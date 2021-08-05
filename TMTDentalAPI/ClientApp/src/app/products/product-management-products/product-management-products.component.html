@@ -11,13 +11,13 @@
                     class="form-control size-text-14" placeholder="Tìm kiếm theo mã hoặc tên ..." type="text">
             </div>
             <div class="flex-fill">
-                <button *ngIf="canAdd" class="btn btn-sm btn-primary mr-2" (click)="createProduct()">Thêm mới</button>
-                <button type="button" class="btn btn-secondary btn-sm mr-2" (click)="importFromExcel()">
+                <button *ngIf="canAdd" class="btn btn-primary mr-2" (click)="createProduct()">Thêm mới</button>
+                <button type="button" class="btn btn-secondary mr-2" (click)="importFromExcel()">
                     <i class="fas fa-upload"></i> Import
                 </button>
-                <button type="button" class="btn btn-secondary btn-sm mr-2" (click)="exportExcelFile()">
+                <button type="button" class="btn btn-secondary mr-2" (click)="exportExcelFile()">
                     <i class="fas fa-download"></i>&nbsp;Xuất file Excel</button>
-                <button class="btn btn-sm btn-secondary mr-2" (click)="updateServiceFromExcel()">
+                <button class="btn btn-secondary mr-2" (click)="updateServiceFromExcel()">
                     <i class="fas fa-upload"></i>
                     Cập nhật excel</button>
 
@@ -50,9 +50,9 @@
                         Thao tác
                     </ng-template>
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                        <button *ngIf="canEdit" class="btn btn-success btn-sm mr-2" (click)="editProduct(dataItem)">
+                        <button *ngIf="canEdit" class="btn btn-success mr-2" (click)="editProduct(dataItem)">
                             <i class="far fa-edit"></i></button>
-                        <button *ngIf="canDelete" class="btn btn-danger btn-sm" (click)="deleteProduct(dataItem)">
+                        <button *ngIf="canDelete" class="btn btn-danger" (click)="deleteProduct(dataItem)">
                             <i class="far fa-trash-alt"></i></button>
                     </ng-template>
                 </kendo-grid-column>

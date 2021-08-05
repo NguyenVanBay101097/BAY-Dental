@@ -30,29 +30,29 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">
+    <button type="button" class="btn btn-primary" (click)="onSave()">
         <span *ngIf="!isUpdate">Import</span>
         <span *ngIf="isUpdate">Cập nhật</span>
     </button>
     <a *ngIf="type == 'service' && !isUpdate" download href="/assets/files/MauFileDichVu.xlsx"
-        class="btn btn-sm btn-light">
+        class="btnbtn-light">
         Tải file mẫu
     </a>
     <a *ngIf="type == 'medicine' && !isUpdate" download href="/assets/files/MauFileThuoc.xlsx"
-        class="btn btn-sm btn-light">
+        class="btn btn-light">
         Tải file mẫu
     </a>
     <a *ngIf="type == 'product' && !isUpdate" download href="/assets/files/MauFileVatTu.xlsx"
-        class="btn btn-sm btn-light">
+        class="btn btn-light">
         Tải file mẫu
     </a>
     <a *ngIf="type == 'labo' && !isUpdate" download href="/assets/files/MauFileVatlieuLabo.xlsx"
-        class="btn btn-sm btn-light">
+        class="btn btn-light">
         Tải file mẫu
     </a>
     <a *ngIf="type == 'labo_attach' && !isUpdate" download href="/assets/files/MauFileGuiKemLabo.xlsx"
-        class="btn btn-sm btn-light">
+        class="btn btn-light">
         Tải file mẫu
     </a>
-    <button type="button" class="btn btn-light btn-sm mr-2" (click)="onCancel()" accesskey="q">Đóng</button>
+    <button type="button" class="btn btn-light mr-2" (click)="onCancel()" accesskey="q">Đóng</button>
 </footer>

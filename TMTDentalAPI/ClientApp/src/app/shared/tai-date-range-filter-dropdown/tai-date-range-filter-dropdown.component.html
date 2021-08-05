@@ -1,5 +1,5 @@
 <div ngbDropdown #myDrop="ngbDropdown">
-    <button class="btn btn-secondary btn-sm dropdown-toggle" id="sortMenu" ngbDropdownAnchor (click)="myDrop.toggle()">
+    <button class="btn btn-secondary dropdown-toggle" id="sortMenu" ngbDropdownAnchor (click)="myDrop.toggle()">
         <i class="fas fa-filter"></i>
         {{title}}:
         <span *ngIf="dateFrom && dateTo">{{dateFrom | date: 'shortDate'}} - {{dateTo | date: 'shortDate'}}</span>
@@ -37,13 +37,13 @@
                 </div>
             </div>
             <div>
-                <button type="button" class="btn btn-primary mr-2 btn-sm" (click)="onSearch()">
+                <button type="button" class="btn btn-primary mr-2" (click)="onSearch()">
                     Áp dụng
                 </button>
-                <button type="button" class="btn btn-secondary btn-sm mr-2" (click)="onClear($event)">
+                <button type="button" class="btn btn-secondary mr-2" (click)="onClear($event)">
                     Hủy lọc
                 </button>
-                <button type="button" class="btn btn-light btn-sm mr-2" (click)="myDrop.toggle()">
+                <button type="button" class="btn btn-light mr-2" (click)="myDrop.toggle()">
                     Đóng
                 </button>
             </div>

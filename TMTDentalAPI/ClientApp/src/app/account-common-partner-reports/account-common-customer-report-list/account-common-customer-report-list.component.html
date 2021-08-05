@@ -8,14 +8,14 @@
         </ol>
         <div class="o_cp_searchview">
             <div class="o_searchview">
-                <span class="fas fa-search form-control-icon form-control-sm"></span>
+                <span class="fas fa-search form-control-icon"></span>
                 <input class="o_searchview_input" [placeholder]="(resultSelection == 'customer' ? ' Tìm kiếm theo tên khách hàng' : ' Tìm kiếm theo tên NCC')
                 + ' , số điện thoại'" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
             </div>
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
-                <button (click)="onExport()" class="btn btn-sm btn-primary"><i class="fas fa-download mr-1"></i>Xuất Excel</button>
+                <button (click)="onExport()" class="btn btn-primary"><i class="fas fa-download mr-1"></i>Xuất Excel</button>
             </div>
             <div class="o_cp_sidebar">
             </div>
@@ -25,7 +25,7 @@
             </app-tai-date-range-filter-dropdown> -->
             <app-date-range-picker-filter class="mr-1" [startDate]="monthStart" [endDate]="monthEnd"
                 (searchChange)="searchChangeDate($event)"></app-date-range-picker-filter>
-            <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1 kendo-combobox-sm" [valueField]="'id'"
+            <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1" [valueField]="'id'"
                 [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
             </kendo-combobox>
         </div>

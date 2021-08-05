@@ -23,20 +23,20 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
-                    <button type="button" *ngIf="state != 'done' && canCreateUpdate" class="btn btn-primary btn-sm"
+                    <button type="button" *ngIf="state != 'done' && canCreateUpdate" class="btn btn-primary"
                         accesskey="s" (click)="onSaveOrUpdate()">
                         Lưu
                     </button>
-                    <button type="button" accesskey="1" class="btn btn-primary btn-sm"
+                    <button type="button" accesskey="1" class="btn btn-primary"
                         *ngIf="['draft'].indexOf(picking?.state) !== -1 && canActionDone" (click)="actionDone()">
                         Hoàn thành
                     </button>
-                    <button *ngIf="id && canPrint" type="button" accesskey="1" class="btn btn-primary btn-sm"
+                    <button *ngIf="id && canPrint" type="button" accesskey="1" class="btn btn-primary"
                         (click)="onPrint()">
                         In Phiếu
                     </button>
                     <a [routerLink]="['/stock/incoming-pickings/create']" accesskey="c" *ngIf="id && canCreate"
-                        class="btn btn-secondary btn-sm">
+                        class="btn btn-secondary">
                         Thêm mới
                     </a>
                 </div>
@@ -184,7 +184,7 @@
                                                     </td>
                                                     <td class="align-middle "
                                                         *ngIf="['done', 'cancel'].indexOf(picking?.state) === -1">
-                                                        <button type="button" class="btn btn-danger btn-sm" tabindex="-1"
+                                                        <button type="button" class="btn btn-danger" tabindex="-1"
                                                             (click)="deleteLine(i)">
                                                             <i class="far fa-trash-alt"></i></button>
                                                     </td>

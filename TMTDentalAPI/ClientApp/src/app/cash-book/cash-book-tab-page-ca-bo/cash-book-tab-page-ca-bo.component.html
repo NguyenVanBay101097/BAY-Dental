@@ -36,17 +36,17 @@
             <app-tai-date-range-filter-dropdown class="mr-2" title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo"
                 (searchChange)="searchChangeDate($event)">
             </app-tai-date-range-filter-dropdown>
-            <button type="button" class="btn btn-primary btn-sm mr-2" (click)="exportExcelFile()">
+            <button type="button" class="btn btn-primary mr-2" (click)="exportExcelFile()">
                 <i class="fas fa-download mr-2"></i>Xuất file
             </button>
-            <!-- <button type="button" class="btn btn-primary btn-sm mr-2" (click)="changeData()">
+            <!-- <button type="button" class="btn btn-primary mr-2" (click)="changeData()">
                 <i class="fas fa-download mr-2"></i>Change Data
             </button> -->
         </div>
         <div class="t-search t-search-left">
-            <input type="text" class="form-control form-control-sm" placeholder="Tìm kiếm theo số phiếu"
+            <input type="text" class="form-control form-control" placeholder="Tìm kiếm theo số phiếu"
                 [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
-            <span class="fas fa-search form-control-icon form-control-sm"></span>
+            <span class="fas fa-search form-control-icon form-control"></span>
         </div>
     </div>
     <div>

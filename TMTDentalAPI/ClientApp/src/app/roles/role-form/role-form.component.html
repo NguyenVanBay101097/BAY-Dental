@@ -12,7 +12,7 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm" accesskey="c" (click)="onSave()">Lưu</button>
+                    <button type="button" class="btn btn-primary" accesskey="c" (click)="onSave()">Lưu</button>
                 </div>
             </div>
             <div class="o_cp_sidebar">
@@ -40,7 +40,7 @@
                     <div>
                         <h4 class="o_horizontal_separator text-dark">Người dùng</h4>
                         <div>
-                            <button type="button" [class.btn-light]="!isUserSelected(user)" title="Cho vào nhóm" class="btn btn-sm mr-2" [class.btn-success]="isUserSelected(user)" *ngFor="let user of userList" (click)="selectUser(user)">{{user.name}}</button>
+                            <button type="button" [class.btn-light]="!isUserSelected(user)" title="Cho vào nhóm" class="btn mr-2" [class.btn-success]="isUserSelected(user)" *ngFor="let user of userList" (click)="selectUser(user)">{{user.name}}</button>
                         </div>
                     </div>
                     <div>

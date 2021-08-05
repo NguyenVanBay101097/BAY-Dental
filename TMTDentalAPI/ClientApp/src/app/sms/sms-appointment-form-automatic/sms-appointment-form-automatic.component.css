@@ -90,9 +90,9 @@ input:checked+.slider:before {
     padding: 0 31px 15px 31px !important;
 }
 
-.form-control{
+/* .form-control{
     height: 36px !important;
-}
+} */
 
 .form-control.textarea{
     overflow: hidden !important;

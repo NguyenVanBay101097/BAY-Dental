@@ -9,14 +9,14 @@
     </div>
     <div class="o_cp_left">
         <div class="o_cp_buttons" *ngIf="canAdd">
-            <button class="btn btn-primary btn-sm" (click)="createQuestion()">Thêm</button>
+            <button class="btn btn-primary" (click)="createQuestion()">Thêm</button>
         </div>
         <div class="o_cp_sidebar">
 
         </div>
     </div>
     <div class="o_cp_right">
-        <kendo-combobox [(ngModel)]="defaultFilter" (selectionChange)="onFilterChange($event)" [class]="'kendo-combobox-sm'" [placeholder]="'Tất cả'" [data]="listFilter" [valueField]="'value'" [textField]="'name'">
+        <kendo-combobox [(ngModel)]="defaultFilter" (selectionChange)="onFilterChange($event)" [placeholder]="'Tất cả'" [data]="listFilter" [valueField]="'value'" [textField]="'name'">
         </kendo-combobox>
     </div>
 </div>
@@ -40,19 +40,19 @@
                     <td class="col-md">{{item.name}}</td>
                     <td class="col-sm">
                         <div class="d-flex text-center">
-                            <button class="btn btn-success mr-2 btn-sm" title="Sửa" (click)="editQuestion(item)" *ngIf="canUpdate">
+                            <button class="btn btn-success mr-2" title="Sửa" (click)="editQuestion(item)" *ngIf="canUpdate">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="btn btn-info mr-2 btn-sm" title="Nhân đôi" (click)="doubleQuestion(item)" *ngIf="canAdd">
+                            <button class="btn btn-info mr-2" title="Nhân đôi" (click)="doubleQuestion(item)" *ngIf="canAdd">
                                 <i class="far fa-copy"></i>
                             </button>
-                            <button [ngClass]="item.active? 'btn-danger': 'btn-info'" class="btn btn-info mr-2 btn-sm" (click)="actionActive(item)" *ngIf="canUpdate">
+                            <button [ngClass]="item.active? 'btn-danger': 'btn-info'" class="btn btn-info mr-2" (click)="actionActive(item)" *ngIf="canUpdate">
                                 <i *ngIf="item.active" title="Ẩn câu hỏi"
                                 class="fas fa-eye-slash"></i>
                                 <i *ngIf="!item.active" title="Hiện câu hỏi"
                                 class="fas fa-eye"></i>
                             </button>
-                            <button class="btn btn-danger btn-sm mr-2" title="Sửa" (click)="removeQuestion(item)" *ngIf="canDelete">
+                            <button class="btn btn-danger mr-2" title="Sửa" (click)="removeQuestion(item)" *ngIf="canDelete">
                                 <i class="far fa-trash-alt"></i>
                             </button>
                         </div>

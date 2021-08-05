@@ -1326,10 +1326,27 @@ html .o_web_client {
     font-size: 1.076923rem;
   }
 
-  .k-grid th, .k-grid td, .k-label {
+  .k-grid th, .k-grid td, .k-label, .k-link {
     font-size: 1.076923rem;
   }
 
   .nav-link, .o_form_label, .form-check-label, .form-control {
     font-size: 1.076923rem;
   }
+  
+  .dropdown-item {
+    font-size: 1.076923rem;
+  }
+
+  label { 
+    font-size: 1.076923rem;  
+  }
+
+  table th, table td {
+    font-size: 1.076923rem;  
+  }
+
+  .font-weight-bold {
+    font-size: 1.076923rem;
+  }
+

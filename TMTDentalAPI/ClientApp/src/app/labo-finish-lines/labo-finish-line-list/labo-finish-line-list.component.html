@@ -11,8 +11,8 @@
         <div class="o_cp_t_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm" (click)="createItem()">Thêm</button>
-                    <button type="button" class="btn btn-light btn-sm" (click)="onImport()">Import</button>
+                    <button type="button" class="btn btn-primary" (click)="createItem()">Thêm</button>
+                    <button type="button" class="btn btn-light" (click)="onImport()">Import</button>
                 </div>
             </div>
             <div class="o_cp_sidebar">
@@ -32,9 +32,9 @@
                 Thao tác
             </ng-template>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-success btn-sm mr-2" (click)="editItem(dataItem)">
+                <button class="btn btn-success mr-2" (click)="editItem(dataItem)">
                     <i class="far fa-edit"></i></button>
-                <button class="btn btn-danger btn-sm" (click)="deleteItem(dataItem)">
+                <button class="btn btn-danger" (click)="deleteItem(dataItem)">
                     <i class="far fa-trash-alt"></i></button>
             </ng-template>
         </kendo-grid-column>

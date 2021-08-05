@@ -14,7 +14,7 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button *ngIf="canSaleCouponProgramCreate" type="button" class="btn btn-primary btn-sm" (click)="createItem()" accesskey="c">
+                    <button *ngIf="canSaleCouponProgramCreate" type="button" class="btn btn-primary" (click)="createItem()" accesskey="c">
                         Thêm
                     </button>
                 </div>
@@ -22,7 +22,7 @@
             <div class="o_cp_sidebar">
                 <div class="btn-group">
                     <div class="btn-group o_dropdown" *ngIf="selectedIds.length && canSaleCouponProgramUpdate">
-                        <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown"
+                        <button class="btn btn-secondary dropdown-toggle" data-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
                             Thao tác
                         </button>
@@ -35,7 +35,7 @@
             </div>
         </div>
         <div class="o_cp_right">
-            <kendo-combobox class="kendo-combobox-sm mr-2" [placeholder]="'Tất cả trạng thái'"
+            <kendo-combobox class="kendo-combobox mr-2" [placeholder]="'Tất cả trạng thái'"
                 [popupSettings]="{width: 'auto'}" [filterable]="true" 
                 [data]="listFilterStatus" [valueField]="'value'" [textField]="'text'"
                 (valueChange)="valueChangeStatus($event)" (filterChange)="filterChangeStatus($event)">
@@ -49,9 +49,9 @@
 <div class="o_content">
     <div class="filter-active">
         <input type="radio" name="filterActive" class="btn-check" id="saleProgramActive" [value]="true" [(ngModel)]="filterActive" (change)="changeFilterActive()">
-        <label for="saleProgramActive" class="btn btn-sm rounded-right-0" [ngClass]="filterActive ? 'btn-primary' : 'btn-outline-primary'">Đã kích hoạt</label>
+        <label for="saleProgramActive" class="btn btn rounded-right-0" [ngClass]="filterActive ? 'btn-primary' : 'btn-outline-primary'">Đã kích hoạt</label>
         <input type="radio" name="filterActive" class="btn-check" id="saleProgramInactive" [value]="false" [(ngModel)]="filterActive" (change)="changeFilterActive()">
-        <label for="saleProgramInactive" class="btn btn-sm rounded-left-0" [ngClass]="!filterActive ? 'btn-primary' : 'btn-outline-primary'">Chưa kích hoạt</label>
+        <label for="saleProgramInactive" class="btn btn rounded-left-0" [ngClass]="!filterActive ? 'btn-primary' : 'btn-outline-primary'">Chưa kích hoạt</label>
     </div>
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
         (pageChange)="pageChange($event)" [selectable]="true" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
@@ -85,10 +85,10 @@
                 Thao tác
             </ng-template>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button *ngIf="canSaleCouponProgramUpdate" class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                <button *ngIf="canSaleCouponProgramUpdate" class="btn btn-success mr-2" title="Sửa" (click)="editItem(dataItem)">
                     <span class="far fa-edit"></span>
                 </button>
-                <button *ngIf="canSaleCouponProgramDelete" class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                <button *ngIf="canSaleCouponProgramDelete" class="btn btn-danger" title="Xóa" (click)="deleteItem(dataItem)">
                     <span class="far fa-trash-alt"></span>
                 </button>
             </ng-template>

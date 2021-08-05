@@ -17,9 +17,9 @@
                     (selectChange)="onStateSelectChange($event)">
                     </app-tmt-option-select-dropdown> -->
                     <div class="d-flex">
-                        <kendo-combobox (selectionChange)="onChangeLaboStatus($event)" placeholder="Lọc phiếu Labo" class="kendo-combobox-sm mr-2" [data]="filterLabo" [textField]="'name'" [valueField]="'value'">
+                        <kendo-combobox (selectionChange)="onChangeLaboStatus($event)" placeholder="Lọc phiếu Labo" class="mr-2" [data]="filterLabo" [textField]="'name'" [valueField]="'value'">
                         </kendo-combobox>
-                        <kendo-combobox (selectionChange)="onStateLaboChange($event)" placeholder="Trạng thái phiếu Labo" class="kendo-combobox-sm" style="width: auto;" [data]="filterLaboStatus" [textField]="'name'" [valueField]="'value'">
+                        <kendo-combobox (selectionChange)="onStateLaboChange($event)" placeholder="Trạng thái phiếu Labo" style="width: auto;" [data]="filterLaboStatus" [textField]="'name'" [valueField]="'value'">
                         </kendo-combobox>
                     </div>
 
@@ -28,7 +28,7 @@
             <div class="o_cp_sidebar">
                 <div class="btn-group">
                     <div class="btn-group o_dropdown" *ngIf="selectedIds.length">
-                        <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
+                        <button class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
                             Thao tác
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -93,9 +93,9 @@
                 Thao tác
             </ng-template>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                <button class="btn btn-success mr-2" title="Sửa" (click)="editItem(dataItem)">
                     <span class="far fa-edit"></span></button>
-                <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                <button class="btn btn-danger" title="Xóa" (click)="deleteItem(dataItem)">
                     <span class="far fa-trash-alt"></span></button>
             </ng-template>
         </kendo-grid-column> -->

@@ -2,12 +2,11 @@
     <div class="o_control_panel">
         <div class="o_cp_left">
             <div class="o_cp_buttons d-flex">
-                <kendo-combobox (selectionChange)="onStatusChange($event)" placeholder="Trạng thái"
-                    class="kendo-combobox-sm" style="width: 200px;" [data]="filterStatus" [textField]="'name'"
+                <kendo-combobox (selectionChange)="onStatusChange($event)" placeholder="Trạng thái" style="width: 200px;" [data]="filterStatus" [textField]="'name'"
                     [valueField]="'value'">
                 </kendo-combobox>
                 <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm ml-2" (click)="setupAutomaic()">Tạo thiết lập
+                    <button type="button" class="btn btn-primary ml-2" (click)="setupAutomaic()">Tạo thiết lập
                         gửi tự động</button>
                 </div>
             </div>
@@ -60,9 +59,9 @@
             Thao tác
         </ng-template>
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+            <button class="btn btn-success mr-2" title="Sửa" (click)="editItem(dataItem)">
                 <span class="far fa-edit"></span></button>
-            <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+            <button class="btn btn-danger" title="Xóa" (click)="deleteItem(dataItem)">
                 <span class="far fa-trash-alt"></span></button>
         </ng-template>
     </kendo-grid-column>

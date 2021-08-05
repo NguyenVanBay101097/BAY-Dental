@@ -4,7 +4,7 @@
     </div>
     <div class="card-body p-2">
         <div class="mb-2" *ngIf="canAdd">
-            <button type="button" class="btn btn-primary btn-sm" (click)="createItem()">Tạo phiếu Labo</button>
+            <button type="button" class="btn btn-primary" (click)="createItem()">Tạo phiếu Labo</button>
         </div>
         <kendo-grid [data]="gridData" [loading]="loading" [pageSize]="limit" [skip]="skip" [pageable]="true" (pageChange)="pageChange($event)" [navigable]="true" kendoGridFocusable>
             <!-- <kendo-grid-column field="date" title="Ngày">
@@ -62,11 +62,11 @@
                     Thao tác
                 </ng-template>
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    <button class="btn btn-sm mr-1" title="In" (click)="printLabo(dataItem)">
+                    <button class="btn mr-1" title="In" (click)="printLabo(dataItem)">
                         <i class="fas fa-print"></i></button>
-                    <button *ngIf="canUpdate" class="btn btn-sm mr-1" title="Sửa" (click)="editItem(dataItem)">
+                    <button *ngIf="canUpdate" class="btn mr-1" title="Sửa" (click)="editItem(dataItem)">
                         <span class="fas fa-edit"></span></button>
-                    <button *ngIf="canDelete" class="btn btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                    <button *ngIf="canDelete" class="btn" title="Xóa" (click)="deleteItem(dataItem)">
                         <span class="fas fa-trash-alt"></span></button>
                 </ng-template>
             </kendo-grid-column>

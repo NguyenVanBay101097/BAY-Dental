@@ -5,17 +5,17 @@
             <app-tai-date-range-filter-dropdown class="mr-2" title="Thời gian" [dateFrom]="dateFrom"
                 [dateTo]="dateTo" (searchChange)="searchChangeDate($event)">
             </app-tai-date-range-filter-dropdown>
-            <button *ngIf="canPhieuThuChiCreate" type="button" class="btn btn-primary btn-sm mr-2" (click)="createItem()">
+            <button *ngIf="canPhieuThuChiCreate" type="button" class="btn btn-primary mr-2" (click)="createItem()">
                 <i class="fas fa-plus mr-2"></i> {{getType(type)}}
             </button>
-            <button type="button" class="btn btn-primary btn-sm mr-2" (click)="exportExcelFile()">
+            <button type="button" class="btn btn-primary mr-2" (click)="exportExcelFile()">
                 <i class="fas fa-download mr-2"></i>Xuất file
             </button>
         </div>
         <div class="t-search t-search-left">
-            <input type="text" class="form-control form-control-sm w-fit-content" placeholder="Tìm kiếm theo số phiếu"
+            <input type="text" class="form-control form-control w-fit-content" placeholder="Tìm kiếm theo số phiếu"
                 [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
-            <span class="fas fa-search form-control-icon form-control-sm"></span>
+            <span class="fas fa-search form-control-icon form-control"></span>
         </div>
     </div>
     <div>
@@ -47,10 +47,10 @@
                 </ng-template>
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     <div class="d-flex">
-                        <button *ngIf="canPhieuThuChiUpdate" class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                        <button *ngIf="canPhieuThuChiUpdate" class="btn btn-success mr-2" title="Sửa" (click)="editItem(dataItem)">
                             <span class="far fa-edit"></span>
                         </button>
-                        <button *ngIf="canPhieuThuChiDelete" class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                        <button *ngIf="canPhieuThuChiDelete" class="btn btn-danger" title="Xóa" (click)="deleteItem(dataItem)">
                             <span class="far fa-trash-alt"></span>
                         </button>
                     </div>

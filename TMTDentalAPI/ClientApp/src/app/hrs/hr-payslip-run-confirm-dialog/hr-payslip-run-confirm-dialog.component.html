@@ -42,7 +42,7 @@
                 </div>
                 <div>
                     <div class="d-flex mb-2">
-                        <button type="button" accesskey="a" class="btn btn-primary btn-sm mr-2" (click)="openEmployees()">Chọn nhân viên</button>                    
+                        <button type="button" accesskey="a" class="btn btn-primary mr-2" (click)="openEmployees()">Chọn nhân viên</button>                    
                     </div>
                     <table class="table table-sm mt-2">
                         <thead>
@@ -61,7 +61,7 @@
                                     <td class="align-middle">{{ item.get('phone').value }}
                                     </td>                          
                                     <td>
-                                        <button type="button" title="Xóa" class="btn btn-danger btn-sm" (click)="deleteLine(i)">
+                                        <button type="button" title="Xóa" class="btn btn-danger" (click)="deleteLine(i)">
                                             <i class="fas fa-trash-alt"></i>
                                         </button>
                                     </td>

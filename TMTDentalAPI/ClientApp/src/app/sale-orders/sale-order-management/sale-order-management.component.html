@@ -11,14 +11,14 @@
                     <div class="breadcrumb">
                         <div class="d-flex">
                             <kendo-combobox [data]="ranges" [valueField]="'intervalNbr'" [textField]="'text'"
-                                class="mr-2 kendo-combobox-sm cmb" [(ngModel)]="dateOrderTo" [placeholder]="'Thời gian'"
+                                class="mr-2 cmb" [(ngModel)]="dateOrderTo" [placeholder]="'Thời gian'"
                                 [filterable]="true" (valueChange)="handleFilterDateOrder()">
                             </kendo-combobox>
                             <kendo-combobox [data]="companies" [valueField]="'id'" [textField]="'name'"
-                                class="mr-2 kendo-combobox-sm cmb" [(ngModel)]="company"
+                                class="mr-2 cmb" [(ngModel)]="company"
                                 [placeholder]="'Tất cả chi nhánh'" (valueChange)="handleFilterCompany()">
                             </kendo-combobox>
-                            <button class="btn btn-primary btn-sm mr-2 btnExport w-30" title="xuất file"
+                            <button class="btn btn-primary mr-2 btnExport w-30" title="xuất file"
                                 (click)="exportExcelFile(grid)"> <i class="fas fa-download mr-2"></i>Xuất file
                             </button>
                         </div>

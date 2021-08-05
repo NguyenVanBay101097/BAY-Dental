@@ -16,7 +16,7 @@
                     <!-- <app-tmt-option-select-dropdown title="Trạng thái" [options]="stateFilterOptions"
                     (selectChange)="onStateSelectChange($event)">
                 </app-tmt-option-select-dropdown> -->
-                    <kendo-combobox (selectionChange)="onChangeLaboState($event)" placeholder="Lọc trạng thái" class="kendo-combobox-sm" [data]="filterLaboStatus" [textField]="'name'" [valueField]="'value'">
+                    <kendo-combobox (selectionChange)="onChangeLaboState($event)" placeholder="Lọc trạng thái" [data]="filterLaboStatus" [textField]="'name'" [valueField]="'value'">
                     </kendo-combobox>
                 </div>
 
@@ -24,7 +24,7 @@
             <div class="o_cp_sidebar">
                 <!-- <div class="btn-group">
                     <div class="btn-group o_dropdown" *ngIf="selectedIds.length">
-                        <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown"
+                        <button class="btn btn-secondary dropdown-toggle" data-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
                             Thao tác
                         </button>
@@ -104,7 +104,7 @@
                 Nhận labo
             </ng-template>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-success btn-sm" title="Sửa" (click)="$event.stopPropagation(); editItem(dataItem)">
+                <button class="btn btn-success" title="Sửa" (click)="$event.stopPropagation(); editItem(dataItem)">
                     <span class="far fa-edit"></span></button>
             </ng-template>
         </kendo-grid-column>

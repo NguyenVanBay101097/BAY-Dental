@@ -6,13 +6,13 @@
             </app-tai-date-range-filter-dropdown>
         </div>
         <div class="mr-1">
-            <kendo-combobox style="width: 200px;" [popupSettings]="" class="kendo-combobox-sm"
+            <kendo-combobox style="width: 200px;" [popupSettings]=""
                 [placeholder]="'Tất cả sản phẩm'" [valuePrimitive]="true" [data]="filteredInventory" [valueField]="'value'" [textField]="'text'"
                 (valueChange)="inventoryChange($event)">
             </kendo-combobox>
         </div>
         <div>
-            <button type="button" class="btn btn-primary btn-sm" (click)="exportExcelFile(grid)">
+            <button type="button" class="btn btn-primary" (click)="exportExcelFile(grid)">
                 <i class="fas fa-download"></i>&nbsp;Xuất Excel</button>
         </div>
     </div>

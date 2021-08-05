@@ -7,12 +7,12 @@
         </div>
         <div class="mr-1">
             <kendo-combobox (selectionChange)="onStateChange($event)" placeholder="Trạng thái"
-                class="kendo-combobox-sm mr-1" style="width: auto;" [data]="filterInventoryState" [textField]="'name'"
+                class="mr-1" style="width: auto;" [data]="filterInventoryState" [textField]="'name'"
                 [valueField]="'value'">
             </kendo-combobox>
         </div>
         <div>
-            <button class="btn btn-primary btn-sm" title="Tạo phiếu kiểm kho" (click)="createItem()"
+            <button class="btn btn-primary" title="Tạo phiếu kiểm kho" (click)="createItem()"
                 *ngIf="canCreate">Tạo phiếu kiểm kho</button>
         </div>
     </div>
@@ -50,9 +50,9 @@
                 Thao tác
             </ng-template>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                <button class="btn btn-success mr-2" title="Sửa" (click)="editItem(dataItem)">
                     <span class="far fa-edit"></span></button>
-                <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                <button class="btn btn-danger" title="Xóa" (click)="deleteItem(dataItem)">
                     <span class="far fa-trash-alt"></span></button>
             </ng-template>
         </kendo-grid-column>

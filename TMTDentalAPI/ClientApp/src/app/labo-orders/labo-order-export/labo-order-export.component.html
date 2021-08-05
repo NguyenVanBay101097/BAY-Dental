@@ -13,7 +13,7 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view d-flex">
-                    <kendo-combobox (selectionChange)="onStateSelectChange($event)" placeholder="Tất cả" class="kendo-combobox-sm mr-1" [data]="filterLaboStatus" [textField]="'name'" [valueField]="'value'">
+                    <kendo-combobox (selectionChange)="onStateSelectChange($event)" placeholder="Tất cả" class="mr-1" [data]="filterLaboStatus" [textField]="'name'" [valueField]="'value'">
                     </kendo-combobox>
                     <app-tai-date-range-filter-dropdown title="Ngày xuất" [dateFrom]="dateExportFrom" [dateTo]="dateExportTo" (searchChange)="onDateSearchChange($event)">
                     </app-tai-date-range-filter-dropdown>
@@ -22,7 +22,7 @@
             <div class="o_cp_sidebar">
                 <div class="btn-group">
                     <div class="btn-group o_dropdown" *ngIf="selectedIds.length">
-                        <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
+                        <button class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
                             Thao tác
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -97,7 +97,7 @@
                 Xuất khách
             </ng-template>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                <button class="btn btn-success mr-2" title="Sửa" (click)="editItem(dataItem)">
                     <span class="far fa-edit"></span></button>
             </ng-template>
         </kendo-grid-column>

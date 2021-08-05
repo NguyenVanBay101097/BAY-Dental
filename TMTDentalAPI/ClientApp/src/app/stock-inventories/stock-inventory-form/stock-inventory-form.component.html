@@ -17,10 +17,10 @@
         <div class="o_cp_left">
             <!-- <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm" *ngIf="['done'].indexOf(stateControl) === -1"
+                    <button type="button" class="btn btn-primary" *ngIf="['done'].indexOf(stateControl) === -1"
                         (click)="onSave()" accesskey="s">
                         Lưu</button>
-                    <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" accesskey="c"
+                    <button type="button" class="btn btn-secondary" (click)="createNew()" accesskey="c"
                         *ngIf="id">
                         Thêm mới</button>
 
@@ -29,7 +29,7 @@
         </div>
         <div class="o_cp_right">
             <!-- <div class="dropdown">
-                <button class="btn btn-secondary btn-sm dropdown-toggle" *ngIf="id" data-toggle="dropdown"
+                <button class="btn btn-secondary dropdown-toggle" *ngIf="id" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
                     Thao tác
                 </button>
@@ -46,25 +46,25 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
-                    <button type="button" class="btn btn-primary btn-sm" *ngIf="['done'].indexOf(stateControl) === -1"
+                    <button type="button" class="btn btn-primary" *ngIf="['done'].indexOf(stateControl) === -1"
                         (click)="onSave()" accesskey="s">
                         Lưu</button>
-                    <button type="button" *ngIf="id && stateControl == 'draft'" class="btn btn-primary btn-sm"
+                    <button type="button" *ngIf="id && stateControl == 'draft'" class="btn btn-primary"
                         (click)="prepareInventory()" accesskey="1">
                         Bắt đầu kiểm kho
                     </button>
                     <button type="button" *ngIf="id && stateControl == 'confirmed' && canActionDone"
-                        class="btn btn-primary btn-sm" (click)="actionDone()" accesskey="1">
+                        class="btn btn-primary" (click)="actionDone()" accesskey="1">
                         Xác nhận kiểm kho
                     </button>
                     <button type="button" *ngIf="id && stateControl != 'draft' && canPrint"
-                        class="btn btn-primary btn-sm" (click)="onPrintStockInventory()">
+                        class="btn btn-primary" (click)="onPrintStockInventory()">
                         In phiếu</button>
                     <button type="button" *ngIf="id && stateControl == 'confirmed' && canCancel"
-                        class="btn btn-danger btn-sm" (click)="actionCancel()" accesskey="1">
+                        class="btn btn-danger" (click)="actionCancel()" accesskey="1">
                         Hủy phiếu
                     </button>
-                    <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" accesskey="c"
+                    <button type="button" class="btn btn-secondary" (click)="createNew()" accesskey="c"
                         *ngIf="id">
                         Thêm mới</button>
                 </div>
@@ -291,7 +291,7 @@
                                                     </td>
                                                     <td *ngIf="stateControl != 'done' "
                                                         class="text-center align-middle">
-                                                        <button type="button" title="Hủy" class="btn btn-danger btn-sm"
+                                                        <button type="button" title="Hủy" class="btn btn-danger"
                                                             (click)="deleteLine(i)">
                                                             <i class="fas fa-trash-alt"></i>
                                                         </button>

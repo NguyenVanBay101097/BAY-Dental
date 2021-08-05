@@ -4,10 +4,10 @@
             <div class="d-flex">
                 <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
                 </app-tai-date-range-filter-dropdown>
-                <kendo-combobox (selectionChange)="onStatusChange($event)" placeholder="Trạng thái" class="kendo-combobox-sm ml-2" style="width: auto;" [data]="filterStatus" [textField]="'name'" [valueField]="'value'">
+                <kendo-combobox (selectionChange)="onStatusChange($event)" placeholder="Trạng thái" class="ml-2" style="width: auto;" [data]="filterStatus" [textField]="'name'" [valueField]="'value'">
                 </kendo-combobox>
 
-                <button type="button" (click)="onSend()" class="ml-2 btn btn-primary btn-sm">Gửi lại</button>
+                <button type="button" (click)="onSend()" class="ml-2 btn btn-primary">Gửi lại</button>
             </div>
         </div>
         <div class="o_cp_searchview">
