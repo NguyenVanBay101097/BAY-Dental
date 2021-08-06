@@ -12,10 +12,14 @@
                 <i class="fas fa-download mr-2"></i>Xuất file
             </button>
         </div>
-        <div class="t-search t-search-left">
-            <input type="text" class="form-control form-control w-fit-content" placeholder="Tìm kiếm theo số phiếu"
-                [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
-            <span class="fas fa-search form-control-icon form-control"></span>
+        <div class="t-search t-search-left w-50">
+            <div class="o_searchview">
+                <input type="text" class="o_searchview_input" 
+                placeholder="Tìm kiếm theo số phiếu" 
+                [(ngModel)]="search" 
+                (ngModelChange)="this.searchUpdate.next($event)" />
+                <span class="o_searchview_icon fas fa-search"></span>
+            </div>
         </div>
     </div>
     <div>

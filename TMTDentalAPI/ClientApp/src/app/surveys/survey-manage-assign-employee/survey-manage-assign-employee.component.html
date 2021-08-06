@@ -1,10 +1,17 @@
 <div class="">
     <div class="row d-flex m-3">
-        <button (click)="onAutoAssign()" class="btn btn-sm btn-primary mr-1"> Phân việc ngẫu nhiên</button>
-        <button (click)="onSave()" class="btn btn-sm btn-primary mr-1"> Lưu</button>
-        <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'" [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
-        </app-tai-date-range-filter-dropdown>
-        <input class="form-control form-control-sm ml-auto w-50" placeholder="Tìm kiếm theo khách hàng, số phiếu điều trị" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+        <div class="btn_group">
+            <button (click)="onAutoAssign()" class="btn btn-primary mr-1"> Phân việc ngẫu nhiên</button>
+            <button (click)="onSave()" class="btn btn-primary mr-1"> Lưu</button>
+            <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'" [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
+            </app-tai-date-range-filter-dropdown>
+        </div>
+        <div class="o_searchview">
+            <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo khách hàng, số phiếu điều trị" 
+            [(ngModel)]="search" 
+            (ngModelChange)="this.searchUpdate.next($event)" />
+            <span class="o_searchview_icon fas fa-search"></span>
+        </div>
     </div>
 
     <div class="content">

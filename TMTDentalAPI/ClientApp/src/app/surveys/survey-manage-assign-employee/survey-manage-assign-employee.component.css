@@ -1,0 +1,9 @@
+.btn_group {
+    display: flex;
+    width: 50%;
+    flex-wrap: wrap;
+}
+
+.o_searchview {
+    flex:1;
+}

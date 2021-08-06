@@ -4,8 +4,11 @@
     </ol>
     <div class="o_cp_searchview">
         <div class="o_searchview">
-            <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo người giới thiệu"
-                [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
+            <input type="text" class="o_searchview_input" 
+            placeholder="Tìm kiếm theo người giới thiệu"
+            [(ngModel)]="search" 
+            (ngModelChange)="this.searchUpdate.next($event)" />
+            <span class="o_searchview_icon fas fa-search"></span>
         </div>
     </div>
     <div class="o_cp_left">

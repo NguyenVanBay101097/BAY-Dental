@@ -7,8 +7,10 @@
         </ol>
         <div class="o_cp_searchview">
             <div class="o_searchview">
-                <input class="o_searchview_input" placeholder="Tìm kiếm theo mã phiếu " type="text" [(ngModel)]="search"
-                    (ngModelChange)="this.searchUpdate.next($event)">
+                <input class="o_searchview_input" placeholder="Tìm kiếm theo mã phiếu " 
+                type="text" [(ngModel)]="search"
+                (ngModelChange)="this.searchUpdate.next($event)">
+                <span class="o_searchview_icon fas fa-search"></span>
             </div>
         </div>
         <div class="o_cp_left">
