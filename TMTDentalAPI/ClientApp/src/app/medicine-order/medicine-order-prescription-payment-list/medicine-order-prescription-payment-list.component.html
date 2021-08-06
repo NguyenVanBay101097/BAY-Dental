@@ -36,7 +36,7 @@
         <div class="o_cp_buttons">
             <div class="o_form_buttons_view">
                 <div class="d-flex">
-                    <kendo-combobox [data]="states" [textField]="'name'" class="custom btn-sm"
+                    <kendo-combobox [data]="states" [textField]="'name'" class="mr-2"
                         [placeholder]="'Tất cả trạng thái'" (valueChange)="stateChange($event)" [valueField]="'value'">
                     </kendo-combobox>
                     <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'" [dateTo]="dateTo"
