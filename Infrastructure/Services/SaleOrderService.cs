@@ -460,10 +460,10 @@ namespace Infrastructure.Services
             foreach (var sale in self)
             {
                 if (sale.OrderLines.Count == 0) throw new Exception("Bạn không thể hoàn thoành phiếu điều trị khi không có dịch vụ");
-                foreach (var line in sale.OrderLines)
-                {
-                    line.State = "done";
-                }
+                //foreach (var line in sale.OrderLines)
+                //{
+                //    line.State = "done";
+                //}
 
                 sale.State = "done";
                 sale.DateDone = DateTime.Now;
