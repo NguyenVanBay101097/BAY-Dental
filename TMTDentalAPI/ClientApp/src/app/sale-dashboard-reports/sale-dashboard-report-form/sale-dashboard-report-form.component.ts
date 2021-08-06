@@ -15,6 +15,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { CashBookService } from 'src/app/cash-book/cash-book.service';
 import { CommissionSettlementFilterReport, CommissionSettlementReportOutput, CommissionSettlementsService } from 'src/app/commission-settlements/commission-settlements.service';
 import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/company.service';
+import { GetRevenueSumTotalReq, SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerCustomerReportInput, PartnerCustomerReportOutput, PartnerService } from 'src/app/partners/partner.service';
 import { PhieuThuChiSearch, PhieuThuChiService } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
@@ -40,7 +41,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
   @ViewChild(SaleDashboardReportChartFlowMonthComponent, { static: true }) monthReport: SaleDashboardReportChartFlowMonthComponent;
   formGroup: FormGroup;
   public aggregates: any[] = [
-    { field: 'debit', aggregate: 'sum' }, { field: 'credit', aggregate: 'sum' }
+    { field: 'debit', aggregate: 'sum' }, { field: 'credit', aggregate: 'sum' } , { field: 'end', aggregate: 'sum' }
   ];
 
   public aggregatesThuChi: any[] = [
@@ -53,7 +54,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
 
   dateFrom: Date;
   dateTo: Date;
-
+  totalAmountNCC: number;
   totalDebitNCC: number;
   totalDebitNCCByMonth: number;
   totalCreditNCCByMonth: number;
@@ -73,11 +74,17 @@ export class SaleDashboardReportFormComponent implements OnInit {
   public reportOldYears: any[];
   companyId: string;
   filterMonthDate: Date = new Date();
+  sumRevenue: any;
   groupBy: string = 'groupby:day';
 
   currentYear = new Date().getFullYear();
   oldYear = this.currentYear - 1;
   companyChangeSubject = new Subject();
+
+  filterGroupby : any[] = [
+    { value: 'groupby:day', text: 'Ngày' },
+    { value: 'groupby:month', text: 'Tháng' },
+  ];
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
@@ -87,6 +94,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
     private reportService: AccountCommonPartnerReportService,
     private companyService: CompanyService,
     private intlService: IntlService,
+    private saleOrderService: SaleOrderService,
     private reportGeneralLedgerService: AccountReportGeneralLedgerService,
     private accountFinancialReportService: AccountFinancialReportService,
     private reportFinancialService: ReportFinancialService,
@@ -124,6 +132,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
     this.loadFinacialReport();
     this.loadDebitNCCByMonth();
     this.loadPhieuThuChiReport();
+    this.getRevenueSumTotal();
     this.loadCommissionSettlementReport();
   }
 
@@ -178,6 +187,15 @@ export class SaleDashboardReportFormComponent implements OnInit {
     })
   }
 
+  getRevenueSumTotal() {
+    var val = new GetRevenueSumTotalReq();
+    val.companyId = this.companyId || '';
+    this.saleOrderService.getRevenueSumTotal(val).subscribe((res:any) => {
+      this.sumRevenue = res;
+    }
+    );
+  }
+
 
   loadDataMoney() {
     var companyId = this.companyId ? this.companyId : null;
@@ -210,6 +228,10 @@ export class SaleDashboardReportFormComponent implements OnInit {
     this.dateFrom = e.dateFrom;
     this.dateTo = e.dateTo;
     // this.loadAllData();
+  }
+
+  setGroupbyFilter(time: any) {
+    this.groupBy = time.value;
   }
 
 
@@ -252,16 +274,17 @@ export class SaleDashboardReportFormComponent implements OnInit {
   loadDebitNCCByMonth() {
     var val = new AccountCommonPartnerReportSearch();
     val.resultSelection = "supplier";
-    var dateFrom = this.filterMonthDate ? new Date(this.filterMonthDate.getFullYear(), this.filterMonthDate.getMonth(), 1) : null;
-    var dateTo = this.filterMonthDate ? new Date(this.filterMonthDate.getFullYear(), this.filterMonthDate.getMonth(), new Date(this.filterMonthDate.getFullYear(), this.filterMonthDate.getMonth() + 1, 0).getDate()) : null;
-    val.fromDate = dateFrom ? this.intlService.formatDate(dateFrom, 'yyyy-MM-dd') : null;
-    val.toDate = dateTo ? this.intlService.formatDate(dateTo, 'yyyy-MM-dd') : null;
+    // var dateFrom = this.filterMonthDate ? new Date(this.filterMonthDate.getFullYear(), this.filterMonthDate.getMonth(), 1) : null;
+    // var dateTo = this.filterMonthDate ? new Date(this.filterMonthDate.getFullYear(), this.filterMonthDate.getMonth(), new Date(this.filterMonthDate.getFullYear(), this.filterMonthDate.getMonth() + 1, 0).getDate()) : null;
+    // val.fromDate = dateFrom ? this.intlService.formatDate(dateFrom, 'yyyy-MM-dd') : null;
+    // val.toDate = dateTo ? this.intlService.formatDate(dateTo, 'yyyy-MM-dd') : null;
     val.companyId = this.companyId;
     this.reportService.getSummary(val).subscribe(res => {
       var total = aggregateBy(res, this.aggregates);
-      if (total) {
+      if (total) {    
         this.totalDebitNCCByMonth = total['debit'] ? total['debit'].sum : 0;
         this.totalCreditNCCByMonth = total['credit'] ? total['credit'].sum : 0;
+        this.totalAmountNCC = total['end'] ? total['end'].sum : 0;
       }
     }, err => {
       console.log(err);

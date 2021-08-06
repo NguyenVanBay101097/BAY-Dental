@@ -58,3 +58,9 @@
 .form-check {
     padding-left: 2px;
 }
+
+.btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
+    color: #fff !important;
+    background-color: #007bff !important;
+    border-color: #007bff !important;
+  }

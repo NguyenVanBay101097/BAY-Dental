@@ -228,7 +228,7 @@
     <div class="o_control_panel">
         <ol class="breadcrumb">
             <li class="active">
-                <span>BÁO CÁO TỔNG QUAN</span>
+                <span class="header-title">BÁO CÁO TỔNG QUAN</span>
             </li>
         </ol>
         <div class="o_cp_searchview">
@@ -238,28 +238,6 @@
             </kendo-combobox>
         </div>
         <div class="o_cp_left">
-            <div class="o_cp_buttons">
-
-                <input class="btn-check" type="radio" [(ngModel)]="groupBy" name="radioButton" id="day"
-                    value="groupby:day" (change)="onChangeType($event.target.value)">
-                <label class="btn btn-sm btn-outline-primary mr-2" for="day">
-                    Ngày
-                </label>
-
-
-                <input class="btn-check" type="radio" [(ngModel)]="groupBy" name="radioButton" id="month"
-                    value="groupby:month" (change)="onChangeType($event.target.value)">
-                <label class="btn btn-sm btn-outline-primary mr-2" for="month">
-                    Tháng
-                </label>
-                <div>
-                    <app-date-range-picker-filter [opens]="'right'" class="mr-1" [startDate]="dateFrom"
-                        [endDate]="dateTo" (searchChange)="onSearchDateChange($event)">
-                    </app-date-range-picker-filter>
-
-                </div>
-
-            </div>
             <div class="o_cp_sidebar">
             </div>
         </div>
@@ -274,46 +252,72 @@
             <div class="o_group o_group_col_12">
                 <div class="o_aggregate_col o_group_col_3">
                     <div class="o_aggregate">
-                        <label>Nợ đầu kỳ</label>
-                        <div class="o_value text-info">{{0 | number }}</div>
+                        <label>Quỹ tiền mặt</label>
+                        <div class="o_value text-info">{{(moneyCash ? moneyCash : 0) | number}}</div>
                     </div>
                 </div>
                 <div class="o_aggregate_col o_group_col_3">
                     <div class="o_aggregate">
-                        <label>Tiền phát sinh</label>
-                        <div class="o_value text-primary">{{0 | number }}</div>
+                        <label>Quỹ ngân hàng</label>
+                        <div class="o_value text-info"> {{(moneyBank ? moneyBank : 0) | number}}</div>
                     </div>
                 </div>
                 <div class="o_aggregate_col o_group_col_3">
                     <div class="o_aggregate">
-                        <label>Tiền thanh toán</label>
-                        <div class="o_value text-success">{{0 | number }}</div>
+                        <label>Công nợ phải trả</label>
+                        <div class="o_value text-danger">{{totalDebitNCC | number }}</div>
                     </div>
                 </div>
                 <div class="o_aggregate_col o_group_col_3">
-                    <div class="o_aggregate text-danger">
-                        <label>Nợ cuối kỳ</label>
-                        <div class="o_value">{{0 | number }}</div>
+                    <div class="o_aggregate text-success">
+                        <label>Công nợ phải thu</label>
+                        <div class="o_value">{{totalDebitCustomer | number }}</div>
+                    </div>
+                </div>
+                <div class="o_aggregate_col o_group_col_3">
+                    <div class="o_aggregate text-success">
+                        <label>Dự kiến thu</label>
+                        <div class="o_value">{{sumRevenue.residual || 0 | number  }}</div>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="o_group mb-2">
+            <div class="d-flex">
+                <input class="btn-check" type="radio" [(ngModel)]="groupBy" name="radioButton" id="day"
+                    value="groupby:day" (change)="onChangeType($event.target.value)">
+                <label class="btn btn-sm btn-outline-primary mr-2" for="day">
+                    Ngày
+                </label>
+                <input class="btn-check" type="radio" [(ngModel)]="groupBy" name="radioButton" id="month"
+                    value="groupby:month" (change)="onChangeType($event.target.value)">
+                <label class="btn btn-sm btn-outline-primary mr-2" for="month">
+                    Tháng
+                </label>
+                <app-date-range-picker-filter [opens]="'right'" class="mr-1" [startDate]="dateFrom" [endDate]="dateTo"
+                    (searchChange)="onSearchDateChange($event)">
+                </app-date-range-picker-filter>
 
-    </div>
-    <div class="o_group">
-        <div class="border border-secondary rounded bg-white">
-            <app-sale-dashboard-invoice-report [companyId]="companyId" [dateFrom]="dateFrom" [dateTo]="dateTo"
-                [groupby]="groupBy">
-            </app-sale-dashboard-invoice-report>
+
+
+            </div>
         </div>
-    </div>
-    <div class="o_group">
-        <div class="o_group o_group_col_12">
-            <div class="border border-secondary rounded">
-                <app-sale-dashboard-cashbook-report [companyId]="companyId" [dateFrom]="dateFrom" [dateTo]="dateTo"
+        <div class="o_group mb-2">
+            <div class="border border-secondary rounded bg-white">
+                <app-sale-dashboard-invoice-report [companyId]="companyId" [dateFrom]="dateFrom" [dateTo]="dateTo"
                     [groupby]="groupBy">
-                </app-sale-dashboard-cashbook-report>
+                </app-sale-dashboard-invoice-report>
+            </div>
+        </div>
+        <div class="o_group ">
+            <div class="o_group o_group_col_12">
+                <div class="border border-secondary rounded">
+                    <app-sale-dashboard-cashbook-report [companyId]="companyId" [dateFrom]="dateFrom" [dateTo]="dateTo"
+                        [groupby]="groupBy">
+                    </app-sale-dashboard-cashbook-report>
+                </div>
             </div>
         </div>
     </div>
+
 </div>
