@@ -36,7 +36,7 @@
         <div class="o_cp_buttons">
             <div class="o_form_buttons_view">
                 <div class="d-flex">
-                    <kendo-combobox [data]="states" [textField]="'name'" class="custom btn-sm"
+                    <kendo-combobox [data]="states" [textField]="'name'" class="mr-2"
                         [placeholder]="'Tất cả trạng thái'" (valueChange)="stateChange($event)" [valueField]="'value'">
                     </kendo-combobox>
                     <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'" [dateTo]="dateTo"
@@ -50,8 +50,11 @@
         </div>
     </div>
     <div class="o_cp_t_right">
-        <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo khách hàng, số hóa đơn thuốc"
+        <div class="o_searchview">
+            <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo khách hàng, số hóa đơn thuốc"
             type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+            <span class="o_searchview_icon fas fa-search"></span>
+        </div>
     </div>
 </div>
 

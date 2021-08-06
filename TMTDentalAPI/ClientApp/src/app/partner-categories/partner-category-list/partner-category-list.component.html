@@ -21,8 +21,12 @@
         </div>
     </div>
     <div class="o_cp_t_right">
-        <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm..." type="text" [(ngModel)]="search"
-                (ngModelChange)="this.searchUpdate.next($event)">
+        <div class="o_searchview">
+            <input class="o_searchview_input" placeholder="Tìm kiếm..." type="text" [(ngModel)]="search"
+            (ngModelChange)="this.searchUpdate.next($event)">
+            <span class="o_searchview_icon fas fa-search"></span>
+        </div>
+       
         <!-- <div class="dropdown">
             <button class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
                 aria-expanded="false" type="button" id="dropdownMenuButton">
