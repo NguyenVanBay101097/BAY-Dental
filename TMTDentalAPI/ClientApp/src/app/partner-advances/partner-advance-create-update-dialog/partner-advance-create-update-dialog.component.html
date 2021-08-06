@@ -107,9 +107,9 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button type="button" *ngIf="partnerAdvance?.state == 'draft'" class="btn btn-sm btn-primary mr-2" (click)="onSave()">Lưu và In</button>
-    <button type="button" *ngIf="partnerAdvance?.state == 'draft'" class="btn btn-sm btn-primary" (click)="onConfirmPrint(false)">Xác nhận</button>
-    <button type="button" *ngIf="partnerAdvance?.state == 'draft'" class="btn btn-sm btn-primary mr-2" (click)="onConfirmPrint(true)">Xác nhận và In</button>
-    <button type="button" *ngIf="partnerAdvance?.state != 'draft'" class="btn btn-sm btn-primary mr-2" (click)="onPrint()">In phiếu</button>
-    <button type="button" class="btn btn-sm btn-secondary" (click)="onClose()">Đóng</button>
+    <button type="button" *ngIf="partnerAdvance?.state == 'draft'" class="btn btn-primary mr-2" (click)="onSave()">Lưu và In</button>
+    <button type="button" *ngIf="partnerAdvance?.state == 'draft'" class="btn btn-primary" (click)="onConfirmPrint(false)">Xác nhận</button>
+    <button type="button" *ngIf="partnerAdvance?.state == 'draft'" class="btn btn-primary mr-2" (click)="onConfirmPrint(true)">Xác nhận và In</button>
+    <button type="button" *ngIf="partnerAdvance?.state != 'draft'" class="btn btn-primary mr-2" (click)="onPrint()">In phiếu</button>
+    <button type="button" class="btn btn-secondary" (click)="onClose()">Đóng</button>
 </div>

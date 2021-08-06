@@ -71,6 +71,10 @@
   min-height: 500px;
 }
 
+.o_searchview {
+  flex: 1;
+}
+
 /* .o_control_panel {
     border-bottom: unset;
 } */

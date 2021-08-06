@@ -6,14 +6,14 @@
                     <div class="d-flex">
                         <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
                         </app-tai-date-range-filter-dropdown>
-                        <button type="button" (click)="createNewSaleOrder()" class="ml-2 btn btn-primary btn-sm"><i
+                        <button type="button" (click)="createNewSaleOrder()" class="ml-2 btn btn-primary"><i
                             class="fas fa-plus"></i> Thêm phiếu điều trị</button>
                     </div>
                 </div>
-                <div class="o_cp_searchview">
-                    <div class="o_searchview">
-                        <input class="o_searchview_input" placeholder="Tìm kiếm theo số phiếu điều trị" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
-                    </div>
+                <div class="o_searchview">
+                    <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo số phiếu điều trị" 
+                    [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
+                    <span class="o_searchview_icon fas fa-search"></span>
                 </div>
                 <div class="o_cp_left">
                     <div class="o_cp_buttons">
@@ -64,7 +64,7 @@
                     </kendo-grid-column>
                     <kendo-grid-column [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" title="#" width="40">
                         <ng-template kendoGridCellTemplate let-dataItem>
-                            <button type="button" class="btn btn-icon btn-sm btn-light" (click)="deleteItem(dataItem)">
+                            <button type="button" class="btn btn-icon btn-light" (click)="deleteItem(dataItem)">
                                 <span class="k-icon k-i-delete"></span>
                             </button>
                         </ng-template>

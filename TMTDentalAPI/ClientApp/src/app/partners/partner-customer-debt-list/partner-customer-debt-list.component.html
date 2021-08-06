@@ -31,16 +31,16 @@
                 <app-tai-date-range-filter-dropdown class="mr-2" [dateFrom]="dateFrom" [title]="'Thời gian'" [dateTo]="dateTo"
                     (searchChange)="onSearchDateChange($event)">
                 </app-tai-date-range-filter-dropdown>
-                <button class="btn btn-primary btn-sm mr-2 " title="Thu nợ" (click)="createItem()">Thu
+                <button class="btn btn-primary mr-2 " title="Thu nợ" (click)="createItem()">Thu
                     nợ</button>
-                <button class="btn btn-primary btn-sm mr-2" title="xuất file" (click)="exportExcelFile()">
+                <button class="btn btn-primary mr-2" title="xuất file" (click)="exportExcelFile()">
                     <i class="fas fa-download mr-2"></i>Xuất file</button>
             </div>
             <div class="flex-fill">
                 <div class="o_searchview">
-                    <span class="o_searchview_icon fa fa-search"></span>
                     <input class="o_searchview_input" placeholder="Tìm kiếm theo nguồn" type="text"
                     [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                    <span class="o_searchview_icon fa fa-search"></span>
                 </div>
             </div>
         </div>

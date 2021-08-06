@@ -1,5 +1,5 @@
 <div>
-    <button class="btn btn-primary btn-sm mb-2" title="Yêu cầu vật tư" 
+    <button class="btn btn-primary mb-2" title="Yêu cầu vật tư" 
         [disabled]="saleOrderState == 'done' ? 'disabled': null"
         (click)="createItem()">
         Yêu cầu vật tư
@@ -23,10 +23,10 @@
                 <td>{{item.employeeName}}</td>
                 <td>{{getStateDisplay(item.state)}}</td>
                 <td *ngIf="saleOrderState != 'done'">
-                    <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(item)">
+                    <button class="btn btn-success mr-2" title="Sửa" (click)="editItem(item)">
                         <span class="far fa-edit"></span>
                     </button>
-                    <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(item)">
+                    <button class="btn btn-danger" title="Xóa" (click)="deleteItem(item)">
                         <span class="far fa-trash-alt"></span>
                     </button>
                 </td>

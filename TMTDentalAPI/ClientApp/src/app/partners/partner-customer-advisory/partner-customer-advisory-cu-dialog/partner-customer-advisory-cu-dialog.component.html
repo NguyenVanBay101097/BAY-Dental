@@ -29,7 +29,7 @@
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;" class=".o_td_control_left">
-                                        <kendo-combobox formControlName="employeeAdvisory" [filterable]="true" #empCbx class="kendo-combobox-sm mr-1" [data]="filterData" [textField]="'name'" [valueField]="'id'">
+                                        <kendo-combobox formControlName="employeeAdvisory" [filterable]="true" #empCbx class="mr-1" [data]="filterData" [textField]="'name'" [valueField]="'id'">
                                         </kendo-combobox>
                                     </td>
                                 </tr>
@@ -58,7 +58,7 @@
                         <h5>BẢN ĐỒ RĂNG NHA</h5>
                         <div class="mb-3">
                             <span *ngFor="let item of filteredToothCategories">
-                                <button type="button" class="btn btn-sm mr-2" 
+                                <button type="button" class="btn mr-2" 
                                     [ngClass]="cateId == item.id ? 'btn-primary' : 'btn-outline-primary'"
                                     (click)="onChangeToothCategory(item)" accesskey="s">{{item.name}}</button>
                             </span>
@@ -72,7 +72,7 @@
                                     <ng-container *ngFor="let item of toothTypeDict; let toothTypeIndex = index">
                                         <div class="col-6 pl-0">
                                             <input (change)="onChangeToothType(item.value)" [value]="item.value" [checked]="item.value === getValueFormControl('toothType')" class="btn-check hide" type="radio" name="toothType" formControlName="toothType" [id]="'toothType' + toothTypeIndex">
-                                            <label class="btn btn-sm w-100 mb-0" [ngClass]="item.value === getValueFormControl('toothType') ? 'btn-primary' : 'btn-outline-primary'" [for]="'toothType' + toothTypeIndex">{{item.name}}</label>
+                                            <label class="btn w-100 mb-0" [ngClass]="item.value === getValueFormControl('toothType') ? 'btn-primary' : 'btn-outline-primary'" [for]="'toothType' + toothTypeIndex">{{item.name}}</label>
                                         </div>
                                     </ng-container>
                                 </div>
