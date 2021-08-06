@@ -67,6 +67,7 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<PartnerInfo, PartnerInfoDisplay>();
             CreateMap<PartnerInfoTemplate, PartnerInfoDisplay>();
+            CreateMap<PartnerInfoTemplate, PartnerOldNewReportRes>();
 
         }
     }

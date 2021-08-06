@@ -19,6 +19,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Street { get; set; }
         public string JobTitle { get; set; }
         public string Comment { get; set; }
+        //doanh thu
+        public decimal Revenue { get; set; }
+        //nguồn
+        public string SourceName { get; set; }
+
     }
     public class PartnerInfoDisplay
     {

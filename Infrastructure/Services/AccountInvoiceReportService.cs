@@ -32,7 +32,7 @@ namespace Infrastructure.Services
         {
             return (T)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(T));
         }
-        private IQueryable<AccountInvoiceReport> GetRevenueReportQuery(RevenueReportQueryCommon val)
+        public IQueryable<AccountInvoiceReport> GetRevenueReportQuery(RevenueReportQueryCommon val)
         {
             var userObj = GetService<IUserService>();
             var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();

@@ -35,5 +35,19 @@ namespace TMTDentalAPI.Controllers
             var res = await _partnerOldNewReportService.GetSumaryPartnerOldNewReport(val);
             return Ok(res);
         }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetReport([FromQuery] PartnerOldNewReportReq val)
+        {
+            var res = await _partnerOldNewReportService.GetReport(val);
+            return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> SumReport([FromQuery] PartnerOldNewReportSumReq val)
+        {
+            var res = await _partnerOldNewReportService.SumReport(val);
+            return Ok(res);
+        }
     }
 }
