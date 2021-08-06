@@ -92,6 +92,13 @@ export class ProductManagementServicesComponent implements OnInit {
     this.categories.unshift(categ);
   }
 
+  onUpdateBtnEvent(categId) {
+    this.productCategoryService.get(categId).subscribe((categ: any) => {
+      var index = this.categories.findIndex(x => x.id == categId);
+      this.categories[index] = categ;
+    });
+  }
+
   onSelectedCate(cate: any) {
     this.selectedCateg = cate;
     this.loadServices();
@@ -103,8 +110,12 @@ export class ProductManagementServicesComponent implements OnInit {
   }
 
   onDeleteCate(index) {
+    var categ = this.categories[index];
+    if (this.selectedCateg == categ) {
+      this.selectedCateg = null;
+    }
+    
     this.categories.splice(index, 1);
-    this.loadServices();
   }
 
   loadCategories() {

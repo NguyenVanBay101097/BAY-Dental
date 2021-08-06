@@ -1,7 +1,7 @@
 <div class="pms-wrapper d-flex">
     <div class="pms-left border mr-2">
         <app-product-category-list (onDelete)="onDeleteCate($event)" (createBtnEvent)="onCreateBtnEvent($event)"
-            [categories]="categories" (onSelect)="onSelectedCate($event)" [type]="type">
+            [categories]="categories" (updateBtnEvent)="onUpdateBtnEvent($event)" (onSelect)="onSelectedCate($event)" [type]="type">
         </app-product-category-list>
     </div>
     <div class="pms-right border h-100 overflow-auto d-flex flex-column p-2">
