@@ -1,9 +1,12 @@
+import { SaleOrderLineBasic } from './../../partners/partner.service';
+import { ToothBasic } from './../../teeth/tooth.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
 import { SaleOrderLineDisplay } from '../../sale-orders/sale-order-line-display';
 import { PagedResult2 } from '../paged-result-2';
 import { ProductSimple } from 'src/app/products/product-simple';
+import { SaleOrderBasic } from 'src/app/sale-orders/sale-order-basic';
 
 export class SaleOrderLineOnChangeProduct {
     productId: string;
@@ -19,6 +22,9 @@ export class SaleOrderLineOnChangeProductResult {
 export class SaleOrderLinesPaged {
     offset: number;
     limit: number;
+    dateOrderFrom: string;
+    dateOrderTo: string;
+    OrderId: string;
     isQuotation: boolean;
     isLabo: boolean;
     search: string;
@@ -32,6 +38,19 @@ export class SaleOrderLinesLaboPaged {
     search: string;
     hasAnyLabo: any;
     laboState: string;
+}
+
+export class SaleOrderLineViewModel {
+    id: string;
+    name: string;
+    state:string;
+    orderId: string;
+    order: SaleOrderBasic;
+    productId: string;
+    product: ProductSimple;
+    diagnostic: string;
+    teeth: ToothBasic[];
+    steps: any[]
 }
 
 export class ProductBomForSaleOrderLine {
@@ -60,10 +79,17 @@ export class SmsCareAfterOrderPaged {
     companyId: string;
 }
 
-export class SaleOrderLineHistoryReq{
+export class SaleOrderLineHistoryReq {
     partnerId: string;
     companyId: string;
 }
+
+export class SaleOrderLinePagging {
+    limit: number;
+    offset: number;
+    totalItems: number;
+    items: SaleOrderLineBasic[];
+  }
 
 @Injectable({ providedIn: 'root' })
 export class SaleOrderLineService {
@@ -74,8 +100,8 @@ export class SaleOrderLineService {
         return this.http.post<SaleOrderLineOnChangeProductResult>(this.baseApi + this.apiUrl + '/OnChangeProduct', val);
     }
 
-    getPaged(val: any) {
-        return this.http.get(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
+    getPaged(val): Observable<PagedResult2<SaleOrderLinePagging>> {    
+        return this.http.get<PagedResult2<SaleOrderLinePagging>>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
     }
 
     create(val): Observable<SaleOrderLineDisplay> {
@@ -133,7 +159,7 @@ export class SaleOrderLineService {
         return this.http.get(this.baseApi + this.apiUrl + '/GetHistory', { params: new HttpParams({ fromObject: val }) });
     }
 
-    update(id,val) {
+    update(id, val) {
         return this.http.put(this.baseApi + this.apiUrl + "/" + id, val);
     }
 
