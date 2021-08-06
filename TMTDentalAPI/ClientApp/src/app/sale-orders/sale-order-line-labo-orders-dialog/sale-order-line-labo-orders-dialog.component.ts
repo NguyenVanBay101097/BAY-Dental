@@ -81,7 +81,7 @@ export class SaleOrderLineLaboOrdersDialogComponent implements OnInit {
 
   printLabo(item: any) {
     this.laboOrderService.getPrint(item.id).subscribe((result: any) => {
-      this.printService.printHtml(result.html);
+      this.printService.printHtml(result);
     });
   }
 

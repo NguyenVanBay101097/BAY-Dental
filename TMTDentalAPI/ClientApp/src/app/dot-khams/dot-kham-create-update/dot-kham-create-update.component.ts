@@ -423,7 +423,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
 
   printToaThuoc(item: ToaThuocBasic) {
     this.toaThuocService.getPrint(item.id).subscribe((result:any) => {
-     this.printService.print(result.html);
+     this.printService.printHtml(result); 
     });
   }
 

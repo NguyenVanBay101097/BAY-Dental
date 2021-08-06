@@ -1,7 +1,6 @@
 import { Component, AfterViewInit, HostListener, ElementRef, OnInit } from '@angular/core';
 import { AuthService } from './auth/auth.service';
 import { Router } from '@angular/router';
-import { PrintService } from './print.service';
 declare var $: any;
 import * as _ from 'lodash';
 import { PermissionService } from './shared/permission.service';
@@ -25,7 +24,6 @@ export class AppComponent implements OnInit {
   constructor(
     public authService: AuthService,
     private router: Router,
-    public printService: PrintService,
     private notificationService: NotificationService,
     private el: ElementRef,
     private permissionService: PermissionService,
