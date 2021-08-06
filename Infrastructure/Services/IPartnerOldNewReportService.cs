@@ -13,6 +13,7 @@ namespace Infrastructure.Services
         Task<PartnerOldNewReportVM> GetSumaryPartnerOldNewReport(PartnerOldNewReportSearch val);
         Task<IEnumerable<PartnerOldNewReportRes>> GetReport(PartnerOldNewReportReq val);
         Task<int> SumReport(PartnerOldNewReportSumReq val);
+        Task<PartnerOldNewReportPrint> GetReportPrint(PartnerOldNewReportReq val);
     }
 
 

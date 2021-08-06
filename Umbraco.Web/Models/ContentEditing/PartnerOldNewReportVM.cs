@@ -107,5 +107,12 @@ namespace Umbraco.Web.Models.ContentEditing
         public string SourceName { get; set; }
     }
 
+    public class PartnerOldNewReportPrint
+    {
+        public IEnumerable<PartnerOldNewReportRes> data { get; set; } = new List<PartnerOldNewReportRes>();
+        public CompanyPrintVM Company { get; set; }
+        public ApplicationUserSimple User { get; set; }
+    }
+
 
 }

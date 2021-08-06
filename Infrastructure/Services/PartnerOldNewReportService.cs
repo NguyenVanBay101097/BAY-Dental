@@ -3,6 +3,7 @@ using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -19,12 +20,14 @@ namespace Infrastructure.Services
         private readonly CatalogDbContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public PartnerOldNewReportService(CatalogDbContext context, IMapper mapper,
+        private readonly IUserService _userService;
+        public PartnerOldNewReportService(CatalogDbContext context, IMapper mapper, IUserService userService,
             IHttpContextAccessor httpContextAccessor)
         {
             _mapper = mapper;
             _context = context;
             _httpContextAccessor = httpContextAccessor;
+            userService = _userService;
         }
 
         public IQueryable<PartnerOldNewReport> _GetQueryAble(PartnerOldNewReportSearch val)
@@ -77,8 +80,8 @@ namespace Infrastructure.Services
                       WeekOfYear = x.Key.WeekOfYear,
                       Year = x.Key.Year,
                       OrderLines = _mapper.Map<IEnumerable<PartnerOldNewReportVMDetail>>(x.GroupBy(s => s.PartnerId).Select(x => x.LastOrDefault()).ToList()),
-                      TotalNewPartner = x.GroupBy(s => s.PartnerId).Select(x => x.LastOrDefault()).Where(x=>x.Type =="KHM").Count(),
-                      TotalOldPartner = x.GroupBy(s => s.PartnerId).Select(x => x.LastOrDefault()).Where(x=>x.Type =="KHC").Count(),
+                      TotalNewPartner = x.GroupBy(s => s.PartnerId).Select(x => x.LastOrDefault()).Where(x => x.Type == "KHM").Count(),
+                      TotalOldPartner = x.GroupBy(s => s.PartnerId).Select(x => x.LastOrDefault()).Where(x => x.Type == "KHC").Count(),
 
                   }).ToList();
             return result;
@@ -117,14 +120,14 @@ namespace Infrastructure.Services
         public IQueryable<IGrouping<Guid, SaleOrder>> SumReportQuery(PartnerOldNewReportSumReq val)
         {
             var saleOrderObj = GetService<ISaleOrderService>();
-            var pnOrderSearchQuery = saleOrderObj.SearchQuery(x=> x.State != "draft");
+            var pnOrderSearchQuery = saleOrderObj.SearchQuery(x => x.State != "draft");
 
             var query = pnOrderSearchQuery;
             if (val.DateFrom.HasValue)
                 query = query.Where(x => x.DateOrder.Date >= val.DateFrom.Value.AbsoluteBeginOfDate());
             if (val.DateTo.HasValue)
                 query = query.Where(x => x.DateOrder.Date <= val.DateTo.Value.AbsoluteBeginOfDate());
-            if(val.CompanyId.HasValue)
+            if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId);
 
             var pnOrderQrBase = query.GroupBy(x => x.PartnerId);
@@ -137,7 +140,7 @@ namespace Infrastructure.Services
         public async Task<int> SumReport(PartnerOldNewReportSumReq val)
         {
             var query = SumReportQuery(val);
-            return await query.Select(x=> x.Key).CountAsync();
+            return await query.Select(x => x.Key).CountAsync();
         }
         public IQueryable<PartnerInfoTemplate> GetReportQuery(PartnerOldNewReportReq val)
         {
@@ -147,7 +150,7 @@ namespace Infrastructure.Services
             var accInvreportObj = GetService<IAccountInvoiceReportService>();
             var companyId = CompanyId;
 
-            var pnOrderQrBase = SumReportQuery(new PartnerOldNewReportSumReq(val.DateFrom, val.DateTo, val.CompanyId, val.TypeReport)) ;
+            var pnOrderQrBase = SumReportQuery(new PartnerOldNewReportSumReq(val.DateFrom, val.DateTo, val.CompanyId, val.TypeReport));
 
             var pnOderQr = from v in pnOrderQrBase
                            select new
@@ -157,7 +160,7 @@ namespace Infrastructure.Services
 
             var pnQr = partnerObj.SearchQuery(x => x.Customer);
             if (!string.IsNullOrEmpty(val.CityCode))
-                pnQr = pnQr.Where(x=> x.CityCode == val.CityCode);
+                pnQr = pnQr.Where(x => x.CityCode == val.CityCode);
             if (!string.IsNullOrEmpty(val.DistrictCode))
                 pnQr = pnQr.Where(x => x.DistrictCode == val.DistrictCode);
             if (!string.IsNullOrEmpty(val.WardCode))
@@ -202,8 +205,8 @@ namespace Infrastructure.Services
                             };
 
             var resQr = from pnOrder in pnOderQr
-                        //from pn in pnQr.Where(x => x.Id == pnOrder.PartnerId).DefaultIfEmpty()
-                        join pn in pnQr on pnOrder.PartnerId equals pn.Id 
+                            //from pn in pnQr.Where(x => x.Id == pnOrder.PartnerId).DefaultIfEmpty()
+                        join pn in pnQr on pnOrder.PartnerId equals pn.Id
                         from pos in partnerOrderStateQr.Where(x => x.PartnerId == pnOrder.PartnerId).DefaultIfEmpty()
                         from ir in irPropertyQr.Where(x => !string.IsNullOrEmpty(x.ResId) && x.ResId.Contains(pnOrder.PartnerId.ToString().ToLower())).DefaultIfEmpty()
                         from pnRevenue in RevenueQr.Where(x => x.PartnerId == pnOrder.PartnerId).DefaultIfEmpty()
@@ -266,6 +269,24 @@ namespace Infrastructure.Services
             var items = _mapper.Map<IEnumerable<PartnerOldNewReportRes>>(res);
             return items;
 
+        }
+
+        public async Task<PartnerOldNewReportPrint> GetReportPrint(PartnerOldNewReportReq val)
+        {
+            var data = await GetReport(val);
+            var res = new PartnerOldNewReportPrint()
+            {
+                data = data,
+                User = _mapper.Map<ApplicationUserSimple>(await _userService.GetCurrentUser())
+            };
+
+            if (val.CompanyId.HasValue)
+            {
+                var companyObj = GetService<ICompanyService>();
+                var company = await companyObj.SearchQuery(x => x.Id == val.CompanyId).Include(x => x.Partner).FirstOrDefaultAsync();
+                res.Company = _mapper.Map<CompanyPrintVM>(company);
+            }
+            return res;
         }
     }
 }
