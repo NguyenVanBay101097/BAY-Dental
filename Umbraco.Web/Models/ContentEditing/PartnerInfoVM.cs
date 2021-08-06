@@ -23,6 +23,21 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal Revenue { get; set; }
         //nguồn
         public string SourceName { get; set; }
+        public string Address
+        {
+            get
+            {
+                var list = new List<string>();
+                if (!string.IsNullOrEmpty(WardName))
+                    list.Add(WardName);
+                if (!string.IsNullOrEmpty(DistrictName))
+                    list.Add(DistrictName);
+                if (!string.IsNullOrEmpty(CityName))
+                    list.Add(CityName);
+                return string.Join(", ", list);
+            }
+            set { }
+        }
 
     }
     public class PartnerInfoDisplay

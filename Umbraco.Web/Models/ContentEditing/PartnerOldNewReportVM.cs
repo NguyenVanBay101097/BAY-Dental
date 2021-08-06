@@ -101,6 +101,10 @@ namespace Umbraco.Web.Models.ContentEditing
             {
             }
         }
+
+        public string Gender { get; set; }
+        public string Address { get; set; }
+        public string SourceName { get; set; }
     }
 
 
