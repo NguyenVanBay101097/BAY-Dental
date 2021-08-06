@@ -18,14 +18,14 @@
                         <div class="d-flex mb-1">
                             <div class="mr-2 d-flex">
                                 <span class="mr-1 text-time p-1">Thời gian</span>
-                                <select class="form-control btn-sm" formControlName="appTime">
+                                <select class="form-control" formControlName="appTime">
                                     <option [value]="i" *ngFor="let i of timeList">
                                         {{i}}</option>
                                 </select>
                             </div>
                             <div class="d-flex">
                                 <span class="mr-1 text-time p-1">Dự kiến</span>
-                                <select class="form-control btn-sm" style="max-width: 88px;"
+                                <select class="form-control" style="max-width: 88px;"
                                     formControlName="timeExpected">
                                     <option [value]="item.value" *ngFor="let item of timeExpecteds">
                                         {{item.name}}</option>
@@ -180,8 +180,8 @@
     </form>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-primary btn-sm mr-2" accesskey="s" (click)="onSave()">
+    <button type="button" class="btn btn-primary mr-2" accesskey="s" (click)="onSave()">
         <i class="fas fa-save"></i>&nbsp;Lưu</button>
-    <button type="button" class="btn btn-light btn-sm mr-2" accesskey="q" (click)="activeModal.dismiss()">
+    <button type="button" class="btn btn-light mr-2" accesskey="q" (click)="activeModal.dismiss()">
         <i class="fas fa-window-close"></i>&nbsp;Đóng</button>
 </div>

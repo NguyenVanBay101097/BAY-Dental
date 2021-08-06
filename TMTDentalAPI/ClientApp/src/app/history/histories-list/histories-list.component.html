@@ -11,9 +11,9 @@
     <div class="o_cp_t_left">
         <div class="o_cp_buttons">
             <div class="o_form_buttons_view">
-                <button type="button" class="btn btn-primary btn-sm" accesskey="c"
+                <button type="button" class="btn btn-primary" accesskey="c"
                     (click)="openModal(null)">Thêm</button>
-                    <button type="button" class="btn btn-light btn-sm" (click)="importFromExcel()">
+                    <button type="button" class="btn btn-light" (click)="importFromExcel()">
                         <i class="fas fa-upload"></i> Import
                     </button>
             </div>
@@ -26,7 +26,7 @@
         <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm..." type="text" [(ngModel)]="search"
         (ngModelChange)="searchUpdate.next($event)">
         <!-- <div class="dropdown">
-            <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+            <button class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
                 aria-expanded="false" type="button" id="dropdownMenuButton">
                 Thao tác
             </button>
@@ -46,9 +46,9 @@
             Thao tác
         </ng-template>
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            <button class="btn btn-success btn-sm mr-2" (click)="openModal(dataItem.id)">
+            <button class="btn btn-success mr-2" (click)="openModal(dataItem.id)">
                 <span class="fa fa-edit"></span></button>
-            <button class="btn btn-danger btn-sm" (click)="delete(dataItem.id)">
+            <button class="btn btn-danger" (click)="delete(dataItem.id)">
                 <span class="far fa-trash-alt"></span></button>
         </ng-template>
     </kendo-grid-column>
