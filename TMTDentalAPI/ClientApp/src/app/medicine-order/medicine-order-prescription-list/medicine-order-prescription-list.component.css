@@ -19,3 +19,7 @@
     display: -webkit-box;
     display: flex;
 }
+
+.o_searchview {
+    flex: 1;
+}

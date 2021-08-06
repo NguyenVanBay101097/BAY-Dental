@@ -4,7 +4,9 @@
     </ol>
     <div class="o_cp_searchview">
         <div class="o_searchview position-relative">
-            <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo mã, họ tên, SĐT" [(ngModel)]="this.filter.search" (ngModelChange)="this.searchUpdate.next($event)" />
+            <input type="text" class="o_searchview_input" 
+            placeholder="Tìm kiếm theo mã, họ tên, SĐT" [(ngModel)]="this.filter.search" 
+            (ngModelChange)="this.searchUpdate.next($event)" />
             <span class="o_searchview_icon fas fa-search"></span>
         </div>
     </div>

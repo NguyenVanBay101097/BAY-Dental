@@ -1317,5 +1317,7 @@ html .o_web_client {
     vertical-align: baseline;
     border-radius: .25rem;
 }
-  
 
+.o_cp_t_right .o_searchview {
+    flex: 1;
+}
