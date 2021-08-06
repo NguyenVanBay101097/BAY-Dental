@@ -83,7 +83,8 @@
                                             <th style="min-width: 160px;" class="text-right">Phụ cấp lễ tết</th>
                                             <th class="text-right" style="min-width: 160px;">Hoa hồng</th>
                                             <th style="min-width: 160px;" class="text-right">Phạt</th>
-                                            <th class="text-right" style="min-width: 160px;">Thuế & BHXH</th>
+                                            <th class="text-right" style="min-width: 160px;">Thuế</th>
+                                            <th class="text-right" style="min-width: 160px;">BHXH</th>
                                             <th class="text-right" [hidden]="isCompact" style="min-width: 160px;">Tổng lương</th>
                                             <th class="text-right" style="min-width: 160px;">Tạm ứng</th>
                                             <th class="text-right" class="b-sticky-right2" style="min-width: 160px;">Thực lĩnh</th>
@@ -128,7 +129,11 @@
                                                     </kendo-numerictextbox>
                                                 </td>
                                                 <td class="text-right">
-                                                    <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="width: 100%;" formControlName="taxNSocialInsurance" [format]="'n0'" [min]="0" [autoCorrect]="true">
+                                                    <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="width: 100%;" formControlName="tax" [format]="'n0'" [min]="0" [autoCorrect]="true">
+                                                    </kendo-numerictextbox>
+                                                </td>
+                                                <td class="text-right">
+                                                    <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="width: 100%;" formControlName="socialInsurance" [format]="'n0'" [min]="0" [autoCorrect]="true">
                                                     </kendo-numerictextbox>
                                                 </td>
                                                 <td class="text-right" [hidden]="isCompact">{{item.get('totalSalary').value | number }}

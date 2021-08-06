@@ -61,7 +61,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? HolidayAllowance { get; set; }
         public decimal? TotalSalary { get; set; }
         public decimal? CommissionSalary { get; set; }
-        public decimal? TaxNSocialInsurance { get; set; }
+        public decimal? Tax { get; set; }
+        public decimal? SocialInsurance { get; set; }
         public decimal? AmercementMoney { get; set; }
         public decimal? AdvancePayment { get; set; }
         public decimal? NetSalary { get; set; }
@@ -111,7 +112,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? HolidayAllowance { get; set; }
         public decimal? TotalSalary { get; set; }
         public decimal? CommissionSalary { get; set; }
-        public decimal? TaxNSocialInsurance { get; set; }
+        public decimal? Tax { get; set; }
+        public decimal? SocialInsurance { get; set; }
         public decimal? AmercementMoney { get; set; }
         public decimal? AdvancePayment { get; set; }
         public decimal? NetSalary { get; set; }
