@@ -8,7 +8,8 @@ export const environment = {
   apiDomain: 'https://localhost:44377/',
   // apiDomain: '/',
   uploadDomain: 'https://statics.tdental.vn/',
-  //apiDomain: 'http://localhost:50396/'
+  //apiDomain: 'http://localhost:50396/',
+  ashipApi: 'https://aship.tpos.dev/'
 };
 
 /*
