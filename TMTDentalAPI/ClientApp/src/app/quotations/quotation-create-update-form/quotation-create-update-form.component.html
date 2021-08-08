@@ -36,7 +36,7 @@
   <form class="o_form_view" #form="ngForm" (ngSubmit)="onSave(form)">
     <div class="o_form_sheet_bg">
       <div class="o_form_sheet">
-        <div class="o_group">
+        <div class="o_group mt-0">
           <table class="o_group o_inner_group o_group_col_6">
             <tbody>
               <tr>
@@ -151,8 +151,8 @@
               </app-service-list-search-dropdown>
             </div>
             <div class="d-flex w-100">
-              <div class="w-75 d-flex flex-column">
-                <div class="div-table w-100">
+              <div class="d-flex flex-column" style="flex: 1 1 100%;">
+                <div class="div-table w-100 mb-2">
                   <div class="div-row bg-primary text-white py-1 pl-2">
                     <div class="py-1 pl-2">Danh sách dịch vụ</div>
                   </div>
@@ -269,7 +269,7 @@
                 </div>
               </div>
 
-              <div class="w-25 pl-3">
+              <div class="pl-3" style="flex: 0 0 auto;width: 320px;">
                 <div class="card mb-3">
                   <div class="card-header bg-primary text-white px-3 py-1 d-flex align-items-center">
                     Ưu đãi phiếu điều trị
@@ -303,19 +303,19 @@
                   </div>
                   <div class="card-body px-3 py-2">
                     <p class="d-flex justify-content-between mb-0">
-                      <label class="">Thành tiền</label>
+                      <label class="font-weight-600">Thành tiền</label>
                       <label class="font-weight-600">{{
                         getAmountSubTotal() | number
                         }}</label>
                     </p>
                     <p class="d-flex justify-content-between mb-0">
-                      <label class="">Tổng giảm giá</label>
+                      <label class="font-weight-600">Tổng giảm giá</label>
                       <label class="font-weight-600">{{
                         getTotalDiscount() | number: "1.0-0"
                         }}</label>
                     </p>
                     <p class="d-flex justify-content-between mb-0">
-                      <label class="">Tổng tiền</label>
+                      <label class="font-weight-600">Tổng tiền</label>
                       <label class="font-weight-600">{{
                         getAmountSubTotal() - getTotalDiscount() | number
                         }}</label>
