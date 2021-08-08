@@ -7949,7 +7949,13 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<DateTime?>("Date")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateDone")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Diagnostic")

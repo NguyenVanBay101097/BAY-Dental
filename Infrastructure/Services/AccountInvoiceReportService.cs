@@ -5,10 +5,12 @@ using ApplicationCore.Specifications;
 using AutoMapper;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
@@ -20,12 +22,14 @@ namespace Infrastructure.Services
         private readonly CatalogDbContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly UserManager<ApplicationUser> _userManager;
         public AccountInvoiceReportService(CatalogDbContext context, IAsyncRepository<Product> repository, IHttpContextAccessor httpContextAccessor,
-            IMapper mapper)
+            IMapper mapper, UserManager<ApplicationUser> userManager)
         {
             _mapper = mapper;
             _context = context;
             _httpContextAccessor = httpContextAccessor;
+            _userManager = userManager;
         }
 
         private T GetService<T>()
@@ -59,6 +63,14 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.CompanyId == val.CompanyId.Value);
             }
 
+            if (!string.IsNullOrEmpty(val.SearchPartner))
+            {
+                query = query.Where(x => x.Partner.Name.Contains(val.SearchPartner)
+                                        || x.Partner.NameNoSign.Contains(val.SearchPartner)
+                                        || x.Partner.Phone.Contains(val.SearchPartner)
+                                        || x.Partner.Ref.Contains(val.SearchPartner));
+            }
+
             return query;
         }
 
@@ -73,7 +85,7 @@ namespace Infrastructure.Services
                 PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal)),
                 CompanyId = val.CompanyId,
                 DateFrom = val.DateFrom,
-                DateTo   = val.DateTo
+                DateTo = val.DateTo
             }).ToListAsync();
 
             res = res.OrderByDescending(z => z.InvoiceDate.Value).ToList();
@@ -110,7 +122,7 @@ namespace Infrastructure.Services
 
             switch (val.GroupBy)
             {
-                case"employee":
+                case "employee":
                     if (val.GroupById.HasValue)
                     {
                         query = query.Where(x => x.EmployeeId == val.GroupById);
@@ -127,7 +139,7 @@ namespace Infrastructure.Services
                 default:
                     throw new Exception("Vui lòng chọn trường cần group");
             }
-           
+
             var res = await queryRes.Select(x => new RevenueEmployeeReportDisplay
             {
                 EmployeeId = (x.Key as EmployeeAssistantKeyGroup).Id,
@@ -170,6 +182,10 @@ namespace Infrastructure.Services
             {
                 query = query.Where(x => x.AssistantId == null);
             }
+            if (val.PartnerId.HasValue)
+            {
+                query = query.Where(x => x.PartnerId == val.PartnerId);
+            }
 
             count = await query.CountAsync();
             query = query.OrderByDescending(x => x.InvoiceDate);
@@ -179,10 +195,14 @@ namespace Infrastructure.Services
                 InvoiceDate = x.InvoiceDate,
                 AssistantName = x.Assistant.Name,
                 EmployeeName = x.Employee.Name,
+                EmployeeId = x.EmployeeId,
+                AssistantId = x.AssistantId,
                 InvoiceOrigin = x.InvoiceOrigin,
                 PartnerName = x.Partner.Name,
+                PartnerId = x.PartnerId,
                 PriceSubTotal = Math.Abs(x.PriceSubTotal),
-                ProductName = x.Product.Name
+                ProductName = x.Product.Name,
+                ProductId = x.ProductId
             }).ToListAsync();
 
             return new PagedResult2<RevenueReportDetailDisplay>(count, val.Offset, val.Limit)
@@ -196,7 +216,164 @@ namespace Infrastructure.Services
             var query = GetRevenueReportQuery(new RevenueReportQueryCommon(val.DateFrom, val.DateTo, val.CompanyId));
             if (val.PartnerId.HasValue)
                 query = query.Where(x => x.PartnerId == val.PartnerId);
-            var res = await query.SumAsync(x=> x.PriceSubTotal);
+            var res = await query.SumAsync(x => x.PriceSubTotal);
+            return res;
+        }
+
+        public async Task<IEnumerable<RevenuePartnerReportDisplay>> GetRevenuePartnerReport(RevenuePartnerReportPar val)
+        {
+            var query = GetRevenueReportQuery(new RevenueReportQueryCommon(val.DateFrom, val.DateTo, val.CompanyId, val.Search));
+
+            var queryRes = query.GroupBy(x => new { x.PartnerId, x.Partner.Name });
+
+            var res = await queryRes.Select(x => new RevenuePartnerReportDisplay
+            {
+                PartnerId = x.Key.PartnerId.Value,
+                PartnerName = x.Key.Name,
+                PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal)),
+                DateTo = val.DateTo,
+                DateFrom = val.DateFrom,
+                CompanyId = val.CompanyId,
+                Search = val.Search
+            }).ToListAsync();
+
+            return res;
+        }
+        private string UserId
+        {
+            get
+            {
+                if (!_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+                    return null;
+
+                return _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            }
+        }
+
+        public async Task<RevenueReportPrintVM<RevenueTimeReportPrint>> GetRevenueTimeReportPrint(RevenueTimeReportPar val)
+        {
+            var data = _mapper.Map<IEnumerable<RevenueTimeReportPrint>>(await GetRevenueTimeReport(val));
+            var detailReq = new RevenueReportDetailPaged()
+            {
+                CompanyId = val.CompanyId,
+                Limit = 0,
+                DateFrom = val.DateFrom,
+                DateTo = val.DateTo
+            };
+            var allLines = await GetRevenueReportDetailPaged(detailReq);
+
+            foreach (var item in data)
+            {
+                item.Lines = allLines.Items.Where(x => x.InvoiceDate.Value.Date == item.InvoiceDate.Value.Date).ToList();
+            }
+
+            var res = new RevenueReportPrintVM<RevenueTimeReportPrint>(val.DateFrom, val.DateTo)
+            {
+                Data = data,
+                User = _mapper.Map<ApplicationUserSimple>(await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId))
+            };
+
+            if (val.CompanyId.HasValue)
+            {
+                var companyObj = GetService<ICompanyService>();
+                var company = await companyObj.SearchQuery(x => x.Id == val.CompanyId).Include(x => x.Partner).FirstOrDefaultAsync();
+                res.Company = _mapper.Map<CompanyPrintVM>(company);
+            }
+            return res;
+        }
+
+        public async Task<RevenueReportPrintVM<RevenueServiceReportPrint>> GetRevenueServiceReportPrint(RevenueServiceReportPar val)
+        {
+            var data = _mapper.Map<IEnumerable<RevenueServiceReportPrint>>(await GetRevenueServiceReport(val));
+            var detailReq = new RevenueReportDetailPaged()
+            {
+                CompanyId = val.CompanyId,
+                Limit = 0,
+                DateFrom = val.DateFrom,
+                DateTo = val.DateTo
+            };
+            var allLines = await GetRevenueReportDetailPaged(detailReq);
+
+            foreach (var item in data)
+            {
+                item.Lines = allLines.Items.Where(x => x.ProductId == item.ProductId).ToList();
+            }
+
+            var res = new RevenueReportPrintVM<RevenueServiceReportPrint>(val.DateFrom, val.DateTo)
+            {
+                Data = data,
+                User = _mapper.Map<ApplicationUserSimple>(await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId))
+            };
+
+            if (val.CompanyId.HasValue)
+            {
+                var companyObj = GetService<ICompanyService>();
+                var company = await companyObj.SearchQuery(x => x.Id == val.CompanyId).Include(x => x.Partner).FirstOrDefaultAsync();
+                res.Company = _mapper.Map<CompanyPrintVM>(company);
+            }
+            return res;
+        }
+
+        public async Task<RevenueReportPrintVM<RevenueEmployeeReportPrint>> GetRevenueEmployeeReportPrint(RevenueEmployeeReportPar val)
+        {
+            var data = _mapper.Map<IEnumerable<RevenueEmployeeReportPrint>>(await GetRevenueEmployeeReport(val));
+            var detailReq = new RevenueReportDetailPaged()
+            {
+                CompanyId = val.CompanyId,
+                Limit = 0,
+                DateFrom = val.DateFrom,
+                DateTo = val.DateTo
+            };
+            var allLines = await GetRevenueReportDetailPaged(detailReq);
+
+            foreach (var item in data)
+            {
+                item.Lines = allLines.Items.Where(x => x.EmployeeId == item.EmployeeId).ToList();
+            }
+
+            var res = new RevenueReportPrintVM<RevenueEmployeeReportPrint>(val.DateFrom, val.DateTo)
+            {
+                Data = data,
+                User = _mapper.Map<ApplicationUserSimple>(await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId))
+            };
+
+            if (val.CompanyId.HasValue)
+            {
+                var companyObj = GetService<ICompanyService>();
+                var company = await companyObj.SearchQuery(x => x.Id == val.CompanyId).Include(x => x.Partner).FirstOrDefaultAsync();
+                res.Company = _mapper.Map<CompanyPrintVM>(company);
+            }
+            return res;
+        }
+        public async Task<RevenueReportPrintVM<RevenuePartnerReportPrint>> GetRevenuePartnerReportPrint(RevenuePartnerReportPar val)
+        {
+            var data = _mapper.Map<IEnumerable<RevenuePartnerReportPrint>>(await GetRevenuePartnerReport(val));
+            var detailReq = new RevenueReportDetailPaged()
+            {
+                CompanyId = val.CompanyId,
+                Limit = 0,
+                DateFrom = val.DateFrom,
+                DateTo = val.DateTo
+            };
+            var allLines = await GetRevenueReportDetailPaged(detailReq);
+
+            foreach (var item in data)
+            {
+                item.Lines = allLines.Items.Where(x => x.PartnerId == item.PartnerId).ToList();
+            }
+
+            var res = new RevenueReportPrintVM<RevenuePartnerReportPrint>(val.DateFrom, val.DateTo)
+            {
+                Data = data,
+                User = _mapper.Map<ApplicationUserSimple>(await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId))
+            };
+
+            if (val.CompanyId.HasValue)
+            {
+                var companyObj = GetService<ICompanyService>();
+                var company = await companyObj.SearchQuery(x => x.Id == val.CompanyId).Include(x => x.Partner).FirstOrDefaultAsync();
+                res.Company = _mapper.Map<CompanyPrintVM>(company);
+            }
             return res;
         }
 

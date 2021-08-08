@@ -82,6 +82,7 @@ export class AccountInvoiceReportRevenueManageComponent implements OnInit {
       val.dateFrom = dataIndex.invoiceDate ?  moment(dataIndex.invoiceDate).format('YYYY/MM/DD'): val.dateFrom ;
       val.dateTo = dataIndex.invoiceDate ?  moment(dataIndex.invoiceDate).format('YYYY/MM/DD'): val.dateTo ;
       val.productId = dataIndex.productId || '';
+      val.partnerId = dataIndex.partnerId || '';
       val.assistantId = dataIndex.employeeId || '';
       val.employeeId = dataIndex.groupBy && dataIndex.groupBy == 'employee'? dataIndex.toDetailEmployeeId : '';
       val.assistantId = dataIndex.groupBy && dataIndex.groupBy == 'assistant'? dataIndex.toDetailEmployeeId : '';

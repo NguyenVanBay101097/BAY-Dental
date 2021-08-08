@@ -220,11 +220,35 @@ export class SaleOrderReportRevenueComponent implements OnInit {
   printReport(){
     var val = Object.assign({}, this.filter);
     val.companyId = val.companyId || val.companyId;
-    val.search = '';
     this.saleOrderService.getPrintRevenueReport(val).subscribe(result => {
       this.printService.printHtml(result);
     })
     
+  }
+
+  onExportPDF() {
+    var val = Object.assign({}, this.filter);
+    val.companyId = val.companyId || val.companyId;
+    this.loading = true;
+    this.saleOrderService.getRevenueReportPdf(val).subscribe(res => {
+      this.loading = false;
+      let filename ="BaoCaoDuKienDoanhThu";
+
+      let newBlob = new Blob([res], {
+        type:
+          "application/pdf",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
   }
 
 }

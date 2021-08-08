@@ -6,6 +6,7 @@ using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MyERP.Utilities;
 using System;
@@ -21,13 +22,16 @@ namespace Infrastructure.Services
     {
         private readonly IMapper _mapper;
         private readonly CatalogDbContext _dbContext;
+        private UserManager<ApplicationUser> _userManager;
 
         public SaleOrderLineService(IAsyncRepository<SaleOrderLine> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper,
+             UserManager<ApplicationUser> userManager,
             CatalogDbContext dbContext)
            : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
             _dbContext = dbContext;
+            _userManager = userManager;
         }
 
         public override async Task<IEnumerable<SaleOrderLine>> CreateAsync(IEnumerable<SaleOrderLine> entities)
@@ -150,7 +154,7 @@ namespace Infrastructure.Services
                 line.OrderPartnerId = order.PartnerId;
                 line.CompanyId = order.CompanyId;
                 line.Order = order;
-                line.State = order.State;
+                //line.State = order.State;
 
 
             }
@@ -364,12 +368,13 @@ namespace Infrastructure.Services
             foreach (var line in self)
                 line.AmountDiscountTotal = line.PromotionLines.Sum(x => x.PriceUnit);
         }
-
+        // Check date is between range
         public async Task<PagedResult2<SaleOrderLineBasic>> GetPagedResultAsync(SaleOrderLinesPaged val)
         {
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Name.Contains(val.Search) || x.OrderPartner.Name.Contains(val.Search));
+                query = query.Where(x => x.Name.Contains(val.Search) || x.OrderPartner.Name.Contains(val.Search)
+                                        || x.Product.NameNoSign.Contains(val.Search) || x.OrderPartner.NameNoSign.Contains(val.Search));
             if (val.OrderPartnerId.HasValue)
                 query = query.Where(x => x.OrderPartnerId == val.OrderPartnerId);
             if (val.ProductId.HasValue)
@@ -379,11 +384,16 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.State))
                 query = query.Where(x => x.State.Contains(val.State));
             if (val.DateOrderFrom.HasValue)
-                query = query.Where(x => x.DateCreated <= val.DateOrderFrom);
+                query = query.Where(x => x.Date >= val.DateOrderFrom.Value.AbsoluteBeginOfDate());
             if (val.DateOrderTo.HasValue)
-                query = query.Where(x => x.DateCreated >= val.DateOrderTo);
+                query = query.Where(x => x.Date <= val.DateOrderTo.Value.AbsoluteEndOfDate());
             if (val.IsLabo == true)
                 query = query.Where(x => x.Product.IsLabo);
+
+            if (val.EmployeeId.HasValue)
+                query = query.Where(x => x.EmployeeId == val.EmployeeId);
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
 
             if (val.IsQuotation.HasValue)
             {
@@ -400,7 +410,7 @@ namespace Infrastructure.Services
             query = query.Include(x => x.OrderPartner).Include(x => x.Product).Include(x => x.Order).Include(x => x.Labos).Include(x => x.Employee).OrderByDescending(x => x.DateCreated);
             if (val.Limit > 0)
             {
-                query = query.Take(val.Limit).Skip(val.Offset);
+                query = query.Skip(val.Offset).Take(val.Limit);
             }
 
             var items = await _mapper.ProjectTo<SaleOrderLineBasic>(query).ToListAsync();
@@ -1107,6 +1117,8 @@ namespace Infrastructure.Services
             var entity = await SearchQuery(x=> x.Id == id).Include(x => x.SaleOrderLineToothRels).FirstOrDefaultAsync();
             if (entity == null)
                 throw new Exception("Không tìm thấy dịch vụ!");
+            if (val.State == "done" && entity.State != "done")
+                entity.DateDone = DateTime.Now;
             _mapper.Map(val, entity);
             entity.SaleOrderLineToothRels.Clear();
             if (val.ToothType == "manual")
@@ -1132,11 +1144,18 @@ namespace Infrastructure.Services
             var saleLineObj = GetService<ISaleOrderLineService>();
             await orderObj.ComputeToUpdateSaleOrder(order);
             await orderObj.UpdateAsync(order);
+            //action done order
+            var isOrderDone = (await SearchQuery(x => x.OrderId == entity.OrderId).AllAsync(x => x.State == "done" || x.State == "cancel"))
+                && (await SearchQuery(x => x.OrderId == entity.OrderId).AnyAsync(x => x.State == "done"));
+            if (isOrderDone)
+                await orderObj.ActionDone(new List<Guid>() { entity.OrderId });
         }
 
         public async Task<SaleOrderLine> CreateOrderLine(SaleOrderLineSave val)
         {
             var saleLine = _mapper.Map<SaleOrderLine>(val);
+            saleLine.Date = saleLine.Date ?? DateTime.Now;
+            if (val.State == "done") saleLine.DateDone = DateTime.Now;
             saleLine.AmountResidual = saleLine.PriceSubTotal - saleLine.AmountPaid;
 
             if (val.ToothType == "manual")
@@ -1164,7 +1183,11 @@ namespace Infrastructure.Services
             var saleLineObj = GetService<ISaleOrderLineService>();
             await orderObj.ComputeToUpdateSaleOrder(order);
             await orderObj.UpdateAsync(order);
-
+            //action done order
+            var isOrderDone = (await SearchQuery(x => x.OrderId == saleLine.OrderId).AllAsync(x => x.State == "done" || x.State == "cancel"))
+                && (await SearchQuery(x => x.OrderId == saleLine.OrderId).AnyAsync(x => x.State == "done"));
+            if (isOrderDone)
+                await orderObj.ActionDone(new List<Guid>() { saleLine.OrderId });
             return saleLine;
         }
 
@@ -1202,6 +1225,41 @@ namespace Infrastructure.Services
             var saleLineObj = GetService<ISaleOrderLineService>();
             await orderObj.ComputeToUpdateSaleOrder(order);
             await orderObj.UpdateAsync(order);
+        }
+
+        public async Task UpdateState(Guid id, string state)
+        {
+            var line = await GetByIdAsync(id);
+            line.State = state;
+            if (line.State == "done")
+                line.DateDone = DateTime.Now;
+            await UpdateAsync(line);
+            //action done saleorder
+            var isOrderDone = (await SearchQuery(x => x.OrderId == line.OrderId).AllAsync(x => x.State == "done" || x.State == "cancel"))
+                && (await SearchQuery(x => x.OrderId == line.OrderId).AnyAsync(x => x.State == "done"));
+            var orderObj = GetService<ISaleOrderService>();
+            if (isOrderDone)
+               await orderObj.ActionDone(new List<Guid>() { line.OrderId });
+        }
+
+        public async Task<ServiceSaleReportPrint> SaleReportPrint(SaleOrderLinesPaged val)
+        {
+            val.Limit = 0;
+            var resPage = await GetPagedResultAsync(val);
+            var companyObj = GetService<ICompanyService>();
+            var res = new ServiceSaleReportPrint()
+            {
+                data = resPage.Items,
+                DateFrom = val.DateOrderFrom,
+                DateTo = val.DateOrderTo,
+                User = _mapper.Map<ApplicationUserSimple>(await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId))
+        };
+            if (val.CompanyId.HasValue)
+            {
+               var company = await companyObj.SearchQuery(x => x.Id == val.CompanyId).Include(x => x.Partner).FirstOrDefaultAsync();
+                res.Company = _mapper.Map<CompanyPrintVM>(company);
+            }
+            return res;
         }
     }
 }

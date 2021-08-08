@@ -19,8 +19,14 @@
         <div class="filter d-flex flex-0-0-auto mt-2">
             <kendo-combobox width="auto" [placeholder]="'Tất cả chi nhánh'" class="mr-1 kendo-combobox-sm" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
             </kendo-combobox>
-            <!-- <button class="btn btn-primary mr-2 btn-sm" (click)="exportExcel(grid)"><i class="fas fa-download"></i> Xuất
-                file</button> -->
+            <div class="dropdown mr-1">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-download"></i> Xuất File</button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" (click)="exportExcel(grid)">Xuất Excel</a>
+                    <a class="dropdown-item" (click)="onExportPDF()">Xuất PDF</a>
+                </div>
+            </div>
             <button class="btn btn-primary btn-sm" (click)="printReport()">In báo cáo</button>
             <input type="text" [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)" placeholder="Tìm kiếm theo số phiếu, khách hàng" class="ml-auto form-control w-50 form-control-sm">
         </div>

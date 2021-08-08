@@ -30,12 +30,13 @@
                     <button *ngIf="saleOrder && ['sale'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-danger btn-sm" (click)="actionCancel()">
                         Hủy phiếu
                     </button>
-                    <button *ngIf="saleOrder && ['sale'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-success btn-sm" (click)="actionDone()">
+                    <!-- <button *ngIf="saleOrder && ['sale'].indexOf(saleOrder.state) !== -1" type="button"
+                        class="btn btn-success btn-sm" (click)="actionDone()">
                         Hoàn thành
-                    </button>
-                    <button *ngIf="saleOrder && ['done'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-success btn-sm" (click)="actionUnlock()">
+                    </button> -->
+                    <!-- <button *ngIf="saleOrder && ['done'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-success btn-sm" (click)="actionUnlock()">
                         Chưa hoàn thành
-                    </button>
+                    </button> -->
                 </div>
             </div>
         </div>
@@ -171,8 +172,7 @@
 
                 <!-- <div class="t-accordion mb-2">
                     <div class="tab">
-                        <input type="checkbox" id="tab-checkbox-1" [checked]="checkedAccordion"
-                            (change)="checkedAccordion = !checkedAccordion" />
+                        <input type="checkbox" id="tab-checkbox-1" [checked]="checkedAccordion" (change)="checkedAccordion = !checkedAccordion" />
                         <label class="tab-label" for="tab-checkbox-1">
                             <b *ngIf="checkedAccordion">Thông tin khách hàng</b>
                             <div *ngIf="!checkedAccordion" class="d-flex justify-content-between w-100">
@@ -201,8 +201,7 @@
                         </label>
                         <div class="tab-content">
                             <div class="d-flex">
-                                <img class="cus-avatar" [src]="partner?.avatar || 'assets/images/no-avatar.png'" alt=""
-                                    onerror="this.src='assets/images/no-avatar.png';">
+                                <img class="cus-avatar" [src]="partner?.avatar || 'assets/images/no-avatar.png'" alt="" onerror="this.src='assets/images/no-avatar.png';">
                                 <div class="row cus-row">
                                     <div class="col cus-col">
                                         <div class="cus-info mb-2">
@@ -222,8 +221,7 @@
                                         <div class="cus-info mb-2">
                                             <label class="cus-label">Nhãn:</label>
                                             <div class="cus-content">
-                                                <span *ngFor="let tag of tags" class="badge badge-secondary mr-1"
-                                                    [ngClass]="'o_tag_color_' + tag.Color">
+                                                <span *ngFor="let tag of tags" class="badge badge-secondary mr-1" [ngClass]="'o_tag_color_' + tag.Color">
                                                     {{tag.Name}}
                                                 </span>
                                             </div>
@@ -259,8 +257,7 @@
                                         <div class="cus-info mb-2">
                                             <label class="cus-label">Hạng thành viên:</label>
                                             <div class="cus-content">
-                                                <span *ngIf="partner?.memberLevel" class="badge badge-secondary"
-                                                    [ngClass]="'o_tag_color_' + partner.memberLevel?.color">
+                                                <span *ngIf="partner?.memberLevel" class="badge badge-secondary" [ngClass]="'o_tag_color_' + partner.memberLevel?.color">
                                                     {{partner?.memberLevel?.name}}
                                                 </span>
                                             </div>
@@ -317,7 +314,8 @@
                                             </div>
                                             <ng-container *ngFor="let line of saleOrder.orderLines; let i=index">
                                                 <app-sale-order-line-cu #lineTemplate (onUpdateOpenPromotionEvent)="onUpdateOpenLinePromotion(i)" [initialListEmployees]="initialListEmployees" [initialFilteredToothCategories]="filteredToothCategories" [initialListTeeths]="listTeeths" [line]="line" [initialToothTypeDict]="toothTypeDict"
-                                                    (onCancelEvent)="onCancelEditLine($event)" (onDeleteEvent)="onDeleteLine(i)" (onEditEvent)="onEditLine($event)" (onUpdateEvent)="updateLineInfo($event, i)" (onActiveEvent)="onActiveLine($event, line)">
+                                                    (onCancelEvent)="onCancelEditLine($event)" (onDeleteEvent)="onDeleteLine(i)" (onEditEvent)="onEditLine($event)" (onUpdateEvent)="updateLineInfo($event, i)" (onActiveEvent)="onActiveLine($event, line)" (onUpdateStateEvent)="onUpdateStateLine($event, line)"
+                                                    [orderState]="saleOrder?.state">
                                                 </app-sale-order-line-cu>
                                             </ng-container>
                                         </div>

@@ -1,0 +1,10 @@
+.o_web_client {
+    background-color: white !important;
+}
+
+.order-state label:hover,
+.order-state input[type="radio"]:checked+label {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}

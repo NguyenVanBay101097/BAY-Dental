@@ -7,6 +7,8 @@ using ApplicationCore.Entities;
 using ApplicationCore.Models;
 using ApplicationCore.Utilities;
 using AutoMapper;
+using DinkToPdf;
+using DinkToPdf.Contracts;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authorization;
@@ -32,12 +34,13 @@ namespace TMTDentalAPI.Controllers
         private readonly ISaleOrderLineService _saleLineService;
         private readonly IViewRenderService _viewRenderService;
         private readonly IViewToStringRenderService _viewToStringRenderService;
+        private IConverter _converter;
 
         public SaleOrdersController(ISaleOrderService saleOrderService, IMapper mapper,
             IUnitOfWorkAsync unitOfWork, IDotKhamService dotKhamService,
             ICardCardService cardService, IProductPricelistService pricelistService,
-            ISaleOrderLineService saleLineService, IViewRenderService viewRenderService,
-            IViewToStringRenderService viewToStringRenderService)
+            ISaleOrderLineService saleLineService, IViewRenderService viewRenderService, IConverter converter,
+        IViewToStringRenderService viewToStringRenderService)
         {
             _saleOrderService = saleOrderService;
             _mapper = mapper;
@@ -48,6 +51,7 @@ namespace TMTDentalAPI.Controllers
             _saleLineService = saleLineService;
             _viewRenderService = viewRenderService;
             _viewToStringRenderService = viewToStringRenderService;
+            _converter = converter;
         }
 
         [HttpGet]
@@ -552,6 +556,36 @@ namespace TMTDentalAPI.Controllers
             stream.Position = 0;
 
             return new FileContentResult(fileContent, mimeType);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetRevenueReportPdf([FromQuery] SaleOrderRevenueReportPaged val)
+        {
+            var data = await _saleOrderService.GetRevenueReportPrint(val);
+            var html = _viewRenderService.Render("SaleOrder/RevenueReportPdf", data);
+
+            var globalSettings = new GlobalSettings
+            {
+                ColorMode = ColorMode.Color,
+                Orientation = Orientation.Landscape,
+                PaperSize = PaperKind.A4,
+                Margins = new MarginSettings { Top = 10 },
+                DocumentTitle = "PDF Report"
+            };
+            var objectSettings = new ObjectSettings
+            {
+                PagesCount = true,
+                HtmlContent = html,
+                WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/css", "print.css") },
+                FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Dự kiến doanh thu", Right = "Page [page] of [toPage]" }
+            };
+            var pdf = new HtmlToPdfDocument()
+            {
+                GlobalSettings = globalSettings,
+                Objects = { objectSettings }
+            };
+            var file = _converter.Convert(pdf);
+            return File(file, "application/pdf", "Dukiendoanhthu.pdf");
         }
     }
 }

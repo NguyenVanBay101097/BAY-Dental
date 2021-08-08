@@ -270,4 +270,8 @@ export class SaleOrderService {
         return this.http.post(this.baseApi + "SaleOrder/PrintRevenueReport",val,{ responseType: "text" });
         
     }
+
+    getRevenueReportPdf(val:any ) {
+        return this.http.get(this.baseApi + this.apiUrl + "/GetRevenueReportPdf", {params: new HttpParams({fromObject: val}),  responseType: 'blob'  });
+    }
 }

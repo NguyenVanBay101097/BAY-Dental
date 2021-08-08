@@ -6,12 +6,14 @@ using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
@@ -23,13 +25,16 @@ namespace Infrastructure.Services
         private readonly CatalogDbContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private UserManager<ApplicationUser> _userManager;
 
         public SaleReportService(CatalogDbContext context, IMapper mapper,
+            UserManager<ApplicationUser> userManager,
             IHttpContextAccessor httpContextAccessor)
         {
             _mapper = mapper;
             _context = context;
             _httpContextAccessor = httpContextAccessor;
+            _userManager = userManager;
         }
 
         protected Guid CompanyId
@@ -42,7 +47,6 @@ namespace Infrastructure.Services
                 return claim != null ? Guid.Parse(claim.Value) : Guid.Empty;
             }
         }
-
         protected T GetService<T>()
         {
             return (T)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(T));
@@ -716,6 +720,153 @@ namespace Infrastructure.Services
                       CompanyId = CompanyId
                   }).ToListAsync();
             return result;
+        }
+
+        private IQueryable<SaleOrderLine> GetServiceReportQuery(ServiceReportReq val)
+        {
+            var orderLineObj = GetService<ISaleOrderLineService>();
+            var query = orderLineObj.SearchQuery(x=> x.State == "sale" || x.State == "done");
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Date >= val.DateFrom.Value.AbsoluteBeginOfDate());
+            
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.Date <= val.DateTo.Value.AbsoluteEndOfDate());
+
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+
+            if(val.EmployeeId.HasValue)
+                query = query.Where(x => x.EmployeeId == val.EmployeeId);
+
+            if (!string.IsNullOrEmpty(val.State))
+                query = query.Where(x => x.State == val.State);
+
+            if(val.Active.HasValue)
+                query = query.Where(x => x.IsActive == val.Active);
+
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.OrderPartner.Name.Contains(val.Search) || x.OrderPartner.Name.Contains(val.Search)
+                                         || x.Product.Name.Contains(val.Search) || x.Product.NameNoSign.Contains(val.Search));
+
+            return query;
+        }
+        public async Task<IEnumerable<ServiceReportRes>> GetServiceReportByTime(ServiceReportReq val)
+        {
+            var res = await GetServiceReportQuery(val).GroupBy(x => x.Date.Value.Date).OrderByDescending(x=> x.Key).Select(x=> new ServiceReportRes() { 
+            Date = x.Key, 
+            Quantity = x.Count(),
+            TotalAmount = x.Sum(z=> z.PriceSubTotal)
+            }).ToListAsync();
+
+            return res;
+        }
+
+        public async Task<IEnumerable<ServiceReportRes>> GetServiceReportByService(ServiceReportReq val)
+        {
+            var res = await GetServiceReportQuery(val).OrderByDescending(x=> x.Date).GroupBy(x => new { x.ProductId, x.Name }).Select(x => new ServiceReportRes()
+            {   
+                Name = x.Key.Name,
+                Quantity = x.Count(),
+                TotalAmount = x.Sum(z => z.PriceSubTotal),
+                ProductId = x.Key.ProductId
+            }).ToListAsync();
+
+            return res;
+        }
+
+        public async Task<PagedResult2<ServiceReportDetailRes>> GetServiceReportDetailPaged(ServiceReportDetailReq val)
+        {
+            var query = GetServiceReportQuery(new ServiceReportReq(){
+            CompanyId = val.CompanyId,
+            DateFrom = val.DateFrom,
+            DateTo = val.DateTo,
+            EmployeeId = val.EmployeeId,
+            Search = val.Search,
+            State = val.State
+            });
+
+            if (val.ProductId.HasValue)
+                query = query.Where(x => x.ProductId == val.ProductId);
+            var count = await query.CountAsync();
+            if(val.Limit > 0)
+            query = query.Skip(val.Offset).Take(val.Limit);
+
+            var res = await _mapper.ProjectTo<ServiceReportDetailRes>(query).ToListAsync();
+            return new PagedResult2<ServiceReportDetailRes>(count, val.Offset, val.Limit) { 
+            Items = res
+            };
+        }
+        private string UserId
+        {
+            get
+            {
+                if (!_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+                    return null;
+
+                return _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            }
+        }
+
+        public async Task<ServiceReportPrint> ServiceReportByServicePrint(ServiceReportReq val)
+        {
+            var parentData = await GetServiceReportByService(val);
+            var data = _mapper.Map<IEnumerable<ServiceReportResPrint>>(parentData);
+            var detailReq = _mapper.Map<ServiceReportDetailReq>(val);
+            detailReq.Limit = 0;
+            var allLines = await GetServiceReportDetailPaged(detailReq);
+
+            foreach (var item in data)
+            {
+                item.Lines = allLines.Items.Where(x=> x.ProductId == item.ProductId);
+            }
+ 
+            var companyObj = GetService<ICompanyService>();
+            var res = new ServiceReportPrint()
+            {
+                type = "service",
+                Title = "BÁO CÁO THEO DỊCH VỤ",
+                data = data,
+                DateFrom = val.DateFrom,
+                DateTo = val.DateTo,
+                User = _mapper.Map<ApplicationUserSimple>(await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId))
+            };
+            if (val.CompanyId.HasValue)
+            {
+                var company = await companyObj.SearchQuery(x => x.Id == val.CompanyId).Include(x => x.Partner).FirstOrDefaultAsync();
+                res.Company = _mapper.Map<CompanyPrintVM>(company);
+            }
+            return res;
+        }
+
+        public async Task<ServiceReportPrint> ServiceReportByTimePrint(ServiceReportReq val)
+        {
+            var parentData = await GetServiceReportByTime(val);
+            var data = _mapper.Map<IEnumerable<ServiceReportResPrint>>(parentData);
+            var detailReq = _mapper.Map<ServiceReportDetailReq>(val);
+            detailReq.Limit = 0;
+            var allLines = await GetServiceReportDetailPaged(detailReq);
+
+            foreach (var item in data)
+            {
+                item.Lines = allLines.Items.Where(x => x.Date.Value.Date >= val.DateFrom.Value.Date && x.Date.Value.Date <= val.DateTo.Value.Date);
+            }
+
+            var companyObj = GetService<ICompanyService>();
+            var res = new ServiceReportPrint()
+            {
+                type = "time",
+                Title = "BÁO CÁO DỊCH VỤ THEO THỜI GIAN",
+                data = data,
+                DateFrom = val.DateFrom,
+                DateTo = val.DateTo,
+                User = _mapper.Map<ApplicationUserSimple>(await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId))
+            };
+            if (val.CompanyId.HasValue)
+            {
+                var company = await companyObj.SearchQuery(x => x.Id == val.CompanyId).Include(x => x.Partner).FirstOrDefaultAsync();
+                res.Company = _mapper.Map<CompanyPrintVM>(company);
+            }
+            return res;
         }
     }
 }

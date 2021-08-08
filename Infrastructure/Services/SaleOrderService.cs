@@ -3084,6 +3084,26 @@ namespace Infrastructure.Services
             return new PagedResult2<SaleOrderRevenueReport>(count, val.Offset, val.Limit) { Items = res };
         }
 
+        public async Task<RevenueReportPrintVM<SaleOrderRevenueReport>> GetRevenueReportPrint(SaleOrderRevenueReportPaged val)
+        {
+            val.Limit = 0;
+            var data = await GetRevenueReport(val);
+
+            var res = new RevenueReportPrintVM<SaleOrderRevenueReport>()
+            {
+                Data = data.Items,
+                User = _mapper.Map<ApplicationUserSimple>(await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId))
+            };
+
+            if (val.CompanyId.HasValue)
+            {
+                var companyObj = GetService<ICompanyService>();
+                var company = await companyObj.SearchQuery(x => x.Id == val.CompanyId).Include(x => x.Partner).FirstOrDefaultAsync();
+                res.Company = _mapper.Map<CompanyPrintVM>(company);
+            }
+            return res;
+        }
+
         public async Task<GetRevenueSumTotalRes> GetRevenueSumTotal(GetRevenueSumTotalReq val)
         {
             var query = SearchQuery(x => x.State != "cancel" && x.State != "draft");

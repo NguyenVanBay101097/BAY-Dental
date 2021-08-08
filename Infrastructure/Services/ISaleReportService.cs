@@ -20,5 +20,10 @@ namespace Infrastructure.Services
         Task<IEnumerable<SaleReportItem>> GetTopSaleProduct(SaleReportTopSaleProductSearch val);
         Task<PagedResult2<SaleOrderLineDisplay>> GetReportService(SaleReportSearch val);
         Task<SaleReportOldNewPartnerOutput> GetReportOldNewPartner(SaleReportOldNewPartnerInput val);
+        Task<IEnumerable<ServiceReportRes>> GetServiceReportByTime(ServiceReportReq val);
+        Task<IEnumerable<ServiceReportRes>> GetServiceReportByService(ServiceReportReq val);
+        Task<PagedResult2<ServiceReportDetailRes>> GetServiceReportDetailPaged(ServiceReportDetailReq val);
+        Task<ServiceReportPrint> ServiceReportByServicePrint(ServiceReportReq val);
+        Task<ServiceReportPrint> ServiceReportByTimePrint(ServiceReportReq val);
     }
 }
