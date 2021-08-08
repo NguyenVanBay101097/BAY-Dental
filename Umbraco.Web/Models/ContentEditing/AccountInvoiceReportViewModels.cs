@@ -58,6 +58,41 @@ namespace Umbraco.Web.Models.ContentEditing
 
     }
 
+    public class RevenueReportFilter
+    {
+        public RevenueReportFilter()
+        {
+            Limit = 20;
+        }
+
+        public int Limit { get; set; }
+
+        public int Offset { get; set; }
+
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
+
+        public string Search { get; set; }
+
+        public Guid? ProductId { get; set; }
+
+        public Guid? EmployeeId { get; set; }
+
+        public Guid? AssistantId { get; set; }
+
+        public Guid? CompanyId { get; set; }
+
+        /// <summary>
+        /// groupby:day  group theo ngày
+        /// groupby:month: group theo tháng
+        /// groupby:product: group theo dịch vụ
+        /// groupby:employee: group theo nhân viên
+        /// groupby:assistant: group theo phụ tá
+        /// </summary>
+        public string GroupBy { get; set; }
+    }
+
     public class EmployeeAssistantKeyGroup
     {
         public Guid? Id { get; set; }
@@ -213,6 +248,20 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateTo { get; set; }
         public IEnumerable<T> Data { get; set; } = new List<T>();
         public ApplicationUserSimple User { get; set; }
+    }
+
+    public class RevenueReportItem
+    {
+        public DateTime InvoiceDate { get; set; }
+        public decimal PriceSubTotal { get; set; }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public Guid? ProductId { get; set; }
+        public string ProductName { get; set; }
+        public string EmployeeName { get; set; }
+        public Guid? EmployeeId { get; set; }
+        public Guid? CompanyId { get; set; }
+        public Guid ToDetailEmployeeId { get; set; }
     }
 
 }

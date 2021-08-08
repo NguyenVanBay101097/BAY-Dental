@@ -23,5 +23,6 @@ namespace Infrastructure.Services
         Task<RevenueReportPrintVM<RevenueEmployeeReportPrint>> GetRevenueEmployeeReportPrint(RevenueEmployeeReportPar val);
 
         IQueryable<AccountInvoiceReport> GetRevenueReportQuery(RevenueReportQueryCommon val);
+        Task<IEnumerable<RevenueReportItem>> GetRevenueReport(RevenueReportFilter val);
     }
 }

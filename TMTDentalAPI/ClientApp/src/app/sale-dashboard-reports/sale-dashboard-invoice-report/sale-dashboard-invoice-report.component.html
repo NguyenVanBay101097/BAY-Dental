@@ -1,0 +1,23 @@
+<kendo-chart class="mh-chart-year p-2">
+    <kendo-chart-title color="black" text="BIỂU ĐỒ DOANH THU">
+    </kendo-chart-title>
+    <kendo-chart-legend position='bottom' orientation='horizontal'></kendo-chart-legend>
+    <kendo-chart-series>
+        <ng-container *ngIf="revenues.length > 0">
+            <kendo-chart-category-axis>
+                <kendo-chart-category-axis-item [categories]="revenuCateg">
+                    <kendo-chart-category-axis-item-labels [content]="labelContent">
+                    </kendo-chart-category-axis-item-labels>
+                </kendo-chart-category-axis-item>
+            </kendo-chart-category-axis>
+            <kendo-chart-series-item type="column" [data]="revenues"
+                field="priceSubTotal" categoryField="invoiceDate" [style]="'smooth'">
+                <kendo-chart-series-item-tooltip>
+                    <ng-template let-dataItem="dataItem">                      
+                        <b> doanh thu: {{dataItem.priceSubTotal || 0 | number }} </b>
+                    </ng-template>
+                </kendo-chart-series-item-tooltip>
+            </kendo-chart-series-item>
+        </ng-container>
+    </kendo-chart-series>
+</kendo-chart>

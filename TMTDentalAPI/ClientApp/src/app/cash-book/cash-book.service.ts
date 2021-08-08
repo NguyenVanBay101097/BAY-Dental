@@ -60,6 +60,21 @@ export class CashBookDetailFilter {
   offset: number;
 }
 
+export class CashBookReportFilter {
+  dateFrom: string;
+  dateTo: string;
+  companyId: string;
+  groupBy: string;
+}
+
+export class CashBookReportItem {
+  date: string;
+  begin: number;
+  totalChi: number;
+  totalThu: number;
+  totalAmount: number;
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -99,6 +114,10 @@ export class CashBookService {
     );
   }
 
+  getChartReport(val: any) {
+    return this.http.post<CashBookReportItem[]>(this.baseApi + this.apiUrl + "/GetChartReport", val);
+  }
+
   exportExcelFile(val: any) {
     return this.http.post(this.baseApi + this.apiUrl + "/ExportExcelFile", val, {
       responseType: "blob",
@@ -108,4 +127,6 @@ export class CashBookService {
   changeData() {
     return this.http.post(this.baseApi + this.apiUrl + "/ChangeData", null);
   }
+
+
 }
