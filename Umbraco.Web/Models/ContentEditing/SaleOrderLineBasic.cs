@@ -43,6 +43,14 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public decimal? AmountPaid { get; set; }
 
+        /// <summary>
+        /// whole_jaw: nguyên hàm
+        /// upper_jaw : hàm trên
+        /// lower_jaw : hàm dưới
+        /// manual :  thủ công
+        /// </summary>
+        public string ToothType { get; set; }
+
         public decimal? AmountResidual
         {
             get
