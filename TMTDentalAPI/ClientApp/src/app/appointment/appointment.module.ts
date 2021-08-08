@@ -14,7 +14,6 @@ import { AppointmentKanbanComponent } from './appointment-kanban/appointment-kan
 import { AppointmentDetailDialogComponent } from './appointment-detail-dialog/appointment-detail-dialog.component';
 import { MyCustomNgbModule } from '../shared/my-custom-ngb.module';
 import { AppointmentOverCancelComponent } from './appointment-over-cancel/appointment-over-cancel.component';
-import { FullCalendarModule } from '@fullcalendar/angular';
 
 @NgModule({
   declarations: [
@@ -34,8 +33,7 @@ import { FullCalendarModule } from '@fullcalendar/angular';
     ReactiveFormsModule,
     FormsModule,
     SharedModule,
-    MyCustomNgbModule, 
-    FullCalendarModule
+    MyCustomNgbModule
   ],
   entryComponents: [AppointmentCuDialogComponent, AppointmentDetailDialogComponent],
   providers: [],

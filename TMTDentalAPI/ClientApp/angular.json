@@ -22,12 +22,6 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/assets",
-              {
-                "glob": "**/*",
-                "input": "node_modules/mxgraph/javascript/src",
-                "output": "./mxgraph"
-              },
               "src/manifest.webmanifest"
             ],
             "styles": [
@@ -38,18 +32,13 @@
               "src/quan-styles.css",
               "src/thien-styles.scss",
               "node_modules/@ctrl/ngx-emoji-mart/picker.css",
-              "node_modules/@ng-select/ng-select/themes/default.theme.css",
-              "node_modules/@fullcalendar/core/main.css",
-              "node_modules/@fullcalendar/daygrid/main.css",
-              "node_modules/@fullcalendar/timegrid/main.css"
+              "node_modules/@ng-select/ng-select/themes/default.theme.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.js",
               "node_modules/popper.js/dist/umd/popper.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.min.js",
               "node_modules/autosize/dist/autosize.js",
-              "src/assets/js/mxgraph.conf.js",
-              "node_modules/mxgraph/javascript/mxClient.js",
               "node_modules/webcamjs/webcam.min.js"
             ]
           },

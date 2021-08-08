@@ -22,13 +22,6 @@ import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { RevenueTimeReportPar } from 'src/app/account-invoice-reports/account-invoice-report.service';
-//
-import { Calendar, EventInput } from '@fullcalendar/core';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGrigPlugin from '@fullcalendar/timegrid';
-import interactionPlugin from '@fullcalendar/interaction';
-import { FullCalendarComponent } from '@fullcalendar/angular';
-import { DateRangeInput } from '@fullcalendar/core/datelib/date-range';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { MyDateRange } from '../my-date-range';
 import { CustomerReceipCreateUpdateComponent } from 'src/app/shared/customer-receip-create-update/customer-receip-create-update.component';
