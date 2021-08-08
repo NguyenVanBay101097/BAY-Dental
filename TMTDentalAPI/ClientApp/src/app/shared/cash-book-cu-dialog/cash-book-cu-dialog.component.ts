@@ -307,6 +307,7 @@ export class CashBookCuDialogComponent implements OnInit {
           if (print) {
             this.printPhieu(this.id);
           }
+          this.activeModal.close();
           this.submitted = false;
         },
         (error) => {

@@ -206,7 +206,6 @@
                     <div class="o_form_section_left" [class.d-none]="purchaseOrder?.state != 'draft'">
                         <div class="card">
                             <div class="card-body p-2">
-                                <h5 class="card-title">Danh sách hàng hóa</h5>
                                 <div class="mb-1">
                                     <app-purchase-order-list-product-tabpanel [listProducts]="productList"
                                         [isStock]="false" (onSelectService)="selectProduct($event)">
@@ -218,8 +217,6 @@
                     <div class="o_form_section_right">
                         <div class="card border-0">
                             <div class="card-body p-2">
-                                <h5 class="card-title">Danh sách {{this.purchaseOrder?.type == 'order' ? 'mua hàng' :
-                                    'trả hàng'}}</h5>
                                 <div class="mb-1">
                                     <!-- <button *ngIf="purchaseOrder?.state == 'draft' && type == 'order'"
                                         class="btn btn-sm btn-primary" (click)="purchaseOrderAlmostOut()">Hàng sắp

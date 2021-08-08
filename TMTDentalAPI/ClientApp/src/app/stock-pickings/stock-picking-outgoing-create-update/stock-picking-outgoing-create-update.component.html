@@ -118,7 +118,6 @@
                     <div class="o_form_section_left" *ngIf="picking?.state == 'draft'">
                         <div class="card">
                             <div class="card-body p-2">
-                                <h5 class="card-title">Danh sách hàng hóa</h5>
                                 <div>
                                     <app-purchase-order-list-product-tabpanel [listProducts]="listProducts"
                                         (onSelectService)="selectProduct($event)" [isStock]="true">
@@ -130,7 +129,6 @@
                     <div class="o_form_section_right">
                         <div class="card border-0">
                             <div class="card-body p-2">
-                                <h5 class="card-title">Danh sách xuất kho</h5>
                                 <div>
                                     <table class="table table-sm" id="table_details">
                                         <thead>

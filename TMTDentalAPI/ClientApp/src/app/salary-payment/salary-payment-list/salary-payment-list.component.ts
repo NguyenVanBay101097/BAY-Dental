@@ -12,6 +12,7 @@ import { AccountPaymentPaged, AccountPaymentService } from 'src/app/account-paym
 import { SalaryPaymentPaged, SalaryPaymentService } from '../salary-payment.service';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-salary-payment-list',
@@ -35,7 +36,8 @@ export class SalaryPaymentListComponent implements OnInit {
     private modalService: NgbModal,
     private salaryPaymentService: SalaryPaymentService,
     private printService: PrintService, 
-    private checkPermissionService: CheckPermissionService
+    private checkPermissionService: CheckPermissionService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
@@ -55,6 +57,7 @@ export class SalaryPaymentListComponent implements OnInit {
     paged.limit = this.limit;
     paged.offset = this.skip;
     paged.search = this.search ? this.search : '';
+    paged.companyId = this.authService.userInfo.companyId;
     this.loading = true;
     this.salaryPaymentService.getPaged(paged).pipe(
       map((response: any) => (<GridDataResult>{

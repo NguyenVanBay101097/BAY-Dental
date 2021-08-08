@@ -31,5 +31,14 @@ namespace TMTDentalAPI.ViewControllers
 
             return View(res);
         }
+
+        public async Task<IActionResult> Print2(Guid id)
+        {
+            var res = await _accountPaymentService.GetPrint(id);
+            if (res == null)
+                NotFound();
+
+            return View(res);
+        }
     }
 }

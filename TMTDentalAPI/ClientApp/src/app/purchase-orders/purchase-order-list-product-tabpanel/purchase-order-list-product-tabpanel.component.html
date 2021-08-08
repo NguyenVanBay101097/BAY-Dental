@@ -10,7 +10,7 @@
             </div>
         </div>
         <div class="product-filter-type">
-            <div class="btn-group">
+            <div class="btn-group" style="width: 100%;" hasGroups [groups]="'medicineOrder.group_medicine'">
                 <input class="btn-check" type="radio" [(ngModel)]="type2" name="radioButton" id="product"
                     value="product" (change)="onChangeType($event.target.value)">
                 <label class="btn btn-sm btn-outline-primary" for="product">
@@ -18,8 +18,7 @@
                 </label>
                 <input class="btn-check" type="radio" [(ngModel)]="type2" name="radioButton" id="medicine"
                     value="medicine" (change)="onChangeType($event.target.value)">
-                <label class="btn btn-sm btn-outline-primary" for="medicine" hasGroups
-                    [groups]="'medicineOrder.group_medicine'">
+                <label class="btn btn-sm btn-outline-primary" for="medicine">
                     Thuốc
                 </label>
             </div>
@@ -38,7 +37,8 @@
             <tbody>
                 <tr class="cursor" (click)="onSelectValue(item)" *ngFor="let item of listProductFilter;let i = index">
                     <td class="sticky-td">{{item.name}}</td>
-                    <td *ngIf="!isStock" class="sticky-td text-right">{{(item.type2 == 'medicine'? (item.standardPrice || 0 ) : (item.purchasePrice || 0) ) | number}}</td>
+                    <td *ngIf="!isStock" class="sticky-td text-right">{{(item.type2 == 'medicine'? (item.standardPrice
+                        || 0 ) : (item.purchasePrice || 0) ) | number}}</td>
                 </tr>
             </tbody>
         </table>
