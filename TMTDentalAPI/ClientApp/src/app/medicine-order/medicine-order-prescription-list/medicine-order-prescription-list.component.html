@@ -12,8 +12,12 @@
             </div>
         </div>
         <div class="o_cp_t_right">
-            <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo khách hàng, số đơn thuốc"
-                type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+            <div class="o_searchview">
+                <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo khách hàng, số đơn thuốc" 
+                [(ngModel)]="search" 
+                (ngModelChange)="this.searchUpdate.next($event)" />
+                <span class="o_searchview_icon fas fa-search"></span>
+            </div>
         </div>
     </div>
 </div>

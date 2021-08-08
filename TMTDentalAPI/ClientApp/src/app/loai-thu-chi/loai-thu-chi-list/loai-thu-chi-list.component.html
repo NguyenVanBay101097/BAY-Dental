@@ -14,14 +14,19 @@
         </div> -->
         <div class="o_cp_left">
             <div class="o_cp_buttons">
-                <button type="button" class="btn btn-primary btn-sm" accesskey="c"
+                <button type="button" class="btn btn-primary" accesskey="c"
                 (click)="createItem()">Thêm</button>
             </div>
             <div class="o_cp_sidebar">
             </div>
         </div>
         <div class="o_cp_t_right">
-            <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo tên ..." type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+            <div class="o_searchview">
+                <input class="o_searchview_input" 
+            placeholder="Tìm kiếm theo tên ..." type="text" [(ngModel)]="search" 
+            (ngModelChange)="this.searchUpdate.next($event)">
+            <span class="o_searchview_icon fas fa-search"></span>
+            </div>
         </div>
     </div>
 </div>
@@ -38,9 +43,9 @@
         <kendo-grid-column field="name" title="Tên"></kendo-grid-column>
         <kendo-grid-command-column title="Thao tác">
             <ng-template kendoGridCellTemplate let-dataItem>
-                <button kendoButton (click)="editItem(dataItem)" class="btn btn-success btn-sm mr-2"><i title="Sửa"
+                <button kendoButton (click)="editItem(dataItem)" class="btn btn-success mr-2"><i title="Sửa"
                         class="far fa-edit"></i></button>
-                <button kendoButton (click)="deleteItem(dataItem)" class="btn btn-danger btn-sm"><i title="Xóa"
+                <button kendoButton (click)="deleteItem(dataItem)" class="btn btn-danger"><i title="Xóa"
                         class="far fa-trash-alt"></i></button>
             </ng-template>
         </kendo-grid-command-column>

@@ -4,11 +4,11 @@
         <div class="mb-2">
             <div class="mb-2 d-flex">
                 <span *ngFor="let item of filteredToothCategories">
-                    <button type="button" class="btn btn-sm mr-2" 
+                    <button type="button" class="btn mr-2" 
                         [ngClass]="cateId == item.id ? 'btn-primary' : 'btn-outline-primary'"
                         (click)="onChangeToothCategory(item)" accesskey="s">{{item.name}}</button>
                 </span>
-                <button type="button" class="btn btn-primary btn-sm mr-2 ml-auto" (click)="reSelected()">Chọn lại</button>
+                <button type="button" class="btn btn-primary mr-2 ml-auto" (click)="reSelected()">Chọn lại</button>
             </div>
             <div class="mb-2">
                 <div class="teeth-map mb-2">
@@ -32,23 +32,26 @@
             <app-tai-date-range-filter-dropdown class="mr-2" title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo" (searchChange)="searchChangeDate($event)">
             </app-tai-date-range-filter-dropdown>
             <div class="o_cp_t_right">
-                <input class="o_searchview_input o_searchview" 
-                    placeholder="Tìm kiếm người tư vấn, dịch vụ" 
-                    type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                <div class="o_searchview">
+                    <input type="text" class="o_searchview_input" placeholder="Tìm kiếm người tư vấn, dịch vụ" 
+                    [(ngModel)]="search" 
+                    (ngModelChange)="this.searchUpdate.next($event)" />
+                    <span class="o_searchview_icon fas fa-search"></span>
+                </div>
             </div>
         </div>
     </div>
     <div class="mb-2">
-        <button type="button" class="btn btn-primary btn-sm mr-2" (click)="createAdvisory()" accesskey="c">
+        <button type="button" class="btn btn-primary mr-2" (click)="createAdvisory()" accesskey="c">
             Thêm tiểu sử
         </button>
-        <!-- <button type="button" class="btn btn-primary btn-sm mr-2" (click)="createQuotations()" accesskey="c">
+        <!-- <button type="button" class="btn btn-primary mr-2" (click)="createQuotations()" accesskey="c">
             Tạo báo giá
         </button> -->
-        <button type="button" class="btn btn-primary btn-sm mr-2" (click)="createSaleOrder()" accesskey="c">
+        <button type="button" class="btn btn-primary mr-2" (click)="createSaleOrder()" accesskey="c">
             Tạo phiếu điều trị
         </button>
-        <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onPrint()" accesskey="c">
+        <button type="button" class="btn btn-primary mr-2" (click)="onPrint()" accesskey="c">
             In phiếu
         </button>
     </div>
@@ -86,9 +89,9 @@
                         Thao tác
                     </ng-template>
                     <ng-template kendoGridCellTemplate let-dataItem>
-                        <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                        <button class="btn btn-success mr-2" title="Sửa" (click)="editItem(dataItem)">
                             <span class="far fa-edit"></span></button>
-                        <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                        <button class="btn btn-danger" title="Xóa" (click)="deleteItem(dataItem)">
                             <span class="far fa-trash-alt"></span></button>
                     </ng-template>
                 </kendo-grid-column>

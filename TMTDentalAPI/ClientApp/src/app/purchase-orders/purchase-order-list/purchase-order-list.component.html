@@ -18,10 +18,10 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm" (click)="createItem()" accesskey="c"
+                    <button type="button" class="btn btn-primary" (click)="createItem()" accesskey="c"
                         *ngIf="canAdd">Thêm
                     </button>
-                    <button type="button" class="btn btn-secondary btn-sm mr-2" (click)="exportExcelFile()">
+                    <button type="button" class="btn btn-secondary mr-2" (click)="exportExcelFile()">
                         <i class="fas fa-download mr-2"></i>Xuất Excel
                     </button>
                 </div>
@@ -29,7 +29,7 @@
             <div class="o_cp_sidebar">
                 <div class="btn-group">
                     <div class="btn-group o_dropdown" *ngIf="selectedIds.length">
-                        <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown"
+                        <button class="btn btn-secondary dropdown-toggle" data-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
                             Thao tác
                         </button>
@@ -47,15 +47,14 @@
                 </app-tai-date-range-filter-dropdown>
                 <kendo-combobox [data]="stateFilterOptions" [textField]="'text'" [valueField]="'value'" [filterable]="true" 
                 (selectionChange)="onStateSelectChange($event)" [placeholder]="'Trạng thái'"
-                    class="kendo-combobox-sm mr-1">
+                    class="mr-1">
                 </kendo-combobox>
                 <!-- <app-tmt-option-select-dropdown title="Trạng thái" [options]="stateFilterOptions"
                     (selectChange)="onStateSelectChange($event)">
                 </app-tmt-option-select-dropdown> -->
                 <kendo-combobox [data]="supplierData" [textField]="'displayName'" [valueField]="'id'" [filterable]="true" 
                 (selectionChange)="handleFilter($event)" [placeholder]="'Nhà cung cấp'"
-                    #supplierCbx
-                    class="kendo-combobox-sm">
+                    #supplierCbx>
                 </kendo-combobox>
             </div>
         </div>
@@ -100,9 +99,9 @@
                 Thao tác
             </ng-template>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)" *ngIf="canUpdate">
+                <button class="btn btn-success mr-2" title="Sửa" (click)="editItem(dataItem)" *ngIf="canUpdate">
                     <span class="far fa-edit"></span></button>
-                <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)" *ngIf="canDelete">
+                <button class="btn btn-danger" title="Xóa" (click)="deleteItem(dataItem)" *ngIf="canDelete">
                     <span class="far fa-trash-alt"></span></button>
             </ng-template>
         </kendo-grid-column>

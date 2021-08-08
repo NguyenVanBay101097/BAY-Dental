@@ -9,13 +9,13 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <!-- <button (click)="importFileExcell()" class="btn btn-primary mr-2 btn-sm">
+                    <!-- <button (click)="importFileExcell()" class="btn btn-primary mr-2">
                         <i class="fas fa-file-import"></i> Import
                     </button> -->
-                    <!-- <button (click)="timeKeepingForAll()" class="btn btn-primary mr-2 btn-sm">
+                    <!-- <button (click)="timeKeepingForAll()" class="btn btn-primary mr-2">
                         Chấm công nguyên ngày
                     </button> -->
-                    <button (click)="createFullMonthTimeKeeping()" class="btn btn-primary mr-2 btn-sm">
+                    <button (click)="createFullMonthTimeKeeping()" class="btn btn-primary mr-2">
                         Chấm công tháng
                     </button>
                 </div>
@@ -30,7 +30,7 @@
             </div>
         </div>
         <div class="o_cp_right">
-            <kendo-combobox *ngIf="canEmployeeRead" [placeholder]="'Lọc theo nhân viên'" class="btn-sm w-50" 
+            <kendo-combobox *ngIf="canEmployeeRead" [placeholder]="'Lọc theo nhân viên'" class="w-50" 
                 [data]="listEmployeies" [textField]="'name'" [filterable]="true" #empCbx 
                 (selectionChange)="empChange($event)" [valueField]="'id'">
             </kendo-combobox>
@@ -40,7 +40,7 @@
 
 <div class="o_content">
     <!-- <div ngbDropdown class="d-inline-flex mr-2 float-right pb-2">
-        <button class="btn btn-outline-primary btn-sm" id="dropdownBasic1" ngbDropdownToggle><i
+        <button class="btn btn-outline-primary" id="dropdownBasic1" ngbDropdownToggle><i
                 class="fas fa-cog"></i></button>
         <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
             <button (click)="setupTimeKeeping()" ngbDropdownItem>Cầu hình chấm công</button>
@@ -49,14 +49,14 @@
     </div> -->
     <!-- <div class="float-right pb-2">
         <div class="d-inline-flex">
-            <button (click)="importFileExcell()" class="btn btn-outline-primary mr-3 btn-sm">
+            <button (click)="importFileExcell()" class="btn btn-outline-primary mr-3">
                 Import<i class="fas fa-file-import ml-1"></i>
             </button>
         </div>
     </div> -->
     <!-- <div class="float-right pb-2">
         <div class="d-inline-flex">
-            <button (click)="exportFileTimeKeeping()" class="btn btn-outline-primary mr-3 btn-sm">Xuất file <i
+            <button (click)="exportFileTimeKeeping()" class="btn btn-outline-primary mr-3">Xuất file <i
                     class="fas fa-file-export"></i></button>
         </div>
     </div> -->

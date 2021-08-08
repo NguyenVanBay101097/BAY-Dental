@@ -32,9 +32,9 @@
                     <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'" [dateTo]="dateTo"
                         (searchChange)="onSearchDateChange($event)">
                     </app-tai-date-range-filter-dropdown>
-                    <button class="btn btn-primary btn-sm mr-2 " title="Đóng tạm ứng"
+                    <button class="btn btn-primary mr-2 " title="Đóng tạm ứng"
                         (click)="createAdvanceModal()">Đóng tạm ứng</button>
-                    <button class="btn btn-primary btn-sm mr-2" *ngIf="amountBalance != 0" title="Hoàn tạm ứng"
+                    <button class="btn btn-primary mr-2" *ngIf="amountBalance != 0" title="Hoàn tạm ứng"
                         (click)="createRefundModal()">Hoàn tạm
                         ứng</button>
                 </div>
@@ -45,8 +45,12 @@
         </div>
     </div>
     <div class="o_cp_t_right">
-        <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo số phiếu tạm ứng" type="text"
-            [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+        <div class="o_searchview">
+            <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo số phiếu tạm ứng" 
+            [(ngModel)]="search" 
+            (ngModelChange)="this.searchUpdate.next($event)" />
+            <span class="o_searchview_icon fas fa-search"></span>
+        </div>
     </div>
 </div>
 
@@ -78,9 +82,9 @@
     </kendo-grid-column>
     <kendo-grid-command-column title="Thao tác" width="100">
         <ng-template kendoGridCellTemplate let-dataItem>
-            <button class="btn btn-success btn-sm mr-2" (click)="editItem(dataItem)"><i
+            <button class="btn btn-success mr-2" (click)="editItem(dataItem)"><i
                     class="fas fa-edit"></i></button>
-            <button type="button" class="btn btn-sm btn-danger" (click)="deleteItem(dataItem)">
+            <button type="button" class="btn btn-danger" (click)="deleteItem(dataItem)">
                 <i class="far fa-trash-alt"></i>
             </button>
         </ng-template>

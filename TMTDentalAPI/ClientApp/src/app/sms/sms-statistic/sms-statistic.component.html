@@ -24,9 +24,9 @@
         <div class="o_cp_right">
             <div>
                 <kendo-combobox (valueChange)="onChangeState($event)" placeholder="Trạng thái"
-                    class="kendo-combobox-sm mr-2" [data]="filteredState" [textField]="'name'" [valueField]="'value'">
+                    class="mr-2" [data]="filteredState" [textField]="'name'" [valueField]="'value'">
                 </kendo-combobox>
-                <kendo-combobox #campaignCbx [filterable]="true" class="kendo-combobox-sm" placeholder="Lọc chiến dịch"
+                <kendo-combobox #campaignCbx [filterable]="true" placeholder="Lọc chiến dịch"
                     [data]="campaignData" [textField]="'name'" [valueField]="'id'"
                     (valueChange)="onChangeCampaign($event)">
                 </kendo-combobox>
