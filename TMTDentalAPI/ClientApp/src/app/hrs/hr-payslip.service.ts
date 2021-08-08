@@ -91,7 +91,8 @@ export class HrPayslipSaveDefaultValue {
     totalSalary = null;
     commissionSalary = null;
     amercementMoney = null;
-    taxNSocialInsurance = null;
+    tax = null;
+    socialInsurance = null;
     advancePayment = null;
     netSalary = null;
     isCheck = false;
