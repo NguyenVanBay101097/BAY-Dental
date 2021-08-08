@@ -1,6 +1,25 @@
 <div class="card mb-2">
     <div [formGroup]="formGroupInfo" class="card-body p-2">
-        <h5 class="mb-0">{{line.name}}</h5>
+        <div class="d-flex justify-content-between">
+            <h5 class="mb-0">{{line.name}}</h5>
+            <div class="d-flex align-items-center">
+                <span class="mr-2 text-nowrap">Ngày tạo</span>
+                <span class="mr-2" *ngIf="!isEditting">{{line.date | date:'dd/MM/yyyy'}}</span>
+                <kendo-datepicker class="mr-2 mw-140" format="dd/MM/yyyy" *ngIf="isEditting" formControlName="date">
+                </kendo-datepicker>
+                <ng-container *ngIf="isEditting; else elseTemplateState">
+                    <select *ngIf="formState != 'draft'" class="form-control text-white select-state" formControlName="state" [ngClass]="{'bg-success':formState == 'done', 'bg-danger': formState == 'cancel', 'bg-primary': formState == 'sale'}">
+                        <option class="text-dark bg-white" *ngFor="let item of  listState" [value]="item.value">{{item.text}}</option>
+                    </select>
+                </ng-container>
+                <ng-template #elseTemplateState>
+                    <div class="form-control text-white select-state" [ngClass]="{'bg-success':line.state == 'done', 'bg-danger': line.state == 'cancel', 'bg-primary': line.state == 'sale'}">
+                        {{getStateDisplay(line.state)}}
+                    </div>
+                </ng-template>
+
+            </div>
+        </div>
         <div class="row">
             <div class="col">
                 <table class="o_group o_inner_group o_group_col_12">
@@ -72,34 +91,6 @@
                                 <span *ngIf="!isEditting">{{line.counselor?.name}}</span>
                                 <kendo-combobox [filterable]="true" (filterChange)="onEmployeeCounselor($event)" *ngIf="isEditting" style="width:100%;" [data]="filteredEmployeesCounselor" [textField]="'name'" #counselorCbx formControlName="counselor" [valueField]="'id'">
                                 </kendo-combobox>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label">
-                                    Ngày tạo
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;" class="pr-0">
-                                <span class="" *ngIf="!isEditting">{{line.date | date:'dd/MM/yyyy HH:mm'}}</span>
-                                <kendo-datepicker format="dd/MMM/yyyy HH:mm" *ngIf="isEditting" formControlName="date">
-                                </kendo-datepicker>
-                            </td>
-                        </tr>
-                        <tr *ngIf="line.state != 'draft'">
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label">
-                                    Trạng thái
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;" class="pr-0">
-                                <ng-container *ngIf="!isEditting">
-                                    <span class="mr-1" [ngClass]="{'text-success':line.state == 'done', 'text-danger': line.state == 'cancel'}">{{getStateDisplay(line.state)}}</span>
-                                    <app-sale-order-line-switch-state-popover *ngIf="stateEdit.indexOf(line.state) != -1" (onSaveEvent)="onSWitchState($event)" [lineInput]="line"></app-sale-order-line-switch-state-popover>
-                                </ng-container>
-                                <select *ngIf="isEditting" class="form-control" formControlName="state">
-                                    <option *ngFor="let item of  listState" [value]="item.value">{{item.text}}</option>
-                                </select>
                             </td>
                         </tr>
                     </tbody>

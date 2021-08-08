@@ -111,6 +111,10 @@ export class SaleOrderLineCuComponent implements OnInit {
     return this.formGroupInfo.get("teeth") as FormArray;
   }
 
+  get formState(){
+    return this.formGroupInfo.get("state").value;
+  }
+
   getPriceUnitLinePromotion(line) {
     return line.priceUnit - (line.amountDiscountTotal || 0);
   }
@@ -326,28 +330,33 @@ export class SaleOrderLineCuComponent implements OnInit {
   // }
 
   updateLineInfo() {
+
+    var updateLineInfoRun = ()=> {
     this.isUpdated = true;
     if (this.formGroupInfo.invalid) {
       this.formGroupInfo.markAllAsTouched();
       return false;
     }
-    // if(this.formInfoControl('toothType').value == 'manual' && this.formInfoControl('teeth').value.length == 0) {
-    //   this.notify('error', 'Chọn răng');
-    //   return false;
-    // }
-    // this.formGroupInfo.get("toothCategory").setValue(this.line.toothCategory);
-    // this.TeethFA.clear();
-    // this.line.teeth.forEach(value => {
-    //   this.onSelected(value);
-    // })
-
     let val = this.formGroupInfo.value;
     this.isEditting = false;
-
-    // this.isItSeff = this.isItSeff;
-    // this.notify('success', 'Cập nhật thành công');
     this.onUpdateEvent.emit(val);
     return true;
+    }
+
+    if(this.formState == 'done' || this.formState == 'cancel')
+    {
+      let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+      modalRef.componentInstance.title = this.formState == 'done' ? 'Hoàn thành dịch vụ' : 'Ngừng dịch vụ';
+      modalRef.componentInstance.body = this.formState == 'done'? 'Bạn có xác nhận hoàn thành dịch vụ không'
+      :'Bạn có muốn ngừng dịch vụ không?';
+      modalRef.componentInstance.body2 = this.formState == 'done'?'(Lưu ý: Sau khi ngừng không thể chỉnh sửa dịch vụ)'
+      :'(Lưu ý: Sau khi hoàn thành không thể chỉnh sửa dịch vụ)'
+      modalRef.result.then(() => {
+      return updateLineInfoRun();
+      });
+    } else{
+      return  updateLineInfoRun();
+    }
   }
 
   onChangeQuantity() {
