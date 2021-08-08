@@ -3,7 +3,7 @@
     <span *ngIf="selected?.startDate && selected?.endDate" class="form-control custom-input border-right-0 text-nowrap">
         {{ selected.startDate | date:'dd/MM/yyyy' }} - {{ selected.endDate| date:'dd/MM/yyyy' }}
     </span>
-    <span class="form-control custom-input border-right-0" *ngIf="!selected?.startDate && !selected?.endDate">Chọn thời gian</span>
+    <span class="form-control form-control-sm custom-input border-right-0" *ngIf="!selected?.startDate && !selected?.endDate">Chọn thời gian</span>
     <div (click)="open()" class="input-group-append cursor-pointer">
         <span class="input-group-text">
         <i class="fas fa-calendar-alt"></i>

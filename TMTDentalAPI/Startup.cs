@@ -363,6 +363,10 @@ namespace TMTDentalAPI
             services.AddScoped<ISmsMessageJobService, SmsMessageJobService>();
             services.AddScoped<ISmsMessageService, SmsMessageService>();
             services.AddScoped<ISmsCampaignService, SmsCampaignService>();
+            services.AddScoped<ICustomerReceiptService, CustomerReceiptService>();
+            services.AddScoped<IDashboardReportService, DashboardReportService>();
+            services.AddScoped<ICustomerReceiptReportService, CustomerReceiptReportService>();
+
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
@@ -552,6 +556,8 @@ namespace TMTDentalAPI
                 mc.AddProfile(new AgentProfile());
                 mc.AddProfile(new StockReportProfile());
                 mc.AddProfile(new SaleReportProfile());
+                mc.AddProfile(new CustomerReceiptProfile());
+                mc.AddProfile(new CustomerReceiptReportProfile());
             };
 
             #endregion

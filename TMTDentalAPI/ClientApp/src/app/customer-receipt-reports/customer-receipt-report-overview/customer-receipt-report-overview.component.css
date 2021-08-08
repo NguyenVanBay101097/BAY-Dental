@@ -1,0 +1,44 @@
+.size-chart {
+    height: 200px;
+    width: 200px;
+}
+
+.img-nodata {
+    padding: 10px;
+    width: 150px;
+}
+
+.box-overview {
+    position: relative;
+    min-width: 300px;
+}
+
+.content-box {
+    height: 30%;
+    margin: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.total-qty {
+    font-weight: 600;
+    color: rgb(37, 37, 218);
+    text-align: center;
+    margin: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.text-truncate {
+    display: inline-block;
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+ }

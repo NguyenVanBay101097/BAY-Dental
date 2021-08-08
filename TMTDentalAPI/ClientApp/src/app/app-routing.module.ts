@@ -14,6 +14,11 @@ const routes: Routes = [
     component: AppHomeComponent,
     children: [
       {
+        path: 'customer-receipt-reports',
+        loadChildren: () => import('./customer-receipt-reports/customer-receipt-reports.module').then(m => m.CustomerReceiptReportsModule),
+        canActivate: [AuthGuard],
+      },
+      {
         path: 'member-level',
         loadChildren: () => import('./member-level/member-level.module').then(m => m.MemberLevelModule),
         canActivate: [AuthGuard],

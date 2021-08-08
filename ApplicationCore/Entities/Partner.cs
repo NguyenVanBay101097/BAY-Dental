@@ -106,6 +106,8 @@ namespace ApplicationCore.Entities
 
         public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
 
+        public ICollection<CustomerReceipt> CustomerReceipts { get; set; } = new List<CustomerReceipt>();
+
         public ICollection<PartnerImage> PartnerImages { get; set; } = new List<PartnerImage>();
 
         /// <summary>

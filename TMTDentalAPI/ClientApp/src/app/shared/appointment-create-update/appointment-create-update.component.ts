@@ -9,7 +9,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { EmployeePaged, EmployeeSimple, EmployeeBasic } from 'src/app/employees/employee';
 import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { EmployeeService } from 'src/app/employees/employee.service';
-import { debounceTime, tap, switchMap } from 'rxjs/operators';
+import { debounceTime, tap, switchMap, mergeMap } from 'rxjs/operators';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { PartnerSearchDialogComponent } from 'src/app/partners/partner-search-dialog/partner-search-dialog.component';
@@ -21,6 +21,11 @@ import { PartnerCustomerCuDialogComponent } from '../partner-customer-cu-dialog/
 import { PartnersService } from '../services/partners.service';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductPaged, ProductService } from 'src/app/products/product.service';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { NotifyService } from '../services/notify.service';
+import { Subject } from 'rxjs';
+import { FacebookUserProfileService } from 'src/app/facebook-config/shared/facebook-user-profile.service';
+import { AppointmentBasic, AppointmentDisplay } from 'src/app/appointment/appointment';
 
 @Component({
   selector: 'app-appointment-create-update',
@@ -37,32 +42,16 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   filteredServices: ProductSimple[] = [];
   filteredEmployees: EmployeeBasic[] = [];
   appointId: string;
-  timeExpecteds: any[] = [
-    {
-      name: '0 phút', value: 0
-    },
-    {
-      name: '30 phút', value: 30
-    },
-    {
-      name: '45 phút', value: 45
-    },
-    {
-      name: '60 phút', value: 60
-    },
-    {
-      name: '75 phút', value: 75
-    },
-    {
-      name: '90 phút', value: 90
-    },
-    {
-      name: '105 phút', value: 105
-    },
-    {
-      name: '120 phút', value: 120
-    },
+  title: string;
+  type: string = "receive_update";
+  showIsNotExamination = false;
+
+  states: any[] = [
+    { value: 'confirmed', text: 'Đang hẹn' },
+    { value: 'arrived', text: 'Đã đến' },
+    { value: 'cancel', text: 'Hủy hẹn' },
   ]
+
   defaultVal: any;
   formGroup: FormGroup;
   dotKhamId: any;
@@ -73,6 +62,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   timeSource: string[] = [];
 
   submitted = false;
+  private btnDeleteSubject = new Subject<any>();
 
   get f() { return this.formGroup.controls; }
 
@@ -87,7 +77,9 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     private errorService: AppSharedShowErrorService,
     private odataPartnerService: PartnersService,
     private productService: ProductService,
-    private employeeService: EmployeeService) { }
+    private employeeService: EmployeeService,
+    private notificationService: NotificationService
+   ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -97,8 +89,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       partnerPhone: null,
       partnerTags: this.fb.array([]),
       user: [null],
-      apptDate: [null, Validators.required],
-      appTime: '00:00',
+      dateObj: [null, Validators.required],
+      timeObj: [null, Validators.required],
       note: null,
       companyId: null,
       doctor: null,
@@ -106,7 +98,10 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       state: 'confirmed',
       reason: null,
       saleOrderId: null,
-      services: []
+      services: [],
+      isRepeatCustomer:false,
+      isNotExamination: false,
+      showReason: false
     })
 
     setTimeout(() => {
@@ -181,8 +176,9 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     return times;
   }
 
-
-
+  get stateControl() {
+    return this.formGroup.get('state').value;
+  }
 
   searchEmployees(filter?: string) {
     var val = new EmployeePaged();
@@ -193,28 +189,31 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
   onSave() {
     this.submitted = true;
-
+    
     if (!this.formGroup.valid) {
       return false;
     }
-
-    var appoint = this.formGroup.value;
+    
+    var appoint = this.formGroup.getRawValue();
     appoint.partnerId = appoint.partner ? appoint.partner.id : null;
     appoint.doctorId = appoint.doctor ? appoint.doctor.id : null;
-    var apptDate = this.intlService.formatDate(appoint.apptDate, 'yyyy-MM-dd');
-    var appTime = appoint.appTime;
-    appoint.date = `${apptDate}T00:00:00`;
+    var apptDate = this.intlService.formatDate(appoint.dateObj, 'yyyy-MM-dd');
+    var appTime = this.intlService.formatDate(appoint.timeObj, 'HH:mm:ss');;
+    appoint.date = `${apptDate}T${appTime}`;
     appoint.time = appTime;
     appoint.timeExpected = Number.parseInt(appoint.timeExpected);
+    
     if (this.state != 'cancel') {
       appoint.reason = null;
     }
 
-    if (this.appointId) {
+    if (this.appointId) {   
       this.appointmentService.update(this.appointId, appoint).subscribe(
         () => {
           appoint.id = this.appointId;
-          this.activeModal.close(appoint);
+          var basic = this.getBasic(appoint);
+          this.activeModal.close(basic);
+          
         },
         er => {
           this.errorService.show(er);
@@ -222,9 +221,13 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         },
       )
     } else {
-      this.appointmentService.create(appoint).subscribe(
-        res => {
-          this.activeModal.close(res);
+      this.appointmentService.create(appoint)
+      .pipe(
+        mergeMap((rs: any) => {
+          return this.appointmentService.get(rs.id);
+        })).subscribe( res => {
+          var basic = this.getBasic(res);
+          this.activeModal.close(basic);
         },
         er => {
           this.errorService.show(er);
@@ -232,6 +235,99 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         },
       )
     }
+  }
+
+  getBasic(res) {
+    var basic = new AppointmentBasic();
+    basic.id = this.appointId ? this.appointId : res.id;
+    basic.doctorId = res.doctor ? res.doctorId : null;
+    basic.doctorName = res.doctor ? res.doctor.name : '';
+    basic.partnerId = res.partnerId;
+    basic.partnerName = res.partner.name;
+    basic.partnerPhone = res.partner.phone;
+    basic.date = res.date ? res.date : null;
+    basic.note = res.note;
+    basic.time = res.time;
+    basic.state = res.state;
+    return basic;
+  }
+
+  onDelete(){
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'md', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xóa lịch hẹn';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
+    modalRef.result.then(() => {
+      this.appointmentService.removeAppointment(this.appointId).subscribe(()=>{
+        this.notify("success","Xóa thành công");
+        this.activeModal.close({id : this.appointId , isDetele: true});       
+      })
+      
+    });
+  }
+
+  onDuplicate(){
+    this.appointId = null; 
+    var item = this.formGroup.value;  
+    var res = this.fb.group({
+      name: null,
+      partner: item.partner ? item.partner : null,
+      partnerAge: item.partner ? item.partner.age : null,
+      partnerPhone: item.partner ? item.partner.phone : null,
+      partnerTags: this.fb.array([]),
+      user: item.user ? item.user : null,
+      dateObj: [null, Validators.required],
+      timeObj: [null, Validators.required],
+      note: null,
+      companyId: item.companyId ? item.companyId : null,
+      doctor: item.doctor ? item.doctor : null,
+      timeExpected: '30',
+      state: 'confirmed',
+      reason: null,
+      saleOrderId: null,
+      services: item.services ? item.services : [],
+      isRepeatCustomer: false,
+      isNotExamination: false,
+      showReason: false
+    })
+
+    this.formGroup.patchValue(res);
+    let date = new Date();
+    this.formGroup.get('dateObj').patchValue(date);
+    this.formGroup.get('timeObj').patchValue(date);
+  }
+
+  onChange(){
+    if(this.appointId){
+      if (this.stateControl == 'cancel') {
+        this.formGroup.get("reason").setValidators([Validators.minLength(0), Validators.required]);
+        this.formGroup.get("reason").updateValueAndValidity();
+      } else {
+        this.formGroup.get('reason').clearValidators();
+        this.formGroup.get('reason').updateValueAndValidity();
+        this.formGroup.get('reason').setValue(null);
+      }
+    }
+  }
+
+  eventCheck(value){
+    if (value == true && this.f.isRepeatCustomer.value == false){
+      this.f.reason.setValidators(Validators.required);
+      this.f.reason.updateValueAndValidity();
+    }
+    else{
+      this.f.reason.clearValidators();
+      this.f.reason.updateValueAndValidity();
+    }
+  }
+
+  notify(style, content) {
+    this.notificationService.show({
+      content: content,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: style, icon: true }
+    });
   }
 
   searchCustomerDialog() {
@@ -327,15 +423,18 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       });
   }
 
+  getBtnDeleteObs() {
+    return this.btnDeleteSubject.asObservable();
+  }
+
   loadAppointmentToForm() {
     if (this.appointId != null) {
       this.appointmentService.get(this.appointId).subscribe(
         (rs: any) => {
           this.formGroup.patchValue(rs);
           let date = new Date(rs.date);
-
-          this.formGroup.get('apptDate').patchValue(date);
-          this.formGroup.get('appTime').patchValue(rs.time);
+          this.formGroup.get('dateObj').patchValue(date);
+          this.formGroup.get('timeObj').patchValue(date);
           // this.formGroup.get('apptHour').patchValue(date.getHours());
           // this.formGroup.get('apptMinute').patchValue(date.getMinutes());
 
@@ -438,8 +537,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         this.formGroup.patchValue(rs);
 
         let date = new Date(rs.date);
-        this.formGroup.get('apptDate').patchValue(date);
-        this.formGroup.get('appTime').patchValue('07:00');
+        this.formGroup.get('dateObj').patchValue(date);
+        this.formGroup.get('timeObj').patchValue(date);
         this.formGroup.get('timeExpected').patchValue('30');
 
         if (rs.partner) {

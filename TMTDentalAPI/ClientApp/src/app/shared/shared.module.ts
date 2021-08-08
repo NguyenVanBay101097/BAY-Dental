@@ -98,6 +98,11 @@ import { AgentCreateUpdateDialogComponent } from './agent-create-update-dialog/a
 import { ToothSelectionDialogComponent } from './tooth-selection-dialog/tooth-selection-dialog.component';
 import { TeethChartComponent } from './teeth-chart/teeth-chart.component';
 import { SaleOrderLineSwitchStatePopoverComponent } from '../sale-orders/sale-order-line-switch-state-popover/sale-order-line-switch-state-popover.component';
+import { DashboardRevenueTodayReportComponent } from './components/dashboard-revenue-today-report/dashboard-revenue-today-report.component';
+import { DashboardCustomerReceiptListTodayComponent } from './components/dashboard-customer-receipt-list-today/dashboard-customer-receipt-list-today.component';
+import { CustomerReceipCreateUpdateComponent } from './customer-receip-create-update/customer-receip-create-update.component';
+import { CustomerReceiptStatePopoverComponent } from './customer-receipt-state-popover/customer-receipt-state-popover.component';
+import { IsEllipsisActiveDirective } from './is-ellipsis-active.directive';
 
 const config: LocaleConfig = {};
 @NgModule({
@@ -131,6 +136,7 @@ const config: LocaleConfig = {};
         ConfirmDialogV2Component,
         AnchorHostDirective,
         MyAutosizeDirective,
+        IsEllipsisActiveDirective,
         CharCountDirective,
         SelectUomProductDialogComponent,
         ImageFileUploadComponent,
@@ -180,6 +186,9 @@ const config: LocaleConfig = {};
         DashboardPartnerCustomerReportComponent,
         DashboardSaleReportComponent,
         DashboardServiceTodayReportComponent,
+        DashboardRevenueTodayReportComponent,
+        DashboardCustomerReceiptListTodayComponent,
+        SaleOrderLineCuComponent,
         CashBankTodayReportComponent,
         SaleOrderLineCuComponent,
         DateRangePickerFilterComponent,
@@ -189,7 +198,10 @@ const config: LocaleConfig = {};
         ToothSelectionDialogComponent,
         TeethChartComponent,
         ToothSelectionDialogComponent,
-        SaleOrderLineSwitchStatePopoverComponent
+        SaleOrderLineSwitchStatePopoverComponent,
+       
+        CustomerReceipCreateUpdateComponent,
+        CustomerReceiptStatePopoverComponent
     ],
     exports: [
         ConfirmDialogComponent,
@@ -217,6 +229,7 @@ const config: LocaleConfig = {};
         AnchorHostDirective,
         MyAutosizeDirective,
         CharCountDirective,
+        IsEllipsisActiveDirective,
         SelectUomProductDialogComponent,
         RedirectComponentDirective,
         ImageFileUploadComponent,
@@ -261,6 +274,8 @@ const config: LocaleConfig = {};
         DashboardPartnerCustomerReportComponent,
         DashboardSaleReportComponent,
         DashboardServiceTodayReportComponent,
+        DashboardRevenueTodayReportComponent,
+        DashboardCustomerReceiptListTodayComponent,
         SaleOrderLineCuComponent,
         CashBankTodayReportComponent,
         DateRangePickerFilterComponent,
@@ -270,7 +285,10 @@ const config: LocaleConfig = {};
         ToothSelectionDialogComponent,
         TeethChartComponent,
         ToothSelectionDialogComponent,
-        SaleOrderLineSwitchStatePopoverComponent
+        SaleOrderLineSwitchStatePopoverComponent,
+        
+        CustomerReceipCreateUpdateComponent,
+        CustomerReceiptStatePopoverComponent
     ],
     imports: [
         NgbModule,
@@ -320,7 +338,9 @@ const config: LocaleConfig = {};
         DateRangePickerFilterComponent,
         DateRangePickerDropdownComponent,
         AgentCreateUpdateDialogComponent,
-        ToothSelectionDialogComponent
+        ToothSelectionDialogComponent,
+        
+        CustomerReceipCreateUpdateComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
