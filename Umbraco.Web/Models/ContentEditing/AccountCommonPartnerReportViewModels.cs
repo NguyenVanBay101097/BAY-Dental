@@ -217,6 +217,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class ReportPartnerDebitDetailRes
     {
+        public Guid PartnerId { get; set; }
         public DateTime? Date { get; set; }
         public string InvoiceOrigin { get; set; }
         public decimal Begin { get; set; }
@@ -228,5 +229,19 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal End { get; set; }
         public string Ref { get; set; }
 
+    }
+
+    public class ReportPartnerDebitPrint : ReportPartnerDebitRes
+    {
+        public IEnumerable<ReportPartnerDebitDetailRes> Lines { get; set; } = new List<ReportPartnerDebitDetailRes>();
+    }
+
+    public class ReportPartnerDebitPrintVM
+    {
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public CompanyPrintVM Company { get; set; }
+        public ApplicationUserSimple User { get; set; }
+        public IEnumerable<ReportPartnerDebitPrint> ReportPartnerDebitLines { get; set; } = new List<ReportPartnerDebitPrint>();
     }
 }

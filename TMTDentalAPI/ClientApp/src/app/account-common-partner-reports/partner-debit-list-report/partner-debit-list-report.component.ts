@@ -134,6 +134,19 @@ export class PartnerDebitListReportComponent implements OnInit {
     grid.saveAsExcel();
   }
 
+  onExportPDF(){
+
+  }
+
+  printReport(){
+    var val = new ReportPartnerDebitReq();
+    val.fromDate = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : null;
+    val.toDate = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null;
+    val.search = this.search ? this.search : '';
+    val.companyId = this.companyId || '';
+    this.reportService.printReportPartnerDebit(val).subscribe(result => {})
+  }
+
   public onExcelExport(args: any) {
     args.preventDefault();
     var data = this.items;
@@ -185,9 +198,9 @@ export class PartnerDebitListReportComponent implements OnInit {
           const line = lines[productIdx] as ReportPartnerDebitDetailRes;
           rows.splice(idx + 4, 0, {
             cells: [
-              {},
               { value: new Date(line.date), format: "dd/MM/yyyy" },
               { value: line.invoiceOrigin },
+              { value: line.ref },
               { value: line.begin, format: "#,##0"},
               { value: line.debit, format: "#,##0"},
               { value: line.credit, format: "#,##0"},
@@ -199,9 +212,9 @@ export class PartnerDebitListReportComponent implements OnInit {
         // add the detail header
         rows.splice(idx + 4, 0, {
           cells: [
-            {},
             Object.assign({}, headerOptions, { value: 'Ngày' }),
             Object.assign({}, headerOptions, { value: 'Số phiếu' }),
+            Object.assign({}, headerOptions, { value: 'Nội dung' }),
             Object.assign({}, headerOptions, { value: 'Nợ đầu kì' }),
             Object.assign({}, headerOptions, { value: 'Phát sinh' }),
             Object.assign({}, headerOptions, { value: 'Thanh toán' }),

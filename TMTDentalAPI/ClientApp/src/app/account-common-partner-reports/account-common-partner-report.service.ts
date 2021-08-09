@@ -108,6 +108,7 @@ export class ReportPartnerDebitDetailRes {
     debit: number;
     credit: number;
     end: number;
+    ref: string;
 }
 
 @Injectable()
@@ -153,5 +154,9 @@ export class AccountCommonPartnerReportService {
 
     reportPartnerDebitSummary(val: ReportPartnerDebitReq) {
         return this.http.post(this.baseApi + this.apiUrl + "/ReportPartnerDebitSummary", val);
+    }
+
+    printReportPartnerDebit(val: ReportPartnerDebitReq) {
+        return this.http.post(this.baseApi + "AccountCommonPartnerReport/PrintReportPartnerDebit", val,{ responseType: "text" });
     }
 }

@@ -577,7 +577,8 @@ namespace Infrastructure.Services
                         Debit = x.Debit,
                         Credit = x.Credit,
                         InvoiceOrigin = x.Move.InvoiceOrigin,
-                        Ref = x.Ref
+                        Ref = x.Ref,
+                        PartnerId = x.PartnerId.Value
                     }).ToList();
 
 
@@ -617,6 +618,39 @@ namespace Infrastructure.Services
                 Credit = result.Count > 0 ? result[0].Credit : 0,
                 Balance = result.Count > 0 ? result[0].Balance : 0,
             };
+        }
+
+        public async Task<ReportPartnerDebitPrintVM> PrintReportPartnerDebit(ReportPartnerDebitReq val)
+        {
+            var companyObj = GetService<ICompanyService>();
+            var userObj = GetService<IUserService>();
+            var result = new ReportPartnerDebitPrintVM();
+            var reportPartnerDebitDetailReq = new ReportPartnerDebitDetailReq()
+            {
+                FromDate = val.FromDate,
+                ToDate = val.ToDate,
+                CompanyId = val.CompanyId,
+                PartnerId = val.PartnerId
+            };
+            var user = await userObj.GetCurrentUser();
+            result.User = _mapper.Map<ApplicationUserSimple>(user);
+            if (val.CompanyId.HasValue)
+            {
+                result.Company = _mapper.Map<CompanyPrintVM>(await companyObj.SearchQuery(x => x.Id == val.CompanyId)
+                    .Include(x => x.Partner).FirstOrDefaultAsync());
+            }
+            var lines = _mapper.Map<IEnumerable<ReportPartnerDebitPrint>>(await ReportPartnerDebit(val));
+            var details = await ReportPartnerDebitDetail(reportPartnerDebitDetailReq);
+            foreach (var line in lines)
+            {
+                line.Lines = details.Where(x => x.PartnerId == line.PartnerId).ToList();
+            }
+            result.ReportPartnerDebitLines = lines;
+            result.DateFrom = val.FromDate;
+            result.DateTo = val.ToDate;
+
+            return result;
+
         }
     }
 
