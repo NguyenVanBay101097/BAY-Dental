@@ -74,7 +74,7 @@ export class AppointmentKanbanComponent implements OnInit {
 
   viewKanban: string = "calendar"; // "calendar", "list"
   gridData: GridDataResult;
-  limit: number = 20;
+  limit: number = 1000;
   offset: number = 0
   loading: boolean = false;
   // events = [];
@@ -125,18 +125,16 @@ export class AppointmentKanbanComponent implements OnInit {
     this.getElements();
 
     this.loadData();
-    this.loadGridData();
 
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
         this.loadData();
-        this.loadGridData();
       });
 
     // this.loadListEmployees();
-    this.loadDoctorList();
+    // this.loadDoctorList();
   }
 
   loadDoctorList() {
@@ -159,7 +157,6 @@ export class AppointmentKanbanComponent implements OnInit {
   onChangeEmployee(employeeId) {
     this.employeeSelected = employeeId;
     this.loadData();
-    this.loadGridData();
   }
 
   onChangeDate(e) {
@@ -172,7 +169,6 @@ export class AppointmentKanbanComponent implements OnInit {
   onChangeState(state) {
     this.state = state;
     this.loadData();
-    this.loadGridData();
   }
 
   createAppointment() {
@@ -180,28 +176,35 @@ export class AppointmentKanbanComponent implements OnInit {
     modalRef.componentInstance.title = "Đặt lịch hẹn";
     modalRef.result.then(result => {
       this.loadData();
-      this.loadGridData();
     }, () => { });
   }
 
   refreshData() {
     this.loadData();
-    this.loadGridData();
   }
 
   loadData() {
     this.resetData();
+    // this.loading = true;
     var val = new AppointmentPaged();
-    val.limit = 1000;
+    val.limit = this.limit;
+    val.offset = this.offset;
     val.state = this.state || '';
     val.search = this.search || '';
     val.doctorId = this.employeeSelected || '';
     val.dateTimeFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
     val.dateTimeTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
 
-    this.appointmentService.getPaged(val).subscribe((result: any) => {
-      // this.addAppointments(result);
-      this.dataAppointments = result.items.map(v => ({
+    this.appointmentService.getPaged(val).pipe(
+      map((response: any) =>
+      (<GridDataResult>{
+        data: response.items,
+        total: response.totalItems
+      }))
+    ).subscribe((result: any) => {
+      this.gridData = result;
+      this.loading = false;
+      this.dataAppointments = result.data.map(v => ({
         ...v,
         date: new Date(v.date),
         dateFormat: new Date(v.date).setHours(0, 0, 0, 0),
@@ -214,6 +217,7 @@ export class AppointmentKanbanComponent implements OnInit {
 
     }, (error: any) => {
       console.log(error);
+      this.loading = false;
     });
   }
 
@@ -244,7 +248,6 @@ export class AppointmentKanbanComponent implements OnInit {
     modalRef.componentInstance.appointId = appointment.id;
     modalRef.result.then(() => {
       this.loadData();
-      this.loadGridData();
       this.appointmentService.getBasic(appointment.id).subscribe(item => {
         var date = new Date(item.date);
         var key = date.toDateString();
@@ -391,33 +394,8 @@ export class AppointmentKanbanComponent implements OnInit {
     this.viewKanban = event;
   }
 
-  loadGridData() {
-    var val = new AppointmentPaged();
-    val.limit = this.limit;
-    val.offset = this.offset;
-    val.doctorId = this.employeeSelected || '';
-    val.state = this.state || '';
-    val.dateTimeFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
-    val.dateTimeTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
-
-    this.appointmentService.getPaged(val).pipe(
-      map((response: any) =>
-      (<GridDataResult>{
-        data: response.items,
-        total: response.totalItems
-      }))
-    ).subscribe((result) => {
-      this.gridData = result;
-      this.loading = false;
-    }, (error) => {
-      console.log(error);
-      this.loading = false;
-    })
-  }
-
   pageChange(event: PageChangeEvent): void {
     this.offset = event.skip;
-    this.loadGridData();
   }
 
   computeNameSerivc(items: any[]) {
@@ -917,14 +895,17 @@ export class AppointmentKanbanComponent implements OnInit {
     contentTimeEl.innerHTML = `
       <i class="fas fa-info-circle"></i>
       <span>
-          ${`${('0' + appointment.date.getHours()).slice(-2)}:00 - ${('0' + (parseInt(appointment.date.getHours()) + 1)).slice(-2)}:00`}
+        ${('0' + appointment.date.getHours()).slice(-2)}:
+        ${('0' + appointment.date.getMinutes()).slice(-2)} - 
+        ${('0' + (appointment.date.getHours() + Math.floor((appointment.date.getMinutes() + appointment.timeExpected) / 60))).slice(-2)}:
+        ${('0' + Math.floor((appointment.date.getMinutes() + appointment.timeExpected) % 60)).slice(-2)}
       </span>
     `;
     let contentReferrerEl = document.createElement('div');
     contentReferrerEl.classList.add("content", "referrer");
     contentReferrerEl.innerHTML = `
       <i class="fas fa-user-plus"></i>
-      <span>${appointment.doctorName}</span>
+      <span>${appointment.doctorName || ""}</span>
     `;
 
     dateEventV2El.appendChild(headerEl);
@@ -974,7 +955,6 @@ export class AppointmentKanbanComponent implements OnInit {
     modalRef.componentInstance.title = id ? "Cập nhật lịch hẹn" : "Đặt lịch hẹn";
     modalRef.result.then(result => {
       this.loadData();
-      this.loadGridData();
     }, () => { });
   }
 
@@ -997,7 +977,6 @@ export class AppointmentKanbanComponent implements OnInit {
       modalRef.componentInstance.title = "Tiếp nhận";
       modalRef.result.then(result => {
         this.loadData();
-        this.loadGridData();
       }, () => { });
     }
   }
