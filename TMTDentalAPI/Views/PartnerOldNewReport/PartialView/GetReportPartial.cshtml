@@ -45,15 +45,15 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="">@item.Name</td>
-                        <td class="">@item.Age</td>
-                        <td class="">@(!string.IsNullOrEmpty(item.Gender) && gender_dict.ContainsKey(item.Gender) ? gender_dict[item.Gender] : "Nam")</td>
-                        <td>@item.Address</td>
-                        <td class="text-right">@(string.Format(culture, "{0:0,0}", item.Revenue))</td>
-                        <td>@item.MemberLevel.Name</td>
-                        <td>@item.SourceName</td>
-                        <td>@(string.Join(",", item.Categories.Select(x=> x.Name).ToList()))</td>
-                        <td>@(!string.IsNullOrEmpty(item.Gender) && status_dict.ContainsKey(item.Gender) ? status_dict[item.Gender] : "Chưa phát sinh")</td>
+                        <td class="" style="width:100px">@item.Name</td>
+                        <td class="" style="width:60px">@item.Age</td>
+                        <td class="" style="width:100px">@(!string.IsNullOrEmpty(item.Gender) && gender_dict.ContainsKey(item.Gender) ? gender_dict[item.Gender] : "Nam")</td>
+                        <td  style="width:120px">@item.Address</td>
+                        <td class="text-right"  style="width:100px">@(string.Format(culture, "{0:0,0}", item.Revenue))</td>
+                        <td  style="width:100px">@(item.MemberLevel != null ? item.MemberLevel.Name : "")</td>
+                        <td style="width:80px">@item.SourceName</td>
+                        <td style="width:80px">@(string.Join(",", item.Categories.Select(x=> x.Name).ToList()))</td>
+                        <td style="width:150px">@(!string.IsNullOrEmpty(item.Gender) && status_dict.ContainsKey(item.Gender) ? status_dict[item.Gender] : "Chưa phát sinh")</td>
                     </tr>
                 </tbody>
             </table>

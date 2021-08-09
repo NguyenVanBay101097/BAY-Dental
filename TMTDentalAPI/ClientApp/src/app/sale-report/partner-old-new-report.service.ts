@@ -88,4 +88,12 @@ export class PartnerOldNewReportService {
   sumReport(val: any) {
     return this.http.get(this.baseApi + this.apiUrl + "/SumReport", { params: new HttpParams({ fromObject: val }) });
   }
+
+  getReportPrint(val) {
+    return this.http.get(this.baseApi + 'PartnerOldNewReport/GetReportPrint', {params: new HttpParams({fromObject: val}), responseType:'text'});
+}
+
+getReportPdf(val){
+    return this.http.get(this.baseApi + this.apiUrl+ '/GetReportPdf',{params: new HttpParams({fromObject: val}), responseType:'blob'});
+}
 }

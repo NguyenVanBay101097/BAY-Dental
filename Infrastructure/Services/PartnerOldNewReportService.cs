@@ -27,7 +27,7 @@ namespace Infrastructure.Services
             _mapper = mapper;
             _context = context;
             _httpContextAccessor = httpContextAccessor;
-            userService = _userService;
+            _userService = userService;
         }
 
         public IQueryable<PartnerOldNewReport> _GetQueryAble(PartnerOldNewReportSearch val)

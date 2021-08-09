@@ -10,6 +10,7 @@ import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } fr
 import { PartnerSourcePaged, PartnerSourceService } from 'src/app/partner-sources/partner-source.service';
 import { PartnerSourceSimple } from 'src/app/partners/partner-simple';
 import { PartnerOldNewReportReq, PartnerOldNewReportService, PartnerOldNewReportSumReq } from 'src/app/sale-report/partner-old-new-report.service';
+import { PrintService } from 'src/app/shared/services/print.service';
 
 @Component({
   selector: 'app-partner-report-overview',
@@ -62,6 +63,7 @@ export class PartnerReportOverviewComponent implements OnInit {
     private pnSourceService: PartnerSourceService,
     private partnerOldNewRpService: PartnerOldNewReportService,
     private partnerCategoryService: PartnerCategoryService,
+    private printService: PrintService,
     private memberLevelService: MemberLevelService
   ) { }
 
@@ -306,5 +308,44 @@ export class PartnerReportOverviewComponent implements OnInit {
 
   toggleFilterAdvance() {
     this.isFilterAdvance = !this.isFilterAdvance;
+  }
+
+  onExportPDF() {
+    var val = Object.assign({}, this.filter) as PartnerOldNewReportReq;
+    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
+    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    this.loading = true;
+    this.partnerOldNewRpService.getReportPdf(val).subscribe(res => {
+      this.loading = false;
+      let filename ="BaoCaoTheoDichVu";
+
+      let newBlob = new Blob([res], {
+        type:
+          "application/pdf",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
+  }
+
+
+  onPrint(){
+    var val = Object.assign({}, this.filter) as PartnerOldNewReportReq;
+    
+    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
+    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    this.loading = true;
+      this.partnerOldNewRpService.getReportPrint(val).subscribe((result: any) => {
+        this.loading = false;
+        this.printService.printHtml(result);
+      });
   }
 }
