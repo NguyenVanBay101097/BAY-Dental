@@ -22,6 +22,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Time { get; set; }
 
         /// <summary>
+        /// Thời gian dự kiến
+        /// </summary>
+        public int TimeExpected { get; set; }
+
+        /// <summary>
         /// Người hẹn
         /// </summary>
         public string UserId { get; set; }

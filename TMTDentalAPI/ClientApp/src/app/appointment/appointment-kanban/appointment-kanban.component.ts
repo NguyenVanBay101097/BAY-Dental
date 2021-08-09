@@ -909,14 +909,17 @@ export class AppointmentKanbanComponent implements OnInit {
     contentTimeEl.innerHTML = `
       <i class="fas fa-info-circle"></i>
       <span>
-          ${`${('0' + appointment.date.getHours()).slice(-2)}:00 - ${('0' + (parseInt(appointment.date.getHours()) + 1)).slice(-2)}:00`}
+        ${('0' + appointment.date.getHours()).slice(-2)}:
+        ${('0' + appointment.date.getMinutes()).slice(-2)} - 
+        ${('0' + (appointment.date.getHours() + Math.floor((appointment.date.getMinutes() + appointment.timeExpected) / 60))).slice(-2)}:
+        ${('0' + Math.floor((appointment.date.getMinutes() + appointment.timeExpected) % 60)).slice(-2)}
       </span>
     `;
     let contentReferrerEl = document.createElement('div');
     contentReferrerEl.classList.add("content", "referrer");
     contentReferrerEl.innerHTML = `
       <i class="fas fa-user-plus"></i>
-      <span>${appointment.doctorName}</span>
+      <span>${appointment.doctorName || ""}</span>
     `;
 
     dateEventV2El.appendChild(headerEl);
