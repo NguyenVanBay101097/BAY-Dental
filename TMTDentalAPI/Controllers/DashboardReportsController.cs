@@ -44,12 +44,6 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpPost("[action]")]
-        public async Task<IActionResult> GetCountSaleOrder(ReportTodayRequest val)
-        {
-            var res = await _dashboardService.GetCountSaleOrder(val);
-            return Ok(res);
-        }
 
         [HttpPost("[action]")]
         public async Task<IActionResult> GetSumary(ReportTodayRequest val)

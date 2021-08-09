@@ -16,6 +16,7 @@ import { DashboardCustomerReceiptListTodayComponent } from '../dashboard-custome
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
+import { SaleOrderService } from 'src/app/core/services/sale-order.service';
 
 @Component({
   selector: 'app-reception-dashboard',
@@ -49,6 +50,7 @@ export class ReceptionDashboardComponent implements OnInit {
   constructor(private checkPermissionService: CheckPermissionService, private dashboardReportService: DashboardReportService,
     private intlService: IntlService,
     private authService: AuthService,
+    private saleOrderService: SaleOrderService,
     private appointmentService : AppointmentService,
     private employeeService: EmployeeService,
     private customerReceiptService: CustomerReceiptService,
@@ -86,7 +88,7 @@ export class ReceptionDashboardComponent implements OnInit {
     val.companyId = this.authService.userInfo.companyId;
     val.dateFrom = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
     val.dateTo = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
-    this.dashboardReportService.getCountSaleOrder(val).subscribe(rs => {
+    this.saleOrderService.getCountSaleOrder(val).subscribe(rs => {
       this.countSaleOrder = rs;
     }, () => {
 
@@ -128,6 +130,7 @@ export class ReceptionDashboardComponent implements OnInit {
     val.offset = this.skip;
     val.dateFrom = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
     val.dateTo = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
+    val.companyId = this.authService.userInfo.companyId;
     this.customerReceiptService.getPaged(val).pipe(
       map((response) => <GridDataResult>{
         data: response.items,
@@ -153,6 +156,7 @@ export class ReceptionDashboardComponent implements OnInit {
     val.offset = this.skip;
     val.dateTimeFrom = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
     val.dateTimeTo = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
+    val.companyId = this.authService.userInfo.companyId;
     this.appointmentService.loadAppointmentList(val).pipe(
       map((response) => <GridDataResult>{
         data: response.items,
@@ -186,36 +190,41 @@ export class ReceptionDashboardComponent implements OnInit {
   }
 
   onCreateCR(event) {
-    this.customerReceiptList.push(event);
+    this.loadDataCustomerRecieptApi();
+    // this.customerReceiptList.push(event);
     this.loadMedicalXamination();
   }
 
   onUpdateCR(event) {    
-    var item = this.customerReceiptList.find(x => x.id === event.id);
-    if (item) {
-      Object.assign(item, event);
-    }
+    this.loadDataCustomerRecieptApi();
+    // var item = this.customerReceiptList.find(x => x.id === event.id);
+    // if (item) {
+    //   Object.assign(item, event);
+    // }
     this.loadMedicalXamination();
   }
 
   onCreateAP(event) {
-    this.appointmenttList.push(event);
+    this.loadDataAppointmentApi();
+    // this.appointmenttList.push(event);
     this.loadMedicalXamination();
   }
 
   onUpdateAP(event) {    
-    var item = this.appointmenttList.find(x => x.id === event.id);
-    if (item) {
-      Object.assign(item, event);
-    }
+    this.loadDataAppointmentApi();
+    // var item = this.appointmenttList.find(x => x.id === event.id);
+    // if (item) {
+    //   Object.assign(item, event);
+    // }
     this.loadMedicalXamination();
   }
 
   onDeleteAP(event) {    
-    const index = this.appointmenttList.findIndex(el => el.id === event.id)
-    if (index > -1) {
-      this.appointmenttList.splice(index, 1);
-    }
+    this.loadDataAppointmentApi();
+    // const index = this.appointmenttList.findIndex(el => el.id === event.id)
+    // if (index > -1) {
+    //   this.appointmenttList.splice(index, 1);
+    // }
     this.loadMedicalXamination();
   }
 

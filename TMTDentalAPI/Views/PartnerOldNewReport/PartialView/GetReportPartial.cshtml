@@ -52,7 +52,7 @@
                         <td class="text-right">@(string.Format(culture, "{0:0,0}", item.Revenue))</td>
                         <td>@item.MemberLevel.Name</td>
                         <td>@item.SourceName</td>
-                        <td>@(string.Join(",", item.Categories.Select(x=> x.Name).ToList())</td>
+                        <td>@(string.Join(",", item.Categories.Select(x=> x.Name).ToList()))</td>
                         <td>@(!string.IsNullOrEmpty(item.Gender) && status_dict.ContainsKey(item.Gender) ? status_dict[item.Gender] : "Chưa phát sinh")</td>
                     </tr>
                 </tbody>

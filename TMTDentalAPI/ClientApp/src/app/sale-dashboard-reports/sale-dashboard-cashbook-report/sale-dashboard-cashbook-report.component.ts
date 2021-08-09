@@ -9,10 +9,8 @@ import { CashBookReportFilter, CashBookReportItem, CashBookService } from 'src/a
 })
 export class SaleDashboardCashbookReportComponent implements OnInit {
   @Input() groupby: string;
-  @Input() dateTo: Date;
-  @Input() dateFrom: Date;
-  @Input() companyId: string;
-  cashBooks: CashBookReportItem[] = [];
+  @Input() cashBooks: any;
+  cashBookData: CashBookReportItem[] = [];
   cashbookThu: any[] = [];
   cashbookChi: any[] = [];
   cashbookTotal: any[] = [];
@@ -32,21 +30,11 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
   }
 
   loadDataApi() {
-    if (!this.dateFrom || !this.dateTo) {
-      return false;
-    }
-
-    var filter = new CashBookReportFilter();
-    filter.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
-    filter.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
-    filter.companyId = this.companyId ? this.companyId : '';
-    filter.groupBy = this.groupby;
-    this.cashBookService.getChartReport(filter).subscribe((result: any) => {
-      this.cashBooks = result;
-      this.cashbookSeries = [];
-      this.loadCashbookGroupby();
-      this.loadCashbookSeries();
-    });
+    debugger
+    this.cashBookData = this.cashBooks;
+    this.cashbookSeries = [];
+    this.loadCashbookGroupby();
+    this.loadCashbookSeries();
   }
 
   public labelContent = (e: any) => {
@@ -55,14 +43,14 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
   };
 
   loadCashbookSeries(){
-    var cashbookThu = {name: "Thu", type: "column", data : this.cashBooks.map(s => s.totalThu)};
-    var cashbookChi = {name: "Chi", type: "column", data : this.cashBooks.map(s => s.totalChi)};
-    var cashbookTotalAmount = {name: "Tồn sổ quỹ", type: "line", data : this.cashBooks.map(s => s.totalAmount)};
+    var cashbookThu = {name: "Thu", type: "column", data : this.cashBookData.map(s => s.totalThu)};
+    var cashbookChi = {name: "Chi", type: "column", data : this.cashBookData.map(s => s.totalChi)};
+    var cashbookTotalAmount = {name: "Tồn sổ quỹ", type: "line", data : this.cashBookData.map(s => s.totalAmount)};
     this.cashbookSeries.push(cashbookThu,cashbookChi,cashbookTotalAmount);      
   }
 
   loadCashbookGroupby() { 
-    this.cashbookCategs = this.cashBooks.map(s => s.date);
+    this.cashbookCategs = this.cashBookData.map(s => s.date);
        
   }
 

@@ -3117,5 +3117,23 @@ namespace Infrastructure.Services
             };
             return res;
         }
+
+        public async Task<long> GetCountSaleOrder(GetCountSaleOrderFilter val)
+        {
+            var saleOrderObj = GetService<ISaleOrderService>();
+
+            var query = saleOrderObj.SearchQuery();
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.DateOrder >= val.DateFrom.Value.AbsoluteBeginOfDate());
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.DateOrder <= val.DateTo.Value.AbsoluteEndOfDate());
+
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+
+            return await query.LongCountAsync();
+        }
     }
 }

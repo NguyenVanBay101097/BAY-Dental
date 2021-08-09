@@ -90,6 +90,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Read")]
+        public async Task<IActionResult> GetCountSaleOrder(GetCountSaleOrderFilter val)
+        {
+            var res = await _saleOrderService.GetCountSaleOrder(val);
+            return Ok(res);
+        }
+
         [HttpPost]
         [CheckAccess(Actions = "Basic.SaleOrder.Create")]
         public async Task<IActionResult> Create(SaleOrderSave val)

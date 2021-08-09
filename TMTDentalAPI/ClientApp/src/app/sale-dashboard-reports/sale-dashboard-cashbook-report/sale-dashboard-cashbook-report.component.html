@@ -9,7 +9,7 @@
         </kendo-chart-category-axis-item>
     </kendo-chart-category-axis>
     <kendo-chart-series>
-        <ng-container *ngIf="cashBooks.length > 0">
+        <ng-container *ngIf="cashbookSeries.length > 0">
             <kendo-chart-series-item
             *ngFor="let item of cashbookSeries"
             [type]="item.type"

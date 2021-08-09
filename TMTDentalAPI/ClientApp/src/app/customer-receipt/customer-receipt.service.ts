@@ -13,6 +13,7 @@ export class CustomerReceiptPaged {
   dateFrom: string;
   dateTo: string;
   doctorId: string;
+  companyId: string;
   state: string;
 }
 
@@ -36,41 +37,39 @@ export class CustomerReceiptBasic {
   state: string;
 }
 
-export class CustomerReceiptDisplay
-{
-    id: string;
-    dateWaiting: string;
-    dateExamination: string;
-    dateDone: string;
-    timeExpected: string;
-    products: ProductSimple[];
-    note: string;
-    partnerId: string;
-    partner: PartnerSimpleContact;
-    companyId: string;
-    doctorId: string;
-    doctor: EmployeeSimple;
-    state: string;
-    reason: string;
-    isRepeatCustomer: boolean;
-    isNoTreatment: boolean;
+export class CustomerReceiptDisplay {
+  id: string;
+  dateWaiting: string;
+  dateExamination: string;
+  dateDone: string;
+  timeExpected: string;
+  products: ProductSimple[];
+  note: string;
+  partnerId: string;
+  partner: PartnerSimpleContact;
+  companyId: string;
+  doctorId: string;
+  doctor: EmployeeSimple;
+  state: string;
+  reason: string;
+  isRepeatCustomer: boolean;
+  isNoTreatment: boolean;
 }
 
-export class CustomerReceiptSave
-{
-    dateWaiting: string;
-    dateExamination: string;
-    dateDone: string;
-    timeExpected: string;
-    products: ProductSimple[];
-    note: string;
-    partnerId: string;
-    companyId: string;
-    doctorId: string;
-    state: string;
-    reason: string;
-    isRepeatCustomer: boolean;
-    isNoTreatment: boolean;
+export class CustomerReceiptSave {
+  dateWaiting: string;
+  dateExamination: string;
+  dateDone: string;
+  timeExpected: string;
+  products: ProductSimple[];
+  note: string;
+  partnerId: string;
+  companyId: string;
+  doctorId: string;
+  state: string;
+  reason: string;
+  isRepeatCustomer: boolean;
+  isNoTreatment: boolean;
 }
 
 export class CustomerReceiptGetCountVM {

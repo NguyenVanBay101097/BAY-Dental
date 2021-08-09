@@ -5,14 +5,15 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { aggregateBy } from '@progress/kendo-data-query';
 import { values } from 'lodash';
-import { forkJoin, observable, Observable, Subject } from 'rxjs';
+import { forkJoin, observable, Observable, of, Subject } from 'rxjs';
 import { debounceTime, map, switchMap, tap, groupBy } from 'rxjs/operators';
-import { AccountCommonPartnerReportSearch, AccountCommonPartnerReportSearchV2, AccountCommonPartnerReportService, ReportPartnerDebitReq } from 'src/app/account-common-partner-reports/account-common-partner-report.service';
+import { AccountCommonPartnerReport, AccountCommonPartnerReportSearch, AccountCommonPartnerReportSearchV2, AccountCommonPartnerReportService, ReportPartnerDebitReq } from 'src/app/account-common-partner-reports/account-common-partner-report.service';
 import { AccountFinancialReportBasic, AccountFinancialReportService } from 'src/app/account-financial-report/account-financial-report.service';
 import { AccoutingReport, ReportFinancialService } from 'src/app/account-financial-report/report-financial.service';
+import { AccountInvoiceReportService, RevenueReportFilter } from 'src/app/account-invoice-reports/account-invoice-report.service';
 import { AccountReportGeneralLedgerService, ReportCashBankGeneralLedger } from 'src/app/account-report-general-ledgers/account-report-general-ledger.service';
 import { AuthService } from 'src/app/auth/auth.service';
-import { CashBookService } from 'src/app/cash-book/cash-book.service';
+import { CashBookReportFilter, CashBookService } from 'src/app/cash-book/cash-book.service';
 import { CommissionSettlementFilterReport, CommissionSettlementReportOutput, CommissionSettlementsService } from 'src/app/commission-settlements/commission-settlements.service';
 import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/company.service';
 import { GetRevenueSumTotalReq, SaleOrderService } from 'src/app/core/services/sale-order.service';
@@ -41,7 +42,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
   @ViewChild(SaleDashboardReportChartFlowMonthComponent, { static: true }) monthReport: SaleDashboardReportChartFlowMonthComponent;
   formGroup: FormGroup;
   public aggregates: any[] = [
-    { field: 'debit', aggregate: 'sum' }, { field: 'credit', aggregate: 'sum' } , { field: 'end', aggregate: 'sum' }
+    { field: 'debit', aggregate: 'sum' }, { field: 'credit', aggregate: 'sum' }, { field: 'end', aggregate: 'sum' }
   ];
 
   public aggregatesThuChi: any[] = [
@@ -54,12 +55,12 @@ export class SaleDashboardReportFormComponent implements OnInit {
 
   dateFrom: Date;
   dateTo: Date;
-  totalAmountNCC: number;
-  totalDebitNCC: number;
+  totalAmountNCC: number = 0;
+  totalDebitNCC: number = 0;
   totalDebitNCCByMonth: number;
   totalCreditNCCByMonth: number;
   accountFinancialReportBasic: AccountFinancialReportBasic = new AccountFinancialReportBasic();
-  totalDebitCustomer: number;
+  totalDebitCustomer: number = 0;
   totalDoanhThu: number;
   totalChiPhi: number;
   totalThu: number;
@@ -68,22 +69,33 @@ export class SaleDashboardReportFormComponent implements OnInit {
   filteredCompanies: CompanyBasic[] = [];
   totalHoaHong: number;
   reportLedgerBank: any;
-  moneyCash: number;
-  moneyBank: number;
+  moneyCash: number = 0;
+  moneyBank: number = 0;
   public reportCurrentYears: any[];
   public reportOldYears: any[];
   companyId: string;
   filterMonthDate: Date = new Date();
-  sumRevenue: any;
+  sumRevenue: number;
   groupBy: string = 'groupby:day';
+  reportAmounTotal: any;
+  cashBooks : any[];
+  revenues : any[];
 
   currentYear = new Date().getFullYear();
   oldYear = this.currentYear - 1;
   companyChangeSubject = new Subject();
 
-  filterGroupby : any[] = [
+  filterGroupby: any[] = [
     { value: 'groupby:day', text: 'Ngày' },
     { value: 'groupby:month', text: 'Tháng' },
+  ];
+
+  filterTotalAmount: any[] = [
+    { value: 'cash', text: 'Quỹ tiền mặt' },
+    { value: 'bank', text: 'Quỹ ngân hàng' },
+    { value: 'supplierdebit', text: 'Công nợ phải trả' },
+    { value: 'customerdebit', text: 'Công nợ phải thu' },
+    { value: 'residual', text: 'Dự kiến thu' },
   ];
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
@@ -91,6 +103,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
   constructor(
     private partnerService: PartnerService,
     private fb: FormBuilder,
+    private revenueReportService: AccountInvoiceReportService,
     private reportService: AccountCommonPartnerReportService,
     private companyService: CompanyService,
     private intlService: IntlService,
@@ -126,14 +139,9 @@ export class SaleDashboardReportFormComponent implements OnInit {
   }
 
   loadAllData() {
-    this.loadDebitNCC();
-    this.loadDataMoney();
-    this.loadDebitCustomer();
-    this.loadFinacialReport();
-    this.loadDebitNCCByMonth();
-    this.loadPhieuThuChiReport();
-    this.getRevenueSumTotal();
-    this.loadCommissionSettlementReport();
+    this.loadReportAmountTotal();
+    this.loadDataRevenueApi();
+    this.loadDataCashbookApi();
   }
 
   changeCompany(e) {
@@ -164,33 +172,62 @@ export class SaleDashboardReportFormComponent implements OnInit {
 
   // filter by company
 
-  loadDebitNCC() {
-    var val = new AccountCommonPartnerReportSearchV2();
-    val.resultSelection = "supplier";
-    val.companyId = this.companyId || '';
-    this.reportService.getSummaryPartner(val).subscribe(res => {
-      if (res) {
-        this.totalDebitNCC = (res.debit - res.credit) * -1;
-      }
-    }, err => {
-      console.log(err);
-    })
+  loadReportAmountTotal() {
+    var companyId = this.companyId ? this.companyId : '';
+    let res1 = this.cashBookService.getTotal({ resultSelection: "cash", companyId: companyId });
+    let res2 = this.cashBookService.getTotal({ resultSelection: "bank", companyId: companyId });
+    let res3 = this.reportService.getSummaryPartner({ resultSelection: "supplier", companyId: companyId }).pipe(map(x => x.initialBalance * -1));
+    let res4 = this.reportService.getSummaryPartner({ resultSelection: "customer", companyId: companyId }).pipe(map(x => x.initialBalance));
+    let res5 = this.saleOrderService.getRevenueSumTotal({ companyId: companyId }).pipe(map((res: any) => res.residual));
+    forkJoin([res1, res2, res3, res4, res5])     
+      .subscribe(data => {
+        this.moneyCash = data[0];
+        this.moneyBank = data[1];
+        this.totalDebitNCC = data[2];
+        this.totalDebitCustomer = data[3];
+        this.sumRevenue = data[4];
+      });
+    
   }
 
-  loadDebitCustomer() {
-    var val = new ReportPartnerDebitReq();
-    val.companyId = this.companyId;
-    this.reportService.reportPartnerDebitSummary(val).subscribe((res: any) => {
-      this.totalDebitCustomer = res.balance;
-    }, err => {
-      console.log(err);
-    })
+  loadDataCashbookApi() {
+    if (!this.dateFrom || !this.dateTo) {
+      return false;
+    }
+
+    var filter = new CashBookReportFilter();
+    filter.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
+    filter.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
+    filter.companyId = this.companyId ? this.companyId : '';
+    filter.groupBy = this.groupBy;
+    this.cashBookService.getChartReport(filter).subscribe((result: any) => {
+      debugger
+      this.cashBooks = result;    
+    });
   }
+
+  loadDataRevenueApi() {
+    if (!this.dateFrom || !this.dateTo) {
+      return false;
+    }
+
+    var filter = new RevenueReportFilter();
+    filter.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
+    filter.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
+    filter.companyId = this.companyId ? this.companyId : '';
+    filter.groupBy = this.groupBy;
+    this.revenueReportService.getRevenueReport(filter).subscribe((result: any) => {
+      this.revenues = result;
+    });
+  }
+
+
+  
 
   getRevenueSumTotal() {
     var val = new GetRevenueSumTotalReq();
     val.companyId = this.companyId || '';
-    this.saleOrderService.getRevenueSumTotal(val).subscribe((res:any) => {
+    this.saleOrderService.getRevenueSumTotal(val).subscribe((res: any) => {
       this.sumRevenue = res;
     }
     );
@@ -216,22 +253,27 @@ export class SaleDashboardReportFormComponent implements OnInit {
     this.dateTo = dateTo;
     this.loadByMonthAndCompany();
     setTimeout(() => {
-      this.monthReport.loadData(); 
+      this.monthReport.loadData();
     });
   }
 
   onChangeType(value) {
     this.groupBy = value;
+    this.loadDataCashbookApi();
+    this.loadDataRevenueApi();
   }
 
   onSearchDateChange(e) {
     this.dateFrom = e.dateFrom;
     this.dateTo = e.dateTo;
-    // this.loadAllData();
+    this.loadDataCashbookApi();
+    this.loadDataRevenueApi();
   }
 
-  setGroupbyFilter(time: any) {
-    this.groupBy = time.value;
+  setGroupbyFilter(groupby: any) {
+    this.groupBy = groupby.value;
+    this.loadDataCashbookApi();
+    this.loadDataRevenueApi();
   }
 
 
@@ -281,7 +323,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
     val.companyId = this.companyId;
     this.reportService.getSummary(val).subscribe(res => {
       var total = aggregateBy(res, this.aggregates);
-      if (total) {    
+      if (total) {
         this.totalDebitNCCByMonth = total['debit'] ? total['debit'].sum : 0;
         this.totalCreditNCCByMonth = total['credit'] ? total['credit'].sum : 0;
         this.totalAmountNCC = total['end'] ? total['end'].sum : 0;

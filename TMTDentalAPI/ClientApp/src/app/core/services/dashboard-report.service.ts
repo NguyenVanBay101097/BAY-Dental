@@ -52,10 +52,6 @@ export class DashboardReportService {
     return this.http.post(this.baseApi + this.apiUrl + '/GetCountMedicalXamination' , val);
   }
 
-  getCountSaleOrder(val) {
-    return this.http.post<number>(this.baseApi + this.apiUrl + '/GetCountSaleOrder', val);
-  }
-
   getSumary(val) {
     return this.http.post<RevenueTodayReponse>(this.baseApi + this.apiUrl + '/GetSumary', val);
   }

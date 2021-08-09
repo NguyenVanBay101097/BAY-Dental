@@ -14,6 +14,7 @@ import { SharedModule } from '../shared/shared.module';
 import { SaleDashboardInvoiceReportComponent } from './sale-dashboard-invoice-report/sale-dashboard-invoice-report.component';
 import { AccountInvoiceReportsModule } from '../account-invoice-reports/account-invoice-reports.module';
 import { SaleDashboardCashbookReportComponent } from './sale-dashboard-cashbook-report/sale-dashboard-cashbook-report.component';
+import { SaleDashboardApCrCharttComponent } from './sale-dashboard-ap-cr-chartt/sale-dashboard-ap-cr-chartt.component';
 @NgModule({
   declarations: [
     SaleDashboardReportFormComponent,
@@ -21,7 +22,8 @@ import { SaleDashboardCashbookReportComponent } from './sale-dashboard-cashbook-
     SaleDashboardReportChartFlowMonthComponent,
     FinancialRevenueReportComponent,
     SaleDashboardInvoiceReportComponent,
-    SaleDashboardCashbookReportComponent, 
+    SaleDashboardCashbookReportComponent,
+    SaleDashboardApCrCharttComponent, 
   ],
   imports: [
     CommonModule,

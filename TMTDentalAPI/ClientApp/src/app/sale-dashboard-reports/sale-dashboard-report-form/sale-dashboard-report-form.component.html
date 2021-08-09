@@ -247,7 +247,7 @@
 </div>
 
 <div class="o_content">
-    <div class="o_dashboard_view">
+    <div class="o_dashboard_view">     
         <div class="o_group">
             <div class="o_group o_group_col_12">
                 <div class="o_aggregate_col o_group_col_3">
@@ -277,7 +277,7 @@
                 <div class="o_aggregate_col o_group_col_3">
                     <div class="o_aggregate text-success">
                         <label>Dự kiến thu</label>
-                        <div class="o_value">{{sumRevenue.residual || 0 | number  }}</div>
+                        <div class="o_value">{{sumRevenue || 0 | number  }}</div>
                     </div>
                 </div>
             </div>
@@ -304,7 +304,7 @@
         </div>
         <div class="o_group mb-2">
             <div class="border border-secondary rounded bg-white">
-                <app-sale-dashboard-invoice-report [companyId]="companyId" [dateFrom]="dateFrom" [dateTo]="dateTo"
+                <app-sale-dashboard-invoice-report [revenues]="revenues"
                     [groupby]="groupBy">
                 </app-sale-dashboard-invoice-report>
             </div>
@@ -312,7 +312,7 @@
         <div class="o_group ">
             <div class="o_group o_group_col_12">
                 <div class="border border-secondary rounded">
-                    <app-sale-dashboard-cashbook-report [companyId]="companyId" [dateFrom]="dateFrom" [dateTo]="dateTo"
+                    <app-sale-dashboard-cashbook-report [cashBooks]="cashBooks"
                         [groupby]="groupBy">
                     </app-sale-dashboard-cashbook-report>
                 </div>

@@ -177,7 +177,7 @@ export class CustomerReceiptReportOverviewComponent implements OnInit {
     val.isNoTreatment = this.isNotTreatment || '';
     val.companyId = this.companyId || '';
     val.doctorId = this.employeeId || '';
-    val.state = this.state || '';
+    val.state = 'done';
     val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
     val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
     this.customerReceiptReportService.getCountCustomerReceiptNoTreatment(val).subscribe(
