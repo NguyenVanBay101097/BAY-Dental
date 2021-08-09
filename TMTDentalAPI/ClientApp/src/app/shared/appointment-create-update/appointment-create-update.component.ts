@@ -266,7 +266,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   }
 
   onDuplicate(){
-    this.appointId = null; 
+    this.appointId = null;
+    this.title = 'Đặt lịch hẹn' 
     var item = this.formGroup.value;  
     var res = this.fb.group({
       name: null,

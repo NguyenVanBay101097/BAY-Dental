@@ -101,7 +101,7 @@ export class AppointmentKanbanComponent implements OnInit {
   // months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]; 
   months = ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"];
 
-  timePeriod = 'month';
+  timePeriod = 'week';
   firstTime = 6; // format 24h : 0h - 23h
   lastTime = 23; // format 24h : 0h - 23h
   dataAppointmentsGrouped = null;
@@ -209,7 +209,8 @@ export class AppointmentKanbanComponent implements OnInit {
       }));
 
       this.groupByDataAppointments();
-      this.jump_today()
+      this.renderCalendar();
+      // this.jump_today()
 
     }, (error: any) => {
       console.log(error);
@@ -221,7 +222,7 @@ export class AppointmentKanbanComponent implements OnInit {
   }
 
   deleteAppointment(appointment: AppointmentBasic) {
-    const modalRef = this.modalService.open(ConfirmDialogComponent, {  windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa lịch hẹn';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa lịch hẹn này?';
     modalRef.result.then(() => {
@@ -395,6 +396,7 @@ export class AppointmentKanbanComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.offset;
     val.doctorId = this.employeeSelected || '';
+    val.state = this.state || '';
     val.dateTimeFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
     val.dateTimeTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
 
@@ -447,6 +449,8 @@ export class AppointmentKanbanComponent implements OnInit {
         r[a['dateFormat']].push(a);
         return r;
       }, Object.create(null));
+    } else {
+      this.dataAppointmentsGrouped = null
     }
   }
 
@@ -490,6 +494,17 @@ export class AppointmentKanbanComponent implements OnInit {
     } else if (this.timePeriod === 'week') {
       this.showCalendarWeek(this.currentYear, this.currentMonth, this.currentWeek);
     } else {
+      this.showCalendarMonth(this.currentYear, this.currentMonth);
+    }
+  }
+
+  renderCalendar(){
+    if (this.timePeriod === 'day') {
+      this.showCalendarDay(this.currentYear, this.currentMonth, null, this.currentDay);
+    } else if (this.timePeriod === 'week') {
+      this.showCalendarWeek(this.currentYear, this.currentMonth, this.currentWeek);
+    } else {
+      // month
       this.showCalendarMonth(this.currentYear, this.currentMonth);
     }
   }
