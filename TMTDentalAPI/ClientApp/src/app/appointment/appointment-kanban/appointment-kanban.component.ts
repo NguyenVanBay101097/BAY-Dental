@@ -523,6 +523,8 @@ export class AppointmentKanbanComponent implements OnInit {
           '/' +
           firstDate.getFullYear();
         this.titleToolbar = firstDateString;
+        this.dateFrom = firstDate;
+        this.dateTo = firstDate;
       }
     } else if (this.timePeriod === 'week') {
       if (firstDate !== null && lastDate !== null) {
@@ -539,11 +541,17 @@ export class AppointmentKanbanComponent implements OnInit {
           '/' +
           lastDate.getFullYear();
         this.titleToolbar = `${firstDateString} - ${lastDateString}`;
+        this.dateFrom = firstDate;
+        this.dateTo = lastDate;        
       }
     } else {
       // month
       if (month !== null && year !== null) {
         this.titleToolbar = this.months[month] + ', ' + year;
+        const monthStart = new Date(year, month, 1);
+        const monthEnd = new Date(year, month, new Date(year, month + 1, 0).getDate());
+        this.dateFrom = monthStart;
+        this.dateTo = monthEnd;        
       }
     }
   }
@@ -705,8 +713,8 @@ export class AppointmentKanbanComponent implements OnInit {
     let lastDate = new Date(year, month, lastDay);
 
     this.setTitleToolbar(firstDate, lastDate);
-
-    this.showCalendarThead(firstDate);
+        
+    this.showCalendarThead(new Date(firstDate));
 
     this.calendarTbodyEl.innerHTML = ''; // Clear calendar-tbody
     this.calendarTableEl.style.tableLayout = 'fixed';

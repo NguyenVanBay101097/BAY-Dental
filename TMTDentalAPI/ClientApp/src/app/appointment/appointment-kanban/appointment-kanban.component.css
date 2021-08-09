@@ -28,6 +28,7 @@
     width: 100%;
     background: #f2f7ff;
     padding: 0.5rem;
+    height: 36px;
 }
 .filter-label {
     font-weight: 500;
@@ -569,4 +570,9 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
+}
+
+.filter-group{
+    height: calc(100% - 36px);
+    overflow: auto;
 }

@@ -154,9 +154,9 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="main-list" *ngIf="viewKanban === 'list'">
-                            <kendo-grid [data]="gridData" [pageSize]="limit" [resizable]="true" [skip]="offset" [pageable]="true"
-                                [loading]="loading" (pageChange)="pageChange($event)">
+                        <div class="main-list h-100 overflow-auto" *ngIf="viewKanban === 'list'">
+                            <kendo-grid [data]="gridData" [pageSize]="limit" [resizable]="true" [skip]="offset" 
+                                [loading]="loading" (pageChange)="pageChange($event)" style="max-height: 100%;">
                                 <kendo-grid-column field="partnerDisplayName" title="Khách hàng" width="250">
                                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                                         <div>
@@ -213,36 +213,38 @@
                     </div>
                 </div>
                 <div class="cont-right">
-                    <div class="filter">
+                    <div class="filter h-100 overflow-hidden" >
                         <div class="filter-title">Bộ lọc</div>
-                        <div class="filter-label">Thời gian</div>
-                        <div class="filter-content">
-                            <app-date-range-picker-filter opens="left" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onChangeDate($event)">
-                            </app-date-range-picker-filter>
-                        </div>
-                        <div class="filter-label">Trạng thái</div>
-                        <div class="filter-content">
-                            <div class="form-check t-form-check mb-1" *ngFor="let state of states; index as i">
-                                <input class="form-check-input" type="radio" name="state" [id]="'state-' + i" [value]="state.value" [(ngModel)]="stateSelected">
-                                <label class="form-check-label" [for]="'state-' + i" (click)="onChangeState(state.value)">
-                                    {{state.text}}
-                                </label>
+                        <div class="filter-group">
+                            <div class="filter-label">Thời gian</div>
+                            <div class="filter-content">
+                                <app-date-range-picker-filter opens="left" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onChangeDate($event)">
+                                </app-date-range-picker-filter>
                             </div>
-                        </div>
-                        <div class="filter-label">Bác sĩ</div>
-                        <div class="filter-content">
-                            <div class="form-check t-form-check mb-1">
-                                <input checked class="form-check-input" type="radio" name="employee" [id]="'employee-default'" [value]="''" (change)="onChangeEmployee('')">
-                                <label class="form-check-label" [for]="'employee-default'">
-                                    Tất cả
-                                </label>
+                            <div class="filter-label">Trạng thái</div>
+                            <div class="filter-content">
+                                <div class="form-check t-form-check mb-1" *ngFor="let state of states; index as i">
+                                    <input class="form-check-input" type="radio" name="state" [id]="'state-' + i" [value]="state.value" [(ngModel)]="stateSelected">
+                                    <label class="form-check-label" [for]="'state-' + i" (click)="onChangeState(state.value)">
+                                        {{state.text}}
+                                    </label>
+                                </div>
                             </div>
+                            <div class="filter-label">Bác sĩ</div>
+                            <div class="filter-content">
+                                <div class="form-check t-form-check mb-1">
+                                    <input checked class="form-check-input" type="radio" name="employee" [id]="'employee-default'" [value]="''" (change)="onChangeEmployee('')">
+                                    <label class="form-check-label" [for]="'employee-default'">
+                                        Tất cả
+                                    </label>
+                                </div>
 
-                            <div class="form-check t-form-check mb-1" *ngFor="let employee of doctors; index as i">
-                                <input class="form-check-input" type="radio" name="employee" [id]="'employee-' + i" [value]="employee.id" (change)="onChangeEmployee(employee.id)">
-                                <label class="form-check-label" [for]="'employee-' + i">
-                                    {{employee.name}}
-                                </label>
+                                <div class="form-check t-form-check mb-1" *ngFor="let employee of doctors; index as i">
+                                    <input class="form-check-input" type="radio" name="employee" [id]="'employee-' + i" [value]="employee.id" (change)="onChangeEmployee(employee.id)">
+                                    <label class="form-check-label" [for]="'employee-' + i">
+                                        {{employee.name}}
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
