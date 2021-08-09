@@ -226,6 +226,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal Credit { get; set; }
 
         public decimal End { get; set; }
+        public string Ref { get; set; }
 
     }
 }

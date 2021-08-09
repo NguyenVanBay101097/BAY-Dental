@@ -27,8 +27,8 @@
                     <a class="dropdown-item" (click)="onExportPDF()">Xuất PDF</a>
                 </div>
             </div>
-            <button class="btn btn-primary btn-sm" (click)="printReport()">In báo cáo</button>
-            <input type="text" [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)" placeholder="Tìm kiếm theo số phiếu, khách hàng" class="ml-auto form-control w-50 form-control-sm">
+            <button class="btn btn-primary" (click)="printReport()">In báo cáo</button>
+            <input type="text" [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)" placeholder="Tìm kiếm theo số phiếu, khách hàng" class="ml-auto form-control w-50">
         </div>
         <kendo-grid (excelExport)="onExcelExport($event)" [resizable]="true" #grid class="mt-2" [loading]="loading" [data]="gridData" [pageSize]="this.filter.limit" [skip]="this.filter.offset" [pageable]="true" (pageChange)="pageChange($event)">
             <kendo-grid-column field="name" title="Số phiếu" width="120">

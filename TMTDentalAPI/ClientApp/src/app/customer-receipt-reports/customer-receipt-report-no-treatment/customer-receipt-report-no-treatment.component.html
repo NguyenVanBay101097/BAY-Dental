@@ -3,17 +3,17 @@
     <div class="filter d-flex flex-0-0-auto mt-2">
         <app-date-range-picker-filter [opens]="'right'" class="mr-1" [startDate]="dateFrom" [endDate]="dateTo"
             (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
-        <kendo-combobox class="mr-1 kendo-combobox-sm" [placeholder]="'Bác sĩ'" [valueField]="'id'" [textField]="'name'"
+        <kendo-combobox class="mr-1" [placeholder]="'Bác sĩ'" [valueField]="'id'" [textField]="'name'"
             [filterable]="true" #employeeCbx [data]="listEmployee" (selectionChange)="onSelectEmployee($event)">
         </kendo-combobox>
-        <kendo-combobox width="auto" class="kendo-combobox-sm" [placeholder]="'Tất cả chi nhánh'"
-            class="mr-1 kendo-combobox-sm" [valueField]="'id'" [textField]="'name'" [filterable]="true"
+        <kendo-combobox width="auto" [placeholder]="'Tất cả chi nhánh'"
+            class="mr-1" [valueField]="'id'" [textField]="'name'" [filterable]="true"
             [data]="listCompany" (selectionChange)="onSelectCompany($event)" #companyCbx>
         </kendo-combobox>
-        <button class="btn btn-primary btn-sm" (click)="onExcelExport()"><i class="fas fa-download"></i> Xuất Excel</button>
+        <button class="btn btn-primary" (click)="onExcelExport()"><i class="fas fa-download"></i> Xuất Excel</button>
         <input type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)"
             placeholder="Tìm kiếm theo mã, tên, số điện thoại khách hàng"
-            class="ml-auto form-control w-50 form-control-sm">
+            class="ml-auto form-control w-50">
     </div>
     <div class="o_content mt-2">
         <div class="o_dashboard_view">

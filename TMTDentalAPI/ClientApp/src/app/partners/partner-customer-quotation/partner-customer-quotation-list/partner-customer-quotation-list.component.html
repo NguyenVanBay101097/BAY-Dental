@@ -4,7 +4,7 @@
             <div class="d-flex">
                 <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
                 </app-tai-date-range-filter-dropdown>
-                <button type="button" (click)="createQuotation()" class="ml-2 btn btn-primary btn-sm">
+                <button type="button" (click)="createQuotation()" class="ml-2 btn btn-primary">
                             <i class="fas fa-plus"></i> Thêm báo giá</button>
             </div>
         </div>
@@ -73,7 +73,7 @@
             </kendo-grid-column>
             <kendo-grid-column title="Thao tác" field="id" width="80" class="text-center">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteQuotation(dataItem)">
+                    <button class="btn btn-danger" title="Xóa" (click)="deleteQuotation(dataItem)">
                             <span class="far fa-trash-alt"></span></button>
                 </ng-template>
             </kendo-grid-column>
