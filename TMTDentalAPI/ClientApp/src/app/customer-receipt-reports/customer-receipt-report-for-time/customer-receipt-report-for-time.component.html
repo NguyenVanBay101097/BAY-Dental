@@ -3,11 +3,11 @@
     <div class="filter d-flex flex-0-0-auto mt-2">
         <app-date-range-picker-filter [opens]="'right'" class="mr-1" [startDate]="dateFrom" [endDate]="dateTo"
             (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>     
-        <kendo-combobox width="auto" class="kendo-combobox-sm" [placeholder]="'Tất cả chi nhánh'"
-            class="mr-1 kendo-combobox-sm" [valueField]="'id'" [textField]="'name'" [filterable]="true"
+        <kendo-combobox width="auto" [placeholder]="'Tất cả chi nhánh'"
+            class="mr-1" [valueField]="'id'" [textField]="'name'" [filterable]="true"
             [data]="listCompany" (selectionChange)="onSelectCompany($event)" #companyCbx>
         </kendo-combobox>
-        <button class="btn btn-primary btn-sm" (click)="onExcelExport()"><i class="fas fa-download"></i> Xuất Excel</button>     
+        <button class="btn btn-primary" (click)="onExcelExport()"><i class="fas fa-download"></i> Xuất Excel</button>     
     </div>
     <div class="o_content mt-2">
         <div>

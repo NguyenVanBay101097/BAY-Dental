@@ -12,26 +12,26 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <a [routerLink]="['/partners/customer/' + customerId + '/treatment']" class="btn btn-secondary btn-sm mr-1">
+                    <a [routerLink]="['/partners/customer/' + customerId + '/treatment']" class="btn btn-secondary mr-1">
                         Trở lại
                     </a>
-                    <button type="button" class="btn btn-primary btn-sm" accesskey="s" *ngIf="saleOrder && saleOrder.state == 'draft'" (click)="onSave()">
+                    <button type="button" class="btn btn-primary" accesskey="s" *ngIf="saleOrder && saleOrder.state == 'draft'" (click)="onSave()">
                         Lưu
                     </button>
-                    <button type="button" accesskey="1" *ngIf="saleOrder && saleOrder.state == 'draft'" class="btn btn-primary btn-sm" (click)="onSaveConfirm()">
+                    <button type="button" accesskey="1" *ngIf="saleOrder && saleOrder.state == 'draft'" class="btn btn-primary" (click)="onSaveConfirm()">
                         Lưu và xác nhận
                     </button>
-                    <button *ngIf="saleOrder && ['sale', 'done'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-primary btn-sm" (click)="actionSaleOrderPayment()">
+                    <button *ngIf="saleOrder && ['sale', 'done'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-primary" (click)="actionSaleOrderPayment()">
                         Thanh toán
                     </button>
-                    <button *ngIf="saleOrderId" type="button" class="btn btn-secondary btn-sm" (click)="printSaleOrder()">
+                    <button *ngIf="saleOrderId" type="button" class="btn btn-secondary" (click)="printSaleOrder()">
                         In phiếu
                     </button>
-                    <button *ngIf="saleOrder && ['sale'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-danger btn-sm" (click)="actionCancel()">
+                    <button *ngIf="saleOrder && ['sale'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-danger" (click)="actionCancel()">
                         Hủy phiếu
                     </button>
                     <!-- <button *ngIf="saleOrder && ['sale'].indexOf(saleOrder.state) !== -1" type="button"
-                        class="btn btn-success btn-sm" (click)="actionDone()">
+                        class="btn btn-success" (click)="actionDone()">
                         Hoàn thành
                     </button> -->
                     <!-- <button *ngIf="saleOrder && ['done'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-success btn-sm" (click)="actionUnlock()">
@@ -41,10 +41,10 @@
             </div>
         </div>
         <div class="o_cp_right" *ngIf="saleOrder && ['sale'].indexOf(saleOrder.state) !== -1">
-            <button (click)="createProductToaThuoc()" type="button" class="btn btn-sm btn-primary ml-auto mr-1">
+            <button (click)="createProductToaThuoc()" type="button" class="btn btn-primary ml-auto mr-1">
                 Tạo đơn thuốc
             </button>
-            <button type="button" (click)="dialogAppointment()" class="btn btn-sm btn-primary">
+            <button type="button" (click)="dialogAppointment()" class="btn btn-primary">
                 Tạo lịch hẹn
             </button>
         </div>
@@ -337,7 +337,7 @@
                                                     <span>{{item.amount | number}}</span>
                                                 </div>
                                                 <div class="w-100 text-right">
-                                                    <button type="button" *ngIf="saleOrder.state != 'done'" class="btn btn-primary btn-sm ml-auto" (click)="onOpenSaleOrderPromotion()">
+                                                    <button type="button" *ngIf="saleOrder.state != 'done'" class="btn btn-primary ml-auto" (click)="onOpenSaleOrderPromotion()">
                                                         <img src="assets/icons/promotion-white.svg" alt="">
                                                         Thêm ưu đãi
                                                     </button>

@@ -183,19 +183,19 @@
             </div>
             <div class="popover-footer d-flex">
                 <button *ngIf="!isEditting" type="button" (click)="editLine()" title="Sửa dịch vụ"
-                    class="btn btn-sm btn-primary">
+                    class="btn btn-primary">
                     <i class="far fa-edit pr-1"></i>
                     <span>Chỉnh sửa</span>
                 </button>
-                <button *ngIf="isEditting" (click)="updateLineInfo(true)" class="btn btn-sm btn-primary">
+                <button *ngIf="isEditting" (click)="updateLineInfo(true)" class="btn btn-primary">
                     <i class="far fa-edit pr-1"></i>
                     <span>Cập nhật</span>
                 </button>
-                <button (click)="deleteLine()" class="btn btn-danger btn-sm ml-2" title="Xóa dịch vụ">
+                <button (click)="deleteLine()" class="btn btn-danger ml-2" title="Xóa dịch vụ">
                     <i class="fas fa-trash pr-1"></i>
                     <span>Xóa</span>
                 </button>
-                <button *ngIf="isEditting" (click)="onCancel()" class="btn btn-sm btn-danger ml-2">Hủy</button>
+                <button *ngIf="isEditting" (click)="onCancel()" class="btn btn-danger ml-2">Hủy</button>
             </div>
         </div>
     </div>
