@@ -1,0 +1,103 @@
+<div class="flex-1-1-100 right border p-2 ml-2 d-flex flex-column">
+    <h5 class="flex-0-0-auto">Báo cáo tổng quan khách hàng</h5>
+    <div class="filter d-flex justify-content-between flex-0-0-auto">
+        <div class="filter-left flex-1-1-100">
+            <div class="row-1 d-flex">
+                <app-date-range-picker-filter [title]="'Thời gian phát sinh phiếu điều trị mới'" [opens]="'right'" class="mr-1" [startDate]="filter.dateFrom" [endDate]="filter.dateTo" (searchChange)="onSearchDateChange($event)" opens="right"></app-date-range-picker-filter>
+                <kendo-combobox [popupSettings]="cbxPopupSettings" [placeholder]="'Tất cả chi nhánh'" class="mr-1" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
+                </kendo-combobox>
+                <kendo-combobox [popupSettings]="cbxPopupSettings" [placeholder]="'Loại khách'" class="" [valueField]="'value'" [textField]="'text'" [filterable]="true" [data]="partnerTypes" (selectionChange)="onSelectPartnerType($event)" #pnTypeCbx>
+                </kendo-combobox>
+            </div>
+            <div class="row-2 d-flex mt-1">
+                <button class="mr-1 btn bg-filter">
+                    <span class="mr-2">Khu vực</span>
+                     <i class="fas fa-arrow-right"></i></button>
+                <button (click)="toggleFilterAdvance()" class="mr-1 btn bg-filter">
+          <i class="fas fa-filter mr-1"></i>
+          <span>Lọc nâng cao</span>
+        </button>
+                <div class="dropdown mr-1">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-download"></i> Xuất File
+          </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" (click)="exportExcel(grid)">Xuất Excel</a>
+                        <a class="dropdown-item" (click)="onExportPDF()">Xuất PDF</a>
+                    </div>
+                </div>
+                <button class="btn btn-primary" (click)="onPrint()">In báo cáo</button>
+            </div>
+            <div [ngClass]="{'hidden hide': !isFilterAdvance}" class="row-3 d-flex mt-1">
+                <kendo-combobox [popupSettings]="cbxPopupSettings" [placeholder]="'Nguồn khách hàng'" class="mr-1" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="partnerSources" (selectionChange)="onSelectPartnerSource($event)" #pnSourceCbx>
+                </kendo-combobox>
+                <kendo-combobox [popupSettings]="cbxPopupSettings" [placeholder]="'Hạng thành viên'" class="mr-1" [data]="memberLevels" [valueField]="'id'" [textField]="'name'" (valueChange)="onMemberLevelSelect($event)" #memberLevelCbx>
+                </kendo-combobox>
+                <kendo-combobox [popupSettings]="cbxPopupSettings" [placeholder]="'Giới tính'" class="" [valueField]="'value'" [textField]="'text'" [filterable]="true" [data]="partnerGenders" (selectionChange)="onSelectPartnerGender($event)" #pnGenderCbx>
+                </kendo-combobox>
+            </div>
+        </div>
+        <div class="filter-right flex-0-0-auto">
+            <input class="form-control" placeholder="Tìm kiếm khách hàng, dịch vụ" type="text" [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)" />
+            <kendo-multiselect class="mt-1" [data]="filteredCategs" [valueField]="'id'" [textField]="'name'" [placeholder]="'Lọc theo nhãn'" [filterable]="true" (valueChange)="onCategChange($event)" #categMst>
+            </kendo-multiselect>
+        </div>
+    </div>
+    <!-- grid -->
+    <div class="total d-flex mt-2">
+        <div class="border mr-2 px-5 py-2 text-center">
+            <label class="mb-0">Tổng lượng khách</label>
+            <h5 class="text-primary">{{ sumOldNew | number }}</h5>
+        </div>
+        <div class="border mr-2 px-5 py-2 text-center">
+            <label class="mb-0">Khách mới</label>
+            <h5 class="text-primary">{{ sumNew | number }}</h5>
+        </div>
+        <div class="border mr-2 px-5 py-2 text-center">
+            <label class="mb-0">Khách quay lại</label>
+            <h5 class="text-primary">{{ sumOld | number }}</h5>
+        </div>
+        <div class="border mr-2 px-5 py-2 text-center">
+            <label class="mb-0">Doanh thu</label>
+            <h5 class="text-success">{{ sumRevenue | number }}</h5>
+        </div>
+    </div>
+    <kendo-grid (excelExport)="onExcelExport($event)" [resizable]="true" #grid class="mt-2" [loading]="loading" [data]="gridData" [pageSize]="this.limit" [skip]="this.skip" [pageable]="true" (pageChange)="pageChange($event)">
+        <kendo-grid-column field="name" title="Khách hàng" width="120">
+        </kendo-grid-column>
+        <kendo-grid-column field="age" title="Tuổi" width="90"> </kendo-grid-column>
+        <kendo-grid-column field="gender" title="Giới tính" width="90">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{ getGenderDisplay(dataItem.gender) }}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="address" title="Địa chỉ" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column class="text-right" [headerClass]="'text-right'" field="revenue" title="Doanh thu" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{ dataItem.revenue | number }}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="memberLevel" title="Hạng thành viên" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{ dataItem.memberLevel?.name }}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="sourceName" title="Nguồn" width="90">
+        </kendo-grid-column>
+        <kendo-grid-column field="categories" title="Nhãn" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                <span *ngFor="let tag of dataItem.categories" class="badge badge-secondary mr-1" [ngClass]="'o_tag_color_' + tag.color">
+          {{ tag.name }}
+        </span>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="orderState" title="Tình trạng điều trị" width="140">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{ orderStateDisplay[dataItem.orderState] || "Chưa phát sinh" }}
+            </ng-template>
+        </kendo-grid-column>
+        <!-- excel -->
+        <!-- <kendo-grid-excel fileName="baocaodichvu.xlsx" [fetchData]="allData"></kendo-grid-excel> -->
+    </kendo-grid>
+</div>
