@@ -276,7 +276,7 @@ namespace Infrastructure.Services
             var data = await GetReport(val);
             var res = new PartnerOldNewReportPrint()
             {
-                data = data,
+                Data = data,
                 User = _mapper.Map<ApplicationUserSimple>(await _userService.GetCurrentUser())
             };
 
