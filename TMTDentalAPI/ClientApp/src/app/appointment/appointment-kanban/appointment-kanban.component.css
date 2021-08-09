@@ -78,7 +78,7 @@
 }
 
 .btn-check + .btn {
-    color: #929daa;
+    /* color: #929daa; */
     border-color: #e2e7ed;
     border-radius: 0;
     border-right-width: 0;
@@ -202,6 +202,7 @@
 .calendar-table th.th-v2 {
     text-align: center;
     background: #F8F9FB;
+    width: 190px;
 }
 
 .calendar-table th.th-v2 div:first-child {
@@ -307,7 +308,7 @@
 }
 
 .date-event-v2 .customer-name {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
     text-decoration: underline !important;
 }

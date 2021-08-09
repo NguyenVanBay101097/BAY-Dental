@@ -576,7 +576,8 @@ namespace Infrastructure.Services
                         Date = x.Date,
                         Debit = x.Debit,
                         Credit = x.Credit,
-                        InvoiceOrigin = x.Move.InvoiceOrigin
+                        InvoiceOrigin = x.Move.InvoiceOrigin,
+                        Ref = x.Ref
                     }).ToList();
 
 
