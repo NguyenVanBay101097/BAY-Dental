@@ -154,4 +154,5 @@ export class AccountCommonPartnerReportService {
     reportPartnerDebitSummary(val: ReportPartnerDebitReq) {
         return this.http.post(this.baseApi + this.apiUrl + "/ReportPartnerDebitSummary", val);
     }
+
 }
