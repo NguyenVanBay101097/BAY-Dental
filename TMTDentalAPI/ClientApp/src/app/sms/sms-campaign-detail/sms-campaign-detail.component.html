@@ -50,7 +50,7 @@
                                 <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom"
                                     [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
                                 </app-tai-date-range-filter-dropdown>
-                                <kendo-combobox class="kendo-combobox-sm ml-2" placeholder="Brandname"
+                                <kendo-combobox class="ml-2" placeholder="Brandname"
                                     [data]="filteredSmsAccount" [textField]="'brandName'" [valueField]="'id'"
                                     [filterable]="true" #smsAccountCbx (valueChange)="onChangeAccount($event)">
                                 </kendo-combobox>

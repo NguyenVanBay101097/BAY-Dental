@@ -5,7 +5,7 @@
                 <div class="d-flex">
                     <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'" [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
                     </app-tai-date-range-filter-dropdown>
-                    <kendo-combobox [data]="filteredEmployees" [textField]="'name'" class="custom btn-sm" #empCbx [filterable]="true" [placeholder]="'Tất cả nhân viên'" (valueChange)="onChaneEmp($event)" [valueField]="'id'">
+                    <kendo-combobox [data]="filteredEmployees" [textField]="'name'" #empCbx [filterable]="true" [placeholder]="'Tất cả nhân viên'" (valueChange)="onChaneEmp($event)" [valueField]="'id'">
                     </kendo-combobox>
                 </div>
             </div>
@@ -27,7 +27,7 @@
         <div class="o_cp_buttons">
             <div class="o_form_buttons_view">
                 <div class="d-flex">
-                    <kendo-combobox [data]="filteredStatus" [textField]="'name'" class="custom btn-sm" [placeholder]="'Tất cả trạng thái'" (valueChange)="onStatusChange($event)" [valueField]="'value'">
+                    <kendo-combobox [data]="filteredStatus" [textField]="'name'" [placeholder]="'Tất cả trạng thái'" (valueChange)="onStatusChange($event)" [valueField]="'value'">
                     </kendo-combobox>
                 </div>
             </div>

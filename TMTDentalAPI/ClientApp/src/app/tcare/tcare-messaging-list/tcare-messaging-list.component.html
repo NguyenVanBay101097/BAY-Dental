@@ -15,7 +15,7 @@
             <div class="o_cp_buttons">
                 <div class="d-flex">
                     <kendo-combobox [placeholder]="'Lọc theo kịch bản'" (valueChange)="onCategChange($event)"
-                        class="kendo-combobox-sm" [filterable]="true" [data]="filteredCategs" #categCbx
+                        [filterable]="true" [data]="filteredCategs" #categCbx
                         [valueField]="'id'" [textField]="'name'" [popupSettings]="{width: 'auto'}">
                     </kendo-combobox>
                     <div class="btn-group o_search_options ml-1">
