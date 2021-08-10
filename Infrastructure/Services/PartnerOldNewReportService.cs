@@ -196,7 +196,7 @@ namespace Infrastructure.Services
             var irPropertyQr = from ir in irProperyObj.SearchQuery(x => x.Name == "member_level" && x.Field.Model == "res.partner")
                                select ir;
 
-            var RevenueQr = from v in accInvreportObj.GetRevenueReportQuery(new RevenueReportQueryCommon(null, null, companyId: val.CompanyId))
+            var RevenueQr = from v in accInvreportObj.GetRevenueReportQuery(new RevenueReportQueryCommon(val.DateFrom, val.DateTo, companyId: val.CompanyId))
                             group v by v.PartnerId into g
                             select new
                             {

@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { GridComponent, GridDataResult } from '@progress/kendo-angular-grid';
 import * as moment from 'moment';
@@ -10,6 +11,7 @@ import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } fr
 import { PartnerSourcePaged, PartnerSourceService } from 'src/app/partner-sources/partner-source.service';
 import { PartnerSourceSimple } from 'src/app/partners/partner-simple';
 import { PartnerOldNewReportReq, PartnerOldNewReportService, PartnerOldNewReportSumReq } from 'src/app/sale-report/partner-old-new-report.service';
+import { AddressDialogComponent } from 'src/app/shared/address-dialog/address-dialog.component';
 import { PrintService } from 'src/app/shared/services/print.service';
 
 @Component({
@@ -52,6 +54,7 @@ export class PartnerReportOverviewComponent implements OnInit {
   sumNew = 0;
   sumOldNew = 0;
   isFilterAdvance = false;
+  addressFilter = null;
   
   @ViewChild("companyCbx", { static: true }) companyVC: ComboBoxComponent;
   @ViewChild("pnSourceCbx", { static: true }) pnSourceVC: ComboBoxComponent;
@@ -64,7 +67,8 @@ export class PartnerReportOverviewComponent implements OnInit {
     private partnerOldNewRpService: PartnerOldNewReportService,
     private partnerCategoryService: PartnerCategoryService,
     private printService: PrintService,
-    private memberLevelService: MemberLevelService
+    private memberLevelService: MemberLevelService,
+    private modalService: NgbModal
   ) { }
 
   ngOnInit() {
@@ -347,5 +351,21 @@ export class PartnerReportOverviewComponent implements OnInit {
         this.loading = false;
         this.printService.printHtml(result);
       });
+  }
+
+  openAddressDialog(){
+    let modalRef = this.modalService.open(AddressDialogComponent, { size: 'sm', windowClass: 'o_technical_modal',keyboard: true, backdrop: 'static' } );
+    if(this.addressFilter) {
+      modalRef.componentInstance.addresObject = this.addressFilter;
+    }
+    modalRef.result.then((res) => {
+      this.addressFilter = res;
+    this.filter.cityCode =  res.city? res.city.code : '';
+    this.filter.districtCode =  res.district? res.district.code : '';
+    this.filter.wardCode =  res.ward? res.ward.code : '';
+    this.skip = 0;
+    this.loadAllData();
+    },()=> {});
+ 
   }
 }

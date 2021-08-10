@@ -1,5 +1,39 @@
 .o_searchview .form-control-icon {
     border: 1px solid transparent;
     line-height: 1.5;
-    color: #929DAA;
+    color: #929DAA !important;
+}
+
+.content {
+    padding-left: 1rem!important;
+    padding-right: 1rem!important;
+}
+
+.tab-content ul {
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+}
+
+.tab-content ul li {
+    padding-left: 3px!important;
+    padding-right: 3px!important;
+    padding-top: .25rem!important;
+    padding-bottom: .25rem!important;
+    align-items: center;
+}
+
+.tab-content ul li:hover {
+    background-color: #007bff;
+    cursor: pointer;
+    color: white;
+}
+
+li.nav-item a.active {
+    text-decoration-line: underline;
+}
+
+li.nav-item a {
+    color: #007bff !important;
+    background-color: transparent !important;
+    font-weight: 600;
 }
