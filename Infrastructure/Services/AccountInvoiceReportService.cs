@@ -403,7 +403,7 @@ namespace Infrastructure.Services
             {
                 item.Lines = allLines.Items.Where(x => x.ProductId == item.ProductId).ToList();
             }
-
+            await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId);
             var res = new RevenueReportPrintVM<RevenueServiceReportPrint>(val.DateFrom, val.DateTo)
             {
                 Data = data,

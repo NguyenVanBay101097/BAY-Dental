@@ -42,54 +42,54 @@
     <div class="h-60 w-100 pt-3">
         @foreach (var item in Model.ReportPartnerDebitLines)
         {
-        <table class="table table-bordered table-sm">
-            <thead>
+            <table class="table table-bordered table-sm">
+                <thead>
+                    <tr class="bg-info font-semibold">
+                        <th scope="col" class="" style="width:100px">Khách hàng</th>
+                        <th scope="col" class="" style="width:100px">Mã KH</th>
+                        <th scope="col" class="" style="width:100px">Số điện thoại</th>
+                        <th scope="col" class="text-right" style="width:100px">Nợ đầu kỳ</th>
+                        <th scope="col" class="text-right" style="width:100px">Phát sinh</th>
+                        <th scope="col" class="text-right" style="width:100px">Thanh toán</th>
+                        <th scope="col" class="text-right" style="width:100px">Nợ cuối kỳ</th>
+
+                    </tr>
+                </thead>
+                <tr>
+                    <td class="" style="width:100px">@(item.PartnerName)</td>
+                    <td class="" style="width:100px">@(item.PartnerRef)</td>
+                    <td class="" style="width:100px">@(item.PartnerPhone)</td>
+                    <td class="text-right" style="width:100px">@(item.Begin)</td>
+                    <td class="text-right" style="width:100px">@(item.Debit)</td>
+                    <td class="text-right" style="width:100px">@(item.Credit)</td>
+                    <td class="text-right" style="width:100px">@(item.End)</td>
+                </tr>
                 <tr class="bg-info font-semibold">
-                    <th scope="col" class="" style="width:100px">Khách hàng</th>
-                    <th scope="col" class="" style="width:100px">Mã KH</th>
-                    <th scope="col" class="" style="width:100px">Số điện thoại</th>
+                    <th scope="col" class="" style="width:100px">Ngày</th>
+                    <th scope="col" class="" style="width:100px">Số phiếu</th>
+                    <th scope="col" class="" style="width:100px">Nội dung</th>
                     <th scope="col" class="text-right" style="width:100px">Nợ đầu kỳ</th>
                     <th scope="col" class="text-right" style="width:100px">Phát sinh</th>
                     <th scope="col" class="text-right" style="width:100px">Thanh toán</th>
                     <th scope="col" class="text-right" style="width:100px">Nợ cuối kỳ</th>
 
                 </tr>
-            </thead>
-            <tr>
-                <td class="" style="width:100px">@(item.PartnerName)</td>
-                <td class="" style="width:100px">@(item.PartnerRef)</td>
-                <td class="" style="width:100px">@(item.PartnerPhone)</td>
-                <td class="text-right" style="width:100px">@(item.Begin)</td>
-                <td class="text-right" style="width:100px">@(item.Debit)</td>
-                <td class="text-right" style="width:100px">@(item.Credit)</td>
-                <td class="text-right" style="width:100px">@(item.End)</td>
-            </tr>
-            <tr class="bg-info font-semibold">
-                <th scope="col" class="" style="width:100px">Ngày</th>
-                <th scope="col" class="" style="width:100px">Số phiếu</th>
-                <th scope="col" class="" style="width:100px">Nội dung</th>
-                <th scope="col" class="text-right" style="width:100px">Nợ đầu kỳ</th>
-                <th scope="col" class="text-right" style="width:100px">Phát sinh</th>
-                <th scope="col" class="text-right" style="width:100px">Thanh toán</th>
-                <th scope="col" class="text-right" style="width:100px">Nợ cuối kỳ</th>
+                <tbody>
+                    @foreach (var row in item.Lines)
+                    {
+                        <tr>
+                            <td class="" style="width:100px">@(row.Date)</td>
+                            <td class="" style="width:100px">@(row.InvoiceOrigin)</td>
+                            <td class="" style="width:100px">@(row.Ref)</td>
+                            <td class="text-right" style="width:100px">@(row.Begin)</td>
+                            <td class="text-right" style="width:100px">@(row.Debit)</td>
+                            <td class="text-right" style="width:100px">@(row.Credit)</td>
+                            <td class="text-right" style="width:100px">@(row.End)</td>
+                        </tr>
+                    }
 
-            </tr>
-            <tbody>
-                @foreach (var row in item.Lines)
-                {
-                    <tr>
-                        <td class="" style="width:100px">@(row.Date)</td>
-                        <td class="" style="width:100px">@(row.InvoiceOrigin)</td>
-                        <td class="" style="width:100px">@(row.Ref)</td>
-                        <td class="text-right" style="width:100px">@(row.Begin)</td>
-                        <td class="text-right" style="width:100px">@(row.Debit)</td>
-                        <td class="text-right" style="width:100px">@(row.Credit)</td>
-                        <td class="text-right" style="width:100px">@(row.End)</td>
-                    </tr>
-                }
-
-            </tbody>
-        </table>
+                </tbody>
+            </table>
         }
 
     </div>

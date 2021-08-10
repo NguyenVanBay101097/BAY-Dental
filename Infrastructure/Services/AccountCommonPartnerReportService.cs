@@ -2,10 +2,12 @@
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
@@ -16,10 +18,13 @@ namespace Infrastructure.Services
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
-        public AccountCommonPartnerReportService(IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public AccountCommonPartnerReportService(IMapper mapper, IHttpContextAccessor httpContextAccessor, 
+            UserManager<ApplicationUser> userManager)
         {
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
+            _userManager = userManager;
         }
 
         public async Task<IEnumerable<AccountCommonPartnerReportItem>> ReportSummary(AccountCommonPartnerReportSearch val)
@@ -623,7 +628,6 @@ namespace Infrastructure.Services
         public async Task<ReportPartnerDebitPrintVM> PrintReportPartnerDebit(ReportPartnerDebitReq val)
         {
             var companyObj = GetService<ICompanyService>();
-            var userObj = GetService<IUserService>();
             var result = new ReportPartnerDebitPrintVM();
             var reportPartnerDebitDetailReq = new ReportPartnerDebitDetailReq()
             {
@@ -632,7 +636,7 @@ namespace Infrastructure.Services
                 CompanyId = val.CompanyId,
                 PartnerId = val.PartnerId
             };
-            var user = await userObj.GetCurrentUser();
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId);
             result.User = _mapper.Map<ApplicationUserSimple>(user);
             if (val.CompanyId.HasValue)
             {
@@ -651,6 +655,17 @@ namespace Infrastructure.Services
 
             return result;
 
+        }
+
+        private string UserId
+        {
+            get
+            {
+                if (!_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+                    return null;
+
+                return _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            }
         }
     }
 

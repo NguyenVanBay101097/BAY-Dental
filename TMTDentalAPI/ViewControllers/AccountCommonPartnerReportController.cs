@@ -1,9 +1,13 @@
-﻿using Infrastructure.Services;
+﻿using ApplicationCore.Constants;
+using ApplicationCore.Entities;
+using Infrastructure.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.ViewControllers
@@ -15,9 +19,11 @@ namespace TMTDentalAPI.ViewControllers
         {
             _service = service;
         }
-        public IActionResult PrintReportPartnerDebit([FromBody]ReportPartnerDebitReq val)
+        [PrinterNameFilterAttribute(Name = AppConstants.ReportPartnerDebit)]
+        [CheckAccess(Actions = "Report.AccountPartner")]
+        public async Task<IActionResult> PrintReportPartnerDebit([FromBody]ReportPartnerDebitReq val)
         {
-            var result = _service.PrintReportPartnerDebit(val);
+            var result = await _service.PrintReportPartnerDebit(val);
             return View(result);
         }
     }
