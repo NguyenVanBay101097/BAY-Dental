@@ -558,6 +558,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new SaleReportProfile());
                 mc.AddProfile(new CustomerReceiptProfile());
                 mc.AddProfile(new CustomerReceiptReportProfile());
+                mc.AddProfile(new AccountCommonPartnerReportProfile());
             };
 
             #endregion
