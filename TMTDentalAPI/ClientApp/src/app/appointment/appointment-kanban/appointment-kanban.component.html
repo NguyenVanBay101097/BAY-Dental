@@ -239,7 +239,7 @@
                                     </label>
                                 </div>
 
-                                <div class="form-check t-form-check mb-1" *ngFor="let employee of doctors; index as i">
+                                <div class="form-check t-form-check mb-1" *ngFor="let employee of listEmployees; index as i">
                                     <input class="form-check-input" type="radio" name="employee" [id]="'employee-' + i" [value]="employee.id" (change)="onChangeEmployee(employee.id)">
                                     <label class="form-check-label" [for]="'employee-' + i">
                                         {{employee.name}}
