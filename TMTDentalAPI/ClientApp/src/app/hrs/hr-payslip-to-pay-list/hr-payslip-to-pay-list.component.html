@@ -16,7 +16,7 @@
             </div>
             <div class="o_cp_sidebar">
                 <div>
-                    <kendo-combobox [data]="listEmployees" [textField]="'name'" [filterable]="true" formControlName="employee" [placeholder]="'Lọc theo nhân viên'" class="kendo-combobox-sm" (selectionChange)="onEmployeeSelectChange($event)" #empCbx [valueField]="'id'" [popupSettings]="{width: 'auto'}">
+                    <kendo-combobox [data]="listEmployees" [textField]="'name'" [filterable]="true" formControlName="employee" [placeholder]="'Lọc theo nhân viên'" (selectionChange)="onEmployeeSelectChange($event)" #empCbx [valueField]="'id'" [popupSettings]="{width: 'auto'}">
                     </kendo-combobox> &nbsp;
                 </div>
                 <div>

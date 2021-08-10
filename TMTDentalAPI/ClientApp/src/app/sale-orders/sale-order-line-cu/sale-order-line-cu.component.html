@@ -13,7 +13,7 @@
                     </select>
                 </ng-container>
                 <ng-template #elseTemplateState>
-                    <div class="form-control text-white select-state" [ngClass]="{'bg-success':line.state == 'done', 'bg-danger': line.state == 'cancel', 'bg-primary': line.state == 'sale'}">
+                    <div *ngIf="line.state != 'draft'" class="form-control text-white select-state" [ngClass]="{'bg-success':line.state == 'done', 'bg-danger': line.state == 'cancel', 'bg-primary': line.state == 'sale'}">
                         {{getStateDisplay(line.state)}}
                     </div>
                 </ng-template>
