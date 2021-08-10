@@ -57,15 +57,12 @@ export class AppointmentKanbanComponent implements OnInit {
 
   appointmentByDate: { [id: string]: AppointmentBasic[]; } = {};
 
-  states: { text: string, value: string, bgColor?: string }[] = [
-    { text: 'Tất cả', value: '', bgColor: '' },
-    { text: 'Đang hẹn', value: 'confirmed', bgColor: '#007BFF' },
-    // { text: 'Chờ khám', value: 'waiting', class: 'text-warning' },
-    // { text: 'Đang khám', value: 'examination', class: 'text-info' },
-    // { text: 'Hoàn thành', value: 'done', class: 'text-success' },
-    { text: 'Đã đến', value: 'arrived', bgColor: '#28A745' },
-    { text: 'Hủy hẹn', value: 'cancel', bgColor: '#EB3B5B' },
-    { text: 'Quá hạn', value: 'overdue', bgColor: '#FFC107' }
+  states: { text: string, value: string, color?: string }[] = [
+    { text: 'Tất cả', value: '', color: '' },
+    { text: 'Đang hẹn', value: 'confirmed', color: '#2395FF' },
+    { text: 'Đã đến', value: 'arrived', color: '#28A745' },
+    { text: 'Hủy hẹn', value: 'cancel', color: '#EB3B5B' },
+    { text: 'Quá hạn', value: 'overdue', color: '#FFC107' }
   ];
 
   stateSelected: string = this.states[0].value;
@@ -101,7 +98,7 @@ export class AppointmentKanbanComponent implements OnInit {
   // months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]; 
   months = ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"];
 
-  timePeriod = 'day';
+  timePeriod = 'week';
   firstTime = 6; // format 24h : 0h - 23h
   lastTime = 23; // format 24h : 0h - 23h
   dataAppointmentsGrouped = null;
@@ -532,6 +529,7 @@ export class AppointmentKanbanComponent implements OnInit {
         this.dateTo = monthEnd;        
       }
     }
+    // this.loadData();
   }
 
   showCalendarThead(date = null) {
