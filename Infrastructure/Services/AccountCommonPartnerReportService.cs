@@ -644,10 +644,11 @@ namespace Infrastructure.Services
                     .Include(x => x.Partner).FirstOrDefaultAsync());
             }
             var lines = _mapper.Map<IEnumerable<ReportPartnerDebitPrint>>(await ReportPartnerDebit(val));
-            var details = await ReportPartnerDebitDetail(reportPartnerDebitDetailReq);
             foreach (var line in lines)
             {
-                line.Lines = details.Where(x => x.PartnerId == line.PartnerId).ToList();
+
+                reportPartnerDebitDetailReq.PartnerId = line.PartnerId;
+                line.Lines = await ReportPartnerDebitDetail(reportPartnerDebitDetailReq);
             }
             result.ReportPartnerDebitLines = lines;
             result.DateFrom = val.FromDate;
