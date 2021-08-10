@@ -28,6 +28,7 @@ namespace TMTDentalAPI.Controllers
         {
             _reportService = reportService;
             _viewRenderService = viewRenderService;
+            _converter = converter;
         }
 
         [HttpPost("GetSummaryPartner")]
@@ -157,7 +158,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpGet("[action]")]
         [CheckAccess(Actions = "Report.AccountPartner")]
-        public async Task<IActionResult> GetReportPartnerDebitPdf(ReportPartnerDebitReq val)
+        public async Task<IActionResult> GetReportPartnerDebitPdf([FromQuery]ReportPartnerDebitReq val)
         {
             var data = await _reportService.PrintReportPartnerDebit(val);
             var html = _viewRenderService.Render("AccountCommonPartnerReport/ReportPartnerDebitPdf", data);

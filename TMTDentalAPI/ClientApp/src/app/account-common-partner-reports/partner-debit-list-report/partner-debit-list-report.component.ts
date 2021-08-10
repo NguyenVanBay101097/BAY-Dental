@@ -16,7 +16,7 @@ import * as moment from 'moment';
   templateUrl: './partner-debit-list-report.component.html',
   styleUrls: ['./partner-debit-list-report.component.css'],
    host: {
-    class: 'o_action o_view_controller'
+    class: 'o_action'
   }
 })
 export class PartnerDebitListReportComponent implements OnInit {
