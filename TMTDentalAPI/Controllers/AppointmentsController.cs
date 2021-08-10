@@ -308,6 +308,72 @@ namespace TMTDentalAPI.Controllers
             return new FileContentResult(fileContent, mimeType);
         }
 
+        [CheckAccess(Actions = "Basic.Appointment.Update")]
+        [HttpGet("[action]")]
+        public async Task<IActionResult> ExportExcel2([FromQuery] AppointmentPaged appointmentPaged)
+        {
+            var data = await _appointmentService.GetExcelData(appointmentPaged);
+            var stream = new MemoryStream();
+            byte[] fileContent;
+
+            var stateDict = new Dictionary<string, string>() {
+                {"confirmed", "Đang hẹn" },
+                {"waiting", "Chờ khám" },
+                {"examination", "Đang khám" },
+                {"done", "Hoàn thành" },
+                {"cancel", "Hủy hẹn" },
+            };
+
+            using (var package = new ExcelPackage(stream))
+            {
+                var worksheet = package.Workbook.Worksheets.Add("Sheet1");
+                worksheet.Cells[1, 1].Value = "Khách hàng";
+                worksheet.Cells[1, 2].Value = "Số điện thoại";
+                worksheet.Cells[1, 3].Value = "Thời gian hẹn";
+                worksheet.Cells[1, 4].Value = "Dịch vụ";
+                worksheet.Cells[1, 5].Value = "Bác sĩ";
+                worksheet.Cells[1, 6].Value = "Nội dung";
+                worksheet.Cells[1, 7].Value = "Loại khám";
+                worksheet.Cells[1, 8].Value = "Trạng thái";
+                worksheet.Cells[1, 9].Value = "Lý do";
+
+                worksheet.Cells["A1:J1"].Style.Font.Bold = true;
+
+                var row = 2;
+                foreach (var item in data)
+                {
+                    var services = item.Services.ToArray();
+
+                    List<string> servicesNameList = new List<string>();
+
+                    foreach (var service in services)
+                    {
+                        servicesNameList.Add(service.Name);
+                    }
+
+                    worksheet.Cells[row, 1].Value = item.PartnerDisplayName;
+                    worksheet.Cells[row, 2].Value = item.PartnerPhone;
+                    worksheet.Cells[row, 3].Value = String.Format("{0:d/M/yyyy HH:mm}", item.Date);
+                    worksheet.Cells[row, 4].Value = string.Join(", ", servicesNameList);
+                    worksheet.Cells[row, 5].Value = item.DoctorName;
+                    worksheet.Cells[row, 6].Value = item.Note;
+                    worksheet.Cells[row, 7].Value = "";
+                    worksheet.Cells[row, 8].Value = !string.IsNullOrEmpty(item.State) && stateDict.ContainsKey(item.State) ? stateDict[item.State] : ""; ;
+                    worksheet.Cells[row, 9].Value = item.Reason;
+
+                    row++;
+                }
+
+                package.Save();
+                fileContent = stream.ToArray();
+            }
+
+            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            stream.Position = 0;
+
+            return new FileContentResult(fileContent, mimeType);
+        }
+
         [HttpGet("[action]")]
         [CheckAccess(Actions = "Basic.Appointment.Read")]
         public async Task<IActionResult> GetListDoctor([FromQuery] AppointmentDoctorReq val)

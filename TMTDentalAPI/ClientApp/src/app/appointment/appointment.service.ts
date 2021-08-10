@@ -122,6 +122,10 @@ export class AppointmentService {
     return this.http.get(this.baseApi + 'api/Appointments/ExportExcel', { params: val, responseType: 'blob' });
   }
 
+  exportExcel2(val) {
+    return this.http.get(this.baseApi + 'api/Appointments/ExportExcel2', { params: val, responseType: 'blob' });
+  }
+
   getListDoctor(val) {
     return this.http.get<any[]>(this.baseApi + 'api/Appointments/GetListDoctor', { params: new HttpParams({ fromObject: val }) });
   }

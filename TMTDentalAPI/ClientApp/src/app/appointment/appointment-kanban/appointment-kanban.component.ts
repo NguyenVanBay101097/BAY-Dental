@@ -25,6 +25,7 @@ import { RevenueTimeReportPar } from 'src/app/account-invoice-reports/account-in
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { MyDateRange } from '../my-date-range';
 import { CustomerReceipCreateUpdateComponent } from 'src/app/shared/customer-receip-create-update/customer-receip-create-update.component';
+import { AppointmentFilterExportExcelDialogComponent } from '../appointment-filter-export-excel-dialog/appointment-filter-export-excel-dialog.component';
 @Component({
   encapsulation: ViewEncapsulation.None, //<<<<< this one! 
   // To css active with innerHTML
@@ -353,18 +354,53 @@ export class AppointmentKanbanComponent implements OnInit {
     val.dateTimeFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
     val.dateTimeTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
 
-    this.appointmentService.exportExcel(val).subscribe((result: any) => {
-      let filenam = 'DanhSachLichHen';
-      let newBlob = new Blob([result], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-      let data = window.URL.createObjectURL(newBlob);
-      let link = document.createElement('a');
-      link.href = data;
-      link.download = filenam;
-      link.click();
-      setTimeout(() => {
-        window.URL.revokeObjectURL(data);
-      }, 100);
-    });
+    const modalRef = this.modalService.open(AppointmentFilterExportExcelDialogComponent, { size: 'md', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Xuất dữ liệu lịch hẹn';
+    modalRef.componentInstance.dateFrom = new Date(this.dateFrom);
+    modalRef.componentInstance.dateTo = new Date(this.dateTo);
+    modalRef.result.then(result => {
+      if (result.state === 'period') {
+        val.state = '';
+        val.search = '';
+        val.doctorId = '';
+        val.dateTimeFrom = result.dateFrom ? this.intlService.formatDate(result.dateFrom, 'yyyy-MM-dd') : '';
+        val.dateTimeTo = result.dateTo ? this.intlService.formatDate(result.dateTo, 'yyyy-MM-dd') : '';
+      }
+
+      this.appointmentService.exportExcel2(val).subscribe((result: any) => {
+        let filenam = 'DanhSachLichHen';
+        let newBlob = new Blob([result], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+        let data = window.URL.createObjectURL(newBlob);
+        let link = document.createElement('a');
+        link.href = data;
+        link.download = filenam;
+        link.click();
+        setTimeout(() => {
+          window.URL.revokeObjectURL(data);
+        }, 100);
+      });
+    }, (err) => console.log(err)
+    );
+    // var val = new AppointmentPaged();
+    // val.limit = 1000;
+    // val.state = this.state || '';
+    // val.search = this.search || '';
+    // val.doctorId = this.employeeSelected || '';
+    // val.dateTimeFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
+    // val.dateTimeTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
+
+    // this.appointmentService.exportExcel(val).subscribe((result: any) => {
+    //   let filenam = 'DanhSachLichHen';
+    //   let newBlob = new Blob([result], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+    //   let data = window.URL.createObjectURL(newBlob);
+    //   let link = document.createElement('a');
+    //   link.href = data;
+    //   link.download = filenam;
+    //   link.click();
+    //   setTimeout(() => {
+    //     window.URL.revokeObjectURL(data);
+    //   }, 100);
+    // });
   }
 
   handleEventClick(e) {
@@ -473,7 +509,7 @@ export class AppointmentKanbanComponent implements OnInit {
     }
   }
 
-  renderCalendar(){
+  renderCalendar() {
     if (this.timePeriod === 'day') {
       this.showCalendarDay(this.currentYear, this.currentMonth, null, this.currentDay);
     } else if (this.timePeriod === 'week') {
@@ -517,7 +553,7 @@ export class AppointmentKanbanComponent implements OnInit {
           lastDate.getFullYear();
         this.titleToolbar = `${firstDateString} - ${lastDateString}`;
         this.dateFrom = firstDate;
-        this.dateTo = lastDate;        
+        this.dateTo = lastDate;
       }
     } else {
       // month
@@ -526,7 +562,7 @@ export class AppointmentKanbanComponent implements OnInit {
         const monthStart = new Date(year, month, 1);
         const monthEnd = new Date(year, month, new Date(year, month + 1, 0).getDate());
         this.dateFrom = monthStart;
-        this.dateTo = monthEnd;        
+        this.dateTo = monthEnd;
       }
     }
     // this.loadData();
@@ -689,7 +725,7 @@ export class AppointmentKanbanComponent implements OnInit {
     let lastDate = new Date(year, month, lastDay);
 
     this.setTitleToolbar(firstDate, lastDate);
-        
+
     this.showCalendarThead(new Date(firstDate));
 
     this.calendarTbodyEl.innerHTML = ''; // Clear calendar-tbody
