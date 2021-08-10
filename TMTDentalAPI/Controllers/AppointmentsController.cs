@@ -362,6 +362,8 @@ namespace TMTDentalAPI.Controllers
                     row++;
                 }
 
+                worksheet.Cells.AutoFitColumns();
+
                 package.Save();
                 fileContent = stream.ToArray();
             }
