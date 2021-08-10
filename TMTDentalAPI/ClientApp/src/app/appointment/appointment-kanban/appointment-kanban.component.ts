@@ -43,8 +43,8 @@ export class AppointmentKanbanComponent implements OnInit {
   search: string;
   searchUpdate = new Subject<string>();
 
-  showDropdown = false;
-  dateList: Date[];
+  // showDropdown = false;
+  // dateList: Date[];
 
   // permission
   canAppointmentCreate = this.checkPermissionService.check(["Basic.Appointment.Create"]);
@@ -56,7 +56,7 @@ export class AppointmentKanbanComponent implements OnInit {
   // public today: Date = new Date(new Date().toDateString());
   // public next3days: Date = new Date(new Date(new Date().setDate(new Date().getDate() + 3)).toDateString());
 
-  appointmentByDate: { [id: string]: AppointmentBasic[]; } = {};
+  // appointmentByDate: { [id: string]: AppointmentBasic[]; } = {};
 
   states: { text: string, value: string, color?: string }[] = [
     { text: 'Tất cả', value: '', color: '' },
@@ -135,15 +135,16 @@ export class AppointmentKanbanComponent implements OnInit {
     // this.loadDoctorList();
   }
 
-  loadDoctorList() {
-    var val = {
-      dateTimeFrom: this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '',
-      dateTimeTo: this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : ''
-    };
-    this.appointmentService.getListDoctor(val).subscribe(res => {
-      this.doctors = res;
-    })
-  }
+  // loadDoctorList() {
+  //   var val = {
+  //     dateTimeFrom: this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '',
+  //     dateTimeTo: this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : ''
+  //   };
+  //   this.appointmentService.getListDoctor(val).subscribe(res => {
+  //     this.doctors = res;
+  //   })
+  // }
+
   loadListEmployees() {
     var paged = new EmployeePaged();
     paged.isDoctor = true;
@@ -169,20 +170,20 @@ export class AppointmentKanbanComponent implements OnInit {
     this.loadData();
   }
 
-  createAppointment() {
-    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = "Đặt lịch hẹn";
-    modalRef.result.then(result => {
-      this.loadData();
-    }, () => { });
-  }
+  // createAppointment() {
+  //   const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
+  //   modalRef.componentInstance.title = "Đặt lịch hẹn";
+  //   modalRef.result.then(result => {
+  //     this.loadData();
+  //   }, () => { });
+  // }
 
   refreshData() {
     this.loadData();
   }
 
   loadData() {
-    this.resetData();
+    // this.resetData();
     // this.loading = true;
     var val = new AppointmentPaged();
     val.limit = this.limit;
@@ -210,8 +211,8 @@ export class AppointmentKanbanComponent implements OnInit {
       }));
 
       this.groupByDataAppointments();
-      this.renderCalendar();
-      // this.jump_today()
+
+      this.jump_today() // renderCalendar
 
     }, (error: any) => {
       console.log(error);
@@ -219,131 +220,131 @@ export class AppointmentKanbanComponent implements OnInit {
     });
   }
 
-  resetData() {
-    this.appointmentByDate = Object.assign({});
-  }
+  // resetData() {
+  //   this.appointmentByDate = Object.assign({});
+  // }
 
-  deleteAppointment(appointment: AppointmentBasic) {
-    const modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Xóa lịch hẹn';
-    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa lịch hẹn này?';
-    modalRef.result.then(() => {
-      this.appointmentService.removeAppointment(appointment.id).subscribe(() => {
-        var date = new Date(appointment.date);
-        var key = date.toDateString();
-        if (this.appointmentByDate[key]) {
-          var index = _.findIndex(this.appointmentByDate[key], o => o.id == appointment.id);
-          if (index != -1) {
-            this.appointmentByDate[key].splice(index, 1);
-          }
-        }
-      });
-    });
-  }
+  // deleteAppointment(appointment: AppointmentBasic) {
+  //   const modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+  //   modalRef.componentInstance.title = 'Xóa lịch hẹn';
+  //   modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa lịch hẹn này?';
+  //   modalRef.result.then(() => {
+  //     this.appointmentService.removeAppointment(appointment.id).subscribe(() => {
+  //       var date = new Date(appointment.date);
+  //       var key = date.toDateString();
+  //       if (this.appointmentByDate[key]) {
+  //         var index = _.findIndex(this.appointmentByDate[key], o => o.id == appointment.id);
+  //         if (index != -1) {
+  //           this.appointmentByDate[key].splice(index, 1);
+  //         }
+  //       }
+  //     });
+  //   });
+  // }
 
-  editAppointment(appointment: AppointmentBasic) {
-    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'xl', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.appointId = appointment.id;
-    modalRef.result.then(() => {
-      this.loadData();
-      this.appointmentService.getBasic(appointment.id).subscribe(item => {
-        var date = new Date(item.date);
-        var key = date.toDateString();
-        if (this.appointmentByDate[key]) {
-          var index = _.findIndex(this.appointmentByDate[key], o => o.id == item.id);
-          if (index != -1) {
-            this.appointmentByDate[key][index] = item;
-          }
-        }
-      });
-    }, () => {
-    });
-  }
+  // editAppointment(appointment: AppointmentBasic) {
+  //   const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'xl', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
+  //   modalRef.componentInstance.appointId = appointment.id;
+  //   modalRef.result.then(() => {
+  //     this.loadData();
+      // this.appointmentService.getBasic(appointment.id).subscribe(item => {
+      //   var date = new Date(item.date);
+      //   var key = date.toDateString();
+      //   if (this.appointmentByDate[key]) {
+      //     var index = _.findIndex(this.appointmentByDate[key], o => o.id == item.id);
+      //     if (index != -1) {
+      //       this.appointmentByDate[key][index] = item;
+      //     }
+      //   }
+      // });
+  //   }, () => {
+  //   });
+  // }
 
-  addAppointmentById(id) {
-    this.appointmentService.getBasic(id).subscribe(item => {
-      var date = new Date(item.date);
-      var key = date.toDateString();
-      var index = _.findIndex(this.dateList, o => o.toDateString() == date.toDateString());
-      if (index == -1) {
-        this.dateList.push(date);
-      }
+  // addAppointmentById(id) {
+  //   this.appointmentService.getBasic(id).subscribe(item => {
+  //     var date = new Date(item.date);
+  //     var key = date.toDateString();
+  //     var index = _.findIndex(this.dateList, o => o.toDateString() == date.toDateString());
+  //     if (index == -1) {
+  //       this.dateList.push(date);
+  //     }
 
-      if (!this.appointmentByDate[key]) {
-        this.appointmentByDate[key] = [];
-      }
+  //     if (!this.appointmentByDate[key]) {
+  //       this.appointmentByDate[key] = [];
+  //     }
 
-      this.appointmentByDate[key].unshift(item);
-    });
-  }
+  //     this.appointmentByDate[key].unshift(item);
+  //   });
+  // }
 
-  getDateList() {
-    if (!this.dateFrom || !this.dateTo) {
-      return [];
-    }
-    var list = [];
-    var oneDay = 1000 * 60 * 60 * 24;
-    var days = (this.dateTo.getTime() - this.dateFrom.getTime()) / oneDay;
-    if (days > 30) {
-      alert('Vui lòng xem tối đa 30 ngày để đảm bảo tốc độ phần mềm');
-      return [];
-    }
-    for (var i = 0; i < days + 1; i++) {
-      var date = new Date(this.dateFrom.toDateString());
-      date.setDate(this.dateFrom.getDate() + i);
-      list.push(date);
-    }
-    return list;
-  }
+  // getDateList() {
+  //   if (!this.dateFrom || !this.dateTo) {
+  //     return [];
+  //   }
+  //   var list = [];
+  //   var oneDay = 1000 * 60 * 60 * 24;
+  //   var days = (this.dateTo.getTime() - this.dateFrom.getTime()) / oneDay;
+  //   if (days > 30) {
+  //     alert('Vui lòng xem tối đa 30 ngày để đảm bảo tốc độ phần mềm');
+  //     return [];
+  //   }
+  //   for (var i = 0; i < days + 1; i++) {
+  //     var date = new Date(this.dateFrom.toDateString());
+  //     date.setDate(this.dateFrom.getDate() + i);
+  //     list.push(date);
+  //   }
+  //   return list;
+  // }
 
-  getPreviousDotKham(id) {
-    var paged = new DotKhamPaged;
-    paged.appointmentId = id;
-    paged.limit = 1;
-    this.dotkhamService.getPaged(paged).subscribe(rs => {
-      if (rs.items.length) {
-        this.router.navigate(['/dot-khams/edit/' + rs.items[0].id]);
-      } else {
-        this.notificationService.show({
-          content: 'Không có đợt khám nào từ lịch hẹn này.',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'error', icon: true }
-        });
-      }
-    });
-  }
+  // getPreviousDotKham(id) {
+  //   var paged = new DotKhamPaged;
+  //   paged.appointmentId = id;
+  //   paged.limit = 1;
+  //   this.dotkhamService.getPaged(paged).subscribe(rs => {
+  //     if (rs.items.length) {
+  //       this.router.navigate(['/dot-khams/edit/' + rs.items[0].id]);
+  //     } else {
+  //       this.notificationService.show({
+  //         content: 'Không có đợt khám nào từ lịch hẹn này.',
+  //         hideAfter: 3000,
+  //         position: { horizontal: 'center', vertical: 'top' },
+  //         animation: { type: 'fade', duration: 400 },
+  //         type: { style: 'error', icon: true }
+  //       });
+  //     }
+  //   });
+  // }
 
-  createDotKham(id) {
-    var paged = new DotKhamPaged;
-    paged.appointmentId = id;
-    paged.limit = 1;
-    this.dotkhamService.getPaged(paged).subscribe((rs: any) => {
-      if (rs.items.length) {
-        console.log(rs.items);
-        let modalRef = this.modalService.open(SaleOrderCreateDotKhamDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-        modalRef.componentInstance.title = 'Tạo đợt khám';
-        modalRef.componentInstance.saleOrderId = rs.items[0].saleOrderId;
+  // createDotKham(id) {
+  //   var paged = new DotKhamPaged;
+  //   paged.appointmentId = id;
+  //   paged.limit = 1;
+  //   this.dotkhamService.getPaged(paged).subscribe((rs: any) => {
+  //     if (rs.items.length) {
+  //       console.log(rs.items);
+  //       let modalRef = this.modalService.open(SaleOrderCreateDotKhamDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+  //       modalRef.componentInstance.title = 'Tạo đợt khám';
+  //       modalRef.componentInstance.saleOrderId = rs.items[0].saleOrderId;
 
-        modalRef.result.then(result => {
-          if (result.view) {
-            this.router.navigate(['/dot-khams/edit/', result.result.id]);
-          } else {
-          }
-        }, () => {
-        });
-      } else {
-        this.notificationService.show({
-          content: 'Không có đợt khám nào từ lịch hẹn này.',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'error', icon: true }
-        });
-      }
-    });
-  }
+  //       modalRef.result.then(result => {
+  //         if (result.view) {
+  //           this.router.navigate(['/dot-khams/edit/', result.result.id]);
+  //         } else {
+  //         }
+  //       }, () => {
+  //       });
+  //     } else {
+  //       this.notificationService.show({
+  //         content: 'Không có đợt khám nào từ lịch hẹn này.',
+  //         hideAfter: 3000,
+  //         position: { horizontal: 'center', vertical: 'top' },
+  //         animation: { type: 'fade', duration: 400 },
+  //         type: { style: 'error', icon: true }
+  //       });
+  //     }
+  //   });
+  // }
 
   exportExcelFile() {
     var val = new AppointmentPaged();
@@ -403,25 +404,25 @@ export class AppointmentKanbanComponent implements OnInit {
     // });
   }
 
-  handleEventClick(e) {
-    var id = e.event._def.publicId;
-    const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.appointId = id;
-    modalRef.result.then(() => {
-      this.loadData();
-      this.appointmentService.getBasic(id).subscribe(item => {
-        var date = new Date(item.date);
-        var key = date.toDateString();
-        if (this.appointmentByDate[key]) {
-          var index = _.findIndex(this.appointmentByDate[key], o => o.id == item.id);
-          if (index != -1) {
-            this.appointmentByDate[key][index] = item;
-          }
-        }
-      });
-    }, () => {
-    });
-  }
+  // handleEventClick(e) {
+  //   var id = e.event._def.publicId;
+  //   const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
+  //   modalRef.componentInstance.appointId = id;
+  //   modalRef.result.then(() => {
+  //     this.loadData();
+  //     this.appointmentService.getBasic(id).subscribe(item => {
+  //       var date = new Date(item.date);
+  //       var key = date.toDateString();
+  //       if (this.appointmentByDate[key]) {
+  //         var index = _.findIndex(this.appointmentByDate[key], o => o.id == item.id);
+  //         if (index != -1) {
+  //           this.appointmentByDate[key][index] = item;
+  //         }
+  //       }
+  //     });
+  //   }, () => {
+  //   });
+  // }
 
   changeViewKanban(event) {
     this.viewKanban = event;
@@ -439,12 +440,12 @@ export class AppointmentKanbanComponent implements OnInit {
     return serviceName;
   }
 
-  intersectionTwoDateRange(a: MyDateRange, b: MyDateRange) {
-    var min: MyDateRange = a.start < b.start ? a : b;
-    var max: MyDateRange = min == a ? b : a;
-    if (min.end < max.start) return null;
-    return new MyDateRange(max.start, min.end < max.end ? min.end : max.end);
-  }
+  // intersectionTwoDateRange(a: MyDateRange, b: MyDateRange) {
+  //   var min: MyDateRange = a.start < b.start ? a : b;
+  //   var max: MyDateRange = min == a ? b : a;
+  //   if (min.end < max.start) return null;
+  //   return new MyDateRange(max.start, min.end < max.end ? min.end : max.end);
+  // }
 
   // New Calendar //
   getElements() {
@@ -505,17 +506,6 @@ export class AppointmentKanbanComponent implements OnInit {
     } else if (this.timePeriod === 'week') {
       this.showCalendarWeek(this.currentYear, this.currentMonth, this.currentWeek);
     } else {
-      this.showCalendarMonth(this.currentYear, this.currentMonth);
-    }
-  }
-
-  renderCalendar() {
-    if (this.timePeriod === 'day') {
-      this.showCalendarDay(this.currentYear, this.currentMonth, null, this.currentDay);
-    } else if (this.timePeriod === 'week') {
-      this.showCalendarWeek(this.currentYear, this.currentMonth, this.currentWeek);
-    } else {
-      // month
       this.showCalendarMonth(this.currentYear, this.currentMonth);
     }
   }
@@ -898,7 +888,7 @@ export class AppointmentKanbanComponent implements OnInit {
     btnEditEl.title = "Sửa";
     btnEditEl.innerHTML = `<i class="fas fa-pen"></i>`;
     btnEditEl.addEventListener("click", () => {
-      this.appointmentUpdate(appointment.id);
+      this.createUpdateAppointment(appointment.id);
     });
     let btnReceiveEl = document.createElement('div');
     btnReceiveEl.classList.add("receive");
@@ -983,7 +973,7 @@ export class AppointmentKanbanComponent implements OnInit {
     return htmlString;
   }
 
-  appointmentUpdate(id = null) {
+  createUpdateAppointment(id = null) {
     const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.appointId = id;
     modalRef.componentInstance.title = id ? "Cập nhật lịch hẹn" : "Đặt lịch hẹn";
