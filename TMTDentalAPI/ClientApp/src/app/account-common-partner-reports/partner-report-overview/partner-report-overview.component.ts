@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
+import { Workbook, WorkbookSheetColumn, WorkbookSheetRow, WorkbookSheetRowCell } from '@progress/kendo-angular-excel-export';
 import { GridComponent, GridDataResult } from '@progress/kendo-angular-grid';
 import * as moment from 'moment';
 import { forkJoin, Subject } from 'rxjs';
@@ -10,9 +11,10 @@ import { MemberLevelAutoCompleteReq, MemberLevelService } from 'src/app/member-l
 import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 import { PartnerSourcePaged, PartnerSourceService } from 'src/app/partner-sources/partner-source.service';
 import { PartnerSourceSimple } from 'src/app/partners/partner-simple';
-import { PartnerOldNewReportReq, PartnerOldNewReportService, PartnerOldNewReportSumReq } from 'src/app/sale-report/partner-old-new-report.service';
+import { PartnerOldNewReportReq, PartnerOldNewReportRes, PartnerOldNewReportService, PartnerOldNewReportSumReq } from 'src/app/sale-report/partner-old-new-report.service';
 import { AddressDialogComponent } from 'src/app/shared/address-dialog/address-dialog.component';
 import { PrintService } from 'src/app/shared/services/print.service';
+import { saveAs } from '@progress/kendo-file-saver';
 
 @Component({
   selector: 'app-partner-report-overview',
@@ -147,7 +149,7 @@ export class PartnerReportOverviewComponent implements OnInit {
         )
         .subscribe((x: any) => {
           this.partnerSources = x;
-          this.companyVC.loading = false;
+          this.pnSourceVC.loading = false;
         });
 
         this.loadMemberLevel();
@@ -257,7 +259,7 @@ export class PartnerReportOverviewComponent implements OnInit {
   }
 
   onSelectCompany(e) {
-    this.filter.companyId = e ? e.id : null;
+    this.filter.companyId = e ? e.id : '';
     this.skip = 0;
     this.loadAllData();
     this.loadSummary();
@@ -270,7 +272,7 @@ export class PartnerReportOverviewComponent implements OnInit {
   }
 
   onSelectPartnerSource(e) {
-    this.filter.sourceId = e ? e.id : null;
+    this.filter.sourceId = e ? e.id : '';
     this.skip = 0;
     this.loadAllData();
   }
@@ -289,7 +291,7 @@ export class PartnerReportOverviewComponent implements OnInit {
   }
 
   onCategChange(value) {
-    this.filter.cateIds = value.map(x=> x.id);
+    this.filter.categIds = value.map(x=> x.id);
      this.skip = 0;
      this.loadAllData();
    }
@@ -321,7 +323,7 @@ export class PartnerReportOverviewComponent implements OnInit {
     this.loading = true;
     this.partnerOldNewRpService.getReportPdf(val).subscribe(res => {
       this.loading = false;
-      let filename ="BaoCaoTheoDichVu";
+      let filename ="BaoCaoTongQuanKhachHang";
 
       let newBlob = new Blob([res], {
         type:
@@ -354,7 +356,7 @@ export class PartnerReportOverviewComponent implements OnInit {
   }
 
   openAddressDialog(){
-    let modalRef = this.modalService.open(AddressDialogComponent, { size: 'sm', windowClass: 'o_technical_modal',keyboard: true, backdrop: 'static' } );
+    let modalRef = this.modalService.open(AddressDialogComponent, { size: 'sm', scrollable: true, windowClass: 'o_technical_modal',keyboard: true, backdrop: 'static' } );
     if(this.addressFilter) {
       modalRef.componentInstance.addresObject = this.addressFilter;
     }
@@ -367,5 +369,107 @@ export class PartnerReportOverviewComponent implements OnInit {
     this.loadAllData();
     },()=> {});
  
+  }
+
+  getAddressFilterDisplay(){
+    if(!this.addressFilter)
+    return 'Khu vực';
+    var names = [];
+    if(this.addressFilter.city)
+    names.push(this.addressFilter.city.name);
+    if(this.addressFilter.district)
+    names.push(this.addressFilter.district.name);
+    if(this.addressFilter.ward)
+    names.push(this.addressFilter.ward.name);
+    return (names as []).join(', ') || 'Khu vực';
+  }
+
+  public allData = (): any => {
+    var all = this.allDataGrid.slice();
+    all = (all as []).map((x:PartnerOldNewReportRes)=> {
+      x.gender = this.getGenderDisplay(x.gender);
+      x.memberLevel = x.memberLevel? x.memberLevel.name : '';
+      (x.categories as any) = (x.categories.map(x=> x.name) as []).join(', ');
+      x.orderState = this.orderStateDisplay[x.orderState] || "Chưa phát sinh";
+    });
+    return {
+      data: this.allDataGrid,
+      total: this.allDataGrid
+    };
+  }
+
+  exportExcel(grid: GridComponent) {
+    grid.saveAsExcel();
+  }
+
+  public onExcelExport(args: any): void {
+    args.preventDefault();
+    var title = "BaoCaoTongQuanKhachHang";
+    // Prevent automatically saving the file. We will save it manually after we fetch and add the details
+    args.preventDefault();
+
+    const observables = [];
+    const workbook = args.workbook;
+
+    const rows = workbook.sheets[0].rows;
+    const columns = workbook.sheets[0].columns;
+
+    rows.forEach((row, index) => {
+    
+      if (row.type === "header") {
+        row.cells.forEach((cell: WorkbookSheetRowCell, index) => {
+          delete cell.background;
+          cell.color = "#212529";
+          cell.bold = true;
+          if(index == 4)
+          {cell.textAlign = 'right';}
+        });
+      }
+      if (row.type === 'data') {
+        row.cells[4].format = '#,###0';
+      } 
+    });
+
+      //add title
+      (rows as WorkbookSheetRow[]).unshift(<WorkbookSheetRow>{
+        cells:[
+          {
+            colSpan: 6,
+            rowSpan:1,
+            value: "BÁO CÁO TỔNG QUAN KHÁCH HÀNG",
+            color:'#4087b9',
+            bold: true
+          }
+         
+        ]
+      },
+      {
+        cells:[
+          {
+            colSpan: 6,
+            rowSpan:1,
+            value: `Từ ngày ${ moment(this.filter.dateFrom).format('DD/MM/YYYY')} đến ngày ${ moment(this.filter.dateTo).format('DD/MM/YYYY')}`,
+          }
+        ]
+      },
+      {
+        cells:[
+          {
+            colSpan: 1,
+            rowSpan:1,
+            value: ``
+          }
+        ]
+      }
+      );
+         //format excel nè
+        columns.forEach(function(column){
+          delete column.width;
+          column.autoWidth = true;
+        });
+    new Workbook(workbook).toDataURL().then((dataUrl: string) => {
+      // https://www.telerik.com/kendo-angular-ui/components/filesaver/
+      saveAs(dataUrl, `${title}.xlsx`);
+    });
   }
 }

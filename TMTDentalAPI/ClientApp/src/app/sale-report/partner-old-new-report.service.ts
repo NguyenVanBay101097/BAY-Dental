@@ -37,7 +37,7 @@ export class PartnerOldNewReportReq {
   districtCode: string;
   wardCode: string;
   sourceId: string;
-  cateIds: string[];
+  categIds: string[];
   memberLevelId: string;
   gender: string;
   search: string;

@@ -1,5 +1,5 @@
 .filter-right {
-    flex-basis: 310px;
+    flex-basis: 330px;
 }
 
 .filter-left {}
@@ -9,5 +9,9 @@
 }
 
 .bg-filter:hover {
-    background-color: #a5b0be;
+    background-color: #c1c7ce;
+}
+
+.icon-filter {
+    background-color: #c1c7ce;
 }

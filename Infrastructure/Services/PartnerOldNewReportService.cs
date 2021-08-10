@@ -166,7 +166,7 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.WardCode))
                 pnQr = pnQr.Where(x => x.WardCode == val.WardCode);
             if (val.SourceId.HasValue)
-                pnQr = pnQr.Where(x => x.SourceId == x.SourceId);
+                pnQr = pnQr.Where(x => x.SourceId == val.SourceId);
             if (!string.IsNullOrEmpty(val.Gender))
                 pnQr = pnQr.Where(x => x.Gender == val.Gender);
             if (!string.IsNullOrEmpty(val.Search))

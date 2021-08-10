@@ -26,38 +26,40 @@
 
 <div class="o_form_view mb-2">
     <div class="h-60 w-100 pt-3">
-        @foreach (var item in Model.Data)
-        {
+        
             <table class="table table-bordered table-sm">
                 <thead>
                     <tr class="bg-info font-semibold">
                         <th scope="col" class="" style="width:100px">Khách hàng</th>
-                        <th scope="col" class="" style="width:60px">Tuổi</th>
-                        <th scope="col" class="" style="width:100px">Giới tính</th>
-                        <th scope="col" class="" style="width:120px">Địa chỉ</th>
-                        <th scope="col" class="text-right" style="width:100px">Doanh thu</th>
+                        <th scope="col" class="" style="width:40px">Tuổi</th>
+                        <th scope="col" class="" style="width:50px">Giới tính</th>
+                        <th scope="col" class="" style="width:150px">Địa chỉ</th>
+                        <th scope="col" class="text-right" style="width:80px">Doanh thu</th>
                         <th scope="col" class="" style="width:100px">Hạng thành viên</th>
                         <th scope="col" style="width:80px">Nguồn</th>
-                        <th scope="col" style="width:80px">nhãn</th>
-                        <th scope="col" style="width:150px">Tình trạng điều trị</th>
+                        <th scope="col" style="width:100px">nhãn</th>
+                        <th scope="col" style="width:100px">Tình trạng điều trị</th>
 
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td class="" style="width:100px">@item.Name</td>
-                        <td class="" style="width:60px">@item.Age</td>
-                        <td class="" style="width:100px">@(!string.IsNullOrEmpty(item.Gender) && gender_dict.ContainsKey(item.Gender) ? gender_dict[item.Gender] : "Nam")</td>
-                        <td  style="width:120px">@item.Address</td>
-                        <td class="text-right"  style="width:100px">@(string.Format(culture, "{0:0,0}", item.Revenue))</td>
-                        <td  style="width:100px">@(item.MemberLevel != null ? item.MemberLevel.Name : "")</td>
-                        <td style="width:80px">@item.SourceName</td>
-                        <td style="width:80px">@(string.Join(",", item.Categories.Select(x=> x.Name).ToList()))</td>
-                        <td style="width:150px">@(!string.IsNullOrEmpty(item.Gender) && status_dict.ContainsKey(item.Gender) ? status_dict[item.Gender] : "Chưa phát sinh")</td>
-                    </tr>
+                    @foreach (var item in Model.Data)
+                    {
+                        <tr>
+                            <td class="" style="width:100px">@item.Name</td>
+                            <td class="" style="width:40px">@item.Age</td>
+                            <td class="" style="width:50px">@(!string.IsNullOrEmpty(item.Gender) && gender_dict.ContainsKey(item.Gender) ? gender_dict[item.Gender] : "Nam")</td>
+                            <td style="width:150px">@item.Address</td>
+                            <td class="text-right" style="width:80px">@(string.Format(culture, "{0:N0}", item.Revenue))</td>
+                            <td style="width:100px">@(item.MemberLevel != null ? item.MemberLevel.Name : "")</td>
+                            <td style="width:80px">@item.SourceName</td>
+                            <td style="width:100px">@(string.Join(", ", item.Categories.Select(x=> x.Name).ToList()))</td>
+                            <td style="width:100px">@(!string.IsNullOrEmpty(item.Gender) && status_dict.ContainsKey(item.Gender) ? status_dict[item.Gender] : "Chưa phát sinh")</td>
+                        </tr>
+                    }
+
                 </tbody>
             </table>
-        }
 
     </div>
     <div class="d-flex">
