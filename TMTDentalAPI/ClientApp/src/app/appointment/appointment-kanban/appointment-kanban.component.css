@@ -57,63 +57,63 @@
     overflow: auto;
 }
 
-.btn-check {
+.btn-check-calendar .btn-check {
     position: absolute;
     clip: rect(0, 0, 0, 0);
     pointer-events: none;
 }
 
-.btn-white {
+.btn-check-calendar .btn-white {
     color: #858f9b;
     border-color: #e2e7ed;
     background-color: #e2e7ed;
 }
 
-.btn-white:hover {
+.btn-check-calendar .btn-white:hover {
     border-color: #e2e7ed;
     background-color: #d7dadd;
 }
 
-/* .btn-check + label {
+.btn-check-calendar .btn-check + label {
     margin-bottom: 0;
-} */
+}
 
-/* .btn-check + .btn {
+.btn-check-calendar .btn-check + .btn {
     color: #929daa;
     border-color: #e2e7ed;
     border-radius: 0;
     border-right-width: 0;
-} */
+}
 
-/* .btn-check + .btn:hover {
+.btn-check-calendar .btn-check + .btn:hover {
     border-color: #e2e7ed;
     background-color: #e2e7ed;
-} */
+}
 
-/* .btn-check:first-of-type + .btn {
+.btn-check-calendar .btn-check:first-of-type + .btn {
     border-top-left-radius: 0.2rem;
     border-bottom-left-radius: 0.2rem;
 }
 
-.btn-check:last-of-type + .btn {
+.btn-check-calendar .btn-check:last-of-type + .btn {
     border-top-right-radius: 0.2rem;
     border-bottom-right-radius: 0.2rem;
     border-right-width: 1px;
 }
 
-.btn-check:active + .btn,
-.btn-check:checked + .btn {
+.btn-check-calendar .btn-check:active + .btn,
+.btn-check-calendar .btn-check:checked + .btn {
     color: #fff;
     border-color: #0d6efd;
     background-color: #0d6efd;
 }
 
-.btn-check:active + .btn-white,
-.btn-check:checked + .btn-white {
+.btn-check-calendar .btn-check:active + .btn-white,
+.btn-check-calendar .btn-check:checked + .btn-white {
     color: #858f9b;
     border-color: #e2e7ed;
     background-color: #fff;
-} */
+}
 
 .btn-gray {
     color: #929daa !important;

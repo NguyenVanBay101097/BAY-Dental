@@ -25,16 +25,18 @@
                             [valueField]="'id'" [textField]="'name'" [popupSettings]="{width: 'auto'}">
                         </kendo-combobox>
                     </div> -->
-                    <input type="radio" class="btn-check" name="view" id="calendar" autocomplete="off" 
-                    [value]="'calendar'" [(ngModel)]="viewKanban" (ngModelChange)="changeViewKanban($event)">
-                    <label class="btn btn-white btn-sm" for="calendar">
-                        <i class="fas fa-th-large"></i>
-                    </label>
-                    <input type="radio" class="btn-check" name="view" id="list" autocomplete="off" 
-                    [value]="'list'" [(ngModel)]="viewKanban" (ngModelChange)="changeViewKanban($event)">
-                    <label class="btn btn-white btn-sm" for="list">
-                        <i class="fas fa-list-ul"></i>
-                    </label>
+                    <div class="btn-check-calendar">
+                        <input type="radio" class="btn-check" name="view" id="calendar" autocomplete="off" [value]="'calendar'"
+                            [(ngModel)]="viewKanban" (ngModelChange)="changeViewKanban($event)">
+                        <label class="btn btn-white btn-sm" for="calendar">
+                            <i class="fas fa-th-large"></i>
+                        </label>
+                        <input type="radio" class="btn-check" name="view" id="list" autocomplete="off" [value]="'list'" [(ngModel)]="viewKanban"
+                            (ngModelChange)="changeViewKanban($event)">
+                        <label class="btn btn-white btn-sm" for="list">
+                            <i class="fas fa-list-ul"></i>
+                        </label>
+                    </div>
                 </div>
             </div>
             <div class="o_cp_right">
@@ -134,16 +136,16 @@
                                     <i class="fas fa-chevron-right"></i>
                                 </button>
                             </div>
-                            <div class="toolbar-time-period btn-group">
+                            <div class="toolbar-time-period btn-check-calendar">
                                 <input type="radio" class="btn-check" name="time-period" id="day" autocomplete="off" [value]="'day'"
                                     [(ngModel)]="timePeriod" (ngModelChange)="changeTimePeriod($event)">
-                                <label class="btn btn-sm btn-outline-primary" for="day">Ngày</label>
+                                <label class="btn btn-sm" for="day">Ngày</label>
                                 <input type="radio" class="btn-check" name="time-period" id="week" autocomplete="off" [value]="'week'"
                                     [(ngModel)]="timePeriod" (ngModelChange)="changeTimePeriod($event)">
-                                <label class="btn btn-sm btn-outline-primary" for="week">Tuần</label>
+                                <label class="btn btn-sm" for="week">Tuần</label>
                                 <input type="radio" class="btn-check" name="time-period" id="month" autocomplete="off" [value]="'month'"
                                     [(ngModel)]="timePeriod" (ngModelChange)="changeTimePeriod($event)">
-                                <label class="btn btn-sm btn-outline-primary" for="month">Tháng</label>
+                                <label class="btn btn-sm" for="month">Tháng</label>
                             </div>
                         </div>
                         <div class="main-calender" [class.d-none]="viewKanban !== 'calendar'">
@@ -221,11 +223,11 @@
                     <div class="filter h-100 overflow-hidden" >
                         <div class="filter-title">Bộ lọc</div>
                         <div class="filter-group">
-                            <div class="filter-label">Thời gian</div>
+                            <!-- <div class="filter-label">Thời gian</div>
                             <div class="filter-content">
                                 <app-date-range-picker-filter opens="left" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onChangeDate($event)">
                                 </app-date-range-picker-filter>
-                            </div>
+                            </div> -->
                             <div class="filter-label">Trạng thái</div>
                             <div class="filter-content">
                                 <div class="form-check t-form-check mb-1" *ngFor="let state of states; index as i">

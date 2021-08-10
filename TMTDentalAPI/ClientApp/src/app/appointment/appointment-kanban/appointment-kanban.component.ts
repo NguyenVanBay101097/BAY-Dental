@@ -90,13 +90,13 @@ export class AppointmentKanbanComponent implements OnInit {
 
   today = new Date();
   todayFormat = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate(), 0, 0, 0);
-  currentDay = 0;
-  currentWeek = 0;
+  differenceDay = 0;
+  differenceWeek = 0;
+  currentDate = this.todayFormat.getDate();
   currentMonth = this.todayFormat.getMonth();
   currentYear = this.todayFormat.getFullYear();
 
   daysOfWeek = ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật"];
-  // months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]; 
   months = ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"];
 
   timePeriod = 'week';
@@ -122,13 +122,13 @@ export class AppointmentKanbanComponent implements OnInit {
     // New Calendar //
     this.getElements();
 
-    this.loadData();
+    this.renderCalendar(); // Render Calendar
 
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
-        this.loadData();
+        this.renderCalendar(); // Render Calendar
       });
 
     this.loadListEmployees();
@@ -155,19 +155,19 @@ export class AppointmentKanbanComponent implements OnInit {
 
   onChangeEmployee(employeeId) {
     this.employeeSelected = employeeId;
-    this.loadData();
+    this.renderCalendar(); // Render Calendar
   }
 
-  onChangeDate(e) {
-    // this.dateFrom = e.dateFrom;
-    // this.dateTo = e.dateTo;
-    // this.loadData();
-    // this.loadGridData();
-  }
+  // onChangeDate(e) {
+  //   this.dateFrom = e.dateFrom;
+  //   this.dateTo = e.dateTo;
+  //   this.loadData();
+  //   this.loadGridData();
+  // }
 
   onChangeState(state) {
     this.state = state;
-    this.loadData();
+    this.renderCalendar(); // Render Calendar
   }
 
   // createAppointment() {
@@ -179,7 +179,7 @@ export class AppointmentKanbanComponent implements OnInit {
   // }
 
   refreshData() {
-    this.loadData();
+    this.renderCalendar(); // Render Calendar
   }
 
   loadData() {
@@ -210,10 +210,7 @@ export class AppointmentKanbanComponent implements OnInit {
         dateHour: new Date(v.date).getHours()
       }));
 
-      this.groupByDataAppointments();
-
-      this.jump_today() // renderCalendar
-
+      this.loadAppointmentToCalendar();
     }, (error: any) => {
       console.log(error);
       this.loading = false;
@@ -448,11 +445,11 @@ export class AppointmentKanbanComponent implements OnInit {
 
   next() {
     if (this.timePeriod === 'day') {
-      this.currentDay++;
-      this.showCalendarDay(this.currentYear, this.currentMonth, null, this.currentDay);
+      this.differenceDay++;
+      this.showCalendarDay(this.currentYear, this.currentMonth, this.currentDate, this.differenceDay);
     } else if (this.timePeriod === 'week') {
-      this.currentWeek++;
-      this.showCalendarWeek(this.currentYear, this.currentMonth, this.currentWeek);
+      this.differenceWeek++;
+      this.showCalendarWeek(this.currentYear, this.currentMonth, this.differenceWeek);
     } else {
       // month
       this.currentMonth = (this.currentMonth + 1) % 12;
@@ -463,11 +460,11 @@ export class AppointmentKanbanComponent implements OnInit {
 
   previous() {
     if (this.timePeriod === 'day') {
-      this.currentDay--;
-      this.showCalendarDay(this.currentYear, this.currentMonth, null, this.currentDay);
+      this.differenceDay--;
+      this.showCalendarDay(this.currentYear, this.currentMonth, this.currentDate, this.differenceDay);
     } else if (this.timePeriod === 'week') {
-      this.currentWeek--;
-      this.showCalendarWeek(this.currentYear, this.currentMonth, this.currentWeek);
+      this.differenceWeek--;
+      this.showCalendarWeek(this.currentYear, this.currentMonth, this.differenceWeek);
     } else {
       // month
       this.currentMonth = this.currentMonth === 0 ? 11 : this.currentMonth - 1;
@@ -477,15 +474,28 @@ export class AppointmentKanbanComponent implements OnInit {
   }
 
   jump_today() {
-    this.currentDay = 0;
-    this.currentWeek = 0;
+    this.differenceDay = 0;
+    this.differenceWeek = 0;
+    this.currentDate = this.todayFormat.getDate();
     this.currentMonth = this.todayFormat.getMonth();
     this.currentYear = this.todayFormat.getFullYear();
     if (this.timePeriod === 'day') {
-      this.showCalendarDay(this.currentYear, this.currentMonth, null, null);
+      this.showCalendarDay(this.currentYear, this.currentMonth, this.currentDate,  this.differenceDay);
     } else if (this.timePeriod === 'week') {
-      this.showCalendarWeek(this.currentYear, this.currentMonth, this.currentWeek);
+      this.showCalendarWeek(this.currentYear, this.currentMonth, this.differenceWeek);
     } else {
+      // month
+      this.showCalendarMonth(this.currentYear, this.currentMonth);
+    }
+  }
+
+  renderCalendar() {
+    if (this.timePeriod === 'day') {
+      this.showCalendarDay(this.currentYear, this.currentMonth, this.currentDate,  this.differenceDay);
+    } else if (this.timePeriod === 'week') {
+      this.showCalendarWeek(this.currentYear, this.currentMonth, this.differenceWeek);
+    } else {
+      // month
       this.showCalendarMonth(this.currentYear, this.currentMonth);
     }
   }
@@ -504,8 +514,8 @@ export class AppointmentKanbanComponent implements OnInit {
           '/' +
           firstDate.getFullYear();
         this.titleToolbar = firstDateString;
-        this.dateFrom = firstDate;
-        this.dateTo = firstDate;
+        this.dateFrom = new Date(firstDate);
+        this.dateTo = new Date(firstDate);
       }
     } else if (this.timePeriod === 'week') {
       if (firstDate !== null && lastDate !== null) {
@@ -522,8 +532,8 @@ export class AppointmentKanbanComponent implements OnInit {
           '/' +
           lastDate.getFullYear();
         this.titleToolbar = `${firstDateString} - ${lastDateString}`;
-        this.dateFrom = firstDate;
-        this.dateTo = lastDate;
+        this.dateFrom = new Date(firstDate);
+        this.dateTo = new Date(lastDate);
       }
     } else {
       // month
@@ -535,7 +545,6 @@ export class AppointmentKanbanComponent implements OnInit {
         this.dateTo = monthEnd;
       }
     }
-    // this.loadData();
   }
 
   showCalendarThead(date = null) {
@@ -638,22 +647,6 @@ export class AppointmentKanbanComponent implements OnInit {
     this.calendarTbodyEl.innerHTML = ''; // Clear calendar-tbody
     this.calendarTableEl.style.tableLayout = 'auto';
 
-    /// check add events
-    let dataAppointmentsGroupedHour = null;
-    if (this.dataAppointmentsGrouped !== null) {
-      let dateFormat = new Date(year, month, day + changeDay).setHours(0);
-      if (this.dataAppointmentsGrouped[dateFormat]) {
-        dataAppointmentsGroupedHour = this.dataAppointmentsGrouped[dateFormat].reduce(
-          function (r, a) {
-            r[a.dateHour] = r[a.dateHour] || [];
-            r[a.dateHour].push(a);
-            return r;
-          },
-          Object.create(null)
-        );
-      }
-    }
-
     // Create cells in calendar-tbody
     for (let i = this.firstTime; i <= this.lastTime; i++) {
       let row = document.createElement('tr');
@@ -663,17 +656,10 @@ export class AppointmentKanbanComponent implements OnInit {
       cellTime.textContent = `${i < 10 ? `0${i}` : i}:00 - ${i + 1 < 10 ? `0${i + 1}` : i + 1}:00`;
       let cell = document.createElement('td');
       cell.classList.add('td-day');
-      cell.id = `${year}-${month < 10 ? `0${month}` : month}-${day < 10 ? `0${day}` : day}-${i < 10 ? `0${i}` : i}`;
+      cell.id = `${year}-${('0' + month).slice(-2)}-${('0' + day).slice(-2)}-${('0' + i).slice(-2)}`;
 
       let cell_dateEvent = document.createElement('div');
       cell_dateEvent.classList.add('list-data-event-day');
-
-      /// check add events
-      if (dataAppointmentsGroupedHour && dataAppointmentsGroupedHour[i]) {
-        dataAppointmentsGroupedHour[i].forEach(dataAppointment => {
-          cell_dateEvent.appendChild(this.getEventDayNWeek(dataAppointment));
-        });
-      }
 
       /// td-day-overwrite
       let tdDayOverwrite = document.createElement('div');
@@ -686,6 +672,9 @@ export class AppointmentKanbanComponent implements OnInit {
       this.calendarTbodyEl.appendChild(row);
     }
     this.addCellTimeNow(firstDate);
+
+    // Data Processing 
+    this.loadData();
   }
 
   showCalendarWeek(year, month, week) {
@@ -706,24 +695,17 @@ export class AppointmentKanbanComponent implements OnInit {
     for (let i = 0; i < this.daysOfWeek.length; i++) {
       let cell = document.createElement('td');
       cell.classList.add('td-week');
+      cell.id = `${year}-${('0' + month).slice(-2)}-${('0' + (firstDay + i)).slice(-2)}`;
       /// td-week click
       cell.addEventListener('click', () => {
         this.timePeriod = 'day';
-        this.showCalendarDay(year, month, firstDay + i, null);
+        this.differenceDay = 0;
+        this.currentDate = firstDay + i;
+        this.showCalendarDay(year, month, this.currentDate, this.differenceDay);
       });
 
       let cell_dateEvent = document.createElement('div');
       cell_dateEvent.classList.add('list-data-event-week');
-
-      /// check add events
-      if (this.dataAppointmentsGrouped !== null) {
-        let dateFormat = new Date(year, month, firstDay + i).setHours(0);
-        if (this.dataAppointmentsGrouped[dateFormat]) {
-          this.dataAppointmentsGrouped[dateFormat].forEach(dataAppointment => {
-            cell_dateEvent.appendChild(this.getEventDayNWeek(dataAppointment));
-          });
-        }
-      }
 
       /// td-week-overwrite
       let tdWeekOverwrite = document.createElement('div');
@@ -734,6 +716,9 @@ export class AppointmentKanbanComponent implements OnInit {
       row.appendChild(cell);
     }
     this.calendarTbodyEl.appendChild(row);
+
+    // Data Processing 
+    this.loadData();
   }
 
   showCalendarMonth(year, month) {
@@ -770,34 +755,16 @@ export class AppointmentKanbanComponent implements OnInit {
           }
         } else {
           cell.classList.add('active');
+          cell.id = `${year}-${('0' + month).slice(-2)}-${('0' + date).slice(-2)}`;
           /// td-month click
           cell.addEventListener('click', () => {
             this.timePeriod = 'day';
-            this.showCalendarDay(year, month, parseInt(cell.id), null);
+            this.differenceDay = 0;
+            this.currentDate = parseInt(cell.id.slice(-2));
+            this.showCalendarDay(year, month, this.currentDate, this.differenceDay);
           });
 
-          cell_dateText.textContent = (date < 10 ? `0${date}` : date).toString();
-
-          /// check add events
-          if (this.dataAppointmentsGrouped !== null) {
-            let dateFormat = new Date(year, month, date).setHours(0);
-            if (this.dataAppointmentsGrouped[dateFormat]) {
-              let dataAppointmentsGroupedStatus = this.dataAppointmentsGrouped[
-                dateFormat
-              ].reduce(function (r, a) {
-                r[a.state] = r[a.state] || [];
-                r[a.state].push(a);
-                return r;
-              }, Object.create(null));
-              let eventMonthString = '';
-              for (const [key, value] of (<any>Object).entries(
-                dataAppointmentsGroupedStatus
-              )) {
-                eventMonthString += this.getEventMonth(key, value.length);
-              }
-              cell_dateEvent.innerHTML = eventMonthString;
-            }
-          }
+          cell_dateText.textContent = ('0' + date).slice(-2);
 
           date++;
         }
@@ -806,6 +773,98 @@ export class AppointmentKanbanComponent implements OnInit {
         row.appendChild(cell);
       }
       this.calendarTbodyEl.appendChild(row);
+    }
+
+    // Data Processing 
+    this.loadData();
+  }
+
+  loadAppointmentToCalendar() {
+    this.dataAppointments = this.dataAppointments.map(v => ({
+      ...v,
+      dateFormat: new Date(v.date).setHours(0, 0, 0, 0),
+      dateHour: v.date.getHours()
+    }));
+
+    this.groupByDataAppointments(); // group by 
+
+    if (this.timePeriod === 'day') {
+      let dataAppointmentsGroupedHour = null;
+      if (this.dataAppointmentsGrouped !== null) {
+        let dateFormat = this.dateFrom.setHours(0);
+        if (this.dataAppointmentsGrouped[dateFormat]) {
+          dataAppointmentsGroupedHour = this.dataAppointmentsGrouped[dateFormat].reduce(
+            function (r, a) {
+              r[a.dateHour] = r[a.dateHour] || [];
+              r[a.dateHour].push(a);
+              return r;
+            },
+            Object.create(null)
+          );
+        }
+      }
+
+      if (dataAppointmentsGroupedHour !== null) {
+        const year = this.dateFrom.getFullYear();
+        const month = this.dateFrom.getMonth();
+        const date = this.dateFrom.getDate();
+
+        for (let key in dataAppointmentsGroupedHour) {
+          const idCell = `${year}-${('0' + month).slice(-2)}-${('0' + date).slice(-2)}-${('0' + key).slice(-2)}`;
+          let cell_dateEventEl = document.querySelector(`[id='${idCell}'] .list-data-event-day`);
+          if (cell_dateEventEl) {
+            const tdDayOverwriteEl = cell_dateEventEl.lastChild; // td-day-overwrite
+            cell_dateEventEl.removeChild(tdDayOverwriteEl); // td-day-overwrite
+            dataAppointmentsGroupedHour[key].forEach(appointment => {
+              cell_dateEventEl.appendChild(this.getEventDayNWeek(appointment));
+            });
+            cell_dateEventEl.appendChild(tdDayOverwriteEl); // td-day-overwrite
+          }
+        }
+      }
+    } else if (this.timePeriod === 'week') {
+      if (this.dataAppointmentsGrouped !== null) {
+        for (let key in this.dataAppointmentsGrouped) {
+          if (parseInt(key) >= this.dateFrom.setHours(0) && parseInt(key) <= this.dateTo.setHours(0)) {
+            const dateKey = new Date(parseInt(key));
+            const year = dateKey.getFullYear();
+            const month = dateKey.getMonth();
+            const date = dateKey.getDate();
+            const idCell = `${year}-${('0' + month).slice(-2)}-${('0' + date).slice(-2)}`;
+            let cell_dateEventEl = document.querySelector(`[id='${idCell}'] .list-data-event-week`);
+            const tdWeekOverwriteEl = cell_dateEventEl.lastChild; // td-week-overwrite
+            cell_dateEventEl.removeChild(tdWeekOverwriteEl); // td-week-overwrite
+            this.dataAppointmentsGrouped[key].forEach(appointment => {
+              cell_dateEventEl.appendChild(this.getEventDayNWeek(appointment));
+            });
+            cell_dateEventEl.appendChild(tdWeekOverwriteEl); // td-week-overwrite
+          }
+        }
+      }
+    } else {
+      // month
+      if (this.dataAppointmentsGrouped !== null) {
+        for (let key in this.dataAppointmentsGrouped) {
+          if (parseInt(key) >= this.dateFrom.setHours(0) && parseInt(key) <= this.dateTo.setHours(0)) {
+            const dateKey = new Date(parseInt(key));
+            const year = dateKey.getFullYear();
+            const month = dateKey.getMonth();
+            const date = dateKey.getDate();
+            const idCell = `${year}-${('0' + month).slice(-2)}-${('0' + date).slice(-2)}`;
+            let cell_dateEventEl = document.querySelector(`[id='${idCell}'] .date-event`);
+            let dataAppointmentsGroupedState = this.dataAppointmentsGrouped[key].reduce(function (r, a) {
+              r[a.state] = r[a.state] || [];
+              r[a.state].push(a);
+              return r;
+            }, Object.create(null));
+            let eventMonthString = '';
+            for (let key in dataAppointmentsGroupedState) {
+              eventMonthString += this.getEventMonth(key, dataAppointmentsGroupedState[key].length);
+            }
+            cell_dateEventEl.innerHTML = eventMonthString;
+          }
+        }
+      }
     }
   }
 
@@ -958,7 +1017,7 @@ export class AppointmentKanbanComponent implements OnInit {
     modalRef.componentInstance.appointId = id;
     modalRef.componentInstance.title = id ? "Cập nhật lịch hẹn" : "Đặt lịch hẹn";
     modalRef.result.then(result => {
-      this.loadData();
+      this.renderCalendar(); // Render Calendar
     }, () => { });
   }
 
@@ -980,7 +1039,7 @@ export class AppointmentKanbanComponent implements OnInit {
       modalRef.componentInstance.appointId = id;
       modalRef.componentInstance.title = "Tiếp nhận";
       modalRef.result.then(result => {
-        this.loadData();
+        this.renderCalendar(); // Render Calendar
       }, () => { });
     }
   }
