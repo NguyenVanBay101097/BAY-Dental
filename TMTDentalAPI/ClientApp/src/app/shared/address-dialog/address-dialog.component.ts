@@ -93,48 +93,45 @@ searchWardUpdate = new Subject<string>();
       });
   }
 
-  loadSourceDistricts(cityCode: string) {
-    this.http
+  async loadSourceDistricts(cityCode: string) {
+   var result = await this.http
       .post(environment.ashipApi + "api/ApiShippingDistrict/GetDistricts", {
         data: {
           code: cityCode,
         },
         provider: "Undefined",
-      })
-      .subscribe((result: any) => {
-        this.dataSourceDistricts = result;
+      }).toPromise();
+        this.dataSourceDistricts = result as any;
         this.dataResultDistricts = this.dataSourceDistricts.slice();
-      });
   }
 
-  loadSourceWards(districtCode: string) {
-    this.http
+  async loadSourceWards(districtCode: string) {
+  var result = await this.http
       .post(environment.ashipApi + "api/ApiShippingWard/GetWards", {
         data: {
           code: districtCode,
         },
         provider: "Undefined",
-      })
-      .subscribe((result: any) => {
-        this.dataSourceWards = result;
+      }).toPromise();
+        this.dataSourceWards = result as any;
         this.dataResultWards = this.dataSourceWards.slice();
-      });
   }
 
-  handleCityChange(value) {
-    this.resetSearch();
+ async handleCityChange(value) {
+   await this.loadSourceDistricts(value.code);
+     this.resetSearch();
     this.activeTab = 'district';
     this.addresObject.city = value;
-      this.loadSourceDistricts(value.code);
       this.addresObject.district = null;
       this.addresObject.ward = null;
+    
   }
 
-  handleDistrictChange(value) {
+ async handleDistrictChange(value) {
+     await this.loadSourceWards(value.code);
     this.resetSearch();
     this.activeTab = 'ward';
     this.addresObject.district = value;
-      this.loadSourceWards(value.code);
       this.addresObject.ward = null;
   }
 
