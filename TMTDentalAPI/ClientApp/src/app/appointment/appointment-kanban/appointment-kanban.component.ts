@@ -371,12 +371,12 @@ export class AppointmentKanbanComponent implements OnInit {
       }
 
       this.appointmentService.exportExcel2(val).subscribe((result: any) => {
-        let filenam = 'DanhSachLichHen';
+        let filename = 'DanhSachLichHen';
         let newBlob = new Blob([result], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
         let data = window.URL.createObjectURL(newBlob);
         let link = document.createElement('a');
         link.href = data;
-        link.download = filenam;
+        link.download = filename;
         link.click();
         setTimeout(() => {
           window.URL.revokeObjectURL(data);
@@ -384,26 +384,6 @@ export class AppointmentKanbanComponent implements OnInit {
       });
     }, (err) => console.log(err)
     );
-    // var val = new AppointmentPaged();
-    // val.limit = 1000;
-    // val.state = this.state || '';
-    // val.search = this.search || '';
-    // val.doctorId = this.employeeSelected || '';
-    // val.dateTimeFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
-    // val.dateTimeTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
-
-    // this.appointmentService.exportExcel(val).subscribe((result: any) => {
-    //   let filenam = 'DanhSachLichHen';
-    //   let newBlob = new Blob([result], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-    //   let data = window.URL.createObjectURL(newBlob);
-    //   let link = document.createElement('a');
-    //   link.href = data;
-    //   link.download = filenam;
-    //   link.click();
-    //   setTimeout(() => {
-    //     window.URL.revokeObjectURL(data);
-    //   }, 100);
-    // });
   }
 
   handleEventClick(e) {

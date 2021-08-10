@@ -8,13 +8,12 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class AppointmentFilterExportExcelDialogComponent implements OnInit {
   title: string;
-  // selected: 'default';
   dateFrom: Date;
   dateTo: Date;
   state: string = 'default';
   states: { text: string, value: string }[] = [
     { text: 'Mặc định', value: 'default' },
-    { text: 'Thoe khoảng thời gian', value: 'period' }
+    { text: 'Theo khoảng thời gian', value: 'period' }
   ];
   stateSelected: string = this.states[0].value;
 
@@ -22,27 +21,22 @@ export class AppointmentFilterExportExcelDialogComponent implements OnInit {
     public activeModal: NgbActiveModal
   ) { }
 
-  ngOnInit() {
-    // this.dateFrom = new Date();
-    // this.dateTo = new Date();
-  }
+  ngOnInit() { }
 
   onConfirm() {
-    var dateRange = {
+    var val = {
       dateFrom: this.dateFrom,
       dateTo: this.dateTo,
       state: this.state
     }
-    this.activeModal.close(dateRange);
+    this.activeModal.close(val);
   }
 
   onChangeState(event) {
-    // console.log(event.target.value);
     this.state = event.target.value;
   }
 
   onChangeDate(event) {
-    // console.log(event);
     this.dateFrom = event.dateFrom;
     this.dateTo = event.dateTo;
   }

@@ -318,9 +318,7 @@ namespace TMTDentalAPI.Controllers
 
             var stateDict = new Dictionary<string, string>() {
                 {"confirmed", "Đang hẹn" },
-                {"waiting", "Chờ khám" },
-                {"examination", "Đang khám" },
-                {"done", "Hoàn thành" },
+                {"arrived", "Đã đến" },
                 {"cancel", "Hủy hẹn" },
             };
 
@@ -357,7 +355,7 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 4].Value = string.Join(", ", servicesNameList);
                     worksheet.Cells[row, 5].Value = item.DoctorName;
                     worksheet.Cells[row, 6].Value = item.Note;
-                    worksheet.Cells[row, 7].Value = "";
+                    worksheet.Cells[row, 7].Value = item.IsRepeatCustomer == true ? "Tái khám" : "Khám mới";
                     worksheet.Cells[row, 8].Value = !string.IsNullOrEmpty(item.State) && stateDict.ContainsKey(item.State) ? stateDict[item.State] : ""; ;
                     worksheet.Cells[row, 9].Value = item.Reason;
 
