@@ -134,8 +134,8 @@ export class AppointmentKanbanComponent implements OnInit {
         this.loadData();
       });
 
-    // this.loadListEmployees();
-    this.loadDoctorList();
+    this.loadListEmployees();
+    // this.loadDoctorList();
   }
 
   loadDoctorList() {
