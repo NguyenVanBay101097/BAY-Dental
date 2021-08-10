@@ -194,8 +194,10 @@
                                 </kendo-grid-column>
                                 <kendo-grid-column title="Trạng thái" width="150">
                                     <ng-template kendoGridCellTemplate let-dataItem>
-                                        <label *ngIf="dataItem.state=='cancel'">Hủy hẹn</label>
-                                        <label *ngIf="dataItem.state=='confirmed'">Đang hẹn</label>
+                                        <label *ngIf="dataItem.state=='confirmed'" class="color-confirmed">Đang hẹn</label>
+                                        <label *ngIf="dataItem.state=='arrived'" class="color-arrived">Đã đến</label>
+                                        <label *ngIf="dataItem.state=='cancel'" class="color-cancel">Hủy hẹn</label>
+                                        <label *ngIf="dataItem.state=='overdue'" class="color-overdue">Quá hạn</label>
                                     </ng-template>
                                 </kendo-grid-column>
                                 <kendo-grid-column field="reason" title="Lý do" width="150">
