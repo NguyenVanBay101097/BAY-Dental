@@ -358,7 +358,7 @@ export class PartnerReportOverviewComponent implements OnInit {
   openAddressDialog(){
     let modalRef = this.modalService.open(AddressDialogComponent, { size: 'sm', scrollable: true, windowClass: 'o_technical_modal',keyboard: true, backdrop: 'static' } );
     if(this.addressFilter) {
-      modalRef.componentInstance.addresObject = this.addressFilter;
+      modalRef.componentInstance.addresObject = Object.assign({}, this.addressFilter);
     }
     modalRef.result.then((res) => {
       this.addressFilter = res;
