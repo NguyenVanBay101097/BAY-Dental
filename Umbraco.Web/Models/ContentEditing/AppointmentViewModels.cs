@@ -44,6 +44,10 @@ namespace Umbraco.Web.Models.ContentEditing
         /// confirmed, done, cancel
         /// </summary>
         public string State { get; set; }
+
+        /// <summary>
+        /// Lý do
+        /// </summary>
         public string Reason { get; set; }
         //danh sach dv
         public IEnumerable<ProductSimple> Services { get; set; } = new List<ProductSimple>();
@@ -58,7 +62,15 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public PartnerBasic Partner { get; set; }
 
+        /// <summary>
+        /// Ghi chú, nội dung
+        /// </summary>
         public string Note { get; set; }
+
+        /// <summary>
+        /// Khách hàng tái khám
+        /// </summary>
+        public bool IsRepeatCustomer { get; set; }
     }
 
     public class AppointmentDisplay
@@ -101,6 +113,10 @@ namespace Umbraco.Web.Models.ContentEditing
         /// confirmed, done, cancel
         /// </summary>
         public string State { get; set; }
+
+        /// <summary>
+        /// Lý do
+        /// </summary>
         public string Reason { get; set; }
 
         //Hẹn khách hàng nào?
