@@ -4,6 +4,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Utilities;
+using DinkToPdf;
+using DinkToPdf.Contracts;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,9 +21,14 @@ namespace TMTDentalAPI.Controllers
     public class AccountCommonPartnerReportsController : BaseApiController
     {
         private readonly IAccountCommonPartnerReportService _reportService;
-        public AccountCommonPartnerReportsController(IAccountCommonPartnerReportService reportService)
+        private readonly IViewRenderService _viewRenderService;
+        private IConverter _converter;
+        public AccountCommonPartnerReportsController(IAccountCommonPartnerReportService reportService, 
+            IViewRenderService viewRenderService, IConverter converter)
         {
             _reportService = reportService;
+            _viewRenderService = viewRenderService;
+            _converter = converter;
         }
 
         [HttpPost("GetSummaryPartner")]
@@ -146,6 +154,37 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _reportService.ReportPartnerDebitSummary(val);
             return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Report.AccountPartner")]
+        public async Task<IActionResult> GetReportPartnerDebitPdf([FromQuery]ReportPartnerDebitReq val)
+        {
+            var data = await _reportService.PrintReportPartnerDebit(val);
+            var html = _viewRenderService.Render("AccountCommonPartnerReport/ReportPartnerDebitPdf", data);
+
+            var globalSettings = new GlobalSettings
+            {
+                ColorMode = ColorMode.Color,
+                Orientation = Orientation.Landscape,
+                PaperSize = PaperKind.A4,
+                Margins = new MarginSettings { Top = 10 },
+                DocumentTitle = "PDF Report"
+            };
+            var objectSettings = new ObjectSettings
+            {
+                PagesCount = true,
+                HtmlContent = html,
+                WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/css", "print.css") },
+                FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Báo cáo công nợ khách hàng", Right = "Page [page] of [toPage]" }
+            };
+            var pdf = new HtmlToPdfDocument()
+            {
+                GlobalSettings = globalSettings,
+                Objects = { objectSettings }
+            };
+            var file = _converter.Convert(pdf);
+            return File(file, "application/pdf", "BaoCaoCongNo_KH.pdf");
         }
     }
 }

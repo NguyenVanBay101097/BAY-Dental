@@ -103,6 +103,7 @@ import { DashboardCustomerReceiptListTodayComponent } from './components/dashboa
 import { CustomerReceipCreateUpdateComponent } from './customer-receip-create-update/customer-receip-create-update.component';
 import { CustomerReceiptStatePopoverComponent } from './customer-receipt-state-popover/customer-receipt-state-popover.component';
 import { IsEllipsisActiveDirective } from './is-ellipsis-active.directive';
+import { AddressDialogComponent } from './address-dialog/address-dialog.component';
 
 const config: LocaleConfig = {};
 @NgModule({
@@ -199,9 +200,9 @@ const config: LocaleConfig = {};
         TeethChartComponent,
         ToothSelectionDialogComponent,
         SaleOrderLineSwitchStatePopoverComponent,
-       
         CustomerReceipCreateUpdateComponent,
-        CustomerReceiptStatePopoverComponent
+        CustomerReceiptStatePopoverComponent,
+        AddressDialogComponent
     ],
     exports: [
         ConfirmDialogComponent,
@@ -288,7 +289,8 @@ const config: LocaleConfig = {};
         SaleOrderLineSwitchStatePopoverComponent,
         
         CustomerReceipCreateUpdateComponent,
-        CustomerReceiptStatePopoverComponent
+        CustomerReceiptStatePopoverComponent,
+        AddressDialogComponent
     ],
     imports: [
         NgbModule,
@@ -338,9 +340,10 @@ const config: LocaleConfig = {};
         DateRangePickerFilterComponent,
         DateRangePickerDropdownComponent,
         AgentCreateUpdateDialogComponent,
-        ToothSelectionDialogComponent,
-        
-        CustomerReceipCreateUpdateComponent
+        ToothSelectionDialogComponent,        
+        CustomerReceipCreateUpdateComponent,
+        AddressDialogComponent,
+
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
