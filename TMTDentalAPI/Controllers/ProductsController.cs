@@ -1264,24 +1264,31 @@ namespace TMTDentalAPI.Controllers
             {
                 var worksheet = package.Workbook.Worksheets.Add(sheetName);
 
-                worksheet.Cells[1, 1].Value = "Tên dịch vụ";
-                worksheet.Cells[1, 2].Value = "Có thể đặt labo";
-                worksheet.Cells[1, 3].Value = "Nhóm dịch vụ";
-                worksheet.Cells[1, 4].Value = "Mã dịch vụ";
+                worksheet.Cells[1, 1].Value = "Mã dịch vụ";
+                worksheet.Cells[1, 2].Value = "Tên dịch vụ";
+                worksheet.Cells[1, 3].Value = "Có thể đặt labo";
+                worksheet.Cells[1, 4].Value = "Nhóm dịch vụ";
                 worksheet.Cells[1, 5].Value = "Giá bán";
-                worksheet.Cells[1, 6].Value = "Công đoạn";
-                worksheet.Cells[1, 7].Value = "Giá đặt labo";
+                worksheet.Cells[1, 6].Value = "";
+                worksheet.Cells[1, 7].Value = "Công đoạn";
+                worksheet.Cells[1, 8].Value = "Giá đặt labo";
+                worksheet.Cells[1, 9].Value = "Hãng";
+
+                worksheet.Cells["A1:I1"].Style.Font.Bold = true;
+
                 for (int row = 2; row < services.Count() + 2; row++)
                 {
                     var item = services.ToList()[row - 2];
 
-                    worksheet.Cells[row, 1].Value = item.Name;
-                    worksheet.Cells[row, 2].Value = item.IsLabo;
-                    worksheet.Cells[row, 3].Value = item.CategName;
-                    worksheet.Cells[row, 4].Value = item.DefaultCode;
+                    worksheet.Cells[row, 1].Value = item.DefaultCode;
+                    worksheet.Cells[row, 2].Value = item.Name;
+                    worksheet.Cells[row, 3].Value = item.IsLabo;
+                    worksheet.Cells[row, 4].Value = item.CategName;
                     worksheet.Cells[row, 5].Value = item.ListPrice;
-                    worksheet.Cells[row, 6].Value = item.StepList.Count() == 0 ? null : string.Join(";", item.StepList.Select(x => x.Name).ToList());
-                    worksheet.Cells[row, 7].Value = item.LaboPrice ?? 0;
+                    worksheet.Cells[row, 6].Value = "giá vốn";
+                    worksheet.Cells[row, 7].Value = item.StepList.Count() == 0 ? null : string.Join(";", item.StepList.Select(x => x.Name).ToList());
+                    worksheet.Cells[row, 8].Value = item.LaboPrice ?? 0;
+                    worksheet.Cells[row, 9].Value = item.Firm;
                 }
 
                 worksheet.Cells.AutoFitColumns();
