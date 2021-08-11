@@ -418,7 +418,7 @@ namespace Infrastructure.Services
                 UpdatePosted = true,
                 Code = "SALARY",
                 DefaultDebitAccountId = acc642.Id,
-                DefaultCreditAccountId = acc334.Id,
+                DefaultCreditAccountId = acc642.Id,
                 CompanyId = company.Id,
             };
 

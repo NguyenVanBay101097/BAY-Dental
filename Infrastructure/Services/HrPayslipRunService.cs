@@ -169,8 +169,8 @@ namespace Infrastructure.Services
                 throw new Exception("Đợt lương không tồn tại");
 
             DateTime dayone = new DateTime(paysliprun.Date.Value.AddMonths(1).Year, paysliprun.Date.Value.AddMonths(1).Month, 1);
-            if (DateTime.Now < dayone)
-                throw new Exception(@$"Bảng lương tháng {paysliprun.Date.Value.ToString("MM/yyyy")} chỉ có thể xác nhận từ ngày {dayone.ToString("dd/MM/yyyy")}");
+            //if (DateTime.Now < dayone)
+            //    throw new Exception(@$"Bảng lương tháng {paysliprun.Date.Value.ToString("MM/yyyy")} chỉ có thể xác nhận từ ngày {dayone.ToString("dd/MM/yyyy")}");
 
             // ghi sổ
             var move = await PreparePayslipMove(paysliprun);
@@ -226,32 +226,99 @@ namespace Infrastructure.Services
 
             // tạo moveline cho từng phiếu lương, 1 phiếu 2 line
             var lines = new List<AccountMoveLine>();
+            var accountingDate = new DateTime(slipRun.Date.Value.Year, slipRun.Date.Value.Month, DateTime.DaysInMonth(slipRun.Date.Value.Year, slipRun.Date.Value.Month));
             foreach (var slip in slipRun.Slips)
             {
-                var balance = slip.TotalSalary.GetValueOrDefault();
+                var grossSalary = slip.TotalSalary.GetValueOrDefault();
+                var taxSalary = slip.Tax.GetValueOrDefault();
+                var bhxhSalary = slip.SocialInsurance.GetValueOrDefault();
+                if (grossSalary == 0)
+                    continue;
+
                 var items = new List<AccountMoveLine>()
                 {
                     new AccountMoveLine
                     {
                         Name =  "Lương tháng " + slipRun.Date.Value.ToString("MM/yyyy"),
-                        Debit = balance < 0 ? -balance : 0,
-                        Credit = balance > 0 ? balance : 0,
+                        Debit = 0,
+                        Credit = grossSalary,
                         AccountId = acc334.Id,
                         Account = acc334,
                         PartnerId = slip.Employee.PartnerId,
                         Move = move,
+                        Date = accountingDate,
                     },
                     new AccountMoveLine
                     {
                         Name = "Lương tháng " + slipRun.Date.Value.ToString("MM/yyyy"),
-                        Debit = balance > 0 ? balance : 0,
-                        Credit = balance < 0 ? -balance : 0,
-                        AccountId = accountJournal.DefaultCreditAccount.Id,
-                        Account = accountJournal.DefaultCreditAccount,
+                        Debit = grossSalary,
+                        Credit = 0,
+                        AccountId = accountJournal.DefaultDebitAccount.Id,
+                        Account = accountJournal.DefaultDebitAccount,
                         PartnerId = slip.Employee.PartnerId,
                         Move = move,
+                        Date = accountingDate,
                     },
                 };
+
+                if (taxSalary > 0)
+                {
+                    //dùng tài khoản thuế thu nhập cá nhân
+                    var acc3335 = await accountObj.GetAccount3335CurrentCompany();
+                    items.Add(new AccountMoveLine
+                    {
+                        Name = "Thuế thu nhập cá nhân tháng " + slipRun.Date.Value.ToString("MM/yyyy"),
+                        Debit = taxSalary,
+                        Credit = 0,
+                        AccountId = acc334.Id,
+                        Account = acc334,
+                        PartnerId = slip.Employee.PartnerId,
+                        Move = move,
+                        Date = accountingDate,
+                    });
+
+                    items.Add(new AccountMoveLine
+                    {
+                        Name = "Thuế thu nhập cá nhân tháng " + slipRun.Date.Value.ToString("MM/yyyy"),
+                        Debit = 0,
+                        Credit = taxSalary,
+                        AccountId = acc3335.Id,
+                        Account = acc3335,
+                        PartnerId = slip.Employee.PartnerId,
+                        Move = move,
+                        Date = accountingDate,
+                    });
+                }
+
+                if (bhxhSalary > 0)
+                {
+                    //dùng tài khoản thuế thu nhập cá nhân
+                    var acc3383 = await accountObj.GetAccount3383CurrentCompany();
+                    items.Add(new AccountMoveLine
+                    {
+                        Name = "Bảo hiểm xã hội tháng " + slipRun.Date.Value.ToString("MM/yyyy"),
+                        Debit = bhxhSalary,
+                        Credit = 0,
+                        AccountId = acc334.Id,
+                        Account = acc334,
+                        PartnerId = slip.Employee.PartnerId,
+                        Move = move,
+                        Date = accountingDate,
+                    });
+
+                    items.Add(new AccountMoveLine
+                    {
+                        Name = "Bảo hiểm xã hội tháng " + slipRun.Date.Value.ToString("MM/yyyy"),
+                        Debit = 0,
+                        Credit = bhxhSalary,
+                        AccountId = acc3383.Id,
+                        Account = acc3383,
+                        PartnerId = slip.Employee.PartnerId,
+                        Move = move,
+                        Date = accountingDate,
+                    });
+                }
+
                 lines.AddRange(items);
             }
             move.Lines = lines;
@@ -430,9 +497,9 @@ namespace Infrastructure.Services
 
             payslip.TotalSalary = (payslip.TotalBasicSalary ?? 0) + (payslip.OverTimeHourSalary ?? 0) + (payslip.OverTimeDaySalary ?? 0) + (payslip.Allowance ?? 0)
                + payslip.OtherAllowance.GetValueOrDefault() + payslip.RewardSalary.GetValueOrDefault() + payslip.HolidayAllowance.GetValueOrDefault()
-               + (payslip.CommissionSalary ?? 0) - (payslip.AmercementMoney ?? 0) - (payslip.Tax ?? 0) - (payslip.SocialInsurance ?? 0);
+               + (payslip.CommissionSalary ?? 0) - (payslip.AmercementMoney ?? 0);
             payslip.AdvancePayment = advances.Sum(x => x.Amount);
-            payslip.NetSalary = payslip.TotalSalary - payslip.AdvancePayment;
+            payslip.NetSalary = payslip.TotalSalary - (payslip.Tax ?? 0) - (payslip.SocialInsurance ?? 0);
         }
 
         public async Task ComputeSalaryByRunId(Guid id)

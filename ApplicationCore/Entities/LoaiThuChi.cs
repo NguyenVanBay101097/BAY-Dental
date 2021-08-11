@@ -24,7 +24,7 @@ namespace ApplicationCore.Entities
         public string Type { get; set; }
 
         /// <summary>
-        /// Hiện trong báo cáo két quả kinh doanh
+        /// Hiện trong báo cáo két quả kinh doanh -> không sử dụng, thay bằng IsAccounting
         /// </summary>
         public bool IsInclude { get; set; }
 
