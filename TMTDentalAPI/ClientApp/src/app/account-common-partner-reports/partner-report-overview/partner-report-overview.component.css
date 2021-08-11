@@ -15,3 +15,7 @@
 .icon-filter {
     background-color: #c1c7ce;
 }
+
+.transform-50 {
+    transform: translateY(50%);
+}

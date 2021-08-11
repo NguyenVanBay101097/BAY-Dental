@@ -44,29 +44,81 @@
             </div>
         </div>
         <div class="filter-right flex-0-0-auto">
-            <input class="form-control" placeholder="Tìm kiếm theo mã, tên, số điện thoại khách hàng" type="text" [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)" />
+            <div class="o_searchview">
+                <input class="o_searchview_input" placeholder="Tìm kiếm theo mã, tên, số điện thoại khách hàng" type="text" [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)" />
+                <span class="o_searchview_icon fas fa-search"></span>
+            </div>
             <kendo-multiselect class="mt-2" [data]="filteredCategs" [valueField]="'id'" [textField]="'name'" [placeholder]="'Lọc theo nhãn'" [filterable]="true" (valueChange)="onCategChange($event)" #categMst>
             </kendo-multiselect>
         </div>
     </div>
     <!-- grid -->
     <div class="total d-flex mt-2">
-        <div class="border mr-2 px-5 py-2 text-center">
-            <label class="mb-0">Tổng lượng khách</label>
-            <h5 class="text-primary">{{ sumOldNew | number }}</h5>
+        <div class="border mr-2 text-center">
+            <h6 class="border-bottom text-center mr-2 px-5 py-2">Tổng lượng khách
+                <ng-template #popContentTotal>
+                    <span>
+                        - Khách quay lại là khách hàng đã từng phát sinh PĐT và phát sinh thêm PĐT mới trong khoảng thời gian xác định
+                        <br> - Doanh thu khách quay lại tính dựa vào doanh thu của những PĐT phát sinh mới trong khoảng thời gian xác định trừ PĐT đầu tiên
+                    </span>
+                </ng-template>
+                <i class="fas fa-info-circle text-primary" popoverClass="popover-xl" placement="right" [ngbPopover]="popContentTotal" triggers="mouseenter:mouseleave"></i>
+            </h6>
+            <h5 class="text-primary transform-50"><span>{{ sumOldNew | number }}</span></h5>
         </div>
-        <div class="border mr-2 px-5 py-2 text-center">
-            <label class="mb-0">Khách mới</label>
-            <h5 class="text-primary">{{ sumNew | number }}</h5>
+        <div class="border mr-2 text-center">
+            <h6 class="border-bottom text-center mr-2 px-5 py-2">Tổng doanh thu
+                <ng-template #popContentTotalRevenue>
+                    <span>
+                        - Khách mới là khách hàng lần đầu tiên phát sinh PĐT trong khoảng thời gian xác định
+                        <br> - Doanh thu khách mới tính dựa vào doanh thu của PĐT đầu tiên của khách hàng đó trong khoảng thời gian xác định
+                    </span>
+                </ng-template>
+                <i class="fas fa-info-circle text-primary" popoverClass="popover-xl" placement="right" [ngbPopover]="popContentTotalRevenue" triggers="mouseenter:mouseleave"></i>
+            </h6>
+            <h5 class="text-success transform-50">{{ revenueOld + revenueNew | number }}</h5>
         </div>
-        <div class="border mr-2 px-5 py-2 text-center">
-            <label class="mb-0">Khách quay lại</label>
-            <h5 class="text-primary">{{ sumOld | number }}</h5>
+        <div class="border mr-2 text-center">
+            <h6 class="border-bottom text-center mr-2 px-5 py-2">Khách mới
+                <ng-template #popContentTotalNew>
+                    <span>
+                        Tổng số khách hàng có phát sinh PĐT mới trong khoảng thời gian xác định
+                    </span>
+                </ng-template>
+                <i class="fas fa-info-circle text-primary" popoverClass="popover-xl" placement="right" [ngbPopover]="popContentTotalNew" triggers="mouseenter:mouseleave"></i>
+            </h6>
+            <div class="d-flex">
+                <div class="flex-fill">
+                    <h6>Số lượng</h6>
+                    <h5 class="text-primary">{{ sumNew | number }}</h5>
+                </div>
+                <div class="flex-fill">
+                    <h6>Doanh thu</h6>
+                    <h5 class="text-success">{{ revenueNew | number }}</h5>
+                </div>
+            </div>
         </div>
-        <div class="border mr-2 px-5 py-2 text-center">
-            <label class="mb-0">Doanh thu</label>
-            <h5 class="text-success">{{ sumRevenue | number }}</h5>
+        <div class="border mr-2 text-center">
+            <h6 class="border-bottom text-center mr-2 px-5 py-2">Khách quay lại
+                <ng-template #popContentTotalOld>
+                    <span>
+                        Tổng doanh thu của tất cả các PĐT phát sinh mới trong khoảng thời gian xác định
+                    </span>
+                </ng-template>
+                <i class="fas fa-info-circle text-primary" popoverClass="popover-xl" placement="right" [ngbPopover]="popContentTotalOld" triggers="mouseenter:mouseleave"></i>
+            </h6>
+            <div class="d-flex">
+                <div class="flex-fill">
+                    <h6>Số lượng</h6>
+                    <h5 class="text-primary">{{ sumOld | number }}</h5>
+                </div>
+                <div class="flex-fill">
+                    <h6>Doanh thu</h6>
+                    <h5 class="text-success">{{ revenueOld | number }}</h5>
+                </div>
+            </div>
         </div>
+
     </div>
     <kendo-grid (excelExport)="onExcelExport($event)" [resizable]="true" #grid class="mt-2" [loading]="loading" [data]="gridData" [pageSize]="this.limit" [skip]="this.skip" [pageable]="true" (pageChange)="pageChange($event)">
         <kendo-grid-column field="name" title="Khách hàng" width="120">

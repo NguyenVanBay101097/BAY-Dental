@@ -14,6 +14,7 @@ namespace Infrastructure.Services
         Task<IEnumerable<PartnerOldNewReportRes>> GetReport(PartnerOldNewReportReq val);
         Task<int> SumReport(PartnerOldNewReportSumReq val);
         Task<PartnerOldNewReportPrint> GetReportPrint(PartnerOldNewReportReq val);
+        Task<decimal> SumReVenue(PartnerOldNewReportSumReq val);
     }
 
 

@@ -13,6 +13,7 @@ import { PartnerDebitListReportComponent } from './partner-debit-list-report/par
 import { PartnerDebitDetailListReportComponent } from './partner-debit-detail-list-report/partner-debit-detail-list-report.component';
 import { PartnerReportManagementComponent } from './partner-report-management/partner-report-management.component';
 import { PartnerReportOverviewComponent } from './partner-report-overview/partner-report-overview.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [AccountCommonCustomerReportListComponent, AccountCommonPartnerReportDetailComponent, AccountCommonPartnerReportListComponent, PartnerDebitListReportComponent, PartnerDebitDetailListReportComponent, PartnerReportManagementComponent, PartnerReportOverviewComponent],
@@ -21,7 +22,8 @@ import { PartnerReportOverviewComponent } from './partner-report-overview/partne
     AccountCommonPartnerReportsRoutingModule,
     MyCustomKendoModule,
     FormsModule,
-    SharedModule
+    SharedModule,
+    NgbModule
   ],
   providers: [
     AccountCommonPartnerReportService

@@ -55,6 +55,8 @@ export class PartnerReportOverviewComponent implements OnInit {
   sumOld = 0;
   sumNew = 0;
   sumOldNew = 0;
+  revenueOld = 0;
+  revenueNew = 0;
   isFilterAdvance = false;
   addressFilter = null;
   
@@ -78,12 +80,6 @@ export class PartnerReportOverviewComponent implements OnInit {
     this.FilterCombobox();
     this.loadAllData();
     this.loadSummary();
-  }
-
-  get sumRevenue(){
-    return (this.allDataGrid as []).reduce((total, cur:any) => {
-      return total + cur.revenue;
-    }, 0);
   }
 
   loadAllData() {
@@ -114,12 +110,15 @@ export class PartnerReportOverviewComponent implements OnInit {
       var valNew = Object.assign({}, val);
       valNew.typeReport = el.value;
     obs.push(this.partnerOldNewRpService.sumReport(valNew));
+    obs.push(this.partnerOldNewRpService.sumReVenue(valNew));
     });
 
     forkJoin(obs).subscribe((res: any[]) => {
       this.sumOldNew = res[0] || 0;
       this.sumNew = res[1] || 0;
-      this.sumOld = res[2] || 0;
+      this.revenueNew = res[2] || 0;
+      this.sumOld = res[3] || 0;
+      this.revenueOld = res[4] || 0;
     });
   }
 
@@ -373,7 +372,7 @@ export class PartnerReportOverviewComponent implements OnInit {
 
   getAddressFilterDisplay(){
     if(!this.addressFilter)
-    return 'Khu vực';
+    return 'Tất cả khu vực';
     var names = [];
     if(this.addressFilter.city)
     names.push(this.addressFilter.city.name);
@@ -381,7 +380,7 @@ export class PartnerReportOverviewComponent implements OnInit {
     names.push(this.addressFilter.district.name);
     if(this.addressFilter.ward)
     names.push(this.addressFilter.ward.name);
-    return (names as []).join(', ') || 'Khu vực';
+    return (names as []).join(', ') || 'Tất cả khu vực';
   }
 
   public allData = (): any => {
