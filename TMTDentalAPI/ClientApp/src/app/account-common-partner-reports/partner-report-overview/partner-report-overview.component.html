@@ -37,7 +37,7 @@
                 <kendo-combobox [popupSettings]="cbxPopupSettings" style="width: 190px" [placeholder]="'Nguồn khách hàng'" class="mr-1" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="partnerSources" (selectionChange)="onSelectPartnerSource($event)"
                     #pnSourceCbx>
                 </kendo-combobox>
-                <kendo-combobox [popupSettings]="cbxPopupSettings" [placeholder]="'Hạng thành viên'" class="mr-1" [data]="memberLevels" [valueField]="'id'" [textField]="'name'" (valueChange)="onMemberLevelSelect($event)" #memberLevelCbx>
+                <kendo-combobox [popupSettings]="cbxPopupSettings" [placeholder]="'Hạng thành viên'" class="mr-1" [data]="memberLevels" [valueField]="'id'" [textField]="'name'" [filterable]="true" (valueChange)="onMemberLevelSelect($event)" #memberLevelCbx>
                 </kendo-combobox>
                 <kendo-combobox [popupSettings]="cbxPopupSettings" [placeholder]="'Giới tính'" class="" [valueField]="'value'" [textField]="'text'" [filterable]="true" [data]="partnerGenders" (selectionChange)="onSelectPartnerGender($event)" #pnGenderCbx>
                 </kendo-combobox>
