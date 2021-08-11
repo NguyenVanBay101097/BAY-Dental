@@ -131,7 +131,7 @@ namespace ApplicationCore.Entities
         /// </summary>
         public decimal? HolidayAllowance { get; set; }
         /// <summary>
-        /// tổng cộng lương:tổng các khoản lương chưa có hoa hồng
+        /// Lương gross: bao gồm lương + trợ cấp + hoa hồng + bảo hiểm + thuế...
         /// </summary>
         public decimal? TotalSalary { get; set; }
         /// <summary>
@@ -156,7 +156,7 @@ namespace ApplicationCore.Entities
         /// </summary>
         public decimal? AmercementMoney { get; set; }
         /// <summary>
-        /// tiền thực nhận: bằng totalsalary + commission - amercement - advance
+        /// Lương net = lương gross - bhxh - thuế
         /// </summary>
         public decimal? NetSalary { get; set; }
         /// <summary>

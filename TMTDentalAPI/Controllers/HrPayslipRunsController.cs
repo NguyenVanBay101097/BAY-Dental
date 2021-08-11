@@ -219,7 +219,7 @@ namespace TMTDentalAPI.Controllers
             string groupSep = cul.NumberFormat.CurrencyGroupSeparator;
             var stream = new MemoryStream();
             var data = await _mapper.ProjectTo<HrPayslipDisplay>(_payslipServie.SearchQuery(x => payslipIds.Contains(x.Id))
-                .Include(x=>x.Employee).Include(x=>x.SalaryPayment)).ToListAsync();
+                .Include(x => x.Employee).Include(x => x.SalaryPayment)).ToListAsync();
             byte[] fileContent;
 
             using (var package = new ExcelPackage(stream))
@@ -238,53 +238,57 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[1, 10].Value = "Phụ cấp khác";
                 worksheet.Cells[1, 11].Value = "Thưởng";
                 worksheet.Cells[1, 12].Value = "Phụ cấp lễ tết";
-                worksheet.Cells[1, 13].Value = "Tổng lương";
-                worksheet.Cells[1, 14].Value = "Hoa hồng";
-                worksheet.Cells[1, 15].Value = "Phạt";
+                worksheet.Cells[1, 13].Value = "Hoa hồng";
+                worksheet.Cells[1, 14].Value = "Phạt";
+                worksheet.Cells[1, 15].Value = "Tổng thu nhập";
                 worksheet.Cells[1, 16].Value = "Thuế";
                 worksheet.Cells[1, 17].Value = "BHXH";
-                worksheet.Cells[1, 18].Value = "Tạm ứng";
-                worksheet.Cells[1, 19].Value = "Thực lĩnh";
-                worksheet.Cells[1, 20].Value = "Phiếu chi";
-                worksheet.Cells["A1:R1"].Style.Font.Bold = true;
+                worksheet.Cells[1, 18].Value = "Thực lĩnh";
+                worksheet.Cells[1, 19].Value = "Tạm ứng";
+                worksheet.Cells[1, 20].Value = "Còn lại";
+                worksheet.Cells[1, 21].Value = "Phiếu chi";
+                worksheet.Cells["A1:U1"].Style.Font.Bold = true;
 
                 var row = 2;
                 foreach (var item in data)
                 {
                     worksheet.Cells[row, 1].Value = item.Employee.Name;
                     worksheet.Cells[row, 2].Value = item.DaySalary;
+                    worksheet.Cells[row, 2].Style.Numberformat.Format = "#,##0";
                     worksheet.Cells[row, 3].Value = item.WorkedDay;
-                    worksheet.Cells[row, 4].Value = item.TotalBasicSalary.GetValueOrDefault().ToString("N1", CultureInfo.InvariantCulture);
+                    worksheet.Cells[row, 4].Value = item.TotalBasicSalary.GetValueOrDefault();
+                    worksheet.Cells[row, 4].Style.Numberformat.Format = "#,##0";
                     worksheet.Cells[row, 5].Value = item.OverTimeHour;
-                    worksheet.Cells[row, 6].Value = item.OverTimeHourSalary.GetValueOrDefault().ToString("N1", CultureInfo.InvariantCulture);
+                    worksheet.Cells[row, 6].Value = item.OverTimeHourSalary.GetValueOrDefault();
+                    worksheet.Cells[row, 6].Style.Numberformat.Format = "#,##0";
                     worksheet.Cells[row, 7].Value = item.OverTimeDay;
-                    worksheet.Cells[row, 8].Value = item.OverTimeDaySalary.GetValueOrDefault().ToString("N1", CultureInfo.InvariantCulture);
-                    worksheet.Cells[row, 9].Value = item.Employee.Allowance.GetValueOrDefault().ToString("N1", CultureInfo.InvariantCulture);
-                    worksheet.Cells[row, 10].Value = item.OtherAllowance.GetValueOrDefault().ToString("N1", CultureInfo.InvariantCulture);
-                    worksheet.Cells[row, 11].Value = item.RewardSalary.GetValueOrDefault().ToString("N1", CultureInfo.InvariantCulture);
-                    worksheet.Cells[row, 12].Value = item.HolidayAllowance.GetValueOrDefault().ToString("N1", CultureInfo.InvariantCulture);
-                    worksheet.Cells[row, 13].Value = item.TotalSalary.GetValueOrDefault().ToString("N1", CultureInfo.InvariantCulture);
-                    worksheet.Cells[row, 14].Value = item.CommissionSalary.GetValueOrDefault().ToString("N1", CultureInfo.InvariantCulture);
-                    worksheet.Cells[row, 15].Value = item.AmercementMoney.GetValueOrDefault().ToString("N1", CultureInfo.InvariantCulture);
-                    worksheet.Cells[row, 16].Value = item.Tax.GetValueOrDefault().ToString("N1", CultureInfo.InvariantCulture);
-                    worksheet.Cells[row, 17].Value = item.SocialInsurance.GetValueOrDefault().ToString("N1", CultureInfo.InvariantCulture);
-                    worksheet.Cells[row, 18].Value = item.AdvancePayment.GetValueOrDefault().ToString("N1", CultureInfo.InvariantCulture); ;
-                    worksheet.Cells[row, 19].Value = item.NetSalary.GetValueOrDefault().ToString("N1", CultureInfo.InvariantCulture);
-                    worksheet.Cells[row, 20].Value = item.SalaryPayment !=null ? item.SalaryPayment.Name : "Chưa chi";
-
-                    //format
-                    //worksheet.Cells[row, 2].Style.Numberformat.Format = "#,#";
-                    //worksheet.Cells[row, 4].Style.Numberformat.Format = "#,#";
-                    //worksheet.Cells[row, 6].Style.Numberformat.Format = "#,#";
-                    //worksheet.Cells[row, 8].Style.Numberformat.Format = "#,#";
-                    //worksheet.Cells[row, 9].Style.Numberformat.Format = "#,#";
-                    //worksheet.Cells[row, 10].Style.Numberformat.Format = "#,#";
-                    //worksheet.Cells[row, 11].Style.Numberformat.Format = "#,#";
-                    //worksheet.Cells[row, 12].Style.Numberformat.Format = "#,#";
-                    //worksheet.Cells[row, 13].Style.Numberformat.Format = "#,#";
-                    //worksheet.Cells[row, 14].Style.Numberformat.Format = "#,#";
-                    //worksheet.Cells[row, 15].Style.Numberformat.Format = "#,#";
-                    //worksheet.Cells[row, 17].Style.Numberformat.Format = "#,#";
+                    worksheet.Cells[row, 8].Value = item.OverTimeDaySalary.GetValueOrDefault();
+                    worksheet.Cells[row, 8].Style.Numberformat.Format = "#,##0";
+                    worksheet.Cells[row, 9].Value = item.Employee.Allowance.GetValueOrDefault();
+                    worksheet.Cells[row, 9].Style.Numberformat.Format = "#,##0";
+                    worksheet.Cells[row, 10].Value = item.OtherAllowance.GetValueOrDefault();
+                    worksheet.Cells[row, 10].Style.Numberformat.Format = "#,##0";
+                    worksheet.Cells[row, 11].Value = item.RewardSalary.GetValueOrDefault();
+                    worksheet.Cells[row, 11].Style.Numberformat.Format = "#,##0";
+                    worksheet.Cells[row, 12].Value = item.HolidayAllowance.GetValueOrDefault();
+                    worksheet.Cells[row, 12].Style.Numberformat.Format = "#,##0";
+                    worksheet.Cells[row, 13].Value = item.CommissionSalary.GetValueOrDefault();
+                    worksheet.Cells[row, 13].Style.Numberformat.Format = "#,##0";
+                    worksheet.Cells[row, 14].Value = item.AmercementMoney.GetValueOrDefault();
+                    worksheet.Cells[row, 14].Style.Numberformat.Format = "#,##0";
+                    worksheet.Cells[row, 15].Value = item.TotalSalary.GetValueOrDefault();
+                    worksheet.Cells[row, 15].Style.Numberformat.Format = "#,##0";
+                    worksheet.Cells[row, 16].Value = item.Tax.GetValueOrDefault();
+                    worksheet.Cells[row, 16].Style.Numberformat.Format = "#,##0";
+                    worksheet.Cells[row, 17].Value = item.SocialInsurance.GetValueOrDefault();
+                    worksheet.Cells[row, 17].Style.Numberformat.Format = "#,##0";
+                    worksheet.Cells[row, 18].Value = item.NetSalary.GetValueOrDefault();
+                    worksheet.Cells[row, 18].Style.Numberformat.Format = "#,##0";
+                    worksheet.Cells[row, 19].Value = item.AdvancePayment.GetValueOrDefault();
+                    worksheet.Cells[row, 19].Style.Numberformat.Format = "#,##0";
+                    worksheet.Cells[row, 20].Value = item.NetSalary.GetValueOrDefault() - item.AdvancePayment.GetValueOrDefault();
+                    worksheet.Cells[row, 20].Style.Numberformat.Format = "#,##0";
+                    worksheet.Cells[row, 21].Value = item.SalaryPayment != null ? item.SalaryPayment.Name : "Chưa chi";
 
                     row++;
                 }
