@@ -68,8 +68,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? SourceId { get; set; }
         //nhãn
         public IEnumerable<Guid> CategIds { get; set; } = new List<Guid>();
-        //hạng thành viên
-        public Guid? MemberLevelId { get; set; }
         //giới tính
         public string Gender { get; set; }
         public string Search { get; set; }
@@ -84,7 +82,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public int? BirthYear { get; set; }
         public string OrderState { get; set; }
         public decimal Revenue { get; set; }
-        public MemberLevelBasic MemberLevel { get; set; }
         public IEnumerable<PartnerCategoryBasic> Categories { get; set; } = new List<PartnerCategoryBasic>();
         public string Age
         {
