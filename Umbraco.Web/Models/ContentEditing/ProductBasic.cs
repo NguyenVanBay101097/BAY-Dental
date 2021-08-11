@@ -157,6 +157,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Steps { get; set; }
 
         public decimal? LaboPrice { get; set; }
+        public string Firm { get; set; }
     }
 
     public class ProductMedicineImportExcelRow
@@ -165,6 +166,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string CategName { get; set; }
         public decimal ListPrice { get; set; }
         public string UoM { get; set; }
+        public decimal? MinInventory { get; set; }
     }
 
     public class ProductMedicineUpdateExcelRow
@@ -187,6 +189,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public string DefaultCode { get; set; }
 
         public decimal? PurchasePrice { get; set; }
+
+        public string UoM { get; set; }
+
+        public decimal? MinInventory { get; set; }
+
     }
 
     public class ProductLaboImportExcelRow

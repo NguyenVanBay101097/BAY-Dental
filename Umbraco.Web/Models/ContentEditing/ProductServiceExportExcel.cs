@@ -62,5 +62,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? ListPrice { get; set; }
 
         public string UomName { get; set; }
+
+        public string UomPoName { get; set; }
+
+        public decimal? MinInventory { get; set; }
     }
 }
