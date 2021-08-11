@@ -38,7 +38,8 @@ namespace Umbraco.Web.Models.ContentEditing
             }
             set { }
         }
-
+        public DateTime? DateCreated { get; set; }
+        public string TitleName { get; set; }
     }
     public class PartnerInfoDisplay
     {
