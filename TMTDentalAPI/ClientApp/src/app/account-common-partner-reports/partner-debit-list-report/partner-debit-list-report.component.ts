@@ -229,7 +229,7 @@ export class PartnerDebitListReportComponent implements OnInit {
             Object.assign({}, headerOptions, { value: 'Nợ đầu kỳ',background: '#aabbcc' }),
             Object.assign({}, headerOptions, { value: 'Phát sinh',background: '#aabbcc' }),
             Object.assign({}, headerOptions, { value: 'Thanh toán',background: '#aabbcc' }),
-            Object.assign({}, headerOptions, { value: 'Nợ cuối kì',background: '#aabbcc'})
+            Object.assign({}, headerOptions, { value: 'Nợ cuối kỳ',background: '#aabbcc'})
           ]
         });
       //  add the detail header
@@ -241,7 +241,7 @@ export class PartnerDebitListReportComponent implements OnInit {
             Object.assign({}, headerOptions, { value: 'Nợ đầu kỳ',background: '#aabbcc' }),
             Object.assign({}, headerOptions, { value: 'Phát sinh',background: '#aabbcc' }),
             Object.assign({}, headerOptions, { value: 'Thanh toán',background: '#aabbcc' }),
-            Object.assign({}, headerOptions, { value: 'Nợ cuối kì',background: '#aabbcc'})
+            Object.assign({}, headerOptions, { value: 'Nợ cuối kỳ',background: '#aabbcc'})
           ]
         });
       //  add the detail data
