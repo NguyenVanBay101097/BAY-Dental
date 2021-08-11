@@ -237,6 +237,13 @@
                                     </label>
                                 </div>
                             </div>
+                            <div class="filter-label">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" [value]="isOverdue" id="checkOverdue" 
+                                        [(ngModel)]="isOverdue" (change)="checkOverdue($event)">
+                                    <label class="form-check-label" for="checkOverdue">Quá hạn</label>
+                                </div>
+                            </div>
                             <div class="filter-label">Bác sĩ</div>
                             <div class="filter-content">
                                 <div class="form-check t-form-check mb-1">
