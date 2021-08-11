@@ -37,7 +37,7 @@
                 <kendo-combobox [popupSettings]="cbxPopupSettings" style="width: 190px" [placeholder]="'Nguồn khách hàng'" class="mr-1" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="partnerSources" (selectionChange)="onSelectPartnerSource($event)"
                     #pnSourceCbx>
                 </kendo-combobox>
-                <kendo-combobox [popupSettings]="cbxPopupSettings" [placeholder]="'Hạng thành viên'" class="mr-1" [data]="memberLevels" [valueField]="'id'" [textField]="'name'" (valueChange)="onMemberLevelSelect($event)" #memberLevelCbx>
+                <kendo-combobox [popupSettings]="cbxPopupSettings" [placeholder]="'Hạng thành viên'" class="mr-1" [data]="memberLevels" [valueField]="'id'" [textField]="'name'" [filterable]="true" (valueChange)="onMemberLevelSelect($event)" #memberLevelCbx>
                 </kendo-combobox>
                 <kendo-combobox [popupSettings]="cbxPopupSettings" [placeholder]="'Giới tính'" class="" [valueField]="'value'" [textField]="'text'" [filterable]="true" [data]="partnerGenders" (selectionChange)="onSelectPartnerGender($event)" #pnGenderCbx>
                 </kendo-combobox>
@@ -55,7 +55,7 @@
     <!-- grid -->
     <div class="total d-flex mt-2">
         <div class="border mr-2 text-center">
-            <h6 class="border-bottom text-center mr-2 px-5 py-2">Tổng lượng khách
+            <h6 class="border-bottom text-center px-3 py-2">Tổng lượng khách
                 <ng-template #popContentTotal>
                     <span>
                         - Khách quay lại là khách hàng đã từng phát sinh PĐT và phát sinh thêm PĐT mới trong khoảng thời gian xác định
@@ -67,7 +67,7 @@
             <h5 class="text-primary transform-50"><span>{{ sumOldNew | number }}</span></h5>
         </div>
         <div class="border mr-2 text-center">
-            <h6 class="border-bottom text-center mr-2 px-5 py-2">Tổng doanh thu
+            <h6 class="border-bottom text-center px-3 py-2">Tổng doanh thu
                 <ng-template #popContentTotalRevenue>
                     <span>
                         - Khách mới là khách hàng lần đầu tiên phát sinh PĐT trong khoảng thời gian xác định
@@ -79,7 +79,7 @@
             <h5 class="text-success transform-50">{{ revenueOld + revenueNew | number }}</h5>
         </div>
         <div class="border mr-2 text-center">
-            <h6 class="border-bottom text-center mr-2 px-5 py-2">Khách mới
+            <h6 class="border-bottom text-center px-3 py-2">Khách mới
                 <ng-template #popContentTotalNew>
                     <span>
                         Tổng số khách hàng có phát sinh PĐT mới trong khoảng thời gian xác định
@@ -89,17 +89,17 @@
             </h6>
             <div class="d-flex">
                 <div class="flex-fill">
-                    <h6>Số lượng</h6>
+                    <h6 class="px-4">Số lượng</h6>
                     <h5 class="text-primary">{{ sumNew | number }}</h5>
                 </div>
                 <div class="flex-fill">
-                    <h6>Doanh thu</h6>
+                    <h6 class="px-4">Doanh thu</h6>
                     <h5 class="text-success">{{ revenueNew | number }}</h5>
                 </div>
             </div>
         </div>
         <div class="border mr-2 text-center">
-            <h6 class="border-bottom text-center mr-2 px-5 py-2">Khách quay lại
+            <h6 class="border-bottom text-center px-3 py-2">Khách quay lại
                 <ng-template #popContentTotalOld>
                     <span>
                         Tổng doanh thu của tất cả các PĐT phát sinh mới trong khoảng thời gian xác định
@@ -109,11 +109,11 @@
             </h6>
             <div class="d-flex">
                 <div class="flex-fill">
-                    <h6>Số lượng</h6>
+                    <h6 class="px-4">Số lượng</h6>
                     <h5 class="text-primary">{{ sumOld | number }}</h5>
                 </div>
                 <div class="flex-fill">
-                    <h6>Doanh thu</h6>
+                    <h6 class="px-4">Doanh thu</h6>
                     <h5 class="text-success">{{ revenueOld | number }}</h5>
                 </div>
             </div>
