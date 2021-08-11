@@ -169,8 +169,8 @@ namespace Infrastructure.Services
                 throw new Exception("Đợt lương không tồn tại");
 
             DateTime dayone = new DateTime(paysliprun.Date.Value.AddMonths(1).Year, paysliprun.Date.Value.AddMonths(1).Month, 1);
-            //if (DateTime.Now < dayone)
-            //    throw new Exception(@$"Bảng lương tháng {paysliprun.Date.Value.ToString("MM/yyyy")} chỉ có thể xác nhận từ ngày {dayone.ToString("dd/MM/yyyy")}");
+            if (DateTime.Now < dayone)
+                throw new Exception(@$"Bảng lương tháng {paysliprun.Date.Value.ToString("MM/yyyy")} chỉ có thể xác nhận từ ngày {dayone.ToString("dd/MM/yyyy")}");
 
             // ghi sổ
             var move = await PreparePayslipMove(paysliprun);
