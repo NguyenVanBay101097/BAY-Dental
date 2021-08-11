@@ -42,7 +42,7 @@ export class AppointmentKanbanComponent implements OnInit {
   userId: string;
   search: string;
   searchUpdate = new Subject<string>();
-
+  isOverdue: boolean = false;
   // showDropdown = false;
   // dateList: Date[];
 
@@ -63,7 +63,7 @@ export class AppointmentKanbanComponent implements OnInit {
     { text: 'Đang hẹn', value: 'confirmed', color: '#2395FF' },
     { text: 'Đã đến', value: 'arrived', color: '#28A745' },
     { text: 'Hủy hẹn', value: 'cancel', color: '#EB3B5B' },
-    { text: 'Quá hạn', value: 'overdue', color: '#FFC107' }
+    // { text: 'Quá hạn', value: 'overdue', color: '#FFC107' }
   ];
 
   stateSelected: string = this.states[0].value;
@@ -190,6 +190,7 @@ export class AppointmentKanbanComponent implements OnInit {
     val.offset = this.offset;
     val.state = this.state || '';
     val.search = this.search || '';
+    val.isOverdue = this.isOverdue;
     val.doctorId = this.employeeSelected || '';
     val.dateTimeFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
     val.dateTimeTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
@@ -244,16 +245,16 @@ export class AppointmentKanbanComponent implements OnInit {
   //   modalRef.componentInstance.appointId = appointment.id;
   //   modalRef.result.then(() => {
   //     this.loadData();
-      // this.appointmentService.getBasic(appointment.id).subscribe(item => {
-      //   var date = new Date(item.date);
-      //   var key = date.toDateString();
-      //   if (this.appointmentByDate[key]) {
-      //     var index = _.findIndex(this.appointmentByDate[key], o => o.id == item.id);
-      //     if (index != -1) {
-      //       this.appointmentByDate[key][index] = item;
-      //     }
-      //   }
-      // });
+  // this.appointmentService.getBasic(appointment.id).subscribe(item => {
+  //   var date = new Date(item.date);
+  //   var key = date.toDateString();
+  //   if (this.appointmentByDate[key]) {
+  //     var index = _.findIndex(this.appointmentByDate[key], o => o.id == item.id);
+  //     if (index != -1) {
+  //       this.appointmentByDate[key][index] = item;
+  //     }
+  //   }
+  // });
   //   }, () => {
   //   });
   // }
@@ -480,7 +481,7 @@ export class AppointmentKanbanComponent implements OnInit {
     this.currentMonth = this.todayFormat.getMonth();
     this.currentYear = this.todayFormat.getFullYear();
     if (this.timePeriod === 'day') {
-      this.showCalendarDay(this.currentYear, this.currentMonth, this.currentDate,  this.differenceDay);
+      this.showCalendarDay(this.currentYear, this.currentMonth, this.currentDate, this.differenceDay);
     } else if (this.timePeriod === 'week') {
       this.showCalendarWeek(this.currentYear, this.currentMonth, this.differenceWeek);
     } else {
@@ -491,7 +492,7 @@ export class AppointmentKanbanComponent implements OnInit {
 
   renderCalendar() {
     if (this.timePeriod === 'day') {
-      this.showCalendarDay(this.currentYear, this.currentMonth, this.currentDate,  this.differenceDay);
+      this.showCalendarDay(this.currentYear, this.currentMonth, this.currentDate, this.differenceDay);
     } else if (this.timePeriod === 'week') {
       this.showCalendarWeek(this.currentYear, this.currentMonth, this.differenceWeek);
     } else {
@@ -958,10 +959,9 @@ export class AppointmentKanbanComponent implements OnInit {
     contentTimeEl.innerHTML = `
       <i class="fas fa-info-circle"></i>
       <span>
-        ${('0' + appointment.date.getHours()).slice(-2)}:
-        ${('0' + appointment.date.getMinutes()).slice(-2)} - 
-        ${('0' + (appointment.date.getHours() + Math.floor((appointment.date.getMinutes() + appointment.timeExpected) / 60))).slice(-2)}:
-        ${('0' + Math.floor((appointment.date.getMinutes() + appointment.timeExpected) % 60)).slice(-2)}
+        ${('0' + appointment.date.getHours()).slice(-2)}:${('0' + appointment.date.getMinutes()).slice(-2)} - 
+        ${('0' + (appointment.date.getHours() + Math.floor((appointment.date.getMinutes() + appointment.timeExpected) / 60)))
+        .slice(-2)}:${('0' + Math.floor((appointment.date.getMinutes() + appointment.timeExpected) % 60)).slice(-2)}
       </span>
     `;
     let contentReferrerEl = document.createElement('div');
@@ -1042,6 +1042,10 @@ export class AppointmentKanbanComponent implements OnInit {
         this.renderCalendar(); // Render Calendar
       }, () => { });
     }
+  }
+
+  checkOverdue(event) {
+    this.renderCalendar(); // Render Calendar
   }
 
 }

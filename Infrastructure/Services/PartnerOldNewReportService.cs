@@ -27,7 +27,7 @@ namespace Infrastructure.Services
             _mapper = mapper;
             _context = context;
             _httpContextAccessor = httpContextAccessor;
-            userService = _userService;
+            _userService = userService;
         }
 
         public IQueryable<PartnerOldNewReport> _GetQueryAble(PartnerOldNewReportSearch val)
@@ -117,7 +117,7 @@ namespace Infrastructure.Services
         {
             return (T)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(T));
         }
-        public IQueryable<IGrouping<Guid, SaleOrder>> SumReportQuery(PartnerOldNewReportSumReq val)
+        public IQueryable<SaleOrder> SumReportQuery(PartnerOldNewReportSumReq val)
         {
             var saleOrderObj = GetService<ISaleOrderService>();
             var pnOrderSearchQuery = saleOrderObj.SearchQuery(x => x.State != "draft");
@@ -130,16 +130,48 @@ namespace Infrastructure.Services
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId);
 
-            var pnOrderQrBase = query.GroupBy(x => x.PartnerId);
+            //var pnOrderQrBase = query.GroupBy(x => x.PartnerId);
+            //if (val.TypeReport == "old")
+            //    pnOrderQrBase = pnOrderQrBase.Where(x => pnOrderSearchQuery.Where(h => h.PartnerId == x.Key).Count() > 1);
+            //if (val.TypeReport == "new" && val.DateFrom.HasValue)
+            //    pnOrderQrBase = pnOrderQrBase.Where(x => pnOrderSearchQuery.Where(h => h.PartnerId == x.Key && h.DateOrder < val.DateFrom.Value).Count() == 0);
+            //return pnOrderQrBase;
+
+
+            //lấy những phiếu điều trị đầu tiên(không đầu tiên) của mỗi khách hàng
+            var pnOrderQrBase2 = query;
             if (val.TypeReport == "old")
-                pnOrderQrBase = pnOrderQrBase.Where(x => pnOrderSearchQuery.Where(h => h.PartnerId == x.Key).Count() > 1);
-            if (val.TypeReport == "new" && val.DateFrom.HasValue)
-                pnOrderQrBase = pnOrderQrBase.Where(x => pnOrderSearchQuery.Where(h => h.PartnerId == x.Key && h.DateOrder.Date < val.DateFrom.Value.Date).Count() == 0);
-            return pnOrderQrBase;
+                pnOrderQrBase2 = pnOrderQrBase2.Where(x => pnOrderSearchQuery.Where(h => h.PartnerId == x.PartnerId && h.DateOrder < x.DateOrder).Any());
+            if (val.TypeReport == "new")
+                pnOrderQrBase2 = pnOrderQrBase2.Where(x => !pnOrderSearchQuery.Where(h => h.PartnerId == x.PartnerId && h.DateOrder < x.DateOrder).Any());
+
+            return pnOrderQrBase2;
+        }
+
+        public IQueryable<AccountInvoiceReport> SumReVenueQuery(PartnerOldNewReportSumReq val)
+        {
+            //lấy những phiếu điều trị đầu tiên(không đầu tiên) của mỗi khách hàng
+            var pnOrderQr = SumReportQuery(val);
+
+            //lấy list movelineid của phiếu điều trị
+            var movelineIdQr = pnOrderQr.SelectMany(x => x.OrderLines.SelectMany(z => z.SaleOrderLineInvoice2Rels.Select(h => h.InvoiceLineId)));
+
+            //revenue query
+            var accInvreportObj = GetService<IAccountInvoiceReportService>();
+            var RevenueQr = from v in accInvreportObj.GetRevenueReportQuery(new RevenueReportQueryCommon(null, null, companyId: val.CompanyId))
+                            where movelineIdQr.Any(x => x == v.Id)
+                            select v;
+            return RevenueQr;
+        }
+        public async Task<decimal> SumReVenue(PartnerOldNewReportSumReq val)
+        {
+            var RevenueQr = SumReVenueQuery(val);
+            var res = await RevenueQr.SumAsync(x=> x.PriceSubTotal);
+            return res;
         }
         public async Task<int> SumReport(PartnerOldNewReportSumReq val)
         {
-            var query = SumReportQuery(val);
+            var query = SumReportQuery(val).GroupBy(x=> x.PartnerId);
             return await query.Select(x => x.Key).CountAsync();
         }
         public IQueryable<PartnerInfoTemplate> GetReportQuery(PartnerOldNewReportReq val)
@@ -150,7 +182,8 @@ namespace Infrastructure.Services
             var accInvreportObj = GetService<IAccountInvoiceReportService>();
             var companyId = CompanyId;
 
-            var pnOrderQrBase = SumReportQuery(new PartnerOldNewReportSumReq(val.DateFrom, val.DateTo, val.CompanyId, val.TypeReport));
+            var pnOrderQrBase = SumReportQuery(new PartnerOldNewReportSumReq(val.DateFrom, val.DateTo, val.CompanyId, val.TypeReport))
+                                .GroupBy(x=> x.PartnerId);
 
             var pnOderQr = from v in pnOrderQrBase
                            select new
@@ -166,7 +199,7 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.WardCode))
                 pnQr = pnQr.Where(x => x.WardCode == val.WardCode);
             if (val.SourceId.HasValue)
-                pnQr = pnQr.Where(x => x.SourceId == x.SourceId);
+                pnQr = pnQr.Where(x => x.SourceId == val.SourceId);
             if (!string.IsNullOrEmpty(val.Gender))
                 pnQr = pnQr.Where(x => x.Gender == val.Gender);
             if (!string.IsNullOrEmpty(val.Search))
@@ -196,13 +229,13 @@ namespace Infrastructure.Services
             var irPropertyQr = from ir in irProperyObj.SearchQuery(x => x.Name == "member_level" && x.Field.Model == "res.partner")
                                select ir;
 
-            var RevenueQr = from v in accInvreportObj.GetRevenueReportQuery(new RevenueReportQueryCommon(null, null, companyId: val.CompanyId))
-                            group v by v.PartnerId into g
-                            select new
+            var RevenueQr = SumReVenueQuery(new PartnerOldNewReportSumReq(val.DateFrom, val.DateTo, val.CompanyId, val.TypeReport))
+                            .GroupBy(x => x.PartnerId)
+                            .Select(g=> new
                             {
                                 PartnerId = g.Key.Value,
                                 PriceSubTotal = Math.Abs(g.Sum(z => z.PriceSubTotal))
-                            };
+                            });
 
             var resQr = from pnOrder in pnOderQr
                             //from pn in pnQr.Where(x => x.Id == pnOrder.PartnerId).DefaultIfEmpty()
