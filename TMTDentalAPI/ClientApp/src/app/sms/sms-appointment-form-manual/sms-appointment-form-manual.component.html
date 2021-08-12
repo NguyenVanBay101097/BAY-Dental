@@ -25,10 +25,9 @@
     <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
     <kendo-grid-column field="partnerName" title="Khách hàng" width="200"></kendo-grid-column>
     <kendo-grid-column field="partnerPhone" title="Số điện thoại" width="120"></kendo-grid-column>
-    <kendo-grid-column title="Giờ hẹn" width="160">
+    <kendo-grid-column field="date" title="Giờ hẹn" width="160">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            <span>{{dataItem.time}}</span>
-            <span>, {{dataItem.date | date:'shortDate'}}</span>
+            {{dataItem.date | date:'short'}}
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="doctorName" title="Bác sĩ" width="180"></kendo-grid-column>
