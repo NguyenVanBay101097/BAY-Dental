@@ -18,10 +18,8 @@
                         <i class="fas fa-arrow-right"></i>
                     </div>
                 </div>
-                <button (click)="toggleFilterAdvance()" class="mr-1 btn bg-filter">
-          <i class="fas fa-filter mr-1"></i>
-          <span>Lọc nâng cao</span>
-        </button>
+                <kendo-combobox [popupSettings]="cbxPopupSettings" [placeholder]="'Giới tính'" class="mr-1" [valueField]="'value'" [textField]="'text'" [filterable]="true" [data]="partnerGenders" (selectionChange)="onSelectPartnerGender($event)" #pnGenderCbx>
+                </kendo-combobox>
                 <div class="dropdown mr-1">
                     <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <i class="fas fa-download"></i> Xuất File
@@ -33,21 +31,22 @@
                 </div>
                 <button class="btn btn-primary" (click)="onPrint()">In báo cáo</button>
             </div>
-            <div [ngClass]="{ 'hidden hide': !isFilterAdvance }" class="row-3 d-flex mt-2">
-                <kendo-combobox [popupSettings]="cbxPopupSettings" style="width: 190px" [placeholder]="'Nguồn khách hàng'" class="mr-1" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="partnerSources" (selectionChange)="onSelectPartnerSource($event)"
-                    #pnSourceCbx>
-                </kendo-combobox>
-                <kendo-combobox [popupSettings]="cbxPopupSettings" [placeholder]="'Giới tính'" class="" [valueField]="'value'" [textField]="'text'" [filterable]="true" [data]="partnerGenders" (selectionChange)="onSelectPartnerGender($event)" #pnGenderCbx>
-                </kendo-combobox>
-            </div>
         </div>
         <div class="filter-right flex-0-0-auto">
             <div class="o_searchview">
                 <input class="o_searchview_input" placeholder="Tìm kiếm theo mã, tên, số điện thoại khách hàng" type="text" [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)" />
                 <span class="o_searchview_icon fas fa-search"></span>
             </div>
-            <kendo-multiselect class="mt-2" [data]="filteredCategs" [valueField]="'id'" [textField]="'name'" [placeholder]="'Lọc theo nhãn'" [filterable]="true" (valueChange)="onCategChange($event)" #categMst>
-            </kendo-multiselect>
+            <div class="d-flex mt-2">
+                <div class="flex-fill">
+                    <kendo-combobox [popupSettings]="cbxPopupSettings" [placeholder]="'Nguồn khách hàng'" class="w-100" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="partnerSources" (selectionChange)="onSelectPartnerSource($event)" #pnSourceCbx>
+                    </kendo-combobox>
+                </div>
+                <div class="flex-fill">
+                    <kendo-multiselect [data]="filteredCategs" [valueField]="'id'" [textField]="'name'" class="w-100" [placeholder]="'Lọc theo nhãn'" [filterable]="true" (valueChange)="onCategChange($event)" #categMst>
+                    </kendo-multiselect>
+                </div>
+            </div>
         </div>
     </div>
     <!-- grid -->

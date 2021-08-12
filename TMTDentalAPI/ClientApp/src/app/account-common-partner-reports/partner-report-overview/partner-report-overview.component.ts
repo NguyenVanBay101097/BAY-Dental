@@ -276,10 +276,6 @@ export class PartnerReportOverviewComponent implements OnInit {
     }
   }
 
-  toggleFilterAdvance() {
-    this.isFilterAdvance = !this.isFilterAdvance;
-  }
-
   onExportPDF() {
     var val = Object.assign({}, this.filter) as PartnerOldNewReportReq;
     val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
