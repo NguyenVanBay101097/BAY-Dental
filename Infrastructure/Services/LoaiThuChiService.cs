@@ -69,78 +69,102 @@ namespace Infrastructure.Services
         //create loại thu chi
         public async Task<LoaiThuChi> CreateLoaiThuChi(LoaiThuChiSave val)
         {
-            var loaithuchi = _mapper.Map<LoaiThuChi>(val);
-            var account = await GenerateAccountThuChi(loaithuchi);
-            loaithuchi.AccountId = account.Id;
-
-            return await CreateAsync(loaithuchi);
-        }
-
-        public async Task<AccountAccount> GenerateAccountThuChi(LoaiThuChi self)
-        {
-            var accountObj = GetService<IAccountAccountService>();
-            string name = "";
+            var self = _mapper.Map<LoaiThuChi>(val);
             string reference_account_type = "";
+
             if (self.Type == "thu")
             {
-                reference_account_type = "account.data_account_type_thu";
-                name = "Thu";
+                if (self.IsAccounting)
+                    reference_account_type = "account.data_account_type_revenue";
+                else
+                    reference_account_type = "account.data_account_type_thu";
             }
             else if (self.Type == "chi")
             {
-                reference_account_type = "account.data_account_type_chi";
-                name = "Chi";
+                if (self.IsAccounting)
+                    reference_account_type = "account.data_account_type_expenses";
+                else
+                    reference_account_type = "account.data_account_type_chi";
             }
 
-            var usertype = await GetAccountTypeThuChi(reference_account_type, name);
+            var usertype = await GetAccountTypeThuChi(reference_account_type);
             var account = new AccountAccount
             {
                 Name = self.Name,
                 Code = self.Code,
                 Note = self.Note,
                 CompanyId = self.CompanyId ?? CompanyId,
-                IsExcludedProfitAndLossReport = self.IsInclude,
                 InternalType = usertype.Type,
                 UserTypeId = usertype.Id,
             };
-           
+
+            var accountObj = GetService<IAccountAccountService>();
             await accountObj.CreateAsync(account);
-            return account;
+            self.AccountId = account.Id;
+
+            return await CreateAsync(self);
         }
 
         //update loại thu chi
         public async Task UpdateLoaiThuChi(Guid id, LoaiThuChiSave val)
         {
-            var loaithuchi = await SearchQuery(x => x.Id == id).Include(x => x.Company).Include(x => x.Account).FirstOrDefaultAsync();
-            if (loaithuchi == null)
+            var self = await SearchQuery(x => x.Id == id).Include(x => x.Company).Include(x => x.Account).FirstOrDefaultAsync();
+            if (self == null)
                 throw new Exception("Loại không tồn tại");
 
-            loaithuchi = _mapper.Map(val, loaithuchi);
+            self = _mapper.Map(val, self);
 
-            var account = loaithuchi.Account;
+            var account = self.Account;
             if (account != null)
             {
                 var accountObj = GetService<IAccountAccountService>();
                 account.Name = val.Name;
                 account.Code = val.Code;
                 account.Note = val.Note;
-                account.IsExcludedProfitAndLossReport = val.IsAccounting;
+
+                string reference_account_type = "";
+                if (self.Type == "thu")
+                {
+                    if (self.IsAccounting)
+                        reference_account_type = "account.data_account_type_revenue";
+                    else
+                        reference_account_type = "account.data_account_type_thu";
+                }
+                else if (self.Type == "chi")
+                {
+                    if (self.IsAccounting)
+                        reference_account_type = "account.data_account_type_expenses";
+                    else
+                        reference_account_type = "account.data_account_type_chi";
+                }
+
+                var usertype = await GetAccountTypeThuChi(reference_account_type);
+                account.UserTypeId = usertype.Id;
+
                 await accountObj.UpdateAsync(account);
             }
 
-            await UpdateAsync(loaithuchi);
+            await UpdateAsync(self);
         }
 
         public async Task RemoveLoaiThuChi(Guid id)
         {
             var accountObj = GetService<IAccountAccountService>();
-            var loaithuchi = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            var loaithuchi = await SearchQuery(x => x.Id == id)
+                .Include(x => x.Account)
+                .FirstOrDefaultAsync();
+
             if (loaithuchi == null)
                 throw new Exception("Loại không tồn tại");
+
+            var account = loaithuchi.Account;
             await DeleteAsync(loaithuchi);
+
+            if (account != null)
+                await accountObj.DeleteAsync(account);
         }
 
-        public async Task<AccountAccountType> GetAccountTypeThuChi(string reference, string name)
+        public async Task<AccountAccountType> GetAccountTypeThuChi(string reference)
         {
             //reference: account.data_account_type_thu
             var accountTypeObj = GetService<IAccountAccountTypeService>();
@@ -148,6 +172,16 @@ namespace Infrastructure.Services
             var accountType = await modelDataObj.GetRef<AccountAccountType>(reference);
             if (accountType == null)
             {
+                string name = "";
+                if (reference == "account.data_account_type_thu")
+                    name = "Thu";
+                else if (reference == "account.data_account_type_chi")
+                    name = "Chi";
+                else if (reference == "account.data_account_type_revenue")
+                    name = "Income";
+                else if (reference == "account.data_account_type_expenses")
+                    name = "Expenses";
+
                 //tao account type
                 accountType = new AccountAccountType()
                 {
@@ -155,6 +189,7 @@ namespace Infrastructure.Services
                     Type = "other",
                 };
                 await accountTypeObj.CreateAsync(accountType);
+
                 //them vao ir model data
                 var tmp = reference.Split(".");
                 var modeldata = new IRModelData

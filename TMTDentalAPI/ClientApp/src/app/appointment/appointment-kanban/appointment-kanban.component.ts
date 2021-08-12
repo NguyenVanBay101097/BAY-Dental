@@ -42,7 +42,6 @@ export class AppointmentKanbanComponent implements OnInit {
   userId: string;
   search: string;
   searchUpdate = new Subject<string>();
-  isOverdue: boolean = false;
   // showDropdown = false;
   // dateList: Date[];
 
@@ -61,9 +60,8 @@ export class AppointmentKanbanComponent implements OnInit {
   states: { text: string, value: string, color?: string }[] = [
     { text: 'Tất cả', value: '', color: '' },
     { text: 'Đang hẹn', value: 'confirmed', color: '#2395FF' },
-    { text: 'Đã đến', value: 'arrived', color: '#28A745' },
+    { text: 'Đã đến', value: 'done', color: '#28A745' },
     { text: 'Hủy hẹn', value: 'cancel', color: '#EB3B5B' },
-    // { text: 'Quá hạn', value: 'overdue', color: '#FFC107' }
   ];
 
   stateSelected: string = this.states[0].value;
@@ -190,7 +188,6 @@ export class AppointmentKanbanComponent implements OnInit {
     val.offset = this.offset;
     val.state = this.state || '';
     val.search = this.search || '';
-    val.isOverdue = this.isOverdue;
     val.doctorId = this.employeeSelected || '';
     val.dateTimeFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
     val.dateTimeTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
@@ -202,6 +199,7 @@ export class AppointmentKanbanComponent implements OnInit {
         total: response.totalItems
       }))
     ).subscribe((result: any) => {
+      console.log(result);
       this.gridData = result;
       this.loading = false;
       this.dataAppointments = result.data.map(v => ({
@@ -891,7 +889,7 @@ export class AppointmentKanbanComponent implements OnInit {
         statusShow = 'Đang hẹn';
         classEvent = 'event-confirmed';
         break;
-      case 'arrived':
+      case 'done':
         statusShow = 'Đã đến';
         classEvent = 'event-arrived';
         break;
@@ -899,11 +897,13 @@ export class AppointmentKanbanComponent implements OnInit {
         statusShow = 'Hủy hẹn';
         classEvent = 'event-cancel';
         break;
-      case 'overdue':
-        statusShow = 'Quá hạn';
-        classEvent = 'event-overdue';
-        break;
+      // case 'overdue':
+      //   statusShow = 'Quá hạn';
+      //   classEvent = 'event-overdue';
+      //   break;
       default:
+        statusShow = 'Đang hẹn';
+        classEvent = 'event-confirmed';
         break;
     }
 
@@ -952,7 +952,7 @@ export class AppointmentKanbanComponent implements OnInit {
     contentPhoneEl.classList.add("content", "phone");
     contentPhoneEl.innerHTML = `
       <i class="fas fa-phone"></i>
-      <span>${appointment.partnerPhone}</span>
+      <span>${appointment.partnerPhone || ""}</span>
     `;
     let contentTimeEl = document.createElement('div');
     contentTimeEl.classList.add("content", "time");
@@ -988,7 +988,7 @@ export class AppointmentKanbanComponent implements OnInit {
         statusShow = 'Đang hẹn';
         classBg = 'bg-confirmed';
         break;
-      case 'arrived':
+      case 'done':
         statusShow = 'Đã đến';
         classBg = 'bg-arrived';
         break;
@@ -996,11 +996,13 @@ export class AppointmentKanbanComponent implements OnInit {
         statusShow = 'Hủy hẹn';
         classBg = 'bg-cancel';
         break;
-      case 'overdue':
-        statusShow = 'Quá hạn';
-        classBg = 'bg-overdue';
-        break;
+      // case 'overdue':
+      //   statusShow = 'Quá hạn';
+      //   classBg = 'bg-overdue';
+      //   break;
       default:
+        statusShow = 'Đang hẹn';
+        classBg = 'bg-confirmed';
         break;
     }
     const htmlString = `
@@ -1043,9 +1045,4 @@ export class AppointmentKanbanComponent implements OnInit {
       }, () => { });
     }
   }
-
-  checkOverdue(event) {
-    this.renderCalendar(); // Render Calendar
-  }
-
 }

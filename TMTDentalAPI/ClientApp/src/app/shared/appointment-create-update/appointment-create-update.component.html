@@ -91,13 +91,16 @@
                                             [class.border-invalid]="f.timeObj.errors"></kendo-timepicker>
                                         <div *ngIf="f.timeObj.errors && (f.timeObj.touched || f.timeObj.dirty || submitted)"
                                             class="text-danger">
-                                            <div *ngIf="f.timeObj.errors.required">Chọn giờ </div>
+                                            <div *ngIf="f.timeObj.errors.required">Chọn giờ hẹn</div>
                                         </div>
                                     </div>
                                     <div class="d-flex">
                                         <span class="mr-1 text-time p-1">Dự kiến</span>
-                                        <input type="number" class="form-control" formControlName="timeExpected"
-                                            [min]="0">
+                                        <!-- <input type="number" class="form-control" formControlName="timeExpected"
+                                            [min]="0"> -->
+                                            <kendo-numerictextbox [min]="0" [format]="'n0'" [spinners]="false"
+                                                [autoCorrect]="true" formControlName="timeExpected">
+                                            </kendo-numerictextbox>
                                         <span class="mr-1 text-time p-1">Phút</span>
                                     </div>
                                 </div>
@@ -152,7 +155,7 @@
                                 <select class="form-control btn-sm mr-1" formControlName="state"
                                     (change)="onChange($event.target.value)">
                                     <option value="confirmed">Đang hẹn</option>
-                                    <option value="arrived">Đã đến</option>
+                                    <option value="done">Đã đến</option>
                                     <option value="cancel">Hủy hẹn</option>
                                 </select>
                             </td>
@@ -180,8 +183,10 @@
         Lưu</button>
     <button *ngIf="appointId" type="button" class="btn btn-danger mr-2 ml-0" (click)="onDelete()">
         Xóa</button>
-    <button *ngIf="appointId" type="button" class="btn btn-secondary mr-2 ml-0" (click)="onDuplicate()">
-        Sao chép</button>
+    <!-- <button *ngIf="appointId" type="button" class="btn btn-secondary mr-2 ml-0" (click)="onDuplicate()">
+        Sao chép</button> -->
+    <button *ngIf="appointId" type="button" class="btn btn-secondary mr-2 ml-0" (click)="onCreateNewAppointment()">
+        Tạo mới</button>
     <button type="button" class="btn btn-light mr-2 ml-0" (click)="activeModal.dismiss()">
         Đóng</button>
 </div>

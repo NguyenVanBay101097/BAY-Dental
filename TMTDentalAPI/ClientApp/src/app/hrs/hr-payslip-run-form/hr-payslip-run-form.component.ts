@@ -192,7 +192,7 @@ export class HrPayslipRunFormComponent implements OnInit {
     const modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xác nhận bảng lương';
     modalRef.componentInstance.body = 'Bạn chắc chắn xác nhận bảng lương?';
-    modalRef.componentInstance.body2 = ' Bạn sẽ không thể điều chỉnh sau khi xác nhận.';
+    modalRef.componentInstance.body2 = 'Bạn sẽ không thể điều chỉnh sau khi xác nhận.';
     modalRef.result.then(() => {
       if (this.id) {
         this.hrPaysliprunService.update(this.id, val).pipe(

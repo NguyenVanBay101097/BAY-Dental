@@ -19,7 +19,7 @@
     -webkit-box-flex: 0;
     /* flex: 0 0 230px; */
     flex: 0 0 230px;
-    margin-left: 0.25rem;
+    margin-left: 1rem;
     border: 1px solid #e2e7ed;
 }
 .filter-title {
@@ -137,6 +137,7 @@
     display: flex;
     width: 100%;
     max-width: 300px;
+    align-items: center;
 }
 
 .toolbar-date .btn-gray {
@@ -158,8 +159,7 @@
 }
 
 .toolbar-date .title-toolbar {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
+    font-size: 1rem;
     line-height: 1.5;
     font-weight: 500;
     width: 100%;
@@ -179,7 +179,7 @@
 
 .calendar-table {
     table-layout: fixed;
-    border-collapse: separate;
+    border-collapse: collapse;
     border-spacing: 0;
     margin-bottom: 0 !important;
     height: 100%;
@@ -187,17 +187,18 @@
 
 .calendar-table th,
 .calendar-table td {
-    text-align: right;
+    border: 1px solid #dee2e6 !important;
 }
 
 .calendar-table th {
     font-size: 13px;
     font-weight: 600;
-    border-bottom: 1px solid #dee2e6 !important;
-    position: sticky;
-    top: 0;
-    z-index: 10;
+    border: 1px solid #dee2e6 !important;
+    /* position: sticky; */
+    /* top: 0; */
+    /* z-index: 10; */
     background: white;
+    text-align: center;
 }
 
 .calendar-table th.th-v2 {
@@ -244,7 +245,8 @@
 }
 
 .calendar-table td.td-month {
-    height: 120px;
+    height: 100px;
+    border: 1px solid #ccc;
 }
 
 .calendar-table td.td-month.active:hover {
@@ -274,7 +276,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: .5rem;
+    margin-bottom: 5px;
 }
 
 .date-event-v2 .header .status {
@@ -419,7 +421,9 @@
 }
 
 .date-text {
+    text-align: center;
     font-size: 13px;
+    margin-bottom: 5px;
 }
 
 .bg-now {

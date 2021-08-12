@@ -44,7 +44,7 @@ export class AppointmentListTodayComponent implements OnInit {
   states: any[] = [
     { value: '', text: 'Tất cả' },
     { value: 'confirmed', text: 'Đang hẹn' },
-    { value: 'arrived', text: 'Đã đến' },
+    { value: 'done', text: 'Đã đến' },
     { value: 'cancel', text: 'Hủy hẹn' },
   ]
 
@@ -166,7 +166,7 @@ export class AppointmentListTodayComponent implements OnInit {
     switch (state) {
       case 'confirmed':
         return 'Đang hẹn';
-      case 'arrived':
+      case 'done':
         return 'Đã đến';
       case 'cancel':
         return 'Hủy hẹn';
@@ -179,7 +179,7 @@ export class AppointmentListTodayComponent implements OnInit {
     switch (state) {
       case 'confirmed':
         return 'appointment-today-box_examination';
-      case 'arrived':
+      case 'done':
         return 'appointment-today-box_arrived';
       case 'cancel':
         return 'appointment-today-box_cancel';
@@ -190,7 +190,7 @@ export class AppointmentListTodayComponent implements OnInit {
     switch (state) {
       case 'confirmed':
         return 'text-primary';
-      case 'arrived':
+      case 'done':
         return 'text-success';
       case 'cancel':
         return 'text-danger';
