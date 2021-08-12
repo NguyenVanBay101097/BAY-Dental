@@ -61,9 +61,8 @@ export class AppointmentKanbanComponent implements OnInit {
   states: { text: string, value: string, color?: string }[] = [
     { text: 'Tất cả', value: '', color: '' },
     { text: 'Đang hẹn', value: 'confirmed', color: '#2395FF' },
-    { text: 'Đã đến', value: 'arrived', color: '#28A745' },
+    { text: 'Đã đến', value: 'done', color: '#28A745' },
     { text: 'Hủy hẹn', value: 'cancel', color: '#EB3B5B' },
-    // { text: 'Quá hạn', value: 'overdue', color: '#FFC107' }
   ];
 
   stateSelected: string = this.states[0].value;
@@ -202,6 +201,7 @@ export class AppointmentKanbanComponent implements OnInit {
         total: response.totalItems
       }))
     ).subscribe((result: any) => {
+      console.log(result);
       this.gridData = result;
       this.loading = false;
       this.dataAppointments = result.data.map(v => ({
@@ -891,7 +891,7 @@ export class AppointmentKanbanComponent implements OnInit {
         statusShow = 'Đang hẹn';
         classEvent = 'event-confirmed';
         break;
-      case 'arrived':
+      case 'done':
         statusShow = 'Đã đến';
         classEvent = 'event-arrived';
         break;
@@ -899,11 +899,13 @@ export class AppointmentKanbanComponent implements OnInit {
         statusShow = 'Hủy hẹn';
         classEvent = 'event-cancel';
         break;
-      case 'overdue':
-        statusShow = 'Quá hạn';
-        classEvent = 'event-overdue';
-        break;
+      // case 'overdue':
+      //   statusShow = 'Quá hạn';
+      //   classEvent = 'event-overdue';
+      //   break;
       default:
+        statusShow = 'Đang hẹn';
+        classEvent = 'event-confirmed';
         break;
     }
 
@@ -988,7 +990,7 @@ export class AppointmentKanbanComponent implements OnInit {
         statusShow = 'Đang hẹn';
         classBg = 'bg-confirmed';
         break;
-      case 'arrived':
+      case 'done':
         statusShow = 'Đã đến';
         classBg = 'bg-arrived';
         break;
@@ -996,11 +998,13 @@ export class AppointmentKanbanComponent implements OnInit {
         statusShow = 'Hủy hẹn';
         classBg = 'bg-cancel';
         break;
-      case 'overdue':
-        statusShow = 'Quá hạn';
-        classBg = 'bg-overdue';
-        break;
+      // case 'overdue':
+      //   statusShow = 'Quá hạn';
+      //   classBg = 'bg-overdue';
+      //   break;
       default:
+        statusShow = 'Đang hẹn';
+        classBg = 'bg-confirmed';
         break;
     }
     const htmlString = `

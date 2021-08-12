@@ -48,7 +48,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
   states: any[] = [
     { value: 'confirmed', text: 'Đang hẹn' },
-    { value: 'arrived', text: 'Đã đến' },
+    { value: 'done', text: 'Đã đến' },
     { value: 'cancel', text: 'Hủy hẹn' },
   ]
 
