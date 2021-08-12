@@ -2,6 +2,11 @@
     font-size: 14px;
 }
 
+label {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+}
+
 [type="text"],
 [type="password"],
 [type="number"],
@@ -197,6 +202,12 @@ select {
 .o_form_view .o_group .o_td_label .o_form_label {
     font-weight: 600;
     margin-right: 0px;
+}
+
+@media (min-width: 475px) {
+	.o_form_view .o_group .o_form_label {
+		margin-bottom: 5px;
+	}
 }
 
 .o_form_view .o_group .k-widget.k-combobox,

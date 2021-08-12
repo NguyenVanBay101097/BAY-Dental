@@ -433,7 +433,7 @@ namespace Infrastructure.Services
 
                 payments.Add(new PayslipCreateSalaryPaymentDisplay()
                 {
-                    Amount = slip.NetSalary.GetValueOrDefault(),
+                    Amount = slip.NetSalary.GetValueOrDefault() - slip.AdvancePayment.GetValueOrDefault(),
                     Date = DateTime.Today,
                     Employee = _mapper.Map<EmployeeSimple>(slip.Employee),
                     Journal = _mapper.Map<AccountJournalSimple>(journal),

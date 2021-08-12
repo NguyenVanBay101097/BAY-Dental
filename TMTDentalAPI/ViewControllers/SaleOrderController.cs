@@ -31,7 +31,7 @@ namespace TMTDentalAPI.ViewControllers
             _companyService = companyService;
         }
 
-        [CheckAccess(Actions = "Basic.SaleOrder.Read")]
+        //[CheckAccess(Actions = "Basic.SaleOrder.Read")]
         [PrinterNameFilterAttribute(Name = AppConstants.SaleOrderPaperCode)]
         public async Task<IActionResult> Print(Guid id)
         {

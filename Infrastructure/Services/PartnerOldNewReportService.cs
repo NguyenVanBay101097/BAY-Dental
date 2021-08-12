@@ -226,9 +226,6 @@ namespace Infrastructure.Services
                                           CountDone = g.Sum(x => x.State == "done" ? 1 : 0)
                                       };
 
-            var irPropertyQr = from ir in irProperyObj.SearchQuery(x => x.Name == "member_level" && x.Field.Model == "res.partner")
-                               select ir;
-
             var RevenueQr = SumReVenueQuery(new PartnerOldNewReportSumReq(val.DateFrom, val.DateTo, val.CompanyId, val.TypeReport))
                             .GroupBy(x => x.PartnerId)
                             .Select(g=> new
@@ -241,7 +238,6 @@ namespace Infrastructure.Services
                             //from pn in pnQr.Where(x => x.Id == pnOrder.PartnerId).DefaultIfEmpty()
                         join pn in pnQr on pnOrder.PartnerId equals pn.Id
                         from pos in partnerOrderStateQr.Where(x => x.PartnerId == pnOrder.PartnerId).DefaultIfEmpty()
-                        from ir in irPropertyQr.Where(x => !string.IsNullOrEmpty(x.ResId) && x.ResId.Contains(pnOrder.PartnerId.ToString().ToLower())).DefaultIfEmpty()
                         from pnRevenue in RevenueQr.Where(x => x.PartnerId == pnOrder.PartnerId).DefaultIfEmpty()
                         select new PartnerInfoTemplate
                         {
@@ -258,15 +254,9 @@ namespace Infrastructure.Services
                             Street = pn.Street,
                             Gender = pn.Gender,
                             OrderState = pos.CountSale > 0 ? "sale" : (pos.CountDone > 0 ? "done" : "draft"),
-                            MemberLevelId = ir.ValueReference,
                             Revenue = pnRevenue.PriceSubTotal,
                             SourceName = pn.Source.Name
                         };
-
-            if (val.MemberLevelId.HasValue)
-            {
-                resQr = resQr.Where(x => x.MemberLevelId.Contains(val.MemberLevelId.Value.ToString()));
-            }
 
             return resQr;
         }

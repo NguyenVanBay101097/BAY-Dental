@@ -7,7 +7,6 @@ import * as moment from 'moment';
 import { forkJoin, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
-import { MemberLevelAutoCompleteReq, MemberLevelService } from 'src/app/member-level/member-level.service';
 import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 import { PartnerSourcePaged, PartnerSourceService } from 'src/app/partner-sources/partner-source.service';
 import { PartnerSourceSimple } from 'src/app/partners/partner-simple';
@@ -43,7 +42,6 @@ export class PartnerReportOverviewComponent implements OnInit {
     {text: 'Khác', value:'other'}
   ];
   partnerSources: PartnerSourceSimple[] = [];
-  memberLevels = [];
   filteredCategs: PartnerCategoryBasic[];
   allDataGrid: any = [];
   // allDataExport: any;
@@ -62,7 +60,6 @@ export class PartnerReportOverviewComponent implements OnInit {
   
   @ViewChild("companyCbx", { static: true }) companyVC: ComboBoxComponent;
   @ViewChild("pnSourceCbx", { static: true }) pnSourceVC: ComboBoxComponent;
-  @ViewChild("memberLevelCbx", { static: true }) memberLevelVC: ComboBoxComponent;
   @ViewChild(GridComponent, { static: true }) public grid: GridComponent;
   @ViewChild("categMst", { static: true }) categMst: MultiSelectComponent;
   constructor(
@@ -71,7 +68,6 @@ export class PartnerReportOverviewComponent implements OnInit {
     private partnerOldNewRpService: PartnerOldNewReportService,
     private partnerCategoryService: PartnerCategoryService,
     private printService: PrintService,
-    private memberLevelService: MemberLevelService,
     private modalService: NgbModal
   ) { }
 
@@ -151,16 +147,6 @@ export class PartnerReportOverviewComponent implements OnInit {
           this.pnSourceVC.loading = false;
         });
 
-        this.loadMemberLevel();
-        this.memberLevelVC.filterChange.asObservable().pipe(
-          debounceTime(300),
-          tap(() => (this.memberLevelVC.loading = true)),
-          switchMap(value => this.searchMemberLevel(value))
-        ).subscribe(result => {
-          this.memberLevels = result.items;
-          this.memberLevelVC.loading = false;
-        });
-
         this.loadFilteredCategs();
         this.categMst.filterChange
         .asObservable()
@@ -217,20 +203,6 @@ export class PartnerReportOverviewComponent implements OnInit {
     });
   }
   
-  searchMemberLevel(s?) {
-    var val = new MemberLevelAutoCompleteReq();
-    val.offset = 0;
-    val.limit = 20;
-    val.search = s || '';
-    return this.memberLevelService.autoComplete(val);
-  }
-
-  loadMemberLevel(){
-    this.searchMemberLevel().subscribe(res => {
-      this.memberLevels = res.items;
-    });
-  }
-
   loadFilteredCategs() {
     this.searchCategories().subscribe(
       (result) => (this.filteredCategs = result)
@@ -276,13 +248,6 @@ export class PartnerReportOverviewComponent implements OnInit {
     this.loadAllData();
   }
 
-  onMemberLevelSelect(e)
-  {
-    this.filter.memberLevelId = e? e.id : '';
-    this.skip = 0;
-    this.loadAllData();
-  }
-
   onSelectPartnerGender(e) {
     this.filter.gender = e ? e.value : '';
     this.skip = 0;
@@ -309,10 +274,6 @@ export class PartnerReportOverviewComponent implements OnInit {
       default:
         return "Khác";
     }
-  }
-
-  toggleFilterAdvance() {
-    this.isFilterAdvance = !this.isFilterAdvance;
   }
 
   onExportPDF() {
@@ -387,7 +348,6 @@ export class PartnerReportOverviewComponent implements OnInit {
     var all = this.allDataGrid.slice();
     all = (all as []).map((x:PartnerOldNewReportRes)=> {
       x.gender = this.getGenderDisplay(x.gender);
-      x.memberLevel = x.memberLevel? x.memberLevel.name : '';
       (x.categories as any) = (x.categories.map(x=> x.name) as []).join(', ');
       x.orderState = this.orderStateDisplay[x.orderState] || "Chưa phát sinh";
     });

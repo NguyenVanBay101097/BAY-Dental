@@ -69,26 +69,27 @@
                                             <th class="b-sticky-left" style="min-width: 50px;">
                                                 <input class="mr-1" [(ngModel)]="checkAll" [ngModelOptions]="{standalone: true}" (click)="onCheckAll($event)" type="checkbox" />
                                             </th>
-                                            <th class="b-sticky-left2" style="min-width: 160px;">Nhân viên</th>
+                                            <th class="b-sticky-left2" style="min-width: 180px;">Nhân viên</th>
                                             <th [hidden]="isCompact" class="text-right" style="min-width: 120px;">Lương ngày</th>
                                             <th [hidden]="isCompact" class="text-right" style="min-width: 90px;">Số ngày</th>
                                             <th class="text-right" style="min-width: 120px;">Lương</th>
                                             <th [hidden]="isCompact" class="text-right" style="min-width: 90px;">Tăng ca</th>
-                                            <th class="text-right" style="min-width: 135px;">Lương tăng ca</th>
-                                            <th [hidden]="isCompact" class="text-right" style="min-width: 145px;">Ngày làm thêm</th>
-                                            <th class="text-right" style="min-width: 150px;">Lương làm thêm</th>
-                                            <th class="text-right" style="min-width: 160px;">Phụ cấp xác định</th>
-                                            <th style="min-width: 160px;" class="text-right">Phụ cấp khác</th>
-                                            <th style="min-width: 160px;" class="text-right">Thưởng</th>
-                                            <th style="min-width: 160px;" class="text-right">Phụ cấp lễ tết</th>
-                                            <th class="text-right" style="min-width: 160px;">Hoa hồng</th>
-                                            <th style="min-width: 160px;" class="text-right">Phạt</th>
-                                            <th class="text-right" style="min-width: 160px;">Thuế</th>
-                                            <th class="text-right" style="min-width: 160px;">BHXH</th>
-                                            <th class="text-right" [hidden]="isCompact" style="min-width: 160px;">Tổng lương</th>
-                                            <th class="text-right" style="min-width: 160px;">Tạm ứng</th>
-                                            <th class="text-right" class="b-sticky-right2" style="min-width: 160px;">Thực lĩnh</th>
-                                            <th class="b-sticky-right">Phiếu chi</th>
+                                            <th class="text-right" style="min-width: 120px;">Lương tăng ca</th>
+                                            <th [hidden]="isCompact" class="text-right" style="min-width: 120px;">Ngày làm thêm</th>
+                                            <th class="text-right" style="min-width: 120px;">Lương làm thêm</th>
+                                            <th class="text-right" style="min-width: 120px;">Phụ cấp xác định</th>
+                                            <th style="min-width: 150px;" class="text-right">Phụ cấp khác</th>
+                                            <th style="min-width: 150px;" class="text-right">Thưởng</th>
+                                            <th style="min-width: 150px;" class="text-right">Phụ cấp lễ tết</th>
+                                            <th class="text-right" style="min-width: 150px;">Hoa hồng</th>
+                                            <th style="min-width: 150px;" class="text-right">Phạt</th>
+                                            <th class="text-right" style="min-width: 120px;">Tổng thu nhập</th>
+                                            <th class="text-right" style="min-width: 150px;">Thuế</th>
+                                            <th class="text-right" style="min-width: 150px;">BHXH</th>
+                                            <th class="text-right" style="min-width: 120px;">Thực lĩnh</th>
+                                            <th class="text-right" style="min-width: 120px;">Tạm ứng</th>
+                                            <th class="text-right" style="min-width: 120px;">Còn lại</th>
+                                            <th style="min-width: 120px;">Phiếu chi</th>
                                         </tr>
                                     </thead>
                                     <tbody formArrayName="slips">
@@ -128,6 +129,7 @@
                                                     <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="width: 100%;" formControlName="amercementMoney" [format]="'n0'" [min]="0" [autoCorrect]="true">
                                                     </kendo-numerictextbox>
                                                 </td>
+                                                <td class="text-right">{{item.get('totalSalary').value | number }}</td>
                                                 <td class="text-right">
                                                     <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="width: 100%;" formControlName="tax" [format]="'n0'" [min]="0" [autoCorrect]="true">
                                                     </kendo-numerictextbox>
@@ -136,12 +138,10 @@
                                                     <kendo-numerictextbox [attr.disabled]="state == 'done' ? true : null" style="width: 100%;" formControlName="socialInsurance" [format]="'n0'" [min]="0" [autoCorrect]="true">
                                                     </kendo-numerictextbox>
                                                 </td>
-                                                <td class="text-right" [hidden]="isCompact">{{item.get('totalSalary').value | number }}
-                                                </td>
+                                                <td class="text-right">{{item.get('netSalary').value | number}}</td>
                                                 <td class="text-right">{{item.get('advancePayment').value | number}}</td>
-                                                <td class="b-sticky-right2 text-right">{{item.get('netSalary').value | number}}
-                                                </td>
-                                                <td class="b-sticky-right">
+                                                <td class="text-right">{{item.get('netSalary').value - item.get('advancePayment').value | number}}</td>
+                                                <td>
                                                     {{item.get('salaryPayment') && item.get('salaryPayment').value ? item.get('salaryPayment').value.name : 'Chưa chi' }}
                                                 </td>
                                             </tr>
