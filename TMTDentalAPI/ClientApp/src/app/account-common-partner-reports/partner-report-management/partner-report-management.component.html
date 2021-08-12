@@ -21,17 +21,25 @@
 </div>
 
 <div class="o_content">
-    <div class="content d-flex px-2 bg-white mt-2">
-        <div class="left flex-0-0-auto">
-            <div class=" nav flex-column nav-pills border p-2">
-                <a class="nav-link" [routerLink]="[ 'partner-report-overview' ]" routerLinkActive="active">Tổng quan khách hàng</a>
-                <a class="nav-link" [routerLink]="[ 'partner-debit' ]" routerLinkActive="active"> Công nợ</a>
+    <div class="d-flex p-3">
+        <div style="flex: 0 0 auto;margin-right: 1rem;">
+            <div class="card">
+                <div class="card-body">
+                    <ul class="nav nav-pills nav-fill flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link text-left" routerLinkActive="active" [routerLink]="[ 'partner-report-overview' ]">Tổng quan khách hàng</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-left" routerLinkActive="active" [routerLink]="[ 'partner-debit' ]">Công nợ</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-
         </div>
-        <div class="border p-2 ml-2">
+        <div>
             <router-outlet></router-outlet>
         </div>
     </div>
+
 
 </div>
