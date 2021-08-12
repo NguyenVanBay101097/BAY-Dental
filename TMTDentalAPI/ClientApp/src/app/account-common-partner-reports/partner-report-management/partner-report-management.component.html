@@ -21,15 +21,17 @@
 </div>
 
 <div class="o_content">
-    <div class="content d-flex px-2 bg-white">
+    <div class="content d-flex px-2 bg-white mt-2">
         <div class="left flex-0-0-auto">
-            <div class=" d-flex flex-column border type p-1">
-                <a [routerLink]="[ 'partner-report-overview' ]" routerLinkActive="active">Tổng quan khách hàng</a>
-                <a [routerLink]="[ 'partner-debit' ]" routerLinkActive="active"> Công nợ</a>
+            <div class=" nav flex-column nav-pills border p-2">
+                <a class="nav-link" [routerLink]="[ 'partner-report-overview' ]" routerLinkActive="active">Tổng quan khách hàng</a>
+                <a class="nav-link" [routerLink]="[ 'partner-debit' ]" routerLinkActive="active"> Công nợ</a>
             </div>
 
         </div>
-        <!-- right -->
-        <router-outlet></router-outlet>
+        <div class="border p-2 ml-2">
+            <router-outlet></router-outlet>
+        </div>
     </div>
+
 </div>
