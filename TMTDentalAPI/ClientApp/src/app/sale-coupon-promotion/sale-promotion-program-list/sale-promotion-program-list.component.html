@@ -6,8 +6,7 @@
         <div class="o_cp_searchview">
             <div class="o_cp_searchview_group">
                 <div class="o_searchview">
-                    <input class="o_searchview_input" placeholder="Tìm kiếm theo tên chương trình" type="text"
-                    [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                    <input class="o_searchview_input" placeholder="Tìm kiếm theo tên chương trình" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                     <span class="o_searchview_icon fas fa-search"></span>
                 </div>
             </div>
@@ -23,8 +22,7 @@
             <div class="o_cp_sidebar">
                 <div class="btn-group">
                     <div class="btn-group o_dropdown" *ngIf="selectedIds.length && canSaleCouponProgramUpdate">
-                        <button class="btn btn-secondary dropdown-toggle" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
+                        <button class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
                             Thao tác
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -36,13 +34,9 @@
             </div>
         </div>
         <div class="o_cp_right">
-            <kendo-combobox class="kendo-combobox mr-2" [placeholder]="'Tất cả trạng thái'"
-                [popupSettings]="{width: 'auto'}" [filterable]="true" 
-                [data]="listFilterStatus" [valueField]="'value'" [textField]="'text'"
-                (valueChange)="valueChangeStatus($event)" (filterChange)="filterChangeStatus($event)">
+            <kendo-combobox class="kendo-combobox mr-2" [placeholder]="'Tất cả trạng thái'" [popupSettings]="{width: 'auto'}" [filterable]="true" [data]="listFilterStatus" [valueField]="'value'" [textField]="'text'" (valueChange)="valueChangeStatus($event)" (filterChange)="filterChangeStatus($event)">
             </kendo-combobox>
-            <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="ruleDateFromBegin" [dateTo]="ruleDateFromEnd" (searchChange)="onDateSearchChange($event)">
-            </app-tai-date-range-filter-dropdown>
+            <app-date-range-picker-filter [opens]="'left'" [startDate]="ruleDateFromBegin" [endDate]="ruleDateFromEnd" (searchChange)="onDateSearchChange($event)"></app-date-range-picker-filter>
         </div>
     </div>
 </div>
@@ -54,8 +48,7 @@
         <input type="radio" name="filterActive" class="btn-check" id="saleProgramInactive" [value]="false" [(ngModel)]="filterActive" (change)="changeFilterActive()">
         <label for="saleProgramInactive" class="btn btn rounded-left-0" [ngClass]="!filterActive ? 'btn-primary' : 'btn-outline-primary'">Chưa kích hoạt</label>
     </div>
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-        (pageChange)="pageChange($event)" [selectable]="true" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)" [selectable]="true" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
         <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
         <kendo-grid-column field="name" title="Chương trình">
         </kendo-grid-column>

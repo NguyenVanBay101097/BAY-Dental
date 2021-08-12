@@ -12,20 +12,16 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="btn-group mr-2" role="group" aria-label="Basic example">
-                    <button type="button" class="btn btn-outline-secondary btn-sm" *ngFor="let item of filters"
-                        [class.active]="item.value == filter" (click)="changeFilter(item.value)">{{item.text}}</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" *ngFor="let item of filters" [class.active]="item.value == filter" (click)="changeFilter(item.value)">{{item.text}}</button>
                 </div>
             </div>
         </div>
         <div class="o_cp_right">
             <div class="d-flex">
                 <div class="btn-group mr-2" role="group" aria-label="Basic example">
-                    <button type="button" class="btn btn-outline-secondary btn-sm" *ngFor="let item of group2s"
-                        [class.active]="item.value == groupBy2" (click)="setGroupBy2(item.value)">{{item.text}}</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" *ngFor="let item of group2s" [class.active]="item.value == groupBy2" (click)="setGroupBy2(item.value)">{{item.text}}</button>
                 </div>
-                <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [dateTo]="dateTo" title="Thời gian"
-                    (searchChange)="onSearchDateChange($event)">
-                </app-tai-date-range-filter-dropdown>
+                <app-date-range-picker-filter [opens]="'left'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
             </div>
         </div>
     </div>

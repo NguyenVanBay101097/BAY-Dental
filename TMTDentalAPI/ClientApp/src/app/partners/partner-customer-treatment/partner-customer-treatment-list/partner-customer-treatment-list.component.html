@@ -4,15 +4,13 @@
             <div class="o_control_panel">
                 <div class="breadcrumb">
                     <div class="d-flex">
-                        <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
-                        </app-tai-date-range-filter-dropdown>
+                        <app-date-range-picker-filter [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
                         <button type="button" (click)="createNewSaleOrder()" class="ml-2 btn btn-primary"><i
                             class="fas fa-plus"></i> Thêm phiếu điều trị</button>
                     </div>
                 </div>
                 <div class="o_searchview">
-                    <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo số phiếu điều trị" 
-                    [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
+                    <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo số phiếu điều trị" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
                     <span class="o_searchview_icon fas fa-search"></span>
                 </div>
                 <div class="o_cp_left">
