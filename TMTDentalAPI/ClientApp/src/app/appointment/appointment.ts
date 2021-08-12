@@ -67,6 +67,7 @@ export class AppointmentPaged {
     companyId: string;
     isLate: boolean;
     doctorId: string;
+    isOverdue: boolean;
 }
 
 export class AppointmentSearch {

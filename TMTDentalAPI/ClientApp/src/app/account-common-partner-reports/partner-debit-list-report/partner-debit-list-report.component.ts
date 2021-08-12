@@ -9,13 +9,14 @@ import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/op
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
 import { AccountCommonPartnerReportService, ReportPartnerDebitDetailReq, ReportPartnerDebitDetailRes, ReportPartnerDebitReq, ReportPartnerDebitRes } from '../account-common-partner-report.service';
 import { saveAs } from '@progress/kendo-file-saver';
+import { PrintService } from 'src/app/shared/services/print.service';
 import * as moment from 'moment';
 @Component({
   selector: 'app-partner-debit-list-report',
   templateUrl: './partner-debit-list-report.component.html',
   styleUrls: ['./partner-debit-list-report.component.css'],
    host: {
-    class: 'o_action o_view_controller'
+    class: 'o_action'
   }
 })
 export class PartnerDebitListReportComponent implements OnInit {
@@ -41,7 +42,8 @@ export class PartnerDebitListReportComponent implements OnInit {
 
   constructor(private reportService: AccountCommonPartnerReportService,
     private intlService: IntlService,
-    private companyService: CompanyService) { }
+    private companyService: CompanyService,
+    private printService: PrintService) { }
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
@@ -134,6 +136,42 @@ export class PartnerDebitListReportComponent implements OnInit {
     grid.saveAsExcel();
   }
 
+  onExportPDF(){
+    var val = new ReportPartnerDebitReq();
+    val.fromDate = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : null;
+    val.toDate = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null;
+    val.search = this.search ? this.search : '';
+    val.companyId = this.companyId || '';
+    this.reportService.getReportPartnerDebitPdf(val).subscribe(result => {
+      this.loading = false;
+      let filename ="BaoCaoCongNo_KH";
+
+      let newBlob = new Blob([result], {
+        type:
+          "application/pdf",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    })
+  }
+
+  printReport(){
+    var val = new ReportPartnerDebitReq();
+    val.fromDate = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : null;
+    val.toDate = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null;
+    val.search = this.search ? this.search : '';
+    val.companyId = this.companyId || '';
+    this.reportService.printReportPartnerDebit(val).subscribe(result => this.printService.printHtml(result));
+  }
+
   public onExcelExport(args: any) {
     args.preventDefault();
     var data = this.items;
@@ -157,6 +195,9 @@ export class PartnerDebitListReportComponent implements OnInit {
 
 
     const rows = workbook.sheets[0].rows;
+    rows.splice(2,1);
+    
+    
 
     // Get the default header styles.
     // Aternatively set custom styles for the details
@@ -179,15 +220,38 @@ export class PartnerDebitListReportComponent implements OnInit {
       // loop backwards in order to avoid changing the rows index
       for (let idx = result.length - 1; idx >= 0; idx--) {
         const lines = (<any>result[idx]);
-
-        // add the detail data
+       rows.splice(idx + 2, 0, {})
+        rows.splice(idx + 3, 0, {
+          cells: [
+            Object.assign({}, headerOptions, { value: 'Khách hàng',background: '#aabbcc' }),
+            Object.assign({}, headerOptions, { value: 'Mã KH',background: '#aabbcc' }),
+            Object.assign({}, headerOptions, { value: 'Số điện thoại',background: '#aabbcc' }),
+            Object.assign({}, headerOptions, { value: 'Nợ đầu kỳ',background: '#aabbcc' }),
+            Object.assign({}, headerOptions, { value: 'Phát sinh',background: '#aabbcc' }),
+            Object.assign({}, headerOptions, { value: 'Thanh toán',background: '#aabbcc' }),
+            Object.assign({}, headerOptions, { value: 'Nợ cuối kỳ',background: '#aabbcc'})
+          ]
+        });
+      //  add the detail header
+        rows.splice(idx + 5, 0, {
+          cells: [
+            Object.assign({}, headerOptions, { value: 'Ngày',background: '#aabbcc' }),
+            Object.assign({}, headerOptions, { value: 'Số phiếu',background: '#aabbcc' }),
+            Object.assign({}, headerOptions, { value: 'Nội dung',background: '#aabbcc'}),
+            Object.assign({}, headerOptions, { value: 'Nợ đầu kỳ',background: '#aabbcc' }),
+            Object.assign({}, headerOptions, { value: 'Phát sinh',background: '#aabbcc' }),
+            Object.assign({}, headerOptions, { value: 'Thanh toán',background: '#aabbcc' }),
+            Object.assign({}, headerOptions, { value: 'Nợ cuối kỳ',background: '#aabbcc'})
+          ]
+        });
+      //  add the detail data
         for (let productIdx = lines.length - 1; productIdx >= 0; productIdx--) {
           const line = lines[productIdx] as ReportPartnerDebitDetailRes;
-          rows.splice(idx + 4, 0, {
+          rows.splice(idx + 6, 0, {
             cells: [
-              {},
-              { value: new Date(line.date), format: "dd/MM/yyyy" },
+              { value: moment(line.date).format('DD/MM/YYYY') },
               { value: line.invoiceOrigin },
+              { value: line.ref },
               { value: line.begin, format: "#,##0"},
               { value: line.debit, format: "#,##0"},
               { value: line.credit, format: "#,##0"},
@@ -196,21 +260,8 @@ export class PartnerDebitListReportComponent implements OnInit {
           });
         }
 
-        // add the detail header
-        rows.splice(idx + 4, 0, {
-          cells: [
-            {},
-            Object.assign({}, headerOptions, { value: 'Ngày' }),
-            Object.assign({}, headerOptions, { value: 'Số phiếu' }),
-            Object.assign({}, headerOptions, { value: 'Nợ đầu kì' }),
-            Object.assign({}, headerOptions, { value: 'Phát sinh' }),
-            Object.assign({}, headerOptions, { value: 'Thanh toán' }),
-            Object.assign({}, headerOptions, { value: 'Nợ cuối kì'})
-          ]
-        });
+        
       }
-    
-      debugger;
       new Workbook(workbook).toDataURL().then((dataUrl: string) => {
         // https://www.telerik.com/kendo-angular-ui/components/filesaver/
         saveAs(dataUrl, `BaoCaoCongNoKhachHang.xlsx`);

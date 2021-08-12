@@ -26,7 +26,7 @@ namespace TMTDentalAPI.ViewControllers
         }
 
         [PrinterNameFilterAttribute(Name = AppConstants.PartnerOldNewReport)]
-        public async Task<IActionResult> GetReportPrint(PartnerOldNewReportReq val)
+        public async Task<IActionResult> GetReportPrint([FromQuery]PartnerOldNewReportReq val)
         {
             var res = await _partnerOldNewReportService.GetReportPrint(val);
             return View(res);

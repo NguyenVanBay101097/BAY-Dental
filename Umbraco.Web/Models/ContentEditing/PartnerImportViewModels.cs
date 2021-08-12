@@ -134,6 +134,8 @@ namespace Umbraco.Web.Models.ContentEditing
         }
 
         public DateTime? Date { get; set; }
+        public string TitleName { get; set; }
+        public string SourceName { get; set; }
     }
 
     public class WardVm
