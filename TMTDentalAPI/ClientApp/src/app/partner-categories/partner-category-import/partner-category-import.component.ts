@@ -29,10 +29,22 @@ export class PartnerCategoryImportComponent implements OnInit {
     this.formGroup.get('fileBase64').patchValue(data);
   }
 
+  showError(event){
+    if (event.length > 0) {
+      this.notificationService.show({
+        content: event[0],
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'error', icon: true }
+      });
+    }
+  }
+
   import() {
     if (!this.formGroup.valid) {
       this.notificationService.show({
-        content: 'Vui lòng chọn file đúng định dạng để import',
+        content: 'Vui lòng chọn file để import',
         hideAfter: 3000,
         position: { horizontal: 'center', vertical: 'top' },
         animation: { type: 'fade', duration: 400 },

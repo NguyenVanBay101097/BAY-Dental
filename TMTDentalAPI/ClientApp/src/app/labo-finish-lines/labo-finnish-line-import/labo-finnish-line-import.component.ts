@@ -76,4 +76,10 @@ export class LaboFinnishLineImportComponent implements OnInit {
   onCancel() {
     this.activeModal.dismiss();
   }
+
+  showEmit(event){
+    if (event.length > 0){
+      this.notify('error',event[0]);
+    }
+  }
 }
