@@ -552,7 +552,7 @@ namespace Infrastructure.Services
                 query = query.Where(x => filterPartnerIds.Contains(x.Id));
             }
 
-            var res = await query.OrderBy(x => x.DisplayName).Select(x => new PartnerCustomerExportExcelVM
+            var res = await query.OrderByDescending(x => x.DateCreated).Select(x => new PartnerCustomerExportExcelVM
             {
                 Name = x.Name,
                 Ref = x.Ref,
@@ -569,7 +569,9 @@ namespace Infrastructure.Services
                 Job = x.JobTitle,
                 Email = x.Email,
                 Note = x.Comment,
-                Id = x.Id
+                Id = x.Id,
+                SourceName = x.SourceName,
+                TitleName = x.TitleName,
             }).ToListAsync();
 
             var historyRelObj = GetService<IHistoryService>();
@@ -2247,7 +2249,10 @@ namespace Infrastructure.Services
                                  OrderState = pos.CountSale > 0 ? "sale" : (pos.CountDone > 0 ? "done" : "draft"),
                                  OrderResidual = pr.OrderResidual,
                                  TotalDebit = pd.TotalDebit,
-                                 MemberLevelId = ir.ValueReference
+                                 MemberLevelId = ir.ValueReference,
+                                 DateCreated = p.DateCreated,
+                                 SourceName = p.Source.Name,
+                                 TitleName = p.Title.Name
                              };
 
             if (!string.IsNullOrEmpty(val.Search))

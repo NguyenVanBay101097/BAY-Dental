@@ -196,7 +196,8 @@ export class AccountInvoiceReportRevenuePartnerComponent implements OnInit {
        data : data,
        args : args,
        filter : this.filter,
-       title: 'BaoCaoDoanhThu_TheoKH'
+       title: 'BaoCaoDoanhThu_TheoKH',
+       showPartner: false
     })
 
     rows.forEach(row => {

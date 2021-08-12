@@ -14,6 +14,7 @@ export class AccountInvoiceReportRevenueDetailComponent implements OnInit {
 
   filter = new RevenueReportDetailPaged();
   @Input() parent: any;
+  @Input() showPartner: boolean = true;
   gridData: GridDataResult;
   loading = false;
 

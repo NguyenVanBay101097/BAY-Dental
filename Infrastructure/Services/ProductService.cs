@@ -243,6 +243,8 @@ namespace Infrastructure.Services
                 ListPrice = x.ListPrice,
                 LaboPrice = x.LaboPrice,
                 PurchasePrice = x.PurchasePrice,
+                Firm = x.Firm,
+                StandardPrice = Convert.ToDecimal(_GetStandardPrice(x.Id)),
                 StepList = x.Steps.Select(s => new ProductStepSimple
                 {
                     Id = s.Id,
@@ -1131,7 +1133,10 @@ namespace Infrastructure.Services
                 DefaultCode = x.DefaultCode,
                 Name = x.Name,
                 PurchasePrice = x.PurchasePrice,
-                Type = x.Type
+                Type = x.Type,
+                UomName = x.UOM.Name,
+                UomPoName = x.UOMPO.Name,
+                MinInventory = x.MinInventory,
             }).ToListAsync();
 
             return res;
@@ -1152,7 +1157,8 @@ namespace Infrastructure.Services
                 Name = x.Name,
                 Type = x.Type,
                 ListPrice = x.ListPrice,
-                UomName = x.UOM.Name
+                UomName = x.UOM.Name,
+                MinInventory = x.MinInventory
             }).ToListAsync();
 
             return res;

@@ -35,6 +35,9 @@ export class AccountInvoiceReportRevenueManageComponent implements OnInit {
     var filter = e.filter;
     var employeeFilter = e.employeeFilter || 'none';
     var title = e.title || 'doanhthu';
+    var showPartner = e.showPartner;
+    console.log(showPartner);
+    
     // Prevent automatically saving the file. We will save it manually after we fetch and add the details
     args.preventDefault();
 
@@ -99,33 +102,63 @@ export class AccountInvoiceReportRevenueManageComponent implements OnInit {
         // add the detail data
         for (let productIdx = lines.length - 1; productIdx >= 0; productIdx--) {
           const line = lines[productIdx];
-          rows.splice(idx + 3, 0, {
-            cells: [
-              {},
-              { value: moment(line.invoiceDate).format('DD/MM/YYYY') },
-              { value: line.invoiceOrigin },
-              { value: line.partnerName },
-              { value: line.employeeName },
-              { value: line.assistantName },
-              { value: line.productName },
-              { value: line.priceSubTotal.toLocaleString('vi'), textAlign: 'right' }
-            ]
-          });
+          if (showPartner == false){
+            rows.splice(idx + 3, 0, {
+              cells: [
+                {},
+                { value: moment(line.invoiceDate).format('DD/MM/YYYY') },
+                { value: line.invoiceOrigin },
+                { value: line.employeeName },
+                { value: line.assistantName },
+                { value: line.productName },
+                { value: line.priceSubTotal.toLocaleString('vi'), textAlign: 'right' }
+              ]
+            });
+          }
+          else {
+            rows.splice(idx + 3, 0, {
+              cells: [
+                {},
+                { value: moment(line.invoiceDate).format('DD/MM/YYYY') },
+                { value: line.invoiceOrigin },
+                { value: line.partnerName },
+                { value: line.employeeName },
+                { value: line.assistantName },
+                { value: line.productName },
+                { value: line.priceSubTotal.toLocaleString('vi'), textAlign: 'right' }
+              ]
+            });
+          }
         }
         // add the detail header
         listDetailHeaderIndex.push(idx + 2);
-        rows.splice(idx + 3, 0, {
-          cells: [
-            {},
-            Object.assign({}, headerOptions, { value: 'Ngày thanh toán', background: '#aabbcc', width: 20 }),
-            Object.assign({}, headerOptions, { value: 'Số phiếu', background: '#aabbcc', width: 200 }),
-            Object.assign({}, headerOptions, { value: 'Khách hàng', background: '#aabbcc', width: 200 }),
-            Object.assign({}, headerOptions, { value: 'Bác sĩ', background: '#aabbcc', width: 200 }),
-            Object.assign({}, headerOptions, { value: 'Phụ tá', background: '#aabbcc', width: 200 }),
-            Object.assign({}, headerOptions, { value: 'Dịch vụ', background: '#aabbcc', width: 200 }),
-            Object.assign({}, headerOptions, { value: 'Thanh toán', background: '#aabbcc', width: 200 })
-          ]
-        });
+        if (showPartner == false){
+          rows.splice(idx + 3, 0, {
+            cells: [
+              {},
+              Object.assign({}, headerOptions, { value: 'Ngày thanh toán', background: '#aabbcc', width: 20 }),
+              Object.assign({}, headerOptions, { value: 'Số phiếu', background: '#aabbcc', width: 200 }),
+              Object.assign({}, headerOptions, { value: 'Bác sĩ', background: '#aabbcc', width: 200 }),
+              Object.assign({}, headerOptions, { value: 'Phụ tá', background: '#aabbcc', width: 200 }),
+              Object.assign({}, headerOptions, { value: 'Dịch vụ/Thuốc', background: '#aabbcc', width: 200 }),
+              Object.assign({}, headerOptions, { value: 'Thanh toán', background: '#aabbcc', width: 200 })
+            ]
+          });
+        }
+        else {
+          rows.splice(idx + 3, 0, {
+            cells: [
+              {},
+              Object.assign({}, headerOptions, { value: 'Ngày thanh toán', background: '#aabbcc', width: 20 }),
+              Object.assign({}, headerOptions, { value: 'Số phiếu', background: '#aabbcc', width: 200 }),
+              Object.assign({}, headerOptions, { value: 'Khách hàng', background: '#aabbcc', width: 200 }),
+              Object.assign({}, headerOptions, { value: 'Bác sĩ', background: '#aabbcc', width: 200 }),
+              Object.assign({}, headerOptions, { value: 'Phụ tá', background: '#aabbcc', width: 200 }),
+              Object.assign({}, headerOptions, { value: 'Dịch vụ/Thuốc', background: '#aabbcc', width: 200 }),
+              Object.assign({}, headerOptions, { value: 'Thanh toán', background: '#aabbcc', width: 200 })
+            ]
+          });
+        }
         rows.splice(idx+2,0,{});
       }
       var a = workbook;

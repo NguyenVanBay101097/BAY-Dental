@@ -65,4 +65,15 @@ export class PartnerOverviewTreatmentHistoryComponent implements OnInit {
   reverseKeyTreatment = (a: KeyValue<number, string>, b: KeyValue<number, string>): number => {
     return a.key > b.key ? -1 : (b.key > a.key ? 1 : 0);
   }
+
+  getStateDisplay(state = null) {
+    switch (state) {
+      case 'sale':
+        return 'Đang điều trị';
+      case 'done':
+        return 'Hoàn thành';
+      default:
+        return 'Nháp';
+    }
+  }
 }
