@@ -150,16 +150,16 @@ namespace Infrastructure.Services
 
         public IQueryable<AccountInvoiceReport> SumReVenueQuery(PartnerOldNewReportSumReq val)
         {
-            //lấy những phiếu điều trị đầu tiên(không đầu tiên) của mỗi khách hàng
-            var pnOrderQr = SumReportQuery(val);
+            ////lấy những phiếu điều trị đầu tiên(không đầu tiên) của mỗi khách hàng
+            //var pnOrderQr = SumReportQuery(val);
 
-            //lấy list movelineid của phiếu điều trị
-            var movelineIdQr = pnOrderQr.SelectMany(x => x.OrderLines.SelectMany(z => z.SaleOrderLineInvoice2Rels.Select(h => h.InvoiceLineId)));
+            ////lấy list movelineid của phiếu điều trị
+            //var movelineIdQr = pnOrderQr.SelectMany(x => x.OrderLines.SelectMany(z => z.SaleOrderLineInvoice2Rels.Select(h => h.InvoiceLineId)));
 
-            //revenue query
+            ////revenue query
             var accInvreportObj = GetService<IAccountInvoiceReportService>();
             var RevenueQr = from v in accInvreportObj.GetRevenueReportQuery(new RevenueReportQueryCommon(null, null, companyId: val.CompanyId))
-                            where movelineIdQr.Any(x => x == v.Id)
+                            //where movelineIdQr.Any(x => x == v.Id)
                             select v;
             return RevenueQr;
         }

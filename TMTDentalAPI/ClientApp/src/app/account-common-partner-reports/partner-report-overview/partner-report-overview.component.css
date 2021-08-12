@@ -19,3 +19,7 @@
 .transform-50 {
     transform: translateY(50%);
 }
+
+.cate-multi li.k-button {
+    white-space: nowrap !important;
+}
