@@ -35,6 +35,16 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? LaboPrice { get; set; }
 
         public IEnumerable<ProductStepSimple> StepList { get; set; } = new List<ProductStepSimple>();
+
+        /// <summary>
+        /// Hãng
+        /// </summary>
+        public string Firm { get; set; }
+
+        /// <summary>
+        /// Giá vốn
+        /// </summary>
+        public decimal? StandardPrice { get; set; }
     }
 
     public class ProductProductExportExcel
@@ -52,5 +62,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? ListPrice { get; set; }
 
         public string UomName { get; set; }
+
+        public string UomPoName { get; set; }
+
+        public decimal? MinInventory { get; set; }
     }
 }
