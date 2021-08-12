@@ -17,7 +17,7 @@ export class DateRangePickerFilterComponent implements OnInit {
   @Input() title: string = 'Chọn thời gian';
 
   @Input() selected: any;
-  ranges: any = {
+  @Input() ranges: any = {
     'Hôm nay': [moment(new Date()), moment(new Date())],
     'Hôm qua': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
     '7 ngày qua': [moment().subtract(6, 'days'), moment()],

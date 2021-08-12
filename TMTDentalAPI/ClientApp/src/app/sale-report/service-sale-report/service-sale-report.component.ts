@@ -34,6 +34,13 @@ export class ServiceSaleReportComponent implements OnInit {
     sale:"Đang điều trị",
     done: "Hoàn thành"
   }
+
+  ranges: any = {
+    'Tháng này': [moment().startOf('month'), moment().endOf('month')],
+    '1-3 tháng trước': [moment().subtract(3, 'months'), moment().subtract(1, 'months')],
+    '3-6 tháng trước': [moment().subtract(6, 'months'), moment().subtract(3, 'months')],
+    '6-12 tháng trước': [moment().subtract(12, 'months'),  moment().subtract(6, 'months')],
+  }
   
   @ViewChild("companyCbx", { static: true }) companyVC: ComboBoxComponent;
   @ViewChild("empCbx", { static: true }) empVC: ComboBoxComponent;
@@ -112,8 +119,8 @@ export class ServiceSaleReportComponent implements OnInit {
       this.loadAllData();
     })
     
-    this.filter.dateOrderFrom = moment().startOf('week').toDate();
-    this.filter.dateOrderTo  = moment().endOf('week').toDate();
+    this.filter.dateOrderFrom = moment().startOf('month').toDate();
+    this.filter.dateOrderTo  = moment().endOf('month').toDate();
     this.filter.limit = 20;
     this.filter.offset = 0;
     this.filter.state = 'sale';
@@ -166,26 +173,6 @@ export class ServiceSaleReportComponent implements OnInit {
   
   pageChange(e) {
     this.filter.offset = e.skip;
-    this.loadAllData();
-  }
-
-  onChangeFilterMonth() {
-    var date = new Date(), month = date.getMonth();
-    this.filter.dateOrderFrom = moment().startOf('week').toDate();
-    this.filter.dateOrderTo  = moment().endOf('week').toDate();
-    this.filter.offset = 0;
-
-    if(this.filterMonth) {
-     this.filter.dateOrderFrom = this.filterMonth.from != null? 
-     new Date(new Date().setMonth(month - this.filterMonth.from)): null;
-     this.filter.dateOrderTo = this.filterMonth.to != null? 
-     new Date(new Date().setMonth(month + this.filterMonth.to)) : null;
-    }
-
-    this.dateRangeComp.selected ={
-      startDate: moment(this.filter.dateOrderFrom || undefined),
-      endDate: moment(this.filter.dateOrderTo || undefined)
-    };
     this.loadAllData();
   }
 
