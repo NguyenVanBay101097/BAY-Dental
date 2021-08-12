@@ -497,7 +497,20 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
 
     this.dashboardReportService.createCustomerReceiptToAppointment(res).subscribe(
       rs => {
-        this.activeModal.close(rs);
+        if (this.appointId) {
+          let appointState = {
+            state: 'done',
+            reason: ''
+          }
+          this.appointmentService.patchState(this.appointId, appointState).subscribe(
+            () => {
+              this.activeModal.close(rs);
+            }, er => {
+              this.notify('error', er);
+            },
+          )
+        }
+        // this.activeModal.close(rs);
       },
       er => {
         this.notify('error', er);

@@ -130,11 +130,11 @@
                                 <kendo-multiselect [data]="filteredServices" [valueField]="'id'" [allowCustom]="true"
                                     [textField]="'name'" [placeholder]="'Chọn dịch vụ'" formControlName="services"
                                     [filterable]="true" #serviceMultiSelect>
-                                    <ng-template kendoMultiSelectTagTemplate let-dataItem>
+                                    <!-- <ng-template kendoMultiSelectTagTemplate let-dataItem>
                                         <div class="template">
                                             <span [title]="dataItem.name">{{dataItem.name}}</span>
                                         </div>
-                                    </ng-template>
+                                    </ng-template> -->
                                 </kendo-multiselect>
                             </td>
                         </tr>
