@@ -1,11 +1,8 @@
 <div>
     <div class="row d-flex m-3">
-        <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" class="w-50" [title]="'Thời gian'" [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
-        </app-tai-date-range-filter-dropdown>
+        <app-date-range-picker-filter [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
         <div class="o_searchview">
-            <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo tên nhân viên" 
-            [(ngModel)]="search" 
-	        (ngModelChange)="this.searchSB.next($event)" />
+            <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo tên nhân viên" [(ngModel)]="search" (ngModelChange)="this.searchSB.next($event)" />
             <span class="o_searchview_icon fas fa-search"></span>
         </div>
     </div>
