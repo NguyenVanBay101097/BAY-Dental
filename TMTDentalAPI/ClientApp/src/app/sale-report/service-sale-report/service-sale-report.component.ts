@@ -34,6 +34,13 @@ export class ServiceSaleReportComponent implements OnInit {
     sale:"Đang điều trị",
     done: "Hoàn thành"
   }
+
+  ranges: any = {
+    'Tuần này': [moment().startOf('week'), moment().endOf('week')],
+    '1-3 tháng trước': [moment().subtract(-3, 'months'), moment(new Date())],
+    '3-6 tháng trước': [moment().subtract(-6, 'months'), moment().subtract(-3, 'months')],
+    '6-12 tháng trước': [moment().subtract(-12, 'months'),  moment().subtract(-6, 'months')],
+  }
   
   @ViewChild("companyCbx", { static: true }) companyVC: ComboBoxComponent;
   @ViewChild("empCbx", { static: true }) empVC: ComboBoxComponent;

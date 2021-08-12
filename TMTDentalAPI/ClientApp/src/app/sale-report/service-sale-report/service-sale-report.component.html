@@ -1,7 +1,7 @@
 <div class="flex-1-1-100 right border p-2 ml-2 d-flex flex-column">
     <h5 class="flex-0-0-auto">Dịch vụ đang điều trị</h5>
     <div class="filter d-flex flex-0-0-auto">
-        <app-date-range-picker-filter #dateRange [opens]="'right'" class="mr-1" [startDate]="filter.dateOrderFrom" [endDate]="filter.dateOrderTo" (searchChange)="onSearchDateChange($event)" opens="right"></app-date-range-picker-filter>
+        <app-date-range-picker-filter #dateRange [ranges]="ranges" [opens]="'right'" class="mr-1" [startDate]="filter.dateOrderFrom" [endDate]="filter.dateOrderTo" (searchChange)="onSearchDateChange($event)" opens="right"></app-date-range-picker-filter>
         <kendo-combobox [placeholder]="'Tất cả bác sĩ'" class="mr-1" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="employees" (selectionChange)="onSelectEmployee($event)" #empCbx>
         </kendo-combobox>
         <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
@@ -60,7 +60,7 @@
         </kendo-grid-column>
         <kendo-grid-column field="state" title="Trạng thái" width="120">
             <ng-template kendoGridCellTemplate let-dataItem>
-                {{!dataItem.isActive?'Ngừng điều trị' : stateDisplay[dataItem.state]}}
+                {{stateDisplay[dataItem.state] || "Đang điều trị"}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="order" title="phiếu điều trị" width="120">
