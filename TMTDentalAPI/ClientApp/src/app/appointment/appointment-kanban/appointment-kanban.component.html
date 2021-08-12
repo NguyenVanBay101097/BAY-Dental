@@ -172,12 +172,9 @@
                                 </kendo-grid-column>
                                 <kendo-grid-column field="partnerPhone" title="Số điện thoại" width="150">
                                 </kendo-grid-column>
-                                <kendo-grid-column field="name" title="Thời gian hẹn" width="170">
+                                <kendo-grid-column field="date" title="Thời gian hẹn" width="170">
                                     <ng-template kendoGridCellTemplate let-dataItem>
-                                        <label class="mb-0" *ngIf="dataItem.time!=''">{{dataItem.time}}, <label class="mb-0"
-                                                *ngIf="dataItem.date"> {{dataItem.date |
-                                                date:'shortDate'}}</label></label>
-                        
+                                        {{dataItem.date | date:'short'}}
                                     </ng-template>
                                 </kendo-grid-column>
                                 <kendo-grid-column title="Dịch vụ" width="250">
