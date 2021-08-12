@@ -30,9 +30,7 @@
             </div>
         </div>
         <div class="o_cp_right">
-            <kendo-combobox *ngIf="canEmployeeRead" [placeholder]="'Lọc theo nhân viên'" class="w-50" 
-                [data]="listEmployeies" [textField]="'name'" [filterable]="true" #empCbx 
-                (selectionChange)="empChange($event)" [valueField]="'id'">
+            <kendo-combobox *ngIf="canEmployeeRead" [placeholder]="'Lọc theo nhân viên'" class="w-50" [data]="listEmployeies" [textField]="'name'" [filterable]="true" #empCbx (selectionChange)="empChange($event)" [valueField]="'id'">
             </kendo-combobox>
         </div>
     </div>
@@ -61,8 +59,7 @@
         </div>
     </div> -->
     <!-- <div class="float-right pb-2 mr-3">
-        <app-tai-date-range-filter-dropdown [dateFrom]="monthStart" (searchChange)="buttonFilterMonth($event)"
-            [title]="'Thời gian'" [dateTo]="monthEnd"></app-tai-date-range-filter-dropdown>
+
     </div> -->
     <table class="table table-bordered table-content">
         <thead>

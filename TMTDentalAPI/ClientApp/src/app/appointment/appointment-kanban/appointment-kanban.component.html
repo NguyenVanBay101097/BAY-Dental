@@ -136,7 +136,7 @@
                                     <i class="fas fa-chevron-right"></i>
                                 </button>
                             </div>
-                            <div class="toolbar-time-period btn-check-calendar mr-2">
+                            <div class="toolbar-time-period btn-check-calendar">
                                 <input type="radio" class="btn-check" name="time-period" id="day" autocomplete="off" [value]="'day'"
                                     [(ngModel)]="timePeriod" (ngModelChange)="changeTimePeriod($event)">
                                 <label class="btn" for="day">Ngày</label>
@@ -158,7 +158,7 @@
                         </div>
                         <div class="main-list h-100 overflow-auto" *ngIf="viewKanban === 'list'">
                             <kendo-grid [data]="gridData" [pageSize]="limit" [resizable]="true" [skip]="offset" 
-                                [loading]="loading" (pageChange)="pageChange($event)" style="max-height: 100%;">
+                                [loading]="loading" (pageChange)="pageChange($event)" style="height: 100%;">
                                 <kendo-grid-column field="partnerDisplayName" title="Khách hàng" width="250">
                                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                                         <div>
@@ -172,12 +172,9 @@
                                 </kendo-grid-column>
                                 <kendo-grid-column field="partnerPhone" title="Số điện thoại" width="150">
                                 </kendo-grid-column>
-                                <kendo-grid-column field="name" title="Thời gian hẹn" width="170">
+                                <kendo-grid-column field="date" title="Thời gian hẹn" width="170">
                                     <ng-template kendoGridCellTemplate let-dataItem>
-                                        <label class="mb-0" *ngIf="dataItem.time!=''">{{dataItem.time}}, <label class="mb-0"
-                                                *ngIf="dataItem.date"> {{dataItem.date |
-                                                date:'shortDate'}}</label></label>
-                        
+                                        {{dataItem.date | date:'short'}}
                                     </ng-template>
                                 </kendo-grid-column>
                                 <kendo-grid-column title="Dịch vụ" width="250">
@@ -203,7 +200,7 @@
                                 </kendo-grid-column>
                                 <kendo-grid-column field="reason" title="Lý do" width="150">
                                 </kendo-grid-column>
-                                <kendo-grid-column field="id" width="100" *ngIf="canAppointmentEdit">
+                                <kendo-grid-column field="id" width="120" *ngIf="canAppointmentEdit">
                                     <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                                         Thao tác
                                     </ng-template>

@@ -16,8 +16,7 @@
                 <div class="o_form_buttons_view d-flex">
                     <kendo-combobox (selectionChange)="onStateSelectChange($event)" placeholder="Tất cả" class="mr-1" [data]="filterLaboStatus" [textField]="'name'" [valueField]="'value'">
                     </kendo-combobox>
-                    <app-tai-date-range-filter-dropdown title="Ngày xuất" [dateFrom]="dateExportFrom" [dateTo]="dateExportTo" (searchChange)="onDateSearchChange($event)">
-                    </app-tai-date-range-filter-dropdown>
+                    <app-date-range-picker-filter [opens]="'right'" [title]="'Ngày xuất'" [startDate]="dateExportFrom" [endDate]="dateExportTo" (searchChange)="onDateSearchChange($event)"></app-date-range-picker-filter>
                 </div>
             </div>
             <div class="o_cp_sidebar">

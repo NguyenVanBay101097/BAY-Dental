@@ -198,9 +198,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     appoint.partnerId = appoint.partner ? appoint.partner.id : null;
     appoint.doctorId = appoint.doctor ? appoint.doctor.id : null;
     var apptDate = this.intlService.formatDate(appoint.dateObj, 'yyyy-MM-dd');
-    var appTime = this.intlService.formatDate(appoint.timeObj, 'HH:mm:ss');;
+    var appTime = this.intlService.formatDate(appoint.timeObj, 'HH:mm');;
     appoint.date = `${apptDate}T${appTime}`;
-    appoint.time = appTime;
     appoint.timeExpected = appoint.timeExpected || 0;
     
     if (this.state != 'cancel') {

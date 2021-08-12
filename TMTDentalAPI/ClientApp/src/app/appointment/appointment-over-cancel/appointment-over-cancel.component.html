@@ -6,9 +6,8 @@
         <div class="o_cp_searchview">
             <div class="o_cp_searchview_group">
                 <div class="o_searchview">
-                    <input class="o_searchview_input" placeholder="Tìm kiếm theo mã lịch hẹn, khách hàng, SĐT..."
-                        type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
-                        <span class="o_searchview_icon fas fa-search"></span>
+                    <input class="o_searchview_input" placeholder="Tìm kiếm theo mã lịch hẹn, khách hàng, SĐT..." type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                    <span class="o_searchview_icon fas fa-search"></span>
                 </div>
             </div>
         </div>
@@ -25,15 +24,10 @@
             </div>
         </div>
         <div class="o_cp_right">
-            <div class="btn-group o_search_options">
-                <kendo-combobox *ngIf="canEmployeeRead" [placeholder]="'Lọc theo bác sĩ'" (valueChange)="valueChangeUser($event)"
-                    class="mr-2" [filterable]="true" [data]="listEmployees" #employeeCbx
-                    [valueField]="'id'" [textField]="'name'" style="min-width: 200px;"
-                    [popupSettings]="{width: 'auto'}">
+            <div class="o_search_options">
+                <kendo-combobox *ngIf="canEmployeeRead" [placeholder]="'Lọc theo bác sĩ'" (valueChange)="valueChangeUser($event)" class="mr-2" [filterable]="true" [data]="listEmployees" #employeeCbx [valueField]="'id'" [textField]="'name'" style="min-width: 200px;" [popupSettings]="{width: 'auto'}">
                 </kendo-combobox>
-                <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [dateTo]="dateTo" [title]="'Thời gian'"
-                    (searchChange)="onDateSearchChange($event)">
-                </app-tai-date-range-filter-dropdown>
+                <app-date-range-picker-filter [opens]="'left'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onDateSearchChange($event)"></app-date-range-picker-filter>
             </div>
         </div>
     </div>
@@ -51,8 +45,7 @@
                                     <input type="radio" checked autocomplete="off">Tất
                                     cả<span class="badge badge-light ml-2 bg-white">{{stateCount['all'] || 0}}</span>
                                 </label>
-                                <label class="btn btn-outline-primary mr-2"
-                                    (click)="setStateFilter('confirmed')">
+                                <label class="btn btn-outline-primary mr-2" (click)="setStateFilter('confirmed')">
                                     <input type="radio" checked autocomplete="off">Quá hạn<span
                                         class="badge badge-light ml-2 bg-white">{{stateCount['confirmed'] || 0}}</span>
                                 </label>
@@ -74,14 +67,11 @@
             </div>
         </div>
     </div>
-    <kendo-grid [data]="gridData" [pageSize]="limit" [resizable]="true" [skip]="offset" [pageable]="true"
-        [loading]="loading" (pageChange)="pageChange($event)">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [resizable]="true" [skip]="offset" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
         <kendo-grid-column field="partnerDisplayName" title="Khách hàng" width="250">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <div>
-                    <a class="text-primary" title="Xem hồ sơ khách hàng"
-                        [routerLink]="['/partners/customer/' + dataItem.partner?.id]"
-                        [class.disabled]="!canCustomerLink">
+                    <a class="text-primary" title="Xem hồ sơ khách hàng" [routerLink]="['/partners/customer/' + dataItem.partner?.id]" [class.disabled]="!canCustomerLink">
                         {{dataItem.partnerDisplayName}}
                     </a>
                 </div>

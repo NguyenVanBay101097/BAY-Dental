@@ -20,10 +20,13 @@ namespace ApplicationCore.Entities
         public DateTime Date { get; set; }
 
         /// <summary>
-        /// thời gian hẹn
+        /// thời gian hẹn -> Không sử dụng, lấy Time thông qua biến Date
         /// </summary>
         public string Time { get; set; }
 
+        /// <summary>
+        /// Không sử dụng -> biến Date đã có đủ Date và Time
+        /// </summary>
         public DateTime? DateTimeAppointment { get; set; }
 
         //ko cần cột này
