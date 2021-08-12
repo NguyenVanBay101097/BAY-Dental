@@ -30,7 +30,7 @@
                         <button class="dropdown-item" (click)="unlink()">Xóa</button>
                     </div>
                 </div>
-                <app-date-range-picker-filter [opens]="'left'" [startDate]="dateOrderFrom" [endDate]="dateOrderTo" (searchChange)="onDateSearchChange()($event)"></app-date-range-picker-filter>
+                <app-date-range-picker-filter [opens]="'left'" [startDate]="dateOrderFrom" [endDate]="dateOrderTo" (searchChange)="onDateSearchChange($event)"></app-date-range-picker-filter>
                 <app-tmt-option-select-dropdown title="Trạng thái" [options]="stateFilterOptions" (selectChange)="onStateSelectChange($event)">
                 </app-tmt-option-select-dropdown>
             </div>

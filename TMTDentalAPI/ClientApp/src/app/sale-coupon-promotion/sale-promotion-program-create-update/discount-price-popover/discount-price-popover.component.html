@@ -18,7 +18,7 @@
         <div class="w-40">
             <input type="text" class="form-control form-control-sm" [placeholder]="typeApply != 'on_order' ? 'Tìm kiếm theo tên dịch vụ' : 'Tìm kiếm theo số phiếu điều trị'" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
         </div>
-        <app-date-range-picker-filter class="mr-2" [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
+        <app-date-range-picker-filter class="mr-2" [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="searchChangeDate($event)"></app-date-range-picker-filter>
     </div>
     <div class="o_content">
         <kendo-grid #grid [data]="gridView" [pageable]="true" [pageSize]="pageSize" [skip]="skip" (pageChange)="pageChange($event)">
