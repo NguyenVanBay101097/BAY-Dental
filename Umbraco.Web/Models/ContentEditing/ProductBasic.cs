@@ -158,6 +158,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public decimal? LaboPrice { get; set; }
         public string Firm { get; set; }
+        public decimal? StandardPrice { get; set; }
     }
 
     public class ProductMedicineImportExcelRow

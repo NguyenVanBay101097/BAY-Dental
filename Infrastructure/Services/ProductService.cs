@@ -243,6 +243,8 @@ namespace Infrastructure.Services
                 ListPrice = x.ListPrice,
                 LaboPrice = x.LaboPrice,
                 PurchasePrice = x.PurchasePrice,
+                Firm = x.Firm,
+                StandardPrice = Convert.ToDecimal(_GetStandardPrice(x.Id)),
                 StepList = x.Steps.Select(s => new ProductStepSimple
                 {
                     Id = s.Id,

@@ -294,6 +294,7 @@ namespace TMTDentalAPI.Controllers
             var fileData = Convert.FromBase64String(val.FileBase64);
             var data = new List<ProductServiceImportExcelRow>();
             var categDict = new Dictionary<string, ProductCategory>();
+            var standardPriceDict = new Dictionary<string, decimal?>();
             var errors = new List<string>();
 
             try
@@ -326,6 +327,7 @@ namespace TMTDentalAPI.Controllers
                                 IsLabo = Convert.ToBoolean(worksheet.Cells[row, 2].Value),
                                 CategName = categName,
                                 ListPrice = Convert.ToDecimal(worksheet.Cells[row, 4].Value),
+                                StandardPrice = Convert.ToDecimal(worksheet.Cells[row, 5].Value),
                                 Steps = Convert.ToString(worksheet.Cells[row, 6].Value),
                                 LaboPrice = Convert.ToDecimal(worksheet.Cells[row, 7].Value),
                                 Firm = Convert.ToString(worksheet.Cells[row, 8].Value),
@@ -360,6 +362,16 @@ namespace TMTDentalAPI.Controllers
                 }
             }
 
+            var standardPrices = data.Select(x => new
+            {
+                x.Name,
+                x.StandardPrice
+            }).ToList();
+
+            foreach (var standardPrice in standardPrices)
+            {
+                standardPriceDict.Add(standardPrice.Name, standardPrice?.StandardPrice);
+            }
             var productDict = new Dictionary<string, Product>();
 
             var uom = await _uomService.DefaultUOM();
@@ -404,7 +416,12 @@ namespace TMTDentalAPI.Controllers
             {
                 await _unitOfWork.BeginTransactionAsync();
 
-                await _productService.CreateAsync(productsCreate);
+                var products = await _productService.CreateAsync(productsCreate);
+
+                foreach (var product in products)
+                {
+                    _productService.SetStandardPrice(product, Convert.ToDouble(standardPriceDict[product.Name]), product.CompanyId);
+                }
 
                 _unitOfWork.Commit();
             }
@@ -1312,7 +1329,7 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 3].Value = item.IsLabo;
                     worksheet.Cells[row, 4].Value = item.CategName;
                     worksheet.Cells[row, 5].Value = item.ListPrice;
-                    worksheet.Cells[row, 6].Value = "";
+                    worksheet.Cells[row, 6].Value = item.StandardPrice;
                     worksheet.Cells[row, 7].Value = item.StepList.Count() == 0 ? null : string.Join(";", item.StepList.Select(x => x.Name).ToList());
                     worksheet.Cells[row, 8].Value = item.LaboPrice ?? 0;
                     worksheet.Cells[row, 9].Value = item.Firm;
