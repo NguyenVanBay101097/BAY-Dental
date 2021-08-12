@@ -11,7 +11,7 @@
                 <div class="o_cp_buttons">
                     <div class="o_form_buttons_view">
                         <button *ngIf="canAppointmentCreate" class="btn btn-primary btn-sm" (click)="createUpdateAppointment()">
-                            <i class="fas fa-calendar-plus"></i>&nbsp;Tạo lịch hẹn</button>
+                            <i class="fas fa-calendar-plus"></i>&nbsp;Thêm</button>
                         <button class="btn btn-primary btn-sm" (click)="refreshData()">
                             <i class="fas fa-sync"></i>&nbsp;Làm mới</button>
                         <button type="button" class="btn btn-primary btn-sm" (click)="exportExcelFile()">
@@ -136,7 +136,7 @@
                                     <i class="fas fa-chevron-right"></i>
                                 </button>
                             </div>
-                            <div class="toolbar-time-period btn-check-calendar">
+                            <div class="toolbar-time-period btn-check-calendar mr-2">
                                 <input type="radio" class="btn-check" name="time-period" id="day" autocomplete="off" [value]="'day'"
                                     [(ngModel)]="timePeriod" (ngModelChange)="changeTimePeriod($event)">
                                 <label class="btn btn-sm" for="day">Ngày</label>
@@ -221,7 +221,7 @@
                 </div>
                 <div class="cont-right">
                     <div class="filter h-100 overflow-hidden" >
-                        <div class="filter-title">Bộ lọc</div>
+                        <div class="filter-title">Lựa chọn lọc</div>
                         <div class="filter-group">
                             <!-- <div class="filter-label">Thời gian</div>
                             <div class="filter-content">
@@ -235,13 +235,6 @@
                                     <label class="form-check-label" [for]="'state-' + i" (click)="onChangeState(state.value)">
                                         {{state.text}}
                                     </label>
-                                </div>
-                            </div>
-                            <div class="filter-label">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" [value]="isOverdue" id="checkOverdue" 
-                                        [(ngModel)]="isOverdue" (change)="checkOverdue($event)">
-                                    <label class="form-check-label" for="checkOverdue">Quá hạn</label>
                                 </div>
                             </div>
                             <div class="filter-label">Bác sĩ</div>

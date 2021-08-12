@@ -94,7 +94,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       note: null,
       companyId: null,
       doctor: null,
-      timeExpected: '30',
+      timeExpected: 30,
       state: 'confirmed',
       reason: null,
       saleOrderId: null,
@@ -201,7 +201,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     var appTime = this.intlService.formatDate(appoint.timeObj, 'HH:mm:ss');;
     appoint.date = `${apptDate}T${appTime}`;
     appoint.time = appTime;
-    appoint.timeExpected = Number.parseInt(appoint.timeExpected);
+    appoint.timeExpected = appoint.timeExpected || 0;
     
     if (this.state != 'cancel') {
       appoint.reason = null;
@@ -213,6 +213,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
           appoint.id = this.appointId;
           var basic = this.getBasic(appoint);
           this.activeModal.close(basic);
+          this.notify("success","Lưu thành công");
           
         },
         er => {
@@ -228,6 +229,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         })).subscribe( res => {
           var basic = this.getBasic(res);
           this.activeModal.close(basic);
+          this.notify("success","Lưu thành công");
         },
         er => {
           this.errorService.show(er);
@@ -281,7 +283,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       note: null,
       companyId: item.companyId ? item.companyId : null,
       doctor: item.doctor ? item.doctor : null,
-      timeExpected: '30',
+      timeExpected: 30,
       state: 'confirmed',
       reason: null,
       saleOrderId: null,
@@ -293,6 +295,18 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
     this.formGroup.patchValue(res);
     let date = new Date();
+    this.formGroup.get('dateObj').patchValue(date);
+    this.formGroup.get('timeObj').patchValue(date);
+  }
+
+  onCreateNewAppointment(){
+    this.appointId = null;
+    this.title = 'Đặt lịch hẹn' 
+    this.formGroup.reset();
+    console.log(this.formGroup);
+    let date = new Date();
+    this.formGroup.get('timeExpected').patchValue(30);
+    this.formGroup.get('state').patchValue('confirmed');
     this.formGroup.get('dateObj').patchValue(date);
     this.formGroup.get('timeObj').patchValue(date);
   }
@@ -540,7 +554,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         let date = new Date(rs.date);
         this.formGroup.get('dateObj').patchValue(date);
         this.formGroup.get('timeObj').patchValue(date);
-        this.formGroup.get('timeExpected').patchValue('30');
+        this.formGroup.get('timeExpected').patchValue(30);
 
         if (rs.partner) {
           this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [rs.partner], 'id');

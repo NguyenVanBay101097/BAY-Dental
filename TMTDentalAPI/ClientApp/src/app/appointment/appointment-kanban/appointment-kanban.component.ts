@@ -42,7 +42,6 @@ export class AppointmentKanbanComponent implements OnInit {
   userId: string;
   search: string;
   searchUpdate = new Subject<string>();
-  isOverdue: boolean = false;
   // showDropdown = false;
   // dateList: Date[];
 
@@ -190,7 +189,6 @@ export class AppointmentKanbanComponent implements OnInit {
     val.offset = this.offset;
     val.state = this.state || '';
     val.search = this.search || '';
-    val.isOverdue = this.isOverdue;
     val.doctorId = this.employeeSelected || '';
     val.dateTimeFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
     val.dateTimeTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
@@ -952,7 +950,7 @@ export class AppointmentKanbanComponent implements OnInit {
     contentPhoneEl.classList.add("content", "phone");
     contentPhoneEl.innerHTML = `
       <i class="fas fa-phone"></i>
-      <span>${appointment.partnerPhone}</span>
+      <span>${appointment.partnerPhone || ""}</span>
     `;
     let contentTimeEl = document.createElement('div');
     contentTimeEl.classList.add("content", "time");
@@ -1043,9 +1041,4 @@ export class AppointmentKanbanComponent implements OnInit {
       }, () => { });
     }
   }
-
-  checkOverdue(event) {
-    this.renderCalendar(); // Render Calendar
-  }
-
 }

@@ -87,8 +87,7 @@ namespace Infrastructure.Services
         {
             var query = GetSearchQuery(search: val.Search, state: val.State, isLate: val.IsLate,
                 partnerId: val.PartnerId, doctorId: val.DoctorId, dateFrom: val.DateTimeFrom,
-                dateTo: val.DateTimeTo, userId: val.UserId, companyId: val.CompanyId,
-                dotKhamId: val.DotKhamId, isOverdue: val.IsOverdue);
+                dateTo: val.DateTimeTo, userId: val.UserId, companyId: val.CompanyId, dotKhamId: val.DotKhamId);
 
             query = query.OrderByDescending(x => x.DateCreated);
             var totalItems = await query.CountAsync();
@@ -176,8 +175,7 @@ namespace Infrastructure.Services
 
         public IQueryable<Appointment> GetSearchQuery(string search = "", Guid? partnerId = null,
             string state = "", DateTime? dateTo = null, DateTime? dateFrom = null, Guid? dotKhamId = null,
-            Guid? doctorId = null, bool? isLate = null, string userId = "", Guid? companyId = null,
-            bool? isOverdue = null)
+            Guid? doctorId = null, bool? isLate = null, string userId = "", Guid? companyId = null)
         {
             var query = SearchQuery();
             var today = DateTime.Today;
@@ -227,11 +225,6 @@ namespace Infrastructure.Services
                 //}
                 if (stateList.Any())
                     query = query.Where(x => stateList.Contains(x.State));
-            }
-
-            if (isOverdue.HasValue && isOverdue.Value)
-            {
-                query = query.Where(x => x.Date.Date < DateTime.Now.Date && x.State.Equals("confirmed"));
             }
 
             if (partnerId.HasValue)
