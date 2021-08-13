@@ -36,6 +36,21 @@ export class RevenueTodayReponse {
   totalAmount: number;
 }
 
+export class SumaryRevenueReportFilter {
+  dateFrom: string;
+  dateTo: string;
+  companyId: string;
+  resultSelection: string;
+  accountCode: string;
+}
+
+export class SumaryRevenueReport {
+  type: string;
+  credit: number;
+  debit: number;
+  balance: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -49,7 +64,7 @@ export class DashboardReportService {
   }
 
   getCountMedicalXamination(val) {
-    return this.http.post(this.baseApi + this.apiUrl + '/GetCountMedicalXamination' , val);
+    return this.http.post(this.baseApi + this.apiUrl + '/GetCountMedicalXamination', val);
   }
 
   getSumary(val) {
@@ -58,6 +73,10 @@ export class DashboardReportService {
 
   createCustomerReceiptToAppointment(val) {
     return this.http.post(this.baseApi + this.apiUrl + '/CreateCustomerReceiptToAppointment', val);
+  }
+
+  getSumaryRevenueReport(val: any) {
+    return this.http.post<SumaryRevenueReport>(this.baseApi + this.apiUrl + "/GetSumaryRevenueReport", val);
   }
 
 

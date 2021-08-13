@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { AccountInvoiceReportService, RevenueReportFilter, RevenueReportItem } from 'src/app/account-invoice-reports/account-invoice-report.service';
+import { CashBookReportItem } from 'src/app/cash-book/cash-book.service';
 import { RevenueReportService } from 'src/app/revenue-report/revenue-report.service';
 
 @Component({
@@ -11,29 +12,60 @@ import { RevenueReportService } from 'src/app/revenue-report/revenue-report.serv
 export class SaleDashboardInvoiceReportComponent implements OnInit {
   @Input() groupby: string;
   @Input() revenues: RevenueReportItem[] = [];
-  revenueData: RevenueReportItem[] = [];
+  @Input() cashBooks: any;
+  @Input() dataRevenues: any[] = [];
+  @Input() dataCashBooks: any;
+  @Input() totalDataCashBook: any;
+  cashBookData: CashBookReportItem[] = [];
   revenuCateg: any[] = [];
+  public revenueCashBank: any;
+  public revenueDebt: any;
+  public revenueAdvance: any;
+  public revenueCusDebt: any;
+  public revenueCusAdvance: any;
+  public cashbookCashBank: any;
+  public cashbookCusDebt: any;
+  public cashbookCusAdvance: any;
+  revenueSeries: any[] = [];
 
 
   constructor(private revenueReportService: AccountInvoiceReportService,
     private intlService: IntlService) { }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.loadDataApi();
+    this.loadCashbookGroupby();
+    this.loadRevenueSeries();
+    this.loadDataCashbookSeries();
   }
 
   ngOnInit() {
-    this.loadDataApi();
   }
 
-  loadDataApi() {
-    this.revenueData = this.revenues;
-    this.loadCashbookGroupby();
+  loadRevenueSeries() {
+    this.revenueCashBank = this.dataRevenues[0];
+    this.revenueCusDebt = this.dataRevenues[1];
+    this.revenueCusAdvance = this.dataRevenues[2]; 
   }
-  
+
+  loadDataCashbookSeries() {
+    this.cashbookCashBank = this.dataCashBooks[0];
+    this.cashbookCusDebt = this.dataCashBooks[1];
+    this.cashbookCusAdvance = this.dataCashBooks[2];
+  }
+
+  get totalDebit() {
+    return this.revenueCashBank.balance + this.revenueCusDebt.debit + this.revenueCusAdvance.debit;
+  }
+
+  get ortherThu() {
+    return this.totalDataCashBook.totalThu - (this.cashbookCashBank.credit + this.cashbookCusDebt.credit +  this.cashbookCusAdvance.credit)  ;
+  }
+
   loadCashbookGroupby() {
-    this.revenuCateg = this.revenueData.map(s => s.invoiceDate);
+    this.revenuCateg = this.revenues.map(s => s.invoiceDate);
   }
+
+
 
   public labelContent = (e: any) => {
     var res = this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(e.value), 'dd/MM') : this.intlService.formatDate(new Date(e.value), 'MM/yyyy');

@@ -14,5 +14,7 @@ namespace Infrastructure.Services
         Task<GetCountMedicalXamination> GetCountMedicalXaminationToday(ReportTodayRequest val);
 
         Task<RevenueTodayReponse> GetSumary(ReportTodayRequest val);
+
+        Task<SumaryRevenueReport> GetSumaryRevenueReport(SumaryRevenueReportFilter val);
     }
 }

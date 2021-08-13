@@ -87,4 +87,36 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal TotalAmount { get; set; }
     }
 
+    public class SumaryRevenueReport
+    {
+        public string Type { get; set; }
+        public decimal? Credit { get; set; }
+        public decimal? Debit { get; set; }
+        public decimal? Balance { get; set; }
+    }
+
+    public class SumaryRevenueReportFilter
+    {
+        /// <summary>
+        /// Ngay bat dau
+        /// </summary>
+        public DateTime? DateTo { get; set; }
+
+        /// <summary>
+        /// ngay ket thuc
+        /// </summary>
+        public DateTime? DateFrom { get; set; }
+
+        public Guid? CompanyId { get; set; }
+
+        /// <summary>
+        /// debt: công nợ
+        /// advance: tạm ứng
+        /// cash_bank: TM/NH
+        /// </summary>
+        public string ResultSelection { get; set; }
+
+        public string AccountCode { get; set; }
+    }
+
 }

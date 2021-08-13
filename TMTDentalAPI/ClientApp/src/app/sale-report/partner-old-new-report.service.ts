@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -27,6 +27,13 @@ export class PartnerOldNewReportSearch {
   companyId: string;
 }
 
+export class PartnerOldNewReportSumReq {
+  dateFrom: any;
+  dateTo: any;
+  companyId: string;
+  typeReport: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -41,6 +48,10 @@ export class PartnerOldNewReportService {
 
   getSumaryPartnerOldNewReport(val: PartnerOldNewReportSearch): Observable<PartnerOldNewReport> {
     return this.http.post<PartnerOldNewReport>(this.baseApi + this.apiUrl + "/GetSumaryPartnerOldNewReport", val);
+  }
+
+  sumReport(val: any) {
+    return this.http.get(this.baseApi + this.apiUrl + "/SumReport", { params: new HttpParams({ fromObject: val }) });
   }
 
 }

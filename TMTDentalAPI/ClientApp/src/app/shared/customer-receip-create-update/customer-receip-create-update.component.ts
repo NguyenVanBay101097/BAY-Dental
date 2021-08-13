@@ -153,7 +153,7 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     val.offset = 0
     val.search = q || '';
     val.type = "service";
-    val.type2 = "product";
+    val.type2 = "service";
     return this.productService.autocomplete2(val);
   }
 

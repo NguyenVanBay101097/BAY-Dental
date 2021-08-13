@@ -73,7 +73,8 @@ export class AppointmentListTodayComponent implements OnInit {
     }
 
     if (this.search) {
-      res = res.filter(x => this.RemoveVietnamese(x.partnerName).includes(this.search) || x.partnerPhone.includes(this.search));
+      debugger
+      res = res.filter(x => this.RemoveVietnamese(x.partnerName).includes(this.RemoveVietnamese(this.search)) || x.partnerPhone.includes(this.search));
     }
 
     this.listAppointment = res;

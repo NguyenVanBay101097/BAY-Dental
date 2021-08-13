@@ -96,6 +96,8 @@ export class SumRevenueReportPar {
     partnerId?: string;
 }
 
+
+
 export class RevenueReportFilter {
     dateFrom: string;
     dateTo: string;
@@ -110,14 +112,12 @@ export class RevenueReportFilter {
 }
 
 export class RevenueReportItem {
+    id: string;
+    name: string;
     invoiceDate: string;
     priceSubTotal: number;
     dateFrom: string;
     dateTo: string;
-    productId: string;
-    productName: string;
-    employeeName: string;
-    employeeId: string
     companyId: string;
     toDetailEmployeeId: string;
 }
@@ -130,6 +130,7 @@ export class AccountInvoiceReportService {
     getRevenueReport(val: any) {
         return this.http.post<RevenueReportItem[]>(this.baseApi + this.apiUrl + "/GetRevenueReport", val);
     }
+
 
     getRevenueTimeReport(val: any) {
         return this.http.get<RevenueTimeReportDisplay[]>(this.baseApi + this.apiUrl + "/GetRevenueTimeReportPaged", { params: new HttpParams({ fromObject: val }) });

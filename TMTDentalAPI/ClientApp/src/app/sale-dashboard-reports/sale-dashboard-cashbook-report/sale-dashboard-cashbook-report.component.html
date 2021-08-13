@@ -1,4 +1,4 @@
-<kendo-chart class="mh-chart-year p-2">
+<kendo-chart class="mh-chart-year p-2 mb-2">
     <kendo-chart-title color="black" text="BIỂU ĐỒ THU CHI">
     </kendo-chart-title>
     <kendo-chart-legend position='bottom' orientation='horizontal'></kendo-chart-legend>
@@ -27,3 +27,62 @@
         </ng-container>
     </kendo-chart-series>
 </kendo-chart>
+<div class="container-fluid pb-4 bg-white">
+    <div class="row">
+        <div class="col">
+            <div class="my-2 d-flex justify-content-between">
+                <h4>Thu</h4>  
+                <span class="text-success">{{ totalCashbook.totalThu || 0 | number}}</span>
+            </div>                    
+            <div class="my-2 d-flex justify-content-between">
+                <span>Khách hàng thanh toán dịch vụ và thuốc</span>
+                <span >{{cashbookCashBank.credit || 0 | number}}</span>
+            </div>
+            <div class="my-2 d-flex justify-content-between">
+                <span>Khách hàng đóng tạm ứng</span>
+                <span>{{cashbookCusAdvance.credit || 0 | number}}</span>
+            </div>
+            <div class="my-2 d-flex justify-content-between">
+                <span>Thu công nợ khách hàng</span>
+                <span> {{cashbookCusDebt.credit || 0 | number}}</span>
+            </div>
+            <div class="my-2 d-flex justify-content-between">
+                <span>Nhà cung cấp hoàn tiền</span>
+                <span> {{cashbookSupp.credit || 0 | number}}</span>
+            </div>
+            <div class="my-2 d-flex justify-content-between">
+                <span>Thu ngoài</span>
+                <span> {{ortherThu || 0 | number}}</span>
+            </div>
+        </div>
+        <div class="col">
+            <div class="my-2 d-flex justify-content-between">
+                <h4>Chi</h4>  
+                <span class="text-danger">{{ totalCashbook.totalChi || 0 | number}}</span>
+            </div>                
+            <div class="my-2 d-flex justify-content-between">
+                <span>Thanh toán cho nhà cung cấp</span>
+                <span >{{cashbookSupp.debit || 0 | number}}</span>
+            </div>       
+            <div class="my-2 d-flex justify-content-between">
+                <span>Hoàn tạm ứng cho khách hàng</span>
+                <span> {{cashbookCusAdvance.debit || 0 | number}}</span>
+            </div>
+            <div class="my-2 d-flex justify-content-between">
+                <span>Chi lương nhân viên</span>
+                <span> {{cashbookCusSalary.debit || 0 | number}}</span>
+            </div>
+            <div class="my-2 d-flex justify-content-between">
+                <span>Hoa hồng người giới thiệu</span>
+                <span> {{cashbookAgentCommission.debit || 0 | number}}</span>
+            </div>
+            <div class="my-2 d-flex justify-content-between">
+                <span>Chi ngoài</span>
+                <span> {{ortherChi || 0 | number}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="link-details">
+        <a (click)="redirectTo()">Chi tiết</a>
+    </div> 
+</div>

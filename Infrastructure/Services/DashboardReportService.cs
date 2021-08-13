@@ -16,7 +16,7 @@ namespace Infrastructure.Services
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
-        public DashboardReportService(IHttpContextAccessor httpContextAccessor , IMapper mapper)
+        public DashboardReportService(IHttpContextAccessor httpContextAccessor, IMapper mapper)
         {
             _httpContextAccessor = httpContextAccessor;
             _mapper = mapper;
@@ -189,6 +189,42 @@ namespace Infrastructure.Services
             revenue.TotalAmountYesterday = await query2.Where(x => x.AccountInternalType == "receivable" && x.Reconciled == true && x.ExcludeFromInvoiceTab == false).SumAsync(x => x.Debit - x.Credit * sign);
 
             return revenue;
+        }
+
+        public async Task<SumaryRevenueReport> GetSumaryRevenueReport(SumaryRevenueReportFilter val)
+        {
+            var amlObj = GetService<IAccountMoveLineService>();
+            var RevenueReport = new SumaryRevenueReport();
+            var sign = -1;
+
+            var types = new string[] { "cash", "bank", "debt", "advance" };
+            if (val.ResultSelection == "cash_bank")
+                types = new string[] { "cash", "bank" };
+            else if (val.ResultSelection == "debt" || val.ResultSelection == "pay_debt")
+                types = new string[] { };
+            else if (val.ResultSelection == "advance" || val.ResultSelection == "pay_advance")
+                types = new string[] { };
+
+            var dateFrom = val.DateFrom;
+            if (dateFrom.HasValue)
+                dateFrom = dateFrom.Value.AbsoluteBeginOfDate();
+
+            var dateTo = val.DateTo;
+            if (dateTo.HasValue)
+                dateTo = dateTo.Value.AbsoluteEndOfDate();
+
+            var query = amlObj._QueryGet(dateFrom: dateFrom, dateTo: dateTo, state: "posted", companyId: val.CompanyId);        
+
+            if (types.Any())
+                query = query.Where(x => types.Contains(x.Journal.Type));
+
+            query = query.Where(x => x.Account.Code == val.AccountCode);
+
+            RevenueReport.Type = val.ResultSelection;
+            RevenueReport.Credit = await query.SumAsync(x => x.Credit);
+            RevenueReport.Debit = await query.SumAsync(x => x.Debit);
+            RevenueReport.Balance = await query.SumAsync(x => x.Balance * sign);
+            return RevenueReport;
         }
 
         protected T GetService<T>()

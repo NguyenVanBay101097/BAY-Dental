@@ -64,3 +64,8 @@
     background-color: #007bff !important;
     border-color: #007bff !important;
   }
+
+.link-details{
+    text-align: end;
+    color: #0d6efd;
+}

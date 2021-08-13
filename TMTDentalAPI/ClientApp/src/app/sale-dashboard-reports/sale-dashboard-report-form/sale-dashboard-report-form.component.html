@@ -250,34 +250,49 @@
     <div class="o_dashboard_view">     
         <div class="o_group">
             <div class="o_group o_group_col_12">
-                <div class="o_aggregate_col o_group_col_3">
+                <div class="o_aggregate_col o_group_col_2">
                     <div class="o_aggregate">
-                        <label>Quỹ tiền mặt</label>
+                        <h5>Quỹ tiền mặt</h5>
                         <div class="o_value text-info">{{(moneyCash ? moneyCash : 0) | number}}</div>
+                        <div class="link-details">
+                            <a (click)="redirectTo('cash-book')">Chi tiết</a>
+                        </div>                      
                     </div>
                 </div>
-                <div class="o_aggregate_col o_group_col_3">
+                <div class="o_aggregate_col o_group_col_2">
                     <div class="o_aggregate">
-                        <label>Quỹ ngân hàng</label>
+                        <h5>Quỹ ngân hàng</h5>
                         <div class="o_value text-info"> {{(moneyBank ? moneyBank : 0) | number}}</div>
+                        <div class="link-details">
+                            <a (click)="redirectTo('cash-book')">Chi tiết</a>
+                        </div>  
                     </div>
                 </div>
-                <div class="o_aggregate_col o_group_col_3">
+                <div class="o_aggregate_col o_group_col_2">
                     <div class="o_aggregate">
-                        <label>Công nợ phải trả</label>
+                        <h5>Công nợ phải trả</h5>
                         <div class="o_value text-danger">{{totalDebitNCC | number }}</div>
+                        <div class="link-details">
+                            <a (click)="redirectTo('ncc-debit-report')">Chi tiết</a>
+                        </div>  
                     </div>
                 </div>
-                <div class="o_aggregate_col o_group_col_3">
-                    <div class="o_aggregate text-success">
-                        <label>Công nợ phải thu</label>
-                        <div class="o_value">{{totalDebitCustomer | number }}</div>
+                <div class="o_aggregate_col o_group_col_2">
+                    <div class="o_aggregate ">
+                        <h5>Công nợ phải thu</h5>
+                        <div class="o_value text-success">{{totalDebitCustomer | number }}</div>
+                        <div class="link-details">
+                            <a (click)="redirectTo('customer-debit-report')">Chi tiết</a>
+                        </div>  
                     </div>
                 </div>
-                <div class="o_aggregate_col o_group_col_3">
-                    <div class="o_aggregate text-success">
-                        <label>Dự kiến thu</label>
-                        <div class="o_value">{{sumRevenue || 0 | number  }}</div>
+                <div class="o_aggregate_col o_group_col_2">
+                    <div class="o_aggregate ">
+                        <h5>Dự kiến thu</h5>
+                        <div class="o_value text-success">{{sumRevenue || 0 | number  }}</div>
+                        <div class="link-details">
+                            <a (click)="redirectTo('account-invoice-reports')">Chi tiết</a>
+                        </div>  
                     </div>
                 </div>
             </div>
@@ -304,19 +319,22 @@
         </div>
         <div class="o_group mb-2">
             <div class="border border-secondary rounded bg-white">
-                <app-sale-dashboard-invoice-report [revenues]="revenues"
+                <app-sale-dashboard-invoice-report [revenues]="revenues" [dataRevenues]="dataRevenues" [dataCashBooks]="dataCashBooks" [totalDataCashBook]="totalDataCashBook"
                     [groupby]="groupBy">
                 </app-sale-dashboard-invoice-report>
             </div>
         </div>
-        <div class="o_group ">
+        <div class="o_group mb-2">
             <div class="o_group o_group_col_12">
                 <div class="border border-secondary rounded">
-                    <app-sale-dashboard-cashbook-report [cashBooks]="cashBooks"
+                    <app-sale-dashboard-cashbook-report [cashBooks]="cashBooks" [dataCashBooks]="dataCashBooks" [totalDataCashBook]="totalDataCashBook"
                         [groupby]="groupBy">
                     </app-sale-dashboard-cashbook-report>
                 </div>
             </div>
+        </div>
+        <div class="o_group">
+            <app-sale-dashboard-ap-cr-chart [dataNoTreatment]="dataNoTreatment" [dataCustomer]="dataCustomer"></app-sale-dashboard-ap-cr-chart>
         </div>
     </div>
 
