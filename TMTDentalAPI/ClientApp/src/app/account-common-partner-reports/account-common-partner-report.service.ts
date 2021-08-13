@@ -120,7 +120,7 @@ export class AccountCommonPartnerReportService {
         return this.http.post<AccountCommonPartnerReportItem[]>(this.baseApi + this.apiUrl + "/GetSummary", val);
     }
 
-    getSummaryPartner(val: AccountCommonPartnerReportSearchV2): Observable<AccountCommonPartnerReport> {
+    getSummaryPartner(val): Observable<AccountCommonPartnerReport> {
         return this.http.post<AccountCommonPartnerReport>(this.baseApi + this.apiUrl + "/GetSummaryPartner", val);
     }
 

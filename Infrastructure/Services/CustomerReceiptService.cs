@@ -46,6 +46,9 @@ namespace Infrastructure.Services
             if (val.DoctorId.HasValue)
                 query = query.Where(x => x.DoctorId == val.DoctorId);
 
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+
             if (!string.IsNullOrEmpty(val.State))
                 query = query.Where(x => x.State == val.State);
 

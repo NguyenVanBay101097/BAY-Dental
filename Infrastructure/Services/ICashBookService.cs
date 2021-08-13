@@ -16,5 +16,7 @@ namespace Infrastructure.Services
         Task<decimal> GetTotal(CashBookSearch val);
 
         Task<IEnumerable<CashBookReportItem>> GetChartReport(CashBookReportFilter val);
+
+        Task<SumaryCashBook> GetSumaryCashBookReport(SumaryCashBookFilter val);
     }
 }

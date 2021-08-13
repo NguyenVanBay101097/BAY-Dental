@@ -176,6 +176,10 @@ export class SaleOrderService {
         return this.http.post(this.baseApi + this.apiUrl + '/Unlink', ids);
     }
 
+    getCountSaleOrder(val) {
+        return this.http.post<number>(this.baseApi + this.apiUrl + '/GetCountSaleOrder', val);
+    }
+
     getDotKhamList(id: string): Observable<DotKhamBasic[]> {
         return this.http.get<DotKhamBasic[]>(this.baseApi + this.apiUrl + `/${id}/GetDotKhamList`);
     }
@@ -266,12 +270,12 @@ export class SaleOrderService {
         });
     }
 
-    getPrintRevenueReport(val:any ) {
-        return this.http.post(this.baseApi + "SaleOrder/PrintRevenueReport",val,{ responseType: "text" });
-        
+    getPrintRevenueReport(val: any) {
+        return this.http.post(this.baseApi + "SaleOrder/PrintRevenueReport", val, { responseType: "text" });
+
     }
 
-    getRevenueReportPdf(val:any ) {
-        return this.http.get(this.baseApi + this.apiUrl + "/GetRevenueReportPdf", {params: new HttpParams({fromObject: val}),  responseType: 'blob'  });
+    getRevenueReportPdf(val: any) {
+        return this.http.get(this.baseApi + this.apiUrl + "/GetRevenueReportPdf", { params: new HttpParams({ fromObject: val }), responseType: 'blob' });
     }
 }

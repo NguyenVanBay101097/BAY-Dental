@@ -29,6 +29,8 @@ namespace Infrastructure.Services
         void _ComputeResidual(IEnumerable<AccountInvoice> invoices);
         void _ComputeResidual(IEnumerable<SaleOrder> self);
 
+        Task<long> GetCountSaleOrder(GetCountSaleOrderFilter val);
+
         Task _ComputeAmountPromotionToOrder(IEnumerable<Guid> ids);
 
         //Task ApplyCoupon(SaleOrderApplyCoupon val);

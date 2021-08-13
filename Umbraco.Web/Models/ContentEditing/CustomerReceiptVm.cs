@@ -23,6 +23,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? DoctorId { get; set; }
 
+        public Guid? CompanyId { get; set; }
+
         public string State { get; set; }
 
     }

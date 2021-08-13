@@ -214,7 +214,7 @@ export class DashboardCustomerReceiptListTodayComponent implements OnInit {
       case 'examination':
         return 'Đang khám';
       case 'done':
-        return 'Hoàn thánh';
+        return 'Hoàn thành';
     }
   }
 

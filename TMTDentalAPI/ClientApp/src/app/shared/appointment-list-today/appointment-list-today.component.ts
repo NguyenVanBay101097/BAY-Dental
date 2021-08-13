@@ -73,7 +73,8 @@ export class AppointmentListTodayComponent implements OnInit {
     }
 
     if (this.search) {
-      res = res.filter(x => this.RemoveVietnamese(x.partnerName).includes(this.search) || x.partnerPhone.includes(this.search));
+      debugger
+      res = res.filter(x => this.RemoveVietnamese(x.partnerName).includes(this.RemoveVietnamese(this.search)) || x.partnerPhone.includes(this.search));
     }
 
     this.listAppointment = res;
@@ -146,6 +147,7 @@ export class AppointmentListTodayComponent implements OnInit {
       modalRef.componentInstance.appointId = item.id;
       modalRef.componentInstance.defaultData = res;
       modalRef.result.then(rs => {
+        debugger
         this.notifyService.notify('success','Lưu thành công');
         if(rs.appointment){
           this.onUpdateAPEvent.emit(rs.appointment);

@@ -69,8 +69,7 @@
                             <td colspan="1">
                                 <div class="d-flex justify-content-between">
                                     <div class="mr-2 ">
-                                        <kendo-timepicker formControlName="dateObj" format="HH:mm"
-                                            [class.border-invalid]="f.dateObj.errors"></kendo-timepicker>
+                                        <kendo-timepicker formControlName="dateObj" format="HH:mm"></kendo-timepicker>
                                         <div *ngIf="f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)"
                                             class="text-danger">
                                             <div *ngIf="f.dateObj.errors.required">Chọn giờ tiếp nhận</div>

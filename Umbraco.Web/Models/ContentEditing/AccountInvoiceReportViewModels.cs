@@ -49,6 +49,8 @@ namespace Umbraco.Web.Models.ContentEditing
     }
 
 
+
+
     public class RevenuePartnerReportPar
     {
         public DateTime? DateFrom { get; set; }
@@ -252,16 +254,16 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class RevenueReportItem
     {
+        public Guid? Id { get; set; }
+        public string Name { get; set; }
         public DateTime InvoiceDate { get; set; }
         public decimal PriceSubTotal { get; set; }
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
-        public Guid? ProductId { get; set; }
-        public string ProductName { get; set; }
-        public string EmployeeName { get; set; }
-        public Guid? EmployeeId { get; set; }
         public Guid? CompanyId { get; set; }
         public Guid ToDetailEmployeeId { get; set; }
     }
+
+
 
 }

@@ -136,8 +136,8 @@ namespace Infrastructure.Services
             {
                 res = await query.GroupBy(x => new { x.EmployeeId, x.Employee.Name }).Select(x => new RevenueReportItem
                 {
-                    EmployeeId = x.Key.EmployeeId,
-                    EmployeeName = x.Key.Name,
+                    Id = x.Key.EmployeeId,
+                    Name = x.Key.Name,
                     PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal)),
                     CompanyId = val.CompanyId,
                     DateFrom = val.DateFrom,
@@ -148,10 +148,11 @@ namespace Infrastructure.Services
             }
             else if (val.GroupBy == "groupby:assistant")
             {
+        
                 res = await query.GroupBy(x => new { x.AssistantId, x.Assistant.Name }).Select(x => new RevenueReportItem
                 {
-                    EmployeeId = x.Key.AssistantId,
-                    EmployeeName = x.Key.Name,
+                    Id = x.Key.AssistantId,
+                    Name = x.Key.Name,
                     PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal)),
                     CompanyId = val.CompanyId,
                     DateFrom = val.DateFrom,
@@ -165,16 +166,15 @@ namespace Infrastructure.Services
 
                 res = await query.GroupBy(x => new { x.ProductId, x.Product.Name } ).Select(x => new RevenueReportItem
                 {
-                    ProductId = x.Key.ProductId.Value,
-                    ProductName = x.Key.Name,
+                    Id = x.Key.ProductId.Value,
+                    Name = x.Key.Name,
                     PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal)),
                     DateTo = val.DateTo,
                     DateFrom = val.DateFrom,
                     CompanyId = val.CompanyId
                 }).ToListAsync();
             }
-
-
+           
 
             return res;
         }
@@ -324,6 +324,8 @@ namespace Infrastructure.Services
             var res = await query.SumAsync(x => x.PriceSubTotal);
             return res;
         }
+
+     
 
         public async Task<IEnumerable<RevenuePartnerReportDisplay>> GetRevenuePartnerReport(RevenuePartnerReportPar val)
         {

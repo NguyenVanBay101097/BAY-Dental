@@ -153,6 +153,7 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     val.offset = 0
     val.search = q || '';
     val.type = "service";
+    val.type2 = "service";
     return this.productService.autocomplete2(val);
   }
 
@@ -191,11 +192,11 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     }
 
     var receipt = this.formGroup.value;
-    receipt.partnerId = receipt.partner ? receipt.partner.id : null;
-    receipt.doctorId = receipt.doctor ? receipt.doctor.id : null;
+    receipt.partnerId = receipt.partner ? receipt.partner.id : '';
+    receipt.doctorId = receipt.doctor ? receipt.doctor.id : '';
     receipt.dateWaiting = this.intlService.formatDate(receipt.dateObj, 'yyyy-MM-ddTHH:mm:ss');
-    receipt.dateExamination = this.stateControl == 'examination' ? this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss') : (this.customerReceipt.dateExamination ? this.customerReceipt.dateExamination : null);
-    receipt.dateDone = this.stateControl == 'done' ? this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss') : null;
+    receipt.dateExamination = this.stateControl == 'examination' ? this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss') : '';
+    receipt.dateDone = this.stateControl == 'done' ? this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss') : '';
     receipt.timeExpected = Number.parseInt(receipt.timeExpected);
     receipt.products = receipt.services == null ? [] : receipt.services;
     receipt.companyId = this.authService.userInfo.companyId;

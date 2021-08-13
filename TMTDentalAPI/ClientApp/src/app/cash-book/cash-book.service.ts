@@ -75,6 +75,22 @@ export class CashBookReportItem {
   totalAmount: number;
 }
 
+export class SumaryCashBookFilter {
+  dateFrom: string;
+  dateTo: string;
+  companyId: string;
+  resultSelection: string;
+  partnerType: string;
+  accountCode: string;
+}
+
+export class SumaryCashBook {
+  type: string;
+  credit: number;
+  debit: number
+  balance: number;
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -98,6 +114,10 @@ export class CashBookService {
       this.baseApi + this.apiUrl + "/GetSumary",
       val
     );
+  }
+
+  getSumaryCashBookReport(val: any) {
+    return this.http.post<SumaryCashBook>(this.baseApi + this.apiUrl + "/GetSumaryCashBookReport", val);
   }
 
   getDetails(val: any) {

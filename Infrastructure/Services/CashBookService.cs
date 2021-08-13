@@ -107,6 +107,49 @@ namespace Infrastructure.Services
             return cashBookReport;
         }
 
+        public async Task<SumaryCashBook> GetSumaryCashBookReport(SumaryCashBookFilter val)
+        {
+            var amlObj = GetService<IAccountMoveLineService>();
+            var SumaryCashBook = new SumaryCashBook();
+
+            var types = new string[] { };
+            if (val.ResultSelection == "cash_bank")
+                types = new string[] { "cash", "bank" };
+            else if (val.ResultSelection == "debt")
+                types = new string[] { "debt" };
+            else if (val.ResultSelection == "advance")
+                types = new string[] { "advance" };
+            else if (val.ResultSelection == "payroll")
+                types = new string[] { "payroll" };
+            else if (val.ResultSelection == "commission")
+                types = new string[] { };
+
+            var dateFrom = val.DateFrom;
+            if (dateFrom.HasValue)
+                dateFrom = dateFrom.Value.AbsoluteBeginOfDate();
+
+            var dateTo = val.DateTo;
+            if (dateTo.HasValue)
+                dateTo = dateTo.Value.AbsoluteEndOfDate();
+
+            var query = amlObj._QueryGet(dateFrom: dateFrom, dateTo: dateTo, state: "posted", companyId: val.CompanyId);
+
+            if (types.Any())
+                query = query.Where(x => types.Contains(x.Journal.Type) && x.AccountInternalType != "liquidity");
+
+            if (!string.IsNullOrEmpty(val.PartnerType))
+                query = query.Where(x => val.PartnerType == "customer" ? x.Partner.Customer : (val.PartnerType == "supplier" ? x.Partner.Supplier : x.Partner.IsAgent));
+
+            if (!string.IsNullOrEmpty(val.AccountCode))
+                query = query.Where(x => x.Account.Code == val.AccountCode);
+
+            SumaryCashBook.Type = val.ResultSelection;
+            SumaryCashBook.Credit = await query.SumAsync(x => x.Credit);
+            SumaryCashBook.Debit = await query.SumAsync(x => x.Debit);
+            SumaryCashBook.Balance = await query.SumAsync(x => x.Balance);
+            return SumaryCashBook;
+        }
+
         public async Task<PagedResult2<CashBookReportDetail>> GetDetails(CashBookDetailFilter val)
         {
             var amlObj = GetService<IAccountMoveLineService>();

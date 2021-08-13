@@ -48,8 +48,7 @@ export class DashboardRevenueTodayReportComponent implements OnInit {
   }
 
   get isIncrease() {
-    if (this.revenue.totalAmount >= this.revenue.totalAmountYesterday) {
-      debugger
+    if (this.revenue.totalAmount > this.revenue.totalAmountYesterday) {
       return true;
     }
     return false;
@@ -60,8 +59,9 @@ export class DashboardRevenueTodayReportComponent implements OnInit {
       if (this.revenue.totalAmountYesterday == 0) {
         return 0;
       }
+      debugger
 
-      return (this.revenue.totalAmount - this.revenue.totalAmountYesterday / this.revenue.totalAmountYesterday) * 100;
+      return Math.abs(((this.revenue.totalAmount - this.revenue.totalAmountYesterday) / this.revenue.totalAmountYesterday) * 100);
     }
 
     return 0;

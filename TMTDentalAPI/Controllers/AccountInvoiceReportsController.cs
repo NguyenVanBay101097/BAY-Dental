@@ -95,7 +95,7 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _invoiceReportService.GetRevenuePartnerReport(val);
             return Ok(res);
-        }
+        }     
 
         [HttpGet("[action]")]
         [CheckAccess(Actions = "Report.Revenue")]
