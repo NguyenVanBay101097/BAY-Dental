@@ -42,6 +42,7 @@ export class AppointmentKanbanComponent implements OnInit {
   userId: string;
   search: string;
   searchUpdate = new Subject<string>();
+  isLateFilter: boolean;
   // showDropdown = false;
   // dateList: Date[];
 
@@ -62,6 +63,7 @@ export class AppointmentKanbanComponent implements OnInit {
     { text: 'Đang hẹn', value: 'confirmed', color: '#2395FF' },
     { text: 'Đã đến', value: 'done', color: '#28A745' },
     { text: 'Hủy hẹn', value: 'cancel', color: '#EB3B5B' },
+    { text: 'Quá hẹn', value: 'overdue', color: '#FFC107' }
   ];
 
   stateSelected: string = this.states[0].value;
@@ -164,7 +166,14 @@ export class AppointmentKanbanComponent implements OnInit {
   // }
 
   onChangeState(state) {
-    this.state = state;
+    if (state == 'overdue') {
+      this.state = 'confirmed';
+      this.isLateFilter = true;
+    } else {
+      this.state = state;
+      this.isLateFilter = undefined;
+    }
+   
     this.renderCalendar(); // Render Calendar
   }
 
@@ -187,6 +196,9 @@ export class AppointmentKanbanComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.offset;
     val.state = this.state || '';
+    if (this.isLateFilter) {
+      val.isLate = this.isLateFilter;
+    }
     val.search = this.search || '';
     val.doctorId = this.employeeSelected || '';
     val.dateTimeFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
@@ -904,6 +916,11 @@ export class AppointmentKanbanComponent implements OnInit {
         statusShow = 'Đang hẹn';
         classEvent = 'event-confirmed';
         break;
+    }
+
+    if (appointment.isLate) {
+      statusShow = 'Quá hẹn';
+      classEvent = 'event-overdue';
     }
 
     let dateEventV2El = document.createElement('div');

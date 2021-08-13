@@ -179,9 +179,9 @@ namespace Infrastructure.Services
             if (isLate.HasValue)
             {
                 if (isLate.Value)
-                    query = query.Where(x => x.Date < today);
+                    query = query.Where(x => x.Date.Date < DateTime.Today);
                 else
-                    query = query.Where(x => x.Date >= today);
+                    query = query.Where(x => x.Date.Date >= DateTime.Today);
             }
 
             if (!string.IsNullOrEmpty(search))
