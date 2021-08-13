@@ -1033,7 +1033,7 @@ export class AppointmentKanbanComponent implements OnInit {
   receiveAppointment(id = null) {
     if (id) {
       const appoint = this.dataAppointments.find(value => value.id === id)
-      if (appoint && (appoint.state === 'cancel' || appoint.state === 'overdue')) {
+      if (appoint && (appoint.state === 'cancel' || appoint.isLate)) {
         this.notificationService.show({
           content: 'Không thể tiếp nhận lịch hẹn ở trạng thái hủy hẹn và quá hạn',
           hideAfter: 3000,
@@ -1048,6 +1048,13 @@ export class AppointmentKanbanComponent implements OnInit {
       modalRef.componentInstance.title = "Tiếp nhận";
       modalRef.result.then(result => {
         this.renderCalendar(); // Render Calendar
+        this.notificationService.show({
+          content: 'Lưu thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
       }, () => { });
     }
   }
