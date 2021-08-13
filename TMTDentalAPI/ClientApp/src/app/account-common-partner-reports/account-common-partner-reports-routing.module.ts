@@ -11,6 +11,10 @@ const routes: Routes = [
     component: AccountCommonCustomerReportListComponent
   },
   {
+    path: 'partner-debit-report',
+    component: PartnerDebitListReportComponent
+  },
+  {
     path: '',
     component: PartnerReportManagementComponent,
     children: [

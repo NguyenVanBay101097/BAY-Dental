@@ -106,6 +106,7 @@ export class ServiceReportTimeComponent implements OnInit {
     var date = new Date(), y = date.getFullYear(), m = date.getMonth();
     this.filter.dateFrom = this.filter.dateFrom || new Date(y, m, 1);
     this.filter.dateTo = this.filter.dateTo || new Date(y, m + 1, 0);
+    this.filter.state = 'sale,done,cancel';
     this.skip = 0;
   }
 
