@@ -105,6 +105,15 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string ResultSelection { get; set; }
     }
+ 
+    public class AccountCommonPartnerReportPrint
+    {
+        public IEnumerable<AccountCommonPartnerReportItem> Data { get; set; } = new List<AccountCommonPartnerReportItem>();
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public CompanyPrintVM Company { get; set; }
+        public ApplicationUserSimple User { get; set; }
+    }
 
     public class AccountCommonPartnerReport
     {

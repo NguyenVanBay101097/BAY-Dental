@@ -5,7 +5,7 @@ import { GridComponent, GridDataResult } from '@progress/kendo-angular-grid';
 import { saveAs } from '@progress/kendo-file-saver';
 import * as moment from 'moment';
 import { Subject, Observable, zip, of, forkJoin } from 'rxjs';
-import { debounceTime, delay, distinctUntilChanged, map } from 'rxjs/operators';
+import { debounceTime, defaultIfEmpty, delay, distinctUntilChanged, map } from 'rxjs/operators';
 import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/company.service';
 import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
 import { SaleOrderPaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
@@ -180,7 +180,9 @@ export class SaleOrderManagementComponent implements OnInit {
       ));
     }
 
-    forkJoin(observables).subscribe((result: any) => {
+    forkJoin(observables).pipe(
+      defaultIfEmpty([]),
+    ).subscribe((result: any) => {
       // add the detail data to the generated master sheet rows
       // loop backwards in order to avoid changing the rows index
       for (let idx = result.length - 1; idx >= 0; idx--) {
@@ -218,7 +220,6 @@ export class SaleOrderManagementComponent implements OnInit {
         });
       }
 
-      debugger;
       // create a Workbook and save the generated data URL
       // https://www.telerik.com/kendo-angular-ui/components/excelexport/api/Workbook/
       new Workbook(workbook).toDataURL().then((dataUrl: string) => {

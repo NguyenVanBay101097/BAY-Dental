@@ -186,5 +186,37 @@ namespace TMTDentalAPI.Controllers
             var file = _converter.Convert(pdf);
             return File(file, "application/pdf", "BaoCaoCongNo_KH.pdf");
         }
+
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.AccountPartner")]
+        public async Task<IActionResult> GetSummaryPdf([FromBody] AccountCommonPartnerReportSearch val)
+        {
+            var data = await _reportService.ReportSummaryPrint(val);
+            var html = _viewRenderService.Render("AccountCommonPartnerReport/GetSummaryPdf", data);
+
+            var globalSettings = new GlobalSettings
+            {
+                ColorMode = ColorMode.Color,
+                Orientation = Orientation.Landscape,
+                PaperSize = PaperKind.A4,
+                Margins = new MarginSettings { Top = 10 },
+                DocumentTitle = "PDF Report"
+            };
+            var objectSettings = new ObjectSettings
+            {
+                PagesCount = true,
+                HtmlContent = html,
+                WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/css", "print.css") },
+                FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Báo cáo công nợ nhà cc", Right = "Page [page] of [toPage]" }
+            };
+            var pdf = new HtmlToPdfDocument()
+            {
+                GlobalSettings = globalSettings,
+                Objects = { objectSettings }
+            };
+            var file = _converter.Convert(pdf);
+            return File(file, "application/pdf", "BaoCaoCongNo_NCC.pdf");
+        }
     }
 }

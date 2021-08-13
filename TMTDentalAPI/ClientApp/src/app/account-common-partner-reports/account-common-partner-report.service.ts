@@ -163,4 +163,12 @@ export class AccountCommonPartnerReportService {
     getReportPartnerDebitPdf(val:any ) {
         return this.http.get(this.baseApi + this.apiUrl + "/GetReportPartnerDebitPdf", {params: new HttpParams({fromObject: val}),  responseType: 'blob'  });
     }
+
+    printGetSummary(val) {
+        return this.http.post(this.baseApi + "AccountCommonPartnerReport/PrintGetSummary", val,{ responseType: "text" });
+    }
+
+    getSummaryPdf(val:any ) {
+        return this.http.post(this.baseApi + this.apiUrl + "/GetSummaryPdf",val,{ responseType: "blob" });
+    }
 }
