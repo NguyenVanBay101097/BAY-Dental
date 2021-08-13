@@ -138,4 +138,5 @@ export class AppointmentGetCountVM {
     state: string;
     dateFrom: string;
     dateTo: string;
+    companyId: string;
 }

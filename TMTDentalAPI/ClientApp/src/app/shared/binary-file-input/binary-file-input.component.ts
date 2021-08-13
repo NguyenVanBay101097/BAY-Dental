@@ -10,7 +10,7 @@ export class BinaryFileInputComponent implements OnInit {
   @Input() value: string;
   @Input() accept: string;
   @Output('valueChange') change = new EventEmitter<string>();
-  @Output() errorEmit = new EventEmitter<string[]>();
+  @Output() checkFormat = new EventEmitter<boolean>();
   constructor() { }
 
   ngOnInit() {
@@ -34,10 +34,14 @@ export class BinaryFileInputComponent implements OnInit {
         var extension = file.name.split(".").pop();
         var extensionAccept = this.accept.replace(/[\s.]/g, '');
         var arr = extensionAccept.split(",");
-        if (!arr.includes(extension)) 
-          this.errorEmit.emit(["Dữ liệu không đúng định dạng mẫu."]);
+        if (!arr.includes(extension)) {
+          this.checkFormat.emit(false);
           return false;
-        
+        }
+        else {
+          this.checkFormat.emit(true);
+          
+        }
       }
 
       var reader = new FileReader();

@@ -725,7 +725,7 @@ namespace Infrastructure.Services
         private IQueryable<SaleOrderLine> GetServiceReportQuery(ServiceReportReq val)
         {
             var orderLineObj = GetService<ISaleOrderLineService>();
-            var query = orderLineObj.SearchQuery(x=> x.State == "sale" || x.State == "done");
+            var query = orderLineObj.SearchQuery();
             if (val.DateFrom.HasValue)
                 query = query.Where(x => x.Date >= val.DateFrom.Value.AbsoluteBeginOfDate());
             
@@ -739,9 +739,12 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.EmployeeId == val.EmployeeId);
 
             if (!string.IsNullOrEmpty(val.State))
-                query = query.Where(x => x.State == val.State);
+            {
+                var stateArr = val.State.Split(",");
+                query = query.Where(x => stateArr.Any(z=> z == x.State));
+            }
 
-            if(val.Active.HasValue)
+            if (val.Active.HasValue)
                 query = query.Where(x => x.IsActive == val.Active);
 
             if (!string.IsNullOrEmpty(val.Search))

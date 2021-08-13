@@ -17,6 +17,7 @@ export class ProductImportExcelDialogComponent implements OnInit {
   errors: string[];
   title: string;
   isUpdate: boolean = false;
+  correctFormat = true;
   constructor(private productService: ProductService, public activeModal: NgbActiveModal, private notificationService: NotificationService,
     private errorService: AppSharedShowErrorService) { }
 
@@ -38,6 +39,10 @@ export class ProductImportExcelDialogComponent implements OnInit {
   }
 
   onSave() {
+    if (!this.correctFormat){
+      this.notify('error','Dữ liệu không đúng định dạng mẫu');
+      return;
+    }
     if (!this.fileBase64 || this.fileBase64 === '') {
       if (this.isUpdate) {
         this.notify('error', 'Vui lòng chọn file để cập nhật');

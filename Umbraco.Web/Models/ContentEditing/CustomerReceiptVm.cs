@@ -224,5 +224,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public DateTime? DateTo { get; set; }
 
+        public Guid? CompanyId { get; set; }
+
     }
 }

@@ -78,6 +78,7 @@ export class CustomerReceiptGetCountVM {
   state: string;
   dateFrom: string;
   dateTo: string;
+  companyId: string;
 }
 
 export class CustomerReceiptStatePatch {
