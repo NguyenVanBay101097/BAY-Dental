@@ -596,3 +596,5 @@ input[type=number] {
     height: calc(100% - 36px);
     overflow: auto;
 }
+
+.k-grid tr.isLate { background-color: #f45c42; }
