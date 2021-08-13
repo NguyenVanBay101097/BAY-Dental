@@ -15,6 +15,7 @@ import { AppointmentService } from 'src/app/appointment/appointment.service';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { AppointmentCreateUpdateComponent } from '../appointment-create-update/appointment-create-update.component';
 import { CustomerReceipCreateUpdateComponent } from '../customer-receip-create-update/customer-receip-create-update.component';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-appointment-list-today',
@@ -51,6 +52,7 @@ export class AppointmentListTodayComponent implements OnInit {
   constructor(private appointmentService: AppointmentService,
     private intlService: IntlService, private modalService: NgbModal,
     private notifyService: NotifyService,
+    private authService: AuthService,
     private dashboardReportService : DashboardReportService,
     private notificationService: NotificationService, private router: Router, private employeeService: EmployeeService) { }
 
@@ -73,8 +75,7 @@ export class AppointmentListTodayComponent implements OnInit {
     }
 
     if (this.search) {
-      debugger
-      res = res.filter(x => this.RemoveVietnamese(x.partnerName).includes(this.RemoveVietnamese(this.search)) || x.partnerPhone.includes(this.search));
+      res = res.filter(x => this.RemoveVietnamese(x.partnerName).includes(this.RemoveVietnamese(this.search)) || x.partnerPhone.includes(this.search) || this.RemoveVietnamese(x.doctorName).includes(this.RemoveVietnamese(this.search)));
     }
 
     this.listAppointment = res;
@@ -102,6 +103,7 @@ export class AppointmentListTodayComponent implements OnInit {
       val.state = x.value;
       val.dateFrom = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
       val.dateTo = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
+      val.companyId = this.authService.userInfo.companyId;
       return this.appointmentService.getCount(val).pipe(
         switchMap(count => of({ state: x.value, count: count }))
       );

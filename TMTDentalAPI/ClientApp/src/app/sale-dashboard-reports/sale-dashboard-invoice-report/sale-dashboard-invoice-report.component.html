@@ -1,7 +1,7 @@
 <kendo-chart class="mh-chart-year p-2 mb-2">
     <kendo-chart-title color="black" text="BIỂU ĐỒ DOANH THU">
     </kendo-chart-title>
-    <kendo-chart-legend position='bottom' orientation='horizontal'></kendo-chart-legend>
+    <!-- <kendo-chart-legend position='bottom' orientation='horizontal'></kendo-chart-legend>
     <kendo-chart-series>
         <ng-container *ngIf="revenues.length > 0">
             <kendo-chart-category-axis>
@@ -18,14 +18,20 @@
                     </ng-template>
                 </kendo-chart-series-item-tooltip>
             </kendo-chart-series-item>
-            <!-- <kendo-chart-series-item type="column" [data]="cashBookData" 
-            [style]="'smooth'">
-            <kendo-chart-series-item-tooltip>
-                <ng-template let-dataItem="dataItem">
-                    <b> doanh thu: {{dataItem.priceSubTotal || 0 | number }} </b>
-                </ng-template>
-            </kendo-chart-series-item-tooltip>
-        </kendo-chart-series-item> -->
+        </ng-container>
+    </kendo-chart-series> -->
+    <kendo-chart-legend position='bottom' orientation='horizontal'></kendo-chart-legend>
+    <kendo-chart-category-axis>
+        <kendo-chart-category-axis-item [categories]="revenuCateg">
+            <kendo-chart-category-axis-item-labels [content]="labelContent">
+            </kendo-chart-category-axis-item-labels>
+        </kendo-chart-category-axis-item>
+    </kendo-chart-category-axis>
+    <kendo-chart-series>
+        <ng-container *ngIf="revenueSeries.length > 0">
+            <kendo-chart-series-item *ngFor="let item of revenueSeries" [type]="item.type" [name]="item.name"
+                [data]="item.data">
+            </kendo-chart-series-item>
         </ng-container>
     </kendo-chart-series>
 </kendo-chart>
@@ -33,16 +39,16 @@
     <div class="row">
         <div class="col">
             <div class="my-2 d-flex justify-content-between">
-                <h4>Doanh thu kinh doanh</h4>  
+                <h4>Doanh thu kinh doanh</h4>
                 <span class="total-amount fs-4">{{totalDebit || 0 | number}}</span>
-            </div>                    
+            </div>
             <div class="my-2 d-flex justify-content-between">
                 <span>Thanh toán dịch vụ và thuốc bằng TM/CK</span>
                 <span class="fw-bold">{{revenueCashBank.balance || 0 | number}}</span>
             </div>
             <div class="my-2 d-flex justify-content-between">
                 <span>Thanh toán dịch vụ bằng tạm ứng</span>
-                <span  class="fw-bold">{{revenueCusAdvance.debit || 0 | number}}</span>
+                <span class="fw-bold">{{revenueCusAdvance.debit || 0 | number}}</span>
             </div>
             <div class="my-2 d-flex justify-content-between">
                 <span>Thanh toán dịch vụ bằng ghi công nợ</span>
@@ -51,9 +57,9 @@
         </div>
         <div class="col">
             <div class="my-2 d-flex justify-content-between">
-                <h4>Thực thu kinh doanh</h4>  
+                <h4>Thực thu kinh doanh</h4>
                 <span class="total-amount fs-4">{{totalDataCashBook.totalThu || 0 | number}}</span>
-            </div>                
+            </div>
             <div class="my-2 d-flex justify-content-between">
                 <span>Thanh toán dịch vụ và thuốc bằng TM/CK</span>
                 <span class="fw-bold">{{cashbookCashBank.credit || 0 | number}}</span>

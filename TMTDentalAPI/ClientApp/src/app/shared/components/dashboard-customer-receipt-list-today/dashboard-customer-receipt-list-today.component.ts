@@ -1,4 +1,4 @@
-import { CustomerReceiptBasic, CustomerReceiptDisplay, CustomerReceiptStatePatch } from './../../../customer-receipt/customer-receipt.service';
+import { CustomerReceiptBasic, CustomerReceiptDisplay, CustomerReceiptGetCountVM, CustomerReceiptStatePatch } from './../../../customer-receipt/customer-receipt.service';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { EmployeeSimple } from 'src/app/employees/employee';
 import { NotifyService } from 'src/app/shared/services/notify.service';
@@ -15,6 +15,7 @@ import { CustomerReceipCreateUpdateComponent } from '../../customer-receip-creat
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { EmployeePaged } from 'src/app/employees/employee';
 import { groupBy } from 'lodash';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-dashboard-customer-receipt-list-today',
@@ -54,6 +55,7 @@ export class DashboardCustomerReceiptListTodayComponent implements OnInit {
   constructor(private intlService: IntlService, private customerReceiptService: CustomerReceiptService,
     private employeeService: EmployeeService,
     private notifyService: NotifyService,
+    private authService: AuthService,
     private modalService: NgbModal) { }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -93,10 +95,11 @@ export class DashboardCustomerReceiptListTodayComponent implements OnInit {
 
   loadStateCount() {
     forkJoin(this.states.map(x => {
-      var val = new AppointmentGetCountVM();
+      var val = new CustomerReceiptGetCountVM();
       val.state = x.value;
       val.dateFrom = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
       val.dateTo = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
+      val.companyId = this.authService.userInfo.companyId;
       return this.customerReceiptService.getCount(val).pipe(
         switchMap(count => of({ state: x.value, count: count }))
       );

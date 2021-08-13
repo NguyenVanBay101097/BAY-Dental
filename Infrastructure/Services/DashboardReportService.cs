@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Utilities;
 using AutoMapper;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -16,10 +17,12 @@ namespace Infrastructure.Services
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
-        public DashboardReportService(IHttpContextAccessor httpContextAccessor, IMapper mapper)
+        private readonly CatalogDbContext _context;
+        public DashboardReportService(IHttpContextAccessor httpContextAccessor, IMapper mapper, CatalogDbContext context)
         {
             _httpContextAccessor = httpContextAccessor;
             _mapper = mapper;
+            _context = context;
         }
 
         public async Task<CustomerReceiptDisplay> GetDefaultCustomerReceipt(GetDefaultRequest val)
