@@ -18,7 +18,7 @@ export class PartnerCategoryImportComponent implements OnInit {
   formGroup: FormGroup;
   title = 'Import excel';
   errors: any = [];
-
+  correctFormat = true;
   ngOnInit() {
     this.formGroup = this.fb.group({
       fileBase64: [null, Validators.required],
@@ -42,6 +42,16 @@ export class PartnerCategoryImportComponent implements OnInit {
   }
 
   import() {
+    if (!this.correctFormat){
+      this.notificationService.show({
+        content: 'Dữ liệu không đúng định dạng mẫu',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'error', icon: true }
+      });
+      return false;
+    }
     if (!this.formGroup.valid) {
       this.notificationService.show({
         content: 'Vui lòng chọn file để import',

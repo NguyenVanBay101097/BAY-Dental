@@ -18,19 +18,19 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
-                    <button type="button" *ngIf="surveyAssignment.status == 'draft'" class="btn btn-primary btn-sm"
+                    <button type="button" *ngIf="surveyAssignment.status == 'draft'" class="btn btn-primary"
                         (click)="actionContact()">
                         Liên hệ
                     </button>
-                    <button type="button" *ngIf="surveyAssignment.status != 'done'" class="btn btn-primary btn-sm"
+                    <button type="button" *ngIf="surveyAssignment.status != 'done'" class="btn btn-primary"
                         (click)="actionDone()">
                         Khảo sát
                     </button>
-                    <button type="button" *ngIf="surveyAssignment.status == 'done'" class="btn btn-danger btn-sm"
+                    <button type="button" *ngIf="surveyAssignment.status == 'done'" class="btn btn-danger"
                         (click)="actionCancel()">
                         Hủy khảo sát
                     </button>
-                    <button type="button" *ngIf="surveyAssignment.status == 'done'" class="btn btn-primary btn-sm"
+                    <button type="button" *ngIf="surveyAssignment.status == 'done'" class="btn btn-primary"
                         (click)="actionDone()">
                         Xem đánh giá
                     </button>

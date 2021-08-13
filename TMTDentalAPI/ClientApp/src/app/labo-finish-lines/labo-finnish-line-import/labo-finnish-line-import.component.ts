@@ -18,6 +18,7 @@ export class LaboFinnishLineImportComponent implements OnInit {
   type: string;
   errors: string[];
   title: string;
+  correctFormat = true;
   constructor(private laboFinishLineService: LaboFinishLineService, public activeModal: NgbActiveModal, private notificationService: NotificationService,
     private errorService: AppSharedShowErrorService,
     private laboBridgeService: LaboBridgeService,
@@ -41,6 +42,10 @@ export class LaboFinnishLineImportComponent implements OnInit {
   }
 
   onSave() {
+    if (!this.correctFormat){
+      this.notify('error','Dữ liệu không đúng định dạng mẫu');
+      return;
+    }
     if (!this.fileBase64 || this.fileBase64 === '') {
       this.notify('error', 'Vui lòng chọn file để import');
       return;
@@ -77,9 +82,5 @@ export class LaboFinnishLineImportComponent implements OnInit {
     this.activeModal.dismiss();
   }
 
-  showEmit(event){
-    if (event.length > 0){
-      this.notify('error',event[0]);
-    }
-  }
+
 }
