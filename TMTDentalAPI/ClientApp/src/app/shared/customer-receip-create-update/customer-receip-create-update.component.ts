@@ -92,7 +92,7 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
       dateObj: [null, Validators.required],
       note: null,
       doctor: [null, Validators.required],
-      timeExpected: '30',
+      timeExpected: 30,
       state: 'waiting',
       reason: null,
       services: [],
@@ -197,7 +197,7 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     receipt.dateWaiting = this.intlService.formatDate(receipt.dateObj, 'yyyy-MM-ddTHH:mm:ss');
     receipt.dateExamination = this.stateControl == 'examination' ? this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss') : '';
     receipt.dateDone = this.stateControl == 'done' ? this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss') : '';
-    receipt.timeExpected = Number.parseInt(receipt.timeExpected);
+    receipt.timeExpected = receipt.timeExpected || 0;
     receipt.products = receipt.services == null ? [] : receipt.services;
     receipt.companyId = this.authService.userInfo.companyId;
     if (this.id) {
@@ -489,7 +489,7 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     res.partnerId = this.partnerId ? this.partnerId : null;
     res.doctorId = receipt.doctor ? receipt.doctor.id : null;
     res.dateWaiting = this.intlService.formatDate(receipt.dateObj, 'yyyy-MM-ddTHH:mm:ss');
-    res.timeExpected = Number.parseInt(receipt.timeExpected);
+    res.timeExpected = receipt.timeExpected || 0;
     res.companyId = this.authService.userInfo.companyId;
     res.products = receipt.services == null ? [] : receipt.services;
     res.isRepeatCustomer = this.isRepeatCustomer;
