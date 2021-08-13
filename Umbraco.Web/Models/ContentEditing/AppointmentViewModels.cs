@@ -76,7 +76,9 @@ namespace Umbraco.Web.Models.ContentEditing
         {
             get
             {
-                return State == "confirmed" && Date < DateTime.Now;
+                if (!Date.HasValue)
+                    return false;
+                return State == "confirmed" && Date.Value.Date < DateTime.Today;
             }
         }
 
