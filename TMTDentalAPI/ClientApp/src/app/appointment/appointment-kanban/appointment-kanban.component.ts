@@ -907,6 +907,12 @@ export class AppointmentKanbanComponent implements OnInit {
         break;
     }
 
+    // Quá hẹn
+    if(appointment.isLate){
+      statusShow = 'Quá hẹn';
+      classEvent = 'event-overdue';
+    }
+
     let dateEventV2El = document.createElement('div');
     dateEventV2El.classList.add("date-event-v2");
     dateEventV2El.classList.add(`${classEvent}`);

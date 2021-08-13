@@ -71,6 +71,15 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Khách hàng tái khám
         /// </summary>
         public bool IsRepeatCustomer { get; set; }
+
+        public bool IsLate
+        {
+            get
+            {
+                return State == "confirmed" && Date < DateTime.Now;
+            }
+        }
+
     }
 
     public class AppointmentDisplay
