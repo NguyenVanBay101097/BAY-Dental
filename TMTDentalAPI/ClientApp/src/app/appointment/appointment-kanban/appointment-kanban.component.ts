@@ -22,7 +22,7 @@ import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { RevenueTimeReportPar } from 'src/app/account-invoice-reports/account-invoice-report.service';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { GridDataResult, PageChangeEvent, RowClassArgs } from '@progress/kendo-angular-grid';
 import { MyDateRange } from '../my-date-range';
 import { CustomerReceipCreateUpdateComponent } from 'src/app/shared/customer-receip-create-update/customer-receip-create-update.component';
 import { AppointmentFilterExportExcelDialogComponent } from '../appointment-filter-export-excel-dialog/appointment-filter-export-excel-dialog.component';
@@ -199,7 +199,6 @@ export class AppointmentKanbanComponent implements OnInit {
         total: response.totalItems
       }))
     ).subscribe((result: any) => {
-      console.log(result);
       this.gridData = result;
       this.loading = false;
       this.dataAppointments = result.data.map(v => ({
@@ -905,12 +904,6 @@ export class AppointmentKanbanComponent implements OnInit {
         statusShow = 'Đang hẹn';
         classEvent = 'event-confirmed';
         break;
-    }
-
-    // Quá hẹn
-    if(appointment.isLate){
-      statusShow = 'Quá hẹn';
-      classEvent = 'event-overdue';
     }
 
     let dateEventV2El = document.createElement('div');
