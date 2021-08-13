@@ -1,3 +1,4 @@
+import { KeyValue } from '@angular/common';
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { AccountInvoiceReportService, RevenueReportFilter, RevenueReportItem } from 'src/app/account-invoice-reports/account-invoice-report.service';
@@ -44,10 +45,15 @@ export class SaleDashboardInvoiceReportComponent implements OnInit {
   loadRevenueSeries() {
     this.revenueCashBank = this.dataRevenues[0];
     this.revenueCusDebt = this.dataRevenues[1];
-    this.revenueCusAdvance = this.dataRevenues[2]; 
+    this.revenueCusAdvance = this.dataRevenues[2];
   }
 
   loadDataCashbookSeries() {
+    this.revenueSeries = [];
+    this.cashBookData = this.cashBooks;
+    var cashbookThu = { name: "Thực thu", type: "column", data: this.cashBookData.map(s => s.totalThu) };
+    var revenue = { name: "Doanh thu", type: "column", data: this.revenues.map(s => s.priceSubTotal) };
+    this.revenueSeries.push(revenue, cashbookThu);
     this.cashbookCashBank = this.dataCashBooks[0];
     this.cashbookCusDebt = this.dataCashBooks[1];
     this.cashbookCusAdvance = this.dataCashBooks[2];
@@ -58,11 +64,24 @@ export class SaleDashboardInvoiceReportComponent implements OnInit {
   }
 
   get ortherThu() {
-    return this.totalDataCashBook.totalThu - (this.cashbookCashBank.credit + this.cashbookCusDebt.credit +  this.cashbookCusAdvance.credit)  ;
+    return this.totalDataCashBook.totalThu - (this.cashbookCashBank.credit + this.cashbookCusDebt.credit + this.cashbookCusAdvance.credit);
   }
 
   loadCashbookGroupby() {
-    this.revenuCateg = this.revenues.map(s => s.invoiceDate);
+    var dateRevenues = this.revenues.map(s => s.invoiceDate);
+    var dateCashbooks = this.cashBookData.map(s => s.date);
+    this.revenuCateg = this.arrayUnique(dateRevenues.concat(dateCashbooks).sort());
+  }
+
+  arrayUnique(array) {
+    var a = array.concat();
+    for (var i = 0; i < a.length; ++i) {
+      for (var j = i + 1; j < a.length; ++j) {
+        if (a[i] === a[j])
+          a.splice(j--, 1);
+      }
+    }
+    return a;
   }
 
 

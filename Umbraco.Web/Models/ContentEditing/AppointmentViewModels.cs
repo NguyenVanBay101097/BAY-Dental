@@ -251,6 +251,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateTo { get; set; }
 
         public bool IsLate { get; set; }
+
+        public Guid? CompanyId { get; set; }
     }
 
     public class AppointmentDoctorReq

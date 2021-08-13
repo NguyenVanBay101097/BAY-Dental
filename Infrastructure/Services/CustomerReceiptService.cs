@@ -152,6 +152,9 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.DateWaiting <= datetimeTo);
             }
 
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+
             if (val.DoctorId.HasValue)
                 query = query.Where(x => x.DoctorId == val.DoctorId);
 

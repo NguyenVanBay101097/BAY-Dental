@@ -123,7 +123,7 @@
                                 <label class="o_form_label">Nội dung</label>
                             </td>
                             <td colspan="1">
-                                <textarea [attr.disabled]="id && customerReceipt?.state == 'done'" class="form-control" rows="3" formControlName="note"
+                                <textarea [attr.disabled]="id && customerReceipt?.state == 'done' ? true : null" class="form-control" rows="3" formControlName="note"
                                     [placeholder]="'Nhập nội dung'" ></textarea>
                             </td>
                         </tr>

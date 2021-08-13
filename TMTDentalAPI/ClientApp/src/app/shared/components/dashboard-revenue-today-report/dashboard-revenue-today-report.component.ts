@@ -58,9 +58,7 @@ export class DashboardRevenueTodayReportComponent implements OnInit {
     if (this.revenue) {
       if (this.revenue.totalAmountYesterday == 0) {
         return 0;
-      }
-      debugger
-
+      }    
       return Math.abs(((this.revenue.totalAmount - this.revenue.totalAmountYesterday) / this.revenue.totalAmountYesterday) * 100);
     }
 
