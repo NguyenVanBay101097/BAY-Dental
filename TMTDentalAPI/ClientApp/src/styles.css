@@ -1376,3 +1376,75 @@ html .o_web_client {
 .o_cp_t_right .o_searchview {
     flex: 1;
 }
+
+@media (min-width: 1400px) {
+    .col-xxl-1 {
+        flex: 0 0 auto;
+        width: 8.3333333333%;
+    }
+    
+    .col-xxl-2 {
+        flex: 0 0 auto;
+        width: 16.6666666667%;
+    }
+    
+    .col-xxl-3 {
+        flex: 0 0 auto;
+        width: 25%;
+    }
+    
+    .col-xxl-4 {
+        flex: 0 0 auto;
+        width: 33.3333333333%;
+    }
+    
+    .col-xxl-5 {
+        flex: 0 0 auto;
+        width: 41.6666666667%;
+    }
+    
+    .col-xxl-6 {
+        flex: 0 0 auto;
+        width: 50%;
+    }
+    
+    .col-xxl-7 {
+        flex: 0 0 auto;
+        width: 58.3333333333%;
+    }
+    
+    .col-xxl-8 {
+        flex: 0 0 auto;
+        width: 66.6666666667%;
+    }
+
+    .col-xxl-9 {
+        flex: 0 0 auto;
+        width: 75%;
+    }
+
+    .col-xxl-10 {
+        flex: 0 0 auto;
+        width: 83.3333333333%;
+    }
+
+    .col-xxl-11 {
+        flex: 0 0 auto;
+        width: 91.6666666667%;
+    }
+
+    .col-xxl-12 {
+        flex: 0 0 auto;
+        width: 100%;
+    }
+}
+
+@media (min-width: 1400px) {
+    .flex-xxl-row {
+        flex-direction: row !important;
+    }
+
+    .flex-xxl-column {
+        flex-direction: column !important;
+    }
+}
