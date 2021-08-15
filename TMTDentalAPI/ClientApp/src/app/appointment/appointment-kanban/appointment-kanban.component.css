@@ -179,7 +179,7 @@
 
 .calendar-table {
     table-layout: fixed;
-    border-collapse: collapse;
+    border-collapse: separate;
     border-spacing: 0;
     margin-bottom: 0 !important;
     height: 100%;
@@ -187,18 +187,28 @@
 
 .calendar-table th,
 .calendar-table td {
-    border: 1px solid #dee2e6 !important;
+    border-top: 1px solid #dee2e6 !important;
+    border-right: 1px solid #dee2e6 !important;
 }
 
 .calendar-table th {
     font-size: 13px;
     font-weight: 600;
-    border: 1px solid #dee2e6 !important;
-    /* position: sticky; */
-    /* top: 0; */
-    /* z-index: 10; */
+    border-top: 1px solid #dee2e6 !important;
+    border-right: 1px solid #dee2e6 !important;
+    position: sticky;
+    top: 0;
+    z-index: 10;
     background: white;
     text-align: center;
+}
+
+.calendar-table th:first-child, .calendar-table td:first-child {
+    border-left: 1px solid #dee2e6 !important;
+}
+
+.calendar-table tr:last-child td {
+    border-bottom: 1px solid #dee2e6 !important;
 }
 
 .calendar-table th.th-v2 {
@@ -246,7 +256,7 @@
 
 .calendar-table td.td-month {
     height: 100px;
-    border: 1px solid #ccc;
+    /* border: 1px solid #ccc; */
 }
 
 .calendar-table td.td-month.active:hover {
