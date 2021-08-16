@@ -1,0 +1,75 @@
+﻿@model Umbraco.Web.Models.ContentEditing.CustomerReceiptReportPdf<CustomerReceiptReportBasic>
+@using Umbraco.Web.Models.ContentEditing;
+@{
+    var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+
+}
+<style>
+    table.border-top-0 thead th {
+        border-top: none;
+    }
+
+    table.border-top-0 thead th {
+        border-top: none;
+    }
+</style>
+<div class="text-center mb-3">
+    <div class="text-3xl font-semibold">BÁO CÁO TIẾP NHẬN THEO THỜI GIAN PHỤC VỤ</div>
+    <div>
+        @((Model.DateFrom.HasValue? "Từ ngày " + Model.DateFrom.Value.ToString("dd/MM/yyyy") : "") +
+            (Model.DateTo.HasValue ? " Đến ngày " + Model.DateTo.Value.ToString("dd/MM/yyyy") : ""))
+    </div>
+</div>
+<div class="o_form_view mb-2">
+    <div class="h-60 w-100 pt-3">
+       
+            <table class="table table-sm table-bordered mb-2" )>
+                <thead>
+                    <tr>
+                        <th style="width: 100px">Ngày tiếp nhận</th>
+                        <th class="" style="width: 120px">Khách hàng</th>
+                        <th class="" style="width: 150px">Dịch vụ</th>
+                        <th class="" style="width: 120px">Bác sĩ</th>
+                        <th class="" style="width: 100px">Loại khám</th>
+                        <th class="" style="width: 100px">Thời gian phục vụ</th>
+                        <th class="" style="width: 100px">Thời gian chờ khám</th>
+                        <th class="" style="width: 100px">Thời gian khám</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Data)
+                    {
+                        <tr>
+                            <td style="width: 100px">@(item.DateWaiting.Value.ToString("dd/MM/yyyy"))</td>
+                            <td class="" style="width: 120px">@item.Partner.Name</td>
+                            <td class="" style="width: 150px">@item.Products</td>
+                            <td class="" style="width: 120px">@item.DoctorName</td>
+                            <td class="" style="width: 100px">@(item.IsRepeatCustomer ? "Tái khám" : "Khám mới")</td>
+                            <td class="" style="width: 100px">@(!item.MinuteTotal.HasValue ?""  : (item.MinuteTotal + " phút"))</td>
+                            <td class="" style="width: 100px">@(!item.MinuteWaiting.HasValue ?""  : (item.MinuteWaiting + " phút"))</td>
+                            <td class="" style="width: 100px">@(!item.MinuteExamination.HasValue ?""  : (item.MinuteExamination + " phút"))</td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+    </div>
+    <div class="d-flex">
+        <div class="col-6">
+
+        </div>
+        <div class="col-6">
+            <div class="text-center">
+                <span>Ngày @DateTime.Now.Day, tháng @DateTime.Now.Month, năm @DateTime.Now.Year </span> <br />
+                <span class="font-semibold">Người lập báo cáo</span> <br />
+                <i>(Ký và ghi rõ họ tên)</i> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span class="font-semibold">@(Model.User == null ? "" : Model.User.Name.ToUpper())</span>
+            </div>
+        </div>
+    </div>
+</div>

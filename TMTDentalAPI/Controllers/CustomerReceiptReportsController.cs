@@ -426,15 +426,15 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> ReportPagedPdf([FromQuery] CustomerReceiptReportFilter val)
         {
             var data = await _customerReceiptReportService.GetPagedResultPdf(val);
-            var html = _viewRenderService.Render("SaleOrder/ReportPagedPdf", data);
+            var html = _viewRenderService.Render("CustomerReceiptReport/ReportPagedPdf", data);
             return Pdfbase(html, "Tổng quan tiếp nhận", "TongQuanTiepNhan");
         }
 
         [HttpGet("[action]")]
         public async Task<IActionResult> ReportPagedForTimePdf([FromQuery] CustomerReceiptReportFilter val)
         {
-            var data = await _customerReceiptReportService.GetPagedResultPdf(val);
-            var html = _viewRenderService.Render("SaleOrder/ReportPagedForTimePdf", data);
+            var data = await _customerReceiptReportService.GetCustomerReceiptForTimePdf(val);
+            var html = _viewRenderService.Render("CustomerReceiptReport/ReportPagedForTimePdf", data);
             return Pdfbase(html, "Báo cáo Tiếp nhận theo giờ", "Tiepnhantheogio");
         }
 
@@ -442,7 +442,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> ReportPagedFortimeServicePdf([FromQuery] CustomerReceiptReportFilter val)
         {
             var data = await _customerReceiptReportService.GetPagedResultPdf(val);
-            var html = _viewRenderService.Render("SaleOrder/ReportPagedFortimeServicePdf", data);
+            var html = _viewRenderService.Render("CustomerReceiptReport/ReportPagedFortimeServicePdf", data);
             return Pdfbase(html, "Báo cáo Tiếp nhận theo thời gian phục vụ", "Tiepnhanthoigianphucvu");
         }
 
@@ -450,7 +450,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> ReportPagedForNoTreatmentPdf([FromQuery] CustomerReceiptReportFilter val)
         {
             var data = await _customerReceiptReportService.GetPagedResultPdf(val);
-            var html = _viewRenderService.Render("SaleOrder/ReportPagedForNoTreatmentPdf", data);
+            var html = _viewRenderService.Render("CustomerReceiptReport/ReportPagedForNoTreatmentPdf", data);
             return Pdfbase(html, "Báo cáo Tiếp nhận không điều trị", "Tiepnhankhongdieutri");
         }
 

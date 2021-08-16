@@ -10,7 +10,14 @@
             class="mr-1" [valueField]="'id'" [textField]="'name'" [filterable]="true"
             [data]="listCompany" (selectionChange)="onSelectCompany($event)" #companyCbx>
         </kendo-combobox>
-        <button class="btn btn-primary" (click)="onExcelExport()"><i class="fas fa-download"></i> Xuất Excel</button>
+        <div class="dropdown mr-1">
+            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-download"></i> Xuất File</button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" (click)="onExcelExport()">Xuất Excel</a>
+                <a class="dropdown-item" (click)="onExportPDF()">Xuất PDF</a>
+            </div>
+        </div>
         <input type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)"
             placeholder="Tìm kiếm theo mã, tên, số điện thoại khách hàng"
             class="ml-auto form-control w-50">

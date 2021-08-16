@@ -123,4 +123,19 @@ export class CustomerReceiptReportService {
     return this.http.post(this.baseApi + this.apiUrl + '/ExportExcelReportNoTreatment', val, { responseType: "blob" });
   }
 
+  reportPagedPdf(val) {
+    return this.http.get(this.baseApi + this.apiUrl + '/ReportPagedPdf', { params: new HttpParams({ fromObject: val }), responseType: 'blob' });
+  }
+
+  reportPagedForTimePdf(val) {
+    return this.http.get(this.baseApi + this.apiUrl + '/ReportPagedForTimePdf', { params: new HttpParams({ fromObject: val }), responseType: 'blob' });
+  }
+
+  reportPagedFortimeServicePdf(val) {
+    return this.http.get(this.baseApi + this.apiUrl + '/reportPagedFortimeServicePdf', { params: new HttpParams({ fromObject: val }), responseType: 'blob' });
+  }
+
+  reportPagedForNoTreatmentPdf(val) {
+    return this.http.get(this.baseApi + this.apiUrl + '/ReportPagedForNoTreatmentPdf', { params: new HttpParams({ fromObject: val }), responseType: 'blob' });
+  }
 }
