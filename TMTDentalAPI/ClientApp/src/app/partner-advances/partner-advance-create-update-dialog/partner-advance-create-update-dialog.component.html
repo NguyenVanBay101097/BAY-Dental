@@ -110,6 +110,6 @@
     <button type="button" *ngIf="partnerAdvance?.state == 'draft'" class="btn btn-primary mr-2" (click)="onSave()">Lưu và In</button>
     <button type="button" *ngIf="partnerAdvance?.state == 'draft'" class="btn btn-primary" (click)="onConfirmPrint(false)">Xác nhận</button>
     <button type="button" *ngIf="partnerAdvance?.state == 'draft'" class="btn btn-primary mr-2" (click)="onConfirmPrint(true)">Xác nhận và In</button>
-    <button type="button" *ngIf="partnerAdvance?.state != 'draft'" class="btn btn-primary mr-2" (click)="onPrint()">In phiếu</button>
+    <button type="button" *ngIf="partnerAdvance?.state != 'draft'" class="btn btn-primary mr-2" (click)="onPrint(id)">In phiếu</button>
     <button type="button" class="btn btn-secondary" (click)="onClose()">Đóng</button>
 </div>

@@ -345,6 +345,10 @@ export class CustomerReceiptReportOverviewComponent implements OnInit {
   }
 
   getMinute(value) {
+    if(value == null || value == undefined){
+      return '';
+    }
+
     return `${value} phút`;
   }
 
@@ -361,10 +365,10 @@ export class CustomerReceiptReportOverviewComponent implements OnInit {
 
   getTreatment(value) {
     switch (value) {
-      case 'true':
-        return 'Không điều trị';
-      case 'false':
+      case true:
         return 'Có điều trị';
+      case false:
+        return 'Không điều trị';
     }
   }
 

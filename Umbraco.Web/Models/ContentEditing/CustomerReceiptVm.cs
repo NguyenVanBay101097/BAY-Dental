@@ -61,6 +61,22 @@ namespace Umbraco.Web.Models.ContentEditing
         public string PartnerName { get; set; }
         public string PartnerPhone { get; set; }
 
+        /// <summary>
+        /// Khách hàng tái khám
+        /// </summary>
+        public bool IsRepeatCustomer { get; set; }
+
+
+        /// <summary>
+        /// không điều trị
+        /// </summary>
+        public bool IsNoTreatment { get; set; }
+
+        /// <summary>
+        /// lý do không điều trị
+        /// </summary>
+        public string Reason { get; set; }
+
         public string State { get; set; }
 
     }

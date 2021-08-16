@@ -184,6 +184,10 @@ export class CustomerReceiptReportNoTreatmentComponent implements OnInit {
   }
 
   getMinute(value) {
+    if(value == null || value == undefined){
+      return '';
+    }
+
     return `${value} phút`;
   }
 
@@ -200,9 +204,9 @@ export class CustomerReceiptReportNoTreatmentComponent implements OnInit {
 
   getTreatment(value) {
     switch (value) {
-      case 'true':
+      case true:
         return 'Không điều trị';
-      case 'false':
+      case false:
         return 'Có điều trị';
     }
   }

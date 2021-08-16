@@ -1,178 +1,174 @@
-<div class="flex-1-1-100 right border p-2 ml-2 d-flex flex-column w-100">
-    <h5 class="flex-0-0-auto">Báo cáo tổng quan tiếp nhận</h5>
-    <div class="filter d-flex flex-0-0-auto mt-2">
-        <app-date-range-picker-filter [opens]="'right'" class="mr-1" [startDate]="dateFrom" [endDate]="dateTo"
-            (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
-        <kendo-combobox width="auto" [placeholder]="'Tất cả chi nhánh'"
-            class="mr-1" [valueField]="'id'" [textField]="'name'" [filterable]="true"
-            [data]="listCompany" (selectionChange)="onSelectCompany($event)" #companyCbx>
-        </kendo-combobox>
-        <button class="btn btn-secondary mr-1" type="button" data-toggle="collapse"
-            href="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne"><i
-                class="fas fa-filter"></i> Lọc nâng cao
-        </button>
-        <button class="btn btn-primary" (click)="onExcelExport()"><i class="fas fa-download"></i> Xuất
-            file</button>
-        <input type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)"
-            placeholder="Tìm kiếm theo mã, tên, số điện thoại khách hàng"
-            class="ml-auto form-control w-50">
-    </div>
-    <div class="accordion-collapse collapse " id="panelsStayOpen-collapseOne"
-        aria-labelledby="panelsStayOpen-headingOne">
-        <div class="filter d-flex flex-0-0-auto mt-2  ">
-            <kendo-combobox class="mr-1" [placeholder]="'Bác sĩ'" [valueField]="'id'"
-                [textField]="'name'" [filterable]="true" #employeeCbx [data]="listEmployee"
-                (selectionChange)="onSelectEmployee($event)">
-            </kendo-combobox>
-            <kendo-combobox (selectionChange)="onChangeExamination($event)" placeholder="Loại khám"
-                class="mr-1" [data]="filterExamination" [textField]="'text'" [valueField]="'value'">
-            </kendo-combobox>
-            <kendo-combobox (selectionChange)="onChangeNotTreatment($event)" placeholder="Kết quả khám mới"
-                class="mr-1" style="width: auto;" [data]="filterNoTreatment" [textField]="'text'"
-                [valueField]="'value'">
-            </kendo-combobox>
-            <kendo-combobox (selectionChange)="onChangeState($event)" placeholder="Trạng thái"
-                style="width: auto;" [data]="filterState" [textField]="'text'" [valueField]="'value'">
-            </kendo-combobox>
-        </div>
-
-    </div>
-    <div class="total d-flex mt-2">
-        <div class="border box-overview mr-2 px-2 py-1 text-center">
-            <div>
-                <h5 class="mb-0">Tiếp nhận</h5>
+<div class="card">
+    <div class="card-body flex-1-1-100 right p-2 ml-2 d-flex flex-column">
+        <h5 class="flex-0-0-auto">Báo cáo tổng quan tiếp nhận</h5>
+        <div class="flex-0-0-auto mb-2">
+            <div class="filter d-flex flex-wrap mb-2">
+                <app-date-range-picker-filter [opens]="'right'" class="mr-1" [startDate]="dateFrom" [endDate]="dateTo"
+                    (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
+                <kendo-combobox width="auto" [placeholder]="'Tất cả chi nhánh'" class="mr-1" [valueField]="'id'"
+                    [textField]="'name'" [filterable]="true" [data]="listCompany"
+                    (selectionChange)="onSelectCompany($event)" #companyCbx>
+                </kendo-combobox>
+                <button class="btn btn-secondary mr-1" type="button" data-toggle="collapse"
+                    href="#panelsStayOpen-collapseOne" aria-expanded="false"
+                    aria-controls="panelsStayOpen-collapseOne"><i class="fas fa-filter"></i> Lọc nâng cao
+                </button>
+                <button class="btn btn-primary mr-auto" (click)="onExcelExport()"><i class="fas fa-download"></i> Xuất
+                    file</button>
+                <input class="form-control filter-search" placeholder="Tìm kiếm theo mã, tên, số điện thoại khách hàng"
+                    type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
             </div>
-            <div class="text-primary content-box">
-                <h1 class="total-qty">{{total || 0 | number}}</h1>
-            </div>
-        </div>
-        <div class="border box-overview mr-2 px-2 py-1">
-            <h5 class="mb-0 text-center">Loại khám</h5>
-            <div>
-                <div>
-                    <ng-container *ngIf="pieDataExamination.length; else elseTemplate">
-                        <div class="d-flex justify-content-center align-items-center"> 
-                            <div>
-                                <kendo-chart class="size-chart" [transitions]="true">                                            
-                                    <kendo-chart-series>
-                                        <kendo-chart-series-item type="pie" [data]="pieDataExamination"
-                                            field="countCustomerReceipt" [name]="'name'" categoryField="name">
-                                        </kendo-chart-series-item>
-                                    </kendo-chart-series>
-                                    <kendo-chart-legend [visible]="false" pói></kendo-chart-legend>
-                                </kendo-chart>
-                            </div>
-                            <div>
-                                <div *ngFor="let item of pieDataExamination">
-                                    <div>
-                                        <i class="fas fa-circle mr-2" [style.color]="item.color"></i>
-                                        <span>{{getInfo(item)}}</span>
-                                    </div>                             
-                                </div>                          
-                            </div>
-                        </div>                                          
-                    </ng-container>
-                    <ng-template #elseTemplate>
-                        <div class="text-center">
-                            <img src="./../../../assets/icons/NoData.svg" class="img-nodata ">
-                        </div>                      
-                    </ng-template>
+            <div class="accordion-collapse collapse " id="panelsStayOpen-collapseOne"
+                aria-labelledby="panelsStayOpen-headingOne">
+                <div class="filter d-flex flex-0-0-auto mt-2 ">
+                    <kendo-combobox class="mr-1" [placeholder]="'Bác sĩ'" [valueField]="'id'" [textField]="'name'"
+                        [filterable]="true" #employeeCbx [data]="listEmployee"
+                        (selectionChange)="onSelectEmployee($event)">
+                    </kendo-combobox>
+                    <kendo-combobox (selectionChange)="onChangeExamination($event)" placeholder="Loại khám" class="mr-1"
+                        [data]="filterExamination" [textField]="'text'" [valueField]="'value'">
+                    </kendo-combobox>
+                    <kendo-combobox (selectionChange)="onChangeNotTreatment($event)" placeholder="Kết quả khám mới"
+                        class="mr-1" style="width: auto;" [data]="filterNoTreatment" [textField]="'text'"
+                        [valueField]="'value'">
+                    </kendo-combobox>
+                    <kendo-combobox (selectionChange)="onChangeState($event)" placeholder="Trạng thái"
+                        style="width: auto;" [data]="filterState" [textField]="'text'" [valueField]="'value'">
+                    </kendo-combobox>
                 </div>
+
             </div>
-        </div>
-        <div class="box-overview border mr-2 px-2 py-1">
-            <h5 class="mb-0 text-center">Kết quả khám mới</h5>
-            <div>
-                <ng-container *ngIf="pieDataNoTreatment.length; else elseTemplate">
-                    <div class="d-flex justify-content-center align-items-center"> 
+            <div class="total d-flex mt-2">
+                <div class="border box-overview mr-2 px-2 py-1 text-center">
+                    <div>
+                        <h5 class="mb-0">Tiếp nhận</h5>
+                    </div>
+                    <div class="text-primary content-box">
+                        <h1 class="total-qty">{{total || 0 | number}}</h1>
+                    </div>
+                </div>
+                <div class="border box-overview mr-2 px-2 py-1">
+                    <h5 class="mb-0 text-center">Loại khám</h5>
+                    <div>
                         <div>
-                            <kendo-chart class="size-chart" [transitions]="true">                                            
-                                <kendo-chart-series>
-                                    <kendo-chart-series-item type="pie" [data]="pieDataNoTreatment"
-                                        field="countCustomerReceipt" [name]="'name'" categoryField="name">
-                                    </kendo-chart-series-item>
-                                </kendo-chart-series>
-                                <kendo-chart-legend [visible]="false" pói></kendo-chart-legend>
-                            </kendo-chart>
+                            <ng-container *ngIf="pieDataExamination.length; else elseTemplate">
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <div>
+                                        <kendo-chart class="size-chart" [transitions]="true">
+                                            <kendo-chart-series>
+                                                <kendo-chart-series-item type="pie" [data]="pieDataExamination"
+                                                    field="countCustomerReceipt" [name]="'name'" categoryField="name">
+                                                </kendo-chart-series-item>
+                                            </kendo-chart-series>
+                                            <kendo-chart-legend [visible]="false" pói></kendo-chart-legend>
+                                        </kendo-chart>
+                                    </div>
+                                    <div>
+                                        <div *ngFor="let item of pieDataExamination">
+                                            <div>
+                                                <i class="fas fa-circle mr-2" [style.color]="item.color"></i>
+                                                <span>{{getInfo(item)}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-container>
+                            <ng-template #elseTemplate>
+                                <div class="text-center">
+                                    <img src="./../../../assets/icons/NoData.svg" class="img-nodata ">
+                                </div>
+                            </ng-template>
                         </div>
-                        <div>
-                            <div *ngFor="let item of pieDataNoTreatment">
+                    </div>
+                </div>
+                <div class="box-overview border mr-2 px-2 py-1">
+                    <h5 class="mb-0 text-center">Kết quả khám mới</h5>
+                    <div>
+                        <ng-container *ngIf="pieDataNoTreatment.length; else elseTemplate">
+                            <div class="d-flex justify-content-center align-items-center">
                                 <div>
-                                    <i class="fas fa-circle mr-2" [style.color]="item.color"></i>
-                                    <span>{{getInfo(item)}}</span>
-                                </div>                             
-                            </div>                          
-                        </div>
-                    </div>      
-                </ng-container>
-                <ng-template #elseTemplate>
-                    <div class="text-center">
-                        <img src="./../../../assets/icons/NoData.svg" class="img-nodata ">
-                    </div>    
+                                    <kendo-chart class="size-chart" [transitions]="true">
+                                        <kendo-chart-series>
+                                            <kendo-chart-series-item type="pie" [data]="pieDataNoTreatment"
+                                                field="countCustomerReceipt" [name]="'name'" categoryField="name">
+                                            </kendo-chart-series-item>
+                                        </kendo-chart-series>
+                                        <kendo-chart-legend [visible]="false" pói></kendo-chart-legend>
+                                    </kendo-chart>
+                                </div>
+                                <div>
+                                    <div *ngFor="let item of pieDataNoTreatment">
+                                        <div>
+                                            <i class="fas fa-circle mr-2" [style.color]="item.color"></i>
+                                            <span>{{getInfo(item)}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-container>
+                        <ng-template #elseTemplate>
+                            <div class="text-center">
+                                <img src="./../../../assets/icons/NoData.svg" class="img-nodata ">
+                            </div>
+                        </ng-template>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <kendo-grid #grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+            (pageChange)="pageChange($event)">
+            <kendo-grid-column title="Ngày tiếp nhận" width="100">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    {{dataItem.dateWaiting | date:'shortDate'}}
                 </ng-template>
-            </div>
-        </div>
-
+            </kendo-grid-column>
+            <kendo-grid-column title="Khách hàng" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    <a class="text-primary" title="Xem hồ sơ khách hàng"
+                        [routerLink]="['/partners/customer/' + dataItem.partner.id]">
+                        {{dataItem.partner?.name}}
+                    </a>
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column title="Dịch vụ" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    <span isEllipsisActive class="d-inline-block text-truncate">
+                        {{dataItem.products}}
+                    </span>
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column title="Bác sĩ" width="100">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    {{dataItem.doctorName}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column title="Giờ tiếp nhận" width="100">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    {{dataItem.dateWaiting | date: 'HH:mm'}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column title="Thời gian phục vụ" width="100">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    {{ getMinute(dataItem.minuteTotal)}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column title="Loại khám" width="100">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    {{getExamination(dataItem.isRepeatCustomer)}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column title="Kết quả khám mới" width="100">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    {{dataItem.state != 'done' ? '' : getTreatment(dataItem.isNoTreatment)}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column title="Trạng thái" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    {{getState(dataItem.state)}}
+                </ng-template>
+            </kendo-grid-column>
+        </kendo-grid>
     </div>
-    <div class="o_content mt-2">
-        <div class="o_dashboard_view">
-
-            <div>
-                <kendo-grid #grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true"
-                    [loading]="loading" (pageChange)="pageChange($event)">
-                    <kendo-grid-column title="Ngày tiếp nhận" width="100">
-                        <ng-template kendoGridCellTemplate let-dataItem>
-                            {{dataItem.dateWaiting | date:'shortDate'}}
-                        </ng-template>
-                    </kendo-grid-column>
-                    <kendo-grid-column title="Khách hàng" width="120">
-                        <ng-template kendoGridCellTemplate let-dataItem>
-                            <a class="text-primary" title="Xem hồ sơ khách hàng"
-                                [routerLink]="['/partners/customer/' + dataItem.partner.id]">
-                                {{dataItem.partner?.name}}
-                            </a>
-                        </ng-template>
-                    </kendo-grid-column>
-                    <kendo-grid-column title="Dịch vụ" width="120">
-                        <ng-template kendoGridCellTemplate let-dataItem>
-                            <span isEllipsisActive class="d-inline-block text-truncate">
-                                {{dataItem.products}}
-                            </span>
-                        </ng-template>
-                    </kendo-grid-column>
-                    <kendo-grid-column title="Bác sĩ" width="100">
-                        <ng-template kendoGridCellTemplate let-dataItem>
-                            {{dataItem.doctorName}}
-                        </ng-template>
-                    </kendo-grid-column>
-                    <kendo-grid-column title="Giờ tiếp nhận" width="100">
-                        <ng-template kendoGridCellTemplate let-dataItem>
-                            {{dataItem.dateWaiting | date: 'HH:mm'}}
-                        </ng-template>
-                    </kendo-grid-column>
-                    <kendo-grid-column title="Thời gian phục vụ" width="100">
-                        <ng-template kendoGridCellTemplate let-dataItem>
-                            {{ getMinute(dataItem.minuteTotal)}}
-                        </ng-template>
-                    </kendo-grid-column>
-                    <kendo-grid-column title="Loại khám" width="100">
-                        <ng-template kendoGridCellTemplate let-dataItem>
-                            {{getExamination(dataItem.isRepeatCustomer)}}
-                        </ng-template>
-                    </kendo-grid-column>
-                    <kendo-grid-column title="Kết quả khám mới" width="100">
-                        <ng-template kendoGridCellTemplate let-dataItem>
-                            {{dataItem.state != 'done' ? '' : getTreatment(dataItem.isNoTreatment)}}
-                        </ng-template>
-                    </kendo-grid-column>
-                    <kendo-grid-column title="Trạng thái" width="120">
-                        <ng-template kendoGridCellTemplate let-dataItem>
-                            {{getState(dataItem.state)}}
-                        </ng-template>
-                    </kendo-grid-column>
-                </kendo-grid>
-            </div>
-        </div>
-    </div>
-
 </div>
+

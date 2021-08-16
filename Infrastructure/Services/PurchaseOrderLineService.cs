@@ -102,7 +102,7 @@ namespace Infrastructure.Services
                 PurchaseLineId = self.Id,
                 ProductUoMId = self.ProductUOMId,
                 ProductId = self.ProductId,
-                PriceUnit = self.PriceUnit,
+                PriceUnit = self.PriceSubtotal,
                 Quantity = qty,
                 PartnerId = move.PartnerId,
             };
