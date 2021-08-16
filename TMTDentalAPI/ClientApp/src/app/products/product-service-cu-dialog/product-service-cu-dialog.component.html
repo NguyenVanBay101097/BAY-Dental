@@ -61,7 +61,7 @@
                                                         (filterChange)="categCbxFilterChange2($event)"
                                                         [loading]="categCbxLoading">
                                                     </kendo-combobox>
-                                                    <a class="btn btn-sm btn-light" (click)="quickCreateCateg()">
+                                                    <a class="btn btn-light" (click)="quickCreateCateg()">
                                                         <span class="k-icon k-i-plus"></span>
                                                     </a>
                                                 </div>
@@ -144,7 +144,7 @@
                                             placeholder="Nhập tên công đoạn sau đó nhấn enter"
                                             (keydown)="onKeyDownStepName($event)" />
                                         <div class="input-group-append">
-                                            <button type="button" class="btn btn-primary btn-sm"
+                                            <button type="button" class="btn btn-primary"
                                                 (click)="createTempProductStepList()">Thêm</button>
                                         </div>
                                         <i class="fas fa-question-circle ml-2 text-primary"
@@ -178,11 +178,11 @@
                                         </td>
                                         <td colspan="1">
                                             <button type="button" [disabled]=" disableButton(i.order,true)"
-                                                class="btn btn-light btn-sm mr-2"
+                                                class="btn btn-light mr-2"
                                                 (click)="editStepOrCancel(i.order, i.name)">
                                                 <i class="fas fa-pen"></i>
                                             </button>
-                                            <button type="button" class="btn btn-light btn-sm mr-2"
+                                            <button type="button" class="btn btn-light mr-2"
                                                 (click)="removeStepListItem(i.order)"
                                                 [disabled]=" disableButton(i.order,false)">
                                                 <i class="fas fa-trash"></i>
@@ -197,7 +197,7 @@
                             <div>
                                 <div class="mb-2">
                                     <button type="button" (click)="createMaterialProduct()" 
-                                    class="btn btn-sm btn-primary">Thêm vật tư mới</button>
+                                    class="btn btn-primary">Thêm vật tư mới</button>
                                 </div>
                              
                                 <table class="table table-sm b-table-border table-tbody-ver-align-middle border-bottom">
@@ -240,7 +240,7 @@
                                                 </td>
                                                 <td>
                                                     <button type="button" (click)="deleteMaterialProduct(i)"
-                                                        class="btn btn-icon btn-sm btn-light text-right">
+                                                        class="btn btn-icon btn-light text-right">
                                                         <span class="k-icon k-i-delete"></span>
                                                     </button>
                                                 </td>
@@ -250,7 +250,7 @@
                                     </tbody>
                                 </table>
                                 <button type="button" (click)="addMaterialProduct()"
-                                    class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> Thêm vật tư</button>
+                                    class="btn btn-primary"><i class="fas fa-plus"></i> Thêm vật tư</button>
                             </div>
                         </div>
                     </div>

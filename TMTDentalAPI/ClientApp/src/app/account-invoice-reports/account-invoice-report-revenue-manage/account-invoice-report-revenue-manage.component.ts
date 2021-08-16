@@ -29,14 +29,15 @@ export class AccountInvoiceReportRevenueManageComponent implements OnInit {
   }
 
   exportData(e) {
-    
     var data = e.data;
     var args = e.args;
     var filter = e.filter;
     var employeeFilter = e.employeeFilter || 'none';
     var title = e.title || 'doanhthu';
-    var showPartner = e.showPartner;
-    console.log(showPartner);
+    var showPartner = typeof e.showPartner == 'undefined' ? true: false;
+    var showInvoiceDate = typeof e.showInvoiceDate == 'undefined' ? true: false;
+    
+    
     
     // Prevent automatically saving the file. We will save it manually after we fetch and add the details
     args.preventDefault();
@@ -115,6 +116,19 @@ export class AccountInvoiceReportRevenueManageComponent implements OnInit {
               ]
             });
           }
+          else if (showInvoiceDate == false){
+            rows.splice(idx + 3, 0, {
+              cells: [
+                {},
+                { value: line.invoiceOrigin },
+                { value: line.partnerName },
+                { value: line.employeeName },
+                { value: line.assistantName },
+                { value: line.productName },
+                { value: line.priceSubTotal.toLocaleString('vi'), textAlign: 'right' }
+              ]
+            });
+          }
           else {
             rows.splice(idx + 3, 0, {
               cells: [
@@ -138,6 +152,19 @@ export class AccountInvoiceReportRevenueManageComponent implements OnInit {
               {},
               Object.assign({}, headerOptions, { value: 'Ngày thanh toán', background: '#aabbcc', width: 20 }),
               Object.assign({}, headerOptions, { value: 'Số phiếu', background: '#aabbcc', width: 200 }),
+              Object.assign({}, headerOptions, { value: 'Bác sĩ', background: '#aabbcc', width: 200 }),
+              Object.assign({}, headerOptions, { value: 'Phụ tá', background: '#aabbcc', width: 200 }),
+              Object.assign({}, headerOptions, { value: 'Dịch vụ/Thuốc', background: '#aabbcc', width: 200 }),
+              Object.assign({}, headerOptions, { value: 'Thanh toán', background: '#aabbcc', width: 200 })
+            ]
+          });
+        }
+        else if (showInvoiceDate == false) {
+          rows.splice(idx + 3, 0, {
+            cells: [
+              {},
+              Object.assign({}, headerOptions, { value: 'Số phiếu', background: '#aabbcc', width: 200 }),
+              Object.assign({}, headerOptions, { value: 'Khách hàng', background: '#aabbcc', width: 200 }),
               Object.assign({}, headerOptions, { value: 'Bác sĩ', background: '#aabbcc', width: 200 }),
               Object.assign({}, headerOptions, { value: 'Phụ tá', background: '#aabbcc', width: 200 }),
               Object.assign({}, headerOptions, { value: 'Dịch vụ/Thuốc', background: '#aabbcc', width: 200 }),

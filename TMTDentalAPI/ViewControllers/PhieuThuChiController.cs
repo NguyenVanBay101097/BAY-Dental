@@ -35,7 +35,9 @@ namespace TMTDentalAPI.ViewControllers
                 .Include(x => x.Company)
                 .Include(x => x.CreatedBy)
                 .Include(x => x.Partner)
-                .Include(x => x.LoaiThuChi).FirstOrDefaultAsync();
+                .Include(x => x.LoaiThuChi)
+                .Include(x => x.Journal)
+                .FirstOrDefaultAsync();
 
             var phieu = _mapper.Map<PhieuThuChiPrintVM>(res);
 

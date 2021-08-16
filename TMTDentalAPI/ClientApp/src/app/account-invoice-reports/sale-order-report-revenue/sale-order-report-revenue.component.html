@@ -1,6 +1,6 @@
 <div class="card">
     <div class="card-body">
-        <h5 class="flex-0-0-auto">Dự kiến doanh thu</h5>
+        <h5 class="card-title">Dự kiến doanh thu</h5>
         <div class="total d-flex">
             <div class="border mr-2 px-5 py-2 text-center">
                 <label class="mb-0">Tổng điều trị</label>
@@ -16,7 +16,7 @@
             </div>
 
         </div>
-        <div class="filter d-flex flex-0-0-auto mt-2">
+        <div class="form-inline">
             <kendo-combobox width="auto" [placeholder]="'Tất cả chi nhánh'" class="mr-1" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
             </kendo-combobox>
             <div class="dropdown mr-1">

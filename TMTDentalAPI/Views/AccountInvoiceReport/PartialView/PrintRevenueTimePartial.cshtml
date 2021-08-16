@@ -28,7 +28,6 @@
             <table class="table table-bordered table-sm">
                 <thead>
                     <tr class="bg-info font-semibold">
-                        <th scope="col" class="" style="width:100px">Ngày thanh toán</th>
                         <th scope="col" class="" style="width:100px">Số phiếu</th>
                         <th scope="col" class="" style="width:100px">Khách hàng</th>
                         <th scope="col" class="" style="width:100px">Bác sĩ</th>
@@ -42,7 +41,6 @@
                     @foreach (var row in item.Lines)
                     {
                         <tr>
-                            <td class="" style="width:100px">@(row.InvoiceDate.Value.ToString("dd/MM/yyyy"))</td>
                             <td class="" style="width:100px">@(row.InvoiceOrigin)</td>
                             <td class="" style="width:100px">@(row.PartnerName)</td>
                             <td class="" style="width:100px">@(row.EmployeeName)</td>
