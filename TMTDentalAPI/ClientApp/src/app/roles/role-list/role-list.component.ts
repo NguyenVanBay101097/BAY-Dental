@@ -34,7 +34,8 @@ export class RoleListComponent implements OnInit {
     private notificationService: NotificationService,
     private authResource: AuthResource,
     private modalService: NgbModal,
-    private route: Router) { }
+    private router: Router,
+    private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -73,11 +74,11 @@ export class RoleListComponent implements OnInit {
   }
 
   createItem() {
-    this.route.navigate(['/roles/form']);
+    this.router.navigate(['form'], { relativeTo: this.route });
   }
 
   editItem(item) {
-    this.route.navigate(['/roles/form'], { queryParams: { id: item.id } });
+    this.router.navigate(['form'], { relativeTo: this.route, queryParams: { id: item.id } });
   }
 
   deleteItem(item) {
