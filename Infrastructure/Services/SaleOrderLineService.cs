@@ -1009,7 +1009,7 @@ namespace Infrastructure.Services
                         foreach (var child in promotion.Lines)
                         {
                             child.Amount = promotion.Amount;
-                            child.PriceUnit = (double)(line.ProductUOMQty != 0 ? (promotion.Amount) : 0);
+                            child.PriceUnit = (double)(line.ProductUOMQty != 0 ? (promotion.Amount/line.ProductUOMQty) : 0);
                         }
                     }
                 }
@@ -1143,6 +1143,8 @@ namespace Infrastructure.Services
 
             var saleLineObj = GetService<ISaleOrderLineService>();
             await orderObj.ComputeToUpdateSaleOrder(order);
+            if (order.AmountTotal < 0 || order.Residual < 0)
+                throw new Exception("Không thể lưu phiếu điều trị khi số tiền còn lại bé hơn 0");
             await orderObj.UpdateAsync(order);
             //action done order
             var isOrderDone = (await SearchQuery(x => x.OrderId == entity.OrderId).AllAsync(x => x.State == "done" || x.State == "cancel"))
