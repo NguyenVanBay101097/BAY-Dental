@@ -47,11 +47,11 @@
                             <label class="o_form_label o_form_label_help">
                                 @if (Model.Type == "advance")
                                 {
-                                    <span>Người nhận tiền</span>
+                                   <span>Người nộp tiền</span>
                                 }
                                 else
                                 {
-                                    <span>Người nộp tiền</span>
+                                    <span>Người nhận tiền</span>
                                 }
                             </label>
                         </td>
@@ -117,13 +117,13 @@
         </div>
         <div class="col">
             <div class="text-center">
-                @if (Model.Type == "chi")
-                {
-                    <span class="font-semibold">Người nhận tiền</span> <br />
-                }
-                else
+                @if (Model.Type == "advance")
                 {
                     <span class="font-semibold">Người nộp tiền</span> <br />
+                }
+                else
+                {                   
+                    <span class="font-semibold">Người nhận tiền</span> <br />
                 }
                 <i>(Ký, họ tên)</i> <br />
                 <span></span> <br />

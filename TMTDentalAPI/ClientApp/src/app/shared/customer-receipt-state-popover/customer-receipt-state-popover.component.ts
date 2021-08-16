@@ -46,6 +46,7 @@ export class CustomerReceiptStatePopoverComponent implements OnInit {
 
   reLoad() {
     if (this.item) {
+      debugger
       this.formGroup.get('state').setValue(this.item.state);
       if (this.item.state == 'done' && this.item.isNoTreatment) {
         this.formGroup.get('isNoTreatment').setValue(this.item.isNoTreatment);

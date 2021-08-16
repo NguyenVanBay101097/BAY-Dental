@@ -41,4 +41,16 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
- }
+}
+
+.filter {
+    margin-top: -.5rem!important;
+}
+
+.filter>* {
+    margin-top: .5rem!important;
+}
+
+.filter-search {
+    max-width: 335px;
+}

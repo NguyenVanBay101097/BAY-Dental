@@ -6,7 +6,7 @@
                     <div class=" mr-2 px-2 py-1">
                         <h5 class="mb-0">Khách hàng phát sinh PĐT mới</h5>
                         <div>
-                            <ng-container *ngIf="pieDataCustomer.length; else elseTemplate">
+                            <ng-container *ngIf="pieDataCustomer?.length; else elseTemplate">
                                 <div class="d-flex justify-content-center align-items-center">
                                     <div>
                                         <kendo-chart class="size-chart" [transitions]="true">
@@ -57,7 +57,7 @@
                     <div class="mr-2 px-2 py-1">
                         <h5 class="mb-0">Tiếp nhận khách khám mới</h5>
                         <div>
-                            <ng-container *ngIf="dataNoTreatment.length; else elseTemplate">
+                            <ng-container *ngIf="dataNoTreatment?.length; else elseTemplate">
                                 <div class="d-flex justify-content-center align-items-center">
                                     <div>
                                         <kendo-chart class="size-chart" [transitions]="true">

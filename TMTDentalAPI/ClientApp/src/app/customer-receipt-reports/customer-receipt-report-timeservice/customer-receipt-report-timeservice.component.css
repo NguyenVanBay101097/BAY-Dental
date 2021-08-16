@@ -35,3 +35,15 @@
   color: #007bff !important;
   background-color: #fff !important;
 }
+
+.filter {
+  margin-top: -.5rem!important;
+}
+
+.filter>* {
+  margin-top: .5rem!important;
+}
+
+.filter-search {
+  max-width: 335px;
+}

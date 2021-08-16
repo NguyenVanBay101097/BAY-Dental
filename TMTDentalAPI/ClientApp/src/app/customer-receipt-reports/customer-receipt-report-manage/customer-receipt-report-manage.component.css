@@ -1,19 +1,19 @@
 .type a:hover,
 .type .active {
     color: white;
-    border-radius: 6px;
+    border-radius: 4px;
     background: #007bff;
+    cursor: pointer;
     text-decoration: none;
-    -webkit-border-radius: 6px;
-    -moz-border-radius: 6px;
-    -ms-border-radius: 6px;
-    -o-border-radius: 6px;
 }
 
 .type a {
-    padding: 0.5rem;
+    padding: .4rem;
     color: black;
-    cursor: pointer;
+}
+
+.type a:not(:first-child) {
+    margin-top: 3px;
 }
 
 .bg-gray {
@@ -26,4 +26,8 @@
 
 .k-grid-footer-wrap table tfoot tr td {
     border: none;
+}
+
+.nav-item{
+    text-align: left;
 }
