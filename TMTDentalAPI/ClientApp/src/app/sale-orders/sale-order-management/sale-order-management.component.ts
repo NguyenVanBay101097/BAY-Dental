@@ -10,6 +10,7 @@ import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/co
 import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
 import { SaleOrderPaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { SaleOrderLinePaged } from 'src/app/partners/partner.service';
+import { PrintService } from 'src/app/shared/services/print.service';
 
 @Component({
   selector: 'app-sale-order-management',
@@ -43,7 +44,8 @@ export class SaleOrderManagementComponent implements OnInit {
     private companyService: CompanyService,
     private saleOrderService: SaleOrderService,
     private router: Router,
-    private saleOrderLineService: SaleOrderLineService
+    private saleOrderLineService: SaleOrderLineService,
+    private printService: PrintService
   ) { }
 
   ngOnInit() {
@@ -67,7 +69,7 @@ export class SaleOrderManagementComponent implements OnInit {
     })
   }
 
-  loadDataFromApi() {
+  getPageParam() {
     var val = new SaleOrderPaged();
     val.search = this.search ? this.search : '';
     val.companyId = this.company ? this.company.id : "";
@@ -79,6 +81,10 @@ export class SaleOrderManagementComponent implements OnInit {
       val.overIntervalNbr = this.dateOrderTo.intervalNbr;
     }
 
+    return val;
+  }
+  loadDataFromApi() {
+    var val = this.getPageParam();
     this.saleOrderService.getPaged(val).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
@@ -152,7 +158,7 @@ export class SaleOrderManagementComponent implements OnInit {
 
     for (var rowIndex = 1; rowIndex < rows.length; rowIndex++) {
       var row = rows[rowIndex];
-      for (var cellIndex = 0; cellIndex < row.cells.length; cellIndex ++) {
+      for (var cellIndex = 0; cellIndex < row.cells.length; cellIndex++) {
         if (cellIndex == 0) {
           row.cells[cellIndex].format = "dd/MM/yyyy HH:mm";
         } else if (cellIndex == 3 || cellIndex == 4 || cellIndex == 5) {
@@ -259,6 +265,39 @@ export class SaleOrderManagementComponent implements OnInit {
     //     window.URL.revokeObjectURL(data);
     //   }, 100);
     // });
+  }
+
+  onExportPDF() {
+    var val = this.getPageParam();
+    this.saleOrderService.managementPdf(val).subscribe(res => {
+      this.loading = false;
+      let filename = "BaoCaoDieuTri";
+
+      let newBlob = new Blob([res], {
+        type:
+          "application/pdf",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
+  }
+
+
+  onPrint() {
+    var val = this.getPageParam();
+    this.loading = true;
+    this.saleOrderService.printManagement(val).subscribe((result: any) => {
+      this.loading = false;
+      this.printService.printHtml(result);
+    });
   }
 
 }

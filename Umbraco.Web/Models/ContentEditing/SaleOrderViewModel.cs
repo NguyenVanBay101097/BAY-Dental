@@ -97,4 +97,15 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? CompanyId { get; set; }
     }
 
+    public class GetPrintManagementItemRes: SaleOrderBasic
+    {
+        public IEnumerable<SaleOrderLineDisplay> Lines { get; set; } = new List<SaleOrderLineDisplay>();
+    }
+    public class GetPrintManagementRes
+    {
+        public IEnumerable<GetPrintManagementItemRes> Data { get; set; } = new List<GetPrintManagementItemRes>();
+        public CompanyPrintVM Company { get; set; }
+        public ApplicationUserSimple User { get; set; }
+    }
+
 }

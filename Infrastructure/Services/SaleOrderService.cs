@@ -1295,10 +1295,10 @@ namespace Infrastructure.Services
         //    return res;
         //}
 
-        public async Task<IEnumerable<SaleOrderLineDisplay>> GetSaleOrderLineBySaleOrder(Guid id)
+        public async Task<IEnumerable<SaleOrderLineDisplay>> GetSaleOrderLineBySaleOrder(Guid? id)
         {
             var lineObj = GetService<ISaleOrderLineService>();
-            var lines = await lineObj.SearchQuery(x => x.OrderId == id && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence))
+            var lines = await lineObj.SearchQuery(x => (id == null || x.OrderId == id) && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence))
              .Include(x => x.Advisory)
              .Include(x => x.Assistant)
              .Include(x => x.PromotionLines).ThenInclude(x => x.Promotion)
@@ -3134,6 +3134,33 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.CompanyId == val.CompanyId);
 
             return await query.LongCountAsync();
+        }
+
+        public async Task<GetPrintManagementRes> GetPrintManagement(SaleOrderPaged val)
+        {
+            val.Limit = 0;
+            var data = await GetPagedResultAsync(val);
+            var allData = _mapper.Map<IEnumerable<GetPrintManagementItemRes>>(data.Items);
+            var allLines = await GetSaleOrderLineBySaleOrder(null);
+            foreach (var item in allData)
+            {
+                item.Lines = allLines.Where(x=> x.OrderId == item.Id).ToList();
+            }
+            var res = new GetPrintManagementRes()
+            {
+                Data = allData
+            };
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId);
+            res.User = _mapper.Map<ApplicationUserSimple>(user);
+
+            if (val.CompanyId.HasValue)
+            {
+                var companyObj = GetService<ICompanyService>();
+                res.Company = _mapper.Map<CompanyPrintVM>(await companyObj.SearchQuery(x => x.Id == val.CompanyId)
+                    .Include(x => x.Partner).FirstOrDefaultAsync());
+            }
+
+            return res;
         }
     }
 }

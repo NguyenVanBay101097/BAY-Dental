@@ -66,7 +66,7 @@ namespace Infrastructure.Services
 
         //Task<SaleOrderDisplay> GetDisplayAsync(Guid id);
 
-        Task<IEnumerable<SaleOrderLineDisplay>> GetSaleOrderLineBySaleOrder(Guid id);
+        Task<IEnumerable<SaleOrderLineDisplay>> GetSaleOrderLineBySaleOrder(Guid? id);
 
         Task<SaleOrder> CreateOrderAsync(SaleOrderSave val);
 
@@ -93,5 +93,6 @@ namespace Infrastructure.Services
 
         Task ComputeToUpdateSaleOrder(SaleOrder order);
         Task<RevenueReportPrintVM<SaleOrderRevenueReport>> GetRevenueReportPrint(SaleOrderRevenueReportPaged val);
+        Task<GetPrintManagementRes> GetPrintManagement(SaleOrderPaged val);
     }
 }
