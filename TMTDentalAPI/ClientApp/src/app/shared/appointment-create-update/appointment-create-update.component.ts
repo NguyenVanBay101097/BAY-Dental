@@ -157,7 +157,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     val.limit = 20;
     val.offset = 0
     val.search = q || '';
-    val.type = "service";
+    val.type2 = "service";
     return this.productService.autocomplete2(val);
   }
 
@@ -301,13 +301,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   onCreateNewAppointment(){
     this.appointId = null;
     this.title = 'Đặt lịch hẹn' 
-    this.formGroup.reset();
-    console.log(this.formGroup);
-    let date = new Date();
-    this.formGroup.get('timeExpected').patchValue(30);
-    this.formGroup.get('state').patchValue('confirmed');
-    this.formGroup.get('dateObj').patchValue(date);
-    this.formGroup.get('timeObj').patchValue(date);
+    this.defaultGet();
   }
 
   onChange(){
@@ -462,6 +456,11 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
           if (rs.doctor) {
             this.filteredEmployees = _.unionBy(this.filteredEmployees, [rs.doctor], 'id');
+          }
+
+          if (this.stateControl == 'cancel') {
+            this.formGroup.get("reason").setValidators([Validators.minLength(0), Validators.required]);
+            this.formGroup.get("reason").updateValueAndValidity();
           }
         },
         er => {

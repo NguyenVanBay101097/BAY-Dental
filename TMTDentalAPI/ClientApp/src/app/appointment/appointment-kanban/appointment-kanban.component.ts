@@ -666,7 +666,7 @@ export class AppointmentKanbanComponent implements OnInit {
       cellTime.textContent = `${i < 10 ? `0${i}` : i}:00 - ${i + 1 < 10 ? `0${i + 1}` : i + 1}:00`;
       let cell = document.createElement('td');
       cell.classList.add('td-day');
-      cell.id = `${year}-${('0' + month).slice(-2)}-${('0' + day).slice(-2)}-${('0' + i).slice(-2)}`;
+      cell.id = `${year}-${('0' + month).slice(-2)}-${('0' + firstDate.getDate()).slice(-2)}-${('0' + i).slice(-2)}`;
 
       let cell_dateEvent = document.createElement('div');
       cell_dateEvent.classList.add('list-data-event-day');
