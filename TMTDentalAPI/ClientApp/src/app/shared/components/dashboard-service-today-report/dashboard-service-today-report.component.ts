@@ -141,8 +141,18 @@ export class DashboardServiceTodayReportComponent implements OnInit {
     }
   }
 
-  getTeethDisplay(teeth) {
-    return teeth.map(x => x.name).join(',');
+  showTeethList(toothType, teeth) {
+    //dựa vào this.line
+    switch (toothType) {
+      case 'whole_jaw':
+        return 'Nguyên hàm';
+      case 'upper_jaw':
+        return 'Hàm trên';
+      case 'lower_jaw':
+        return 'Hàm dưới';
+      default:
+        return teeth.map(x => x.name).join(', ');
+    }
   }
 
   getStateDisplay(state) {

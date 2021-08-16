@@ -36,7 +36,7 @@
         <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="teeth" title="Răng"
             width="120">
             <ng-template kendoGridCellTemplate let-dataItem>
-                {{getTeethDisplay(dataItem.teeth)}}
+                {{showTeethList(dataItem.toothType, dataItem.teeth)}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="diagnostic"
