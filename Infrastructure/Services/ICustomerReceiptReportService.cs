@@ -21,5 +21,7 @@ namespace Infrastructure.Services
         Task<IEnumerable<CustomerReceiptGetCountItem>> GetCountCustomerReceiptNotreatment(CustomerReceiptReportFilter val);
 
         Task<long> GetCountTime(CustomerReceiptReportFilter val);
+        Task<CustomerReceiptReportPdf<CustomerReceiptReportBasic>> GetPagedResultPdf(CustomerReceiptReportFilter val);
+        Task<CustomerReceiptReportPdf<CustomerReceiptForTimePdf>> GetCustomerReceiptForTimePdf(CustomerReceiptReportFilter val);
     }
 }

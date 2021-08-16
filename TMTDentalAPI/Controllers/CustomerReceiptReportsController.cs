@@ -1,4 +1,7 @@
-﻿using Infrastructure.Services;
+﻿using ApplicationCore.Utilities;
+using DinkToPdf;
+using DinkToPdf.Contracts;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
@@ -19,10 +22,15 @@ namespace TMTDentalAPI.Controllers
     {
         private readonly ICustomerReceiptReportService _customerReceiptReportService;
         private readonly IProductService _productService;
-        public CustomerReceiptReportsController(ICustomerReceiptReportService customerReceiptReportService, IProductService productService)
+        private readonly IViewRenderService _viewRenderService;
+        private IConverter _converter;
+        public CustomerReceiptReportsController(ICustomerReceiptReportService customerReceiptReportService, IProductService productService,
+            IViewRenderService viewRenderService, IConverter converter)
         {
             _productService = productService;
             _customerReceiptReportService = customerReceiptReportService;
+            _viewRenderService = viewRenderService;
+            _converter = converter;
         }
 
         [HttpGet]
@@ -386,6 +394,64 @@ namespace TMTDentalAPI.Controllers
             stream.Position = 0;
 
             return new FileContentResult(fileContent, mimeType);
+        }
+
+        private FileContentResult Pdfbase(string html, string fileName, string TitleBottom = "")
+        {
+            var globalSettings = new GlobalSettings
+            {
+                ColorMode = ColorMode.Color,
+                Orientation = Orientation.Landscape,
+                PaperSize = PaperKind.A4,
+                Margins = new MarginSettings { Top = 10 },
+                DocumentTitle = "PDF Report"
+            };
+            var objectSettings = new ObjectSettings
+            {
+                PagesCount = true,
+                HtmlContent = html,
+                WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/css", "print.css") },
+                FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = $@"{TitleBottom}", Right = "Page [page] of [toPage]" }
+            };
+            var pdf = new HtmlToPdfDocument()
+            {
+                GlobalSettings = globalSettings,
+                Objects = { objectSettings }
+            };
+            var file = _converter.Convert(pdf);
+            return File(file, "application/pdf", $@"{fileName}.pdf");
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> ReportPagedPdf([FromQuery] CustomerReceiptReportFilter val)
+        {
+            var data = await _customerReceiptReportService.GetPagedResultPdf(val);
+            var html = _viewRenderService.Render("SaleOrder/ReportPagedPdf", data);
+            return Pdfbase(html, "Tổng quan tiếp nhận", "TongQuanTiepNhan");
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> ReportPagedForTimePdf([FromQuery] CustomerReceiptReportFilter val)
+        {
+            var data = await _customerReceiptReportService.GetPagedResultPdf(val);
+            var html = _viewRenderService.Render("SaleOrder/ReportPagedForTimePdf", data);
+            return Pdfbase(html, "Báo cáo Tiếp nhận theo giờ", "Tiepnhantheogio");
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> ReportPagedFortimeServicePdf([FromQuery] CustomerReceiptReportFilter val)
+        {
+            var data = await _customerReceiptReportService.GetPagedResultPdf(val);
+            var html = _viewRenderService.Render("SaleOrder/ReportPagedFortimeServicePdf", data);
+            return Pdfbase(html, "Báo cáo Tiếp nhận theo thời gian phục vụ", "Tiepnhanthoigianphucvu");
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> ReportPagedForNoTreatmentPdf([FromQuery] CustomerReceiptReportFilter val)
+        {
+            var data = await _customerReceiptReportService.GetPagedResultPdf(val);
+            var html = _viewRenderService.Render("SaleOrder/ReportPagedForNoTreatmentPdf", data);
+            return Pdfbase(html, "Báo cáo Tiếp nhận không điều trị", "Tiepnhankhongdieutri");
         }
 
     }

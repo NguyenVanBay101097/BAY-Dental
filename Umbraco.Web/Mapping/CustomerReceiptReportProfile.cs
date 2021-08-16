@@ -12,7 +12,9 @@ namespace Umbraco.Web.Mapping
         public CustomerReceiptReportProfile()
         {
             CreateMap<CustomerReceiptReport, CustomerReceiptReportBasic>();
-       
+            CreateMap<CustomerReceiptReportFilter, CustomerReceiptTimeDetailFilter>();
+            CreateMap<CustomerReceiptReportTime, CustomerReceiptReportTime>();
+
         }
     }
 }
