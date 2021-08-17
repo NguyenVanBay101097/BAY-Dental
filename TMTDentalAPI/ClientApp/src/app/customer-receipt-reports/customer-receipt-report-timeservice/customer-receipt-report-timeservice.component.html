@@ -35,12 +35,12 @@
         </div>
         <kendo-grid #grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true"
         [loading]="loading" (pageChange)="pageChange($event)">
-        <kendo-grid-column title="Ngày tiếp nhận" width="100">
+        <kendo-grid-column title="Ngày tiếp nhận" width="120">
             <ng-template kendoGridCellTemplate let-dataItem>
                 {{dataItem.dateWaiting | date:'shortDate'}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column title="Khách hàng" width="120">
+        <kendo-grid-column title="Khách hàng" width="200">
             <ng-template kendoGridCellTemplate let-dataItem>
                 <a class="text-primary" title="Xem hồ sơ khách hàng"
                     [routerLink]="['/partners/customer/' + dataItem.partner.id]">
@@ -48,14 +48,14 @@
                 </a>
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column title="Dịch vụ" width="120">
+        <kendo-grid-column title="Dịch vụ" width="150">
             <ng-template kendoGridCellTemplate let-dataItem>
-                <span isEllipsisActive class="d-inline-block text-truncate">
+                <span isEllipsisActive class="cus-text-truncate">
                     {{dataItem.products}}
                 </span>
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column title="Bác sĩ" width="100">
+        <kendo-grid-column title="Bác sĩ" width="120">
             <ng-template kendoGridCellTemplate let-dataItem>
                 {{dataItem.doctorName}}
             </ng-template>
@@ -65,17 +65,17 @@
                 {{getExamination(dataItem.isRepeatCustomer)}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column title="Thời gian phục vụ" width="100">
+        <kendo-grid-column title="Thời gian phục vụ" width="150">
             <ng-template kendoGridCellTemplate let-dataItem>
                 {{dataItem.minuteTotal ? getMinute(dataItem.minuteTotal) : '' }}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column title="Thời gian chờ khám" width="100">
+        <kendo-grid-column title="Thời gian chờ khám" width="150">
             <ng-template kendoGridCellTemplate let-dataItem>
                 {{dataItem.minuteWaiting ? getMinute(dataItem.minuteWaiting) : '' }}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column title="Thời gian khám" width="100">
+        <kendo-grid-column title="Thời gian khám" width="120">
             <ng-template kendoGridCellTemplate let-dataItem>
                 {{dataItem.minuteExamination ? getMinute(dataItem.minuteExamination) : ''}}
             </ng-template>
