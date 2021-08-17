@@ -173,7 +173,7 @@ export class AppointmentKanbanComponent implements OnInit {
       this.state = state;
       this.isLateFilter = undefined;
     }
-   
+
     this.renderCalendar(); // Render Calendar
   }
 
@@ -863,8 +863,14 @@ export class AppointmentKanbanComponent implements OnInit {
             const idCell = `${year}-${('0' + month).slice(-2)}-${('0' + date).slice(-2)}`;
             let cell_dateEventEl = document.querySelector(`[id='${idCell}'] .date-event`);
             let dataAppointmentsGroupedState = this.dataAppointmentsGrouped[key].reduce(function (r, a) {
-              r[a.state] = r[a.state] || [];
-              r[a.state].push(a);
+              if (a.state == 'confirmed' && a.isLate) {
+                r['overdue'] = r['overdue'] || [];
+                r['overdue'].push(a);
+              }
+              else {
+                r[a.state] = r[a.state] || [];
+                r[a.state].push(a);
+              }
               return r;
             }, Object.create(null));
             let eventMonthString = '';
@@ -1012,10 +1018,10 @@ export class AppointmentKanbanComponent implements OnInit {
         statusShow = 'Hủy hẹn';
         classBg = 'bg-cancel';
         break;
-      // case 'overdue':
-      //   statusShow = 'Quá hạn';
-      //   classBg = 'bg-overdue';
-      //   break;
+      case 'overdue':
+        statusShow = 'Quá hẹn';
+        classBg = 'bg-overdue';
+        break;
       default:
         statusShow = 'Đang hẹn';
         classBg = 'bg-confirmed';
