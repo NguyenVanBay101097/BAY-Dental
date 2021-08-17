@@ -15,4 +15,15 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Search { get; set; }
         public Guid? CategoryId { get; set; }
     }
+
+    public class UoMImportExcelRow
+    {
+        public string Name { get; set; }
+
+        public string CategName { get; set; }
+
+        public string Type { get; set; }
+
+        public decimal Factor { get; set; }
+    }
 }

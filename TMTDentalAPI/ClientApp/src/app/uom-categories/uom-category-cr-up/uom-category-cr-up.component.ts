@@ -23,8 +23,10 @@ export class UomCategoryCrUpComponent implements OnInit {
   ngOnInit() {
     this.uomCategory = new UoMCategoryBasic();
     this.formGroup = this.fb.group({
-      name: ['', Validators.required]
+      name: ['', Validators.required],
+      measureType: ['unit', Validators.required],
     });
+    
     if (this.id) {
       this.loadFormApi();
     }

@@ -50,7 +50,7 @@ namespace Infrastructure.Services
             var dict = new Dictionary<Guid, dynamic>();
             if (date_from.HasValue)
             {
-                var query = _context.StockHistories.Where(x => x.date >= date_from && x.date <= date_to);
+                var query = _context.StockHistories.Where(x => x.date < date_from);
                 if (val.CompanyId.HasValue)
                     query = query.Where(x => x.company_id == val.CompanyId);
                 if (val.ProductCategId.HasValue)
