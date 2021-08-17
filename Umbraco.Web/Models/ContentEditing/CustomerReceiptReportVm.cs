@@ -54,7 +54,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
 
-        public int Time { get; set; }
+        public int? Time { get; set; }
         public Guid? CompanyId { get; set; }
     }
 
@@ -140,6 +140,25 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Color { get; set; }
         public int CountCustomerReceipt { get; set; }
         public int TotalCustomerReceipt { get; set; }
+    }
+
+    public class CustomerReceiptForTimePdf: CustomerReceiptReportTime
+    {
+        public IEnumerable<CustomerReceiptReportBasic> Lines { get; set; } = new List<CustomerReceiptReportBasic>();
+    }
+    public class CustomerReceiptReportPdf<T> where T : class
+    {
+        public CustomerReceiptReportPdf(DateTime? dateFrom, DateTime? dateTo)
+        {
+            this.DateTo = dateTo;
+            this.DateFrom = dateFrom;
+        }
+        public CustomerReceiptReportPdf() { }
+        public CompanyPrintVM Company { get; set; }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public ApplicationUserSimple User { get; set; }
+        public IEnumerable<T> Data { get; set; } = new List<T>();
     }
 
 }

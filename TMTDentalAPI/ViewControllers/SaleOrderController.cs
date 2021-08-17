@@ -51,5 +51,12 @@ namespace TMTDentalAPI.ViewControllers
             return View(data);
         }
 
+        [PrinterNameFilterAttribute(Name = AppConstants.SaleOrderPaperCode)]
+        public async Task<IActionResult> PrintManagement([FromQuery] SaleOrderPaged val)
+        {
+            var result = await _saleOrderService.GetPrintManagement(val);
+            return View(result);
+        }
+
     }
 }

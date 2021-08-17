@@ -97,8 +97,7 @@ export class CustomerReceiptReportTimeserviceComponent implements OnInit {
 
   }
 
-  loadDataApi() {
-    this.loading = true;
+  getDataApiParam() {
     var val = new CustomerReceiptReportFilter();
     val.limit = this.limit;
     val.offset = this.skip;
@@ -107,8 +106,13 @@ export class CustomerReceiptReportTimeserviceComponent implements OnInit {
     val.doctorId = this.employeeId || '';
     val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
     val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
-    val.timeFrom = this.timeStart || '' ;
-    val.timeTo = this.timeEnd || '' ;
+    val.timeFrom = this.timeStart || '';
+    val.timeTo = this.timeEnd || '';
+    return val;
+  }
+  loadDataApi() {
+    this.loading = true;
+    var val = this.getDataApiParam();
     this.customerReceiptReportService.getPaged(val).pipe(
       map((response) => <GridDataResult>{
         data: response.items,
@@ -136,8 +140,8 @@ export class CustomerReceiptReportTimeserviceComponent implements OnInit {
       val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
       val.companyId = this.companyId || '';
       val.doctorId = this.employeeId || '';
-      val.timeFrom = x.timeStart || '' ;
-      val.timeTo = x.timeEnd || '' ;
+      val.timeFrom = x.timeStart || '';
+      val.timeTo = x.timeEnd || '';
       return this.customerReceiptReportService.getCount(val).pipe(
         switchMap(count => of({ time: x.timeStart, count: count }))
       );
@@ -253,8 +257,8 @@ export class CustomerReceiptReportTimeserviceComponent implements OnInit {
     val.doctorId = this.employeeId || '';
     val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
     val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
-    val.timeFrom = this.timeStart || '' ;
-    val.timeTo = this.timeEnd || '' ;
+    val.timeFrom = this.timeStart || '';
+    val.timeTo = this.timeEnd || '';
     this.customerReceiptReportService.exportExcelReportTimeService(val).subscribe((res: any) => {
       let filename = "BaoCaoTiepNhan_PhucVu";
       let newBlob = new Blob([res], {
@@ -270,6 +274,30 @@ export class CustomerReceiptReportTimeserviceComponent implements OnInit {
         window.URL.revokeObjectURL(data);
       }, 100);
     })
+  }
+
+  onExportPDF() {
+    var val = this.getDataApiParam();
+    this.loading = true;
+    this.customerReceiptReportService.reportPagedFortimeServicePdf(val).subscribe(res => {
+      this.loading = false;
+      let filename = "TiepNhanTongQuan";
+
+      let newBlob = new Blob([res], {
+        type:
+          "application/pdf",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
   }
 
 }

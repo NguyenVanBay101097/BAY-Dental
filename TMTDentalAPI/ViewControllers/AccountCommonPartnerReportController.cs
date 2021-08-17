@@ -26,5 +26,13 @@ namespace TMTDentalAPI.ViewControllers
             var result = await _service.PrintReportPartnerDebit(val);
             return View(result);
         }
+
+        [PrinterNameFilterAttribute(Name = AppConstants.ReportPartnerDebit)]
+        [CheckAccess(Actions = "Report.AccountPartner")]
+        public async Task<IActionResult> PrintGetSummary([FromBody] AccountCommonPartnerReportSearch val)
+        {
+            var result = await _service.ReportSummaryPrint(val);
+            return View(result);
+        }
     }
 }

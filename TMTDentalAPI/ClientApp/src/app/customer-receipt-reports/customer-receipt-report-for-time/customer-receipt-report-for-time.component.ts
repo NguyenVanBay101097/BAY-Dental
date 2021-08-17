@@ -18,7 +18,7 @@ export class CustomerReceiptReportForTimeComponent implements OnInit {
   skip = 0;
   total: number;
   gridData: GridDataResult;
-  customerReceiptTimes : any[] = [];
+  customerReceiptTimes: any[] = [];
   listCompany: CompanySimple[] = [];
   searchUpdate = new Subject<string>();
   search: string;
@@ -62,14 +62,19 @@ export class CustomerReceiptReportForTimeComponent implements OnInit {
     this.loadDataApi();
   }
 
-  loadDataApi() {
-    this.loading = true;
+  getDataApiParam() {
     var val = new CustomerReceiptReportFilter();
     val.limit = this.limit;
     val.offset = this.skip;
     val.companyId = this.companyId || '';
     val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
     val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
+    return val;
+  }
+
+  loadDataApi() {
+    this.loading = true;
+    var val = this.getDataApiParam();
     this.customerReceiptReportService.getCustomerReceiptTimePaged(val).pipe(
       map((response) => <GridDataResult>{
         data: response.items,
@@ -156,6 +161,30 @@ export class CustomerReceiptReportForTimeComponent implements OnInit {
         window.URL.revokeObjectURL(data);
       }, 100);
     })
+  }
+
+  onExportPDF() {
+    var val = this.getDataApiParam();
+    this.loading = true;
+    this.customerReceiptReportService.reportPagedForTimePdf(val).subscribe(res => {
+      this.loading = false;
+      let filename = "TiepNhanTongQuan";
+
+      let newBlob = new Blob([res], {
+        type:
+          "application/pdf",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
   }
 
 }

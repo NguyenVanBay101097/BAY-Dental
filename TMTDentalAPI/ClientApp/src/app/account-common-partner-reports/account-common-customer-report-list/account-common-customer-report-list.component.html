@@ -15,8 +15,16 @@
             </div>
         </div>
         <div class="o_cp_left">
-            <div class="o_cp_buttons">
-                <button (click)="onExport()" class="btn btn-primary"><i class="fas fa-download mr-1"></i>Xuất Excel</button>
+            <div class="o_cp_buttons d-flex">
+                <div class="dropdown mr-1">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-download"></i> Xuất File</button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" (click)="onExport()">Xuất Excel</a>
+                        <a class="dropdown-item" (click)="onExportPDF()">Xuất PDF</a>
+                    </div>
+                </div>
+                <button class="btn btn-primary" (click)="printReport()">In báo cáo</button>
             </div>
             <div class="o_cp_sidebar">
             </div>

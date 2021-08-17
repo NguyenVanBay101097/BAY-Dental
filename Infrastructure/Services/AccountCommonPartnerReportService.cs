@@ -182,6 +182,26 @@ namespace Infrastructure.Services
             }
             return res;
         }
+        public async Task<AccountCommonPartnerReportPrint> ReportSummaryPrint(AccountCommonPartnerReportSearch val)
+        {
+            var data = await ReportSummary(val);
+            var res = new AccountCommonPartnerReportPrint()
+            {
+                DateFrom = val.FromDate,
+                DateTo = val.ToDate,
+                Data = data,
+            };
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId);
+            res.User = _mapper.Map<ApplicationUserSimple>(user);
+
+            if (val.CompanyId.HasValue)
+            {
+                var companyObj = GetService<ICompanyService>();
+                res.Company = _mapper.Map<CompanyPrintVM>(await companyObj.SearchQuery(x => x.Id == val.CompanyId)
+                    .Include(x => x.Partner).FirstOrDefaultAsync());
+            }
+            return res;
+        }
 
         public async Task<IEnumerable<AccountCommonPartnerReportItemDetail>> ReportDetail(AccountCommonPartnerReportItem val)
         {
