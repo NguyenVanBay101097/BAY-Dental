@@ -1706,7 +1706,7 @@ html:not([dir=rtl]) .sidebar {
     position: relative;
     min-width: 50px;
     margin: 0;
-    text-align: center;
+    /* text-align: center; */
 }
 
 /*End App Header*/
@@ -1888,4 +1888,141 @@ html:not([dir=rtl]) .sidebar {
 		display: inline
 	}
 }
+
+@media(min-width:992px) {
+	.header-fixed .app-header {
+		position: fixed;
+		z-index: 1020;
+		width: 100%
+	}
+	.header-fixed .app-body {
+		margin-top: 55px
+	}
+	.sidebar-fixed .sidebar {
+		position: fixed;
+		z-index: 1019;
+		width: 200px;
+		height: 100vh
+	}
+	.sidebar-fixed .app-header+.app-body .sidebar {
+		height: calc(100vh - 55px)
+	}
+	.sidebar-compact .sidebar {
+		flex: 0 0 150px
+	}
+	.sidebar-compact.sidebar-fixed .sidebar {
+		width: 150px
+	}
+	.sidebar-compact .sidebar-minimizer {
+		display: none
+	}
+	.sidebar-minimized .sidebar {
+		flex: 0 0 50px
+	}
+	.sidebar-minimized.sidebar-fixed .sidebar {
+		width: 50px
+	}
+	.sidebar-off-canvas .sidebar {
+		position: fixed;
+		z-index: 1019;
+		height: 100%
+	}
+	.sidebar-off-canvas .app-header+.app-body .sidebar {
+		height: calc(100vh - 55px)
+	}
+	html:not([dir=rtl]) .sidebar-compact .sidebar {
+		margin-left: -150px
+	}
+	html:not([dir=rtl]) .sidebar-minimized .sidebar {
+		margin-left: -50px
+	}
+	html[dir=rtl] .sidebar-compact .sidebar {
+		margin-right: -150px
+	}
+	html[dir=rtl] .sidebar-minimized .sidebar {
+		margin-right: -50px
+	}
+	.aside-menu-fixed .aside-menu {
+		position: fixed;
+		height: 100%
+	}
+	.aside-menu-fixed .aside-menu .tab-content {
+		height: calc(100vh - 2.375rem - 55px)
+	}
+	.aside-menu-fixed .app-header+.app-body .aside-menu {
+		height: calc(100vh - 55px)
+	}
+	.aside-menu-off-canvas .aside-menu {
+		position: fixed;
+		z-index: 1019;
+		height: 100%
+	}
+	.aside-menu-off-canvas .app-header+.app-body .aside-menu {
+		height: calc(100vh - 55px)
+	}
+	html:not([dir=rtl]) .aside-menu-fixed .aside-menu,
+	html:not([dir=rtl]) .aside-menu-off-canvas .aside-menu {
+		right: 0
+	}
+	html[dir=rtl] .aside-menu-fixed .aside-menu,
+	html[dir=rtl] .aside-menu-off-canvas .aside-menu {
+		left: 0
+	}
+}
+
+html:not([dir=rtl]) .sidebar-show .sidebar {
+	margin-left: 0
+}
+
+
+@media(min-width:576px) and (min-width:992px) {
+	html:not([dir=rtl]) .sidebar-show.sidebar-fixed.sidebar-minimized .app-footer,
+	html:not([dir=rtl]) .sidebar-show.sidebar-fixed.sidebar-minimized .main,
+	html:not([dir=rtl]) .sidebar-sm-show.sidebar-fixed.sidebar-minimized .app-footer,
+	html:not([dir=rtl]) .sidebar-sm-show.sidebar-fixed.sidebar-minimized .main {
+		margin-left: 50px
+	}
+}
+
+@media(min-width:992px) {
+	html:not([dir=rtl]) .sidebar-lg-show .sidebar,
+	html:not([dir=rtl]) .sidebar-show .sidebar {
+		margin-left: 0
+	}
+	html:not([dir=rtl]) .sidebar-lg-show.sidebar-fixed .app-footer,
+	html:not([dir=rtl]) .sidebar-lg-show.sidebar-fixed .main,
+	html:not([dir=rtl]) .sidebar-show.sidebar-fixed .app-footer,
+	html:not([dir=rtl]) .sidebar-show.sidebar-fixed .main {
+		margin-left: 200px
+	}
+	html:not([dir=rtl]) .sidebar-lg-show.sidebar-fixed.sidebar-compact .app-footer,
+	html:not([dir=rtl]) .sidebar-lg-show.sidebar-fixed.sidebar-compact .main,
+	html:not([dir=rtl]) .sidebar-show.sidebar-fixed.sidebar-compact .app-footer,
+	html:not([dir=rtl]) .sidebar-show.sidebar-fixed.sidebar-compact .main {
+		margin-left: 150px
+	}
+}
+
+@media(min-width:992px) and (min-width:992px) {
+	html:not([dir=rtl]) .sidebar-lg-show.sidebar-fixed.sidebar-minimized .app-footer,
+	html:not([dir=rtl]) .sidebar-lg-show.sidebar-fixed.sidebar-minimized .main,
+	html:not([dir=rtl]) .sidebar-show.sidebar-fixed.sidebar-minimized .app-footer,
+	html:not([dir=rtl]) .sidebar-show.sidebar-fixed.sidebar-minimized .main {
+		margin-left: 50px
+	}
+}
+
+.app-footer,
+.app-header,
+.aside-menu,
+.main,
+.sidebar {
+	transition: margin-left .25s, margin-right .25s, width .25s, flex .25s
+}
+
+.app-body .main {
+    flex: 1;
+    min-width: 0;
+}
+
 

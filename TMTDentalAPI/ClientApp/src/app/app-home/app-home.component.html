@@ -54,8 +54,8 @@
         </li> -->
         <li class="nav-item dropdown" ngbDropdown placement="bottom-right">
             <a class="nav-link o-no-caret px-2" ngbDropdownToggle>
-                <img *ngIf="authService.userInfo" [src]="getAvatarImgSource(authService.userInfo.avatar)" width="20"
-                    height="20" class="rounded-circle mr-2">
+                <img *ngIf="authService.userInfo" [src]="getAvatarImgSource(authService.userInfo.avatar)" width="40"
+                    height="40" class="rounded-circle mr-2">
                 <span class="oe_topbar_name" *ngIf="authService.userInfo">{{authService.userInfo.name}}</span>
             </a>
             <div ngbDropdownMenu>
@@ -68,12 +68,12 @@
     </ul>
 </app-header>
 
-<div class="o_action_manager">
+<div class="o_action_manager app-body">
     <app-sidebar [fixed]="true" [display]="'lg'" #sidebar [minimized]="minimized" (minimizedChange)="toggleMinimize($event)">
         <app-sidebar-nav [navItems]="navItems"></app-sidebar-nav>
         <app-sidebar-minimizer></app-sidebar-minimizer>
     </app-sidebar>
-    <div fxFlex fxLayout="column" class="w-100" style="overflow-x: auto;">
+    <div class="main">
         <router-outlet></router-outlet>
     </div>
 </div>
