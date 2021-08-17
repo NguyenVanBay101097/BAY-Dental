@@ -7,6 +7,7 @@ import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { UomCrUpComponent } from '../uom-cr-up/uom-cr-up.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { UomImportExcelDialogComponent } from '../uom-import-excel-dialog/uom-import-excel-dialog.component';
 
 @Component({
   selector: 'app-uom-list',
@@ -57,6 +58,23 @@ export class UomListComponent implements OnInit {
       console.log(err);
       this.loading = false;
     })
+  }
+
+  importFromExcel() {
+    let modalRef = this.modalService.open(UomImportExcelDialogComponent, {
+      size: 'xl',
+      windowClass: "o_technical_modal",
+      keyboard: false,
+      backdrop: "static",
+      scrollable: true
+    });
+
+    modalRef.result.then(
+      () => {
+        this.loadDataFromApi();
+      },
+      () => {}
+    );
   }
 
   createItem() {

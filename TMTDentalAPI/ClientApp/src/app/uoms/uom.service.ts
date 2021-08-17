@@ -73,4 +73,7 @@ export class UomService {
     return this.http.post<UoMBasic[]>(this.base_api + this.apiUrl + '/autocomplete', val);
   }
 
+  importExcel(val: any) {
+    return this.http.post(this.base_api + this.apiUrl + '/ImportExcel', val);
+  }
 }
