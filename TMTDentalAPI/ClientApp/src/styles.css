@@ -1469,6 +1469,13 @@ html:not([dir=rtl]) .sidebar {
     color: #869fb1;
 }
 
+.sidebar .sidebar-nav,
+.sidebar .sidebar-scroll {
+	position: relative;
+	flex: 1;
+	width: 200px
+}
+
 .sidebar>.sidebar-nav {
     overflow-x: hidden;
     overflow-y: auto;
@@ -1495,8 +1502,28 @@ html:not([dir=rtl]) .sidebar {
 .sidebar .nav-item {
     position: relative;
     margin: 0;
+    transition: background .2s ease-in-out;
+}
+
+.sidebar .nav-dropdown-items.nav-sub {
+    height: 0;
+    margin-left: -20px;
+    overflow: hidden;
+    opacity: 0;
     -webkit-transition: all .2s ease-in-out 0s;
     transition: all .2s ease-in-out 0s;
+}
+
+.sidebar .nav-dropdown.open>.nav-dropdown-items {
+    height: auto !important;
+    margin-left: 0;
+    overflow: auto;
+    opacity: 1;
+}
+
+.sidebar .nav-dropdown-items .nav-item {
+	padding: 0;
+	list-style: none
 }
 
 .sidebar .nav-link {
@@ -1507,20 +1534,6 @@ html:not([dir=rtl]) .sidebar {
     background: 0 0;
 }
 
-.sidebar .nav-link:hover {
-    color: #fff;
-    background-color: #16232d;
-}
-
-.sidebar .nav-dropdown-toggle {
-    position: relative;
-}
-
-.sidebar .nav-link.active {
-    color: #fff;
-    background-color: #16232d;
-}
-
 .sidebar .nav-link .nav-icon {
     display: inline-block;
     width: 1.09375rem;
@@ -1528,6 +1541,28 @@ html:not([dir=rtl]) .sidebar {
     /* font-size: .875rem; */
     color: #73818f;
     text-align: center;
+}
+
+.sidebar .nav-link.active {
+    color: #fff;
+    background-color: #16232d;
+}
+
+.sidebar .nav-link.active .nav-icon {
+	color: #20a8d8
+}
+
+.sidebar .nav-link:hover {
+    color: #fff;
+    background-color: #16232d;
+}
+
+.sidebar .nav-link:hover .nav-icon {
+	color: #fff
+}
+
+.sidebar .nav-dropdown-toggle {
+    position: relative;
 }
 
 .sidebar .nav-link .badge {
@@ -1546,22 +1581,6 @@ html:not([dir=rtl]) .sidebar {
 /* .sidebar .nav-dropdown.open>.nav-dropdown-items {
     max-height: 1500px;
 } */
-
-.sidebar .nav-dropdown-items.nav-sub {
-    height: 0;
-    margin-left: -20px;
-    overflow: hidden;
-    opacity: 0;
-    -webkit-transition: all .2s ease-in-out 0s;
-    transition: all .2s ease-in-out 0s;
-}
-
-.sidebar .nav-dropdown.open>.nav-dropdown-items {
-    height: auto !important;
-    margin-left: 0;
-    overflow: auto;
-    opacity: 1;
-}
 
 .sidebar .nav-sub .nav-link {
     padding-left: 35px;
@@ -1591,6 +1610,19 @@ html:not([dir=rtl]) .sidebar {
     transform: rotate(-90deg);
 }
 
+.sidebar .nav-dropdown.open {
+	background: rgba(0, 0, 0, .2);
+}
+
+.sidebar .nav-link.nav-dropdown-toggle:hover {
+	color: #fff;
+}
+
+/* .sidebar .nav-dropdown.open .nav-link {
+	color: #fff;
+	border-left: 0
+} */
+
 .sidebar .sidebar-minimizer {
     position: relative;
     flex: 0 0 50px;
@@ -1613,10 +1645,17 @@ html:not([dir=rtl]) .sidebar {
     transition: .3s;
 }
 
-.sidebar .sidebar-nav, .sidebar .sidebar-scroll {
-    position: relative;
-    flex: 1;
-    width: 200px;
+.sidebar .sidebar-minimizer.focus,
+.sidebar .sidebar-minimizer:focus {
+	outline: 0
+}
+
+.sidebar .sidebar-minimizer:hover {
+	background-color: rgba(0, 0, 0, .3)
+}
+
+.sidebar .sidebar-minimizer:hover:before {
+	background-image: url(data:image/svg+xml;charset=utf8;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxMSAxNCc+PHBhdGggZmlsbD0nI2ZmZicgZD0nTTkuMTQ4IDIuMzUybC00LjE0OCA0LjE0OCA0LjE0OCA0LjE0OHEwLjE0OCAwLjE0OCAwLjE0OCAwLjM1MnQtMC4xNDggMC4zNTJsLTEuMjk3IDEuMjk3cS0wLjE0OCAwLjE0OC0wLjM1MiAwLjE0OHQtMC4zNTItMC4xNDhsLTUuNzk3LTUuNzk3cS0wLjE0OC0wLjE0OC0wLjE0OC0wLjM1MnQwLjE0OC0wLjM1Mmw1Ljc5Ny01Ljc5N3EwLjE0OC0wLjE0OCAwLjM1Mi0wLjE0OHQwLjM1MiAwLjE0OGwxLjI5NyAxLjI5N3EwLjE0OCAwLjE0OCAwLjE0OCAwLjM1MnQtMC4xNDggMC4zNTJ6Jy8+PC9zdmc+)
 }
 
 /*End sidebar Menu*/
@@ -1763,6 +1802,16 @@ html:not([dir=rtl]) .sidebar {
 		border-left: 0;
         transition: none;
 	}
+
+    .sidebar-minimized .sidebar .nav-dropdown .nav-dropdown-items {
+        overflow: auto;
+    }
+
+    .sidebar-minimized .sidebar .nav-dropdown .nav-dropdown-items .nav-link {
+        padding-left: 0.5rem;
+    }
+
+
 	.sidebar-minimized .sidebar .nav-link .nav-icon {
 		display: block;
 		float: left;
