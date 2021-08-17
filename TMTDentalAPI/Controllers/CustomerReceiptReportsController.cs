@@ -167,7 +167,7 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells["A1:G1"].Style.Font.Size = 20;
                 worksheet.Cells["A1:G1"].Merge = true;
 
-                worksheet.Cells["A2:G2"].Value = $"Từ ngày {val.DateFrom.Value.ToShortDateString()} đến ngày {val.DateTo.Value.ToShortDateString()}";
+                worksheet.Cells["A2:G2"].Value = @$"{(val.DateFrom.HasValue ? "Từ ngày" + val.DateFrom.Value.ToShortDateString() : "")}  {(val.DateTo.HasValue ? "đến ngày" + val.DateTo.Value.ToShortDateString() : "")}";
                 worksheet.Cells["A2:G2"].Style.Numberformat.Format = "dd/mm/yyyy";
                 worksheet.Cells["A2:G2"].Merge = true;
 
@@ -278,7 +278,7 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells["A1:G1"].Style.Font.Size = 20;
                 worksheet.Cells["A1:G1"].Merge = true;
 
-                worksheet.Cells["A2:G2"].Value = $"Từ ngày {val.DateFrom.Value.ToShortDateString()} đến ngày {val.DateTo.Value.ToShortDateString()}";
+                worksheet.Cells["A2:G2"].Value = @$"{(val.DateFrom.HasValue ? "Từ ngày" + val.DateFrom.Value.ToShortDateString() : "")}  {(val.DateTo.HasValue ? "đến ngày" + val.DateTo.Value.ToShortDateString() : "")}";
                 worksheet.Cells["A2:G2"].Merge = true;
 
                 worksheet.Cells[4, 1].Value = "Ngày tiếp nhận";
@@ -347,7 +347,7 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells["A1:G1"].Style.Font.Size = 20;
                 worksheet.Cells["A1:G1"].Merge = true;
 
-                worksheet.Cells["A2:G2"].Value = $"Từ ngày {val.DateFrom.Value.Date.ToShortDateString()} đến ngày {val.DateTo.Value.ToShortDateString()}";
+                worksheet.Cells["A2:G2"].Value = @$"{(val.DateFrom.HasValue ? "Từ ngày" + val.DateFrom.Value.ToShortDateString() : "")}  {(val.DateTo.HasValue ? "đến ngày" + val.DateTo.Value.ToShortDateString() : "")}";
                 worksheet.Cells["A2:G2"].Merge = true;
 
                 worksheet.Cells[4, 1].Value = "Ngày tiếp nhận";
