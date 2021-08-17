@@ -187,6 +187,12 @@ namespace Umbraco.Web.Models.ContentEditing
         public string DefaultCode { get; set; }
 
         public decimal? PurchasePrice { get; set; }
+
+        public string UOM { get; set; }
+
+        public string UOMPO { get; set; }
+
+        public decimal? MinInventory { get; set; }
     }
 
     public class ProductLaboImportExcelRow

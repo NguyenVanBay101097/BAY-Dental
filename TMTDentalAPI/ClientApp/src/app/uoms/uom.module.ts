@@ -7,12 +7,14 @@ import { UomListComponent } from './uom-list/uom-list.component';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { SharedModule } from '@progress/kendo-angular-dialog';
+import { UomImportExcelDialogComponent } from './uom-import-excel-dialog/uom-import-excel-dialog.component';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [
     UomCrUpComponent,
-    UomListComponent],
+    UomListComponent,
+    UomImportExcelDialogComponent],
   imports: [
     CommonModule,
     UomRoutingModule,
@@ -23,7 +25,8 @@ import { SharedModule } from '@progress/kendo-angular-dialog';
     SharedModule
   ],
   entryComponents: [
-    UomCrUpComponent
+    UomCrUpComponent,
+    UomImportExcelDialogComponent
   ]
 
 })

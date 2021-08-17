@@ -854,11 +854,18 @@ namespace TMTDentalAPI.Controllers
                             var name = Convert.ToString(worksheet.Cells[row, 1].Value);
                             var categName = Convert.ToString(worksheet.Cells[row, 3].Value);
                             var type = Convert.ToString(worksheet.Cells[row, 2].Value);
+                            var uomName = Convert.ToString(worksheet.Cells[row, 5].Value);
+                            var uomPOName = Convert.ToString(worksheet.Cells[row, 6].Value);
 
                             if (string.IsNullOrEmpty(name))
                                 errs.Add("Tên vật tư là bắt buộc");
                             if (string.IsNullOrEmpty(type))
                                 errs.Add("Loại là bắt buộc");
+                            if (string.IsNullOrEmpty(uomName))
+                                errs.Add("Đơn vị mặc định là bắt buộc");
+                            if (string.IsNullOrEmpty(uomPOName))
+                                errs.Add("Đơn vị mua là bắt buộc");
+
                             if (!string.IsNullOrEmpty(type) && !typeDict.ContainsKey(type))
                                 errs.Add($"Loại không hợp lệ. Giá trị cho phép là {string.Join(", ", typeDict.Keys.ToArray())}");
                             if (string.IsNullOrEmpty(categName))
@@ -876,6 +883,9 @@ namespace TMTDentalAPI.Controllers
                                 Type = type,
                                 CategName = categName,
                                 PurchasePrice = Convert.ToDecimal(worksheet.Cells[row, 4].Value),
+                                UOM = uomName,
+                                UOMPO = uomPOName,
+                                MinInventory = Convert.ToDecimal(worksheet.Cells[row, 7].Value),
                             };
                             data.Add(item);
                         }
@@ -889,6 +899,13 @@ namespace TMTDentalAPI.Controllers
 
             if (errors.Any())
                 return Ok(new { success = false, errors });
+
+            var uomNames = data.Select(x => x.UOM).Union(data.Select(x => x.UOMPO)).Distinct().ToList();
+            var uoms = await _uomService.SearchQuery(x => uomNames.Contains(x.Name)).ToListAsync();
+            var uomDict = uoms.GroupBy(x => x.Name).ToDictionary(x => x.Key, x => x.FirstOrDefault());
+            var notFoundUomNames = uomNames.Where(x => !uomDict.ContainsKey(x)).ToList();
+            if (notFoundUomNames.Any())
+                return Ok(new { success = false, errors = new List<string>() { $"Đơn vị tính không tồn tại: {string.Join(", ", notFoundUomNames)}" } });
 
             var categNames = data.Select(x => x.CategName).Distinct().ToList();
             if (categNames.Any())
@@ -905,14 +922,16 @@ namespace TMTDentalAPI.Controllers
                     categDict.Add(categName, categ);
                 }
             }
-            var uom = await _uomService.DefaultUOM();
+
             var productsCreate = new List<Product>();
             foreach (var item in data)
             {
+                var uom = uomDict[item.UOM];
+                var uomPO = uomDict[item.UOMPO];
                 var product = new Product();
                 product.CompanyId = CompanyId;
                 product.UOMId = uom.Id;
-                product.UOMPOId = uom.Id;
+                product.UOMPOId = uomPO.Id;
                 product.Name = item.Name;
                 product.NameNoSign = StringUtils.RemoveSignVietnameseV2(item.Name);
                 product.SaleOK = false;
@@ -920,6 +939,10 @@ namespace TMTDentalAPI.Controllers
                 product.Type2 = "product";
                 product.CategId = categDict[item.CategName].Id;
                 product.PurchasePrice = item.PurchasePrice ?? 0;
+                product.MinInventory = item.MinInventory ?? 0;
+                product.ProductUoMRels.Add(new ProductUoMRel { UoMId = uom.Id });
+                if (uom.Id != uomPO.Id)
+                    product.ProductUoMRels.Add(new ProductUoMRel { UoMId = uomPO.Id });
 
                 productsCreate.Add(product);
             }
@@ -962,10 +985,12 @@ namespace TMTDentalAPI.Controllers
                         for (var row = 2; row <= worksheet.Dimension.Rows; row++)
                         {
                             var errs = new List<string>();
-                            var name = Convert.ToString(worksheet.Cells[row, 1].Value);
-                            var type = Convert.ToString(worksheet.Cells[row, 2].Value);
-                            var categName = Convert.ToString(worksheet.Cells[row, 3].Value);
-                            var productCode = Convert.ToString(worksheet.Cells[row, 4].Value);
+                            var productCode = Convert.ToString(worksheet.Cells[row, 1].Value);
+                            var name = Convert.ToString(worksheet.Cells[row, 2].Value);
+                            var type = Convert.ToString(worksheet.Cells[row, 3].Value);
+                            var categName = Convert.ToString(worksheet.Cells[row, 4].Value);
+                            var uomName = Convert.ToString(worksheet.Cells[row, 6].Value);
+                            var uomPOName = Convert.ToString(worksheet.Cells[row, 7].Value);
 
                             if (string.IsNullOrEmpty(productCode))
                                 errs.Add("Mã vật tư là bắt buộc"); ;
@@ -973,6 +998,10 @@ namespace TMTDentalAPI.Controllers
                                 errs.Add("Tên vật tư là bắt buộc");
                             if (string.IsNullOrEmpty(type))
                                 errs.Add("Loại là bắt buộc");
+                            if (string.IsNullOrEmpty(uomName))
+                                errs.Add("Đơn vị mặc định là bắt buộc");
+                            if (string.IsNullOrEmpty(uomPOName))
+                                errs.Add("Đơn vị mua là bắt buộc");
                             if (!string.IsNullOrEmpty(type) && !typeDict.ContainsKey(type))
                                 errs.Add($"Loại không hợp lệ. Giá trị cho phép là {string.Join(", ", typeDict.Keys.ToArray())}");
                             if (string.IsNullOrEmpty(categName))
@@ -991,6 +1020,9 @@ namespace TMTDentalAPI.Controllers
                                 CategName = categName,
                                 DefaultCode = productCode,
                                 PurchasePrice = Convert.ToDecimal(worksheet.Cells[row, 5].Value),
+                                UOM = uomName,
+                                UOMPO = uomPOName,
+                                MinInventory = Convert.ToDecimal(worksheet.Cells[row, 8].Value),
                             };
                             data.Add(item);
                         }
@@ -1004,6 +1036,13 @@ namespace TMTDentalAPI.Controllers
 
             if (errors.Any())
                 return Ok(new { success = false, errors });
+
+            var uomNames = data.Select(x => x.UOM).Union(data.Select(x => x.UOMPO)).Distinct().ToList();
+            var uoms = await _uomService.SearchQuery(x => uomNames.Contains(x.Name)).ToListAsync();
+            var uomDict = uoms.GroupBy(x => x.Name).ToDictionary(x => x.Key, x => x.FirstOrDefault());
+            var notFoundUomNames = uomNames.Where(x => !uomDict.ContainsKey(x)).ToList();
+            if (notFoundUomNames.Any())
+                return Ok(new { success = false, errors = new List<string>() { $"Đơn vị tính không tồn tại: {string.Join(", ", notFoundUomNames)}" } });
 
             var categNames = data.Select(x => x.CategName).Distinct().ToList();
             if (categNames.Any())
@@ -1021,12 +1060,16 @@ namespace TMTDentalAPI.Controllers
                 }
             }
 
-            var uom = await _uomService.DefaultUOM();
             var productsUpdate = new List<Product>();
             var productCodes = data.Select(x => x.DefaultCode).Distinct().ToList();
             var productsToUpdate = await _productService.SearchQuery(x => productCodes.Contains(x.DefaultCode))
+                .Include(x => x.ProductUoMRels)
                 .ToListAsync();
-            var productDict = productsToUpdate.ToDictionary(x => x.DefaultCode, x => x);
+            var productDict = productsToUpdate.GroupBy(x => x.DefaultCode).ToDictionary(x => x.Key, x => x.FirstOrDefault());
+            var notFoundProductCodes = productCodes.Where(x => !productDict.ContainsKey(x)).ToList();
+            if (notFoundProductCodes.Any())
+                return Ok(new { success = false, errors = new List<string>() { $"Mã vật tư không tồn tại: {string.Join(", ", notFoundProductCodes)}" } });
+
             foreach (var item in data)
             {
                 if (!productDict.ContainsKey(item.DefaultCode))
@@ -1037,6 +1080,13 @@ namespace TMTDentalAPI.Controllers
                 product.NameNoSign = StringUtils.RemoveSignVietnameseV2(item.Name);
                 product.CategId = categDict[item.CategName].Id;
                 product.PurchasePrice = item.PurchasePrice ?? 0;
+                product.UOMId = uomDict[item.UOM].Id;
+                product.UOMPOId = uomDict[item.UOMPO].Id;
+                product.MinInventory = item.MinInventory ?? 0;
+                product.ProductUoMRels.Clear();
+                product.ProductUoMRels.Add(new ProductUoMRel { UoMId = uomDict[item.UOM].Id });
+                if (uomDict[item.UOM].Id != uomDict[item.UOMPO].Id)
+                    product.ProductUoMRels.Add(new ProductUoMRel { UoMId = uomDict[item.UOMPO].Id });
 
                 productsUpdate.Add(product);
             }
@@ -1317,20 +1367,26 @@ namespace TMTDentalAPI.Controllers
             {
                 var worksheet = package.Workbook.Worksheets.Add(sheetName);
 
-                worksheet.Cells[1, 1].Value = "Tên vật tư";
-                worksheet.Cells[1, 2].Value = "Loại";
-                worksheet.Cells[1, 3].Value = "Nhóm vật tư";
-                worksheet.Cells[1, 4].Value = "Mã vật tư";
+                worksheet.Cells[1, 1].Value = "Mã vật tư";
+                worksheet.Cells[1, 2].Value = "Tên vật tư";
+                worksheet.Cells[1, 3].Value = "Loại";
+                worksheet.Cells[1, 4].Value = "Nhóm vật tư";
                 worksheet.Cells[1, 5].Value = "Giá mua";
+                worksheet.Cells[1, 6].Value = "Đơn vị mặc định";
+                worksheet.Cells[1, 7].Value = "Đơn vị mua";
+                worksheet.Cells[1, 8].Value = "Mức tồn tối thiểu";
 
                 var row = 2;
                 foreach (var item in products)
                 {
-                    worksheet.Cells[row, 1].Value = item.Name;
-                    worksheet.Cells[row, 2].Value = type_dict[item.Type];
-                    worksheet.Cells[row, 3].Value = item.CategName;
-                    worksheet.Cells[row, 4].Value = item.DefaultCode;
+                    worksheet.Cells[row, 1].Value = item.DefaultCode;
+                    worksheet.Cells[row, 2].Value = item.Name;
+                    worksheet.Cells[row, 3].Value = type_dict[item.Type];
+                    worksheet.Cells[row, 4].Value = item.CategName;
                     worksheet.Cells[row, 5].Value = item.PurchasePrice ?? 0;
+                    worksheet.Cells[row, 6].Value = item.UomName;
+                    worksheet.Cells[row, 7].Value = item.UoMPOName;
+                    worksheet.Cells[row, 8].Value = item.MinInventory ?? 0;
 
                     row++;
                 }

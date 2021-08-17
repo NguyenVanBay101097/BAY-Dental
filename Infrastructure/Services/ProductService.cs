@@ -1131,7 +1131,10 @@ namespace Infrastructure.Services
                 DefaultCode = x.DefaultCode,
                 Name = x.Name,
                 PurchasePrice = x.PurchasePrice,
-                Type = x.Type
+                Type = x.Type,
+                UomName = x.UOM.Name,
+                UoMPOName = x.UOMPO.Name,
+                MinInventory = x.MinInventory
             }).ToListAsync();
 
             return res;
