@@ -89,8 +89,8 @@ namespace Infrastructure.Services
         {
             var userObj = GetService<IUserService>();
             var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
-            var timeFrom = DateTime.Now.Date.Add(new TimeSpan(val.Time, 00, 00));
-            var timeTo = DateTime.Now.Date.Add(new TimeSpan(val.Time, 59, 59));
+            var timeFrom = DateTime.Now.Date.Add(new TimeSpan(val.Time ?? 0, 00, 00));
+            var timeTo = DateTime.Now.Date.Add(new TimeSpan(val.Time ?? 0, 59, 59));
 
             var query = _context.CustomerReceiptReports.Where(x => companyIds.Contains(x.CompanyId)).AsQueryable();
 
@@ -109,6 +109,7 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.CompanyId == val.CompanyId.Value);
             }
 
+            if(val.Time.HasValue)
             query = query.Where(x => x.DateWaiting.HasValue && timeFrom.TimeOfDay <= x.DateWaiting.Value.TimeOfDay && x.DateWaiting.Value.TimeOfDay <= timeTo.TimeOfDay);
 
             var totalItems = await query.CountAsync();

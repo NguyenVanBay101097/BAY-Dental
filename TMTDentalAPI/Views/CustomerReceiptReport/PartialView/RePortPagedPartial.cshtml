@@ -48,7 +48,7 @@
                             <td class="" style="width: 100px">@item.DateWaiting.Value.ToString("HH:mm")</td>
                             <td class="" style="width: 100px">@(!item.MinuteTotal.HasValue ?""  : (item.MinuteTotal + " phút"))</td>
                             <td class="" style="width: 100px">@(item.IsRepeatCustomer ? "Tái khám" : "Khám mới")</td>
-                            <td class="" style="width: 100px">@(item.State == "done"?"":(item.IsNoTreatment ? "Không điều trị" : "Có điều trị"))</td>
+                            <td class="" style="width: 100px">@(item.State != "done"?"":(item.IsNoTreatment ? "Không điều trị" : "Có điều trị"))</td>
                             <td class="" style="width: 100px">@(item.State == "examination"? "Đang khám": (item.State == "done"?"Hoàn thành":"Chờ khám"))</td>
                         </tr>
                     }
