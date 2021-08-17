@@ -18,14 +18,14 @@
                         <div>
                             <input class="btn-check" type="radio" [(ngModel)]="groupBy" name="radioButton" id="day"
                                 value="groupby:day" (change)="onChangeType($event.target.value)">
-                            <label class="btn btn-sm btn-outline-primary mr-2" for="day">
+                            <label class="btn btn-outline-primary mr-2" for="day">
                                 Ngày
                             </label>
                         </div>
                         <div>
                             <input class="btn-check" type="radio" [(ngModel)]="groupBy" name="radioButton" id="month"
                                 value="groupby:month" (change)="onChangeType($event.target.value)">
-                            <label class="btn btn-sm btn-outline-primary mr-2" for="month">
+                            <label class="btn btn-outline-primary mr-2" for="month">
                                 Tháng
                             </label>
                         </div>
@@ -301,12 +301,12 @@
             <div class="d-flex">
                 <input class="btn-check" type="radio" [(ngModel)]="groupBy" name="radioButton" id="day"
                     value="groupby:day" (change)="onChangeType($event.target.value)">
-                <label class="btn btn-sm btn-outline-primary mr-2" for="day">
+                <label class="btn btn-outline-primary mr-2" for="day">
                     Ngày
                 </label>
                 <input class="btn-check" type="radio" [(ngModel)]="groupBy" name="radioButton" id="month"
                     value="groupby:month" (change)="onChangeType($event.target.value)">
-                <label class="btn btn-sm btn-outline-primary mr-2" for="month">
+                <label class="btn btn-outline-primary mr-2" for="month">
                     Tháng
                 </label>
                 <app-date-range-picker-filter [opens]="'right'" class="mr-1" [startDate]="dateFrom" [endDate]="dateTo"
