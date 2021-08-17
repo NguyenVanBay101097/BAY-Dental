@@ -98,9 +98,9 @@
                                         <span class="mr-1 text-time p-1">Dự kiến</span>
                                         <!-- <input type="number" class="form-control" formControlName="timeExpected"
                                             [min]="0"> -->
-                                            <kendo-numerictextbox [min]="0" [format]="'n0'" [spinners]="false"
-                                                [autoCorrect]="true" formControlName="timeExpected">
-                                            </kendo-numerictextbox>
+                                        <kendo-numerictextbox [min]="0" [format]="'n0'" [spinners]="false"
+                                            [autoCorrect]="true" formControlName="timeExpected">
+                                        </kendo-numerictextbox>
                                         <span class="mr-1 text-time p-1">Phút</span>
                                     </div>
                                 </div>
@@ -165,7 +165,8 @@
                                 <label class="o_form_label">Lý do</label>
                             </td>
                             <td colspan="1">
-                                <textarea class="form-control" rows="3" formControlName="reason"></textarea>
+                                <textarea class="form-control" rows="3" formControlName="reason"
+                                    [class.border-danger]="f.reason.errors && (f.reason.touched || f.reason.dirty || submitted)"></textarea>
                                 <div *ngIf="f.reason.errors && (f.reason.touched || f.reason.dirty || submitted)"
                                     class="text-danger">
                                     <div *ngIf="f.reason.errors.required">Nhập lý do</div>

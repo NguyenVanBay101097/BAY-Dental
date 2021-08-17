@@ -6,32 +6,34 @@
     </div>
 </div>
 <div class="o_content">
-    <div class="d-flex p-3">
-        <div style="flex: 0 0 auto;margin-right: 1rem;">
-            <div class="card">
-                <div class="card-body">
-                    <ul class="nav nav-pills nav-fill flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link text-left" routerLinkActive="active" [routerLink]="[ 'revenue-time' ]">Thời gian</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-left" routerLinkActive="active" [routerLink]="[ 'revenue-service' ]">Doanh thu dịch vụ</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-left" routerLinkActive="active" [routerLink]="[ 'revenue-employee' ]">Doanh thu nhân viên</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-left" routerLinkActive="active" [routerLink]="[ 'revenue-partner' ]">Doanh thu khách hàng</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-left" routerLinkActive="active" [routerLink]="[ 'revenue-expecting' ]">Dự kiến doanh thu</a>
-                        </li>
-                    </ul>
+    <div class="container-fluid py-3">
+        <div class="row">
+            <div class="col-xxl-2 col-xl-12">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <ul class="nav nav-pills nav-fill flex-xxl-column">
+                            <li class="nav-item">
+                                <a class="nav-link text-left" routerLinkActive="active" [routerLink]="[ 'revenue-time' ]">Thời gian</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-left" routerLinkActive="active" [routerLink]="[ 'revenue-service' ]">Doanh thu dịch vụ</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-left" routerLinkActive="active" [routerLink]="[ 'revenue-employee' ]">Doanh thu nhân viên</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-left" routerLinkActive="active" [routerLink]="[ 'revenue-partner' ]">Doanh thu khách hàng</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-left" routerLinkActive="active" [routerLink]="[ 'revenue-expecting' ]">Dự kiến doanh thu</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div>
-            <router-outlet></router-outlet>
+            <div class="col-xxl-10 col-xl-12">
+                <router-outlet></router-outlet>
+            </div>
         </div>
     </div>
 </div>

@@ -23,6 +23,7 @@ namespace TMTDentalAPI.ViewControllers
 
         public async Task<IActionResult> Print(Guid id)
         {
+
             var partnerAdvance = await _partnerAdvanceService.GetPartnerAdvancePrint(id);
             if (partnerAdvance == null)
                 return NotFound();

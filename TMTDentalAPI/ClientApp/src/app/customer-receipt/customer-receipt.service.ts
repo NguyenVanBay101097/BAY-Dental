@@ -34,6 +34,9 @@ export class CustomerReceiptBasic {
   partnerId: string;
   partnerName: string;
   partnerPhone: string;
+  isRepeatCustomer: boolean;
+  isNoTreatment: boolean;
+  reason: string;
   state: string;
 }
 

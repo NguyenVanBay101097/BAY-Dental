@@ -42,11 +42,13 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
   }
 
   loadDataApi() {
-    this.cashBookData = this.cashBooks;
-    this.cashbookSeries = [];
-    this.loadCashbookGroupby();
-    this.loadCashbookSeries();
-    this.loadDataCashbookSeries();
+    if (this.cashBooks) {
+      this.cashBookData = this.cashBooks;
+      this.cashbookSeries = [];
+      this.loadCashbookGroupby();
+      this.loadCashbookSeries();
+      this.loadDataCashbookSeries();
+    }
   }
 
   public labelContent = (e: any) => {
@@ -62,25 +64,39 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
   }
 
   loadDataCashbookSeries() {
-    this.cashbookCashBank = this.dataCashBooks[0];
-    this.cashbookCusDebt = this.dataCashBooks[1];
-    this.cashbookCusAdvance = this.dataCashBooks[2];
-    this.cashbookSupp = this.dataCashBooks[3];
-    this.cashbookCusSalary = this.dataCashBooks[4];
-    this.cashbookAgentCommission = this.dataCashBooks[5];
-    this.totalCashbook = this.totalDataCashBook;
+    if (this.dataCashBooks && this.totalDataCashBook) {
+      this.cashbookCashBank = this.dataCashBooks[0];
+      this.cashbookCusDebt = this.dataCashBooks[1];
+      this.cashbookCusAdvance = this.dataCashBooks[2];
+      this.cashbookSupp = this.dataCashBooks[3];
+      this.cashbookCusSalary = this.dataCashBooks[4];
+      this.cashbookAgentCommission = this.dataCashBooks[5];
+      this.totalCashbook = this.totalDataCashBook;
+    }
+
   }
 
   get ortherThu() {
-    return this.totalCashbook.totalThu - (this.dataCashBooks.reduce((total, val) => total += val.credit, 0));
+    if (this.totalCashbook && this.dataCashBooks) {
+      return (this.totalCashbook.totalThu ? this.totalCashbook.totalThu : 0) - (this.dataCashBooks.reduce((total, val) => total += val.credit, 0));
+    }
+
+    return 0;
   }
 
   get ortherChi() {
-    return this.totalCashbook.totalChi - (this.cashbookSupp.debit + this.cashbookCusAdvance.debit + this.cashbookCusSalary.debit + this.cashbookAgentCommission.debit);
+    if (this.totalCashbook) {
+      return (this.totalCashbook.totalChi ? this.totalCashbook.totalChi : 0) - (this.cashbookSupp.debit + this.cashbookCusAdvance.debit + this.cashbookCusSalary.debit + this.cashbookAgentCommission.debit);
+    }
+
+    return 0;
+
   }
 
   loadCashbookGroupby() {
-    this.cashbookCategs = this.cashBookData.map(s => s.date);
+    if (this.cashBookData) {
+      this.cashbookCategs = this.cashBookData.map(s => s.date);
+    }
   }
 
   redirectTo() {

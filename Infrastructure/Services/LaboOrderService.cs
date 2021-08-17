@@ -394,6 +394,14 @@ namespace Infrastructure.Services
                 .Include("SaleOrderLine.Product").FirstOrDefaultAsync();
 
             labo = _mapper.Map(val, labo);
+
+            ///thêm răng
+            labo.LaboOrderToothRel.Clear();
+            foreach (var tooth in val.Teeth)
+            {
+                labo.LaboOrderToothRel.Add(new LaboOrderToothRel() { ToothId = tooth.Id });
+            }
+
             labo.LaboOrderProductRel.Clear();
             foreach (var product in val.LaboOrderProducts)
             {

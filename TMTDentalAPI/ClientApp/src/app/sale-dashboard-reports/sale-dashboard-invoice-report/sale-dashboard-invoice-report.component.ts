@@ -28,6 +28,8 @@ export class SaleDashboardInvoiceReportComponent implements OnInit {
   public cashbookCusDebt: any;
   public cashbookCusAdvance: any;
   revenueSeries: any[] = [];
+  revenue: any;
+  realIncome: any;
 
 
   constructor(private revenueReportService: AccountInvoiceReportService,
@@ -43,34 +45,48 @@ export class SaleDashboardInvoiceReportComponent implements OnInit {
   }
 
   loadRevenueSeries() {
-    this.revenueCashBank = this.dataRevenues[0];
-    this.revenueCusDebt = this.dataRevenues[1];
-    this.revenueCusAdvance = this.dataRevenues[2];
+    if (this.dataRevenues) {
+      this.revenueCashBank = this.dataRevenues[0];
+      this.revenueCusDebt = this.dataRevenues[1];
+      this.revenueCusAdvance = this.dataRevenues[2];
+    }
   }
 
   loadDataCashbookSeries() {
     this.revenueSeries = [];
-    this.cashBookData = this.cashBooks;
-    var cashbookThu = { name: "Thực thu", type: "column", data: this.cashBookData.map(s => s.totalThu) };
-    var revenue = { name: "Doanh thu", type: "column", data: this.revenues.map(s => s.priceSubTotal) };
-    this.revenueSeries.push(revenue, cashbookThu);
-    this.cashbookCashBank = this.dataCashBooks[0];
-    this.cashbookCusDebt = this.dataCashBooks[1];
-    this.cashbookCusAdvance = this.dataCashBooks[2];
+    if (this.cashBooks && this.revenues && this.dataCashBooks) {
+      this.cashBookData = this.cashBooks;
+      this.realIncome = this.cashBookData;
+      this.revenue = this.revenues;    
+      this.cashbookCashBank = this.dataCashBooks[0];
+      this.cashbookCusDebt = this.dataCashBooks[1];
+      this.cashbookCusAdvance = this.dataCashBooks[2];
+    }
+
   }
 
   get totalDebit() {
-    return this.revenueCashBank.balance + this.revenueCusDebt.debit + this.revenueCusAdvance.debit;
+    if(this.dataCashBooks){
+      return (this.revenueCashBank.balance ? this.revenueCashBank.balance : 0) + (this.revenueCusDebt.debit || 0) + (this.revenueCusAdvance.debit || 0);
+    }
+   
+    return 0;
   }
 
   get ortherThu() {
-    return this.totalDataCashBook.totalThu - (this.cashbookCashBank.credit + this.cashbookCusDebt.credit + this.cashbookCusAdvance.credit);
+    if (this.totalDataCashBook && this.cashbookCashBank) {
+      return (this.totalDataCashBook.totalThu || 0) - ((this.cashbookCashBank.credit ? this.cashbookCashBank.credit : 0) + (this.cashbookCusDebt.credit || 0) + (this.cashbookCusAdvance.credit || 0));
+    }
+
+    return 0;
   }
 
   loadCashbookGroupby() {
-    var dateRevenues = this.revenues.map(s => s.invoiceDate);
-    var dateCashbooks = this.cashBookData.map(s => s.date);
-    this.revenuCateg = this.arrayUnique(dateRevenues.concat(dateCashbooks).sort());
+    if (this.revenues && this.cashBookData) {
+      var dateRevenues = this.revenues.map(s => this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(s.invoiceDate), 'dd/MM/yyyy') : this.intlService.formatDate(new Date(s.invoiceDate), 'MM/yyyy'));
+      var dateCashbooks = this.cashBookData.map(s => this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(s.date), 'dd/MM/yyyy') : this.intlService.formatDate(new Date(s.date), 'MM/yyyy'));
+      this.revenuCateg = this.arrayUnique(dateRevenues.concat(dateCashbooks).sort());
+    }
   }
 
   arrayUnique(array) {
@@ -87,7 +103,7 @@ export class SaleDashboardInvoiceReportComponent implements OnInit {
 
 
   public labelContent = (e: any) => {
-    var res = this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(e.value), 'dd/MM') : this.intlService.formatDate(new Date(e.value), 'MM/yyyy');
+    var res = e.value;
     return res;
   };
 

@@ -1,4 +1,4 @@
-<div class="h-100 w-100 bg-white">
+<!-- <div class="h-100 w-100 bg-white">
     <h5 class="p-2 bg-gray">Báo cáo tiếp nhận</h5>
     <div class="content d-flex px-2 bg-white">
         <div class="left flex-0-0-auto">
@@ -10,7 +10,62 @@
             </div>
 
         </div>
-        <!-- right -->
         <router-outlet></router-outlet>
+    </div>
+</div> -->
+
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">Báo cáo tiếp nhận</li>
+        </ol>
+        <!-- <div class="o_cp_searchview">
+            <div class="o_cp_searchview_group">
+                <div class="o_searchview">
+                </div>
+            </div>
+        </div> -->
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <div class="container-fluid py-3">
+        <div class="row">
+            <div class="col-xxl-2 col-xl-12">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <ul class="nav nav-pills nav-fill flex-xxl-column">
+                            <li class="nav-item">
+                                <a class="nav-link" [routerLink]="[ 'customer-receipt-overview' ]" routerLinkActive="active">Tổng quan
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" [routerLink]="[ 'customer-receipt-for-time' ]" routerLinkActive="active"> Giờ tiếp
+                                    nhận</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" [routerLink]="[ 'customer-receipt-timeservice' ]" routerLinkActive="active">Thời gian
+                                    phục vụ</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" [routerLink]="[ 'customer-receipt-notreatment' ]" routerLinkActive="active">Tiếp nhận
+                                    không điều trị</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xxl-10 col-xl-12">
+                <router-outlet></router-outlet>
+            </div>
+        </div>
     </div>
 </div>

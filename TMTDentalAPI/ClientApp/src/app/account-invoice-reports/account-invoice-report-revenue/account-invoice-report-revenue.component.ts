@@ -190,7 +190,8 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
       data: data,
       args: args,
       filter: this.filter,
-      title:'Doanh thu theo thời gian'
+      title:'Doanh thu theo thời gian',
+      showInvoiceDate: false
     })
 
     rows.forEach(row => {

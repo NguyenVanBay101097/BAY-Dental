@@ -36,10 +36,12 @@ export class SaleDashboardApCrChartComponent implements OnInit {
 
 
   loadPieDataCustomer() {
-    this.pieDataCustomer = [];
-    for (let i = 0; i < this.dataCustomer.length; i++) {
-      this.pieDataCustomer.push({ category: this.dataCustomer[i].text, value: this.dataCustomer[i].count, color: this.dataCustomer[i].text == 'old' ? '#1A6DE3' : '#95C8FF' })
-    };
+    if(this.dataCustomer){
+      this.pieDataCustomer = [];
+      for (let i = 0; i < this.dataCustomer.length; i++) {
+        this.pieDataCustomer.push({ category: this.dataCustomer[i].text, value: this.dataCustomer[i].count, color: this.dataCustomer[i].text == 'old' ? '#1A6DE3' : '#95C8FF' })
+      };
+    }
   }
 
   get countdataCustomer() {
