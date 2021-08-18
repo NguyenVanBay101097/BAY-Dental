@@ -13,8 +13,7 @@ import {INavData} from '../app-sidebar-nav';
         <app-sidebar-nav-dropdown
           *ngSwitchCase="'dropdown'"
           [item]="item"
-          (click)="itemClick(item)"
-          [class.open]="helper.isActive(router, item) || selectedItem === item"
+          [class.open]="helper.isActive(router, item)"
           [ngClass]="item | appSidebarNavItemClass"
           appNavDropdown
           routerLinkActive="open">
@@ -43,8 +42,6 @@ import {INavData} from '../app-sidebar-nav';
         <app-sidebar-nav-link
           *ngSwitchDefault
           [item]="item"
-          (click)="itemClick(item)"
-          [class.active]="selectedItem === item"
           class="nav-item"
           [ngClass]="item | appSidebarNavItemClass"
           (linkClick)="hideMobile()"
@@ -57,7 +54,6 @@ import {INavData} from '../app-sidebar-nav';
 export class AppSidebarNavItemsComponent {
 
   protected _items: INavData[];
-  selectedItem: INavData;
 
   @Input()
   set items(items: INavData[]) {
@@ -78,9 +74,5 @@ export class AppSidebarNavItemsComponent {
     if (this.document.body.classList.contains('sidebar-show')) {
       this.renderer.removeClass(this.document.body, 'sidebar-show');
     }
-  }
-
-  itemClick(item) {
-    this.selectedItem = item;
   }
 }

@@ -117,11 +117,6 @@ const routes: Routes = [
         canActivate: [AuthGuard]
       },
       {
-        path: 'commission-settlements',
-        loadChildren: () => import('./commission-settlements/commission-settlements.module').then(m => m.CommissionSettlementsModule),
-        canActivate: [AuthGuard]
-      },
-      {
         path: 'tcare',
         loadChildren: () => import('./tcare/tcare.module').then(m => m.TcareModule),
         canActivate: [AuthGuard]

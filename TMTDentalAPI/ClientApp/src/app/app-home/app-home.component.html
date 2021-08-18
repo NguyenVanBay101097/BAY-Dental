@@ -59,8 +59,8 @@
                 <span class="oe_topbar_name" *ngIf="authService.userInfo">{{authService.userInfo.name}}</span>
             </a>
             <div ngbDropdownMenu>
-                <button class="dropdown-item" type="button" (click)="editProfile(authService.userInfo)">Sửa thông
-                    tin</button>
+                <!-- <button class="dropdown-item" type="button" (click)="editProfile(authService.userInfo)">Sửa thông
+                    tin</button> -->
                 <button class="dropdown-item" type="button" (click)="changePassword()">Đổi mật khẩu</button>
                 <button class="dropdown-item" type="button" (click)="logout()">Đăng xuất</button>
             </div>
