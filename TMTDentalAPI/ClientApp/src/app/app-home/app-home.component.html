@@ -1,8 +1,79 @@
-<app-layout-header></app-layout-header>
+<app-header [navbarBrandRouterLink]="['/dashboard']" [fixed]="true"
+    [navbarBrandFull]="{src: 'assets/images/logo-color.svg', width: 89, height: 25, alt: 'TDental Logo'}"
+    [navbarBrandMinimized]="{src: 'assets/images/logo-color.svg', width: 30, height: 30, alt: 'TDental Logo'}"
+    [sidebarToggler]="'lg'" [asideMenuToggler]="false">
+    <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+            <app-search-all></app-search-all>
+        </li>
+    </ul>
+    <ul class="navbar-nav ml-auto">
+        <li class="nav-item dropdown">
+            <a class="nav-link text-success">{{expire}}</a>
+        </li>
+        <!-- <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="bd-setting" role="button" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                <span class="oe_topbar_name">
+                    Hỗ trợ
+                </span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="bd-setting">
+                <a class="dropdown-item" href="/assets/files/TMT TimeKeeper.zip" download>Tải phần mềm kết nối máy
+                    chấm công</a>
+            </div>
+        </li> -->
+        <li class="o_switch_company_menu nav-item dropdown" ngbDropdown placement="bottom-right"
+            *ngIf="userChangeCurrentCompany && userChangeCurrentCompany.companies.length >= 2">
+            <a class="nav-link px-2" ngbDropdownToggle>
+                <span class="oe_topbar_name">{{userChangeCurrentCompany.currentCompany.name}}</span> <span
+                    class="caret"></span>
+            </a>
+            <ul ngbDropdownMenu>
+                <li *ngFor="let company of userChangeCurrentCompany.companies">
+                    <button (click)="switchCompany(company.id)" class="dropdown-item">
+                        <i *ngIf="company.id == userChangeCurrentCompany.currentCompany.id"
+                            class="fa fa-check o_current_company"></i>
+                        <span *ngIf="company.id !== userChangeCurrentCompany.currentCompany.id"
+                            class="o_company"></span>
+                        {{company.name}}
+                    </button>
+                </li>
+            </ul>
+        </li>
+        <!-- <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="bd-setting" role="button" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                <span class="oe_topbar_name" *ngIf="authService.userInfo">
+                    Thiết lập
+                </span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="bd-setting">
+                <button class="dropdown-item" type="button" (click)="removeSampleData()">Xóa dữ liệu mẫu</button>
+            </div>
+        </li> -->
+        <li class="nav-item dropdown" ngbDropdown placement="bottom-right">
+            <a class="nav-link o-no-caret px-2" ngbDropdownToggle>
+                <img *ngIf="authService.userInfo" [src]="getAvatarImgSource(authService.userInfo.avatar)" width="40"
+                    height="40" class="rounded-circle mr-2">
+                <span class="oe_topbar_name" *ngIf="authService.userInfo">{{authService.userInfo.name}}</span>
+            </a>
+            <div ngbDropdownMenu>
+                <!-- <button class="dropdown-item" type="button" (click)="editProfile(authService.userInfo)">Sửa thông
+                    tin</button> -->
+                <button class="dropdown-item" type="button" (click)="changePassword()">Đổi mật khẩu</button>
+                <button class="dropdown-item" type="button" (click)="logout()">Đăng xuất</button>
+            </div>
+        </li>
+    </ul>
+</app-header>
 
-<div class="o_action_manager">
-    <app-layout-sidebar></app-layout-sidebar>
-    <div fxFlex fxLayout="column" class="w-100" style="overflow-x: auto;">
+<div class="o_action_manager app-body">
+    <app-sidebar [fixed]="true" [display]="'lg'" #sidebar [minimized]="minimized" (minimizedChange)="toggleMinimize($event)">
+        <app-sidebar-nav [navItems]="navItems"></app-sidebar-nav>
+        <app-sidebar-minimizer></app-sidebar-minimizer>
+    </app-sidebar>
+    <div class="main">
         <router-outlet></router-outlet>
     </div>
 </div>
