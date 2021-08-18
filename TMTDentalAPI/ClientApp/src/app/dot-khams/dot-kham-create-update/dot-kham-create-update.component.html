@@ -14,24 +14,24 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <!-- <button type="button" class="btn btn-light btn-sm" (click)="actionCreateDotKham()" *ngIf="!dialog">
+                    <!-- <button type="button" class="btn btn-light" (click)="actionCreateDotKham()" *ngIf="!dialog">
                         Mở đợt khám mới</button> -->
-                    <button [disabled]="invoiceState=='cancel'" type="button" class="btn btn-primary btn-sm"
+                    <button [disabled]="invoiceState=='cancel'" type="button" class="btn btn-primary"
                         (click)="onSave()" *ngIf="!id">
                         Lưu</button>
-                    <button type="button" class="btn btn-primary btn-sm" (click)="onUpdate()" *ngIf="id">
+                    <button type="button" class="btn btn-primary" (click)="onUpdate()" *ngIf="id">
                         Lưu</button>
-                    <button [disabled]="invoiceState=='cancel'" type="button" class="btn btn-primary btn-sm"
+                    <button [disabled]="invoiceState=='cancel'" type="button" class="btn btn-primary"
                         (click)="onConfirm()" *ngIf="id && getState === 'draft'">
                         Xác nhận</button>
-                    <button [disabled]="invoiceState=='cancel'" type="button" class="btn btn-primary btn-sm"
+                    <button [disabled]="invoiceState=='cancel'" type="button" class="btn btn-primary"
                         (click)="actionCreateToaThuoc()">
                         <i class="fas fa-pills"></i> Kê toa thuốc</button>
-                    <button type="button" class="btn btn-primary btn-sm" (click)="actionCreateDotKham()">
+                    <button type="button" class="btn btn-primary" (click)="actionCreateDotKham()">
                         <i class="fas fa-plus-circle"></i>
                         Tạo đợt khám mới
                     </button>
-                    <!-- <button [disabled]="invoiceState=='cancel'" type="button" class="btn btn-primary btn-sm"
+                    <!-- <button [disabled]="invoiceState=='cancel'" type="button" class="btn btn-primary"
                         (click)="actionCreateLabo()">
                         <i class="fas fa-tooth"></i> Tạo labo</button> -->
                 </div>
@@ -199,7 +199,7 @@
                     <kendo-combobox formControlName="assistant" [filterable]="true" [data]="assistantSimpleFilter"
                         #assistantCbx [valueField]="'id'" [textField]="'name'">
                     </kendo-combobox>
-                    <button class="btn btn-info btn-sm mr-2">Thêm</button>
+                    <button class="btn btn-info mr-2">Thêm</button>
                 </div> -->
 
 
@@ -282,7 +282,7 @@
                                                 </kendo-combobox>
                                             </td>
                                             <td><button [disabled]="invoiceState=='cancel'" (click)="createDKSteps()"
-                                                    class="btn btn-info btn-sm mr-2">Thêm</button></td>
+                                                    class="btn btn-info mr-2">Thêm</button></td>
                                         </tr>
                                     </tbody>
                                 </table> -->
@@ -314,7 +314,7 @@
                                             </td>
                                             <td>
                                                 <button [disabled]="invoiceState=='cancel'"
-                                                    (click)="checkState(step.id,step.state)" class="btn btn-sm mr-2"
+                                                    (click)="checkState(step.id,step.state)" class="btn mr-2"
                                                     [class.btn-light]="step.state=='draft'"
                                                     [class.btn-primary]="step.state=='progress'"
                                                     [class.btn-success]="step.state=='done'">
@@ -323,7 +323,7 @@
                                             </td>
                                             <td>
                                                 <button [disabled]="invoiceState=='cancel'"
-                                                    (click)="deleteSteps(step.id)" class="btn btn-light btn-sm mr-2">
+                                                    (click)="deleteSteps(step.id)" class="btn btn-light mr-2">
                                                     <i title="Xóa" class="fas fa-trash"></i>&nbsp;Xóa</button>
                                             </td>
                                         </tr>
@@ -361,7 +361,7 @@
                                                     <input (keydown.enter)="updateStepName($event, step)"
                                                         [value]="step.name" type="text"
                                                         class="form-control updateStepName" />
-                                                    <button type="button" class="btn btn-sm btn-light"
+                                                    <button type="button" class="btn btn-light"
                                                         (click)="$event.stopPropagation();setEditingStep(null);">
                                                         <i class="fas fa-times"></i>
                                                     </button>
@@ -376,35 +376,35 @@
                                                     <label [for]="'o_field_input_28' + i"
                                                         class="custom-control-label">​</label>
                                                 </div>
-                                                <!-- <button class="btn btn-sm btn-secondary"
+                                                <!-- <button class="btn btn-secondary"
                                                     (click)="assignDotKham(step)">{{step.dotKham ? step.dotKham.name : 'Chưa khám'}}</button> -->
                                             </td>
                                             <td width="100">
-                                                <button type="button" class="btn btn-sm btn-outline-secondary mr-2"
+                                                <button type="button" class="btn btn-outline-secondary mr-2"
                                                     title="Thêm công đoạn lên trên"
                                                     (click)="$event.stopPropagation();copyInsert(step, 'up', i)">
                                                     <i class="far fa-copy mr-1"></i>
                                                     <i class="fas fa-arrow-up"></i>
                                                 </button>
-                                                <button type="button" class="btn btn-sm btn-outline-secondary mr-2"
+                                                <button type="button" class="btn btn-outline-secondary mr-2"
                                                     title="Thêm công đoạn xuống dưới"
                                                     (click)="$event.stopPropagation();copyInsert(step, 'down', i)">
                                                     <i class="far fa-copy mr-1"></i>
                                                     <i class="fas fa-arrow-down"></i>
                                                 </button>
-                                                <button type="button" class="btn btn-sm btn-outline-danger"
+                                                <button type="button" class="btn btn-outline-danger"
                                                     title="Xóa công đoạn"
                                                     (click)="$event.stopPropagation();deleteStep(step, i)">
                                                     <i class="far fa-trash-alt"></i>
                                                 </button>
                                             </td>
                                             <!-- <td>
-                                                <button *ngIf="step.dotKham" class="btn btn-sm btn-secondary"
+                                                <button *ngIf="step.dotKham" class="btn btn-secondary"
                                                     (click)="toggleIsDone(step)">
                                                     <span *ngIf="step.isDone === false">Chưa xong</span>
                                                     <span *ngIf="step.isDone === true">Đã xong</span>
                                                 </button>
-                                                <button *ngIf="!step.dotKham" class="btn btn-sm btn-secondary">
+                                                <button *ngIf="!step.dotKham" class="btn btn-secondary">
                                                     Chưa khám
                                                 </button>
                                             </td> -->
@@ -433,7 +433,7 @@
                                             <td>{{ line.date | date : 'short' }}</td>
                                             <td>
                                                 <button [disabled]="invoiceState=='cancel'" type="button"
-                                                    class="btn btn-icon btn-sm btn-light mr-1" title="In toa thuốc"
+                                                    class="btn btn-icon btn-light mr-1" title="In toa thuốc"
                                                     (click)="printToaThuoc(line)">
                                                     <i class="fas fa-print"></i> In
                                                 </button>
@@ -525,9 +525,9 @@
 </div>
 
 <div *ngIf="dialog">
-    <button type="button" class="btn btn-light btn-sm mr-2" (click)="closeWindow()"><i
+    <button type="button" class="btn btn-light mr-2" (click)="closeWindow()"><i
             class="fas fa-window-close"></i>&nbsp;Đóng</button>
-    <a style="color: white" class="btn btn-primary btn-sm"
+    <a style="color: white" class="btn btn-primary"
         [routerLink]="id ? ['/dot-khams/edit/'+id] : ['/dot-khams/create/']" target="_blank">
         <i class="fas fa-external-link-alt"></i>&nbsp;Mở trong tab</a>
 </div>

@@ -15,7 +15,7 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm" *ngIf="payment.state == 'draft' && !id"
+                    <button type="button" class="btn btn-primary" *ngIf="payment.state == 'draft' && !id"
                         (click)="onSave()">
                         Lưu</button>
                 </div>
@@ -24,7 +24,7 @@
             </div>
         </div>
         <div class="o_cp_right">
-            <button class="btn btn-sm btn-light" *ngIf="id" (click)="unlink()">
+            <button class="btn btn-light" *ngIf="id" (click)="unlink()">
                 Xóa
             </button>
         </div>
@@ -36,11 +36,11 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
-                    <!-- <button type="button" class="btn btn-primary btn-sm" *ngIf="payment.state == 'draft'"
+                    <!-- <button type="button" class="btn btn-primary" *ngIf="payment.state == 'draft'"
                         (click)="actionConfirm()">
                         Xác nhận
                     </button> -->
-                    <button type="button" class="btn btn-danger btn-sm" *ngIf="payment.state == 'posted'"
+                    <button type="button" class="btn btn-danger" *ngIf="payment.state == 'posted'"
                         (click)="actionCancel()">
                         Hủy bỏ
                     </button>

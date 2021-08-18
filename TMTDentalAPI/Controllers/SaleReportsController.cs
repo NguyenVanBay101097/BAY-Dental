@@ -136,7 +136,14 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 8].Value = (item.PriceSubTotal - item.AmountResidual);
                     worksheet.Cells[row, 8].Style.Numberformat.Format = "#,#";
                     worksheet.Cells[row, 9].Value = item.AmountResidual;
-                    worksheet.Cells[row, 9].Style.Numberformat.Format = "#,#";
+                    if (item.AmountResidual.Value == 0)
+                    {
+                        worksheet.Cells[row, 9].Style.Numberformat.Format = "0";
+                    }
+                    else
+                    {
+                        worksheet.Cells[row, 9].Style.Numberformat.Format = "#,#";
+                    }
                     worksheet.Cells[row, 10].Value = item.State == "done" ? "Hoàn thành" : (item.State == "sale" ? "Đang điều trị" : "");
                     row++;
                 }
