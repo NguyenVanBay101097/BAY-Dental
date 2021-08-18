@@ -8,6 +8,7 @@ import { AuthService } from '../auth/auth.service';
 import { WebService } from '../core/services/web.service';
 import { ChangePasswordDialogComponent } from '../shared/change-password-dialog/change-password-dialog.component';
 import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog.component';
+import { PermissionService } from '../shared/permission.service';
 import { SearchAllService } from '../shared/search-all.service';
 import { UserProfileEditComponent } from '../shared/user-profile-edit/user-profile-edit.component';
 import { UserChangeCurrentCompanyVM, UserService } from '../users/user.service';
@@ -208,6 +209,8 @@ export class AppHomeComponent implements OnInit {
     },
   ];
 
+  menus: any[] = [];
+
   userChangeCurrentCompany: UserChangeCurrentCompanyVM;
   searchString: string = '';
   searchUpdate = new Subject<string>();
@@ -222,7 +225,8 @@ export class AppHomeComponent implements OnInit {
     private router: Router,
     private userService: UserService,
     private webService: WebService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private permissionService: PermissionService
   ) { }
 
   ngOnInit() {
@@ -235,6 +239,68 @@ export class AppHomeComponent implements OnInit {
         this.loadExpire();
       }
     });
+
+    this.menus = this.filterMenus();
+    this.permissionService.permissionStoreChangeEmitter.subscribe(() => {
+      this.menus = this.filterMenus();
+    });
+  }
+
+  filterMenus() {
+    var menuItems = this.navItems.filter(x => {
+      if (x.groups) {
+        return this.permissionService.hasDefined(x.groups);
+      }
+
+      return true;
+    });
+
+    var list: any[] = [];
+
+    for (var i = 0; i < menuItems.length; i++) {
+      var menuItem = menuItems[i];
+      if (this.hasPermission(menuItem)) {
+        // list.push(menuItem);
+        if (menuItem.children) {
+          var childArr: any[] = [];
+          menuItem.children.forEach(child => {
+            if (this.hasPermission(child)) {
+              childArr.push(child);
+            }
+          });
+          menuItem.children = childArr;
+        }
+        list.push(menuItem);
+      }
+    }
+
+    return list;
+  }
+
+  hasPermission(menuItem) {
+    var pm = localStorage.getItem("user_permission");
+    if (pm != null) {
+      var user_permission = JSON.parse(pm);
+      if (user_permission.isUserRoot) {
+        return true;
+      }
+
+      if (menuItem.permissions) {
+        var listPermission = user_permission.permission;
+        for (var i = 0; i < menuItem.permissions.length; i++) {
+          var permission = menuItem.permissions[i];
+          if (listPermission.includes(permission)) {
+            return true;
+          }
+        }
+
+        return false;
+      }
+
+      return true;
+    }
+
+    return false;
   }
 
   toggleMinimize(e) {
