@@ -149,7 +149,6 @@ export class AppointmentListTodayComponent implements OnInit {
       modalRef.componentInstance.appointId = item.id;
       modalRef.componentInstance.defaultData = res;
       modalRef.result.then(rs => {
-        debugger
         this.notifyService.notify('success','Lưu thành công');
         if(rs.appointment){
           this.onUpdateAPEvent.emit(rs.appointment);

@@ -77,7 +77,7 @@ namespace Infrastructure.Services
             customerReceipt.PartnerId = val.PartnerId;
             customerReceipt.DoctorId = val.DoctorId;
             customerReceipt.DateWaiting = val.DateWaiting.HasValue ? val.DateWaiting.Value : DateTime.Now;
-            customerReceipt.IsNoTreatment = val.IsRepeatCustomer;
+            customerReceipt.IsRepeatCustomer = val.IsRepeatCustomer;
             customerReceipt.Note = val.Note;
             customerReceipt.State = "waiting";
             if (val.Products.Any())
@@ -87,6 +87,7 @@ namespace Infrastructure.Services
                     customerReceipt.CustomerReceiptProductRels.Add(new CustomerReceiptProductRel()
                     {
                         ProductId = product.Id
+                        
                     });
                 }
             }
