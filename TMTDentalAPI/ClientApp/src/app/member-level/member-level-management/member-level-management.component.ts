@@ -14,15 +14,18 @@ export class MemberLevelManagementComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    console.log(this.route);
+    
     this.route.data.subscribe((data: { memberLevelsResolve: any }) => {
       if (data.memberLevelsResolve.length > 0) {
-        this.router.navigate(['member-level/list']);
+        this.router.navigate(['catalog/member-level/list']);
+        
       }
     })
   }
 
   createLevel() {
-    this.router.navigate(['member-level/create']);
+    this.router.navigate(['catalog/member-level/create']);
   }
 
 }
