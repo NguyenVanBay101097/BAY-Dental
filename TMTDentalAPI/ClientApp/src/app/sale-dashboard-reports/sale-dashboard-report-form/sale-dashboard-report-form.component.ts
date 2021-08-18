@@ -519,13 +519,13 @@ export class SaleDashboardReportFormComponent implements OnInit {
         this.router.navigateByUrl("account-invoice-reports/revenue-expecting");
         break;
       case "ncc-debit-report":
-        this.router.navigateByUrl("report-account-common/partner?result_selection=supplier");
+        this.router.navigateByUrl("report/report-account-common/partner?result_selection=supplier");
         break;
       case "customer-debit-report":
-        this.router.navigateByUrl("report-account-common/partner?result_selection=customer");
+        this.router.navigateByUrl("report/report-account-common/partner?result_selection=customer");
         break;
       case "money-report":
-        this.router.navigateByUrl("report-general-ledgers/cash-bank");
+        this.router.navigateByUrl("report/report-general-ledgers/cash-bank");
         break;
       case "new-old-customer-report":
         this.router.navigateByUrl("sale-report/partner");

@@ -8,7 +8,7 @@ import { AgentListComponent } from './agent-list/agent-list.component';
 
 const routes: Routes = [
   {
-    path: '',
+    path: 'list',
     component: AgentListComponent
   },
   {

@@ -34,7 +34,7 @@ const routes: Routes = [
   {
     path: 'survey-tag', component: SurveyTagListComponent
   },
-  { path: '', component: SurveyAssignmentListComponent },
+  { path: 'list', component: SurveyAssignmentListComponent },
   {
     path: 'form',
     component: SurveyAssignmentFormComponent

@@ -31,6 +31,8 @@ import { HrSalaryReportListComponent } from './hr-salary-report-list/hr-salary-r
 import { HrSalaryReportDetailComponent } from './hr-salary-report-detail/hr-salary-report-detail.component';
 import { AccountCommonPartnerReportsModule } from '../account-common-partner-reports/account-common-partner-reports.module';
 import { HrSalaryPaymentComponent } from './hr-salary-payment/hr-salary-payment.component';
+import { TimeKeepingModule } from '../time-keeping/time-keeping.module';
+import { SalaryPaymentModule } from '../salary-payment/salary-payment.module';
 
 @NgModule({
   declarations: [
@@ -61,7 +63,9 @@ import { HrSalaryPaymentComponent } from './hr-salary-payment/hr-salary-payment.
     LayoutModule,
     DropDownsModule,
     NgbModule,
-    SharedModule
+    SharedModule,
+    TimeKeepingModule,
+    SalaryPaymentModule
   ],
   providers: [
     HrPayrollStructureService,

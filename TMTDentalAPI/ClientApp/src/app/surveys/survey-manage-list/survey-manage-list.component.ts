@@ -8,7 +8,7 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { forkJoin, of, Subject } from 'rxjs';
+import { forkJoin, of, Subject, from } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
@@ -85,6 +85,17 @@ export class SurveyManageListComponent implements OnInit {
         this.loadDataFromApi();
       });
 
+    this.empCbx.filterChange.asObservable().pipe(
+      switchMap(value => from([this.employees]).pipe(
+        tap(() => this.empCbx.loading = true),
+        debounceTime(300),
+        map((data) => this.employees.filter((s) => s.name.toLowerCase().indexOf(value.toLowerCase()) !== -1).slice(0, 20))
+      ))
+    ).subscribe(x => {
+      this.filteredEmployees = x;
+      this.empCbx.loading = false;
+    });
+    
     this.loadDataFromApi();
     this.loadSummary();
     this.loadEmployees();

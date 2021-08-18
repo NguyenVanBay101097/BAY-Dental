@@ -370,9 +370,9 @@ export class CustomerReceiptReportOverviewComponent implements OnInit {
   getTreatment(value) {
     switch (value) {
       case true:
-        return 'Có điều trị';
-      case false:
         return 'Không điều trị';
+      case false:
+        return 'Có điều trị';
     }
   }
 

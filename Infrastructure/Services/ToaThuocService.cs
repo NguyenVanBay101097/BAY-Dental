@@ -283,6 +283,9 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Date <= dateOrderTo);
             }
 
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+
             var totalItems = await query.CountAsync();
 
             var limit = val.Limit > 0 ? val.Limit : int.MaxValue;
