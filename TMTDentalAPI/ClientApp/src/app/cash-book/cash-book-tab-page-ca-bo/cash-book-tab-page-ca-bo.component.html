@@ -51,9 +51,9 @@
     <div>
         <nav>
             <div class="nav nav-tabs">
-                <a class="nav-item nav-link active" data-toggle="tab" (click)="clickTab('cash_bank')">Tổng sổ quỹ</a>
-                <a class="nav-item nav-link" data-toggle="tab" (click)="clickTab('cash')">Tiền mặt</a>
-                <a class="nav-item nav-link" data-toggle="tab" (click)="clickTab('bank')">Ngân hàng</a>
+                <a class="nav-item nav-link" [class.active]="resultSelection=='cash_bank'" (click)="clickTab('cash_bank')">Tổng sổ quỹ</a>
+                <a class="nav-item nav-link" [class.active]="resultSelection=='cash'" (click)="clickTab('cash')">Tiền mặt</a>
+                <a class="nav-item nav-link" [class.active]="resultSelection=='bank'" (click)="clickTab('bank')">Ngân hàng</a>
             </div>
         </nav>
         <div class="tab-content">

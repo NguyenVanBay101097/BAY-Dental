@@ -5,6 +5,22 @@
 
 }
 
+@functions{
+    public string showTeethList(string toothType)
+    {
+        switch (toothType)
+        {
+            case "whole_jaw":
+                return "Nguyên hàm";
+            case "upper_jaw":
+                return "Hàm trên";
+            case "lower_jaw":
+                return "Hàm dưới";
+            default:
+                return "";
+        }
+    }
+}
 
 <div class="text-center">
     <div class="text-3xl font-semibold">BÁO CÁO DỊCH VỤ ĐANG ĐIỀU TRỊ</div>
@@ -38,7 +54,16 @@
                     <td>@line.OrderPartner.Name</td>
                     <td>@line.Product.Name</td>
                     <td>@(line.Employee == null? "": line.Employee.Name)</td>
-                    <td>@string.Join(", ", line.Teeth.Select(x => x.Name))</td>
+                    <td>
+                        @if (line.ToothType == "manual")
+                        {
+                            @string.Join(", ", line.Teeth.Select(x => x.Name))
+                        }
+                        else
+                        {
+                            @showTeethList(line.ToothType)
+                        }
+                    </td>
                     <td class="text-right">@string.Format(culture, "{0:0}", @line.ProductUOMQty)</td>
                     <td class="text-right">@string.Format(culture, "{0:0,0}", line.PriceSubTotal)</td>
                     <td>@(line.State == "done" ? "Hoàn thành" : (line.State == "cancel"? "Ngừng dịch vụ" : "đang điều trị"))</td>
