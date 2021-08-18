@@ -27,6 +27,7 @@ export class MedicineOrderPrescriptionListComponent implements OnInit {
   constructor(
     private toathuocSevice: ToaThuocService,
     private intlService: IntlService,
+    private authService: AuthService,
     private modalService: NgbModal
   ) { }
 
@@ -52,6 +53,7 @@ export class MedicineOrderPrescriptionListComponent implements OnInit {
     paged.search = this.search ? this.search : '';
     paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd")
     paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:59")
+    paged.companyId = this.authService.userInfo.companyId;
     this.toathuocSevice.getPaged(paged).pipe(
       map(response => (<GridDataResult>{
         data: response.items,

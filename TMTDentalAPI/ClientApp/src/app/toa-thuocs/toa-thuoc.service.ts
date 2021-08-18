@@ -130,6 +130,7 @@ export class ToaThuocPaged {
     saleOrderId: string;
     dateFrom: string;
     dateTo: string;
+    companyId: string;
 }
 
 export class ToaThuocPaging {

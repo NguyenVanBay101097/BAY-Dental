@@ -77,7 +77,7 @@ namespace Infrastructure.Services
             customerReceipt.PartnerId = val.PartnerId;
             customerReceipt.DoctorId = val.DoctorId;
             customerReceipt.DateWaiting = val.DateWaiting.HasValue ? val.DateWaiting.Value : DateTime.Now;
-            customerReceipt.IsNoTreatment = val.IsRepeatCustomer;
+            customerReceipt.IsRepeatCustomer = val.IsRepeatCustomer;
             customerReceipt.Note = val.Note;
             customerReceipt.State = "waiting";
             if (val.Products.Any())
@@ -87,6 +87,7 @@ namespace Infrastructure.Services
                     customerReceipt.CustomerReceiptProductRels.Add(new CustomerReceiptProductRel()
                     {
                         ProductId = product.Id
+                        
                     });
                 }
             }
@@ -118,22 +119,7 @@ namespace Infrastructure.Services
         public async Task<GetCountMedicalXamination> GetCountMedicalXaminationToday(ReportTodayRequest val)
         {
             var customerReceiptObj = GetService<ICustomerReceiptService>();
-            var appointmentObj = GetService<IAppointmentService>();
-
-            var query = appointmentObj.SearchQuery();
-
-            if (val.DateFrom.HasValue)
-                query = query.Where(x => x.Date >= val.DateFrom.Value.AbsoluteBeginOfDate());
-
-            if (val.DateFrom.HasValue)
-                query = query.Where(x => x.Date <= val.DateTo.Value.AbsoluteEndOfDate());
-
-            if (val.CompanyId.HasValue)
-                query = query.Where(x => x.CompanyId == val.CompanyId);
-
-
-            var appointmentNewToday = await query.Where(x => !x.IsRepeatCustomer).CountAsync();
-            var appointmentOldToday = await query.Where(x => x.IsRepeatCustomer).CountAsync();
+         
 
             var query2 = customerReceiptObj.SearchQuery();
 
@@ -152,8 +138,8 @@ namespace Infrastructure.Services
 
             var res = new GetCountMedicalXamination
             {
-                NewMedical = appointmentNewToday + customerReceiptNewToday,
-                ReMedical = appointmentOldToday + customerReceiptOldToday
+                NewMedical = customerReceiptNewToday,
+                ReMedical = customerReceiptOldToday
             };
 
             return res;

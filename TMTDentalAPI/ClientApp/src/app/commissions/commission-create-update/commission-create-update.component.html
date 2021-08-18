@@ -12,9 +12,9 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm" (click)="onSave()" accesskey="s">
+                    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">
                         Lưu</button>
-                    <button type="button" class="btn btn-secondary btn-sm" (click)="createNew()" accesskey="c"
+                    <button type="button" class="btn btn-secondary" (click)="createNew()" accesskey="c"
                         *ngIf="id">
                         Thêm mới</button>
                 </div>
@@ -40,7 +40,7 @@
                 <div class="o_notebook">
                     <h5 class="mb-2">Quy định hoa hồng</h5>
                     <div class="mb-2">
-                        <button type="button" accesskey="A" class="btn btn-secondary btn-sm"
+                        <button type="button" accesskey="A" class="btn btn-secondary"
                             (click)="addLine()">Thêm</button>
                         <ng-template #popContent>
                             <kendo-combobox 
@@ -55,18 +55,18 @@
                             </kendo-combobox>
                             <div class="text-right mt-2">
                                 <button type="button" accesskey="C"
-                                    class="btn btn-light btn-sm mr-1" 
+                                    class="btn btn-light mr-1" 
                                     (click)="this.selectedProductCategory=null; popover.close()">
                                     Hủy
                                 </button>
                                 <button type="button" accesskey="A"
-                                    class="btn btn-primary btn-sm" 
+                                    class="btn btn-primary" 
                                     (click)="addProductsFromProductCategory(); popover.close()">
                                     Thêm
                                 </button>
                             </div>
                         </ng-template>
-                        <button type="button" class="btn btn-secondary btn-sm ml-1"
+                        <button type="button" class="btn btn-secondary ml-1"
                             placement="bottom"
                             [ngbPopover]="popContent"
                             popoverTitle="Từ nhóm dịch vụ"
@@ -102,11 +102,11 @@
                                             </div>
                                         </td>
                                         <td class="text-right align-middle">
-                                            <button type="button" class="btn btn-icon btn-sm btn-light mr-1" 
+                                            <button type="button" class="btn btn-icon btn-light mr-1" 
                                                 (click)="editLine(line)">
                                                 <span class="k-icon k-i-edit"></span>
                                             </button>
-                                            <button type="button" class="btn btn-icon btn-sm btn-light" 
+                                            <button type="button" class="btn btn-icon btn-light" 
                                                 (click)="deleteLine(i)">
                                                 <span class="k-icon k-i-delete"></span>
                                             </button>

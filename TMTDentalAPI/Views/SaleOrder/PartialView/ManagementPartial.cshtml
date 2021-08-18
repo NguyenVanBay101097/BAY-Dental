@@ -20,57 +20,56 @@
     <div class="h-60 w-100 pt-3">
         @foreach (var item in Model.Data)
         {
-            <table class="table table-sm table-bordered @(item.Lines.Count()  == 0 ? "mb-2":"mb-0") " )>
+        <table class="table table-sm table-bordered @(item.Lines.Count()  == 0 ? "mb-2":"mb-0") " )>
+            <thead>
+                <tr>
+                    <th style="width: 100px">Ngày lập phiếu</th>
+                    <th class="" style="width: 80px"> Số phiếu</th>
+                    <th class="" style="width: 150px">Khách hàng</th>
+                    <th class="text-right" style="width: 100px">Tiền điều trị</th>
+                    <th class="text-right" style="width: 100px">Thanh toán</th>
+                    <th class="text-right" style="width: 100px">Còn lại</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="width: 100px">@(item.DateOrder.ToString("dd/MM/yyyy"))</td>
+                    <td class="" style="width: 80px">@item.Name</td>
+                    <td class="" style="width: 150px">@item.PartnerName</td>
+                    <td class="text-right" style="width: 100px">@string.Format(culture, "{0:N0}", item.AmountTotal)</td>
+                    <td class="text-right" style="width: 100px">@string.Format(culture, "{0:N0}", item.TotalPaid)</td>
+                    <td class="text-right" style="width: 100px">@string.Format(culture, "{0:N0}", item.Residual)</td>
+                </tr>
+            </tbody>
+
+
+            @if (item.Lines.Count() > 0)
+            {
                 <thead>
-                    <tr>
-                        <th style="width: 100px">Ngày lập phiếu</th>
-                        <th class="" style="width: 80px"> Số phiếu</th>
-                        <th class="" style="width: 150px">Khách hàng</th>
-                        <th class="text-right" style="width: 100px">Tiền điều trị</th>
+                    <tr class="border-top-0">
+                        <th colspan="2" style="width: 180px">Dịch vụ</th>
+                        <th style="width:80px">Số lượng</th>
+                        <th class="text-right" style="width: 100px">Thành tiền</th>
                         <th class="text-right" style="width: 100px">Thanh toán</th>
                         <th class="text-right" style="width: 100px">Còn lại</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td  style="width: 100px">@(item.DateOrder.ToString("dd/MM/yyyy"))</td>
-                        <td class=""  style="width: 80px">@item.Name</td>
-                        <td class=""  style="width: 150px">@item.PartnerName</td>
-                        <td class="text-right"  style="width: 100px">@string.Format(culture, "{0:N0}", item.AmountTotal)</td>
-                        <td class="text-right"  style="width: 100px">@string.Format(culture, "{0:N0}", item.TotalPaid)</td>
-                        <td class="text-right"  style="width: 100px">@string.Format(culture, "{0:N0}", item.Residual)</td>
-                    </tr>
-                </tbody>
-
-            </table>
-            @if (item.Lines.Count() > 0)
-            {
-                <table class="table table-sm table-bordered mb-2 border-top-0">
-                    <thead>
-                        <tr class="border-top-0">
-                            <th  class="border-0" style="width: 100px"></th>
-                            <th style="width: 150px">Dịch vụ</th>
-                            <th style="width:80px">Số lượng</th>
-                            <th class="text-right" style="width: 100px">Thành tiền</th>
-                            <th class="text-right" style="width: 100px">Thanh toán</th>
-                            <th class="text-right" style="width: 100px">Còn lại</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var line in item.Lines)
-                        {
+                    @foreach (var line in item.Lines)
+                    {
                         <tr>
-                            <td  class="border-0"  style="width: 100px"></td>
-                            <td style="width: 150px">@(line.Name)</td>
+                            <td colspan="2" style="width: 180px">@(line.Name)</td>
                             <td style="width: 80px">@string.Format(culture, "{0:N0}", @line.ProductUOMQty)</td>
                             <td class="text-right" style="width: 100px">@string.Format(culture, "{0:N0}", @line.PriceSubTotal)</td>
                             <td class="text-right" style="width: 100px">@string.Format(culture, "{0:N0}", line.AmountPaid)</td>
                             <td class="text-right" style="width: 100px">@string.Format(culture, "{0:N0}", line.AmountResidual)</td>
                         </tr>
-                        }
-                    </tbody>
-                </table>
+                    }
+
+                </tbody>
             }
+            <tr><td colspan="6"></td></tr>
+        </table>
         }
     </div>
     <div class="d-flex">

@@ -21,7 +21,7 @@
         </div>
         <div class="o_cp_right">
             <div class="dropdown">
-                <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                <button class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
                     aria-expanded="false" type="button" id="dropdownMenuButton" *ngIf="selectedIds.length">
                     Thao tác
                 </button>
@@ -66,9 +66,9 @@
                     Thao tác
                 </ng-template>
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    <button class="btn btn-success btn-sm mr-2" (click)="editItem(dataItem)">
+                    <button class="btn btn-success mr-2" (click)="editItem(dataItem)">
                         <i class="far fa-edit"></i></button>
-                    <button class="btn btn-danger btn-sm" (click)="$event.stopPropagation();deleteItem(dataItem)">
+                    <button class="btn btn-danger" (click)="$event.stopPropagation();deleteItem(dataItem)">
                         <i class="far fa-trash-alt"></i></button>
                 </ng-template>
             </kendo-grid-column>
