@@ -1,3 +1,4 @@
+<h4 class="ml-3 my-2">Sổ quỹ</h4>
 <kendo-chart class="mh-chart-year p-2 mb-2">
     <kendo-chart-title color="black" text="BIỂU ĐỒ THU CHI">
     </kendo-chart-title>
@@ -14,7 +15,8 @@
             *ngFor="let item of cashbookSeries"
             [type]="item.type"
             [name]="item.name"
-            [data]="item.data" >
+            [data]="item.data"
+            [color]="item.color" >
           </kendo-chart-series-item>
         </ng-container>
     </kendo-chart-series>
@@ -27,7 +29,13 @@
                 <span class="text-success">{{totalCashbook?.totalThu || 0 | number}}</span>
             </div>                    
             <div class="my-2 d-flex justify-content-between">
-                <span>Khách hàng thanh toán dịch vụ và thuốc</span>
+                <span>
+                    Khách hàng thanh toán dịch vụ và thuốc
+                    <span class="text-primary t-tooltip ml-1" placement="top"
+                        ngbTooltip="Không bao gồm tiền khách hàng thanh toán bằng phương thức Ghi công nợ và Tạm ứng">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </span>
+                </span>
                 <span >{{cashbookCashBank?.credit || 0 | number}}</span>
             </div>
             <div class="my-2 d-flex justify-content-between">

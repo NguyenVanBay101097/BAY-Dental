@@ -25,6 +25,11 @@ export class TreatmentProcessServiceListComponent implements OnInit {
   services: any;
   dotkhams: any[] = [];
   activeDotkham: any;
+  toothType = [
+    { name: "Hàm trên", value: "upper_jaw" },
+    { name: "Nguyên hàm", value: "whole_jaw" },
+    { name: "Hàm dưới", value: "lower_jaw" },
+  ];
   // @ViewChild('dotkhamVC', {static: false}) dotkhamVC: any;
   @ViewChildren("dotkhamVC") domReference: QueryList<any>;
 
@@ -63,8 +68,16 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     }
   }
 
-  formatTeethList(teethList) {
-    return teethList.map(x => x.Name).join(', ');
+  formatTeethList(service) {
+    let teethList = '';
+    if(service.ToothType && service.ToothType != 'manual'){
+      teethList = this.toothType.find(x => x.value == service.ToothType).name;
+    }
+    else{
+      teethList = service.Teeth.map(x => x.Name).join(', ');
+    }
+    return teethList;
+    // return teethList.map(x => x.Name).join(', ');
   }
 
   checkStatusDotKhamStep(step) {

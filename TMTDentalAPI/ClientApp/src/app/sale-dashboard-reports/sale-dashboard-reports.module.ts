@@ -15,6 +15,7 @@ import { SaleDashboardInvoiceReportComponent } from './sale-dashboard-invoice-re
 import { AccountInvoiceReportsModule } from '../account-invoice-reports/account-invoice-reports.module';
 import { SaleDashboardCashbookReportComponent } from './sale-dashboard-cashbook-report/sale-dashboard-cashbook-report.component';
 import { SaleDashboardApCrChartComponent } from './sale-dashboard-ap-cr-chart/sale-dashboard-ap-cr-chart.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 @NgModule({
   declarations: [
     SaleDashboardReportFormComponent,
@@ -34,7 +35,8 @@ import { SaleDashboardApCrChartComponent } from './sale-dashboard-ap-cr-chart/sa
     ReactiveFormsModule,
     AccountCommonPartnerReportsModule,
     AccountInvoiceReportsModule,
-    RevenueReportModule
+    RevenueReportModule,
+    NgbModule
   ]
 })
 export class SaleDashboardReportsModule { }
