@@ -208,10 +208,10 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
     const workbook = args.workbook;
     var sheet = args.workbook.sheets[0];
     var rows = sheet.rows;
-    sheet.mergedCells = ["A1:H1", "A2:H2"];
+    sheet.mergedCells = ["A1:G1", "A2:G2", "A3:F3"];
     sheet.frozenRows = 3;
     sheet.name = 'BaoCaoDoanhThu_TheoNV';
-    sheet.rows.splice(0, 1, { cells: [{
+    sheet.rows.splice(0, 0, { cells: [{
       value:"BÁO CÁO DOANH THU THEO NHÂN VIÊN",
       textAlign: "center"
     }], type: 'header' });
@@ -219,6 +219,15 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
     sheet.rows.splice(1, 0, { cells: [{
       value: `Từ ngày ${this.filter.dateFrom ? this.intlService.formatDate(this.filter.dateFrom, 'dd/MM/yyyy') : '...'} đến ngày ${this.filter.dateTo ? this.intlService.formatDate(this.filter.dateTo, 'dd/MM/yyyy') : '...'}`,
       textAlign: "center"
+    }], type: 'header' });
+    sheet.rows.splice(2, 1, { cells: [{
+      value:"Nhân viên",
+      textAlign: "left",
+      color: "#0000",
+    },{
+      value:"Doanh thu",
+      textAlign: "right",
+      color: "#0000",
     }], type: 'header' });
     args.preventDefault();
     const data = this.allDataInvoiceExport.data;
@@ -229,12 +238,12 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
       employeeFilter: this.empFilter,
       title: 'Doanh thu theo nhân viên'
     })
-    rows.forEach(row => {
-      if (row.type === "data"){
-        row.cells[0].value = "Nhân viên: "+row.cells[0].value;
-        row.cells[1].value = "Tổng doanh thu   "+row.cells[1].value;
-      }
-    });
+    // rows.forEach(row => {
+    //   if (row.type === "data"){
+    //     row.cells[0].value = "Nhân viên: "+row.cells[0].value;
+    //     row.cells[1].value = "Tổng doanh thu   "+row.cells[1].value;
+    //   }
+    // });
   }
 
 
