@@ -53,14 +53,14 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> SumReport([FromQuery] PartnerOldNewReportSumReq val)
+        public async Task<IActionResult> SumReport([FromQuery] PartnerOldNewReportReq val)
         {
             var res = await _partnerOldNewReportService.SumReport(val);
             return Ok(res);
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> SumReVenue([FromQuery] PartnerOldNewReportSumReq val)
+        public async Task<IActionResult> SumReVenue([FromQuery] PartnerOldNewReportReq val)
         {
             var res = await _partnerOldNewReportService.SumReVenue(val);
             return Ok(res);
@@ -95,5 +95,12 @@ namespace TMTDentalAPI.Controllers
             var file = _converter.Convert(pdf);
             return File(file, "application/pdf", "baocaokhachhang.pdf");
         }
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetSaleOrderPaged([FromQuery] GetSaleOrderPagedReq val)
+        {
+            var res = await _partnerOldNewReportService.GetSaleOrderPaged(val);
+            return Ok(res);
+        }
+
     }
 }

@@ -1,6 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { PagedResult2 } from '../employee-categories/emp-category';
+import { SaleOrderBasic } from '../sale-orders/sale-order-basic';
 
 export class PartnerOldNewReport {
   weekStart: string;
@@ -41,6 +43,19 @@ export class PartnerOldNewReportReq {
   memberLevelId: string;
   gender: string;
   search: string;
+  limit: number;
+  offset: number;
+  partnerId: string;
+}
+
+export class GetSaleOrderPagedReq {
+  dateFrom: any;
+  dateTo: any;
+  companyId: string;
+  typeReport: string;
+  limit: number;
+  offset: number;
+  partnerId: string;
 }
 
 export class PartnerOldNewReportRes {
@@ -81,8 +96,8 @@ export class PartnerOldNewReportService {
     return this.http.post<PartnerOldNewReport>(this.baseApi + this.apiUrl + "/GetSumaryPartnerOldNewReport", val);
   }
 
-  getReport(val: any): Observable<PartnerOldNewReportRes[]> {
-    return this.http.get<PartnerOldNewReportRes[]>(this.baseApi + this.apiUrl + "/GetReport", { params: new HttpParams({ fromObject: val }) });
+  getReport(val: any) {
+    return this.http.get<PagedResult2<PartnerOldNewReportRes>>(this.baseApi + this.apiUrl + "/GetReport", { params: new HttpParams({ fromObject: val }) });
   }
 
   sumReport(val: any) {
@@ -94,10 +109,14 @@ export class PartnerOldNewReportService {
   }
 
   getReportPrint(val) {
-    return this.http.get(this.baseApi + 'PartnerOldNewReport/GetReportPrint', {params: new HttpParams({fromObject: val}), responseType:'text'});
-}
+    return this.http.get(this.baseApi + 'PartnerOldNewReport/GetReportPrint', { params: new HttpParams({ fromObject: val }), responseType: 'text' });
+  }
 
-getReportPdf(val){
-    return this.http.get(this.baseApi + this.apiUrl+ '/GetReportPdf',{params: new HttpParams({fromObject: val}), responseType:'blob'});
-}
+  getReportPdf(val) {
+    return this.http.get(this.baseApi + this.apiUrl + '/GetReportPdf', { params: new HttpParams({ fromObject: val }), responseType: 'blob' });
+  }
+
+  getSaleOrderPaged(val: any) {
+    return this.http.get<PagedResult2<SaleOrderBasic>>(this.baseApi + this.apiUrl + "/GetSaleOrderPaged", { params: new HttpParams({ fromObject: val }) });
+  }
 }
