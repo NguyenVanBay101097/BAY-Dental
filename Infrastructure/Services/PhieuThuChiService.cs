@@ -496,12 +496,18 @@ namespace Infrastructure.Services
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 
+            if (!string.IsNullOrEmpty(val.AccountType))
+                query = query.Where(x => x.AccountType == val.AccountType);
+
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+
             if (val.DateFrom.HasValue)
-                query = query.Where(x => x.Date >= val.DateFrom.Value);
+                query = query.Where(x => x.Date >= val.DateFrom.Value.AbsoluteBeginOfDate());
+
             if (val.DateTo.HasValue)
-                query = query.Where(x => x.Date <= val.DateTo.Value);
+                query = query.Where(x => x.Date <= val.DateTo.Value.AbsoluteEndOfDate());
+
 
             query = query.Skip(val.Offset).Take(val.Limit);
 
