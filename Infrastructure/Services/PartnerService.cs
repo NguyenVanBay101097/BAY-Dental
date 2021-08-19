@@ -571,16 +571,22 @@ namespace Infrastructure.Services
                 Note = x.Comment,
                 Id = x.Id,
                 SourceName = x.SourceName,
-                TitleName = x.TitleName,
+                TitleName = x.TitleName
             }).ToListAsync();
 
             var historyRelObj = GetService<IHistoryService>();
             var pnIds = res.Select(x => x.Id).ToList();
             var Histories = await historyRelObj.SearchQuery(x => x.PartnerHistoryRels.Any(z => pnIds.Contains(z.PartnerId)))
                                                 .Include(x => x.PartnerHistoryRels).ToListAsync();
+
+            var partnerCategoryRelObj = GetService<IPartnerPartnerCategoryRelService>();
+            var cateList = await partnerCategoryRelObj.SearchQuery(x => res.Select(i => i.Id).Contains(x.PartnerId)).Include(x => x.Category).ToListAsync();
+            var categDict = cateList.GroupBy(x => x.PartnerId).ToDictionary(x => x.Key, x => x.Select(s => s.Category));
+
             foreach (var item in res)
             {
                 item.MedicalHistories = Histories.Where(x => x.PartnerHistoryRels.Any(z => z.PartnerId == item.Id)).Select(x => x.Name).ToList();
+                item.Categories = _mapper.Map<List<PartnerCategoryBasic>>(categDict.ContainsKey(item.Id) ? categDict[item.Id] : new List<PartnerCategory>());
             }
 
             return res;
