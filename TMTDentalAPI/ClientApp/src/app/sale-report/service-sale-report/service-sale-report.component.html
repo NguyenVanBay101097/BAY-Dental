@@ -44,7 +44,7 @@
                 </kendo-grid-column>
                 <kendo-grid-column field="teeth" class="text-primary" title="Răng" width="80">
                     <ng-template kendoGridCellTemplate let-dataItem>
-                        {{getTeethDisplay(dataItem.teeth)}}
+                        {{showTeethList(dataItem.toothType, dataItem.teeth)}}
                     </ng-template>
                 </kendo-grid-column>
                 <kendo-grid-column c field="productUOMQty" class="text-right" [headerClass]="'text-right'" title="Số lượng" width="90">

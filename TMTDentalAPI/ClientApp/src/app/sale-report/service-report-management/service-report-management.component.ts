@@ -153,6 +153,17 @@ export class ServiceReportManagementComponent implements OnInit {
         // add the detail data
         for (let productIdx = lines.length - 1; productIdx >= 0; productIdx--) {
           const line = lines[productIdx] as ServiceReportDetailRes;
+          var teethList = "";
+          if (line.toothType == "whole_jaw") {
+            teethList = "Nguyên hàm";
+          } else if (line.toothType == "upper_jaw") {
+            teethList = "Hàm trên";
+          } else if (line.toothType == "lower_jaw") {
+            teethList = "Hàm dưới";
+          } else {
+            teethList = line.teeth.map(x=> x.name).join(", ");
+          }
+
           rows.splice(idx + 2, 0, {
             cells: [
               {},
@@ -160,7 +171,7 @@ export class ServiceReportManagementComponent implements OnInit {
               { value: line.orderPartnerName },
               { value: line.name },
               { value: line.employeeName },
-              { value: line.teeth.map(x=> x.name).join(", ") },
+              { value: teethList },
               { value: line.productUOMQty },
               { value: line.priceSubTotal, textAlign: 'right',format : '#,###0' },
               { value: !line.isActive?'Ngừng điều trị' : stateDisplay[line.state] },
