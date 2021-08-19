@@ -95,6 +95,8 @@ namespace Infrastructure.Services
             if (qty < 0)
                 qty = 0;
 
+            var priceUnit = self.PriceUnit * (1 - (self.Discount ?? 0) / 100);
+
             return new AccountMoveLine
             {
                 Name = $"{self.Order.Name}: {self.Name}",
@@ -102,7 +104,7 @@ namespace Infrastructure.Services
                 PurchaseLineId = self.Id,
                 ProductUoMId = self.ProductUOMId,
                 ProductId = self.ProductId,
-                PriceUnit = self.PriceSubtotal,
+                PriceUnit = priceUnit,
                 Quantity = qty,
                 PartnerId = move.PartnerId,
             };

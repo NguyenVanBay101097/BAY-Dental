@@ -108,6 +108,16 @@ export class DashboardCustomerReceiptListTodayComponent implements OnInit {
         this.stateCount[item.state] = item.count;
       });
     });
+
+    // forkJoin(this.states.map(x => {
+    //   let count = x.value == '' ? this.listCustomerReceipt.length : this.listCustomerReceipt.map(s => s.state == x.value).length;
+    //   var obj = { state: x.value, count: count };
+    //   return obj;
+    // })).subscribe((result) => {
+    //   result.forEach(item => {
+    //     this.stateCount[item.state] = item.count;
+    //   });
+    // });
   }
 
   setStateFilter(state) {

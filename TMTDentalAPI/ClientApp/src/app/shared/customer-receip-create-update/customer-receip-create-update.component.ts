@@ -195,7 +195,7 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     receipt.partnerId = receipt.partner ? receipt.partner.id : '';
     receipt.doctorId = receipt.doctor ? receipt.doctor.id : '';
     receipt.dateWaiting = this.intlService.formatDate(receipt.dateObj, 'yyyy-MM-ddTHH:mm:ss');
-    receipt.dateExamination = this.stateControl == 'examination' ? this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss') : (this.customerReceipt.dateExamination ? this.customerReceipt.dateExamination : '');
+    receipt.dateExamination = this.stateControl == 'examination' ? this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss') : (this.customerReceipt && this.customerReceipt.dateExamination ? this.customerReceipt.dateExamination : '');
     receipt.dateDone = this.stateControl == 'done' ? this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss') : '';
     receipt.timeExpected = receipt.timeExpected || 0;
     receipt.products = receipt.services == null ? [] : receipt.services;
