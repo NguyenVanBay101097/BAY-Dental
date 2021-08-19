@@ -154,8 +154,9 @@ export class SaleOrderManagementComponent implements OnInit {
 
     const observables = [];
     const workbook = args.workbook;
+    var sheet = workbook.sheets[0];
     const rows = workbook.sheets[0].rows;
-
+    sheet.name = "QuanLyDieuTri";
     for (var rowIndex = 1; rowIndex < rows.length; rowIndex++) {
       var row = rows[rowIndex];
       for (var cellIndex = 0; cellIndex < row.cells.length; cellIndex++) {
@@ -230,7 +231,7 @@ export class SaleOrderManagementComponent implements OnInit {
       // https://www.telerik.com/kendo-angular-ui/components/excelexport/api/Workbook/
       new Workbook(workbook).toDataURL().then((dataUrl: string) => {
         // https://www.telerik.com/kendo-angular-ui/components/filesaver/
-        saveAs(dataUrl, "dieu_tri_chua_hoan_thanh.xlsx");
+        saveAs(dataUrl, "QuanLyDieuTri.xlsx");
         this.loading = false;
       });
     });
