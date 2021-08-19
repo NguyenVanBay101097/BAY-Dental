@@ -154,6 +154,13 @@ namespace Infrastructure.Services
                     {
                         ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
                         var rowCount = worksheet.Dimension.Rows;
+                        var cellCount = worksheet.Dimension.Columns;
+                        var title = Convert.ToString(worksheet.Cells[1, 1].Value);
+                        if(cellCount != 1 || !title.Contains("Tên nhãn khách hàng"))
+                        {
+                            errors.Add("File import sai định dạng. Vui lòng tải file mẫu và nhập dữ liệu đúng");
+                            return new PartnerCategoryImportResponse { Success = false, Errors = errors };
+                        }
 
                         for (int row = 2; row <= rowCount; row++)
                         {
