@@ -177,7 +177,7 @@
     box-shadow: none;
 }
 
-.calendar-table {
+.main-calender .calendar-table {
     table-layout: fixed;
     border-collapse: separate;
     border-spacing: 0;
@@ -185,13 +185,13 @@
     height: 100%;
 }
 
-.calendar-table th,
-.calendar-table td {
+.main-calender .calendar-table th,
+.main-calender .calendar-table td {
     border-top: 1px solid #dee2e6 !important;
     border-right: 1px solid #dee2e6 !important;
 }
 
-.calendar-table th {
+.main-calender .calendar-table th {
     font-size: 13px;
     font-weight: 600;
     border-top: 1px solid #dee2e6 !important;
@@ -203,35 +203,36 @@
     text-align: center;
 }
 
-.calendar-table th:first-child, .calendar-table td:first-child {
+.main-calender .calendar-table th:first-child, 
+.main-calender .calendar-table td:first-child {
     border-left: 1px solid #dee2e6 !important;
 }
 
-.calendar-table tr:last-child td {
+.main-calender .calendar-table tr:last-child td {
     border-bottom: 1px solid #dee2e6 !important;
 }
 
-.calendar-table th.th-v2 {
+.main-calender .calendar-table th.th-v2 {
     text-align: center;
     background: #F8F9FB;
     width: 190px;
 }
 
-.calendar-table th.th-v2 div:first-child {
+.main-calender .calendar-table th.th-v2 div:first-child {
     font-size: 1.5rem;
     /* color: #5A6271; */
 }
 
-.calendar-table th.th-v2 div:last-child {
+.main-calender .calendar-table th.th-v2 div:last-child {
     font-weight: normal;
     color: #929DAA;
 }
 
-.calendar-table th.th-v2 div.now {
+.main-calender .calendar-table th.th-v2 div.now {
     color: #007BFF;
 }
 
-.calendar-table td.td-time {
+.main-calender .calendar-table td.td-time {
     width: 1%;
     white-space: nowrap;
     font-size: 14px;
@@ -239,32 +240,32 @@
     border-right: 1px solid #dee2e6;
 }
 
-.calendar-table td.td-time.now {
+.main-calender .calendar-table td.td-time.now {
     font-weight: 600;
     color: #007BFF;
 }
 
-.calendar-table td.td-day {
+.main-calender .calendar-table td.td-day {
     position: relative;
     padding: 0;
 }
 
-.calendar-table td.td-week {
+.main-calender .calendar-table td.td-week {
     position: relative;
     padding: 0;
 }
 
-.calendar-table td.td-month {
+.main-calender .calendar-table td.td-month {
     height: 100px;
     /* border: 1px solid #ccc; */
 }
 
-.calendar-table td.td-month.active:hover {
+.main-calender .calendar-table td.td-month.active:hover {
     cursor: pointer;
     background: #F8F9FB;
 }
 
-.calendar-table tbody tr:first-child td {
+.main-calender .calendar-table tbody tr:first-child td {
     border-top: 0 !important;
 }
 
