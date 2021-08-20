@@ -10,7 +10,7 @@
                         [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                 </div>
                 <div class="o_searchview_advance">
-                    <button class="btn btn-secondary btn-sm rounded-0" type="button"
+                    <button class="btn btn-secondary rounded-0" type="button"
                         (click)="advanceFilter.toggleShow()">
                         Nâng cao
                     </button>
@@ -20,7 +20,7 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm" (click)="createItem()" accesskey="c">Thêm
+                    <button type="button" class="btn btn-primary" (click)="createItem()" accesskey="c">Thêm
                         mới</button>
                 </div>
             </div>
@@ -29,7 +29,7 @@
         </div>
         <div class="o_cp_right">
             <div class="dropdown">
-                <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                <button class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
                     aria-expanded="false" type="button" id="dropdownMenuButton" *ngIf="selectedIds.length">
                     Thao tác
                 </button>
@@ -83,9 +83,9 @@
                 Thao tác
             </ng-template>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-light btn-sm mr-2" (click)="editItem(dataItem)">
+                <button class="btn btn-light mr-2" (click)="editItem(dataItem)">
                     <span class="fa fa-edit"></span> Sửa</button>
-                <button class="btn btn-light btn-sm" (click)="deleteItem(dataItem)">
+                <button class="btn btn-light" (click)="deleteItem(dataItem)">
                     <span class="fa fa-trash"></span> Xóa</button>
             </ng-template>
         </kendo-grid-column>

@@ -255,7 +255,7 @@
                         <h5>Quỹ tiền mặt</h5>
                         <div class="o_value text-info">{{(moneyCash ? moneyCash : 0) | number}}</div>
                         <div class="link-details">
-                            <a (click)="redirectTo('cash-book')">Chi tiết</a>
+                            <a (click)="redirectTo('cash-book-cash')">Chi tiết</a>
                         </div>                      
                     </div>
                 </div>
@@ -264,7 +264,7 @@
                         <h5>Quỹ ngân hàng</h5>
                         <div class="o_value text-info"> {{(moneyBank ? moneyBank : 0) | number}}</div>
                         <div class="link-details">
-                            <a (click)="redirectTo('cash-book')">Chi tiết</a>
+                            <a (click)="redirectTo('cash-book-bank')">Chi tiết</a>
                         </div>  
                     </div>
                 </div>
@@ -318,7 +318,7 @@
             </div>
         </div>
         <div class="o_group mb-2">
-            <div class="border border-secondary rounded bg-white">
+            <div class="border border-secondary rounded">
                 <app-sale-dashboard-invoice-report [revenues]="revenues" [dataRevenues]="dataRevenues"
                     [cashBooks]="cashBooks" [dataCashBooks]="dataCashBooks" [totalDataCashBook]="totalDataCashBook"
                     [groupby]="groupBy">

@@ -335,7 +335,12 @@ namespace Infrastructure.Services
 
             if (!string.IsNullOrEmpty(val.State))
                 query = query.Where(x => !x.Order.State.Equals(val.State));
-
+            if (!string.IsNullOrEmpty(val.Search))
+            {
+                query = query.Where(x => x.Name.Contains(val.Search) ||
+                x.OrderPartner.Name.Contains(val.Search) ||
+                x.Employee.Name.Contains(val.Search));
+            }
             var items = await query.ToListAsync();
 
             var totalItems = await query.CountAsync();

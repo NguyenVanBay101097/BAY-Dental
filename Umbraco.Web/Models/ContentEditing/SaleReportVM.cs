@@ -50,6 +50,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string OrderPartnerName { get; set; }
         public string Name { get; set; }
         public string EmployeeName { get; set; }
+        public string ToothType { get; set; }
         public IEnumerable<ToothSimple> Teeth { get; set; } = new List<ToothSimple>();
         public decimal ProductUOMQty { get; set; }
         public decimal PriceSubTotal { get; set; }

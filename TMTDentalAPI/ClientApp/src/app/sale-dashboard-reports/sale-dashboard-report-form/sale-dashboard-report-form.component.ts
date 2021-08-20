@@ -515,6 +515,12 @@ export class SaleDashboardReportFormComponent implements OnInit {
       case 'cash-book':
         this.router.navigateByUrl("cash-book/tab-cabo");
         break;
+      case 'cash-book-cash':
+        this.router.navigateByUrl("cash-book/tab-cabo?result_selection=cash");
+        break;
+      case 'cash-book-bank':
+        this.router.navigateByUrl("cash-book/tab-cabo?result_selection=bank");
+        break;
       case 'account-invoice-reports':
         this.router.navigateByUrl("account-invoice-reports/revenue-expecting");
         break;

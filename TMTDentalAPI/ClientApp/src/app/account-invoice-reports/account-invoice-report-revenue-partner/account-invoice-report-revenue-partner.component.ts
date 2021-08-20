@@ -178,10 +178,10 @@ export class AccountInvoiceReportRevenuePartnerComponent implements OnInit {
     const workbook = args.workbook;
     var sheet = args.workbook.sheets[0];
     var rows = sheet.rows;
-    sheet.mergedCells = ["A1:H1", "A2:H2"];
+    sheet.mergedCells = ["A1:G1", "A2:G2","A3:F3"];
     sheet.frozenRows = 3;
     sheet.name = 'BaoCaoDoanhThu_TheoKH';
-    sheet.rows.splice(0, 1, { cells: [{
+    sheet.rows.splice(0, 0, { cells: [{
       value:"BÁO CÁO DOANH THU THEO KHÁCH HÀNG",
       textAlign: "center"
     }], type: 'header' });
@@ -189,6 +189,15 @@ export class AccountInvoiceReportRevenuePartnerComponent implements OnInit {
     sheet.rows.splice(1, 0, { cells: [{
       value: `Từ ngày ${this.filter.dateFrom ? this.intlPartner.formatDate(this.filter.dateFrom, 'dd/MM/yyyy') : '...'} đến ngày ${this.filter.dateTo ? this.intlPartner.formatDate(this.filter.dateTo, 'dd/MM/yyyy') : '...'}`,
       textAlign: "center"
+    }], type: 'header' });
+    sheet.rows.splice(2, 1, { cells: [{
+      value:"Khách hàng",
+      textAlign: "left",
+      color: "#0000",
+    },{
+      value:"Doanh thu",
+      textAlign: "right",
+      color: "#0000",
     }], type: 'header' });
     args.preventDefault();
     const data = this.allDataInvoiceExport.data;
@@ -200,14 +209,14 @@ export class AccountInvoiceReportRevenuePartnerComponent implements OnInit {
        showPartner: false
     })
 
-    rows.forEach(row => {
-      if (row.type === "data"){
-        row.cells[0].value = "Khách hàng: "+row.cells[0].value;
-        (row.cells[0] as WorkbookSheetRowCell).bold = true;
-        (row.cells[0] as WorkbookSheetRowCell).color = "#60aed0";
-        row.cells[1].value = "Tổng doanh thu   "+row.cells[1].value;
-      }
-    });
+    // rows.forEach(row => {
+    //   if (row.type === "data"){
+    //     row.cells[0].value = "Khách hàng: "+row.cells[0].value;
+    //     (row.cells[0] as WorkbookSheetRowCell).bold = true;
+    //     (row.cells[0] as WorkbookSheetRowCell).color = "#60aed0";
+    //     row.cells[1].value = "Tổng doanh thu   "+row.cells[1].value;
+    //   }
+    // });
   }
 
   printReport(){

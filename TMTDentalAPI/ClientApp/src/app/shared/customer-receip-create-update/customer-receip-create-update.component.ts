@@ -195,7 +195,7 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     receipt.partnerId = receipt.partner ? receipt.partner.id : '';
     receipt.doctorId = receipt.doctor ? receipt.doctor.id : '';
     receipt.dateWaiting = this.intlService.formatDate(receipt.dateObj, 'yyyy-MM-ddTHH:mm:ss');
-    receipt.dateExamination = this.stateControl == 'examination' ? this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss') : '';
+    receipt.dateExamination = this.stateControl == 'examination' ? this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss') : (this.customerReceipt && this.customerReceipt.dateExamination ? this.customerReceipt.dateExamination : '');
     receipt.dateDone = this.stateControl == 'done' ? this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss') : '';
     receipt.timeExpected = receipt.timeExpected || 0;
     receipt.products = receipt.services == null ? [] : receipt.services;
@@ -412,6 +412,10 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
             this.filteredEmployees = _.unionBy(this.filteredEmployees, [rs.doctor], 'id');
           }
 
+          if (rs.products) {            
+            this.formGroup.get('services').patchValue(rs.products);
+          }
+
           // if(this.id && this.customerReceipt.state != 'done') {
           //   this.f.partner.disable();
           //   this.f.doctor.disable();
@@ -484,6 +488,7 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     if (!this.formGroup.valid) {
       return false;
     }
+
     var receipt = this.formGroup.value;
     var res = new CustomerReceiptRequest();
     res.partnerId = this.partnerId ? this.partnerId : null;
@@ -492,7 +497,7 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     res.timeExpected = receipt.timeExpected || 0;
     res.companyId = this.authService.userInfo.companyId;
     res.products = receipt.services == null ? [] : receipt.services;
-    res.isRepeatCustomer = this.isRepeatCustomer;
+    res.isRepeatCustomer = receipt.isRepeatCustomer;
     res.note = receipt.note;
     res.appointmentId = this.appointId;
 

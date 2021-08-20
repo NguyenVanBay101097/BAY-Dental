@@ -158,7 +158,7 @@
                                 <label class="o_form_label">Lý do</label>
                             </td>
                             <td colspan="1">
-                                <textarea  class="form-control" rows="3" formControlName="reason" 
+                                <textarea  class="form-control text-error" rows="3" formControlName="reason" 
                                     placeholder="Lý do khách không điều trị"></textarea>
                                 <div *ngIf="f.reason.errors && (f.reason.touched || f.reason.dirty || submitted)"
                                     class="text-danger">

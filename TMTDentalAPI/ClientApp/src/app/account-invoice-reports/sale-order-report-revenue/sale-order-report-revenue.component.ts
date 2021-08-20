@@ -172,13 +172,13 @@ export class SaleOrderReportRevenueComponent implements OnInit {
     const workbook = args.workbook;
     var sheet = workbook.sheets[0];
     var rows = sheet.rows;
-    sheet.name = 'BaoCaoDoanhThu_TheoNV';
+    sheet.name = 'BaoCaoDuKienThu';
     sheet.rows.splice(0, 0, { cells: [{
       value:"BÁO CÁO DỰ KIẾN THU",
       textAlign: "center"
     }], type: 'header' });
     sheet.mergedCells = ["A1:E1"];
-    sheet.frozenRows = 3;
+    sheet.frozenRows = 2;
     
     args.preventDefault();
     this.loading = true;
@@ -190,6 +190,9 @@ export class SaleOrderReportRevenueComponent implements OnInit {
         row.cells[2].textAlign = 'right';
         row.cells[3].textAlign = 'right';
         row.cells[4].textAlign = 'right';
+        row.cells[2].format = '#,##0';
+        row.cells[3].format = '#,##0';
+        row.cells[4].format = '#,##0';
       }
       else {
         if (index != 0){
@@ -206,8 +209,6 @@ export class SaleOrderReportRevenueComponent implements OnInit {
        
       }
     });
-    console.log(rows);
-    
 
     new Workbook(workbook).toDataURL().then((dataUrl: string) => {
       // https://www.telerik.com/kendo-angular-ui/components/filesaver/

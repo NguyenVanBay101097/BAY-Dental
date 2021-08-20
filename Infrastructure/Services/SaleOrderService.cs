@@ -2818,6 +2818,7 @@ namespace Infrastructure.Services
                     }),
                     ProductId = x.ProductId,
                     Diagnostic = x.Diagnostic,
+                    ToothType = x.ToothType,
                     Teeth = x.SaleOrderLineToothRels.Select(s => new ToothDisplay
                     {
                         Id = s.ToothId,

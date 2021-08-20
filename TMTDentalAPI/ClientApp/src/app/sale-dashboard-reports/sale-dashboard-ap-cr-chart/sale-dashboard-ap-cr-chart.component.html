@@ -29,7 +29,7 @@
                                         </div>
                                         <div *ngFor="let item of pieDataCustomer" class="d-flex">
                                             <div>
-                                                <i class="fas fa-square mr-2" [style.color]="item.color"></i><span>{{getCusType(item.category)}}:</span>
+                                                <i class="fas fa-square mr-2" [style.color]="item.color"></i><span style="font-size: 1rem;">{{getCusType(item.category)}}:</span>
                                             </div>
                                             <div class="ml-2">
                                                 <span class="numeric-revenue">{{item.value | number}}</span>
@@ -80,7 +80,7 @@
                                         </div>
                                         <div *ngFor="let item of dataNoTreatment" class="d-flex">
                                             <div>
-                                                <i class="fas fa-square mr-2" [style.color]="item.color"></i><span>{{item.name}}:</span>
+                                                <i class="fas fa-square mr-2" [style.color]="item.color"></i><span style="font-size: 1rem;">{{item.name}}:</span>
                                             </div>
                                             <div class="ml-2">
                                                 <span class="numeric-revenue">{{item.countCustomerReceipt | number}}</span>

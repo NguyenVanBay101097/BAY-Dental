@@ -70,10 +70,10 @@
 
 <div class="o_action_manager app-body">
     <app-sidebar [fixed]="true" [display]="'lg'" #sidebar [minimized]="minimized" (minimizedChange)="toggleMinimize($event)">
-        <app-sidebar-nav [navItems]="navItems"></app-sidebar-nav>
+        <app-sidebar-nav [navItems]="menus"></app-sidebar-nav>
         <app-sidebar-minimizer></app-sidebar-minimizer>
     </app-sidebar>
-    <div class="main">
+    <div class="o_action main">
         <router-outlet></router-outlet>
     </div>
 </div>
