@@ -72,6 +72,8 @@ export class PartnerOverviewTreatmentHistoryComponent implements OnInit {
         return 'Đang điều trị';
       case 'done':
         return 'Hoàn thành';
+      case 'cancel':
+        return 'Ngừng điều trị';
       default:
         return 'Nháp';
     }
