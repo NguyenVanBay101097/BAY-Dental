@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { DateRangeComponent } from '@progress/kendo-angular-dateinputs';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { GridComponent, GridDataResult } from '@progress/kendo-angular-grid';
+import { GridComponent, GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { IntlService } from '@progress/kendo-angular-intl';
 import { isNaN } from 'lodash';
 import * as moment from 'moment';
 import { Subject } from 'rxjs/internal/Subject';
@@ -28,8 +29,16 @@ export class ServiceSaleReportComponent implements OnInit {
   employees: EmployeeSimple[] = [];
   gridData: GridDataResult;
   loading = false;
+  skip = 0;
+  limit = 20;
   searchUpdate = new Subject<string>();
   filterMonth: any = "";
+  search: string;
+  dateFrom: Date;
+  dateTo: Date;
+  state: string;
+  companyId: string;
+  employeeId: string;
   stateDisplay= {
     sale:"Đang điều trị",
     done: "Hoàn thành"
@@ -51,6 +60,7 @@ export class ServiceSaleReportComponent implements OnInit {
     private saleOrderLineService: SaleOrderLineService,
     private companyService: CompanyService,
     private employeeService: EmployeeService,
+    private intlService: IntlService,
     private printService:PrintService
   ) { }
 
@@ -64,11 +74,7 @@ export class ServiceSaleReportComponent implements OnInit {
 
   
   loadAllData() {
-    var val = Object.assign({}, this.filter) as SaleOrderLinePaged;
-    val.companyId = val.companyId || '';
-    val.employeeId = val.employeeId || '';
-    val.dateOrderFrom = val.dateOrderFrom ? moment(val.dateOrderFrom).format('YYYY/MM/DD') : '';
-    val.dateOrderTo = val.dateOrderTo ? moment(val.dateOrderTo).format('YYYY/MM/DD') : '';
+    var val = this.getDataApiParam();
     this.loading = true;
     this.saleOrderLineService.getPaged(val).subscribe(res => {
       this.gridData = <GridDataResult>{
@@ -80,6 +86,19 @@ export class ServiceSaleReportComponent implements OnInit {
       err => {
         this.loading = false;
       });
+  }
+
+  getDataApiParam() {
+    var val = new SaleOrderLinePaged();
+    val.limit = this.limit;
+    val.offset = this.skip;
+    val.search = this.search || '';
+    val.companyId = this.companyId || '';
+    val.employeeId = this.employeeId || '';
+    val.dateOrderFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
+    val.dateOrderTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
+    val.state = 'sale';
+    return val;
   }
 
   FilterCombobox() {
@@ -105,7 +124,7 @@ export class ServiceSaleReportComponent implements OnInit {
         )
       )
       .subscribe((x: any) => {
-        this.employees = x.items;
+        this.employees = x;
         this.empVC.loading = false;
       });
   }
@@ -119,11 +138,10 @@ export class ServiceSaleReportComponent implements OnInit {
       this.loadAllData();
     })
     
-    this.filter.dateOrderFrom = moment().startOf('month').toDate();
-    this.filter.dateOrderTo  = moment().endOf('month').toDate();
-    this.filter.limit = 20;
-    this.filter.offset = 0;
-    this.filter.state = 'sale';
+    var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+    this.dateFrom = this.dateFrom || new Date(y, m, 1);
+    this.dateTo = this.dateTo || new Date(y, m + 1, 0);
+    this.loadAllData();
   }
 
   searchCompany$(search?) {
@@ -153,26 +171,26 @@ export class ServiceSaleReportComponent implements OnInit {
   }
 
   onSearchDateChange(e) {
-    this.filter.dateOrderFrom = e.dateFrom;
-    this.filter.dateOrderTo = e.dateTo;
-    this.filter.offset = 0;
+    this.dateFrom = e.dateFrom;
+    this.dateTo = e.dateTo;
+    this.skip = 0;
     this.loadAllData();
   }
 
   onSelectCompany(e) {
-    this.filter.companyId = e ? e.id : null;
-    this.filter.offset = 0;
+    this.companyId = e ? e.id : null;
+    this.skip = 0;
     this.loadAllData();
   }
 
   onSelectEmployee(e) {
-    this.filter.employeeId = e ? e.id : null;
-    this.filter.offset = 0;
+    this.employeeId = e ? e.id : null;
+    this.skip = 0;
     this.loadAllData();
   }
-  
-  pageChange(e) {
-    this.filter.offset = e.skip;
+
+  pageChange(event: PageChangeEvent): void {
+    this.skip = event.skip;
     this.loadAllData();
   }
 
@@ -191,11 +209,7 @@ export class ServiceSaleReportComponent implements OnInit {
   }
 
   onExportExcel() {
-    var val = Object.assign({}, this.filter) as SaleOrderLinePaged;
-    val.companyId = val.companyId || '';
-    val.employeeId = val.employeeId || '';
-    val.dateOrderFrom = val.dateOrderFrom ? moment(val.dateOrderFrom).format('YYYY/MM/DD') : '';
-    val.dateOrderTo = val.dateOrderTo ? moment(val.dateOrderTo).format('YYYY/MM/DD') : '';
+    var val = this.getDataApiParam();
     this.loading = true;
     this.saleOrderLineService.getSaleReportExportExcel(val).subscribe(res => {
       this.loading = false;
@@ -219,11 +233,7 @@ export class ServiceSaleReportComponent implements OnInit {
   }
 
   onExportPDF() {
-    var val = Object.assign({}, this.filter) as SaleOrderLinePaged;
-    val.companyId = val.companyId || '';
-    val.employeeId = val.employeeId || '';
-    val.dateOrderFrom = val.dateOrderFrom ? moment(val.dateOrderFrom).format('YYYY/MM/DD') : '';
-    val.dateOrderTo = val.dateOrderTo ? moment(val.dateOrderTo).format('YYYY/MM/DD') : '';
+    var val = this.getDataApiParam();
     this.loading = true;
     this.saleOrderLineService.getSaleReportExportPdf(val).subscribe(res => {
       this.loading = false;
@@ -248,11 +258,7 @@ export class ServiceSaleReportComponent implements OnInit {
 
 
   onPrint(){
-    var val = Object.assign({}, this.filter) as SaleOrderLinePaged;
-    val.companyId = val.companyId || '';
-    val.employeeId = val.employeeId || '';
-    val.dateOrderFrom = val.dateOrderFrom ? moment(val.dateOrderFrom).format('YYYY/MM/DD') : '';
-    val.dateOrderTo = val.dateOrderTo ? moment(val.dateOrderTo).format('YYYY/MM/DD') : '';
+    var val = this.getDataApiParam();
     this.loading = true;
       this.saleOrderLineService.SaleReportPrint(val).subscribe((result: any) => {
         this.loading = false;
