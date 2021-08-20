@@ -620,7 +620,7 @@ namespace Infrastructure.Services
                 message.Error = $"Mã khuyến mãi vượt quá hạn mức áp dụng";
             if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.DiscountMemberLevels.Any() && (!memberLevelId.HasValue || self.DiscountMemberLevels.Any(x=> x.MemberLevelId != memberLevelId)))
                 message.Error = $"Mã khuyến mãi không áp dụng cho hạng thành viên này hoặc chưa có hạng thành viên";
-            else if ((self.RuleDateFrom.HasValue && self.RuleDateFrom.Value > order.DateOrder) || (self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() < order.DateOrder))
+            else if ((self.RuleDateFrom.HasValue && self.RuleDateFrom.Value > order.DateOrder) || (self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() < order.DateOrder) || today > self.RuleDateTo)
                 message.Error = $"CTKM đã hết hạn.";
             else if (self.IsApplyDayOfWeek && !string.IsNullOrEmpty(self.Days) && !self.Days.Contains(((int)today.DayOfWeek).ToString()))
                 message.Error = $"Mã khuyến mãi không được áp dụng trong hôm nay";
@@ -668,7 +668,7 @@ namespace Infrastructure.Services
                 message.Error = "Mã đang trùng CTKM đang áp dụng";
             else if (self.DiscountApplyOn != "on_order")
                 message.Error = "Mã khuyến mãi không áp dụng trên báo giá";
-            else if (self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() < quotation.DateQuotation)
+            else if ((self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() < quotation.DateQuotation) || today > self.RuleDateTo )
                 // message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
                 message.Error = "Chương trình khuyến mãi đã hết hạn";
             else if (self.RuleDateFrom.HasValue && self.RuleDateFrom.Value > quotation.DateQuotation)
@@ -705,7 +705,8 @@ namespace Infrastructure.Services
         {
             var message = new CheckPromoCodeMessage();
             var saleObj = GetService<ISaleOrderService>();
-            if (self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() < order.DateOrder)
+            var today = DateTime.Today;
+            if (self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() < order.DateOrder || today > self.RuleDateTo)
                 // message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
                 message.Error = "Chương trình khuyến mãi đã hết hạn";
             else if (self.RuleDateFrom.HasValue && self.RuleDateFrom.Value > order.DateOrder)
@@ -736,6 +737,7 @@ namespace Infrastructure.Services
         {
             var message = new CheckPromoCodeMessage();
             var saleLineObj = GetService<ISaleOrderLineService>();
+            var today = DateTime.Today;
             var countApplied = await _GetCountAppliedAsync(self);
             var memberLevelId = GetMemberLevel(line.OrderPartnerId.Value);
             if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
@@ -744,7 +746,7 @@ namespace Infrastructure.Services
                 message.Error = $"Mã khuyến mãi không áp dụng cho hạng thành viên này hoặc chưa có hạng thành viên";
             else if ((self.RuleDateFrom.HasValue && self.RuleDateFrom.Value > line.Order.DateOrder))
                 message.Error = $"Mã khuyến mãi không được áp dụng trong hôm nay";
-            else if ((self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() < line.Order.DateOrder))
+            else if ((self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() < line.Order.DateOrder) || today > self.RuleDateTo)
                 message.Error = $"Chương trình khuyến mãi đã hết hạn";
             else if ((self.DiscountSpecificProducts.Any() && !self.DiscountSpecificProducts.Any(x => x.ProductId == line.ProductId)))
                 message.Error = "Khuyến mãi không áp dụng cho dịch vụ này";
@@ -777,6 +779,7 @@ namespace Infrastructure.Services
         {
             var message = new CheckPromoCodeMessage();
             var saleObj = GetService<ISaleOrderService>();
+            var today = DateTime.Today;
             //var applicable_programs = await saleObj._GetApplicablePrograms(order);
             var countApplied = await _GetCountAppliedQuotationAsync(self);
             var memberLevelId = GetMemberLevel(line.Quotation.PartnerId);
@@ -787,7 +790,7 @@ namespace Infrastructure.Services
             message.Error = "Mã khuyến mãi vượt quá hạn mức áp dụng";
             else if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.DiscountMemberLevels.Any() && (!memberLevelId.HasValue || self.DiscountMemberLevels.Any(x => x.MemberLevelId != memberLevelId)))
                 message.Error = $"Mã khuyến mãi không áp dụng cho hạng thành viên này hoặc chưa có hạng thành viên";
-            else if ((self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() < line.Quotation.DateQuotation))
+            else if ((self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() < line.Quotation.DateQuotation) || today > self.RuleDateTo)
                 // message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
                 message.Error = "CTKM đã hết hạn";
             else if (self.RuleDateFrom.HasValue && self.RuleDateFrom.Value.AbsoluteBeginOfDate() > line.Quotation.DateQuotation)
@@ -833,7 +836,8 @@ namespace Infrastructure.Services
         {
             var message = new CheckPromoCodeMessage();
             var saleObj = GetService<ISaleOrderService>();
-            if ((self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() < quotation.DateQuotation))
+            var today = DateTime.Today;
+            if ((self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() < quotation.DateQuotation) || today > self.RuleDateTo)
                 // message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
                 message.Error = "CTKM đã hết hạn";
             else if (self.RuleDateFrom.HasValue && self.RuleDateFrom.Value.AbsoluteBeginOfDate() > quotation.DateQuotation)
