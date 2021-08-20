@@ -654,7 +654,7 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 10].Value = item.WardName;
                     worksheet.Cells[row, 11].Value = item.DistrictName;
                     worksheet.Cells[row, 12].Value = item.CityName;
-                    worksheet.Cells[row, 13].Value = item.TitleName;
+                    worksheet.Cells[row, 13].Value = item.Tags;
                     worksheet.Cells[row, 14].Value = string.Join(",", item.MedicalHistories);
                     worksheet.Cells[row, 15].Value = item.Email;
                     worksheet.Cells[row, 16].Value = item.Job;
