@@ -140,6 +140,7 @@ export class ServiceReportDetailRes {
 	orderPartnerName: string;
 	name: string;
 	employeeName?: any;
+    toothType: string;
 	teeth: any[];
 	productUOMQty: number;
 	priceSubTotal: number;

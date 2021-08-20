@@ -81,8 +81,29 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
         [EpplusDisplay("Bác sĩ")]
         public string EmployeeName { get; set; }
-        [EpplusDisplay("Răng")]
+        [EpplusIgnore]
+        public string ToothType { get; set; }
+        [EpplusIgnore]
         public string Teeth { get; set; }
+        [EpplusDisplay("Răng")]
+        public string TeethList
+        {
+            get
+            {
+                switch (this.ToothType)
+                {
+                    case "whole_jaw":
+                        return "Nguyên hàm";
+                    case "upper_jaw":
+                        return "Hàm trên";
+                    case "lower_jaw":
+                        return "Hàm dưới";
+                    default:
+                        return this.Teeth;
+                }
+            }
+            set { }
+        }
         [EpplusDisplay("Số lượng")]
         public decimal ProductUOMQty { get; set; }
         [EpplusDisplay("Thành tiền")]
