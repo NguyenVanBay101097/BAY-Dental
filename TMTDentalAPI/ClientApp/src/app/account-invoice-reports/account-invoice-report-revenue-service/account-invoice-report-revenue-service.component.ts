@@ -202,10 +202,12 @@ export class AccountInvoiceReportRevenueServiceComponent implements OnInit {
     const workbook = args.workbook;
     var sheet = args.workbook.sheets[0];
     var rows = sheet.rows;
-    sheet.mergedCells = ["A1:H1", "A2:H2"];
+    sheet.mergedCells = ["A1:G1", "A2:G2","B3:G3"];
     sheet.frozenRows = 3;
+    console.log(sheet.rows);
+    
     sheet.name = 'BaoCaoDoanhThu_TheoDV';
-    sheet.rows.splice(0, 1, { cells: [{
+    sheet.rows.splice(0, 0, { cells: [{
       value:"BÁO CÁO DOANH THU THEO DỊCH VỤ",
       textAlign: "center"
     }], type: 'header' });
@@ -213,6 +215,15 @@ export class AccountInvoiceReportRevenueServiceComponent implements OnInit {
     sheet.rows.splice(1, 0, { cells: [{
       value: `Từ ngày ${this.filter.dateFrom ? this.intlService.formatDate(this.filter.dateFrom, 'dd/MM/yyyy') : '...'} đến ngày ${this.filter.dateTo ? this.intlService.formatDate(this.filter.dateTo, 'dd/MM/yyyy') : '...'}`,
       textAlign: "center"
+    }], type: 'header' });
+    sheet.rows.splice(2, 1, { cells: [{
+      value:"Dịch vụ & Thuốc",
+      textAlign: "left",
+      color: "#0000",
+    },{
+      value:"Doanh thu",
+      textAlign: "right",
+      color: "#0000",
     }], type: 'header' });
     args.preventDefault();
     const data = this.allDataInvoiceExport.data;
@@ -223,12 +234,12 @@ export class AccountInvoiceReportRevenueServiceComponent implements OnInit {
        title: 'Doanh thu theo dịch vụ'
     })
 
-    rows.forEach(row => {
-      if (row.type === "data"){
-        row.cells[0].value = "Dịch vụ & thuốc: "+row.cells[0].value;
-        row.cells[1].value = "Tổng doanh thu   "+row.cells[1].value;
-      }
-    });
+    // rows.forEach(row => {
+    //   if (row.type === "data"){
+    //     row.cells[0].value = "Dịch vụ & thuốc: "+row.cells[0].value;
+    //     row.cells[1].value = "Tổng doanh thu   "+row.cells[1].value;
+    //   }
+    // });
   }
 
   onSelectProduct(e) {
