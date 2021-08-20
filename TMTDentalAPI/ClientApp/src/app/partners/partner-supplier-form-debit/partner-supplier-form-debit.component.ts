@@ -4,7 +4,7 @@ import { PartnerGetDebtPagedFilter } from './../partner.service';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { GridComponent, GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
@@ -43,7 +43,9 @@ export class PartnerSupplierFormDebitComponent implements OnInit {
     private notificationService: NotificationService,
     private accountPaymentService: AccountPaymentService,
 
-  ) { }
+  ) { 
+    this.allData = this.allData.bind(this);
+  }
 
   ngOnInit() {
     this.id = this.activeRoute.parent.snapshot.paramMap.get('id');
@@ -61,25 +63,51 @@ export class PartnerSupplierFormDebitComponent implements OnInit {
     }
   }
 
-  exportExcelFile() {
-    this.partnerService.exportUnreconcileInvoices(this.id).subscribe((res) => {
-      let filename = "CongNoNhaCungCap";
-      let newBlob = new Blob([res], {
-        type:
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      let data = window.URL.createObjectURL(newBlob);
-      let link = document.createElement("a");
-      link.href = data;
-      link.download = filename;
-      link.click();
-      setTimeout(() => {
-        // For Firefox it is necessary to delay revoking the ObjectURL
-        window.URL.revokeObjectURL(data);
-      }, 100);
-    });
+  // exportExcelFile() {
+  //   this.partnerService.exportUnreconcileInvoices(this.id).subscribe((res) => {
+  //     let filename = "CongNoNhaCungCap";
+  //     let newBlob = new Blob([res], {
+  //       type:
+  //         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  //     });
+  //     let data = window.URL.createObjectURL(newBlob);
+  //     let link = document.createElement("a");
+  //     link.href = data;
+  //     link.download = filename;
+  //     link.click();
+  //     setTimeout(() => {
+  //       // For Firefox it is necessary to delay revoking the ObjectURL
+  //       window.URL.revokeObjectURL(data);
+  //     }, 100);
+  //   });
+  // }
+
+  exportExcelFile(grid: GridComponent) {
+    grid.saveAsExcel()
   }
 
+  public allData = (): any => {
+    var val = new PartnerGetDebtPagedFilter();
+    val.search = this.search ? this.search : '';
+    val.companyId = this.authService.userInfo.companyId;
+    val.limit = this.limit;
+    val.offset = this.skip;
+    var observable = this.partnerService.getDebtPaged(this.id, val).pipe(
+      map((response: any) => (<GridDataResult>{
+        data: response.items.map(x => {
+          return {
+            ...x,
+            date: new Date(x.date),
+            moveType: x.moveType == 'in_invoice' ? 'Mua hàng': 'Trả hàng',
+            payment: x.balance - x.amountResidual
+          }
+        }),
+        total: response.totalItems,
+      }))
+    );
+    return observable;
+  }
+  
   loadDataFromApi() {
     var val = new PartnerGetDebtPagedFilter();
     val.search = this.search ? this.search : '';
