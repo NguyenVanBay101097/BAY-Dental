@@ -29,7 +29,7 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<HrPayslipRunBasic>> GetPagedResultAsync(HrPayslipRunPaged val)
         {
-            ISpecification<HrPayslipRun> spec = new InitialSpecification<HrPayslipRun>(x => true);
+            ISpecification<HrPayslipRun> spec = new InitialSpecification<HrPayslipRun>(x => x.CompanyId == CompanyId);
             if (!string.IsNullOrEmpty(val.Search))
                 spec = spec.And(new InitialSpecification<HrPayslipRun>(x => x.Name.Contains(val.Search)));
 
@@ -47,7 +47,8 @@ namespace Infrastructure.Services
 
         public async Task<HrPayslipRunDisplay> GetHrPayslipRunForDisplay(Guid id)
         {
-            var res = await _mapper.ProjectTo<HrPayslipRunDisplay>(SearchQuery(x => x.Id == id)
+            //bị lỗi là các đợt logic cũ có  nhân viên chi nhánh khác
+            var res = await _mapper.ProjectTo<HrPayslipRunDisplay>(SearchQuery(x => x.Id == id && x.CompanyId == CompanyId)
                 .Include(x => x.Slips).ThenInclude(x => x.Employee)
                 .Include(x => x.Slips).ThenInclude(x => x.SalaryPayment))
                 .FirstOrDefaultAsync();
@@ -66,7 +67,7 @@ namespace Infrastructure.Services
         {
             var userObj = GetService<IUserService>();
             var slipObj = GetService<IHrPayslipService>();
-            var res = await SearchQuery(x => x.Id == id).Select(x => new HrPayslipRunPrintVm
+            var res = await SearchQuery(x => x.Id == id && x.CompanyId == CompanyId).Select(x => new HrPayslipRunPrintVm
             {
                 Id = x.Id,
                 Name = x.Name,
@@ -102,10 +103,9 @@ namespace Infrastructure.Services
         public async Task<HrPayslipRun> CreatePayslipRun(HrPayslipRunSave val)
         {
 
-
             var ccObj = GetService<IChamCongService>();
 
-            var isExist = await SearchQuery().AnyAsync(x => x.Date.Value.Month == val.Date.Value.Month && x.Date.Value.Year == val.Date.Value.Year);
+            var isExist = await SearchQuery(x=> x.CompanyId == CompanyId).AnyAsync(x => x.Date.Value.Month == val.Date.Value.Month && x.Date.Value.Year == val.Date.Value.Year);
             if (isExist == true)
             {
                 throw new Exception("Đã tồn tại bảng lương của tháng " + val.Date.Value.Month);
@@ -117,7 +117,7 @@ namespace Infrastructure.Services
 
         public async Task UpdatePayslipRun(Guid id, HrPayslipRunSave val)
         {
-            var paySlipRun = await SearchQuery(x => x.Id == id).Include(x => x.Slips).Include(x => x.Company).FirstOrDefaultAsync();
+            var paySlipRun = await SearchQuery(x => x.Id == id && x.CompanyId == CompanyId).Include(x => x.Slips).Include(x => x.Company).FirstOrDefaultAsync();
             if (paySlipRun == null)
                 throw new Exception("Đợt lương không tồn tại");
 
@@ -163,7 +163,7 @@ namespace Infrastructure.Services
             var moveObj = GetService<IAccountMoveService>();
             var amlObj = GetService<IAccountMoveLineService>();
 
-            var paysliprun = await SearchQuery(x => x.Id == id).Include(x => x.Slips).ThenInclude(x => x.Employee)
+            var paysliprun = await SearchQuery(x => x.Id == id && x.CompanyId == CompanyId).Include(x => x.Slips).ThenInclude(x => x.Employee)
                 .ThenInclude(x => x.Partner).FirstOrDefaultAsync();
             if (paysliprun == null)
                 throw new Exception("Đợt lương không tồn tại");
@@ -329,7 +329,7 @@ namespace Infrastructure.Services
         public async Task ActionDone(IEnumerable<Guid> ids)
         {
             var payslipObj = GetService<IHrPayslipService>();
-            var payslipruns = await SearchQuery(x => ids.Contains(x.Id) && x.State == "confirm").Include(x => x.Slips).ToListAsync();
+            var payslipruns = await SearchQuery(x => ids.Contains(x.Id) && x.State == "confirm" && x.CompanyId == CompanyId).Include(x => x.Slips).ToListAsync();
 
             foreach (var run in payslipruns)
             {
@@ -351,7 +351,7 @@ namespace Infrastructure.Services
         {
             var moveObj = GetService<IAccountMoveService>();
             var moveLineObj = GetService<IAccountMoveLineService>();
-            var payslipruns = await SearchQuery(x => ids.Contains(x.Id)).Include("Slips.SalaryPayment")
+            var payslipruns = await SearchQuery(x => ids.Contains(x.Id) && x.CompanyId == CompanyId).Include("Slips.SalaryPayment")
                 .Include(x => x.Move).ThenInclude(x => x.Lines).ToListAsync();
 
             var listMove = new List<AccountMove>();
@@ -391,19 +391,19 @@ namespace Infrastructure.Services
             var advanceObj = GetService<ISalaryPaymentService>();
 
             //get all resource
-            var emps = await employeeObj.SearchQuery(x => x.Active == true).ToListAsync();
+            var emps = await employeeObj.SearchQuery(x => x.Active == true && x.CompanyId == CompanyId).ToListAsync();
             var empIds = emps.Select(x => x.Id).ToList();
-            var paysliprun = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            var paysliprun = await SearchQuery(x => x.Id == id && x.CompanyId == CompanyId).FirstOrDefaultAsync();
             var allChamcongs = await ccObj.SearchQuery(c => empIds.Any(x => x == c.EmployeeId)
             && c.Date.Value.Month == paysliprun.Date.Value.Month
-            && c.Date.Value.Year == paysliprun.Date.Value.Year).ToListAsync();
+            && c.Date.Value.Year == paysliprun.Date.Value.Year && c.CompanyId == CompanyId).ToListAsync();
             var firstDayOfMonth = new DateTime(paysliprun.Date.Value.Year, paysliprun.Date.Value.Month, 1);
             var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
             var commissions = await commissionObj.GetReport(new CommissionSettlementFilterReport() { CompanyId = paysliprun.CompanyId, DateFrom = firstDayOfMonth, DateTo = lastDayOfMonth });
             var Alladvances = await advanceObj.SearchQuery(c => empIds.Contains(c.EmployeeId.Value)
             && c.Type == "advance" && c.State == "done"
             && c.Date.Month == paysliprun.Date.Value.Month
-            && c.Date.Year == paysliprun.Date.Value.Year).ToListAsync();
+            && c.Date.Year == paysliprun.Date.Value.Year && c.CompanyId == CompanyId).ToListAsync();
 
             //validate
             if (paysliprun == null)
@@ -461,7 +461,7 @@ namespace Infrastructure.Services
             {
                 chamCongs = await ccObj.SearchQuery(c => c.EmployeeId == emp.Id
             && c.Date.Value.Month == date.Value.Month
-            && c.Date.Value.Year == date.Value.Year).ToListAsync();
+            && c.Date.Value.Year == date.Value.Year && c.CompanyId == CompanyId).ToListAsync();
             }
             if (commission == null)
             {
@@ -474,7 +474,7 @@ namespace Infrastructure.Services
             {
                 advances = await advanceObj.SearchQuery(c => c.EmployeeId == emp.Id
              && c.Type == "advance" && c.State == "done" && c.Date.Month == date.Value.Month
-            && c.Date.Year == date.Value.Year).ToListAsync();
+            && c.Date.Year == date.Value.Year && c.CompanyId == CompanyId).ToListAsync();
             }
 
             payslip.DaySalary = (emp.Wage.GetValueOrDefault() / soCongChuanThang);
@@ -504,7 +504,7 @@ namespace Infrastructure.Services
 
         public async Task ComputeSalaryByRunId(Guid id)
         {
-            var paysliprun = await SearchQuery(x => x.Id == id).Include(x => x.Slips).ThenInclude(x => x.Employee).FirstOrDefaultAsync();
+            var paysliprun = await SearchQuery(x => x.Id == id && x.CompanyId == CompanyId).Include(x => x.Slips).ThenInclude(x => x.Employee).FirstOrDefaultAsync();
 
             //validate
             if (paysliprun == null)
@@ -527,14 +527,14 @@ namespace Infrastructure.Services
             var empIds = paysliprun.Slips.Select(x => x.EmployeeId);
             var allChamcongs = await ccObj.SearchQuery(c => empIds.Any(x => x == c.EmployeeId)
             && c.Date.Value.Month == paysliprun.Date.Value.Month
-            && c.Date.Value.Year == paysliprun.Date.Value.Year).ToListAsync();
+            && c.Date.Value.Year == paysliprun.Date.Value.Year && c.CompanyId == CompanyId).ToListAsync();
             var firstDayOfMonth = new DateTime(paysliprun.Date.Value.Year, paysliprun.Date.Value.Month, 1);
             var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
             var commissions = await commissionObj.GetReport(new CommissionSettlementFilterReport() { CompanyId = paysliprun.CompanyId, DateFrom = firstDayOfMonth, DateTo = lastDayOfMonth });
             var Alladvances = await advanceObj.SearchQuery(c => empIds.Contains(c.EmployeeId.Value)
             && c.Type == "advance" && c.State == "done"
             && c.Date.Month == paysliprun.Date.Value.Month
-            && c.Date.Year == paysliprun.Date.Value.Year).ToListAsync();
+            && c.Date.Year == paysliprun.Date.Value.Year && c.CompanyId == CompanyId).ToListAsync();
             foreach (var item in paysliprun.Slips)
             {
                 var chamCongs = allChamcongs.Where(x => x.EmployeeId == item.EmployeeId);
@@ -551,7 +551,7 @@ namespace Infrastructure.Services
 
         public async Task<HrPayslipRunDisplay> CheckExist(DateTime date)
         {
-            var run = await this.SearchQuery(x => x.Date.Value.Month == date.Month && x.Date.Value.Year == date.Year).FirstOrDefaultAsync();
+            var run = await this.SearchQuery(x => x.Date.Value.Month == date.Month && x.Date.Value.Year == date.Year && x.CompanyId == CompanyId).FirstOrDefaultAsync();
             if (run == null) { return null; }
             return await this.GetHrPayslipRunForDisplay(run.Id);
         }
@@ -560,7 +560,7 @@ namespace Infrastructure.Services
         {
             var payslipObj = GetService<IHrPayslipService>();
             var employeeObj = GetService<IEmployeeService>();
-            var empCompanys = await employeeObj.SearchQuery(x => x.Active == true).ToListAsync();
+            var empCompanys = await employeeObj.SearchQuery(x => x.Active == true && x.CompanyId == CompanyId).ToListAsync();
             var ccObj = GetService<IChamCongService>();
             var commissionObj = GetService<ICommissionSettlementService>();
             var advanceObj = GetService<ISalaryPaymentService>();
@@ -570,11 +570,11 @@ namespace Infrastructure.Services
 
             var allChamcongs = await ccObj.SearchQuery(c => empIds.Any(x => x == c.EmployeeId)
             && c.Date.Value.Month == paysliprun.Date.Value.Month
-            && c.Date.Value.Year == paysliprun.Date.Value.Year).ToListAsync();
+            && c.Date.Value.Year == paysliprun.Date.Value.Year && c.CompanyId == CompanyId).ToListAsync();
             var firstDayOfMonth = new DateTime(paysliprun.Date.Value.Year, paysliprun.Date.Value.Month, 1);
             var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
             var commissions = await commissionObj.GetReport(new CommissionSettlementFilterReport() { CompanyId = paysliprun.CompanyId, DateFrom = firstDayOfMonth, DateTo = lastDayOfMonth });
-            var Alladvances = await advanceObj.SearchQuery(c => empIds.Contains(c.EmployeeId.Value) && c.Type == "advance" && c.State == "done" && c.Date.Month == paysliprun.Date.Value.Month && c.Date.Year == paysliprun.Date.Value.Year).ToListAsync();
+            var Alladvances = await advanceObj.SearchQuery(c => c.CompanyId == CompanyId && empIds.Contains(c.EmployeeId.Value) && c.Type == "advance" && c.State == "done" && c.Date.Month == paysliprun.Date.Value.Month && c.Date.Year == paysliprun.Date.Value.Year).ToListAsync();
 
             //tạo phiếu lương từ list emps
             var payslips = new List<HrPayslip>();
