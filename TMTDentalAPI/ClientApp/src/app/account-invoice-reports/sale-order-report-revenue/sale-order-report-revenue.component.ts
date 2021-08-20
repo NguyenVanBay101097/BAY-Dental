@@ -172,7 +172,7 @@ export class SaleOrderReportRevenueComponent implements OnInit {
     const workbook = args.workbook;
     var sheet = workbook.sheets[0];
     var rows = sheet.rows;
-    sheet.name = 'BaoCaoDoanhThu_TheoNV';
+    sheet.name = 'BaoCaoDuKienThu';
     sheet.rows.splice(0, 0, { cells: [{
       value:"BÁO CÁO DỰ KIẾN THU",
       textAlign: "center"
