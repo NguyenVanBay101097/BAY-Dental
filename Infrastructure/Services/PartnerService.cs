@@ -2321,7 +2321,7 @@ namespace Infrastructure.Services
 
             var ResponseQr = await GetQueryPartnerInfoPaged2(val);
             var count = await ResponseQr.CountAsync();
-            var res = await ResponseQr.Skip(val.Offset).Take(val.Limit).ToListAsync();
+            var res = await ResponseQr.OrderByDescending(x=> x.DateCreated).Skip(val.Offset).Take(val.Limit).ToListAsync();
 
             var cateList = await partnerCategoryRelObj.SearchQuery(x => res.Select(i => i.Id).Contains(x.PartnerId)).Include(x => x.Category).ToListAsync();
             var categDict = cateList.GroupBy(x => x.PartnerId).ToDictionary(x => x.Key, x => x.Select(s => s.Category));

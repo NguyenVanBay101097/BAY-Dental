@@ -379,6 +379,7 @@ namespace Infrastructure.Services
                     saleOrderLine.Order = saleOrder;
                     saleOrderLine.Sequence = sequence++;
                     saleOrderLine.ToothCategoryId = advisory.ToothCategoryId;
+                    saleOrderLine.Date = DateTime.Now;
 
                     if (advisory.ToothType == "manual")
                     {
