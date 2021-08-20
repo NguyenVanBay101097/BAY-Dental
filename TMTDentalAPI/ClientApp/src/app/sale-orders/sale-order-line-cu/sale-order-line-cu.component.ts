@@ -349,8 +349,8 @@ export class SaleOrderLineCuComponent implements OnInit {
       modalRef.componentInstance.title = this.formState == 'done' ? 'Hoàn thành dịch vụ' : 'Ngừng dịch vụ';
       modalRef.componentInstance.body = this.formState == 'done'? 'Bạn có xác nhận hoàn thành dịch vụ không'
       :'Bạn có muốn ngừng dịch vụ không?';
-      modalRef.componentInstance.body2 = this.formState == 'done'?'(Lưu ý: Sau khi ngừng không thể chỉnh sửa dịch vụ)'
-      :'(Lưu ý: Sau khi hoàn thành không thể chỉnh sửa dịch vụ)'
+      modalRef.componentInstance.body2 = this.formState == 'done'?'(Lưu ý: Sau khi hoàn thành không thể chỉnh sửa dịch vụ)'
+      :'(Lưu ý: Sau khi ngừng không thể chỉnh sửa dịch vụ)'
       modalRef.result.then(() => {
       return updateLineInfoRun();
       });
