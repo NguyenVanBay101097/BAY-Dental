@@ -116,6 +116,10 @@ export class PartnerOldNewReportService {
     return this.http.get(this.baseApi + this.apiUrl + '/GetReportPdf', { params: new HttpParams({ fromObject: val }), responseType: 'blob' });
   }
 
+  getReportExcel(val) {
+    return this.http.get(this.baseApi + this.apiUrl + '/GetReportExcel', { params: new HttpParams({ fromObject: val }), responseType: 'blob' });
+  }
+
   getSaleOrderPaged(val: any) {
     return this.http.get<PagedResult2<SaleOrderBasic>>(this.baseApi + this.apiUrl + "/GetSaleOrderPaged", { params: new HttpParams({ fromObject: val }) });
   }

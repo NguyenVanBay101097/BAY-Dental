@@ -1,9 +1,9 @@
 <h6>Danh sách phiếu điều trị</h6>
-<kendo-grid #grid [data]="gridData" [pageable]="true" [pageSize]="filter.limit" [skip]="filter.offset"
+<kendo-grid #grid [data]="gridData" [pageable]="true" [pageSize]="limit" [skip]="offset"
 (pageChange)="pageChange($event)" [resizable]="true" [loading]="loading">
 <kendo-grid-column field="dateOrder" title="Ngày tạo" width="100">
     <ng-template kendoGridCellTemplate let-dataItem>
-        {{dataItem.dateOrder || 'shortDate'}}
+        {{dataItem.dateOrder | date:'shortDate'}}
     </ng-template>
 </kendo-grid-column>
 <kendo-grid-column field="name" title="Phiếu điều trị" width="120">
@@ -26,7 +26,7 @@
         {{(dataItem.residual || 0) | number}}
     </ng-template>
 </kendo-grid-column>
-<kendo-grid-column class="text-right" [headerClass]="'text-right'" field="state" title="Trạng thái" width="120">
+<kendo-grid-column class="" field="state" title="Trạng thái" width="120">
     <ng-template kendoGridCellTemplate let-dataItem>
         {{getStateDisplay(dataItem.state)}}
     </ng-template>

@@ -178,8 +178,7 @@ export class PartnerReportOverviewComponent implements OnInit {
       debounceTime(300),
       distinctUntilChanged()
     ).subscribe(r => {
-      this.filter.offset = 0;
-      this.loadData();
+      this.onFilterChange();
     })
 
     // var date = new Date(), y = date.getFullYear(), m = date.getMonth();
@@ -265,7 +264,7 @@ export class PartnerReportOverviewComponent implements OnInit {
   }
 
   pageChange(e) {
-    this.filter.offset = 0;
+    this.filter.offset = e.skip;
     this.loadData();
   }
 
@@ -320,7 +319,7 @@ export class PartnerReportOverviewComponent implements OnInit {
   }
 
   openAddressDialog() {
-    let modalRef = this.modalService.open(AddressDialogComponent, { size: 'sm', scrollable: true, windowClass: 'o_technical_modal', keyboard: true, backdrop: 'static' });
+    let modalRef = this.modalService.open(AddressDialogComponent, { size: 'md', scrollable: true, windowClass: 'o_technical_modal', keyboard: true, backdrop: 'static' });
     if (this.addressFilter) {
       modalRef.componentInstance.addresObject = Object.assign({}, this.addressFilter);
     }
@@ -347,92 +346,26 @@ export class PartnerReportOverviewComponent implements OnInit {
     return (names as []).join(', ') || 'Tất cả khu vực';
   }
 
-  // public allData = (): any => {
-  //   var all = this.allDataGrid.slice();
-  //   all = (all as []).map((x: PartnerOldNewReportRes) => {
-  //     x.gender = this.getGenderDisplay(x.gender);
-  //     (x.categories as any) = (x.categories.map(x => x.name) as []).join(', ');
-  //     x.orderState = this.orderStateDisplay[x.orderState] || "Chưa phát sinh";
-  //   });
-  //   return {
-  //     data: this.allDataGrid,
-  //     total: this.allDataGrid
-  //   };
-  // }
-
-  // exportExcel(grid: GridComponent) {
-  //   grid.saveAsExcel();
-  // }
-
-  // public onExcelExport(args: any): void {
-  //   args.preventDefault();
-  //   var title = "BaoCaoTongQuanKhachHang";
-  //   // Prevent automatically saving the file. We will save it manually after we fetch and add the details
-  //   args.preventDefault();
-
-  //   const observables = [];
-  //   const workbook = args.workbook;
-
-  //   const rows = workbook.sheets[0].rows;
-  //   const columns = workbook.sheets[0].columns;
-
-  //   rows.forEach((row, index) => {
-
-  //     if (row.type === "header") {
-  //       row.cells.forEach((cell: WorkbookSheetRowCell, index) => {
-  //         delete cell.background;
-  //         cell.color = "#212529";
-  //         cell.bold = true;
-  //         if (index == 4) { cell.textAlign = 'right'; }
-  //       });
-  //     }
-  //     if (row.type === 'data') {
-  //       row.cells[4].format = '#,###0';
-  //     }
-  //   });
-
-  //   //add title
-  //   (rows as WorkbookSheetRow[]).unshift(<WorkbookSheetRow>{
-  //     cells: [
-  //       {
-  //         colSpan: 6,
-  //         rowSpan: 1,
-  //         value: "BÁO CÁO TỔNG QUAN KHÁCH HÀNG",
-  //         color: '#4087b9',
-  //         bold: true
-  //       }
-
-  //     ]
-  //   },
-  //     {
-  //       cells: [
-  //         {
-  //           colSpan: 6,
-  //           rowSpan: 1,
-  //           value: `Từ ngày ${moment(this.filter.dateFrom).format('DD/MM/YYYY')} đến ngày ${moment(this.filter.dateTo).format('DD/MM/YYYY')}`,
-  //         }
-  //       ]
-  //     },
-  //     {
-  //       cells: [
-  //         {
-  //           colSpan: 1,
-  //           rowSpan: 1,
-  //           value: ``
-  //         }
-  //       ]
-  //     }
-  //   );
-  //   //format excel nè
-  //   columns.forEach(function (column) {
-  //     delete column.width;
-  //     column.autoWidth = true;
-  //   });
-  //   new Workbook(workbook).toDataURL().then((dataUrl: string) => {
-  //     // https://www.telerik.com/kendo-angular-ui/components/filesaver/
-  //     saveAs(dataUrl, `${title}.xlsx`);
-  //   });
-  // }
+  exportExcel() {
+    var val = Object.assign({}, this.filter) as PartnerOldNewReportReq;
+    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
+    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    this.partnerOldNewRpService.getReportExcel(val).subscribe((res: any) => {
+      let filename = "ThongKeKhachHangDieuTri";
+      let newBlob = new Blob([res], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    })
+  }
 
   getFilterDetail(row: PartnerOldNewReportRes) {
     var val = <GetSaleOrderPagedReq>{

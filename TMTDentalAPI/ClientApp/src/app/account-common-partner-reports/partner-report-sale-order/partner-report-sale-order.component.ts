@@ -13,18 +13,19 @@ export class PartnerReportSaleOrderComponent implements OnInit {
   @Input() filter = new GetSaleOrderPagedReq();
   loading = false;
   gridData: GridDataResult;
+  limit = 20;
+  offset = 0;
 
   constructor(private partnerOldNewRpService: PartnerOldNewReportService) { }
 
   ngOnInit() {
-    this.filter.limit = 20;
-    this.filter.offset = 0;
     this.loadData();
   }
 
   loadData() {
     var val = Object.assign({}, this.filter) as GetSaleOrderPagedReq;
-
+    val.limit = this.limit;
+    val.offset = this.offset;
     val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
     val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
     this.loading = true;
@@ -49,5 +50,10 @@ export class PartnerReportSaleOrderComponent implements OnInit {
       default:
         return 'Nháp';
     }
+  }
+
+  pageChange(e) {
+    this.offset = e.skip;
+    this.loadData();
   }
 }

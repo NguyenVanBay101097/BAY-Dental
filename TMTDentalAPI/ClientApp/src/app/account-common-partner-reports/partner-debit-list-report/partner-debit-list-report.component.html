@@ -1,6 +1,6 @@
 <div class="card">
     <div class="card-body">
-        <h5>Báo cáo công nợ khách hàng</h5>
+        <!-- <h5>Báo cáo công nợ khách hàng</h5> -->
         <div class="filter d-flex flex-0-0-auto justify-content-between">
             <div class="d-flex w-50">
                 <app-date-range-picker-filter [opens]="'right'" class="mr-1 date-picker" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="searchChangeDate($event)" opens="right">
@@ -23,29 +23,29 @@
             </div>
         </div>
         <div class="o_dashboard_view">
-            <div class="o_group">
+            <div class="">
                 <div class="o_group o_group_col_12">
                     <div class="o_aggregate_col o_group_col_3">
                         <div class="o_aggregate">
-                            <label class="font-weight-bold">Nợ đầu kỳ</label>
+                            <label class="font-weight-600">Nợ đầu kỳ</label>
                             <div class="o_value text-info">{{sum('begin') | number }}</div>
                         </div>
                     </div>
                     <div class="o_aggregate_col o_group_col_3">
                         <div class="o_aggregate">
-                            <label class="font-weight-bold">Tiền phát sinh</label>
+                            <label class="font-weight-600">Tiền phát sinh</label>
                             <div class="o_value text-primary">{{sum('debit') | number }}</div>
                         </div>
                     </div>
                     <div class="o_aggregate_col o_group_col_3">
                         <div class="o_aggregate">
-                            <label class="font-weight-bold">Tiền thanh toán</label>
+                            <label class="font-weight-600">Tiền thanh toán</label>
                             <div class="o_value text-success">{{sum('credit') | number }}</div>
                         </div>
                     </div>
                     <div class="o_aggregate_col o_group_col_3">
                         <div class="o_aggregate text-danger">
-                            <label class="font-weight-bold">Nợ cuối kỳ</label>
+                            <label class="font-weight-600">Nợ cuối kỳ</label>
                             <div class="o_value">{{sum('end') | number }}</div>
                         </div>
                     </div>
@@ -62,13 +62,13 @@
                     </kendo-grid-column>
                     <kendo-grid-column field="partnerPhone" title="Số điện thoại" width="120">
                     </kendo-grid-column>
-                    <kendo-grid-column field="begin" format="{0:n0}" class="text-right" title="Nợ đầu kỳ" width="150">
+                    <kendo-grid-column field="begin" format="{0:n0}" [headerClass]="'text-right'" class="text-right" title="Nợ đầu kỳ" width="150">
                     </kendo-grid-column>
-                    <kendo-grid-column field="debit" format="{0:n0}" class="text-right" title="Phát sinh" width="150">
+                    <kendo-grid-column field="debit" format="{0:n0}"  [headerClass]="'text-right'" class="text-right" title="Phát sinh" width="150">
                     </kendo-grid-column>
-                    <kendo-grid-column field="credit" format="{0:n0}" class="text-right" title="Thanh toán" width="150">
+                    <kendo-grid-column field="credit" format="{0:n0}"  [headerClass]="'text-right'" class="text-right" title="Thanh toán" width="150">
                     </kendo-grid-column>
-                    <kendo-grid-column field="end" format="{0:n0}" class="text-right" title="Nợ cuối kỳ" footerClass="text-right font-weight-bold" width="150">
+                    <kendo-grid-column field="end" format="{0:n0}"  [headerClass]="'text-right'" class="text-right" title="Nợ cuối kỳ" footerClass="text-right font-weight-600" width="150">
                     </kendo-grid-column>
 
                     <kendo-grid-excel fileName="BaoCaoCongNoKH.xlsx">

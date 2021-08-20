@@ -13,6 +13,8 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<PartnerOldNewReport, PartnerOldNewReportVMDetail>();
             CreateMap<GetSaleOrderPagedReq, PartnerOldNewReportReq>();
+            CreateMap<PartnerOldNewReportReq, GetSaleOrderPagedReq>();
+            CreateMap<PartnerOldNewReportRes, PartnerOldNewReportResExcel>();
         }
     }
 }

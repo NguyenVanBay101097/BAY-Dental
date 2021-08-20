@@ -128,6 +128,18 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateTo { get; set; }
     }
 
+    public class PartnerOldNewReportResExcel: PartnerOldNewReportRes
+    {
+        public IEnumerable<SaleOrderBasic> Lines { get; set; } = new List<SaleOrderBasic>();
+    }
+
+    public class PartnerOldNewReportExcel
+    {
+        public IEnumerable<PartnerOldNewReportResExcel> Data { get; set; } = new List<PartnerOldNewReportResExcel>();
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+    }
+
     public class GetSaleOrderPagedReq
     {
 

@@ -3,14 +3,22 @@
         <ol class="breadcrumb">
             <li class="active">Báo cáo khách hàng</li>
         </ol>
-        <!-- <div class="o_cp_searchview">
-            <div class="o_cp_searchview_group">
+        <div class="o_cp_searchview">
+            <!-- <div class="o_cp_searchview_group">
                 <div class="o_searchview">
                 </div>
-            </div>
-        </div> -->
+            </div> -->
+        </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
+                <ul class="nav nav-pills nav-fill">
+                    <li class="nav-item">
+                        <a class="nav-link text-left" routerLinkActive="active" [routerLink]="[ 'partner-report-overview' ]">Khách hàng điều trị</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-left" routerLinkActive="active" [routerLink]="[ 'partner-debit' ]">Công nợ</a>
+                    </li>
+                </ul>
             </div>
             <div class="o_cp_sidebar">
             </div>
@@ -21,25 +29,5 @@
 </div>
 
 <div class="o_content">
-    <div class="d-flex p-3">
-        <div style="flex: 0 0 auto;margin-right: 1rem;">
-            <div class="card">
-                <div class="card-body">
-                    <ul class="nav nav-pills nav-fill flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link text-left" routerLinkActive="active" [routerLink]="[ 'partner-report-overview' ]">Tổng quan khách hàng</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-left" routerLinkActive="active" [routerLink]="[ 'partner-debit' ]">Công nợ</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div>
-            <router-outlet></router-outlet>
-        </div>
-    </div>
-
-
+    <router-outlet></router-outlet>
 </div>
