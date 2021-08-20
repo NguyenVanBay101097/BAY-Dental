@@ -105,7 +105,7 @@ export class ServiceSaleReportComponent implements OnInit {
         )
       )
       .subscribe((x: any) => {
-        this.employees = x.items;
+        this.employees = x;
         this.empVC.loading = false;
       });
   }
