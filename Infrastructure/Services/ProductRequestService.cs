@@ -49,6 +49,8 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Date <= dateOrderTo);
             }
 
+            query = query.Include(x => x.SaleOrder);
+
             var totalItems = await query.CountAsync();
 
             query = query.OrderByDescending(x => x.DateCreated);
@@ -85,6 +87,7 @@ namespace Infrastructure.Services
                 .Include(x => x.User)
                 .Include(x => x.Employee)
                 .Include(x => x.Picking)
+                .Include(x => x.SaleOrder)
                 .FirstOrDefaultAsync();
 
             res.Lines = await requestLineObj.SearchQuery(x => x.RequestId == res.Id)

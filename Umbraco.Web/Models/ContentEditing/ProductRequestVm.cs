@@ -28,6 +28,9 @@ namespace Umbraco.Web.Models.ContentEditing
         /// done : đã xuất
         /// </summary>
         public string State { get; set; }
+
+        public Guid SaleOrderId { get; set; }
+        public SaleOrderSimple SaleOrder { get; set; }
     }
 
     public class ProductRequestPaged
@@ -82,6 +85,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public EmployeeSimple Employee { get; set; }
 
         public Guid? SaleOrderId { get; set; }
+        public SaleOrderSimple SaleOrder { get; set; }
 
         /// <summary>
         /// phiếu xuất
