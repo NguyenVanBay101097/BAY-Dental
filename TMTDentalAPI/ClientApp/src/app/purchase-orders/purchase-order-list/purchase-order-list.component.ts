@@ -57,8 +57,8 @@ export class PurchaseOrderListComponent implements OnInit {
 
   ngOnInit() {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-    this.route.queryParamMap.subscribe(params => {
-      this.type = params.get('type');
+    this.route.data.subscribe(params => {
+      this.type = params.type;
       this.skip = 0;
       this.loadDataFromApi();
     });
@@ -86,7 +86,7 @@ export class PurchaseOrderListComponent implements OnInit {
     if (value) {
       this.stateFilter = value;
     } else {
-      
+
       this.stateFilter = null;
     }
 
@@ -94,7 +94,7 @@ export class PurchaseOrderListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  
+
 
   handleFilter(event) {
     this.supplierFilter = event ? event.id : null;
@@ -142,7 +142,7 @@ export class PurchaseOrderListComponent implements OnInit {
 
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Xóa phiếu ' + this.getTitle();
-    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa phiếu '+this.getTitle() + '?';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa phiếu ' + this.getTitle() + '?';
     modalRef.result.then(() => {
       this.purchaseOrderService.unlink(this.selectedIds).subscribe(() => {
         this.selectedIds = [];
@@ -162,7 +162,7 @@ export class PurchaseOrderListComponent implements OnInit {
     val.state = this.stateFilter || '';
     val.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     val.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
-  
+
 
     this.purchaseOrderService.getPaged(val).pipe(
       map(response => (<GridDataResult>{
@@ -199,11 +199,11 @@ export class PurchaseOrderListComponent implements OnInit {
   }
 
   createItem() {
-    this.router.navigate(['/purchase/orders/create'], { queryParams: { type: this.type } });
+    this.router.navigate([`/purchase/${this.type}/create`]);
   }
 
   editItem(item: PurchaseOrderBasic) {
-    this.router.navigate(['/purchase/orders/edit/', item.id]);
+    this.router.navigate([`/purchase/${this.type}/edit/`, item.id]);
   }
 
   deleteItem(item) {
@@ -229,7 +229,7 @@ export class PurchaseOrderListComponent implements OnInit {
     val.state = this.stateFilter || '';
     val.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     val.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
-  
+
     this.purchaseOrderService.exportExcelFile(val).subscribe((res) => {
       let filename = this.type == 'order' ? 'Mua-hang' : 'Tra-hang';
 

@@ -5,16 +5,34 @@ import { PurchaseOrderListComponent } from './purchase-order-list/purchase-order
 
 const routes: Routes = [
   {
-    path: 'orders',
-    component: PurchaseOrderListComponent
+    path: 'order',
+    component: PurchaseOrderListComponent,
+    data: { type: 'order' }
   },
   {
-    path: 'orders/create',
-    component: PurchaseOrderCreateUpdateComponent
+    path: 'refund',
+    component: PurchaseOrderListComponent,
+    data: { type: 'refund' }
   },
   {
-    path: 'orders/edit/:id',
-    component: PurchaseOrderCreateUpdateComponent
+    path: 'order/create',
+    component: PurchaseOrderCreateUpdateComponent,
+    data: { type: 'order' }
+  },
+  {
+    path: 'refund/create',
+    component: PurchaseOrderCreateUpdateComponent,
+    data: { type: 'refund' }
+  },
+  {
+    path: 'order/edit/:id',
+    component: PurchaseOrderCreateUpdateComponent,
+    data: { type: 'order' }
+  },
+  {
+    path: 'refund/edit/:id',
+    component: PurchaseOrderCreateUpdateComponent,
+    data: { type: 'refund' }
   }
 ];
 
