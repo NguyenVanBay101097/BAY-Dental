@@ -44,6 +44,8 @@ export class ServiceReportManagementComponent implements OnInit {
     const observables = [];
     const workbook = args.workbook;
 
+    args.workbook.sheets[0].name = 'BaoCaoDichVu_TheoTG';
+    
     const rows = workbook.sheets[0].rows;
     const columns = workbook.sheets[0].columns;
     var headerRow = Object.assign({},rows[0]);
@@ -59,6 +61,7 @@ export class ServiceReportManagementComponent implements OnInit {
       } 
       //làm màu
       if (row.type === "header") {
+        row.cells[0].value = "Ngày"
         row.cells.forEach((cell: WorkbookSheetRowCell) => {
           cell.background = "#d0ece9";
           cell.color = "white";
@@ -246,7 +249,7 @@ export class ServiceReportManagementComponent implements OnInit {
           }
 
           if (r.type === "headerchild") {
-            console.log(cell);
+            // console.log(cell);
             
             cell.bold = true;
             cell.color = 'black';
