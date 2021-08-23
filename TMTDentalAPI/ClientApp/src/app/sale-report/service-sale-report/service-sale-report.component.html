@@ -24,7 +24,7 @@
             </div>
         </div>
         <div class="overflow-auto">
-            <kendo-grid [resizable]="true" #grid class="mt-2" [loading]="loading" [data]="gridData" [pageSize]="filter.limit" [skip]="filter.offset" [pageable]="true" (pageChange)="pageChange($event)">
+            <kendo-grid [resizable]="true" #grid class="mt-2" [loading]="loading" [data]="gridData" [pageSize]="this.filter.limit" [skip]="this.filter.offset" [pageable]="true" (pageChange)="pageChange($event)">
                 <kendo-grid-column field="date" title="Ngày tạo" width="110">
                     <ng-template kendoGridCellTemplate let-dataItem>
                         {{dataItem.date | date: 'dd/MM/yyyy'}}

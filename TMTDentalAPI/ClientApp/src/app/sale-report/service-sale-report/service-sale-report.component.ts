@@ -29,8 +29,6 @@ export class ServiceSaleReportComponent implements OnInit {
   employees: EmployeeSimple[] = [];
   gridData: GridDataResult;
   loading = false;
-  skip = 0;
-  limit = 20;
   searchUpdate = new Subject<string>();
   filterMonth: any = "";
   search: string;
@@ -65,6 +63,7 @@ export class ServiceSaleReportComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.initFilter();
     this.initFilterData();
     this.loadCompanies();
     this.loadEmployees();
@@ -72,6 +71,10 @@ export class ServiceSaleReportComponent implements OnInit {
     this.loadAllData();
   }
 
+  initFilter() {
+    this.filter.limit = 20;
+    this.filter.offset = 0;
+  }
   
   loadAllData() {
     var val = this.getDataApiParam();
@@ -90,8 +93,8 @@ export class ServiceSaleReportComponent implements OnInit {
 
   getDataApiParam() {
     var val = new SaleOrderLinePaged();
-    val.limit = this.limit;
-    val.offset = this.skip;
+    val.limit = this.filter.limit;
+    val.offset = this.filter.offset;
     val.search = this.search || '';
     val.companyId = this.companyId || '';
     val.employeeId = this.employeeId || '';
@@ -173,24 +176,24 @@ export class ServiceSaleReportComponent implements OnInit {
   onSearchDateChange(e) {
     this.dateFrom = e.dateFrom;
     this.dateTo = e.dateTo;
-    this.skip = 0;
+    this.filter.offset = 0;
     this.loadAllData();
   }
 
   onSelectCompany(e) {
     this.companyId = e ? e.id : null;
-    this.skip = 0;
+    this.filter.offset = 0;
     this.loadAllData();
   }
 
   onSelectEmployee(e) {
     this.employeeId = e ? e.id : null;
-    this.skip = 0;
+    this.filter.offset = 0;
     this.loadAllData();
   }
 
   pageChange(event: PageChangeEvent): void {
-    this.skip = event.skip;
+    this.filter.offset = event.skip;
     this.loadAllData();
   }
 
