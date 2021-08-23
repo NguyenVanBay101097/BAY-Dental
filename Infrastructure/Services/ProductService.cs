@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -41,7 +42,7 @@ namespace Infrastructure.Services
         {
             _SetNameNoSign(entities);
 
-            await _GenerateCodeIfEmpty(entities);
+           // await _GenerateCodeIfEmpty(entities);
 
             await base.CreateAsync(entities);
 
@@ -62,7 +63,7 @@ namespace Infrastructure.Services
         {
             _SetNameNoSign(entities);
 
-            await _GenerateCodeIfEmpty(entities);
+           // await _GenerateCodeIfEmpty(entities);
 
             await base.UpdateAsync(entities);
 
@@ -548,7 +549,16 @@ namespace Infrastructure.Services
         public async Task<Product> CreateProduct(ProductSave val)
         {
             var product = _mapper.Map<Product>(val);
-
+            if (string.IsNullOrEmpty(product.DefaultCode))
+            {
+                product.DefaultCode = await GenerateCodeIfEmpty();
+            }
+            else
+            {
+                if (await IsExistProductCode(product.DefaultCode))
+                    throw new Exception($"Đã tồn tại sản phầm với mã {val.DefaultCode}");
+            }
+                
             _SaveProductSteps(product, val.StepList);
 
             _SaveProductBoms(product, val.Boms);
@@ -560,7 +570,8 @@ namespace Infrastructure.Services
             product = await CreateAsync(product);
 
             SetStandardPrice(product, val.StandardPrice, force_company: product.CompanyId);
-
+            if (IsCorrectFormat(product.DefaultCode))
+                await UpdateNextCode(product.DefaultCode);
             return product;
         }
 
@@ -570,6 +581,15 @@ namespace Infrastructure.Services
                 .Include(x => x.ProductUoMRels).Include(x => x.ProductStockInventoryCriteriaRels).FirstOrDefaultAsync();
 
             product = _mapper.Map(val, product);
+            if (string.IsNullOrEmpty(product.DefaultCode))
+            {
+                product.DefaultCode = await GenerateCodeIfEmpty();
+            }
+            else
+            {
+                if (await IsExistProductCode(product.DefaultCode))
+                    throw new Exception($"Đã tồn tại sản phầm với mã ${val.DefaultCode}");
+            }
             product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
 
             _SaveProductSteps(product, val.StepList);
@@ -585,6 +605,8 @@ namespace Infrastructure.Services
             UpdateProductCriteriaRel(product, val);
 
             await UpdateAsync(product);
+            if (IsCorrectFormat(product.DefaultCode))
+                await UpdateNextCode(product.DefaultCode);
         }
 
         private void UpdateProductCriteriaRel(Product product, ProductSave val)
@@ -1162,6 +1184,52 @@ namespace Infrastructure.Services
             }).ToListAsync();
 
             return res;
+        }
+        private async Task<bool> IsExistProductCode(string productCode)
+        {
+            var product = await SearchQuery(x => x.DefaultCode == productCode).FirstOrDefaultAsync();
+            if (product == null)
+                return false;
+            return true;
+        }
+        private bool IsCorrectFormat(string productCode)
+        {
+            string pattern = @"^SP\d{1,}$";
+            Regex rg = new Regex(pattern, RegexOptions.IgnoreCase);
+            var isMatching = rg.IsMatch(productCode);
+            return isMatching;
+        }
+        private async Task<string> GenerateCodeIfEmpty() {
+            var seqObj = GetService<IIRSequenceService>();
+
+            var code = await seqObj.NextByCode("product_seq");
+
+            if (string.IsNullOrWhiteSpace(code))
+            {
+                await _InsertProductSequence();
+                code = await seqObj.NextByCode("product_seq");
+            }
+            return code;
+        }
+        private async Task UpdateNextCode(string productCode) {
+            Regex rgx = new Regex(@"SP", RegexOptions.IgnoreCase);
+            var result = rgx.Split(productCode, 2, 0);
+            var numberCode = result[1];
+            int number = Int32.Parse(numberCode.ToString());
+            var sequenceObj = GetService<IIRSequenceService>();
+            var sequence = await sequenceObj.SearchQuery(x => x.Code == "product_seq").FirstOrDefaultAsync();
+            if (sequence == null)
+            {
+                await _InsertProductSequence();
+                sequence = await sequenceObj.SearchQuery(x => x.Code == "product_seq").FirstOrDefaultAsync();
+            }
+                
+            if (number > sequence.NumberNext)
+            {
+                sequence.NumberNext = number + sequence.NumberIncrement;
+                await sequenceObj.UpdateAsync(sequence);
+            }
+
         }
     }
 
