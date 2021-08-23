@@ -50,8 +50,8 @@ export class CustomerReceiptReportOverviewComponent implements OnInit {
   ];
 
   filterNoTreatment: any[] = [
-    { value: 'true', text: 'Có điều trị' },
-    { value: 'false', text: 'Không điều trị' },
+    { value: 'false', text: 'Có điều trị' },
+    { value: 'true', text: 'Không điều trị' },
   ];
 
   filterState: any[] = [

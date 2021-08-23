@@ -110,6 +110,7 @@ export class CustomerReceiptReportTimeserviceComponent implements OnInit {
     val.timeTo = this.timeEnd || '';
     return val;
   }
+  
   loadDataApi() {
     this.loading = true;
     var val = this.getDataApiParam();

@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridComponent, GridDataResult } from '@progress/kendo-angular-grid';
+import { IntlService } from '@progress/kendo-angular-intl';
 import * as moment from 'moment';
 import { of } from 'rxjs/internal/observable/of';
 import { Subject } from 'rxjs/internal/Subject';
@@ -28,16 +29,31 @@ export class ServiceReportServiceComponent implements OnInit {
   skip = 0;
   limit = 20;
   searchUpdate = new Subject<string>();
-  filterState = "";
-  
+  // filterState = "";
+  search: string;
+  dateFrom: Date;
+  dateTo: Date;
+  state: string;
+  companyId: string;
+  employeeId: string;
+  active: boolean = true;
+
   @ViewChild("companyCbx", { static: true }) companyVC: ComboBoxComponent;
   @ViewChild("empCbx", { static: true }) empVC: ComboBoxComponent;
   @ViewChild(GridComponent, { static: true }) public grid: GridComponent;
+
+  filterState: any[] = [
+    { value: null, text: 'Tất cả' },
+    { value: 'sale', text: 'Đang điều trị' },
+    { value: 'done', text: 'Hoàn thành' },
+    { value: 'cancel', text: 'Ngừng điều trị' },
+  ];
 
   constructor(
     private saleReportService: SaleReportService,
     private companyService: CompanyService,
     private employeeService: EmployeeService,
+    private intlService: IntlService,
     private serviceReportManageService: ServiceReportManageService,
     private printService: PrintService
   ) { }
@@ -50,13 +66,22 @@ export class ServiceReportServiceComponent implements OnInit {
     this.loadAllData();
   }
 
-  
+
   loadAllData() {
-    var val = Object.assign({}, this.filter) as ServiceReportReq;
-    
-    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
-    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    var val = new ServiceReportReq();
+    val.search = this.search || '';
+    val.companyId = this.companyId || '';
+    val.employeeId = this.employeeId || '';
+    val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
+    val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
+    val.state = this.state || '';
+    val.active = this.active;
+    // var val = Object.assign({}, this.filter) as ServiceReportReq;
+
+    // val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
+    // val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
     this.loading = true;
+    this.filter = val;
     this.saleReportService.getServiceReportByService(val).subscribe(res => {
       this.allDataGrid = res;
       this.loading = false;
@@ -81,7 +106,7 @@ export class ServiceReportServiceComponent implements OnInit {
         this.companyVC.loading = false;
       });
 
-      this.empVC.filterChange
+    this.empVC.filterChange
       .asObservable()
       .pipe(
         debounceTime(300),
@@ -90,7 +115,7 @@ export class ServiceReportServiceComponent implements OnInit {
         )
       )
       .subscribe((x: any) => {
-        this.employees = x.items;
+        this.employees = x;
         this.empVC.loading = false;
       });
   }
@@ -99,15 +124,16 @@ export class ServiceReportServiceComponent implements OnInit {
     this.searchUpdate.pipe(
       debounceTime(300),
       distinctUntilChanged()
-    ).subscribe(r=> {
+    ).subscribe(r => {
       this.skip = 0;
       this.loadAllData();
     })
 
     var date = new Date(), y = date.getFullYear(), m = date.getMonth();
-    this.filter.dateFrom = this.filter.dateFrom || new Date(y, m, 1);
-    this.filter.dateTo = this.filter.dateTo || new Date(y, m + 1, 0);
+    this.dateFrom = this.dateFrom || new Date(y, m, 1);
+    this.dateTo = this.dateTo || new Date(y, m + 1, 0);
     this.skip = 0;
+    this.loadAllData();
   }
 
   searchCompany$(search?) {
@@ -144,45 +170,36 @@ export class ServiceReportServiceComponent implements OnInit {
   }
 
   onSearchDateChange(e) {
-    this.filter.dateFrom = e.dateFrom;
-    this.filter.dateTo = e.dateTo;
+    this.dateFrom = e.dateFrom;
+    this.dateTo = e.dateTo;
     this.skip = 0;
     this.loadAllData();
   }
 
   onSelectCompany(e) {
-    this.filter.companyId = e ? e.id : null;
+    this.companyId = e ? e.id : null;
     this.skip = 0;
     this.loadAllData();
   }
 
   onSelectEmployee(e) {
-    this.filter.employeeId = e ? e.id : null;
+    this.employeeId = e ? e.id : null;
     this.skip = 0;
     this.loadAllData();
   }
-  
+
   pageChange(e) {
     this.skip = e.skip;
     this.loadReport();
   }
 
-  onChangeFilterState() {
-    this.filter.active = null;
-    this.filter.state = '';
+  onChangeFilterState(state) {
+    this.state = state.value;
     this.skip = 0;
-
-    if(this.filterState) {
-      if(this.filterState == "notActive" ){
-        this.filter.active = false;
-      }else {
-        this.filter.state = this.filterState;
-      }
-    }
     this.loadAllData();
   }
 
-  
+
   public allData = (): any => {
     return {
       data: this.allDataGrid,
@@ -198,23 +215,23 @@ export class ServiceReportServiceComponent implements OnInit {
     args.preventDefault();
     const data = this.allDataGrid;
     this.serviceReportManageService.emitChange({
-       data : data,
-       args : args,
-       filter : this.filter,
-       title: 'BaoCaoTheoDichVu',
-       header:'BÁO CÁO THEO DỊCH VỤ'
+      data: data,
+      args: args,
+      filter: this.filter,
+      title: 'BaoCaoTheoDichVu',
+      header: 'BÁO CÁO THEO DỊCH VỤ'
     })
   }
 
   onExportPDF() {
     var val = Object.assign({}, this.filter) as ServiceReportReq;
-    
+
     val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
     val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
     this.loading = true;
     this.saleReportService.getServiceReportByServicePdf(val).subscribe(res => {
       this.loading = false;
-      let filename ="BaoCaoTheoDichVu";
+      let filename = "BaoCaoTheoDichVu";
 
       let newBlob = new Blob([res], {
         type:
@@ -234,15 +251,15 @@ export class ServiceReportServiceComponent implements OnInit {
   }
 
 
-  onPrint(){
+  onPrint() {
     var val = Object.assign({}, this.filter) as ServiceReportReq;
-    
+
     val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
     val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
     this.loading = true;
-      this.saleReportService.serviceReportByServicePrint(val).subscribe((result: any) => {
-        this.loading = false;
-        this.printService.printHtml(result);
-      });
+    this.saleReportService.serviceReportByServicePrint(val).subscribe((result: any) => {
+      this.loading = false;
+      this.printService.printHtml(result);
+    });
   }
 }

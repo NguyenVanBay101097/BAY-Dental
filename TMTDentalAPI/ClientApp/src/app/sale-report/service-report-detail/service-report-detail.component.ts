@@ -21,7 +21,8 @@ export class ServiceReportDetailComponent implements OnInit {
   loading = false;
   stateDisplay= {
     sale:"Đang điều trị",
-    done: "Hoàn thành"
+    done: "Hoàn thành",
+    cancel: 'Ngừng điều trị'
   }
 
   constructor(

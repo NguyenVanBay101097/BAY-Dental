@@ -178,8 +178,10 @@ export class DashboardCustomerReceiptListTodayComponent implements OnInit {
     res.state = val.state;
     res.isNoTreatment = val.isNoTreatment;
     res.reason = val.reason != null ? val.reason : null;
-    res.dateExamination = val.state == 'examination' ? this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss') : null;
-    res.dateDone = val.state == 'done' ? this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss') : null;
+    res.dateExamination = val.state == 'examination' ? this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss') : (item && item.dateExamination ? item.dateExamination : '');
+    res.dateDone = val.state == 'done' ? this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss') : '';
+    // res.dateExamination = val.state == 'examination' ? this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss') : null;
+    // res.dateDone = val.state == 'done' ? this.intlService.formatDate(new Date(), 'yyyy-MM-ddTHH:mm:ss') : null;
     this.customerReceiptService.patchState(item.id, res).pipe(
       mergeMap((rs: any) => {
         return this.customerReceiptService.get(item.id);

@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridComponent, GridDataResult } from '@progress/kendo-angular-grid';
+import { IntlService } from '@progress/kendo-angular-intl';
 import * as moment from 'moment';
 import { of, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
@@ -27,16 +28,30 @@ export class ServiceReportTimeComponent implements OnInit {
   skip = 0;
   limit = 20;
   searchUpdate = new Subject<string>();
-  filterState = "";
+  // filterState = "";
+  search: string;
+  dateFrom: Date;
+  dateTo: Date;
+  state: string;
+  companyId: string;
+  employeeId: string;
   
   @ViewChild("companyCbx", { static: true }) companyVC: ComboBoxComponent;
   @ViewChild("empCbx", { static: true }) empVC: ComboBoxComponent;
   @ViewChild(GridComponent, { static: true }) public grid: GridComponent;
 
+  filterState: any[] = [
+    { value: 'sale,done,cancel', text: 'Tất cả' },
+    { value: 'sale', text: 'Đang điều trị' },
+    { value: 'done', text: 'Hoàn thành' },
+    { value: 'cancel', text: 'Ngừng điều trị' },
+  ];
+
   constructor(
     private saleReportService: SaleReportService,
     private companyService: CompanyService,
     private employeeService: EmployeeService,
+    private intlService: IntlService,
     private serviceReportManageService: ServiceReportManageService,
     private printService: PrintService
   ) { }
@@ -51,11 +66,19 @@ export class ServiceReportTimeComponent implements OnInit {
 
   
   loadAllData() {
-    var val = Object.assign({}, this.filter) as ServiceReportReq;
-    
-    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
-    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    var val = new ServiceReportReq();
+    val.search = this.search || '';
+    val.companyId = this.companyId || '';
+    val.employeeId = this.employeeId || '';
+    val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
+    val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
+    val.state = this.state || '';
+    // var val = Object.assign({}, this.filter) as ServiceReportReq;
+
+    // val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
+    // val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
     this.loading = true;
+    this.filter = val;
     this.saleReportService.getServiceReportByTime(val).subscribe(res => {
       this.allDataGrid = res;
       this.loading = false;
@@ -89,7 +112,7 @@ export class ServiceReportTimeComponent implements OnInit {
         )
       )
       .subscribe((x: any) => {
-        this.employees = x.items;
+        this.employees = x;
         this.empVC.loading = false;
       });
   }
@@ -104,10 +127,11 @@ export class ServiceReportTimeComponent implements OnInit {
     })
 
     var date = new Date(), y = date.getFullYear(), m = date.getMonth();
-    this.filter.dateFrom = this.filter.dateFrom || new Date(y, m, 1);
-    this.filter.dateTo = this.filter.dateTo || new Date(y, m + 1, 0);
-    this.filter.state = 'sale,done,cancel';
+    this.dateFrom = this.filter.dateFrom || new Date(y, m, 1);
+    this.dateTo = this.filter.dateTo || new Date(y, m + 1, 0);
+    this.state = 'sale,done,cancel';
     this.skip = 0;
+    this.loadAllData();
   }
 
   searchCompany$(search?) {
@@ -144,42 +168,32 @@ export class ServiceReportTimeComponent implements OnInit {
   }
 
   onSearchDateChange(e) {
-    this.filter.dateFrom = e.dateFrom;
-    this.filter.dateTo = e.dateTo;
+    this.dateFrom = e.dateFrom;
+    this.dateTo = e.dateTo;
     this.skip = 0;
     this.loadAllData();
   }
 
   onSelectCompany(e) {
-    this.filter.companyId = e ? e.id : null;
+    this.companyId = e ? e.id : null;
     this.skip = 0;
     this.loadAllData();
   }
 
   onSelectEmployee(e) {
-    this.filter.employeeId = e ? e.id : null;
+    this.employeeId = e ? e.id : null;
     this.skip = 0;
     this.loadAllData();
   }
-
 
   pageChange(e) {
     this.skip = e.skip;
     this.loadReport();
   }
 
-  onChangeFilterState() {
-    this.filter.active = null;
-    this.filter.state = '';
+  onChangeFilterState(state) {
+    this.state = state.value;
     this.skip = 0;
-
-    if(this.filterState) {
-      if(this.filterState == "notActive" ){
-        this.filter.active = false;
-      }else {
-        this.filter.state = this.filterState;
-      }
-    }
     this.loadAllData();
   }
 
