@@ -25,6 +25,7 @@
 
 .has-search {
     width: 300px;
+    position: relative;
 }
 
 .has-search .form-control {

@@ -325,10 +325,10 @@ namespace Infrastructure.Services
                 .AsQueryable();
 
             if (val.DateFrom.HasValue)
-                query = query.Where(x => x.Order.DateOrder >= val.DateFrom.Value);
+                query = query.Where(x => x.DateCreated >= val.DateFrom.Value);
 
             if (val.DateTo.HasValue)
-                query = query.Where(x => x.Order.DateOrder <= val.DateTo.Value);
+                query = query.Where(x => x.DateCreated <= val.DateTo.Value);
 
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId.Value);
