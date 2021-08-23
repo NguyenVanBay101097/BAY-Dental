@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApplicationCore.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,10 +12,12 @@ namespace Infrastructure.Services
         Task<IEnumerable<PartnerOldNewReportVM>> GetPartnerOldNewReport(PartnerOldNewReportSearch val);
 
         Task<PartnerOldNewReportVM> GetSumaryPartnerOldNewReport(PartnerOldNewReportSearch val);
-        Task<IEnumerable<PartnerOldNewReportRes>> GetReport(PartnerOldNewReportReq val);
-        Task<int> SumReport(PartnerOldNewReportSumReq val);
+        Task<PagedResult2<PartnerOldNewReportRes>> GetReport(PartnerOldNewReportReq val);
+        Task<int> SumReport(PartnerOldNewReportReq val);
         Task<PartnerOldNewReportPrint> GetReportPrint(PartnerOldNewReportReq val);
-        Task<decimal> SumReVenue(PartnerOldNewReportSumReq val);
+        Task<decimal> SumReVenue(PartnerOldNewReportReq val);
+        Task<PagedResult2<SaleOrderBasic>> GetSaleOrderPaged(GetSaleOrderPagedReq val);
+        Task<PartnerOldNewReportExcel> GetReportExcel(PartnerOldNewReportReq val);
     }
 
 

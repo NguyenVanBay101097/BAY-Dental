@@ -14,9 +14,10 @@ import { PartnerDebitDetailListReportComponent } from './partner-debit-detail-li
 import { PartnerReportManagementComponent } from './partner-report-management/partner-report-management.component';
 import { PartnerReportOverviewComponent } from './partner-report-overview/partner-report-overview.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { PartnerReportSaleOrderComponent } from './partner-report-sale-order/partner-report-sale-order.component';
 
 @NgModule({
-  declarations: [AccountCommonCustomerReportListComponent, AccountCommonPartnerReportDetailComponent, AccountCommonPartnerReportListComponent, PartnerDebitListReportComponent, PartnerDebitDetailListReportComponent, PartnerReportManagementComponent, PartnerReportOverviewComponent],
+  declarations: [AccountCommonCustomerReportListComponent, AccountCommonPartnerReportDetailComponent, AccountCommonPartnerReportListComponent, PartnerDebitListReportComponent, PartnerDebitDetailListReportComponent, PartnerReportManagementComponent, PartnerReportOverviewComponent, PartnerReportSaleOrderComponent],
   imports: [
     CommonModule,
     AccountCommonPartnerReportsRoutingModule,

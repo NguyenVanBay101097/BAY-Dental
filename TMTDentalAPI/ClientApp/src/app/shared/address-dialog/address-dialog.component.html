@@ -47,7 +47,7 @@
                     <span class="o_searchview_icon fas fa-search"></span>
                     <input class="o_searchview_input" [placeholder]="'Tỉnh/Thành'" type="text" [(ngModel)]="searchCity" (ngModelChange)="this.searchCityUpdate.next($event)" />
                 </div>
-                <ul class="overflow-auto">
+                <ul class="overflow-auto mt-2">
                     <li (click)="onAllCity()" class="d-flex justify-content-between">
                         <span>Tất cả</span>
                         <i class="fas fa-chevron-right"></i>
@@ -65,7 +65,7 @@
                     <span class="o_searchview_icon fas fa-search"></span>
                     <input class="o_searchview_input" [placeholder]="'Quận/Huyện'" type="text" [(ngModel)]="searchDistrict" (ngModelChange)="this.searchDistrictUpdate.next($event)" />
                 </div>
-                <ul class="overflow-auto">
+                <ul class="overflow-auto  mt-2">
                     <li (click)="onAllDistrict()" class="d-flex justify-content-between">
                         <span>Tất cả</span>
                         <i class="fas fa-chevron-right"></i>
@@ -83,7 +83,7 @@
                     <span class="o_searchview_icon fas fa-search"></span>
                     <input class="o_searchview_input" [placeholder]="'Phường/Xã'" type="text" [(ngModel)]="searchWard" (ngModelChange)="this.searchWardUpdate.next($event)" />
                 </div>
-                <ul class="overflow-auto">
+                <ul class="overflow-auto  mt-2">
                     <li (click)="onAllWard()" class="d-flex justify-content-between">
                         <span>Tất cả</span>
                         <i class="fas fa-chevron-right"></i>

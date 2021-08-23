@@ -33,26 +33,38 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateTo { get; set; }
 
     }
-    public class PartnerOldNewReportSumReq
+    //public class PartnerOldNewReportSumReq
+    //{
+    //    public PartnerOldNewReportSumReq() { }
+    //    public PartnerOldNewReportSumReq(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string TypeReport = "")
+    //    {
+    //        this.DateFrom = dateFrom;
+    //        this.DateTo = DateTo;
+    //        this.CompanyId = companyId;
+    //        this.TypeReport = TypeReport;
+    //    }
+    //    public DateTime? DateFrom { get; set; }
+    //    public DateTime? DateTo { get; set; }
+    //    public Guid? CompanyId { get; set; }
+    //    /// <summary>
+    //    /// old, new
+    //    /// </summary>
+    //    public String TypeReport { get; set; }
+    //}
+
+    public class PartnerOldNewReportSumIqueryable
     {
-        public PartnerOldNewReportSumReq() { }
-        public PartnerOldNewReportSumReq(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string TypeReport = "")
-        {
-            this.DateFrom = dateFrom;
-            this.DateTo = DateTo;
-            this.CompanyId = companyId;
-            this.TypeReport = TypeReport;
-        }
-        public DateTime? DateFrom { get; set; }
-        public DateTime? DateTo { get; set; }
-        public Guid? CompanyId { get; set; }
-        /// <summary>
-        /// old, new
-        /// </summary>
-        public String TypeReport { get; set; }
+        public Guid PartnerId { get; set; }
+        public decimal Sum { get; set; }
     }
     public class PartnerOldNewReportReq
     {
+
+        public PartnerOldNewReportReq()
+        {
+            this.Limit = 20;
+            this.Offset  = 0;
+        }
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
         public Guid? CompanyId { get; set; }
@@ -71,6 +83,9 @@ namespace Umbraco.Web.Models.ContentEditing
         //giới tính
         public string Gender { get; set; }
         public string Search { get; set; }
+        public Guid? PartnerId { get; set; }
+        public int Limit { get; set; }
+        public int Offset { get; set; }
     }
 
     public class PartnerOldNewReportRes
@@ -113,5 +128,36 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateTo { get; set; }
     }
 
+    public class PartnerOldNewReportResExcel: PartnerOldNewReportRes
+    {
+        public IEnumerable<SaleOrderBasic> Lines { get; set; } = new List<SaleOrderBasic>();
+    }
+
+    public class PartnerOldNewReportExcel
+    {
+        public IEnumerable<PartnerOldNewReportResExcel> Data { get; set; } = new List<PartnerOldNewReportResExcel>();
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+    }
+
+    public class GetSaleOrderPagedReq
+    {
+
+        public GetSaleOrderPagedReq()
+        {
+            this.Limit = 20;
+            this.Offset = 0;
+        }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public Guid? CompanyId { get; set; }
+        /// <summary>
+        /// old, new
+        /// </summary>
+        public String TypeReport { get; set; }
+        public Guid? PartnerId { get; set; }
+        public int Limit { get; set; }
+        public int Offset { get; set; }
+    }
 
 }

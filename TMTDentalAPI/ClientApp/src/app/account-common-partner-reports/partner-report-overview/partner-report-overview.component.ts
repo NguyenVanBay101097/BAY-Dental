@@ -4,13 +4,13 @@ import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular
 import { Workbook, WorkbookSheetColumn, WorkbookSheetRow, WorkbookSheetRowCell } from '@progress/kendo-angular-excel-export';
 import { GridComponent, GridDataResult } from '@progress/kendo-angular-grid';
 import * as moment from 'moment';
-import { forkJoin, Subject } from 'rxjs';
+import { forkJoin, of, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
 import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 import { PartnerSourcePaged, PartnerSourceService } from 'src/app/partner-sources/partner-source.service';
 import { PartnerSourceSimple } from 'src/app/partners/partner-simple';
-import { PartnerOldNewReportReq, PartnerOldNewReportRes, PartnerOldNewReportService, PartnerOldNewReportSumReq } from 'src/app/sale-report/partner-old-new-report.service';
+import { GetSaleOrderPagedReq, PartnerOldNewReportReq, PartnerOldNewReportRes, PartnerOldNewReportService, PartnerOldNewReportSumReq } from 'src/app/sale-report/partner-old-new-report.service';
 import { AddressDialogComponent } from 'src/app/shared/address-dialog/address-dialog.component';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { saveAs } from '@progress/kendo-file-saver';
@@ -23,9 +23,9 @@ import { saveAs } from '@progress/kendo-file-saver';
 export class PartnerReportOverviewComponent implements OnInit {
 
   orderStateDisplay = {
-    'sale':'Đang điều trị',
-    'done':'Hoàn thành',
-    'draft':'Chưa phát sinh'
+    'sale': 'Đang điều trị',
+    'done': 'Hoàn thành',
+    'draft': 'Chưa phát sinh'
   };
   cbxPopupSettings = {
     width: 'auto'
@@ -33,22 +33,18 @@ export class PartnerReportOverviewComponent implements OnInit {
   filter = new PartnerOldNewReportReq();
   companies: CompanySimple[] = [];
   partnerTypes = [
-    {text: 'Khách mới', value:'new'},
-    {text: 'Khách quay lại', value:'old'}
+    { text: 'Khách mới', value: 'new' },
+    { text: 'Khách quay lại', value: 'old' }
   ];
   partnerGenders = [
-    {text: 'Nam', value:'male'},
-    {text: 'Nữ', value:'female'},
-    {text: 'Khác', value:'other'}
+    { text: 'Nam', value: 'male' },
+    { text: 'Nữ', value: 'female' },
+    { text: 'Khác', value: 'other' }
   ];
   partnerSources: PartnerSourceSimple[] = [];
   filteredCategs: PartnerCategoryBasic[];
-  allDataGrid: any = [];
-  // allDataExport: any;
   gridData: GridDataResult;
   loading = false;
-  skip = 0;
-  limit = 20;
   searchUpdate = new Subject<string>();
   sumOld = 0;
   sumNew = 0;
@@ -57,7 +53,7 @@ export class PartnerReportOverviewComponent implements OnInit {
   revenueNew = 0;
   isFilterAdvance = false;
   addressFilter = null;
-  
+
   @ViewChild("companyCbx", { static: true }) companyVC: ComboBoxComponent;
   @ViewChild("pnSourceCbx", { static: true }) pnSourceVC: ComboBoxComponent;
   @ViewChild(GridComponent, { static: true }) public grid: GridComponent;
@@ -74,20 +70,22 @@ export class PartnerReportOverviewComponent implements OnInit {
   ngOnInit() {
     this.initFilterData();
     this.FilterCombobox();
-    this.loadAllData();
+    this.loadData();
     this.loadSummary();
   }
 
-  loadAllData() {
+  loadData() {
     var val = Object.assign({}, this.filter) as PartnerOldNewReportReq;
-    
+
     val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
     val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
     this.loading = true;
     this.partnerOldNewRpService.getReport(val).subscribe(res => {
-      this.allDataGrid = res;
       this.loading = false;
-      this.loadReport();
+      this.gridData = <GridDataResult>{
+        data: res.items,
+        total: res.totalItems
+      };
     },
       err => {
         this.loading = false;
@@ -96,18 +94,32 @@ export class PartnerReportOverviewComponent implements OnInit {
 
   loadSummary() {
     var obs = [];
-    var val = new PartnerOldNewReportSumReq();
-    val.dateFrom = this.filter.dateFrom ? moment(this.filter.dateFrom).format('YYYY/MM/DD') : '';
-    val.dateTo = this.filter.dateTo ? moment(this.filter.dateTo).format('YYYY/MM/DD') : '';
-    val.companyId = this.filter.companyId || '';
-    // val.typeReport = this.filter.typeReport;
+    var val = Object.assign({}, this.filter) as PartnerOldNewReportReq;
+
+    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
+    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
     obs.push(this.partnerOldNewRpService.sumReport(val));
-    this.partnerTypes.forEach(el => {
-      var valNew = Object.assign({}, val);
-      valNew.typeReport = el.value;
-    obs.push(this.partnerOldNewRpService.sumReport(valNew));
-    obs.push(this.partnerOldNewRpService.sumReVenue(valNew));
-    });
+    if (val.typeReport) {
+      if (val.typeReport == 'new') {
+        obs.push(this.partnerOldNewRpService.sumReport(val));
+        obs.push(this.partnerOldNewRpService.sumReVenue(val));
+        obs.push(of(0));
+        obs.push(of(0));
+      } else {
+        obs.push(of(0));
+        obs.push(of(0));
+        obs.push(this.partnerOldNewRpService.sumReport(val));
+        obs.push(this.partnerOldNewRpService.sumReVenue(val));
+      }
+      obs.push(this.partnerOldNewRpService.sumReVenue(val));
+    } else {
+      this.partnerTypes.forEach(el => {
+        var valNew = Object.assign({}, val);
+        valNew.typeReport = el.value;
+        obs.push(this.partnerOldNewRpService.sumReport(valNew));
+        obs.push(this.partnerOldNewRpService.sumReVenue(valNew));
+      });
+    }
 
     forkJoin(obs).subscribe((res: any[]) => {
       this.sumOldNew = res[0] || 0;
@@ -133,47 +145,47 @@ export class PartnerReportOverviewComponent implements OnInit {
         this.companyVC.loading = false;
       });
 
-      this.loadPnSources();
-      this.pnSourceVC.filterChange
-        .asObservable()
-        .pipe(
-          debounceTime(300),
-          tap(() => (this.pnSourceVC.loading = true)),
-          switchMap((value) => this.searchPartnerSource$(value)
-          )
+    this.loadPnSources();
+    this.pnSourceVC.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.pnSourceVC.loading = true)),
+        switchMap((value) => this.searchPartnerSource$(value)
         )
-        .subscribe((x: any) => {
-          this.partnerSources = x;
-          this.pnSourceVC.loading = false;
-        });
+      )
+      .subscribe((x: any) => {
+        this.partnerSources = x;
+        this.pnSourceVC.loading = false;
+      });
 
-        this.loadFilteredCategs();
-        this.categMst.filterChange
-        .asObservable()
-        .pipe(
-          debounceTime(300),
-          tap(() => (this.categMst.loading = true)),
-          switchMap((value) => this.searchCategories(value))
-        )
-        .subscribe((result) => {
-          this.filteredCategs = result;
-          this.categMst.loading = false;
-        });
+    this.loadFilteredCategs();
+    this.categMst.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.categMst.loading = true)),
+        switchMap((value) => this.searchCategories(value))
+      )
+      .subscribe((result) => {
+        this.filteredCategs = result;
+        this.categMst.loading = false;
+      });
   }
 
   initFilterData() {
     this.searchUpdate.pipe(
       debounceTime(300),
       distinctUntilChanged()
-    ).subscribe(r=> {
-      this.skip = 0;
-      this.loadAllData();
+    ).subscribe(r => {
+      this.onFilterChange();
     })
 
     // var date = new Date(), y = date.getFullYear(), m = date.getMonth();
     // this.filter.dateFrom = this.filter.dateFrom || new Date(y, m, 1);
     // this.filter.dateTo = this.filter.dateTo || new Date(y, m + 1, 0);
-    this.skip = 0;
+    this.filter.offset = 0;
+    this.filter.limit = 20;
   }
 
   searchCompany$(search?) {
@@ -202,7 +214,7 @@ export class PartnerReportOverviewComponent implements OnInit {
       this.partnerSources = res;
     });
   }
-  
+
   loadFilteredCategs() {
     this.searchCategories().subscribe(
       (result) => (this.filteredCategs = result)
@@ -214,63 +226,54 @@ export class PartnerReportOverviewComponent implements OnInit {
     return this.partnerCategoryService.autocomplete(val);
   }
 
-  loadReport() {
-    this.gridData = <GridDataResult>{
-      total: this.allDataGrid.length,
-      data: this.allDataGrid.slice(this.skip, this.skip + this.limit)
-    };
+  onFilterChange() {
+    this.filter.offset = 0;
+    this.loadData();
+    this.loadSummary();
   }
 
   onSearchDateChange(e) {
     this.filter.dateFrom = e.dateFrom;
     this.filter.dateTo = e.dateTo;
-    this.skip = 0;
-    this.loadAllData();
-    this.loadSummary();
+    this.onFilterChange();
   }
 
   onSelectCompany(e) {
     this.filter.companyId = e ? e.id : '';
-    this.skip = 0;
-    this.loadAllData();
-    this.loadSummary();
+    this.onFilterChange();
   }
 
   onSelectPartnerType(e) {
     this.filter.typeReport = e ? e.value : '';
-    this.skip = 0;
-    this.loadAllData(); 
+    this.onFilterChange();
   }
 
   onSelectPartnerSource(e) {
     this.filter.sourceId = e ? e.id : '';
-    this.skip = 0;
-    this.loadAllData();
+    this.onFilterChange();
   }
 
   onSelectPartnerGender(e) {
     this.filter.gender = e ? e.value : '';
-    this.skip = 0;
-    this.loadAllData(); 
+    this.onFilterChange();
   }
 
   onCategChange(value) {
-    this.filter.categIds = value.map(x=> x.id);
-     this.skip = 0;
-     this.loadAllData();
-   }
+    this.filter.categIds = value.map(x => x.id);
+    this.onFilterChange();
+  }
 
   pageChange(e) {
-    this.skip = e.skip;
-    this.loadReport();
+    this.filter.offset = e.skip;
+    this.loadData();
   }
 
   getGenderDisplay(e) {
     switch (e) {
       case 'male':
         return 'Nam';
-        case 'female':
-          return 'Nữ';
+      case 'female':
+        return 'Nữ';
       default:
         return "Khác";
     }
@@ -283,7 +286,7 @@ export class PartnerReportOverviewComponent implements OnInit {
     this.loading = true;
     this.partnerOldNewRpService.getReportPdf(val).subscribe(res => {
       this.loading = false;
-      let filename ="BaoCaoTongQuanKhachHang";
+      let filename = "BaoCaoTongQuanKhachHang";
 
       let newBlob = new Blob([res], {
         type:
@@ -303,132 +306,75 @@ export class PartnerReportOverviewComponent implements OnInit {
   }
 
 
-  onPrint(){
+  onPrint() {
     var val = Object.assign({}, this.filter) as PartnerOldNewReportReq;
-    
+
     val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
     val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
     this.loading = true;
-      this.partnerOldNewRpService.getReportPrint(val).subscribe((result: any) => {
-        this.loading = false;
-        this.printService.printHtml(result);
-      });
+    this.partnerOldNewRpService.getReportPrint(val).subscribe((result: any) => {
+      this.loading = false;
+      this.printService.printHtml(result);
+    });
   }
 
-  openAddressDialog(){
-    let modalRef = this.modalService.open(AddressDialogComponent, { size: 'sm', scrollable: true, windowClass: 'o_technical_modal',keyboard: true, backdrop: 'static' } );
-    if(this.addressFilter) {
+  openAddressDialog() {
+    let modalRef = this.modalService.open(AddressDialogComponent, { size: 'md', scrollable: true, windowClass: 'o_technical_modal', keyboard: true, backdrop: 'static' });
+    if (this.addressFilter) {
       modalRef.componentInstance.addresObject = Object.assign({}, this.addressFilter);
     }
     modalRef.result.then((res) => {
       this.addressFilter = res;
-    this.filter.cityCode =  res.city? res.city.code : '';
-    this.filter.districtCode =  res.district? res.district.code : '';
-    this.filter.wardCode =  res.ward? res.ward.code : '';
-    this.skip = 0;
-    this.loadAllData();
-    },()=> {});
- 
+      this.filter.cityCode = res.city ? res.city.code : '';
+      this.filter.districtCode = res.district ? res.district.code : '';
+      this.filter.wardCode = res.ward ? res.ward.code : '';
+      this.onFilterChange();
+    }, () => { });
+
   }
 
-  getAddressFilterDisplay(){
-    if(!this.addressFilter)
-    return 'Tất cả khu vực';
+  getAddressFilterDisplay() {
+    if (!this.addressFilter)
+      return 'Tất cả khu vực';
     var names = [];
-    if(this.addressFilter.city)
-    names.push(this.addressFilter.city.name);
-    if(this.addressFilter.district)
-    names.push(this.addressFilter.district.name);
-    if(this.addressFilter.ward)
-    names.push(this.addressFilter.ward.name);
+    if (this.addressFilter.city)
+      names.push(this.addressFilter.city.name);
+    if (this.addressFilter.district)
+      names.push(this.addressFilter.district.name);
+    if (this.addressFilter.ward)
+      names.push(this.addressFilter.ward.name);
     return (names as []).join(', ') || 'Tất cả khu vực';
   }
 
-  public allData = (): any => {
-    var all = this.allDataGrid.slice();
-    all = (all as []).map((x:PartnerOldNewReportRes)=> {
-      x.gender = this.getGenderDisplay(x.gender);
-      (x.categories as any) = (x.categories.map(x=> x.name) as []).join(', ');
-      x.orderState = this.orderStateDisplay[x.orderState] || "Chưa phát sinh";
-    });
-    return {
-      data: this.allDataGrid,
-      total: this.allDataGrid
+  exportExcel() {
+    var val = Object.assign({}, this.filter) as PartnerOldNewReportReq;
+    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
+    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    this.partnerOldNewRpService.getReportExcel(val).subscribe((res: any) => {
+      let filename = "ThongKeKhachHangDieuTri";
+      let newBlob = new Blob([res], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    })
+  }
+
+  getFilterDetail(row: PartnerOldNewReportRes) {
+    var val = <GetSaleOrderPagedReq>{
+      companyId: this.filter.companyId || '',
+      dateFrom: this.filter.dateFrom || '',
+      dateTo: this.filter.dateTo || '',
+      partnerId: row.id,
+      typeReport: this.filter.typeReport || ''
     };
-  }
-
-  exportExcel(grid: GridComponent) {
-    grid.saveAsExcel();
-  }
-
-  public onExcelExport(args: any): void {
-    args.preventDefault();
-    var title = "BaoCaoTongQuanKhachHang";
-    // Prevent automatically saving the file. We will save it manually after we fetch and add the details
-    args.preventDefault();
-
-    const observables = [];
-    const workbook = args.workbook;
-
-    const rows = workbook.sheets[0].rows;
-    const columns = workbook.sheets[0].columns;
-
-    rows.forEach((row, index) => {
-    
-      if (row.type === "header") {
-        row.cells.forEach((cell: WorkbookSheetRowCell, index) => {
-          delete cell.background;
-          cell.color = "#212529";
-          cell.bold = true;
-          if(index == 4)
-          {cell.textAlign = 'right';}
-        });
-      }
-      if (row.type === 'data') {
-        row.cells[4].format = '#,###0';
-      } 
-    });
-
-      //add title
-      (rows as WorkbookSheetRow[]).unshift(<WorkbookSheetRow>{
-        cells:[
-          {
-            colSpan: 6,
-            rowSpan:1,
-            value: "BÁO CÁO TỔNG QUAN KHÁCH HÀNG",
-            color:'#4087b9',
-            bold: true
-          }
-         
-        ]
-      },
-      {
-        cells:[
-          {
-            colSpan: 6,
-            rowSpan:1,
-            value: `Từ ngày ${ moment(this.filter.dateFrom).format('DD/MM/YYYY')} đến ngày ${ moment(this.filter.dateTo).format('DD/MM/YYYY')}`,
-          }
-        ]
-      },
-      {
-        cells:[
-          {
-            colSpan: 1,
-            rowSpan:1,
-            value: ``
-          }
-        ]
-      }
-      );
-         //format excel nè
-        columns.forEach(function(column){
-          delete column.width;
-          column.autoWidth = true;
-        });
-    new Workbook(workbook).toDataURL().then((dataUrl: string) => {
-      // https://www.telerik.com/kendo-angular-ui/components/filesaver/
-      saveAs(dataUrl, `${title}.xlsx`);
-    });
+    return val;
   }
 }

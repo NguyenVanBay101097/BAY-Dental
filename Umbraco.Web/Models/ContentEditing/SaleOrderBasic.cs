@@ -17,6 +17,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Khách hàng
         /// </summary>
         public string PartnerName { get; set; }
+        public Guid PartnerId { get; set; }
 
         public decimal? AmountTotal { get; set; }
         /// <summary>

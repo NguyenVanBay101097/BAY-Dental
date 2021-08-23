@@ -1,5 +1,5 @@
 .filter-right {
-    flex-basis: 335px;
+    flex-basis: 400px;
 }
 
 .filter-left {}
@@ -13,7 +13,7 @@
 }
 
 .icon-filter {
-    background-color: #c1c7ce;
+    background-color: #E4E7EB;
 }
 
 .transform-50 {
@@ -23,3 +23,11 @@
 .cate-multi li.k-button {
     white-space: nowrap !important;
 }
+
+/* .o_technical_modal .modal-dialog {
+    max-width: 500px;
+} */
+
+  .filter-2 > * {
+    margin-top: .5rem!important;
+  }

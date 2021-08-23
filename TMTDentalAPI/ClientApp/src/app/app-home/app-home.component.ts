@@ -59,9 +59,9 @@ export class AppHomeComponent implements OnInit {
       icon: 'fas fa-poll',
       url: '/surveys',
       children: [
-        { name: 'Danh sách khảo sát', url: '/surveys/list', permissions: ['Survey.UserInput.Read'], groups:'survey.group_user,survey.group_manager' },
-        { name: 'Quản lý phân việc', url: '/surveys/manage', permissions: ['Survey.Assignment.Read'], groups:'survey.group_manager' },
-        { name: 'Câu hỏi khảo sát', url: '/surveys/config', permissions: ['Survey.Question.Read', 'Survey.Question.Create', 'Survey.Question.Update', 'Survey.Question.Delete'], groups:'survey.group_manager' },
+        { name: 'Danh sách khảo sát', url: '/surveys/list', permissions: ['Survey.UserInput.Read'], groups: 'survey.group_user,survey.group_manager' },
+        { name: 'Quản lý phân việc', url: '/surveys/manage', permissions: ['Survey.Assignment.Read'], groups: 'survey.group_manager' },
+        { name: 'Câu hỏi khảo sát', url: '/surveys/config', permissions: ['Survey.Question.Read', 'Survey.Question.Create', 'Survey.Question.Update', 'Survey.Question.Delete'], groups: 'survey.group_manager' },
         { name: 'Nhãn khảo sát', url: '/surveys/survey-tag', groups: 'survey.group_survey' },
       ],
       groups: 'survey.group_survey',
@@ -72,8 +72,8 @@ export class AppHomeComponent implements OnInit {
       icon: 'fas fa-shopping-cart',
       url: '/purchase',
       children: [
-        { name: 'Mua hàng', url: '/purchase/orders', linkProps: { queryParams: { type: 'order' }}, permissions: ['Purchase.Order.Read', 'Purchase.Order.Create', 'Purchase.Order.Update', 'Purchase.Order.Delete'] },
-        { name: 'Trả hàng', url: '/purchase/orders', linkProps: { queryParams: { type: 'refund' }}, permissions: ['Purchase.Order.Read'] },
+        { name: 'Mua hàng', url: '/purchase/orders', linkProps: { queryParams: { type: 'order' } }, permissions: ['Purchase.Order.Read', 'Purchase.Order.Create', 'Purchase.Order.Update', 'Purchase.Order.Delete'] },
+        { name: 'Trả hàng', url: '/purchase/orders', linkProps: { queryParams: { type: 'refund' } }, permissions: ['Purchase.Order.Read'] },
       ],
       permissions: ['Purchase.Order.Read']
     },
@@ -131,7 +131,7 @@ export class AppHomeComponent implements OnInit {
         { name: 'Danh sách', url: '/agents/list' },
         { name: 'Thống kê hoa hồng', url: '/agents/commission' },
       ],
-      permissions: ['Catalog.Agent.Read','Report.Commission']
+      permissions: ['Catalog.Agent.Read', 'Report.Commission']
     },
     {
       name: 'Danh mục',
@@ -139,7 +139,7 @@ export class AppHomeComponent implements OnInit {
       url: '/catalog',
       children: [
         { name: 'Thông tin khách hàng', url: '/catalog/customer-management' },
-        { name: 'Hạng thành viên', url: '/catalog/member-level/management'},
+        { name: 'Hạng thành viên', url: '/catalog/member-level/management' },
         { name: 'Nhà cung cấp', url: '/catalog/suppliers', permissions: ['Basic.Partner.Read'] },
         { name: 'Dịch vụ - Vật tư - Thuốc', url: '/catalog/products', permissions: ['Catalog.Products.Read'] },
         { name: 'Đơn thuốc mẫu', url: '/catalog/sample-prescriptions', permissions: ['Catalog.SamplePrescription.Read'] },
@@ -184,7 +184,7 @@ export class AppHomeComponent implements OnInit {
         { name: 'Kết quả kinh doanh', url: '/report/financial-report', permissions: ['Report.Financial'] },
         { name: 'Báo cáo doanh thu', url: '/report/account-invoice-reports/revenue-time', permissions: ['Report.Revenue'] },
         { name: 'Báo cáo dịch vụ', url: '/report/sale-report/service-report', permissions: ['Report.Sale'] },
-        { name: 'Báo cáo công nợ khách hàng', url: '/report/report-account-common/partner-debit-report', permissions: ['Report.AccountPartner'] },
+        { name: 'Báo cáo khách hàng', url: '/report/report-account-common/partner-report-overview', permissions: ['Report.AccountPartner'] },
         { name: 'Báo cáo tiếp nhận', url: '/report/customer-receipt-reports' },
         { name: 'Công nợ nhà cung cấp', url: '/report/report-account-common/partner', linkProps: { queryParams: { result_selection: 'supplier' }}, permissions: ['Report.AccountPartner'] },
         { name: 'Khách hàng lân cận phòng khám', url: '/report/partner-report-location', permissions: ['Report.PartnerLocation'] },
@@ -215,7 +215,7 @@ export class AppHomeComponent implements OnInit {
   searchString: string = '';
   searchUpdate = new Subject<string>();
   expire = '';
-  @ViewChild('searchAllSelect', {static: true}) searchAllSelect: NgSelectComponent;
+  @ViewChild('searchAllSelect', { static: true }) searchAllSelect: NgSelectComponent;
 
   minimized = false;
 
