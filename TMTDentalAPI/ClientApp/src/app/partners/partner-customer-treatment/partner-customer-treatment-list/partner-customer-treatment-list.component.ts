@@ -22,6 +22,7 @@ export class PartnerCustomerTreatmentListComponent implements OnInit {
   dateTo: Date;
   skip: number = 0;
   limit: number = 10;
+  pageSizes = [20, 50, 100, 200];
   search: string;
   saleOrdersData: GridDataResult;
   searchUpdate = new Subject<string>();
@@ -97,6 +98,12 @@ export class PartnerCustomerTreatmentListComponent implements OnInit {
 
   pageChange(event){
     this.skip = event.skip;
+    this.getSaleOrders();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
     this.getSaleOrders();
   }
 

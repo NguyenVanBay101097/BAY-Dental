@@ -34,6 +34,7 @@ export class SurveyManageListComponent implements OnInit {
   search: string;
   limit = 20;
   offset = 0;
+  pageSizes = [20, 50, 100, 200];
   edit = false;
   dateFrom: Date;
   dateTo: Date;
@@ -126,6 +127,12 @@ export class SurveyManageListComponent implements OnInit {
 
   pageChange(e) {
     this.offset = e.skip;
+    this.loadDataFromApi();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.offset = 0;
+    this.limit = value;
     this.loadDataFromApi();
   }
 

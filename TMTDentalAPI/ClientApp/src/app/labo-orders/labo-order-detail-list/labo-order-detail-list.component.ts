@@ -20,6 +20,7 @@ export class LaboOrderDetailListComponent implements OnInit {
   @Output() reload : Subject<boolean> = new Subject<boolean>();
   skip = 0;
   limit = 10;
+  pageSizes = [20, 50, 100, 200];
   gridData: GridDataResult;
   details: LaboOrderBasic[];
   loading = false;
@@ -62,6 +63,12 @@ export class LaboOrderDetailListComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.loadDataFromApi();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
     this.loadDataFromApi();
   }
 

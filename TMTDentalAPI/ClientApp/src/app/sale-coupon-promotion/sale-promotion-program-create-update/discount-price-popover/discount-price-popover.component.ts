@@ -28,6 +28,7 @@ export class DiscountPricePopoverComponent implements OnInit {
   dateTo: Date;
   skip = 0;
   pageSize = 20;
+  pageSizes = [20, 50, 100, 200];
   amountTotal: number;
   constructor(public activeModal: NgbActiveModal,private saleOrderPromotionService: SaleOrderPromotionService,private intlService: IntlService,
   ) { }
@@ -107,6 +108,12 @@ export class DiscountPricePopoverComponent implements OnInit {
   
   pageChange(event: PageChangeEvent){
     this.skip = event.skip;
+    this.loadGridData();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.pageSize = value;
     this.loadGridData();
   }
 }

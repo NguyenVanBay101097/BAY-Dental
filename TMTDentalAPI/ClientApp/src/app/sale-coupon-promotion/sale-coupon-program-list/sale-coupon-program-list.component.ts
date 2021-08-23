@@ -20,6 +20,7 @@ export class SaleCouponProgramListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pageSizes = [20, 50, 100, 200];
   loading = false;
   search: string;
   searchUpdate = new Subject<string>();
@@ -88,6 +89,12 @@ export class SaleCouponProgramListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.loadDataFromApi();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
     this.loadDataFromApi();
   }
 

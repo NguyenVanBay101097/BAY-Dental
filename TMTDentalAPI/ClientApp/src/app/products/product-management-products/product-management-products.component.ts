@@ -27,6 +27,7 @@ export class ProductManagementProductsComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pageSizes = [20, 50, 100, 200];
   searchProduct: string;
   cateId: string;
   selectedCateg: any;
@@ -108,6 +109,12 @@ export class ProductManagementProductsComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.loadProducts();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
     this.loadProducts();
   }
 

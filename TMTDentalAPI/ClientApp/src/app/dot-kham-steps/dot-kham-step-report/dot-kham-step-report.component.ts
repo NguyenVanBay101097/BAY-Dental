@@ -31,6 +31,7 @@ export class DotKhamStepReportComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pageSizes = [20, 50, 100, 200];
   dateFrom: Date;
   userSimpleFilter: EmployeeBasic[] = [];
   partnerSimpleFilter: PartnerSimple[] = [];
@@ -159,6 +160,11 @@ export class DotKhamStepReportComponent implements OnInit {
     this.loadData();
   }
 
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
+    this.loadData();
+  }
 
   onSearchDateChange(data) {
     this.dateFrom = data.dateFrom;

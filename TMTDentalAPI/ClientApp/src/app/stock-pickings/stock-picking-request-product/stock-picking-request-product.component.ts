@@ -18,6 +18,7 @@ export class StockPickingRequestProductComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pageSizes = [20, 50, 100, 200];
   loading = false;
   search: string;
   states: any[] = [{ value: 'confirmed', name: 'Đang yêu cầu' }, { value: 'done', name: 'Đã xuất' }];
@@ -117,4 +118,9 @@ export class StockPickingRequestProductComponent implements OnInit {
     this.loadDataFromApi();
   }
 
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
+    this.loadDataFromApi();
+  }
 }

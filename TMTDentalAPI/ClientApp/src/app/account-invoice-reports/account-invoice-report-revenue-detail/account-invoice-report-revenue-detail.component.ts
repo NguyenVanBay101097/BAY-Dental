@@ -17,6 +17,7 @@ export class AccountInvoiceReportRevenueDetailComponent implements OnInit {
   @Input() showPartner: boolean = true;
   gridData: GridDataResult;
   loading = false;
+  pageSizes = [20, 50, 100, 200];
 
   constructor(
     private accInvService: AccountInvoiceReportService,
@@ -67,4 +68,9 @@ export class AccountInvoiceReportRevenueDetailComponent implements OnInit {
     this.loadReport();
   }
 
+  onPageSizeChange(value: number): void {
+    this.filter.offset = 0;
+    this.filter.limit = value;
+    this.loadReport();
+  }
 }

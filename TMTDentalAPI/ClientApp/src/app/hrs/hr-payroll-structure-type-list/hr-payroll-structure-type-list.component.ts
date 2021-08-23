@@ -16,6 +16,7 @@ export class HrPayrollStructureTypeListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pageSizes = [20, 50, 100, 200];
   title = 'Loại mẫu lương';
   loading = false;
   opened = false;
@@ -68,6 +69,12 @@ export class HrPayrollStructureTypeListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.loadDataFromApi();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
     this.loadDataFromApi();
   }
 

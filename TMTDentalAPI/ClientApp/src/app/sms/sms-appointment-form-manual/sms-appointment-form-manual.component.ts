@@ -23,6 +23,7 @@ export class SmsAppointmentFormManualComponent implements OnInit {
   gridData: any;
   skip: number = 0;
   limit: number = 20;
+  pageSizes = [20, 50, 100, 200];
   isRowSelected: any[];
   search: string = '';
   selectedIds: string[] = [];
@@ -85,6 +86,12 @@ export class SmsAppointmentFormManualComponent implements OnInit {
 
   pageChange(event) {
     this.skip = event.skip;
+    this.loadDataFromApi();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
     this.loadDataFromApi();
   }
 

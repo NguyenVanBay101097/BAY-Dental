@@ -26,6 +26,7 @@ export class PartnerAdvanceListComponent implements OnInit {
   search: string;
   limit = 20;
   offset = 0;
+  pageSizes = [20, 50, 100, 200];
   edit = false;
   dateFrom: Date;
   dateTo: Date;
@@ -102,6 +103,12 @@ export class PartnerAdvanceListComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.offset = event.skip;
+    this.loadDataFromApi();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.offset = 0;
+    this.limit = value;
     this.loadDataFromApi();
   }
 

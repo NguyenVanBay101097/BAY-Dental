@@ -24,6 +24,7 @@ export class DotKhamLineListComponent implements OnInit {
   );
   skip = 0;
   pageSize = 20;
+  pageSizes = [20, 50, 100, 200];
   loading = false;
   search: string;
   searchUpdate = new Subject<string>();
@@ -85,6 +86,12 @@ export class DotKhamLineListComponent implements OnInit {
 
   pageChange(e: PageChangeEvent) {
     this.skip = e.skip;
+    this.loadDataFromApi();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.pageSize = value;
     this.loadDataFromApi();
   }
 

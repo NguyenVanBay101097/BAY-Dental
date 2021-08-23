@@ -21,6 +21,7 @@ export class CompanyListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pageSizes = [20, 50, 100, 200];
   active = true;
   opened = false;
   loading = false;
@@ -40,6 +41,12 @@ export class CompanyListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.loadDataFromApi();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
     this.loadDataFromApi();
   }
 

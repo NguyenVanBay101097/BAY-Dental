@@ -22,6 +22,7 @@ export class PartnerPaymentsComponent implements OnInit {
 
   limit = 5;
   skip = 0;
+  pageSizes = [20, 50, 100, 200];
   constructor(private service: PartnerService, private modalService: NgbModal,
     private paymentService: AccountPaymentService) { }
 
@@ -70,6 +71,12 @@ export class PartnerPaymentsComponent implements OnInit {
     this.limit = event.take;
     this.loadPayments();
   }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
+    this.loadPayments();
+  } 
 
   registerPayment() {
     this.service.getDefaultRegisterPayment(this.partnerId).subscribe(result => {

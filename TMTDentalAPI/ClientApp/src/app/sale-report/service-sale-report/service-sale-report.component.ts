@@ -31,6 +31,7 @@ export class ServiceSaleReportComponent implements OnInit {
   loading = false;
   skip = 0;
   limit = 20;
+  pageSizes = [20, 50, 100, 200];
   searchUpdate = new Subject<string>();
   filterMonth: any = "";
   search: string;
@@ -191,6 +192,12 @@ export class ServiceSaleReportComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.loadAllData();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
     this.loadAllData();
   }
 

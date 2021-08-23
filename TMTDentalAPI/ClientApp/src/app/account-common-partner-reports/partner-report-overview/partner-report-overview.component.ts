@@ -53,6 +53,7 @@ export class PartnerReportOverviewComponent implements OnInit {
   revenueNew = 0;
   isFilterAdvance = false;
   addressFilter = null;
+  pageSizes = [20, 50, 100, 200];
 
   @ViewChild("companyCbx", { static: true }) companyVC: ComboBoxComponent;
   @ViewChild("pnSourceCbx", { static: true }) pnSourceVC: ComboBoxComponent;
@@ -265,6 +266,12 @@ export class PartnerReportOverviewComponent implements OnInit {
 
   pageChange(e) {
     this.filter.offset = e.skip;
+    this.loadData();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.filter.offset = 0;
+    this.filter.limit = value;
     this.loadData();
   }
 

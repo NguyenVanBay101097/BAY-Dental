@@ -20,6 +20,7 @@ export class CustomerReceiptReportForTimeDetailComponent implements OnInit {
   loading = false;
   limit = 20;
   skip = 0;
+  pageSizes = [20, 50, 100, 200];
   total: number;
   gridData: GridDataResult;
   customerReceiptTimes: any[] = [];
@@ -83,6 +84,11 @@ export class CustomerReceiptReportForTimeDetailComponent implements OnInit {
     this.loadDataApi();
   }
 
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
+    this.loadDataApi();
+  }
 
   getExamination(value) {
     switch (value) {

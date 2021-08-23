@@ -24,6 +24,7 @@ export class StockInventoryListComponent implements OnInit {
   dateFrom: Date;
   dateTo: Date;
   offset = 0;
+  pageSizes = [20, 50, 100, 200];
   state: string;
   filterInventoryState = [
     { name: 'Nháp', value: 'draft' },
@@ -83,6 +84,12 @@ export class StockInventoryListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.offset = event.skip;
+    this.loadDataFromApi();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.offset = 0;
+    this.limit = value;
     this.loadDataFromApi();
   }
 

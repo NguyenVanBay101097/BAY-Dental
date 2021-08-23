@@ -72,6 +72,7 @@ export class PartnerCustomerListComponent implements OnInit {
   color='red';
 
   showInfo = false;
+  pageSizes = [20, 50, 100, 200];
 
   constructor(private partnerService: PartnerService, private modalService: NgbModal,
     private partnerCategoryService: PartnerCategoryService, private notificationService: NotificationService, 
@@ -312,6 +313,12 @@ export class PartnerCustomerListComponent implements OnInit {
 
   public onPageChange(event: PageChangeEvent): void {
     this.filter.offset = event.skip;;
+    this.refreshData();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.filter.offset = 0;
+    this.filter.limit = value;
     this.refreshData();
   }
 }

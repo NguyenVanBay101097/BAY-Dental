@@ -16,6 +16,7 @@ export class CustomerReceiptReportForTimeComponent implements OnInit {
   loading = false;
   limit = 20;
   skip = 0;
+  pageSizes = [20, 50, 100, 200];
   total: number;
   gridData: GridDataResult;
   customerReceiptTimes: any[] = [];
@@ -97,6 +98,12 @@ export class CustomerReceiptReportForTimeComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.loadDataApi();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
     this.loadDataApi();
   }
 

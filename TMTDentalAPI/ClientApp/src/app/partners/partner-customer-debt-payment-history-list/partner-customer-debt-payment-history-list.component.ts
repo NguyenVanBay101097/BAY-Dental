@@ -24,6 +24,7 @@ export class PartnerCustomerDebtPaymentHistoryListComponent implements OnInit {
   search: string;
   limit = 20;
   offset = 0;
+  pageSizes = [20, 50, 100, 200];
   edit = false;
   dateFrom: Date;
   dateTo: Date;
@@ -86,6 +87,11 @@ export class PartnerCustomerDebtPaymentHistoryListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
+  onPageSizeChange(value: number): void {
+    this.offset = 0;
+    this.limit = value;
+    this.loadDataFromApi();
+  }
   onSearchDateChange(data) {
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;

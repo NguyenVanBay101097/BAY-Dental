@@ -12,6 +12,7 @@ export class ServiceCardCardHistoriesComponent implements OnInit {
   @Input() public item: any;
   skip = 0;
   pageSize = 5;
+  pageSizes = [20, 50, 100, 200];
   gridData: any;
   loading = false;
   gridView: GridDataResult;
@@ -43,6 +44,12 @@ export class ServiceCardCardHistoriesComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.loadItems();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.pageSize = value;
     this.loadItems();
   }
 

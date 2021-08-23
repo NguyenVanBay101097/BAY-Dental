@@ -43,5 +43,17 @@
                                 class="fas fa-eye"></i></button>
             </ng-template>
         </kendo-grid-command-column>
+        <ng-template kendoPagerTemplate let-skip="skip" let-total="total" let-pageSize="pageSize">
+            <kendo-pager-prev-buttons></kendo-pager-prev-buttons>
+            <kendo-pager-numeric-buttons [buttonCount]="10"></kendo-pager-numeric-buttons>
+            <kendo-pager-next-buttons></kendo-pager-next-buttons>
+            <kendo-pager-info></kendo-pager-info>
+            <span class="ml-4">
+                <kendo-dropdownlist style="width: 80px;" [data]="pageSizes"
+                    (valueChange)="onPageSizeChange($event)" [value]="pageSize">
+                </kendo-dropdownlist>
+                <label class="ml-2 mb-0">Số dòng trên trang</label>
+            </span>
+        </ng-template>
     </kendo-grid>
 </div>

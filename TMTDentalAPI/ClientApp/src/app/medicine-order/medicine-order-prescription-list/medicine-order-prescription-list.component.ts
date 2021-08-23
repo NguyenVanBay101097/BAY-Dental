@@ -22,6 +22,7 @@ export class MedicineOrderPrescriptionListComponent implements OnInit {
   dateFrom: Date;
   dateTo: Date;
   skip = 0;
+  pageSizes = [20, 50, 100, 200];
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
   constructor(
@@ -73,6 +74,11 @@ export class MedicineOrderPrescriptionListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
+    this.loadDataFromApi();
+  }
 
   createPrescriptionPayment(item) {
     const modalRef = this.modalService.open(MedicineOrderCreateDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });

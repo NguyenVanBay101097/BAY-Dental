@@ -22,6 +22,7 @@ export class SmsCareAfterOrderFormAutomaticComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   offset = 0;
+  pageSizes = [20, 50, 100, 200];
   campaign: any;
   loading = false;
   searchUpdate = new Subject<string>();
@@ -143,6 +144,12 @@ export class SmsCareAfterOrderFormAutomaticComponent implements OnInit {
 
   pageChange(event): void {
     this.offset = event.skip;
+    this.loadDataFromApi();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.offset = 0;
+    this.limit = value;
     this.loadDataFromApi();
   }
 

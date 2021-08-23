@@ -15,6 +15,7 @@ export class PartnerReportSaleOrderComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   offset = 0;
+  pageSizes = [20, 50, 100, 200];
 
   constructor(private partnerOldNewRpService: PartnerOldNewReportService) { }
 
@@ -54,6 +55,12 @@ export class PartnerReportSaleOrderComponent implements OnInit {
 
   pageChange(e) {
     this.offset = e.skip;
+    this.loadData();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.offset = 0;
+    this.limit = value;
     this.loadData();
   }
 }

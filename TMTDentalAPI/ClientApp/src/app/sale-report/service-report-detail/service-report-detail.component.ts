@@ -24,6 +24,7 @@ export class ServiceReportDetailComponent implements OnInit {
     done: "Hoàn thành",
     cancel: 'Ngừng điều trị'
   }
+  pageSizes = [20, 50, 100, 200];
 
   constructor(
     private saleReportService: SaleReportService,
@@ -71,6 +72,12 @@ export class ServiceReportDetailComponent implements OnInit {
 
   pageChange(e) {
     this.filter.offset = e.skip;
+    this.loadReport();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.filter.offset = 0;
+    this.filter.limit = value;
     this.loadReport();
   }
 

@@ -17,6 +17,7 @@ export class SmsMessageStatisticComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pageSizes = [20, 50, 100, 200];
   loading = false;
   searchUpdate = new Subject<string>();
   search: string;
@@ -67,6 +68,12 @@ export class SmsMessageStatisticComponent implements OnInit {
 
   pageChange(event): void {
     this.skip = event.skip;
+    this.loadDataFromApi();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
     this.loadDataFromApi();
   }
 }

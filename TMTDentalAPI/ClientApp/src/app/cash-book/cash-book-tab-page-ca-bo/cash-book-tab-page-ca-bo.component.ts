@@ -30,6 +30,7 @@ export class CashBookTabPageCaBoComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pageSizes = [20, 50, 100, 200];
 
   dateFrom: Date;
   dateTo: Date;
@@ -134,6 +135,11 @@ export class CashBookTabPageCaBoComponent implements OnInit {
     this.loadGridData();
   }
 
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
+    this.loadGridData();
+  }
 
   searchChangeDate(value) {
     this.dateFrom = value.dateFrom;

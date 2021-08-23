@@ -23,6 +23,7 @@ export class PartnerDetailListComponent implements OnInit {
 
   limit = 5;
   skip = 0;
+  pageSizes = [20, 50, 100, 200];
 
   constructor(private service: PartnerService, private router: Router) { }
 
@@ -94,6 +95,12 @@ export class PartnerDetailListComponent implements OnInit {
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
     this.limit = event.take;
+    this.loadInvoices();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
     this.loadInvoices();
   }
 

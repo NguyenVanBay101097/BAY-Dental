@@ -34,6 +34,7 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
   loading = false;
   skip = 0;
   limit = 20;
+  pageSizes = [20, 50, 100, 200];
 
   @ViewChild("companyCbx", { static: true }) companyVC: ComboBoxComponent;
   @ViewChild(GridComponent, { static: true }) public grid: GridComponent;
@@ -168,6 +169,12 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
 
   pageChange(e) {
     this.skip = e.skip;
+    this.loadReport();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
     this.loadReport();
   }
 

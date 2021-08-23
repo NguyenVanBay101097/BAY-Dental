@@ -13,6 +13,7 @@ export class PartnerCustomerSaleOrderQuotationsLinesComponent implements OnInit 
   @Input() public advisoryId: string;
   skip = 0;
   limit = 10;
+  pageSizes = [20, 50, 100, 200];
   gridData: any = [];
   details: AdvisoryLine[];
   loading = false;
@@ -58,4 +59,9 @@ export class PartnerCustomerSaleOrderQuotationsLinesComponent implements OnInit 
     this.loadDataFromApi();
   }
 
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
+    this.loadDataFromApi();
+  }
 }

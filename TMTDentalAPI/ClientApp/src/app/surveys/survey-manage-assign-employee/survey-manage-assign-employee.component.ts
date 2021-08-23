@@ -29,6 +29,7 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
   gridData: GridDataResult;
   limit = 10;
   offset = 0;
+  pageSizes = [20, 50, 100, 200];
   filteredEmployees: EmployeeSimple[];
 
   constructor(
@@ -86,6 +87,12 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
 
   pageChange(e) {
     this.offset = e.skip;
+    this.loadDataFromApi();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.offset = 0;
+    this.limit = value;
     this.loadDataFromApi();
   }
 

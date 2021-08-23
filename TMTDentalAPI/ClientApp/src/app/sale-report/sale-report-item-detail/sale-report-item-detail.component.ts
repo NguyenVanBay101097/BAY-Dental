@@ -12,6 +12,7 @@ export class SaleReportItemDetailComponent implements OnInit {
   @Input() public item: SaleReportItem;
   skip = 0;
   limit = 10;
+  pageSizes = [20, 50, 100, 200];
   gridData: GridDataResult;
   details: SaleReportItemDetail[];
   loading = false;
@@ -44,6 +45,12 @@ export class SaleReportItemDetailComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.loadItems();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
     this.loadItems();
   }
 

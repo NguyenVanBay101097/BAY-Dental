@@ -24,6 +24,7 @@ export class PartnerSupplierFormDebitComponent implements OnInit {
   skip = 0;
   countPayment = 0;
   limit = 10;
+  pageSizes = [20, 50, 100, 200];
   gridData: GridDataResult;
   details: AccountMoveBasic[];
   loading = false;
@@ -151,6 +152,12 @@ export class PartnerSupplierFormDebitComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.loadItems();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
     this.loadItems();
   }
 

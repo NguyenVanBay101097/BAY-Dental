@@ -26,6 +26,7 @@ export class ProductManagementMedicinesComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pageSizes = [20, 50, 100, 200];
   searchMedicine: string;
   cateId: string;
   selectedCateg: any;
@@ -85,7 +86,7 @@ export class ProductManagementMedicinesComponent implements OnInit {
         (res) => {
           this.gridData = res;
           this.loading = false;
-          console.log(res);
+          // console.log(res);
         },
         (err) => {
           console.log(err);
@@ -120,6 +121,12 @@ export class ProductManagementMedicinesComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.loadMedicines();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
     this.loadMedicines();
   }
 
@@ -262,7 +269,7 @@ export class ProductManagementMedicinesComponent implements OnInit {
     );
   }
 
-  checkPermission(){
+  checkPermission() {
     this.canAdd = this.checkPermissionService.check(['Catalog.Products.Create']);
     this.canEdit = this.checkPermissionService.check(['Catalog.Products.Update']);
     this.canDelete = this.checkPermissionService.check(['Catalog.Products.Delete']);

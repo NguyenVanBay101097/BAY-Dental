@@ -19,6 +19,7 @@ export class PartnerCustomerTreatmentSaleOrderLineComponent implements OnInit {
   @Input() public saleOrderId: string;
   skip = 0;
   limit = 10;
+  pageSizes = [20, 50, 100, 200];
   gridData: GridDataResult;
   details: SaleOrderLineDisplay[];
   loading = false;
@@ -98,6 +99,12 @@ export class PartnerCustomerTreatmentSaleOrderLineComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.loadDataFromApi();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
     this.loadDataFromApi();
   }
 

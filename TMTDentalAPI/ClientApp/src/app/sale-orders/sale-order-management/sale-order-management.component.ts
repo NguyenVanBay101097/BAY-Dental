@@ -37,6 +37,7 @@ export class SaleOrderManagementComponent implements OnInit {
   loading = false;
   limit = 20;
   skip = 0;
+  pageSizes = [20, 50, 100, 200];
 
   saleOrdersAllData: GridDataResult;
 
@@ -115,6 +116,12 @@ export class SaleOrderManagementComponent implements OnInit {
 
   pageChange(event) {
     this.skip = event.skip;
+    this.loadDataFromApi();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
     this.loadDataFromApi();
   }
 

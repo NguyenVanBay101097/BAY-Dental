@@ -19,6 +19,7 @@ export class PurchaseOrderRefundComponent implements OnInit {
   loading = false;
   skip = 0;
   pageSize = 5;
+  pageSizes = [20, 50, 100, 200];
   gridLoading = false;
   formFilter: FormGroup;
 
@@ -62,6 +63,12 @@ export class PurchaseOrderRefundComponent implements OnInit {
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
     this.pageSize = event.take;
+    this.loadPurchaseOrder();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.pageSize = value;
     this.loadPurchaseOrder();
   }
 

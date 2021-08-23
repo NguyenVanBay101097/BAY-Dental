@@ -21,6 +21,7 @@ export class PartnerSupplierFormPaymentComponent implements OnInit {
   gridView: GridDataResult;
   limit = 10;
   skip = 0;
+  pageSizes = [20, 50, 100, 200];
   constructor(
     private service: PartnerService,
     private modalService: NgbModal,
@@ -91,6 +92,12 @@ export class PartnerSupplierFormPaymentComponent implements OnInit {
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
     this.limit = event.take;
+    this.loadPayments();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
     this.loadPayments();
   }
 

@@ -13,6 +13,7 @@ export class PartnerDebitDetailListReportComponent implements OnInit {
   @Input() public parent: ReportPartnerDebitRes;
   skip = 0;
   limit = 10;
+  pageSizes = [20, 50, 100, 200];
   gridData: GridDataResult;
   details: ReportPartnerDebitDetailRes[];
   loading = false;
@@ -45,6 +46,12 @@ export class PartnerDebitDetailListReportComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.loadItems();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
     this.loadItems();
   }
 

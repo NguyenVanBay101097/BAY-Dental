@@ -36,6 +36,7 @@ export class EmployeeListComponent implements OnInit {
   windowOpened: boolean = false;
   skip = 0;
   pageSize = 20;
+  pageSizes = [20, 50, 100, 200];
   active: boolean = true;
 
   search: string;
@@ -96,6 +97,12 @@ export class EmployeeListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.getEmployeesList();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.pageSize = value;
     this.getEmployeesList();
   }
 

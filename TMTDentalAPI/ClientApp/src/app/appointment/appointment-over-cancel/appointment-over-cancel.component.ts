@@ -30,6 +30,7 @@ export class AppointmentOverCancelComponent implements OnInit {
   dateTo: Date;
   limit: number = 20;
   offset: number = 0
+  pageSizes = [20, 50, 100, 200];
   state: string = "cancel,confirmed";
   search: string;
   searchUpdate = new Subject<string>();
@@ -133,6 +134,12 @@ export class AppointmentOverCancelComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.offset = event.skip;
+    this.loadDataFromApi();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.offset = 0;
+    this.limit = value;
     this.loadDataFromApi();
   }
 

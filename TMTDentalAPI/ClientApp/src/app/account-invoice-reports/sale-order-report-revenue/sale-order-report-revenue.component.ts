@@ -23,6 +23,7 @@ export class SaleOrderReportRevenueComponent implements OnInit {
   companies: CompanySimple[] = [];
   allDataReport: any;
   searchUpdate = new Subject<string>();
+  pageSizes = [20, 50, 100, 200];
 
   sumRevenue = {
     amountTotal : 0,
@@ -122,6 +123,12 @@ export class SaleOrderReportRevenueComponent implements OnInit {
 
   pageChange(e) {
     this.filter.offset = e.skip;
+    this.loadReport();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.filter.offset = 0;
+    this.filter.limit = value;
     this.loadReport();
   }
 

@@ -23,6 +23,7 @@ export class AgentCommmissionFormDetailItemComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pageSizes = [20, 50, 100, 200];
   loading = false;
   search: string;
   searchUpdate = new Subject<string>();
@@ -73,4 +74,9 @@ export class AgentCommmissionFormDetailItemComponent implements OnInit {
     this.loadDataFromApi();
   }
 
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
+    this.loadDataFromApi();
+  }
 }

@@ -13,6 +13,7 @@ export class StockReportXuatNhapTonDetailComponent implements OnInit {
   @Input() public item: StockReportXuatNhapTonItem;
   skip = 0;
   limit = 10;
+  pageSizes = [20, 50, 100, 200];
   gridData: GridDataResult;
   details: StockReportXuatNhapTonItemDetail[];
   loading = false;
@@ -38,6 +39,12 @@ export class StockReportXuatNhapTonDetailComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.loadItems();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
     this.loadItems();
   }
 

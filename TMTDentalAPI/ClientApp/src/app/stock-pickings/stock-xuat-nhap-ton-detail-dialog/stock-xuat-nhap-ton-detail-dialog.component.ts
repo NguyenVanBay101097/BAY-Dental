@@ -16,6 +16,7 @@ export class StockXuatNhapTonDetailDialogComponent implements OnInit {
   loading: boolean = false;
   limit: number = 5;
   skip: number = 0;
+  pageSizes = [20, 50, 100, 200];
   item: any;
   allGridData: GridDataResult;
   fileExcelName: string;
@@ -63,6 +64,12 @@ export class StockXuatNhapTonDetailDialogComponent implements OnInit {
 
   pageChange(event) {
     this.skip = event.skip;
+    this.loadDataFromApi();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
     this.loadDataFromApi();
   }
 

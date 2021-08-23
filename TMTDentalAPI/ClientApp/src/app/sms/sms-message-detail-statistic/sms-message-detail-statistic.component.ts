@@ -31,6 +31,7 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
   listMessageDetails: any[];
   smsCampaignId: string;
   limit: number = 20;
+  pageSizes = [20, 50, 100, 200];
   isRowSelected: any[];
   search: string = '';
   selectedIds: string[] = [];
@@ -120,6 +121,12 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
 
   pageChange(event) {
     this.skip = event.skip;
+    this.loadDataFromApi();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
     this.loadDataFromApi();
   }
 

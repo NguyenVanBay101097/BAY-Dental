@@ -14,6 +14,7 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pageSizes = [20, 50, 100, 200];
   loading = false;
   reportData: ReportDataResult;
   changeDateFirst: boolean = true;
@@ -64,6 +65,12 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.loadDataGetMoney();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
     this.loadDataGetMoney();
   }
 

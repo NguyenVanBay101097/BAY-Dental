@@ -21,6 +21,7 @@ export class ToothDiagnosisListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 10;
   skip = 0;
+  pageSizes = [20, 50, 100, 200];
   
   search: string;
   searchUpdate = new Subject<string>();
@@ -107,6 +108,12 @@ export class ToothDiagnosisListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent){
     this.skip = event.skip;
+    this.loadDataFromApi();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
     this.loadDataFromApi();
   }
 }

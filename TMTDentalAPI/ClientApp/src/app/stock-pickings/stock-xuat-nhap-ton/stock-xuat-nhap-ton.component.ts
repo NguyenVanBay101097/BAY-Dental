@@ -28,6 +28,7 @@ export class StockXuatNhapTonComponent implements OnInit {
   gridData: GridDataResult;
   limit = 10;
   skip = 0;
+  pageSizes = [20, 50, 100, 200];
   dateFrom: Date;
   dateTo: Date;
   searchProduct: ProductSimple;
@@ -106,6 +107,12 @@ export class StockXuatNhapTonComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.loadItems();
+  }
+
+  onPageSizeChange(value: number): void {
+    this.skip = 0;
+    this.limit = value;
     this.loadItems();
   }
 
