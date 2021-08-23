@@ -162,20 +162,22 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       dateOrderObj: [null, Validators.required],
     });
 
-    this.route.data.subscribe(data => {
-      this.partner = data.partner;
-    });
-
     if (this.saleOrderId) {
       this.saleOrderService.get(this.saleOrderId).subscribe((res: any) => {
         this.saleOrder = res;
+        this.partnerService.getCustomerInfo(this.saleOrder.partnerId).subscribe((result) => {
+          this.partner = result;
+        });
         this.updateFormGroup(res);
       });
     } else {
       this.saleOrderService.defaultGet().subscribe((res: any) => {
         this.saleOrder = res;
-        if (this.partner) {
-          this.saleOrder.partner = this.partner;
+        if (this.partnerId) {
+          this.partnerService.getCustomerInfo(this.partnerId).subscribe((result) => {
+            this.partner = result;
+            this.saleOrder.partner = result;
+          });
         }
 
         this.updateFormGroup(res);
