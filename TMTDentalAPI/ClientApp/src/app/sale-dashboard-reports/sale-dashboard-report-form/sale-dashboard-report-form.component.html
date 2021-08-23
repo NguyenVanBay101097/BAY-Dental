@@ -232,10 +232,10 @@
             </li>
         </ol>
         <div class="o_cp_searchview">
-            <kendo-combobox [(ngModel)]="companyId" (valueChange)="changeCompany($event)" class="form-control"
+            <!-- <kendo-combobox [(ngModel)]="companyId" (valueChange)="changeCompany($event)" class="form-control"
                 [data]="filteredCompanies" [textField]="'name'" [filterable]="true" #companyCbx [valueField]="'id'"
                 [valuePrimitive]="true" [placeholder]="'Tất cả chi nhánh'">
-            </kendo-combobox>
+            </kendo-combobox> -->
         </div>
         <div class="o_cp_left">
             <div class="o_cp_sidebar">
@@ -250,22 +250,34 @@
     <div class="o_dashboard_view">
         <div class="o_group">
             <div class="o_group o_group_col_12">
+                <div class="o_aggregate_col o_group_col_6">
+                    <kendo-combobox [(ngModel)]="companyId" (valueChange)="changeCompany($event)" class="form-control"
+                        [data]="filteredCompanies" [textField]="'name'" [filterable]="true" #companyCbx
+                        [valueField]="'id'" [valuePrimitive]="true" [placeholder]="'Tất cả chi nhánh'">
+                    </kendo-combobox>
+                </div>
+                <div class="o_aggregate_col o_group_col_6">
+                </div>
+            </div>
+        </div>
+        <div class="o_group">
+            <div class="o_group o_group_col_12">
                 <div class="o_aggregate_col o_group_col_2">
                     <div class="o_aggregate">
                         <h5>Quỹ tiền mặt</h5>
-                        <div class="o_value text-info">{{(moneyCash ? moneyCash : 0) | number}}</div>
+                        <div class="o_value text-success">{{(moneyCash ? moneyCash : 0) | number}}</div>
                         <div class="link-details">
                             <a (click)="redirectTo('cash-book-cash')">Chi tiết</a>
-                        </div>                      
+                        </div>
                     </div>
                 </div>
                 <div class="o_aggregate_col o_group_col_2">
                     <div class="o_aggregate">
                         <h5>Quỹ ngân hàng</h5>
-                        <div class="o_value text-info"> {{(moneyBank ? moneyBank : 0) | number}}</div>
+                        <div class="o_value text-primary"> {{(moneyBank ? moneyBank : 0) | number}}</div>
                         <div class="link-details">
                             <a (click)="redirectTo('cash-book-bank')">Chi tiết</a>
-                        </div>  
+                        </div>
                     </div>
                 </div>
                 <div class="o_aggregate_col o_group_col_2">
@@ -274,25 +286,25 @@
                         <div class="o_value text-danger">{{totalDebitNCC | number }}</div>
                         <div class="link-details">
                             <a (click)="redirectTo('ncc-debit-report')">Chi tiết</a>
-                        </div>  
+                        </div>
                     </div>
                 </div>
                 <div class="o_aggregate_col o_group_col_2">
                     <div class="o_aggregate ">
                         <h5>Công nợ phải thu</h5>
-                        <div class="o_value text-success">{{totalDebitCustomer | number }}</div>
+                        <div class="o_value text-primary">{{totalDebitCustomer | number }}</div>
                         <div class="link-details">
                             <a (click)="redirectTo('customer-debit-report')">Chi tiết</a>
-                        </div>  
+                        </div>
                     </div>
                 </div>
                 <div class="o_aggregate_col o_group_col_2">
                     <div class="o_aggregate ">
                         <h5>Dự kiến thu</h5>
-                        <div class="o_value text-success">{{sumRevenue || 0 | number  }}</div>
+                        <div class="o_value text-success">{{sumRevenue || 0 | number }}</div>
                         <div class="link-details">
                             <a (click)="redirectTo('report/account-invoice-reports')">Chi tiết</a>
-                        </div>  
+                        </div>
                     </div>
                 </div>
             </div>
@@ -301,7 +313,7 @@
             <div class="d-flex">
                 <input class="btn-check" type="radio" [(ngModel)]="groupBy" name="radioButton" id="day"
                     value="groupby:day" (change)="onChangeType($event.target.value)">
-                <label class="btn btn-outline-primary mr-2" for="day">
+                <label class="btn btn-outline-primary" for="day">
                     Ngày
                 </label>
                 <input class="btn-check" type="radio" [(ngModel)]="groupBy" name="radioButton" id="month"
@@ -317,8 +329,8 @@
 
             </div>
         </div>
-        <div class="o_group mb-2">
-            <div class="border border-secondary rounded">
+        <div class="o_group mb-2 bg-white">
+            <div class="border-group">
                 <app-sale-dashboard-invoice-report [revenues]="revenues" [dataRevenues]="dataRevenues"
                     [cashBooks]="cashBooks" [dataCashBooks]="dataCashBooks" [totalDataCashBook]="totalDataCashBook"
                     [groupby]="groupBy">
@@ -327,7 +339,7 @@
         </div>
         <div class="o_group mb-2">
             <div class="o_group o_group_col_12">
-                <div class="border border-secondary rounded">
+                <div class="border-group">
                     <app-sale-dashboard-cashbook-report [cashBooks]="cashBooks" [dataCashBooks]="dataCashBooks"
                         [totalDataCashBook]="totalDataCashBook" [groupby]="groupBy">
                     </app-sale-dashboard-cashbook-report>

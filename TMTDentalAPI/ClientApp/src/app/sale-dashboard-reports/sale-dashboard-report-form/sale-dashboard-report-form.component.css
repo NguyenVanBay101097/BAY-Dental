@@ -1,9 +1,8 @@
 .header-title {
-    width: 50% !important;
-    font-size: 24px;
-    font-weight: bolder;
     font-weight: 600;
-    height: 100% !important;
+    font-size: 20px;
+    line-height: 27px;
+    color: #777777;
 }
 
 .header-filter {
@@ -39,7 +38,7 @@
     padding: 28px;
 }
 
-.btn-group{
+.btn-group {
     cursor: pointer;
 }
 
@@ -63,16 +62,22 @@
     color: #fff !important;
     background-color: #007bff !important;
     border-color: #007bff !important;
-  }
+}
 
-.link-details{
+.link-details {
     text-align: end;
     color: #0d6efd;
 }
 
-.o_dashboard_view .o_group>.o_aggregate_col,
-.o_dashboard_view .o_group .o_formula {
+.o_dashboard_view .o_group>.o_aggregate_col, .o_dashboard_view .o_group .o_formula {
     display: inline-block;
     width: 280px;
     margin-bottom: 1rem;
+}
+
+.border-group {
+    background: #FFFFFF;
+    border: 1px solid #E2E7ED;
+    box-sizing: border-box;
+    border-radius: 6px;
 }

@@ -1,4 +1,4 @@
-<h4 class="ml-3 my-2">Sổ quỹ</h4>
+<h4 class="ml-3 my-2 title-header">Sổ quỹ</h4>
 <kendo-chart class="mh-chart-year p-2 mb-2">
     <kendo-chart-title color="black" text="BIỂU ĐỒ THU CHI">
     </kendo-chart-title>
@@ -29,7 +29,7 @@
                 <span class="text-success">{{totalCashbook?.totalThu || 0 | number}}</span>
             </div>                    
             <div class="my-2 d-flex justify-content-between">
-                <span>
+                <span class="title-detail">
                     Khách hàng thanh toán dịch vụ và thuốc
                     <span class="text-primary t-tooltip ml-1" placement="top"
                         ngbTooltip="Không bao gồm tiền khách hàng thanh toán bằng phương thức Ghi công nợ và Tạm ứng">
@@ -39,19 +39,19 @@
                 <span >{{cashbookCashBank?.credit || 0 | number}}</span>
             </div>
             <div class="my-2 d-flex justify-content-between">
-                <span>Khách hàng đóng tạm ứng</span>
+                <span class="title-detail">Khách hàng đóng tạm ứng</span>
                 <span>{{cashbookCusAdvance?.credit || 0 | number}}</span>
             </div>
             <div class="my-2 d-flex justify-content-between">
-                <span>Thu công nợ khách hàng</span>
+                <span class="title-detail">Thu công nợ khách hàng</span>
                 <span> {{cashbookCusDebt?.credit || 0 | number}}</span>
             </div>
             <div class="my-2 d-flex justify-content-between">
-                <span>Nhà cung cấp hoàn tiền</span>
+                <span class="title-detail">Nhà cung cấp hoàn tiền</span>
                 <span> {{cashbookSupp?.credit || 0 | number}}</span>
             </div>
             <div class="my-2 d-flex justify-content-between">
-                <span>Thu ngoài</span>
+                <span class="title-detail">Thu ngoài</span>
                 <span> {{(ortherThu ? ortherThu : 0 ) | number}}</span>
             </div>
         </div>
@@ -61,23 +61,23 @@
                 <span class="text-danger">{{ totalCashbook?.totalChi || 0 | number}}</span>
             </div>                
             <div class="my-2 d-flex justify-content-between">
-                <span>Thanh toán cho nhà cung cấp</span>
+                <span class="title-detail">Thanh toán cho nhà cung cấp</span>
                 <span >{{cashbookSupp?.debit || 0 | number}}</span>
             </div>       
             <div class="my-2 d-flex justify-content-between">
-                <span>Hoàn tạm ứng cho khách hàng</span>
+                <span class="title-detail">Hoàn tạm ứng cho khách hàng</span>
                 <span> {{cashbookCusAdvance?.debit || 0 | number}}</span>
             </div>
             <div class="my-2 d-flex justify-content-between">
-                <span>Chi lương nhân viên</span>
+                <span class="title-detail">Chi lương nhân viên</span>
                 <span> {{cashbookCusSalary?.debit || 0 | number}}</span>
             </div>
             <div class="my-2 d-flex justify-content-between">
-                <span>Hoa hồng người giới thiệu</span>
+                <span class="title-detail">Hoa hồng người giới thiệu</span>
                 <span> {{cashbookAgentCommission?.debit || 0 | number}}</span>
             </div>
             <div class="my-2 d-flex justify-content-between">
-                <span>Chi ngoài</span>
+                <span class="title-detail">Chi ngoài</span>
                 <span> {{(ortherChi ? ortherChi : 0) | number}}</span>
             </div>
         </div>

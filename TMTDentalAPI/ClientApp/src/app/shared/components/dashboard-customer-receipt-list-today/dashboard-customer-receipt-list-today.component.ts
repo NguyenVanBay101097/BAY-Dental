@@ -80,7 +80,7 @@ export class DashboardCustomerReceiptListTodayComponent implements OnInit {
     }
 
     if (this.search) {
-      res = res.filter(x => this.RemoveVietnamese(x.partnerName).includes(this.RemoveVietnamese(this.search)) || x.partnerPhone.includes(this.search));
+      res = res.filter(x => x.partnerName && this.RemoveVietnamese(x.partnerName).includes(this.RemoveVietnamese(this.search)) || x.partnerPhone && x.partnerPhone.includes(this.search));
     }
 
     this.listCustomerReceipt = res;

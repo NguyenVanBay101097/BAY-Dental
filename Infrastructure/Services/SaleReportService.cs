@@ -324,6 +324,14 @@ namespace Infrastructure.Services
                 .Include("SaleOrderLineToothRels.Tooth")
                 .AsQueryable();
 
+            if (!string.IsNullOrEmpty(val.Search))
+            {
+                query = query.Where(x => x.Name.Contains(val.Search) ||
+                x.OrderPartner.Name.Contains(val.Search) ||
+                x.Order.Name.Contains(val.Search) ||
+                x.Employee.Name.Contains(val.Search));
+            }
+
             if (val.DateFrom.HasValue)
                 query = query.Where(x => x.DateCreated >= val.DateFrom.Value);
 
@@ -335,12 +343,11 @@ namespace Infrastructure.Services
 
             if (!string.IsNullOrEmpty(val.State))
                 query = query.Where(x => !x.Order.State.Equals(val.State));
-            if (!string.IsNullOrEmpty(val.Search))
-            {
-                query = query.Where(x => x.Name.Contains(val.Search) ||
-                x.OrderPartner.Name.Contains(val.Search) ||
-                x.Employee.Name.Contains(val.Search));
-            }
+
+       
+
+            query = query.OrderByDescending(x => x.DateCreated);
+
             var items = await query.ToListAsync();
 
             var totalItems = await query.CountAsync();
