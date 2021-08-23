@@ -42,7 +42,7 @@
                         {{dataItem.employee?.name}}
                     </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column field="teeth" class="text-primary" title="Răng" width="80">
+                <kendo-grid-column field="teeth" title="Răng" width="80">
                     <ng-template kendoGridCellTemplate let-dataItem>
                         {{showTeethList(dataItem.toothType, dataItem.teeth)}}
                     </ng-template>
