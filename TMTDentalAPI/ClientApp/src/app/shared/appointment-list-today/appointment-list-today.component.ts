@@ -41,7 +41,7 @@ export class AppointmentListTodayComponent implements OnInit {
   public today: Date = new Date(new Date().toDateString());
   stateFilter: string = '';
   stateFilterOptions: any[] = [];
-  stateCount: any = {};
+  stateCount: any[] = [];
   states: any[] = [
     { value: '', text: 'Tất cả' },
     { value: 'confirmed', text: 'Đang hẹn' },
@@ -94,24 +94,16 @@ export class AppointmentListTodayComponent implements OnInit {
   onChangeSearch(value) {
     this.search = value ? value : '';
     this.loadData();
-    this.loadStateCount();
+    // this.loadStateCount();
   }
 
   loadStateCount() {
-    forkJoin(this.states.map(x => {
-      var val = new AppointmentGetCountVM();
-      val.state = x.value;
-      val.dateFrom = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
-      val.dateTo = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
-      val.companyId = this.authService.userInfo.companyId;
-      return this.appointmentService.getCount(val).pipe(
-        switchMap(count => of({ state: x.value, count: count }))
-      );
-    })).subscribe((result) => {
-      result.forEach(item => {
-        this.stateCount[item.state] = item.count;
-      });
-    });
+    this.stateCount = [];
+    this.states.forEach(x=> {
+      let count = x.value == '' ? this.listAppointment.length : this.listAppointment.filter(s => s.state == x.value).length;
+      this.stateCount.push({name: x.text, value: x.value, count: count})
+    })
+    
   }
 
   createItem() {

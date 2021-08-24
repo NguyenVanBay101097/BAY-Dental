@@ -103,6 +103,7 @@ import { CustomerReceipCreateUpdateComponent } from './customer-receip-create-up
 import { CustomerReceiptStatePopoverComponent } from './customer-receipt-state-popover/customer-receipt-state-popover.component';
 import { IsEllipsisActiveDirective } from './is-ellipsis-active.directive';
 import { AddressDialogComponent } from './address-dialog/address-dialog.component';
+import { ChartsModule } from 'ng2-charts';
 
 const config: LocaleConfig = {};
 @NgModule({
@@ -299,6 +300,7 @@ const config: LocaleConfig = {};
         MyCustomKendoModule,
         NgSelectModule,
         FormsModule,
+        ChartsModule,
         MyCustomNgbModule,
         CalendarModule,
         MomentModule.forRoot({
