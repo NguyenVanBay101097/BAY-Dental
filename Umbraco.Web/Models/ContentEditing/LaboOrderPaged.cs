@@ -55,12 +55,16 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateExportFrom { get; set; }
 
         public DateTime? DateExportTo { get; set; }
+        public DateTime? DateReceiptFrom { get; set; }
+
+        public DateTime? DateReceiptTo { get; set; }
 
         /// <summary>
         /// danhan
         /// chuanhan
         /// </summary>
         public string State { get; set; }
+        public Guid? PartnerId { get; set; }
     }
 
 

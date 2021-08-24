@@ -219,7 +219,7 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("[action]")]
         [CheckAccess(Actions = "Labo.ExportLabo.Read")]
         public async Task<IActionResult> GetExportLabo([FromQuery] ExportLaboPaged val)
-        {
+         {
             var res = await _laboOrderService.GetPagedExportLaboAsync(val);
             return Ok(res);
         }
