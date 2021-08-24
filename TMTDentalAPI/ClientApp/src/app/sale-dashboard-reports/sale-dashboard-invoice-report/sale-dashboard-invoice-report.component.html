@@ -1,4 +1,4 @@
-<h4 class="ml-3 my-2">Doanh thu</h4>
+<h4 class="ml-3 my-2 title-header">Doanh thu</h4>
 <kendo-chart class="mh-chart-year p-2 mb-2">
     <kendo-chart-title color="black" text="BIỂU ĐỒ DOANH THU - THỰC THU">
     </kendo-chart-title>
@@ -6,24 +6,28 @@
     <kendo-chart-category-axis>
         <kendo-chart-category-axis-item [categories]="revenuCateg">
             <kendo-chart-category-axis-item-labels [content]="labelContent">
-            </kendo-chart-category-axis-item-labels>  
+            </kendo-chart-category-axis-item-labels>
         </kendo-chart-category-axis-item>
     </kendo-chart-category-axis>
     <kendo-chart-series>
         <ng-container>
-            <kendo-chart-series-item type="column" [data]="revenue" field="priceSubTotal" color="#2395FF" name="Doanh thu">
+            <kendo-chart-series-item type="column" [data]="revenue" field="priceSubTotal" color="#2395FF"
+                name="Doanh thu">
                 <kendo-chart-series-item-tooltip>
-                  <ng-template let-dataItem="dataItem" >
-                      <b> Doanh thu {{groupby == 'groupby:day' ? (dataItem.invoiceDate | date:'dd/MM/yyyy') : (dataItem.invoiceDate | date:'MM/yyyy')}}: {{(dataItem.priceSubTotal ? dataItem.priceSubTotal : 0) | number }}</b>
-                  </ng-template>
-                </kendo-chart-series-item-tooltip>
-              </kendo-chart-series-item>
-            <kendo-chart-series-item type="column" field="totalThu" [data]="realIncome" color="#28A745" name="Thực thu"> 
-                <kendo-chart-series-item-tooltip>
-                    <ng-template let-dataItem="dataItem" >
-                        <b> Thực thu {{groupby == 'groupby:day' ? (dataItem.date | date:'dd/MM/yyyy') : (dataItem.date | date:'MM/yyyy') }}: {{(dataItem.totalThu ? dataItem.totalThu : 0) | number }}</b>
+                    <ng-template let-dataItem="dataItem">
+                        <b> Doanh thu {{groupby == 'groupby:day' ? (dataItem.invoiceDate | date:'dd/MM/yyyy') :
+                            (dataItem.invoiceDate | date:'MM/yyyy')}}: {{(dataItem.priceSubTotal ?
+                            dataItem.priceSubTotal : 0) | number }}</b>
                     </ng-template>
-                  </kendo-chart-series-item-tooltip>
+                </kendo-chart-series-item-tooltip>
+            </kendo-chart-series-item>
+            <kendo-chart-series-item type="column" field="totalThu" [data]="realIncome" color="#28A745" name="Thực thu">
+                <kendo-chart-series-item-tooltip>
+                    <ng-template let-dataItem="dataItem">
+                        <b> Thực thu {{groupby == 'groupby:day' ? (dataItem.date | date:'dd/MM/yyyy') : (dataItem.date |
+                            date:'MM/yyyy') }}: {{(dataItem.totalThu ? dataItem.totalThu : 0) | number }}</b>
+                    </ng-template>
+                </kendo-chart-series-item-tooltip>
             </kendo-chart-series-item>
         </ng-container>
     </kendo-chart-series>
@@ -36,15 +40,15 @@
                 <span class="total-amount fs-4">{{(totalDebit ? totalDebit : 0 )| number}}</span>
             </div>
             <div class="my-2 d-flex justify-content-between">
-                <span>Thanh toán dịch vụ và thuốc bằng TM/CK</span>
+                <span class="title-detail">Thanh toán dịch vụ và thuốc bằng TM/CK</span>
                 <span class="fw-bold">{{revenueCashBank?.balance || 0 | number}}</span>
             </div>
             <div class="my-2 d-flex justify-content-between">
-                <span>Thanh toán dịch vụ bằng tạm ứng</span>
+                <span class="title-detail">Thanh toán dịch vụ bằng tạm ứng</span>
                 <span class="fw-bold">{{revenueCusAdvance?.debit || 0 | number}}</span>
             </div>
             <div class="my-2 d-flex justify-content-between">
-                <span>Thanh toán dịch vụ bằng ghi công nợ</span>
+                <span class="title-detail">Thanh toán dịch vụ bằng ghi công nợ</span>
                 <span class="fw-bold"> {{revenueCusDebt?.debit || 0 | number}}</span>
             </div>
         </div>
@@ -54,19 +58,19 @@
                 <span class="total-amount fs-4">{{totalDataCashBook?.totalThu || 0 | number}}</span>
             </div>
             <div class="my-2 d-flex justify-content-between">
-                <span>Thanh toán dịch vụ và thuốc bằng TM/CK</span>
+                <span class="title-detail">Thanh toán dịch vụ và thuốc bằng TM/CK</span>
                 <span class="fw-bold">{{cashbookCashBank?.credit || 0 | number}}</span>
             </div>
             <div class="my-2 d-flex justify-content-between">
-                <span>Khách hàng đóng tạm ứng</span>
+                <span class="title-detail">Khách hàng đóng tạm ứng</span>
                 <span class="fw-bold">{{cashbookCusAdvance?.credit || 0 | number}}</span>
             </div>
             <div class="my-2 d-flex justify-content-between">
-                <span>Thu công nợ khách hàng</span>
+                <span class="title-detail">Thu công nợ khách hàng</span>
                 <span class="fw-bold"> {{cashbookCusDebt?.credit || 0 | number}}</span>
             </div>
             <div class="my-2 d-flex justify-content-between">
-                <span>Thu ngoài</span>
+                <span class="title-detail">Thu ngoài</span>
                 <span class="fw-bold"> {{ortherThu || 0 | number}}</span>
             </div>
         </div>

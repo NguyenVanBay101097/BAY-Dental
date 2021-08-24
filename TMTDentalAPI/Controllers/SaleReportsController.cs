@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -98,29 +100,44 @@ namespace TMTDentalAPI.Controllers
 
             using (var package = new ExcelPackage(stream))
             {
-                var worksheet = package.Workbook.Worksheets.Add("Sheet1");
+                var worksheet = package.Workbook.Worksheets.Add("BaoCaoDichVuTrongNgay");
 
-                worksheet.Cells[1, 1].Value = "Phếu điều trị";
-                worksheet.Cells[1, 2].Value = "Khách hàng";
-                worksheet.Cells[1, 3].Value = "Bác sĩ";
-                worksheet.Cells[1, 4].Value = "Răng";
-                worksheet.Cells[1, 5].Value = "Chuẩn đoán";
-                worksheet.Cells[1, 6].Value = "Dịch vụ";
-                worksheet.Cells[1, 7].Value = "Thành tiền";
-                worksheet.Cells[1, 8].Value = "Thanh toán";
-                worksheet.Cells[1, 9].Value = "Còn lại";
-                worksheet.Cells[1, 10].Value = "Trạng thái";
+                worksheet.Cells["A1:K1"].Value = "BÁO CÁO DỊCH VỤ TRONG NGÀY";
+                worksheet.Cells["A1:K1"].Style.Font.Color.SetColor(Color.Blue);
+                worksheet.Cells["A1:K1"].Style.Font.Size = 20;
+                worksheet.Cells["A1:K1"].Merge = true;
 
-                worksheet.Cells["A1:P1"].Style.Font.Bold = true;
+                worksheet.Cells["A2:K2"].Value = $"Ngày {val.DateFrom.Value.ToShortDateString()}";
+                worksheet.Cells["A2:K2"].Style.Numberformat.Format = "dd/mm/yyyy";
+                worksheet.Cells["A2:K2"].Merge = true;          
 
-                var row = 2;
-                
+                worksheet.Cells[4, 1].Value = "Dịch vụ";
+                worksheet.Cells[4, 2].Value = "Phếu điều trị";
+                worksheet.Cells[4, 3].Value = "Khách hàng";
+                worksheet.Cells[4, 4].Value = "Số lượng";
+                worksheet.Cells[4, 5].Value = "Bác sĩ";
+                worksheet.Cells[4, 6].Value = "Răng";
+                worksheet.Cells[4, 7].Value = "Chuẩn đoán";
+              
+                worksheet.Cells[4, 8].Value = "Thành tiền";
+                worksheet.Cells[4, 9].Value = "Thanh toán";
+                worksheet.Cells[4, 10].Value = "Còn lại";
+                worksheet.Cells[4, 11].Value = "Trạng thái";
+
+                worksheet.Cells["A4:K4"].Style.Font.Bold = true;
+                worksheet.Cells["A4:K4"].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+
+                var row = 5;
+
                 foreach (var item in data.Items)
                 {
                     string numberTeeth = "";
-                    worksheet.Cells[row, 1].Value = item.Order.Name;
-                    worksheet.Cells[row, 2].Value = item.OrderPartner.DisplayName;
-                    worksheet.Cells[row, 3].Value = item.Employee != null ? item.Employee.Name : "";
+                    worksheet.Cells[row, 1].Value = item.Product.Name;
+                    worksheet.Cells[row, 2].Value = item.Order.Name;
+                    worksheet.Cells[row, 3].Value = item.OrderPartner.DisplayName;
+                    worksheet.Cells[row, 4].Value = item.ProductUOMQty;
+                    worksheet.Cells[row, 4].Style.Numberformat.Format = "0";
+                    worksheet.Cells[row, 5].Value = item.Employee != null ? item.Employee.Name : "";
                     if (item.Teeth.Any())
                     {
                         foreach (var te in item.Teeth)
@@ -128,23 +145,16 @@ namespace TMTDentalAPI.Controllers
                             numberTeeth += te.Name +", ";
                         }
                     }
-                    worksheet.Cells[row, 4].Value = numberTeeth;
-                    worksheet.Cells[row, 5].Value = item.Diagnostic;
-                    worksheet.Cells[row, 6].Value = item.Product.Name;
-                    worksheet.Cells[row, 7].Value = item.PriceSubTotal;
-                    worksheet.Cells[row, 7].Style.Numberformat.Format = "#,#";
-                    worksheet.Cells[row, 8].Value = (item.PriceSubTotal - item.AmountResidual);
-                    worksheet.Cells[row, 8].Style.Numberformat.Format = "#,#";
-                    worksheet.Cells[row, 9].Value = item.AmountResidual;
-                    if (item.AmountResidual.Value == 0)
-                    {
-                        worksheet.Cells[row, 9].Style.Numberformat.Format = "0";
-                    }
-                    else
-                    {
-                        worksheet.Cells[row, 9].Style.Numberformat.Format = "#,#";
-                    }
-                    worksheet.Cells[row, 10].Value = item.State == "done" ? "Hoàn thành" : (item.State == "sale" ? "Đang điều trị" : "");
+                    worksheet.Cells[row, 6].Value = item.ToothType == "manual" ? numberTeeth : (item.ToothType == "whole_jaw" ? "Nguyên hàm" : ((item.ToothType == "upper_jaw" ? "Hàm trên" : "Hàm dưới" )));
+                    worksheet.Cells[row, 7].Value = item.Diagnostic;
+                   
+                    worksheet.Cells[row, 8].Value = item.PriceSubTotal;
+                    worksheet.Cells[row, 8].Style.Numberformat.Format = "#,###";
+                    worksheet.Cells[row, 9].Value = (item.PriceSubTotal - item.AmountResidual);
+                    worksheet.Cells[row, 9].Style.Numberformat.Format = ((item.PriceSubTotal) - (item.AmountResidual ?? 0)) > 0 && item.State != "draft" ? "#,###" : "0"; 
+                    worksheet.Cells[row, 10].Value = item.AmountResidual;
+                    worksheet.Cells[row, 10].Style.Numberformat.Format = (item.AmountResidual ?? 0) > 0 ? "#,###" : "0";
+                    worksheet.Cells[row, 11].Value = item.State == "done" ? "Hoàn thành" : (item.State == "sale" ? "Đang điều trị" : "");
                     row++;
                 }
 
