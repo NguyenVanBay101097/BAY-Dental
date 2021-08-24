@@ -165,6 +165,11 @@ namespace Infrastructure.Services
                 }
             }
 
+            if (val.PartnerId.HasValue)
+            {
+                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.PartnerId == val.PartnerId));
+            }
+
             if (val.DateExportFrom.HasValue)
                 spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DateExport >= val.DateExportFrom));
 
@@ -172,6 +177,15 @@ namespace Infrastructure.Services
             {
                 var dateOrderTo = val.DateExportTo.Value.AbsoluteEndOfDate();
                 spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DateExport <= dateOrderTo));
+            }
+
+            if (val.DateReceiptFrom.HasValue)
+                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DateReceipt >= val.DateReceiptFrom));
+
+            if (val.DateReceiptTo.HasValue)
+            {
+                var dateReceipt = val.DateReceiptTo.Value.AbsoluteEndOfDate();
+                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DateReceipt <= dateReceipt));
             }
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));

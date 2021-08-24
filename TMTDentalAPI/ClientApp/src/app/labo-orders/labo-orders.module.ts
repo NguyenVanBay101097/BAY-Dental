@@ -23,6 +23,8 @@ import { LaboFinishLinesModule } from '../labo-finish-lines/labo-finish-lines.mo
 import { ProductsModule } from '../products/products.module';
 import { LaboBridgesModule } from '../labo-bridges/labo-bridges.module';
 import { LaboBiteJointsModule } from '../labo-bite-joints/labo-bite-joints.module';
+import { LaboOrderExportExportedComponent } from './labo-order-export-exported/labo-order-export-exported.component';
+import { LaboOrderExportNotExportComponent } from './labo-order-export-not-export/labo-order-export-not-export.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +39,8 @@ import { LaboBiteJointsModule } from '../labo-bite-joints/labo-bite-joints.modul
     LaboOrderExportComponent,
     LaboOrderReceiptDialogComponent,
     LaboOrderExportDialogComponent,
+    LaboOrderExportExportedComponent,
+    LaboOrderExportNotExportComponent,
   ],
   imports: [
     CommonModule,

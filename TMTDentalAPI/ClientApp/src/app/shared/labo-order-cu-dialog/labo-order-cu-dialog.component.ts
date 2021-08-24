@@ -21,6 +21,7 @@ import { ToothBasic, ToothDisplay } from 'src/app/teeth/tooth.service';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { ImageViewerComponent } from '../image-viewer/image-viewer.component';
 import { PartnerSupplierCuDialogComponent } from '../partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
+import { PrintService } from '../services/print.service';
 import { IrAttachmentBasic } from '../shared';
 
 @Component({
@@ -36,7 +37,11 @@ export class LaboOrderCuDialogComponent implements OnInit {
   id: string;// có thể là input
   saleOrderLineId: string; // có thể là input
   laboOrder: LaboOrderDisplay = new LaboOrderDisplay();
-
+  saleOrderId: string; // là input
+  saleOrderName: string; // là input
+  orderPartnerName: string; // là input
+  employeeName: string; // là input
+  
   partners: any = [];
   labos: ProductSimple[] = [];
   finishlines: LaboFinishLineBasic[] = [];
@@ -61,7 +66,8 @@ export class LaboOrderCuDialogComponent implements OnInit {
     private finishLineService: LaboFinishLineService,
     private biteJointService: LaboBiteJointService,
     private bridgeService: LaboBridgeService,
-    private webService: WebService
+    private webService: WebService,
+    private printService: PrintService,
   ) { }
 
   ngOnInit() {
@@ -450,4 +456,11 @@ export class LaboOrderCuDialogComponent implements OnInit {
     return type;
   }
 
+  printLaboOrder(){
+    if(this.id){
+      this.laboOrderService.getPrint(this.id).subscribe(result => {
+        this.printService.printHtml(result);
+      })
+    }
+  }
 }
