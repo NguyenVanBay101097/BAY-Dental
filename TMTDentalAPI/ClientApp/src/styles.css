@@ -7,6 +7,11 @@ label {
     margin-bottom: 0.5rem;
 }
 
+h5,
+.h5 {
+	font-size: 1.18571428571rem;
+}
+
 [type="text"],
 [type="password"],
 [type="number"],

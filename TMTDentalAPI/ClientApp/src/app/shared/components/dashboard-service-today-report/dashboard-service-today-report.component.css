@@ -23,14 +23,9 @@
     padding: 3px 6px;
   }
   
-  .header-buttons-view .header-combobox,
-  .header-search {
-    height: 2.1rem;
-  }
-
   .has-search {
-    flex: 1 1 300px;
     position: relative;
+    width: 300px;
   }
   
   .has-search .form-control {
@@ -51,4 +46,5 @@
     text-align: center;
     pointer-events: none;
     color: #aaa;
+    top: 3px;
   }

@@ -1,81 +1,78 @@
-<div class="section-header">
-    <div class="section-header-left">
-        <h5 class="text-primary"> DỊCH VỤ TRONG NGÀY</h5>
-    </div>
-    <div class="section-header-right">
-        <div class="d-flex header-buttons-view">
-            <div class="mr-1">
-                <button class="btn btn-primary" (click)="exportServiceExcelFile()">Xuất excel</button>
-            </div>
-            <div class="has-search">
-                <span class="fa fa-search form-control-feedback"></span>
-                <input #searchInput accesskey="C" class="form-control header-search size-text-12"
-                    placeholder="Tìm kiếm nhanh " type="text" [(ngModel)]="search"  kendoTextBox (input)="onFilter($event.target.value)">
-
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center flex-wrap">
+            <h5 class="text-primary card-title">DỊCH VỤ TRONG NGÀY</h5>
+            <div class="d-flex flex-wrap">
+                <div class="mr-2 mb-2">
+                    <button class="btn btn-primary" (click)="exportServiceExcelFile()">Xuất excel</button>
+                </div>
+                <div class="has-search position-relative mb-2">
+                    <span class="fa fa-search form-control-feedback"></span>
+                    <input #searchInput accesskey="C" class="form-control header-search size-text-12"
+                        placeholder="Tìm kiếm nhanh " type="text" [(ngModel)]="search" kendoTextBox
+                        (input)="onFilter($event.target.value)">
+                </div>
             </div>
         </div>
-    </div>
-</div>
-<div class="sale-order-line">
-    <kendo-grid [height]="350" [resizable]="true" [kendoGridBinding]="gridView" [sortable]="true"
-        (dataStateChange)="dataStateChange($event)">    
-        <kendo-grid-column [headerClass]="{'text-center font-weight-bold':true}" field="order.name"
-            title="Phiếu điều trị" class="text-center" width="150">
-            <ng-template kendoGridCellTemplate let-dataItem>
-                <a class="text-primary cursor-pointer"
-                    title="Chuyển đến phiếu điều trị {{dataItem.order.name}}"
-                    (click)="redirectSaleOrder(dataItem.order)">{{dataItem.order.name}}</a>
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="orderPartner.displayName"
-            title="Khách hàng" width="200">
-        </kendo-grid-column>
-        <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="employee.name"
-            title="Bác sĩ" width="150">
-        </kendo-grid-column>
-        <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="teeth" title="Răng"
-            width="120">
-            <ng-template kendoGridCellTemplate let-dataItem>
-                {{showTeethList(dataItem.toothType, dataItem.teeth)}}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="diagnostic"
-            title="Chuẩn đoán" width="150">
-        </kendo-grid-column>
-        <kendo-grid-column [headerClass]="{'font-weight-bold':true}" class="text-right"
-            field="productUOMQty" title="Số lượng" width="100">
-            <ng-template kendoGridCellTemplate let-dataItem>
-                {{dataItem.productUOMQty | number}}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="name" title="Dịch vụ"
-            width="150">
-        </kendo-grid-column>
-        <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="priceSubTotal"
-            class="text-right" title="Thành tiền" width="120">
-            <ng-template kendoGridCellTemplate let-dataItem>
-                {{dataItem.priceSubTotal | number}}
-            </ng-template>
+        <div>
+            <kendo-grid [height]="350" [resizable]="true" [kendoGridBinding]="gridView" [sortable]="true"
+                (dataStateChange)="dataStateChange($event)">
+                <kendo-grid-column [headerClass]="{'text-center font-weight-bold':true}" field="order.name"
+                    title="Phiếu điều trị" class="text-center" width="150">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        <a class="text-primary cursor-pointer" title="Chuyển đến phiếu điều trị {{dataItem.order.name}}"
+                            (click)="redirectSaleOrder(dataItem.order)">{{dataItem.order.name}}</a>
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="orderPartner.displayName"
+                    title="Khách hàng" width="200">
+                </kendo-grid-column>
+                <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="employee.name" title="Bác sĩ"
+                    width="150">
+                </kendo-grid-column>
+                <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="teeth" title="Răng" width="120">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        {{showTeethList(dataItem.toothType, dataItem.teeth)}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="diagnostic" title="Chuẩn đoán"
+                    width="150">
+                </kendo-grid-column>
+                <kendo-grid-column [headerClass]="{'font-weight-bold':true}" class="text-right" field="productUOMQty"
+                    title="Số lượng" width="100">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        {{dataItem.productUOMQty | number}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="name" title="Dịch vụ" width="150">
+                </kendo-grid-column>
+                <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="priceSubTotal" class="text-right"
+                    title="Thành tiền" width="120">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        {{dataItem.priceSubTotal | number}}
+                    </ng-template>
 
-        </kendo-grid-column>
-        <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="amount" class="text-right"
-            title="Thanh toán" width="120">
-            <ng-template kendoGridCellTemplate let-dataItem>
-                {{(dataItem.priceSubTotal - dataItem.amountResidual) | number}}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column [headerClass]="{'font-weight-bold':true}" class="text-right"
-            field="amountResidual" title="Còn lại" width="120">
-            <ng-template kendoGridCellTemplate let-dataItem>
-                {{dataItem.amountResidual | number}}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column class="text-center" [headerClass]="{'text-center font-weight-bold':true}"
-            field="order.state" title="Trạng thái" width="150">
-            <ng-template kendoGridCellTemplate let-dataItem>
-                {{getStateDisplay(dataItem.state)}}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-excel fileName="Danh_sach_dich_vu.xlsx"></kendo-grid-excel>
-    </kendo-grid>
+                </kendo-grid-column>
+                <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="amount" class="text-right"
+                    title="Thanh toán" width="120">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        {{(dataItem.priceSubTotal - dataItem.amountResidual) | number}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column [headerClass]="{'font-weight-bold':true}" class="text-right" field="amountResidual"
+                    title="Còn lại" width="120">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        {{dataItem.amountResidual | number}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column class="text-center" [headerClass]="{'text-center font-weight-bold':true}"
+                    field="order.state" title="Trạng thái" width="150">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        {{getStateDisplay(dataItem.state)}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-excel fileName="Danh_sach_dich_vu.xlsx"></kendo-grid-excel>
+            </kendo-grid>
+        </div>
+    </div>
 </div>

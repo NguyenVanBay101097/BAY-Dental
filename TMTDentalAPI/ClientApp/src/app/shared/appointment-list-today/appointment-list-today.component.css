@@ -97,8 +97,8 @@
 }
 
 .appointment-today-items {
-  min-height: 300px;
-  max-height: 350px;
+  min-height: 25vh;
+  max-height: 30vh;
   position: relative;
   overflow: auto;
 }
@@ -162,29 +162,4 @@
   color: #fff !important;
   background-color: #007bff !important;
   border-color: #007bff !important;
-}
-
-@media (min-width: 1300px) and (max-width: 1500px) {
-  .title-header {
-    font-size: 14px;
-  }
-  .btn-header {
-    padding: 0.2rem 0.3rem;
-  }
-  .has-search input {
-    height: calc(1.5em + .55rem + 2px);
-    font-size: 14px;
-  }
-  
-  .has-search .form-control-feedback {
-    position: absolute;
-    z-index: 2;
-    display: block;
-    width: 2rem;
-    height: 1.5rem;
-    line-height: 2.3rem;
-    text-align: center;
-    pointer-events: none;
-    color: #aaa;
-  }
 }

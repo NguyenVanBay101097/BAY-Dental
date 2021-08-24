@@ -227,11 +227,7 @@
                 </div>
             </div>
             <div class="popover-footer d-flex">
-                <button (click)="deleteLine()" *ngIf="(!isEditting && line.state != 'done' && orderState != 'done')" class="btn btn-danger" title="Xóa dịch vụ">
-                    <i class="fas fa-trash pr-1"></i>
-                    <span>Xóa</span>
-                </button>
-                <button *ngIf="!isEditting && stateEdit.indexOf(line.state) != -1" type="button" (click)="editLine()" title="Sửa dịch vụ" class="btn btn-primary ml-2">
+                <button *ngIf="!isEditting && stateEdit.indexOf(line.state) != -1" type="button" (click)="editLine()" title="Sửa dịch vụ" class="btn btn-primary mr-2">
                     <i class="far fa-edit pr-1"></i>
                     <span>Chỉnh sửa</span>
                 </button>
@@ -239,6 +235,10 @@
                     <span>Lưu</span>
                 </button>
                 <button *ngIf="isEditting && line.state != 'done'" (click)="onCancel()" class="btn btn-danger ml-2">Hủy</button>
+                <button (click)="deleteLine()" *ngIf="(!isEditting && line.state != 'done' && orderState != 'done')" class="btn btn-danger" title="Xóa dịch vụ">
+                    <i class="fas fa-trash pr-1"></i>
+                    <span>Xóa</span>
+                </button>
             </div>
         </div>
     </div>

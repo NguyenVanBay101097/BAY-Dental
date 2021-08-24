@@ -1,74 +1,8 @@
-<!-- <div class="header-title pb-3">THEO DÕI KHÁCH HÀNG TẠI PHÒNG KHÁM</div>
-<div class="state-filter-wrapper">
-    <button type="button" *ngFor="let state of states" class="btn active" (click)="setStateFilter(state.value)"
-        [class.btn-primary]="stateFilter == state.value" [class.btn-light]="stateFilter != state.value">
-        {{state.text}} <span class="badge badge-light bg-white">{{stateCount[state.value] || 0}}</span>
-    </button>
-</div>
-<div>
-    <kendo-grid [height]="300" [resizable]="true" [data]="gridData" [loading]="loading" [sortable]="true"
-        (pageChange)="pageChange($event)">
-        <kendo-grid-column title="Khách hàng" width="120">
-            <ng-template kendoGridCellTemplate let-dataItem>
-                <div>
-                    <a class="text-primary" title="Xem hồ sơ khách hàng"
-                        [routerLink]="['/partners/customer/' + dataItem.partnerId]">
-                        <span> {{dataItem.partnerDisplayName}}</span>
-                    </a>
-                </div>
-
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column title="Thời gian hẹn" width="100">
-            <ng-template kendoGridCellTemplate let-dataItem>
-                {{dataItem.time}}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column title="Tuổi" width="50">
-            <ng-template kendoGridCellTemplate let-dataItem>
-                {{dataItem.partner.age}}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column title="Số điện thoại" width="100">
-            <ng-template kendoGridCellTemplate let-dataItem>
-                {{dataItem.partnerPhone}}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column title="Bác sĩ" width="100">
-            <ng-template kendoGridCellTemplate let-dataItem>
-                {{dataItem.doctorName}}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column title="Nội dung" width="120">
-            <ng-template kendoGridCellTemplate let-dataItem>
-                {{dataItem.note}}
-            </ng-template>
-        </kendo-grid-column>
-        <kendo-grid-column title="Trạng thái" width="80">
-            <ng-template kendoGridCellTemplate let-dataItem>
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <span class="align-items-">
-                            {{stateGet(dataItem.state)}}
-                        </span>
-                    </div>
-                    <app-popover-state-appointment [item]="dataItem" class="ml-3"
-                            (stateFormGroup)="onChangeState(dataItem,$event)">
-                        </app-popover-state-appointment>
-                </div>
-
-            </ng-template>
-        </kendo-grid-column>
-    </kendo-grid>
-</div> -->
-
-<div class="appointments-today">
-    <div class="appointments-today-header ">
-        <div class="d-flex justify-content-between mb-2">
-            <div>
-                <h6 class="text-primary title-header">LỊCH HẸN HÔM NAY</h6>
-            </div>
-            <div>
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center flex-wrap">
+            <h5 class="text-primary card-title">LỊCH HẸN HÔM NAY</h5>
+            <div class="mb-2">
                 <button class="btn btn-primary btn-header" (click)=" createItem()"><i class="fas fa-plus-circle mr-1"></i>Thêm lịch
                     hẹn</button>
             </div>
@@ -80,53 +14,53 @@
                 (keyup)="onChangeSearch($event.target.value);">
 
         </div>
-        <div class="appointments-today-filter-state">
+        <div class="appointments-today-filter-state mb-2">
             <button type="button" *ngFor="let state of states" class="btn active"
                 (click)="setStateFilter(state.value)" [class.btn-primary]="stateFilter == state.value"
                 [class.appointments-today-filter-state]="stateFilter != state.value">
                 {{state.text}} <span class="ml-1" [class.text-white]="stateFilter == state.value">{{stateCount[state.value] || 0}}</span>
             </button>
         </div>
-    </div>
-    <div class="appointment-today-items">
-        <ng-container *ngFor="let item of listAppointment">
-            <div class="appointment-today-box">
-                <div class="box-content" [ngClass]="getBgBoxContent(item.state)">
-                    <div class="box-header">
-                        <div class="appointment-state">
-                            <span [ngClass]="getTextColorState(item.state)">{{stateGet(item.state)}}</span>
-                        </div>
-                        <div class="appointment-manipulation text-center show-on-hover">
-                            <i class="fas fa-pen text-primary icon-more" (click)="editItem(item)"></i>
-                            <i class="fas fa-sign-in-alt text-primary icon-more fa-lg" (click)="createCustomerReceipt(item)"></i>
-                        </div>
-                    </div>
-                    <ul class="info_nav">
-                        <li>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div>
-                                    <i class="fas fa-user"></i>
-                                    <a class="text-primary" title="Xem hồ sơ khách hàng"
-                                        [routerLink]="['/partners/customer/' + item.partnerId]">
-                                        <span> {{item.partnerName}}</span>
-                                    </a>
-                                </div>
-                                <div class="timer">
-                                    <span>{{item.date | date: 'HH:mm'}}</span>
-                                </div>
+        <div class="appointment-today-items">
+            <ng-container *ngFor="let item of listAppointment">
+                <div class="appointment-today-box">
+                    <div class="box-content" [ngClass]="getBgBoxContent(item.state)">
+                        <div class="box-header">
+                            <div class="appointment-state">
+                                <span [ngClass]="getTextColorState(item.state)">{{stateGet(item.state)}}</span>
                             </div>
-                        </li>
-                        <li>
-                            <i class="fas fa-phone"></i>
-                            <span>{{item.partnerPhone}}</span>
-                        </li>
-                        <li>
-                            <i class="fas fa-user"></i>
-                            <span>{{item.doctorName}}</span>
-                        </li>
-                    </ul>
+                            <div class="appointment-manipulation text-center show-on-hover">
+                                <i class="fas fa-pen text-primary icon-more" (click)="editItem(item)"></i>
+                                <i class="fas fa-sign-in-alt text-primary icon-more fa-lg" (click)="createCustomerReceipt(item)"></i>
+                            </div>
+                        </div>
+                        <ul class="info_nav">
+                            <li>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <i class="fas fa-user"></i>
+                                        <a class="text-primary" title="Xem hồ sơ khách hàng"
+                                            [routerLink]="['/partners/customer/' + item.partnerId]">
+                                            <span> {{item.partnerName}}</span>
+                                        </a>
+                                    </div>
+                                    <div class="timer">
+                                        <span>{{item.date | date: 'HH:mm'}}</span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-phone"></i>
+                                <span>{{item.partnerPhone}}</span>
+                            </li>
+                            <li>
+                                <i class="fas fa-user"></i>
+                                <span>{{item.doctorName}}</span>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-        </ng-container>
+            </ng-container>
+        </div>
     </div>
 </div>
