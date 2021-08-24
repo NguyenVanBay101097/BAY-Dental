@@ -21,7 +21,7 @@ export class PartnerCustomerTreatmentListComponent implements OnInit {
   dateFrom: Date;
   dateTo: Date;
   skip: number = 0;
-  limit: number = 10;
+  limit: number = 20;
   pageSizes = [20, 50, 100, 200];
   search: string;
   saleOrdersData: GridDataResult;

@@ -18,7 +18,7 @@ export class PartnerCustomerTreatmentSaleOrderLineComponent implements OnInit {
   @Input() dateOrderTo: string;
   @Input() public saleOrderId: string;
   skip = 0;
-  limit = 10;
+  limit = 20;
   pageSizes = [20, 50, 100, 200];
   gridData: GridDataResult;
   details: SaleOrderLineDisplay[];

@@ -11,7 +11,7 @@ import { aggregateBy } from '@progress/kendo-data-query';
 export class ServiceCardCardHistoriesComponent implements OnInit {
   @Input() public item: any;
   skip = 0;
-  pageSize = 5;
+  pageSize = 20;
   pageSizes = [20, 50, 100, 200];
   gridData: any;
   loading = false;

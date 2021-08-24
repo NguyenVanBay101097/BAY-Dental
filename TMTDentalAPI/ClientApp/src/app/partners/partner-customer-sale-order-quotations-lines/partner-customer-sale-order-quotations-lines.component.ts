@@ -12,7 +12,7 @@ export class PartnerCustomerSaleOrderQuotationsLinesComponent implements OnInit 
 
   @Input() public advisoryId: string;
   skip = 0;
-  limit = 10;
+  limit = 20;
   pageSizes = [20, 50, 100, 200];
   gridData: any = [];
   details: AdvisoryLine[];

@@ -12,7 +12,7 @@ export class PartnerDebitDetailListReportComponent implements OnInit {
 
   @Input() public parent: ReportPartnerDebitRes;
   skip = 0;
-  limit = 10;
+  limit = 20;
   pageSizes = [20, 50, 100, 200];
   gridData: GridDataResult;
   details: ReportPartnerDebitDetailRes[];

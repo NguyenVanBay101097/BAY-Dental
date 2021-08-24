@@ -14,9 +14,9 @@ export class StockXuatNhapTonDetailDialogComponent implements OnInit {
   title: string;
   gridData: GridDataResult;
   loading: boolean = false;
-  limit: number = 5;
+  limit: number = 10;
   skip: number = 0;
-  pageSizes = [20, 50, 100, 200];
+  pageSizes = [10, 20, 50, 100, 200];
   item: any;
   allGridData: GridDataResult;
   fileExcelName: string;

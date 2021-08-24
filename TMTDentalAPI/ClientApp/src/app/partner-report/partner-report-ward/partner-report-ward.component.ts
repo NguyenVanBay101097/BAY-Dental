@@ -11,7 +11,7 @@ import { aggregateBy } from '@progress/kendo-data-query';
 export class PartnerReportWardComponent implements OnInit {
   @Input() public item: PartnerReportLocationDistrict;
   skip = 0;
-  limit = 10;
+  limit = 20;
   pageSizes = [20, 50, 100, 200];
   gridData: GridDataResult;
   details: PartnerReportLocationWard[];

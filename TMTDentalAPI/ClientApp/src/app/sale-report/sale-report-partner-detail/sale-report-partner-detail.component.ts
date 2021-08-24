@@ -11,7 +11,7 @@ import { SaleReportPartnerItemV3Detail } from '../sale-report.service';
 export class SaleReportPartnerDetailComponent implements OnInit {
   @Input() public details: PartnerOldNewReportDetail[];
   skip = 0;
-  limit = 10;
+  limit = 20;
   pageSizes = [20, 50, 100, 200];
   gridData: GridDataResult;
   loading = false;

@@ -11,7 +11,7 @@ import { aggregateBy } from '@progress/kendo-data-query';
 export class SaleReportItemDetailComponent implements OnInit {
   @Input() public item: SaleReportItem;
   skip = 0;
-  limit = 10;
+  limit = 20;
   pageSizes = [20, 50, 100, 200];
   gridData: GridDataResult;
   details: SaleReportItemDetail[];

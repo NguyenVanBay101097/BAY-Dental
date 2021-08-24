@@ -10,7 +10,7 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 export class AccountCommonPartnerReportDetailComponent implements OnInit {
   @Input() public item: AccountCommonPartnerReportItem;
   skip = 0;
-  limit = 10;
+  limit = 20;
   pageSizes = [20, 50, 100, 200];
   gridData: GridDataResult;
   details: AccountCommonPartnerReportItemDetail[];

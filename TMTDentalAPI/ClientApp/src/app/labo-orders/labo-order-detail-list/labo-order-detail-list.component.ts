@@ -19,7 +19,7 @@ export class LaboOrderDetailListComponent implements OnInit {
   @Input() public state: string;
   @Output() reload : Subject<boolean> = new Subject<boolean>();
   skip = 0;
-  limit = 10;
+  limit = 20;
   pageSizes = [20, 50, 100, 200];
   gridData: GridDataResult;
   details: LaboOrderBasic[];

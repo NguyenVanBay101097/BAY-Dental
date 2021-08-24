@@ -19,7 +19,7 @@ export class ToothDiagnosisListComponent implements OnInit {
   loading = false;
   items: any[];
   gridData: GridDataResult;
-  limit = 10;
+  limit = 20;
   skip = 0;
   pageSizes = [20, 50, 100, 200];
   

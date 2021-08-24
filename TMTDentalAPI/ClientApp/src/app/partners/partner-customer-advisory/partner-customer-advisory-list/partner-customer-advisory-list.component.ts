@@ -34,7 +34,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
   filteredToothCategories: any[] = [];
   cateId: string;
   gridData: GridDataResult;
-  limit: number = 10;
+  limit: number = 20;
   skip: number = 0;
   pageSizes = [20, 50, 100, 200];
   loading = false;

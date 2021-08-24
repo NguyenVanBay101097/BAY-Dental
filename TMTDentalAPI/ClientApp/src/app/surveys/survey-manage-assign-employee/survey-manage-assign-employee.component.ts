@@ -27,7 +27,7 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
   search: string;
   searchUpdate = new Subject<string>();
   gridData: GridDataResult;
-  limit = 10;
+  limit = 20;
   offset = 0;
   pageSizes = [20, 50, 100, 200];
   filteredEmployees: EmployeeSimple[];
