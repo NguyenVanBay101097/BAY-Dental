@@ -24,7 +24,7 @@
             </div>
         </div>
         <div class="overflow-auto">
-            <kendo-grid [resizable]="true" #grid class="mt-2" [loading]="loading" [data]="gridData" [pageSize]="filter.limit" [skip]="filter.offset" [pageable]="true" (pageChange)="pageChange($event)">
+            <kendo-grid [resizable]="true" #grid class="mt-2" [loading]="loading" [data]="gridData" [pageSize]="this.filter.limit" [skip]="this.filter.offset" [pageable]="true" (pageChange)="pageChange($event)">
                 <kendo-grid-column field="date" title="Ngày tạo" width="110">
                     <ng-template kendoGridCellTemplate let-dataItem>
                         {{dataItem.date | date: 'dd/MM/yyyy'}}
@@ -42,7 +42,7 @@
                         {{dataItem.employee?.name}}
                     </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column field="teeth" class="text-primary" title="Răng" width="80">
+                <kendo-grid-column field="teeth" title="Răng" width="80">
                     <ng-template kendoGridCellTemplate let-dataItem>
                         {{showTeethList(dataItem.toothType, dataItem.teeth)}}
                     </ng-template>
