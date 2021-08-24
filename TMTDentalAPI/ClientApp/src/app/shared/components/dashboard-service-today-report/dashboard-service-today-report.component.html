@@ -17,6 +17,8 @@
         <div>
             <kendo-grid [height]="350" [resizable]="true" [kendoGridBinding]="gridView" [sortable]="true"
                 (dataStateChange)="dataStateChange($event)">
+                <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="name" title="Dịch vụ" width="150">
+                </kendo-grid-column>
                 <kendo-grid-column [headerClass]="{'text-center font-weight-bold':true}" field="order.name"
                     title="Phiếu điều trị" class="text-center" width="150">
                     <ng-template kendoGridCellTemplate let-dataItem>
@@ -26,6 +28,12 @@
                 </kendo-grid-column>
                 <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="orderPartner.displayName"
                     title="Khách hàng" width="200">
+                </kendo-grid-column>
+                <kendo-grid-column [headerClass]="{'font-weight-bold':true}" class="text-right" field="productUOMQty"
+                    title="Số lượng" width="100">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        {{dataItem.productUOMQty | number}}
+                    </ng-template>
                 </kendo-grid-column>
                 <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="employee.name" title="Bác sĩ"
                     width="150">
@@ -38,20 +46,11 @@
                 <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="diagnostic" title="Chuẩn đoán"
                     width="150">
                 </kendo-grid-column>
-                <kendo-grid-column [headerClass]="{'font-weight-bold':true}" class="text-right" field="productUOMQty"
-                    title="Số lượng" width="100">
-                    <ng-template kendoGridCellTemplate let-dataItem>
-                        {{dataItem.productUOMQty | number}}
-                    </ng-template>
-                </kendo-grid-column>
-                <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="name" title="Dịch vụ" width="150">
-                </kendo-grid-column>
                 <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="priceSubTotal" class="text-right"
                     title="Thành tiền" width="120">
                     <ng-template kendoGridCellTemplate let-dataItem>
                         {{dataItem.priceSubTotal | number}}
                     </ng-template>
-
                 </kendo-grid-column>
                 <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="amount" class="text-right"
                     title="Thanh toán" width="120">
