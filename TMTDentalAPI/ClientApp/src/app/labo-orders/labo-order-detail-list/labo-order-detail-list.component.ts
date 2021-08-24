@@ -86,6 +86,10 @@ export class LaboOrderDetailListComponent implements OnInit {
     const modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Tạo phiếu Labo';
     modalRef.componentInstance.saleOrderLineId = this.item.id;
+    modalRef.componentInstance.saleOrderId = this.item.order.id;
+    modalRef.componentInstance.saleOrderName = this.item.order.name;
+    modalRef.componentInstance.orderPartnerName = this.item.orderPartner.name;
+    modalRef.componentInstance.employeeName = this.item.employee ? this.item.employee.name : '';
     modalRef.result.then(res => {
       this.loadDataFromApi();
       this.reload.next(true);
@@ -98,6 +102,10 @@ export class LaboOrderDetailListComponent implements OnInit {
     modalRef.componentInstance.title = 'Cập nhật phiếu labo';
     modalRef.componentInstance.id = item.id;
     modalRef.componentInstance.saleOrderLineId = item.saleOrderLineId;
+    modalRef.componentInstance.saleOrderId = this.item.order.id;
+    modalRef.componentInstance.saleOrderName = this.item.order.name;
+    modalRef.componentInstance.orderPartnerName = this.item.orderPartner.name;
+    modalRef.componentInstance.employeeName = this.item.employee ? this.item.employee.name : '';
 
     modalRef.result.then(res => {
       this.loadDataFromApi();
