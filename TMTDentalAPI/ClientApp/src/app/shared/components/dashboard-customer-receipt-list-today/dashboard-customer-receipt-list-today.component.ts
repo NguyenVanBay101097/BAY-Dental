@@ -40,7 +40,7 @@ export class DashboardCustomerReceiptListTodayComponent implements OnInit {
   listEmployees: EmployeeSimple[] = [];
   stateFilter: string = '';
   doctorFilter: string;
-  stateCount: any = {};
+  stateCount: any[] = [];
   states: any[] = [
     { value: '', text: 'Tất cả' },
     { value: 'waiting', text: 'Chờ khám' },
@@ -90,34 +90,16 @@ export class DashboardCustomerReceiptListTodayComponent implements OnInit {
   onChangeSearch(value) {
     this.search = value ? value : '';
     this.loadData();
-    this.loadStateCount();
+    // this.loadStateCount();
   }
 
   loadStateCount() {
-    forkJoin(this.states.map(x => {
-      var val = new CustomerReceiptGetCountVM();
-      val.state = x.value;
-      val.dateFrom = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
-      val.dateTo = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
-      val.companyId = this.authService.userInfo.companyId;
-      return this.customerReceiptService.getCount(val).pipe(
-        switchMap(count => of({ state: x.value, count: count }))
-      );
-    })).subscribe((result) => {
-      result.forEach(item => {
-        this.stateCount[item.state] = item.count;
-      });
-    });
-
-    // forkJoin(this.states.map(x => {
-    //   let count = x.value == '' ? this.listCustomerReceipt.length : this.listCustomerReceipt.map(s => s.state == x.value).length;
-    //   var obj = { state: x.value, count: count };
-    //   return obj;
-    // })).subscribe((result) => {
-    //   result.forEach(item => {
-    //     this.stateCount[item.state] = item.count;
-    //   });
-    // });
+    this.stateCount = [];
+    this.states.forEach(x=> {
+      let count = x.value == '' ? this.listCustomerReceipt.length : this.listCustomerReceipt.filter(s => s.state == x.value).length;
+      this.stateCount.push({name: x.text, value: x.value, count: count})
+    })
+    
   }
 
   setStateFilter(state) {
@@ -135,7 +117,7 @@ export class DashboardCustomerReceiptListTodayComponent implements OnInit {
   onChangeDoctor(val) {
     this.doctorFilter = val ? val.id : '';
     this.loadData();
-    this.loadStateCount();
+    // this.loadStateCount();
   }
 
   onEmployeeFilter(value) {
