@@ -36,7 +36,10 @@ export class WarrantyCuDidalogComponent implements OnInit {
     this.myForm = this.fb.group({
       state: 'draft',
       doctor: [null, Validators.required],
-      dateReceiptObj: [null, Validators.required],
+      dateReceiptWarrantyObj: [null, Validators.required],
+      reason: [null, Validators.required],
+      content: null,
+      note: null,
     });
 
     this.doctorCbx.filterChange.asObservable().pipe(
