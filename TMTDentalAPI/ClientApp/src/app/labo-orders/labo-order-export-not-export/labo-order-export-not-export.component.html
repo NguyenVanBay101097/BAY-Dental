@@ -26,9 +26,6 @@
 <div>
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
         <kendo-grid-column field="partnerDisplayName" title="NCC Labo" width="100">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.partnerDisplayName}}
-            </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="saleOrderName" title="Phiếu điều trị" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
@@ -36,19 +33,10 @@
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="name" title="Phiếu Labo" width="100">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.name}}
-            </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="productName" title="Loại phục hình" width="120">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.saleOrderLineName}}
-            </ng-template>
+        <kendo-grid-column field="saleOrderLineName" title="Loại phục hình" width="120">
         </kendo-grid-column>
         <kendo-grid-column field="customerName" title="Khách hàng" width="100">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.customerName }}
-            </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="dateReceipt" title="Ngày nhận thực tế" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
@@ -56,18 +44,17 @@
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="warrantyCode" title="Mã bảo hành" width="100">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.warrantyCode}}
-            </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="warrantyPeriod" title="Hạn bảo hành" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.warrantyPeriod | date: 'shortDate'}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="id" width="80">
-            <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
-                Xuất khách
+        <kendo-grid-column field="Id" title="Xuất khách" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem let-dataItem>
+                <button class="btn btn-success mr-2" title="Xuất khách" (click)="exportPartner(dataItem)">
+                    <i class="far fa-edit"></i>
+                </button>
             </ng-template>
         </kendo-grid-column>
     </kendo-grid>
