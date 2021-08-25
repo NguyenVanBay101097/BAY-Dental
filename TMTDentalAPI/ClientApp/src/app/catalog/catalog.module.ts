@@ -20,6 +20,7 @@ import { PartnerImportComponent } from '../partners/partner-import/partner-impor
     PartnerInfoCustomerManagementComponent,
     PartnerSupplierListComponent,
     LaboManagementComponent,
+    PartnerImportComponent
   ],
   imports: [
     CommonModule,
@@ -34,6 +35,7 @@ import { PartnerImportComponent } from '../partners/partner-import/partner-impor
     ReactiveFormsModule,
     MyCustomKendoModule
   ],
-  entryComponents:[]
+  exports: [PartnerImportComponent],
+  entryComponents:[PartnerImportComponent]
 })
 export class CatalogModule { }
