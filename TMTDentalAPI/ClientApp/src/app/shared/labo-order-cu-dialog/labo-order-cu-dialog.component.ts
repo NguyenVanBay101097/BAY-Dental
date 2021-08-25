@@ -37,11 +37,8 @@ export class LaboOrderCuDialogComponent implements OnInit {
   id: string;// có thể là input
   saleOrderLineId: string; // có thể là input
   laboOrder: LaboOrderDisplay = new LaboOrderDisplay();
-  saleOrderId: string; // là input
-  saleOrderName: string; // là input
-  orderPartnerName: string; // là input
-  employeeName: string; // là input
-  
+  saleOrderLineLabo: any; // là input
+
   partners: any = [];
   labos: ProductSimple[] = [];
   finishlines: LaboFinishLineBasic[] = [];

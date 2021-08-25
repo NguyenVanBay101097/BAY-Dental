@@ -29,6 +29,8 @@ export class PartnerCustomerLaboOrdersComponentComponent implements OnInit {
     { name: 'Đơn hàng', value: 'confirmed' },
   ];
   customerId: string;
+  dateExportFrom: Date;
+  dateExportTo: Date;
 
   constructor(private laboOrderService: LaboOrderService, 
     private route: ActivatedRoute, private modalService: NgbModal, 
@@ -63,6 +65,8 @@ export class PartnerCustomerLaboOrdersComponentComponent implements OnInit {
       }))
     ).subscribe(res => {
       this.gridData = res;
+      console.log(this.gridData);
+      
       this.loading = false;
     }, err => {
       console.log(err);
@@ -114,10 +118,13 @@ export class PartnerCustomerLaboOrdersComponentComponent implements OnInit {
   }
 
   editItem(item) {
+    console.log(item);
+    
     const modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Cập nhật phiếu labo';
     modalRef.componentInstance.id = item.id;
     modalRef.componentInstance.saleOrderLineId = item.saleOrderLineId;
+    modalRef.componentInstance.saleOrderLineLabo = item;
 
     modalRef.result.then(res => {
       this.loadDataFromApi();
@@ -134,5 +141,12 @@ export class PartnerCustomerLaboOrdersComponentComponent implements OnInit {
         this.loadDataFromApi();
       });
     });
+  }
+
+  dateExportChange(data) {
+    this.dateExportFrom = data.dateFrom;
+    this.dateExportTo = data.dateTo;
+    this.skip = 0;
+    this.loadDataFromApi();
   }
 }
