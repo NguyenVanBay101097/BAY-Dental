@@ -6,7 +6,7 @@
             <span *ngFor="let option of options">
                 <input (click)="onChangeResultSelection(option.value)" class="btn-check" type="radio" [attr.id]="option.value"
                     value="all">
-                <label class="btn btn-light btn-sm" [ngClass]="{'btn-light': resultSelection != option.value, 'btn-primary': resultSelection == option.value}" [for]="option.value">{{option.text}}</label>
+                <label class="btn btn-light" [ngClass]="{'btn-light': resultSelection != option.value, 'btn-primary': resultSelection == option.value}" [for]="option.value">{{option.text}}</label>
             </span>
         </div>
     </ng-template>

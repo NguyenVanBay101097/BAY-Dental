@@ -48,20 +48,20 @@
 </div>
 
 <footer class="modal-footer">
-    <button *ngIf="isUpdate" type="button" class="btn btn-primary btn-sm" (click)="updateFileExcel()">
+    <button *ngIf="isUpdate" type="button" class="btn btn-primary" (click)="updateFileExcel()">
         Cập nhật
     </button>
-    <button *ngIf="!isUpdate" type="button" class="btn btn-primary btn-sm" (click)="import()">
+    <button *ngIf="!isUpdate" type="button" class="btn btn-primary" (click)="import()">
         Import
     </button>
 
     <a *ngIf="type == 'customer' && isUpdate != true" href="assets/files/Mau_File_KH_V2.xlsx"
-        class="btn btn-info btn-sm">
+        class="btn btn-info">
         Tải file mẫu
     </a>
-    <a *ngIf="type == 'supplier'" href="assets/files/Mau_File_NCC_V2.xlsx" class="btn btn-info btn-sm">
+    <a *ngIf="type == 'supplier'" href="assets/files/Mau_File_NCC_V2.xlsx" class="btn btn-info">
         Tải file mẫu
     </a>
-    <button type="button" class="btn btn-secondary btn-sm" (click)="activeModal.dismiss()">
+    <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">
         Đóng</button>
 </footer>

@@ -156,6 +156,12 @@ export class SaleOrderManagementComponent implements OnInit {
     const workbook = args.workbook;
     var sheet = workbook.sheets[0];
     const rows = workbook.sheets[0].rows;
+    sheet.mergedCells = ["A1:F1"];
+    sheet.frozenRows = 2;
+    sheet.rows.splice(0, 0, { cells: [{
+      value:"BÁO CÁO QUẢN LÝ ĐIỀU TRỊ CHƯA HOÀN THÀNH",
+      textAlign: "center"
+    }], type: 'header' });
     sheet.name = "QuanLyDieuTri";
     for (var rowIndex = 1; rowIndex < rows.length; rowIndex++) {
       var row = rows[rowIndex];
@@ -172,7 +178,7 @@ export class SaleOrderManagementComponent implements OnInit {
     // Aternatively set custom styles for the details
     // https://www.telerik.com/kendo-angular-ui/components/excelexport/api/WorkbookSheetRowCell/
     const headerOptions = rows[0].cells[0];
-    const data = this.saleOrdersAllData.data;
+    const data = this.saleOrdersAllData ? this.saleOrdersAllData.data : [];
 
     // Fetch the data for all details
     for (let idx = 0; idx < data.length; idx++) {
@@ -202,7 +208,7 @@ export class SaleOrderManagementComponent implements OnInit {
           productIdx--
         ) {
           const product = products[productIdx];
-          rows.splice(idx + 2, 0, {
+          rows.splice(idx + 3, 0, {
             cells: [
               {},
               { value: product.name },
@@ -215,7 +221,7 @@ export class SaleOrderManagementComponent implements OnInit {
         }
 
         // add the detail header
-        rows.splice(idx + 2, 0, {
+        rows.splice(idx + 3, 0, {
           cells: [
             {},
             Object.assign({}, headerOptions, { value: "Dịch vụ" }),
