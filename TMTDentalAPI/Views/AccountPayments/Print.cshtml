@@ -196,7 +196,16 @@
                 <span></span> <br />
                 <span></span> <br />
                 <span></span> <br />
-                <span class="font-semibold">@(!string.IsNullOrEmpty(Model.PartnerName) ? Model.PartnerName.ToUpper() : "")</span>
+                <span class="font-semibold">
+                    @if (Model.PaymentType == "inbound")
+                    {
+                        @(!string.IsNullOrEmpty(Model.PartnerName) ? Model.PartnerName.ToUpper() : "")
+                    }
+                    else
+                    {
+                        @(!string.IsNullOrEmpty(Model.UserName) ? Model.UserName.ToUpper() : "")
+                    }
+                </span>
             </div>
         </div>
         <div class="col">
@@ -206,7 +215,16 @@
                 <span></span> <br />
                 <span></span> <br />
                 <span></span> <br />
-                <span class="font-semibold">@(Model.UserName == null ? "" : Model.UserName.ToUpper())</span>
+                <span class="font-semibold">
+                    @if (Model.PaymentType == "inbound")
+                    {
+                        @(!string.IsNullOrEmpty(Model.UserName) ? Model.UserName.ToUpper() : "")
+                    }
+                    else
+                    {
+                        @(!string.IsNullOrEmpty(Model.PartnerName) ? Model.PartnerName.ToUpper() : "")
+                    }
+                </span>
             </div>
         </div>
     </div>
