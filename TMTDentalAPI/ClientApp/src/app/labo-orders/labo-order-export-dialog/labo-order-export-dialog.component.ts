@@ -23,7 +23,7 @@ export class LaboOrderExportDialogComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     public activeModal: NgbActiveModal,
-    private intelservice: IntlService,
+    private intlService: IntlService,
     private laboOrderService: LaboOrderService,
     private notificationService: NotificationService,
     private modalService: NgbModal
@@ -56,11 +56,10 @@ export class LaboOrderExportDialogComponent implements OnInit {
     modalRef.result.then(() => {
       var val = this.formGroup.value;
       val.id = this.labo.id;
-      val.dateExport = val.dateExport ? this.intelservice.formatDate(val.dateExport, 'yyyy-MM-dd HH:mm:ss') : null;
+      val.dateExport = val.dateExport ? this.intlService.formatDate(val.dateExport, 'yyyy-MM-dd HH:mm:ss') : null;
 
       this.laboOrderService.updateExportLabo(val).subscribe(() => { 
-        var status = 'update';  
-        this.activeModal.close(status);
+        this.activeModal.close("reload");
         this.notificationService.show({
           content: 'Xuất Labo thành công',
           hideAfter: 3000,
@@ -78,6 +77,7 @@ export class LaboOrderExportDialogComponent implements OnInit {
           type: { style: 'error', icon: true }
         });
       });
+    }, () => {
     });
   }
 

@@ -134,5 +134,15 @@ export class LaboOrderExportNotExportComponent implements OnInit {
   exportPartner(item){
     const modalRef = this.modalService.open(LaboOrderExportDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.labo = item;
+
+    modalRef.result.then(
+      result => {        
+        if (result && result === "reload") {
+          this.skip = 0;
+          this.loadDataFromApi();
+        }
+      },
+      er => { }
+    )
   }
 }
