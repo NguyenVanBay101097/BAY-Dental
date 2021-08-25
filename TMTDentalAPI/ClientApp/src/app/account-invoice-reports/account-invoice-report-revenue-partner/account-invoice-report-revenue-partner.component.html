@@ -1,6 +1,5 @@
 <div class="card">
     <div class="card-body">
-        <h5 class="card-title">Doanh thu khách hàng</h5>
         <div class="form-inline">
             <app-date-range-picker-filter [opens]="'right'" class="mr-1" [startDate]="filter.dateFrom" [endDate]="filter.dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
             <kendo-combobox [popupSettings]="{

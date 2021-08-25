@@ -1,6 +1,5 @@
 <div class="card">
     <div class="card-body">
-        <h5 class="card-title">Doanh thu theo nhân viên</h5>
         <div class="form-inline">
             <app-date-range-picker-filter class="mr-1" [startDate]="filter.dateFrom" [endDate]="filter.dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
             <select [(ngModel)]="empFilter" (change)="onChangeEmployeeFilter()" class="form-control w-auto mr-1" aria-label="Default select example">
