@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { Subject } from 'rxjs';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { LaboOrderService } from '../labo-order.service';
 
 @Component({
@@ -14,7 +16,7 @@ export class LaboOrderExportDialogComponent implements OnInit {
   labo : any;
   formGroup: FormGroup;
   submitted = false;
-
+  private btnConfirm = new Subject<any>();
   get f() { return this.formGroup.controls; }
 
   
@@ -23,7 +25,8 @@ export class LaboOrderExportDialogComponent implements OnInit {
     public activeModal: NgbActiveModal,
     private intelservice: IntlService,
     private laboOrderService: LaboOrderService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private modalService: NgbModal
   ) { }
 
   ngOnInit() {
@@ -45,14 +48,36 @@ export class LaboOrderExportDialogComponent implements OnInit {
     if (!this.formGroup.valid) {
       return false;
     }
-  
-    var val = this.formGroup.value;
-    val.id = this.labo.id;
-    val.dateExport = val.dateExport ? this.intelservice.formatDate(val.dateExport, 'yyyy-MM-dd HH:mm:ss') : null;
 
-    this.laboOrderService.updateExportLabo(val).subscribe(() => { 
-      var status = 'update';  
-      this.activeModal.close(status);
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xác nhận xuất Labo cho khách';
+    modalRef.componentInstance.body = 'Phiếu Labo đã xuất cho khách không thể xóa và chỉnh sửa.';
+    modalRef.componentInstance.body2 = 'Bạn chắc chắn muốn xuất Labo cho khách ?';
+    modalRef.result.then(() => {
+      var val = this.formGroup.value;
+      val.id = this.labo.id;
+      val.dateExport = val.dateExport ? this.intelservice.formatDate(val.dateExport, 'yyyy-MM-dd HH:mm:ss') : null;
+
+      this.laboOrderService.updateExportLabo(val).subscribe(() => { 
+        var status = 'update';  
+        this.activeModal.close(status);
+        this.notificationService.show({
+          content: 'Xuất Labo thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+        this.btnConfirm.next();
+      }, err => {
+        this.notificationService.show({
+          content: 'Xuất Labo không thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'error', icon: true }
+        });
+      });
     });
   }
 
@@ -63,5 +88,8 @@ export class LaboOrderExportDialogComponent implements OnInit {
     });
   }
 
+  getBtnConfirm() {
+    return this.btnConfirm.asObservable();
+  }
   
 }
