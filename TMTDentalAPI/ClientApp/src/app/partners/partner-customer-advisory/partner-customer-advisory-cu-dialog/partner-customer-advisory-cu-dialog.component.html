@@ -120,9 +120,6 @@
                                 (filterChange)="this.searchUpdateProduct.next($event)" [textField]="'name'" [valueField]="'id'"
                                 formControlName="product">
                             </kendo-multiselect>
-                            <div *ngIf="f.product.value.length == 0 && submitted" class="text-danger">
-                                Chọn dịch vụ tư vấn
-                            </div>
                         </div>
                     
                     </div>
