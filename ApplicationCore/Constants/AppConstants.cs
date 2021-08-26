@@ -42,5 +42,31 @@ namespace ApplicationCore.Constants
 
         public const string PartnerOldNewReport = "PartnerOldNewReport";
         public const string ReportPartnerDebit = "ReportPartnerDebit";
+
+        public static string[] PrintTemplateType = new string[] {
+            "tmp_sale_order",
+            "tmp_account_payment",
+            "tmp_account_payment" ,
+            "tmp_advisory" ,
+            "tmp_partner_advance",
+            "tmp_supplier_payment",
+            "tmp_phieu_thu",
+            "tmp_phieu_chi",
+            "tmp_partner_debt",
+            "tmp_agent_commission",
+            "tmp_purchase_order",
+            "tmp_purchase_refund",
+            "tmp_quotation",
+            "tmp_salary_employee",
+            "tmp_salary_advance",
+            "tmp_salary",
+            "tmp_stock_picking_incoming",
+            "tmp_stock_picking_outgoing",
+            "tmp_stock_inventory",
+            "tmp_toathuoc",
+            "tmp_medicine_order",
+            "tmp_labo_order",
+
+        };
     }
 }
