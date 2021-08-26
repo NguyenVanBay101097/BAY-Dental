@@ -4,16 +4,16 @@
             <h5 class="mb-0">{{line.name}}</h5>
             <div class="d-flex align-items-center">
                 <span class="mr-2 text-nowrap">Ngày tạo</span>
-                <span class="mr-2" *ngIf="!isEditting">{{line.date | date:'dd/MM/yyyy'}}</span>
-                <kendo-datepicker class="mr-2 mw-140" format="dd/MM/yyyy" *ngIf="isEditting" formControlName="date">
+                <span *ngIf="!isEditting">{{line.date | date:'dd/MM/yyyy'}}</span>
+                <kendo-datepicker class="mw-140" format="dd/MM/yyyy" *ngIf="isEditting" formControlName="date">
                 </kendo-datepicker>
                 <ng-container *ngIf="isEditting; else elseTemplateState">
-                    <select *ngIf="formState != 'draft'" class="form-control text-white select-state" formControlName="state" [ngClass]="{'bg-success':formState == 'done', 'bg-danger': formState == 'cancel', 'bg-primary': formState == 'sale'}">
+                    <select *ngIf="formState != 'draft'" class="form-control text-white select-state ml-2" formControlName="state" [ngClass]="{'bg-success':formState == 'done', 'bg-danger': formState == 'cancel', 'bg-primary': formState == 'sale'}">
                         <option class="text-dark bg-white" *ngFor="let item of  listState" [value]="item.value">{{item.text}}</option>
                     </select>
                 </ng-container>
                 <ng-template #elseTemplateState>
-                    <div *ngIf="line.state != 'draft'" class="form-control text-white select-state" [ngClass]="{'bg-success':line.state == 'done', 'bg-danger': line.state == 'cancel', 'bg-primary': line.state == 'sale'}">
+                    <div *ngIf="line.state != 'draft'" class="form-control text-white select-state ml-2" [ngClass]="{'bg-success':line.state == 'done', 'bg-danger': line.state == 'cancel', 'bg-primary': line.state == 'sale'}">
                         {{getStateDisplay(line.state)}}
                     </div>
                 </ng-template>
@@ -220,7 +220,7 @@
                         </div>
                         <div class="d-flex">
                             <span>Ưu đãi dịch vụ</span>
-                            <img *ngIf="line.state != 'done'" (click)="onOpenPromotion()" class="ml-2 pointer" src="../../../assets/icons/promotion-bg-primary.svg" alt="">
+                            <img *ngIf="line.state != 'done' && line.state != 'cancel'" (click)="onOpenPromotion()" class="ml-2 pointer" src="../../../assets/icons/promotion-bg-primary.svg" alt="">
                             <span class="ml-auto">{{line.amountPromotionToOrderLine | number}}</span>
                         </div>
                     </div>

@@ -230,8 +230,8 @@
                             <div class="filter-label">Trạng thái</div>
                             <div class="filter-content">
                                 <div class="form-check t-form-check mb-1" *ngFor="let state of states; index as i">
-                                    <input class="form-check-input" type="radio" name="state" [id]="'state-' + i" [value]="state.value" [(ngModel)]="stateSelected">
-                                    <label class="form-check-label" [for]="'state-' + i" (click)="onChangeState(state.value)">
+                                    <input class="form-check-input" type="radio" (change)="onChangeState(state.value)" name="state" [id]="'state-' + i" [value]="state.value" [(ngModel)]="stateSelected">
+                                    <label class="form-check-label" [for]="'state-' + i">
                                         {{state.text}}
                                     </label>
                                 </div>

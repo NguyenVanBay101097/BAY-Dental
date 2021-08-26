@@ -215,14 +215,14 @@ export class SaleDashboardReportFormComponent implements OnInit {
     let res1 = this.cashBookService.getTotal({ resultSelection: "cash", companyId: companyId });
     let res2 = this.cashBookService.getTotal({ resultSelection: "bank", companyId: companyId });
     let res3 = this.reportService.getSummaryPartner({ resultSelection: "supplier", companyId: companyId }).pipe(map(x => x.initialBalance * -1));
-    let res4 = this.reportService.getSummaryPartner({ resultSelection: "customer", companyId: companyId }).pipe(map(x => x.initialBalance));
+    let res4 = this.reportService.reportPartnerDebitSummary(<ReportPartnerDebitReq>{ companyId: companyId });
     let res5 = this.saleOrderService.getRevenueSumTotal({ companyId: companyId }).pipe(map((res: any) => res.residual));
     forkJoin([res1, res2, res3, res4, res5])
       .subscribe(data => {
         this.moneyCash = data[0];
         this.moneyBank = data[1];
         this.totalDebitNCC = data[2];
-        this.totalDebitCustomer = data[3];
+        this.totalDebitCustomer = data[3].balance;
         this.sumRevenue = data[4];
       });
   }
@@ -528,7 +528,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
         this.router.navigateByUrl("report/report-account-common/partner?result_selection=supplier");
         break;
       case "customer-debit-report":
-        this.router.navigateByUrl("report/report-account-common/partner?result_selection=customer");
+        this.router.navigateByUrl("report/report-account-common/partner-debit");
         break;
       case "money-report":
         this.router.navigateByUrl("report/report-general-ledgers/cash-bank");
