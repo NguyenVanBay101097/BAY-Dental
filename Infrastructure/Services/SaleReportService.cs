@@ -333,10 +333,10 @@ namespace Infrastructure.Services
             }
 
             if (val.DateFrom.HasValue)
-                query = query.Where(x => x.DateCreated >= val.DateFrom.Value);
+                query = query.Where(x => x.Date >= val.DateFrom.Value);
 
             if (val.DateTo.HasValue)
-                query = query.Where(x => x.DateCreated <= val.DateTo.Value);
+                query = query.Where(x => x.Date <= val.DateTo.Value);
 
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId.Value);
