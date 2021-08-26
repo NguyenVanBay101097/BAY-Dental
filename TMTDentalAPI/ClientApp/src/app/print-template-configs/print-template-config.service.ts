@@ -55,7 +55,19 @@ export class PrintTemplateConfigService {
   constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
   get(type) {
-    return this.http.get(this.baseApi + this.apiUrl + '/ApplyDiscountOnQuotationLine/' + type);
+    return this.http.get(this.baseApi + this.apiUrl + '/' + type);
+  }
+
+  create(val) {
+    return this.http.post(this.baseApi + this.apiUrl, val);
+  }
+
+  update(val) {
+    return this.http.put(this.baseApi + this.apiUrl, val);
+  }
+
+  delete(type) {
+    return this.http.delete(this.baseApi + this.apiUrl + '/' + type);
   }
 
 }
