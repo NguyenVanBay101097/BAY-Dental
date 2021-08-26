@@ -142,13 +142,18 @@ const routes: Routes = [
         canActivate: [AuthGuard]
       },
       {
-        path:'treatment-lines',
-        loadChildren:() => import('./dot-kham-lines/dot-kham-lines.module').then(m => m.DotKhamLinesModule),
-        canActivate:[AuthGuard]
+        path: 'treatment-lines',
+        loadChildren: () => import('./dot-kham-lines/dot-kham-lines.module').then(m => m.DotKhamLinesModule),
+        canActivate: [AuthGuard]
       },
       {
         path: 'sms',
         loadChildren: () => import('./sms/sms.module').then(m => m.SmsModule),
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'print-template-config',
+        loadChildren: () => import('./print-template-configs/print-template-configs.module').then(m => m.PrintTemplateConfigsModule),
         canActivate: [AuthGuard]
       },
       {
