@@ -1,0 +1,8 @@
+:host ::ng-deep .ck-editor__editable_inline {
+    min-height: 500px;
+}
+.preview .title {
+    color: #919191;
+    font-size: 28px;
+    font-weight: 700
+}

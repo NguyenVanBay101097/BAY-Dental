@@ -1,0 +1,37 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">Tùy chỉnh mẫu in</li>
+        </ol>
+        <div class="o_cp_searchview">
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <button type="button" class="btn btn-outline-primary mr-2" accesskey="c" (click)="onPrint()">In
+                    thử</button>
+                <button type="button" class="btn btn-primary" accesskey="c" (click)="onEdit()">Sửa</button>
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+<div class="o_content">
+    <div class="o_form_view">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="d-flex align-items-center">
+                    <div class="form-group">
+                        <label>Chọn mẫu in</label>
+                        <select (change)="onChangeType($event)" [(ngModel)]="typeFilter" class="form-control">
+                            <option [value]="item.value" *ngFor="let item of types">{{item.text}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="view d-flex justify-content-center">
+                    <div class="w-75" [innerHTML]="config.content | safeHtml "></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
