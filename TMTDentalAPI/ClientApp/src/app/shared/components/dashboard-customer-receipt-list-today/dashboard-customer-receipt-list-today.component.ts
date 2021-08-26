@@ -226,8 +226,8 @@ export class DashboardCustomerReceiptListTodayComponent implements OnInit {
     }
   }
 
-  RemoveVietnamese(text) {
-    text = text.toLowerCase().trim();
+  RemoveVietnamese(text : string) {
+    text = text.toLowerCase();
     text = text.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
     text = text.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
     text = text.replace(/ì|í|ị|ỉ|ĩ/g, "i");
@@ -238,6 +238,7 @@ export class DashboardCustomerReceiptListTodayComponent implements OnInit {
     // Some system encode vietnamese combining accent as individual utf-8 characters
     text = text.replace(/\u0300|\u0301|\u0303|\u0309|\u0323/g, ""); // Huyền sắc hỏi ngã nặng 
     text = text.replace(/\u02C6|\u0306|\u031B/g, ""); // Â, Ê, Ă, Ơ, Ư
+    text = text.replace(/\s/g, "");;
     return text;
   }
 
