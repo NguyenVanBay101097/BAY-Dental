@@ -10,15 +10,17 @@ import { PartnerInfoCustomerManagementComponent } from './partner-info-customer-
 import { MemberLevelModule } from '../member-level/member-level.module';
 import { PartnerSupplierListComponent } from './partner-supplier-list/partner-supplier-list.component';
 import { SharedModule } from '../shared/shared.module';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { LaboManagementComponent } from './labo-management/labo-management.component';
+import { PartnerImportComponent } from '../partners/partner-import/partner-import.component';
 
 @NgModule({
   declarations: [
     PartnerInfoCustomerManagementComponent,
     PartnerSupplierListComponent,
-    LaboManagementComponent
+    LaboManagementComponent,
+    PartnerImportComponent
   ],
   imports: [
     CommonModule,
@@ -30,7 +32,10 @@ import { LaboManagementComponent } from './labo-management/labo-management.compo
     MemberLevelModule,
     SharedModule,
     FormsModule,
+    ReactiveFormsModule,
     MyCustomKendoModule
-  ]
+  ],
+  exports: [PartnerImportComponent],
+  entryComponents:[PartnerImportComponent]
 })
 export class CatalogModule { }

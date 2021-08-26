@@ -79,6 +79,7 @@ export class PartnerSupplierListComponent implements OnInit {
   importFromExcel() {
     const modalRef = this.modalService.open(PartnerImportComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
     modalRef.componentInstance.type = 'supplier';
+    modalRef.componentInstance.title = 'Import excel';
     modalRef.result.then(() => {
       this.notificationService.show({
         content: 'Import thành công',

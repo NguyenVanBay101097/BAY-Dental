@@ -112,8 +112,10 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
       if (this.appointId) {
         this.loadAppointmentToForm();
+        this.title = 'Cập nhật lịch hẹn';
       } else {
         this.defaultGet();
+        this.title = 'Đặt lịch hẹn';
       }
 
       this.loadEmployees();
