@@ -113,6 +113,7 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[4, 9].Value = "Trạng thái";
 
                 worksheet.Cells["A4:I4"].Style.Font.Bold = true;
+                worksheet.Cells["A4:I4"].Style.Font.Size = 14;
                 worksheet.Cells["A4:I4"].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                 worksheet.Cells["A4:I4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
                 worksheet.Cells["A4:I4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
@@ -184,8 +185,10 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells["A2:J2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
                 worksheet.Cells["A4:I4"].Value = "Giờ";
+                worksheet.Cells["A4:I4"].Style.Font.Size = 14;
                 worksheet.Cells["A4:I4"].Merge = true;
                 worksheet.Cells["J4:J4"].Value = "Tổng số lượng";
+                worksheet.Cells["J4:J4"].Style.Font.Size = 14;
                 //worksheet.Cells["A4:J4"].Merge = true;
                 worksheet.Cells["A4:J4"].Style.Font.Bold = true;
                 worksheet.Cells["A4:J4"].Style.Border.BorderAround(ExcelBorderStyle.Thin);
@@ -238,6 +241,7 @@ namespace TMTDentalAPI.Controllers
                         worksheet.Cells[row, 10].Style.Border.BorderAround(ExcelBorderStyle.Thin);
 
                         worksheet.Cells[$"B{row}:J{row}"].Style.Font.Bold = true;
+                        worksheet.Cells[$"B{row}:J{row}"].Style.Font.Size = 14;
                         worksheet.Cells[$"B{row}:J{row}"].Style.Fill.PatternType = ExcelFillStyle.Solid;
                         worksheet.Cells[$"B{row}:J{row}"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#DDEBF7"));
 
@@ -328,6 +332,7 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[4, 8].Value = "Thời gian khám";
 
                 worksheet.Cells["A4:H4"].Style.Font.Bold = true;
+                worksheet.Cells["A4:H4"].Style.Font.Size = 14;
                 worksheet.Cells["A4:H4"].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                 worksheet.Cells["A4:H4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
                 worksheet.Cells["A4:H4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
@@ -402,6 +407,7 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[4, 7].Value = "Lý do không phục vụ";
 
                 worksheet.Cells["A4:G4"].Style.Font.Bold = true;
+                worksheet.Cells["A4:G4"].Style.Font.Size = 14;
                 worksheet.Cells["A4:G4"].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                 worksheet.Cells["A4:G4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
                 worksheet.Cells["A4:G4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
