@@ -93,6 +93,14 @@ export class DashboardCustomerReceiptListTodayComponent implements OnInit {
     // this.loadStateCount();
   }
 
+  getCount(state) {
+    if (state) {
+      return this.customerReceipts.filter(s => s.state == state).length;
+    } else {
+      return this.customerReceipts.length;
+    }
+  }
+
   loadStateCount() {
     this.stateCount = [];
     this.states.forEach(x=> {
@@ -147,6 +155,7 @@ export class DashboardCustomerReceiptListTodayComponent implements OnInit {
     const modalRef = this.modalService.open(CustomerReceipCreateUpdateComponent, { size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = "Cập nhật tiếp nhận";
     modalRef.componentInstance.id = item.id;
+    modalRef.componentInstance.partnerDisable = true;
     modalRef.result.then(res => {
       this.notifyService.notify('success', 'Lưu thành công');
       this.onUpdateCREvent.emit(res);

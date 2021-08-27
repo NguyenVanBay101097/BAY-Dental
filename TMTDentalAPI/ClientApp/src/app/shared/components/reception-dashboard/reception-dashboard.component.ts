@@ -195,6 +195,14 @@ export class ReceptionDashboardComponent implements OnInit {
     this.loadMedicalXamination();
   }
 
+  onSuccessReceiveAppointment(data) {
+    var appointment = data.appointment;
+    var item = this.appointmenttList.find(x => x.id === appointment.id);
+    item.state = 'done';
+
+    this.customerReceiptList.unshift(data.customerReceipt);
+  }
+
   onUpdateCR(event) {    
     this.loadDataCustomerRecieptApi();
     // var item = this.customerReceiptList.find(x => x.id === event.id);

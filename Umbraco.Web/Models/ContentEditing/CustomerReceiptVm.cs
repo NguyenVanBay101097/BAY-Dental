@@ -154,17 +154,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// thời gian chờ khám
         /// </summary>
-        public DateTime? DateWaiting { get; set; }
-
-        /// <summary>
-        /// thời gian đang khám
-        /// </summary>
-        public DateTime? DateExamination { get; set; }
-
-        /// <summary>
-        /// thời gian hoàn thành
-        /// </summary>
-        public DateTime? DateDone { get; set; }
+        public DateTime DateWaiting { get; set; }
 
         /// <summary>
         /// Thời gian dự kiến
@@ -243,4 +233,80 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? CompanyId { get; set; }
 
     }
+
+    public class ReceiveAppointmentSaveViewModel
+    {
+        /// <summary>
+        /// thời gian chờ khám
+        /// </summary>
+        public DateTime DateWaiting { get; set; }
+
+        /// <summary>
+        /// Thời gian dự kiến
+        /// </summary>
+        public int TimeExpected { get; set; }
+
+        /// <summary>
+        /// Danh sách dịch vụ
+        /// </summary>
+        public IEnumerable<Guid> ProductIds { get; set; } = new List<Guid>();
+
+        /// <summary>
+        /// Ghi chú, nội dung
+        /// </summary>
+        public string Note { get; set; }
+
+        //Hẹn khách hàng nào?
+        public Guid PartnerId { get; set; }
+
+        public Guid? DoctorId { get; set; }
+
+        /// <summary>
+        /// Khách hàng tái khám
+        /// </summary>
+        public bool IsRepeatCustomer { get; set; }
+
+        public Guid AppointmentId { get; set; }
+    }
+
+    public class ReceiveAppointmentDisplayViewModel
+    {
+        public ReceiveAppointmentDisplayViewModel()
+        {
+            DateWaiting = DateTime.Now;
+        }
+
+        /// <summary>
+        /// thời gian chờ khám
+        /// </summary>
+        public DateTime DateWaiting { get; set; }
+
+        /// <summary>
+        /// Thời gian dự kiến
+        /// </summary>
+        public int TimeExpected { get; set; }
+
+        /// <summary>
+        /// Danh sách dịch vụ
+        /// </summary>
+        public IEnumerable<ProductSimple> Products { get; set; } = new List<ProductSimple>();
+
+        /// <summary>
+        /// Ghi chú, nội dung
+        /// </summary>
+        public string Note { get; set; }
+
+        //Hẹn khách hàng nào?
+        public PartnerSimple Partner { get; set; }
+
+        public EmployeeSimple Doctor { get; set; }
+
+        /// <summary>
+        /// Khách hàng tái khám
+        /// </summary>
+        public bool IsRepeatCustomer { get; set; }
+
+        public Guid AppointmentId { get; set; }
+    }
+
 }

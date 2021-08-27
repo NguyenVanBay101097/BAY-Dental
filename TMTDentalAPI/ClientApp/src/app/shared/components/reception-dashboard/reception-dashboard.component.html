@@ -47,7 +47,7 @@
             </div>
             <div class="col-3">
                 <div class="mb-3">
-                  <app-appointment-list-today [appointments]="appointmenttList" (onUpdateAPEvent)="onUpdateAP($event)" (onCreateAPEvent)="onCreateAP($event)" (onCreateCREvent)="onCreateCR($event)" (onDeleteAPEvent)="onDeleteAP($event)"></app-appointment-list-today>
+                  <app-appointment-list-today [appointments]="appointmenttList" (onUpdateAPEvent)="onUpdateAP($event)" (successReceiveEvent)="onSuccessReceiveAppointment($event)" (onCreateAPEvent)="onCreateAP($event)" (onCreateCREvent)="onCreateCR($event)" (onDeleteAPEvent)="onDeleteAP($event)"></app-appointment-list-today>
                 </div>
                 <div>
                     <app-dashboard-revenue-today-report [revenueToday]="revenueReportToDay"></app-dashboard-revenue-today-report>

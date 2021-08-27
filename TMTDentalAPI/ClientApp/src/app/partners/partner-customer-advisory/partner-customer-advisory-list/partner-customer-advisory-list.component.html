@@ -32,7 +32,7 @@
             <app-date-range-picker-filter class="mr-2" [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="searchChangeDate($event)"></app-date-range-picker-filter>
             <div class="o_cp_t_right">
                 <div class="o_searchview">
-                    <input type="text" class="o_searchview_input" placeholder="Tìm kiếm người tư vấn, dịch vụ" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
+                    <input type="text" class="o_searchview_input" placeholder="Tìm kiếm người tạo, dịch vụ" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
                     <span class="o_searchview_icon fas fa-search"></span>
                 </div>
             </div>

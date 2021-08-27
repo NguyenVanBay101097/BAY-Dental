@@ -17,10 +17,10 @@
         </div>
         <div class="appointments-today-filter-state mb-2">
             <div role="group" aria-label="Basic outlined example">
-                <button type="button" *ngFor="let state of stateCount" class="btn active"
+                <button type="button" *ngFor="let state of states" class="btn active"
                     (click)="setStateFilter(state.value)" [class.btn-primary]="stateFilter == state.value"
                     [class.appointments-today-filter-state]="stateFilter != state.value">
-                    {{state.name}} <span class="ml-1" [class.text-white]="stateFilter == state.value">{{state.count ||
+                    {{state.text}} <span class="ml-1" [class.text-white]="stateFilter == state.value">{{getStateCount(state.value) ||
                         0}}</span>
                 </button>
             </div>

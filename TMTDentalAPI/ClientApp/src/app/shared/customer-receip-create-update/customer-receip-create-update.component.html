@@ -24,11 +24,11 @@
                                     <div class="flex-grow-1">
                                         <kendo-combobox formControlName="partner" [filterable]="true"
                                             [data]="customerSimpleFilter" (valueChange)="onChangePartner()" #partnerCbx
-                                            [valueField]="'id'" [textField]="'name'" [attr.disabled]="id || defaultData"
+                                            [valueField]="'id'" [textField]="'name'" [attr.disabled]="partnerDisable ? true : null"
                                             placeholder="Mã, tên, số điện thoại khách hàng">
                                         </kendo-combobox>
                                     </div>
-                                    <div *ngIf="!id && !defaultData" class="ml-2">
+                                    <div *ngIf="!partnerDisable" class="ml-2">
                                         <a type="button" title="Thêm khách hàng" class="btn btn-primary"
                                             (click)="quickCreateCustomerModal()">
                                             <i class="fas fa-plus text-white"></i>
@@ -41,12 +41,12 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr>
+                        <tr *ngIf="partnerInfo">
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label">Số điện thoại</label>
                             </td>
                             <td colspan="1">
-                                {{partnerPhone}}
+                                {{partnerInfo.phone}}
                             </td>
                         </tr>
                         <tr>
@@ -173,9 +173,7 @@
     </form>
 </div>
 <div class="modal-footer">
-    <button type="button" *ngIf="!appointId && customerReceipt?.state != 'done'" class="btn btn-primary mr-2" accesskey="s" (click)="onSave()">
-        Lưu</button>
-    <button type="button" *ngIf="appointId && customerReceipt?.state != 'done'" class="btn btn-primary mr-2" accesskey="s" (click)="onSaveToAppoint()">
+    <button type="button" *ngIf="customerReceipt?.state != 'done'" class="btn btn-primary mr-2" accesskey="s" (click)="onSave()">
         Lưu</button>
     <button type="button" class="btn btn-secondary mr-2" accesskey="q" (click)="activeModal.dismiss()">
         Đóng</button>

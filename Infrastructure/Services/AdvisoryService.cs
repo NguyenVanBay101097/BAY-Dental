@@ -393,7 +393,6 @@ namespace Infrastructure.Services
                     }
                 
                     saleOrderLine.Diagnostic = string.Join(", ", toothDiagnosisName);
-                    saleOrderLine.CounselorId = advisory.EmployeeId;
                     saleOrderLine.AdvisoryId = advisory.Id;
                     saleOrderLines.Add(saleOrderLine);
                 }
@@ -468,7 +467,6 @@ namespace Infrastructure.Services
                     }
                     quotationLine.Diagnostic = string.Join(", ", toothDiagnosisName);
                     quotationLine.AdvisoryId = advisory.Id;
-                    quotationLine.CounselorId = advisory.EmployeeId;
                     quotationLines.Add(quotationLine);
                 }
             }
@@ -483,54 +481,35 @@ namespace Infrastructure.Services
             var advisoryService = GetService<IAdvisoryService>();
             var saleOrderLineService = GetService<ISaleOrderLineService>();
             var quotationLineService = GetService<IQuotationLineService>();
-            var res = new List<AdvisoryLine>();
-            var saleOrderLines = await saleOrderLineService.SearchQuery(x => x.AdvisoryId == val.AdvisoryId)
-                .Include(x => x.Order)
-                .Include(x => x.Employee)
-                .ToListAsync();
-            if (saleOrderLines.Any())
-            {
-                foreach (var line in saleOrderLines)
+            var saleOrderLines = saleOrderLineService.SearchQuery(x => x.AdvisoryId == val.AdvisoryId)
+                .Select(x => new AdvisoryLine
                 {
-                    res.Add(new AdvisoryLine
-                    {
-                        Id = line.Order.Id,
-                        Name = line.Order.Name,
-                        ProductName = line.Name,
-                        Date = line.Order.DateOrder,
-                        DoctorName = line.Employee != null ? line.Employee.Name : null,
-                        Qty = line.ProductUOMQty,
-                        Type = "saleOrder"
-                    });
-                }
-            }
+                    Id = x.Order.Id,
+                    Name = x.Order.Name,
+                    ProductName = x.Name,
+                    Date = x.Order.DateOrder,
+                    DoctorName = x.Employee.Name,
+                    Qty = x.ProductUOMQty,
+                    Type = "saleOrder"
+                });
 
-            var quotationLines = await quotationLineService.SearchQuery(x => x.AdvisoryId == val.AdvisoryId)
-                .Include(x => x.Quotation)
-                .ToListAsync();
-            if (quotationLines.Any())
-            {
-                foreach (var line in quotationLines)
+            var quotationLines = quotationLineService.SearchQuery(x => x.AdvisoryId == val.AdvisoryId)
+                .Select(x => new AdvisoryLine
                 {
-                    res.Add(new AdvisoryLine
-                    {
-                        Id = line.Quotation.Id,
-                        Name = line.Quotation.Name,
-                        ProductName = line.Name,
-                        Date = line.Quotation.DateQuotation,
-                        Qty = line.Qty,
-                        Type = "quotation"
-                    });
-                }
-            }
+                    Id = x.Quotation.Id,
+                    Name = x.Quotation.Name,
+                    ProductName = x.Name,
+                    Date = x.Quotation.DateQuotation,
+                    Qty = x.Qty,
+                    Type = "quotation",
+                    DoctorName = x.Employee.Name
+                });
 
-            var totalItems = res.Count();
+            var res = saleOrderLines.Union(quotationLines);
+            var totalItems = await res.CountAsync();
 
-
-
-            res = res.OrderByDescending(x => x.Date).ToList();
-
-            var items = res.Skip(val.Offset).Take(val.Limit).ToList();
+            res = res.OrderByDescending(x => x.Date);
+            var items = await res.Skip(val.Offset).Take(val.Limit).ToListAsync();
 
             var paged = new PagedResult2<AdvisoryLine>(totalItems, val.Offset, val.Limit)
             {

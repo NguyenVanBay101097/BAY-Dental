@@ -179,12 +179,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public decimal? SubPrice { get; set; }
 
-        /// <summary>
-        /// Tư vấn
-        /// </summary>
-        public Guid? AdvisoryId { get; set; }
-
-
         public Guid? EmployeeId { get; set; }
 
         public Guid? AssistantId { get; set; }
