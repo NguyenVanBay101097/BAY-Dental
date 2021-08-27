@@ -225,6 +225,8 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.IsRepeatCustomer == val.IsRepeatCustomer.Value);
             }
 
+            query = query.OrderByDescending(x => x.DateWaiting.Value);
+
 
             return query;
         }

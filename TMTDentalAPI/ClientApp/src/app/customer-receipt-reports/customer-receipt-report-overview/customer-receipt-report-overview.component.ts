@@ -17,7 +17,7 @@ import { CustomerReceiptReportFilter, CustomerReceiptReportService } from '../cu
 })
 export class CustomerReceiptReportOverviewComponent implements OnInit {
   loading = false;
-  limit = 20;
+  limit = 10;
   skip = 0;
   total: number;
   gridData: GridDataResult;

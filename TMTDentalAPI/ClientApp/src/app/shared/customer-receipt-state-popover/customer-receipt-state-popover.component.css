@@ -41,3 +41,7 @@ textarea.ng-invalid {
     font-size: 1rem;
     background-color: #f7f7f7;
 }
+
+.btn-font-size{
+    font-size: 14px;
+}

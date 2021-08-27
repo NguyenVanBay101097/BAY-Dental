@@ -145,7 +145,7 @@ namespace TMTDentalAPI.Controllers
                             numberTeeth += te.Name +", ";
                         }
                     }
-                    worksheet.Cells[row, 6].Value = item.ToothType == "manual" ? numberTeeth : (item.ToothType == "whole_jaw" ? "Nguyên hàm" : ((item.ToothType == "upper_jaw" ? "Hàm trên" : "Hàm dưới" )));
+                    worksheet.Cells[row, 6].Value = numberTeeth;
                     worksheet.Cells[row, 7].Value = item.Diagnostic;
                    
                     worksheet.Cells[row, 8].Value = item.PriceSubTotal;

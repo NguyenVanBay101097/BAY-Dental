@@ -50,6 +50,7 @@ export class CustomerReceiptStatePopoverComponent implements OnInit {
       if (this.item.state == 'done' && this.item.isNoTreatment) {
         this.formGroup.get('isNoTreatment').setValue(this.item.isNoTreatment);
         this.formGroup.get('reason').setValue(this.item.reason);
+        this.formGroup.controls['reason'].disable();
       }
     }
   }

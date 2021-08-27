@@ -97,7 +97,11 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells["A1:I1"].Style.Font.Bold = true;
                 worksheet.Cells["A1:I1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
 
-                worksheet.Cells["A2:I2"].Value = $"Từ ngày {val.DateFrom.Value.ToShortDateString()} đến ngày {val.DateTo.Value.ToShortDateString()}";
+                if(val.DateFrom.HasValue && val.DateTo.HasValue)
+                    worksheet.Cells["A2:I2"].Value = $"Từ ngày {val.DateFrom.Value.ToShortDateString()} đến ngày {val.DateTo.Value.ToShortDateString()}";
+                else
+                    worksheet.Cells["A2:I2"].Value = $"Từ ngày {data.Items.LastOrDefault().DateWaiting.Value.ToShortDateString()} đến ngày {data.Items.FirstOrDefault().DateWaiting.Value.ToShortDateString()} ";
+              
                 worksheet.Cells["A2:I2"].Merge = true;
                 worksheet.Cells["A2:I2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
@@ -179,7 +183,11 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells["A1:J1"].Style.Font.Bold = true;
                 worksheet.Cells["A1:J1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
 
-                worksheet.Cells["A2:J2"].Value = @$"{(val.DateFrom.HasValue ? "Từ ngày " + val.DateFrom.Value.ToShortDateString() : "")}  {(val.DateTo.HasValue ? "đến ngày " + val.DateTo.Value.ToShortDateString() : "")}";
+                if (val.DateFrom.HasValue && val.DateTo.HasValue)
+                    worksheet.Cells["A2:J2"].Value = @$"{(val.DateFrom.HasValue ? "Từ ngày " + val.DateFrom.Value.ToShortDateString() : "")}  {(val.DateTo.HasValue ? "đến ngày " + val.DateTo.Value.ToShortDateString() : "")}";
+                else
+                    worksheet.Cells["A2:J2"].Value = "";
+             
                 worksheet.Cells["A2:J2"].Style.Numberformat.Format = "dd/mm/yyyy";
                 worksheet.Cells["A2:J2"].Merge = true;
                 worksheet.Cells["A2:J2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
@@ -318,7 +326,11 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells["A1:H1"].Style.Font.Bold = true;
                 worksheet.Cells["A1:H1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
 
-                worksheet.Cells["A2:H2"].Value = @$"{(val.DateFrom.HasValue ? "Từ ngày " + val.DateFrom.Value.ToShortDateString() : "")}  {(val.DateTo.HasValue ? "đến ngày " + val.DateTo.Value.ToShortDateString() : "")}";
+                if(val.DateFrom.HasValue && val.DateTo.HasValue)
+                    worksheet.Cells["A2:H2"].Value = @$"{(val.DateFrom.HasValue ? "Từ ngày " + val.DateFrom.Value.ToShortDateString() : "")}  {(val.DateTo.HasValue ? "đến ngày " + val.DateTo.Value.ToShortDateString() : "")}";
+                else
+                    worksheet.Cells["A2:H2"].Value = @$"{(data.Items.LastOrDefault().DateWaiting.HasValue ? "Từ ngày " + data.Items.LastOrDefault().DateWaiting.Value.ToShortDateString() : "")}  {(data.Items.FirstOrDefault().DateWaiting.HasValue ? "đến ngày " + data.Items.FirstOrDefault().DateWaiting.Value.ToShortDateString() : "")}";
+
                 worksheet.Cells["A2:H2"].Merge = true;
                 worksheet.Cells["A2:H2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
