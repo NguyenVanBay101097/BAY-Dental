@@ -245,6 +245,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<ReportPartnerDebitDetailRes> Lines { get; set; } = new List<ReportPartnerDebitDetailRes>();
     }
 
+    public class ReportPartnerDebitExcel : ReportPartnerDebitRes
+    {
+        public IEnumerable<ReportPartnerDebitDetailRes> Lines { get; set; } = new List<ReportPartnerDebitDetailRes>();
+    }
+
     public class ReportPartnerDebitPrintVM
     {
         public DateTime? DateFrom { get; set; }

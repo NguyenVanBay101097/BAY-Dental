@@ -3163,5 +3163,20 @@ namespace Infrastructure.Services
 
             return res;
         }
+
+        public async Task<IEnumerable<GetExcelManagementItemRes>> ExportManagementExcel(SaleOrderPaged val)
+        {
+            val.Limit = 0;
+            var data = await GetPagedResultAsync(val);
+            var allData = _mapper.Map<IEnumerable<GetExcelManagementItemRes>>(data.Items);
+            var allLines = await GetSaleOrderLineBySaleOrder(null);
+            foreach (var item in allData)
+            {
+                item.Lines = allLines.Where(x => x.OrderId == item.Id).ToList();
+            }
+            
+
+            return allData;
+        }
     }
 }

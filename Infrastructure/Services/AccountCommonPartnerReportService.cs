@@ -678,6 +678,28 @@ namespace Infrastructure.Services
 
         }
 
+        public async Task<IEnumerable<ReportPartnerDebitExcel>> ExportReportPartnerDebitExcel(ReportPartnerDebitReq val)
+        {
+            var companyObj = GetService<ICompanyService>();
+            var reportPartnerDebitDetailReq = new ReportPartnerDebitDetailReq()
+            {
+                FromDate = val.FromDate,
+                ToDate = val.ToDate,
+                CompanyId = val.CompanyId,
+                PartnerId = val.PartnerId
+            };
+            var data = _mapper.Map<IEnumerable<ReportPartnerDebitExcel>>(await ReportPartnerDebit(val));
+            foreach (var line in data)
+            {
+
+                reportPartnerDebitDetailReq.PartnerId = line.PartnerId;
+                line.Lines = await ReportPartnerDebitDetail(reportPartnerDebitDetailReq);
+            }
+
+            return data;
+
+        }
+
         private string UserId
         {
             get
