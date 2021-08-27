@@ -4,8 +4,8 @@ import { PrintTemplateConfigCuComponent } from './print-template-config-cu/print
 import { PrintTemplateConfigListComponent } from './print-template-config-list/print-template-config-list.component';
 
 const routes: Routes = [
-  { path: 'list', component: PrintTemplateConfigListComponent },
-  { path: 'edit', component: PrintTemplateConfigCuComponent }
+  // { path: 'list', component: PrintTemplateConfigListComponent },
+  { path: '', component: PrintTemplateConfigCuComponent }
 ];
 
 @NgModule({

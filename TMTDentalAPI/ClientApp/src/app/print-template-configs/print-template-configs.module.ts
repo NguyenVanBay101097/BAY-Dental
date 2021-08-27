@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { PrintTemplatesRoutingModule } from './print-template-configs-routing.module';
-import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
+import { CKEditorModule } from 'ckeditor4-angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { SharedModule } from '../shared/shared.module';

@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import '@ckeditor/ckeditor5-build-decoupled-document/build/translations/vi';
-import * as DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
-import { PrintTemplateConfigSave, PrintTemplateConfigService } from '../print-template-config.service';
+import { PrintTemplateConfigChangeType, PrintTemplateConfigDisplay, PrintTemplateConfigSave, PrintTemplateConfigService } from '../print-template-config.service';
+import { NotifyService } from 'src/app/shared/services/notify.service';
+import { AuthService } from 'src/app/auth/auth.service';
+import { PrintService } from 'src/app/shared/services/print.service';
 
 @Component({
   selector: 'app-print-template-config-cu',
@@ -10,30 +11,32 @@ import { PrintTemplateConfigSave, PrintTemplateConfigService } from '../print-te
   styleUrls: ['./print-template-config-cu.component.css']
 })
 export class PrintTemplateConfigCuComponent implements OnInit {
-  public editor = DecoupledEditor;
   typeFilter: any;
+  isEditting = false;
   types: { text: string, value: string }[] = [];
-  type: any;
-  config = new PrintTemplateConfigSave();
+  config = new PrintTemplateConfigDisplay();
+  configEdit = new PrintTemplateConfigDisplay();
   configEditor = {
-    toolbar: {
-      shouldNotGroupWhenFull: true
-    },
     language: 'vi',
-    defaultLanguage: 'vi'
+    height: 525,
+    contentsCss: '/css/print.css',
+    fullPage: true
   };
   constructor(private configService: PrintTemplateConfigService,
-    private activeRoute: ActivatedRoute
+    private activeRoute: ActivatedRoute,
+    private notifyService: NotifyService,
+    private authService: AuthService,
+    private printService: PrintService
   ) { }
 
   ngOnInit() {
     this.types = this.configService.types;
-    this.typeFilter = this.types[2].value;
-
-    this.activeRoute.paramMap.subscribe(x => {
-      this.type = x.get("type");
-      this.loadCurrentConfig();
-    });
+    this.typeFilter = this.types[0].value;
+    this.loadCurrentConfig();
+    // this.activeRoute.paramMap.subscribe(x => {
+    //   this.typeFilter = x.get("type");
+    //   this.loadCurrentConfig();
+    // });
   }
 
   public onReady(editor) {
@@ -44,150 +47,208 @@ export class PrintTemplateConfigCuComponent implements OnInit {
   }
 
   loadCurrentConfig() {
-    this.config.content = `
-    <div style="width: 100%;float: left;font-family:Arial,sans-serif;font-size:13px;padding-bottom: 20px;border-bottom: 1px solid #7a7676;margin-bottom: 20px;display:flex">
-    <div style="width: 30%;float: left;">{store_logo}</div>
-    
-    <div style="width: 35%;float: left;padding-left:10px">
-    <div style="padding-bottom: 10px;font-weight: 600;">{store_name}</div>
-    
-    <div style="padding-bottom: 10px;font-weight: 600;">{store_address}</div>
-    
-    <div style="padding-bottom: 10px;font-weight: 600;">{store_phone_number}</div>
-    
-    <div style="padding-bottom: 10px;font-weight: 600;">{store_email}</div>
-    </div>
-    
-    <div style="width: 35%;float: right;">
-    <div style="text-align: right;padding-bottom: 10px;">Mã đơn hàng: <span style="font-weight: 600">{order_code}</span></div>
-    
-    <div style="text-align: right;padding-bottom: 10px;">Ngày tạo: <span style="font-weight: 600">{created_on}</span></div>
-    </div>
-    </div>
-    
-    <div style="width: 100%">
-    <h1 style="font-family:Arial,sans-serif;font-size:22px;text-align: center;padding-top: 10px;">Đơn hàngHH</h1>
-    </div>
-    
-    <table style="width:100%;margin: 0 0 20px;">
-      <tbody style="font-family:Arial,sans-serif;font-size:13px;">
-        <tr>
-          <td style="width: 35%;">&nbsp;</td>
-          <td style="width: 35%;">&nbsp;</td>
-          <td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td style="padding-bottom: 10px;"><span style="font-weight: 600;">Hóa đơn đến:</span></td>
-          <td style="padding-bottom: 10px;"><span style="font-weight: 600;">Giao hàng đến:</span></td>
-          <td style="text-align: right;padding-bottom: 10px;">Điện thoại: <span style="font-weight: 600">{customer_phone_number}</span></td>
-        </tr>
-        <tr>
-          <td style="padding-bottom: 10px;">{customer_name}</td>
-          <td style="padding-bottom: 10px;">{customer_name}</td>
-          <td style="text-align: right;padding-bottom: 10px;">Email: <span style="font-weight: 600;">{customer_email}</span></td>
-        </tr>
-        <tr>
-          <td style="padding-right: 20px;line-height: 20px;">{billing_address}</td>
-          <td style="padding-right: 20px;line-height: 20px;">{shipping_address}</td>
-          <td>&nbsp;</td>
-        </tr>
-      </tbody>
-    </table>
-    
-    <table cellpadding="0" cellspacing="0" style="width: 100%;border-left: 1px solid #7a7676;border-top: 1px solid #7a7676">
-      <tbody>
-        <tr style="font-family:Arial,sans-serif;font-size: 12px;font-weight: 600">
-          <td style="padding: 1%; text-align: center;border-bottom:1px solid #7a7676;border-right:1px solid #7a7676; width: 10%;"><span>STT </span></td>
-          <td style="padding: 1%; width: 10%; text-align: left; border-bottom:1px solid #7a7676;border-right:1px solid #7a7676;"><span>Mã sản phẩm </span></td>
-          <td style="padding: 1%; width: 20%; text-align: left; border-bottom:1px solid #7a7676;border-right:1px solid #7a7676;"><span>Tên sản phẩm </span></td>
-          <td style="padding: 1%; width: 10%; border-bottom: 1px solid rgb(122, 118, 118); border-right: 1px solid rgb(122, 118, 118);"><span>Đơn vị</span></td>
-          <td style="padding: 1%; width: 10%; text-align: right; border-bottom:1px solid #7a7676;border-right:1px solid #7a7676;"><span>Số lượng </span></td>
-          <td style="padding: 1%; width: 15%; text-align: right; border-bottom:1px solid #7a7676;border-right:1px solid #7a7676;"><span>Đơn giá </span></td>
-          <td style="padding: 1%; width: 10%; text-align: right; border-bottom:1px solid #7a7676;border-right:1px solid #7a7676;"><span>Chiết khấu </span></td>
-          <td style="padding: 1%; width: 15%; text-align: right; border-bottom:1px solid #7a7676;border-right:1px solid #7a7676;"><span>Thành tiền </span></td>
-        </tr>
-        <!--<#assign lines = model.orderLineItems>--><!--<#list lines as line>-->
-        <tr style="font-family:Arial,sans-serif;font-size: 12px">
-          <td style="padding: 1%; text-align: center;border-bottom:1px solid #7a7676;border-right:1px solid #7a7676; width: 10%;"><span>{line_stt}</span></td>
-          <td style="padding: 1%; width: 10%; text-align: left; border-bottom:1px solid #7a7676;border-right:1px solid #7a7676;"><span>{line_variant_code}</span></td>
-          <td style="padding: 1%; width: 20%; text-align: left; border-bottom:1px solid #7a7676;border-right:1px solid #7a7676;"><span>{line_variant}</span></td>
-          <td style="padding: 1%; width: 10%; border-bottom: 1px solid rgb(122, 118, 118); border-right: 1px solid rgb(122, 118, 118);"><span>{line_unit}</span></td>
-          <td style="padding: 1%; width: 10%; text-align: right; border-bottom:1px solid #7a7676;border-right:1px solid #7a7676;"><span>{line_quantity}</span></td>
-          <td style="padding: 1%; width: 15%; text-align: right; border-bottom:1px solid #7a7676;border-right:1px solid #7a7676;"><span>{line_price}</span></td>
-          <td style="padding: 1%; width: 10%; text-align: right; border-bottom:1px solid #7a7676;border-right:1px solid #7a7676;"><span>{line_discount_rate}%</span></td>
-          <td style="padding: 1%; width: 15%; text-align: right; border-bottom:1px solid #7a7676;border-right:1px solid #7a7676;"><span>{line_amount}</span></td>
-        </tr>
-        <!--</#list>-->
-      </tbody>
-    </table>
-    
-    <table style="width:100%">
-      <tbody>
-        <tr>
-          <td style="width: 50%;">
-          <table border="1" cellpadding="1" cellspacing="1" style="width:500px;">
-            <tbody>
-              <tr>
-                <td>fdsaf</td>
-                <td>fdas</td>
-              </tr>
-              <tr>
-                <td><span>{line_stt}</span></td>
-                <td><span>{line_variant_code}</span></td>
-              </tr>
-              <tr>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-              </tr>
-            </tbody>
-          </table>
-    
-          <p>&nbsp;</p>
-          </td>
-          <td style="width: 50%;">&nbsp;</td>
-        </tr>
-        <tr style="font-family:Arial,sans-serif;font-size: 13px;">
-          <td style="width: 50%;padding:1%">&nbsp;</td>
-          <td style="width: 50%;border-bottom: 1px solid #7a7676;padding: 10px;">Tổng số lượng<span style="float: right;">{total_quantity}</span></td>
-        </tr>
-        <tr style="font-family:Arial,sans-serif;font-size: 13px;">
-          <td style="width: 50%;padding: 1%">&nbsp;</td>
-          <td style="width: 50%;border-bottom: 1px solid #7a7676;padding: 10px;">Tổng Tiền<span style="float: right;">{total}</span></td>
-        </tr>
-        <tr style="font-family:Arial,sans-serif;font-size: 13px;">
-          <td style="width: 50%;padding:1%">&nbsp;</td>
-          <td style="width: 50%;border-bottom: 1px solid #7a7676;padding: 10px;">VAT<span style="float: right;">{total_tax}</span></td>
-        </tr>
-        <tr style="font-family:Arial,sans-serif;font-size: 13px;">
-          <td style="width: 50%;padding:1%">&nbsp;</td>
-          <td style="width: 50%;border-bottom: 1px solid #7a7676;padding: 10px;">Chiết khấu<span style="float: right;">{order_discount}</span></td>
-        </tr>
-        <tr style="font-family:Arial,sans-serif;font-size: 13px;border-bottom: 1px solid #7a7676">
-          <td style="width: 50%;padding:1%;border-bottom: 0;">&nbsp;</td>
-          <td style="width: 50%;border-bottom: 1px solid #222222;padding: 10px;">Phí giao hàng<span style="float: right;">{delivery_fee}</span></td>
-        </tr>
-        <tr style="font-family:Arial,sans-serif;font-size: 13px;">
-          <td style="width: 50%;padding:1%">&nbsp;</td>
-          <td style="width: 50%;font-weight: 600;padding: 10px;">Khách phải trả<span style="float: right;">{total_amount}</span></td>
-        </tr>
-      </tbody>
-    </table>
-    
-    <footer style="page-break-after: always">.</footer>
-    
-    `;
+    var val = new PrintTemplateConfigChangeType();
+    val.type = this.typeFilter;
+    this.configService.getDisplay(val).subscribe(res => {
+      this.config = res;
+      // if (!res.content)
+      this.config.content = `
+
+
+
+      <!DOCTYPE html>
+      <html>
+      <head>
+          <meta charset="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>TDental.vn</title>
+      
+          <!-- Load paper.css for happy printing -->
+      
+          <link rel="stylesheet" type="text/css" href="/css/print.css" />
+          <style>
+              @page {
+                  size: A4 !important;
+                  margin-top: 10mm ;
+                  margin-right: 10mm;
+                  margin-bottom: 10mm;
+                  margin-left:10mm ;
+              }
+      
+          </style>
+      </head>
+      <body class="A4">
+          <div class="container">
+              
+      <div class="">
+              <div class="d-flex mb-2">
+                      <img class="img-fluid me-3" style="width: 150px;" src="http://statics.tdental.vn/images/localhost/210728/1007416043_Capture.PNG" alt="chi nh&#xE1;nh 1">
+                  <div>
+                      <div class="text-xl font-semibold">chi nh&#xE1;nh 1</div>
+                          <div>Địa chỉ: X&#xE3; An Th&#xE1;i, Huy&#x1EC7;n An L&#xE3;o, Th&#xE0;nh ph&#x1ED1; H&#x1EA3;i Ph&#xF2;ng</div>
+                          <div>ĐT: 0357142225</div>
+                          <div>Email: dfsjaf@gmail.com</div>
+                  </div>
+              </div>
+      
+          <div class="text-center">
+              <div class="text-3xl font-semibold">PHIẾU ĐIỀU TRỊ</div>
+              <div>Ngày 27 tháng 8 năm 2021 </div>
+              <div class="font-semibold">Số: SO00193</div>
+          </div>
+          <div class="o_form_view">
+              <div class="o_group mt-0 mb-0">
+                  <table class="o_group o_inner_group">
+                      <tbody>
+                          <tr>
+                              <td colspan="2">
+                                  <div class="o_horizontal_separator">
+                                      THÔNG TIN CHI TIẾT
+                                  </div>
+                              </td>
+                          </tr>
+                          <tr>
+                              <td colspan="1" class="o_td_label">
+                                  <div class="o_form_label o_form_label_help">
+                                      Khách hàng
+                                  </div>
+                              </td>
+                              <td colspan="1" style="width: 100%;">
+                                  <div class="o_field_widget">kh&#xE1;ch h&#xE0;ng m&#x1EDB;i 3</div>
+                              </td>
+                          </tr>
+      
+                      </tbody>
+                  </table>
+              </div>
+          </div>
+      
+          <div>
+              <div class="text-lg font-semibold mb-1">BẢNG KÊ DỊCH VỤ</div>
+              <table class="table table-sm table-bordered mb-1">
+                  <thead>
+                      <tr>
+                          <th>Dịch vụ</th>
+                          <th class="text-right">Số lượng</th>
+                          <th class="text-right">Đơn giá</th>
+                          <th class="text-right">Giảm giá</th>
+                          <th class="text-right">Thành tiền</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                          <tr *ngFor="let line of saleOrderPrint.orderLines; let i=index">
+                              <td>L&#x1EA5;y cao r&#x103;ng v&#xE0; &#x111;&#xE1;nh b&#xF3;ng</td>
+                              <td class="text-right">1</td>
+                              <td class="text-right">100.000</td>
+                              <td class="text-right">0</td>
+                              <td class="text-right">100.000</td>
+                          </tr>
+      
+                  </tbody>
+              </table>
+              <div class="o_form_view float-right">
+                  <table class="o_group o_inner_group">
+                      <tbody>
+                          <tr>
+                              <td colspan="1" class="o_td_label pr-3">
+                                  <div class="o_form_label">
+                                      Tổng tiền
+                                  </div>
+                              </td>
+                              <td colspan="1" class="text-right pe-0">
+                                  <div class="o_form_field o_form_field_number">100.000</div>
+                              </td>
+                          </tr>
+                          <tr>
+                              <td colspan="1" class="o_td_label pr-3">
+                                  <div class="o_form_label">
+                                      Đã thanh toán
+                                  </div>
+                              </td>
+                              <td colspan="1" class="text-right pe-0">
+                                  <div class="o_form_field o_form_field_number">0</div>
+                              </td>
+                          </tr>
+                          <tr>
+                              <td colspan="1" class="o_td_label pr-3">
+                                  <div class="o_form_label">
+                                      Còn lại
+                                  </div>
+                              </td>
+                              <td colspan="1" class="text-right pe-0">
+                                  <div class="o_form_field o_form_field_number">100.000</div>
+                              </td>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+              <div class="clearfix"></div>
+          </div>
+      
+          <div class="d-flex mt-2">
+              <div class="col">
+                  <div class="text-center">
+                      <span class="font-semibold">Người lập phiếu</span> <br />
+                      <i>(Ký, họ tên)</i> <br />
+                      <span></span> <br />
+                      <span></span> <br />
+                      <span></span> <br />
+                      <span class="font-semibold"></span>
+                  </div>
+              </div>
+              <div class="col">
+                  <div class="text-center">
+                      <span class="font-semibold"> Khách hàng</span> <br />
+                      <i>(Ký, họ tên)</i> <br />
+                      <span></span> <br />
+                      <span></span> <br />
+                      <span></span> <br />
+                      <span class="font-semibold">KH&#xC1;CH H&#xC0;NG M&#x1EDA;I 3</span>
+                  </div>
+              </div>
+          </div>
+      </div>
+          </div>
+      </body>
+      </html>
+      
+      `;
+    });
+
   }
 
 
   onDefault() {
-
+    //gọi api get default
   }
 
   onPrint() {
-
+    this.printService.printHtml(this.config.content);
   }
 
   onSave() {
+    var val = Object.assign({}, this.configEdit) as PrintTemplateConfigSave;
+    val.companyId = this.authService.userInfo ? this.authService.userInfo.companyId : '';
+    val.type = this.typeFilter;
+    this.configService.createOrUpdate(val).subscribe(res => {
+      this.notifyService.notify('success', 'Lưu thành công');
+      this.onToggleEdit();
+      this.config = this.configEdit;
+    });
+  }
 
+  onChangeType(e) {
+    const value = e.target.value;
+    this.typeFilter = value;
+    this.loadCurrentConfig();
+  }
+
+  onEdit() {
+    this.configEdit = Object.assign({}, this.config);
+    this.onToggleEdit();
+  }
+
+  onToggleEdit() {
+    this.isEditting = !this.isEditting;
   }
 }
