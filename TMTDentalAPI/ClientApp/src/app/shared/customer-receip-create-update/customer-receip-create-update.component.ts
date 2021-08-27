@@ -238,7 +238,27 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     return basic;
   }
 
+  deleteBtnClick() {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Xóa tiếp nhận';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa tiếp nhận?';
 
+    modalRef.result.then(() => {
+      this.customerReceiptService.delete(this.id).subscribe(() => {
+        this.notificationService.show({
+          content: 'Xóa thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+        this.activeModal.close();
+      }, err => {
+        console.log(err);
+      });
+    }, () => {
+    });
+  }
 
 
 

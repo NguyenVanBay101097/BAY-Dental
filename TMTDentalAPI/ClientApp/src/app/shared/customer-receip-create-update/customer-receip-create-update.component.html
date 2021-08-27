@@ -175,6 +175,8 @@
 <div class="modal-footer">
     <button type="button" *ngIf="customerReceipt?.state != 'done'" class="btn btn-primary mr-2" accesskey="s" (click)="onSave()">
         Lưu</button>
+    <button type="button" *ngIf="customerReceipt?.state != 'done' && id" class="btn btn-danger mr-2" (click)="deleteBtnClick()">
+        Xóa</button>
     <button type="button" class="btn btn-secondary mr-2" accesskey="q" (click)="activeModal.dismiss()">
         Đóng</button>
 </div>

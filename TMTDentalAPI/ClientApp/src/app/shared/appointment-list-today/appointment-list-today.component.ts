@@ -2,7 +2,7 @@ import { AppointmentBasic } from './../../appointment/appointment';
 import { DashboardReportService, GetDefaultRequest } from './../../core/services/dashboard-report.service';
 import { NotifyService } from 'src/app/shared/services/notify.service';
 import { state } from '@angular/animations';
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, DoCheck, EventEmitter, Input, IterableDiffer, IterableDiffers, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -24,7 +24,7 @@ import { ReceiveAppointmentService } from 'src/app/customer-receipt/receive-appo
   templateUrl: './appointment-list-today.component.html',
   styleUrls: ['./appointment-list-today.component.css']
 })
-export class AppointmentListTodayComponent implements OnInit {
+export class AppointmentListTodayComponent implements OnInit, DoCheck {
   @Input() appointments: AppointmentBasic[] = [];
 
   @Output() onUpdateAPEvent = new EventEmitter<any>();
@@ -52,22 +52,31 @@ export class AppointmentListTodayComponent implements OnInit {
     { value: 'cancel', text: 'Hủy hẹn' },
   ]
 
+  iterableDiffer: IterableDiffer<any>;
+
   constructor(private appointmentService: AppointmentService,
     private intlService: IntlService, private modalService: NgbModal,
     private notifyService: NotifyService,
     private authService: AuthService,
     private dashboardReportService : DashboardReportService,
     private notificationService: NotificationService, private router: Router, private employeeService: EmployeeService,
-    private receiveAppointmentService: ReceiveAppointmentService
-    ) { }
+    private receiveAppointmentService: ReceiveAppointmentService,
+    private iterableDiffers: IterableDiffers
+    ) { 
+      this.iterableDiffer = this.iterableDiffers.find([]).create(null);
+    }
 
 
   ngOnInit() {
     this.loadData();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.loadData();
+  ngDoCheck() {
+    var changes = this.iterableDiffer.diff(this.appointments);
+    if (changes) {
+      console.log('detect changes');
+      this.loadData();
+    }
   }
 
   loadData() {
@@ -112,6 +121,7 @@ export class AppointmentListTodayComponent implements OnInit {
     modalRef.componentInstance.title = "Đặt lịch hẹn";
     modalRef.result.then(res => {
       this.notifyService.notify('success','Lưu thành công');
+      this.onCreateAPEvent.emit(res);
     }, () => { }
     );
   }

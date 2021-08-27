@@ -128,8 +128,8 @@ export class ReceiveAppointmentDialogComponent implements OnInit {
     receipt.productIds = receipt.services ? receipt.services.map(x => x.id) : [];
     receipt.appointmentId = this.receiveAppointmentDisplay.appointmentId;
     this.receiveAppointmentService.actionSave(receipt).subscribe(
-      () => {
-        this.activeModal.close();
+      (res) => {
+        this.activeModal.close(res);
       },
       er => {
         this.errorService.show(er);

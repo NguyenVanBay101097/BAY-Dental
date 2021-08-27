@@ -105,5 +105,16 @@ namespace TMTDentalAPI.Controllers
 
             return NoContent();
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Remove(Guid id)
+        {
+            var customerReceipt = await _customerReceiptService.GetByIdAsync(id);
+            if (customerReceipt == null)
+                return NotFound();
+
+            await _customerReceiptService.DeleteAsync(customerReceipt);
+            return NoContent();
+        }
     }
 }

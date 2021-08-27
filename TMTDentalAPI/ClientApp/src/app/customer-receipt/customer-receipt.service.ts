@@ -115,6 +115,10 @@ export class CustomerReceiptService {
     return this.http.put(this.baseApi + this.apiUrl + "/" + id, val);
   }
 
+  delete(id: string) {
+    return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
+  }
+
   getCount(val: any) {
     return this.http.post(this.baseApi + this.apiUrl + "/GetCount", val);
   }
