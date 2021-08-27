@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Models;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -25,5 +26,8 @@ namespace Infrastructure.Services
         Task<PagedResult2<ServiceReportDetailRes>> GetServiceReportDetailPaged(ServiceReportDetailReq val);
         Task<ServiceReportPrint> ServiceReportByServicePrint(ServiceReportReq val);
         Task<ServiceReportPrint> ServiceReportByTimePrint(ServiceReportReq val);
+        Task<IEnumerable<ServiceReportResExcel>> ServiceReportByTimeExcel(ServiceReportReq val);
+        Task<IEnumerable<ServiceReportResExcel>> ServiceReportByServiceExcel(ServiceReportReq val);
+        FileContentResult ExportServiceReportExcel(IEnumerable<ServiceReportResExcel> data, DateTime? dateFrom, DateTime? dateTo, string type);
     }
 }

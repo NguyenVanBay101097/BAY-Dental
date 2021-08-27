@@ -77,4 +77,9 @@ namespace Umbraco.Web.Models.ContentEditing
         //time, service
         public string type { get; set; }
     }
+
+    public class ServiceReportResExcel : ServiceReportRes
+    {
+        public IEnumerable<ServiceReportDetailRes> Lines { get; set; } = new List<ServiceReportDetailRes>();
+    }
 }

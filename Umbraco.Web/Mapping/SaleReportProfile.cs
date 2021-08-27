@@ -12,6 +12,7 @@ namespace Umbraco.Web.Mapping
         public SaleReportProfile()
         {
             CreateMap<ServiceReportRes, ServiceReportResPrint>();
+            CreateMap<ServiceReportRes, ServiceReportResExcel>();
             CreateMap<ServiceReportReq, ServiceReportDetailReq>();
         }
     }

@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Models;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,5 +25,6 @@ namespace Infrastructure.Services
 
         IQueryable<AccountInvoiceReport> GetRevenueReportQuery(RevenueReportQueryCommon val);
         Task<IEnumerable<RevenueReportItem>> GetRevenueReport(RevenueReportFilter val);
+        Task<RevenueReportExcelVM<RevenueTimeReportExcel>> GetRevenueTimeReportExcel(RevenueTimeReportPar val);
     }
 }

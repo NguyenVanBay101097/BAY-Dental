@@ -236,7 +236,41 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public IEnumerable<RevenueReportDetailDisplay> Lines { get; set; } = new List<RevenueReportDetailDisplay>();
     }
-  
+
+    public class RevenuePartnerReportExcel : RevenuePartnerReportDisplay
+    {
+        public IEnumerable<RevenueReportDetailDisplay> Lines { get; set; } = new List<RevenueReportDetailDisplay>();
+    }
+    public class RevenueTimeReportExcel : RevenueTimeReportDisplay
+    {
+        public IEnumerable<RevenueReportDetailDisplay> Lines { get; set; } = new List<RevenueReportDetailDisplay>();
+    }
+    public class RevenueServiceReportExcel : RevenueServiceReportDisplay
+    {
+        public IEnumerable<RevenueReportDetailDisplay> Lines { get; set; } = new List<RevenueReportDetailDisplay>();
+    }
+
+    public class RevenueEmployeeReportExcel : RevenueEmployeeReportDisplay
+    {
+        public IEnumerable<RevenueReportDetailDisplay> Lines { get; set; } = new List<RevenueReportDetailDisplay>();
+    }
+
+    public class RevenueReportExcelVM<T> 
+    {
+        public RevenueReportExcelVM(DateTime? dateFrom, DateTime? dateTo)
+        {
+            this.DateTo = dateTo;
+            this.DateFrom = dateFrom;
+            this.Data = Data;
+        }
+        public RevenueReportExcelVM() { }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public string Title { get; set; }
+        public string ColumnTitle { get; set; }
+        public IEnumerable<T> Data { get; set; } = new List<T>();
+    }
+
     public class RevenueReportPrintVM<T> where T : class
     {
         public RevenueReportPrintVM(DateTime? dateFrom, DateTime? dateTo)

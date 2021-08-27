@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,6 +17,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -255,18 +257,9 @@ namespace TMTDentalAPI.Controllers
             var res = await _saleLineService.GetPagedResultAsync(val);
             var data = _mapper.Map<IEnumerable<ServiceSaleReportExcel>>(res.Items);
             byte[] fileContent;
-            var packageByte = await _exportExcelService.createExcel(data, "báo cáo dịch vụ");
+            var packageByte = await _exportExcelService.createExcel(data, "BaoCaoDichVu_DangDieuTri");
             using (MemoryStream memStream = new MemoryStream(packageByte as byte[]))
             {
-                //ExcelPackage packageResult = new ExcelPackage(memStream);
-                //packageResult.Load(memStream);
-                ////await _exportExcelService.AddToHeader(packageResult.GetAsByteArray());
-                //packageResult.Save();
-
-                //fileContent = memStream.ToArray();
-                //string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-
-                //return new FileContentResult(fileContent, mimeType);
                 ExcelPackage package = new ExcelPackage(memStream);
                 package.Load(memStream);
 
@@ -277,17 +270,19 @@ namespace TMTDentalAPI.Controllers
                 worksheet.InsertRow(1,3);
                 worksheet.Cells[1,1,1,worksheet.Dimension.Columns].Merge = true;
                 worksheet.Cells[1, 1].Value = "BÁO CÁO DỊCH VỤ ĐANG ĐIỀU TRỊ";
+                worksheet.Cells[1, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
                 worksheet.Cells[1, 1].Style.Font.Bold = true;
                 worksheet.Cells[1, 1].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
                 worksheet.Cells[2,1,2,worksheet.Dimension.Columns].Merge = true;
                 worksheet.Cells[2, 1].Value = (val.DateOrderFrom.HasValue ? "Từ ngày " + val.DateOrderFrom.Value.ToString("dd/MM/yyyy") : "") +
                                                (val.DateOrderTo.HasValue ? " đến ngày " + val.DateOrderTo.Value.ToString("dd/MM/yyyy") : "");
-
+                worksheet.Cells[2, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells["A4:I4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["A4:I4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#1167a8"));
+                worksheet.Cells["A4:I4"].Style.Font.Color.SetColor(Color.White);
 
                 worksheet.Cells.AutoFitColumns();
                 
-
-
                 await _exportExcelService.AddToHeader(package.GetAsByteArray());
             }
 

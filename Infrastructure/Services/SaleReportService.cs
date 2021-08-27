@@ -7,11 +7,16 @@ using AutoMapper;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -882,6 +887,178 @@ namespace Infrastructure.Services
                 res.Company = _mapper.Map<CompanyPrintVM>(company);
             }
             return res;
+        }
+
+        public async Task<IEnumerable<ServiceReportResExcel>> ServiceReportByTimeExcel(ServiceReportReq val)
+        {
+            var parentData = await GetServiceReportByTime(val);
+            var data = _mapper.Map<IEnumerable<ServiceReportResExcel>>(parentData);
+            var detailReq = _mapper.Map<ServiceReportDetailReq>(val);
+            detailReq.Limit = 0;
+            var allLines = await GetServiceReportDetailPaged(detailReq);
+
+            foreach (var item in data)
+            {
+                item.Lines = allLines.Items.Where(x => x.Date.Value.Date == item.Date.Value.Date);
+            }
+
+            return data;
+
+        }
+
+        public async Task<IEnumerable<ServiceReportResExcel>> ServiceReportByServiceExcel(ServiceReportReq val)
+        {
+            var parentData = await GetServiceReportByService(val);
+            var data = _mapper.Map<IEnumerable<ServiceReportResExcel>>(parentData);
+            var detailReq = _mapper.Map<ServiceReportDetailReq>(val);
+            detailReq.Limit = 0;
+            var allLines = await GetServiceReportDetailPaged(detailReq);
+
+            foreach (var item in data)
+            {
+                item.Lines = allLines.Items.Where(x => x.ProductId == item.ProductId);
+            }
+
+            return data;
+        }
+
+        public FileContentResult ExportServiceReportExcel(IEnumerable<ServiceReportResExcel> data,DateTime? dateFrom, DateTime? dateTo, string type)
+        {
+            
+            var dateToDate = "";
+            if (dateFrom.HasValue && dateTo.HasValue)
+            {
+                dateToDate = $"Từ ngày {dateFrom.Value.ToString("dd/MM/yyyy")} đến ngày {dateTo.Value.ToString("dd/MM/yyyy")}";
+            }
+            var stream = new MemoryStream();
+            byte[] fileContent;
+
+            using (var package = new ExcelPackage(stream))
+            {
+                var worksheet = package.Workbook.Worksheets.Add("BaoCaoDichVu_TheoTG");
+
+                worksheet.Cells["A1:J1"].Value = type == "time" ? "BÁO CÁO DỊCH VỤ THEO THỜI GIAN" : "BÁO CÁO THEO DỊCH VỤ";
+                worksheet.Cells["A1:J1"].Style.Font.Size = 14;
+                worksheet.Cells["A1:J1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
+                worksheet.Cells["A1:J1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells["A1:J1"].Merge = true;
+                worksheet.Cells["A1:J1"].Style.Font.Bold = true;
+                worksheet.Cells["A2:J2"].Value = dateToDate;
+                worksheet.Cells["A2:J2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells["A2:J2"].Merge = true;
+                worksheet.Cells["A3:J3"].Value = "";
+                worksheet.Cells["A4:J4"].Value = type == "time" ? "Ngày" : "Dịch vụ";
+                worksheet.Cells["A4:J4"].Style.Font.Bold = true;
+                worksheet.Cells["A4:J4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["A4:J4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
+                worksheet.Cells["A4:J4"].Style.Font.Color.SetColor(Color.White);
+                worksheet.Cells["B4:G4"].Value = "Số lượng";
+                worksheet.Cells["B4:G4"].Merge = true;
+                worksheet.Cells["B4:G4"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                worksheet.Cells["B4:G4"].Style.Font.Bold = true;
+                worksheet.Cells["B4:G4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["B4:G4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
+                worksheet.Cells["B4:G4"].Style.Font.Color.SetColor(Color.White);
+                worksheet.Cells["H4:J4"].Value = "Tổng tiền";
+                worksheet.Cells["H4:J4"].Merge = true;
+                worksheet.Cells["H4:J4"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                worksheet.Cells["H4:J4"].Style.Font.Bold = true;
+                worksheet.Cells["H4:J4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["H4:J4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
+                worksheet.Cells["H4:J4"].Style.Font.Color.SetColor(Color.White);
+                worksheet.Cells["A4:J4"].Style.Font.Size = 14;
+
+                var row = 5;
+                foreach (var item in data)
+                {
+                    if (type == "time")
+                    {
+                        worksheet.Cells[row, 1].Value = item.Date;
+                        worksheet.Cells[row, 1].Style.Numberformat.Format = "dd/mm/yyyy";
+                    }
+                    else
+                        worksheet.Cells[row, 1].Value = item.Name;
+
+                    worksheet.Cells[row, 2].Value = item.Quantity;
+                    worksheet.Cells[row, 2, row, 7].Merge = true;
+                    worksheet.Cells[row, 8].Value = item.TotalAmount;
+                    worksheet.Cells[row, 8].Style.Numberformat.Format = "#,###,###";
+                    worksheet.Cells[row, 8, row, 10].Merge = true;
+                    row++;
+                    worksheet.Cells[row, 1].Value = "";
+                    worksheet.Cells[row, 2].Value = "Ngày tạo";
+                    worksheet.Cells[row, 3].Value = "Khách hàng";
+                    worksheet.Cells[row, 4].Value = "Dịch vụ";
+                    worksheet.Cells[row, 5].Value = "Bác sĩ";
+                    worksheet.Cells[row, 6].Value = "Răng";
+                    worksheet.Cells[row, 7].Value = "Số lượng";
+                    worksheet.Cells[row, 8].Value = "Thành tiền";
+                    worksheet.Cells[row, 9].Value = "Trạng thái";
+                    worksheet.Cells[row, 10].Value = "Phiếu điều trị";
+                    worksheet.Cells[row, 2, row, 10].Style.Font.Bold = true;
+                    worksheet.Cells[row, 2, row, 10].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    worksheet.Cells[row, 2, row, 10].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#DDEBF7"));
+                    var rowEnd = row + item.Lines.Count();
+                    worksheet.Cells[row, 1, rowEnd, 1].Merge = true;
+                    row++;
+                    ExportReportServiceDetail(item.Lines, worksheet,ref row);
+
+                }
+
+                worksheet.Cells.AutoFitColumns();
+
+
+                package.Save();
+
+                fileContent = stream.ToArray();
+            }
+
+            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            stream.Position = 0;
+
+            return new FileContentResult(fileContent, mimeType);
+        }
+
+        public void ExportReportServiceDetail(IEnumerable<ServiceReportDetailRes> lines, ExcelWorksheet worksheet, ref int row)
+        {
+            foreach (var line in lines)
+            {
+                worksheet.Cells[row, 1].Value = "";
+                worksheet.Cells[row, 2].Value = line.Date;
+                worksheet.Cells[row, 2].Style.Numberformat.Format = "dd/mm/yyyy";
+                worksheet.Cells[row, 3].Value = line.OrderPartnerName;
+                worksheet.Cells[row, 4].Value = line.Name;
+                worksheet.Cells[row, 5].Value = line.EmployeeName;
+                worksheet.Cells[row, 6].Value = ShowTeethList(line.ToothType, line.Teeth);
+                worksheet.Cells[row, 7].Value = line.ProductUOMQty;
+                worksheet.Cells[row, 8].Value = line.PriceSubTotal;
+                worksheet.Cells[row, 8].Style.Numberformat.Format = "#,###,###";
+                worksheet.Cells[row, 9].Value = !line.IsActive ? "Ngừng điều trị" : ShowState(line.State);
+                worksheet.Cells[row, 10].Value = line.OrderName;
+                row++;
+            }
+        }
+
+        private string ShowTeethList(string toothType, IEnumerable<ToothSimple> teeth)
+        {
+            if (toothType == "whole_jaw")
+                return "Nguyên hàm";
+            else if (toothType == "upper_jaw")
+                return "Hàm trên";
+            else if (toothType == "lower_jaw")
+                return "Hàm dưới";
+            else
+                return string.Join(',', toothType);
+        }
+
+        private string ShowState(string state)
+        {
+            if (state == "done")
+                return "Hoàn thành";
+            else if (state == "sale")
+                return "Đang điều trị";
+            else
+                return "Ngừng điều trị";
         }
     }
 }

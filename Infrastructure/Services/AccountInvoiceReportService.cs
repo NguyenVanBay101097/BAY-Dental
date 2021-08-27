@@ -7,9 +7,14 @@ using AutoMapper;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -483,6 +488,33 @@ namespace Infrastructure.Services
             }
             return res;
         }
+
+        public async Task<RevenueReportExcelVM<RevenueTimeReportExcel>> GetRevenueTimeReportExcel(RevenueTimeReportPar val)
+        {
+            var data = _mapper.Map<IEnumerable<RevenueTimeReportExcel>>(await GetRevenueTimeReport(val));
+            var detailReq = new RevenueReportDetailPaged()
+            {
+                CompanyId = val.CompanyId,
+                Limit = 0,
+                DateFrom = val.DateFrom,
+                DateTo = val.DateTo
+            };
+            var allLines = await GetRevenueReportDetailPaged(detailReq);
+
+            foreach (var item in data)
+            {
+                item.Lines = allLines.Items.Where(x => x.InvoiceDate.Value.Date == item.InvoiceDate.Value.Date).ToList();
+            }
+
+            var res = new RevenueReportExcelVM<RevenueTimeReportExcel>(val.DateFrom, val.DateTo)
+            {
+                Title = "BÁO CÁO DOANH THU THEO THỜI GIAN",
+                ColumnTitle = "Ngày",
+                Data = data
+            };
+            return res;
+        }
+
 
 
         //public override ISpecification<AccountInvoiceReport> RuleDomainGet(IRRule rule)

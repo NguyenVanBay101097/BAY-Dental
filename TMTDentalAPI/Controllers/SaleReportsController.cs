@@ -287,5 +287,25 @@ namespace TMTDentalAPI.Controllers
             var file = _converter.Convert(pdf);
             return File(file, "application/pdf", "ServiceReportService.pdf");
         }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.Sale")]
+        public async Task<IActionResult> ExportServiceReportByTimeExcel(ServiceReportReq val)
+        {
+            var data = await _saleReportService.ServiceReportByTimeExcel(val);
+            return _saleReportService.ExportServiceReportExcel(data, val.DateFrom, val.DateTo, "time");
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.Sale")]
+        public async Task<IActionResult> ExportServiceReportByServiceExcel(ServiceReportReq val)
+        {
+            var data = await _saleReportService.ServiceReportByServiceExcel(val);
+            return _saleReportService.ExportServiceReportExcel(data, val.DateFrom, val.DateTo, "service");
+
+        }
+
+       
     }
+
 }

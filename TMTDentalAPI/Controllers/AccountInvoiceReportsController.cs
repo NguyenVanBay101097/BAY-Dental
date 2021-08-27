@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,6 +10,8 @@ using DinkToPdf.Contracts;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -219,6 +222,84 @@ namespace TMTDentalAPI.Controllers
             };
             var file = _converter.Convert(pdf);
             return File(file, "application/pdf", "baocaodoanhthu_theoNV.pdf");
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.Revenue")]
+        public async Task<IActionResult> ExportRevenueTimeReportExcel([FromBody] RevenueTimeReportPar val)
+        {
+            var data = await _invoiceReportService.GetRevenueTimeReportExcel(val);
+            var dateToDate = "";
+            if (val.DateFrom.HasValue && val.DateTo.HasValue)
+            {
+                dateToDate = $"Từ ngày {val.DateFrom.Value.ToString("dd/MM/yyyy")} đến ngày {val.DateTo.Value.ToString("dd/MM/yyyy")}";
+            }
+            var stream = new MemoryStream();
+            byte[] fileContent;
+
+            using (var package = new ExcelPackage(stream))
+            {
+                var worksheet = package.Workbook.Worksheets.Add("BaoCaoDoanhThu_TheoTG");
+
+                worksheet.Cells["A1:G1"].Value = data.Title;
+                worksheet.Cells["A1:G1"].Style.Font.Size = 14;
+                worksheet.Cells["A1:G1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
+                worksheet.Cells["A1:G1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells["A1:G1"].Merge = true;
+                worksheet.Cells["A1:G1"].Style.Font.Bold = true;
+                worksheet.Cells["A2:G2"].Value = dateToDate;
+                worksheet.Cells["A2:G2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells["A2:G2"].Merge = true;
+                worksheet.Cells["A3:G3"].Value = "";
+                worksheet.Cells["A4:A4"].Value = data.ColumnTitle;
+                worksheet.Cells["A4:G4"].Style.Font.Bold = true;
+                worksheet.Cells["A4:G4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["A4:G4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
+                worksheet.Cells["B4:G4"].Value = "Doanh thu";
+                worksheet.Cells["B4:G4"].Merge = true;
+                worksheet.Cells["B4:G4"].Style.Font.Color.SetColor(Color.White);
+                worksheet.Cells["B4:G4"].Value = "Tổng tiền";
+                worksheet.Cells["B4:G4"].Merge = true;
+                worksheet.Cells["B4:G4"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                worksheet.Cells["A4:G4"].Style.Font.Size = 14;
+
+                var row = 5;
+                foreach (var item in data.Data)
+                {
+                    worksheet.Cells[row, 1].Value = item.InvoiceDate;
+                    worksheet.Cells[row, 1].Style.Numberformat.Format = "dd/mm/yyyy";
+                    worksheet.Cells[row, 2, row, 7].Value = item.PriceSubTotal;
+                    worksheet.Cells[row, 2, row, 7].Style.Numberformat.Format = "#,###,###";
+                    worksheet.Cells[row, 2, row, 7].Merge = true;
+                    row++;
+                    worksheet.Cells[row, 1].Value = "";
+                    worksheet.Cells[row, 2].Value = "Số phiếu";
+                    worksheet.Cells[row, 3].Value = "Khách hàng";
+                    worksheet.Cells[row, 4].Value = "Bác sĩ";
+                    worksheet.Cells[row, 5].Value = "Phụ tá";
+                    worksheet.Cells[row, 6].Value = "Dịch vụ/Thuốc";
+                    worksheet.Cells[row, 7].Value = "Thanh toán";
+                    worksheet.Cells[row, 2, row, 10].Style.Font.Bold = true;
+                    worksheet.Cells[row, 2, row, 10].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    worksheet.Cells[row, 2, row, 10].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#DDEBF7"));
+                    var rowEnd = row + item.Lines.Count();
+                    worksheet.Cells[row, 1, rowEnd, 1].Merge = true;
+                    row++;
+
+                }
+
+                worksheet.Cells.AutoFitColumns();
+
+
+                package.Save();
+
+                fileContent = stream.ToArray();
+            }
+
+            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            stream.Position = 0;
+
+            return new FileContentResult(fileContent, mimeType);
         }
     }
 }

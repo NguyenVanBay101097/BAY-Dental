@@ -21,7 +21,7 @@
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-download"></i> Xuất File</button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" (click)="exportExcel(grid)">Xuất Excel</a>
+                        <a class="dropdown-item" (click)="exportExcel()">Xuất Excel</a>
                         <a class="dropdown-item" (click)="onExportPDF()">Xuất PDF</a>
                     </div>
                 </div>
@@ -44,7 +44,7 @@
             </button>
 
         </div>
-        <kendo-grid (excelExport)="onExcelExport($event)" [resizable]="true" #grid class="mt-2" [loading]="loading"
+        <kendo-grid [resizable]="true" #grid class="mt-2" [loading]="loading"
             [data]="gridData" [pageSize]="this.limit" [skip]="this.skip" [pageable]="true"
             (pageChange)="pageChange($event)">
             <kendo-grid-column field="name" title="Dịch vụ">
