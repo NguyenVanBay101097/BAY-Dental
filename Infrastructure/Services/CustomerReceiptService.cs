@@ -122,6 +122,27 @@ namespace Infrastructure.Services
                 }
             }
 
+            if (customerReceipt.State == "examination")
+            {
+                if (!customerReceipt.DateExamination.HasValue)
+                    customerReceipt.DateExamination = DateTime.Now;
+            }
+            else if (customerReceipt.State == "waiting")
+            {
+                if (!customerReceipt.DateWaiting.HasValue)
+                    customerReceipt.DateWaiting = DateTime.Now;
+                customerReceipt.DateExamination = null;
+                customerReceipt.DateDone = null;
+            }
+            else if (customerReceipt.State == "done")
+            {
+                var now = DateTime.Now;
+                if (!customerReceipt.DateExamination.HasValue)
+                    customerReceipt.DateExamination = now;
+                if (!customerReceipt.DateDone.HasValue)
+                    customerReceipt.DateDone = now;
+            }
+
             await UpdateAsync(customerReceipt);
         }
 

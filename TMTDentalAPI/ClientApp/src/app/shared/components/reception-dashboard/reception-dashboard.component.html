@@ -24,7 +24,7 @@
                             <div class="box-item">
                                 <div class="box-item-content">
                                     <p class="box-content-header">Khám mới</p>
-                                    <p class="box-content-subheader">{{medicalXamination?.newMedical || 0 }}</p>
+                                    <p class="box-content-subheader">{{getCountIsRepeatCustomer(false) || 0 }}</p>
                                 </div>
                             </div>
                         </div>
@@ -32,7 +32,7 @@
                             <div class="box-item">
                                 <div class="box-item-content">
                                     <p class="box-content-header">Tái khám</p>
-                                    <p class="box-content-subheader">{{medicalXamination?.reMedical || 0}}</p>
+                                    <p class="box-content-subheader">{{getCountIsRepeatCustomer(true) || 0}}</p>
                                 </div>
                             </div>
                         </div>
@@ -47,7 +47,7 @@
             </div>
             <div class="col-3">
                 <div class="mb-3">
-                  <app-appointment-list-today [appointments]="appointmenttList" (onUpdateAPEvent)="onUpdateAP($event)" (onCreateAPEvent)="onCreateAP($event)" (onCreateCREvent)="onCreateCR($event)" (onDeleteAPEvent)="onDeleteAP($event)"></app-appointment-list-today>
+                  <app-appointment-list-today [appointments]="appointmenttList" (onUpdateAPEvent)="onUpdateAP($event)" (successReceiveEvent)="onSuccessReceiveAppointment($event)" (onCreateAPEvent)="onCreateAP($event)" (onCreateCREvent)="onCreateCR($event)" (onDeleteAPEvent)="onDeleteAP($event)"></app-appointment-list-today>
                 </div>
                 <div>
                     <app-dashboard-revenue-today-report [revenueToday]="revenueReportToDay"></app-dashboard-revenue-today-report>

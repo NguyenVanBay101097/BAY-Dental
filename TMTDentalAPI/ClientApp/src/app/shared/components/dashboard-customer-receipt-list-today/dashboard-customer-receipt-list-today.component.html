@@ -27,9 +27,9 @@
         </div>
         <div class="state-filter-wrapper mb-2">
             <div role="group" aria-label="Basic outlined example">
-                <button type="button"  *ngFor="let state of stateCount" class="btn active" (click)="setStateFilter(state.value)"
+                <button type="button"  *ngFor="let state of states" class="btn active" (click)="setStateFilter(state.value)"
                 [class.btn-primary]="stateFilter == state.value" [class.btn-light]="stateFilter != state.value">
-                {{state.name}} <span class="ml-2" [class.text-white]="stateFilter == state.value">{{state.count || 0}}</span></button>              
+                {{state.text}} <span class="ml-2" [class.text-white]="stateFilter == state.value">{{getCount(state.value) || 0}}</span></button>              
               </div>
             <!-- <button type="button" *ngFor="let state of states" class="btn active" (click)="setStateFilter(state.value)"
                 [class.btn-primary]="stateFilter == state.value" [class.btn-light]="stateFilter != state.value">

@@ -2,7 +2,7 @@ import { AppointmentBasic } from './../../appointment/appointment';
 import { DashboardReportService, GetDefaultRequest } from './../../core/services/dashboard-report.service';
 import { NotifyService } from 'src/app/shared/services/notify.service';
 import { state } from '@angular/animations';
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, DoCheck, EventEmitter, Input, IterableDiffer, IterableDiffers, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -16,19 +16,22 @@ import { EmployeeService } from 'src/app/employees/employee.service';
 import { AppointmentCreateUpdateComponent } from '../appointment-create-update/appointment-create-update.component';
 import { CustomerReceipCreateUpdateComponent } from '../customer-receip-create-update/customer-receip-create-update.component';
 import { AuthService } from 'src/app/auth/auth.service';
+import { ReceiveAppointmentDialogComponent } from '../receive-appointment-dialog/receive-appointment-dialog.component';
+import { ReceiveAppointmentService } from 'src/app/customer-receipt/receive-appointment.service';
 
 @Component({
   selector: 'app-appointment-list-today',
   templateUrl: './appointment-list-today.component.html',
   styleUrls: ['./appointment-list-today.component.css']
 })
-export class AppointmentListTodayComponent implements OnInit {
+export class AppointmentListTodayComponent implements OnInit, DoCheck {
   @Input() appointments: AppointmentBasic[] = [];
 
   @Output() onUpdateAPEvent = new EventEmitter<any>();
   @Output() onCreateAPEvent = new EventEmitter<any>();
   @Output() onDeleteAPEvent = new EventEmitter<any>();
   @Output() onCreateCREvent = new EventEmitter<any>();
+  @Output() successReceiveEvent = new EventEmitter<any>();
   listAppointment: AppointmentBasic[];
   userId: string;
   limit = 1000;
@@ -49,23 +52,31 @@ export class AppointmentListTodayComponent implements OnInit {
     { value: 'cancel', text: 'Hủy hẹn' },
   ]
 
+  iterableDiffer: IterableDiffer<any>;
+
   constructor(private appointmentService: AppointmentService,
     private intlService: IntlService, private modalService: NgbModal,
     private notifyService: NotifyService,
     private authService: AuthService,
     private dashboardReportService : DashboardReportService,
-    private notificationService: NotificationService, private router: Router, private employeeService: EmployeeService) { }
+    private notificationService: NotificationService, private router: Router, private employeeService: EmployeeService,
+    private receiveAppointmentService: ReceiveAppointmentService,
+    private iterableDiffers: IterableDiffers
+    ) { 
+      this.iterableDiffer = this.iterableDiffers.find([]).create(null);
+    }
 
 
   ngOnInit() {
     this.loadData();
-    this.loadStateCount();
-
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.loadData();
-    this.loadStateCount();
+  ngDoCheck() {
+    var changes = this.iterableDiffer.diff(this.appointments);
+    if (changes) {
+      console.log('detect changes');
+      this.loadData();
+    }
   }
 
   loadData() {
@@ -97,13 +108,12 @@ export class AppointmentListTodayComponent implements OnInit {
     // this.loadStateCount();
   }
 
-  loadStateCount() {
-    this.stateCount = [];
-    this.states.forEach(x=> {
-      let count = x.value == '' ? this.listAppointment.length : this.listAppointment.filter(s => s.state == x.value).length;
-      this.stateCount.push({name: x.text, value: x.value, count: count})
-    })
-    
+  getStateCount(state) {
+    if (state) {
+      return this.appointments.filter(s => s.state == state).length;
+    } else {
+      return this.appointments.length;
+    }
   }
 
   createItem() {
@@ -112,7 +122,6 @@ export class AppointmentListTodayComponent implements OnInit {
     modalRef.result.then(res => {
       this.notifyService.notify('success','Lưu thành công');
       this.onCreateAPEvent.emit(res);
-      this.loadStateCount();
     }, () => { }
     );
   }
@@ -129,30 +138,24 @@ export class AppointmentListTodayComponent implements OnInit {
         this.notifyService.notify('success','Lưu thành công');
         this.onUpdateAPEvent.emit(res);
       }     
-      this.loadStateCount();
     }, () => {
     });
   }
 
   createCustomerReceipt(item) {   
-    this.dashboardReportService.getDefaultCustomerReceipt({appointmentId : item.id}).subscribe(res => {
-      let modalRef = this.modalService.open(CustomerReceipCreateUpdateComponent, { size: "lg", windowClass: "o_technical_modal modal-appointment", keyboard: false, backdrop: "static", });
-      modalRef.componentInstance.title = "Tiếp nhận";
-      modalRef.componentInstance.appointId = item.id;
-      modalRef.componentInstance.defaultData = res;
-      modalRef.result.then(rs => {
+    this.receiveAppointmentService.defaultGet(item.id).subscribe(result => {
+      let modalRef = this.modalService.open(ReceiveAppointmentDialogComponent, { size: "lg", windowClass: "o_technical_modal modal-appointment", keyboard: false, backdrop: "static", });
+      modalRef.componentInstance.receiveAppointmentDisplay = result;
+      modalRef.result.then((res) => {
         this.notifyService.notify('success','Lưu thành công');
-        if(rs.appointment){
-          this.onUpdateAPEvent.emit(rs.appointment);
-        }
-
-        if(rs.customerReceipt){
-          this.onCreateCREvent.emit(rs.customerReceipt);
-        }
-        this.loadStateCount();
+        this.successReceiveEvent.emit({
+          appointment: item,
+          customerReceipt: res
+        });
       }, () => { }
       );
     });
+   
   }
 
 
@@ -206,7 +209,6 @@ export class AppointmentListTodayComponent implements OnInit {
       });
 
       item.state = val.state;
-      this.loadStateCount();
     });
 
   }

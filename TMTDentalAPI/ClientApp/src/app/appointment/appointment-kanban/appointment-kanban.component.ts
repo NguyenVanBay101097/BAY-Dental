@@ -26,6 +26,8 @@ import { GridDataResult, PageChangeEvent, RowClassArgs } from '@progress/kendo-a
 import { MyDateRange } from '../my-date-range';
 import { CustomerReceipCreateUpdateComponent } from 'src/app/shared/customer-receip-create-update/customer-receip-create-update.component';
 import { AppointmentFilterExportExcelDialogComponent } from '../appointment-filter-export-excel-dialog/appointment-filter-export-excel-dialog.component';
+import { ReceiveAppointmentService } from 'src/app/customer-receipt/receive-appointment.service';
+import { ReceiveAppointmentDialogComponent } from 'src/app/shared/receive-appointment-dialog/receive-appointment-dialog.component';
 @Component({
   encapsulation: ViewEncapsulation.None, //<<<<< this one! 
   // To css active with innerHTML
@@ -115,7 +117,8 @@ export class AppointmentKanbanComponent implements OnInit {
     private router: Router,
     private employeeService: EmployeeService,
     private checkPermissionService: CheckPermissionService,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private receiveAppointmentService: ReceiveAppointmentService
   ) { }
 
   ngOnInit() {
@@ -1048,30 +1051,23 @@ export class AppointmentKanbanComponent implements OnInit {
   // form tiếp nhận
   receiveAppointment(id = null) {
     if (id) {
-      const appoint = this.dataAppointments.find(value => value.id === id)
-      if (appoint && (appoint.state === 'cancel' || appoint.isLate)) {
-        this.notificationService.show({
-          content: 'Không thể tiếp nhận lịch hẹn ở trạng thái hủy hẹn và quá hạn',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'error', icon: true }
-        });
-        return false;
-      }
-      const modalRef = this.modalService.open(CustomerReceipCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
-      modalRef.componentInstance.appointId = id;
-      modalRef.componentInstance.title = "Tiếp nhận";
-      modalRef.result.then(result => {
-        this.renderCalendar(); // Render Calendar
-        this.notificationService.show({
-          content: 'Lưu thành công',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
-      }, () => { });
+      const appoint = this.dataAppointments.find(value => value.id === id);
+
+      this.receiveAppointmentService.defaultGet(id).subscribe(res => {
+        const modalRef = this.modalService.open(ReceiveAppointmentDialogComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
+        modalRef.componentInstance.appointId = id;
+        modalRef.componentInstance.receiveAppointmentDisplay = res;
+        modalRef.result.then(result => {
+          this.renderCalendar(); // Render Calendar
+          this.notificationService.show({
+            content: 'Lưu thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+        }, () => { });
+      })
     }
   }
 }

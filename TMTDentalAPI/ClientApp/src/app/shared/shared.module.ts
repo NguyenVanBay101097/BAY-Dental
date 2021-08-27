@@ -104,6 +104,7 @@ import { CustomerReceiptStatePopoverComponent } from './customer-receipt-state-p
 import { IsEllipsisActiveDirective } from './is-ellipsis-active.directive';
 import { AddressDialogComponent } from './address-dialog/address-dialog.component';
 import { ChartsModule } from 'ng2-charts';
+import { ReceiveAppointmentDialogComponent } from './receive-appointment-dialog/receive-appointment-dialog.component';
 
 const config: LocaleConfig = {};
 @NgModule({
@@ -202,7 +203,8 @@ const config: LocaleConfig = {};
         SaleOrderLineSwitchStatePopoverComponent,
         CustomerReceipCreateUpdateComponent,
         CustomerReceiptStatePopoverComponent,
-        AddressDialogComponent
+        AddressDialogComponent,
+        ReceiveAppointmentDialogComponent
     ],
     exports: [
         ConfirmDialogComponent,
@@ -290,7 +292,8 @@ const config: LocaleConfig = {};
         
         CustomerReceipCreateUpdateComponent,
         CustomerReceiptStatePopoverComponent,
-        AddressDialogComponent
+        AddressDialogComponent,
+        ReceiveAppointmentDialogComponent
     ],
     imports: [
         NgbModule,
@@ -344,7 +347,7 @@ const config: LocaleConfig = {};
         ToothSelectionDialogComponent,        
         CustomerReceipCreateUpdateComponent,
         AddressDialogComponent,
-
+        ReceiveAppointmentDialogComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

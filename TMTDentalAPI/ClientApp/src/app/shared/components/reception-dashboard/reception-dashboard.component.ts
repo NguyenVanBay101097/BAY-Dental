@@ -61,7 +61,6 @@ export class ReceptionDashboardComponent implements OnInit {
   ngOnInit() {
     this.loadTotalCash();
     this.loadCountSaleOrder();
-    this.loadMedicalXamination();
     this.loadDataCustomerRecieptApi();
     this.loadDataAppointmentApi();
     this.loadDataRevenueApi();
@@ -96,17 +95,8 @@ export class ReceptionDashboardComponent implements OnInit {
 
   }
 
-  loadMedicalXamination() {
-    var val = new ReportTodayRequest();
-    val.companyId = this.authService.userInfo.companyId;
-    val.dateFrom = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
-    val.dateTo = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
-    this.dashboardReportService.getCountMedicalXamination(val).subscribe((rs: any) => {
-      this.medicalXamination = rs;
-    }, () => {
-
-    });
-
+  getCountIsRepeatCustomer(value) {
+    return this.customerReceiptList.filter(x => x.isRepeatCustomer == value).length;
   }
 
   loadEmployees() {
@@ -191,41 +181,27 @@ export class ReceptionDashboardComponent implements OnInit {
 
   onCreateCR(event) {
     this.loadDataCustomerRecieptApi();
-    // this.customerReceiptList.push(event);
-    this.loadMedicalXamination();
+  }
+
+  onSuccessReceiveAppointment(data) {
+    this.loadDataAppointmentApi();
+    this.loadDataCustomerRecieptApi();
   }
 
   onUpdateCR(event) {    
     this.loadDataCustomerRecieptApi();
-    // var item = this.customerReceiptList.find(x => x.id === event.id);
-    // if (item) {
-    //   Object.assign(item, event);
-    // }
-    this.loadMedicalXamination();
   }
 
   onCreateAP(event) {
     this.loadDataAppointmentApi();
-    // this.appointmenttList.push(event);
-    this.loadMedicalXamination();
   }
 
   onUpdateAP(event) {    
     this.loadDataAppointmentApi();
-    // var item = this.appointmenttList.find(x => x.id === event.id);
-    // if (item) {
-    //   Object.assign(item, event);
-    // }
-    this.loadMedicalXamination();
   }
 
   onDeleteAP(event) {    
     this.loadDataAppointmentApi();
-    // const index = this.appointmenttList.findIndex(el => el.id === event.id)
-    // if (index > -1) {
-    //   this.appointmenttList.splice(index, 1);
-    // }
-    this.loadMedicalXamination();
   }
 
 }
