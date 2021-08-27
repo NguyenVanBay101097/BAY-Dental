@@ -43,6 +43,9 @@ namespace TMTDentalAPI.Controllers
                 .Include(x => x.AppointmentServices).ThenInclude(x => x.Product)
                 .FirstOrDefaultAsync();
 
+            if (appointment.State == "cancel" || appointment.Date < DateTime.Today)
+                throw new Exception("Không thể tiếp nhận lịch hẹn ở trạng thái hủy hẹn hoặc quá hẹn");
+
             var res = new ReceiveAppointmentDisplayViewModel
             {
                 Doctor = _mapper.Map<EmployeeSimple>(appointment.Doctor),
