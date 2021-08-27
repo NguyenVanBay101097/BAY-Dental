@@ -45,6 +45,8 @@ namespace Umbraco.Web.Mapping
             CreateMap<SaleOrder, SaleOrderSimple>();
             CreateMap<SaleOrder, SaleOrderRevenueReport>();
             CreateMap<SaleOrderBasic, GetPrintManagementItemRes>();
+            CreateMap<SaleOrderBasic, GetExcelManagementItemRes>();
+            
         }
     }
 }

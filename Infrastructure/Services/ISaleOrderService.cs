@@ -94,5 +94,6 @@ namespace Infrastructure.Services
         Task ComputeToUpdateSaleOrder(SaleOrder order);
         Task<RevenueReportPrintVM<SaleOrderRevenueReport>> GetRevenueReportPrint(SaleOrderRevenueReportPaged val);
         Task<GetPrintManagementRes> GetPrintManagement(SaleOrderPaged val);
+        Task<IEnumerable<GetExcelManagementItemRes>> ExportManagementExcel(SaleOrderPaged val);
     }
 }

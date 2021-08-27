@@ -46,6 +46,11 @@ namespace Umbraco.Web.Mapping
             CreateMap<RevenueTimeReportDisplay, RevenueTimeReportPrint>();
             CreateMap<RevenueServiceReportDisplay, RevenueServiceReportPrint>();
             CreateMap<RevenueEmployeeReportDisplay, RevenueEmployeeReportPrint>();
+            CreateMap<RevenueTimeReportDisplay, RevenueTimeReportExcel>();
+            CreateMap<RevenueServiceReportDisplay, RevenueServiceReportExcel>();
+            CreateMap<RevenueEmployeeReportDisplay, RevenueEmployeeReportExcel>();
+            CreateMap<RevenuePartnerReportDisplay, RevenuePartnerReportExcel>();
+
 
         }
     }

@@ -169,8 +169,29 @@ export class AccountInvoiceReportRevenuePartnerComponent implements OnInit {
     return observable;
 
   }
-  exportExcel(grid: GridComponent) {
-    grid.saveAsExcel();
+  exportExcel() {
+    var val = Object.assign({}, this.filter) as RevenuePartnerReportPar;
+    val.companyId = val.companyId || '';
+    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
+    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    val.search = val.search || '';
+    this.accInvService.exportRevenuePartnerReportExcel(val).subscribe((rs) => {
+      let filename = "BaoCaoDoanhThu_TheoKH";
+      let newBlob = new Blob([rs], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
   }
 
   public onExcelExport(args: any): void {

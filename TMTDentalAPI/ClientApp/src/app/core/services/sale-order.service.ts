@@ -264,7 +264,7 @@ export class SaleOrderService {
         return this.http.post(this.baseApi + this.apiUrl + '/GetRevenueSumTotal', val);
     }
     exportExcelFile(val: any) {
-        return this.http.get(this.baseApi + this.apiUrl + "/ExportExcelFile", {
+        return this.http.get(this.baseApi + this.apiUrl + "/ExportRevenueReportExcel", {
             responseType: "blob",
             params: val,
         });
@@ -286,5 +286,12 @@ export class SaleOrderService {
 
     managementPdf(val: any) {
         return this.http.get(this.baseApi + this.apiUrl + "/ManagementPdf", { params: new HttpParams({ fromObject: val }), responseType: 'blob' });
+    }
+
+    exportManagementExcel(paged) {
+        return this.http.post(
+            this.baseApi + this.apiUrl + "/ExportManagementExcel", paged,
+            { responseType: "blob" }
+        );
     }
 }

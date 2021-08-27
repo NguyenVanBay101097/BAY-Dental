@@ -515,6 +515,84 @@ namespace Infrastructure.Services
             return res;
         }
 
+        public async Task<RevenueReportExcelVM<RevenueServiceReportExcel>> GetRevenueServiceReportExcel(RevenueServiceReportPar val)
+        {
+            var data = _mapper.Map<IEnumerable<RevenueServiceReportExcel>>(await GetRevenueServiceReport(val));
+            var detailReq = new RevenueReportDetailPaged()
+            {
+                CompanyId = val.CompanyId,
+                Limit = 0,
+                DateFrom = val.DateFrom,
+                DateTo = val.DateTo
+            };
+            var allLines = await GetRevenueReportDetailPaged(detailReq);
+
+            foreach (var item in data)
+            {
+                item.Lines = allLines.Items.Where(x => x.ProductId == item.ProductId).ToList();
+            }
+
+            var res = new RevenueReportExcelVM<RevenueServiceReportExcel>(val.DateFrom, val.DateTo)
+            {
+                Title = "BÁO CÁO DOANH THU THEO DỊCH VỤ",
+                ColumnTitle = "Dịch vụ & Thuốc",
+                Data = data
+            };
+            return res;
+        }
+
+        public async Task<RevenueReportExcelVM<RevenueEmployeeReportExcel>> GetRevenueEmployeeReportExcel(RevenueEmployeeReportPar val)
+        {
+            var data = _mapper.Map<IEnumerable<RevenueEmployeeReportExcel>>(await GetRevenueEmployeeReport(val));
+            var detailReq = new RevenueReportDetailPaged()
+            {
+                CompanyId = val.CompanyId,
+                Limit = 0,
+                DateFrom = val.DateFrom,
+                DateTo = val.DateTo
+            };
+            var allLines = await GetRevenueReportDetailPaged(detailReq);
+
+            foreach (var item in data)
+            {
+                item.Lines = allLines.Items.Where(x => x.EmployeeId == item.EmployeeId).ToList();
+            }
+
+            var res = new RevenueReportExcelVM<RevenueEmployeeReportExcel>(val.DateFrom, val.DateTo)
+            {
+                Title = "BÁO CÁO DOANH THU THEO NHÂN VIÊN",
+                ColumnTitle = "Nhân viên",
+                Data = data
+            };
+            return res;
+        }
+
+        public async Task<RevenueReportExcelVM<RevenuePartnerReportExcel>> GetRevenuePartnerReportExcel(RevenuePartnerReportPar val)
+        {
+            var data = _mapper.Map<IEnumerable<RevenuePartnerReportExcel>>(await GetRevenuePartnerReport(val));
+            var detailReq = new RevenueReportDetailPaged()
+            {
+                CompanyId = val.CompanyId,
+                Limit = 0,
+                DateFrom = val.DateFrom,
+                DateTo = val.DateTo
+            };
+            var allLines = await GetRevenueReportDetailPaged(detailReq);
+
+            foreach (var item in data)
+            {
+                item.Lines = allLines.Items.Where(x => x.PartnerId == item.PartnerId).ToList();
+            }
+
+            var res = new RevenueReportExcelVM<RevenuePartnerReportExcel>(val.DateFrom, val.DateTo)
+            {
+                Title = "BÁO CÁO DOANH THU THEO NHÂN VIÊN",
+                ColumnTitle = "Nhân viên",
+                Data = data
+            };
+            return res;
+        }
+
 
 
         //public override ISpecification<AccountInvoiceReport> RuleDomainGet(IRRule rule)

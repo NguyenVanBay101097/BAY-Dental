@@ -196,4 +196,25 @@ export class AccountInvoiceReportService {
             { responseType: "blob" }
         );
     }
+
+    exportRevenueServiceReportExcel(paged) {
+        return this.http.post(
+            this.baseApi + this.apiUrl + "/ExportRevenueServiceReportExcel", paged,
+            { responseType: "blob" }
+        );
+    }
+
+    exportRevenueEmployeeReportExcel(paged) {
+        return this.http.post(
+            this.baseApi + this.apiUrl + "/ExportRevenueEmployeeReportExcel", paged,
+            { responseType: "blob" }
+        );
+    }
+
+    exportRevenuePartnerReportExcel(paged) {
+        return this.http.post(
+            this.baseApi + this.apiUrl + "/ExportRevenuePartnerReportExcel", paged,
+            { responseType: "blob" }
+        );
+    }
 }

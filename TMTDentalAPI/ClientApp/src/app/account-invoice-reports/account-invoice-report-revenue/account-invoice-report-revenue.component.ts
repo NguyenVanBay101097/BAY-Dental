@@ -168,7 +168,7 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
     val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
     val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
     this.accInvService.exportRevenueTimeReportExcel(val).subscribe((rs) => {
-      let filename = "BaoCaoDichVu_TheoTG";
+      let filename = "BaoCaoDoanhThu_TheoTG";
       let newBlob = new Blob([rs], {
         type:
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
