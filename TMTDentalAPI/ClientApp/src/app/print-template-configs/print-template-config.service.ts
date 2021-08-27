@@ -1,6 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, Pipe, PipeTransform } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { Observable } from 'rxjs';
+import { PrintPaperSizeDisplay } from '../config-prints/print-paper-size.service';
+
+export class PrintTemplateConfigDisplay {
+  content: string;
+  type: string;
+  printPaperSizeId: string;
+  printPaperSize: PrintPaperSizeDisplay;
+  companyId: string;
+}
 
 export class PrintTemplateConfigSave {
   content: string;
@@ -9,12 +19,10 @@ export class PrintTemplateConfigSave {
   companyId: string;
 }
 
-export class PrintTemplateConfigDisplay {
-  content: string;
+export class PrintTemplateConfigChangeType {
   type: string;
-  printPaperSizeId: string;
-  companyId: string;
 }
+
 
 @Pipe({ name: "safeHtml" })
 export class SafeHtmlPipe implements PipeTransform {
@@ -54,20 +62,12 @@ export class PrintTemplateConfigService {
   apiUrl = 'api/PrintTemplateConfigs';
   constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
-  get(type) {
-    return this.http.get(this.baseApi + this.apiUrl + '/' + type);
+  getDisplay(val: PrintTemplateConfigChangeType): Observable<PrintTemplateConfigDisplay> {
+    return this.http.post<PrintTemplateConfigDisplay>(this.baseApi + this.apiUrl + '/GetDisplay', val);
   }
 
-  create(val) {
-    return this.http.post(this.baseApi + this.apiUrl, val);
-  }
-
-  update(val) {
-    return this.http.put(this.baseApi + this.apiUrl, val);
-  }
-
-  delete(type) {
-    return this.http.delete(this.baseApi + this.apiUrl + '/' + type);
+  createOrUpdate(val: PrintTemplateConfigSave) {
+    return this.http.put(this.baseApi + this.apiUrl + '/CreateOrUpdate', val);
   }
 
 }

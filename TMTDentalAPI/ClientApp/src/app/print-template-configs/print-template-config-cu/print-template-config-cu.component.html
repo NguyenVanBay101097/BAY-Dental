@@ -6,8 +6,19 @@
         <div class="o_cp_searchview">
         </div>
         <div class="o_cp_left">
-            <div class="o_cp_right">
+            <div class="o_cp_buttons">
+                <button type="button" class="btn btn-outline-primary mr-2" accesskey="c" (click)="onPrint()">In
+                    thử</button>
+                <button *ngIf="!isEditting" type="button" class="btn btn-primary mr-2" accesskey="c"
+                    (click)="onEdit()">Sửa</button>
+                <button *ngIf="isEditting" type="button" class="btn btn-primary mr-2" accesskey="c"
+                    (click)="onSave()">Lưu</button>
+                <button *ngIf="isEditting" (click)="onToggleEdit()" class="btn btn-danger mr-2">
+                    Hủy
+                </button>
             </div>
+        </div>
+        <div class="o_cp_right">
         </div>
     </div>
 </div>
@@ -17,29 +28,72 @@
             <div class="o_form_sheet">
 
                 <div class="d-flex align-items-center">
-                    <div class="form-group">
-                        <label>Chọn mẫu in</label>
-                        <select [(ngModel)]="typeFilter" class="form-control">
-                            <option [value]="item.value" *ngFor="let item of types">{{item.text}}</option>
-                        </select>
-                    </div>
+                    <table class="mr-2">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label o_td_label_sm">
+                                    <label class="o_form_label">
+                                        Chọn mẫu in
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" style="width: 100%;">
+                                    <select [(ngModel)]="typeFilter" class="form-control">
+                                        <option [value]="item.value" *ngFor="let item of types">{{item.text}}
+                                        </option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="mr-2">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label o_td_label_sm">
+                                    <label class="o_form_label">
+                                        Chọn khổ in
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" style="width: 100%;">
+                                    <select class="form-control">
+                                        <option>khổ in
+                                        </option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-                <div class="d-flex">
-                    <div class="left w-50 mr-1 p-2 border">
-                        <div class="mb-2">
-                            <button (click)="onDefault()" class="btn btn-outline-primary">Sử dụng mẫu có sẵn</button>
+                <div>
+                    <ng-container *ngIf="!isEditting; else EditTemplate">
+                        <hr>
+                        <div class="view d-flex justify-content-center">
+                            <div class="w-75" [innerHTML]="config.content | safeHtml "></div>
                         </div>
-                        <ckeditor [config]="configEditor" [editor]="editor" [(ngModel)]="config.content"
-                            (ready)="onReady($event)">
-                        </ckeditor>
-                    </div>
-                    <div class="right w-50 ml-1 p-2 border">
-                        <div class="preview d-flex justify-content-between align-items-center mb-2">
-                            <h5 class="title">Bản xem trước</h5>
-                            <button (click)="onPrint()" class="btn btn-outline-primary">In thử</button>
+                    </ng-container>
+                    <ng-template #EditTemplate>
+                        <div class="d-flex">
+                            <div class="left w-50 mr-1 p-2 border">
+                                <div class="mb-2">
+                                    <button (click)="onDefault()" class="btn btn-outline-primary">Sử dụng mẫu có
+                                        sẵn</button>
+                                </div>
+                                <ckeditor editorUrl="https://cdn.ckeditor.com/4.16.2/full-all/ckeditor.js"
+                                    [config]="configEditor" [(ngModel)]="configEdit.content"></ckeditor>
+                            </div>
+                            <div class="right w-50 ml-1 p-2 border">
+                                <div class="preview d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="title">Bản xem trước</h5>
+                                    <!-- <button (click)="onPrint()" class="btn btn-outline-primary">In thử</button> -->
+                                </div>
+                                <iframe frameborder="0" height="100%" width="100%" class="border-0"
+                                    [srcdoc]="configEdit.content | safeHtml "></iframe>
+                            </div>
                         </div>
-                        <div [innerHTML]="config.content | safeHtml"></div>
-                    </div>
+                    </ng-template>
                 </div>
             </div>
         </div>

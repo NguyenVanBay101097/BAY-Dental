@@ -152,11 +152,6 @@ const routes: Routes = [
         canActivate: [AuthGuard]
       },
       {
-        path: 'print-template-config',
-        loadChildren: () => import('./print-template-configs/print-template-configs.module').then(m => m.PrintTemplateConfigsModule),
-        canActivate: [AuthGuard]
-      },
-      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full',
