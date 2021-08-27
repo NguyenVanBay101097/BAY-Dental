@@ -101,7 +101,7 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells["A1:G1"].Style.Font.Bold = true;
                 worksheet.Cells["A1:G1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
 
-                worksheet.Cells["A2:G2"].Value = @$"{(val.FromDate.HasValue ? "Từ ngày" + val.FromDate.Value.ToShortDateString() : "")}  {(val.ToDate.HasValue ? "đến ngày" + val.ToDate.Value.ToShortDateString() : "")}";
+                worksheet.Cells["A2:G2"].Value = @$"{(val.FromDate.HasValue ? "Từ ngày " + val.FromDate.Value.ToShortDateString() : "")}  {(val.ToDate.HasValue ? "đến ngày " + val.ToDate.Value.ToShortDateString() : "")}";
                 worksheet.Cells["A2:G2"].Merge = true;
                 worksheet.Cells["A2:G2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
