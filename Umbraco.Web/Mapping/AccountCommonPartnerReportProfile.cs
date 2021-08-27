@@ -11,6 +11,7 @@ namespace Umbraco.Web.Mapping
         public AccountCommonPartnerReportProfile()
         {
             CreateMap<ReportPartnerDebitRes, ReportPartnerDebitPrint>();
+            CreateMap<ReportPartnerDebitRes, ReportPartnerDebitExcel>();
         }
     }
 }

@@ -189,4 +189,32 @@ export class AccountInvoiceReportService {
         return this.http.post(this.baseApi + "AccountInvoiceReport/PrintRevenueEmployeeReport", val, { responseType: "text" });
 
     }
+
+    exportRevenueTimeReportExcel(paged) {
+        return this.http.post(
+            this.baseApi + this.apiUrl + "/ExportRevenueTimeReportExcel", paged,
+            { responseType: "blob" }
+        );
+    }
+
+    exportRevenueServiceReportExcel(paged) {
+        return this.http.post(
+            this.baseApi + this.apiUrl + "/ExportRevenueServiceReportExcel", paged,
+            { responseType: "blob" }
+        );
+    }
+
+    exportRevenueEmployeeReportExcel(paged) {
+        return this.http.post(
+            this.baseApi + this.apiUrl + "/ExportRevenueEmployeeReportExcel", paged,
+            { responseType: "blob" }
+        );
+    }
+
+    exportRevenuePartnerReportExcel(paged) {
+        return this.http.post(
+            this.baseApi + this.apiUrl + "/ExportRevenuePartnerReportExcel", paged,
+            { responseType: "blob" }
+        );
+    }
 }

@@ -132,8 +132,29 @@ export class PartnerDebitListReportComponent implements OnInit {
     };
   }
 
-  exportExcel(grid: GridComponent) {
-    grid.saveAsExcel();
+  exportExcel() {
+    var val = new ReportPartnerDebitReq();
+    val.fromDate = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : null;
+    val.toDate = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null;
+    val.search = this.search ? this.search : '';
+    val.companyId = this.companyId || '';
+    this.reportService.exportReportPartnerDebitExcel(val).subscribe((rs) => {
+      let filename = "BaoCaoCongNo_KH";
+      let newBlob = new Blob([rs], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
   }
 
   onExportPDF(){

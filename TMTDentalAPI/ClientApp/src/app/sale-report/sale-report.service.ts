@@ -222,4 +222,18 @@ export class SaleReportService {
     getServiceReportByTimePdf(val){
         return this.http.post(this.baseApi + this.apiUrl+ '/GetServiceReportByTimePdf',val, {responseType:'blob'});
     }
+
+    exportServiceReportByTimeExcel(paged) {
+        return this.http.post(
+            this.baseApi + this.apiUrl + "/ExportServiceReportByTimeExcel", paged,
+            { responseType: "blob" }
+        );
+    }
+
+    exportServiceReportByServiceExcel(paged) {
+        return this.http.post(
+            this.baseApi + this.apiUrl + "/ExportServiceReportByServiceExcel", paged,
+            { responseType: "blob" }
+        );
+    }
 }

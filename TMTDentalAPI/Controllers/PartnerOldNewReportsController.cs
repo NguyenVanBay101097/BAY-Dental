@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -115,32 +116,45 @@ namespace TMTDentalAPI.Controllers
             var stream = new MemoryStream();
             var data = await _partnerOldNewReportService.GetReportExcel(val);
             byte[] fileContent;
-
+            var dateToDate = (data.DateFrom.HasValue ? "Từ ngày " + data.DateFrom.Value.ToString("dd/MM/yyyy") : "") +
+                                               (data.DateTo.HasValue ? " đến ngày " + data.DateTo.Value.ToString("dd/MM/yyyy") : "");
             using (var package = new ExcelPackage(stream))
             {
-                var worksheet = package.Workbook.Worksheets.Add("thongkekhachhangdieutri");
-                var row = 1;
+                var worksheet = package.Workbook.Worksheets.Add("ThongKeKhachHangDieuTri");
+                worksheet.Cells["A1:H1"].Value = "THỐNG KÊ KHÁCH HÀNG ĐIỀU TRỊ";
+                worksheet.Cells["A1:H1"].Style.Font.Size = 14;
+                worksheet.Cells["A1:H1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
+                worksheet.Cells["A1:H1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells["A1:H1"].Merge = true;
+                worksheet.Cells["A1:H1"].Style.Font.Bold = true;
+                worksheet.Cells["A2:H2"].Value = dateToDate;
+                worksheet.Cells["A2:H2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells["A2:H2"].Merge = true;
+                worksheet.Cells["A3:H3"].Value = "";
+                
+                worksheet.Cells["A4"].Value = "Khách hàng";
+                worksheet.Cells["B4"].Value = "Tuổi";
+                worksheet.Cells["B4"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                worksheet.Cells["C4"].Value = "Giới tính";
+                worksheet.Cells["D4"].Value = "Địa chỉ";
+                worksheet.Cells["E4"].Value = "Doanh thu";
+                worksheet.Cells["E4"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                worksheet.Cells["F4"].Value = "Nguồn";
+                worksheet.Cells["G4"].Value = "Nhãn";
+                worksheet.Cells["H4"].Value = "Tình trạng điều trị";
+                worksheet.Cells["A4:H4"].Style.Font.Bold = true;
+                worksheet.Cells["A4:H4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["A4:H4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
+                worksheet.Cells["A4:H4"].Style.Font.Color.SetColor(Color.White);
+                worksheet.Cells["A4:H4"].Style.Font.Size = 14;
+
+                var row = 5;
                 foreach (var item in data.Data)
                 {
-                    //add parent header
-                    worksheet.Cells[row, 1].Value = "Khách hàng";
-                    worksheet.Cells[row, 2].Value = "Tuổi";
-                    worksheet.Cells[row, 3].Value = "Giới tính";
-                    worksheet.Cells[row, 4].Value = "Địa chỉ";
-                    worksheet.Cells[row, 5].Value = "Doanh thu";
-                    worksheet.Cells[row, 5].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                    worksheet.Cells[row, 6].Value = "Nguồn";
-                    worksheet.Cells[row, 7].Value = "Nhãn";
-                    worksheet.Cells[row, 8].Value = "Tình trạng điều trị";
-
-                    worksheet.Cells[row, 1, row, worksheet.Dimension.Columns].Style.Font.Bold = true;
-                    worksheet.Cells[row, 1, row, worksheet.Dimension.Columns].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
-                    worksheet.Cells[row, 1, row, worksheet.Dimension.Columns].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                    worksheet.Cells[row, 1, row, worksheet.Dimension.Columns].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#cddfe1"));
-                    row++;
                     //add parent data
                     worksheet.Cells[row, 1].Value = item.Name;
                     worksheet.Cells[row, 2].Value = item.Age;
+                    worksheet.Cells[row, 2].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                     worksheet.Cells[row, 3].Value = item.Gender == "male"? "Nam" : (item.Gender == "female" ? "Nữ" : "Khác");
                     worksheet.Cells[row, 4].Value = item.Address;
                     worksheet.Cells[row, 5].Value = item.Revenue;
@@ -151,45 +165,40 @@ namespace TMTDentalAPI.Controllers
 
                     row++;
                     //add child header
-                    worksheet.Cells[row, 2].Value = "Ngày tạo";
-                    worksheet.Cells[row, 3].Value = "Phiếu điều trị";
-                    worksheet.Cells[row, 4].Value = "Tổng tiền";
-                    worksheet.Cells[row, 4].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                    worksheet.Cells[row, 5].Value = "Thanh toán";
+                    worksheet.Cells[row, 2, row, 3].Value = "Ngày tạo";
+                    worksheet.Cells[row, 2, row, 3].Merge = true;
+                    worksheet.Cells[row, 4].Value = "Phiếu điều trị";
+                    worksheet.Cells[row, 5].Value = "Tổng tiền";
                     worksheet.Cells[row, 5].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                    worksheet.Cells[row, 6].Value = "Còn lại";
+                    worksheet.Cells[row, 6].Value = "Thanh toán";
                     worksheet.Cells[row, 6].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                    worksheet.Cells[row, 7].Value = "Trạng thái";
-
+                    worksheet.Cells[row, 7].Value = "Còn lại";
+                    worksheet.Cells[row, 7].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    worksheet.Cells[row, 8].Value = "Trạng thái";
+                    worksheet.Cells[row, 2, row, 8].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    worksheet.Cells[row, 2, row, 8].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#DDEBF7"));
                     worksheet.Cells[row, 1, row, worksheet.Dimension.Columns].Style.Font.Bold = true;
+                    var rowEnd = row + item.Lines.Count();
+                    worksheet.Cells[row, 1, rowEnd, 1].Merge = true;
                     row++;
                     //add child data
                     foreach (var line in item.Lines)
                     {
-                        worksheet.Cells[row, 2].Value = line.DateOrder;
+                        worksheet.Cells[row, 2, row, 3].Value = line.DateOrder;
                         worksheet.Cells[row, 2].Style.Numberformat.Format = "dd/mm/yyyy";
-                        worksheet.Cells[row, 2].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-                        worksheet.Cells[row, 3].Value = line.Name;
-                        worksheet.Cells[row, 4].Value = line.AmountTotal;
-                        worksheet.Cells[row, 4].Style.Numberformat.Format = "#,###0";
-                        worksheet.Cells[row, 5].Value = line.TotalPaid;
+                        worksheet.Cells[row, 2, row, 3].Merge = true;
+                        worksheet.Cells[row, 2, row, 3].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                        worksheet.Cells[row, 4].Value = line.Name;
+                        worksheet.Cells[row, 5].Value = line.AmountTotal;
                         worksheet.Cells[row, 5].Style.Numberformat.Format = "#,###0";
-                        worksheet.Cells[row, 6].Value = line.Residual;
+                        worksheet.Cells[row, 6].Value = line.TotalPaid;
                         worksheet.Cells[row, 6].Style.Numberformat.Format = "#,###0";
-                        worksheet.Cells[row, 7].Value = line.State == "sale" ? "Đang điều trị" : (line.State == "done" ? "Hoàn thành" : "Nháp");
+                        worksheet.Cells[row, 7].Value = line.Residual;
+                        worksheet.Cells[row, 7].Style.Numberformat.Format = "#,###0";
+                        worksheet.Cells[row, 8].Value = line.State == "sale" ? "Đang điều trị" : (line.State == "done" ? "Hoàn thành" : "Nháp");
                         row++;
                     }
                 }
-
-                //insert title
-                worksheet.InsertRow(1, 3);
-                worksheet.Cells[1, 1, 1, worksheet.Dimension.Columns].Merge = true;
-                worksheet.Cells[1, 1].Value = "THỐNG KÊ KHÁCH HÀNG ĐIỀU TRỊ";
-                worksheet.Cells[1, 1].Style.Font.Bold = true;
-                worksheet.Cells[1, 1].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
-                worksheet.Cells[2, 1, 2, worksheet.Dimension.Columns].Merge = true;
-                worksheet.Cells[2, 1].Value = (data.DateFrom.HasValue ? "Từ ngày " + data.DateFrom.Value.ToString("dd/MM/yyyy") : "") +
-                                               (data.DateTo.HasValue ? " đến ngày " + data.DateTo.Value.ToString("dd/MM/yyyy") : "");
 
                 worksheet.Cells.AutoFitColumns();
 

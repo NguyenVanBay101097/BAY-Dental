@@ -225,35 +225,15 @@ export class ServiceReportTimeComponent implements OnInit {
     return observable;
 
   }
-  exportExcel(grid: GridComponent) {
-    grid.saveAsExcel();
-  }
-
-  public onExcelExport(args: any): void {
-    args.preventDefault();
-    const data = this.allDataExport.data;
-    this.serviceReportManageService.emitChange({
-       data : data,
-       args : args,
-       filter : this.filter,
-       title: 'BaoCaoDichVu_TheoTG',
-       header:'BÁO CÁO DỊCH VỤ THEO THỜI GIAN'
-    })
-  }
-
-  onExportPDF() {
-    var val = Object.assign({}, this.filter) as ServiceReportReq;
-    
+  exportExcel() {
+    var val = Object.assign({}, this.filter);
     val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
     val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
-    this.loading = true;
-    this.saleReportService.getServiceReportByTimePdf(val).subscribe(res => {
-      this.loading = false;
-      let filename ="BaoCaoDichVuTheoThoiGian";
-
-      let newBlob = new Blob([res], {
+    this.saleReportService.exportServiceReportByTimeExcel(val).subscribe((rs) => {
+      let filename = "BaoCaoDichVu_TheoTG";
+      let newBlob = new Blob([rs], {
         type:
-          "application/pdf",
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
 
       let data = window.URL.createObjectURL(newBlob);
@@ -267,6 +247,45 @@ export class ServiceReportTimeComponent implements OnInit {
       }, 100);
     });
   }
+
+  // public onExcelExport(args: any): void {
+  //   args.preventDefault();
+  //   const data = this.allDataExport.data;
+  //   this.serviceReportManageService.emitChange({
+  //      data : data,
+  //      args : args,
+  //      filter : this.filter,
+  //      title: 'BaoCaoDichVu_TheoTG',
+  //      header:'BÁO CÁO DỊCH VỤ THEO THỜI GIAN'
+  //   })
+  // }
+
+  // onExportPDF() {
+  //   var val = Object.assign({}, this.filter) as ServiceReportReq;
+    
+  //   val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
+  //   val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+  //   this.loading = true;
+  //   this.saleReportService.getServiceReportByTimePdf(val).subscribe(res => {
+  //     this.loading = false;
+  //     let filename ="BaoCaoDichVuTheoThoiGian";
+
+  //     let newBlob = new Blob([res], {
+  //       type:
+  //         "application/pdf",
+  //     });
+
+  //     let data = window.URL.createObjectURL(newBlob);
+  //     let link = document.createElement("a");
+  //     link.href = data;
+  //     link.download = filename;
+  //     link.click();
+  //     setTimeout(() => {
+       
+  //       window.URL.revokeObjectURL(data);
+  //     }, 100);
+  //   });
+  // }
 
 
   onPrint(){

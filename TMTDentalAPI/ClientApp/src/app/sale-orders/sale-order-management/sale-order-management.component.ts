@@ -243,35 +243,26 @@ export class SaleOrderManagementComponent implements OnInit {
     });
   }
 
-  exportExcelFile(grid: GridComponent) {
-    grid.saveAsExcel();
-    // var paged = new SaleOrderPaged();
-    // paged.search = this.search || '';
-    // paged.companyId = this.company ? this.company.id : "";
-    // paged.state = "sale";
-    // if (this.dateOrderTo) {
-    //   paged.overInterval = this.dateOrderTo.interval;
-    //   paged.overIntervalNbr = this.dateOrderTo.intervalNbr;
-    // }
+  exportExcelFile() {
+    var val = this.getPageParam();
+    this.saleOrderService.exportManagementExcel(val).subscribe((res) => {
+      let filename = "QuanLyDieuTri";
 
-    // this.saleOrderService.exportExcelFile(paged).subscribe((res) => {
-    //   let filename = "Quản lý điều trị chưa hoàn thành";
+      let newBlob = new Blob([res], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
 
-    //   let newBlob = new Blob([res], {
-    //     type:
-    //       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    //   });
-
-    //   let data = window.URL.createObjectURL(newBlob);
-    //   let link = document.createElement("a");
-    //   link.href = data;
-    //   link.download = filename;
-    //   link.click();
-    //   setTimeout(() => {
-    //     // For Firefox it is necessary to delay revoking the ObjectURL
-    //     window.URL.revokeObjectURL(data);
-    //   }, 100);
-    // });
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
   }
 
   onExportPDF() {

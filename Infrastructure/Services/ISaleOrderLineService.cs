@@ -75,5 +75,6 @@ namespace Infrastructure.Services
 
         Task UpdateState(Guid id, string state);
         Task<ServiceSaleReportPrint> SaleReportPrint(SaleOrderLinesPaged val);
+
     }
 }
