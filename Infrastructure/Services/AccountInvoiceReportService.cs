@@ -586,8 +586,8 @@ namespace Infrastructure.Services
 
             var res = new RevenueReportExcelVM<RevenuePartnerReportExcel>(val.DateFrom, val.DateTo)
             {
-                Title = "BÁO CÁO DOANH THU THEO NHÂN VIÊN",
-                ColumnTitle = "Nhân viên",
+                Title = "BÁO CÁO DOANH THU THEO KHÁCH HÀNG",
+                ColumnTitle = "Khách hàng",
                 Data = data
             };
             return res;

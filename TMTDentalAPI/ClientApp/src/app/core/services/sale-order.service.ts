@@ -294,4 +294,11 @@ export class SaleOrderService {
             { responseType: "blob" }
         );
     }
+
+    exportRevenueReportExcel(paged) {
+        return this.http.post(
+            this.baseApi + this.apiUrl + "/ExportRevenueReportExcel", paged,
+            { responseType: "blob" }
+        );
+    }
 }

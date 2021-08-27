@@ -935,7 +935,8 @@ namespace Infrastructure.Services
 
             using (var package = new ExcelPackage(stream))
             {
-                var worksheet = package.Workbook.Worksheets.Add("BaoCaoDichVu_TheoTG");
+                var sheetName = type == "time" ? "BaoCaoDichVu_TheoTG" : "BaoCaoTheoDichVu";
+                var worksheet = package.Workbook.Worksheets.Add(sheetName);
 
                 worksheet.Cells["A1:J1"].Value = type == "time" ? "BÁO CÁO DỊCH VỤ THEO THỜI GIAN" : "BÁO CÁO THEO DỊCH VỤ";
                 worksheet.Cells["A1:J1"].Style.Font.Size = 14;
@@ -1048,7 +1049,7 @@ namespace Infrastructure.Services
             else if (toothType == "lower_jaw")
                 return "Hàm dưới";
             else
-                return string.Join(',', toothType);
+                return string.Join(',', teeth);
         }
 
         private string ShowState(string state)
