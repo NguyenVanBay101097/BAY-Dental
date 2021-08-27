@@ -1,9 +1,20 @@
-﻿using ApplicationCore.Entities;
+﻿using ApplicationCore.Constants;
+using ApplicationCore.Entities;
+using ApplicationCore.Utilities;
 using Infrastructure.Data;
 using MediatR;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,11 +25,14 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
     {
         private const string _version = "1.0.1.8";
         private IServiceScopeFactory _serviceScopeFactory;
+        private IRazorViewEngine _viewEngine;
+        private ITempDataProvider _tempDataProvider;
 
-
-        public PrintTemplateConfigProcessUpdateHandler(IServiceScopeFactory serviceScopeFactory)
+        public PrintTemplateConfigProcessUpdateHandler(IServiceScopeFactory serviceScopeFactory, IRazorViewEngine viewEngine, ITempDataProvider tempDataProvider)
         {
             _serviceScopeFactory = serviceScopeFactory;
+            _viewEngine = viewEngine;
+            _tempDataProvider = tempDataProvider;
 
         }
 
@@ -60,7 +74,22 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                 }
 
                 //add data print template 
-
+                //var types = AppConstants.PrintTemplateTypeDemo;
+                //foreach (var type in types)
+                //{
+                //    var printTemplate = context.PrintTemplates.Where(x => x.Type == type.Type).FirstOrDefault();
+                //    if (printTemplate == null)
+                //    {
+                //        printTemplate = new PrintTemplate { Type = type.Type, Content = "" };
+                //        context.PrintTemplates.Add(printTemplate);
+                //        context.SaveChanges();
+                //    }
+                //    else
+                //    {
+                //        printTemplate.Content = "";
+                //        context.SaveChanges();
+                //    }
+                //}
 
             }
 

@@ -362,7 +362,7 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
 
   loadDefault() {
     if (this.appointId) {
-      this.appointmentService.get(this.appointId).subscribe(
+      this.dashboardReportService.getDefaultCustomerReceipt(this.appointId).subscribe(
         (rs: any) => {
           this.defaultData = rs;
           this.customerReceipt = this.defaultData;

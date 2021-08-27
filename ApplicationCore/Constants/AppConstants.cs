@@ -14,6 +14,7 @@ namespace ApplicationCore.Constants
             return string.Format(LockRequestKeyTemplate, host, name);
         }
 
+
         /// <summary>
         /// code của mẫu in
         /// </summary>
@@ -43,30 +44,39 @@ namespace ApplicationCore.Constants
         public const string PartnerOldNewReport = "PartnerOldNewReport";
         public const string ReportPartnerDebit = "ReportPartnerDebit";
 
-        public static string[] PrintTemplateType = new string[] {
-            "tmp_sale_order",
-            "tmp_account_payment",
-            "tmp_account_payment" ,
-            "tmp_advisory" ,
-            "tmp_partner_advance",
-            "tmp_supplier_payment",
-            "tmp_phieu_thu",
-            "tmp_phieu_chi",
-            "tmp_partner_debt",
-            "tmp_agent_commission",
-            "tmp_purchase_order",
-            "tmp_purchase_refund",
-            "tmp_quotation",
-            "tmp_salary_employee",
-            "tmp_salary_advance",
-            "tmp_salary",
-            "tmp_stock_picking_incoming",
-            "tmp_stock_picking_outgoing",
-            "tmp_stock_inventory",
-            "tmp_toathuoc",
-            "tmp_medicine_order",
-            "tmp_labo_order",
-
+        public static PrintTemplateType[] PrintTemplateType = new PrintTemplateType[] {
+           new PrintTemplateType {Type = "tmp_sale_order" , PathTemplate = "~/TMTDentalAPI/Views/SaleOrder/Print.cshtml" },
+           new PrintTemplateType {Type = "tmp_account_payment" , PathTemplate = "" },
+           new PrintTemplateType {Type = "tmp_advisory" , PathTemplate = "" },
+           new PrintTemplateType {Type = "tmp_partner_advance" , PathTemplate = "" },
+           new PrintTemplateType {Type = "tmp_supplier_payment" , PathTemplate = "" },
+           new PrintTemplateType {Type = "tmp_phieu_thu" , PathTemplate = "" },
+           new PrintTemplateType {Type = "tmp_phieu_chi" , PathTemplate = "" },
+           new PrintTemplateType {Type = "tmp_partner_debt" , PathTemplate = "" },
+           new PrintTemplateType {Type = "tmp_agent_commission" , PathTemplate = "" },
+           new PrintTemplateType {Type = "tmp_purchase_order" , PathTemplate = "" },
+           new PrintTemplateType {Type = "tmp_purchase_refund" , PathTemplate = "" },
+           new PrintTemplateType {Type = "tmp_quotation" , PathTemplate = "" },
+           new PrintTemplateType {Type = "tmp_salary_employee" , PathTemplate = "" },
+           new PrintTemplateType {Type = "tmp_salary_advance" , PathTemplate = "" },
+           new PrintTemplateType {Type = "tmp_salary" , PathTemplate = "" },
+           new PrintTemplateType {Type = "tmp_stock_picking_incoming" , PathTemplate = "" },
+           new PrintTemplateType {Type = "tmp_stock_picking_outgoing" , PathTemplate = "" },
+           new PrintTemplateType {Type = "tmp_stock_inventory" , PathTemplate = "" },
+           new PrintTemplateType {Type = "tmp_toathuoc" , PathTemplate = "" },
+           new PrintTemplateType {Type = "tmp_medicine_order" , PathTemplate = "" },
+           new PrintTemplateType {Type = "tmp_labo_order" , PathTemplate = "" },          
         };
+
+        public static PrintTemplateType[] PrintTemplateTypeDemo = new PrintTemplateType[] {
+           new PrintTemplateType {Type = "tmp_toathuoc" , PathTemplate = "~/Views/ToaThuoc/Print.cshtml" },
+           new PrintTemplateType {Type = "tmp_medicine_order" , PathTemplate = "~/Views/MedicineOrder/Print.cshtml" },
+        };
+    }
+
+    public class PrintTemplateType
+    {
+        public string Type { get; set; }
+        public string PathTemplate { get; set; }
     }
 }
