@@ -158,7 +158,7 @@ namespace Infrastructure.Services
 
             var res = items.GroupBy(x => x.IsNoTreatment).Select(x => new CustomerReceiptGetCountItem
             {
-                Name = x.Key == true ? "Có điều trị" : "Không điều trị",
+                Name = x.Key == true ? "Không điều trị" : "Có điều trị",
                 Color = x.Key == true ? "#1A6DE3" : "#95C8FF",
                 TotalCustomerReceipt = totalItems,
                 CountCustomerReceipt = x.Count()
