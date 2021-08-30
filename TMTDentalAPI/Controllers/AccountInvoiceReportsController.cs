@@ -537,7 +537,6 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells["B4:G4"].Merge = true;
                 worksheet.Cells["A4:G4"].Style.Font.Color.SetColor(Color.White);
                 worksheet.Cells["B4:G4"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                worksheet.Cells["A4:G4"].Style.Font.Size = 14;
 
                 var row = 5;
                 foreach (var item in data.Data)

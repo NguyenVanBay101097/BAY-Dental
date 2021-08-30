@@ -7,6 +7,7 @@ using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -19,12 +20,15 @@ namespace TMTDentalAPI.Controllers
         private readonly IMapper _mapper;
         private readonly IProductRequestService _productRequestService;
         private readonly IUnitOfWorkAsync _unitOfWork;
+        private readonly ISaleOrderLineService _saleLineService;
 
-        public ProductRequestsController(IMapper mapper, IProductRequestService productRequestService, IUnitOfWorkAsync unitOfWork)
+        public ProductRequestsController(IMapper mapper, IProductRequestService productRequestService, IUnitOfWorkAsync unitOfWork,
+            ISaleOrderLineService saleLineService)
         {
             _mapper = mapper;
             _productRequestService = productRequestService;
             _unitOfWork = unitOfWork;
+            _saleLineService = saleLineService;
         }
 
         [HttpGet]
@@ -118,11 +122,19 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Basic.ProductRequest.Delete")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var request = await _productRequestService.GetByIdAsync(id);
+            var request = await _productRequestService.SearchQuery(x => x.Id == id)
+                .Include(x => x.Lines)
+                .FirstOrDefaultAsync();
             if (request == null)
                 return NotFound();
 
+            await _unitOfWork.BeginTransactionAsync();
+            var saleLineIds = request.Lines.Where(x => x.SaleOrderLineId.HasValue).Select(x => x.SaleOrderLineId.Value).Distinct().ToList();
+            if (saleLineIds.Any())
+                await _saleLineService.ComputeProductRequestedQuantity(saleLineIds);
+
             await _productRequestService.DeleteAsync(request);
+            _unitOfWork.Commit();
             return NoContent();
         }
     }

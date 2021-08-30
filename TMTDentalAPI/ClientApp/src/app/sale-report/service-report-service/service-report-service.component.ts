@@ -19,7 +19,7 @@ import { ServiceReportManageService } from '../service-report-management/service
   styleUrls: ['./service-report-service.component.css']
 })
 export class ServiceReportServiceComponent implements OnInit {
-  filter = new ServiceReportReq();
+  filter: ServiceReportReq;
   companies: CompanySimple[] = [];
   employees: EmployeeSimple[] = [];
   allDataGrid: any;
@@ -29,21 +29,13 @@ export class ServiceReportServiceComponent implements OnInit {
   skip = 0;
   limit = 20;
   searchUpdate = new Subject<string>();
-  // filterState = "";
-  search: string;
-  dateFrom: Date;
-  dateTo: Date;
-  state: string;
-  companyId: string;
-  employeeId: string;
-  active: boolean = true;
 
   @ViewChild("companyCbx", { static: true }) companyVC: ComboBoxComponent;
   @ViewChild("empCbx", { static: true }) empVC: ComboBoxComponent;
   @ViewChild(GridComponent, { static: true }) public grid: GridComponent;
 
   filterState: any[] = [
-    { value: null, text: 'Tất cả' },
+    { value: 'sale,done,cancel', text: 'Tất cả' },
     { value: 'sale', text: 'Đang điều trị' },
     { value: 'done', text: 'Hoàn thành' },
     { value: 'cancel', text: 'Ngừng điều trị' },
@@ -68,20 +60,10 @@ export class ServiceReportServiceComponent implements OnInit {
 
 
   loadAllData() {
-    var val = new ServiceReportReq();
-    val.search = this.search || '';
-    val.companyId = this.companyId || '';
-    val.employeeId = this.employeeId || '';
-    val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
-    val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
-    val.state = this.state || '';
-    val.active = this.active;
-    // var val = Object.assign({}, this.filter) as ServiceReportReq;
-
-    // val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
-    // val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    var val = Object.assign({}, this.filter) as ServiceReportReq;
+    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
+    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
     this.loading = true;
-    this.filter = val;
     this.saleReportService.getServiceReportByService(val).subscribe(res => {
       this.allDataGrid = res;
       this.loading = false;
@@ -130,8 +112,13 @@ export class ServiceReportServiceComponent implements OnInit {
     })
 
     var date = new Date(), y = date.getFullYear(), m = date.getMonth();
-    this.dateFrom = this.dateFrom || new Date(y, m, 1);
-    this.dateTo = this.dateTo || new Date(y, m + 1, 0);
+
+    this.filter = <ServiceReportReq>{
+      state: 'sale,done,cancel',
+      dateFrom: new Date(y, m, 1),
+      dateTo: new Date(y, m + 1, 0)
+    };
+
     this.skip = 0;
     this.loadAllData();
   }
@@ -170,20 +157,20 @@ export class ServiceReportServiceComponent implements OnInit {
   }
 
   onSearchDateChange(e) {
-    this.dateFrom = e.dateFrom;
-    this.dateTo = e.dateTo;
+    this.filter.dateFrom = e.dateFrom;
+    this.filter.dateTo = e.dateTo;
     this.skip = 0;
     this.loadAllData();
   }
 
   onSelectCompany(e) {
-    this.companyId = e ? e.id : null;
+    this.filter.companyId = e ? e.id : null;
     this.skip = 0;
     this.loadAllData();
   }
 
   onSelectEmployee(e) {
-    this.employeeId = e ? e.id : null;
+    this.filter.employeeId = e ? e.id : null;
     this.skip = 0;
     this.loadAllData();
   }
@@ -194,7 +181,7 @@ export class ServiceReportServiceComponent implements OnInit {
   }
 
   onChangeFilterState(state) {
-    this.state = state.value;
+    this.filter.state = state.value;
     this.skip = 0;
     this.loadAllData();
   }

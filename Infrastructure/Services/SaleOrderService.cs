@@ -379,38 +379,10 @@ namespace Infrastructure.Services
 
             foreach (var sale in self)
             {
-                foreach (var line in sale.OrderLines)
-                {
-
-                    if (line.State == "cancel")
-                        continue;
-
-                    line.State = "draft";
-                    await linePaymentRelObj.DeleteAsync(line.SaleOrderLinePaymentRels);
-                    var amountPaid = await linePaymentRelObj.SearchQuery(x => x.SaleOrderLineId == line.Id).SumAsync(x => x.AmountPrepaid.Value);
-                    line.AmountPaid = amountPaid;
-                    line.AmountResidual = 0;
-                }
-
-
-                saleLineObj._GetInvoiceQty(sale.OrderLines);
-                saleLineObj._GetToInvoiceQty(sale.OrderLines);
-                saleLineObj._GetInvoiceAmount(sale.OrderLines);
-                saleLineObj._GetToInvoiceAmount(sale.OrderLines);
-                saleLineObj._ComputeInvoiceStatus(sale.OrderLines);
-                await saleLineObj._RemovePartnerCommissions(sale.OrderLines.Select(x => x.Id).ToList());
-                saleLineObj.RecomputePromotionLine(sale.OrderLines);
-                ReComputePromotionOrder(sale);
                 sale.State = "draft";
-                sale.Residual = 0;
                 await UpdateAsync(sale);
-
-                //tính lại tổng tiền ưu đãi saleorderlines
-                saleLineObj._ComputeAmountDiscountTotal(sale.OrderLines);
-                saleLineObj.ComputeAmount(sale.OrderLines);
             }
 
-            _GetInvoiced(self);
             await UpdateAsync(self);
         }
 

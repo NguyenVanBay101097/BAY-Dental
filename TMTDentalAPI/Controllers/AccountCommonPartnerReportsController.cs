@@ -130,16 +130,16 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 3].Value = item.PartnerPhone;
                     worksheet.Cells[row, 3].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                     worksheet.Cells[row, 4].Value = item.Begin;
-                    worksheet.Cells[row, 4].Style.Numberformat.Format = "#,###0";
+                    worksheet.Cells[row, 4].Style.Numberformat.Format = "#,##0";
                     worksheet.Cells[row, 4].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                     worksheet.Cells[row, 5].Value = item.Debit;
-                    worksheet.Cells[row, 5].Style.Numberformat.Format = "#,###0";
+                    worksheet.Cells[row, 5].Style.Numberformat.Format = "#,##0";
                     worksheet.Cells[row, 5].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                     worksheet.Cells[row, 6].Value = item.Credit;
-                    worksheet.Cells[row, 6].Style.Numberformat.Format ="#,###0";
+                    worksheet.Cells[row, 6].Style.Numberformat.Format ="#,##0";
                     worksheet.Cells[row, 6].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                     worksheet.Cells[row, 7].Value = item.End;
-                    worksheet.Cells[row, 7].Style.Numberformat.Format ="#,###0";
+                    worksheet.Cells[row, 7].Style.Numberformat.Format ="#,##0";
                     worksheet.Cells[row, 7].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                     row++;
                 }
@@ -285,25 +285,32 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells["A4:H4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
                 worksheet.Cells["A4:H4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
                 worksheet.Cells["A4:H4"].Style.Font.Color.SetColor(Color.White);
-                worksheet.Cells["A4:H4"].Style.Font.Size = 14;
 
                 var row = 5;
                 foreach (var item in data)
                 {
                     worksheet.Cells[row, 1].Value = !string.IsNullOrEmpty(item.PartnerName) ? item.PartnerName : "Không xác định";
-                    worksheet.Cells[row, 1].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                     worksheet.Cells[row, 2, row, 3].Value = item.PartnerRef;
-                    worksheet.Cells[row, 2, row, 3].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                     worksheet.Cells[row, 2, row, 3].Merge = true;
                     worksheet.Cells[row, 2, row, 3].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                     worksheet.Cells[row, 4].Value = item.PartnerPhone;
                     worksheet.Cells[row, 4].Style.Numberformat.Format = "@";
+
                     worksheet.Cells[row, 5].Value = item.Begin;
                     worksheet.Cells[row, 6].Value = item.Debit;
                     worksheet.Cells[row, 7].Value = item.Credit;
                     worksheet.Cells[row, 8].Value = item.End;
-                    worksheet.Cells[row, 4, row, 8].Style.Numberformat.Format = "#,###,###";
+                    worksheet.Cells[row, 5, row, 8].Style.Numberformat.Format = "#,##0";
+
+                    worksheet.Cells[row, 1, row, 8].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells[row, 1, row, 8].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells[row, 1, row, 8].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells[row, 1, row, 8].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+
                     row++;
+                    if (!item.Lines.Any())
+                        continue;
+
                     worksheet.Cells[row, 1].Value = "";
                     worksheet.Cells[row, 2].Value = "Ngày";
                     worksheet.Cells[row, 3].Value = "Số phiếu";
@@ -345,7 +352,7 @@ namespace TMTDentalAPI.Controllers
                         worksheet.Cells[row, 6].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                         worksheet.Cells[row, 7].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                         worksheet.Cells[row, 8].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                        worksheet.Cells[row, 4, row, 8].Style.Numberformat.Format = "#,###,###";
+                        worksheet.Cells[row, 4, row, 8].Style.Numberformat.Format = "#,##0";
                         row++;
                     }
 
