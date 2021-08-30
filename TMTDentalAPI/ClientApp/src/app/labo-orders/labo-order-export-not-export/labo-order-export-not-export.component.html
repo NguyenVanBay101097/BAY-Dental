@@ -9,8 +9,8 @@
             </kendo-combobox>
         </div>
         <div class="mr-1">
-            <app-date-range-picker-filter [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo" 
-            (searchChange)="onSearchChange($event)" [title]="'Ngày nhận thực tế'"></app-date-range-picker-filter>
+            <app-date-range-picker-filter [opens]="'right'" [startDate]="dateExportFrom" [endDate]="dateExportTo" 
+            (searchChange)="dateExportChange($event)" [title]="'Ngày nhận thực tế'"></app-date-range-picker-filter>
         </div>
     </div>
     <div class="flex-fill">
@@ -33,6 +33,12 @@
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="name" title="Phiếu Labo" width="100">
+            <ng-template *ngIf="canUpdate else elseBlock" kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <a class="text-primary" (click)="editItem(dataItem)"> {{dataItem.name}}</a>
+            </ng-template>
+            <ng-template #elseBlock kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.name}}
+            </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="saleOrderLineName" title="Loại phục hình" width="120">
         </kendo-grid-column>

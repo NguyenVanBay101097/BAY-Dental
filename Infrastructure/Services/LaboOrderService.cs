@@ -296,7 +296,9 @@ namespace Infrastructure.Services
                 .Include(x => x.LaboBiteJoint)
                 .Include(x => x.LaboFinishLine)
                 .Include(x => x.Product)
-                .Include(x => x.SaleOrderLine)
+                .Include(x => x.Customer)
+                .Include(x => x.SaleOrderLine).ThenInclude(x => x.Employee)
+                .Include(x => x.SaleOrderLine).ThenInclude(x => x.Order)
                 .Include(x => x.LaboOrderProductRel).ThenInclude(x => x.Product)
                 .Include(x => x.LaboOrderToothRel)
                 .Include("SaleOrderLine.Product").FirstOrDefaultAsync();

@@ -9,6 +9,7 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { LaboOrderExportDialogComponent } from '../labo-order-export-dialog/labo-order-export-dialog.component';
 import { ExportLaboPaged, LaboOrderService } from '../labo-order.service';
 
@@ -26,10 +27,9 @@ export class LaboOrderExportNotExportComponent implements OnInit {
   searchUpdate = new Subject<string>();
   dateExportFrom: Date;
   dateExportTo: Date;
-  dateReceiptFrom: Date;
-  dateReceiptTo: Date;
   supplierData: any[]=[];
   partnerId: string = '';
+  canUpdate: boolean = false;
   constructor(
     private laboOrderService: LaboOrderService, 
     private intlService: IntlService, 
@@ -51,6 +51,7 @@ export class LaboOrderExportNotExportComponent implements OnInit {
           this.loadDataFromApi();
         });
     },);
+    this.canUpdate = this.checkPermissionService.check(['Labo.LaboOrder.Update']);
   }
 
   loadDataFromApi() {
@@ -67,21 +68,12 @@ export class LaboOrderExportNotExportComponent implements OnInit {
     if (this.dateExportTo) {
       val.dateExportTo = this.intlService.formatDate(this.dateExportTo, 'd', 'en-US');
     }
-
-    if (this.dateReceiptFrom) {
-      val.dateReceiptFrom = this.intlService.formatDate(this.dateReceiptFrom, 'd', 'en-US');
-    }
-    if (this.dateReceiptTo) {
-      val.dateReceiptTo = this.intlService.formatDate(this.dateReceiptTo, 'd', 'en-US');
-    }
-
     this.laboOrderService.getExportLabo(val).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
         total: response.totalItems
       }))
     ).subscribe(res => {
-      console.log(res);
       this.gridData = res;
       this.loading = false;
     }, err => {
@@ -112,14 +104,6 @@ export class LaboOrderExportNotExportComponent implements OnInit {
     this.skip = 0;
     this.loadDataFromApi();
   }
-
-  dateReceiptChange(data){
-    this.dateReceiptFrom = data.dateFrom;
-    this.dateReceiptTo = data.dateTo;
-    this.skip = 0;
-    this.loadDataFromApi();
-  }
-
   supplierChange(event){
     this.partnerId = event;
     this.skip = 0;
@@ -137,12 +121,28 @@ export class LaboOrderExportNotExportComponent implements OnInit {
 
     modalRef.result.then(
       result => {        
-        if (result && result === "reload") {
+        if (result) {
           this.skip = 0;
           this.loadDataFromApi();
         }
       },
       er => { }
     )
+  }
+
+  editItem(item) {    
+    console.log(item);
+    
+    const modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Cập nhật phiếu labo';
+    modalRef.componentInstance.id = item.id;
+    modalRef.componentInstance.saleOrderLineId = item.saleOrderLineId;
+   // modalRef.componentInstance.saleOrderLineLabo = this.item;
+
+    modalRef.result.then(res => {
+      this.loadDataFromApi();
+      //this.reload.next(true);
+    }, () => {
+    });
   }
 }
