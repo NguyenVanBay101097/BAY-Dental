@@ -217,7 +217,7 @@ namespace Infrastructure.Services
 
             if (val.IsNoTreatment.HasValue)
             {
-                query = query.Where(x => x.IsNoTreatment == val.IsNoTreatment.Value);
+                query = query.Where(x => x.IsNoTreatment == val.IsNoTreatment.Value && x.State == "done");
             }
 
             if (val.IsRepeatCustomer.HasValue)

@@ -46,7 +46,6 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
       this.cashBookData = this.cashBooks;
       this.cashbookSeries = [];
       this.loadCashbookGroupby();
-      this.loadCashbookSeries();
       this.loadDataCashbookSeries();
     }
   }
@@ -56,12 +55,6 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
     return res;
   };
 
-  loadCashbookSeries() {
-    var cashbookThu = { name: "Thu", type: "column", data: this.cashBookData.map(s => s.totalThu), color: '#2395FF' };
-    var cashbookChi = { name: "Chi", type: "column", data: this.cashBookData.map(s => s.totalChi), color: '#28A745' };
-    var cashbookTotalAmount = { name: "Tồn sổ quỹ", type: "line", data: this.cashBookData.map(s => s.totalAmount), color: '#FF3B4D' };
-    this.cashbookSeries.push(cashbookThu, cashbookChi, cashbookTotalAmount);
-  }
 
   loadDataCashbookSeries() {
     if (this.dataCashBooks && this.totalDataCashBook) {
