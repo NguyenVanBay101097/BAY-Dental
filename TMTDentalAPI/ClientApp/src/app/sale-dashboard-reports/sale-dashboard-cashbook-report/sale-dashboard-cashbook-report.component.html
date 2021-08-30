@@ -39,11 +39,6 @@
             </kendo-chart-series-item>
         </ng-container>
     </kendo-chart-series>
-    <kendo-chart-tooltip>
-        <ng-template kendoChartSeriesTooltipTemplate let-value="value">
-           Value is {{value}}
-         </ng-template>
-     </kendo-chart-tooltip>
     <kendo-chart-value-axis>
         <kendo-chart-value-axis-item [labels]="{format: 'n0'}">
         </kendo-chart-value-axis-item>
@@ -54,7 +49,7 @@
         <div class="col">
             <div class="my-2 d-flex justify-content-between">
                 <h4>Thu</h4>  
-                <span class="text-success">{{totalCashbook?.totalThu || 0 | number}}</span>
+                <span class="text-success">{{totalThu || 0 | number}}</span>
             </div>                    
             <div class="my-2 d-flex justify-content-between">
                 <span class="title-detail">
@@ -86,7 +81,7 @@
         <div class="col">
             <div class="my-2 d-flex justify-content-between">
                 <h4>Chi</h4>  
-                <span class="text-danger">{{ totalCashbook?.totalChi || 0 | number}}</span>
+                <span class="text-danger">{{ totalChi || 0 | number}}</span>
             </div>                
             <div class="my-2 d-flex justify-content-between">
                 <span class="title-detail">Thanh toán cho nhà cung cấp</span>
