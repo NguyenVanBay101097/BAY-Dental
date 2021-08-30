@@ -153,5 +153,7 @@ namespace ApplicationCore.Entities
         /// list gửu kèm
         /// </summary>
         public ICollection<LaboOrderProductRel> LaboOrderProductRel { get; set; } = new List<LaboOrderProductRel>();
+
+        public ICollection<LaboWarranty> LaboWarranties { get; set; } = new List<LaboWarranty>();
     }
 }
