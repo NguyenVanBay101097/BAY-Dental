@@ -10,9 +10,23 @@ import { SharedModule } from '../shared/shared.module';
 import { CommissionSettlementsService } from './commission-settlements.service';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CommissionSettlementReportComponent } from './commission-settlement-report/commission-settlement-report.component';
+import { AgentCommissionListComponent } from '../agents/agent-commission-list/agent-commission-list.component';
+import { AgentCommissionFormComponent } from '../agents/agent-commission-form/agent-commission-form.component';
+import { AgentCommmissionFormDetailComponent } from '../agents/agent-commmission-form-detail/agent-commmission-form-detail.component';
+import { AgentCommmissionHistoryComponent } from '../agents/agent-commmission-history/agent-commmission-history.component';
+import { AgentCommmissionFormDetailItemComponent } from '../agents/agent-commmission-form-detail-item/agent-commmission-form-detail-item.component';
+import { AgentCommmissionPaymentDialogComponent } from '../agents/agent-commmission-payment-dialog/agent-commmission-payment-dialog.component';
 
 @NgModule({
-  declarations: [CommissionSettlementReportListComponent, CommissionSettlementReportDetailComponent, CommissionSettlementReportComponent],
+  declarations: [CommissionSettlementReportListComponent, CommissionSettlementReportDetailComponent,
+    CommissionSettlementReportComponent,
+    AgentCommissionListComponent,
+    AgentCommissionFormComponent,
+    AgentCommmissionFormDetailComponent,
+    AgentCommmissionHistoryComponent,
+    AgentCommmissionFormDetailItemComponent,
+    AgentCommmissionPaymentDialogComponent
+  ],
   imports: [
     CommonModule,
     CommissionSettlementsRoutingModule,
@@ -22,6 +36,7 @@ import { CommissionSettlementReportComponent } from './commission-settlement-rep
     MyCustomKendoModule,
     SharedModule
   ],
-  providers: [CommissionSettlementsService]
+  providers: [CommissionSettlementsService],
+  entryComponents: [AgentCommmissionPaymentDialogComponent]
 })
 export class CommissionSettlementsModule { }

@@ -62,7 +62,6 @@ export class AppHomeComponent implements OnInit {
         { name: 'Danh sách khảo sát', url: '/surveys/list', permissions: ['Survey.UserInput.Read'], groups: 'survey.group_user,survey.group_manager' },
         { name: 'Quản lý phân việc', url: '/surveys/manage', permissions: ['Survey.Assignment.Read'], groups: 'survey.group_manager' },
         { name: 'Câu hỏi khảo sát', url: '/surveys/config', permissions: ['Survey.Question.Read', 'Survey.Question.Create', 'Survey.Question.Update', 'Survey.Question.Delete'], groups: 'survey.group_manager' },
-        { name: 'Nhãn khảo sát', url: '/surveys/survey-tag', groups: 'survey.group_survey' },
       ],
       groups: 'survey.group_survey',
       permissions: ['Survey.UserInput.Read', 'Survey.Assignment.Read', 'Survey.Question.Read']
@@ -124,14 +123,14 @@ export class AppHomeComponent implements OnInit {
       permissions: ['SMS.Account.Read', 'SMS.Campaign.Read', 'SMS.Message.Read', 'SMS.Template.Read', 'SMS.Config.Read', 'SMS.Report.AllMessage', 'SMS.Report.AllSMS']
     },
     {
-      name: 'Người giới thiệu',
+      name: 'Hoa hồng',
       icon: 'fas fa-poll',
-      url: '/agents',
+      url: '/commission-settlements',
       children: [
-        { name: 'Danh sách', url: '/agents/list' },
-        { name: 'Thống kê hoa hồng', url: '/agents/commission' },
+        { name: 'Người giới thiệu', url: '/commission-settlements/agent' },
+        { name: 'Nhân viên', url: '/commission-settlements/employee', permissions: ['Report.Commission'] },
       ],
-      permissions: ['Catalog.Agent.Read', 'Report.Commission']
+      permissions: ['Report.Commission']
     },
     {
       name: 'Danh mục',
@@ -151,6 +150,8 @@ export class AppHomeComponent implements OnInit {
         { name: 'Loại thu chi', url: '/catalog/loai-thu-chi', permissions: ['Account.LoaiThuChi.Read'] },
         { name: 'Tiêu chí kiểm kho', url: '/catalog/stock/criterias', permissions: ['Stock.StockInventoryCriteria.Read'] },
         { name: 'Chẩn đoán răng', url: '/catalog/tooth-diagnosis', permissions: ['Catalog.ToothDiagnosis.Read'] },
+        { name: 'Nhãn khảo sát', url: '/catalog/surveys/survey-tag', groups: 'survey.group_survey' },
+        { name: 'Người giới thiệu', url: '/catalog/agents/list', Permissions: ['Catalog.Agent.Read'] },
       ],
       permissions: [
         'Catalog.PartnerCategory.Read',
@@ -186,11 +187,10 @@ export class AppHomeComponent implements OnInit {
         { name: 'Báo cáo dịch vụ', url: '/report/sale-report/service-report', permissions: ['Report.Sale'] },
         { name: 'Báo cáo khách hàng', url: '/report/report-account-common/partner-report-overview', permissions: ['Report.AccountPartner'] },
         { name: 'Báo cáo tiếp nhận', url: '/report/customer-receipt-reports' },
-        { name: 'Công nợ nhà cung cấp', url: '/report/report-account-common/partner', linkProps: { queryParams: { result_selection: 'supplier' }}, permissions: ['Report.AccountPartner'] },
+        { name: 'Công nợ nhà cung cấp', url: '/report/report-account-common/partner', linkProps: { queryParams: { result_selection: 'supplier' } }, permissions: ['Report.AccountPartner'] },
         { name: 'Khách hàng lân cận phòng khám', url: '/report/partner-report-location', permissions: ['Report.PartnerLocation'] },
         { name: 'Thống kê nguồn khách hàng', url: '/report/report-partner-sources', permissions: ['Report.PartnerSource'] },
         { name: 'Quản lý điều trị', url: '/report/sale-orders/management', permissions: ['Basic.SaleOrder.Read'] },
-        { name: 'Hoa hồng nhân viên', url: '/report/commission-settlements/report', permissions: ['Report.Commission'] },
       ],
       permissions: [
         'Report.Financial',

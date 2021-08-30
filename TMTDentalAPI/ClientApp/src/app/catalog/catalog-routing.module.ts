@@ -4,6 +4,8 @@ import { HistoriesListComponent } from '../history/histories-list/histories-list
 import { PartnerCategoryListComponent } from '../partner-categories/partner-category-list/partner-category-list.component';
 import { PartnerSourceListComponent } from '../partner-sources/partner-source-list/partner-source-list.component';
 import { PartnerTitleListComponent } from '../partner-titles/partner-title-list/partner-title-list.component';
+import { ProductLaboAttachListComponent } from '../products/product-labo-attach-list/product-labo-attach-list.component';
+import { ProductLaboListComponent } from '../products/product-labo-list/product-labo-list.component';
 import { LaboManagementComponent } from './labo-management/labo-management.component';
 import { PartnerInfoCustomerManagementComponent } from './partner-info-customer-management/partner-info-customer-management.component';
 import { PartnerSupplierListComponent } from './partner-supplier-list/partner-supplier-list.component';
@@ -20,8 +22,8 @@ const routes: Routes = [
       { path: 'customer-history', component: HistoriesListComponent },
     ]
   },
-  { 
-    path: 'member-level', 
+  {
+    path: 'member-level',
     loadChildren: () => import('../member-level/member-level.module').then(m => m.MemberLevelModule)
   },
   {
@@ -68,7 +70,7 @@ const routes: Routes = [
     path: 'labo-managerment',
     component: LaboManagementComponent,
     children: [
-      { path: '', redirectTo: 'labo-bite-joints', pathMatch: 'full' },
+      { path: '', redirectTo: 'product-labos', pathMatch: 'full' },
       {
         path: 'labo-bite-joints',
         loadChildren: () => import('../labo-bite-joints/labo-bite-joints.module').then(m => m.LaboBiteJointsModule),
@@ -81,8 +83,18 @@ const routes: Routes = [
         path: 'labo-finish-lines',
         loadChildren: () => import('../labo-finish-lines/labo-finish-lines.module').then(m => m.LaboFinishLinesModule),
       },
+      { path: 'product-labos', component: ProductLaboListComponent },
+      { path: 'labo-attachs', component: ProductLaboAttachListComponent }
     ]
-  }
+  },
+  {
+    path: 'surveys',
+    loadChildren: () => import('../surveys/surveys.module').then(m => m.SurveysModule),
+  },
+  {
+    path: 'agents',
+    loadChildren: () => import('../agents/agents.module').then(m => m.AgentsModule),
+  },
 ];
 
 @NgModule({

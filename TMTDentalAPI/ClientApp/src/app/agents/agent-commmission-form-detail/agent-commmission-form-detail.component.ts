@@ -27,7 +27,7 @@ export class AgentCommmissionFormDetailComponent implements OnInit {
   searchUpdate = new Subject<string>();
   dateFrom: Date;
   dateTo: Date;
-  commissionAgentStatistics : any;
+  commissionAgentStatistics: any;
   updateSubject: Subject<boolean> = new Subject<boolean>();
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
@@ -91,11 +91,10 @@ export class AgentCommmissionFormDetailComponent implements OnInit {
 
   loadAmountCommissionAgentTotal() {
     if (this.id) {
-      debugger
       var val = new TotalAmountAgentFilter();
       val.agentId = this.id;
       val.companyId = this.authService.userInfo.companyId;
-      this.agentService.getAmountCommissionAgentToTal(val).subscribe((result : any) => {
+      this.agentService.getAmountCommissionAgentToTal(val).subscribe((result: any) => {
         this.commissionAgentStatistics = result;
       });
     }

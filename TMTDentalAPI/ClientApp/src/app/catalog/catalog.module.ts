@@ -14,13 +14,23 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { LaboManagementComponent } from './labo-management/labo-management.component';
 import { PartnerImportComponent } from '../partners/partner-import/partner-import.component';
+import { ProductLaboListComponent } from '../products/product-labo-list/product-labo-list.component';
+import { ProductLaboAttachListComponent } from '../products/product-labo-attach-list/product-labo-attach-list.component';
+import { ProductLaboCuDialogComponent } from '../products/product-labo-cu-dialog/product-labo-cu-dialog.component';
+import { ProductImportExcelDialogComponent } from '../products/product-import-excel-dialog/product-import-excel-dialog.component';
+import { ProductLaboAttachCuDialogComponent } from '../products/product-labo-attach-cu-dialog/product-labo-attach-cu-dialog.component';
 
 @NgModule({
   declarations: [
     PartnerInfoCustomerManagementComponent,
     PartnerSupplierListComponent,
     LaboManagementComponent,
-    PartnerImportComponent
+    PartnerImportComponent,
+    ProductLaboListComponent,
+    ProductLaboAttachListComponent,
+    ProductLaboCuDialogComponent,
+    ProductImportExcelDialogComponent,
+    ProductLaboAttachCuDialogComponent
   ],
   imports: [
     CommonModule,
@@ -33,9 +43,13 @@ import { PartnerImportComponent } from '../partners/partner-import/partner-impor
     SharedModule,
     FormsModule,
     ReactiveFormsModule,
-    MyCustomKendoModule
+    MyCustomKendoModule,
   ],
   exports: [PartnerImportComponent],
-  entryComponents:[PartnerImportComponent]
+  entryComponents: [PartnerImportComponent,
+    ProductLaboCuDialogComponent,
+    ProductImportExcelDialogComponent,
+    ProductLaboAttachCuDialogComponent
+  ]
 })
 export class CatalogModule { }
