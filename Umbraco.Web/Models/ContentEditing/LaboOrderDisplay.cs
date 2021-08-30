@@ -20,6 +20,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public Guid PartnerId { get; set; }
         public PartnerSimple Partner { get; set; }
+        public EmployeeSimple Employee { get; set; }
 
         public DateTime DateOrder { get; set; }
 
@@ -29,6 +30,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Ngày nhận (dự kiến)
         /// </summary>
         public DateTime? DatePlanned { get; set; }
+        public DateTime? DateReceipt { get; set; }
+        public DateTime? DateExport { get; set; }
 
         /// <summary>
         /// Vật liệu
@@ -83,6 +86,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// số lượng
         /// </summary>
         public decimal Quantity { get; set; }
+        public PartnerSimple Customer { get; set; }
 
         /// <summary>
         /// đơn giá

@@ -41,7 +41,7 @@
                                                         </label>
                                                     </td>
                                                     <td colspan="1" style="width: 100%;">
-                                                        <span>{{saleOrderLineLabo.orderPartner?.name}}</span>
+                                                        <span>{{laboOrder.customer?.displayName}}</span>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -51,7 +51,7 @@
                                                         </label>
                                                     </td>
                                                     <td colspan="1" style="width: 100%;">
-                                                        <span>{{saleOrderLineLabo.employee?.name}}</span>
+                                                        <span>{{saleOrderLine?.employee?.name}}</span>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -88,12 +88,9 @@
                                                         </label>
                                                     </td>
                                                     <td colspan="1" style="width: 100%;">
-                                                        <span *ngIf="saleOrderLineLabo.orderId">
-                                                            <a class="text-primary" (click)="activeModal.dismiss()" [routerLink]="['/sale-orders/form']" [queryParams]="{id: saleOrderLineLabo.orderId}">
-                                                                {{saleOrderLineLabo.order?.name}}
-                                                            </a>
-                                                        </span>
-
+                                                        <a class="text-primary" (click)="activeModal.dismiss()" [routerLink]="['/sale-orders/form']" [queryParams]="{id: saleOrderLine?.orderId}">
+                                                            {{saleOrderLine?.order?.name}}
+                                                        </a>
                                                     </td>
                                                 </tr>
                                                 <tr>
