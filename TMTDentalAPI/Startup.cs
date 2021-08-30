@@ -367,6 +367,8 @@ namespace TMTDentalAPI
             services.AddScoped<IDashboardReportService, DashboardReportService>();
             services.AddScoped<ICustomerReceiptReportService, CustomerReceiptReportService>();
 
+            services.AddScoped<ILaboWarrantyService, LaboWarrantyService>();
+
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
@@ -559,6 +561,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new CustomerReceiptProfile());
                 mc.AddProfile(new CustomerReceiptReportProfile());
                 mc.AddProfile(new AccountCommonPartnerReportProfile());
+                mc.AddProfile(new LaboWarrantyProfile());
             };
 
             #endregion

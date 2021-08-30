@@ -79,6 +79,7 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// Trạng thái
         /// draft: Nháp
+        /// new: Mới
         /// sent: Đã gửi
         /// received: Đã nhận
         /// assembled: Đã lắp
