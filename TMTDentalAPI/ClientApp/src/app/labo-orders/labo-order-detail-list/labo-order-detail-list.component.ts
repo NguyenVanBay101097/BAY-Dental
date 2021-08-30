@@ -23,7 +23,12 @@ export class LaboOrderDetailListComponent implements OnInit {
   gridData: GridDataResult;
   details: LaboOrderBasic[];
   loading = false;
-
+  toothTypeDict = [
+    { name: "Hàm trên", value: "upper_jaw" },
+    { name: "Nguyên hàm", value: "whole_jaw" },
+    { name: "Hàm dưới", value: "lower_jaw" },
+    { name: "Chọn răng", value: "manual" },
+  ];
   // check permissions
   canAdd: boolean= false;
   canUpdate: boolean = false;
@@ -53,6 +58,8 @@ export class LaboOrderDetailListComponent implements OnInit {
       }))
     ).subscribe(res => {
       this.gridData = res;
+      console.log(this.gridData);
+      
       this.loading = false;
     }, err => {
       console.log(err);
@@ -65,7 +72,7 @@ export class LaboOrderDetailListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  GetTeeth(val) {
+  getTeeth(val) {
     var list = [];
     if (val.teeth.length) {
       list.push(val.teeth.map(x => x.name).join(','));
@@ -131,5 +138,10 @@ export class LaboOrderDetailListComponent implements OnInit {
     this.canAdd = this.checkPermissionService.check(['Labo.LaboOrder.Create']);
     this.canUpdate = this.checkPermissionService.check(['Labo.LaboOrder.Update']);
     this.canDelete = this.checkPermissionService.check(['Labo.LaboOrder.Delete']);
+  }
+
+  getToothType(key) {
+    var type = this.toothTypeDict.find(x=> x.value == key);
+    return type;
   }
 }
