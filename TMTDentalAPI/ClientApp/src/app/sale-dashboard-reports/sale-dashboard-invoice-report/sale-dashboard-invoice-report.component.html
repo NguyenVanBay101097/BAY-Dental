@@ -9,23 +9,23 @@
             </kendo-chart-category-axis-item-labels>
         </kendo-chart-category-axis-item>
     </kendo-chart-category-axis>
-    <kendo-chart-series>
+    <kendo-chart-series>     
         <ng-container>
-            <kendo-chart-series-item type="column" [data]="revenue" field="priceSubTotal" color="#2395FF"
+            <kendo-chart-series-item type="column" [data]="revenue" field="total" color="#2395FF"
                 name="Doanh thu">
                 <kendo-chart-series-item-tooltip>
                     <ng-template let-dataItem="dataItem">
-                        <b> Doanh thu {{groupby == 'groupby:day' ? (dataItem.invoiceDate | date:'dd/MM/yyyy') :
-                            (dataItem.invoiceDate | date:'MM/yyyy')}}: {{(dataItem.priceSubTotal ?
-                            dataItem.priceSubTotal : 0) | number }}</b>
+                        <b> Doanh thu {{groupby == 'groupby:day' ? (dataItem.date | date:'dd/MM/yyyy') :
+                            (dataItem.date | date:'MM/yyyy')}}: {{(dataItem.total ?
+                            dataItem.total : 0) | number }}</b>
                     </ng-template>
                 </kendo-chart-series-item-tooltip>
             </kendo-chart-series-item>
-            <kendo-chart-series-item type="column" field="totalThu" [data]="realIncome" color="#28A745" name="Thực thu">
+            <kendo-chart-series-item type="column" field="total" [data]="realIncome" color="#28A745" name="Thực thu">
                 <kendo-chart-series-item-tooltip>
                     <ng-template let-dataItem="dataItem">
                         <b> Thực thu {{groupby == 'groupby:day' ? (dataItem.date | date:'dd/MM/yyyy') : (dataItem.date |
-                            date:'MM/yyyy') }}: {{(dataItem.totalThu ? dataItem.totalThu : 0) | number }}</b>
+                            date:'MM/yyyy') }}: {{(dataItem.total ? dataItem.total : 0) | number }}</b>
                     </ng-template>
                 </kendo-chart-series-item-tooltip>
             </kendo-chart-series-item>
