@@ -234,6 +234,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
     filter.companyId = this.companyId ? this.companyId : '';
     filter.groupBy = this.groupBy;
     this.cashBookService.getChartReport(filter).subscribe((result: any) => {
+      debugger
       this.cashBooks = result;
     });
   }
@@ -277,7 +278,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
       return this.dashboardReportService.getSumaryRevenueReport(filter).pipe(
         switchMap(total => of({ text: x.value, total: total }))
       );
-    })).subscribe((result) => {
+    })).subscribe((result) => {     
       this.dataCashBooks = result.map(x => x.total);
     });
   }

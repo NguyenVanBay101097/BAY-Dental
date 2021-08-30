@@ -216,13 +216,22 @@ namespace Infrastructure.Services
                 res = await query.GroupBy(x => x.Date.Value.Date)
                   .Select(x => new CashBookReportItem
                   {
-                      Date = x.Key,
-                      Begin = x.Sum(s => s.Credit - s.Debit),
+                      Date = x.Key,                   
                       TotalThu = x.Sum(s => s.Credit),
                       TotalChi = x.Sum(s => s.Debit),
                   }).ToListAsync();
 
-
+                if (dateFrom.HasValue)
+                {
+                    foreach (var item in res)
+                    {
+                        var query1 = amlObj._QueryGet(dateFrom: item.Date, state: "posted", companyId: val.CompanyId, initBal: true);
+                        query1 = query1.Where(x => types.Contains(x.Journal.Type) && x.AccountInternalType != "liquidity");
+                        var begin = await query1.SumAsync(x => x.Credit - x.Debit);
+                        item.Begin = begin;
+                    }
+                  
+                }
 
             }
             else if (val.GroupBy == "groupby:month")
@@ -243,7 +252,7 @@ namespace Infrastructure.Services
             }
 
             foreach (var item in res)
-                item.TotalAmount = item.Begin + item.TotalThu - item.TotalChi;
+                item.TotalAmount = item.Begin + (item.TotalThu - item.TotalChi);
 
             return res;
         }
