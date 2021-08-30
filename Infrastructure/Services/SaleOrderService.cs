@@ -3079,7 +3079,7 @@ namespace Infrastructure.Services
 
         public async Task<GetRevenueSumTotalRes> GetRevenueSumTotal(GetRevenueSumTotalReq val)
         {
-            var query = SearchQuery(x => x.State != "cancel" && x.State != "draft");
+            var query = SearchQuery(x => x.State != "cancel" && x.State != "draft" && x.Residual > 0);
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId);
             var res = new GetRevenueSumTotalRes()

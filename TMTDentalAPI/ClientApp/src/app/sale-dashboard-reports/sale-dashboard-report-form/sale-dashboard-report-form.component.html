@@ -303,7 +303,7 @@
                         <h5>Dự kiến thu</h5>
                         <div class="o_value text-success">{{sumRevenue || 0 | number }}</div>
                         <div class="link-details">
-                            <a (click)="redirectTo('report/account-invoice-reports')">Chi tiết</a>
+                            <a (click)="redirectTo('account-invoice-reports')">Chi tiết</a>
                         </div>
                     </div>
                 </div>
@@ -313,7 +313,7 @@
             <div class="d-flex">
                 <input class="btn-check" type="radio" [(ngModel)]="groupBy" name="radioButton" id="day"
                     value="groupby:day" (change)="onChangeType($event.target.value)">
-                <label class="btn btn-outline-primary" for="day">
+                <label class="btn btn-outline-primary mr-2" for="day">
                     Ngày
                 </label>
                 <input class="btn-check" type="radio" [(ngModel)]="groupBy" name="radioButton" id="month"
