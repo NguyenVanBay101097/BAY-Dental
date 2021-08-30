@@ -56,6 +56,7 @@ namespace Infrastructure.Services
 
             query = query.Include(x => x.Partner)
                 .Include(x => x.SaleOrderLine.Order)
+                .Include(x => x.SaleOrderLine.SaleOrderLineToothRels).ThenInclude(x=>x.Tooth)
                 .Include(x => x.LaboOrderToothRel).ThenInclude(x => x.Tooth);
 
             query = query.OrderByDescending(x => x.DateCreated);
