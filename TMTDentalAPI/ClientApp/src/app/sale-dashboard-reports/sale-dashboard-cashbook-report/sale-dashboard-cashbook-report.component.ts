@@ -87,11 +87,11 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
   }
 
   get totalThu() {
-    return (this.cashbookCashBank ? this.cashbookCashBank.credit : 0 ) + (this.cashbookCusAdvance ? this.cashbookCusAdvance.credit : 0) + (this.cashbookCusDebt ? this.cashbookCusDebt.credit : 0) + (this.cashbookSupp ? this.cashbookSupp.credit : 0) + this.ortherThu;
+    return (this.cashbookCashBank ? this.cashbookCashBank.credit : 0) + (this.cashbookCusAdvance ? this.cashbookCusAdvance.credit : 0) + (this.cashbookCusDebt ? this.cashbookCusDebt.credit : 0) + (this.cashbookSupp ? this.cashbookSupp.credit : 0) + this.ortherThu;
   }
 
   get totalChi() {
-    return this.cashbookSupp.debit + this.cashbookCusAdvance.debit + this.cashbookCusSalary.debit + this.cashbookAgentCommission.debit + this.ortherChi;
+    return (this.cashbookSupp ? this.cashbookSupp.debit : 0) + (this.cashbookCusAdvance ? this.cashbookCusAdvance.debit : 0) + (this.cashbookCusSalary ? this.cashbookCusSalary.debit : 0) + (this.cashbookAgentCommission ? this.cashbookAgentCommission.debit : 0) + this.ortherChi;
   }
 
   loadCashbookGroupby() {
