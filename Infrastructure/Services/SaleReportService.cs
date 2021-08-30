@@ -349,7 +349,7 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.State))
                 query = query.Where(x => !x.Order.State.Equals(val.State));
 
-       
+
 
             query = query.OrderByDescending(x => x.DateCreated);
 
@@ -745,20 +745,20 @@ namespace Infrastructure.Services
             var query = orderLineObj.SearchQuery();
             if (val.DateFrom.HasValue)
                 query = query.Where(x => x.Date >= val.DateFrom.Value.AbsoluteBeginOfDate());
-            
+
             if (val.DateTo.HasValue)
                 query = query.Where(x => x.Date <= val.DateTo.Value.AbsoluteEndOfDate());
 
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId);
 
-            if(val.EmployeeId.HasValue)
+            if (val.EmployeeId.HasValue)
                 query = query.Where(x => x.EmployeeId == val.EmployeeId);
 
             if (!string.IsNullOrEmpty(val.State))
             {
                 var stateArr = val.State.Split(",");
-                query = query.Where(x => stateArr.Any(z=> z == x.State));
+                query = query.Where(x => stateArr.Any(z => z == x.State));
             }
 
             if (val.Active.HasValue)
@@ -772,10 +772,11 @@ namespace Infrastructure.Services
         }
         public async Task<IEnumerable<ServiceReportRes>> GetServiceReportByTime(ServiceReportReq val)
         {
-            var res = await GetServiceReportQuery(val).GroupBy(x => x.Date.Value.Date).OrderByDescending(x=> x.Key).Select(x=> new ServiceReportRes() { 
-            Date = x.Key, 
-            Quantity = x.Count(),
-            TotalAmount = x.Sum(z=> z.PriceSubTotal)
+            var res = await GetServiceReportQuery(val).GroupBy(x => x.Date.Value.Date).OrderByDescending(x => x.Key).Select(x => new ServiceReportRes()
+            {
+                Date = x.Key,
+                Quantity = x.Sum(s => s.ProductUOMQty),
+                TotalAmount = x.Sum(z => z.PriceSubTotal)
             }).ToListAsync();
 
             return res;
@@ -783,10 +784,10 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<ServiceReportRes>> GetServiceReportByService(ServiceReportReq val)
         {
-            var res = await GetServiceReportQuery(val).OrderByDescending(x=> x.Date).GroupBy(x => new { x.ProductId, x.Name }).Select(x => new ServiceReportRes()
-            {   
+            var res = await GetServiceReportQuery(val).OrderByDescending(x => x.Date).GroupBy(x => new { x.ProductId, x.Name }).Select(x => new ServiceReportRes()
+            {
                 Name = x.Key.Name,
-                Quantity = x.Count(),
+                Quantity = x.Sum(s => s.ProductUOMQty),
                 TotalAmount = x.Sum(z => z.PriceSubTotal),
                 ProductId = x.Key.ProductId
             }).ToListAsync();
@@ -796,24 +797,28 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<ServiceReportDetailRes>> GetServiceReportDetailPaged(ServiceReportDetailReq val)
         {
-            var query = GetServiceReportQuery(new ServiceReportReq(){
-            CompanyId = val.CompanyId,
-            DateFrom = val.DateFrom,
-            DateTo = val.DateTo,
-            EmployeeId = val.EmployeeId,
-            Search = val.Search,
-            State = val.State
+            var query = GetServiceReportQuery(new ServiceReportReq()
+            {
+                CompanyId = val.CompanyId,
+                DateFrom = val.DateFrom,
+                DateTo = val.DateTo,
+                EmployeeId = val.EmployeeId,
+                Search = val.Search,
+                State = val.State
             });
 
             if (val.ProductId.HasValue)
                 query = query.Where(x => x.ProductId == val.ProductId);
             var count = await query.CountAsync();
-            if(val.Limit > 0)
-            query = query.Skip(val.Offset).Take(val.Limit);
+
+            query = query.OrderBy(x => x.Date);
+            if (val.Limit > 0)
+                query = query.Skip(val.Offset).Take(val.Limit);
 
             var res = await _mapper.ProjectTo<ServiceReportDetailRes>(query).ToListAsync();
-            return new PagedResult2<ServiceReportDetailRes>(count, val.Offset, val.Limit) { 
-            Items = res
+            return new PagedResult2<ServiceReportDetailRes>(count, val.Offset, val.Limit)
+            {
+                Items = res
             };
         }
         private string UserId
@@ -837,9 +842,9 @@ namespace Infrastructure.Services
 
             foreach (var item in data)
             {
-                item.Lines = allLines.Items.Where(x=> x.ProductId == item.ProductId);
+                item.Lines = allLines.Items.Where(x => x.ProductId == item.ProductId);
             }
- 
+
             var companyObj = GetService<ICompanyService>();
             var res = new ServiceReportPrint()
             {
@@ -922,9 +927,9 @@ namespace Infrastructure.Services
             return data;
         }
 
-        public FileContentResult ExportServiceReportExcel(IEnumerable<ServiceReportResExcel> data,DateTime? dateFrom, DateTime? dateTo, string type)
+        public FileContentResult ExportServiceReportExcel(IEnumerable<ServiceReportResExcel> data, DateTime? dateFrom, DateTime? dateTo, string type)
         {
-            
+
             var dateToDate = "";
             if (dateFrom.HasValue && dateTo.HasValue)
             {
@@ -967,7 +972,6 @@ namespace Infrastructure.Services
                 worksheet.Cells["H4:J4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
                 worksheet.Cells["H4:J4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
                 worksheet.Cells["H4:J4"].Style.Font.Color.SetColor(Color.White);
-                worksheet.Cells["A4:J4"].Style.Font.Size = 14;
 
                 var row = 5;
                 foreach (var item in data)
@@ -983,7 +987,7 @@ namespace Infrastructure.Services
                     worksheet.Cells[row, 2].Value = item.Quantity;
                     worksheet.Cells[row, 2, row, 7].Merge = true;
                     worksheet.Cells[row, 8].Value = item.TotalAmount;
-                    worksheet.Cells[row, 8].Style.Numberformat.Format = "#,###,###";
+                    worksheet.Cells[row, 8].Style.Numberformat.Format = "#,##0";
                     worksheet.Cells[row, 8, row, 10].Merge = true;
                     row++;
                     worksheet.Cells[row, 1].Value = "";
@@ -1002,7 +1006,7 @@ namespace Infrastructure.Services
                     var rowEnd = row + item.Lines.Count();
                     worksheet.Cells[row, 1, rowEnd, 1].Merge = true;
                     row++;
-                    ExportReportServiceDetail(item.Lines, worksheet,ref row);
+                    ExportReportServiceDetail(item.Lines, worksheet, ref row);
 
                 }
 
@@ -1030,11 +1034,11 @@ namespace Infrastructure.Services
                 worksheet.Cells[row, 3].Value = line.OrderPartnerName;
                 worksheet.Cells[row, 4].Value = line.Name;
                 worksheet.Cells[row, 5].Value = line.EmployeeName;
-                worksheet.Cells[row, 6].Value = ShowTeethList(line.ToothType, line.Teeth);
+                worksheet.Cells[row, 6].Value = line.TeethDisplay;
                 worksheet.Cells[row, 7].Value = line.ProductUOMQty;
                 worksheet.Cells[row, 8].Value = line.PriceSubTotal;
-                worksheet.Cells[row, 8].Style.Numberformat.Format = "#,###,###";
-                worksheet.Cells[row, 9].Value = !line.IsActive ? "Ngừng điều trị" : ShowState(line.State);
+                worksheet.Cells[row, 8].Style.Numberformat.Format = "#,##0";
+                worksheet.Cells[row, 9].Value = line.StateDisplay;
                 worksheet.Cells[row, 10].Value = line.OrderName;
                 row++;
             }
@@ -1049,7 +1053,7 @@ namespace Infrastructure.Services
             else if (toothType == "lower_jaw")
                 return "Hàm dưới";
             else
-                return string.Join(',', teeth);
+                return string.Join(", ", teeth.Select(x => x.Name));
         }
 
         private string ShowState(string state)

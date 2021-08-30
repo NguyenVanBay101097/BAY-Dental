@@ -3,7 +3,7 @@
         <h5 class="flex-0-0-auto">Báo cáo theo dịch vụ</h5>
         <div class="flex-0-0-auto">
             <div class="filter d-flex flex-wrap">
-                <app-date-range-picker-filter [opens]="'right'" class="mr-1" [startDate]="dateFrom" [endDate]="dateTo"
+                <app-date-range-picker-filter [opens]="'right'" class="mr-1" [startDate]="filter.dateFrom" [endDate]="filter.dateTo"
                     (searchChange)="onSearchDateChange($event)" opens="right"></app-date-range-picker-filter>
                 <kendo-combobox [placeholder]="'Tất cả bác sĩ'" class="mr-1" [valueField]="'id'" [textField]="'name'"
                     [filterable]="true" [data]="employees" (selectionChange)="onSelectEmployee($event)" #empCbx>
@@ -13,7 +13,7 @@
                     (selectionChange)="onSelectCompany($event)" #companyCbx>
                 </kendo-combobox>
                 <input class="form-control filter-search" placeholder="Tìm kiếm khách hàng, dịch vụ" type="text"
-                    [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                    [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)">
             </div>
             <div class="d-flex mt-2">
                 <div class="dropdown mr-1">
@@ -39,7 +39,7 @@
             <label class="btn btn-outline-primary mr-2 mb-0" for="notActive">Ngừng điều trị</label> -->
 
             <button type="button" *ngFor="let item of filterState" class="btn active mr-2"
-                (click)="onChangeFilterState(item)" [class.btn-primary]="state == item.value">
+                (click)="onChangeFilterState(item)" [class.btn-primary]="filter.state == item.value">
                 {{item.text}} 
             </button>
 

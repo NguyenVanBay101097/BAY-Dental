@@ -146,7 +146,6 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells["A4:H4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
                 worksheet.Cells["A4:H4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
                 worksheet.Cells["A4:H4"].Style.Font.Color.SetColor(Color.White);
-                worksheet.Cells["A4:H4"].Style.Font.Size = 14;
 
                 var row = 5;
                 foreach (var item in data.Data)
@@ -158,7 +157,7 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 3].Value = item.Gender == "male"? "Nam" : (item.Gender == "female" ? "Nữ" : "Khác");
                     worksheet.Cells[row, 4].Value = item.Address;
                     worksheet.Cells[row, 5].Value = item.Revenue;
-                    worksheet.Cells[row, 5].Style.Numberformat.Format = "#,###0";
+                    worksheet.Cells[row, 5].Style.Numberformat.Format = "#,##0";
                     worksheet.Cells[row, 6].Value = item.SourceName;
                     worksheet.Cells[row, 7].Value = string.Join("; ",item.Categories.Select(x=> x.Name));
                     worksheet.Cells[row, 8].Value = item.OrderState == "sale" ? "Đang điều trị" : (item.OrderState == "done" ? "Hoàn thành" : "Chưa phát sinh") ;
@@ -190,11 +189,11 @@ namespace TMTDentalAPI.Controllers
                         worksheet.Cells[row, 2, row, 3].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                         worksheet.Cells[row, 4].Value = line.Name;
                         worksheet.Cells[row, 5].Value = line.AmountTotal;
-                        worksheet.Cells[row, 5].Style.Numberformat.Format = "#,###0";
+                        worksheet.Cells[row, 5].Style.Numberformat.Format = "#,##0";
                         worksheet.Cells[row, 6].Value = line.TotalPaid;
-                        worksheet.Cells[row, 6].Style.Numberformat.Format = "#,###0";
+                        worksheet.Cells[row, 6].Style.Numberformat.Format = "#,##0";
                         worksheet.Cells[row, 7].Value = line.Residual;
-                        worksheet.Cells[row, 7].Style.Numberformat.Format = "#,###0";
+                        worksheet.Cells[row, 7].Style.Numberformat.Format = "#,##0";
                         worksheet.Cells[row, 8].Value = line.State == "sale" ? "Đang điều trị" : (line.State == "done" ? "Hoàn thành" : "Nháp");
                         row++;
                     }

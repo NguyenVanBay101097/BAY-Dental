@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
@@ -19,7 +20,7 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public DateTime? Date { get; set; }
         public string Name { get; set; }
-        public int Quantity { get; set; }
+        public decimal Quantity { get; set; }
         public decimal TotalAmount { get; set; }
         public Guid? ProductId { get; set; }
     }
@@ -52,11 +53,44 @@ namespace Umbraco.Web.Models.ContentEditing
         public string EmployeeName { get; set; }
         public string ToothType { get; set; }
         public IEnumerable<ToothSimple> Teeth { get; set; } = new List<ToothSimple>();
+        public string TeethDisplay
+        {
+            get
+            {
+                switch (ToothType)
+                {
+                    case "whole_jaw":
+                        return "Nguyên hàm";
+                    case "upper_jaw":
+                        return "Hàm trên";
+                    case "lower_jaw":
+                        return "Hàm dưới";
+                    default:
+                        return string.Join(", ", Teeth.Select(x => x.Name));
+                }
+            }
+        }
         public decimal ProductUOMQty { get; set; }
         public decimal PriceSubTotal { get; set; }
         public string State { get; set; }
+        public string StateDisplay
+        {
+            get
+            {
+                switch (State)
+                {
+                    case "sale":
+                        return "Đang điều trị";
+                    case "cancel":
+                        return "Ngừng điều trị";
+                    case "done":
+                        return "Hoàn thành";
+                    default:
+                        return "Nháp";
+                }
+            }
+        }
         public string OrderName { get; set; }
-        public bool IsActive { get; set; }
         public Guid ProductId { get; set; }
 
     }

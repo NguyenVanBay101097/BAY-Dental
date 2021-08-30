@@ -15,6 +15,13 @@ body {
     margin: 0
 }
 
+@media print {
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+}
+
 .sheet {
     margin: 0;
     overflow: hidden;

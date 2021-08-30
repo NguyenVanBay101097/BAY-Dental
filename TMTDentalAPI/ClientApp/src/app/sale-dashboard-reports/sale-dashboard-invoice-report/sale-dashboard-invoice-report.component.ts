@@ -52,6 +52,7 @@ export class SaleDashboardInvoiceReportComponent implements OnInit {
   }
 
   loadDataCashbookSeries() {
+    console.log(this.revenues);
     this.revenueSeries = [];
     if (this.cashBooks && this.revenues && this.dataCashBooks) {
       this.cashBookData = this.cashBooks;

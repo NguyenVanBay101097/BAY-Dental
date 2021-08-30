@@ -26,21 +26,8 @@
             <button class="btn btn-primary mb-2" (click)="onPrint()">In báo cáo</button>
         </div>
         <div class="d-flex mb-2 order-state">
-            <!-- <input [(ngModel)]="filterState" (ngModelChange)="onChangeFilterState()" value="" type="radio"
-                class="btn-check hidden hide" name="orderStates" id="all" autocomplete="off" [checked]="true">
-            <label class="btn btn-outline-primary mr-2 mb-0" for="all">Tất cả</label>
-            <input [(ngModel)]="filterState" (ngModelChange)="onChangeFilterState()" value="sale" type="radio"
-                class="btn-check hidden hide" name="orderStates" id="sale" autocomplete="off" [checked]="true">
-            <label class="btn btn-outline-primary mr-2 mb-0" for="sale">Đang điều trị</label>
-            <input [(ngModel)]="filterState" (ngModelChange)="onChangeFilterState()" value="done" type="radio"
-                class="btn-check hidden hide" name="orderStates" id="done" autocomplete="off" [checked]="true">
-            <label class="btn btn-outline-primary mr-2 mb-0" for="done">Hoàn thành</label>
-            <input [(ngModel)]="filterState" (ngModelChange)="onChangeFilterState()" value="notActive" type="radio"
-                class="btn-check hidden hide" name="orderStates" id="notActive" autocomplete="off" [checked]="true">
-            <label class="btn btn-outline-primary mr-2 mb-0" for="notActive">Ngừng điều trị</label> -->
-
             <button type="button" *ngFor="let item of filterState" class="btn active mr-2"
-                (click)="onChangeFilterState(item)" [class.btn-primary]="state == item.value">
+                (click)="onChangeFilterState(item)" [class.btn-primary]="filter.state == item.value">
                 {{item.text}}
             </button>
             

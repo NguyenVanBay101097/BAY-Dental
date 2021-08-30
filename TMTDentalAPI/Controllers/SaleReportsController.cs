@@ -277,7 +277,6 @@ namespace TMTDentalAPI.Controllers
                 PagesCount = true,
                 HtmlContent = html,
                 WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/css", "print.css") },
-                FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Báo cáo dịch vụ", Right = "Page [page] of [toPage]" }
             };
             var pdf = new HtmlToPdfDocument()
             {
@@ -285,7 +284,7 @@ namespace TMTDentalAPI.Controllers
                 Objects = { objectSettings }
             };
             var file = _converter.Convert(pdf);
-            return File(file, "application/pdf", "ServiceReportService.pdf");
+            return File(file, "application/pdf", "BaoCaoDichVu_TheoTG.pdf");
         }
 
         [HttpPost("[action]")]

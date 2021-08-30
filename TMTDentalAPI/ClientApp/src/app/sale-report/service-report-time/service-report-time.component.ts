@@ -28,13 +28,6 @@ export class ServiceReportTimeComponent implements OnInit {
   skip = 0;
   limit = 20;
   searchUpdate = new Subject<string>();
-  // filterState = "";
-  search: string;
-  dateFrom: Date;
-  dateTo: Date;
-  state: string;
-  companyId: string;
-  employeeId: string;
   
   @ViewChild("companyCbx", { static: true }) companyVC: ComboBoxComponent;
   @ViewChild("empCbx", { static: true }) empVC: ComboBoxComponent;
@@ -66,19 +59,11 @@ export class ServiceReportTimeComponent implements OnInit {
 
   
   loadAllData() {
-    var val = new ServiceReportReq();
-    val.search = this.search || '';
-    val.companyId = this.companyId || '';
-    val.employeeId = this.employeeId || '';
-    val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
-    val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
-    val.state = this.state || '';
-    // var val = Object.assign({}, this.filter) as ServiceReportReq;
-
-    // val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
-    // val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    var val = Object.assign({}, this.filter) as ServiceReportReq;
+    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
+    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
     this.loading = true;
-    this.filter = val;
+
     this.saleReportService.getServiceReportByTime(val).subscribe(res => {
       this.allDataGrid = res;
       this.loading = false;
@@ -127,9 +112,12 @@ export class ServiceReportTimeComponent implements OnInit {
     })
 
     var date = new Date(), y = date.getFullYear(), m = date.getMonth();
-    this.dateFrom = this.filter.dateFrom || new Date(y, m, 1);
-    this.dateTo = this.filter.dateTo || new Date(y, m + 1, 0);
-    this.state = 'sale,done,cancel';
+    this.filter = <ServiceReportReq>{
+      state: 'sale,done,cancel',
+      dateFrom: new Date(y, m, 1),
+      dateTo: new Date(y, m + 1, 0)
+    };
+
     this.skip = 0;
     this.loadAllData();
   }
@@ -168,20 +156,20 @@ export class ServiceReportTimeComponent implements OnInit {
   }
 
   onSearchDateChange(e) {
-    this.dateFrom = e.dateFrom;
-    this.dateTo = e.dateTo;
+    this.filter.dateFrom = e.dateFrom;
+    this.filter.dateTo = e.dateTo;
     this.skip = 0;
     this.loadAllData();
   }
 
   onSelectCompany(e) {
-    this.companyId = e ? e.id : null;
+    this.filter.companyId = e ? e.id : null;
     this.skip = 0;
     this.loadAllData();
   }
 
   onSelectEmployee(e) {
-    this.employeeId = e ? e.id : null;
+    this.filter.employeeId = e ? e.id : null;
     this.skip = 0;
     this.loadAllData();
   }
@@ -192,7 +180,7 @@ export class ServiceReportTimeComponent implements OnInit {
   }
 
   onChangeFilterState(state) {
-    this.state = state.value;
+    this.filter.state = state.value;
     this.skip = 0;
     this.loadAllData();
   }
@@ -260,32 +248,32 @@ export class ServiceReportTimeComponent implements OnInit {
   //   })
   // }
 
-  // onExportPDF() {
-  //   var val = Object.assign({}, this.filter) as ServiceReportReq;
+  onExportPDF() {
+    var val = Object.assign({}, this.filter) as ServiceReportReq;
     
-  //   val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
-  //   val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
-  //   this.loading = true;
-  //   this.saleReportService.getServiceReportByTimePdf(val).subscribe(res => {
-  //     this.loading = false;
-  //     let filename ="BaoCaoDichVuTheoThoiGian";
+    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
+    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    this.loading = true;
+    this.saleReportService.getServiceReportByTimePdf(val).subscribe(res => {
+      this.loading = false;
+      let filename ="BaoCaoDichVuTheoThoiGian";
 
-  //     let newBlob = new Blob([res], {
-  //       type:
-  //         "application/pdf",
-  //     });
+      let newBlob = new Blob([res], {
+        type:
+          "application/pdf",
+      });
 
-  //     let data = window.URL.createObjectURL(newBlob);
-  //     let link = document.createElement("a");
-  //     link.href = data;
-  //     link.download = filename;
-  //     link.click();
-  //     setTimeout(() => {
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
        
-  //       window.URL.revokeObjectURL(data);
-  //     }, 100);
-  //   });
-  // }
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
+  }
 
 
   onPrint(){
