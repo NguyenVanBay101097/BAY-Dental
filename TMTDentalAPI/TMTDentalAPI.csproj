@@ -59,6 +59,7 @@
 
   <ItemGroup>
     <Folder Include="ClientApp\dist\" />
+    <Folder Include="PrintTemplate\" />
   </ItemGroup>
 
   <ItemGroup>
