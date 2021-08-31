@@ -109,7 +109,6 @@ export class PrintTemplateConfigCuComponent implements OnInit {
 
     onEdit() {
         this.configEdit = Object.assign({}, this.config);
-        this.onGenerate();
         this.onToggleEdit();
     }
 
