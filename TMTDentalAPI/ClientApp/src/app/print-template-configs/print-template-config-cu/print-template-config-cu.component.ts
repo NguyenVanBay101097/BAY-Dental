@@ -4,55 +4,57 @@ import { PrintTemplateConfigChangeType, PrintTemplateConfigDisplay, PrintTemplat
 import { NotifyService } from 'src/app/shared/services/notify.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PrintService } from 'src/app/shared/services/print.service';
+import { PrintTemplateDefault, PrintTemplateService } from '../print-template.service';
 
 @Component({
-  selector: 'app-print-template-config-cu',
-  templateUrl: './print-template-config-cu.component.html',
-  styleUrls: ['./print-template-config-cu.component.css']
+    selector: 'app-print-template-config-cu',
+    templateUrl: './print-template-config-cu.component.html',
+    styleUrls: ['./print-template-config-cu.component.css']
 })
 export class PrintTemplateConfigCuComponent implements OnInit {
-  typeFilter: any;
-  isEditting = false;
-  types: { text: string, value: string }[] = [];
-  config = new PrintTemplateConfigDisplay();
-  configEdit = new PrintTemplateConfigDisplay();
-  configEditor = {
-    language: 'vi',
-    height: 525,
-    contentsCss: '/css/print.css',
-    fullPage: true
-  };
-  constructor(private configService: PrintTemplateConfigService,
-    private activeRoute: ActivatedRoute,
-    private notifyService: NotifyService,
-    private authService: AuthService,
-    private printService: PrintService
-  ) { }
+    typeFilter: any;
+    isEditting = false;
+    types: { text: string, value: string }[] = [];
+    config = new PrintTemplateConfigDisplay();
+    configEdit = new PrintTemplateConfigDisplay();
+    configEditor = {
+        language: 'vi',
+        height: 525,
+        contentsCss: '/css/print.css',
+        fullPage: true
+    };
+    constructor(private configService: PrintTemplateConfigService,
+        private activeRoute: ActivatedRoute,
+        private notifyService: NotifyService,
+        private authService: AuthService,
+        private printService: PrintService,
+        private printTemplateService: PrintTemplateService
+    ) { }
 
-  ngOnInit() {
-    this.types = this.configService.types;
-    this.typeFilter = this.types[0].value;
-    this.loadCurrentConfig();
-    // this.activeRoute.paramMap.subscribe(x => {
-    //   this.typeFilter = x.get("type");
-    //   this.loadCurrentConfig();
-    // });
-  }
+    ngOnInit() {
+        this.types = this.configService.types;
+        this.typeFilter = this.types[0].value;
+        this.loadCurrentConfig();
+        // this.activeRoute.paramMap.subscribe(x => {
+        //   this.typeFilter = x.get("type");
+        //   this.loadCurrentConfig();
+        // });
+    }
 
-  public onReady(editor) {
-    editor.ui.getEditableElement().parentElement.insertBefore(
-      editor.ui.view.toolbar.element,
-      editor.ui.getEditableElement()
-    );
-  }
+    public onReady(editor) {
+        editor.ui.getEditableElement().parentElement.insertBefore(
+            editor.ui.view.toolbar.element,
+            editor.ui.getEditableElement()
+        );
+    }
 
-  loadCurrentConfig() {
-    var val = new PrintTemplateConfigChangeType();
-    val.type = this.typeFilter;
-    this.configService.getDisplay(val).subscribe(res => {
-      this.config = res;
-      // if (!res.content)
-      this.config.content = `
+    loadCurrentConfig(preType?) {
+        var val = new PrintTemplateConfigChangeType();
+        val.type = this.typeFilter;
+        this.configService.getDisplay(val).subscribe(res => {
+            this.config = res;
+            // if (!res.content)
+            this.config.content = `
 
 
 
@@ -77,7 +79,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
       
           </style>
       </head>
-      <body class="A4">
+      <body class="">
           <div class="container">
               
       <div class="">
@@ -213,42 +215,53 @@ export class PrintTemplateConfigCuComponent implements OnInit {
       </html>
       
       `;
-    });
+        },
+            err => {
+                if (preType) this.typeFilter = preType;
+                console.log(this.typeFilter);
 
-  }
+            }
+        );
+
+    }
 
 
-  onDefault() {
-    //gọi api get default
-  }
+    onDefault() {
+        var val = Object.assign({}, this.configEdit) as PrintTemplateDefault;
+        val.type = this.typeFilter;
+        this.printTemplateService.getDisplay(val).subscribe(res => {
+            this.configEdit.content = res;
+        });
+    }
 
-  onPrint() {
-    this.printService.printHtml(this.config.content);
-  }
+    onPrint() {
+        this.printService.printHtml(this.isEditting ? this.configEdit.content : this.config.content);
+    }
 
-  onSave() {
-    var val = Object.assign({}, this.configEdit) as PrintTemplateConfigSave;
-    val.companyId = this.authService.userInfo ? this.authService.userInfo.companyId : '';
-    val.type = this.typeFilter;
-    this.configService.createOrUpdate(val).subscribe(res => {
-      this.notifyService.notify('success', 'Lưu thành công');
-      this.onToggleEdit();
-      this.config = this.configEdit;
-    });
-  }
+    onSave() {
+        var val = Object.assign({}, this.configEdit) as PrintTemplateConfigSave;
+        val.companyId = this.authService.userInfo ? this.authService.userInfo.companyId : '';
+        val.type = this.typeFilter;
+        this.configService.createOrUpdate(val).subscribe(res => {
+            this.notifyService.notify('success', 'Lưu thành công');
+            this.onToggleEdit();
+            this.config = this.configEdit;
+        });
+    }
 
-  onChangeType(e) {
-    const value = e.target.value;
-    this.typeFilter = value;
-    this.loadCurrentConfig();
-  }
+    onChangeType(e) {
+        var prev = this.typeFilter;
+        this.typeFilter = e;
+        this.loadCurrentConfig(prev);
+    }
 
-  onEdit() {
-    this.configEdit = Object.assign({}, this.config);
-    this.onToggleEdit();
-  }
+    onEdit() {
+        this.configEdit = Object.assign({}, this.config);
+        this.onToggleEdit();
+    }
 
-  onToggleEdit() {
-    this.isEditting = !this.isEditting;
-  }
+    onToggleEdit() {
+        this.isEditting = !this.isEditting;
+    }
+
 }

@@ -39,7 +39,8 @@
                             </tr>
                             <tr>
                                 <td colspan="1" style="width: 100%;">
-                                    <select [(ngModel)]="typeFilter" class="form-control">
+                                    <select (ngModelChange)="onChangeType($event)" [(ngModel)]="typeFilter"
+                                        class="form-control">
                                         <option [value]="item.value" *ngFor="let item of types">{{item.text}}
                                         </option>
                                     </select>
@@ -71,7 +72,8 @@
                     <ng-container *ngIf="!isEditting; else EditTemplate">
                         <hr>
                         <div class="view d-flex justify-content-center">
-                            <div class="w-75" [innerHTML]="config.content | safeHtml "></div>
+                            <iframe class="w-75" frameborder="0" style="height: 100vh;"
+                                [srcdoc]="config.content | safeHtml "></iframe>
                         </div>
                     </ng-container>
                     <ng-template #EditTemplate>
@@ -89,8 +91,9 @@
                                     <h5 class="title">Bản xem trước</h5>
                                     <!-- <button (click)="onPrint()" class="btn btn-outline-primary">In thử</button> -->
                                 </div>
-                                <iframe frameborder="0" height="100%" width="100%" class="border-0"
-                                    [srcdoc]="configEdit.content | safeHtml "></iframe>
+                                <iframe #iframe style="height: 100vh; width: 100%;" frameBorder="0"
+                                    sandbox="allow-same-origin" [attr.srcdoc]="configEdit.content | safeHtml "></iframe>
+                                <!-- <div [innerHTML]="configEdit.content | safeHtml "></div> -->
                             </div>
                         </div>
                     </ng-template>
