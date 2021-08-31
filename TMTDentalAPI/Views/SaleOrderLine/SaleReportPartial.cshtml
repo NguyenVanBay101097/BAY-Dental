@@ -35,15 +35,15 @@
     <table class="table table-sm table-bordered mb-1">
         <thead>
             <tr>
-                <th>Ngày tạo</th>
-                <th style="width:90px">Khách hàng</th>
-                <th>Dịch vụ</th>
-                <th style="width:90px">Bác sĩ</th>
-                <th>Răng</th>
-                <th style="width:70px" class="text-right">Số lượng</th>
-                <th class="text-right">Thành tiền</th>
-                <th style="width:70px">Trạng thái</th>
-                <th>Phiếu điều trị</th>
+                <th width="120">Ngày tạo</th>
+                <th width="150">Khách hàng</th>
+                <th width="150">Dịch vụ</th>
+                <th width="150">Bác sĩ</th>
+                <th width="120">Răng</th>
+                <th width="120" class="text-right">Số lượng</th>
+                <th width="120">Thành tiền</th>
+                <th width="120">Trạng thái</th>
+                <th width="120">Phiếu điều trị</th>
             </tr>
         </thead>
         <tbody>
@@ -66,7 +66,7 @@
                     </td>
                     <td class="text-right">@string.Format(culture, "{0:0}", @line.ProductUOMQty)</td>
                     <td class="text-right">@string.Format(culture, "{0:0,0}", line.PriceSubTotal)</td>
-                    <td>@(line.State == "done" ? "Hoàn thành" : (line.State == "cancel"? "Ngừng dịch vụ" : "đang điều trị"))</td>
+                    <td>@(line.State == "done" ? "Hoàn thành" : (line.State == "cancel"? "Ngừng dịch vụ" : "Đang điều trị"))</td>
                     <td>@line.Order.Name</td>
                 </tr>
                 <tr>

@@ -811,7 +811,7 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.ProductId == val.ProductId);
             var count = await query.CountAsync();
 
-            query = query.OrderBy(x => x.Date);
+            query = query.OrderByDescending(x => x.Date);
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 

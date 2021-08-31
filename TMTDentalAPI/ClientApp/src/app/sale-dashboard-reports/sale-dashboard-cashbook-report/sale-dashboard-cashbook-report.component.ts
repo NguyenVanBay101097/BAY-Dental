@@ -51,7 +51,7 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
   }
 
   public labelContent = (e: any) => {
-    var res = this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(e.value), 'dd/MM') : this.intlService.formatDate(new Date(e.value), 'MM/yyyy');
+    var res = this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(e.value), 'dd/MM/yyyy') : this.intlService.formatDate(new Date(e.value), 'MM/yyyy');
     return res;
   };
 
