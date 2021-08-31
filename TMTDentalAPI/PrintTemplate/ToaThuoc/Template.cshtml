@@ -93,21 +93,21 @@
         <table class="table table-sm table-borderless">
             <tbody>
                 @{ var index = 1; }
-                {{ for line in Model.Lines }}
+                {{ for line in Model.lines }}
                 <tr>
                     <td width="30"><span class="font-semibold">@(index++).</span></td>
                     <td>
                         <div class="d-flex justify-content-between">
-                            <div class="font-semibold">{{line.Product.Name}}</div>
+                            <div class="font-semibold">{{line.product.Name}}</div>
                             <div>
-                                <span class="font-semibold">{{line.Quantity}}</span>
-                                {{line.Product.UOM.Name}}
+                                <span class="font-semibold">{{line.quantity}}</span>
+                                {{line.product.uom.name}}
                             </div>
                         </div>
                         <div>
-                            Ngày uống <span class="font-semibold">{{line.NumberOfTimes}}</span> lần,
-                            mỗi lần <span class="font-semibold">{{line.AmountOfTimes}}</span> {{line.Product.UOM.Name}},
-                            uống trong <span class="font-semibold">{{line.NumberOfDays}}</span> ngày (<span class="font-semibold">{{line.GetUseAtDisplay()}}</span>)
+                            Ngày uống <span class="font-semibold">{{line.numberOfTimes}}</span> lần,
+                            mỗi lần <span class="font-semibold">{{line.amountOfTimes}}</span> {{line.product.uom.mame}},
+                            uống trong <span class="font-semibold">{{line.numberOfDays}}</span> ngày (<span class="font-semibold">{{line.GetUseAtDisplay()}}</span>)
                         </div>
                     </td>
                 </tr>
@@ -125,7 +125,7 @@
                                 Lời dặn
                             </label>
                         </td>
-                        <td colspan="1" style="width: 100%;">@Model.Note</td>
+                        <td colspan="1" style="width: 100%;">{{Model.note}}</td>
                     </tr>
                     <tr>
                         <td colspan="1" class="o_td_label">
@@ -133,7 +133,7 @@
                                 Chẩn đoán bệnh
                             </label>
                         </td>
-                        <td colspan="1" style="width: 100%;">@Model.Diagnostic</td>
+                        <td colspan="1" style="width: 100%;">{{Model.diagnostic}}</td>
                     </tr>
                     <tr>
                         <td colspan="1" class="o_td_label">
