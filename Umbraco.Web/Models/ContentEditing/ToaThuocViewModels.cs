@@ -103,9 +103,13 @@ namespace Umbraco.Web.Models.ContentEditing
     public class ToaThuocLinePrintViewModel
     {
         public string ProductName { get; set; }
+        public string ProductUOMName { get; set; }
         public string Name { get; set; }
         public decimal Quantity { get; set; }
         public int? Sequence { get; set; }
+        public int NumberOfTimes { get; set; }
+        public int NumberOfDays { get; set; }
+        public decimal AmountOfTimes { get; set; }
         public string UseAt { get; set; }
         public string Note { get; set; }
         public string GetUseAtDisplay
