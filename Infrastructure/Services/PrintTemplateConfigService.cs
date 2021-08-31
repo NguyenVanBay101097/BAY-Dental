@@ -92,7 +92,7 @@ namespace Infrastructure.Services
             {
                 case "tmp_toathuoc":
 
-                    obj = new ToaThuoc()
+                    var temp = new ToaThuoc()
                     {
                         Company = company,
                         Date = DateTime.Now,
@@ -134,6 +134,7 @@ namespace Infrastructure.Services
                         ReExaminationDate = DateTime.Now.AddMonths(6),
 
                     };
+                    obj = _mapper.Map<ToaThuocPrintViewModel>(temp);
 
                     break;
                 default:
