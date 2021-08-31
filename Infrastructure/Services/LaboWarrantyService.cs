@@ -1,0 +1,197 @@
+﻿using ApplicationCore.Entities;
+using ApplicationCore.Interfaces;
+using ApplicationCore.Models;
+using ApplicationCore.Specifications;
+using ApplicationCore.Utilities;
+using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Umbraco.Web.Models.ContentEditing;
+
+namespace Infrastructure.Services
+{
+    public class LaboWarrantyService : BaseService<LaboWarranty>, ILaboWarrantyService
+    {
+        private readonly IMapper _mapper;
+        public LaboWarrantyService(
+            IAsyncRepository<LaboWarranty> repository, 
+            IHttpContextAccessor httpContextAccessor, 
+            IUploadService uploadService,
+            IMapper mapper)
+            : base(repository, httpContextAccessor)
+        {
+            _mapper = mapper;
+        }
+
+        public async Task<PagedResult2<LaboWarrantyBasic>> GetPagedResultAsync(LaboWarrantyPaged val)
+        {
+            var query = SearchQuery();
+
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search) ||
+                                x.LaboOrder.Customer.Name.Contains(val.Search) ||
+                                x.LaboOrder.Name.Contains(val.Search));
+
+            if (val.SupplierId.HasValue)
+            {
+                query = query.Where(x => x.LaboOrder.PartnerId == val.SupplierId);
+            }
+
+            if (val.LaboOrderId.HasValue)
+            {
+                query = query.Where(x => x.LaboOrderId == val.LaboOrderId);
+            }
+
+            if (val.DateReceiptFrom.HasValue)
+            {
+                var dateFrom = val.DateReceiptFrom.Value.AbsoluteBeginOfDate();
+                query = query.Where(x => x.DateReceiptWarranty >= val.DateReceiptFrom);
+            }
+
+            if (val.DateReceiptTo.HasValue)
+            {
+                var dateTo = val.DateReceiptTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.DateReceiptWarranty <= val.DateReceiptTo);
+            }
+
+            if (!string.IsNullOrEmpty(val.State))
+            {
+                query = query.Where(x => x.State == val.State);
+            }
+
+            var totalItems = await query.CountAsync();
+
+            query = query.Include(x => x.LaboOrder);
+
+            query = query.OrderByDescending(x => x.DateCreated);
+
+            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
+
+            var paged = new PagedResult2<LaboWarrantyBasic>(totalItems, val.Offset, val.Limit)
+            {
+                Items = _mapper.Map<IEnumerable<LaboWarrantyBasic>>(items)
+            };
+
+            return paged;
+        }
+
+        public async Task<LaboWarrantyDisplay> GetDefault(LaboWarrantyGetDefault val)
+        {
+            var res = new LaboWarrantyDisplay();
+
+            if (val.LaboOrderId.HasValue)
+            {
+                var laboOrderObj = GetService<ILaboOrderService>();
+                var laboOrder = await laboOrderObj.SearchQuery(x => x.Id == val.LaboOrderId)
+                    .Include(x => x.Partner)
+                    .Include(x => x.Customer)
+                    .Include(x => x.SaleOrderLine)
+                    .Include(x => x.SaleOrderLine.Employee)
+                    .FirstOrDefaultAsync();
+
+                var teeth = await laboOrderObj.SearchQuery(x => x.Id == val.LaboOrderId)
+                    .SelectMany(x => x.LaboOrderToothRel)
+                    .Select(x => x.Tooth).ToListAsync();
+
+                res.TeethLaboOrder = _mapper.Map<IEnumerable<ToothDisplay>>(teeth);
+                res.LaboOrderId = laboOrder.Id.ToString();
+                res.LaboOrderName = laboOrder.Name;
+                res.SupplierId = laboOrder.PartnerId.ToString();
+                res.SupplierName = laboOrder.Partner.Name;
+                res.CustomerId = laboOrder.CustomerId.ToString();
+                res.CustomerRef = laboOrder.Customer.Ref;
+                res.CustomerName = laboOrder.Customer.Name;
+                res.CustomerDisplayName = laboOrder.Customer.DisplayName;
+                res.SaleOrderLineName = laboOrder.SaleOrderLine.Name;
+                res.EmployeeId = laboOrder.SaleOrderLine.EmployeeId;
+                res.Employee = _mapper.Map<EmployeeSimple>(laboOrder.SaleOrderLine.Employee);
+                res.State = "draft";
+            }
+
+            return res;
+        }
+
+        public async Task<LaboWarrantyDisplay> GetLaboWarrantyDisplay(Guid id)
+        {
+            var laboWarranty = await SearchQuery(x => x.Id == id)
+                .Include(x => x.LaboOrder)
+                .Include(x => x.LaboOrder.Partner)
+                .Include(x => x.LaboOrder.Customer)
+                .Include(x => x.LaboOrder.SaleOrderLine)
+                .Include(x => x.LaboOrder.SaleOrderLine.SaleOrderLineToothRels)
+                .Include(x => x.Employee)
+                .Include(x => x.LaboWarrantyToothRels).ThenInclude(x => x.Tooth)
+                .FirstOrDefaultAsync();
+
+            // Lấy danh sách răng của Phiếu Labo
+            var res = _mapper.Map<LaboWarrantyDisplay>(laboWarranty);
+            var laboOrderObj = GetService<ILaboOrderService>();
+            var teeth = await laboOrderObj.SearchQuery(x => x.Id == laboWarranty.LaboOrderId)
+                .SelectMany(x => x.LaboOrderToothRel)
+                .Select(x => x.Tooth).ToListAsync();
+            res.TeethLaboOrder = _mapper.Map<IEnumerable<ToothDisplay>>(teeth);
+
+            // Lấy danh sách răng của Phiếu bảo hành
+            res.Teeth = _mapper.Map<IEnumerable<ToothDisplay>>(laboWarranty.LaboWarrantyToothRels.Select(x => x.Tooth).ToList());
+
+            return res;
+        }
+
+        public async Task<LaboWarranty> CreateLaboWarranty(LaboWarrantySave val)
+        {
+            var laboWarranty = _mapper.Map<LaboWarranty>(val);
+            laboWarranty.CompanyId = CompanyId;
+
+            // Thêm danh sách răng
+            foreach (var tooth in val.Teeth)
+            {
+                laboWarranty.LaboWarrantyToothRels.Add(new LaboWarrantyToothRel() { ToothId = tooth.Id });
+            }
+            await CreateAsync(laboWarranty);
+
+            return laboWarranty;
+        }
+
+        public async Task UpdateLaboWarranty(Guid id, LaboWarrantySave val)
+        {
+            var laboWarranty = await SearchQuery(x => x.Id == id)
+                .Include(x => x.LaboOrder)
+                .Include(x => x.LaboOrder.Partner)
+                .Include(x => x.LaboOrder.Customer)
+                .Include(x => x.LaboOrder.SaleOrderLine)
+                .Include(x => x.LaboOrder.SaleOrderLine.SaleOrderLineToothRels)
+                .Include(x => x.Employee)
+                .Include(x => x.LaboWarrantyToothRels).ThenInclude(x => x.Tooth)
+                .FirstOrDefaultAsync();
+
+            laboWarranty = _mapper.Map(val, laboWarranty);
+
+            // Thêm danh sách răng
+            laboWarranty.LaboWarrantyToothRels.Clear();
+            foreach (var tooth in val.Teeth)
+            {
+                laboWarranty.LaboWarrantyToothRels.Add(new LaboWarrantyToothRel() { ToothId = tooth.Id });
+            }
+
+            await UpdateAsync(laboWarranty);
+        }
+
+        public async Task Unlink(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            foreach (var laboWarranty in self)
+            {
+                if (laboWarranty.State == "draft")
+                    throw new Exception("Chỉ có thế xóa phiếu bảo hành ở trạng thái nháp");
+            }
+
+            await DeleteAsync(self);
+        }
+    }
+}
