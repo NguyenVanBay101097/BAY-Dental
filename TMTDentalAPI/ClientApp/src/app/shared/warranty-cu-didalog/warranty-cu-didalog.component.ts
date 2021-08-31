@@ -41,9 +41,6 @@ export class WarrantyCuDidalogComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    // console.log(this.laboId);
-    // console.log(this.laboWarrantyId);
-
     this.myForm = this.fb.group({
       state: 'draft',
       doctor: [null, Validators.required],
@@ -99,17 +96,11 @@ export class WarrantyCuDidalogComponent implements OnInit {
 
   loadData() {
     this.laboWarrantyService.get(this.laboWarrantyId).subscribe((res: any) => {
-      // console.log(res);
-      // this.infoLabo = res;
-      // console.log(this.laboWarrantyName);
-
       this.laboWarrantyName = res.name;
       this.myForm.patchValue(res);
       this.myForm.controls['dateReceiptObj'].setValue(new Date(res.dateReceiptWarranty));
       this.myForm.patchValue(res);
       this.myForm.controls['doctor'].setValue(res.employee);
-      // console.log(this.myForm.value);
-
     }, err => {
       console.log(err);
     })
@@ -172,14 +163,14 @@ export class WarrantyCuDidalogComponent implements OnInit {
       }
       this.laboWarrantyService.buttonConfirm([this.laboWarrantyId]).subscribe(() => {
         this.activeModal.close();
-        this.notify('success', 'Xác nhận thành công');
+        this.notifyService.notify('success', 'Xác nhận thành công');
       });
     });
   }
 
   onCancel() {
     this.laboWarrantyService.buttonCancel([this.laboWarrantyId]).subscribe(() => {
-      this.notify('success', 'Hủy phiếu thành công');
+      this.notifyService.notify('success', 'Hủy phiếu thành công');
       this.activeModal.close(true);
     });
   }
@@ -190,15 +181,5 @@ export class WarrantyCuDidalogComponent implements OnInit {
     } else {
       this.activeModal.close();
     }
-  }
-
-  notify(style, content) {
-    this.notificationService.show({
-      content: content,
-      hideAfter: 3000,
-      position: { horizontal: 'center', vertical: 'top' },
-      animation: { type: 'fade', duration: 400 },
-      type: { style: style, icon: true }
-    });
   }
 }
