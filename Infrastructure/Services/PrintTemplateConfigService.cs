@@ -84,6 +84,8 @@ namespace Infrastructure.Services
 
         public async Task<object> getDataTest(string type)
         {
+            var comObj = GetService<ICompanyService>();
+            var company = await comObj.SearchQuery().Include(x => x.Partner).FirstOrDefaultAsync();
             object obj = new object();
 
             switch (type)
@@ -92,10 +94,7 @@ namespace Infrastructure.Services
 
                     obj = new ToaThuoc()
                     {
-                        Company = new Company()
-                        {
-                            Name = "Chi nhánh team Dev"
-                        },
+                        Company = company,
                         Date = DateTime.Now,
                         Name = "TT310821-00162",
                         Partner = new Partner()
