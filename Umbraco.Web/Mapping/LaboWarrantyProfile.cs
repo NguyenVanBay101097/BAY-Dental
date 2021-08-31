@@ -26,7 +26,7 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.CustomerName, x => x.MapFrom(s => s.LaboOrder.Customer.Name))
                 .ForMember(x => x.CustomerDisplayName, x => x.MapFrom(s => s.LaboOrder.Customer.DisplayName))
                 .ForMember(x => x.SaleOrderLineName, x => x.MapFrom(s => s.LaboOrder.SaleOrderLine.Name))
-                .ForMember(x => x.TeethLaboOrder, x => x.MapFrom(s => s.LaboOrder.SaleOrderLine.SaleOrderLineToothRels.Select(m => m.Tooth)))
+                .ForMember(x => x.TeethLaboOrder, x => x.MapFrom(s => s.LaboOrder.LaboOrderToothRel.Select(m => m.Tooth)))
                 .ForMember(x => x.Teeth, x => x.MapFrom(s => s.LaboWarrantyToothRels.Select(m => m.Tooth)));
 
             CreateMap<LaboWarrantyBasic, LaboWarranty>();
