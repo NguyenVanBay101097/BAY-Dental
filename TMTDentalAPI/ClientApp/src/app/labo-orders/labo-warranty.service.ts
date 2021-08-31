@@ -55,8 +55,31 @@ export class LaboWarrantyService {
     return this.http.get<PagedResult2<LaboWarrantyBasic>>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) })
   }
 
+  get(id: string) {
+    return this.http.get(this.baseApi + this.apiUrl + '/' + id)
+  }
+
+  getDefault(val) {
+    return this.http.post(this.baseApi + this.apiUrl+"/GetDefault", val);
+  }
+
   create(val: LaboWarrantySave): Observable<LaboWarrantySave> {
     return this.http.post<LaboWarrantySave>(this.baseApi + this.apiUrl, val);
   }
 
+  update(id, val: LaboWarrantySave): Observable<LaboWarrantySave> {
+    return this.http.put<LaboWarrantySave>(this.baseApi + this.apiUrl + '/' + id, val);
+  }
+  
+  buttonCancel(ids: string[]){
+    return this.http.post(this.baseApi + this.apiUrl + '/ButtonCancel', ids);
+  }
+  
+  buttonConfirm(ids: string[]){
+    return this.http.post(this.baseApi + this.apiUrl + '/ButtonConfirm', ids);
+  }
+  
+  delete(id: string) {
+    return this.http.delete(this.baseApi + this.apiUrl + '/' + id);
+  }
 }

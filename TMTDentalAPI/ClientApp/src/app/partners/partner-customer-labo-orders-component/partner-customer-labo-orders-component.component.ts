@@ -65,8 +65,6 @@ export class PartnerCustomerLaboOrdersComponentComponent implements OnInit {
       }))
     ).subscribe(res => {
       this.gridData = res;
-      console.log(this.gridData);
-      
       this.loading = false;
     }, err => {
       console.log(err);

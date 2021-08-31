@@ -1,6 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
+import { IntlService } from '@progress/kendo-angular-intl';
+import { DataResult } from '@progress/kendo-data-query';
+import { map } from 'rxjs/operators';
+import { LaboWarrantyPaged, LaboWarrantyService } from 'src/app/labo-orders/labo-warranty.service';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { NotifyService } from '../services/notify.service';
 import { WarrantyCuDidalogComponent } from '../warranty-cu-didalog/warranty-cu-didalog.component';
 
 @Component({
@@ -10,36 +16,84 @@ import { WarrantyCuDidalogComponent } from '../warranty-cu-didalog/warranty-cu-d
 })
 export class LaboWarrantyDetailListComponent implements OnInit {
   @Input() item: any;
+  @Input() dateReceiptFrom: any;
+  @Input() dateReceiptTo: any;
   limit = 20;
   skip = 0;
-  loading = false;
+  search: string = '';
+  state: string = '';
+  loading = true;
   gridData: GridDataResult;
 
   constructor(
-    private modalService: NgbModal
+    private laboWarrantyService: LaboWarrantyService,
+    private modalService: NgbModal,
+    private intlService: IntlService,
+    private notifyService: NotifyService,
   ) { }
 
   ngOnInit() {
-    console.log(this.item);
-
+    this.loadDataFromApi();
   }
 
-  editItem() { }
-  deleteItem() { }
-  pageChange() { }
+  loadDataFromApi() {
+    let val = new LaboWarrantyPaged();
+    val.limit = this.limit;
+    val.offset = this.skip;
+    val.search = this.search || '';
+    val.supplierId = '';
+    val.state = this.state || '';
+    val.laboOrderId = this.item.id || '';
+    val.dateReceiptFrom = this.dateReceiptFrom ? this.intlService.formatDate(this.dateReceiptFrom, "yyyy-MM-dd") : '';
+    val.dateReceiptTo = this.dateReceiptTo ? this.intlService.formatDate(this.dateReceiptTo, "yyyy-MM-dd") : '';
+    // val.dateReceiptFrom = '';
+    // val.dateReceiptTo = '';
+    this.laboWarrantyService.getPaged(val).pipe(
+      map(res => {
+        return <DataResult>{
+          data: res.items,
+          total: res.totalItems
+        }
+      })
+    ).subscribe(res => {
+      this.gridData = res;
+      this.loading = false;
+    }, err => { this.loading = false; });
+  }
+
   createNewWarranty() {
-    let val = {
-      laboOrderId: this.item.id,
-      laboOrderName: this.item.name,
-      partnerName: this.item.partnerName,
-      partnerRef: this.item.partnerRef,
-      customerName: this.item.customerName,
-      saleOrderId: this.item.saleOrderId,
-      saleOrderLineName: this.item.saleOrderLineName,
-      teeth: this.item.teeth
-    }
     const modalRef = this.modalService.open(WarrantyCuDidalogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.infoLabo = val;
-
+    modalRef.componentInstance.laboId = this.item.id;
+    modalRef.result.then((res) => {
+      this.loadDataFromApi()
+    }, (err) => { console.log(err) });
   }
+
+  editItem(item) {
+    const modalRef = this.modalService.open(WarrantyCuDidalogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.laboId = this.item.id;
+    modalRef.componentInstance.laboWarrantyId = item.id;
+
+    modalRef.result.then((res) => {
+      this.loadDataFromApi()
+    }, (err) => { console.log(err) });
+  }
+
+  deleteItem(item) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xác nhận xóa phiếu bảo hành';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa phiếu bảo hành?';
+    modalRef.result.then(() => {
+      this.laboWarrantyService.delete(item.id).subscribe((res) => {
+        this.notifyService.notify("success", "Xóa thành công");
+        this.loadDataFromApi()
+      }, err => console.log(err))
+    });
+  }
+
+  pageChange(event) {
+    this.skip = event.skip;
+    this.loadDataFromApi();
+  }
+
 }
