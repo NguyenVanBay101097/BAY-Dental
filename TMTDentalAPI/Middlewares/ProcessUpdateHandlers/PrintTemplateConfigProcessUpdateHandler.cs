@@ -74,22 +74,24 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                 }
 
                 //add data print template 
-                //var types = AppConstants.PrintTemplateTypeDemo;
-                //foreach (var type in types)
-                //{
-                //    var printTemplate = context.PrintTemplates.Where(x => x.Type == type.Type).FirstOrDefault();
-                //    if (printTemplate == null)
-                //    {
-                //        printTemplate = new PrintTemplate { Type = type.Type, Content = "" };
-                //        context.PrintTemplates.Add(printTemplate);
-                //        context.SaveChanges();
-                //    }
-                //    else
-                //    {
-                //        printTemplate.Content = "";
-                //        context.SaveChanges();
-                //    }
-                //}
+                var types = AppConstants.PrintTemplateTypeDemo;
+                foreach (var type in types)
+                {
+                    var printTemplate = context.PrintTemplates.Where(x => x.Type == type.Type).FirstOrDefault();
+                    var html = File.ReadAllText(type.PathTemplate);
+                    if (printTemplate == null)
+                    {
+                        
+                        printTemplate = new PrintTemplate { Type = type.Type, Content = html };
+                        context.PrintTemplates.Add(printTemplate);
+                        context.SaveChanges();
+                    }
+                    else
+                    {
+                        printTemplate.Content = html;
+                        context.SaveChanges();
+                    }
+                }
 
             }
 

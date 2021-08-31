@@ -69,8 +69,7 @@ namespace ApplicationCore.Constants
         };
 
         public static PrintTemplateType[] PrintTemplateTypeDemo = new PrintTemplateType[] {
-           new PrintTemplateType {Type = "tmp_toathuoc" , PathTemplate = "~/Views/ToaThuoc/Print.cshtml" },
-           new PrintTemplateType {Type = "tmp_medicine_order" , PathTemplate = "~/Views/MedicineOrder/Print.cshtml" },
+           new PrintTemplateType {Type = "tmp_toathuoc" , PathTemplate = "PrintTemplate/ToaThuoc/Template.cshtml" },       
         };
     }
 

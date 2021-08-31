@@ -37,14 +37,14 @@ namespace Infrastructure.Services
             if(display == null)
             {
                 var printTmp = await _printTemplateService.SearchQuery(x => x.Type == val.Type).FirstOrDefaultAsync();
-                if(printConfig == null)
+                if(printTmp == null)
                 {
                     throw new Exception("Không tìm thấy mẫu in có sẵn");
                 }
 
                 display = new PrintTemplateConfigDisplay();
-                display.Content = printConfig.Content;
-                display.Type = printConfig.Type;
+                display.Content = printTmp.Content;
+                display.Type = printTmp.Type;
             }
 
             return display;
