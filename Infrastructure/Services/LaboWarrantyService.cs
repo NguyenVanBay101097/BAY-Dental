@@ -124,7 +124,6 @@ namespace Infrastructure.Services
                 .Include(x => x.LaboOrder.Partner)
                 .Include(x => x.LaboOrder.Customer)
                 .Include(x => x.LaboOrder.SaleOrderLine)
-                .Include(x => x.LaboOrder.SaleOrderLine.SaleOrderLineToothRels)
                 .Include(x => x.Employee)
                 .Include(x => x.LaboWarrantyToothRels).ThenInclude(x => x.Tooth)
                 .FirstOrDefaultAsync();
@@ -195,7 +194,6 @@ namespace Infrastructure.Services
                 .Include(x => x.LaboOrder.Partner)
                 .Include(x => x.LaboOrder.Customer)
                 .Include(x => x.LaboOrder.SaleOrderLine)
-                .Include(x => x.LaboOrder.SaleOrderLine.SaleOrderLineToothRels)
                 .Include(x => x.Employee)
                 .Include(x => x.LaboWarrantyToothRels).ThenInclude(x => x.Tooth)
                 .FirstOrDefaultAsync();
