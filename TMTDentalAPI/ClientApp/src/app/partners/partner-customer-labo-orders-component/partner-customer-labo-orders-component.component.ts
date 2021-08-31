@@ -124,7 +124,7 @@ export class PartnerCustomerLaboOrdersComponentComponent implements OnInit {
     modalRef.componentInstance.title = 'Cập nhật phiếu labo';
     modalRef.componentInstance.id = item.id;
     modalRef.componentInstance.saleOrderLineId = item.saleOrderLineId;
-    modalRef.componentInstance.saleOrderLineLabo = item;
+    // modalRef.componentInstance.saleOrderLineLabo = item;
 
     modalRef.result.then(res => {
       this.loadDataFromApi();

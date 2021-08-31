@@ -23,7 +23,7 @@
         <div class="o_content">
             <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
                 <div *kendoGridDetailTemplate="let dataItem">
-
+                    <app-labo-warranty-detail-list></app-labo-warranty-detail-list>
                 </div>
                 <kendo-grid-column field="name" title="Phiếu Labo" width="100">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
@@ -37,7 +37,7 @@
                         </a>
                     </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column title="Loại phục hình" width="170">
+                <kendo-grid-column field="saleOrderLineName" title="Loại phục hình" width="170">
                 </kendo-grid-column>
                 <kendo-grid-column field="quantity" title="Số lượng" class="text-right" width="80">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
@@ -58,9 +58,12 @@
                         {{dataItem.dateExport | date: 'shortDate'}}
                     </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column title="Mã bảo hành" width="170">
+                <kendo-grid-column field="warrantyCode" title="Mã bảo hành" width="170">
                 </kendo-grid-column>
-                <kendo-grid-column title="Hạn bảo hành" width="170">
+                <kendo-grid-column field="warrantyPeriod" title="Hạn bảo hành" width="170">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{dataItem?.warrantyPeriod | date: 'shortDate'}}
+                    </ng-template>
                 </kendo-grid-column>
                 <!-- <kendo-grid-column field="amountTotal" title="Thành tiền" class="text-right" width="100">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
