@@ -65,11 +65,16 @@ namespace Infrastructure.Services
             {
                 var timeFrom = DateTime.Now.Date.Add(new TimeSpan(i, 00, 00));
                 var timeTo = DateTime.Now.Date.Add(new TimeSpan(i, 59, 59));
+                var count = items.Where(x => x.DateWaiting.HasValue && timeFrom.TimeOfDay <= x.DateWaiting.Value.TimeOfDay && x.DateWaiting.Value.TimeOfDay <= timeTo.TimeOfDay).Count();
+
+                if (count <= 0)
+                    continue;
+
                 res.Add(new CustomerReceiptReportTime
                 {
                     Time = i,
                     TimeRange = $"{i}:00 - {i}:59",
-                    TimeRangeCount = items.Where(x => x.DateWaiting.HasValue && timeFrom.TimeOfDay <= x.DateWaiting.Value.TimeOfDay && x.DateWaiting.Value.TimeOfDay <= timeTo.TimeOfDay).Count()
+                    TimeRangeCount = count
                 });
 
             }
