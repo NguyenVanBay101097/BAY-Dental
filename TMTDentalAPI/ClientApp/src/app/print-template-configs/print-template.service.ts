@@ -15,7 +15,7 @@ export class PrintTemplateService {
   constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
   getDisplay(val: PrintTemplateDefault): Observable<string> {
-    return this.http.post<string>(this.baseApi + this.apiUrl + '/GetPrintTemplateDefault', val);
+    return this.http.post(this.baseApi + this.apiUrl + '/GetPrintTemplateDefault', val, { responseType: 'text' });
   }
 
 

@@ -55,10 +55,9 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         val.type = this.typeFilter;
         this.configService.getDisplay(val).subscribe(res => {
             this.config = res;
+            this.onGenerate(this.config.content);
             if (this.isEditting) {
                 this.configEdit = Object.assign({}, this.config);
-                this.onGenerate();
-
             }
         },
             err => {
@@ -118,9 +117,9 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         this.isEditting = !this.isEditting;
     }
 
-    onGenerate() {
+    onGenerate(content?) {
         var val = new GenerateReq();
-        val.content = this.configEdit.content;
+        val.content = content || this.configEdit.content;
         val.type = this.typeFilter;
         this.configService.generate(val).subscribe((res: any) => {
             this.contentPrev = res;
