@@ -77,23 +77,29 @@
                         </div>
                     </ng-container>
                     <ng-template #EditTemplate>
-                        <div class="d-flex">
-                            <div class="left w-50 mr-1 p-2 border">
-                                <div class="mb-2">
-                                    <button (click)="onDefault()" class="btn btn-outline-primary">Sử dụng mẫu có
-                                        sẵn</button>
-                                </div>
-                                <ckeditor editorUrl="https://cdn.ckeditor.com/4.16.2/full-all/ckeditor.js"
-                                    [config]="configEditor" [(ngModel)]="configEdit.content"></ckeditor>
+                        <div class="d-flex flex-column">
+                            <div class="w-100 d-flex justify-content-center mb-2">
+                                <button type="button" class="btn btn-primary" accesskey="c"
+                                    (click)="onGenerate()">Chuyển qua</button>
                             </div>
-                            <div class="right w-50 ml-1 p-2 border">
-                                <div class="preview d-flex justify-content-between align-items-center mb-2">
-                                    <h5 class="title">Bản xem trước</h5>
-                                    <!-- <button (click)="onPrint()" class="btn btn-outline-primary">In thử</button> -->
+                            <div class="d-flex">
+                                <div class="left w-50 mr-1 p-2 border">
+                                    <div class="mb-2">
+                                        <button (click)="onDefault()" class="btn btn-outline-primary">Sử dụng mẫu có
+                                            sẵn</button>
+                                    </div>
+                                    <ckeditor editorUrl="https://cdn.ckeditor.com/4.16.2/full-all/ckeditor.js"
+                                        [config]="configEditor" [(ngModel)]="configEdit.content"></ckeditor>
                                 </div>
-                                <iframe #iframe style="height: 100vh; width: 100%;" frameBorder="0"
-                                    sandbox="allow-same-origin" [attr.srcdoc]="configEdit.content | safeHtml "></iframe>
-                                <!-- <div [innerHTML]="configEdit.content | safeHtml "></div> -->
+                                <div class="right w-50 ml-1 p-2 border">
+                                    <div class="preview d-flex justify-content-between align-items-center mb-2">
+                                        <h5 class="title">Bản xem trước</h5>
+                                        <!-- <button (click)="onPrint()" class="btn btn-outline-primary">In thử</button> -->
+                                    </div>
+                                    <iframe #iframe style="height: 100vh; width: 100%;" frameBorder="0"
+                                        sandbox="allow-same-origin" [attr.srcdoc]="contentPrev | safeHtml "></iframe>
+                                    <!-- <div [innerHTML]="configEdit.content | safeHtml "></div> -->
+                                </div>
                             </div>
                         </div>
                     </ng-template>

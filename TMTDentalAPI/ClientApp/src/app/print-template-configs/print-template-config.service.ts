@@ -23,6 +23,15 @@ export class PrintTemplateConfigChangeType {
   type: string;
 }
 
+export class GenerateReq {
+  content: string;
+  type: string;
+}
+
+export class PrintTestReq {
+  type: string;
+}
+
 
 @Pipe({ name: "safeHtml" })
 export class SafeHtmlPipe implements PipeTransform {
@@ -68,6 +77,14 @@ export class PrintTemplateConfigService {
 
   createOrUpdate(val: PrintTemplateConfigSave) {
     return this.http.put(this.baseApi + this.apiUrl + '/CreateOrUpdate', val);
+  }
+
+  generate(val: GenerateReq) {
+    return this.http.post(this.baseApi + this.apiUrl + '/Generate', val, { responseType: 'text' });
+  }
+
+  printTest(val: PrintTestReq) {
+    return this.http.post(this.baseApi + this.apiUrl + '/PrintTest', val, { responseType: 'text' });
   }
 
 }

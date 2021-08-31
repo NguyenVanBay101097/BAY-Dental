@@ -1,7 +1,9 @@
-﻿using AutoMapper;
+﻿using ApplicationCore.Entities;
+using AutoMapper;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Scriban;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,6 +42,42 @@ namespace TMTDentalAPI.Controllers
 
              await _printTemplateConfigService.CreateOrUpdate(val);
             return NoContent();
+        }
+
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Generate(GenerateReq val)
+        {
+            object obj = await _printTemplateConfigService.getDataTest(val.Type);
+            var template = Template.Parse(val.Content);
+            try
+            {
+                var result = template.Render(obj);
+                return Ok(result);
+
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Không thể chuyển đổi do sai cú pháp");
+            }
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> PrintTest(PrintTestReq val)
+        {
+            object obj = await _printTemplateConfigService.getDataTest(val.Type);
+            var printTemplateConfig = await _printTemplateConfigService.GetDisplay(new PrintTemplateConfigChangeType() { Type = val.Type});
+            var template = Template.Parse(printTemplateConfig.Content);
+            try
+            {
+                var result = template.Render(obj);
+                return Ok(result);
+
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Không thể chuyển đổi do sai cú pháp");
+            }
         }
     }
 }
