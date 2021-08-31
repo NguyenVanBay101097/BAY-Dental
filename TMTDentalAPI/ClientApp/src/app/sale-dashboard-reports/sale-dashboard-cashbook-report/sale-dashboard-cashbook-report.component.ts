@@ -65,6 +65,9 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
       this.cashbookCusSalary = this.dataCashBooks[4];
       this.cashbookAgentCommission = this.dataCashBooks[5];
       this.totalCashbook = this.totalDataCashBook;
+      this.cashbookThu = this.cashBookData.map(x => x.totalThu);
+      this.cashbookChi = this.cashBookData.map(x => x.totalChi);
+      this.cashbookTotal = this.cashBookData.map(x => x.totalAmount);
     }
 
   }
@@ -96,7 +99,7 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
 
   loadCashbookGroupby() {
     if (this.cashBookData) {
-      this.cashbookCategs = this.cashBookData.map(s => s.date);
+      this.cashbookCategs = this.cashBookData.map(s => s.date).sort();
     }
   }
 
