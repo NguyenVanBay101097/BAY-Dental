@@ -17,7 +17,8 @@ import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
 import { PartnerImageBasic, PartnerService } from 'src/app/partners/partner.service';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductFilter, ProductService } from 'src/app/products/product.service';
-import { ToothBasic, ToothDisplay } from 'src/app/teeth/tooth.service';
+import { ToothBasic, ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
+import { ToothCategoryBasic } from 'src/app/tooth-categories/tooth-category.service';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { ImageViewerComponent } from '../image-viewer/image-viewer.component';
 import { PartnerSupplierCuDialogComponent } from '../partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
@@ -51,7 +52,14 @@ export class LaboOrderCuDialogComponent implements OnInit {
     { name: "Hàm dưới", value: "lower_jaw" },
     { name: "Chọn răng", value: "manual" },
   ];
-
+  listType = {
+    'up_right':[],
+    'up_left':[],
+    'down_right':[],
+    'down_left':[]
+  };
+  hamList: { [key: string]: {} };
+  listRang: any;
   constructor(private fb: FormBuilder,
     public activeModal: NgbActiveModal,
     private modalService: NgbModal,
@@ -65,6 +73,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
     private bridgeService: LaboBridgeService,
     private webService: WebService,
     private printService: PrintService,
+    private toothService: ToothService
   ) { }
 
   ngOnInit() {
@@ -111,6 +120,11 @@ export class LaboOrderCuDialogComponent implements OnInit {
     } else {
       this.loadDefault();
     }
+    // setTimeout(() => {
+    //   if (this.saleOrderLine){
+    //     this.processTeeth(this.saleOrderLine.teeth);
+    //   }
+    // },3000);
     this.loadCategory();
 
 
@@ -223,6 +237,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
     this.laboOrderService.get(this.id).subscribe(result => {
       this.laboOrder = result;
       this.patchValue(result);
+      this.processTeeth(result.saleOrderLine.teeth);
     });
   }
 
@@ -231,6 +246,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
     df.saleOrderLineId = this.saleOrderLineId;
     this.laboOrderService.defaultGet(df).subscribe(result => {
       this.laboOrder = result;
+      this.processTeeth(result.saleOrderLine.teeth);
       result.quantity = 1;
       this.patchValue(result);
     (result.saleOrderLine && result.saleOrderLine.product )? this.priceUnitFC.patchValue(result.saleOrderLine.product.laboPrice) : '';
@@ -449,8 +465,40 @@ export class LaboOrderCuDialogComponent implements OnInit {
   }
 
   getToothType(key) {
-    var type = this.toothTypeDict.find(x=> x.value == key);
-    return type;
+    if (key && this.hamList){
+      if (key == 'upper_jaw'){
+        return this.hamList['0_up']['0_right'].concat(this.hamList['0_up']['1_left']);
+      }
+      else if (key == 'lower_jaw'){
+        return this.hamList['1_down']['0_right'].concat(this.hamList['1_down']['1_left']);
+      }
+      else if (key == 'whole_jaw'){
+        return this.hamList;
+      }
+      else {
+        return this.saleOrderLine ? this.saleOrderLine.teeth : [];
+      }
+    }
+  }
+
+  loadTeethMap(categId) {
+    var val = new ToothFilter();
+    val.categoryId = categId;
+    return this.toothService.getAllBasic(val).subscribe(result => this.processTeeth(result));
+  }
+
+  processTeeth(teeth: ToothDisplay[]) {
+    for (var i = 0; i < teeth.length; i++) {
+      var tooth = teeth[i];
+      if (tooth.viTriHam == '0_up' && tooth.position == '0_right')
+        this.listType.up_right.push(tooth);
+      if (tooth.viTriHam == '0_up' && tooth.position == '1_left')
+        this.listType.up_left.push(tooth);
+      if (tooth.viTriHam == '1_down' && tooth.position == '0_right')
+        this.listType.down_right.push(tooth);
+      if (tooth.viTriHam == '1_down' && tooth.position == '0_right')
+        this.listType.down_left.push(tooth);
+    }
   }
 
   printLaboOrder(){
