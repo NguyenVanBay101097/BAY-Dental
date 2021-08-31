@@ -380,7 +380,8 @@ namespace Infrastructure.Services
             foreach (var sale in self)
             {
                 sale.State = "draft";
-                await UpdateAsync(sale);
+                foreach (var line in sale.OrderLines)
+                    line.State = "draft";
             }
 
             await UpdateAsync(self);

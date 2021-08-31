@@ -873,7 +873,7 @@ namespace Infrastructure.Services
 
             foreach (var item in data)
             {
-                item.Lines = allLines.Items.Where(x => x.Date.Value.Date >= val.DateFrom.Value.Date && x.Date.Value.Date <= val.DateTo.Value.Date);
+                item.Lines = allLines.Items.Where(x => x.Date.Value.Date >= item.Date.Value.AbsoluteBeginOfDate() && x.Date.Value.Date <= item.Date.Value.AbsoluteEndOfDate());
             }
 
             var companyObj = GetService<ICompanyService>();

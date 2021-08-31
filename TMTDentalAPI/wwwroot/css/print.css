@@ -22,6 +22,11 @@ body {
     }
 }
 
+tr,
+img {
+    page-break-inside: avoid;
+}
+
 .sheet {
     margin: 0;
     overflow: hidden;
@@ -695,11 +700,12 @@ table {
 }
 
     .table > :not(caption) > * > * {
-        padding: 0.5rem 0.5rem;
+        padding: 0.5rem 0.5rem!important;
     }
 
+
 .table-sm > :not(caption) > * > * {
-    padding: 0.25rem 0.25rem;
+    padding: 0.25rem 0.25rem!important;
 }
 
 .table-bordered td, .table-bordered th {
