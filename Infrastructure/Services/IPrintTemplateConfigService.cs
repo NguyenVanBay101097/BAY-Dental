@@ -12,5 +12,8 @@ namespace Infrastructure.Services
         Task<PrintTemplateConfigDisplay> GetDisplay(PrintTemplateConfigChangeType val);
 
         Task CreateOrUpdate(PrintTemplateConfigSave val);
+
+        Task<object> getDataTest(string type);
+
     }
 }

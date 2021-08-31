@@ -66,4 +66,15 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public string Type { get; set; }
     }
+
+    public class GenerateReq
+    {
+        public string Type { get; set; }
+        public string Content { get; set; }
+    }
+
+    public class PrintTestReq
+    {
+        public string Type { get; set; }
+    }
 }

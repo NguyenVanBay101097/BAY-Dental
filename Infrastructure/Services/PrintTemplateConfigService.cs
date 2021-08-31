@@ -82,6 +82,67 @@ namespace Infrastructure.Services
             }
         }
 
+        public async Task<object> getDataTest(string type)
+        {
+            object obj = new object();
+
+            switch (type)
+            {
+                case "tmp_toathuoc":
+
+                    obj = new ToaThuoc()
+                    {
+                        Company = new Company()
+                        {
+                            Name = "Chi nhánh team Dev"
+                        },
+                        Date = DateTime.Now,
+                        Name = "TT310821-00162",
+                        Partner = new Partner()
+                        {
+                            DisplayName = "Nguyễn Văn A",
+                            Street = "Tô ký",
+                            WardName = "Tân chánh hiệp",
+                            DistrictName = "Quận 12",
+                            CityName = "HCM",
+                            Gender = "male",
+                            BirthYear = 1997
+                        },
+                        Employee = new Employee()
+                        {
+                            Name = "Nguyễn Văn B"
+                        },
+                        Lines = new List<ToaThuocLine>() {
+                            new ToaThuocLine()
+                            {
+                                Quantity = 3,
+                                Product = new Product()
+                                {
+                                    Name = "Acetaminophen",
+                                    UOM = new UoM()
+                                    {
+                                        Name = "Vỉ"
+                                    },
+                                },
+                                NumberOfDays = 1,
+                                NumberOfTimes = 1,
+                                AmountOfTimes = 1,
+                                UseAt = "after_meal",
+                            }
+                        },
+                        Note = "Nhớ ăn uống điều độ",
+                        Diagnostic = "Sâu răng",
+                        ReExaminationDate = DateTime.Now.AddMonths(6),
+
+                    };
+
+                    break;
+                default:
+                    break;
+            }
+
+            return obj;
+        }
 
     }
 }

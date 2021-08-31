@@ -9,6 +9,7 @@ import { SharedModule } from '../shared/shared.module';
 import { PrintTemplateConfigListComponent } from './print-template-config-list/print-template-config-list.component';
 import { PrintTemplateConfigCuComponent } from './print-template-config-cu/print-template-config-cu.component';
 import { PrintTemplateConfigService, SafeHtmlPipe } from './print-template-config.service';
+import { PrintTemplateService } from './print-template.service';
 
 @NgModule({
   declarations: [PrintTemplateConfigListComponent, PrintTemplateConfigCuComponent, SafeHtmlPipe],
@@ -24,6 +25,7 @@ import { PrintTemplateConfigService, SafeHtmlPipe } from './print-template-confi
   ],
   providers: [
     PrintTemplateConfigService,
+    PrintTemplateService,
   ],
 })
 export class PrintTemplateConfigsModule { }
