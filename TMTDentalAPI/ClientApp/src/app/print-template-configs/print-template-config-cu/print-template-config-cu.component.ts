@@ -55,7 +55,11 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         val.type = this.typeFilter;
         this.configService.getDisplay(val).subscribe(res => {
             this.config = res;
-            this.onGenerate();
+            if (this.isEditting) {
+                this.configEdit = Object.assign({}, this.config);
+                this.onGenerate();
+
+            }
         },
             err => {
                 if (preType) this.typeFilter = preType;
