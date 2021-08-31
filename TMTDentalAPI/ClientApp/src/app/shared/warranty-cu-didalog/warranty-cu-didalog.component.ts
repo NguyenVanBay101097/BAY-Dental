@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
@@ -8,6 +8,7 @@ import * as _ from 'lodash';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
+import { LaboWarrantySave, LaboWarrantyService } from 'src/app/labo-orders/labo-warranty.service';
 
 @Component({
   selector: 'app-warranty-cu-didalog',
@@ -15,7 +16,7 @@ import { EmployeeService } from 'src/app/employees/employee.service';
   styleUrls: ['./warranty-cu-didalog.component.css']
 })
 export class WarrantyCuDidalogComponent implements OnInit {
-
+  @Input() infoLabo: any;
   @ViewChild('doctorCbx', { static: true }) doctorCbx: ComboBoxComponent;
 
   title: string = "Tạo phiếu bảo hành";
@@ -30,13 +31,16 @@ export class WarrantyCuDidalogComponent implements OnInit {
     private notificationService: NotificationService,
     private intlService: IntlService,
     private employeeService: EmployeeService,
+    private laboWarrantyService: LaboWarrantyService,
   ) { }
 
   ngOnInit() {
+    console.log(this.infoLabo);
+
     this.myForm = this.fb.group({
       state: 'draft',
       doctor: [null, Validators.required],
-      dateReceiptWarrantyObj: [null, Validators.required],
+      dateReceiptObj: [new Date(), Validators.required],
       reason: [null, Validators.required],
       content: null,
       note: null,
@@ -88,8 +92,31 @@ export class WarrantyCuDidalogComponent implements OnInit {
     if (this.myForm.invalid) {
       return;
     }
+    let teeth = []
+    this.infoLabo.teeth.forEach(tooth => {
+      let temp = {
+        id: tooth.id,
+        name: tooth.name,
+        categoryId: tooth.categoryId
+      }
+      teeth.push(temp);
+    });
 
-    // Your code is here
+    let valForm = this.myForm.value;
+    let val = new LaboWarrantySave();
+    val.content = valForm.content;
+    val.note = valForm.note;
+    val.reason = valForm.reason;
+    val.dateReceiptWarranty = this.intlService.formatDate(valForm.dateReceiptObj, 'yyyy-MM-ddTHH:mm:ss');
+    val.state = valForm.state;
+    val.teeth = teeth;
+    val.laboOrderId = this.infoLabo.laboOrderId;
+    val.employeeId = valForm.doctor.id;
+    console.log(val);
+
+    this.laboWarrantyService.create(val).subscribe((res) => {
+      console.log(res);
+    }, err => console.log(err))
   }
 
   onConfirm() {

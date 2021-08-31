@@ -1,5 +1,5 @@
 <header class="modal-header">
-    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small" ngbAutofocus></span></h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
 </header>
 
@@ -37,7 +37,7 @@
                                     </label>
                                 </td>
                                 <td class="w-100">
-                                    <span></span>
+                                    <span>{{infoLabo?.partnerName}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -47,7 +47,7 @@
                                     </label>
                                 </td>
                                 <td class="w-100">
-                                    <span></span>
+                                    <span>{{infoLabo?.laboOrderName}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -57,7 +57,9 @@
                                     </label>
                                 </td>
                                 <td class="w-100">
-                                    <ng-container *ngIf="getValueFC('state') === 'draft'; else dateReceipt">
+                                    <kendo-datepicker formControlName="dateReceiptObj">
+                                    </kendo-datepicker>
+                                    <!-- <ng-container *ngIf="getValueFC('state') === 'draft'; else dateReceipt">
                                         <kendo-datepicker formControlName="dateReceiptObj">
                                         </kendo-datepicker>
                                         <span *ngIf="getControlFC('dateReceiptObj')?.errors?.required" class="text-danger">
@@ -66,7 +68,7 @@
                                     </ng-container>
                                     <ng-template #dateReceipt>
                                         {{getValueFC('dateReceiptObj') | date:'dd/MM/yyyy'}}
-                                    </ng-template>
+                                    </ng-template> -->
                                 </td>
                             </tr>
                         </tbody>
@@ -80,7 +82,7 @@
                                     </label>
                                 </td>
                                 <td class="w-100">
-                                    <span></span>
+                                    <span>{{infoLabo?.customerName}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -117,7 +119,7 @@
                                     </label>
                                 </td>
                                 <td class="w-100">
-                                    <span></span>
+                                    <span>{{infoLabo?.saleOrderLineName}}</span>
                                 </td>
                             </tr>
                             <tr>
@@ -127,7 +129,7 @@
                                     </label>
                                 </td>
                                 <td class="w-100">
-
+                                    <span>12, 13</span>
                                 </td>
                             </tr>
                             <tr>
@@ -159,14 +161,15 @@
                                     </label>
                                 </td>
                                 <td class="w-100">
-                                    <ng-container *ngIf="getValueFC('content') === 'draft'; else content">
+                                    <textarea type="text" formControlName="content" class="form-control"></textarea>
+                                    <!-- <ng-container *ngIf="getValueFC('content') === 'draft'; else content">
                                         <textarea type="text" formControlName="content" class="form-control"></textarea>
                                     </ng-container>
                                     <ng-template #content>
                                         <label style="white-space: pre-line;">
                                             {{getValueFC('content')}}
                                         </label>
-                                    </ng-template>
+                                    </ng-template> -->
                                 </td>
                             </tr>
                             <tr>
@@ -176,14 +179,15 @@
                                     </label>
                                 </td>
                                 <td class="w-100">
-                                    <ng-container *ngIf="getValueFC('note') === 'draft'; else note">
+                                    <textarea type="text" formControlName="note" class="form-control"></textarea>
+                                    <!-- <ng-container *ngIf="getValueFC('note') === 'draft'; else note">
                                         <textarea type="text" formControlName="note" class="form-control"></textarea>
                                     </ng-container>
                                     <ng-template #note>
                                         <label style="white-space: pre-line;">
                                             {{getValueFC('note')}}
                                         </label>
-                                    </ng-template>
+                                    </ng-template> -->
                                 </td>
                             </tr>
                         </tbody>

@@ -23,7 +23,7 @@
         <div class="o_content">
             <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
                 <div *kendoGridDetailTemplate="let dataItem">
-                    <app-labo-warranty-detail-list></app-labo-warranty-detail-list>
+                    <app-labo-warranty-detail-list [item]="dataItem"></app-labo-warranty-detail-list>
                 </div>
                 <kendo-grid-column field="name" title="Phiếu Labo" width="100">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
