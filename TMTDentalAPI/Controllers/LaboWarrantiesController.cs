@@ -81,5 +81,29 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork.Commit();
             return NoContent();
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ButtonConfirm(IEnumerable<Guid> ids)
+        {
+            if (ids == null)
+                return BadRequest();
+
+            await _unitOfWork.BeginTransactionAsync();
+            await _laboWarrantyService.ButtonConfirm(ids);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ButtonCancel(IEnumerable<Guid> ids)
+        {
+            if (ids == null)
+                return BadRequest();
+
+            await _unitOfWork.BeginTransactionAsync();
+            await _laboWarrantyService.ButtonCancel(ids);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
     }
 }

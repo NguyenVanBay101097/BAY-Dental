@@ -16,5 +16,7 @@ namespace Infrastructure.Services
         Task<LaboWarranty> CreateLaboWarranty(LaboWarrantySave val);
         Task UpdateLaboWarranty(Guid id, LaboWarrantySave val);
         Task Unlink(IEnumerable<Guid> ids);
+        Task ButtonConfirm(IEnumerable<Guid> ids);
+        Task ButtonCancel(IEnumerable<Guid> ids);
     }
 }
