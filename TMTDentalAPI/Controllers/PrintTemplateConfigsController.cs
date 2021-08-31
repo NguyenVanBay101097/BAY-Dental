@@ -7,6 +7,7 @@ using Scriban;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -49,7 +50,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Generate(GenerateReq val)
         {
             object obj = await _printTemplateConfigService.getDataTest(val.Type);
-            var template = Template.Parse(val.Content);
+            var template = Template.Parse(val.Content); 
             try
             {
                 var result = template.Render(obj);

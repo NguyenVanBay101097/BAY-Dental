@@ -241,8 +241,22 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Phone { get; set; }
         public int? BirthYear { get; set; }
 
-       
-        
+        public string Age
+        {
+            get
+            {
+                if (!BirthYear.HasValue)
+                {
+                    return string.Empty;
+                }
+
+                return (DateTime.Now.Year - BirthYear.Value).ToString();
+            }
+            set
+            {
+            }
+        }
+
 
         public string DisplayGender
         {

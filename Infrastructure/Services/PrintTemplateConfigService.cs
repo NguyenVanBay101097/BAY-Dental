@@ -99,6 +99,7 @@ namespace Infrastructure.Services
                         Name = "TT310821-00162",
                         Partner = new Partner()
                         {
+                            Name = "Nguyễn Văn A",
                             DisplayName = "Nguyễn Văn A",
                             Street = "Tô ký",
                             WardName = "Tân chánh hiệp",
