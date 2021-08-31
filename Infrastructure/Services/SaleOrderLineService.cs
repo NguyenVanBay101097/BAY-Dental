@@ -428,7 +428,7 @@ namespace Infrastructure.Services
             switch (rule.Code)
             {
                 case "sale.sale_order_line_comp_rule":
-                    return new InitialSpecification<SaleOrderLine>(x => x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value));
+                    return new InitialSpecification<SaleOrderLine>(x => !x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value));
                 default:
                     return null;
             }
