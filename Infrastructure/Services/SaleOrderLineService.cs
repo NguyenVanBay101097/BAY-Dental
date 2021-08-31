@@ -423,11 +423,12 @@ namespace Infrastructure.Services
 
         public override ISpecification<SaleOrderLine> RuleDomainGet(IRRule rule)
         {
-            var companyId = CompanyId;
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
             switch (rule.Code)
             {
                 case "sale.sale_order_line_comp_rule":
-                    return new InitialSpecification<SaleOrderLine>(x => x.CompanyId == companyId);
+                    return new InitialSpecification<SaleOrderLine>(x => x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value));
                 default:
                     return null;
             }

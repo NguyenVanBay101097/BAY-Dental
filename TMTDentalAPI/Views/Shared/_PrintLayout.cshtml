@@ -12,14 +12,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TDental.vn</title>
 
-    <!-- Load paper.css for happy printing -->
-    @*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.4.1/paper.css">*@
-
-    @*<link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.css" />*@
     <link rel="stylesheet" type="text/css" href="/css/print.css" />
     <style>
         @@page {
-            size: @(config.PrintPaperSize != null ? config.PrintPaperSize.PaperFormat : paperDefault.PaperFormat) !important;
+            size: @(config.PrintPaperSize != null ? config.PrintPaperSize.PaperFormat : paperDefault.PaperFormat) portrait landscape !important;
             margin-top: @((config.PrintPaperSize != null ? config.PrintPaperSize.TopMargin : paperDefault.TopMargin) + "mm") ;
             margin-right: @((config.PrintPaperSize != null ? config.PrintPaperSize.RightMargin : paperDefault.RightMargin) + "mm");
             margin-bottom: @((config.PrintPaperSize != null ? config.PrintPaperSize.BottomMargin : paperDefault.BottomMargin)  + "mm");
@@ -28,7 +24,7 @@
 
     </style>
 </head>
-<body class="@paperDefault.PaperFormat">
+<body>
     <div class="container">
         @RenderBody()
     </div>

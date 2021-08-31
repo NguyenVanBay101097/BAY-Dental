@@ -6,10 +6,10 @@
                 [endDate]="filter.dateTo" (searchChange)="onSearchDateChange($event)" opens="right">
             </app-date-range-picker-filter>
             <kendo-combobox [placeholder]="'Tất cả bác sĩ'" class="mb-2 mr-2" [valueField]="'id'" [textField]="'name'"
-                [filterable]="true" [data]="employees" (selectionChange)="onSelectEmployee($event)" #empCbx>
+                [filterable]="true" [data]="employees" (valueChange)="onSelectEmployee($event)" #empCbx>
             </kendo-combobox>
             <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mb-2 mr-2" [valueField]="'id'"
-                [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)"
+                [textField]="'name'" [filterable]="true" [data]="companies" (valueChange)="onSelectCompany($event)"
                 #companyCbx>
             </kendo-combobox>
             <input class="mb-2 mr-2 form-control filter-search" placeholder="Tìm kiếm khách hàng, dịch vụ" type="text"

@@ -17,7 +17,7 @@
 }
 
 <div class="text-center mb-2">
-    <div class="text-3xl font-semibold">BÁO CÁO TỔNG QUAN KHÁCH HÀNG</div>
+    <div class="text-3xl font-semibold">THỐNG KÊ KHÁCH HÀNG ĐIỀU TRỊ</div>
     <div>
         @((Model.DateFrom.HasValue? "Từ ngày " + Model.DateFrom.Value.ToString("dd/MM/yyyy") : "") +
                 (Model.DateFrom.HasValue ? " đến ngày " + Model.DateTo.Value.ToString("dd/MM/yyyy") : ""))
@@ -30,14 +30,14 @@
             <table class="table table-bordered table-sm">
                 <thead>
                     <tr class="bg-info font-semibold">
-                        <th scope="col" class="" style="width:100px">Khách hàng</th>
-                        <th scope="col" class="" style="width:40px">Tuổi</th>
-                        <th scope="col" class="" style="width:50px">Giới tính</th>
-                        <th scope="col" class="" style="width:150px">Địa chỉ</th>
-                        <th scope="col" class="text-right" style="width:100px">Doanh thu</th>
-                        <th scope="col" style="width:80px">Nguồn</th>
-                        <th scope="col" style="width:100px">nhãn</th>
-                        <th scope="col" style="width:100px">Tình trạng điều trị</th>
+                        <th width="150" scope="col">Khách hàng</th>
+                        <th width="60" scope="col">Tuổi</th>
+                        <th width="100" scope="col">Giới tính</th>
+                        <th width="200" scope="col">Địa chỉ</th>
+                        <th width="120" scope="col" class="text-right">Doanh thu</th>
+                        <th width="120" scope="col">Nguồn</th>
+                        <th width="120" scope="col">Nhãn</th>
+                        <th width="150" scope="col">Tình trạng điều trị</th>
 
                     </tr>
                 </thead>
