@@ -19,6 +19,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Trạng thái
         /// draft: Nháp
+        /// new: Mới
         /// sent: Đã gửi
         /// received: Đã nhận
         /// assembled: Đã lắp
@@ -115,7 +116,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Phiếu Labo
         /// </summary>
-        public string LaboOrderId { get; set; }
+        public Guid? LaboOrderId { get; set; }
         public string LaboOrderName { get; set; }
 
         /// <summary>
@@ -177,19 +178,19 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Phiếu Labo
         /// </summary>
-        public string LaboOrderId { get; set; }
+        public Guid? LaboOrderId { get; set; }
         public string LaboOrderName { get; set; }
 
         /// <summary>
         /// Nhà cung cấp Labo
         /// </summary>
-        public string SupplierId { get; set; }
+        public Guid? SupplierId { get; set; }
         public string SupplierName { get; set; }
 
         /// <summary>
         /// Khách hàng
         /// </summary>
-        public string CustomerId { get; set; }
+        public Guid? CustomerId { get; set; }
         public string CustomerRef { get; set; }
         public string CustomerName { get; set; }
         public string CustomerDisplayName { get; set; }

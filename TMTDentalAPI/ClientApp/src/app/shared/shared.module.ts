@@ -104,6 +104,7 @@ import { CustomerReceiptStatePopoverComponent } from './customer-receipt-state-p
 import { IsEllipsisActiveDirective } from './is-ellipsis-active.directive';
 import { AddressDialogComponent } from './address-dialog/address-dialog.component';
 import { WarrantyCuDidalogComponent } from './warranty-cu-didalog/warranty-cu-didalog.component';
+import { LaboWarrantyDetailListComponent } from './labo-warranty-detail-list/labo-warranty-detail-list.component';
 
 const config: LocaleConfig = {};
 @NgModule({
@@ -203,7 +204,8 @@ const config: LocaleConfig = {};
         CustomerReceipCreateUpdateComponent,
         CustomerReceiptStatePopoverComponent,
         AddressDialogComponent, 
-        WarrantyCuDidalogComponent
+        WarrantyCuDidalogComponent,
+        LaboWarrantyDetailListComponent
     ],
     exports: [
         ConfirmDialogComponent,
@@ -292,7 +294,8 @@ const config: LocaleConfig = {};
         CustomerReceipCreateUpdateComponent,
         CustomerReceiptStatePopoverComponent,
         AddressDialogComponent, 
-        WarrantyCuDidalogComponent
+        WarrantyCuDidalogComponent,
+        LaboWarrantyDetailListComponent
     ],
     imports: [
         NgbModule,

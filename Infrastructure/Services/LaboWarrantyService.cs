@@ -100,11 +100,11 @@ namespace Infrastructure.Services
                     .Select(x => x.Tooth).ToListAsync();
 
                 res.TeethLaboOrder = _mapper.Map<IEnumerable<ToothDisplay>>(teeth);
-                res.LaboOrderId = laboOrder.Id.ToString();
+                res.LaboOrderId = laboOrder.Id;
                 res.LaboOrderName = laboOrder.Name;
-                res.SupplierId = laboOrder.PartnerId.ToString();
+                res.SupplierId = laboOrder.PartnerId;
                 res.SupplierName = laboOrder.Partner.Name;
-                res.CustomerId = laboOrder.CustomerId.ToString();
+                res.CustomerId = laboOrder.CustomerId;
                 res.CustomerRef = laboOrder.Customer.Ref;
                 res.CustomerName = laboOrder.Customer.Name;
                 res.CustomerDisplayName = laboOrder.Customer.DisplayName;
@@ -124,7 +124,6 @@ namespace Infrastructure.Services
                 .Include(x => x.LaboOrder.Partner)
                 .Include(x => x.LaboOrder.Customer)
                 .Include(x => x.LaboOrder.SaleOrderLine)
-                .Include(x => x.LaboOrder.SaleOrderLine.SaleOrderLineToothRels)
                 .Include(x => x.Employee)
                 .Include(x => x.LaboWarrantyToothRels).ThenInclude(x => x.Tooth)
                 .FirstOrDefaultAsync();
@@ -158,6 +157,36 @@ namespace Infrastructure.Services
             return laboWarranty;
         }
 
+        public override async Task<IEnumerable<LaboWarranty>> CreateAsync(IEnumerable<LaboWarranty> entities)
+        {
+            await _UpdateProperties(entities);
+            return await base.CreateAsync(entities);
+        }
+
+        private async Task _UpdateProperties(IEnumerable<LaboWarranty> self)
+        {
+            foreach (var laboWarranty in self)
+            {
+                if (string.IsNullOrEmpty(laboWarranty.Name))
+                {
+                    var sequenceObj = GetService<IIRSequenceService>();
+                    laboWarranty.Name = await sequenceObj.NextByCode("labo.warranty");
+                    if (string.IsNullOrEmpty(laboWarranty.Name))
+                    {
+                        await sequenceObj.CreateAsync(new IRSequence
+                        {
+                            Name = "Bảo hành Labo",
+                            Code = "labo.warranty",
+                            Prefix = "BH",
+                            Padding = 5
+                        });
+
+                        laboWarranty.Name = await sequenceObj.NextByCode("labo.warranty");
+                    }
+                }
+            }
+        }
+
         public async Task UpdateLaboWarranty(Guid id, LaboWarrantySave val)
         {
             var laboWarranty = await SearchQuery(x => x.Id == id)
@@ -165,7 +194,6 @@ namespace Infrastructure.Services
                 .Include(x => x.LaboOrder.Partner)
                 .Include(x => x.LaboOrder.Customer)
                 .Include(x => x.LaboOrder.SaleOrderLine)
-                .Include(x => x.LaboOrder.SaleOrderLine.SaleOrderLineToothRels)
                 .Include(x => x.Employee)
                 .Include(x => x.LaboWarrantyToothRels).ThenInclude(x => x.Tooth)
                 .FirstOrDefaultAsync();
@@ -187,11 +215,37 @@ namespace Infrastructure.Services
             var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
             foreach (var laboWarranty in self)
             {
-                if (laboWarranty.State == "draft")
+                if (laboWarranty.State != "draft")
                     throw new Exception("Chỉ có thế xóa phiếu bảo hành ở trạng thái nháp");
             }
 
             await DeleteAsync(self);
+        }
+
+        public async Task ButtonConfirm(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            foreach (var laboWarranty in self)
+            {
+                if (laboWarranty.State != "draft")
+                    throw new Exception("Chỉ có thể xác nhận ở trạng thái nháp");
+                laboWarranty.State = "new";
+            }
+
+            await UpdateAsync(self);
+        }
+
+        public async Task ButtonCancel(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            foreach (var laboWarranty in self)
+            {
+                if (laboWarranty.DateSendWarranty != null)
+                    throw new Exception("Không thể hủy phiếu bảo hành đã Gửi bảo hành");
+                laboWarranty.State = "draft";
+            }
+
+            await UpdateAsync(self);
         }
     }
 }
