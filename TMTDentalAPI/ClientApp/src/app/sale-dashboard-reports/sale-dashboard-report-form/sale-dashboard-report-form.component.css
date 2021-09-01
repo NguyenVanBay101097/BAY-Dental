@@ -69,12 +69,6 @@
     color: #0d6efd;
 }
 
-.o_dashboard_view .o_group>.o_aggregate_col, .o_dashboard_view .o_group .o_formula {
-    display: inline-block;
-    width: 280px;
-    margin-bottom: 1rem;
-}
-
 .border-group {
     background: #FFFFFF;
     border: 1px solid #E2E7ED;
