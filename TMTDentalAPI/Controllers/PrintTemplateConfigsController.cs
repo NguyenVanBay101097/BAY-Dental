@@ -3,13 +3,13 @@ using AutoMapper;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Scriban;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
+using Scriban;
 
 namespace TMTDentalAPI.Controllers
 {
@@ -50,10 +50,11 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Generate(GenerateReq val)
         {
             object obj = await _printTemplateConfigService.getDataTest(val.Type);
-            var template = Template.Parse(val.Content); 
+            var template = Template.Parse(val.Content);
+
             try
             {
-                var result = template.Render(obj);
+                var result = template.Render(new { Model = obj }, member => member.Name);
                 return Ok(result);
 
             }
@@ -61,6 +62,8 @@ namespace TMTDentalAPI.Controllers
             {
                 throw new Exception("Không thể chuyển đổi do sai cú pháp");
             }
+
+
         }
 
         [HttpPost("[action]")]
@@ -71,7 +74,7 @@ namespace TMTDentalAPI.Controllers
             var template = Template.Parse(printTemplateConfig.Content);
             try
             {
-                var result = template.Render(obj);
+                var result = template.Render(new { Model = obj }, member => member.Name);
                 return Ok(result);
 
             }
