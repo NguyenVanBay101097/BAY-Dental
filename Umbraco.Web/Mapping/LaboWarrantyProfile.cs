@@ -14,7 +14,11 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<LaboWarranty, LaboWarrantyBasic>()
                 .ForMember(x => x.LaboOrderId, x => x.MapFrom(s => s.LaboOrderId))
-                .ForMember(x => x.LaboOrderName, x => x.MapFrom(s => s.LaboOrder.Name));
+                .ForMember(x => x.LaboOrderName, x => x.MapFrom(s => s.LaboOrder.Name))
+                .ForMember(x => x.CustomerId, x => x.MapFrom(s => s.LaboOrder.CustomerId))
+                .ForMember(x => x.CustomerRef, x => x.MapFrom(s => s.LaboOrder.Customer.Ref))
+                .ForMember(x => x.CustomerName, x => x.MapFrom(s => s.LaboOrder.Customer.Name))
+                .ForMember(x => x.CustomerDisplayName, x => x.MapFrom(s => s.LaboOrder.Customer.DisplayName));
 
             CreateMap<LaboWarranty, LaboWarrantyDisplay>()
                 .ForMember(x => x.LaboOrderId, x => x.MapFrom(s => s.LaboOrderId))

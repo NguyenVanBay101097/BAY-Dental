@@ -122,6 +122,14 @@ namespace Umbraco.Web.Models.ContentEditing
         public string LaboOrderName { get; set; }
 
         /// <summary>
+        /// Khách hàng
+        /// </summary>
+        public Guid? CustomerId { get; set; }
+        public string CustomerRef { get; set; }
+        public string CustomerName { get; set; }
+        public string CustomerDisplayName { get; set; }
+
+        /// <summary>
         /// Ngày nhận bảo hành
         /// </summary>
         public DateTime? DateReceiptWarranty { get; set; }
