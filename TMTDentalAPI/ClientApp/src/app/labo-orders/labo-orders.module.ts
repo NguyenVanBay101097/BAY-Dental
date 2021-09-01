@@ -25,6 +25,7 @@ import { LaboBridgesModule } from '../labo-bridges/labo-bridges.module';
 import { LaboBiteJointsModule } from '../labo-bite-joints/labo-bite-joints.module';
 import { LaboOrderExportExportedComponent } from './labo-order-export-exported/labo-order-export-exported.component';
 import { LaboOrderExportNotExportComponent } from './labo-order-export-not-export/labo-order-export-not-export.component';
+import { LaboOrderWarrantyListComponent } from './labo-order-warranty/labo-order-warranty-list/labo-order-warranty-list.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +42,7 @@ import { LaboOrderExportNotExportComponent } from './labo-order-export-not-expor
     LaboOrderExportDialogComponent,
     LaboOrderExportExportedComponent,
     LaboOrderExportNotExportComponent,
+    LaboOrderWarrantyListComponent,
   ],
   imports: [
     CommonModule,
