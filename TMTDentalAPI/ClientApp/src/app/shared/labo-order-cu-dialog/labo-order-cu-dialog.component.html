@@ -11,10 +11,10 @@
                     <h3>{{laboOrder?.name}}</h3>
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                    <button [disabled]="true" class="btn o_arrow_button disabled" [ngClass]="{'btn-primary': state === 'confirmed', 'btn-secondary': state !== 'confirmed'}" type="button">
+                    <button [disabled]="true" class="btn o_arrow_button o_arrow_button_bg_primary disabled" [ngClass]="{'btn-primary': state === 'confirmed', 'btn-secondary': state !== 'confirmed'}" type="button">
                         Đơn hàng
                     </button>
-                    <button [disabled]="true" class="btn o_arrow_button disabled" [ngClass]="{'btn-primary': state === 'draft', 'btn-secondary': state !== 'draft'}" type="button">
+                    <button [disabled]="true" class="btn o_arrow_button o_arrow_button_bg_primary disabled" [ngClass]="{'btn-primary': state === 'draft', 'btn-secondary': state !== 'draft'}" type="button">
                         Nháp
                     </button>
                 </div>
