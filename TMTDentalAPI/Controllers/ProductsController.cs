@@ -854,7 +854,6 @@ namespace TMTDentalAPI.Controllers
             var data = new List<ProductProductImportExcelRow>();
             var categDict = new Dictionary<string, ProductCategory>();
             var productDict = new Dictionary<string, Product>();
-            var uomDict = new Dictionary<string, UoM>();
             var errors = new List<string>();
 
             var typeDict = new Dictionary<string, string>()

@@ -1135,7 +1135,7 @@ namespace Infrastructure.Services
                 PurchasePrice = x.PurchasePrice,
                 Type = x.Type,
                 UomName = x.UOM.Name,
-                UomPoName = x.UOMPO.Name,
+                UoMPOName = x.UOMPO.Name,
                 MinInventory = x.MinInventory,
             }).ToListAsync();
 
