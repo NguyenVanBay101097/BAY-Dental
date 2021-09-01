@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PagedResult2 } from '../core/paged-result-2';
@@ -12,6 +12,7 @@ export class LaboWarrantyPaged {
   dateReceiptTo: string;
   supplierId: string;
   laboOrderId: string;
+  notDraft: boolean;
 }
 
 export class LaboWarrantySave {
@@ -60,7 +61,7 @@ export class LaboWarrantyService {
   }
 
   getDefault(val) {
-    return this.http.post(this.baseApi + this.apiUrl+"/GetDefault", val);
+    return this.http.post(this.baseApi + this.apiUrl + "/GetDefault", val);
   }
 
   create(val: LaboWarrantySave): Observable<LaboWarrantySave> {
@@ -70,16 +71,40 @@ export class LaboWarrantyService {
   update(id, val: LaboWarrantySave): Observable<LaboWarrantySave> {
     return this.http.put<LaboWarrantySave>(this.baseApi + this.apiUrl + '/' + id, val);
   }
-  
-  buttonCancel(ids: string[]){
+
+  buttonCancel(ids: string[]) {
     return this.http.post(this.baseApi + this.apiUrl + '/ButtonCancel', ids);
   }
-  
-  buttonConfirm(ids: string[]){
+
+  buttonConfirm(ids: string[]) {
     return this.http.post(this.baseApi + this.apiUrl + '/ButtonConfirm', ids);
   }
-  
+
   delete(id: string) {
     return this.http.delete(this.baseApi + this.apiUrl + '/' + id);
+  }
+
+  confirmSendWarranty(val) {
+    return this.http.post(this.baseApi + this.apiUrl + '/ConfirmSendWarranty', val);
+  }
+
+  cancelSendWarranty(val: string) {
+    return this.http.post(this.baseApi + this.apiUrl + '/CancelSendWarranty', val);
+  }
+
+  confirmReceiptInspection(val) {
+    return this.http.post(this.baseApi + this.apiUrl + '/ConfirmReceiptInspection', val);
+  }
+
+  cancelReceiptInspection(val: string) {
+    return this.http.post(this.baseApi + this.apiUrl + '/CancelReceiptInspection', val);
+  }
+
+  confirmAssemblyWarranty(val) {
+    return this.http.post(this.baseApi + this.apiUrl + '/ConfirmAssemblyWarranty', val);
+  }
+
+  cancelAssemblyWarranty(val: string) {
+    return this.http.post(this.baseApi + this.apiUrl + '/CancelAssemblyWarranty', val);
   }
 }

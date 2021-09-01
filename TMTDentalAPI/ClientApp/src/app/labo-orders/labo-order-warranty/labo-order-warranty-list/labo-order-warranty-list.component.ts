@@ -9,6 +9,7 @@ import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/
 import { WarrantyCuDidalogComponent } from 'src/app/shared/warranty-cu-didalog/warranty-cu-didalog.component';
 import { LaboOrderService } from '../../labo-order.service';
 import { LaboWarrantyPaged, LaboWarrantyService } from '../../labo-warranty.service';
+import { LaboOrderWarrantyConfirmDialogComponent } from '../labo-order-warranty-confirm-dialog/labo-order-warranty-confirm-dialog.component';
 
 @Component({
   selector: 'app-labo-order-warranty-list',
@@ -59,6 +60,7 @@ export class LaboOrderWarrantyListComponent implements OnInit {
     val.supplierId = '';
     val.state = this.state || '';
     val.laboOrderId = '';
+    val.notDraft = true;
     val.dateReceiptFrom = '';
     val.dateReceiptTo = '';
     this.laboWarrantyService.getPaged(val).pipe(
@@ -76,8 +78,17 @@ export class LaboOrderWarrantyListComponent implements OnInit {
     }, err => { this.loading = false; });
   }
 
-  editItem() {
+  editItem(item) {
+    console.log(item);
+    
+    const modalRef = this.modalService.open(LaboOrderWarrantyConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.state = item.state;
+    modalRef.componentInstance.laboWarrantyId = item.id;
+    modalRef.componentInstance.dateAssemblyWarranty = item.dateAssemblyWarranty;
 
+    modalRef.result.then((res) => {
+      this.loadDataFromApi()
+    }, (err) => { console.log(err) });
   }
 
   editWarranty(item) {
@@ -94,9 +105,9 @@ export class LaboOrderWarrantyListComponent implements OnInit {
   editLabo(item) {
     console.log(item);
     this.loadLaboOrder(item.laboOrderId)
-    // const modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    // modalRef.componentInstance.title = 'Cập nhật phiếu labo';
-    // modalRef.componentInstance.id = item.laboOrderId;
+    const modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Cập nhật phiếu labo';
+    modalRef.componentInstance.id = item.laboOrderId;
     // // modalRef.componentInstance.saleOrderLineId = item.saleOrderLineId;
 
     // modalRef.result.then(res => {

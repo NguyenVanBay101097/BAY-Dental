@@ -26,6 +26,7 @@ import { LaboBiteJointsModule } from '../labo-bite-joints/labo-bite-joints.modul
 import { LaboOrderExportExportedComponent } from './labo-order-export-exported/labo-order-export-exported.component';
 import { LaboOrderExportNotExportComponent } from './labo-order-export-not-export/labo-order-export-not-export.component';
 import { LaboOrderWarrantyListComponent } from './labo-order-warranty/labo-order-warranty-list/labo-order-warranty-list.component';
+import { LaboOrderWarrantyConfirmDialogComponent } from './labo-order-warranty/labo-order-warranty-confirm-dialog/labo-order-warranty-confirm-dialog.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { LaboOrderWarrantyListComponent } from './labo-order-warranty/labo-order
     LaboOrderExportExportedComponent,
     LaboOrderExportNotExportComponent,
     LaboOrderWarrantyListComponent,
+    LaboOrderWarrantyConfirmDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -66,7 +68,8 @@ import { LaboOrderWarrantyListComponent } from './labo-order-warranty/labo-order
     LaboOrderListDialogComponent,
     LaboOrderStatisticUpdateDialogComponent,
     LaboOrderReceiptDialogComponent,
-    LaboOrderExportDialogComponent
+    LaboOrderExportDialogComponent,
+    LaboOrderWarrantyConfirmDialogComponent
   ]
 })
 export class LaboOrdersModule { }

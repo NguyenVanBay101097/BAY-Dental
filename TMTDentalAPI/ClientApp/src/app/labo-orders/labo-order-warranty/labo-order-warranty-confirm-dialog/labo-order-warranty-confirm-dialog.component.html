@@ -1,0 +1,41 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+<div class="modal-body o_act_window">
+    <div class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_12">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">{{label}}</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker formControlName="date">
+                                    </kendo-datepicker>
+                                    <!-- <div *ngIf="f.date.errors && (f.date.touched || f.date.dirty || submitted)"
+                                        class="text-danger">
+                                        <div *ngIf="f.date.errors.required">Chọn ngày nhận thực tế</div>
+                                    </div> -->
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" accesskey="s" (click)="onSave()">Lưu</button>
+    <button *ngIf="state != 'new'" type="button" class="btn btn-danger" accesskey="x" (click)="onCancel()">
+        <span *ngIf="state=='sent'">Hủy gửi</span>
+        <span *ngIf="state=='received'">Hủy nhận</span>
+        <span *ngIf="state=='assembled'">Hủy lắp</span>
+    </button>
+    <button type="button" class="btn btn-secondary" accesskey="q" (click)="activeModal.dismiss()">Đóng</button>
+</div>
