@@ -60,9 +60,15 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.DateReceiptWarranty <= val.DateReceiptTo);
             }
 
-            if (!string.IsNullOrEmpty(val.State))
+            if (!string.IsNullOrEmpty(val.States))
             {
-                query = query.Where(x => x.State == val.State);
+                var states = val.States.Split(",");
+                query = query.Where(x => states.Contains(x.State));
+            }
+
+            if (val.NotDraft.HasValue && val.NotDraft == true)
+            {
+                query = query.Where(x => x.State != "draft");
             }
 
             var totalItems = await query.CountAsync();

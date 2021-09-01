@@ -24,7 +24,9 @@ namespace Umbraco.Web.Models.ContentEditing
         /// received: Đã nhận
         /// assembled: Đã lắp
         /// </summary>
-        public string State { get; set; }
+        public string States { get; set; }
+
+        public bool? NotDraft { get; set; }
 
         /// <summary>
         /// Ngày nhận bảo hành
