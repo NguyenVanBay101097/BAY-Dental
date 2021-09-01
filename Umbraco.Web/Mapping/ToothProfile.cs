@@ -16,7 +16,6 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<Tooth, ToothDisplay>();
             CreateMap<ToothDisplay, Tooth>()
-                .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.Category, x => x.Ignore());
         }
     }

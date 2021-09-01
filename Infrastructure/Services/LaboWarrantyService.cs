@@ -215,7 +215,7 @@ namespace Infrastructure.Services
             var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
             foreach (var laboWarranty in self)
             {
-                if (laboWarranty.State == "draft")
+                if (laboWarranty.State != "draft")
                     throw new Exception("Chỉ có thế xóa phiếu bảo hành ở trạng thái nháp");
             }
 

@@ -1,44 +1,45 @@
 <div class="card">
-    <div class="card-header p-2 font-weight-600">
+    <div class="card-header p-2">
         <h6 class="mb-0">Lịch sử bảo hành</h6>
-        <button type="button" class="btn btn-primary" (click)="createNewWarranty()">
-            <i class="fas fa-plus-circle text-white"></i>
-            <span> Tạo phiếu bảo hành </span>
-        </button>
     </div>
     <div class="card-body p-2">
+        <button type="button" class="btn btn-primary mb-2" (click)="createNewWarranty()">
+            <!-- <i class="fas fa-plus-circle text-white"></i> -->
+            <span> Tạo phiếu bảo hành </span>
+        </button>
         <kendo-grid [data]="gridData" [loading]="loading" [pageSize]="limit" [skip]="skip" [pageable]="true"
             (pageChange)="pageChange($event)" [navigable]="true" kendoGridFocusable>
-            <kendo-grid-column field="name" title="Ngày nhận bảo hành" width="150">
+            <kendo-grid-column title="Ngày nhận bảo hành" width="180">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.datePlanned | date : 'shortDate'}}
+                    {{dataItem.dateReceiptWarranty | date : 'shortDate'}}
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column field="partnerName" title="Phiếu bảo hành" width="120">
+            <kendo-grid-column field="name" title="Phiếu bảo hành" width="120">
             </kendo-grid-column>
-            <kendo-grid-column field="dateOrder" title="Lý do bảo hành" width="150">
+            <kendo-grid-column field="reason" title="Lý do bảo hành" width="150">
             </kendo-grid-column>
-            <kendo-grid-column field="datePlanned" title="Nội dung bảo hành" width="150">
+            <kendo-grid-column field="content" title="Nội dung bảo hành" width="150">
+            </kendo-grid-column>
+            <kendo-grid-column title="Gửi bảo hành" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.datePlanned | date : 'shortDate'}}
+                    {{dataItem.dateSendWarranty | date : 'shortDate'}}
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column field="quantity" title="Gửi bảo hành" width="120">
+            <kendo-grid-column title="Nhận nghiệm thu" class="text-right" width="150">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.datePlanned | date : 'shortDate'}}
+                    {{dataItem.dateReceiptInspection | date : 'shortDate'}}
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column field="amountTotal" title="Nhận nghiệm thu" class="text-right" width="150">
+            <kendo-grid-column title="Lắp bảo hành" class="text-right" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.datePlanned | date : 'shortDate'}}
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column field="amountTotal" title="Lắp bảo hành" class="text-right" width="120">
-                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.datePlanned | date : 'shortDate'}}
+                    {{dataItem.dateAssemblyWarranty | date : 'shortDate'}}
                 </ng-template>
             </kendo-grid-column>
             <kendo-grid-column field="state" title="Trạng thái" width="100">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    <span *ngIf="dataItem.state === 'draft'">Nháp</span>
+                    <span *ngIf="dataItem.state != 'draft'">Đơn bảo hành</span>
+                </ng-template>
             </kendo-grid-column>
             <kendo-grid-column field="id" width="120">
                 <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
@@ -46,9 +47,9 @@
                 </ng-template>
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     <button class="btn mr-1" title="Sửa" (click)="editItem(dataItem)">
-                        <span class="fas fa-edit"></span></button>
+                        <span class="fas fa-edit text-success"></span></button>
                     <button class="btn" title="Xóa" (click)="deleteItem(dataItem)">
-                        <span class="fas fa-trash-alt"></span></button>
+                        <span class="fas fa-trash-alt text-danger"></span></button>
                 </ng-template>
             </kendo-grid-column>
         </kendo-grid>
