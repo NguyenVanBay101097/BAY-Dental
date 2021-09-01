@@ -65,11 +65,14 @@ namespace ApplicationCore.Constants
            new PrintTemplateType {Type = "tmp_stock_inventory" , PathTemplate = "" },
            new PrintTemplateType {Type = "tmp_toathuoc" , PathTemplate = "" },
            new PrintTemplateType {Type = "tmp_medicine_order" , PathTemplate = "" },
-           new PrintTemplateType {Type = "tmp_labo_order" , PathTemplate = "" },          
+           new PrintTemplateType {Type = "tmp_labo_order" , PathTemplate = "" },
         };
 
         public static PrintTemplateType[] PrintTemplateTypeDemo = new PrintTemplateType[] {
-           new PrintTemplateType {Type = "tmp_toathuoc" , PathTemplate = "PrintTemplate/ToaThuoc/Template.cshtml" },       
+           new PrintTemplateType {Type = "tmp_toathuoc" , PathTemplate = "PrintTemplate/ToaThuoc/Template.cshtml" },
+           new PrintTemplateType {Type = "tmp_labo_order" , PathTemplate = "" },
+           new PrintTemplateType {Type = "tmp_purchase_order" , PathTemplate = "" },
+           new PrintTemplateType {Type = "tmp_purchase_refund" , PathTemplate = "" },
         };
     }
 
