@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -10,6 +10,7 @@ import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { LaboWarrantySave, LaboWarrantyService } from 'src/app/labo-orders/labo-warranty.service';
+import { ToothDisplay } from 'src/app/teeth/tooth.service';
 import { NotifyService } from '../services/notify.service';
 
 @Component({
@@ -20,6 +21,7 @@ import { NotifyService } from '../services/notify.service';
 export class WarrantyCuDidalogComponent implements OnInit {
   @Input() laboId: string;
   @Input() laboWarrantyId: string;
+  @Input() laboTeeth: any;
   @ViewChild('doctorCbx', { static: true }) doctorCbx: ComboBoxComponent;
 
   title: string = "Tạo phiếu bảo hành";
@@ -48,6 +50,7 @@ export class WarrantyCuDidalogComponent implements OnInit {
       reason: [null, Validators.required],
       content: null,
       note: null,
+      teeth: this.fb.array([]),
     });
 
     this.doctorCbx.filterChange.asObservable().pipe(
@@ -59,6 +62,7 @@ export class WarrantyCuDidalogComponent implements OnInit {
       this.doctorCbx.loading = false;
     });
     this.loadDoctors();
+
     if (this.laboWarrantyId) {
       this.loadData();
       this.title = "Cập nhật bảo hành";
@@ -76,7 +80,9 @@ export class WarrantyCuDidalogComponent implements OnInit {
   getValueFC(key: string) {
     return this.myForm.get(key).value;
   }
-
+  
+  get teethFA() { return this.myForm.get('teeth') as FormArray; }
+  
   get f() {
     return this.myForm.controls;
   }
@@ -101,6 +107,10 @@ export class WarrantyCuDidalogComponent implements OnInit {
       this.myForm.controls['dateReceiptObj'].setValue(new Date(res.dateReceiptWarranty));
       this.myForm.patchValue(res);
       this.myForm.controls['doctor'].setValue(res.employee);
+      this.teethFA.clear();
+      res.teeth.forEach(tooth => {
+        this.teethFA.push(this.fb.group(tooth));
+      });
     }, err => {
       console.log(err);
     })
@@ -124,13 +134,14 @@ export class WarrantyCuDidalogComponent implements OnInit {
     val.name = this.laboWarrantyName || '';
     val.employeeId = valForm.doctor.id;
     val.dateReceiptWarranty = this.intlService.formatDate(valForm.dateReceiptObj, 'yyyy-MM-ddTHH:mm:ss');
-    val.teeth = [];
+    val.teeth = valForm.teeth;
     val.reason = valForm.reason;
     val.note = valForm.note;
     val.content = valForm.content;
     val.state = valForm.state;
     return val;
   }
+
   onSave$(): Observable<any> {
     let val = this.getDataFormGroup();
     if (this.laboWarrantyId) {
@@ -139,6 +150,7 @@ export class WarrantyCuDidalogComponent implements OnInit {
       return this.laboWarrantyService.create(val);
     }
   }
+
   onSave() {
     this.submitted = true;
 
@@ -180,6 +192,20 @@ export class WarrantyCuDidalogComponent implements OnInit {
       this.activeModal.close(true);
     } else {
       this.activeModal.close();
+    }
+  }
+
+  isToothSelected(tooth: ToothDisplay) {
+    const index = this.getValueFC('teeth').findIndex(x => x.id == tooth.id);
+    return index >= 0 ? true : false;
+  }
+
+  onToothSelected(tooth: ToothDisplay) {
+    if (this.isToothSelected(tooth)) {
+      var index = this.getValueFC('teeth').findIndex(x => x.id == tooth.id);
+      this.teethFA.removeAt(index);
+    } else {
+      this.teethFA.push(this.fb.group(tooth));
     }
   }
 }

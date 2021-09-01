@@ -64,6 +64,8 @@ export class LaboWarrantyDetailListComponent implements OnInit {
   createNewWarranty() {
     const modalRef = this.modalService.open(WarrantyCuDidalogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.laboId = this.item.id;
+    modalRef.componentInstance.laboTeeth = this.item.teeth;
+
     modalRef.result.then((res) => {
       this.loadDataFromApi()
     }, (err) => { console.log(err) });
@@ -73,6 +75,7 @@ export class LaboWarrantyDetailListComponent implements OnInit {
     const modalRef = this.modalService.open(WarrantyCuDidalogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.laboId = this.item.id;
     modalRef.componentInstance.laboWarrantyId = item.id;
+    modalRef.componentInstance.laboTeeth = this.item.teeth;
 
     modalRef.result.then((res) => {
       this.loadDataFromApi()
