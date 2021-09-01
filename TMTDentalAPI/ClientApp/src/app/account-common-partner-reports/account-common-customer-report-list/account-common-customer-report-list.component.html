@@ -8,25 +8,30 @@
         </ol>
         <div class="o_cp_searchview">
             <div class="o_searchview">
-                <span class="fas fa-search form-control-icon form-control-sm"></span>
+                <span class="o_searchview_icon fas fa-search"></span>
                 <input class="o_searchview_input" [placeholder]="(resultSelection == 'customer' ? ' Tìm kiếm theo tên khách hàng' : ' Tìm kiếm theo tên NCC')
                 + ' , số điện thoại'" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+
             </div>
         </div>
         <div class="o_cp_left">
-            <div class="o_cp_buttons">
-                <button (click)="onExport()" class="btn btn-sm btn-primary"><i class="fas fa-download mr-1"></i>Xuất Excel</button>
+            <div class="o_cp_buttons d-flex">
+                <div class="dropdown mr-1">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-download"></i> Xuất File</button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" (click)="onExport()">Xuất Excel</a>
+                        <a class="dropdown-item" (click)="onExportPDF()">Xuất PDF</a>
+                    </div>
+                </div>
+                <button class="btn btn-primary" (click)="printReport()">In báo cáo</button>
             </div>
             <div class="o_cp_sidebar">
             </div>
         </div>
         <div class="o_cp_right">
-            <!-- <app-tai-date-range-filter-dropdown class="mr-2" title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo" (searchChange)="searchChangeDate($event)">
-            </app-tai-date-range-filter-dropdown> -->
-            <app-date-range-picker-filter class="mr-1" [startDate]="monthStart" [endDate]="monthEnd"
-                (searchChange)="searchChangeDate($event)"></app-date-range-picker-filter>
-            <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1 kendo-combobox-sm" [valueField]="'id'"
-                [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
+            <app-date-range-picker-filter class="mr-1" [startDate]="monthStart" [endDate]="monthEnd" (searchChange)="searchChangeDate($event)"></app-date-range-picker-filter>
+            <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
             </kendo-combobox>
         </div>
     </div>

@@ -1,0 +1,30 @@
+/*--Report doanh thu --*/
+  
+  .revenue-report {
+    padding: 15px;
+  }
+  
+  .revenue-report-chart {
+    width: 100%;
+  }
+
+  .box-content-header {
+    font-weight: 600;
+    font-size: 16px;
+    color: #2c333a;
+  }
+  
+  .box-content-subheader {
+    font-weight: 600;
+    font-size: 18px;
+    color: #0184ff;
+  }
+
+  .numeric-revenue {
+    font-weight: 600;
+    font-size: 18px;
+  }
+
+  .size-chart{
+    height: 300px;
+  }

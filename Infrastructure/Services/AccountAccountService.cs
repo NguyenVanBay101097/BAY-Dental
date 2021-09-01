@@ -47,6 +47,52 @@ namespace Infrastructure.Services
             return await SearchQuery(x => x.Code == "334" && x.CompanyId == companyId).FirstOrDefaultAsync();
         }
 
+        public async Task<AccountAccount> GetAccount3335CurrentCompany()
+        {
+            var companyId = CompanyId;
+            var account = await SearchQuery(x => x.Code == "3335" && x.CompanyId == companyId).FirstOrDefaultAsync();
+            if (account == null)
+            {
+                var modelDataObj = GetService<IIRModelDataService>();
+                var accountType = await modelDataObj.GetRef<AccountAccountType>("account.data_account_type_current_liabilities");
+                account = new AccountAccount()
+                {
+                    Name = "Thuế thu nhập cá nhân",
+                    Code = "3335",
+                    UserTypeId = accountType.Id,
+                    CompanyId = CompanyId,
+                    InternalType = accountType.Type
+                };
+
+                await CreateAsync(account);
+            }
+
+            return account;
+        }
+
+        public async Task<AccountAccount> GetAccount3383CurrentCompany()
+        {
+            var companyId = CompanyId;
+            var account = await SearchQuery(x => x.Code == "3383" && x.CompanyId == companyId).FirstOrDefaultAsync();
+            if (account == null)
+            {
+                var modelDataObj = GetService<IIRModelDataService>();
+                var accountType = await modelDataObj.GetRef<AccountAccountType>("account.data_account_type_current_liabilities");
+                account = new AccountAccount()
+                {
+                    Name = "Bảo hiểm xã hội",
+                    Code = "3383",
+                    UserTypeId = accountType.Id,
+                    CompanyId = CompanyId,
+                    InternalType = accountType.Type
+                };
+
+                await CreateAsync(account);
+            }
+
+            return account;
+        }
+
         public async Task<AccountAccount> GetAccountAdvanceCurrentCompany()
         {
             var companyId = CompanyId;

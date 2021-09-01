@@ -75,7 +75,6 @@ import { PartnerWebcamComponent } from './partner-webcam/partner-webcam.componen
 import { FundBookService } from './fund-book.service';
 import { LaboFinnishLineImportComponent } from '../labo-finish-lines/labo-finnish-line-import/labo-finnish-line-import.component';
 import { ProductMedicineCuDialogComponent } from '../products/product-medicine-cu-dialog/product-medicine-cu-dialog.component';
-import { ProductsModule } from '../products/products.module';
 import { CashBookCuDialogComponent } from './cash-book-cu-dialog/cash-book-cu-dialog.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SearchAllComponent } from './search-all/search-all.component';
@@ -97,6 +96,15 @@ import { DateRangePickerDropdownComponent } from './date-range-picker-filter/dat
 import { AgentCreateUpdateDialogComponent } from './agent-create-update-dialog/agent-create-update-dialog.component';
 import { ToothSelectionDialogComponent } from './tooth-selection-dialog/tooth-selection-dialog.component';
 import { TeethChartComponent } from './teeth-chart/teeth-chart.component';
+import { SaleOrderLineSwitchStatePopoverComponent } from '../sale-orders/sale-order-line-switch-state-popover/sale-order-line-switch-state-popover.component';
+import { DashboardRevenueTodayReportComponent } from './components/dashboard-revenue-today-report/dashboard-revenue-today-report.component';
+import { DashboardCustomerReceiptListTodayComponent } from './components/dashboard-customer-receipt-list-today/dashboard-customer-receipt-list-today.component';
+import { CustomerReceipCreateUpdateComponent } from './customer-receip-create-update/customer-receip-create-update.component';
+import { CustomerReceiptStatePopoverComponent } from './customer-receipt-state-popover/customer-receipt-state-popover.component';
+import { IsEllipsisActiveDirective } from './is-ellipsis-active.directive';
+import { AddressDialogComponent } from './address-dialog/address-dialog.component';
+import { ChartsModule } from 'ng2-charts';
+import { ReceiveAppointmentDialogComponent } from './receive-appointment-dialog/receive-appointment-dialog.component';
 
 const config: LocaleConfig = {};
 @NgModule({
@@ -130,6 +138,7 @@ const config: LocaleConfig = {};
         ConfirmDialogV2Component,
         AnchorHostDirective,
         MyAutosizeDirective,
+        IsEllipsisActiveDirective,
         CharCountDirective,
         SelectUomProductDialogComponent,
         ImageFileUploadComponent,
@@ -179,6 +188,8 @@ const config: LocaleConfig = {};
         DashboardPartnerCustomerReportComponent,
         DashboardSaleReportComponent,
         DashboardServiceTodayReportComponent,
+        DashboardRevenueTodayReportComponent,
+        DashboardCustomerReceiptListTodayComponent,
         SaleOrderLineCuComponent,
         CashBankTodayReportComponent,
         SaleOrderLineCuComponent,
@@ -187,7 +198,13 @@ const config: LocaleConfig = {};
         DateRangePickerDropdownComponent,
         AgentCreateUpdateDialogComponent,
         ToothSelectionDialogComponent,
-        TeethChartComponent
+        TeethChartComponent,
+        ToothSelectionDialogComponent,
+        SaleOrderLineSwitchStatePopoverComponent,
+        CustomerReceipCreateUpdateComponent,
+        CustomerReceiptStatePopoverComponent,
+        AddressDialogComponent,
+        ReceiveAppointmentDialogComponent
     ],
     exports: [
         ConfirmDialogComponent,
@@ -215,6 +232,7 @@ const config: LocaleConfig = {};
         AnchorHostDirective,
         MyAutosizeDirective,
         CharCountDirective,
+        IsEllipsisActiveDirective,
         SelectUomProductDialogComponent,
         RedirectComponentDirective,
         ImageFileUploadComponent,
@@ -259,15 +277,23 @@ const config: LocaleConfig = {};
         DashboardPartnerCustomerReportComponent,
         DashboardSaleReportComponent,
         DashboardServiceTodayReportComponent,
+        DashboardRevenueTodayReportComponent,
+        DashboardCustomerReceiptListTodayComponent,
         SaleOrderLineCuComponent,
         CashBankTodayReportComponent,
-        SaleOrderLineCuComponent,
         DateRangePickerFilterComponent,
         DaterangepickerDirective,
         DateRangePickerDropdownComponent,
         AgentCreateUpdateDialogComponent,
         ToothSelectionDialogComponent,
-        TeethChartComponent
+        TeethChartComponent,
+        ToothSelectionDialogComponent,
+        SaleOrderLineSwitchStatePopoverComponent,
+        
+        CustomerReceipCreateUpdateComponent,
+        CustomerReceiptStatePopoverComponent,
+        AddressDialogComponent,
+        ReceiveAppointmentDialogComponent
     ],
     imports: [
         NgbModule,
@@ -277,6 +303,7 @@ const config: LocaleConfig = {};
         MyCustomKendoModule,
         NgSelectModule,
         FormsModule,
+        ChartsModule,
         MyCustomNgbModule,
         CalendarModule,
         MomentModule.forRoot({
@@ -317,7 +344,10 @@ const config: LocaleConfig = {};
         DateRangePickerFilterComponent,
         DateRangePickerDropdownComponent,
         AgentCreateUpdateDialogComponent,
-        ToothSelectionDialogComponent
+        ToothSelectionDialogComponent,        
+        CustomerReceipCreateUpdateComponent,
+        AddressDialogComponent,
+        ReceiveAppointmentDialogComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

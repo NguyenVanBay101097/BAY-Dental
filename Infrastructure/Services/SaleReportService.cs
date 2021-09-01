@@ -6,12 +6,19 @@ using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
@@ -23,13 +30,16 @@ namespace Infrastructure.Services
         private readonly CatalogDbContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private UserManager<ApplicationUser> _userManager;
 
         public SaleReportService(CatalogDbContext context, IMapper mapper,
+            UserManager<ApplicationUser> userManager,
             IHttpContextAccessor httpContextAccessor)
         {
             _mapper = mapper;
             _context = context;
             _httpContextAccessor = httpContextAccessor;
+            _userManager = userManager;
         }
 
         protected Guid CompanyId
@@ -42,7 +52,6 @@ namespace Infrastructure.Services
                 return claim != null ? Guid.Parse(claim.Value) : Guid.Empty;
             }
         }
-
         protected T GetService<T>()
         {
             return (T)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(T));
@@ -320,17 +329,29 @@ namespace Infrastructure.Services
                 .Include("SaleOrderLineToothRels.Tooth")
                 .AsQueryable();
 
+            if (!string.IsNullOrEmpty(val.Search))
+            {
+                query = query.Where(x => x.Name.Contains(val.Search) ||
+                x.OrderPartner.Name.Contains(val.Search) ||
+                x.Order.Name.Contains(val.Search) ||
+                x.Employee.Name.Contains(val.Search));
+            }
+
             if (val.DateFrom.HasValue)
-                query = query.Where(x => x.Order.DateOrder >= val.DateFrom.Value);
+                query = query.Where(x => x.Date >= val.DateFrom.Value);
 
             if (val.DateTo.HasValue)
-                query = query.Where(x => x.Order.DateOrder <= val.DateTo.Value);
+                query = query.Where(x => x.Date <= val.DateTo.Value);
 
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId.Value);
 
             if (!string.IsNullOrEmpty(val.State))
                 query = query.Where(x => !x.Order.State.Equals(val.State));
+
+
+
+            query = query.OrderByDescending(x => x.DateCreated);
 
             var items = await query.ToListAsync();
 
@@ -716,6 +737,333 @@ namespace Infrastructure.Services
                       CompanyId = CompanyId
                   }).ToListAsync();
             return result;
+        }
+
+        private IQueryable<SaleOrderLine> GetServiceReportQuery(ServiceReportReq val)
+        {
+            var orderLineObj = GetService<ISaleOrderLineService>();
+            var query = orderLineObj.SearchQuery();
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Date >= val.DateFrom.Value.AbsoluteBeginOfDate());
+
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.Date <= val.DateTo.Value.AbsoluteEndOfDate());
+
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+
+            if (val.EmployeeId.HasValue)
+                query = query.Where(x => x.EmployeeId == val.EmployeeId);
+
+            if (!string.IsNullOrEmpty(val.State))
+            {
+                var stateArr = val.State.Split(",");
+                query = query.Where(x => stateArr.Any(z => z == x.State));
+            }
+
+            if (val.Active.HasValue)
+                query = query.Where(x => x.IsActive == val.Active);
+
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.OrderPartner.Name.Contains(val.Search) || x.OrderPartner.Name.Contains(val.Search)
+                                         || x.Product.Name.Contains(val.Search) || x.Product.NameNoSign.Contains(val.Search));
+
+            return query;
+        }
+        public async Task<IEnumerable<ServiceReportRes>> GetServiceReportByTime(ServiceReportReq val)
+        {
+            var res = await GetServiceReportQuery(val).GroupBy(x => x.Date.Value.Date).OrderByDescending(x => x.Key).Select(x => new ServiceReportRes()
+            {
+                Date = x.Key,
+                Quantity = x.Sum(s => s.ProductUOMQty),
+                TotalAmount = x.Sum(z => z.PriceSubTotal)
+            }).ToListAsync();
+
+            return res;
+        }
+
+        public async Task<IEnumerable<ServiceReportRes>> GetServiceReportByService(ServiceReportReq val)
+        {
+            var res = await GetServiceReportQuery(val).OrderByDescending(x => x.Date).GroupBy(x => new { x.ProductId, x.Name }).Select(x => new ServiceReportRes()
+            {
+                Name = x.Key.Name,
+                Quantity = x.Sum(s => s.ProductUOMQty),
+                TotalAmount = x.Sum(z => z.PriceSubTotal),
+                ProductId = x.Key.ProductId
+            }).ToListAsync();
+
+            return res;
+        }
+
+        public async Task<PagedResult2<ServiceReportDetailRes>> GetServiceReportDetailPaged(ServiceReportDetailReq val)
+        {
+            var query = GetServiceReportQuery(new ServiceReportReq()
+            {
+                CompanyId = val.CompanyId,
+                DateFrom = val.DateFrom,
+                DateTo = val.DateTo,
+                EmployeeId = val.EmployeeId,
+                Search = val.Search,
+                State = val.State
+            });
+
+            if (val.ProductId.HasValue)
+                query = query.Where(x => x.ProductId == val.ProductId);
+            var count = await query.CountAsync();
+
+            query = query.OrderByDescending(x => x.Date);
+            if (val.Limit > 0)
+                query = query.Skip(val.Offset).Take(val.Limit);
+
+            var res = await _mapper.ProjectTo<ServiceReportDetailRes>(query).ToListAsync();
+            return new PagedResult2<ServiceReportDetailRes>(count, val.Offset, val.Limit)
+            {
+                Items = res
+            };
+        }
+        private string UserId
+        {
+            get
+            {
+                if (!_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+                    return null;
+
+                return _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            }
+        }
+
+        public async Task<ServiceReportPrint> ServiceReportByServicePrint(ServiceReportReq val)
+        {
+            var parentData = await GetServiceReportByService(val);
+            var data = _mapper.Map<IEnumerable<ServiceReportResPrint>>(parentData);
+            var detailReq = _mapper.Map<ServiceReportDetailReq>(val);
+            detailReq.Limit = 0;
+            var allLines = await GetServiceReportDetailPaged(detailReq);
+
+            foreach (var item in data)
+            {
+                item.Lines = allLines.Items.Where(x => x.ProductId == item.ProductId);
+            }
+
+            var companyObj = GetService<ICompanyService>();
+            var res = new ServiceReportPrint()
+            {
+                type = "service",
+                Title = "BÁO CÁO THEO DỊCH VỤ",
+                data = data,
+                DateFrom = val.DateFrom,
+                DateTo = val.DateTo,
+                User = _mapper.Map<ApplicationUserSimple>(await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId))
+            };
+            if (val.CompanyId.HasValue)
+            {
+                var company = await companyObj.SearchQuery(x => x.Id == val.CompanyId).Include(x => x.Partner).FirstOrDefaultAsync();
+                res.Company = _mapper.Map<CompanyPrintVM>(company);
+            }
+            return res;
+        }
+
+        public async Task<ServiceReportPrint> ServiceReportByTimePrint(ServiceReportReq val)
+        {
+            var parentData = await GetServiceReportByTime(val);
+            var data = _mapper.Map<IEnumerable<ServiceReportResPrint>>(parentData);
+            var detailReq = _mapper.Map<ServiceReportDetailReq>(val);
+            detailReq.Limit = 0;
+            var allLines = await GetServiceReportDetailPaged(detailReq);
+
+            foreach (var item in data)
+            {
+                item.Lines = allLines.Items.Where(x => x.Date.Value.Date >= item.Date.Value.AbsoluteBeginOfDate() && x.Date.Value.Date <= item.Date.Value.AbsoluteEndOfDate());
+            }
+
+            var companyObj = GetService<ICompanyService>();
+            var res = new ServiceReportPrint()
+            {
+                type = "time",
+                Title = "BÁO CÁO DỊCH VỤ THEO THỜI GIAN",
+                data = data,
+                DateFrom = val.DateFrom,
+                DateTo = val.DateTo,
+                User = _mapper.Map<ApplicationUserSimple>(await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId))
+            };
+            if (val.CompanyId.HasValue)
+            {
+                var company = await companyObj.SearchQuery(x => x.Id == val.CompanyId).Include(x => x.Partner).FirstOrDefaultAsync();
+                res.Company = _mapper.Map<CompanyPrintVM>(company);
+            }
+            return res;
+        }
+
+        public async Task<IEnumerable<ServiceReportResExcel>> ServiceReportByTimeExcel(ServiceReportReq val)
+        {
+            var parentData = await GetServiceReportByTime(val);
+            var data = _mapper.Map<IEnumerable<ServiceReportResExcel>>(parentData);
+            var detailReq = _mapper.Map<ServiceReportDetailReq>(val);
+            detailReq.Limit = 0;
+            var allLines = await GetServiceReportDetailPaged(detailReq);
+
+            foreach (var item in data)
+            {
+                item.Lines = allLines.Items.Where(x => x.Date.Value.Date == item.Date.Value.Date);
+            }
+
+            return data;
+
+        }
+
+        public async Task<IEnumerable<ServiceReportResExcel>> ServiceReportByServiceExcel(ServiceReportReq val)
+        {
+            var parentData = await GetServiceReportByService(val);
+            var data = _mapper.Map<IEnumerable<ServiceReportResExcel>>(parentData);
+            var detailReq = _mapper.Map<ServiceReportDetailReq>(val);
+            detailReq.Limit = 0;
+            var allLines = await GetServiceReportDetailPaged(detailReq);
+
+            foreach (var item in data)
+            {
+                item.Lines = allLines.Items.Where(x => x.ProductId == item.ProductId);
+            }
+
+            return data;
+        }
+
+        public FileContentResult ExportServiceReportExcel(IEnumerable<ServiceReportResExcel> data, DateTime? dateFrom, DateTime? dateTo, string type)
+        {
+
+            var dateToDate = "";
+            if (dateFrom.HasValue && dateTo.HasValue)
+            {
+                dateToDate = $"Từ ngày {dateFrom.Value.ToString("dd/MM/yyyy")} đến ngày {dateTo.Value.ToString("dd/MM/yyyy")}";
+            }
+            var stream = new MemoryStream();
+            byte[] fileContent;
+
+            using (var package = new ExcelPackage(stream))
+            {
+                var sheetName = type == "time" ? "BaoCaoDichVu_TheoTG" : "BaoCaoTheoDichVu";
+                var worksheet = package.Workbook.Worksheets.Add(sheetName);
+
+                worksheet.Cells["A1:J1"].Value = type == "time" ? "BÁO CÁO DỊCH VỤ THEO THỜI GIAN" : "BÁO CÁO THEO DỊCH VỤ";
+                worksheet.Cells["A1:J1"].Style.Font.Size = 14;
+                worksheet.Cells["A1:J1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
+                worksheet.Cells["A1:J1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells["A1:J1"].Merge = true;
+                worksheet.Cells["A1:J1"].Style.Font.Bold = true;
+                worksheet.Cells["A2:J2"].Value = dateToDate;
+                worksheet.Cells["A2:J2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells["A2:J2"].Merge = true;
+                worksheet.Cells["A3:J3"].Value = "";
+                worksheet.Cells["A4:J4"].Value = type == "time" ? "Ngày" : "Dịch vụ";
+                worksheet.Cells["A4:J4"].Style.Font.Bold = true;
+                worksheet.Cells["A4:J4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["A4:J4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
+                worksheet.Cells["A4:J4"].Style.Font.Color.SetColor(Color.White);
+                worksheet.Cells["B4:G4"].Value = "Số lượng";
+                worksheet.Cells["B4:G4"].Merge = true;
+                worksheet.Cells["B4:G4"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                worksheet.Cells["B4:G4"].Style.Font.Bold = true;
+                worksheet.Cells["B4:G4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["B4:G4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
+                worksheet.Cells["B4:G4"].Style.Font.Color.SetColor(Color.White);
+                worksheet.Cells["H4:J4"].Value = "Tổng tiền";
+                worksheet.Cells["H4:J4"].Merge = true;
+                worksheet.Cells["H4:J4"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                worksheet.Cells["H4:J4"].Style.Font.Bold = true;
+                worksheet.Cells["H4:J4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["H4:J4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
+                worksheet.Cells["H4:J4"].Style.Font.Color.SetColor(Color.White);
+
+                var row = 5;
+                foreach (var item in data)
+                {
+                    if (type == "time")
+                    {
+                        worksheet.Cells[row, 1].Value = item.Date;
+                        worksheet.Cells[row, 1].Style.Numberformat.Format = "dd/mm/yyyy";
+                    }
+                    else
+                        worksheet.Cells[row, 1].Value = item.Name;
+
+                    worksheet.Cells[row, 2].Value = item.Quantity;
+                    worksheet.Cells[row, 2, row, 7].Merge = true;
+                    worksheet.Cells[row, 8].Value = item.TotalAmount;
+                    worksheet.Cells[row, 8].Style.Numberformat.Format = "#,##0";
+                    worksheet.Cells[row, 8, row, 10].Merge = true;
+                    row++;
+                    worksheet.Cells[row, 1].Value = "";
+                    worksheet.Cells[row, 2].Value = "Ngày tạo";
+                    worksheet.Cells[row, 3].Value = "Khách hàng";
+                    worksheet.Cells[row, 4].Value = "Dịch vụ";
+                    worksheet.Cells[row, 5].Value = "Bác sĩ";
+                    worksheet.Cells[row, 6].Value = "Răng";
+                    worksheet.Cells[row, 7].Value = "Số lượng";
+                    worksheet.Cells[row, 8].Value = "Thành tiền";
+                    worksheet.Cells[row, 9].Value = "Trạng thái";
+                    worksheet.Cells[row, 10].Value = "Phiếu điều trị";
+                    worksheet.Cells[row, 2, row, 10].Style.Font.Bold = true;
+                    worksheet.Cells[row, 2, row, 10].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    worksheet.Cells[row, 2, row, 10].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#DDEBF7"));
+                    var rowEnd = row + item.Lines.Count();
+                    worksheet.Cells[row, 1, rowEnd, 1].Merge = true;
+                    row++;
+                    ExportReportServiceDetail(item.Lines, worksheet, ref row);
+
+                }
+
+                worksheet.Cells.AutoFitColumns();
+
+
+                package.Save();
+
+                fileContent = stream.ToArray();
+            }
+
+            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            stream.Position = 0;
+
+            return new FileContentResult(fileContent, mimeType);
+        }
+
+        public void ExportReportServiceDetail(IEnumerable<ServiceReportDetailRes> lines, ExcelWorksheet worksheet, ref int row)
+        {
+            foreach (var line in lines)
+            {
+                worksheet.Cells[row, 1].Value = "";
+                worksheet.Cells[row, 2].Value = line.Date;
+                worksheet.Cells[row, 2].Style.Numberformat.Format = "dd/mm/yyyy";
+                worksheet.Cells[row, 3].Value = line.OrderPartnerName;
+                worksheet.Cells[row, 4].Value = line.Name;
+                worksheet.Cells[row, 5].Value = line.EmployeeName;
+                worksheet.Cells[row, 6].Value = line.TeethDisplay;
+                worksheet.Cells[row, 7].Value = line.ProductUOMQty;
+                worksheet.Cells[row, 8].Value = line.PriceSubTotal;
+                worksheet.Cells[row, 8].Style.Numberformat.Format = "#,##0";
+                worksheet.Cells[row, 9].Value = line.StateDisplay;
+                worksheet.Cells[row, 10].Value = line.OrderName;
+                row++;
+            }
+        }
+
+        private string ShowTeethList(string toothType, IEnumerable<ToothSimple> teeth)
+        {
+            if (toothType == "whole_jaw")
+                return "Nguyên hàm";
+            else if (toothType == "upper_jaw")
+                return "Hàm trên";
+            else if (toothType == "lower_jaw")
+                return "Hàm dưới";
+            else
+                return string.Join(", ", teeth.Select(x => x.Name));
+        }
+
+        private string ShowState(string state)
+        {
+            if (state == "done")
+                return "Hoàn thành";
+            else if (state == "sale")
+                return "Đang điều trị";
+            else
+                return "Ngừng điều trị";
         }
     }
 }

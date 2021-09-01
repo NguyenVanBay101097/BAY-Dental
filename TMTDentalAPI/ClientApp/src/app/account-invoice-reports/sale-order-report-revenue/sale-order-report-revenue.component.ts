@@ -154,8 +154,26 @@ export class SaleOrderReportRevenueComponent implements OnInit {
 
   }
 
-  exportExcel(grid: GridComponent) {
-    grid.saveAsExcel();
+  exportExcel() {
+    var val = Object.assign({}, this.filter);
+    val.companyId = val.companyId || val.companyId;
+    this.saleOrderService.exportRevenueReportExcel(val).subscribe((rs) => {
+      let filename = "BaoCaoDuKienThu";
+      let newBlob = new Blob([rs], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
   }
 
   getRevenueSumTotal() {
@@ -172,13 +190,13 @@ export class SaleOrderReportRevenueComponent implements OnInit {
     const workbook = args.workbook;
     var sheet = workbook.sheets[0];
     var rows = sheet.rows;
-    sheet.name = 'BaoCaoDoanhThu_TheoNV';
+    sheet.name = 'BaoCaoDuKienThu';
     sheet.rows.splice(0, 0, { cells: [{
       value:"BÁO CÁO DỰ KIẾN THU",
       textAlign: "center"
     }], type: 'header' });
     sheet.mergedCells = ["A1:E1"];
-    sheet.frozenRows = 3;
+    sheet.frozenRows = 2;
     
     args.preventDefault();
     this.loading = true;
@@ -190,6 +208,9 @@ export class SaleOrderReportRevenueComponent implements OnInit {
         row.cells[2].textAlign = 'right';
         row.cells[3].textAlign = 'right';
         row.cells[4].textAlign = 'right';
+        row.cells[2].format = '#,##0';
+        row.cells[3].format = '#,##0';
+        row.cells[4].format = '#,##0';
       }
       else {
         if (index != 0){
@@ -206,8 +227,6 @@ export class SaleOrderReportRevenueComponent implements OnInit {
        
       }
     });
-    console.log(rows);
-    
 
     new Workbook(workbook).toDataURL().then((dataUrl: string) => {
       // https://www.telerik.com/kendo-angular-ui/components/filesaver/
@@ -220,11 +239,35 @@ export class SaleOrderReportRevenueComponent implements OnInit {
   printReport(){
     var val = Object.assign({}, this.filter);
     val.companyId = val.companyId || val.companyId;
-    val.search = '';
     this.saleOrderService.getPrintRevenueReport(val).subscribe(result => {
       this.printService.printHtml(result);
     })
     
+  }
+
+  onExportPDF() {
+    var val = Object.assign({}, this.filter);
+    val.companyId = val.companyId || val.companyId;
+    this.loading = true;
+    this.saleOrderService.getRevenueReportPdf(val).subscribe(res => {
+      this.loading = false;
+      let filename ="BaoCaoDuKienDoanhThu";
+
+      let newBlob = new Blob([res], {
+        type:
+          "application/pdf",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
   }
 
 }

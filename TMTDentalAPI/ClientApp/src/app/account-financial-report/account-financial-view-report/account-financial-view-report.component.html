@@ -4,7 +4,7 @@
     </ol>
 </div>
 
-<div class="container bg-white my-3">
+<div class="o_content container">
     <div class="o_form_view o_form_nosheet o_form_editable">
         <div class="o_group" [formGroup]="formGroup">
             <table class="o_group o_inner_group o_group_col_6">
@@ -52,7 +52,7 @@
             </table>
         </div>
         <div class="mb-2">
-            <button type="button" class="btn btn-primary btn-sm" (click)="reportFinancial()">Báo cáo</button>
+            <button type="button" class="btn btn-primary" (click)="reportFinancial()">Báo cáo</button>
         </div>
         <div>
             <div class="o_form_field o_view_manager_content" *ngIf="accountLines.length > 0">

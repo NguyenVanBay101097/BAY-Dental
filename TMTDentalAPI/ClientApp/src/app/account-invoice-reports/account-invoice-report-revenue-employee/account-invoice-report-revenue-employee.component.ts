@@ -57,7 +57,7 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
     this.loadEmployees();
   }
 
-  loadAllData(){
+  loadAllData() {
     var val = Object.assign({}, this.filter) as RevenueEmployeeReportPar;
     val.companyId = val.companyId || '';
     val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
@@ -73,8 +73,8 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
         this.loading = false;
       });
   }
-  
-  
+
+
   FilterCombobox() {
     this.companyVC.filterChange
       .asObservable()
@@ -89,7 +89,7 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
         this.companyVC.loading = false;
       });
 
-      this.empVC.filterChange
+    this.empVC.filterChange
       .asObservable()
       .pipe(
         debounceTime(300),
@@ -129,8 +129,8 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
     var val = new CompanyPaged();
     val.active = true;
     val.search = search || '';
-   return  this.companyService.getPaged(val);
-  } 
+    return this.companyService.getPaged(val);
+  }
 
   loadCompanies() {
     this.searchCompany$().subscribe(res => {
@@ -160,8 +160,8 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
     }, 0);
   }
 
-  onSelectCompany(e){
-    this.filter.companyId = e? e.id : null;
+  onSelectCompany(e) {
+    this.filter.companyId = e ? e.id : null;
     this.skip = 0;
     this.loadAllData();
   }
@@ -199,8 +199,29 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
     return observable;
 
   }
-  exportExcel(grid: GridComponent) {
-    grid.saveAsExcel();
+  exportExcel() {
+    var val = Object.assign({}, this.filter) as RevenueEmployeeReportPar;
+    val.companyId = val.companyId || '';
+    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
+    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    val.groupById = val.groupById || '';
+    this.accInvService.exportRevenueEmployeeReportExcel(val).subscribe((rs) => {
+      let filename = "BaoCaoDoanhThu_TheoNV";
+      let newBlob = new Blob([rs], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
   }
 
   public onExcelExport(args: any): void {
@@ -208,10 +229,10 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
     const workbook = args.workbook;
     var sheet = args.workbook.sheets[0];
     var rows = sheet.rows;
-    sheet.mergedCells = ["A1:H1", "A2:H2"];
+    sheet.mergedCells = ["A1:G1", "A2:G2", "A3:F3"];
     sheet.frozenRows = 3;
     sheet.name = 'BaoCaoDoanhThu_TheoNV';
-    sheet.rows.splice(0, 1, { cells: [{
+    sheet.rows.splice(0, 0, { cells: [{
       value:"BÁO CÁO DOANH THU THEO NHÂN VIÊN",
       textAlign: "center"
     }], type: 'header' });
@@ -220,32 +241,41 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
       value: `Từ ngày ${this.filter.dateFrom ? this.intlService.formatDate(this.filter.dateFrom, 'dd/MM/yyyy') : '...'} đến ngày ${this.filter.dateTo ? this.intlService.formatDate(this.filter.dateTo, 'dd/MM/yyyy') : '...'}`,
       textAlign: "center"
     }], type: 'header' });
+    sheet.rows.splice(2, 1, { cells: [{
+      value:"Nhân viên",
+      textAlign: "left",
+      color: "#0000",
+    },{
+      value:"Doanh thu",
+      textAlign: "right",
+      color: "#0000",
+    }], type: 'header' });
     args.preventDefault();
     const data = this.allDataInvoiceExport.data;
     this.revenueManageService.emitChange({
-       data : data,
-       args : args,
-       filter : this.filter,
-       employeeFilter: this.empFilter,
-       title: 'Doanh thu theo nhân viên'
+      data: data,
+      args: args,
+      filter: this.filter,
+      employeeFilter: this.empFilter,
+      title: 'Doanh thu theo nhân viên'
     })
-    rows.forEach(row => {
-      if (row.type === "data"){
-        row.cells[0].value = "Nhân viên: "+row.cells[0].value;
-        row.cells[1].value = "Tổng doanh thu   "+row.cells[1].value;
-      }
-    });
+    // rows.forEach(row => {
+    //   if (row.type === "data"){
+    //     row.cells[0].value = "Nhân viên: "+row.cells[0].value;
+    //     row.cells[1].value = "Tổng doanh thu   "+row.cells[1].value;
+    //   }
+    // });
   }
 
-  
+
   onSelectEmployee(e) {
-    this.filter.groupById = e? e.id : null;
+    this.filter.groupById = e ? e.id : null;
     this.skip = 0;
     this.loadAllData();
   }
 
   onChangeEmployeeFilter() {
-    this.filter.groupBy = this.empFilter ;
+    this.filter.groupBy = this.empFilter;
     this.skip = 0;
     this.loadAllData();
   }
@@ -260,5 +290,34 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
       this.printService.printHtml(result);
     })
   }
+
+  onExportPDF() {
+    var val = Object.assign({}, this.filter) as RevenueEmployeeReportPar;
+    val.companyId = val.companyId || '';
+    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
+    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    val.groupById = val.groupById || '';
+    this.loading = true;
+    this.accInvService.getRevenueEmployeeReportPdf(val).subscribe(res => {
+      this.loading = false;
+      let filename ="BaoCaodoanhthu_theoNV";
+
+      let newBlob = new Blob([res], {
+        type:
+          "application/pdf",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
+  }
+
 
 }

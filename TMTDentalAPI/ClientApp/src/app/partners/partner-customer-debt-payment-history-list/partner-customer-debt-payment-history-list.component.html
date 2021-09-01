@@ -1,11 +1,19 @@
-
 <div>
+
     <div class="px-3 py-2">
-        <div>
-            <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'" [dateTo]="dateTo"
-                (searchChange)="onSearchDateChange($event)">
-            </app-tai-date-range-filter-dropdown>
+        <div class="d-flex">
+            <div class="d-flex flex-fill">
+                <app-date-range-picker-filter class="mr-2" [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
+              
+            </div>
+            <div class="flex-fill">
+              
+            </div>
         </div>
+        <!-- <div>
+            <app-date-range-picker-filter [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo"
+                (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
+        </div> -->
     </div>
     <div>
         <kendo-grid [resizable]="true" [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true"
@@ -35,17 +43,14 @@
                     {{dataItem.reason}}
                 </ng-template>
             </kendo-grid-column>
-    
+
             <kendo-grid-command-column title="Thao tác" width="100" class="edit_remove_action">
                 <ng-template kendoGridCellTemplate let-dataItem>
                     <button title="In" (click)="printItem(dataItem)">
                         <i class="fas fa-print fa-lg"></i></button>
-                    <button (click)="deleteItem(dataItem)"><i title="Xóa"
-                            class="far fa-trash-alt fa-lg"></i></button>
+                    <button (click)="deleteItem(dataItem)"><i title="Xóa" class="far fa-trash-alt fa-lg"></i></button>
                 </ng-template>
             </kendo-grid-command-column>
         </kendo-grid>
     </div>
 </div>
-
-

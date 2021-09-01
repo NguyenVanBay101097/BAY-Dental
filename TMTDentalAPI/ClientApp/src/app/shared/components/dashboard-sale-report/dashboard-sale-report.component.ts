@@ -39,7 +39,7 @@ export class DashboardSaleReportComponent implements OnInit {
         }
       },
       error => {
-
+        
       }
     );
   }

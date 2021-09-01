@@ -25,11 +25,11 @@
                                 <tr>
                                     <td colspan="1" class="o_td_label o_td_label_left">
                                         <label class="o_form_label">
-                                            Người tư vấn
+                                            Người tạo
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;" class=".o_td_control_left">
-                                        <kendo-combobox formControlName="employeeAdvisory" [filterable]="true" #empCbx class="kendo-combobox-sm mr-1" [data]="filterData" [textField]="'name'" [valueField]="'id'">
+                                        <kendo-combobox formControlName="employeeAdvisory" [filterable]="true" #empCbx class="mr-1" [data]="filterData" [textField]="'name'" [valueField]="'id'">
                                         </kendo-combobox>
                                     </td>
                                 </tr>
@@ -40,14 +40,14 @@
                                 <tr>
                                     <td colspan="1" class="o_td_label">
                                         <label class="o_form_label o_form_label_help">
-                                            Ngày tư vấn
+                                            Ngày tạo
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">
                                         <kendo-datepicker [format]="'dd/MM/yyyy'" formControlName="dateObj">
                                         </kendo-datepicker>
                                          <div *ngIf="f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)" class="text-danger">
-                                            <div *ngIf="f.dateObj.errors.required">Chọn ngày tư vấn</div>
+                                            <div *ngIf="f.dateObj.errors.required">Chọn ngày tạo</div>
                                         </div> 
                                     </td>
                                 </tr>
@@ -58,7 +58,7 @@
                         <h5>BẢN ĐỒ RĂNG NHA</h5>
                         <div class="mb-3">
                             <span *ngFor="let item of filteredToothCategories">
-                                <button type="button" class="btn btn-sm mr-2" 
+                                <button type="button" class="btn mr-2" 
                                     [ngClass]="cateId == item.id ? 'btn-primary' : 'btn-outline-primary'"
                                     (click)="onChangeToothCategory(item)" accesskey="s">{{item.name}}</button>
                             </span>
@@ -72,7 +72,7 @@
                                     <ng-container *ngFor="let item of toothTypeDict; let toothTypeIndex = index">
                                         <div class="col-6 pl-0">
                                             <input (change)="onChangeToothType(item.value)" [value]="item.value" [checked]="item.value === getValueFormControl('toothType')" class="btn-check hide" type="radio" name="toothType" formControlName="toothType" [id]="'toothType' + toothTypeIndex">
-                                            <label class="btn btn-sm w-100 mb-0" [ngClass]="item.value === getValueFormControl('toothType') ? 'btn-primary' : 'btn-outline-primary'" [for]="'toothType' + toothTypeIndex">{{item.name}}</label>
+                                            <label class="btn w-100 mb-0" [ngClass]="item.value === getValueFormControl('toothType') ? 'btn-primary' : 'btn-outline-primary'" [for]="'toothType' + toothTypeIndex">{{item.name}}</label>
                                         </div>
                                     </ng-container>
                                 </div>
@@ -120,9 +120,6 @@
                                 (filterChange)="this.searchUpdateProduct.next($event)" [textField]="'name'" [valueField]="'id'"
                                 formControlName="product">
                             </kendo-multiselect>
-                            <div *ngIf="f.product.value.length == 0 && submitted" class="text-danger">
-                                Chọn dịch vụ tư vấn
-                            </div>
                         </div>
                     
                     </div>

@@ -21,7 +21,7 @@
             <ng-container *ngFor="let item of toothTypeDict">
                 <input [value]="item.value" class="btn-check" type="radio" formControlName="toothType"
                     [id]="'toothType_' + item.value" autocomplete="off" (change)="onChangeToothType(item.value)">
-                <label class="btn btn-sm btn-outline-primary mr-1"
+                <label class="btn btn-outline-primary mr-1"
                     [for]="'toothType_' + item.value">{{item.name}}</label>
             </ng-container>
         </div>
@@ -58,10 +58,10 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">
+    <button type="button" class="btn btn-primary" (click)="onSave()">
         <span>Lưu</span>
     </button>
-    <button type="button" class="btn btn-light border btn-sm" (click)="onCancel()">
+    <button type="button" class="btn btn-light border" (click)="onCancel()">
         <span>Đóng</span>
     </button>
 </footer>

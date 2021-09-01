@@ -13,7 +13,7 @@
     <div class="o_form_view t_custom_form" [formGroup]="formGroup">
         <div class="d-flex">
             <div class="btns">
-                <a [routerLink]="['/dashboard']" class="btn btn-secondary btn-sm mr-1">
+                <a [routerLink]="['/dashboard']" class="btn btn-secondary mr-1">
                     Trở lại
                 </a>
                 <button *ngIf="!saleOrderId && saleOrder.state == 'draft'" type="button" class="btn btn-primary btn-sm mr-1" (click)="actionPayment()">

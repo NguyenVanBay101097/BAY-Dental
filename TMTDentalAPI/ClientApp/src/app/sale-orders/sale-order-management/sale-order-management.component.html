@@ -11,22 +11,29 @@
                     <div class="breadcrumb">
                         <div class="d-flex">
                             <kendo-combobox [data]="ranges" [valueField]="'intervalNbr'" [textField]="'text'"
-                                class="mr-2 kendo-combobox-sm cmb" [(ngModel)]="dateOrderTo" [placeholder]="'Thời gian'"
+                                class="mr-2 cmb" [(ngModel)]="dateOrderTo" [placeholder]="'Thời gian'"
                                 [filterable]="true" (valueChange)="handleFilterDateOrder()">
                             </kendo-combobox>
                             <kendo-combobox [data]="companies" [valueField]="'id'" [textField]="'name'"
-                                class="mr-2 kendo-combobox-sm cmb" [(ngModel)]="company"
+                                class="mr-2 cmb" [(ngModel)]="company"
                                 [placeholder]="'Tất cả chi nhánh'" (valueChange)="handleFilterCompany()">
                             </kendo-combobox>
-                            <button class="btn btn-primary btn-sm mr-2 btnExport w-30" title="xuất file"
-                                (click)="exportExcelFile(grid)"> <i class="fas fa-download mr-2"></i>Xuất file
-                            </button>
-                        </div>
+                            <div class="dropdown mr-2">
+                                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-download"></i> Xuất File</button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" (click)="exportExcelFile()">Xuất Excel</a>
+                                    <a class="dropdown-item" (click)="onExportPDF()">Xuất PDF</a>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary mr-2" (click)="onPrint()">In báo cáo</button>
+                        </div>  
                     </div>
                     <div class="o_cp_searchview">
                         <div class="o_searchview">
                             <input class="o_searchview_input" placeholder="Tìm kiếm theo số phiếu, khách hàng" type="text"
                                 [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                                <span class="o_searchview_icon fas fa-search"></span>
                         </div>
                     </div>
                     <div class="o_cp_left">

@@ -2,15 +2,15 @@
     <div class="o_control_panel">
         <div class="breadcrumb">
             <div class="d-flex">
-                <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
-                </app-tai-date-range-filter-dropdown>
-                <button type="button" (click)="createQuotation()" class="ml-2 btn btn-primary btn-sm">
+                <app-date-range-picker-filter [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
+                <button type="button" (click)="createQuotation()" class="ml-2 btn btn-primary">
                             <i class="fas fa-plus"></i> Thêm báo giá</button>
             </div>
         </div>
         <div class="o_cp_searchview">
             <div class="o_searchview">
-                <input class="o_searchview_input" placeholder="Tìm kiếm theo số báo giá, người báo giá" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo số báo giá, người báo giá" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
+                <span class="o_searchview_icon fas fa-search"></span>
             </div>
         </div>
         <div class="o_cp_left">
@@ -69,7 +69,7 @@
             </kendo-grid-column>
             <kendo-grid-column title="Thao tác" field="id" width="80" class="text-center">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteQuotation(dataItem)">
+                    <button class="btn btn-danger" title="Xóa" (click)="deleteQuotation(dataItem)">
                             <span class="far fa-trash-alt"></span></button>
                 </ng-template>
             </kendo-grid-column>

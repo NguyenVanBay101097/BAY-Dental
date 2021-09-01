@@ -134,6 +134,23 @@ namespace Umbraco.Web.Models.ContentEditing
         }
 
         public DateTime? Date { get; set; }
+        public string TitleName { get; set; }
+        public string SourceName { get; set; }
+
+        public IEnumerable<PartnerCategoryBasic> Categories { get; set; } = new List<PartnerCategoryBasic>();
+        public string Tags
+        {
+            get
+            {
+                var list = new List<string>();
+                foreach (var item in this.Categories)
+                {
+                    list.Add(item.Name);
+                }
+                return string.Join(", ", list);
+            }
+            set { }
+        }
     }
 
     public class WardVm

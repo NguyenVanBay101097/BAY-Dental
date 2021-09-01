@@ -54,6 +54,8 @@ using MediatR;
 using Infrastructure.HangfireJobService;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
+using DinkToPdf;
+using DinkToPdf.Contracts;
 
 namespace TMTDentalAPI
 {
@@ -361,6 +363,10 @@ namespace TMTDentalAPI
             services.AddScoped<ISmsMessageJobService, SmsMessageJobService>();
             services.AddScoped<ISmsMessageService, SmsMessageService>();
             services.AddScoped<ISmsCampaignService, SmsCampaignService>();
+            services.AddScoped<ICustomerReceiptService, CustomerReceiptService>();
+            services.AddScoped<IDashboardReportService, DashboardReportService>();
+            services.AddScoped<ICustomerReceiptReportService, CustomerReceiptReportService>();
+
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
@@ -368,6 +374,10 @@ namespace TMTDentalAPI
 
 
             services.AddScoped<IUnitOfWorkAsync, UnitOfWork>();
+            var context = new CustomAssemblyLoadContext();
+            context.LoadUnmanagedLibrary(Path.Combine(Directory.GetCurrentDirectory(), "LibDirectoryLoad/DinkToPdf/libwkhtmltox.dll"));
+            services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
+
             #endregion
 
             services.AddScoped<IToothDiagnosisService, ToothDiagnosisService>();
@@ -545,6 +555,10 @@ namespace TMTDentalAPI
                 mc.AddProfile(new SmsMessageProfile());
                 mc.AddProfile(new AgentProfile());
                 mc.AddProfile(new StockReportProfile());
+                mc.AddProfile(new SaleReportProfile());
+                mc.AddProfile(new CustomerReceiptProfile());
+                mc.AddProfile(new CustomerReceiptReportProfile());
+                mc.AddProfile(new AccountCommonPartnerReportProfile());
             };
 
             #endregion
@@ -677,6 +691,13 @@ namespace TMTDentalAPI
                 //app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
+
+            var supportedCultures = new[] { "vi-VN" };
+            var localizationOptions = new RequestLocalizationOptions().SetDefaultCulture(supportedCultures[0])
+                .AddSupportedCultures(supportedCultures)
+                .AddSupportedUICultures(supportedCultures);
+
+            app.UseRequestLocalization(localizationOptions);
 
             //app.UseHttpsRedirection();
             app.UseStaticFiles();

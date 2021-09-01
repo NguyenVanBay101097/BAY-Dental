@@ -294,6 +294,7 @@ namespace TMTDentalAPI.Controllers
             var fileData = Convert.FromBase64String(val.FileBase64);
             var data = new List<ProductServiceImportExcelRow>();
             var categDict = new Dictionary<string, ProductCategory>();
+            var standardPriceDict = new Dictionary<string, decimal?>();
             var errors = new List<string>();
 
             try
@@ -326,8 +327,10 @@ namespace TMTDentalAPI.Controllers
                                 IsLabo = Convert.ToBoolean(worksheet.Cells[row, 2].Value),
                                 CategName = categName,
                                 ListPrice = Convert.ToDecimal(worksheet.Cells[row, 4].Value),
-                                Steps = Convert.ToString(worksheet.Cells[row, 5].Value),
-                                LaboPrice = Convert.ToDecimal(worksheet.Cells[row, 6].Value),
+                                StandardPrice = Convert.ToDecimal(worksheet.Cells[row, 5].Value),
+                                Steps = Convert.ToString(worksheet.Cells[row, 6].Value),
+                                LaboPrice = Convert.ToDecimal(worksheet.Cells[row, 7].Value),
+                                Firm = Convert.ToString(worksheet.Cells[row, 8].Value),
                             };
                             data.Add(item);
                         }
@@ -359,6 +362,16 @@ namespace TMTDentalAPI.Controllers
                 }
             }
 
+            var standardPrices = data.Select(x => new
+            {
+                x.Name,
+                x.StandardPrice
+            }).ToList();
+
+            foreach (var standardPrice in standardPrices)
+            {
+                standardPriceDict.Add(standardPrice.Name, standardPrice?.StandardPrice);
+            }
             var productDict = new Dictionary<string, Product>();
 
             var uom = await _uomService.DefaultUOM();
@@ -370,6 +383,7 @@ namespace TMTDentalAPI.Controllers
                 product.CompanyId = CompanyId;
                 product.ListPrice = item.ListPrice ?? 0;
                 product.IsLabo = item.IsLabo ?? false;
+                product.Firm = item.Firm;
                 product.CategId = categDict[item.CategName].Id;
                 product.LaboPrice = item.LaboPrice ?? 0;
                 product.UOMId = uom.Id;
@@ -402,7 +416,12 @@ namespace TMTDentalAPI.Controllers
             {
                 await _unitOfWork.BeginTransactionAsync();
 
-                await _productService.CreateAsync(productsCreate);
+                var products = await _productService.CreateAsync(productsCreate);
+
+                foreach (var product in products)
+                {
+                    _productService.SetStandardPrice(product, Convert.ToDouble(standardPriceDict[product.Name]), product.CompanyId);
+                }
 
                 _unitOfWork.Commit();
             }
@@ -600,7 +619,8 @@ namespace TMTDentalAPI.Controllers
                                 Name = name,
                                 CategName = categName,
                                 ListPrice = Convert.ToDecimal(worksheet.Cells[row, 3].Value),
-                                UoM = uomName
+                                UoM = uomName,
+                                MinInventory = Convert.ToDecimal(worksheet.Cells[row, 5].Value),
                             };
                             data.Add(item);
                         }
@@ -666,6 +686,7 @@ namespace TMTDentalAPI.Controllers
                 pd.CategId = categDict[item.CategName].Id;
                 pd.ListPrice = item.ListPrice;
                 pd.PurchasePrice = 0;
+                pd.MinInventory = item.MinInventory;
                 vals.Add(pd);
             }
 
@@ -833,6 +854,7 @@ namespace TMTDentalAPI.Controllers
             var data = new List<ProductProductImportExcelRow>();
             var categDict = new Dictionary<string, ProductCategory>();
             var productDict = new Dictionary<string, Product>();
+            var uomDict = new Dictionary<string, UoM>();
             var errors = new List<string>();
 
             var typeDict = new Dictionary<string, string>()
@@ -1314,24 +1336,31 @@ namespace TMTDentalAPI.Controllers
             {
                 var worksheet = package.Workbook.Worksheets.Add(sheetName);
 
-                worksheet.Cells[1, 1].Value = "Tên dịch vụ";
-                worksheet.Cells[1, 2].Value = "Có thể đặt labo";
-                worksheet.Cells[1, 3].Value = "Nhóm dịch vụ";
-                worksheet.Cells[1, 4].Value = "Mã dịch vụ";
+                worksheet.Cells[1, 1].Value = "Mã dịch vụ";
+                worksheet.Cells[1, 2].Value = "Tên dịch vụ";
+                worksheet.Cells[1, 3].Value = "Có thể đặt labo";
+                worksheet.Cells[1, 4].Value = "Nhóm dịch vụ";
                 worksheet.Cells[1, 5].Value = "Giá bán";
-                worksheet.Cells[1, 6].Value = "Công đoạn";
-                worksheet.Cells[1, 7].Value = "Giá đặt labo";
+                worksheet.Cells[1, 6].Value = "Giá vốn";
+                worksheet.Cells[1, 7].Value = "Công đoạn";
+                worksheet.Cells[1, 8].Value = "Giá đặt labo";
+                worksheet.Cells[1, 9].Value = "Hãng";
+
+                worksheet.Cells["A1:I1"].Style.Font.Bold = true;
+
                 for (int row = 2; row < services.Count() + 2; row++)
                 {
                     var item = services.ToList()[row - 2];
 
-                    worksheet.Cells[row, 1].Value = item.Name;
-                    worksheet.Cells[row, 2].Value = item.IsLabo;
-                    worksheet.Cells[row, 3].Value = item.CategName;
-                    worksheet.Cells[row, 4].Value = item.DefaultCode;
+                    worksheet.Cells[row, 1].Value = item.DefaultCode;
+                    worksheet.Cells[row, 2].Value = item.Name;
+                    worksheet.Cells[row, 3].Value = item.IsLabo;
+                    worksheet.Cells[row, 4].Value = item.CategName;
                     worksheet.Cells[row, 5].Value = item.ListPrice;
-                    worksheet.Cells[row, 6].Value = item.StepList.Count() == 0 ? null : string.Join(";", item.StepList.Select(x => x.Name).ToList());
-                    worksheet.Cells[row, 7].Value = item.LaboPrice ?? 0;
+                    worksheet.Cells[row, 6].Value = item.StandardPrice;
+                    worksheet.Cells[row, 7].Value = item.StepList.Count() == 0 ? null : string.Join(";", item.StepList.Select(x => x.Name).ToList());
+                    worksheet.Cells[row, 8].Value = item.LaboPrice ?? 0;
+                    worksheet.Cells[row, 9].Value = item.Firm;
                 }
 
                 worksheet.Cells.AutoFitColumns();
@@ -1375,6 +1404,8 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[1, 6].Value = "Đơn vị mặc định";
                 worksheet.Cells[1, 7].Value = "Đơn vị mua";
                 worksheet.Cells[1, 8].Value = "Mức tồn tối thiểu";
+
+                worksheet.Cells["A1:H1"].Style.Font.Bold = true;
 
                 var row = 2;
                 foreach (var item in products)
@@ -1420,20 +1451,24 @@ namespace TMTDentalAPI.Controllers
             {
                 var worksheet = package.Workbook.Worksheets.Add(sheetName);
 
-                worksheet.Cells[1, 1].Value = "Tên thuốc";
-                worksheet.Cells[1, 2].Value = "Nhóm thuốc";
-                worksheet.Cells[1, 3].Value = "Giá thuốc";
-                worksheet.Cells[1, 4].Value = "Đơn vị tính mặc định";
-                worksheet.Cells[1, 5].Value = "Mã thuốc";
+                worksheet.Cells[1, 1].Value = "Mã thuốc";
+                worksheet.Cells[1, 2].Value = "Tên thuốc";
+                worksheet.Cells[1, 3].Value = "Nhóm thuốc";
+                worksheet.Cells[1, 4].Value = "Giá thuốc";
+                worksheet.Cells[1, 5].Value = "Đơn vị tính mặc định";
+                worksheet.Cells[1, 6].Value = "Mức tồn tối thiểu";
+
+                worksheet.Cells["A1:F1"].Style.Font.Bold = true;
 
                 var row = 2;
                 foreach (var item in products)
                 {
-                    worksheet.Cells[row, 1].Value = item.Name;
-                    worksheet.Cells[row, 2].Value = item.CategName;
-                    worksheet.Cells[row, 3].Value = item.ListPrice;
-                    worksheet.Cells[row, 4].Value = item.UomName;
-                    worksheet.Cells[row, 5].Value = item.DefaultCode;
+                    worksheet.Cells[row, 1].Value = item.DefaultCode;
+                    worksheet.Cells[row, 2].Value = item.Name;
+                    worksheet.Cells[row, 3].Value = item.CategName;
+                    worksheet.Cells[row, 4].Value = item.ListPrice;
+                    worksheet.Cells[row, 5].Value = item.UomName;
+                    worksheet.Cells[row, 6].Value = item.MinInventory;
                     row++;
                 }
 

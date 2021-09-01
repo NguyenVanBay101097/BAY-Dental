@@ -23,5 +23,7 @@ namespace Infrastructure.Services
         Task UpdateAsync(Guid id,AppointmentDisplay val);
         Task<IEnumerable<AppointmentBasic>> GetExcelData(AppointmentPaged val);
         void ComputeDataExcel(ExcelWorksheet worksheet, IEnumerable<AppointmentBasic> data, Dictionary<string, string> stateDict);
+
+        Task<IEnumerable<EmployeeSimple>> GetListDoctor(AppointmentDoctorReq val);
     }
 }

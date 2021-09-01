@@ -7,13 +7,15 @@
         </ol>
         <div class="o_cp_searchview">
             <div class="o_searchview">
-                <input class="o_searchview_input" placeholder="Tìm kiếm theo mã phiếu " type="text" [(ngModel)]="search"
-                    (ngModelChange)="this.searchUpdate.next($event)">
+                <input class="o_searchview_input" placeholder="Tìm kiếm theo mã phiếu " 
+                type="text" [(ngModel)]="search"
+                (ngModelChange)="this.searchUpdate.next($event)">
+                <span class="o_searchview_icon fas fa-search"></span>
             </div>
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
-                <button *ngIf="canSalaryPaymentCreate" type="button" class="btn btn-primary btn-sm" (click)="createItem()" accesskey="c">
+                <button *ngIf="canSalaryPaymentCreate" type="button" class="btn btn-primary" (click)="createItem()" accesskey="c">
                     Tạm ứng lương
                 </button>
             </div>
@@ -69,7 +71,7 @@
         <kendo-grid-column *ngIf="canSalaryPaymentDelete"
             [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" title="#" width="40">
             <ng-template kendoGridCellTemplate let-dataItem>
-                <button *ngIf="canSalaryPaymentDelete" type="button" class="btn btn-icon btn-sm btn-danger" (click)="deleteItem(dataItem)">
+                <button *ngIf="canSalaryPaymentDelete" type="button" class="btn btn-icon btn-danger" (click)="deleteItem(dataItem)">
                     <span class="k-icon k-i-delete"></span>
                 </button>
             </ng-template>

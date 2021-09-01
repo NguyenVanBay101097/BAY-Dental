@@ -43,6 +43,14 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public decimal? AmountPaid { get; set; }
 
+        /// <summary>
+        /// whole_jaw: nguyên hàm
+        /// upper_jaw : hàm trên
+        /// lower_jaw : hàm dưới
+        /// manual :  thủ công
+        /// </summary>
+        public string ToothType { get; set; }
+
         public decimal? AmountResidual
         {
             get
@@ -50,6 +58,9 @@ namespace Umbraco.Web.Models.ContentEditing
                 return PriceTotal - AmountPaid;
             }
         }
+
+        public bool IsActive { get; set; }
+        public DateTime? Date { get; set; }
     }
 
     public class SaleOrderLineSmsSimple
@@ -58,5 +69,77 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
         public Guid ProductId { get; set; }
         public ProductSimple Product { get; set; }
+    }
+
+    public class ServiceSaleReportExcel// mẫu xuất excel báo cáo dịch vụ đang điều trị dựa vào saleorderlinebasic
+    {
+        [EpplusDisplay("Ngày tạo")]
+        public DateTime DateCreated { get; set; }
+        [EpplusDisplay("Khách hàng")]
+        public string OrderPartnerName { get; set; }
+        [EpplusDisplay("Dịch vụ")]
+        public string Name { get; set; }
+        [EpplusDisplay("Bác sĩ")]
+        public string EmployeeName { get; set; }
+        [EpplusIgnore]
+        public string ToothType { get; set; }
+        [EpplusIgnore]
+        public string Teeth { get; set; }
+        [EpplusDisplay("Răng")]
+        public string TeethList
+        {
+            get
+            {
+                switch (this.ToothType)
+                {
+                    case "whole_jaw":
+                        return "Nguyên hàm";
+                    case "upper_jaw":
+                        return "Hàm trên";
+                    case "lower_jaw":
+                        return "Hàm dưới";
+                    default:
+                        return this.Teeth;
+                }
+            }
+            set { }
+        }
+        [EpplusDisplay("Số lượng")]
+        public decimal ProductUOMQty { get; set; }
+        [EpplusDisplay("Thành tiền")]
+        public decimal PriceSubTotal { get; set; }
+        [EpplusIgnore]
+        public string State { get; set; }
+        [EpplusIgnore]
+
+        public bool IsActive { get; set; }
+        [EpplusDisplay("Trạng thái")]
+        public string StateDisplay
+        {
+            get
+            {
+                if (!this.IsActive)
+                {
+                    return "Ngừng điều trị";
+                }
+                else
+                {
+                    return this.State == "sale" ? "Đang điều trị" : "Hoàn thành";
+                }
+            }
+            set { }
+        }
+        [EpplusDisplay("Phiếu điều trị")]
+        public string OrderName { get; set; }
+
+    }
+
+    public class ServiceSaleReportPrint
+    {
+        public IEnumerable<SaleOrderLineBasic> data { get; set; } = new List<SaleOrderLineBasic>();
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public CompanyPrintVM Company { get; set; }
+        public ApplicationUserSimple User { get; set; }
     }
 }

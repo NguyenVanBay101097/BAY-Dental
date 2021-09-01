@@ -1,0 +1,33 @@
+.filter-right {
+    flex-basis: 400px;
+}
+
+.filter-left {}
+
+.bg-filter {
+    background-color: #E4E7EB;
+}
+
+.bg-filter:hover {
+    background-color: #c1c7ce;
+}
+
+.icon-filter {
+    background-color: #E4E7EB;
+}
+
+.transform-50 {
+    transform: translateY(50%);
+}
+
+.cate-multi li.k-button {
+    white-space: nowrap !important;
+}
+
+/* .o_technical_modal .modal-dialog {
+    max-width: 500px;
+} */
+
+  .filter-2 > * {
+    margin-top: .5rem!important;
+  }

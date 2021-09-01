@@ -162,8 +162,28 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
     return observable;
 
   }
-  exportExcel(grid: GridComponent) {
-    grid.saveAsExcel();
+  exportExcel() {
+    var val = Object.assign({}, this.filter) as RevenueTimeReportPar;
+    val.companyId = val.companyId || '';
+    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
+    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    this.accInvService.exportRevenueTimeReportExcel(val).subscribe((rs) => {
+      let filename = "BaoCaoDoanhThu_TheoTG";
+      let newBlob = new Blob([rs], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
   }
 
   public onExcelExport(args: any): void {
@@ -171,10 +191,10 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
     const workbook = args.workbook;
     var sheet = args.workbook.sheets[0];
     var rows = sheet.rows;
-    sheet.mergedCells = ["A1:H1", "A2:H2"];
+    sheet.mergedCells = ["A1:G1", "A2:G2","A3:F3"];
     sheet.frozenRows = 3;
     sheet.name = 'BaoCaoDoanhThu_TheoTG';
-    sheet.rows.splice(0, 1, { cells: [{
+    sheet.rows.splice(0, 0, { cells: [{
       value:"BÁO CÁO DOANH THU THEO THỜI GIAN",
       textAlign: "center"
     }], type: 'header' });
@@ -183,6 +203,15 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
       value: `Từ ngày ${this.filter.dateFrom ? this.intlService.formatDate(this.filter.dateFrom, 'dd/MM/yyyy') : '...'} đến ngày ${this.filter.dateTo ? this.intlService.formatDate(this.filter.dateTo, 'dd/MM/yyyy') : '...'}`,
       textAlign: "center"
     }], type: 'header' });
+    sheet.rows.splice(2, 1, { cells: [{
+      value:"Ngày",
+      textAlign: "left",
+      color: "#0000",
+    },{
+      value:"Doanh thu",
+      textAlign: "right",
+      color: "#0000",
+    }], type: 'header' });
     
     args.preventDefault();
     const data = this.allDataInvoice;
@@ -190,15 +219,16 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
       data: data,
       args: args,
       filter: this.filter,
-      title:'Doanh thu theo thời gian'
+      title:'Doanh thu theo thời gian',
+      showInvoiceDate: false
     })
 
-    rows.forEach(row => {
-      if (row.type === "data"){
-        row.cells[0].value = "Ngày "+row.cells[0].value;
-        row.cells[1].value = "Tổng doanh thu   "+row.cells[1].value;
-      }
-    });
+    // rows.forEach(row => {
+    //   if (row.type === "data"){
+    //     row.cells[0].value = "Ngày "+row.cells[0].value;
+    //     row.cells[1].value = "Tổng doanh thu   "+row.cells[1].value;
+    //   }
+    // });
     
   }
 
@@ -211,6 +241,33 @@ export class AccountInvoiceReportRevenueComponent implements OnInit {
       this.printService.printHtml(result);
     });
     
+  }
+
+  onExportPDF() {
+    var val = Object.assign({}, this.filter) as RevenueTimeReportPar;
+    val.companyId = val.companyId || '';
+    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
+    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    this.loading = true;
+    this.accInvService.getRevenueTimeReportPdf(val).subscribe(res => {
+      this.loading = false;
+      let filename ="BaoCaodoanhthu_theoTG";
+
+      let newBlob = new Blob([res], {
+        type:
+          "application/pdf",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
   }
 
 }

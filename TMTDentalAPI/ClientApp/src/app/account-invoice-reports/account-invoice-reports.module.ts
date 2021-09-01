@@ -13,11 +13,13 @@ import { AccountInvoiceReportRevenueComponent } from './account-invoice-report-r
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AccountInvoiceReportRevenueServiceComponent } from './account-invoice-report-revenue-service/account-invoice-report-revenue-service.component';
 import { AccountInvoiceReportRevenueEmployeeComponent } from './account-invoice-report-revenue-employee/account-invoice-report-revenue-employee.component';
+import { AccountInvoiceReportRevenuePartnerComponent } from './account-invoice-report-revenue-partner/account-invoice-report-revenue-partner.component';
 
 @NgModule({
   declarations: [AccountInvoiceReportRevenueDetailComponent, SaleOrderReportRevenueComponent, AccountInvoiceReportRevenueComponent,AccountInvoiceReportRevenueManageComponent,
     AccountInvoiceReportRevenueServiceComponent,
-    AccountInvoiceReportRevenueEmployeeComponent
+    AccountInvoiceReportRevenueEmployeeComponent,
+    AccountInvoiceReportRevenuePartnerComponent
   ],
   imports: [
     CommonModule,

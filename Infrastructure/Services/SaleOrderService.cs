@@ -379,38 +379,11 @@ namespace Infrastructure.Services
 
             foreach (var sale in self)
             {
-                foreach (var line in sale.OrderLines)
-                {
-
-                    if (line.State == "cancel")
-                        continue;
-
-                    line.State = "draft";
-                    await linePaymentRelObj.DeleteAsync(line.SaleOrderLinePaymentRels);
-                    var amountPaid = await linePaymentRelObj.SearchQuery(x => x.SaleOrderLineId == line.Id).SumAsync(x => x.AmountPrepaid.Value);
-                    line.AmountPaid = amountPaid;
-                    line.AmountResidual = 0;
-                }
-
-
-                saleLineObj._GetInvoiceQty(sale.OrderLines);
-                saleLineObj._GetToInvoiceQty(sale.OrderLines);
-                saleLineObj._GetInvoiceAmount(sale.OrderLines);
-                saleLineObj._GetToInvoiceAmount(sale.OrderLines);
-                saleLineObj._ComputeInvoiceStatus(sale.OrderLines);
-                await saleLineObj._RemovePartnerCommissions(sale.OrderLines.Select(x => x.Id).ToList());
-                saleLineObj.RecomputePromotionLine(sale.OrderLines);
-                ReComputePromotionOrder(sale);
                 sale.State = "draft";
-                sale.Residual = 0;
-                await UpdateAsync(sale);
-
-                //tính lại tổng tiền ưu đãi saleorderlines
-                saleLineObj._ComputeAmountDiscountTotal(sale.OrderLines);
-                saleLineObj.ComputeAmount(sale.OrderLines);
+                foreach (var line in sale.OrderLines)
+                    line.State = "draft";
             }
 
-            _GetInvoiced(self);
             await UpdateAsync(self);
         }
 
@@ -460,10 +433,10 @@ namespace Infrastructure.Services
             foreach (var sale in self)
             {
                 if (sale.OrderLines.Count == 0) throw new Exception("Bạn không thể hoàn thoành phiếu điều trị khi không có dịch vụ");
-                foreach (var line in sale.OrderLines)
-                {
-                    line.State = "done";
-                }
+                //foreach (var line in sale.OrderLines)
+                //{
+                //    line.State = "done";
+                //}
 
                 sale.State = "done";
                 sale.DateDone = DateTime.Now;
@@ -1295,10 +1268,10 @@ namespace Infrastructure.Services
         //    return res;
         //}
 
-        public async Task<IEnumerable<SaleOrderLineDisplay>> GetSaleOrderLineBySaleOrder(Guid id)
+        public async Task<IEnumerable<SaleOrderLineDisplay>> GetSaleOrderLineBySaleOrder(Guid? id)
         {
             var lineObj = GetService<ISaleOrderLineService>();
-            var lines = await lineObj.SearchQuery(x => x.OrderId == id && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence))
+            var lines = await lineObj.SearchQuery(x => (id == null || x.OrderId == id) && !x.IsCancelled, orderBy: x => x.OrderBy(s => s.Sequence))
              .Include(x => x.Advisory)
              .Include(x => x.Assistant)
              .Include(x => x.PromotionLines).ThenInclude(x => x.Promotion)
@@ -2818,6 +2791,7 @@ namespace Infrastructure.Services
                     }),
                     ProductId = x.ProductId,
                     Diagnostic = x.Diagnostic,
+                    ToothType = x.ToothType,
                     Teeth = x.SaleOrderLineToothRels.Select(s => new ToothDisplay
                     {
                         Id = s.ToothId,
@@ -3084,9 +3058,29 @@ namespace Infrastructure.Services
             return new PagedResult2<SaleOrderRevenueReport>(count, val.Offset, val.Limit) { Items = res };
         }
 
+        public async Task<RevenueReportPrintVM<SaleOrderRevenueReport>> GetRevenueReportPrint(SaleOrderRevenueReportPaged val)
+        {
+            val.Limit = 0;
+            var data = await GetRevenueReport(val);
+
+            var res = new RevenueReportPrintVM<SaleOrderRevenueReport>()
+            {
+                Data = data.Items,
+                User = _mapper.Map<ApplicationUserSimple>(await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId))
+            };
+
+            if (val.CompanyId.HasValue)
+            {
+                var companyObj = GetService<ICompanyService>();
+                var company = await companyObj.SearchQuery(x => x.Id == val.CompanyId).Include(x => x.Partner).FirstOrDefaultAsync();
+                res.Company = _mapper.Map<CompanyPrintVM>(company);
+            }
+            return res;
+        }
+
         public async Task<GetRevenueSumTotalRes> GetRevenueSumTotal(GetRevenueSumTotalReq val)
         {
-            var query = SearchQuery(x => x.State != "cancel" && x.State != "draft");
+            var query = SearchQuery(x => x.State != "cancel" && x.State != "draft" && x.Residual > 0);
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId);
             var res = new GetRevenueSumTotalRes()
@@ -3096,6 +3090,66 @@ namespace Infrastructure.Services
                 Residual = await query.SumAsync(x => x.Residual.Value)
             };
             return res;
+        }
+
+        public async Task<long> GetCountSaleOrder(GetCountSaleOrderFilter val)
+        {
+            var saleOrderObj = GetService<ISaleOrderService>();
+
+            var query = saleOrderObj.SearchQuery();
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.DateOrder >= val.DateFrom.Value.AbsoluteBeginOfDate());
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.DateOrder <= val.DateTo.Value.AbsoluteEndOfDate());
+
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+
+            return await query.LongCountAsync();
+        }
+
+        public async Task<GetPrintManagementRes> GetPrintManagement(SaleOrderPaged val)
+        {
+            val.Limit = 0;
+            var data = await GetPagedResultAsync(val);
+            var allData = _mapper.Map<IEnumerable<GetPrintManagementItemRes>>(data.Items);
+            var allLines = await GetSaleOrderLineBySaleOrder(null);
+            foreach (var item in allData)
+            {
+                item.Lines = allLines.Where(x=> x.OrderId == item.Id).ToList();
+            }
+            var res = new GetPrintManagementRes()
+            {
+                Data = allData
+            };
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId);
+            res.User = _mapper.Map<ApplicationUserSimple>(user);
+
+            if (val.CompanyId.HasValue)
+            {
+                var companyObj = GetService<ICompanyService>();
+                res.Company = _mapper.Map<CompanyPrintVM>(await companyObj.SearchQuery(x => x.Id == val.CompanyId)
+                    .Include(x => x.Partner).FirstOrDefaultAsync());
+            }
+
+            return res;
+        }
+
+        public async Task<IEnumerable<GetExcelManagementItemRes>> ExportManagementExcel(SaleOrderPaged val)
+        {
+            val.Limit = 0;
+            var data = await GetPagedResultAsync(val);
+            var allData = _mapper.Map<IEnumerable<GetExcelManagementItemRes>>(data.Items);
+            var allLines = await GetSaleOrderLineBySaleOrder(null);
+            foreach (var item in allData)
+            {
+                item.Lines = allLines.Where(x => x.OrderId == item.Id).ToList();
+            }
+            
+
+            return allData;
         }
     }
 }

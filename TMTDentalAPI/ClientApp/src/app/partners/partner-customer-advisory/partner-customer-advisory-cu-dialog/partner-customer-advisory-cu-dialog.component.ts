@@ -38,6 +38,7 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
   customerId: string;
   id: string;
   filterData: EmployeeBasic[] = [];
+  changesCount = 0;
   toothTypeDict = [
     { name: "Hàm trên", value: "upper_jaw" },
     { name: "Nguyên hàm", value: "whole_jaw" },
@@ -74,7 +75,7 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
       toothType: "manual",
       teeth: [],
       toothDiagnosis: [[], Validators.required],
-      product: [[], Validators.required],
+      product: [],
       note: [],
       companyId: [null,Validators.required]
     })
@@ -129,8 +130,11 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
         var unique = products.filter(function (elem, index, self) {
           return index === self.findIndex(x => x.id == elem.id);
         })
-        this.f.product.setValue(unique);
+        if (this.changesCount != 0){
+          this.f.product.setValue(unique);
+        }
         this.productSelectedFromApi = result;
+        this.changesCount += 1;
       })
     })
   }
@@ -256,7 +260,6 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
 
     if (this.getValueFormControl('toothType') == 'manual' && (this.getValueFormControl('teeth') && this.getValueFormControl('teeth').length == 0) )
       return;
-    
     var valueForm = this.myForm.value;
     if (valueForm.employeeAdvisory) {
       valueForm.employeeId = valueForm.employeeAdvisory.id;
@@ -290,6 +293,7 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
   }
 
   getDefault() {
+    this.changesCount += 1;
     var val = new AdvisoryDefaultGet();
     val.customerId = this.customerId
     this.advisoryService.getDefault(val).subscribe(result => {
@@ -315,33 +319,8 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
         this.productSelectedFromApi = result;
       })
     });
-  }
-
-  onChange(data){
-    console.log(data);
     
   }
-
-  updateDiagnosis(data) {
-    this.f.toothDiagnosis.setValue(data);
-    
-    var ids = data.map(x => x.id);
-    this.toothDiagnosisService.getProducts(ids).subscribe(result => {
-      var products = this.f.product.value;
-      products = products.filter(elem => this.productSelectedFromApi.findIndex(x => x.id == elem.id) == -1);
-      products = products.concat(result);
-      var unique = products.filter(function(elem, index, self){
-        return index === self.findIndex(x => x.id == elem.id);
-      })
-      this.f.product.setValue(unique);
-      this.productSelectedFromApi = result;
-    })
-  }
-
-  updateProduct(data) {
-    this.f.product.setValue(data);
-  }
-
   resetForm(){
     if (this.id) {
       this.getById();
@@ -411,8 +390,6 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     val.name = text;
     return this.toothDiagnosisService.create(val).pipe(
       map((result: any) => {
-        console.log(result);
-        
         return {
           id: result.id,
           name: result.name

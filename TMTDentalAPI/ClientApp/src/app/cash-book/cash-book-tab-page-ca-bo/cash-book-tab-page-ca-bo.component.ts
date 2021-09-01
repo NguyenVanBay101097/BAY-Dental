@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -39,10 +40,18 @@ export class CashBookTabPageCaBoComponent implements OnInit {
     private cashBookService: CashBookService,
     private intlService: IntlService,
     private authService: AuthService,
-    private accountPaymentService: AccountPaymentService
+    private accountPaymentService: AccountPaymentService, 
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
+    this.route.queryParamMap.subscribe( params => {
+      var result_selection = params.get('result_selection'); 
+      if (result_selection) {
+        this.resultSelection = result_selection;
+      }   
+    });
+
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd;
 

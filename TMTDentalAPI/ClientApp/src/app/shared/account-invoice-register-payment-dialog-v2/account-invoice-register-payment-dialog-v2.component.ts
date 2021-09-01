@@ -97,7 +97,6 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
         this.activeModal.close(true);
       });
     }, (err) => {
-      debugger
       this.notifyService.notify('error',err);
     });
   }

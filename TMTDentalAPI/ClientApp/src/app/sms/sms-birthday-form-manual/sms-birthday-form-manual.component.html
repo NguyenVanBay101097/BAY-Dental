@@ -3,21 +3,21 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons d-flex">
                 <div class="mr-2">
-                    <select class="form-control btn-sm" style="height: 32px;" (change)="selectDayChange($event)">
+                    <select class="form-control" (change)="selectDayChange($event)">
                         <option value="">Ngày sinh</option>
                         <option *ngFor="let i of dayList">
                             {{i}}</option>
                     </select>
                 </div>
                 <div class="mr-2">
-                    <select class="form-control btn-sm" style="height: 32px;" (change)="selectMonthChange($event)">
+                    <select class="form-control" (change)="selectMonthChange($event)">
                         <option value="">Tháng sinh</option>
                         <option *ngFor="let i of monthList">
                             {{i}}</option>
                     </select>
                 </div>
                 <div>
-                    <button type="button" class="btn btn-primary btn-sm" (click)="onSend()">Tạo tin nhắn</button>
+                    <button type="button" class="btn btn-primary" (click)="onSend()">Tạo tin nhắn</button>
                 </div>
             </div>
             <div class="o_cp_sidebar">
@@ -25,8 +25,10 @@
         </div>
         <div class="o_cp_searchview">
             <div class="o_searchview">
-                <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo họ tên, số điện thoại" [(ngModel)]="search"
-                    (ngModelChange)="this.searchUpdate.next($event)" />
+                <input type="text" class="o_searchview_input" 
+                placeholder="Tìm kiếm theo họ tên, số điện thoại" [(ngModel)]="search"
+                (ngModelChange)="this.searchUpdate.next($event)" />
+                <span class="o_searchview_icon fas fa-search"></span>
             </div>
         </div>
     </div>

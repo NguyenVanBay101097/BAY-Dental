@@ -222,6 +222,18 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
       return false;
     }
 
+    if(this.medicineOrderLines.length <= 0) {
+      this.notificationService.show({
+        content: 'Đơn thuốc không có thuốc để thanh toán',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'error', icon: true }
+      });
+      return false;
+    
+    }
+
     var val = this.formGroup.value;
     val = this.computeForm(val)
     this.medicineOrderService.confirmPayment(val).subscribe(
@@ -242,6 +254,17 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
     this.submitted = true;
 
     if (!this.formGroup.valid) {
+      return false;
+    }
+
+    if(this.medicineOrderLines.length <= 0) {
+      this.notificationService.show({
+        content: 'Đơn thuốc không có thuốc để thanh toán',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'error', icon: true }
+      });
       return false;
     }
 

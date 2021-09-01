@@ -29,12 +29,16 @@ export class AccountInvoiceReportRevenueManageComponent implements OnInit {
   }
 
   exportData(e) {
-    
     var data = e.data;
     var args = e.args;
     var filter = e.filter;
     var employeeFilter = e.employeeFilter || 'none';
     var title = e.title || 'doanhthu';
+    var showPartner = typeof e.showPartner == 'undefined' ? true: false;
+    var showInvoiceDate = typeof e.showInvoiceDate == 'undefined' ? true: false;
+    
+    
+    
     // Prevent automatically saving the file. We will save it manually after we fetch and add the details
     args.preventDefault();
 
@@ -49,14 +53,13 @@ export class AccountInvoiceReportRevenueManageComponent implements OnInit {
     const headerOptions = rows[0].cells[0];
 
     rows.forEach((row, index) => {
-      //colspan
-      if (row.type == "footer") {
-        row.cells[1].colSpan = 7;
-      }
       //làm màu
       if (row.type === "data" || row.type == 'footer') {
+        row.cells[0].bold = true;
+        row.cells[1].format = '#,##0'
         row.cells[1].textAlign = 'right';
-        row.cells[1].colSpan = 7;
+        row.cells[1].colSpan = 6;
+        row.cells[1].bold = true;
       }
     });
 
@@ -82,6 +85,7 @@ export class AccountInvoiceReportRevenueManageComponent implements OnInit {
       val.dateFrom = dataIndex.invoiceDate ?  moment(dataIndex.invoiceDate).format('YYYY/MM/DD'): val.dateFrom ;
       val.dateTo = dataIndex.invoiceDate ?  moment(dataIndex.invoiceDate).format('YYYY/MM/DD'): val.dateTo ;
       val.productId = dataIndex.productId || '';
+      val.partnerId = dataIndex.partnerId || '';
       val.assistantId = dataIndex.employeeId || '';
       val.employeeId = dataIndex.groupBy && dataIndex.groupBy == 'employee'? dataIndex.toDetailEmployeeId : '';
       val.assistantId = dataIndex.groupBy && dataIndex.groupBy == 'assistant'? dataIndex.toDetailEmployeeId : '';
@@ -98,34 +102,105 @@ export class AccountInvoiceReportRevenueManageComponent implements OnInit {
         // add the detail data
         for (let productIdx = lines.length - 1; productIdx >= 0; productIdx--) {
           const line = lines[productIdx];
-          rows.splice(idx + 3, 0, {
+          // if (showPartner == false){
+          //   rows.splice(idx + 4, 0, {
+          //     cells: [
+          //       { value: moment(line.invoiceDate).format('DD/MM/YYYY') },
+          //       { value: line.invoiceOrigin },
+          //       { value: line.employeeName },
+          //       { value: line.assistantName },
+          //       { value: line.productName },
+          //       { value: line.priceSubTotal.toLocaleString('vi'), textAlign: 'right', format:'#,##0' }
+          //     ]
+          //   });
+          // }
+          // else if (showInvoiceDate == false){
+          //   rows.splice(idx + 4, 0, {
+          //     cells: [
+          //       { value: line.invoiceOrigin },
+          //       { value: line.partnerName },
+          //       { value: line.employeeName },
+          //       { value: line.assistantName },
+          //       { value: line.productName },
+          //       { value: line.priceSubTotal.toLocaleString('vi'), textAlign: 'right',format:'#,##0' }
+          //     ]
+          //   });
+          // }
+          // else {
+          //   rows.splice(idx + 4, 0, {
+          //     cells: [
+          //       { value: moment(line.invoiceDate).format('DD/MM/YYYY') },
+          //       { value: line.invoiceOrigin },
+          //       { value: line.partnerName },
+          //       { value: line.employeeName },
+          //       { value: line.assistantName },
+          //       { value: line.productName },
+          //       { value: line.priceSubTotal.toLocaleString('vi'), textAlign: 'right',format: '#,##0'}
+          //     ]
+          //   });
+          // }
+          rows.splice(idx + 4, 0, {
             cells: [
-              {},
               { value: moment(line.invoiceDate).format('DD/MM/YYYY') },
               { value: line.invoiceOrigin },
               { value: line.partnerName },
               { value: line.employeeName },
               { value: line.assistantName },
               { value: line.productName },
-              { value: line.priceSubTotal.toLocaleString('vi'), textAlign: 'right' }
+              { value: line.priceSubTotal.toLocaleString('vi'), textAlign: 'right',format: '#,##0'}
             ]
           });
         }
         // add the detail header
-        listDetailHeaderIndex.push(idx + 2);
-        rows.splice(idx + 3, 0, {
+        listDetailHeaderIndex.push(idx + 4);
+        // if (showPartner == false){
+        //   rows.splice(idx + 4, 0, {
+        //     cells: [
+        //       Object.assign({}, headerOptions, { value: 'Ngày thanh toán', background: '#aabbcc', width: 20 }),
+        //       Object.assign({}, headerOptions, { value: 'Số phiếu', background: '#aabbcc', width: 200 }),
+        //       Object.assign({}, headerOptions, { value: 'Bác sĩ', background: '#aabbcc', width: 200 }),
+        //       Object.assign({}, headerOptions, { value: 'Phụ tá', background: '#aabbcc', width: 200 }),
+        //       Object.assign({}, headerOptions, { value: 'Dịch vụ/Thuốc', background: '#aabbcc', width: 200 }),
+        //       Object.assign({}, headerOptions, { value: 'Thanh toán', background: '#aabbcc', width: 200 })
+        //     ]
+        //   });
+        // }
+        // else if (showInvoiceDate == false) {
+        //   rows.splice(idx + 4, 0, {
+        //     cells: [
+        //       Object.assign({}, headerOptions, { value: 'Số phiếu', background: '#aabbcc', width: 200 }),
+        //       Object.assign({}, headerOptions, { value: 'Khách hàng', background: '#aabbcc', width: 200 }),
+        //       Object.assign({}, headerOptions, { value: 'Bác sĩ', background: '#aabbcc', width: 200 }),
+        //       Object.assign({}, headerOptions, { value: 'Phụ tá', background: '#aabbcc', width: 200 }),
+        //       Object.assign({}, headerOptions, { value: 'Dịch vụ/Thuốc', background: '#aabbcc', width: 200 }),
+        //       Object.assign({}, headerOptions, { value: 'Thanh toán', background: '#aabbcc', width: 200 })
+        //     ]
+        //   });
+        // }
+        // else {
+        //   rows.splice(idx + 4, 0, {
+        //     cells: [
+        //       Object.assign({}, headerOptions, { value: 'Ngày thanh toán', background: '#aabbcc', width: 20 }),
+        //       Object.assign({}, headerOptions, { value: 'Số phiếu', background: '#aabbcc', width: 200 }),
+        //       Object.assign({}, headerOptions, { value: 'Khách hàng', background: '#aabbcc', width: 200 }),
+        //       Object.assign({}, headerOptions, { value: 'Bác sĩ', background: '#aabbcc', width: 200 }),
+        //       Object.assign({}, headerOptions, { value: 'Phụ tá', background: '#aabbcc', width: 200 }),
+        //       Object.assign({}, headerOptions, { value: 'Dịch vụ/Thuốc', background: '#aabbcc', width: 200 }),
+        //       Object.assign({}, headerOptions, { value: 'Thanh toán', background: '#aabbcc', width: 200 })
+        //     ]
+        //   });
+        // }
+        rows.splice(idx + 4, 0, {
           cells: [
-            {},
             Object.assign({}, headerOptions, { value: 'Ngày thanh toán', background: '#aabbcc', width: 20 }),
             Object.assign({}, headerOptions, { value: 'Số phiếu', background: '#aabbcc', width: 200 }),
             Object.assign({}, headerOptions, { value: 'Khách hàng', background: '#aabbcc', width: 200 }),
             Object.assign({}, headerOptions, { value: 'Bác sĩ', background: '#aabbcc', width: 200 }),
             Object.assign({}, headerOptions, { value: 'Phụ tá', background: '#aabbcc', width: 200 }),
-            Object.assign({}, headerOptions, { value: 'Dịch vụ', background: '#aabbcc', width: 200 }),
+            Object.assign({}, headerOptions, { value: 'Dịch vụ/Thuốc', background: '#aabbcc', width: 200 }),
             Object.assign({}, headerOptions, { value: 'Thanh toán', background: '#aabbcc', width: 200 })
           ]
         });
-        rows.splice(idx+2,0,{});
       }
       var a = workbook;
       delete a.sheets[0].columns[1].width;
@@ -153,12 +228,12 @@ export class AccountInvoiceReportRevenueManageComponent implements OnInit {
         if (row.type == "footer") {
           rows.splice(index,1);
           if (row.type === 'header') {
-            rows[index + 1].cells[1].colSpan = 7;
+            rows[index + 1].cells[1].colSpan = 6;
           }
         }
-        if (index == 2){
-          rows.splice(index,1);
-        }
+        // if (index == 2){
+        //   rows.splice(index,1);
+        // }
         //làm màu
         if (row.type === "header") {
           if (index != 0 && index != 1){

@@ -64,9 +64,9 @@ export class LayoutSidebarComponent implements OnInit {
       name: 'Khảo sát đánh giá',
       icon: 'fas fa-poll',
       children: [
-        { name: 'Danh sách khảo sát', link: '/surveys', permissions: ['Survey.UserInput.Read'], groups:'survey.group_user,survey.group_manager' },
-        { name: 'Quản lý phân việc', link: '/surveys/manage', permissions: ['Survey.Assignment.Read'], groups:'survey.group_manager' },
-        { name: 'Câu hỏi khảo sát', link: '/surveys/config', permissions: ['Survey.Question.Read', 'Survey.Question.Create', 'Survey.Question.Update', 'Survey.Question.Delete'], groups:'survey.group_manager' },
+        { name: 'Danh sách khảo sát', link: '/surveys', permissions: ['Survey.UserInput.Read'], groups: 'survey.group_user,survey.group_manager' },
+        { name: 'Quản lý phân việc', link: '/surveys/manage', permissions: ['Survey.Assignment.Read'], groups: 'survey.group_manager' },
+        { name: 'Câu hỏi khảo sát', link: '/surveys/config', permissions: ['Survey.Question.Read', 'Survey.Question.Create', 'Survey.Question.Update', 'Survey.Question.Delete'], groups: 'survey.group_manager' },
       ],
       groups: 'survey.group_survey',
       permissions: ['Survey.UserInput.Read', 'Survey.Assignment.Read', 'Survey.Question.Read']
@@ -184,14 +184,14 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Người giới thiệu', link: '/agents/commission' },
         { name: 'Nhân viên', link: '/commission-settlements/report', permissions: ['Report.Commission'] },
       ],
-      permissions: ['Catalog.Agent.Read','Report.Commission']
+      permissions: ['Catalog.Agent.Read', 'Report.Commission']
     },
     {
       name: 'Danh mục',
       icon: 'fas fa-list',
       children: [
         { name: 'Thông tin khách hàng', link: '/partners/customer-management', permissions: ['Catalog.PartnerCategory.Read'] },
-        { name: 'Hạng thành viên', link: '/member-level/management'},
+        { name: 'Hạng thành viên', link: '/member-level/management' },
         { name: 'Nhãn khảo sát', link: '/surveys/survey-tag', groups: 'survey.group_survey' },
         // { name: "Nguồn khách hàng", link: "/partner-sources" },
         { name: 'Nhà cung cấp', link: '/partners/suppliers', permissions: ['Basic.Partner.Read'] },
@@ -208,7 +208,7 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Loại thu chi', link: '/loai-thu-chi', permissions: ['Account.LoaiThuChi.Read'] },
         { name: 'Tiêu chí kiểm kho', link: '/stock/criterias', permissions: ['Stock.StockInventoryCriteria.Read'] },
         { name: 'Thông tin chẩn đoán răng', link: '/tooth-diagnosis', permissions: ['Catalog.ToothDiagnosis.Read'] },
-        
+
         // { name: 'Loại chi', link: '/loai-thu-chi', params: { type: 'chi' }},
         // { name: 'Vật liệu Labo', link: '/products/labos' },
         // { name: 'Đường hoàn tất', link: '/labo-finish-lines' },
@@ -247,8 +247,11 @@ export class LayoutSidebarComponent implements OnInit {
         { name: 'Kết quả kinh doanh', link: '/financial-report', permissions: ['Report.Financial'] },
         // { name: 'Tiền mặt, ngân hàng', link: '/report-general-ledgers/cash-bank', permissions: ['Report.CashBankAccount'] },
         { name: 'Báo cáo doanh thu', link: '/account-invoice-reports/revenue-time', permissions: ['Report.Revenue'] },
-        { name: 'Thống kê điều trị', link: '/sale-report', permissions: ['Report.Sale'] },
-        { name: 'Công nợ khách hàng', link: '/report-account-common/partner-debit', permissions: ['Report.AccountPartner'] },
+        { name: 'Báo cáo dịch vụ', link: '/sale-report/service-report', permissions: ['Report.Sale'] },
+        // { name: 'Thống kê điều trị', link: '/sale-report', permissions: ['Report.Sale'] },
+        { name: 'Báo cáo khách hàng', link: '/report-account-common/partner-report-overview', permissions: ['Report.AccountPartner'] },
+        { name: 'Báo cáo tiếp nhận', link: '/customer-receipt-reports' },
+        // { name: 'Công nợ khách hàng', link: '/report-account-common/partner', params: { result_selection: 'customer' }, permissions: ['Report.AccountPartner'] },
         { name: 'Công nợ nhà cung cấp', link: '/report-account-common/partner', params: { result_selection: 'supplier' }, permissions: ['Report.AccountPartner'] },
         // { name: 'Xuất nhập tồn', link: '/stock-report-xuat-nhap-ton', permissions: ['Report.Stock'] },
         // { name: 'Thống kê tình hình thu nợ khách hàng', link: '/real-revenue-report', permissions: ['Report.RealRevenue'] },

@@ -13,6 +13,7 @@ import { SalaryPaymentPaged, SalaryPaymentService } from '../salary-payment.serv
 import { PrintService } from 'src/app/shared/services/print.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { AuthService } from 'src/app/auth/auth.service';
+import { NotifyService } from 'src/app/shared/services/notify.service';
 
 @Component({
   selector: 'app-salary-payment-list',
@@ -37,6 +38,7 @@ export class SalaryPaymentListComponent implements OnInit {
     private salaryPaymentService: SalaryPaymentService,
     private printService: PrintService, 
     private checkPermissionService: CheckPermissionService,
+    private notifyService: NotifyService,
     private authService: AuthService
   ) { }
 
@@ -91,16 +93,22 @@ export class SalaryPaymentListComponent implements OnInit {
     });
   }
 
+  // printItem(id) {
+  //   this.salaryPaymentService.getPrint([id]).subscribe(
+  //     result => {
+  //       if (result && result['html']) {
+  //         this.printService.printHtml(result['html']);
+  //       } else {
+  //         alert('Có lỗi xảy ra, thử lại sau');
+  //       }
+  //     }
+  //   )
+  // }
+
   printItem(id) {
-    this.salaryPaymentService.getPrint([id]).subscribe(
-      result => {
-        if (result && result['html']) {
-          this.printService.printHtml(result['html']);
-        } else {
-          alert('Có lỗi xảy ra, thử lại sau');
-        }
-      }
-    )
+    this.salaryPaymentService.getPrint([id]).subscribe((data: any) => {
+      this.printService.printHtml(data);
+    });
   }
 
   editItem(item) {
@@ -109,6 +117,7 @@ export class SalaryPaymentListComponent implements OnInit {
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(
       (result: any) => {
+        this.notifyService.notify('success','Lưu thành công')
         this.loadData();
         if (result && result.print) {
           this.printItem(item.id);

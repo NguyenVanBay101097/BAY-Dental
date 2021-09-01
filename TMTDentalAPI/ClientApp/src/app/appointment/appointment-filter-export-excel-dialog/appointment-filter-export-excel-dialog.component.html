@@ -1,0 +1,32 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body">
+    <div class="form-check t-form-check mb-1">
+        <input class="form-check-input" type="radio" name="stateFilter" id="default" checked="checked" value="default"
+            (change)="onChangeState($event)">
+        <label class="form-check-label" for="default">
+            Theo bộ lọc hiện tại
+        </label>
+    </div>
+    <div class="form-check t-form-check mb-1">
+        <input class="form-check-input" type="radio" name="stateFilter" id="period" value="period"
+            (change)="onChangeState($event)">
+        <label class="form-check-label" for="period">
+            Theo khoảng thời gian
+        </label>
+    </div>
+    <div style="width: 250px">
+        <app-date-range-picker-filter opens="right" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onChangeDate($event)">
+        </app-date-range-picker-filter>
+    </div>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onConfirm()" accesskey="s"><span>Xuất file</span></button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()"
+        accesskey="q"><span>Đóng</span></button>
+</footer>

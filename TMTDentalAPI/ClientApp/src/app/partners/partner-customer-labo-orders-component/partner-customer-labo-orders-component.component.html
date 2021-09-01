@@ -1,13 +1,16 @@
 <div class="px-3 py-3 bg-white">
     <div class="mb-2 d-flex justify-content-between">
         <kendo-combobox (selectionChange)="onStateChange($event)" 
-            placeholder="Trạng thái phiếu Labo" class="kendo-combobox-sm" style="width: auto;" 
+            placeholder="Trạng thái phiếu Labo" style="width: auto;" 
             [data]="filterStatus" [textField]="'name'" [valueField]="'value'">
         </kendo-combobox>
         <div class="o_cp_t_right">
-            <input class="o_searchview_input o_searchview" 
+            <div class="o_searchview">
+                <input type="text" class="o_searchview_input" 
                 placeholder="Tìm kiếm theo phiếu Labo, phiếu điều trị, nhà cung cấp" 
-                type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
+                <span class="o_searchview_icon fas fa-search"></span>
+            </div>
         </div>
     </div>
     <div>
@@ -59,11 +62,11 @@
                         Thao tác
                     </ng-template>
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                        <button class="btn btn-sm mr-1" title="In" (click)="printLabo(dataItem)">
+                        <button class="btn mr-1" title="In" (click)="printLabo(dataItem)">
                             <i class="fas fa-print"></i></button>
-                        <button class="btn btn-sm mr-1" title="Sửa" (click)="editItem(dataItem)">
+                        <button class="btn mr-1" title="Sửa" (click)="editItem(dataItem)">
                             <span class="fas fa-edit"></span></button>
-                        <button class="btn btn-sm" title="Xóa" (click)="deleteItem(dataItem)">
+                        <button class="btn" title="Xóa" (click)="deleteItem(dataItem)">
                             <span class="fas fa-trash-alt"></span></button>
                     </ng-template>
                 </kendo-grid-column>

@@ -7,8 +7,7 @@
 
         </div>
         <div class="o_cp_left">
-            <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" title="Ngày" [dateTo]="dateTo" (searchChange)="onDateSearchChange($event)">
-            </app-tai-date-range-filter-dropdown>
+            <app-date-range-picker-filter [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onDateSearchChange($event)"></app-date-range-picker-filter>
         </div>
         <div class="o_cp_right">
             <div class="o_cp_searchview">

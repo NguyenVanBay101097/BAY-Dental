@@ -10,18 +10,16 @@
             <div class="o_searchview">
                 <i class="o_searchview_icon fa fa-search"></i>
                 <div class="o_searchview_input_container">
-                    <input class="o_searchview_input" placeholder="Tìm kiếm theo số phiếu" type="text"
-                        [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                    <input class="o_searchview_input" placeholder="Tìm kiếm theo số phiếu" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                 </div>
             </div>
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm" (click)="createItem()" accesskey="c"
-                        *ngIf="canAdd">Thêm
+                    <button type="button" class="btn btn-primary" (click)="createItem()" accesskey="c" *ngIf="canAdd">Thêm
                     </button>
-                    <button type="button" class="btn btn-secondary btn-sm mr-2" (click)="exportExcelFile()">
+                    <button type="button" class="btn btn-secondary mr-2" (click)="exportExcelFile()">
                         <i class="fas fa-download mr-2"></i>Xuất Excel
                     </button>
                 </div>
@@ -29,8 +27,7 @@
             <div class="o_cp_sidebar">
                 <div class="btn-group">
                     <div class="btn-group o_dropdown" *ngIf="selectedIds.length">
-                        <button class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
+                        <button class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
                             Thao tác
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -42,20 +39,13 @@
         </div>
         <div class="o_cp_right">
             <div class="o_search_options">
-                <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo"
-                    (searchChange)="onSearchDateChange($event)">
-                </app-tai-date-range-filter-dropdown>
-                <kendo-combobox [data]="stateFilterOptions" [textField]="'text'" [valueField]="'value'" [filterable]="true" 
-                (selectionChange)="onStateSelectChange($event)" [placeholder]="'Trạng thái'"
-                    class="kendo-combobox-sm mr-1">
+                <app-date-range-picker-filter [opens]="'left'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
+                <kendo-combobox [data]="stateFilterOptions" [textField]="'text'" [valueField]="'value'" [filterable]="true" (selectionChange)="onStateSelectChange($event)" [placeholder]="'Trạng thái'" class="mr-1">
                 </kendo-combobox>
                 <!-- <app-tmt-option-select-dropdown title="Trạng thái" [options]="stateFilterOptions"
                     (selectChange)="onStateSelectChange($event)">
                 </app-tmt-option-select-dropdown> -->
-                <kendo-combobox [data]="supplierData" [textField]="'displayName'" [valueField]="'id'" [filterable]="true" 
-                (selectionChange)="handleFilter($event)" [placeholder]="'Nhà cung cấp'"
-                    #supplierCbx
-                    class="kendo-combobox-sm">
+                <kendo-combobox [data]="supplierData" [textField]="'displayName'" [valueField]="'id'" [filterable]="true" (selectionChange)="handleFilter($event)" [placeholder]="'Nhà cung cấp'" #supplierCbx>
                 </kendo-combobox>
             </div>
         </div>
@@ -63,14 +53,13 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-        (pageChange)="pageChange($event)" [selectable]="true" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)" [selectable]="true" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
         <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
         <kendo-grid-column field="name" title="Số phiếu" width="100">
         </kendo-grid-column>
         <kendo-grid-column field="partnerName" title="Nhà cung cấp" width="150">
         </kendo-grid-column>
-        <kendo-grid-column field="dateOrder" title="Ngày mua hàng" width="120">
+        <kendo-grid-column field="dateOrder" [title]="type == 'order' ? 'Ngày mua hàng':'Ngày trả hàng'" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.dateOrder | date : 'shortDate'}}
             </ng-template>
@@ -100,9 +89,9 @@
                 Thao tác
             </ng-template>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)" *ngIf="canUpdate">
+                <button class="btn btn-success mr-2" title="Sửa" (click)="editItem(dataItem)" *ngIf="canUpdate">
                     <span class="far fa-edit"></span></button>
-                <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteItem(dataItem)" *ngIf="canDelete">
+                <button class="btn btn-danger" title="Xóa" (click)="deleteItem(dataItem)" *ngIf="canDelete">
                     <span class="far fa-trash-alt"></span></button>
             </ng-template>
         </kendo-grid-column>

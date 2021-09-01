@@ -3,23 +3,22 @@
         <div class="o_cp_t_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'" [dateTo]="dateTo"
-                        (searchChange)="onSearchDateChange($event)">
-                    </app-tai-date-range-filter-dropdown>
+                    <app-date-range-picker-filter [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
                 </div>
             </div>
             <div class="o_cp_sidebar">
             </div>
         </div>
         <div class="o_cp_t_right">
-            <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo khách hàng, số đơn thuốc"
-                type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+            <div class="o_searchview">
+                <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo khách hàng, số đơn thuốc" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
+                <span class="o_searchview_icon fas fa-search"></span>
+            </div>
         </div>
     </div>
 </div>
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-        (pageChange)="pageChange($event)">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
         <kendo-grid-column field="date" title="Ngày tạo" width="80">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.date | date:'shortDate'}}
@@ -29,8 +28,7 @@
         </kendo-grid-column>
         <kendo-grid-column field="saleOrderName" title="Phiếu điều trị" width="80">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <a class="text-primary text-decoraction" routerLink="/sale-orders/form"
-                    [queryParams]="{id: dataItem.saleOrderId}">
+                <a class="text-primary text-decoraction" routerLink="/sale-orders/form" [queryParams]="{id: dataItem.saleOrderId}">
                     {{dataItem.saleOrderName}}
                 </a>
             </ng-template>
@@ -38,13 +36,13 @@
         <kendo-grid-column field="name" title="Số đơn thuốc" width="100">
         </kendo-grid-column>
         <kendo-grid-column field="employeeName" title="Bác sĩ" width="100">
-        </kendo-grid-column>      
+        </kendo-grid-column>
         <kendo-grid-column class="text-center" field="id" width="100">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 Thao tác
             </ng-template>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-primary btn-sm" title="Tạo thanh toán hóa đơn thuốc" (click)="createPrescriptionPayment(dataItem)">
+                <button class="btn btn-primary" title="Tạo thanh toán hóa đơn thuốc" (click)="createPrescriptionPayment(dataItem)">
                     <img src="./assets/images/add-payment.png" alt="">Tạo hóa đơn
                 </button>
             </ng-template>

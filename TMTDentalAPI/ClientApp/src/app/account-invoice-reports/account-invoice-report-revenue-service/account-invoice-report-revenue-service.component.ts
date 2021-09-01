@@ -193,8 +193,28 @@ export class AccountInvoiceReportRevenueServiceComponent implements OnInit {
     return observable;
 
   }
-  exportExcel(grid: GridComponent) {
-    grid.saveAsExcel();
+  exportExcel() {
+    var val = Object.assign({}, this.filter) as RevenueServiceReportPar;
+    val.companyId = val.companyId || '';
+    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
+    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    this.accInvService.exportRevenueServiceReportExcel(val).subscribe((rs) => {
+      let filename = "BaoCaoDoanhThu_TheoTG";
+      let newBlob = new Blob([rs], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
   }
 
   public onExcelExport(args: any): void {
@@ -202,10 +222,12 @@ export class AccountInvoiceReportRevenueServiceComponent implements OnInit {
     const workbook = args.workbook;
     var sheet = args.workbook.sheets[0];
     var rows = sheet.rows;
-    sheet.mergedCells = ["A1:H1", "A2:H2"];
+    sheet.mergedCells = ["A1:G1", "A2:G2","B3:G3"];
     sheet.frozenRows = 3;
+    console.log(sheet.rows);
+    
     sheet.name = 'BaoCaoDoanhThu_TheoDV';
-    sheet.rows.splice(0, 1, { cells: [{
+    sheet.rows.splice(0, 0, { cells: [{
       value:"BÁO CÁO DOANH THU THEO DỊCH VỤ",
       textAlign: "center"
     }], type: 'header' });
@@ -213,6 +235,15 @@ export class AccountInvoiceReportRevenueServiceComponent implements OnInit {
     sheet.rows.splice(1, 0, { cells: [{
       value: `Từ ngày ${this.filter.dateFrom ? this.intlService.formatDate(this.filter.dateFrom, 'dd/MM/yyyy') : '...'} đến ngày ${this.filter.dateTo ? this.intlService.formatDate(this.filter.dateTo, 'dd/MM/yyyy') : '...'}`,
       textAlign: "center"
+    }], type: 'header' });
+    sheet.rows.splice(2, 1, { cells: [{
+      value:"Dịch vụ & Thuốc",
+      textAlign: "left",
+      color: "#0000",
+    },{
+      value:"Doanh thu",
+      textAlign: "right",
+      color: "#0000",
     }], type: 'header' });
     args.preventDefault();
     const data = this.allDataInvoiceExport.data;
@@ -223,12 +254,12 @@ export class AccountInvoiceReportRevenueServiceComponent implements OnInit {
        title: 'Doanh thu theo dịch vụ'
     })
 
-    rows.forEach(row => {
-      if (row.type === "data"){
-        row.cells[0].value = "Dịch vụ & thuốc: "+row.cells[0].value;
-        row.cells[1].value = "Tổng doanh thu   "+row.cells[1].value;
-      }
-    });
+    // rows.forEach(row => {
+    //   if (row.type === "data"){
+    //     row.cells[0].value = "Dịch vụ & thuốc: "+row.cells[0].value;
+    //     row.cells[1].value = "Tổng doanh thu   "+row.cells[1].value;
+    //   }
+    // });
   }
 
   onSelectProduct(e) {
@@ -243,6 +274,34 @@ export class AccountInvoiceReportRevenueServiceComponent implements OnInit {
     val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
     val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
     this.accInvService.getPrintRevenueServiceReport(val).subscribe(result=>this.printService.printHtml(result));
+  }
+
+  onExportPDF() {
+    var val = Object.assign({}, this.filter) as RevenueServiceReportPar;
+    val.companyId = val.companyId || '';
+    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
+    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    val.productId = val.productId || '';
+    this.loading = true;
+    this.accInvService.getRevenueServiceReportPdf(val).subscribe(res => {
+      this.loading = false;
+      let filename ="BaoCaodoanhthu_theoDV";
+
+      let newBlob = new Blob([res], {
+        type:
+          "application/pdf",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
   }
 
 

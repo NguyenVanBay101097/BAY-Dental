@@ -20,10 +20,13 @@ namespace ApplicationCore.Entities
         public DateTime Date { get; set; }
 
         /// <summary>
-        /// thời gian hẹn
+        /// thời gian hẹn -> Không sử dụng, lấy Time thông qua biến Date
         /// </summary>
         public string Time { get; set; }
 
+        /// <summary>
+        /// Không sử dụng -> biến Date đã có đủ Date và Time
+        /// </summary>
         public DateTime? DateTimeAppointment { get; set; }
 
         //ko cần cột này
@@ -65,8 +68,9 @@ namespace ApplicationCore.Entities
 
 
         /// <summary>
-        /// Trạng thái cuộc hẹn: Đang hẹn, Chờ khám, Đang khám, Hoàn thành, Hủy hẹn
-        /// confirmed, waiting, examination, done, cancel
+        /// confirmed : đang hẹn
+        /// arrived : đã đến
+        /// cancel : hủy hẹn
         /// </summary>
         public string State { get; set; }
 
@@ -76,5 +80,11 @@ namespace ApplicationCore.Entities
 
         public Guid? SaleOrderId { get; set; }
         public SaleOrder SaleOrder { get; set; }
+
+        /// <summary>
+        /// Khách hàng tái khám
+        /// </summary>
+        public bool IsRepeatCustomer { get; set; }
+
     }
 }

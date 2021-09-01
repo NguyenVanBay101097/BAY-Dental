@@ -1,0 +1,52 @@
+<div class="card">
+    <div class="card-body">
+        <h5 class="text-primary card-title">DOANH THU</h5>
+        <div class="revenue-report-chart">
+            <div class="revenue-report-chart-header">
+                <div class="text-center justify-content-center mb-3">
+                    <div class="box-content-header">Tổng doanh thu </div>
+                    <div class="box-content-subheader">{{revenue?.totalAmount | number}}</div>
+                </div>
+            </div>
+            <div class="mb-2">
+                <ng-container *ngIf="revenue?.totalAmount > 0; else elseTemplate">
+                    <!-- <kendo-chart style="height: 300px;">
+                        <kendo-chart-series >
+                            <kendo-chart-series-item type="pie" [data]="pieData" field="value" categoryField="category" colorField="color">
+                            </kendo-chart-series-item>
+                        </kendo-chart-series>
+                        <kendo-chart-legend [visible]="false"></kendo-chart-legend>
+                    </kendo-chart> -->
+                    <div style="display: block;">
+                        <canvas baseChart 
+                          [data]="pieChartData"                        
+                          [chartType]="pieChartType"
+                          [options]="pieChartOptions"
+                          [colors]="pieChartColors"
+                          [plugins]="pieChartPlugins"
+                          >
+                        </canvas>
+                      </div>
+                </ng-container>
+                <ng-template #elseTemplate>
+                    <div class="text-center justify-content-center">
+                       <img src="../../../../assets/icons/NoData.svg" class="img-nodata" >          
+                    </div>
+                </ng-template>
+            </div>
+            <div>
+                <div style="width:100%">
+                    <div *ngFor="let item of pieData" class=" d-flex justify-content-between">
+                        <div>
+                            <i class="fas fa-circle mr-2" [style.color]="item.color"></i><span
+                                style="color: gray;">{{getType(item.category)}}</span>
+                        </div>
+                        <div>
+                            <span class="numeric-revenue">{{item.value | number}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

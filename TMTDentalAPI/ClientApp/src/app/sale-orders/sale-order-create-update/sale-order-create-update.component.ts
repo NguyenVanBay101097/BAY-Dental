@@ -60,6 +60,7 @@ import { SaleOrderPromotionService } from '../sale-order-promotion.service';
 import { SaleOrderPaymentService } from 'src/app/core/services/sale-order-payment.service';
 import { SmsMessageService } from 'src/app/sms/sms-message.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import * as moment from 'moment';
 declare var $: any;
 
 @Component({
@@ -161,22 +162,24 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       dateOrderObj: [null, Validators.required],
     });
 
-    this.route.data.subscribe(data => {
-      this.partner = data.partner;
-    });
-
     if (this.saleOrderId) {
       this.saleOrderService.get(this.saleOrderId).subscribe((res: any) => {
         this.saleOrder = res;
+        this.partnerService.getCustomerInfo(this.saleOrder.partnerId).subscribe((result) => {
+          this.partner = result;
+        });
         this.updateFormGroup(res);
       });
     } else {
       this.saleOrderService.defaultGet().subscribe((res: any) => {
         this.saleOrder = res;
-        if (this.partner) {
-          this.saleOrder.partner = this.partner;
+        if (this.partnerId) {
+          this.partnerService.getCustomerInfo(this.partnerId).subscribe((result) => {
+            this.partner = result;
+            this.saleOrder.partner = result;
+          });
         }
-        
+
         this.updateFormGroup(res);
       });
     }
@@ -352,7 +355,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       diagnostic: line.diagnostic,
       toothType: line.toothType,
       isActive: line.isActive,
-      orderId: this.saleOrderId
+      orderId: this.saleOrderId,
+      date: moment(line.date).format('YYYY-MM-DD HH:mm'),
+      state: line.state
     };
 
     if (!this.saleOrderId) {
@@ -390,6 +395,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         })
       }
     }
+
   }
 
   computeAmountLine(lines) {
@@ -510,24 +516,32 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       return false;
     }
 
+    if (this.saleOrder.orderLines.length == 0) {
+      this.notify('error', 'Phải có ít nhất 1 dịch vụ trong phiếu điều trị');
+      return;
+    }
+
     this.updateFormGroupDataToSaleOrder();
     const val = this.getFormDataSave();
+
     if (!this.saleOrderId) {
       this.saleOrderService.create(val)
         .subscribe((r: any) => {
           this.saleOrderId = r.id;
+          this.router.navigate(['/sale-orders/form'], { queryParams: { id: this.saleOrderId } });
           //update line trước khi lưu
           if (this.lineSelected != null) {
             var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
             var rs = viewChild.updateLineInfo();
-            if (!rs) return;
-            viewChild.onUpdateSignSubject.subscribe(value => {
-              this.saleOrderService.actionConfirm([r.id]).subscribe(() => {
-                this.notify('success', 'Xác nhận thành công');
+            if (rs) {
+              viewChild.onUpdateSignSubject.subscribe(value => {
+                this.saleOrderService.actionConfirm([r.id]).subscribe(() => {
+                  this.notify('success', 'Xác nhận thành công');
 
-                this.loadSaleOrder();
-              });
-            })
+                  this.loadSaleOrder();
+                });
+              })
+            }
           } else {
             this.saleOrderService.actionConfirm([r.id]).subscribe(() => {
               this.notify('success', 'Xác nhận thành công');
@@ -596,6 +610,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         this.saleOrderId = result.id;
         //update line trước khi lưu
         if (this.lineSelected != null) {
+          this.router.navigate(['/sale-orders/form'], { queryParams: { id: result.id } });
           var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
           var rs = viewChild.updateLineInfo();
           if (!rs) return;
@@ -708,7 +723,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         name: val.name
       },
       productUOMQty: 1,
-      state: 'draft',
+      state: this.saleOrder.state,
       teeth: [],
       promotions: [],
       toothCategory: toothCategory,
@@ -719,7 +734,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       isActive: true,
       amountPromotionToOrder: 0,
       amountPromotionToOrderLine: 0,
-      amountDiscountTotal: 0
+      amountDiscountTotal: 0,
+      date: new Date()
     };
 
     this.saleOrder.orderLines.unshift(value);
@@ -977,13 +993,26 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onOpenSaleOrderPromotion() {
-    //Nếu có chi tiết đang chỉnh sửa thì cập nhật
-    if (this.lineSelected != null) {
-      var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
-      var rs = viewChild.updateLineInfo();
-      if (!rs) return;
+    var getData_OpenDialog = ()=> {
+       //Nếu có chi tiết đang chỉnh sửa thì cập nhật
+       if (this.lineSelected != null) {
+        var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
+        var rs = viewChild.updateLineInfo();
+        if (rs) {
+          viewChild.onUpdateSignSubject.subscribe(value => {
+            this.saleOrderService.get(this.saleOrderId).subscribe((rs:any) => {
+              this.resetData(rs);
+              this.openSaleOrderPromotionDialog();
+            });
+          })
+        }
+      } else {
+        this.saleOrderService.get(this.saleOrderId).subscribe((rs:any) => {
+          this.resetData(rs);
+          this.openSaleOrderPromotionDialog();
+        });
+      }
     }
-
     //Nếu phiếu điều trị chưa lưu
     if (!this.saleOrderId) {
       if (!this.formGroup.valid) {
@@ -993,17 +1022,13 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.updateFormGroupDataToSaleOrder();
       const val = this.getFormDataSave();
 
-      this.saleOrderService.create(val).pipe(
-        mergeMap((result: any) => {
-          this.saleOrderId = result.id;
-          this.router.navigate(['/sale-orders/form'], { queryParams: { id: result.id } });
-          return this.saleOrderService.get(this.saleOrderId);
-        })
-      ).subscribe((result: any) => {
-        this.resetData(result);
-        this.openSaleOrderPromotionDialog();
+      this.saleOrderService.create(val).subscribe((result: any) => {
+        this.saleOrderId = result.id;
+        this.router.navigate(['/sale-orders/form'], { queryParams: { id: result.id } });
+        getData_OpenDialog();
+       
       });
-    } else if (this.isDataChanged()) { //Nếu dữ liệu cần lưu lại
+    } else if (this.lineSelected != null) { //Nếu dữ liệu cần lưu lại
       if (!this.formGroup.valid) {
         return false;
       }
@@ -1011,13 +1036,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.updateFormGroupDataToSaleOrder();
       const val = this.getFormDataSave();
 
-      this.saleOrderService.update(this.saleOrderId, val).pipe(
-        mergeMap((result: any) => {
-          return this.saleOrderService.get(this.saleOrderId);
-        })
-      ).subscribe((result: any) => {
-        this.resetData(result);
-        this.openSaleOrderPromotionDialog();
+      this.saleOrderService.update(this.saleOrderId, val).subscribe((result: any) => {
+       getData_OpenDialog();
       });
     } else {
       this.openSaleOrderPromotionDialog();
@@ -1034,7 +1054,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     }
   }
 
-  onCancelEditLine(line) {
+  onCancelEditLine(line, index) {
+    if (!line.id)
+      this.saleOrder.orderLines.splice(index, 1);
     this.lineSelected = null;
   }
 
@@ -1136,13 +1158,27 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onUpdateOpenLinePromotion(i) {
-    //Nếu có chi tiết đang chỉnh sửa thì cập nhật
-    if (this.lineSelected != null) {
-      var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
-      var rs = viewChild.updateLineInfo();
-      if (!rs) return;
-    }
+    var getData_OpenDialog = ()=> {
+      //Nếu có chi tiết đang chỉnh sửa thì cập nhật
 
+      if (this.lineSelected != null) {
+        var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
+        var rs = viewChild.updateLineInfo();
+        if (rs) {
+          viewChild.onUpdateSignSubject.subscribe(value => {
+            this.saleOrderService.get(this.saleOrderId).subscribe(result => {
+              this.resetData(result);
+              this.onOpenLinePromotionDialog(i);
+            });
+          })
+        }
+      } else {
+        this.saleOrderService.get(this.saleOrderId).subscribe(result => {
+          this.resetData(result);
+          this.onOpenLinePromotionDialog(i);
+        });
+      }
+    }
     //Nếu phiếu điều trị chưa lưu
     if (!this.saleOrderId) {
       if (!this.formGroup.valid) {
@@ -1152,17 +1188,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.updateFormGroupDataToSaleOrder();
       const val = this.getFormDataSave();
 
-      this.saleOrderService.create(val).pipe(
-        mergeMap((result: any) => {
-          this.saleOrderId = result.id;
-          this.router.navigate(['/sale-orders/form'], { queryParams: { id: result.id } });
-          return this.saleOrderService.get(this.saleOrderId);
-        })
-      ).subscribe((result: any) => {
-        this.resetData(result);
-        this.onOpenLinePromotionDialog(i);
+      this.saleOrderService.create(val).subscribe((r: any) => {
+        this.saleOrderId = r.id;
+        this.router.navigate(['/sale-orders/form'], { queryParams: { id: r.id } });
+        getData_OpenDialog();
       });
-    } else if (this.linesDirty) { //Nếu dữ liệu cần lưu lại
+    } else if (this.lineSelected != null) { //Nếu dữ liệu cần lưu lại
       if (!this.formGroup.valid) {
         return false;
       }
@@ -1170,13 +1201,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       this.updateFormGroupDataToSaleOrder();
       const val = this.getFormDataSave();
 
-      this.saleOrderService.update(this.saleOrderId, val).pipe(
-        mergeMap((result: any) => {
-          return this.saleOrderService.get(this.saleOrderId);
-        })
-      ).subscribe((result: any) => {
-        this.resetData(result);
-        this.onOpenLinePromotionDialog(i);
+      this.saleOrderService.update(this.saleOrderId, val).subscribe((result: any) => {
+        getData_OpenDialog();
       });
     } else {
       this.onOpenLinePromotionDialog(i);
@@ -1244,5 +1270,24 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       });
     }
   }
+
+  onUpdateStateLine(state, line) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = state == 'done' ? 'Hoàn thành dịch vụ' : (state == 'cancel' ? 'Ngừng dịch vụ' : 'Lưu dịch vụ');
+    modalRef.componentInstance.body = `Bạn có ${state == 'done' ? 'xác nhận hoàn thành' : (state == 'cancel' ? 'muốn ngừng' : 'muốn lưu')} dịch vụ không ?`;
+    modalRef.componentInstance.body2 = state == 'cancel' ? 'Lưu ý: sau khi ngừng không thể chỉnh sửa dịch vụ' : '';
+    modalRef.result.then(() => {
+      this.saleOrderLineService.updateState(line.id, state).subscribe(r => {
+        this.notify('success', 'Lưu thành công');
+        line.state = state;
+        if (this.saleOrder.orderLines.every(x => x.state == 'done' || x.state == 'cancel') &&
+          this.saleOrder.orderLines.some(x => x.state == 'done')
+        ) {
+          this.saleOrder.state = 'done';
+        }
+      });
+    })
+  }
+
 }
 

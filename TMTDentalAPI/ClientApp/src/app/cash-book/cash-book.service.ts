@@ -60,6 +60,37 @@ export class CashBookDetailFilter {
   offset: number;
 }
 
+export class CashBookReportFilter {
+  dateFrom: string;
+  dateTo: string;
+  companyId: string;
+  groupBy: string;
+}
+
+export class CashBookReportItem {
+  date: string;
+  begin: number;
+  totalChi: number;
+  totalThu: number;
+  totalAmount: number;
+}
+
+export class SumaryCashBookFilter {
+  dateFrom: string;
+  dateTo: string;
+  companyId: string;
+  resultSelection: string;
+  partnerType: string;
+  accountCode: string;
+}
+
+export class SumaryCashBook {
+  type: string;
+  credit: number;
+  debit: number
+  balance: number;
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -69,7 +100,7 @@ export class CashBookService {
   constructor(
     private http: HttpClient,
     @Inject("BASE_API") private baseApi: string
-  ) {}
+  ) { }
 
   getMoney(val: CashBookPaged): Observable<PagedResult2<AccountMoveLineCashBookVM>> {
     return this.http.post<PagedResult2<AccountMoveLineCashBookVM>>(
@@ -83,6 +114,10 @@ export class CashBookService {
       this.baseApi + this.apiUrl + "/GetSumary",
       val
     );
+  }
+
+  getSumaryCashBookReport(val: any) {
+    return this.http.post<SumaryCashBook>(this.baseApi + this.apiUrl + "/GetSumaryCashBookReport", val);
   }
 
   getDetails(val: any) {
@@ -99,13 +134,19 @@ export class CashBookService {
     );
   }
 
+  getChartReport(val: any) {
+    return this.http.post<CashBookReportItem[]>(this.baseApi + this.apiUrl + "/GetChartReport", val);
+  }
+
   exportExcelFile(val: any) {
     return this.http.post(this.baseApi + this.apiUrl + "/ExportExcelFile", val, {
       responseType: "blob",
     });
   }
 
-  changeData(){
+  changeData() {
     return this.http.post(this.baseApi + this.apiUrl + "/ChangeData", null);
   }
+
+
 }

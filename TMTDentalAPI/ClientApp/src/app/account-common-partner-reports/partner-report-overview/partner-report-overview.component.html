@@ -1,0 +1,164 @@
+<div class="card">
+    <div class="card-body">
+        <!-- <h5 class="">Thống kê khách hàng điều trị</h5> -->
+        <div class="filter d-flex justify-content-between">
+            <div class="filter-left flex-1-1-100">
+                <div class="row-1 d-flex mr-3">
+                    <app-date-range-picker-filter [title]="'Ngày tạo phiếu điều trị'" [opens]="'right'" class="mr-2 flex-shrink-0" [startDate]="filter.dateFrom" [endDate]="filter.dateTo" (searchChange)="onSearchDateChange($event)" opens="right"></app-date-range-picker-filter>
+                    <kendo-combobox [popupSettings]="cbxPopupSettings" [placeholder]="'Tất cả chi nhánh'" class="mr-2 flex-shrink-0" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
+                    </kendo-combobox>
+                    <kendo-combobox [popupSettings]="cbxPopupSettings" [placeholder]="'Loại khách'" class="flex-shrink-0" [valueField]="'value'" [textField]="'text'" [filterable]="true" [data]="partnerTypes" (selectionChange)="onSelectPartnerType($event)" #pnTypeCbx>
+                    </kendo-combobox>
+                </div>
+                <div class="row-2 d-flex flex-wrap mr-3 filter-2">
+                    <div class="filter-address cursor-pointer d-flex mr-2 align-items-center border flex-shrink-0" (click)="openAddressDialog()">
+                        <div class="px-2">
+                            {{ getAddressFilterDisplay() }}
+                        </div>
+                        <div class="px-2 h-100 icon-filter d-flex align-items-center">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                    <kendo-combobox [popupSettings]="cbxPopupSettings" [placeholder]="'Giới tính'" class="mr-2 flex-shrink-0" [valueField]="'value'" [textField]="'text'" [filterable]="true" [data]="partnerGenders" (selectionChange)="onSelectPartnerGender($event)" #pnGenderCbx>
+                    </kendo-combobox>
+                    <div class="dropdown mr-2 flex-shrink-0">
+                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-download"></i> Xuất File
+          </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" (click)="exportExcel()">Xuất Excel</a>
+                            <a class="dropdown-item" (click)="onExportPDF()">Xuất PDF</a>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary flex-shrink-0" (click)="onPrint()">In báo cáo</button>
+                </div>
+            </div>
+            <div class="filter-right flex-0-0-auto">
+                <div class="o_searchview">
+                    <input class="o_searchview_input" placeholder="Tìm kiếm theo mã, tên, số điện thoại khách hàng" type="text" [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)" />
+                    <span class="o_searchview_icon fas fa-search"></span>
+                </div>
+                <div class="d-flex mt-2">
+                    <div class="w-50 mr-2">
+                        <kendo-combobox [popupSettings]="cbxPopupSettings" [placeholder]="'Nguồn khách hàng'" class="w-100" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="partnerSources" (selectionChange)="onSelectPartnerSource($event)" #pnSourceCbx>
+                        </kendo-combobox>
+                    </div>
+                    <div class="w-50">
+                        <kendo-multiselect [data]="filteredCategs" [valueField]="'id'" [textField]="'name'" class="w-100 cate-multi" [placeholder]="'Nhãn khách hàng'" [filterable]="true" (valueChange)="onCategChange($event)" #categMst>
+                        </kendo-multiselect>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- grid -->
+        <div class="total d-flex mt-2">
+            <div class="border mr-2 text-center">
+                <h6 class="text-center px-5 py-2">Tổng lượng khách
+                    <ng-template #popContentTotal>
+                        <span>
+                        <span>
+                            Tổng số khách hàng phát sinh phiếu điều trị mới
+                        </span>
+                        </span>
+                    </ng-template>
+                    <i class="fas fa-info-circle text-primary" popoverClass="popover-xl" placement="right" [ngbPopover]="popContentTotal" triggers="mouseenter:mouseleave"></i>
+                </h6>
+                <h5 class="text-primary transform-50"><span>{{ sumOldNew | number }}</span></h5>
+            </div>
+            <div class="border mr-2 text-center">
+                <h6 class="text-center px-5 py-2">Tổng doanh thu
+                    <ng-template #popContentTotalRevenue>
+                        <span>
+                            Doanh thu của các phiếu điều trị phát sinh mới
+                    </span>
+                    </ng-template>
+                    <i class="fas fa-info-circle text-primary" popoverClass="popover-xl" placement="right" [ngbPopover]="popContentTotalRevenue" triggers="mouseenter:mouseleave"></i>
+                </h6>
+                <h5 class="text-success transform-50 px-2">{{ revenueOld + revenueNew | number }}</h5>
+            </div>
+            <div class="border mr-2 text-center">
+                <h6 class="text-center px-5 py-2">Khách mới
+                    <ng-template #popContentTotalNew>
+                        <span>
+                            - Khách mới là khách hàng lần đầu tiên phát sinh phiếu điều trị <br>
+                            - Doanh thu khách mới tính dựa vào doanh thu của phiếu điều trị đầu tiên của khách hàng đó
+                    </span>
+                    </ng-template>
+                    <i class="fas fa-info-circle text-primary" popoverClass="popover-xl" placement="right" [ngbPopover]="popContentTotalNew" triggers="mouseenter:mouseleave"></i>
+                </h6>
+                <div class="d-flex">
+                    <div class="w-50 mx-5">
+                        <h6 class="">Số lượng</h6>
+                        <h5 class="text-primary">{{ sumNew | number }}</h5>
+                    </div>
+                    <div class="w-auto mx-5">
+                        <h6 class="text-nowrap">Doanh thu</h6>
+                        <h5 class="text-success text-nowrap">{{ revenueNew | number }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="border mr-2 text-center">
+                <h6 class="text-center px-5 py-2">Khách quay lại
+                    <ng-template #popContentTotalOld>
+                        - Khách quay lại là khách hàng đã từng phát phát sinh phiếu điều trị và phát sinh thêm phiếu điều trị mới <br>
+                        - Doanh thu khách quay lại tính dựa vào doanh thu của những phiếu điều trị phát sinh mới, trừ phiếu điều trị đầu tiên (nếu có).
+                    </ng-template>
+                    <i class="fas fa-info-circle text-primary" popoverClass="popover-xl" placement="left" [ngbPopover]="popContentTotalOld" triggers="mouseenter:mouseleave"></i>
+                </h6>
+                <div class="d-flex">
+                    <div class="w-50 mx-5">
+                        <h6 class="">Số lượng</h6>
+                        <h5 class="text-primary">{{ sumOld | number }}</h5>
+                    </div>
+                    <div class="w-auto mx-5">
+                        <h6 class="text-nowrap">Doanh thu</h6>
+                        <h5 class="text-success text-nowrap">{{ revenueOld | number }}</h5>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="overflow-auto">
+            <kendo-grid [resizable]="true" #grid class="mt-2" [loading]="loading" [data]="gridData" [pageSize]="this.filter.limit" [skip]="this.filter.offset" [pageable]="true" (pageChange)="pageChange($event)">
+                <kendo-grid-column field="name" title="Khách hàng" width="110">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        <a class="text-primary" [routerLink]="['/partners/customer/' + dataItem.id]">{{dataItem.name}}</a>
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="age" title="Tuổi" width="40"> </kendo-grid-column>
+                <kendo-grid-column field="gender" title="Giới tính" width="60">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        {{ getGenderDisplay(dataItem.gender) }}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="address" title="Địa chỉ" width="150">
+                </kendo-grid-column>
+                <kendo-grid-column class="text-right" [headerClass]="'text-right'" field="revenue" 
+                title="Doanh thu" width="70">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        {{ dataItem.revenue | number }}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="sourceName" title="Nguồn" width="90">
+                </kendo-grid-column>
+                <kendo-grid-column field="categories" title="Nhãn" width="120">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        <div class="d-flex">
+                            <span *ngFor="let tag of dataItem.categories" class="badge badge-secondary mr-2" [ngClass]="'o_tag_color_' + tag.color">
+                        {{ tag.name }}
+                      </span>
+                        </div>
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="orderState" title="Tình trạng điều trị" width="100">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{ orderStateDisplay[dataItem.orderState] || "Chưa phát sinh" }}
+                    </ng-template>
+                </kendo-grid-column>
+                <div *kendoGridDetailTemplate="let dataItem">
+                    <app-partner-report-sale-order [filter]="getFilterDetail(dataItem)"></app-partner-report-sale-order>
+                </div>
+            </kendo-grid>
+        </div>
+    </div>
+</div>

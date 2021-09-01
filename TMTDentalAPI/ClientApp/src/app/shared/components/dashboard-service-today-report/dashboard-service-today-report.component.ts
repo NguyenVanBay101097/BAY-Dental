@@ -15,7 +15,7 @@ import { SaleReportSearch, SaleReportService } from 'src/app/sale-report/sale-re
 export class DashboardServiceTodayReportComponent implements OnInit {
 
   @ViewChild(DataBindingDirective, { static: true }) dataBinding: DataBindingDirective;
-  
+
   public gridData: any[];
   public gridView: any[];
 
@@ -33,9 +33,9 @@ export class DashboardServiceTodayReportComponent implements OnInit {
     }
   };
 
-  constructor(private intlService: IntlService, 
-    private authService: AuthService, 
-    private saleReportService: SaleReportService, 
+  constructor(private intlService: IntlService,
+    private authService: AuthService,
+    private saleReportService: SaleReportService,
     private router: Router
   ) { }
 
@@ -141,8 +141,18 @@ export class DashboardServiceTodayReportComponent implements OnInit {
     }
   }
 
-  getTeethDisplay(teeth) {
-    return teeth.map(x => x.name).join(',');
+  showTeethList(toothType, teeth) {
+    //dựa vào this.line
+    switch (toothType) {
+      case 'whole_jaw':
+        return 'Nguyên hàm';
+      case 'upper_jaw':
+        return 'Hàm trên';
+      case 'lower_jaw':
+        return 'Hàm dưới';
+      default:
+        return teeth.map(x => x.name).join(', ');
+    }
   }
 
   getStateDisplay(state) {
@@ -151,6 +161,8 @@ export class DashboardServiceTodayReportComponent implements OnInit {
         return 'Đang điều trị';
       case 'done':
         return 'Hoàn thành';
+      case 'cancel':
+        return 'Ngừng điều trị';
       default:
         return 'Nháp';
     }

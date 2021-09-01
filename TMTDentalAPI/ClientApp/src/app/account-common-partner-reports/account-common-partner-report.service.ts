@@ -108,6 +108,7 @@ export class ReportPartnerDebitDetailRes {
     debit: number;
     credit: number;
     end: number;
+    ref: string;
 }
 
 @Injectable()
@@ -119,7 +120,7 @@ export class AccountCommonPartnerReportService {
         return this.http.post<AccountCommonPartnerReportItem[]>(this.baseApi + this.apiUrl + "/GetSummary", val);
     }
 
-    getSummaryPartner(val: AccountCommonPartnerReportSearchV2): Observable<AccountCommonPartnerReport> {
+    getSummaryPartner(val): Observable<AccountCommonPartnerReport> {
         return this.http.post<AccountCommonPartnerReport>(this.baseApi + this.apiUrl + "/GetSummaryPartner", val);
     }
 
@@ -153,5 +154,28 @@ export class AccountCommonPartnerReportService {
 
     reportPartnerDebitSummary(val: ReportPartnerDebitReq) {
         return this.http.post(this.baseApi + this.apiUrl + "/ReportPartnerDebitSummary", val);
+    }
+
+    printReportPartnerDebit(val: ReportPartnerDebitReq) {
+        return this.http.post(this.baseApi + "AccountCommonPartnerReport/PrintReportPartnerDebit", val,{ responseType: "text" });
+    }
+
+    getReportPartnerDebitPdf(val:any ) {
+        return this.http.get(this.baseApi + this.apiUrl + "/GetReportPartnerDebitPdf", {params: new HttpParams({fromObject: val}),  responseType: 'blob'  });
+    }
+
+    printGetSummary(val) {
+        return this.http.post(this.baseApi + "AccountCommonPartnerReport/PrintGetSummary", val,{ responseType: "text" });
+    }
+
+    getSummaryPdf(val:any ) {
+        return this.http.post(this.baseApi + this.apiUrl + "/GetSummaryPdf",val,{ responseType: "blob" });
+    }
+
+    exportReportPartnerDebitExcel(paged) {
+        return this.http.post(
+            this.baseApi + this.apiUrl + "/ExportReportPartnerDebitExcel", paged,
+            { responseType: "blob" }
+        );
     }
 }

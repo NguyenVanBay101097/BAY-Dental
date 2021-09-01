@@ -18,7 +18,8 @@ namespace ApplicationCore.Entities
             HolidayAllowance = 0;
             CommissionSalary = 0;
             AmercementMoney = 0;
-            TaxNSocialInsurance = 0;
+            Tax = 0;
+            SocialInsurance = 0;
         }
 
         /// <summary>
@@ -130,7 +131,7 @@ namespace ApplicationCore.Entities
         /// </summary>
         public decimal? HolidayAllowance { get; set; }
         /// <summary>
-        /// tổng cộng lương:tổng các khoản lương chưa có hoa hồng
+        /// Lương gross: bao gồm lương + trợ cấp + hoa hồng + bảo hiểm + thuế...
         /// </summary>
         public decimal? TotalSalary { get; set; }
         /// <summary>
@@ -138,9 +139,13 @@ namespace ApplicationCore.Entities
         /// </summary>
         public decimal? CommissionSalary { get; set; }
         /// <summary>
-        /// Thuế và BHXH
+        /// Thuế
         /// </summary>
-        public decimal? TaxNSocialInsurance { get; set; }
+        public decimal? Tax { get; set; }
+        /// <summary>
+        /// BHXH
+        /// </summary>
+        public decimal? SocialInsurance { get; set; }
         /// <summary>
         /// tạm ứng lương
         /// </summary>
@@ -151,7 +156,7 @@ namespace ApplicationCore.Entities
         /// </summary>
         public decimal? AmercementMoney { get; set; }
         /// <summary>
-        /// tiền thực nhận: bằng totalsalary + commission - amercement - advance
+        /// Lương net = lương gross - bhxh - thuế
         /// </summary>
         public decimal? NetSalary { get; set; }
         /// <summary>

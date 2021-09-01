@@ -7,14 +7,11 @@
             <div class="search border-bottom flex-0-0-auto">
                 <div class="has-search">
                     <span class="fa fa-search form-control-feedback"></span>
-                    <input [(ngModel)]="searchProduct" (ngModelChange)="searchProductUpdate.next($event)"
-                        class="form-control size-text-14 border-0" placeholder="Tìm kiếm dịch vụ" type="text">
+                    <input [(ngModel)]="searchProduct" (ngModelChange)="searchProductUpdate.next($event)" class="form-control size-text-14 border-0" placeholder="Tìm kiếm dịch vụ" type="text">
                 </div>
             </div>
             <ul class="list-group flex-1-1-100 overflow-auto">
-                <li [ngClass]="{'active': productId == item.id}" (click)="selectProduct(item)"
-                    *ngFor="let item of filteredProducts;index as i"
-                    class="list-group-item cate-item d-flex justify-content-between align-items-center">
+                <li [ngClass]="{'active': productId == item.id}" (click)="selectProduct(item)" *ngFor="let item of filteredProducts;index as i" class="list-group-item cate-item d-flex justify-content-between align-items-center">
                     <span class="mr-1">{{item.name}}</span>
                 </li>
             </ul>
@@ -23,22 +20,16 @@
     <div class="pms-right border h-100 overflow-auto d-flex flex-column p-2">
         <div class="flex-0-0-auto mb-2 d-flex align-items-center">
             <div class="d-flex flex-fill">
-                <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo"
-                    (searchChange)="searchChangeDate($event)">
-                </app-tai-date-range-filter-dropdown>
-                <button class="btn btn-sm btn-primary ml-2" (click)="onSend()">Tạo tin nhắn</button>
+                <app-date-range-picker-filter [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="searchChangeDate($event)" opens="right"></app-date-range-picker-filter>
+                <button class="btn btn-primary ml-2" (click)="onSend()">Tạo tin nhắn</button>
             </div>
             <div class="has-search flex-fill">
                 <span class="fa fa-search form-control-feedback"></span>
-                <input [(ngModel)]="search" (ngModelChange)="this.searchPartnerUpdate.next($event)"
-                    class="form-control size-text-14" placeholder="Tìm kiếm theo họ tên, số điện thoại"
-                    type="text">
+                <input [(ngModel)]="search" (ngModelChange)="this.searchPartnerUpdate.next($event)" class="form-control size-text-14" placeholder="Tìm kiếm theo họ tên, số điện thoại" type="text">
             </div>
         </div>
         <div class="flex-1-1-100 h-100 overflow-hidden">
-            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-                [selectable]="true" [kendoGridSelectBy]="'saleOrderLineId'" [selectedKeys]="selectedIds"
-                (pageChange)="pageChange($event)">
+            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" [selectable]="true" [kendoGridSelectBy]="'saleOrderLineId'" [selectedKeys]="selectedIds" (pageChange)="pageChange($event)">
                 <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
                 <kendo-grid-column field="partnerName" title="Khách hàng" width="200">
                 </kendo-grid-column>

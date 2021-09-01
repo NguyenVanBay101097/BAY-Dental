@@ -37,7 +37,9 @@
     transition: all .3s ease-out;
     padding: 5px 10px;
     border-radius: 5px;
+    font-size: 1rem;
   }
+
   
   input[type="radio"]:checked+label {
     background-color: #007bff;
@@ -120,4 +122,7 @@
 
 .default {
   background-color: #007bff;
+}
+.custom-control-label {
+  font-size: 1rem;
 }

@@ -5,11 +5,12 @@ import { GridComponent, GridDataResult } from '@progress/kendo-angular-grid';
 import { saveAs } from '@progress/kendo-file-saver';
 import * as moment from 'moment';
 import { Subject, Observable, zip, of, forkJoin } from 'rxjs';
-import { debounceTime, delay, distinctUntilChanged, map } from 'rxjs/operators';
+import { debounceTime, defaultIfEmpty, delay, distinctUntilChanged, map } from 'rxjs/operators';
 import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/company.service';
 import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
 import { SaleOrderPaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { SaleOrderLinePaged } from 'src/app/partners/partner.service';
+import { PrintService } from 'src/app/shared/services/print.service';
 
 @Component({
   selector: 'app-sale-order-management',
@@ -43,7 +44,8 @@ export class SaleOrderManagementComponent implements OnInit {
     private companyService: CompanyService,
     private saleOrderService: SaleOrderService,
     private router: Router,
-    private saleOrderLineService: SaleOrderLineService
+    private saleOrderLineService: SaleOrderLineService,
+    private printService: PrintService
   ) { }
 
   ngOnInit() {
@@ -67,7 +69,7 @@ export class SaleOrderManagementComponent implements OnInit {
     })
   }
 
-  loadDataFromApi() {
+  getPageParam() {
     var val = new SaleOrderPaged();
     val.search = this.search ? this.search : '';
     val.companyId = this.company ? this.company.id : "";
@@ -79,6 +81,10 @@ export class SaleOrderManagementComponent implements OnInit {
       val.overIntervalNbr = this.dateOrderTo.intervalNbr;
     }
 
+    return val;
+  }
+  loadDataFromApi() {
+    var val = this.getPageParam();
     this.saleOrderService.getPaged(val).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
@@ -148,11 +154,18 @@ export class SaleOrderManagementComponent implements OnInit {
 
     const observables = [];
     const workbook = args.workbook;
+    var sheet = workbook.sheets[0];
     const rows = workbook.sheets[0].rows;
-
+    sheet.mergedCells = ["A1:F1"];
+    sheet.frozenRows = 2;
+    sheet.rows.splice(0, 0, { cells: [{
+      value:"BÁO CÁO QUẢN LÝ ĐIỀU TRỊ CHƯA HOÀN THÀNH",
+      textAlign: "center"
+    }], type: 'header' });
+    sheet.name = "QuanLyDieuTri";
     for (var rowIndex = 1; rowIndex < rows.length; rowIndex++) {
       var row = rows[rowIndex];
-      for (var cellIndex = 0; cellIndex < row.cells.length; cellIndex ++) {
+      for (var cellIndex = 0; cellIndex < row.cells.length; cellIndex++) {
         if (cellIndex == 0) {
           row.cells[cellIndex].format = "dd/MM/yyyy HH:mm";
         } else if (cellIndex == 3 || cellIndex == 4 || cellIndex == 5) {
@@ -165,7 +178,7 @@ export class SaleOrderManagementComponent implements OnInit {
     // Aternatively set custom styles for the details
     // https://www.telerik.com/kendo-angular-ui/components/excelexport/api/WorkbookSheetRowCell/
     const headerOptions = rows[0].cells[0];
-    const data = this.saleOrdersAllData.data;
+    const data = this.saleOrdersAllData ? this.saleOrdersAllData.data : [];
 
     // Fetch the data for all details
     for (let idx = 0; idx < data.length; idx++) {
@@ -180,7 +193,9 @@ export class SaleOrderManagementComponent implements OnInit {
       ));
     }
 
-    forkJoin(observables).subscribe((result: any) => {
+    forkJoin(observables).pipe(
+      defaultIfEmpty([]),
+    ).subscribe((result: any) => {
       // add the detail data to the generated master sheet rows
       // loop backwards in order to avoid changing the rows index
       for (let idx = result.length - 1; idx >= 0; idx--) {
@@ -193,7 +208,7 @@ export class SaleOrderManagementComponent implements OnInit {
           productIdx--
         ) {
           const product = products[productIdx];
-          rows.splice(idx + 2, 0, {
+          rows.splice(idx + 3, 0, {
             cells: [
               {},
               { value: product.name },
@@ -206,7 +221,7 @@ export class SaleOrderManagementComponent implements OnInit {
         }
 
         // add the detail header
-        rows.splice(idx + 2, 0, {
+        rows.splice(idx + 3, 0, {
           cells: [
             {},
             Object.assign({}, headerOptions, { value: "Dịch vụ" }),
@@ -218,46 +233,69 @@ export class SaleOrderManagementComponent implements OnInit {
         });
       }
 
-      debugger;
       // create a Workbook and save the generated data URL
       // https://www.telerik.com/kendo-angular-ui/components/excelexport/api/Workbook/
       new Workbook(workbook).toDataURL().then((dataUrl: string) => {
         // https://www.telerik.com/kendo-angular-ui/components/filesaver/
-        saveAs(dataUrl, "dieu_tri_chua_hoan_thanh.xlsx");
+        saveAs(dataUrl, "QuanLyDieuTri.xlsx");
         this.loading = false;
       });
     });
   }
 
-  exportExcelFile(grid: GridComponent) {
-    grid.saveAsExcel();
-    // var paged = new SaleOrderPaged();
-    // paged.search = this.search || '';
-    // paged.companyId = this.company ? this.company.id : "";
-    // paged.state = "sale";
-    // if (this.dateOrderTo) {
-    //   paged.overInterval = this.dateOrderTo.interval;
-    //   paged.overIntervalNbr = this.dateOrderTo.intervalNbr;
-    // }
+  exportExcelFile() {
+    var val = this.getPageParam();
+    this.saleOrderService.exportManagementExcel(val).subscribe((res) => {
+      let filename = "QuanLyDieuTri";
 
-    // this.saleOrderService.exportExcelFile(paged).subscribe((res) => {
-    //   let filename = "Quản lý điều trị chưa hoàn thành";
+      let newBlob = new Blob([res], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
 
-    //   let newBlob = new Blob([res], {
-    //     type:
-    //       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    //   });
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
+  }
 
-    //   let data = window.URL.createObjectURL(newBlob);
-    //   let link = document.createElement("a");
-    //   link.href = data;
-    //   link.download = filename;
-    //   link.click();
-    //   setTimeout(() => {
-    //     // For Firefox it is necessary to delay revoking the ObjectURL
-    //     window.URL.revokeObjectURL(data);
-    //   }, 100);
-    // });
+  onExportPDF() {
+    var val = this.getPageParam();
+    this.saleOrderService.managementPdf(val).subscribe(res => {
+      this.loading = false;
+      let filename = "BaoCaoDieuTri";
+
+      let newBlob = new Blob([res], {
+        type:
+          "application/pdf",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
+  }
+
+
+  onPrint() {
+    var val = this.getPageParam();
+    this.loading = true;
+    this.saleOrderService.printManagement(val).subscribe((result: any) => {
+      this.loading = false;
+      this.printService.printHtml(result);
+    });
   }
 
 }

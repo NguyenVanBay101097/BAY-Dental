@@ -28,20 +28,20 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
-                    <button *ngIf="!program.active" type="button" class="btn btn-primary btn-sm" accesskey="s"
+                    <button *ngIf="!program.active" type="button" class="btn btn-primary" accesskey="s"
                         (click)="onSave()">
                         Lưu
                     </button>
-                    <button *ngIf="!program.active" type="button" class="btn btn-primary btn-sm"
+                    <button *ngIf="!program.active" type="button" class="btn btn-primary"
                         (click)="onSaveActive()">
                         Lưu và kích hoạt
                     </button>
                     <button *ngIf="!program.isPaused && program.active && program.statusDisplay == 'Đang chạy'"
-                        type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onPause()">
+                        type="button" class="btn btn-primary" accesskey="s" (click)="onPause()">
                         Tạm ngừng
                     </button>
                     <button *ngIf="program.isPaused && program.active && program.statusDisplay != 'Hết hạn'"
-                        type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onActive()">
+                        type="button" class="btn btn-primary" accesskey="s" (click)="onActive()">
                         Kích hoạt
                     </button>
                 </div>
@@ -94,14 +94,14 @@
                                                 <input type="radio" class="btn-check" formControlName="promoCodeUsage"
                                                     id="radio686_no_code_needed" value="no_code_needed"
                                                     autocomplete="off" (change)="ChangPromoCodeUsage('no_code_needed')">
-                                                <label class="btn btn-sm btn-outline-primary button-radio rounded-left"
+                                                <label class="btn btn-outline-primary button-radio rounded-left"
                                                     [class.disabled]="program.active" for="radio686_no_code_needed">Tự
                                                     động</label>
 
                                                 <input type="radio" class="btn-check" formControlName="promoCodeUsage"
                                                     id="radio686_code_needed" value="code_needed" autocomplete="off"
                                                     (change)="ChangPromoCodeUsage('code_needed')">
-                                                <label class="btn btn-sm btn-outline-primary button-radio"
+                                                <label class="btn btn-outline-primary button-radio"
                                                     [class.disabled]="program.active" for="radio686_code_needed">Mã
                                                     khuyến mãi</label>
                                             </div>
@@ -176,13 +176,13 @@
                                                 <input type="radio" class="btn-check" formControlName="discountType"
                                                     id="radioDiscountPercent" value="percentage" autocomplete="off"
                                                     (change)="ChangeDiscountType('percentage')">
-                                                <label class="btn btn-sm btn-outline-primary button-radio rounded-left"
+                                                <label class="btn btn-outline-primary button-radio rounded-left"
                                                     [class.disabled]="program.active" for="radioDiscountPercent">Phần
                                                     trăm</label>
                                                 <input type="radio" class="btn-check" formControlName="discountType"
                                                     id="radioDiscountFixed" value="fixed_amount" autocomplete="off"
                                                     (change)="ChangeDiscountType('fixed_amount')">
-                                                <label class="btn btn-sm btn-outline-primary button-radio"
+                                                <label class="btn btn-outline-primary button-radio"
                                                     [class.disabled]="program.active" for="radioDiscountFixed">Số
                                                     tiền</label>
                                             </div>

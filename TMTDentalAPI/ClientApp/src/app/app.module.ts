@@ -26,6 +26,9 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { PartnerGeneralSettingsComponent } from './partner-general-settings/partner-general-settings.component';
 import { AppHomeComponent } from './app-home/app-home.component';
+import { AppSidebarModule } from "./layout/sidebar/app-sidebar.module";
+import { AppHeaderModule } from "./layout/header/app-header.module";
+import { MyCustomNgbModule } from "./shared/my-custom-ngb.module";
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -52,7 +55,10 @@ registerLocaleData(localeVi, "vi");
         blacklistedRoutes: [],
       },
     }),
+    AppSidebarModule,
+    AppHeaderModule,
     SharedModule,
+    MyCustomNgbModule,
     RoutingsModule,
     MomentModule.forRoot({
       relativeTimeThresholdOptions: {

@@ -22,6 +22,7 @@
 
 ._wrapper {
     max-width: 400px;
+    min-width: 400px;
 }
 
 ._wrapper .input-search {

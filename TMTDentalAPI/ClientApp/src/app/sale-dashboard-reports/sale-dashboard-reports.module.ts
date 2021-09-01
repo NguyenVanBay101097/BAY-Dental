@@ -11,12 +11,20 @@ import { SaleDashboardReportChartFlowYearComponent } from './sale-dashboard-repo
 import { SaleDashboardReportChartFlowMonthComponent } from './sale-dashboard-report-chart-flow-month/sale-dashboard-report-chart-flow-month.component';
 import { FinancialRevenueReportComponent } from './financial-revenue-report/financial-revenue-report.component';
 import { SharedModule } from '../shared/shared.module';
+import { SaleDashboardInvoiceReportComponent } from './sale-dashboard-invoice-report/sale-dashboard-invoice-report.component';
+import { AccountInvoiceReportsModule } from '../account-invoice-reports/account-invoice-reports.module';
+import { SaleDashboardCashbookReportComponent } from './sale-dashboard-cashbook-report/sale-dashboard-cashbook-report.component';
+import { SaleDashboardApCrChartComponent } from './sale-dashboard-ap-cr-chart/sale-dashboard-ap-cr-chart.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 @NgModule({
   declarations: [
     SaleDashboardReportFormComponent,
     SaleDashboardReportChartFlowYearComponent,
     SaleDashboardReportChartFlowMonthComponent,
-    FinancialRevenueReportComponent
+    FinancialRevenueReportComponent,
+    SaleDashboardInvoiceReportComponent,
+    SaleDashboardCashbookReportComponent,
+    SaleDashboardApCrChartComponent, 
   ],
   imports: [
     CommonModule,
@@ -26,7 +34,9 @@ import { SharedModule } from '../shared/shared.module';
     FormsModule,
     ReactiveFormsModule,
     AccountCommonPartnerReportsModule,
-    RevenueReportModule
+    AccountInvoiceReportsModule,
+    RevenueReportModule,
+    NgbModule
   ]
 })
 export class SaleDashboardReportsModule { }

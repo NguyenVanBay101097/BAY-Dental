@@ -13,12 +13,12 @@
             <div class="btn-group" style="width: 100%;" hasGroups [groups]="'medicineOrder.group_medicine'">
                 <input class="btn-check" type="radio" [(ngModel)]="type2" name="radioButton" id="product"
                     value="product" (change)="onChangeType($event.target.value)">
-                <label class="btn btn-sm btn-outline-primary" for="product">
+                <label class="btn btn-outline-primary" for="product">
                     Vật tư
                 </label>
                 <input class="btn-check" type="radio" [(ngModel)]="type2" name="radioButton" id="medicine"
                     value="medicine" (change)="onChangeType($event.target.value)">
-                <label class="btn btn-sm btn-outline-primary" for="medicine">
+                <label class="btn btn-outline-primary" for="medicine">
                     Thuốc
                 </label>
             </div>

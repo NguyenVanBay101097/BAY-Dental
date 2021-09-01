@@ -8,7 +8,7 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button class="btn btn-primary btn-sm"
+                    <button class="btn btn-primary"
                         (click)="createItem()" accesskey="c">Thêm</button>
                 </div>
             </div>
@@ -17,7 +17,7 @@
         </div>
         <div class="o_cp_right">
             <kendo-combobox [(ngModel)]="defaultFilter" (selectionChange)="onStateSelectChange($event)"
-            placeholder="Tất cả" class="kendo-combobox-sm mr-1" [popupSettings]="{width: 'auto'}"
+            placeholder="Tất cả" class="mr-1" [popupSettings]="{width: 'auto'}"
             [data]="filterCompanyStatus" [textField]="'name'" [valueField]="'value'">
             </kendo-combobox>
         </div>
@@ -34,13 +34,13 @@
                 Thao tác
             </ng-template>
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="editItem(dataItem)">
+                <button class="btn btn-success mr-2" title="Sửa" (click)="editItem(dataItem)">
                     <span class="far fa-edit"></span></button>
-                <button class="btn btn-danger btn-sm mr-2" title="Xóa" (click)="deleteItem(dataItem)">
+                <button class="btn btn-danger mr-2" title="Xóa" (click)="deleteItem(dataItem)">
                     <span class="far fa-trash-alt"></span></button>
-                <button *ngIf="dataItem.active == true" kendoButton (click)="actionActive(dataItem, false)" class="btn btn-danger btn-sm mr-2"><i title="Ẩn nhân viên"
+                <button *ngIf="dataItem.active == true" kendoButton (click)="actionActive(dataItem, false)" class="btn btn-danger mr-2"><i title="Ẩn nhân viên"
                     class="fas fa-eye-slash"></i></button>
-                <button *ngIf="dataItem.active == false" kendoButton (click)="actionActive(dataItem, true)" class="btn btn-success btn-sm mr-2"><i title="Hiện nhân viên"
+                <button *ngIf="dataItem.active == false" kendoButton (click)="actionActive(dataItem, true)" class="btn btn-success mr-2"><i title="Hiện nhân viên"
                     class="fas fa-eye"></i></button>
             </ng-template>
         </kendo-grid-column>

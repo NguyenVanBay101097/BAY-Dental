@@ -39,10 +39,7 @@ namespace Infrastructure.Services
                 await InsertAppointmentSequence();
                 entity.Name = await sequenceService.NextByCode("appointment");
             }
-            if (!string.IsNullOrEmpty(entity.Time))
-            {
-                entity.DateTimeAppointment = entity.Date.Add(TimeSpan.Parse(entity.Time));
-            }
+          
             return await base.CreateAsync(entity);
         }
 
@@ -169,7 +166,7 @@ namespace Infrastructure.Services
 
         public async Task<long> GetCount(AppointmentGetCountVM val)
         {
-            var query = GetSearchQuery(state: val.State, dateFrom: val.DateFrom, dateTo: val.DateTo, isLate: val.IsLate, doctorId: val.DoctorId, search: val.Search);
+            var query = GetSearchQuery(state: val.State, dateFrom: val.DateFrom, dateTo: val.DateTo, isLate: val.IsLate, doctorId: val.DoctorId, search: val.Search, companyId: val.CompanyId );
             return await query.LongCountAsync();
         }
 
@@ -182,9 +179,9 @@ namespace Infrastructure.Services
             if (isLate.HasValue)
             {
                 if (isLate.Value)
-                    query = query.Where(x => x.Date < today);
+                    query = query.Where(x => x.Date.Date < DateTime.Today);
                 else
-                    query = query.Where(x => x.Date >= today);
+                    query = query.Where(x => x.Date.Date >= DateTime.Today);
             }
 
             if (!string.IsNullOrEmpty(search))
@@ -214,7 +211,17 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(state))
             {
                 stateList = state.Split(",");
-                query = query.Where(x => stateList.Contains(x.State));
+                //if (stateList.Contains("overdue"))
+                //{
+                //    query = query.Where(x => x.Date.Date < DateTime.Now.Date);
+                //    stateList = stateList.Where(x=> !x.Contains("overdue")).ToArray();
+                //} 
+                //else
+                //{
+                //    query = query.Where(x => x.Date.Date >= DateTime.Now.Date);
+                //}
+                if (stateList.Any())
+                    query = query.Where(x => stateList.Contains(x.State));
             }
 
             if (partnerId.HasValue)
@@ -394,10 +401,6 @@ namespace Infrastructure.Services
             var appointment = await SearchQuery(x => x.Id == id).Include(x => x.AppointmentServices).ThenInclude(x => x.Product).FirstOrDefaultAsync();
             await ComputeAppointmentService(appointment, val);
             appointment = _mapper.Map(val, appointment);
-            if (!string.IsNullOrEmpty(val.Time) && val.Date.HasValue)
-            {
-                appointment.DateTimeAppointment = val.Date.Value.Add(TimeSpan.Parse(val.Time));
-            }
             await UpdateAsync(appointment);
         }
 
@@ -468,6 +471,13 @@ namespace Infrastructure.Services
             }
             worksheet.Column(4).Style.Numberformat.Format = "@";
             worksheet.Cells.AutoFitColumns();
+        }
+
+        public async Task<IEnumerable<EmployeeSimple>> GetListDoctor(AppointmentDoctorReq val)
+        {
+            var query = GetSearchQuery(dateFrom: val.DateFrom, dateTo: val.DateTo);
+            var res = await query.Where(x => x.DoctorId.HasValue).Select(x => new EmployeeSimple() { Id = x.DoctorId.Value, Name = x.Doctor.Name }).Distinct().ToListAsync();
+            return res;
         }
     }
 }

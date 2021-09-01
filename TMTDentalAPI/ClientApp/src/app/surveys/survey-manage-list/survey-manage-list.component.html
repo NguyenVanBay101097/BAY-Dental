@@ -3,9 +3,8 @@
         <div class="o_cp_buttons">
             <div class="o_form_buttons_view">
                 <div class="d-flex">
-                    <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'" [dateTo]="dateTo" (searchChange)="onSearchDateChange($event)">
-                    </app-tai-date-range-filter-dropdown>
-                    <kendo-combobox [data]="filteredEmployees" [textField]="'name'" class="custom btn-sm" #empCbx [filterable]="true" [placeholder]="'Tất cả nhân viên'" (valueChange)="onChaneEmp($event)" [valueField]="'id'">
+                    <app-date-range-picker-filter [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
+                    <kendo-combobox [data]="filteredEmployees" [textField]="'name'" #empCbx [filterable]="true" [placeholder]="'Tất cả nhân viên'" (valueChange)="onChaneEmp($event)" [valueField]="'id'">
                     </kendo-combobox>
                 </div>
             </div>
@@ -27,7 +26,7 @@
         <div class="o_cp_buttons">
             <div class="o_form_buttons_view">
                 <div class="d-flex">
-                    <kendo-combobox [data]="filteredStatus" [textField]="'name'" class="custom btn-sm" [placeholder]="'Tất cả trạng thái'" (valueChange)="onStatusChange($event)" [valueField]="'value'">
+                    <kendo-combobox [data]="filteredStatus" [textField]="'name'" [placeholder]="'Tất cả trạng thái'" (valueChange)="onStatusChange($event)" [valueField]="'value'">
                     </kendo-combobox>
                 </div>
             </div>
@@ -36,7 +35,11 @@
         </div>
     </div>
     <div class="o_cp_t_right">
-        <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo khách hàng, số phiếu điều trị" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+        <div class="o_searchview">
+            <input class="o_searchview_input" placeholder="Tìm kiếm theo khách hàng, số phiếu điều trị" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+            <span class="o_searchview_icon fas fa-search"></span>
+        </div>
+
     </div>
 </div>
 <div class="o_content">

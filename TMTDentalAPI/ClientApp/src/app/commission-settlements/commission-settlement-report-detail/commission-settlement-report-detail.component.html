@@ -5,14 +5,14 @@
                 <app-date-range-picker-filter title="Thời gian" class="mr-1 mb-2" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onDateSearchChange($event)">
                 </app-date-range-picker-filter>
                 <kendo-combobox [placeholder]="'Tất cả nhân viên'" (valueChange)="valueEmployeeChange($event)"
-                    class="kendo-combobox-sm mr-1 mb-2" [filterable]="true" [data]="filteredEmployees" #employeeCbx
+                    class="mr-1 mb-2" [filterable]="true" [data]="filteredEmployees" #employeeCbx
                     [valueField]="'id'" [textField]="'name'" [popupSettings]="{width: 'auto'}">
                 </kendo-combobox>
                 <kendo-combobox [placeholder]="'Loại hoa hồng'" (valueChange)="valueCommissionTypeChange($event)"
-                    class="kendo-combobox-sm mr-1 mb-2" [data]="filteredCommissionType" [valueField]="'value'"
+                    class="mr-1 mb-2" [data]="filteredCommissionType" [valueField]="'value'"
                     [textField]="'name'">
                 </kendo-combobox>
-                <button type="button" class="btn btn-secondary btn-sm mr-1 mb-2"
+                <button type="button" class="btn btn-secondary mr-1 mb-2"
                     (click)="exportCommissionExcelFile()"><i class="fas fa-download"></i>&nbsp;Xuất excel</button>
             </div>
 
@@ -20,8 +20,11 @@
                 <div class="o_cp_searchview">
                     <div class="o_cp_searchview_group">
                         <div class="o_searchview">
-                            <input class="o_searchview_input" placeholder="Tìm kiếm theo số phiếu, khách hàng, dịch vụ"
-                                type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                            <input class="o_searchview_input" 
+                            placeholder="Tìm kiếm theo số phiếu, khách hàng, dịch vụ"
+                            type="text" [(ngModel)]="search" 
+                            (ngModelChange)="this.searchUpdate.next($event)">
+                            <span class="o_searchview_icon fas fa-search"></span>
                         </div>
                     </div>
                 </div>

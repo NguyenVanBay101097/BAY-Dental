@@ -1,0 +1,12 @@
+.mh-chart-year {
+    max-height: 300px !important;
+}
+
+.title-chart text{
+    color: rgb(255, 255, 255);
+    font-weight: 600;
+}
+
+.testcolor{
+    color: lightskyblue;
+}

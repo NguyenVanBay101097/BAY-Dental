@@ -12,18 +12,14 @@
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
-                <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [dateTo]="dateTo" title="Thời gian"
-                    (searchChange)="onSearchDateChange($event)">
-                </app-tai-date-range-filter-dropdown>
+                <app-date-range-picker-filter [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
             </div>
             <div class="o_cp_sidebar">
             </div>
         </div>
         <div class="o_cp_right">
             <div class="d-flex">
-                <kendo-combobox [data]="listCompanies" style="font-size: 0.8rem;min-width: 200px;"
-                    [placeholder]="'Tất cả chi nhánh'" (valueChange)="changeCompany($event)" class="cbbox-sm"
-                    [textField]="'name'" [valueField]="'id'" [popupSettings]="{width: 'auto'}">
+                <kendo-combobox [data]="listCompanies" style="font-size: 0.8rem;min-width: 200px;" [placeholder]="'Tất cả chi nhánh'" (valueChange)="changeCompany($event)" class="cbbox-sm" [textField]="'name'" [valueField]="'id'" [popupSettings]="{width: 'auto'}">
                 </kendo-combobox>
             </div>
         </div>
@@ -31,8 +27,7 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-        (pageChange)="pageChange($event)">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
         <kendo-grid-column field="weekOfYear" title="Tuần">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <span>Tuần {{dataItem.weekOfYear}}, {{dataItem.year}}</span>

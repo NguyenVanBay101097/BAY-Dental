@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { PartnerListComponent } from './partner-list/partner-list.component';
 import { PartnerCustomerListComponent } from './partner-customer-list/partner-customer-list.component';
-import { PartnerSupplierListComponent } from './partner-supplier-list/partner-supplier-list.component';
 import { PartnerCustomerDetailComponent } from './partner-customer-detail/partner-customer-detail.component';
 import { PartnerCustomerProfileComponent } from './partner-customer-profile/partner-customer-profile.component';
 import { PartnerCustomerTreatmentPaymentComponent } from './partner-customer-treatment-payment/partner-customer-treatment-payment.component';
@@ -16,11 +15,6 @@ import { PartnerCustomerTreatmentHistoryFormComponent } from './partner-customer
 import { PartnerCustomerTreatmentHistorySaleOrderComponent } from './partner-customer-treatment-history-sale-order/partner-customer-treatment-history-sale-order.component';
 import { PartnerCustomerTreatmentPaymentFastComponent } from './partner-customer-treatment-payment-fast/partner-customer-treatment-payment-fast.component';
 import { PartnerOverviewComponent } from './partner-overview/partner-overview/partner-overview.component';
-import { PartnerInfoCustomerManagementComponent } from './partner-info-customer-management/partner-info-customer-management.component';
-import { PartnerCategoryListComponent } from '../partner-categories/partner-category-list/partner-category-list.component';
-import { PartnerSourceListComponent } from '../partner-sources/partner-source-list/partner-source-list.component';
-import { PartnerTitleListComponent } from '../partner-titles/partner-title-list/partner-title-list.component';
-import { HistoriesListComponent } from '../history/histories-list/histories-list.component';
 import { PartnerSupplierFormComponent } from './partner-supplier-form/partner-supplier-form.component';
 import { PartnerSupplierFormInforComponent } from './partner-supplier-form-infor/partner-supplier-form-infor.component';
 import { PartnerSupplierFormDebitComponent } from './partner-supplier-form-debit/partner-supplier-form-debit.component';
@@ -87,22 +81,6 @@ const routes: Routes = [
 
     ]
   },
-  {
-    path: 'customer-management',
-    component: PartnerInfoCustomerManagementComponent,
-    children: [
-      { path: '', redirectTo: 'customer-categ', pathMatch: 'full' },
-      { path: 'customer-categ', component: PartnerCategoryListComponent },
-      { path: 'customer-source', component: PartnerSourceListComponent },
-      { path: 'customer-title', component: PartnerTitleListComponent },
-      { path: 'customer-history', component: HistoriesListComponent },
-    ]
-  },
-
-  {
-    path: 'suppliers', component: PartnerSupplierListComponent
-  },
-
   {
     path: 'supplier/:id',
     component: PartnerSupplierFormComponent,

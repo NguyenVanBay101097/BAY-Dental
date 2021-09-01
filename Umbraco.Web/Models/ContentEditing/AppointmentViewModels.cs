@@ -22,6 +22,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Time { get; set; }
 
         /// <summary>
+        /// Thời gian dự kiến
+        /// </summary>
+        public int TimeExpected { get; set; }
+
+        /// <summary>
         /// Người hẹn
         /// </summary>
         public string UserId { get; set; }
@@ -33,12 +38,16 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public Guid? DoctorId { get; set; }
         public string DoctorName { get; set; }
-
+        public EmployeeSimple Doctor { get; set; }
         /// <summary>
         /// Trạng thái cuộc hẹn: xác nhận, khách đã tới hoặc đã hủy bỏ
         /// confirmed, done, cancel
         /// </summary>
         public string State { get; set; }
+
+        /// <summary>
+        /// Lý do
+        /// </summary>
         public string Reason { get; set; }
         //danh sach dv
         public IEnumerable<ProductSimple> Services { get; set; } = new List<ProductSimple>();
@@ -53,7 +62,26 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public PartnerBasic Partner { get; set; }
 
+        /// <summary>
+        /// Ghi chú, nội dung
+        /// </summary>
         public string Note { get; set; }
+
+        /// <summary>
+        /// Khách hàng tái khám
+        /// </summary>
+        public bool IsRepeatCustomer { get; set; }
+
+        public bool IsLate
+        {
+            get
+            {
+                if (!Date.HasValue)
+                    return false;
+                return State == "confirmed" && Date.Value.Date < DateTime.Today;
+            }
+        }
+
     }
 
     public class AppointmentDisplay
@@ -96,6 +124,10 @@ namespace Umbraco.Web.Models.ContentEditing
         /// confirmed, done, cancel
         /// </summary>
         public string State { get; set; }
+
+        /// <summary>
+        /// Lý do
+        /// </summary>
         public string Reason { get; set; }
 
         //Hẹn khách hàng nào?
@@ -119,6 +151,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public bool HasDotKhamRef { get; set; }
         public Guid? SaleOrderId { get; set; }
+        public bool IsRepeatCustomer { get; set; }
     }
 
     public class AppointmentPaged
@@ -229,6 +262,15 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateTo { get; set; }
 
         public bool IsLate { get; set; }
+
+        public Guid? CompanyId { get; set; }
+    }
+
+    public class AppointmentDoctorReq
+    {
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
     }
 
 }
