@@ -10,6 +10,7 @@ import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/op
 import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { ExportLaboPaged, LaboOrderService } from '../labo-order.service';
 
 @Component({
@@ -129,5 +130,19 @@ export class LaboOrderExportExportedComponent implements OnInit {
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
     this.loadDataFromApi();
+  }
+
+  editItem(item){
+    const modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Cập nhật phiếu labo';
+    modalRef.componentInstance.id = item.id;
+    modalRef.componentInstance.saleOrderLineId = item.saleOrderLineId;
+   // modalRef.componentInstance.saleOrderLineLabo = this.item;
+
+    modalRef.result.then(res => {
+      this.loadDataFromApi();
+      //this.reload.next(true);
+    }, () => {
+    });
   }
 }

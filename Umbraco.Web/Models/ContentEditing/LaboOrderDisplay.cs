@@ -106,7 +106,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? WarrantyPeriod { get; set; }
 
         public IEnumerable<ToothDisplay> Teeth { get; set; } = new List<ToothDisplay>();
-
+        // ds răng của pđt
+        public IEnumerable<ToothDisplay> TeethOrderLine { get; set; } = new List<ToothDisplay>();
         /// <summary>
         /// list image for laboorder
         /// </summary>

@@ -36,9 +36,10 @@ export class SaleOrderLineBasic {
     productId: string;
     diagnostic: string;
     dateCreated: string;
-    teeth: ToothDisplay;
+    teeth: ToothDisplay[];
     product: any;
     toothType: string;
+    toothCategoryId: string;
 }
 
 export class SaleOrderLinePaged {

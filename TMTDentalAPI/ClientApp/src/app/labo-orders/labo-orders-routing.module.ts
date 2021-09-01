@@ -19,7 +19,7 @@ const routes: Routes = [
     path: 'export',
     component: LaboOrderExportComponent,
     children: [
-      { path: '', redirectTo: 'exported', pathMatch: 'full' },
+      { path: '', redirectTo: 'not-export', pathMatch: 'full' },
       { path: 'exported', component: LaboOrderExportExportedComponent},
       { path: 'not-export', component: LaboOrderExportNotExportComponent}
     ]
