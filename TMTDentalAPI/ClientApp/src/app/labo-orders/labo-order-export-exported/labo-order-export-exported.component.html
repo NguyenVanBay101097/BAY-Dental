@@ -42,7 +42,7 @@
         </kendo-grid-column>
         <kendo-grid-column field="name" title="Phiếu Labo" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.name}}
+                <a class="text-primary" (click)="editItem(dataItem)"> {{dataItem.name}}</a>
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="productName" title="Loại phục hình" width="120">

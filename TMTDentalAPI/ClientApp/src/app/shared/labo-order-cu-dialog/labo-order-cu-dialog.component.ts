@@ -46,20 +46,12 @@ export class LaboOrderCuDialogComponent implements OnInit {
   biteJoints: LaboBiteJointBasic[] = [];
   bridges: LaboBridgeBasic[] = [];
   attachs: ProductSimple[] = [];
-  toothTypeDict = [
-    { name: "Hàm trên", value: "upper_jaw" },
-    { name: "Nguyên hàm", value: "whole_jaw" },
-    { name: "Hàm dưới", value: "lower_jaw" },
-    { name: "Chọn răng", value: "manual" },
-  ];
   listType = {
     'up_right':[],
     'up_left':[],
     'down_right':[],
     'down_left':[]
   };
-  hamList: { [key: string]: {} };
-  listRang: any;
   constructor(private fb: FormBuilder,
     public activeModal: NgbActiveModal,
     private modalService: NgbModal,
@@ -120,11 +112,6 @@ export class LaboOrderCuDialogComponent implements OnInit {
     } else {
       this.loadDefault();
     }
-    // setTimeout(() => {
-    //   if (this.saleOrderLine){
-    //     this.processTeeth(this.saleOrderLine.teeth);
-    //   }
-    // },3000);
     this.loadCategory();
 
 
@@ -464,29 +451,6 @@ export class LaboOrderCuDialogComponent implements OnInit {
     });
   }
 
-  getToothType(key) {
-    if (key && this.hamList){
-      if (key == 'upper_jaw'){
-        return this.hamList['0_up']['0_right'].concat(this.hamList['0_up']['1_left']);
-      }
-      else if (key == 'lower_jaw'){
-        return this.hamList['1_down']['0_right'].concat(this.hamList['1_down']['1_left']);
-      }
-      else if (key == 'whole_jaw'){
-        return this.hamList;
-      }
-      else {
-        return this.saleOrderLine ? this.saleOrderLine.teeth : [];
-      }
-    }
-  }
-
-  loadTeethMap(categId) {
-    var val = new ToothFilter();
-    val.categoryId = categId;
-    return this.toothService.getAllBasic(val).subscribe(result => this.processTeeth(result));
-  }
-
   processTeeth(teeth: ToothDisplay[]) {
     for (var i = 0; i < teeth.length; i++) {
       var tooth = teeth[i];
@@ -496,7 +460,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
         this.listType.up_left.push(tooth);
       if (tooth.viTriHam == '1_down' && tooth.position == '0_right')
         this.listType.down_right.push(tooth);
-      if (tooth.viTriHam == '1_down' && tooth.position == '0_right')
+      if (tooth.viTriHam == '1_down' && tooth.position == '1_left')
         this.listType.down_left.push(tooth);
     }
   }

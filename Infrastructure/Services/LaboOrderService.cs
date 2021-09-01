@@ -592,10 +592,17 @@ namespace Infrastructure.Services
             {
                 var saleOrderLineObj = GetService<ISaleOrderLineService>();
                 var toothObj = GetService<IToothService>();
-                var orderLine = await saleOrderLineObj.SearchQuery(x => x.Id == val.SaleOrderLineId).Include(x => x.Product).FirstOrDefaultAsync();
+                var orderLine = await saleOrderLineObj.SearchQuery(x => x.Id == val.SaleOrderLineId)
+                    .Include(x => x.Product)
+                    .Include(x => x.OrderPartner)
+                    .Include(x => x.Employee)
+                    .Include(x => x.Order)
+                    .FirstOrDefaultAsync();
 
                 var type = orderLine.ToothType;
                 res.SaleOrderLine = _mapper.Map<SaleOrderLineDisplay>(orderLine);
+                res.Employee = _mapper.Map<EmployeeSimple>(orderLine.Employee);
+                res.Customer = _mapper.Map<PartnerSimple>(orderLine.OrderPartner);
                 if (orderLine.ToothType == "manual")
                 {
                     var teeth = await saleOrderLineObj.SearchQuery(x => x.Id == val.SaleOrderLineId).SelectMany(x => x.SaleOrderLineToothRels)

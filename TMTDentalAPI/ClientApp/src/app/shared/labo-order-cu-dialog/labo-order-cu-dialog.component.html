@@ -285,9 +285,12 @@
                                                             Mã bảo hành
                                                         </label>
                                                     </td>
-                                                    <td colspan="1" style="width: 100%;">
+                                                    <td *ngIf="!laboOrder?.dateExport" colspan="1" style="width: 100%;">
                                                         <input type="text" formControlName='warrantyCode' class="form-control">
                                                         <label *ngIf="warrantyCodeFC.errors?.exist" for="" class="text-danger">Mã bảo hành đã tồn tại</label>
+                                                    </td>
+                                                    <td *ngIf="laboOrder?.dateExport" colspan="1" style="width: 100%;">
+                                                        {{laboOrder.warrantyCode}}
                                                     </td>
                                                 </tr>
                                                 <tr *ngIf="laboOrder?.dateReceipt">
@@ -301,7 +304,7 @@
                                                         </kendo-datepicker>
                                                     </td>
                                                     <td *ngIf="laboOrder?.dateExport" colspan="1" style="width: 100%;">
-                                                        {{warrantyPeriodObj?.value | date:'dd/MM/yyyy'}}
+                                                        {{laborOrder?.warrantyPeriod | date:'dd/MM/yyyy'}}
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -481,9 +484,9 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button *ngIf="!laboOrder?.dateExport" type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
     <button *ngIf="state == 'draft'" type="button" class="btn btn-primary" (click)="onConfirm()" accesskey="s">Đặt hàng</button>
-    <button *ngIf="state == 'confirmed'" type="button" class="btn btn-danger" (click)="onCancel()" accesskey="s">Hủy phiếu</button>
+    <button *ngIf="state == 'confirmed' && !laboOrder?.dateReceipt" type="button" class="btn btn-danger" (click)="onCancel()" accesskey="s">Hủy phiếu</button>
     <button *ngIf="id" type="button" class="btn btn-secondary o_form_button_cancel" (click)="printLaboOrder()" accesskey="p">In phiếu</button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onClose()" accesskey="q">Đóng</button>
 </footer>
