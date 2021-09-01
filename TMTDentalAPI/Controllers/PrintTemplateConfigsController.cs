@@ -54,6 +54,7 @@ namespace TMTDentalAPI.Controllers
             try
             {
                 var result = template.Render(obj);
+                var text = template.ToText();
                 return Ok(result);
 
             }

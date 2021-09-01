@@ -138,6 +138,15 @@ namespace Infrastructure.Services
                     obj = _mapper.Map<ToaThuocPrintViewModel>(temp);
 
                     break;
+                case "tmp_labo_order":
+                    var tmp = new LaboOrder() { 
+                    
+                    };
+                    break;
+                case "tmp_purchase_order":
+                    break;
+                case "tmp_purchase_refund":
+                    break;
                 default:
                     break;
             }
