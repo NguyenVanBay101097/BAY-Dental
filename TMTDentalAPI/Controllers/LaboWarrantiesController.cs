@@ -105,5 +105,77 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork.Commit();
             return NoContent();
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ConfirmSendWarranty(Guid id, DateTime date)
+        {
+            if (id == null || date == null)
+                return BadRequest();
+
+            await _unitOfWork.BeginTransactionAsync();
+            await _laboWarrantyService.ConfirmSendWarranty(id, date);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> CancelSendWarranty(Guid id)
+        {
+            if (id == null)
+                return BadRequest();
+
+            await _unitOfWork.BeginTransactionAsync();
+            await _laboWarrantyService.CancelSendWarranty(id);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ConfirmReceiptInspection(Guid id, DateTime date)
+        {
+            if (id == null || date == null)
+                return BadRequest();
+
+            await _unitOfWork.BeginTransactionAsync();
+            await _laboWarrantyService.ConfirmReceiptInspection(id, date);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> CancelReceiptInspection(Guid id)
+        {
+            if (id == null)
+                return BadRequest();
+
+            await _unitOfWork.BeginTransactionAsync();
+            await _laboWarrantyService.CancelReceiptInspection(id);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ConfirmAssemblyWarranty(Guid id, DateTime date)
+        {
+            if (id == null || date == null)
+                return BadRequest();
+
+            await _unitOfWork.BeginTransactionAsync();
+            await _laboWarrantyService.ConfirmAssemblyWarranty(id, date);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> CancelAssemblyWarranty(Guid id)
+        {
+            if (id == null)
+                return BadRequest();
+
+            await _unitOfWork.BeginTransactionAsync();
+            await _laboWarrantyService.CancelAssemblyWarranty(id);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
     }
 }
