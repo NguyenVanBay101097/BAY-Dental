@@ -120,20 +120,16 @@ textarea[readonly] {
     background: #555;
 }
 
-.o_form_view .o_form_statusbar>.o_statusbar_status>.o_arrow_button.btn-primary{
-    color: white;
-    background-color: #007bff !important;
-    height: 32px !important;
+/* .o_form_view .o_form_statusbar>.o_statusbar_status>.o_arrow_button.btn-primary.disabled {
+    color: #ffff;
+    font-size: 11px;
+    background-color: #007bff;
+    cursor: default;
 }
 
-.btn.o_arrow_button.disabled {
-    width: 132px;
-}
-
-.o_form_statusbar {
-    height: 64px;
-    margin-right: 10px;
-}
+.o_form_view .o_form_statusbar>.o_statusbar_status>.o_arrow_button.btn-secondary.disabled {
+    background-color: #e9ecef;
+} */
 
 td h5 {
     border-radius: 2px;
