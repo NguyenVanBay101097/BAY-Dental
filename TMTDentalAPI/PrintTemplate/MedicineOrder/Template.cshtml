@@ -1,0 +1,225 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TDental.vn</title>
+    <link rel="stylesheet" type="text/css" href="/css/print.css" />
+    <style>
+        @@page {
+            size: A4 landscape !important;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div>
+            <div class="d-flex mb-2">
+                {{ if company.logo != "" || company.logo != null}}
+                <img class="img-fluid me-3 w-20" src="{{company.logo}}" alt="{{company.name}}">
+                {{ end }}
+
+                <div>
+                    <div class="text-xl font-semibold">{{company.name}}</div>
+                    {{if company.address != ""}}
+
+                    <div>Địa chỉ: {{company.address}}</div>
+
+                    {{ end }}
+
+                    {{ if company.phone}}
+
+                    <div>ĐT: {{company.phone}}</div>
+
+                    {{ end }}
+
+                    {{if company.email }}
+
+                    <div>Email: {{company.email}}</div>
+
+                    {{ end }}
+
+                </div>
+            </div>
+            <div class="text-center mb-2">
+                <div class="text-3xl font-semibold">HÓA ĐƠN THUỐC</div>
+                <div>Ngày {{Model.OrderDate.Day}} tháng {{Model.OrderDate.Month}} năm {{Model.OrderDate.Year}} </div>
+                <div class="font-semibold">Số: Model.Name</div>
+            </div>
+            <div class="o_form_view mb-2">
+                <div class="d-flex">
+                    <table class="o_group o_inner_group">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Khách hàng
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">{{Model.Partner.Name}}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Địa chỉ
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    {{Model.Partner.Address}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Bác sĩ
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    {{if Model.Employee != null }}
+                                    {{Model.Employee.Name}}
+                                    {{ end }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="o_form_view mb-2">
+                <table class="table table-sm table-bordered mb-0">
+                    <tr>
+                        <th>Tên thuốc</th>
+                        <th class="text-center">Số lượng</th>
+                        <th class="text-center">Đơn giá</th>
+                        <th class="text-right">Thành tiền</th>
+                    </tr>
+
+                    {{ for line in  Model.MedicineOrderLines }}
+                    <tr>
+                        <td>
+                            <div class="font-semibold">{{line.Product.Name}}</div>
+                            <i>
+                                Ngày uống {{line.ToaThuocLine.NumberOfTimes | math.format "#,###.##" "vi"}} lần,
+                                mỗi lần {{line.ToaThuocLine.AmountOfTimes | math.format "#,###.##" "vi"}} {{line.Product.UOM.Name}},
+                                {{line.ToaThuocLine.GetUseAtDisplay}}
+                            </i>
+                        </td>
+                        <td class="text-center">{{line.Quantity | math.format "#,###.##" "vi"}}</td>
+                        <td class="text-center">{{line.Price | math.format "#,###.##" "vi"}}</td>
+                        <td class="text-right">{{line.AmountTotal | math.format "#,###.##" "vi"}}</td>
+                    </tr>
+                    {{ end }}
+                </table>
+            </div>
+            <div class="o_form_view float-right mb-2">
+                <div class="d-flex">
+                    <div>
+                        <table class="o_group o_inner_group">
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Tổng tiền
+                                        </label>
+                                    </td>
+                                    <td class="pe-0 text-right font-semibold" colspan="1" style="width: 100%;">{{Model.Amount | math.format "#,###.##" "vi"}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Thanh toán
+                                        </label>
+                                    </td>
+                                    <td class="pe-0 text-right font-semibold" colspan="1" style="width: 100%;">
+                                        {{if Model.AccountPayment == null }}
+                                        {{0}}
+                                        {{else}}
+                                        {{Model.AccountPayment.Amount | math.format "#,###.##" "vi"}}
+                                        {{ end }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Còn lại
+                                        </label>
+                                    </td>
+                                    <td class="pe-0 text-right font-semibold" colspan="1" style="width: 100%;">
+                                        {{Model.Amount - (Model.AccountPayment == null ? 0 : Model.AccountPayment.Amount) | math.format "#,###.##" "vi"}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+            <div class="clearfix"></div>
+            <div class="">
+                <div class="o_form_view">
+                    <table class="o_group o_inner_group">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Lời dặn
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">{{Model.ToaThuoc.Note}}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Chẩn đoán bệnh
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">{{Model.ToaThuoc.Diagnostic}}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Tái khám
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    {{if Model.ToaThuoc.ReExaminationDate }}
+                                    {{Model.ToaThuoc.ReExaminationDate | date.to_string '%d/%m/%Y'}}
+                                    {{ end }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="d-flex mt-2">
+                <div class="col">
+                    <div class="text-center">
+                        <span class="font-semibold">Người lập phiếu</span> <br />
+                        <i>(Ký, họ tên)</i> <br />
+                        <span></span> <br />
+                        <span></span> <br />
+                        <span></span> <br />
+                        <span class="font-semibold">
+                            {{if Model.Employee != null }}
+                            {{Model.Employee.Name | string.upcase }}
+                            {{ end }}
+                        </span>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="text-center">
+                        <span class="font-semibold"> Bệnh nhân</span> <br />
+                        <i>(Ký, họ tên)</i> <br />
+                        <span></span> <br />
+                        <span></span> <br />
+                        <span></span> <br />
+                        <span class="font-semibold">
+                            {{Model.Partner.Name | string.upcase }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

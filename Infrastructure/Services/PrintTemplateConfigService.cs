@@ -138,6 +138,8 @@ namespace Infrastructure.Services
                     obj = _mapper.Map<ToaThuocPrintViewModel>(temp);
 
                     break;
+                case "tmp_medicine_order":
+                    break;
                 default:
                     break;
             }
