@@ -263,4 +263,16 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string State { get; set; }
     }
+
+    public class LaboWarrantyConfirm
+    {
+        public LaboWarrantyConfirm()
+        {
+            Date = DateTime.Now;
+        }
+
+        public Guid Id { get; set; }
+
+        public DateTime? Date { get; set; }
+    }
 }

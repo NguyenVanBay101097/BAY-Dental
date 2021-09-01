@@ -254,13 +254,13 @@ namespace Infrastructure.Services
             await UpdateAsync(self);
         }
 
-        public async Task ConfirmSendWarranty(Guid id, DateTime date)
+        public async Task ConfirmSendWarranty(LaboWarrantyConfirm val)
         {
-            var laboWarranty = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            var laboWarranty = await SearchQuery(x => x.Id == val.Id).FirstOrDefaultAsync();
             if (laboWarranty.State != "new")
                 throw new Exception("Chỉ có thể xác nhận ở trạng thái mới");
             laboWarranty.State = "sent";
-            laboWarranty.DateSendWarranty = date;
+            laboWarranty.DateSendWarranty = val.Date;
 
             await UpdateAsync(laboWarranty);
         }
@@ -276,13 +276,13 @@ namespace Infrastructure.Services
             await UpdateAsync(laboWarranty);
         }
 
-        public async Task ConfirmReceiptInspection(Guid id, DateTime date)
+        public async Task ConfirmReceiptInspection(LaboWarrantyConfirm val)
         {
-            var laboWarranty = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            var laboWarranty = await SearchQuery(x => x.Id == val.Id).FirstOrDefaultAsync();
             if (laboWarranty.State != "sent")
                 throw new Exception("Chỉ có thể xác nhận ở trạng thái đã gửi");
             laboWarranty.State = "received";
-            laboWarranty.DateReceiptInspection = date;
+            laboWarranty.DateReceiptInspection = val.Date;
 
             await UpdateAsync(laboWarranty);
         }
@@ -298,13 +298,13 @@ namespace Infrastructure.Services
             await UpdateAsync(laboWarranty);
         }
 
-        public async Task ConfirmAssemblyWarranty(Guid id, DateTime date)
+        public async Task ConfirmAssemblyWarranty(LaboWarrantyConfirm val)
         {
-            var laboWarranty = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            var laboWarranty = await SearchQuery(x => x.Id == val.Id).FirstOrDefaultAsync();
             if (laboWarranty.State != "received")
                 throw new Exception("Chỉ có thể xác nhận ở trạng thái đã nhận");
             laboWarranty.State = "assembled";
-            laboWarranty.DateAssemblyWarranty = date;
+            laboWarranty.DateAssemblyWarranty = val.Date;
 
             await UpdateAsync(laboWarranty);
         }

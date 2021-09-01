@@ -18,11 +18,11 @@ namespace Infrastructure.Services
         Task Unlink(IEnumerable<Guid> ids);
         Task ButtonConfirm(IEnumerable<Guid> ids);
         Task ButtonCancel(IEnumerable<Guid> ids);
-        Task ConfirmSendWarranty(Guid id, DateTime date);
+        Task ConfirmSendWarranty(LaboWarrantyConfirm val);
         Task CancelSendWarranty(Guid id);
-        Task ConfirmReceiptInspection(Guid id, DateTime date);
+        Task ConfirmReceiptInspection(LaboWarrantyConfirm val);
         Task CancelReceiptInspection(Guid id);
-        Task ConfirmAssemblyWarranty(Guid id, DateTime date);
+        Task ConfirmAssemblyWarranty(LaboWarrantyConfirm val);
         Task CancelAssemblyWarranty(Guid id);
     }
 }

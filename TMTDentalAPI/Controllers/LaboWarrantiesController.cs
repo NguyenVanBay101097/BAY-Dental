@@ -107,13 +107,13 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> ConfirmSendWarranty(Guid id, DateTime date)
+        public async Task<IActionResult> ConfirmSendWarranty(LaboWarrantyConfirm val)
         {
-            if (id == null || date == null)
+            if (val.Id == null)
                 return BadRequest();
 
             await _unitOfWork.BeginTransactionAsync();
-            await _laboWarrantyService.ConfirmSendWarranty(id, date);
+            await _laboWarrantyService.ConfirmSendWarranty(val);
             _unitOfWork.Commit();
             return NoContent();
         }
@@ -131,13 +131,13 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> ConfirmReceiptInspection(Guid id, DateTime date)
+        public async Task<IActionResult> ConfirmReceiptInspection(LaboWarrantyConfirm val)
         {
-            if (id == null || date == null)
+            if (val.Id == null)
                 return BadRequest();
 
             await _unitOfWork.BeginTransactionAsync();
-            await _laboWarrantyService.ConfirmReceiptInspection(id, date);
+            await _laboWarrantyService.ConfirmReceiptInspection(val);
             _unitOfWork.Commit();
             return NoContent();
         }
@@ -155,13 +155,13 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> ConfirmAssemblyWarranty(Guid id, DateTime date)
+        public async Task<IActionResult> ConfirmAssemblyWarranty(LaboWarrantyConfirm val)
         {
-            if (id == null || date == null)
+            if (val.Id == null)
                 return BadRequest();
 
             await _unitOfWork.BeginTransactionAsync();
-            await _laboWarrantyService.ConfirmAssemblyWarranty(id, date);
+            await _laboWarrantyService.ConfirmAssemblyWarranty(val);
             _unitOfWork.Commit();
             return NoContent();
         }
