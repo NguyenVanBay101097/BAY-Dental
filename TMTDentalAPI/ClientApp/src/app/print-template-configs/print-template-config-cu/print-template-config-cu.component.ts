@@ -21,7 +21,9 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         language: 'vi',
         height: 525,
         contentsCss: '/css/print.css',
-        fullPage: true
+        fullPage: true,
+        allowedContent: true,
+        entities: false
     };
     contentPrev = "";
 
