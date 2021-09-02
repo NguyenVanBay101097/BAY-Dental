@@ -121,7 +121,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class MedicineOrderPrint
     {
-        public Company Company { get; set; }
+        public CompanyPrintVM Company { get; set; }
         public Guid Id { get; set; }
 
         public string Name { get; set; }
@@ -151,7 +151,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal Amount { get; set; }
         public string State { get; set; }
 
-        public IEnumerable<MedicineOrderLineDisplay> MedicineOrderLines { get; set; } = new List<MedicineOrderLineDisplay>();
+        public IEnumerable<MedicineOrderLine> MedicineOrderLines { get; set; } = new List<MedicineOrderLine>();
     }
 }
 

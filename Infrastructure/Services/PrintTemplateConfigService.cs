@@ -160,6 +160,8 @@ namespace Infrastructure.Services
                     break;
                 case "tmp_purchase_refund":
                     break;
+                case "tmp_medicine_order":
+                    break;
                 default:
                     break;
             }
