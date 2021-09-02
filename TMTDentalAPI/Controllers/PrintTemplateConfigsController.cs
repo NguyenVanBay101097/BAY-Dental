@@ -54,7 +54,7 @@ namespace TMTDentalAPI.Controllers
 
             try
             {
-                var result = template.Render(new { Model = obj }, member => member.Name);
+                var result = template.Render(new { Model = obj });
                 return Ok(result);
 
             }

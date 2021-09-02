@@ -85,7 +85,7 @@ namespace Infrastructure.Services
         public async Task<object> getDataTest(string type)
         {
             var comObj = GetService<ICompanyService>();
-            var company = await comObj.SearchQuery().Include(x => x.Partner).FirstOrDefaultAsync();
+            var company = await comObj.SearchQuery(x => x.Id == CompanyId).Include(x => x.Partner).FirstOrDefaultAsync();
             object obj = new object();
 
             switch (type)
@@ -139,8 +139,21 @@ namespace Infrastructure.Services
 
                     break;
                 case "tmp_labo_order":
-                    var tmp = new LaboOrder() { 
-                    
+                    var tmp = new LaboOrder() {
+                        Company = company,
+                        DateOrder = DateTime.Now,
+                        Partner = new Partner()
+                        {
+                            Name = "Nguyễn Văn A",
+                            DisplayName = "Nguyễn Văn A",
+                            Street = "Tô ký",
+                            WardName = "Tân chánh hiệp",
+                            DistrictName = "Quận 12",
+                            CityName = "HCM",
+                            Gender = "male",
+                            BirthYear = 1997
+                        },
+                        
                     };
                     break;
                 case "tmp_purchase_order":
