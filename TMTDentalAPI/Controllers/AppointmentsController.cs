@@ -382,5 +382,12 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionSend(LaboWarantyActionSendViewModel model)
+        {
+            return Ok(result);
+        }
+
     }
 }
