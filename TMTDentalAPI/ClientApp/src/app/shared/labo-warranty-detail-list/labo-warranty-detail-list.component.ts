@@ -42,12 +42,10 @@ export class LaboWarrantyDetailListComponent implements OnInit {
     val.offset = this.skip;
     val.search = this.search || '';
     val.supplierId = '';
-    val.state = this.state || '';
+    val.states = this.state || '';
     val.laboOrderId = this.item.id || '';
     val.dateReceiptFrom = this.dateReceiptFrom ? this.intlService.formatDate(this.dateReceiptFrom, "yyyy-MM-dd") : '';
     val.dateReceiptTo = this.dateReceiptTo ? this.intlService.formatDate(this.dateReceiptTo, "yyyy-MM-dd") : '';
-    // val.dateReceiptFrom = '';
-    // val.dateReceiptTo = '';
     this.laboWarrantyService.getPaged(val).pipe(
       map(res => {
         return <DataResult>{
@@ -73,9 +71,8 @@ export class LaboWarrantyDetailListComponent implements OnInit {
 
   editItem(item) {
     const modalRef = this.modalService.open(WarrantyCuDidalogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.laboId = this.item.id;
+    modalRef.componentInstance.laboOrderId = this.item.id;
     modalRef.componentInstance.laboWarrantyId = item.id;
-    modalRef.componentInstance.laboTeeth = this.item.teeth;
 
     modalRef.result.then((res) => {
       this.loadDataFromApi()

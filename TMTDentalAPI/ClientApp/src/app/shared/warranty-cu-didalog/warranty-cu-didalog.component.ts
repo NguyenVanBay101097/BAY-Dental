@@ -19,11 +19,10 @@ import { NotifyService } from '../services/notify.service';
   styleUrls: ['./warranty-cu-didalog.component.css']
 })
 export class WarrantyCuDidalogComponent implements OnInit {
-  @Input() laboId: string;
   @Input() laboWarrantyId: string;
-  @Input() laboTeeth: any;
+  @Input() laboOrderId: any;
   @ViewChild('doctorCbx', { static: true }) doctorCbx: ComboBoxComponent;
-
+  
   title: string = "Tạo phiếu bảo hành";
   myForm: FormGroup;
   id: string;
@@ -31,6 +30,7 @@ export class WarrantyCuDidalogComponent implements OnInit {
   infoLabo: any;
   submitted = false;
   laboWarrantyName: string = '';
+  laboTeeth: any;
   constructor(
     private fb: FormBuilder,
     public activeModal: NgbActiveModal,
@@ -68,7 +68,7 @@ export class WarrantyCuDidalogComponent implements OnInit {
       this.title = "Cập nhật bảo hành";
     }
 
-    if (this.laboId) {
+    if (this.laboOrderId) {
       this.loadDefault();
     }
   }
@@ -118,10 +118,11 @@ export class WarrantyCuDidalogComponent implements OnInit {
 
   loadDefault() {
     let val = {
-      laboOrderId: this.laboId
+      laboOrderId: this.laboOrderId
     }
-    this.laboWarrantyService.getDefault(val).subscribe((res) => {
+    this.laboWarrantyService.getDefault(val).subscribe((res:any) => {
       this.infoLabo = res;
+      this.laboTeeth = res.teethLaboOrder;
     }, err => {
       console.log(err);
     })
@@ -130,7 +131,7 @@ export class WarrantyCuDidalogComponent implements OnInit {
   getDataFormGroup() {
     let valForm = this.myForm.value;
     let val = new LaboWarrantySave();
-    val.laboOrderId = this.laboId || '';
+    val.laboOrderId = this.laboOrderId || '';
     val.name = this.laboWarrantyName || '';
     val.employeeId = valForm.doctor.id;
     val.dateReceiptWarranty = this.intlService.formatDate(valForm.dateReceiptObj, 'yyyy-MM-ddTHH:mm:ss');

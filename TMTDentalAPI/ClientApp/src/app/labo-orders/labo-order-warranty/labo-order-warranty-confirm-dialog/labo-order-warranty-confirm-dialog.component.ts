@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Observable } from 'rxjs';
+import { NotifyService } from 'src/app/shared/services/notify.service';
 import { LaboWarrantyService } from '../../labo-warranty.service';
 
 @Component({
@@ -12,6 +13,8 @@ import { LaboWarrantyService } from '../../labo-warranty.service';
 })
 export class LaboOrderWarrantyConfirmDialogComponent implements OnInit {
   @Input() state: string;
+  @Input() dateSendWarranty: string;
+  @Input() dateReceiptInspection: string;
   @Input() dateAssemblyWarranty: string;
   @Input() laboWarrantyId: string;
   formGroup: FormGroup;
@@ -23,6 +26,7 @@ export class LaboOrderWarrantyConfirmDialogComponent implements OnInit {
     private fb: FormBuilder,
     private laboWarrantyService: LaboWarrantyService,
     private intlService: IntlService,
+    private notifyService: NotifyService,
 
   ) { }
 
@@ -30,16 +34,15 @@ export class LaboOrderWarrantyConfirmDialogComponent implements OnInit {
     this.formGroup = this.fb.group({
       date: [new Date(), Validators.required]
     });
+    this.loadDefault();
+  }
 
-    console.log(this.state);
-    console.log(this.dateAssemblyWarranty);
-    console.log(this.laboWarrantyId);
+  get f() {
+    return this.formGroup.controls;
+  }
 
-
-    if (this.dateAssemblyWarranty) {
-      this.formGroup.controls['date'].setValue(new Date(this.dateAssemblyWarranty));
-    }
-
+  loadDefault() {
+    let date = new Date();
     if (this.state == 'new') {
       this.title = 'Gửi bảo hành';
       this.label = 'Ngày gửi';
@@ -47,15 +50,19 @@ export class LaboOrderWarrantyConfirmDialogComponent implements OnInit {
     else if (this.state == 'sent') {
       this.title = 'Nhận nghiệm thu';
       this.label = 'Ngày nhận';
+      date = new Date(this.dateSendWarranty);
     }
-    else {
+    else if (this.state == 'received') {
       this.title = 'Lắp bảo hành';
       this.label = 'Ngày lắp';
+      date = new Date(this.dateReceiptInspection);
     }
-  }
-
-  get f() {
-    return this.formGroup.controls;
+    else if (this.state == 'assembled') {
+      this.title = 'Lắp bảo hành';
+      this.label = 'Ngày lắp';
+      date = new Date(this.dateAssemblyWarranty);
+    }
+    this.formGroup.controls['date'].setValue(date);
   }
 
   onSave$(): Observable<any> {
@@ -82,26 +89,30 @@ export class LaboOrderWarrantyConfirmDialogComponent implements OnInit {
     }
 
     this.onSave$().subscribe((res: any) => {
+      this.notifyService.notify("success", "Lưu thành công");
       this.activeModal.close();
-
     });
 
   }
 
   onCancel$(): Observable<any> {
+    let val = {
+      id: this.laboWarrantyId,
+    }
     if (this.state == 'sent') {
-      return this.laboWarrantyService.cancelSendWarranty(this.laboWarrantyId)
+      return this.laboWarrantyService.cancelSendWarranty(val)
     }
     else if (this.state == 'received') {
-      return this.laboWarrantyService.cancelReceiptInspection(this.laboWarrantyId)
+      return this.laboWarrantyService.cancelReceiptInspection(val)
     }
     else if (this.state == 'assembled') {
-      return this.laboWarrantyService.cancelAssemblyWarranty(this.laboWarrantyId)
+      return this.laboWarrantyService.cancelAssemblyWarranty(val)
     }
   }
 
   onCancel() {
     this.onCancel$().subscribe((res: any) => {
+      this.notifyService.notify("success", "Hủy thành công");
       this.activeModal.close();
     });
   }

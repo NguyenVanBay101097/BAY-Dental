@@ -7,7 +7,7 @@ export class LaboWarrantyPaged {
   limit: number;
   offset: number;
   search: string;
-  state: string;
+  states: string;
   dateReceiptFrom: string;
   dateReceiptTo: string;
   supplierId: string;
@@ -88,7 +88,7 @@ export class LaboWarrantyService {
     return this.http.post(this.baseApi + this.apiUrl + '/ConfirmSendWarranty', val);
   }
 
-  cancelSendWarranty(val: string) {
+  cancelSendWarranty(val) {
     return this.http.post(this.baseApi + this.apiUrl + '/CancelSendWarranty', val);
   }
 
@@ -96,7 +96,7 @@ export class LaboWarrantyService {
     return this.http.post(this.baseApi + this.apiUrl + '/ConfirmReceiptInspection', val);
   }
 
-  cancelReceiptInspection(val: string) {
+  cancelReceiptInspection(val) {
     return this.http.post(this.baseApi + this.apiUrl + '/CancelReceiptInspection', val);
   }
 
@@ -104,7 +104,7 @@ export class LaboWarrantyService {
     return this.http.post(this.baseApi + this.apiUrl + '/ConfirmAssemblyWarranty', val);
   }
 
-  cancelAssemblyWarranty(val: string) {
+  cancelAssemblyWarranty(val) {
     return this.http.post(this.baseApi + this.apiUrl + '/CancelAssemblyWarranty', val);
   }
 }

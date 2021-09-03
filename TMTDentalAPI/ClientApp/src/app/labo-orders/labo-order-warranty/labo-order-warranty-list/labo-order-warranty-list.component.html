@@ -16,68 +16,38 @@
         <div class="o_cp_left">
             <div class="o_search_options flex-wrap">
                 <div class="mr-1 mb-1">
-                    <kendo-combobox [popupSettings]="" placeholder="Nhà cung cấp" [valuePrimitive]="true"
-                        [valueField]="'id'" [textField]="'name'" #supplierDataCbx>
+                    <kendo-combobox [data]="supplierData" [popupSettings]="" placeholder="Nhà cung cấp"
+                        [valuePrimitive]="true" [valueField]="'id'" [textField]="'name'" #supplierDataCbx
+                        (valueChange)="supplierChange($event)">
                     </kendo-combobox>
                 </div>
                 <div class="mr-1 mb-1">
                     <kendo-combobox [data]="stateFilterOptions" [textField]="'text'" [valueField]="'value'"
-                        [filterable]="true" [placeholder]="'Trạng thái'" >
+                        [filterable]="true" [placeholder]="'Trạng thái'" (valueChange)="onChangeState($event)">
                     </kendo-combobox>
                 </div>
                 <div class="mr-1 mb-1">
-                    <app-date-range-picker-filter [opens]="'right'" [title]="'Ngày nhận bảo hành'">
+                    <app-date-range-picker-filter [opens]="'right'" [title]="'Ngày nhận bảo hành'"
+                        [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchChange($event)">
                     </app-date-range-picker-filter>
                 </div>
-                <button type="button" class="btn btn-primary" (click)="exportExcel(grid)">
-                    <i class="fas fa-download"></i>&nbsp;Xuất Excel
-                </button>
-                
-
+                <div class="o_cp_buttons">
+                    <div class="o_form_buttons_view">
+                        <button type="button" class="btn btn-primary" (click)="exportExcel(grid)">
+                            <i class="fas fa-download"></i>&nbsp;Xuất Excel
+                        </button>
+                    </div>
+                </div>
             </div>
-            <!-- <div class="o_cp_buttons">
-            </div>
-            <div class="o_cp_sidebar">
-            </div> -->
         </div>
         <div class="o_cp_right">
         </div>
     </div>
 </div>
 <div class="o_content">
-    <!-- <div class="p-2 d-flex bg-white">
-        <div class="d-flex flex-fill">
-            <div class="mr-1">
-                <kendo-combobox [popupSettings]="" placeholder="Nhà cung cấp" [valuePrimitive]="true"
-                    [valueField]="'id'" [textField]="'name'" #supplierDataCbx>
-                </kendo-combobox>
-            </div>
-            <div class="mr-1">
-                <kendo-combobox [data]="stateFilterOptions" [textField]="'text'" [valueField]="'value'"
-                    [filterable]="true" [placeholder]="'Trạng thái'">
-                </kendo-combobox>
-            </div>
-            <div class="mr-1">
-                <app-date-range-picker-filter [opens]="'right'" [title]="'Ngày nhận bảo hành'">
-                </app-date-range-picker-filter>
-            </div>
-            <button type="button" class="btn btn-primary" (click)="exportExcelFile()">
-                <i class="fas fa-download"></i>&nbsp;Xuất Excel</button>
-
-        </div>
-        <div class="flex-fill">
-            <div class="o_searchview">
-                <i class="o_searchview_icon fa fa-search"></i>
-                <div class="o_searchview_input_container" style="width: 300px;">
-                    <input class="o_searchview_input"
-                        placeholder="Tìm kiếm theo tên khách hàng, phiếu labo, phiếu bảo hành" type="text">
-                </div>
-            </div>
-        </div>
-    </div> -->
     <div>
-        <kendo-grid (excelExport)="onExcelExport($event)" [data]="gridData" #grid [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-            (pageChange)="pageChange($event)">
+        <kendo-grid (excelExport)="onExcelExport($event)" [data]="gridData" #grid [pageSize]="limit" [skip]="skip"
+            [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
             <kendo-grid-column field="dateReceiptWarranty" title="Ngày nhận bảo hành" width="180">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{dataItem.dateReceiptWarranty | date : 'shortDate'}}
@@ -93,7 +63,7 @@
                     <a class="text-primary" (click)="editLabo(dataItem)"> {{dataItem.laboOrderName}}</a>
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column title="Khách hàng" width="150">
+            <kendo-grid-column field="customerName" title="Khách hàng" width="150">
             </kendo-grid-column>
             <kendo-grid-column field="reason" title="Lý do bảo hành" width="150">
             </kendo-grid-column>
