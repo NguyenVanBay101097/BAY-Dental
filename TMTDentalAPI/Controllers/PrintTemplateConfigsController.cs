@@ -49,7 +49,7 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Generate(GenerateReq val)
         {
-            object obj = await _printTemplateConfigService.getDataTest(val.Type);
+            object obj = await _printTemplateConfigService.GetSampleData(val.Type);
             var template = Template.Parse(val.Content);
 
             try
@@ -69,7 +69,7 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> PrintTest(PrintTestReq val)
         {
-            object obj = await _printTemplateConfigService.getDataTest(val.Type);
+            object obj = await _printTemplateConfigService.GetSampleData(val.Type);
             var printTemplateConfig = await _printTemplateConfigService.GetDisplay(new PrintTemplateConfigChangeType() { Type = val.Type});
             var template = Template.Parse(printTemplateConfig.Content);
             try

@@ -16,27 +16,27 @@
     <div class="container">
         <div>
             <div class="d-flex mb-2">
-                {{ if company.logo != "" || company.logo != null}}
-                <img class="img-fluid me-3 w-20" src="{{company.logo}}" alt="{{company.name}}">
+                {{ if model.company.logo != "" && model.company.logo != null}}
+                <img class="img-fluid me-3 w-20" src="{{model.company.logo}}" alt="{{model.company.name}}">
                 {{ end }}
 
                 <div>
-                    <div class="text-xl font-semibold">{{company.name}}</div>
-                    {{if company.address != ""}}
+                    <div class="text-xl font-semibold">{{model.company.name}}</div>
+                    {{if model.company.address != ""}}
 
-                    <div>Địa chỉ: {{company.address}}</div>
-
-                    {{ end }}
-
-                    {{ if company.phone}}
-
-                    <div>ĐT: {{company.phone}}</div>
+                    <div>Địa chỉ: {{model.company.address}}</div>
 
                     {{ end }}
 
-                    {{if company.email }}
+                    {{ if model.company.phone}}
 
-                    <div>Email: {{company.email}}</div>
+                    <div>ĐT: {{model.company.phone}}</div>
+
+                    {{ end }}
+
+                    {{if model.company.email }}
+
+                    <div>Email: {{model.company.email}}</div>
 
                     {{ end }}
 
@@ -44,68 +44,72 @@
             </div>
             <div class="text-center mb-2">
                 <div class="text-3xl font-semibold">ĐẶT HÀNG LABO</div>
-                <div>Ngày {{date.day}} tháng {{date.month}} năm {{date.year}} </div>
-                <div class="font-semibold">Số: {{name}}</div>
+                <div>Ngày {{model.date_order.day}} tháng {{model.date_order.month}} năm {{model.date_order.year}} </div>
+                <div class="font-semibold">Số: {{model.name}}</div>
             </div>
-            @*<div class="o_form_view  mb-2">
+            <div class="o_form_view  mb-2">
                 <div class="text-lg font-semibold mb-1">THÔNG TIN CHUNG</div>
-                <div class="d-flex">
-                    <table class="o_group o_inner_group col-6">
-                        <tbody>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Bác sĩ
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">@(Model.SaleOrderLine.Employee != null ? Model.SaleOrderLine.Employee.Name : "")</td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Số phiếu điều trị
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">@(Model.SaleOrderLine.Order.Name)</td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Khách hàng
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">@(Model.Customer.Name)</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="o_group o_inner_group col-6">
-                        <tbody>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        NCC Labo
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">@(Model.Partner.Name)</td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Ngày gửi
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">@(Model.DateOrder.ToString("dd/MM/yyyy"))</td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Ngày nhận dự kiến
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">@(Model.DatePlanned.HasValue ? Model.DatePlanned.Value.ToString("dd/MM/yyyy") : "")</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="container">
+                    <div class="row">
+                        <table class="o_group o_inner_group col">
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Bác sĩ
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">{{model.sale_order_line.employee ? model.sale_order_line.employee.name : "" }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Số phiếu điều trị
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">{{model.sale_order_line.order ? model.sale_order_line.order.name : ""}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Khách hàng
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">{{model.customer.name}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="o_group o_inner_group col">
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            NCC Labo
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">{{model.partner.name}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Ngày gửi
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">{{date.parse model.date_order | date.to_string '%d/%m/%Y' }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Ngày nhận dự kiến
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">{{date.parse model.date_planned | date.to_string '%d/%m/%Y' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+
                 </div>
             </div>
             <div class="o_form_view  mb-2">
@@ -120,7 +124,7 @@
                                             Loại phục hình
                                         </label>
                                     </td>
-                                    <td colspan="1" style="width: 100%;">@(Model.SaleOrderLine.Name)</td>
+                                    <td colspan="1" style="width: 100%;">{{model.sale_order_line ? model.sale_order_line.name : ""}}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="1" class="o_td_label">
@@ -128,7 +132,7 @@
                                             Hãng
                                         </label>
                                     </td>
-                                    <td colspan="1" style="width: 100%;">@(Model.SaleOrderLine.Product.Firm)</td>
+                                    <td colspan="1" style="width: 100%;">{{model.sale_order_line.product ? (model.sale_order_line.product.firm ? model.sale_order_line.product.firm : "") : ""}}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="1" class="o_td_label">
@@ -136,7 +140,7 @@
                                             Răng
                                         </label>
                                     </td>
-                                    <td colspan="1" style="width: 100%;">@(string.Join(",", Model.LaboOrderToothRel.Select(x => x.Tooth.Name)))</td>
+                                    <td colspan="1" style="width: 100%;">{{model.teeth ? (model.teeth | array.map "name" | array.join ",") : ""}}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="1" class="o_td_label">
@@ -144,7 +148,7 @@
                                             Màu sắc chi tiết
                                         </label>
                                     </td>
-                                    <td colspan="1" style="width: 100%;">@(Model.Color)</td>
+                                    <td colspan="1" style="width: 100%;">{{model.color ? model.color : ""}}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="1" class="o_td_label">
@@ -152,7 +156,7 @@
                                             Số lượng
                                         </label>
                                     </td>
-                                    <td colspan="1" style="width: 100%;">@(Model.Quantity.ToString("n0"))</td>
+                                    <td colspan="1" style="width: 100%;">{{model.quantity > 0 ? model.quantity : 0}}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="1" class="o_td_label">
@@ -160,7 +164,7 @@
                                             Chỉ định
                                         </label>
                                     </td>
-                                    <td colspan="1" style="width: 100%;">@(Model.Indicated)</td>
+                                    <td colspan="1" style="width: 100%;">{{model.indicated ? model.indicated : ""}}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="1" class="o_td_label">
@@ -168,7 +172,7 @@
                                             Ghi chú
                                         </label>
                                     </td>
-                                    <td colspan="1" style="width: 100%;">@(Model.Note)</td>
+                                    <td colspan="1" style="width: 100%;">{{model.note ? model.note : ""}}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -183,7 +187,7 @@
                                             Vật liệu
                                         </label>
                                     </td>
-                                    <td colspan="1" style="width: 100%;">@(Model.Product != null ? Model.Product.Name : "")</td>
+                                    <td colspan="1" style="width: 100%;">{{model.product ? model.product.name : ""}}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="1" class="o_td_label">
@@ -191,7 +195,7 @@
                                             Đường hoàn tất
                                         </label>
                                     </td>
-                                    <td colspan="1" style="width: 100%;">@(Model.LaboFinishLine != null ? Model.LaboFinishLine.Name : "")</td>
+                                    <td colspan="1" style="width: 100%;">{{model.labo_finish_line ? model.labo_finish_line.name : ""}}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="1" class="o_td_label">
@@ -199,7 +203,7 @@
                                             Khớp cắn
                                         </label>
                                     </td>
-                                    <td colspan="1" style="width: 100%;">@(Model.LaboBiteJoint != null ? Model.LaboBiteJoint.Name : "")</td>
+                                    <td colspan="1" style="width: 100%;">{{model.labo_bite_joint ? model.labo_bite_joint.name : ""}}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="1" class="o_td_label">
@@ -207,7 +211,7 @@
                                             Kiểu nhịp
                                         </label>
                                     </td>
-                                    <td colspan="1" style="width: 100%;">@(Model.LaboBridge != null ? Model.LaboBridge.Name : "")</td>
+                                    <td colspan="1" style="width: 100%;">{{model.labo_bridge ? model.labo_bridge.name : ""}}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="1" class="o_td_label">
@@ -215,7 +219,7 @@
                                             Gửi kèm
                                         </label>
                                     </td>
-                                    <td colspan="1" style="width: 100%;">@(string.Join(", ", Model.LaboOrderProductRel.Select(x => x.Product.Name)))</td>
+                                    <td colspan="1" style="width: 100%;">{{model.labo_order_products ? (model.labo_order_products | array.map "name" | array.join "," ) : ""}}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="1" class="o_td_label">
@@ -223,7 +227,7 @@
                                             Ghi chú kĩ thuật
                                         </label>
                                     </td>
-                                    <td colspan="1" style="width: 100%;">@(Model.TechnicalNote)</td>
+                                    <td colspan="1" style="width: 100%;">{{model.technical_note ? model.technical_note : ""}}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -241,7 +245,7 @@
                                         Mã bảo hành
                                     </label>
                                 </td>
-                                <td colspan="1" style="width: 100%;">@(Model.WarrantyCode)</td>
+                                <td colspan="1" style="width: 100%;">{{model.warranty_code ? model.ưarranty_code : ""}}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -253,7 +257,7 @@
                                         Hạn bảo hành
                                     </label>
                                 </td>
-                                <td colspan="1" style="width: 100%;">@(Model.WarrantyPeriod.HasValue ? Model.WarrantyPeriod.Value.ToString("dd/MM/yyyy") : "")</td>
+                                <td colspan="1" style="width: 100%;">{{model.warranty_period ? (model.warranty_period | date.to_string '%d/%m/%Y') : ""}}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -269,11 +273,12 @@
                         <span></span> <br />
                         <span></span> <br />
                         <span></span> <br />
-                        <span class="font-semibold">@(Model.SaleOrderLine.Employee != null ? Model.SaleOrderLine.Employee.Name.ToUpper() : "")</span>
+                        <span class="font-semibold">{{model.sale_order_line.employee ? (model.sale_order_line.employee.name | string.upcase) : ""}}</span>
                     </div>
                 </div>
-            </div>*@
+            </div>
         </div>
     </div>
+
 </body>
 </html>

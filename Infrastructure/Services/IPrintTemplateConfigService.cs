@@ -13,7 +13,7 @@ namespace Infrastructure.Services
 
         Task CreateOrUpdate(PrintTemplateConfigSave val);
 
-        Task<object> getDataTest(string type);
+        Task<object> GetSampleData(string type);
 
     }
 }

@@ -23,7 +23,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public CompanyPrintVM Company { get; set; }
         public string Name { get; set; }
 
-        public DateTime Date { get; set; }
+        public DateTime DateOrder { get; set; }
 
         public string Note { get; set; }
 
@@ -35,7 +35,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string StockPickingName { get; set; }
 
-        public IEnumerable<PurchaseOrderLinePrintVm> Lines { get; set; } = new List<PurchaseOrderLinePrintVm>();
+        public IEnumerable<PurchaseOrderLinePrintVm> OrderLines { get; set; } = new List<PurchaseOrderLinePrintVm>();
 
         public decimal AmountTotal { get; set; }
 

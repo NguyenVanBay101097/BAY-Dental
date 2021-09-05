@@ -95,7 +95,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">{{model.partner.age}}</td>
                             </tr>
-                     
+
                         </tbody>
                     </table>
                 </div>
@@ -156,7 +156,7 @@
 
                                     {{ end }}
                                 </td>
-                            </tr>                       
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -169,7 +169,7 @@
                         <span></span> <br />
                         <span></span> <br />
                         <span></span> <br />
-                        <span class="font-semibold">{{model.employee_name}}</span>
+                        <span class="font-semibold">{{model.employee_name ? (model.employee_name | string.upcase) : "" }}</span>
                     </div>
                 </div>
                 <div class="col">
@@ -179,7 +179,7 @@
                         <span></span> <br />
                         <span></span> <br />
                         <span></span> <br />
-                        <span class="font-semibold">{{model.partner.name}}</span>
+                        <span class="font-semibold">{{model.partner ? (model.partner.name | string.upcase) : ""}}</span>
                     </div>
                 </div>
             </div>

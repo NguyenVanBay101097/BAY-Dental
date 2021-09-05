@@ -21,6 +21,12 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid PartnerId { get; set; }
         public PartnerSimple Partner { get; set; }
 
+        /// <summary>
+        /// Nhà cung cấp
+        /// </summary>
+        public Guid CustomerId { get; set; }
+        public PartnerSimple Customer { get; set; }
+
         public DateTime DateOrder { get; set; }
 
         public decimal AmountTotal { get; set; }

@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using ApplicationCore.Constants;
+using ApplicationCore.Entities;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -40,6 +45,7 @@ namespace TMTDentalAPI.ViewControllers
               .Include(x => x.Customer)
               .Include("LaboOrderToothRel.Tooth")
               .FirstOrDefaultAsync();
+
             if (res == null)
                 return NotFound();
 

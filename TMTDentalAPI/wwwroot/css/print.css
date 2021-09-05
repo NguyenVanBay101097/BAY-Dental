@@ -783,7 +783,7 @@ table {
 
 .col-8 {
     flex: 0 0 auto;
-    width: 66.6666666667%;
+    width: 66.6666666667% ;
 }
 
 .col-4 {
@@ -793,7 +793,7 @@ table {
 
 .col-6 {
     flex: 0 0 auto;
-    width: 50%;
+    width: 50% !important;
 }
 
 .justify-content-center {
