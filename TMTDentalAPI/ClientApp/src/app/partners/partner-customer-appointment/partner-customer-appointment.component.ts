@@ -94,7 +94,6 @@ export class PartnerCustomerAppointmentComponent implements OnInit {
     }
 
     modalRef.result.then(() => {
-      this.notify('success', 'Lưu thành công');
       this.loadData();
     }, () => {
     });

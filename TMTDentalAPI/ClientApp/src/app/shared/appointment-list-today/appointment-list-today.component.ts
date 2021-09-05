@@ -86,7 +86,7 @@ export class AppointmentListTodayComponent implements OnInit, DoCheck {
     }
 
     if (this.search) {
-      res = res.filter(x => this.RemoveVietnamese(x.partnerName).includes(this.RemoveVietnamese(this.search)) || x.partnerPhone.includes(this.search) || this.RemoveVietnamese(x.doctorName).includes(this.RemoveVietnamese(this.search)));
+      res = res.filter(x => x.partnerName && this.RemoveVietnamese(x.partnerName).includes(this.RemoveVietnamese(this.search)) || x.partnerPhone && x.partnerPhone.includes(this.search) || x.doctorName && this.RemoveVietnamese(x.doctorName).includes(this.RemoveVietnamese(this.search)));
     }
 
     this.listAppointment = res;

@@ -381,6 +381,5 @@ namespace TMTDentalAPI.Controllers
             var result = await _appointmentService.GetListDoctor(val);
             return Ok(result);
         }
-
     }
 }

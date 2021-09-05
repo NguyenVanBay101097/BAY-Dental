@@ -479,5 +479,12 @@ namespace Infrastructure.Services
             var res = await query.Where(x => x.DoctorId.HasValue).Select(x => new EmployeeSimple() { Id = x.DoctorId.Value, Name = x.Doctor.Name }).Distinct().ToListAsync();
             return res;
         }
+
+        public override Task DeleteAsync(IEnumerable<Appointment> entities)
+        {
+            if (entities.Any(x => x.State == "done"))
+                throw new Exception("Không thể xóa lịch hẹn ở trạng thái đã đến");
+            return base.DeleteAsync(entities);
+        }
     }
 }
