@@ -6,7 +6,6 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { PrintService } from 'src/app/print.service';
 import { NotifyService } from 'src/app/shared/services/notify.service';
 import { AgentService, CommissionAgentFilter } from '../agent.service';
 
@@ -33,8 +32,7 @@ export class AgentCommissionListComponent implements OnInit {
     private agentService: AgentService, private router: Router,
     private intlService: IntlService,
     private authService: AuthService,
-    private notifyService: NotifyService,
-    private printService: PrintService) { }
+    private notifyService: NotifyService) { }
 
   ngOnInit() {
 

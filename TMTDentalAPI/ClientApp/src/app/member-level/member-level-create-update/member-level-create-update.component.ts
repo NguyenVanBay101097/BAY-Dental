@@ -105,8 +105,8 @@ export class MemberLevelCreateUpdateComponent implements OnInit {
         this.partnerService.checkUpdateLevel().subscribe(() => {
           this.notifyService.notify("success", "Lưu hạng thành viên thành công");
           vals.length > 0 ?
-            this.router.navigate(['member-level/list']) :
-            this.router.navigate(['member-level/management']);
+            this.router.navigate(['catalog/member-level/list']) :
+            this.router.navigate(['catalog/member-level/management']);
         });
       })
     });

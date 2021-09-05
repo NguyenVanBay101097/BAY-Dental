@@ -12,10 +12,8 @@
                     </kendo-combobox>
                     <kendo-combobox class="mr-2" style="width: 250px;" [placeholder]="'Tìm theo loại phục hình'" [data]="filteredProducts" [textField]="'name'" [filterable]="true" #productCbx [(ngModel)]="paged.productId" [valueField]="'id'" [valuePrimitive]="true" (valueChange)="loadDataFromApi()">
                     </kendo-combobox>
-                    <app-tai-date-range-filter-dropdown class="mr-2" title="Ngày gởi" [dateFrom]="paged.dateOrderFrom" [dateTo]="paged.dateOrderTo" (searchChange)="onDateOrderSearchChange($event)">
-                    </app-tai-date-range-filter-dropdown>
-                    <app-tai-date-range-filter-dropdown title="Ngày nhận" [dateFrom]="paged.datePlannedFrom" [dateTo]="paged.datePlannedTo" (searchChange)="onDatePlannedSearchChange($event)">
-                    </app-tai-date-range-filter-dropdown>
+                    <app-date-range-picker-filter [opens]="'right'" class="mr-2" [title]="'Ngày gởi'" [startDate]="paged.dateOrderTo" [endDate]="paged.datePlannedTo" (searchChange)="onDateOrderSearchChange($event)"></app-date-range-picker-filter>
+                    <app-date-range-picker-filter [opens]="'right'" [title]="'Ngày nhận'" [startDate]="paged.datePlannedFrom" [endDate]="paged.datePlannedTo" (searchChange)="onDatePlannedSearchChange($event)"></app-date-range-picker-filter>
                 </div>
             </div>
             <div class="o_cp_sidebar">
@@ -37,7 +35,7 @@
                         <i class="far fa-trash-alt"></i></button>
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column field="productName" title="Vật liệu" width="150" [locked]="true" >
+            <kendo-grid-column field="productName" title="Vật liệu" width="150" [locked]="true">
             </kendo-grid-column>
             <kendo-grid-column field="customerRef" title="Mã KH" width="100" [locked]="true">
             </kendo-grid-column>
@@ -69,8 +67,8 @@
             </kendo-grid-column>
             <kendo-grid-column field="orderName" title="Phiếu labo" width="100">
             </kendo-grid-column> -->
-         
-          
+
+
             <kendo-grid-column field="dateOrder" title="Ngày gửi" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{dataItem.dateOrder | date : 'shortDate'}}

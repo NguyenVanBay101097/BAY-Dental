@@ -9,7 +9,7 @@
     <div class="o_cp_controller">
         <div class="o_control_panel">
             <div class="o_cp_t_left">
-                <kendo-combobox (valueChange)="onChangeState($event)" placeholder="Tất cả trạng thái" class="kendo-combobox-sm ml-2" 
+                <kendo-combobox (valueChange)="onChangeState($event)" placeholder="Tất cả trạng thái" class="ml-2" 
                     [data]="filteredState" [textField]="'name'" [valueField]="'value'">
                 </kendo-combobox>
                 <button type="button" class="btn btn-primary btn-sm mx-2" (click)="onSend()">

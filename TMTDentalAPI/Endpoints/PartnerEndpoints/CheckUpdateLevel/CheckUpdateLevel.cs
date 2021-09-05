@@ -63,7 +63,7 @@ namespace TMTDentalAPI.Endpoints.PartnerEndpoints.CheckUpdateLevel
         {
             var partners = _partnerService.SearchQuery(x => x.Customer).ToList();
             var partnerPointsPropsDict = _propertyService.get_multi("loyalty_points", "res.partner", partners.Select(x => x.Id.ToString()).ToList(), force_company: CompanyId);
-            var memberLevels = _memberLevelService.SearchQuery().ToList();
+            var memberLevels = _memberLevelService.SearchQuery(x => x.CompanyId == CompanyId).ToList();
 
             var levelValuesDict = new Dictionary<string, object>();
             foreach(var partnerPointsPropsItem in partnerPointsPropsDict)

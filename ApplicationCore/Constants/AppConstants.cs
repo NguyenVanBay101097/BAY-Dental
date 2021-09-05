@@ -35,5 +35,12 @@ namespace ApplicationCore.Constants
         public const string RevenueEmployeeReport = "RevenueEmployeeReport";
         public const string RevenueReport = "RevenueReport";
         public const string AdvisoryPaperCode = "Advisory";
+        public const string SaleOrderLineCode = "SaleOrderLine";
+        public const string SaleReport = "SaleReport";
+
+        public const string RevenuePartnerReport = "RevenuePartnerReport";
+
+        public const string PartnerOldNewReport = "PartnerOldNewReport";
+        public const string ReportPartnerDebit = "ReportPartnerDebit";
     }
 }

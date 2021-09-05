@@ -111,8 +111,8 @@
     </div>
 
     <div class="popover-footer">
-        <button (click)="onSave()" class="btn btn-sm btn-primary ml-auto">Lưu</button>
-        <button (click)="onRemoveTimeKeeping()"  *ngIf="line.chamCongs.length !== 0" class="btn btn-sm btn-danger ml-2">Xóa</button>
-        <button (click)="popOver.close()" class="btn btn-sm btn-secondary ml-2">Đóng</button>
+        <button (click)="onSave()" class="btn btn-primary ml-auto">Lưu</button>
+        <button (click)="onRemoveTimeKeeping()"  *ngIf="line.chamCongs.length !== 0" class="btn btn-danger ml-2">Xóa</button>
+        <button (click)="popOver.close()" class="btn btn-secondary ml-2">Đóng</button>
     </div>
 </ng-template>

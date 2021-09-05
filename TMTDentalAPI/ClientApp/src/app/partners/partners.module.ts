@@ -11,7 +11,6 @@ import { PartnerCustomerListDetailComponent } from './partner-customer-list-deta
 import { PartnerCustomerInfoComponent } from './partner-customer-info/partner-customer-info.component';
 import { PartnerCustomerInvoicesComponent } from './partner-customer-invoices/partner-customer-invoices.component';
 import { PartnerDetailListComponent } from './partner-detail-list/partner-detail-list.component';
-import { PartnerSupplierListComponent } from './partner-supplier-list/partner-supplier-list.component';
 import { PartnerInvoiceLinesComponent } from './partner-invoice-lines/partner-invoice-lines.component';
 import { PartnerImportComponent } from './partner-import/partner-import.component';
 import { PartnerPaymentsComponent } from './partner-payments/partner-payments.component';
@@ -63,10 +62,8 @@ import { AccountCommonPartnerReportsModule } from '../account-common-partner-rep
 import { SaleCouponProgramService } from '../sale-coupon-promotion/sale-coupon-program.service';
 import { PartnerOverviewSaleOrderLineComponent } from './partner-overview/partner-overview-sale-order-line/partner-overview-sale-order-line.component';
 import { PartnerCustomerTreatmentPaymentFastComponent } from './partner-customer-treatment-payment-fast/partner-customer-treatment-payment-fast.component';
-import { PartnerInfoCustomerManagementComponent } from './partner-info-customer-management/partner-info-customer-management.component';
 import { PartnerTitlesModule } from '../partner-titles/partner-titles.module';
 import { PartnerSourcesModule } from '../partner-sources/partner-sources.module';
-import { PartnerCategoriesModule } from '../partner-categories/partner-categories.module';
 import { HistoryModule } from '../history/history.module';
 import { PartnerSupplierFormComponent } from './partner-supplier-form/partner-supplier-form.component';
 import { PartnerSupplierFormInforComponent } from './partner-supplier-form-infor/partner-supplier-form-infor.component';
@@ -95,6 +92,7 @@ import { PartnerCustomerDebtPaymentHistoryListComponent } from './partner-custom
 import { PartnerCustomerDebtManagementComponent } from './partner-customer-debt-management/partner-customer-debt-management.component';
 import { PartnerOverviewTreatmentHistoryComponent } from './partner-overview/partner-overview-treatment-history/partner-overview-treatment-history.component';
 import { AccountInvoiceReportService } from '../account-invoice-reports/account-invoice-report.service';
+import { CatalogModule } from '../catalog/catalog.module';
 
 
 
@@ -107,9 +105,8 @@ import { AccountInvoiceReportService } from '../account-invoice-reports/account-
     PartnerCustomerInfoComponent,
     PartnerCustomerInvoicesComponent,
     PartnerDetailListComponent,
-    PartnerSupplierListComponent,
     PartnerInvoiceLinesComponent,
-    PartnerImportComponent,
+    // PartnerImportComponent,
     PartnerPaymentsComponent,
     PurchaseOrderRefundComponent,
     PartnerCardsTabPaneComponent,
@@ -152,7 +149,6 @@ import { AccountInvoiceReportService } from '../account-invoice-reports/account-
     PartnerOverviewSaleOrderLineComponent,
     ApplyDiscountSaleOrderLinePopoverComponent,
     PartnerCustomerTreatmentPaymentFastComponent,
-    PartnerInfoCustomerManagementComponent,
     PartnerSupplierFormComponent,
     PartnerSupplierFormInforComponent,
     PartnerSupplierFormDebitComponent,
@@ -193,9 +189,9 @@ import { AccountInvoiceReportService } from '../account-invoice-reports/account-
     SaleOrdersModule,
     PartnerTitlesModule,
     PartnerSourcesModule,
-    PartnerCategoriesModule,
     PartnerAdvancesModule,
-    HistoryModule
+    HistoryModule,
+    CatalogModule
   ],
   entryComponents: [
     PartnerCreateUpdateComponent,

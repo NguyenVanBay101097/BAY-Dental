@@ -99,5 +99,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Diagnostic { get; set; }
         public string ToothType { get; set; }
         public string OrderId { get; set; }
+        public string State { get; set; }
     }
+
 }

@@ -37,6 +37,8 @@ export class SaleOrderLineCuComponent implements OnInit {
   @Output() onEditEvent = new EventEmitter<any>();
   @Output() onCancelEvent = new EventEmitter<any>();
   @Output() onActiveEvent = new EventEmitter<any>();
+  @Output() onUpdateStateEvent = new EventEmitter<any>();
+
   onUpdateSignSubject = new Subject<boolean>();//emit true: đã update xong, false: fail update
 
   isEditting: boolean = false;
@@ -51,6 +53,7 @@ export class SaleOrderLineCuComponent implements OnInit {
   // hamList: { [key: string]: {} };
   @Input() initialListTeeths: any[] = [];
   @Input() initialToothTypeDict: any[] = [];
+  @Input() orderState: string = 'draft';
   formGroupInfo: FormGroup;
   submitted = false;
   get f() { return this.formGroupInfo.controls; }
@@ -67,6 +70,14 @@ export class SaleOrderLineCuComponent implements OnInit {
   };
   isUpdated: boolean = false;
   lineId: string = '';
+  public listState = [
+   {text:'Đang điều trị', value:'sale'},
+   {text:'Hoàn thành', value:'done'},
+   {text:'Ngừng điều trị', value:'cancel'},
+  ];
+
+  stateEdit= ['draft', 'sale'];
+
   constructor(
     private fb: FormBuilder,
     private employeeService: EmployeeService,
@@ -98,6 +109,10 @@ export class SaleOrderLineCuComponent implements OnInit {
 
   get TeethFA() {
     return this.formGroupInfo.get("teeth") as FormArray;
+  }
+
+  get formState(){
+    return this.formGroupInfo.get("state").value;
   }
 
   getPriceUnitLinePromotion(line) {
@@ -138,6 +153,8 @@ export class SaleOrderLineCuComponent implements OnInit {
       counselor: this.line.counselor,
       diagnostic: this.line.diagnostic,
       teeth: this.fb.array(this.line.teeth),
+      date: typeof this.line.date == 'string'? new Date(this.line.date) : this.line.date,
+      state: this.line.state
     });
 
     this.formGroupInfo.get('toothType').setValue(this.line.toothType);
@@ -313,28 +330,33 @@ export class SaleOrderLineCuComponent implements OnInit {
   // }
 
   updateLineInfo() {
+
+    var updateLineInfoRun = ()=> {
     this.isUpdated = true;
     if (this.formGroupInfo.invalid) {
       this.formGroupInfo.markAllAsTouched();
       return false;
     }
-    // if(this.formInfoControl('toothType').value == 'manual' && this.formInfoControl('teeth').value.length == 0) {
-    //   this.notify('error', 'Chọn răng');
-    //   return false;
-    // }
-    // this.formGroupInfo.get("toothCategory").setValue(this.line.toothCategory);
-    // this.TeethFA.clear();
-    // this.line.teeth.forEach(value => {
-    //   this.onSelected(value);
-    // })
-
     let val = this.formGroupInfo.value;
     this.isEditting = false;
-
-    // this.isItSeff = this.isItSeff;
-    // this.notify('success', 'Cập nhật thành công');
     this.onUpdateEvent.emit(val);
     return true;
+    }
+
+    if(this.formState == 'done' || this.formState == 'cancel')
+    {
+      let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+      modalRef.componentInstance.title = this.formState == 'done' ? 'Hoàn thành dịch vụ' : 'Ngừng dịch vụ';
+      modalRef.componentInstance.body = this.formState == 'done'? 'Bạn có xác nhận hoàn thành dịch vụ không'
+      :'Bạn có muốn ngừng dịch vụ không?';
+      modalRef.componentInstance.body2 = this.formState == 'done'?'(Lưu ý: Sau khi hoàn thành không thể chỉnh sửa dịch vụ)'
+      :'(Lưu ý: Sau khi ngừng không thể chỉnh sửa dịch vụ)'
+      modalRef.result.then(() => {
+      return updateLineInfoRun();
+      });
+    } else{
+      return  updateLineInfoRun();
+    }
   }
 
   onChangeQuantity() {
@@ -455,5 +477,15 @@ export class SaleOrderLineCuComponent implements OnInit {
       this.onChangeToothTypeLine(this.formInfoControl("toothType").value);
     }, (reason) => {
     });
+  }
+
+  getStateDisplay(state){
+    var r = this.listState.find(x=> x.value == state);
+    return r? r.text : '';
+  }
+
+  onSWitchState(line) {
+    if(line.state == this.line.state) return;
+   this.onUpdateStateEvent.next(line.state);
   }
 }

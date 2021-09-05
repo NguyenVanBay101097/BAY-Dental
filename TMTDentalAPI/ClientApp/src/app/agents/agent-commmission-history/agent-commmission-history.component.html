@@ -2,9 +2,7 @@
     <div class="o_control_panel">
         <div class="o_cp_left">
             <div class="o_cp_buttons">
-                <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [title]="'Thời gian'" [dateTo]="dateTo"
-                    (searchChange)="onSearchDateChange($event)">
-                </app-tai-date-range-filter-dropdown>
+                <app-date-range-picker-filter [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
             </div>
             <div class="o_cp_sidebar">
             </div>
@@ -19,8 +17,7 @@
 
 <div class="o_content">
     <div>
-        <kendo-grid [resizable]="true" [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true"
-            [loading]="loading" (pageChange)="pageChange($event)" [navigable]="true">
+        <kendo-grid [resizable]="true" [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)" [navigable]="true">
             <kendo-grid-column title="Ngày" width="135">
                 <ng-template kendoGridCellTemplate let-dataItem let-column="column">
                     {{dataItem.date | date:'shortDate'}}
@@ -54,9 +51,9 @@
 
             <kendo-grid-command-column title="Thao tác" width="100">
                 <ng-template kendoGridCellTemplate let-dataItem>
-                    <button class="btn btn-sm mr-1" title="In" (click)="printItem(dataItem)">
+                    <button class="btn mr-1" title="In" (click)="printItem(dataItem)">
                         <i class="fas fa-print fa-lg"></i></button>
-                    <button kendoButton (click)="deleteItem(dataItem)" class="btn btn-sm"><i title="Xóa"
+                    <button kendoButton (click)="deleteItem(dataItem)" class="btn"><i title="Xóa"
                             class="far fa-trash-alt fa-lg"></i></button>
                 </ng-template>
             </kendo-grid-command-column>

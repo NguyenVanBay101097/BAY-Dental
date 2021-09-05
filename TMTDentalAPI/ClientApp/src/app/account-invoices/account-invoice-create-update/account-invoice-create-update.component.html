@@ -12,13 +12,13 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm" *ngIf="getInvState == 'draft' && !id"
+                    <button type="button" class="btn btn-primary" *ngIf="getInvState == 'draft' && !id"
                         (click)="onSave()">
                         Lưu</button>
-                    <button type="button" class="btn btn-primary btn-sm" *ngIf="getInvState == 'draft' && id"
+                    <button type="button" class="btn btn-primary" *ngIf="getInvState == 'draft' && id"
                         (click)="onUpdate()">
                         Lưu</button>
-                    <button type="button" class="btn btn-primary btn-sm" (click)="createNew()" *ngIf="id">
+                    <button type="button" class="btn btn-primary" (click)="createNew()" *ngIf="id">
                         Thêm mới</button>
                 </div>
             </div>
@@ -27,7 +27,7 @@
         </div>
         <div class="o_cp_right">
             <div class="dropdown">
-                <button class="btn btn-secondary btn-sm dropdown-toggle" *ngIf="id" data-toggle="dropdown"
+                <button class="btn btn-secondary dropdown-toggle" *ngIf="id" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
                     Thao tác
                 </button>
@@ -43,23 +43,23 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
-                    <button type="button" class="btn btn-primary btn-sm" *ngIf="getInvState == 'draft' && !id"
+                    <button type="button" class="btn btn-primary" *ngIf="getInvState == 'draft' && !id"
                         (click)="onSaveConfirm()">
                         Xác nhận
                     </button>
-                    <button type="button" class="btn btn-primary btn-sm" *ngIf="getInvState == 'draft' && id"
+                    <button type="button" class="btn btn-primary" *ngIf="getInvState == 'draft' && id"
                         (click)="onConfirm()">
                         Xác nhận
                     </button>
-                    <button type="button" class="btn btn-primary btn-sm" *ngIf="getInvState == 'open'"
+                    <button type="button" class="btn btn-primary" *ngIf="getInvState == 'open'"
                         (click)="actionInvoicePayment()">
                         Thanh toán
                     </button>
-                    <button type="button" class="btn btn-danger btn-sm" *ngIf="['open'].indexOf(getInvState) != -1"
+                    <button type="button" class="btn btn-danger" *ngIf="['open'].indexOf(getInvState) != -1"
                         (click)="actionCancel()">
                         Hủy phiếu
                     </button>
-                    <button type="button" class="btn btn-sm btn-primary" *ngIf="['cancel'].indexOf(getInvState) != -1"
+                    <button type="button" class="btn btn-primary" *ngIf="['cancel'].indexOf(getInvState) != -1"
                         (click)="actionCancelDraft()">
                         Chuyển thành nháp
                     </button>
@@ -164,7 +164,7 @@
                     <div class="tab-content">
                         <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">
                             <div class="mb-2">
-                                <button type="button" class="btn btn-secondary btn-sm" accesskey="a"
+                                <button type="button" class="btn btn-secondary" accesskey="a"
                                     *ngIf="getInvState == 'draft'" aria-keyshortcuts="alt+a"
                                     (click)="showAddLineModal()">
                                     Thêm</button>
@@ -192,12 +192,12 @@
                                                 </td>
                                                 <td>
                                                     <button type="button" *ngIf="getInvState == 'draft'"
-                                                        class="btn btn-icon btn-sm btn-light mr-1"
+                                                        class="btn btn-icon btn-light mr-1"
                                                         (click)="editLine(line)">
                                                         <span class="k-icon k-i-edit"></span>
                                                     </button>
                                                     <button type="button" *ngIf="getInvState == 'draft'"
-                                                        class="btn btn-icon btn-sm btn-light" (click)="deleteLine(i)">
+                                                        class="btn btn-icon btn-light" (click)="deleteLine(i)">
                                                         <span class="k-icon k-i-delete"></span>
                                                     </button>
                                                 </td>
@@ -298,7 +298,7 @@
                                                                                             style="text-align:right">
                                                                                             <a *ngIf="payment.accountPaymentId != null"
                                                                                                 [routerLink]="['/accountpayments/edit/' + payment.accountPaymentId]"
-                                                                                                class="btn btn-sm btn-primary">Mở</a>
+                                                                                                class="btn btn-primary">Mở</a>
                                                                                         </td>
                                                                                     </tr>
                                                                                 </table>

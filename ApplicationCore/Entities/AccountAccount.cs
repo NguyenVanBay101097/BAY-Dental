@@ -37,7 +37,7 @@ namespace ApplicationCore.Entities
         public bool Reconcile { get; set; }
 
         /// <summary>
-        /// Co khong hien thi trong bao cao ket qua kinh doanh?
+        /// Co khong hien thi trong bao cao ket qua kinh doanh? -> Không sử dụng
         /// </summary>
         public bool IsExcludedProfitAndLossReport { get; set; }
     }

@@ -14,6 +14,7 @@ export class AccountInvoiceReportRevenueDetailComponent implements OnInit {
 
   filter = new RevenueReportDetailPaged();
   @Input() parent: any;
+  @Input() showPartner: boolean = true;
   gridData: GridDataResult;
   loading = false;
 
@@ -35,6 +36,8 @@ export class AccountInvoiceReportRevenueDetailComponent implements OnInit {
     this.filter.productId = this.parent.productId  || '';
     this.filter.employeeId = this.parent.groupBy && this.parent.groupBy == 'employee'? this.parent.toDetailEmployeeId : '';
     this.filter.assistantId = this.parent.groupBy && this.parent.groupBy == 'assistant'? this.parent.toDetailEmployeeId : '';
+    this.filter.partnerId = this.parent.partnerId  || '';
+
   }
 
   loadReport() {

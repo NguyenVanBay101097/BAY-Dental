@@ -5,8 +5,8 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { PrintService } from 'src/app/print.service';
 import { NotifyService } from 'src/app/shared/services/notify.service';
+import { PrintService } from 'src/app/shared/services/print.service';
 import { AgentService, CommissionAgentDetailItemFilter } from '../agent.service';
 
 @Component({

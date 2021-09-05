@@ -1,6 +1,6 @@
 <div class="px-3 py-3 bg-white">
     <div class="mb-2">
-        <button type="button" class="btn btn-primary btn-sm" (click)="dialogAppointment(null)" accesskey="c">
+        <button type="button" class="btn btn-primary" (click)="dialogAppointment(null)" accesskey="c">
             <i class="fas fa-plus"></i> Tạo lịch hẹn
         </button>
     </div>
@@ -11,7 +11,7 @@
                 </kendo-grid-column>
                 <kendo-grid-column field="date" title="Ngày hẹn" width="150">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                        {{dataItem.time}} - {{dataItem.date | date:'EEEE, dd/MM/yyyy'}}
+                        {{dataItem.date | date:'HH:mm EEEE, dd/MM/yyyy'}}
                     </ng-template>
                 </kendo-grid-column>
                 <kendo-grid-column field="doctorName" title="Bác sĩ" width="150">
@@ -31,9 +31,9 @@
                         Thao tác
                     </ng-template>
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                        <button class="btn btn-success btn-sm mr-2" title="Sửa" (click)="dialogAppointment(dataItem)">
+                        <button class="btn btn-success mr-2" title="Sửa" (click)="dialogAppointment(dataItem)">
                             <span class="far fa-edit"></span></button>
-                        <button class="btn btn-danger btn-sm" title="Xóa" (click)="deleteAppointment(dataItem)">
+                        <button class="btn btn-danger" title="Xóa" (click)="deleteAppointment(dataItem)">
                             <span class="far fa-trash-alt"></span></button>
                     </ng-template>
                 </kendo-grid-column>

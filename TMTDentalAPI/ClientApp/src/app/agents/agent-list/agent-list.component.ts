@@ -5,7 +5,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { PrintService } from 'src/app/print.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { AgentPaged, AgentService } from '../agent.service';
 import { AgentCreateUpdateDialogComponent } from 'src/app/shared/agent-create-update-dialog/agent-create-update-dialog.component';
@@ -25,8 +24,7 @@ export class AgentListComponent implements OnInit {
   searchUpdate = new Subject<string>();
   constructor(private route: ActivatedRoute, private modalService: NgbModal,
     private agentService: AgentService, private router: Router,
-    private notifyService: NotifyService,
-    private printService: PrintService) { }
+    private notifyService: NotifyService) { }
 
   ngOnInit() {
     this.loadDataFromApi();

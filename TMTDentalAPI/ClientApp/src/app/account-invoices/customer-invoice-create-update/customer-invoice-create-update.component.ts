@@ -19,14 +19,13 @@ import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
 import * as _ from 'lodash';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { LaboOrderLineCuDialogComponent } from 'src/app/labo-order-lines/labo-order-line-cu-dialog/labo-order-line-cu-dialog.component';
-import { PrintService } from 'src/app/print.service';
 import { DotKhamLineService } from 'src/app/dot-kham-lines/dot-kham-line.service';
 import { DotKhamBasic } from 'src/app/dot-khams/dot-khams';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AccountRegisterPaymentDefaultGet, AccountRegisterPaymentService } from 'src/app/account-payments/account-register-payment.service';
 import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/shared/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 declare var $: any;
-
+ 
 @Component({
   selector: 'app-customer-invoice-create-update',
   templateUrl: './customer-invoice-create-update.component.html',
@@ -54,7 +53,7 @@ export class CustomerInvoiceCreateUpdateComponent implements OnInit {
     private userService: UserService, private route: ActivatedRoute,
     public intlService: IntlService, private windowService: WindowService, private accountInvoiceService: AccountInvoiceService,
     private notificationService: NotificationService, private modalService: NgbModal,
-    private router: Router, private printService: PrintService, private dotkhamLinesService: DotKhamLineService,
+    private router: Router, private dotkhamLinesService: DotKhamLineService,
     private registerPaymentService: AccountRegisterPaymentService) { }
 
   ngOnInit() {

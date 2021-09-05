@@ -41,9 +41,15 @@
     </div>
     <div class="o_form_view">
         <div class="o_group mt-0 mb-0">
-            <div class="text-lg font-semibold mb-1">THÔNG TIN CHI TIẾT</div>
             <table class="o_group o_inner_group">
                 <tbody>
+                    <tr>
+                        <td colspan="2">
+                            <div class="o_horizontal_separator">
+                                THÔNG TIN CHI TIẾT
+                            </div>
+                        </td>
+                    </tr>
                     <tr>
                         <td colspan="1" class="o_td_label">
                             <div class="o_form_label o_form_label_help">
@@ -103,10 +109,10 @@
                 {
                     <tr *ngFor="let line of saleOrderPrint.orderLines; let i=index">
                         <td>@line.ProductName</td>
-                        <td class="text-right">@string.Format(culture, "{0:0}", @line.ProductUOMQty)</td>
-                        <td class="text-right">@string.Format(culture, "{0:0,0}", line.PriceUnit)</td>
-                        <td class="text-right">@string.Format(culture, "{0:0,0}", line.AmountDiscountTotal ?? 0)</td>
-                        <td class="text-right">@string.Format(culture, "{0:0,0}", line.PriceSubTotal)</td>
+                        <td class="text-right">@string.Format(culture, "{0:n0}", @line.ProductUOMQty)</td>
+                        <td class="text-right">@string.Format(culture, "{0:n0}", line.PriceUnit)</td>
+                        <td class="text-right">@string.Format(culture, "{0:n0}", line.AmountDiscountTotal ?? 0)</td>
+                        <td class="text-right">@string.Format(culture, "{0:n0}", line.PriceSubTotal)</td>
                     </tr>
                 }
 
@@ -122,7 +128,7 @@
                             </div>
                         </td>
                         <td colspan="1" class="text-right pe-0">
-                            <div class="o_form_field o_form_field_number">@string.Format(culture, "{0:0,0}", Model.AmountTotal)</div>
+                            <div class="o_form_field o_form_field_number">@string.Format(culture, "{0:n0}", Model.AmountTotal)</div>
                         </td>
                     </tr>
                     <tr>
@@ -132,7 +138,7 @@
                             </div>
                         </td>
                         <td colspan="1" class="text-right pe-0">
-                            <div class="o_form_field o_form_field_number">@((Model.AmountTotal - Model.Residual) == 0 ? "0" : string.Format(culture, "{0:0,0}", (Model.AmountTotal - Model.Residual)))</div>
+                            <div class="o_form_field o_form_field_number">@((Model.AmountTotal - Model.Residual) == 0 ? "0" : string.Format(culture, "{0:n0}", (Model.AmountTotal - Model.Residual)))</div>
                         </td>
                     </tr>
                     <tr>
@@ -142,7 +148,7 @@
                             </div>
                         </td>
                         <td colspan="1" class="text-right pe-0">
-                            <div class="o_form_field o_form_field_number">@(Model.Residual == 0 ? "0" : string.Format(culture, "{0:0,0}", Model.Residual) )</div>
+                            <div class="o_form_field o_form_field_number">@(Model.Residual == 0 ? "0" : string.Format(culture, "{0:n0}", Model.Residual) )</div>
                         </td>
                     </tr>
                 </tbody>
@@ -174,10 +180,10 @@
                                 @if (item.Id == payment.Payments.FirstOrDefault().Id)
                                 {
                                     <td rowspan="@payment.Payments.Count()">@item.PaymentDate.ToString("dd/MM/yyyy")</td>
-                                    <td rowspan="@payment.Payments.Count()">@string.Format(culture, "{0:0,0}", payment.Amount)</td>
+                                    <td rowspan="@payment.Payments.Count()">@string.Format(culture, "{0:n0}", payment.Amount)</td>
                                 }
                                 <td>@item.JournalName</td>
-                                <td class="text-right">@string.Format(culture, "{0:0,0}", item.Amount)</td>
+                                <td class="text-right">@string.Format(culture, "{0:n0}", item.Amount)</td>
                             </tr>
                         }
                     }
@@ -252,7 +258,7 @@
         </div>
         <div class="col">
             <div class="text-center">
-                <span class="font-semibold"> Khách Hàng</span> <br />
+                <span class="font-semibold"> Khách hàng</span> <br />
                 <i>(Ký, họ tên)</i> <br />
                 <span></span> <br />
                 <span></span> <br />

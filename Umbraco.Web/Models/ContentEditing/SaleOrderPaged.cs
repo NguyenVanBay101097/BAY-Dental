@@ -35,6 +35,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Over interval: 'month'
         /// </summary>
         public string OverInterval { get; set; }
+        //new, old: phiếu cũ hay phiếu đầu tiên
+        public string TypeReport { get; set; }
     }
 
     public class ApplyDiscountRequest

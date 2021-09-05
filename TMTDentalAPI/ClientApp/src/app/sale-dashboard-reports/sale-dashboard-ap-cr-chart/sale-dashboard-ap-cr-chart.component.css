@@ -1,0 +1,68 @@
+.size-chart {
+  height: 200px;
+  width: 200px;
+}
+
+.img-nodata {
+  padding: 10px;
+  width: 150px;
+}
+
+.reports-section {
+  border-radius: 6px;
+  overflow: hidden;
+  display: -webkit-box;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  flex-direction: column;
+  -webkit-border-radius: 6px;
+}
+
+.report-boxes.gridViewReport .report-box {
+  width: 50%;
+}
+
+.report-box {
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+  padding-bottom: 15px;
+  padding-right: 25px;
+}
+
+.report-box:last-child {
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+  padding-bottom: 15px;
+  padding-right: 0px;
+}
+
+.box-item {
+  background: #FFFFFF;
+  border: 1px solid #E2E7ED;
+  box-sizing: border-box;
+  border-radius: 6px;
+  padding: 10px;
+}
+
+.box-item-content {
+  margin-bottom: 10px;
+}
+
+.note-chart {
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.link-details {
+  text-align: end;
+  color: #0d6efd;
+}
+
+.title-box {
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 28px;
+  text-transform: uppercase;
+  color: #1A6DE3;
+}

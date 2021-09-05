@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, DoCheck, EventEmitter, Input, IterableDiffer, IterableDiffers, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
@@ -14,29 +14,37 @@ import { ProductCategoryDialogComponent } from 'src/app/shared/product-category-
   templateUrl: './product-category-list.component.html',
   styleUrls: ['./product-category-list.component.css']
 })
-export class ProductCategoryListComponent implements OnInit, OnChanges {
+export class ProductCategoryListComponent implements OnInit, DoCheck {
   @Input() type: string;
   @Output() onSelect = new EventEmitter<any>();
   @Output() onDelete = new EventEmitter<any>();
   @Output() createBtnEvent = new EventEmitter<any>();
+  @Output() updateBtnEvent = new EventEmitter<any>();
   searchCate: string;
   @Input() categories: any[];
   sourceCategories: any[];
   searchCateUpdate = new Subject<string>();
   category: any;
   canAdd = false;
+  iterableDiffer: IterableDiffer<any>;
   constructor(private productCategoryService: ProductCategoryService,
     private modalService: NgbModal,
-    private checkPermissionService: CheckPermissionService
-  ) { }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    this.sourceCategories = this.categories.slice();
-  }
+    private checkPermissionService: CheckPermissionService,
+    private iterableDiffers: IterableDiffers
+  ) {
+    this.iterableDiffer = this.iterableDiffers.find([]).create(null);
+   }
 
   ngOnInit() {
     this.sourceCategories = this.categories.slice();
     this.checkPermission();
+  }
+
+  ngDoCheck() {
+    var changes = this.iterableDiffer.diff(this.categories);
+    if (changes) {
+      this.sourceCategories = this.categories.slice();
+    }
   }
 
   onSearchChange(val: string) {
@@ -73,8 +81,7 @@ export class ProductCategoryListComponent implements OnInit, OnChanges {
     modalRef.componentInstance.title = 'Thêm: ' + this.getTitle();
     modalRef.componentInstance.type = this.type;
     modalRef.result.then(result => {
-      this.sourceCategories.unshift(result);
-      // this.createBtnEvent.emit(result);
+      this.createBtnEvent.emit(result);
     }, () => {
     });
   }
@@ -85,9 +92,7 @@ export class ProductCategoryListComponent implements OnInit, OnChanges {
     modalRef.componentInstance.id = item.id;
     modalRef.componentInstance.type = this.type;
     modalRef.result.then(() => {
-      this.productCategoryService.get(item.id).subscribe((categ: any) => {
-        this.sourceCategories[index] = categ;
-      });
+      this.updateBtnEvent.emit(item.id);
     }, () => {
     });
   }
@@ -97,11 +102,8 @@ export class ProductCategoryListComponent implements OnInit, OnChanges {
     modalRef.componentInstance.title = 'Xóa: ' + this.getTitle();
     modalRef.result.then(() => {
       this.productCategoryService.delete(item.id).subscribe(() => {
-        this.sourceCategories.splice(index, 1);
-        if (this.category == item) {
-          this.category = null;
-          this.onSelect.emit(null);
-        }
+        //emit về cha để cha remove categ
+        this.onDelete.emit(index);
       }, err => {
         console.log(err);
       });

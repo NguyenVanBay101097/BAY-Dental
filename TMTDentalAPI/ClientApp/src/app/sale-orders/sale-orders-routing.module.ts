@@ -14,9 +14,6 @@ const routes: Routes = [
   {
     path: 'form',
     component: SaleOrderCreateUpdateComponent,
-    resolve: {
-      partner: PartnerResolver
-    }
   },
   {
     path: 'management',

@@ -40,7 +40,7 @@ export class MemberLevelListComponent implements OnInit {
   }
   
   onUpdate(){
-    this.router.navigate(['member-level/create']);
+    this.router.navigate(['catalog/member-level/create']);
   }
 
 }

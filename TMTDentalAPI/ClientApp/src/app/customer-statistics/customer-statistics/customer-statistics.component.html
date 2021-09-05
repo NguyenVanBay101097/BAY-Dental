@@ -4,18 +4,16 @@
             <li class="active">
                 Thống kê khách hàng
             </li>
-        </ol>   
-        <div class="o_cp_right">           
-               
-        </div> 
-        <div class="o_cp_left">           
+        </ol>
+        <div class="o_cp_right">
+
+        </div>
+        <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div>
-                    <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [dateTo]="dateTo" title="Thời gian"
-                        (searchChange)="onSearchDateChange($event)">
-                    </app-tai-date-range-filter-dropdown>
+                    <app-date-range-picker-filter [opens]="'left'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
                 </div>
-            </div>          
+            </div>
         </div>
     </div>
 </div>

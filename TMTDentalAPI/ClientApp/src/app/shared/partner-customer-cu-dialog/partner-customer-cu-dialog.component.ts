@@ -28,6 +28,7 @@ import { EmployeeService } from 'src/app/employees/employee.service';
 import { PermissionService } from '../permission.service';
 import { CheckPermissionService } from '../check-permission.service';
 import { AgentCreateUpdateDialogComponent } from '../agent-create-update-dialog/agent-create-update-dialog.component';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: "app-partner-customer-cu-dialog",
@@ -101,9 +102,6 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
   submitted = false;
 
-  showPartnerSource = false;
-  showPartnerHistories = false;
-  showPartnerTitles = false;
   showAgent = false;
   showPartnerCategories = false;
   showInfo = false;
@@ -211,7 +209,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
             this.filteredTitles = _.unionBy(this.filteredTitles, [result.title], 'id');
           }
-          
+
           if (result.agent) {
             this.filteredAgents = _.unionBy(this.filteredAgents, [result.agent], 'id');
           }
@@ -231,21 +229,10 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       this.monthList = _.range(1, 13);
       this.yearList = _.range(new Date().getFullYear(), 1900, -1);
       this.loadSourceCities();
-      if(this.showPartnerCategories){
-        this.loadCategoriesList();
-      }
-      if(this.showPartnerHistories){
-        this.loadHistoriesList();
-      }
-      if(this.showPartnerSource){
-        this.loadSourceList();
-      }
-      // this.loadReferralUserList();
-      if(this.showPartnerTitles){
-        this.loadTitleList();
-      }
-        this.loadAgentList();
-
+      this.loadHistoriesList();
+      this.loadSourceList();
+      this.loadTitleList();
+      this.loadAgentList();
 
       this.sourceCbx.filterChange
         .asObservable()
@@ -267,7 +254,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
         tap(() => (this.titleCbx.loading = true)),
         switchMap((value) => this.searchTitles(value))
       )
-      .subscribe((result) => {     
+      .subscribe((result) => {
         this.filteredTitles = result;
         this.titleCbx.loading = false;
       });
@@ -355,7 +342,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   }
 
   quickCreateAgent() {
-    let modalRef = this.modalService.open(AgentCreateUpdateDialogComponent,  { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(AgentCreateUpdateDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm người giới thiệu';
     modalRef.result.then(result => {
       this.filteredAgents.push(result as AgentBasic);
@@ -367,7 +354,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
   loadSourceCities() {
     this.http
-      .post("https://aship.skyit.vn/api/ApiShippingCity/GetCities", {
+      .post(environment.ashipApi + "api/ApiShippingCity/GetCities", {
         provider: "Undefined",
       })
       .subscribe((result: any) => {
@@ -378,7 +365,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
   loadSourceDistricts(cityCode: string) {
     this.http
-      .post("https://aship.skyit.vn/api/ApiShippingDistrict/GetDistricts", {
+      .post(environment.ashipApi + "api/ApiShippingDistrict/GetDistricts", {
         data: {
           code: cityCode,
         },
@@ -392,7 +379,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
   loadSourceWards(districtCode: string) {
     this.http
-      .post("https://aship.skyit.vn/api/ApiShippingWard/GetWards", {
+      .post(environment.ashipApi + "api/ApiShippingWard/GetWards", {
         data: {
           code: districtCode,
         },
@@ -600,10 +587,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     this.f.avatar.setValue(data ? data.fileUrl : null);
   }
 
-  checkRole(){
-    console.log(this.id);
-    
-    this.showPartnerHistories = this.checkPermissionService.check(["Catalog.History.Read"]);
+  checkRole() {
     this.canCreateTitle = this.checkPermissionService.check(["Catalog.PartnerTitle.Create"]);
     this.showInfo = this.checkPermissionService.check(["Basic.Partner.ContactInfo"]);
   }

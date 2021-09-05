@@ -1,9 +1,30 @@
-﻿@page {
+﻿*, ::after, ::before {
+    box-sizing: border-box;
+}
+
+label {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+}
+
+@page {
     margin: 0
 }
 
 body {
     margin: 0
+}
+
+@media print {
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+}
+
+tr,
+img {
+    page-break-inside: avoid;
 }
 
 .sheet {
@@ -248,6 +269,8 @@ p {
 
 .d-flex {
     display: flex !important;
+    display: -webkit-box;
+    display: -webkit-flex;
 }
 
 .mt-0 {
@@ -486,14 +509,15 @@ p {
     text-align: center !important;
 }
 
-label, strong {
-    font-weight: 600 !important;
-}
-
 [type="text"], [type="password"], [type="number"], textarea, select {
     width: 100%;
     display: block;
     outline: none;
+}
+
+.o_form_view .o_horizontal_separator {
+    font-size: 1.125rem;
+    margin: 5px 0;
 }
 
 .o_form_view .o_form_sheet_bg .o_form_sheet {
@@ -546,8 +570,10 @@ body.A5 .o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_label {
     font-size: 20px;
 }
 
-.o_form_view .o_group.o_inner_group {
-    display: inline-table;
+.o_form_view .o_group {
+    display: flex;
+    width: 100%;
+    margin: 10px 0;
 }
 
 .o_form_view .o_group .o_group_col_6 {
@@ -558,7 +584,7 @@ body.A5 .o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_label {
 
 .o_form_view .o_group .o_group_col_8 {
     display: inline-block;
-    width: 66.666667%;
+    width: 66.666666%;
     vertical-align: top;
 }
 
@@ -566,6 +592,10 @@ body.A5 .o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_label {
     display: inline-block;
     width: 33.333333%;
     vertical-align: top;
+}
+
+.o_form_view .o_group.o_inner_group {
+    display: inline-table;
 }
 
 .o_form_view .o_notebook > .tab-content > .tab-pane > :first-child {
@@ -670,11 +700,12 @@ table {
 }
 
     .table > :not(caption) > * > * {
-        padding: 0.5rem 0.5rem;
+        padding: 0.5rem 0.5rem!important;
     }
 
+
 .table-sm > :not(caption) > * > * {
-    padding: 0.25rem 0.25rem;
+    padding: 0.25rem 0.25rem!important;
 }
 
 .table-bordered td, .table-bordered th {
@@ -728,6 +759,39 @@ table {
     display: block;
     clear: both;
     content: "";
+}
+
+.container,
+.container-fluid,
+.container-xxl,
+.container-xl,
+.container-lg,
+.container-md,
+.container-sm {
+    width: 100%;
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -0.75rem;
+    margin-left: -0.75rem;
+}
+
+    .row > * {
+        flex-shrink: 0;
+        width: 100%;
+        max-width: 100%;
+        padding-right: 0.75rem;
+        padding-left: 0.75rem;
+    }
+
+.col {
+    flex: 1 0 0%;
 }
 
 .col-8 {

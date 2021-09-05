@@ -1,0 +1,7 @@
+.cus-text-truncate {
+    display: inline-block;
+    max-width: calc(150px - 1.71rem); 
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

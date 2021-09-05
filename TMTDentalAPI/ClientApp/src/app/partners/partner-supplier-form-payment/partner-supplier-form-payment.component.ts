@@ -95,11 +95,16 @@ export class PartnerSupplierFormPaymentComponent implements OnInit {
   }
 
   printPayment(payment) {
-    this.accountPaymentOdataService.getPrint(payment.id).subscribe(result => {
-      if (result) {
-        var html = result['html']
-        this.printService.printHtml(html);
-      }
-    });
+    // this.accountPaymentOdataService.getPrint(payment.id).subscribe(result => {
+    //   if (result) {
+    //     var html = result['html']
+    //     this.printService.printHtml(html);
+    //   }
+    // });
+    if (payment && payment.id) {
+      this.paymentService.getPrint(payment.id).subscribe(result => {
+        this.printService.printHtml(result);
+      });
+    }
   }
 }

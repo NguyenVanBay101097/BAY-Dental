@@ -354,8 +354,8 @@ namespace Infrastructure.Services
             {
                 Name = "Hoa hồng người giới thiệu",
                 Code = "HHNGT",
-                InternalType = currentLiabilities.Type,
-                UserTypeId = currentLiabilities.Id,
+                InternalType = expenseAccType.Type,
+                UserTypeId = expenseAccType.Id,
                 CompanyId = company.Id,
             };
 
@@ -418,7 +418,7 @@ namespace Infrastructure.Services
                 UpdatePosted = true,
                 Code = "SALARY",
                 DefaultDebitAccountId = acc642.Id,
-                DefaultCreditAccountId = acc334.Id,
+                DefaultCreditAccountId = acc642.Id,
                 CompanyId = company.Id,
             };
 

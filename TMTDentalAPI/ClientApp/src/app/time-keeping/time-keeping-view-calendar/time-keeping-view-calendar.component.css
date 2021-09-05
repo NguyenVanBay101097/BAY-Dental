@@ -26,10 +26,6 @@
   position: relative;
 }
 
-.o_control_panel .o_cp_right {
-  margin-top: -1px;
-}
-
 .oe_kanban_content {
   cursor: pointer;
   position: relative;

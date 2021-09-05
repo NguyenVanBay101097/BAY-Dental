@@ -13,6 +13,7 @@ export class SalaryPaymentPaged {
     search: string;
     limit: number;
     offset: number;
+    companyId: string;
 }
 
 export class SalaryPaymentDisplay {

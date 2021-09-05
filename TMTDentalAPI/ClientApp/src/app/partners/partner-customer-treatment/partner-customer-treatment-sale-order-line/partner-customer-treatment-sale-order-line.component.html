@@ -1,5 +1,6 @@
-<kendo-grid [data]="gridData" [loading]="loading" >
-    <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}" field="Name"
+<kendo-grid [data]="gridData" [loading]="loading" [pageSize]="limit" [skip]="skip" [pageable]="true"
+[scrollable]="'none'" (pageChange)="pageChange($event)" [navigable]="true" >
+    <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}" field="name"
         title="Dịch vụ" width="150">
     </kendo-grid-column>
     <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}" field="teeth"
@@ -9,27 +10,27 @@
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
-        field="Employee.Name" title="Bác sĩ" width="120">
+        field="employee.name" title="Bác sĩ" width="120">
     </kendo-grid-column>
     <kendo-grid-column class="text-right" [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
-        field="ProductUOMQty" title="Số lượng" width="100">
+        field="productUOMQty" title="Số lượng" width="100">
     </kendo-grid-column>
     <kendo-grid-column class="text-right" [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
-        field="PriceSubTotal" title="Thành tiền" width="150">
+        field="priceSubTotal" title="Thành tiền" width="150">
         <ng-template kendoGridCellTemplate let-dataItem>
-            {{dataItem.PriceSubTotal | number}}
+            {{dataItem.priceSubTotal | number}}
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column class="text-right" [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
-        field="AmountPaid" title="Thanh toán" width="150">
+        field="amountPaid" title="Thanh toán" width="150">
         <ng-template kendoGridCellTemplate let-dataItem>
-            {{dataItem.AmountPaid | number}}
+            {{dataItem.amountPaid | number}}
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column class="text-right" [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
-        field="AmountResidual" title="Còn lại" width="150">
+        field="amountResidual" title="Còn lại" width="150">
         <ng-template kendoGridCellTemplate let-dataItem>
-            {{dataItem.AmountResidual | number}}
+            {{dataItem.amountResidual | number}}
         </ng-template>
     </kendo-grid-column>
 </kendo-grid>

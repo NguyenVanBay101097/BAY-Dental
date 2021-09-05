@@ -9,6 +9,9 @@ import { HrPayslipRunListComponent } from './hr-payslip-run-list/hr-payslip-run-
 import { HrPayslipRunFormComponent } from './hr-payslip-run-form/hr-payslip-run-form.component';
 import { HrSalaryConfigCreateUpdateComponent } from './hr-salary-config-create-update/hr-salary-config-create-update.component';
 import { HrSalaryReportListComponent } from './hr-salary-report-list/hr-salary-report-list.component';
+import { TimeKeepingViewCalendarComponent } from '../time-keeping/time-keeping-view-calendar/time-keeping-view-calendar.component';
+import { SalaryPaymentListComponent } from '../salary-payment/salary-payment-list/salary-payment-list.component';
+import { SalaryPaymentFormComponent } from '../salary-payment/salary-payment-form/salary-payment-form.component';
 
 const routes: Routes = [
   {
@@ -46,7 +49,19 @@ const routes: Routes = [
   },
   {
     path: 'salary-reports', component: HrSalaryReportListComponent
-  }
+  },
+  {
+    path: 'time-keepings',
+    component: TimeKeepingViewCalendarComponent
+  },
+  {
+    path: 'salary-payment',
+    component: SalaryPaymentListComponent
+  },
+  {
+    path: 'salary-payment/form',
+    component: SalaryPaymentFormComponent
+  },
 ];
 
 @NgModule({

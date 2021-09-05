@@ -1,0 +1,106 @@
+<div class="reports-section">
+    <div class=" report-boxes gridViewReport d-flex justify-content-between">
+        <div class="report-box">
+            <div class="box-item">
+                <div class="box-item-content">
+                    <div class=" mr-2 px-2 py-1">
+                        <h5 class="mb-0 title-box">Khách hàng phát sinh PĐT mới</h5>
+                        <div>
+                            <ng-container *ngIf="pieDataCustomer?.length; else elseTemplate">
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <div>
+                                        <kendo-chart class="size-chart" [transitions]="true">
+                                            <kendo-chart-series>
+                                                <kendo-chart-series-item type="pie" [data]="pieDataCustomer" field="value"
+                                                    [name]="'category'" categoryField="category">
+                                                </kendo-chart-series-item>
+                                            </kendo-chart-series>
+                                            <kendo-chart-legend [visible]="false" pói></kendo-chart-legend>
+                                        </kendo-chart>
+                                    </div>
+                                    <div class="ml-1 note-chart">
+                                        <div class="d-flex">
+                                            <div>
+                                               <h5>Tổng lượng khách:</h5>
+                                            </div>
+                                            <div class="ml-2">
+                                                <span class="numeric-revenue">{{countdataCustomer | number}}</span>
+                                            </div>
+                                        </div>
+                                        <div *ngFor="let item of pieDataCustomer" class="d-flex">
+                                            <div>
+                                                <i class="fas fa-square mr-2" [style.color]="item.color"></i><span style="font-size: 1rem;">{{getCusType(item.category)}}:</span>
+                                            </div>
+                                            <div class="ml-2">
+                                                <span class="numeric-revenue">{{item.value | number}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-container>
+                            <ng-template #elseTemplate>
+                                <div class="text-center">
+                                    <img src="./../../../assets/icons/NoData.svg" class="img-nodata ">
+                                </div>
+                            </ng-template>
+                            <div class="link-details">
+                                <a (click)="redirectTo('partner-report-overview')">Chi tiết</a>
+                            </div>  
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="report-box">
+            <div class="box-item">
+                <div class="box-item-content">
+                    <div class="mr-2 px-2 py-1">
+                        <h5 class="mb-0 title-box">Tiếp nhận khách khám mới</h5>
+                        <div>
+                            <ng-container *ngIf="dataNoTreatment?.length; else elseTemplate">
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <div>
+                                        <kendo-chart class="size-chart" [transitions]="true">
+                                            <kendo-chart-series>
+                                                <kendo-chart-series-item type="pie" [data]="dataNoTreatment"
+                                                    field="countCustomerReceipt" [name]="'name'" categoryField="name">
+                                                </kendo-chart-series-item>
+                                            </kendo-chart-series>
+                                            <kendo-chart-legend [visible]="false" pói></kendo-chart-legend>
+                                        </kendo-chart>
+                                    </div>
+                                    <div class="ml-1 note-chart">
+                                        <div class="d-flex">
+                                            <div>
+                                               <h5>Lượng tiếp nhận:</h5>
+                                            </div>
+                                            <div class="ml-2">
+                                                <span class="numeric-revenue">{{countdataNoTreatment | number}}</span>
+                                            </div>
+                                        </div>
+                                        <div *ngFor="let item of dataNoTreatment" class="d-flex">
+                                            <div>
+                                                <i class="fas fa-square mr-2" [style.color]="item.color"></i><span style="font-size: 1rem;">{{item.name}}:</span>
+                                            </div>
+                                            <div class="ml-2">
+                                                <span class="numeric-revenue">{{item.countCustomerReceipt | number}}</span>
+                                            </div>
+                                        </div>                          
+                                    </div>
+                                </div>
+                            </ng-container>
+                            <ng-template #elseTemplate>
+                                <div class="text-center">
+                                    <img src="./../../../assets/icons/NoData.svg" class="img-nodata ">
+                                </div>
+                            </ng-template>
+                            <div class="link-details">
+                                <a (click)="redirectTo('customer-receipt-overview')">Chi tiết</a>
+                            </div> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

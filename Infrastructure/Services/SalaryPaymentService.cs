@@ -29,6 +29,8 @@ namespace Infrastructure.Services
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search));
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
 
             var totalItems = await query.CountAsync();
             var items = await _mapper.ProjectTo<SalaryPaymentBasic>(query.OrderByDescending(x => x.DateCreated).Skip(val.Offset).Take(val.Limit)).ToListAsync();
@@ -431,7 +433,7 @@ namespace Infrastructure.Services
 
                 payments.Add(new PayslipCreateSalaryPaymentDisplay()
                 {
-                    Amount = slip.NetSalary.GetValueOrDefault(),
+                    Amount = slip.NetSalary.GetValueOrDefault() - slip.AdvancePayment.GetValueOrDefault(),
                     Date = DateTime.Today,
                     Employee = _mapper.Map<EmployeeSimple>(slip.Employee),
                     Journal = _mapper.Map<AccountJournalSimple>(journal),

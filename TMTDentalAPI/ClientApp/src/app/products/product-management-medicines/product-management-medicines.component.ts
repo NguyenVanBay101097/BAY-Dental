@@ -98,6 +98,13 @@ export class ProductManagementMedicinesComponent implements OnInit {
     this.categories.unshift(categ);
   }
 
+  onUpdateBtnEvent(categId) {
+    this.productCategoryService.get(categId).subscribe((categ: any) => {
+      var index = this.categories.findIndex(x => x.id == categId);
+      this.categories[index] = categ;
+    });
+  }
+
   onSelectedCate(cate: any) {
     this.selectedCateg = cate;
     this.loadMedicines();

@@ -11,9 +11,7 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div>
-                    <app-tai-date-range-filter-dropdown [dateFrom]="dateFrom" [dateTo]="dateTo" title="Thời gian"
-                        (searchChange)="onSearchDateChange($event)">
-                    </app-tai-date-range-filter-dropdown>
+                    <app-date-range-picker-filter [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
                 </div>
             </div>
         </div>
@@ -27,8 +25,7 @@
                 <kendo-chart *ngIf="pieDataDistrict.length" title="Theo quận/huyện lân cận phòng khám">
                     <kendo-chart-legend position="bottom"></kendo-chart-legend>
                     <kendo-chart-series>
-                        <kendo-chart-series-item [autoFit]="true" type="pie" [data]="pieDataDistrict" field="total"
-                            categoryField="name" [labels]="{ visible: true, content: labelContent }">
+                        <kendo-chart-series-item [autoFit]="true" type="pie" [data]="pieDataDistrict" field="total" categoryField="name" [labels]="{ visible: true, content: labelContent }">
                         </kendo-chart-series-item>
                     </kendo-chart-series>
                 </kendo-chart>
@@ -38,8 +35,7 @@
                 <kendo-chart *ngIf="pieDataWard.length" title="Theo phường/xã lân cận phòng khám">
                     <kendo-chart-legend position="bottom"></kendo-chart-legend>
                     <kendo-chart-series>
-                        <kendo-chart-series-item [autoFit]="true" type="pie" [data]="pieDataWard" field="total"
-                            categoryField="name" [labels]="{ visible: true, content: labelContent }">
+                        <kendo-chart-series-item [autoFit]="true" type="pie" [data]="pieDataWard" field="total" categoryField="name" [labels]="{ visible: true, content: labelContent }">
                         </kendo-chart-series-item>
                     </kendo-chart-series>
                 </kendo-chart>

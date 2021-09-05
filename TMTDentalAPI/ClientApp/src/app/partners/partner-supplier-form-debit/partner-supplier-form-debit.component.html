@@ -2,9 +2,9 @@
     <div class="o_control_panel">
         <ol class="breadcrumb">
             <div class="payment">
-                <button (click)="onPayment()" class="btn btn-primary btn-sm mr-2">Thanh toán</button>
+                <button (click)="onPayment()" class="btn btn-primary mr-2">Thanh toán</button>
                 <!-- <span *ngIf="countPayment != 0" class="count-payment">{{countPayment}}</span> -->
-                <button (click)="exportExcelFile()" class="btn btn-primary btn-sm">Xuất file</button>
+                <button (click)="exportExcelFile(grid)" class="btn btn-primary">Xuất file</button>
             </div>
         </ol>
         <div class="o_cp_searchview">
@@ -16,7 +16,7 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" [selectable]="true" (pageChange)="pageChange($event)" [kendoGridSelectBy]="'moveId'" [selectedKeys]="selectedIds">
+    <kendo-grid  #grid="kendoGrid" [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" [selectable]="true" (pageChange)="pageChange($event)" [kendoGridSelectBy]="'moveId'" [selectedKeys]="selectedIds">
         <kendo-grid-checkbox-column [width]="50" [headerClass]="{'text-center': true}" [class]="{'text-center': true}" showSelectAll="true"></kendo-grid-checkbox-column>
         <kendo-grid-column field="date" title="Ngày">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
@@ -46,5 +46,19 @@
                 {{dataItem.amountResidual | number}}
             </ng-template>
         </kendo-grid-column>
+        <kendo-grid-excel fileName="CongNoNhaCungCap.xlsx" [fetchData]="allData">
+            <kendo-excelexport-column field="date" title="Ngày" [cellOptions]="{format: 'dd/MM/yyyy'}" [width]="100">
+            </kendo-excelexport-column>
+            <kendo-excelexport-column field="origin" title="Nguồn">
+            </kendo-excelexport-column>
+            <kendo-excelexport-column field="moveType" title="Loại">
+            </kendo-excelexport-column>
+            <kendo-excelexport-column field="balance" title="Tổng tiền" [cellOptions]="{format: '#,##0'}" [width]="100">
+            </kendo-excelexport-column>
+            <kendo-excelexport-column field="payment" title="Thanh toán" [cellOptions]="{format: '#,##0'}" [width]="100">
+            </kendo-excelexport-column>
+            <kendo-excelexport-column field="amountResidual" title="Còn Nợ" [cellOptions]="{format: '#,##0'}" [width]="100">
+            </kendo-excelexport-column>
+        </kendo-grid-excel>
     </kendo-grid>
 </div>

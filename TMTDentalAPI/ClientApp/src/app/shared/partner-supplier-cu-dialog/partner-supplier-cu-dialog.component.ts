@@ -10,6 +10,7 @@ import { AppSharedShowErrorService } from "src/app/shared/shared-show-error.serv
 import { PartnerService } from 'src/app/partners/partner.service';
 import { NotificationService } from "@progress/kendo-angular-notification";
 import { IntlService } from "@progress/kendo-angular-intl";
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: "app-partner-supplier-cu-dialog",
@@ -118,7 +119,7 @@ export class PartnerSupplierCuDialogComponent implements OnInit {
 
   loadSourceCities() {
     this.http
-      .post("https://aship.skyit.vn/api/ApiShippingCity/GetCities", {
+      .post(environment.ashipApi + "api/ApiShippingCity/GetCities", {
         provider: "Undefined",
       })
       .subscribe((result: any) => {
@@ -129,7 +130,7 @@ export class PartnerSupplierCuDialogComponent implements OnInit {
 
   loadSourceDistricts(cityCode: string) {
     this.http
-      .post("https://aship.skyit.vn/api/ApiShippingDistrict/GetDistricts", {
+      .post(environment.ashipApi + "api/ApiShippingDistrict/GetDistricts", {
         data: {
           code: cityCode,
         },
@@ -143,7 +144,7 @@ export class PartnerSupplierCuDialogComponent implements OnInit {
 
   loadSourceWards(districtCode: string) {
     this.http
-      .post("https://aship.skyit.vn/api/ApiShippingWard/GetWards", {
+      .post(environment.ashipApi + "api/ApiShippingWard/GetWards", {
         data: {
           code: districtCode,
         },

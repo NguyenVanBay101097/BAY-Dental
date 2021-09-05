@@ -22,12 +22,6 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/assets",
-              {
-                "glob": "**/*",
-                "input": "node_modules/mxgraph/javascript/src",
-                "output": "./mxgraph"
-              },
               "src/manifest.webmanifest"
             ],
             "styles": [
@@ -45,8 +39,6 @@
               "node_modules/popper.js/dist/umd/popper.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.min.js",
               "node_modules/autosize/dist/autosize.js",
-              "src/assets/js/mxgraph.conf.js",
-              "node_modules/mxgraph/javascript/mxClient.js",
               "node_modules/webcamjs/webcam.min.js"
             ]
           },

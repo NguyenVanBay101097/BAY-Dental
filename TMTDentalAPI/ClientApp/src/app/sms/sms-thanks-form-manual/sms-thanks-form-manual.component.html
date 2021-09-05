@@ -2,11 +2,9 @@
     <div class="o_control_panel">
         <div class="o_cp_left">
             <div class="o_cp_buttons d-flex">
-                <app-tai-date-range-filter-dropdown title="Thời gian" [dateFrom]="dateFrom" [dateTo]="dateTo"
-                    (searchChange)="onSearchDateChange($event)">
-                </app-tai-date-range-filter-dropdown>
+                <app-date-range-picker-filter [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
                 <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary btn-sm ml-2" (click)="onSend()">Tạo tin nhắn</button>
+                    <button type="button" class="btn btn-primary ml-2" (click)="onSend()">Tạo tin nhắn</button>
                 </div>
 
             </div>
@@ -15,16 +13,15 @@
         </div>
         <div class="o_cp_searchview">
             <div class="o_searchview">
-                <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo họ tên, số điện thoại" [(ngModel)]="search"
-                    (ngModelChange)="this.searchUpdate.next($event)" />
+                <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo họ tên, số điện thoại" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
+                <span class="o_searchview_icon fas fa-search"></span>
             </div>
         </div>
     </div>
 </div>
 
 
-<kendo-grid [data]="gridData" [selectable]="true" (pageChange)="pageChange($event)" [skip]="skip" [pageable]="true"
-    [pageSize]="limit" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
+<kendo-grid [data]="gridData" [selectable]="true" (pageChange)="pageChange($event)" [skip]="skip" [pageable]="true" [pageSize]="limit" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
     <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
     <kendo-grid-column field="partnerName" title="Khách hàng" width="200"></kendo-grid-column>
     <kendo-grid-column field="partnerPhone" title="Số điện thoại" width="120"></kendo-grid-column>

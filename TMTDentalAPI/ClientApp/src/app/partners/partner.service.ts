@@ -49,8 +49,10 @@ export class SaleOrderLinePaged {
     orderId: string;
     productId: string;
     search: string;
-    dateOrderFrom: string;
-    dateOrderTo: string;
+    dateOrderFrom: any;
+    dateOrderTo: any;
+    employeeId: string;
+    companyId: string;
 }
 
 export class PartnerReportLocationCitySearch {

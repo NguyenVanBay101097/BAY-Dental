@@ -10,6 +10,7 @@ import { Subject } from 'rxjs';
 import { aggregateBy } from '@progress/kendo-data-query';
 import { ActivatedRoute } from '@angular/router';
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
+import { PrintService } from 'src/app/shared/services/print.service';
 
 @Component({
   selector: 'app-account-common-customer-report-list',
@@ -43,7 +44,8 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
   constructor(private reportService: AccountCommonPartnerReportService, private intlService: IntlService,
     private route: ActivatedRoute,
     private companyService: CompanyService,
-    private partnerService: PartnerService) { }
+    private partnerService: PartnerService,
+    private printService: PrintService) { }
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
@@ -105,6 +107,18 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
     this.dateTo = value.dateTo;
     this.skip = 0;
     this.loadDataFromApi();
+  }
+
+  getParamReport() {
+    var val = new AccountCommonPartnerReportSearch();
+    val.fromDate = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : null;
+    val.toDate = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null;
+    val.partnerId = null;
+    val.search = this.search ? this.search : '';
+    val.resultSelection = this.resultSelection;
+    val.companyId = this.companyId || '';
+    val.display = "";
+    return val;
   }
 
   loadDataFromApi() {
@@ -177,4 +191,33 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
       return res[field].sum;
     }
   }
+
+  onExportPDF(){
+    var val = this.getParamReport();
+    this.reportService.getSummaryPdf(val).subscribe(result => {
+      this.loading = false;
+      let filename ="BaoCaoCongNo_KH";
+
+      let newBlob = new Blob([result], {
+        type:
+          "application/pdf",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    })
+  }
+
+  printReport(){
+    var val = this.getParamReport();
+    this.reportService.printGetSummary(val).subscribe(result => this.printService.printHtml(result));
+  }
+
 }

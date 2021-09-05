@@ -14,6 +14,7 @@ import { AppointmentKanbanComponent } from './appointment-kanban/appointment-kan
 import { AppointmentDetailDialogComponent } from './appointment-detail-dialog/appointment-detail-dialog.component';
 import { MyCustomNgbModule } from '../shared/my-custom-ngb.module';
 import { AppointmentOverCancelComponent } from './appointment-over-cancel/appointment-over-cancel.component';
+import { AppointmentFilterExportExcelDialogComponent } from './appointment-filter-export-excel-dialog/appointment-filter-export-excel-dialog.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { AppointmentOverCancelComponent } from './appointment-over-cancel/appoin
     AppointmentStateFilterComponent,
     AppointmentKanbanComponent,
     AppointmentDetailDialogComponent,
-    AppointmentOverCancelComponent
+    AppointmentOverCancelComponent,
+    AppointmentFilterExportExcelDialogComponent
   ],
   imports: [
     CommonModule,
@@ -35,7 +37,7 @@ import { AppointmentOverCancelComponent } from './appointment-over-cancel/appoin
     SharedModule,
     MyCustomNgbModule
   ],
-  entryComponents: [AppointmentCuDialogComponent, AppointmentDetailDialogComponent],
+  entryComponents: [AppointmentCuDialogComponent, AppointmentDetailDialogComponent, AppointmentFilterExportExcelDialogComponent],
   providers: [],
 })
 export class AppointmentModule { }

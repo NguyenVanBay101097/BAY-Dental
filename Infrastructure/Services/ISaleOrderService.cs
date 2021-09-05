@@ -29,6 +29,8 @@ namespace Infrastructure.Services
         void _ComputeResidual(IEnumerable<AccountInvoice> invoices);
         void _ComputeResidual(IEnumerable<SaleOrder> self);
 
+        Task<long> GetCountSaleOrder(GetCountSaleOrderFilter val);
+
         Task _ComputeAmountPromotionToOrder(IEnumerable<Guid> ids);
 
         //Task ApplyCoupon(SaleOrderApplyCoupon val);
@@ -64,7 +66,7 @@ namespace Infrastructure.Services
 
         //Task<SaleOrderDisplay> GetDisplayAsync(Guid id);
 
-        Task<IEnumerable<SaleOrderLineDisplay>> GetSaleOrderLineBySaleOrder(Guid id);
+        Task<IEnumerable<SaleOrderLineDisplay>> GetSaleOrderLineBySaleOrder(Guid? id);
 
         Task<SaleOrder> CreateOrderAsync(SaleOrderSave val);
 
@@ -90,5 +92,8 @@ namespace Infrastructure.Services
         Task<IEnumerable<SaleOrderManagementExcel>> GetExcel(SaleOrderPaged val);
 
         Task ComputeToUpdateSaleOrder(SaleOrder order);
+        Task<RevenueReportPrintVM<SaleOrderRevenueReport>> GetRevenueReportPrint(SaleOrderRevenueReportPaged val);
+        Task<GetPrintManagementRes> GetPrintManagement(SaleOrderPaged val);
+        Task<IEnumerable<GetExcelManagementItemRes>> ExportManagementExcel(SaleOrderPaged val);
     }
 }

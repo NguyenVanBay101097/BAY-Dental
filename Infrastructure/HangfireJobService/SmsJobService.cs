@@ -50,11 +50,10 @@ namespace Infrastructure.HangfireJobService
                 await context.SaveChangesAsync();
 
                 var listAppointments = await context.Appointments.Where(x => x.CompanyId == config.CompanyId
-                      && x.DateTimeAppointment.HasValue
                       && x.State == "confirmed"
-                      && x.DateTimeAppointment.Value >= now &&
-                      ((config.TypeTimeBeforSend == "hour" && x.DateTimeAppointment.Value.AddHours(-config.TimeBeforSend) < now && (!lastExecution.HasValue || x.DateTimeAppointment.Value.AddHours(-config.TimeBeforSend) > lastExecution)) ||
-                      (config.TypeTimeBeforSend == "day" && x.DateTimeAppointment.Value.AddDays(-config.TimeBeforSend) < now && (!lastExecution.HasValue || x.DateTimeAppointment.Value.AddDays(-config.TimeBeforSend) > lastExecution))))
+                      && x.Date >= now &&
+                      ((config.TypeTimeBeforSend == "hour" && x.Date.AddHours(-config.TimeBeforSend) < now && (!lastExecution.HasValue || x.Date.AddHours(-config.TimeBeforSend) > lastExecution)) ||
+                      (config.TypeTimeBeforSend == "day" && x.Date.AddDays(-config.TimeBeforSend) < now && (!lastExecution.HasValue || x.Date.AddDays(-config.TimeBeforSend) > lastExecution))))
                         .ToListAsync();
                 if (listAppointments.Any())
                 {
@@ -248,7 +247,7 @@ namespace Infrastructure.HangfireJobService
 
                 var orders = await context.SaleOrders.Where(x => x.State == "done" &&
                 x.CompanyId == config.CompanyId &&
-                 ((config.TypeTimeBeforSend == "month" && x.DateDone.Value.AddMonths(config.TimeBeforSend) < now && (!lastExecution.HasValue || x.DateDone.Value.AddMonths(config.TimeBeforSend) > lastExecution)) ||
+                 ((config.TypeTimeBeforSend == "hour" && x.DateDone.Value.AddHours(config.TimeBeforSend) < now && (!lastExecution.HasValue || x.DateDone.Value.AddHours(config.TimeBeforSend) > lastExecution)) ||
                     (config.TypeTimeBeforSend == "day" && x.DateDone.Value.AddDays(config.TimeBeforSend) < now && (!lastExecution.HasValue || x.DateDone.Value.AddDays(config.TimeBeforSend) > lastExecution)))
                 ).ToListAsync();
                 if (orders.Any())

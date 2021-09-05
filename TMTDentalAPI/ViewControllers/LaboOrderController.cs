@@ -22,7 +22,7 @@ namespace TMTDentalAPI.ViewControllers
             _viewToStringRenderService = viewToStringRenderService;
         }
 
-        [CheckAccess(Actions = "Labo.LaboOrder.Read")]
+        //[CheckAccess(Actions = "Labo.LaboOrder.Read")]
         [PrinterNameFilterAttribute(Name = AppConstants.LaboOrderPaperCode)]
         public async Task<IActionResult> Print(Guid id)
         {

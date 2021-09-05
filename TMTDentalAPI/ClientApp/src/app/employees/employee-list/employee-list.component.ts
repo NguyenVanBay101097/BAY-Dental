@@ -10,6 +10,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { ActivatedRoute } from '@angular/router';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-employee-list',
@@ -27,7 +28,8 @@ export class EmployeeListComponent implements OnInit {
   defaultFilter: any = this.filterLaboStatus[0];
   constructor(private fb: FormBuilder, private service: EmployeeService,
     private notificationService: NotificationService,
-    private activeroute: ActivatedRoute, private modalService: NgbModal) { }
+    private activeroute: ActivatedRoute, private modalService: NgbModal,
+    private authService: AuthService) { }
 
   loading = false;
   gridView: GridDataResult;
@@ -51,11 +53,11 @@ export class EmployeeListComponent implements OnInit {
   }
 
   getEmployeesList() {
-    var positionList = new Array<string>();
     this.loading = true;
     var empPaged = new EmployeePaged();
     empPaged.limit = this.pageSize;
     empPaged.offset = this.skip;
+    empPaged.companyId = this.authService.userInfo.companyId;
     empPaged.active = (this.active || this.active == false) ? this.active : '';
     if (this.search) {
       empPaged.search = this.search;

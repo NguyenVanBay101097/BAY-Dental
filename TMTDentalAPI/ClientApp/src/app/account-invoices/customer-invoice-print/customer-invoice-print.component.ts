@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { PrintService } from 'src/app/print.service';
 import { AccountInvoiceService, AccountInvoiceDisplay, AccountInvoicePrint } from '../account-invoice.service';
 import { ActivatedRoute } from '@angular/router';
 

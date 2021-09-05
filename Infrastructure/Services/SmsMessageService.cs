@@ -378,7 +378,7 @@ namespace Infrastructure.Services
             foreach (var app in appointments)
             {
                 var content = template
-                    .Replace("{gio_hen}", app.Time)
+                    .Replace("{gio_hen}", app.Date.ToString("HH:mm"))
                     .Replace("{ngay_hen}", app.Date.ToString("dd/MM/yyyy"))
                     .Replace("{ten_bac_si}", app.Doctor != null ? app.Doctor.Name.Split(' ').Last() : "")
                     .Replace("{ten_khach_hang}", app.Partner != null ? app.Partner.Name.Split(' ').Last() : "")

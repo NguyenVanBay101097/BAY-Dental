@@ -43,6 +43,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? PartnerId { get; set; }
         public Guid? SaleOrderId { get; set; }
+
+        public Guid? CompanyId { get; set; }
     }
 
     public class ToaThuocDisplay

@@ -396,6 +396,7 @@ namespace Infrastructure.Services
                     saleLine.EmployeeId = line.EmployeeId;
                     saleLine.AssistantId = line.AssistantId;
                     saleLine.CounselorId = line.CounselorId;
+                    saleLine.Date = DateTime.Now;
 
                     if (line.QuotationLineToothRels.Any())
                     {

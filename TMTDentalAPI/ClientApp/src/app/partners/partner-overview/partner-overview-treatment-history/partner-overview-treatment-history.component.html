@@ -4,7 +4,7 @@
       <h5 class="mb-0">
         Lịch sử điều trị
       </h5>
-      <button type="button" (click)="createNewSaleOrder()" class="btn btn-sm btn-primary">
+      <button type="button" (click)="createNewSaleOrder()" class="btn btn-primary">
         <i class="fas fa-plus pr-1"></i>
         <span>Tạo điều trị</span>
       </button>
@@ -32,6 +32,7 @@
                   <p class="opacity-8">Răng: {{viewTeeth(item)}} </p>
                   <p class="opacity-8">Bác sĩ: {{item?.employeeName}}</p>
                   <p class="opacity-8">Chuẩn đoán: {{item?.diagnostic}}</p>
+                  <p class="opacity-8">Trạng thái: {{getStateDisplay(item.state)}}</p>
                 </div>
               </div>
             </div>

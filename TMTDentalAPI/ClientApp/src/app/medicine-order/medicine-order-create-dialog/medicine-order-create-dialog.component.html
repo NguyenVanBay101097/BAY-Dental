@@ -185,7 +185,7 @@
                                     </td>
                                     <td class="text-right">{{computeAmountOfLine(line) | number}}</td>
                                     <td class="text-center cursor-pointer" *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'">
-                                        <button title="Xóa thuốc khỏi hóa đơn thanh toán" (click)="removeLine(line)" class="btn btn-danger btn-sm">
+                                        <button title="Xóa thuốc khỏi hóa đơn thanh toán" (click)="removeLine(line)" class="btn btn-danger">
                                             <i class="text-white" class="far fa-trash-alt"></i>
                                         </button>
                                     </td>
@@ -264,15 +264,15 @@
 </div>
 
 <footer class="modal-footer">
-    <!-- <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
+    <!-- <button type="button" class="btn btn-primary" accesskey="s" (click)="onSave()">
         Lưu</button> -->
-    <button type="button" *ngIf="!id && precscriptPayment.state != 'cancel'" class="btn btn-primary btn-sm" accesskey="t" (click)="onSavePayment()">
+    <button type="button" *ngIf="!id && precscriptPayment.state != 'cancel'" class="btn btn-primary" accesskey="t" (click)="onSavePayment()">
         Thanh toán</button>
-    <button type="button" *ngIf="!id && precscriptPayment.state != 'cancel'" class="btn btn-primary btn-sm" accesskey="p" (click)="onSavePaymentPrint()">
+    <button type="button" *ngIf="!id && precscriptPayment.state != 'cancel'" class="btn btn-primary" accesskey="p" (click)="onSavePaymentPrint()">
         Thanh toán và in</button>
-    <button type="button" *ngIf="id && precscriptPayment.state != 'cancel'" class="btn btn-danger btn-sm" accesskey="c" (click)="onCancelPayment()">
+    <button type="button" *ngIf="id && precscriptPayment.state != 'cancel'" class="btn btn-danger" accesskey="c" (click)="onCancelPayment()">
         Hủy thanh toán</button>
-    <button type="button" *ngIf="id && precscriptPayment.state != 'cancel'" class="btn btn-primary btn-sm" accesskey="s" (click)="onPrintPayment()">
+    <button type="button" *ngIf="id && precscriptPayment.state != 'cancel'" class="btn btn-primary" accesskey="s" (click)="onPrintPayment()">
         In hóa đơn</button>
-    <button type="button" class="btn btn-secondary btn-sm o_form_button_cancel" (click)="activeModal.dismiss()" accesskey="q">Đóng</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()" accesskey="q">Đóng</button>
 </footer>

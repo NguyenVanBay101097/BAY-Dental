@@ -34,7 +34,7 @@ namespace TMTDentalAPI.Controllers
         private readonly CatalogDbContext _context;
         private readonly IMapper _mapper;
         private readonly IIRModelAccessService _modelAccessService;
-        private readonly IMemoryCache _cache;
+        private readonly IMyCache _cache;
         private readonly AppTenant _tenant;
         private readonly IPartnerService _partnerService;
         private readonly UserManager<ApplicationUser> _userManager;
@@ -45,7 +45,7 @@ namespace TMTDentalAPI.Controllers
             IUnitOfWorkAsync unitOfWork,
             CatalogDbContext context,
             IMapper mapper, IIRModelAccessService modelAccessService,
-            IMemoryCache cache, ITenant<AppTenant> tenant,
+            IMyCache cache, ITenant<AppTenant> tenant,
             UserManager<ApplicationUser> userManager, IPartnerService partnerService,
             TenantDbContext tenantDbContext, IOptions<AppSettings> appSettings)
         {
@@ -248,7 +248,11 @@ namespace TMTDentalAPI.Controllers
         public IActionResult ClearCacheTenant()
         {
             if (_tenant != null)
+            {
                 _cache.Remove(_tenant.Hostname.ToLower());
+                _cache.RemoveByPattern(_tenant.Hostname);
+            }
+                
             return NoContent();
         }
 
