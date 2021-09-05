@@ -708,7 +708,11 @@ export class AppointmentKanbanComponent implements OnInit {
     for (let i = 0; i < this.daysOfWeek.length; i++) {
       let cell = document.createElement('td');
       cell.classList.add('td-week');
-      cell.id = `${year}-${('0' + month).slice(-2)}-${('0' + (firstDay + i)).slice(-2)}`;
+      const tempDate = new Date(year, month, firstDay + i);
+      const tempYear = tempDate.getFullYear();
+      const tempMonth = tempDate.getMonth();
+      const tempDay = tempDate.getDate();
+      cell.id = `${tempYear}-${('0' + tempMonth).slice(-2)}-${('0' + tempDay).slice(-2)}`;
       /// td-week click
       cell.addEventListener('click', () => {
         this.timePeriod = 'day';
