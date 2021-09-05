@@ -72,10 +72,10 @@ export class SaleDashboardApCrChartComponent implements OnInit {
   redirectTo(value) {
     switch (value) {
       case 'partner-report-overview':
-        this.router.navigateByUrl("report-account-common/partner-report-overview");
+        this.router.navigateByUrl("report/report-account-common/partner-report-overview");
         break;
       case 'customer-receipt-overview':
-        this.router.navigateByUrl("customer-receipt-reports/customer-receipt-overview");
+        this.router.navigateByUrl("report/customer-receipt-reports/customer-receipt-overview");
         break;
       default:
         break;
