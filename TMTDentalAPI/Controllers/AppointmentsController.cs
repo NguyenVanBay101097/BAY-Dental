@@ -381,13 +381,5 @@ namespace TMTDentalAPI.Controllers
             var result = await _appointmentService.GetListDoctor(val);
             return Ok(result);
         }
-
-
-        [HttpPost("[action]")]
-        public async Task<IActionResult> ActionSend(LaboWarantyActionSendViewModel model)
-        {
-            return Ok(result);
-        }
-
     }
 }

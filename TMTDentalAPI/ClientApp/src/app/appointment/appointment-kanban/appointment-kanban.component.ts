@@ -691,7 +691,7 @@ export class AppointmentKanbanComponent implements OnInit {
   }
 
   showCalendarWeek(year, month, week) {
-    let firstDay = this.todayFormat.getDate() - this.todayFormat.getDay() + 1 + 7 * week; // First day is the day of the month - the day of the week
+    let firstDay = this.todayFormat.getDate() - (this.todayFormat.getDay() == 0 ? 7 : this.todayFormat.getDay()) + 1 + 7 * week; // First day is the day of the month - the day of the week
     let lastDay = firstDay + 6; // last day is the first day + 6
     let firstDate = new Date(year, month, firstDay);
     let lastDate = new Date(year, month, lastDay);
@@ -751,7 +751,7 @@ export class AppointmentKanbanComponent implements OnInit {
 
     // Create cells in calendar-tbody
     let date = 1;
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 5; i++) {
       let row = document.createElement('tr');
 
       for (let j = 0; j < 7; j++) {
