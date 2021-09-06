@@ -30,6 +30,8 @@ export class LaboOrderExportNotExportComponent implements OnInit {
   supplierData: any[]=[];
   partnerId: string = '';
   canUpdate: boolean = false;
+  canExport: boolean = false;
+  canReadSaleOrder: boolean = false;
   constructor(
     private laboOrderService: LaboOrderService, 
     private intlService: IntlService, 
@@ -52,6 +54,8 @@ export class LaboOrderExportNotExportComponent implements OnInit {
         });
     },);
     this.canUpdate = this.checkPermissionService.check(['Labo.LaboOrder.Update']);
+    this.canExport = this.checkPermissionService.check(['Labo.ExportLabo.Update']);
+    this.canReadSaleOrder = this.checkPermissionService.check(['Basic.SaleOrder.Read']);
   }
 
   loadDataFromApi() {

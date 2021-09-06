@@ -177,8 +177,6 @@ export class LaboOrderWarrantyListComponent implements OnInit {
     var sheet = workbook.sheets[0];
     var rows = sheet.rows;
     var columns = sheet.columns;
-    columns.splice(9, 1, {});
-
     sheet.name = 'QuanLyBaoHanh';
     sheet.rows.splice(0, 0, {
       cells: [{
@@ -192,8 +190,9 @@ export class LaboOrderWarrantyListComponent implements OnInit {
         textAlign: "center"
       }], type: 'header'
     });
-    sheet.mergedCells = ["A2:C2"];
+    sheet.mergedCells = ["A1:J1","A2:J2"];
     sheet.frozenRows = 3;
+    columns.splice(10, 1, {});
     rows.forEach((row, index) => {
       if (row.type === "header" && index == 2) {
         row.cells.forEach(cell => {
@@ -207,14 +206,17 @@ export class LaboOrderWarrantyListComponent implements OnInit {
         });
       }
       if (row.type === "data") {
-        row.cells[0].value = moment(row.cells[0].value).format('DD/MM/YYYY');
+        row.cells[0].value = row.cells[0].value ? moment(row.cells[0].value).format('DD/MM/YYYY') : '';
+        row.cells[6].value = row.cells[6].value ? moment(row.cells[6].value).format('DD/MM/YYYY') : '';
+        row.cells[7].value = row.cells[7].value ? moment(row.cells[7].value).format('DD/MM/YYYY') : '';
+        row.cells[8].value = row.cells[8].value ? moment(row.cells[8].value).format('DD/MM/YYYY') : '';
         row.cells.forEach(cell => {
           cell.borderTop = { color: "black", size: 1 };
           cell.borderRight = { color: "black", size: 1 };
           cell.borderBottom = { color: "black", size: 1 };
           cell.borderLeft = { color: "black", size: 1 };
         });
-        row.cells[8].value = this.showState(row.cells[8].value);
+        row.cells[9].value = this.showState(row.cells[9].value);
       }
     });
 
