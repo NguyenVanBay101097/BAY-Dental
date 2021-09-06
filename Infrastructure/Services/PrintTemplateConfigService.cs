@@ -22,19 +22,21 @@ namespace Infrastructure.Services
         private readonly IPrintTemplateService _printTemplateService;
         private readonly IPrintPaperSizeService _printPaperSizeService;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IIRModelDataService _modelData;
 
-        public PrintTemplateConfigService(IAsyncRepository<PrintTemplateConfig> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper, IPrintTemplateService printTemplateService, IPrintPaperSizeService printPaperSizeService,IWebHostEnvironment webHostEnvironment)
+        public PrintTemplateConfigService(IAsyncRepository<PrintTemplateConfig> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper, IPrintTemplateService printTemplateService, IPrintPaperSizeService printPaperSizeService,IWebHostEnvironment webHostEnvironment, IIRModelDataService modelData)
             : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
             _printTemplateService = printTemplateService;
             _printPaperSizeService = printPaperSizeService;
             _webHostEnvironment = webHostEnvironment;
+            _modelData = modelData;
         }
 
         public async Task<PrintTemplateConfigDisplay> GetDisplay(PrintTemplateConfigChangeType val)
         {
-            var printConfig = await SearchQuery(x => x.Type == val.Type)
+            var printConfig = await SearchQuery(x => x.Type == val.Type && x.IsDefault)
                 .Include(x => x.PrintPaperSize)
                 .Include(x => x.Company)
                 .FirstOrDefaultAsync();
@@ -43,15 +45,22 @@ namespace Infrastructure.Services
 
             if(display == null)
             {
+               
                 var printTmp = await _printTemplateService.SearchQuery(x => x.Type == val.Type).FirstOrDefaultAsync();
                 if(printTmp == null)
                 {
                     throw new Exception("Không tìm thấy mẫu in có sẵn");
                 }
 
+                var paperSize = await _modelData.GetRef<PrintPaperSize>("base.paperformat_a4");
+                if (paperSize == null)
+                    throw new Exception("Không tìm thấy khổ giấy mặc định");
+
                 display = new PrintTemplateConfigDisplay();
                 display.Content = printTmp.Content;
                 display.Type = printTmp.Type;
+                display.PrintPaperSizeId = paperSize.Id;
+                display.PrintPaperSize = _mapper.Map<PrintPaperSizeDisplay>(paperSize);
             }
 
             return display;
@@ -59,20 +68,39 @@ namespace Infrastructure.Services
 
         public async Task CreateOrUpdate(PrintTemplateConfigSave val)
         {
-            var printConfig = await SearchQuery(x => x.Type == val.Type)
+            var printConfigs = await SearchQuery(x => x.Type == val.Type)
                 .Include(x => x.PrintPaperSize)
                 .Include(x => x.Company)
-                .FirstOrDefaultAsync();
+                .ToListAsync();
 
-            if(printConfig != null)
+            if(printConfigs.Any())
             {
-                printConfig = _mapper.Map(val, printConfig);
+                var paperSize = await _printPaperSizeService.SearchQuery(x => x.Id == val.PrintPaperSizeId).FirstOrDefaultAsync();
+                foreach (var printConfig in printConfigs)
+                {
+                    if(printConfig.PrintPaperSize.PaperFormat == paperSize.PaperFormat)
+                    {
+                        var res = _mapper.Map(val, printConfig);
+                        await UpdateAsync(res);
+                    }
+                    else
+                    {
+                        var res = _mapper.Map<PrintTemplateConfig>(val);
+                        await CreateAsync(res);
+                    }
+                }
 
-                await UpdateAsync(printConfig);
+                foreach (var printConfig in printConfigs)
+                    printConfig.IsDefault = printConfig.PrintPaperSize.PaperFormat == paperSize.PaperFormat ? true : false;
+
+                await UpdateAsync(printConfigs);
+
+
             }
             else
             {
                 var res = _mapper.Map<PrintTemplateConfig>(val);
+                res.IsDefault = true;
                 await CreateAsync(res);
             }
           
