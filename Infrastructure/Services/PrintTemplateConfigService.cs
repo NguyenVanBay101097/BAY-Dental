@@ -119,6 +119,9 @@ namespace Infrastructure.Services
 
                         break;
                     case "tmp_medicine_order":
+                        var res_medicine_order = JsonConvert.DeserializeObject<MedicineOrder>(item.Data.ToString());
+                        res_medicine_order.Company = company;
+                        obj = _mapper.Map<MedicineOrderPrint>(res_medicine_order);
                         break;
                     default:
                         break;

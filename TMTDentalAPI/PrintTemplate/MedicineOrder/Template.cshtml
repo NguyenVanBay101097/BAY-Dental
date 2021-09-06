@@ -16,36 +16,37 @@
     <div class="container">
         <div>
             <div class="d-flex mb-2">
-                {{ if Model.Company.Logo != "" ||  Model.Company.Logo != null}}
-                <img class="img-fluid me-3 w-20" src="{{ Model.Company.Logo}}" alt="{{ Model.Company.Name}}">
+                {{ if model.company.logo != "" && model.company.logo != null}}
+                <img class="img-fluid me-3 w-20" src="{{model.company.logo}}" alt="{{model.company.name}}">
                 {{ end }}
 
-            <div>
-                <div class="text-xl font-semibold">{{ Model.Company.Name}}</div>
-                {{if  Model.Company.address != ""}}
+                <div>
+                    <div class="text-xl font-semibold">{{model.company.name}}</div>
+                    {{if model.company.address != ""}}
 
-                <div>Địa chỉ: {{ Model.Company.address}}</div>
+                    <div>Địa chỉ: {{model.company.address}}</div>
 
-                {{ end }}
+                    {{ end }}
 
-                {{ if  Model.Company.Phone}}
+                    {{ if model.company.phone}}
 
-                <div>ĐT: {{ Model.Company.Phone}}</div>
+                    <div>ĐT: {{model.company.phone}}</div>
 
-                {{ end }}
+                    {{ end }}
 
-                {{if  Model.Company.Email }}
+                    {{if model.company.email }}
 
-            <div>Email: {{ Model.Company.Email}}</div>
+                    <div>Email: {{model.company.email}}</div>
 
-                {{ end }}
+                    {{ end }}
 
+                </div>
             </div>
-            </div>
+
             <div class="text-center mb-2">
                 <div class="text-3xl font-semibold">HÓA ĐƠN THUỐC</div>
-                <div>Ngày {{Model.OrderDate.Day}} tháng {{Model.OrderDate.Month}} năm {{Model.OrderDate.Year}} </div>
-                <div class="font-semibold">Số: Model.Name</div>
+                <div>Ngày {{model.order_date.day}} tháng {{model.order_date.month}} năm {{model.order_date.year}} </div>
+                <div class="font-semibold">Số: model.Name</div>
             </div>
             <div class="o_form_view mb-2">
                 <div class="d-flex">
@@ -57,7 +58,7 @@
                                         Khách hàng
                                     </label>
                                 </td>
-                                <td colspan="1" style="width: 100%;">{{Model.Partner.Name}}</td>
+                                <td colspan="1" style="width: 100%;">{{model.partner.name}}</td>
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
@@ -66,7 +67,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    {{Model.Partner.Address}}
+                                    {{model.partner.address}}
                                 </td>
                             </tr>
                             <tr>
@@ -76,8 +77,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    {{if Model.Employee != null }}
-                                    {{Model.Employee.Name}}
+                                    {{if model.employee != null }}
+                                    {{model.employee.name}}
                                     {{ end }}
                                 </td>
                             </tr>
@@ -94,19 +95,19 @@
                         <th class="text-right">Thành tiền</th>
                     </tr>
 
-                    {{ for line in  Model.MedicineOrderLines }}
+                    {{ for line in  model.medicine_order_lines }}
                     <tr>
                         <td>
-                            <div class="font-semibold">{{line.Product.Name}}</div>
+                            <div class="font-semibold">{{line.product.name}}</div>
                             <i>
-                                Ngày uống {{line.ToaThuocLine.NumberOfTimes | math.format "#,###.##" "vi"}} lần,
-                                mỗi lần {{line.ToaThuocLine.AmountOfTimes | math.format "#,###.##" "vi"}} {{line.Product.UOMName}},
-                                {{line.ToaThuocLine.GetUseAtDisplay}}
+                                Ngày uống {{line.toa_thuoc_line.number_of_times | math.format "#,###.##" "vi"}} lần,
+                                mỗi lần {{line.toa_thuoc_line.amount_of_times | math.format "#,###.##" "vi"}} {{line.product.uomname}},
+                                {{line.toa_thuoc_line.get_use_at_display}}
                             </i>
                         </td>
-                        <td class="text-center">{{line.Quantity | math.format "#,###.##" "vi"}}</td>
-                        <td class="text-center">{{line.Price | math.format "#,###.##" "vi"}}</td>
-                        <td class="text-right">{{line.AmountTotal | math.format "#,###.##" "vi"}}</td>
+                        <td class="text-center">{{line.quantity | math.format "#,###.##" "vi"}}</td>
+                        <td class="text-center">{{line.price | math.format "#,###.##" "vi"}}</td>
+                        <td class="text-right">{{line.amount_total | math.format "#,###.##" "vi"}}</td>
                     </tr>
                     {{ end }}
                 </table>
@@ -122,7 +123,7 @@
                                             Tổng tiền
                                         </label>
                                     </td>
-                                    <td class="pe-0 text-right font-semibold" colspan="1" style="width: 100%;">{{Model.Amount | math.format "#,###.##" "vi"}}</td>
+                                    <td class="pe-0 text-right font-semibold" colspan="1" style="width: 100%;">{{model.amount | math.format "#,###.##" "vi"}}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="1" class="o_td_label">
@@ -131,10 +132,10 @@
                                         </label>
                                     </td>
                                     <td class="pe-0 text-right font-semibold" colspan="1" style="width: 100%;">
-                                        {{if Model.AccountPayment == null }}
+                                        {{if model.account_payment == null }}
                                         {{0}}
                                         {{else}}
-                                        {{Model.AccountPayment.Amount | math.format "#,###.##" "vi"}}
+                                        {{model.account_payment.amount | math.format "#,###.##" "vi"}}
                                         {{ end }}
                                     </td>
                                 </tr>
@@ -145,7 +146,7 @@
                                         </label>
                                     </td>
                                     <td class="pe-0 text-right font-semibold" colspan="1" style="width: 100%;">
-                                        {{Model.Amount - (Model.AccountPayment == null ? 0 : Model.AccountPayment.Amount) | math.format "#,###.##" "vi"}}
+                                        {{model.amount - (model.account_payment == null ? 0 : model.account_payment.amount) | math.format "#,###.##" "vi"}}
                                     </td>
                                 </tr>
                             </tbody>
@@ -165,7 +166,7 @@
                                         Lời dặn
                                     </label>
                                 </td>
-                                <td colspan="1" style="width: 100%;">{{Model.ToaThuoc.Note}}</td>
+                                <td colspan="1" style="width: 100%;">{{model.toa_thuoc.note}}</td>
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
@@ -173,7 +174,7 @@
                                         Chẩn đoán bệnh
                                     </label>
                                 </td>
-                                <td colspan="1" style="width: 100%;">{{Model.ToaThuoc.Diagnostic}}</td>
+                                <td colspan="1" style="width: 100%;">{{model.toa_thuoc.diagnostic}}</td>
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
@@ -182,8 +183,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    {{if Model.ToaThuoc.ReExaminationDate }}
-                                    {{Model.ToaThuoc.ReExaminationDate | date.to_string '%d/%m/%Y'}}
+                                    {{if model.toa_thuoc.re_examination_date }}
+                                    {{model.toa_thuoc.re_examination_date | date.to_string '%d/%m/%Y'}}
                                     {{ end }}
                                 </td>
                             </tr>
@@ -200,8 +201,8 @@
                         <span></span> <br />
                         <span></span> <br />
                         <span class="font-semibold">
-                            {{if Model.Employee != null }}
-                            {{Model.Employee.Name | string.upcase }}
+                            {{if model.employee != null }}
+                            {{model.employee.name | string.upcase }}
                             {{ end }}
                         </span>
                     </div>
@@ -214,7 +215,7 @@
                         <span></span> <br />
                         <span></span> <br />
                         <span class="font-semibold">
-                            {{Model.Partner.Name | string.upcase }}
+                            {{model.partner.name | string.upcase }}
                         </span>
                     </div>
                 </div>
