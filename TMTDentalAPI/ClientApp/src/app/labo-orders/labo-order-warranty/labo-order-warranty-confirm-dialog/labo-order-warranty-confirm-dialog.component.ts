@@ -96,17 +96,17 @@ export class LaboOrderWarrantyConfirmDialogComponent implements OnInit {
   }
 
   onCancel$(): Observable<any> {
-    let val = {
-      id: this.laboWarrantyId,
-    }
+    // let val = {
+    //   id: this.laboWarrantyId,
+    // }
     if (this.state == 'sent') {
-      return this.laboWarrantyService.cancelSendWarranty(val)
+      return this.laboWarrantyService.cancelSendWarranty(this.laboWarrantyId)
     }
     else if (this.state == 'received') {
-      return this.laboWarrantyService.cancelReceiptInspection(val)
+      return this.laboWarrantyService.cancelReceiptInspection(this.laboWarrantyId)
     }
     else if (this.state == 'assembled') {
-      return this.laboWarrantyService.cancelAssemblyWarranty(val)
+      return this.laboWarrantyService.cancelAssemblyWarranty(this.laboWarrantyId)
     }
   }
 

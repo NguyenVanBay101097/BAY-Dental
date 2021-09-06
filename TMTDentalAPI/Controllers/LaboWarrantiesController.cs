@@ -119,13 +119,13 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> CancelSendWarranty(LaboWarrantyConfirm val)
+        public async Task<IActionResult> CancelSendWarranty(Guid id)
         {
-            if (val.Id == null)
+            if (id == null)
                 return BadRequest();
 
             await _unitOfWork.BeginTransactionAsync();
-            await _laboWarrantyService.CancelSendWarranty(val.Id);
+            await _laboWarrantyService.CancelSendWarranty(id);
             _unitOfWork.Commit();
             return NoContent();
         }
@@ -143,13 +143,13 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> CancelReceiptInspection(LaboWarrantyConfirm val)
+        public async Task<IActionResult> CancelReceiptInspection(Guid id)
         {
-            if (val.Id == null)
+            if (id == null)
                 return BadRequest();
 
             await _unitOfWork.BeginTransactionAsync();
-            await _laboWarrantyService.CancelReceiptInspection(val.Id);
+            await _laboWarrantyService.CancelReceiptInspection(id);
             _unitOfWork.Commit();
             return NoContent();
         }
@@ -167,13 +167,13 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> CancelAssemblyWarranty(LaboWarrantyConfirm val)
+        public async Task<IActionResult> CancelAssemblyWarranty(Guid id)
         {
-            if (val.Id == null)
+            if (id == null)
                 return BadRequest();
 
             await _unitOfWork.BeginTransactionAsync();
-            await _laboWarrantyService.CancelAssemblyWarranty(val.Id);
+            await _laboWarrantyService.CancelAssemblyWarranty(id);
             _unitOfWork.Commit();
             return NoContent();
         }

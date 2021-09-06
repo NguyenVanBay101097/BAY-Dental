@@ -166,6 +166,8 @@ export class WarrantyCuDidalogComponent implements OnInit {
   }
 
   onConfirm() {
+    this.submitted = true;
+
     if (this.myForm.invalid) {
       return;
     }
