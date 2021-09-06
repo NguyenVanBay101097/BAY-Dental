@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta Name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TDental.vn</title>
     <link rel="stylesheet" type="text/css" href="/css/print.css" />
     <style>
@@ -16,31 +16,31 @@
     <div class="container">
         <div>
             <div class="d-flex mb-2">
-                {{ if company.logo != "" || company.logo != null}}
-                <img class="img-fluid me-3 w-20" src="{{company.logo}}" alt="{{company.name}}">
+                {{ if Model.Company.Logo != "" ||  Model.Company.Logo != null}}
+                <img class="img-fluid me-3 w-20" src="{{ Model.Company.Logo}}" alt="{{ Model.Company.Name}}">
                 {{ end }}
 
-                <div>
-                    <div class="text-xl font-semibold">{{company.name}}</div>
-                    {{if company.address != ""}}
+            <div>
+                <div class="text-xl font-semibold">{{ Model.Company.Name}}</div>
+                {{if  Model.Company.address != ""}}
 
-                    <div>Địa chỉ: {{company.address}}</div>
+                <div>Địa chỉ: {{ Model.Company.address}}</div>
 
-                    {{ end }}
+                {{ end }}
 
-                    {{ if company.phone}}
+                {{ if  Model.Company.Phone}}
 
-                    <div>ĐT: {{company.phone}}</div>
+                <div>ĐT: {{ Model.Company.Phone}}</div>
 
-                    {{ end }}
+                {{ end }}
 
-                    {{if company.email }}
+                {{if  Model.Company.Email }}
 
-                    <div>Email: {{company.email}}</div>
+            <div>Email: {{ Model.Company.Email}}</div>
 
-                    {{ end }}
+                {{ end }}
 
-                </div>
+            </div>
             </div>
             <div class="text-center mb-2">
                 <div class="text-3xl font-semibold">HÓA ĐƠN THUỐC</div>
@@ -100,7 +100,7 @@
                             <div class="font-semibold">{{line.Product.Name}}</div>
                             <i>
                                 Ngày uống {{line.ToaThuocLine.NumberOfTimes | math.format "#,###.##" "vi"}} lần,
-                                mỗi lần {{line.ToaThuocLine.AmountOfTimes | math.format "#,###.##" "vi"}} {{line.Product.UOM.Name}},
+                                mỗi lần {{line.ToaThuocLine.AmountOfTimes | math.format "#,###.##" "vi"}} {{line.Product.UOMName}},
                                 {{line.ToaThuocLine.GetUseAtDisplay}}
                             </i>
                         </td>

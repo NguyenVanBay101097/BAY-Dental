@@ -143,7 +143,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public AccountJournalSimple Journal { get; set; }
 
         public Guid PartnerId { get; set; }
-        public PartnerDisplay Partner { get; set; }
+        public PartnerPrintVM Partner { get; set; }
 
         public Guid? AccountPaymentId { get; set; }
         public AccountPaymentDisplay AccountPayment { get; set; }
@@ -151,7 +151,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal Amount { get; set; }
         public string State { get; set; }
 
-        public IEnumerable<MedicineOrderLine> MedicineOrderLines { get; set; } = new List<MedicineOrderLine>();
+        public IEnumerable<MedicineOrderLineDisplay> MedicineOrderLines { get; set; } = new List<MedicineOrderLineDisplay>();
     }
 }
 

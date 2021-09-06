@@ -50,7 +50,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Generate(GenerateReq val)
         {
             object obj = await _printTemplateConfigService.getDataTest(val.Type);
-            var template = Template.Parse(val.Content);
+            var template = Template.ParseLiquid(val.Content);
 
             try
             {

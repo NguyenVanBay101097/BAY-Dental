@@ -88,6 +88,42 @@ namespace Infrastructure.Services
             var company = await comObj.SearchQuery().Include(x => x.Partner).FirstOrDefaultAsync();
             object obj = new object();
 
+            var partner = new Partner()
+            {
+                Name = "Nguyễn Văn A",
+                DisplayName = "Nguyễn Văn A",
+                Street = "Tô ký",
+                WardName = "Tân chánh hiệp",
+                DistrictName = "Quận 12",
+                CityName = "HCM",
+                Gender = "male",
+                BirthYear = 1997
+            };
+
+            var employee = new Employee()
+            {
+                Name = "Nguyễn Văn B"
+            };
+
+            var medicine = new Product()
+            {
+                Name = "Acetaminophen",
+                UOM = new UoM()
+                {
+                    Name = "Vỉ"
+                },
+            };
+
+            var toathuocLine = new ToaThuocLine()
+            {
+                Quantity = 3,
+                Product = medicine,
+                NumberOfDays = 1,
+                NumberOfTimes = 1,
+                AmountOfTimes = 1,
+                UseAt = "after_meal",
+            };
+
             switch (type)
             {
                 case "tmp_toathuoc":
@@ -97,38 +133,10 @@ namespace Infrastructure.Services
                         Company = company,
                         Date = DateTime.Now,
                         Name = "TT310821-00162",
-                        Partner = new Partner()
-                        {
-                            Name = "Nguyễn Văn A",
-                            DisplayName = "Nguyễn Văn A",
-                            Street = "Tô ký",
-                            WardName = "Tân chánh hiệp",
-                            DistrictName = "Quận 12",
-                            CityName = "HCM",
-                            Gender = "male",
-                            BirthYear = 1997
-                        },
-                        Employee = new Employee()
-                        {
-                            Name = "Nguyễn Văn B"
-                        },
+                        Partner = partner,
+                        Employee = employee,
                         Lines = new List<ToaThuocLine>() {
-                            new ToaThuocLine()
-                            {
-                                Quantity = 3,
-                                Product = new Product()
-                                {
-                                    Name = "Acetaminophen",
-                                    UOM = new UoM()
-                                    {
-                                        Name = "Vỉ"
-                                    },
-                                },
-                                NumberOfDays = 1,
-                                NumberOfTimes = 1,
-                                AmountOfTimes = 1,
-                                UseAt = "after_meal",
-                            }
+                            toathuocLine
                         },
                         Note = "Nhớ ăn uống điều độ",
                         Diagnostic = "Sâu răng",
@@ -139,6 +147,33 @@ namespace Infrastructure.Services
 
                     break;
                 case "tmp_medicine_order":
+                    var mo = new MedicineOrder()
+                    {
+                        Company = company,
+                        OrderDate = DateTime.Now,
+                        Partner = partner,
+                        Employee = employee,
+                        MedicineOrderLines = new List<MedicineOrderLine>()
+                        {
+                            new MedicineOrderLine()
+                            {
+                                Product = medicine,
+                                ToaThuocLine = toathuocLine,
+                                Quantity = 1,
+                                Price = 100000,
+                                AmountTotal = 100000
+                            }
+                        },
+                        Amount = 100000,
+                        AccountPayment = new AccountPayment() {  Amount = 100000},
+                        ToaThuoc = new ToaThuoc()
+                        {
+                            Note = "Nhớ ăn uống điều độ",
+                            Diagnostic = "Sâu răng",
+                            ReExaminationDate = DateTime.Now.AddMonths(6),
+                        }
+                    };
+                    obj = _mapper.Map<MedicineOrderPrint>(mo);
                     break;
                 default:
                     break;
