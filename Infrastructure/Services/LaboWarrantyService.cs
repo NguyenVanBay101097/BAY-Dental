@@ -265,15 +265,18 @@ namespace Infrastructure.Services
             await UpdateAsync(laboWarranty);
         }
 
-        public async Task CancelSendWarranty(Guid id)
+        public async Task CancelSendWarranty(IEnumerable<Guid> ids)
         {
-            var laboWarranty = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
-            if (laboWarranty.State != "sent")
-                throw new Exception("Chỉ có thể hủy ở trạng thái đã gửi");
-            laboWarranty.State = "new";
-            laboWarranty.DateSendWarranty = null;
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            foreach (var laboWarranty in self)
+            {
+                if (laboWarranty.State != "sent")
+                    throw new Exception("Chỉ có thể hủy ở trạng thái đã gửi");
+                laboWarranty.State = "new";
+                laboWarranty.DateSendWarranty = null;
+            }
 
-            await UpdateAsync(laboWarranty);
+            await UpdateAsync(self);
         }
 
         public async Task ConfirmReceiptInspection(LaboWarrantyConfirm val)
@@ -287,15 +290,18 @@ namespace Infrastructure.Services
             await UpdateAsync(laboWarranty);
         }
 
-        public async Task CancelReceiptInspection(Guid id)
+        public async Task CancelReceiptInspection(IEnumerable<Guid> ids)
         {
-            var laboWarranty = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
-            if (laboWarranty.State != "received")
-                throw new Exception("Chỉ có thể hủy ở trạng thái đã nhận");
-            laboWarranty.State = "sent";
-            laboWarranty.DateReceiptInspection = null;
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            foreach (var laboWarranty in self)
+            {
+                if (laboWarranty.State != "received")
+                    throw new Exception("Chỉ có thể hủy ở trạng thái đã nhận");
+                laboWarranty.State = "sent";
+                laboWarranty.DateReceiptInspection = null;
+            }
 
-            await UpdateAsync(laboWarranty);
+            await UpdateAsync(self);
         }
 
         public async Task ConfirmAssemblyWarranty(LaboWarrantyConfirm val)
@@ -309,15 +315,18 @@ namespace Infrastructure.Services
             await UpdateAsync(laboWarranty);
         }
 
-        public async Task CancelAssemblyWarranty(Guid id)
+        public async Task CancelAssemblyWarranty(IEnumerable<Guid> ids)
         {
-            var laboWarranty = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
-            if (laboWarranty.State != "assembled")
-                throw new Exception("Chỉ có thể hủy ở trạng thái đã lắp");
-            laboWarranty.State = "received";
-            laboWarranty.DateAssemblyWarranty = null;
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            foreach (var laboWarranty in self)
+            {
+                if (laboWarranty.State != "assembled")
+                    throw new Exception("Chỉ có thể hủy ở trạng thái đã lắp");
+                laboWarranty.State = "received";
+                laboWarranty.DateAssemblyWarranty = null;
+            }
 
-            await UpdateAsync(laboWarranty);
+            await UpdateAsync(self);
         }
     }
 }

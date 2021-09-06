@@ -19,10 +19,10 @@ namespace Infrastructure.Services
         Task ButtonConfirm(IEnumerable<Guid> ids);
         Task ButtonCancel(IEnumerable<Guid> ids);
         Task ConfirmSendWarranty(LaboWarrantyConfirm val);
-        Task CancelSendWarranty(Guid id);
+        Task CancelSendWarranty(IEnumerable<Guid> ids);
         Task ConfirmReceiptInspection(LaboWarrantyConfirm val);
-        Task CancelReceiptInspection(Guid id);
+        Task CancelReceiptInspection(IEnumerable<Guid> ids);
         Task ConfirmAssemblyWarranty(LaboWarrantyConfirm val);
-        Task CancelAssemblyWarranty(Guid id);
+        Task CancelAssemblyWarranty(IEnumerable<Guid> ids);
     }
 }
