@@ -101,6 +101,9 @@ namespace Infrastructure.Services
                     .Include(x => x.SaleOrderLine.Employee)
                     .FirstOrDefaultAsync();
 
+                if (laboOrder == null)
+                    throw new Exception("Not found LaboOrderId");
+
                 var teeth = await laboOrderObj.SearchQuery(x => x.Id == val.LaboOrderId)
                     .SelectMany(x => x.LaboOrderToothRel)
                     .Select(x => x.Tooth).ToListAsync();
@@ -133,6 +136,9 @@ namespace Infrastructure.Services
                 .Include(x => x.Employee)
                 .Include(x => x.LaboWarrantyToothRels).ThenInclude(x => x.Tooth)
                 .FirstOrDefaultAsync();
+
+            if (laboWarranty == null)
+                throw new Exception("Not found LaboWarrantyId");
 
             // Lấy danh sách răng của Phiếu Labo
             var res = _mapper.Map<LaboWarrantyDisplay>(laboWarranty);
@@ -204,6 +210,9 @@ namespace Infrastructure.Services
                 .Include(x => x.LaboWarrantyToothRels).ThenInclude(x => x.Tooth)
                 .FirstOrDefaultAsync();
 
+            if (laboWarranty == null)
+                throw new Exception("Not found LaboWarrantyId");
+
             laboWarranty = _mapper.Map(val, laboWarranty);
 
             // Thêm danh sách răng
@@ -257,6 +266,10 @@ namespace Infrastructure.Services
         public async Task ConfirmSendWarranty(LaboWarrantyConfirm val)
         {
             var laboWarranty = await SearchQuery(x => x.Id == val.Id).FirstOrDefaultAsync();
+
+            if (laboWarranty == null)
+                throw new Exception("Not found LaboWarrantyId");
+
             if (laboWarranty.State != "new")
                 throw new Exception("Chỉ có thể xác nhận ở trạng thái mới");
             laboWarranty.State = "sent";
@@ -282,6 +295,10 @@ namespace Infrastructure.Services
         public async Task ConfirmReceiptInspection(LaboWarrantyConfirm val)
         {
             var laboWarranty = await SearchQuery(x => x.Id == val.Id).FirstOrDefaultAsync();
+
+            if (laboWarranty == null)
+                throw new Exception("Not found LaboWarrantyId");
+
             if (laboWarranty.State != "sent")
                 throw new Exception("Chỉ có thể xác nhận ở trạng thái đã gửi");
             laboWarranty.State = "received";
@@ -307,6 +324,10 @@ namespace Infrastructure.Services
         public async Task ConfirmAssemblyWarranty(LaboWarrantyConfirm val)
         {
             var laboWarranty = await SearchQuery(x => x.Id == val.Id).FirstOrDefaultAsync();
+
+            if (laboWarranty == null)
+                throw new Exception("Not found LaboWarrantyId");
+
             if (laboWarranty.State != "received")
                 throw new Exception("Chỉ có thể xác nhận ở trạng thái đã nhận");
             laboWarranty.State = "assembled";
