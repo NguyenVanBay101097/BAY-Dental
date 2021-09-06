@@ -23,7 +23,9 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         contentsCss: '/css/print.css',
         fullPage: true,
         allowedContent: true,
-        entities: false
+        entities: false,
+        basicEntities: false,
+        forceSimpleAmpersand: true
     };
     contentPrev = "";
 
