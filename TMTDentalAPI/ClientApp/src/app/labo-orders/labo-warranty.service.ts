@@ -88,23 +88,23 @@ export class LaboWarrantyService {
     return this.http.post(this.baseApi + this.apiUrl + '/ConfirmSendWarranty', val);
   }
 
-  cancelSendWarranty(id: string) {
-    return this.http.post(this.baseApi + this.apiUrl + '/CancelSendWarranty', id);
+  cancelSendWarranty(ids: string[]) {
+    return this.http.post(this.baseApi + this.apiUrl + '/CancelSendWarranty', ids);
   }
 
   confirmReceiptInspection(val) {
     return this.http.post(this.baseApi + this.apiUrl + '/ConfirmReceiptInspection', val);
   }
 
-  cancelReceiptInspection(id: string) {
-    return this.http.post(this.baseApi + this.apiUrl + '/CancelReceiptInspection', id);
+  cancelReceiptInspection(ids: string[]) {
+    return this.http.post(this.baseApi + this.apiUrl + '/CancelReceiptInspection', ids);
   }
 
   confirmAssemblyWarranty(val) {
     return this.http.post(this.baseApi + this.apiUrl + '/ConfirmAssemblyWarranty', val);
   }
 
-  cancelAssemblyWarranty(id: string) {
-    return this.http.post(this.baseApi + this.apiUrl + '/CancelAssemblyWarranty', id);
+  cancelAssemblyWarranty(ids: string[]) {
+    return this.http.post(this.baseApi + this.apiUrl + '/CancelAssemblyWarranty', ids);
   }
 }

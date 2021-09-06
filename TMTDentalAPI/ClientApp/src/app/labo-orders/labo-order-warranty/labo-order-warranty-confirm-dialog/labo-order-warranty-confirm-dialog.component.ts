@@ -100,13 +100,13 @@ export class LaboOrderWarrantyConfirmDialogComponent implements OnInit {
     //   id: this.laboWarrantyId,
     // }
     if (this.state == 'sent') {
-      return this.laboWarrantyService.cancelSendWarranty(this.laboWarrantyId)
+      return this.laboWarrantyService.cancelSendWarranty([this.laboWarrantyId])
     }
     else if (this.state == 'received') {
-      return this.laboWarrantyService.cancelReceiptInspection(this.laboWarrantyId)
+      return this.laboWarrantyService.cancelReceiptInspection([this.laboWarrantyId])
     }
     else if (this.state == 'assembled') {
-      return this.laboWarrantyService.cancelAssemblyWarranty(this.laboWarrantyId)
+      return this.laboWarrantyService.cancelAssemblyWarranty([this.laboWarrantyId])
     }
   }
 
