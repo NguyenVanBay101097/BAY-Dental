@@ -1,0 +1,284 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TDental.vn</title>
+    <link rel="stylesheet" type="text/css" href="/css/print.css" />
+    <style>
+        @@page {
+            size: A4 landscape !important;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div>
+            <div class="d-flex mb-2">
+                {{ if model.company.logo != "" && model.company.logo != null}}
+                <img class="img-fluid me-3 w-20" src="{{model.company.logo}}" alt="{{model.company.name}}">
+                {{ end }}
+
+                <div>
+                    <div class="text-xl font-semibold">{{model.company.name}}</div>
+                    {{if model.company.address != ""}}
+
+                    <div>Địa chỉ: {{model.company.address}}</div>
+
+                    {{ end }}
+
+                    {{ if model.company.phone}}
+
+                    <div>ĐT: {{model.company.phone}}</div>
+
+                    {{ end }}
+
+                    {{if model.company.email }}
+
+                    <div>Email: {{model.company.email}}</div>
+
+                    {{ end }}
+
+                </div>
+            </div>
+            <div class="text-center mb-2">
+                <div class="text-3xl font-semibold">ĐẶT HÀNG LABO</div>
+                <div>Ngày {{model.date_order.day}} tháng {{model.date_order.month}} năm {{model.date_order.year}} </div>
+                <div class="font-semibold">Số: {{model.name}}</div>
+            </div>
+            <div class="o_form_view  mb-2">
+                <div class="text-lg font-semibold mb-1">THÔNG TIN CHUNG</div>
+                <div class="container">
+                    <div class="row">
+                        <table class="o_group o_inner_group col">
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Bác sĩ
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">{{model.sale_order_line.employee ? model.sale_order_line.employee.name : "" }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Số phiếu điều trị
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">{{model.sale_order_line.order ? model.sale_order_line.order.name : ""}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Khách hàng
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">{{model.customer.name}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="o_group o_inner_group col">
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            NCC Labo
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">{{model.partner.name}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Ngày gửi
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">{{date.parse model.date_order | date.to_string '%d/%m/%Y' }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Ngày nhận dự kiến
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">{{date.parse model.date_planned | date.to_string '%d/%m/%Y' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                </div>
+            </div>
+            <div class="o_form_view  mb-2">
+                <div class="d-flex">
+                    <div class="col-6">
+                        <div class="text-lg font-semibold mb-1">CHI TIẾT PHIẾU</div>
+                        <table class="o_group o_inner_group">
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Loại phục hình
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">{{model.sale_order_line ? model.sale_order_line.name : ""}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Hãng
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">{{model.sale_order_line.product ? (model.sale_order_line.product.firm ? model.sale_order_line.product.firm : "") : ""}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Răng
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">{{model.teeth ? (model.teeth | array.map "name" | array.join ",") : ""}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Màu sắc chi tiết
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">{{model.color ? model.color : ""}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Số lượng
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">{{model.quantity > 0 ? model.quantity : 0}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Chỉ định
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">{{model.indicated ? model.indicated : ""}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Ghi chú
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">{{model.note ? model.note : ""}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-lg font-semibold mb-1">THÔNG SỐ LABO</div>
+                        <table class="o_group o_inner_group">
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Vật liệu
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">{{model.product ? model.product.name : ""}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Đường hoàn tất
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">{{model.labo_finish_line ? model.labo_finish_line.name : ""}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Khớp cắn
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">{{model.labo_bite_joint ? model.labo_bite_joint.name : ""}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Kiểu nhịp
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">{{model.labo_bridge ? model.labo_bridge.name : ""}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Gửi kèm
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">{{model.labo_order_products ? (model.labo_order_products | array.map "name" | array.join "," ) : ""}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Ghi chú kĩ thuật
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">{{model.technical_note ? model.technical_note : ""}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="o_form_view mb-2">
+                <div class="text-lg font-semibold mb-1">THÔNG TIN BẢO HÀNH</div>
+                <div class="d-flex">
+                    <table class="o_group o_inner_group col-6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Mã bảo hành
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">{{model.warranty_code ? model.ưarranty_code : ""}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group col-6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Hạn bảo hành
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">{{model.warranty_period ? (model.warranty_period | date.to_string '%d/%m/%Y') : ""}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="d-flex">
+                <div class="col ">
+                </div>
+                <div class="col ">
+                    <div class="text-center">
+                        <span class="font-semibold">Người đặt hàng</span> <br />
+                        <i>(Ký, họ tên)</i> <br />
+                        <span></span> <br />
+                        <span></span> <br />
+                        <span></span> <br />
+                        <span class="font-semibold">{{model.sale_order_line.employee ? (model.sale_order_line.employee.name | string.upcase) : ""}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

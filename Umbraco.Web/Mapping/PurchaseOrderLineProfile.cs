@@ -28,6 +28,8 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<PurchaseOrderLineSave, PurchaseOrderLine>()
               .ForMember(x => x.Id, x => x.Ignore());
+
+            CreateMap<PurchaseOrderLine, PurchaseOrderLinePrintVm>();
         }
     }
 }

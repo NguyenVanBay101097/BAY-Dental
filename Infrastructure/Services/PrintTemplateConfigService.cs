@@ -2,10 +2,14 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Specifications;
 using AutoMapper;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
@@ -17,12 +21,15 @@ namespace Infrastructure.Services
         private readonly IMapper _mapper;
         private readonly IPrintTemplateService _printTemplateService;
         private readonly IPrintPaperSizeService _printPaperSizeService;
-        public PrintTemplateConfigService(IAsyncRepository<PrintTemplateConfig> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper, IPrintTemplateService printTemplateService, IPrintPaperSizeService printPaperSizeService)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
+        public PrintTemplateConfigService(IAsyncRepository<PrintTemplateConfig> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper, IPrintTemplateService printTemplateService, IPrintPaperSizeService printPaperSizeService,IWebHostEnvironment webHostEnvironment)
             : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
             _printTemplateService = printTemplateService;
             _printPaperSizeService = printPaperSizeService;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public async Task<PrintTemplateConfigDisplay> GetDisplay(PrintTemplateConfigChangeType val)
@@ -71,6 +78,58 @@ namespace Infrastructure.Services
           
         }
 
+        public async Task<object> GetSampleData(string type)
+        {
+            var comObj = GetService<ICompanyService>();
+            var company = await comObj.SearchQuery(x => x.Id == CompanyId).Include(x => x.Partner).FirstOrDefaultAsync();
+            var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, @"SampleData\print_template_data.json");
+            object obj = new object();
+
+            using (var reader = new StreamReader(filePath))
+            {
+                var fileContent = reader.ReadToEnd();
+                var sample_data = JsonConvert.DeserializeObject<List<SampleDataPrintTemplate>>(fileContent);
+                var item = sample_data.Where(s=> s.Type == type).FirstOrDefault();
+
+                switch (type)
+                {
+                    case "tmp_toathuoc":
+                        var res_toathuoc = JsonConvert.DeserializeObject<ToaThuoc>(item.Data.ToString());
+                        res_toathuoc.Company = company;
+                        res_toathuoc.ReExaminationDate = DateTime.Now.AddMonths(3);
+                        obj = _mapper.Map<ToaThuocPrintViewModel>(res_toathuoc);
+
+                        break;
+                    case "tmp_labo_order":
+                        var res_labo = JsonConvert.DeserializeObject<LaboOrderPrintVM>(item.Data.ToString());
+                        res_labo.Company = _mapper.Map<CompanyPrintVM>(company);
+                        obj = res_labo;
+
+                        break;
+                    case "tmp_purchase_order":
+                        var res_purchase_order = JsonConvert.DeserializeObject<PurchaseOrder>(item.Data.ToString());
+                        res_purchase_order.Company = company;
+                        //res_purchase_order.User.Name = "Nguyễn Văn A";
+                        obj = _mapper.Map<PurchaseOrderPrintVm>(res_purchase_order);
+                        break;
+                    case "tmp_purchase_refund":
+                        var res_purchase_refund = JsonConvert.DeserializeObject<PurchaseOrder>(item.Data.ToString());
+                        res_purchase_refund.Company = company;
+                        obj = _mapper.Map<PurchaseOrderPrintVm>(res_purchase_refund);
+
+                        break;
+                    case "tmp_medicine_order":
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+
+
+            return obj;
+        }
+
         public override ISpecification<PrintTemplateConfig> RuleDomainGet(IRRule rule)
         {
             switch (rule.Code)
@@ -82,105 +141,7 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<object> getDataTest(string type)
-        {
-            var comObj = GetService<ICompanyService>();
-            var company = await comObj.SearchQuery().Include(x => x.Partner).FirstOrDefaultAsync();
-            object obj = new object();
-
-            var partner = new Partner()
-            {
-                Name = "Nguyễn Văn A",
-                DisplayName = "Nguyễn Văn A",
-                Street = "Tô ký",
-                WardName = "Tân chánh hiệp",
-                DistrictName = "Quận 12",
-                CityName = "HCM",
-                Gender = "male",
-                BirthYear = 1997
-            };
-
-            var employee = new Employee()
-            {
-                Name = "Nguyễn Văn B"
-            };
-
-            var medicine = new Product()
-            {
-                Name = "Acetaminophen",
-                UOM = new UoM()
-                {
-                    Name = "Vỉ"
-                },
-            };
-
-            var toathuocLine = new ToaThuocLine()
-            {
-                Quantity = 3,
-                Product = medicine,
-                NumberOfDays = 1,
-                NumberOfTimes = 1,
-                AmountOfTimes = 1,
-                UseAt = "after_meal",
-            };
-
-            switch (type)
-            {
-                case "tmp_toathuoc":
-
-                    var temp = new ToaThuoc()
-                    {
-                        Company = company,
-                        Date = DateTime.Now,
-                        Name = "TT310821-00162",
-                        Partner = partner,
-                        Employee = employee,
-                        Lines = new List<ToaThuocLine>() {
-                            toathuocLine
-                        },
-                        Note = "Nhớ ăn uống điều độ",
-                        Diagnostic = "Sâu răng",
-                        ReExaminationDate = DateTime.Now.AddMonths(6),
-
-                    };
-                    obj = _mapper.Map<ToaThuocPrintViewModel>(temp);
-
-                    break;
-                case "tmp_medicine_order":
-                    var mo = new MedicineOrder()
-                    {
-                        Company = company,
-                        OrderDate = DateTime.Now,
-                        Partner = partner,
-                        Employee = employee,
-                        MedicineOrderLines = new List<MedicineOrderLine>()
-                        {
-                            new MedicineOrderLine()
-                            {
-                                Product = medicine,
-                                ToaThuocLine = toathuocLine,
-                                Quantity = 1,
-                                Price = 100000,
-                                AmountTotal = 100000
-                            }
-                        },
-                        Amount = 100000,
-                        AccountPayment = new AccountPayment() {  Amount = 100000},
-                        ToaThuoc = new ToaThuoc()
-                        {
-                            Note = "Nhớ ăn uống điều độ",
-                            Diagnostic = "Sâu răng",
-                            ReExaminationDate = DateTime.Now.AddMonths(6),
-                        }
-                    };
-                    obj = _mapper.Map<MedicineOrderPrint>(mo);
-                    break;
-                default:
-                    break;
-            }
-
-            return obj;
-        }
+       
 
     }
 }

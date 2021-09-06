@@ -49,12 +49,12 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Generate(GenerateReq val)
         {
-            object obj = await _printTemplateConfigService.getDataTest(val.Type);
-            var template = Template.ParseLiquid(val.Content);
+            object obj = await _printTemplateConfigService.GetSampleData(val.Type);
+            var template = Template.Parse(val.Content);
 
             try
             {
-                var result = template.Render(new { Model = obj }, member => member.Name);
+                var result = template.Render(new { Model = obj });
                 return Ok(result);
 
             }
@@ -69,7 +69,7 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> PrintTest(PrintTestReq val)
         {
-            object obj = await _printTemplateConfigService.getDataTest(val.Type);
+            object obj = await _printTemplateConfigService.GetSampleData(val.Type);
             var printTemplateConfig = await _printTemplateConfigService.GetDisplay(new PrintTemplateConfigChangeType() { Type = val.Type});
             var template = Template.Parse(printTemplateConfig.Content);
             try

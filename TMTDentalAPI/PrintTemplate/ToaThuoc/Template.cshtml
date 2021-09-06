@@ -16,27 +16,27 @@
     <div class="container">
         <div>
             <div class="d-flex mb-2">
-                {{ if company.logo != "" || company.logo != null}}
-                <img class="img-fluid me-3 w-20" src="{{company.logo}}" alt="{{company.name}}">
+                {{ if model.company.logo != "" && model.company.logo != null}}
+                <img class="img-fluid me-3 w-20" src="{{model.company.logo}}" alt="{{model.company.name}}">
                 {{ end }}
 
                 <div>
-                    <div class="text-xl font-semibold">{{company.name}}</div>
-                    {{if company.address != ""}}
+                    <div class="text-xl font-semibold">{{model.company.name}}</div>
+                    {{if model.company.address != ""}}
 
-                    <div>Địa chỉ: {{company.address}}</div>
-
-                    {{ end }}
-
-                    {{ if company.phone}}
-
-                    <div>ĐT: {{company.phone}}</div>
+                    <div>Địa chỉ: {{model.company.address}}</div>
 
                     {{ end }}
 
-                    {{if company.email }}
+                    {{ if model.company.phone}}
 
-                    <div>Email: {{company.email}}</div>
+                    <div>ĐT: {{model.company.phone}}</div>
+
+                    {{ end }}
+
+                    {{if model.company.email }}
+
+                    <div>Email: {{model.company.email}}</div>
 
                     {{ end }}
 
@@ -44,8 +44,8 @@
             </div>
             <div class="text-center mb-2">
                 <div class="text-3xl font-semibold">ĐƠN THUỐC</div>
-                <div>Ngày {{date.day}} tháng {{date.month}} năm {{date.year}} </div>
-                <div class="font-semibold">Số: {{name}}</div>
+                <div>Ngày {{model.date.day}} tháng {{model.date.month}} năm {{model.date.year}} </div>
+                <div class="font-semibold">Số: {{model.name}}</div>
             </div>
             <div class="o_form_view">
                 <div class="o_group">
@@ -57,7 +57,7 @@
                                         Khách hàng
                                     </label>
                                 </td>
-                                <td colspan="1" style="width: 100%;">{{partner.display_name}}</td>
+                                <td colspan="1" style="width: 100%;">{{model.partner.display_name}}</td>
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
@@ -65,7 +65,7 @@
                                         Địa chỉ
                                     </label>
                                 </td>
-                                <td colspan="1" style="width: 100%;">{{partner.address}}</td>
+                                <td colspan="1" style="width: 100%;">{{model.partner.address}}</td>
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
@@ -73,7 +73,7 @@
                                         Bác sĩ
                                     </label>
                                 </td>
-                                <td colspan="1" style="width: 100%;">{{employee_name}}</td>
+                                <td colspan="1" style="width: 100%;">{{model.employee_name}}</td>
                             </tr>
                     </table>
                     <table class="o_group o_inner_group o_group_col_4">
@@ -84,7 +84,7 @@
                                         Giới tính
                                     </label>
                                 </td>
-                                <td colspan="1" style="width: 100%;">{{partner.display_gender}}</td>
+                                <td colspan="1" style="width: 100%;">{{model.partner.display_gender}}</td>
                             </tr>
 
                             <tr>
@@ -93,8 +93,9 @@
                                         Tuổi
                                     </label>
                                 </td>
-                                <td colspan="1" style="width: 100%;">{{partner.age}}</td>
+                                <td colspan="1" style="width: 100%;">{{model.partner.age}}</td>
                             </tr>
+
                         </tbody>
                     </table>
                 </div>
@@ -102,7 +103,7 @@
             <div>
                 <table class="table table-sm table-borderless">
                     <tbody>
-                        {{ for line in lines }}
+                        {{ for line in model.lines }}
                         <tr>
                             <td>
                                 <div class="d-flex justify-content-between">
@@ -133,7 +134,7 @@
                                         Lời dặn
                                     </label>
                                 </td>
-                                <td colspan="1" style="width: 100%;">{{note}}</td>
+                                <td colspan="1" style="width: 100%;">{{model.note}}</td>
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
@@ -141,7 +142,7 @@
                                         Chẩn đoán bệnh
                                     </label>
                                 </td>
-                                <td colspan="1" style="width: 100%;">{{diagnostic}}</td>
+                                <td colspan="1" style="width: 100%;">{{model.diagnostic}}</td>
                             </tr>
                             <tr>
                                 <td colspan="1" class="o_td_label">
@@ -150,8 +151,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    {{if re_examination_date }}
-                                    <div>{{re_examination_date.day}}/{{re_examination_date.month}}/{{re_examination_date.year}}</div>
+                                    {{if model.re_examination_date }}
+                                    <div>{{date.parse model.re_examination_date | date.to_string '%d/%m/%Y'}}</div>
 
                                     {{ end }}
                                 </td>
@@ -168,7 +169,7 @@
                         <span></span> <br />
                         <span></span> <br />
                         <span></span> <br />
-                        <span class="font-semibold">{{employee_name}}</span>
+                        <span class="font-semibold">{{model.employee_name ? (model.employee_name | string.upcase) : "" }}</span>
                     </div>
                 </div>
                 <div class="col">
@@ -178,7 +179,7 @@
                         <span></span> <br />
                         <span></span> <br />
                         <span></span> <br />
-                        <span class="font-semibold">{{partner.name}}</span>
+                        <span class="font-semibold">{{model.partner ? (model.partner.name | string.upcase) : ""}}</span>
                     </div>
                 </div>
             </div>

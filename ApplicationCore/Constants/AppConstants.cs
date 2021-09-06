@@ -54,8 +54,6 @@ namespace ApplicationCore.Constants
            new PrintTemplateType {Type = "tmp_phieu_chi" , PathTemplate = "" },
            new PrintTemplateType {Type = "tmp_partner_debt" , PathTemplate = "" },
            new PrintTemplateType {Type = "tmp_agent_commission" , PathTemplate = "" },
-           new PrintTemplateType {Type = "tmp_purchase_order" , PathTemplate = "" },
-           new PrintTemplateType {Type = "tmp_purchase_refund" , PathTemplate = "" },
            new PrintTemplateType {Type = "tmp_quotation" , PathTemplate = "" },
            new PrintTemplateType {Type = "tmp_salary_employee" , PathTemplate = "" },
            new PrintTemplateType {Type = "tmp_salary_advance" , PathTemplate = "" },
@@ -63,12 +61,12 @@ namespace ApplicationCore.Constants
            new PrintTemplateType {Type = "tmp_stock_picking_incoming" , PathTemplate = "" },
            new PrintTemplateType {Type = "tmp_stock_picking_outgoing" , PathTemplate = "" },
            new PrintTemplateType {Type = "tmp_stock_inventory" , PathTemplate = "" },
-           new PrintTemplateType {Type = "tmp_toathuoc" , PathTemplate = "" },
-           new PrintTemplateType {Type = "tmp_medicine_order" , PathTemplate = "" },
-           new PrintTemplateType {Type = "tmp_labo_order" , PathTemplate = "" },          
         };
 
         public static PrintTemplateType[] PrintTemplateTypeDemo = new PrintTemplateType[] {
+           new PrintTemplateType {Type = "tmp_labo_order" , PathTemplate = "PrintTemplate/LaboOrder/Template.cshtml" },
+           new PrintTemplateType {Type = "tmp_purchase_order" , PathTemplate = "PrintTemplate/PurchaseOrder/Template.cshtml" },
+           new PrintTemplateType {Type = "tmp_purchase_refund" , PathTemplate = "PrintTemplate/PurchaseOrder/Template.cshtml" },
            new PrintTemplateType {Type = "tmp_toathuoc" , PathTemplate = "PrintTemplate/ToaThuoc/Template.cshtml" },       
            new PrintTemplateType {Type = "tmp_medicine_order" , PathTemplate = "PrintTemplate/MedicineOrder/Template.cshtml" },       
         };

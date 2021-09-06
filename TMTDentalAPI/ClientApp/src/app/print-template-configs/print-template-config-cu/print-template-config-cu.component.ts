@@ -37,7 +37,8 @@ export class PrintTemplateConfigCuComponent implements OnInit {
 
     ngOnInit() {
         this.types = this.configService.types;
-        this.typeFilter = "tmp_toathuoc";
+        // this.typeFilter = "tmp_toathuoc";
+        this.typeFilter = "tmp_purchase_order";
         this.loadCurrentConfig();
         // this.activeRoute.paramMap.subscribe(x => {
         //   this.typeFilter = x.get("type");

@@ -77,4 +77,13 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public string Type { get; set; }
     }
+
+    public class SampleDataPrintTemplate
+    {
+        public string Type { get; set; }
+
+        public object Data { get; set; }
+       
+    }
+
 }
