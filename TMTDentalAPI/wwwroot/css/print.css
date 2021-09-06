@@ -907,3 +907,7 @@ table {
 .border-5 {
     border-width: 5px !important;
 }
+
+.table-border-top-0 tr:first-child td {
+    border-top: none;
+}

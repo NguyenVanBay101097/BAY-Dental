@@ -46,7 +46,7 @@
             <div class="text-center mb-2">
                 <div class="text-3xl font-semibold">HÓA ĐƠN THUỐC</div>
                 <div>Ngày {{model.order_date.day}} tháng {{model.order_date.month}} năm {{model.order_date.year}} </div>
-                <div class="font-semibold">Số: model.Name</div>
+                <div class="font-semibold">Số: {{model.name}}</div>
             </div>
             <div class="o_form_view mb-2">
                 <div class="d-flex">
@@ -88,16 +88,20 @@
             </div>
             <div class="o_form_view mb-2">
                 <table class="table table-sm table-bordered mb-0">
-                    <tr>
-                        <th>Tên thuốc</th>
-                        <th class="text-center">Số lượng</th>
-                        <th class="text-center">Đơn giá</th>
-                        <th class="text-right">Thành tiền</th>
-                    </tr>
+                    <thead>
+                        <tr>
+                            <th style="">Tên thuốc</th>
+                            <th style="width: 100px" class="text-center">Số lượng</th>
+                            <th style="width: 100px" class="text-center">Đơn giá</th>
+                            <th style="width: 100px" class="text-right">Thành tiền</th>
+                        </tr>
+                    </thead>
 
-                    {{ for line in  model.medicine_order_lines }}
+                </table>
+                {{ for line in  model.medicine_order_lines }}
+                <table class="table table-sm table-bordered mb-0 table-border-top-0">
                     <tr>
-                        <td>
+                        <td style="" >
                             <div class="font-semibold">{{line.product.name}}</div>
                             <i>
                                 Ngày uống {{line.toa_thuoc_line.number_of_times | math.format "#,###.##" "vi"}} lần,
@@ -105,12 +109,13 @@
                                 {{line.toa_thuoc_line.get_use_at_display}}
                             </i>
                         </td>
-                        <td class="text-center">{{line.quantity | math.format "#,###.##" "vi"}}</td>
-                        <td class="text-center">{{line.price | math.format "#,###.##" "vi"}}</td>
-                        <td class="text-right">{{line.amount_total | math.format "#,###.##" "vi"}}</td>
+                        <td style="width: 100px"  class="text-center">{{line.quantity | math.format "#,###.##" "vi"}}</td>
+                        <td style="width: 100px" class="text-center">{{line.price | math.format "#,###.##" "vi"}}</td>
+                        <td style="width: 100px" class="text-right">{{line.amount_total | math.format "#,###.##" "vi"}}</td>
                     </tr>
-                    {{ end }}
                 </table>
+                {{ end }}
+
             </div>
             <div class="o_form_view float-right mb-2">
                 <div class="d-flex">
@@ -161,7 +166,7 @@
                     <table class="o_group o_inner_group">
                         <tbody>
                             <tr>
-                                <td colspan="1" class="o_td_label">
+                                <td style="" colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
                                         Lời dặn
                                     </label>
