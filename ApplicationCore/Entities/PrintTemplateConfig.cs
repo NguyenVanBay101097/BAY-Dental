@@ -43,6 +43,11 @@ namespace ApplicationCore.Entities
         public PrintPaperSize PrintPaperSize { get; set; }
 
         /// <summary>
+        /// làm mẫu in mặc định
+        /// </summary>
+        public bool IsDefault { get; set; }
+
+        /// <summary>
         /// chi nhánh
         /// </summary>
         public Guid? CompanyId { get; set; }
