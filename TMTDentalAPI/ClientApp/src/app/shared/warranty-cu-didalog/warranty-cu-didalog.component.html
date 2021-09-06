@@ -12,11 +12,11 @@
                     <h3 *ngIf="laboWarrantyName" class="m-0">{{laboWarrantyName}}</h3>
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                    <button [disabled]="true" class="btn o_arrow_button disabled"
+                    <button [disabled]="true" class="btn o_arrow_button o_arrow_button_bg_primary disabled"
                         [ngClass]="getValueFC('state') != 'draft' ? 'btn-primary' : 'btn-secondary'" type="button">
                         Đơn bảo hành
                     </button>
-                    <button [disabled]="true" class="btn o_arrow_button disabled"
+                    <button [disabled]="true" class="btn o_arrow_button o_arrow_button_bg_primary disabled"
                         [ngClass]="getValueFC('state') === 'draft' ? 'btn-primary' : 'btn-secondary'" type="button">
                         Nháp
                     </button>

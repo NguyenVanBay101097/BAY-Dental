@@ -189,11 +189,12 @@ export class WarrantyCuDidalogComponent implements OnInit {
   }
 
   onClose() {
-    if (this.id) {
-      this.activeModal.close(true);
-    } else {
-      this.activeModal.close();
-    }
+    // if (this.id) {
+    //   this.activeModal.close(true);
+    // } else {
+    //   this.activeModal.close();
+    // }
+    this.activeModal.dismiss()
   }
 
   isToothSelected(tooth: ToothDisplay) {

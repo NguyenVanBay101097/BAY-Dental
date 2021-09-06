@@ -40,7 +40,7 @@ export class LaboOrderWarrantyListComponent implements OnInit {
     { text: 'Mới', value: 'new' },
     { text: 'Đã gửi', value: 'sent' },
     { text: 'Đã nhận', value: 'received' },
-    { text: 'Đã Lắp', value: 'assembled' }
+    { text: 'Đã lắp', value: 'assembled' }
   ];
   constructor(
     private laboWarrantyService: LaboWarrantyService,
