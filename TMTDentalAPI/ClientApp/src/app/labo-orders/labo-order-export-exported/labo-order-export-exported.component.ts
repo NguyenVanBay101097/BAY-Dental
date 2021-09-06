@@ -32,6 +32,8 @@ export class LaboOrderExportExportedComponent implements OnInit {
   dateReceiptTo: Date;
   supplierData: any[]=[];
   partnerId: string = '';
+  canUpdate: boolean = false;
+  canReadSaleOrder: boolean = false;
   constructor(
     private laboOrderService: LaboOrderService, 
     private intlService: IntlService, 
@@ -53,6 +55,8 @@ export class LaboOrderExportExportedComponent implements OnInit {
           this.loadDataFromApi();
         });
     },);
+    this.canUpdate = this.checkPermissionService.check(['Labo.LaboOrder.Update']);
+    this.canReadSaleOrder = this.checkPermissionService.check(['Basic.SaleOrder.Read']);
   }
 
   loadDataFromApi() {
