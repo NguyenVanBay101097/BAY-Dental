@@ -406,7 +406,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
       }
       this.laboOrderService.buttonConfirm([this.id]).subscribe(() => {
         this.activeModal.close();
-        this.notify('success', 'Lưu thành công');
+        this.notify('success', 'Đặt hàng thành công');
       });
     });
   }

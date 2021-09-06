@@ -64,6 +64,11 @@
                 </ng-template>
             </kendo-grid-column>
             <kendo-grid-column field="customerName" title="Khách hàng" width="150">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    <a *ngIf="dataItem.customerId" class="text-primary" title="Xem hồ sơ khách hàng" [routerLink]="['/partners/customer/' + dataItem.customerId]">
+                        {{dataItem?.customerName}}
+                    </a>
+                </ng-template>
             </kendo-grid-column>
             <kendo-grid-column field="reason" title="Lý do bảo hành" width="150">
             </kendo-grid-column>
@@ -89,10 +94,11 @@
                     {{showState(dataItem.state)}}
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column field="state" title="Thao tác" width="100">
+            <kendo-grid-column title="Thao tác" width="100">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    <button class="btn mr-1" title="Sửa" (click)="editItem(dataItem)">
-                        <span class="fas fa-edit text-success"></span></button>
+                    <button class="btn btn-success" title="Sửa" (click)="editItem(dataItem)">
+                        <span class="fas fa-edit"></span>
+                    </button>
                 </ng-template>
             </kendo-grid-column>
             <kendo-grid-excel fileName="QuanLyBaoHanh.xlsx">

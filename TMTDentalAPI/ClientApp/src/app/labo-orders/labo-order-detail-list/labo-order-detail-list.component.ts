@@ -8,6 +8,7 @@ import { PrintService } from 'src/app/shared/services/print.service';
 import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { Subject } from 'rxjs';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { NotifyService } from 'src/app/shared/services/notify.service';
 
 @Component({
   selector: 'app-labo-order-detail-list',
@@ -36,7 +37,8 @@ export class LaboOrderDetailListComponent implements OnInit {
 
   constructor(private laboOrderService: LaboOrderService, private modalService: NgbModal,
     private printService: PrintService, 
-    private checkPermissionService: CheckPermissionService
+    private checkPermissionService: CheckPermissionService,
+    private notifyService: NotifyService,
     ) { }
 
   ngOnInit() {
@@ -116,11 +118,12 @@ export class LaboOrderDetailListComponent implements OnInit {
   }
 
   deleteItem(item) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Xóa phiếu Labo';
     modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa?';
     modalRef.result.then(() => {
       this.laboOrderService.unlink([item.id]).subscribe(() => {
+        this.notifyService.notify("success", "Xóa phiếu Labo thành công");
         this.loadDataFromApi();
         this.reload.next(true);
       });
