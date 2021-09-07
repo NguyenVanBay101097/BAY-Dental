@@ -53,7 +53,7 @@ export class AppHomeComponent implements OnInit {
         { name: 'Xuất Labo cho khách', url: '/labo-orders/export', permissions: ['Labo.ExportLabo.Read', 'Labo.ExportLabo.Update'] },
         { name: 'Quản lý bảo hành', url: '/labo-orders/warranty', permissions: ['Labo.LaboWarranty.Read', '.LaboWarranty.Create', 'Labo.LaboWarranty.Update', 'Labo.LaboWarranty.Delete'] },
       ],
-      permissions: ['Labo.LaboOrder.Read', 'Labo.OrderLabo.Read', 'Labo.ExportLabo.Read']
+      permissions: ['Labo.LaboOrder.Read', 'Labo.OrderLabo.Read', 'Labo.ExportLabo.Read', 'Labo.LaboWarranty.Read']
     },
     {
       name: 'Khảo sát đánh giá',
@@ -185,7 +185,7 @@ export class AppHomeComponent implements OnInit {
         { name: 'Kết quả kinh doanh', url: '/report/financial-report', permissions: ['Report.Financial'] },
         { name: 'Báo cáo doanh thu', url: '/report/account-invoice-reports/revenue-time', permissions: ['Report.Revenue'] },
         { name: 'Báo cáo dịch vụ', url: '/report/sale-report/service-report', permissions: ['Report.Sale'] },
-        { name: 'Báo cáo khách hàng', url: '/report/report-account-common/partner-report-overview', permissions: ['Report.AccountPartner'] },
+        { name: 'Báo cáo khách hàng', url: '/report/report-account-common/partner-report-overview', permissions: ['Report.PartnerOldNew'] },
         { name: 'Báo cáo tiếp nhận', url: '/report/customer-receipt-reports' },
         { name: 'Công nợ nhà cung cấp', url: '/report/report-account-common/partner', linkProps: { queryParams: { result_selection: 'supplier' }}, permissions: ['Report.AccountPartner'] },
         { name: 'Khách hàng lân cận phòng khám', url: '/report/partner-report-location', permissions: ['Report.PartnerLocation'] },
@@ -195,10 +195,10 @@ export class AppHomeComponent implements OnInit {
       ],
       permissions: [
         'Report.Financial',
-        'Report.CashBankAccount',
+        // 'Report.CashBankAccount',
         'Report.Revenue',
         'Report.Sale',
-        'Report.AccountPartner',
+        // 'Report.AccountPartner',
         'Report.AccountPartner',
         'Report.Stock',
         'Report.RealRevenue',
