@@ -53,7 +53,7 @@ export class ProductImportExcelDialogComponent implements OnInit {
       return;
     }
 
-    if (this.errors.length > 0)
+    if (this.errors && this.errors.length > 0)
       return;
 
     var val = new ProductImportExcelBaseViewModel();
