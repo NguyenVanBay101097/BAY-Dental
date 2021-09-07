@@ -21,11 +21,15 @@ export class PrintTemplateConfigSave {
 
 export class PrintTemplateConfigChangeType {
   type: string;
+  printPaperSizeId: string;
+  isDefault: boolean;
 }
 
 export class GenerateReq {
   content: string;
   type: string;
+  printPaperSizeId: string;
+  isDefault: boolean;
 }
 
 export class PrintTestReq {

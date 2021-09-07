@@ -13,7 +13,7 @@
                     (click)="onEdit()">Sửa</button>
                 <button *ngIf="isEditting" type="button" class="btn btn-primary mr-2" accesskey="c"
                     (click)="onSave()">Lưu</button>
-                <button *ngIf="isEditting" (click)="onToggleEdit()" class="btn btn-danger mr-2">
+                <button *ngIf="isEditting" (click)="onCancel()" class="btn btn-danger mr-2">
                     Hủy
                 </button>
             </div>
@@ -39,7 +39,7 @@
                             </tr>
                             <tr>
                                 <td colspan="1" style="width: 100%;">
-                                    <select (ngModelChange)="onChangeType($event)" [(ngModel)]="typeFilter"
+                                    <select (ngModelChange)="onChangeType($event)" [(ngModel)]="this.filter.type"
                                         class="form-control">
                                         <option [value]="item.value" *ngFor="let item of types">{{item.text}}
                                         </option>
@@ -58,12 +58,16 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="1" style="width: 100%;">
+                                <td colspan="1" style="width: 100%;" class="d-flex">
                                     <select (ngModelChange)="onChangePaperSize($event)"
-                                        [(ngModel)]="this.paperSizeFilter" class="form-control">
+                                        [(ngModel)]="this.filter.printPaperSizeId" class="form-control">
                                         <option [value]="item.id" *ngFor="let item of paperSizes">{{item.name}}
                                         </option>
                                     </select>
+                                    <button (click)="onEditPaperSize()" title="Sửa khổ in"
+                                        class="btn btn-sm btn-light"><span class="far fa-edit"></span></button>
+                                    <button (click)="onCreatePaperSize()" title="Thêm khổ in"
+                                        class="btn btn-sm btn-light"><span class="k-icon k-i-plus"></span></button>
                                 </td>
                             </tr>
                         </tbody>

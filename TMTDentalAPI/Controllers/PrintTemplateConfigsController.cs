@@ -50,7 +50,10 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Generate(GenerateReq val)
         {
             object obj = await _printTemplateConfigService.GetSampleData(val.Type);
-            var printTemplateConfig = await _printTemplateConfigService.GetDisplay(new PrintTemplateConfigChangeType() { Type = val.Type });
+            var printTemplateConfig = await _printTemplateConfigService.GetDisplay(new PrintTemplateConfigChangeType() { 
+                IsDefault = val.IsDefault,
+                PrintPaperSizeId = val.PrintPaperSizeId,
+                Type = val.Type });
             var template = Template.Parse(val.Content);
 
             try

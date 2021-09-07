@@ -6,6 +6,9 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { PrintTemplateDefault, PrintTemplateService } from '../print-template.service';
 import { PrintPaperSizeBasic, PrintPaperSizeDisplay, PrintPaperSizePaged, PrintPaperSizeService } from 'src/app/config-prints/print-paper-size.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { PrintPaperSizeCreateUpdateDialogComponent } from 'src/app/config-prints/print-paper-size-create-update-dialog/print-paper-size-create-update-dialog.component';
+import * as _ from 'lodash';
 
 @Component({
     selector: 'app-print-template-config-cu',
@@ -29,8 +32,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     };
     contentPrev = "";
     paperSizes: PrintPaperSizeBasic[] = [];
-    typeFilter: any;
-    paperSizeFilter: any;
+    filter = new PrintTemplateConfigChangeType();
 
     constructor(private configService: PrintTemplateConfigService,
         private activeRoute: ActivatedRoute,
@@ -38,13 +40,14 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         private authService: AuthService,
         private printService: PrintService,
         private printTemplateService: PrintTemplateService,
-        private paperSizeService: PrintPaperSizeService
+        private paperSizeService: PrintPaperSizeService,
+        private modalService: NgbModal
     ) { }
 
     ngOnInit() {
         this.types = this.configService.types;
-        // this.typeFilter = "tmp_toathuoc";
-        this.typeFilter = "tmp_purchase_order";
+        this.filter.type = "tmp_medicine_order";
+        this.filter.isDefault = true;
         this.loadCurrentConfig();
         this.loadPaperSizeList();
         // this.activeRoute.paramMap.subscribe(x => {
@@ -68,19 +71,17 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     }
 
     loadCurrentConfig(preType?) {
-        var val = new PrintTemplateConfigChangeType();
-        val.type = this.typeFilter;
+        var val = Object.assign({}, this.filter);
         this.configService.getDisplay(val).subscribe(res => {
             this.config = res;
+            this.filter.printPaperSizeId = this.config.printPaperSizeId;
             this.onGenerate(this.config.content);
             if (this.isEditting) {
                 this.configEdit = Object.assign({}, this.config);
             }
         },
             err => {
-                if (preType) this.typeFilter = preType;
-                console.log(this.typeFilter);
-
+                if (preType) this.filter.type = preType;
             }
         );
 
@@ -89,9 +90,10 @@ export class PrintTemplateConfigCuComponent implements OnInit {
 
     onDefault() {
         var val = Object.assign({}, this.configEdit) as PrintTemplateDefault;
-        val.type = this.typeFilter;
+        val.type = this.filter.type;
         this.printTemplateService.getDisplay(val).subscribe(res => {
             this.configEdit.content = res;
+            this.onGenerate();
         });
     }
 
@@ -100,7 +102,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
             this.printService.printHtml(this.contentPrev);
         } else {
             var val = new PrintTestReq();
-            val.type = this.typeFilter;
+            val.type = this.filter.type;
             this.configService.printTest(val).subscribe(res => {
                 this.printService.printHtml(res);
             });
@@ -110,7 +112,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     onSave() {
         var val = Object.assign({}, this.configEdit) as PrintTemplateConfigSave;
         val.companyId = this.authService.userInfo ? this.authService.userInfo.companyId : '';
-        val.type = this.typeFilter;
+        val.type = this.filter.type;
         this.configService.createOrUpdate(val).subscribe(res => {
             this.notifyService.notify('success', 'Lưu thành công');
             this.onToggleEdit();
@@ -119,14 +121,15 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     }
 
     onChangeType(e) {
-        var prev = this.typeFilter;
-        this.typeFilter = e;
+        var prev = this.filter.type;
+        this.filter.type = e;
         this.loadCurrentConfig(prev);
     }
 
     onEdit() {
         this.configEdit = Object.assign({}, this.config);
-        this.paperSizeFilter = this.config.printPaperSizeId;
+        this.filter.printPaperSizeId = this.config.printPaperSizeId;
+        delete this.filter.isDefault;
         this.onToggleEdit();
     }
 
@@ -135,16 +138,44 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     }
 
     onGenerate(content?) {
-        var val = new GenerateReq();
+        var val = Object.assign({}, this.filter) as GenerateReq;
         val.content = content || this.configEdit.content;
-        val.type = this.typeFilter;
         this.configService.generate(val).subscribe((res: any) => {
             this.contentPrev = res;
         });
     }
 
     onChangePaperSize(e) {
-        this.paperSizeFilter = e;
+        this.filter.printPaperSizeId = e;
         this.loadCurrentConfig();
+    }
+
+    onCancel() {
+        this.onToggleEdit();
+        this.filter.isDefault = true;
+        delete this.filter.printPaperSizeId;
+        this.loadCurrentConfig();
+    }
+
+    onCreatePaperSize() {
+        const modalRef = this.modalService.open(PrintPaperSizeCreateUpdateDialogComponent, { scrollable: true, windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        modalRef.componentInstance.title = 'Thêm khổ giấy in';
+        modalRef.result.then((res) => {
+            this.paperSizes = _.unionBy(this.paperSizes, [res], 'id');
+            this.filter.printPaperSizeId = res.id;
+            this.onGenerate();
+        }, () => {
+        });
+    }
+
+    onEditPaperSize() {
+        const modalRef = this.modalService.open(PrintPaperSizeCreateUpdateDialogComponent, { scrollable: true, windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        modalRef.componentInstance.title = 'Sửa khổ giấy in';
+        modalRef.componentInstance.id = this.filter.printPaperSizeId;
+        modalRef.result.then((res) => {
+            this.paperSizes = _.unionBy(this.paperSizes, [res], 'id');
+            this.onGenerate();
+        }, () => {
+        });
     }
 }
