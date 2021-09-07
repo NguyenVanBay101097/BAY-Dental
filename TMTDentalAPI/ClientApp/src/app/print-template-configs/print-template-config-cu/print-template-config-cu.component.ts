@@ -5,6 +5,7 @@ import { NotifyService } from 'src/app/shared/services/notify.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { PrintTemplateDefault, PrintTemplateService } from '../print-template.service';
+import { PrintPaperSizeBasic, PrintPaperSizeDisplay, PrintPaperSizePaged, PrintPaperSizeService } from 'src/app/config-prints/print-paper-size.service';
 
 @Component({
     selector: 'app-print-template-config-cu',
@@ -12,7 +13,6 @@ import { PrintTemplateDefault, PrintTemplateService } from '../print-template.se
     styleUrls: ['./print-template-config-cu.component.css']
 })
 export class PrintTemplateConfigCuComponent implements OnInit {
-    typeFilter: any;
     isEditting = false;
     types: { text: string, value: string }[] = [];
     config = new PrintTemplateConfigDisplay();
@@ -28,13 +28,17 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         forceSimpleAmpersand: true
     };
     contentPrev = "";
+    paperSizes: PrintPaperSizeBasic[] = [];
+    typeFilter: any;
+    paperSizeFilter: any;
 
     constructor(private configService: PrintTemplateConfigService,
         private activeRoute: ActivatedRoute,
         private notifyService: NotifyService,
         private authService: AuthService,
         private printService: PrintService,
-        private printTemplateService: PrintTemplateService
+        private printTemplateService: PrintTemplateService,
+        private paperSizeService: PrintPaperSizeService
     ) { }
 
     ngOnInit() {
@@ -42,6 +46,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         // this.typeFilter = "tmp_toathuoc";
         this.typeFilter = "tmp_purchase_order";
         this.loadCurrentConfig();
+        this.loadPaperSizeList();
         // this.activeRoute.paramMap.subscribe(x => {
         //   this.typeFilter = x.get("type");
         //   this.loadCurrentConfig();
@@ -53,6 +58,13 @@ export class PrintTemplateConfigCuComponent implements OnInit {
             editor.ui.view.toolbar.element,
             editor.ui.getEditableElement()
         );
+    }
+
+    loadPaperSizeList() {
+        var val = new PrintPaperSizePaged();
+        this.paperSizeService.getPaged(val).subscribe(res => {
+            this.paperSizes = res.items;
+        });
     }
 
     loadCurrentConfig(preType?) {
@@ -114,6 +126,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
 
     onEdit() {
         this.configEdit = Object.assign({}, this.config);
+        this.paperSizeFilter = this.config.printPaperSizeId;
         this.onToggleEdit();
     }
 
@@ -128,5 +141,10 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         this.configService.generate(val).subscribe((res: any) => {
             this.contentPrev = res;
         });
+    }
+
+    onChangePaperSize(e) {
+        this.paperSizeFilter = e;
+        this.loadCurrentConfig();
     }
 }
