@@ -48,7 +48,7 @@
                             </tr>
                         </tbody>
                     </table>
-                    <table class="mr-2">
+                    <table *ngIf="isEditting" class="mr-2">
                         <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label o_td_label_sm">
@@ -59,8 +59,9 @@
                             </tr>
                             <tr>
                                 <td colspan="1" style="width: 100%;">
-                                    <select class="form-control">
-                                        <option>khổ in
+                                    <select (ngModelChange)="onChangePaperSize($event)"
+                                        [(ngModel)]="this.paperSizeFilter" class="form-control">
+                                        <option [value]="item.id" *ngFor="let item of paperSizes">{{item.name}}
                                         </option>
                                     </select>
                                 </td>
