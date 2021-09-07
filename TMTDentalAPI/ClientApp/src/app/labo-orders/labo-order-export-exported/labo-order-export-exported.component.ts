@@ -33,7 +33,8 @@ export class LaboOrderExportExportedComponent implements OnInit {
   supplierData: any[]=[];
   partnerId: string = '';
   canUpdate: boolean = false;
-  canReadSaleOrder: boolean = false;
+  canUpdateSaleOrder: boolean = false;
+  canReadLaboWarranty: boolean = false;
   constructor(
     private laboOrderService: LaboOrderService, 
     private intlService: IntlService, 
@@ -44,6 +45,7 @@ export class LaboOrderExportExportedComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.checkRole();
     setTimeout(() => {
       this.loadDataFromApi();
       this.loadSupplier();
@@ -55,8 +57,7 @@ export class LaboOrderExportExportedComponent implements OnInit {
           this.loadDataFromApi();
         });
     },);
-    this.canUpdate = this.checkPermissionService.check(['Labo.LaboOrder.Update']);
-    this.canReadSaleOrder = this.checkPermissionService.check(['Basic.SaleOrder.Read']);
+    
   }
 
   loadDataFromApi() {
@@ -148,5 +149,11 @@ export class LaboOrderExportExportedComponent implements OnInit {
       //this.reload.next(true);
     }, () => {
     });
+  }
+
+  checkRole(){
+    this.canUpdate = this.checkPermissionService.check(['Labo.LaboOrder.Update']);
+    this.canUpdateSaleOrder = this.checkPermissionService.check(['Basic.SaleOrder.Update']);
+    this.canReadLaboWarranty = this.checkPermissionService.check(['Labo.LaboWarranty.Read']);
   }
 }

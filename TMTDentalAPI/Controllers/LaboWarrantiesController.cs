@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -29,6 +30,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "Labo.LaboWarranty.Read")]
         public async Task<IActionResult> Get([FromQuery] LaboWarrantyPaged val)
         {
             var result = await _laboWarrantyService.GetPagedResultAsync(val);
@@ -36,6 +38,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Labo.LaboWarranty.Read")]
         public async Task<IActionResult> GetDefault(LaboWarrantyGetDefault val)
         {
             var res = await _laboWarrantyService.GetDefault(val);
@@ -43,6 +46,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [CheckAccess(Actions = "Labo.LaboWarranty.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var res = await _laboWarrantyService.GetLaboWarrantyDisplay(id);
@@ -50,6 +54,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Labo.LaboWarranty.Create")]
         public async Task<IActionResult> Create(LaboWarrantySave val)
         {
             if (val == null || !ModelState.IsValid)
@@ -61,6 +66,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "Labo.LaboWarranty.Update")]
         public async Task<IActionResult> Update(Guid id, LaboWarrantySave val)
         {
             if (val == null || !ModelState.IsValid)
@@ -74,6 +80,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Labo.LaboWarranty.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -83,6 +90,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Labo.LaboWarranty.Update")]
         public async Task<IActionResult> ButtonConfirm(IEnumerable<Guid> ids)
         {
             if (ids == null)
@@ -95,6 +103,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Labo.LaboWarranty.Cancel")]
         public async Task<IActionResult> ButtonCancel(IEnumerable<Guid> ids)
         {
             if (ids == null)

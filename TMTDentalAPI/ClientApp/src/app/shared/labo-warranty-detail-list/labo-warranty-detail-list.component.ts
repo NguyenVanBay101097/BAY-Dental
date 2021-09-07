@@ -5,6 +5,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { DataResult } from '@progress/kendo-data-query';
 import { map } from 'rxjs/operators';
 import { LaboWarrantyPaged, LaboWarrantyService } from 'src/app/labo-orders/labo-warranty.service';
+import { CheckPermissionService } from '../check-permission.service';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { NotifyService } from '../services/notify.service';
 import { WarrantyCuDidalogComponent } from '../warranty-cu-didalog/warranty-cu-didalog.component';
@@ -24,16 +25,21 @@ export class LaboWarrantyDetailListComponent implements OnInit {
   state: string = '';
   loading = true;
   gridData: GridDataResult;
+  canUpdate = false;
+  canAdd = false;
+  canDelete = false;
 
   constructor(
     private laboWarrantyService: LaboWarrantyService,
     private modalService: NgbModal,
     private intlService: IntlService,
     private notifyService: NotifyService,
+    private checkPermissionService: CheckPermissionService
   ) { }
 
   ngOnInit() {
     this.loadDataFromApi();
+    this.checkRole();
   }
 
   loadDataFromApi() {
@@ -96,4 +102,9 @@ export class LaboWarrantyDetailListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
+  checkRole(){
+    this.canAdd = this.checkPermissionService.check(['Labo.LaboWarranty.Create']);
+    this.canUpdate = this.checkPermissionService.check(['Labo.LaboWarranty.Update']);
+    this.canDelete = this.checkPermissionService.check(['Labo.LaboWarranty.Delete']);
+  }
 }

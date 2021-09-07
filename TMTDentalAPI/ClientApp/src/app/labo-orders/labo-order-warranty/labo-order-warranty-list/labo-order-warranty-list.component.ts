@@ -17,6 +17,7 @@ import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import * as _ from 'lodash';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 
 @Component({
   selector: 'app-labo-order-warranty-list',
@@ -42,18 +43,23 @@ export class LaboOrderWarrantyListComponent implements OnInit {
     { text: 'Đã nhận', value: 'received' },
     { text: 'Đã lắp', value: 'assembled' }
   ];
+  canUpdate = false;
+  canUpdateLabo = false;
+  canReadPartner = false;
+
   constructor(
     private laboWarrantyService: LaboWarrantyService,
     private modalService: NgbModal,
     private laboOrderService: LaboOrderService,
     private partnerService: PartnerService,
     private intlService: IntlService,
-
+    private checkPermissionService: CheckPermissionService
   ) { }
 
   ngOnInit() {
     this.loadSupplier();
     this.loadDataFromApi();
+    this.checkRole();
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
@@ -247,5 +253,11 @@ export class LaboOrderWarrantyListComponent implements OnInit {
       default:
         return 'Nháp'
     }
+  }
+
+  checkRole(){
+    this.canUpdate = this.checkPermissionService.check(['Labo.LaboWarranty.Update']);
+    this.canUpdateLabo = this.checkPermissionService.check(['Labo.LaboOrder.Update']);
+    this.canReadPartner = this.checkPermissionService.check(['Basic.Partner.Read']);
   }
 }

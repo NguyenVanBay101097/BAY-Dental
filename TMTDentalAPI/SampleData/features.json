@@ -488,6 +488,27 @@
             "Permission": "Labo.ExportLabo.Update"
           }
         ]
+      },
+      {
+        "Name": "Quản lý bảo hành",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Labo.LaboWarranty.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Labo.LaboWarranty.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Labo.LaboWarranty.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Labo.LaboWarranty.Delete"
+          }
+        ]
       }
     ]
   },

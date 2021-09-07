@@ -3,7 +3,7 @@
         <h6 class="mb-0">Lịch sử bảo hành</h6>
     </div>
     <div class="card-body p-2">
-        <button type="button" class="btn btn-primary mb-2" (click)="createNewWarranty()">
+        <button *ngIf="canAdd" type="button" class="btn btn-primary mb-2" (click)="createNewWarranty()">
             <i class="fas fa-plus-circle text-white"></i>
             <span> Tạo phiếu bảo hành </span>
         </button>
@@ -41,14 +41,14 @@
                     <span *ngIf="dataItem.state != 'draft'">Đơn bảo hành</span>
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column field="id" width="120">
+            <kendo-grid-column *ngIf="canUpdate || canDelete" field="id" width="120">
                 <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                     Thao tác
                 </ng-template>
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    <button class="btn mr-1" title="Sửa" (click)="editItem(dataItem)">
+                    <button *ngIf="canUpdate" class="btn mr-1" title="Sửa" (click)="editItem(dataItem)">
                         <span class="fas fa-edit text-success"></span></button>
-                    <button class="btn" title="Xóa" (click)="deleteItem(dataItem)">
+                    <button *ngIf="canDelete" class="btn" title="Xóa" (click)="deleteItem(dataItem)">
                         <span class="fas fa-trash-alt text-danger"></span></button>
                 </ng-template>
             </kendo-grid-column>

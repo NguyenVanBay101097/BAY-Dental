@@ -9,6 +9,7 @@ import { LaboOrderPaged, LaboOrderService } from 'src/app/labo-orders/labo-order
 import { PrintService } from 'src/app/shared/services/print.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/labo-order-cu-dialog.component';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 
 @Component({
   selector: 'app-partner-customer-labo-orders-component',
@@ -31,16 +32,21 @@ export class PartnerCustomerLaboOrdersComponentComponent implements OnInit {
   customerId: string;
   dateExportFrom: Date;
   dateExportTo: Date;
+  canUpdateSaleOrder: boolean = false;
+  canReadLaboWarranty: boolean = false;
 
   constructor(private laboOrderService: LaboOrderService, 
-    private route: ActivatedRoute, private modalService: NgbModal, 
-    private printService: PrintService) { }
+    private route: ActivatedRoute,
+    private modalService: NgbModal, 
+    private printService: PrintService,
+    private checkPermissionService: CheckPermissionService
+  ) { }
 
   ngOnInit() {
     this.customerId = this.route.parent.snapshot.paramMap.get('id');
 
     this.loadDataFromApi();
-
+    this.checkRole();
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
@@ -146,5 +152,10 @@ export class PartnerCustomerLaboOrdersComponentComponent implements OnInit {
     this.dateExportTo = data.dateTo;
     this.skip = 0;
     this.loadDataFromApi();
+  }
+
+  checkRole(){
+    this.canUpdateSaleOrder = this.checkPermissionService.check(['Basic.SaleOrder.Update']);
+    this.canReadLaboWarranty = this.checkPermissionService.check(['Labo.LaboWarranty.Read']);
   }
 }
