@@ -75,4 +75,8 @@ export class DotKhamStepService {
     dotKhamStepReport(params): Observable<DotKhamStepPaggingReport> {
         return this.http.get<DotKhamStepPaggingReport>(this.baseApi + this.apiUrl + '/DotKhamStepReport', { params: params });
     }
+
+    updateIsDone(val) {
+        return this.http.post(this.baseApi + this.apiUrl + `/UpdateIsDone`, val);
+    }
 }

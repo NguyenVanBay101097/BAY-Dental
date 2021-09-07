@@ -780,6 +780,42 @@ namespace TMTDentalAPI.Controllers
             return new FileContentResult(fileContent, mimeType);
         }
 
-     
+        [HttpGet("{id}/[action]")]
+        [CheckAccess(Actions = "Basic.DotKham.Read")]
+        public async Task<IActionResult> GetDotKhamStepByOrderLine(Guid id)
+        {
+            var res = await _saleOrderService.GetDotKhamStepByOrderLine(id);
+            return Ok(res);
+        }
+
+        [HttpPost("{id}/[action]")]
+        [CheckAccess(Actions = "Basic.DotKham.Create")]
+        public async Task<IActionResult> CreateDotKham(Guid id, DotKhamSaveVm val)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _unitOfWork.BeginTransactionAsync();
+            var res = await _dotKhamService.CreateDotKham(id, val);
+            var viewdotkham = _mapper.Map<DotKhamVm>(res);
+            _unitOfWork.Commit();
+
+            return Ok(viewdotkham);
+        }
+
+
+        [HttpGet("{id}/[action]")]
+        [CheckAccess(Actions = "Basic.DotKham.Read")]
+        public async Task<IActionResult> GetDotKhamListIds(Guid id)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            var dotKhamIds = await _dotKhamService.SearchQuery(x => x.SaleOrderId == id).OrderByDescending(x => x.DateCreated).Select(x => x.Id).ToListAsync();
+
+            return Ok(dotKhamIds);
+        }
+
     }
 }

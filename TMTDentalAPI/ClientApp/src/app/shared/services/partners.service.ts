@@ -5,13 +5,13 @@ import { map } from 'rxjs/operators';
 import { ODataService } from './odata.service';
 
 export class PartnerImageBasic {
-    Id: string;
-    Name: string;
-    Date: any = new Date();
-    Note: string;
-    UploadId: string;
-    DotKhamId: string;
-    PartnerId: string;
+    id: string;
+    name: string;
+    date: any = new Date();
+    note: string;
+    uploadId: string;
+    dotKhamId: string;
+    partnerId: string;
 }
 
 
