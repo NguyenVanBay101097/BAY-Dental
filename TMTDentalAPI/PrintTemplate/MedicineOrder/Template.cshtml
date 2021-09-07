@@ -7,12 +7,15 @@
     <link rel="stylesheet" type="text/css" href="/css/print.css" />
     <style>
         @@page {
-            size: A4 landscape !important;
-            margin: 0;
+            size: {{paper_size.paper_format ?? 'A4'}} {{ paper_size.is_size ? 'landscape' : 'portrait' }} !important;
+            margin-top: {{paper_size.top_margin ?? 0}} mm;
+            margin-right: {{paper_size.right_margin ?? 0}} mm;
+            margin-bottom:{{paper_size.bottom_margin ?? 0}} mm;
+            margin-left:{{paper_size.left_margin ?? 0}} mm;
         }
     </style>
 </head>
-<body>
+<body class="{{paper_size.paper_format ?? 'A4'}}">
     <div class="container">
         <div>
             <div class="d-flex mb-2">

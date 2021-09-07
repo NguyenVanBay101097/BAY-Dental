@@ -50,18 +50,19 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Generate(GenerateReq val)
         {
             object obj = await _printTemplateConfigService.GetSampleData(val.Type);
+            var printTemplateConfig = await _printTemplateConfigService.GetDisplay(new PrintTemplateConfigChangeType() { Type = val.Type });
             var template = Template.Parse(val.Content);
 
-            try
-            {
-                var result = template.Render(new { Model = obj });
+            //try
+            //{
+                var result = template.Render(new { Model = obj, PaperSize = printTemplateConfig.PrintPaperSize });
                 return Ok(result);
 
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Không thể chuyển đổi do sai cú pháp");
-            }
+            //}
+            //catch (Exception e)
+            //{
+            //    throw new Exception("Không thể chuyển đổi do sai cú pháp");
+            //}
 
 
         }
@@ -74,7 +75,7 @@ namespace TMTDentalAPI.Controllers
             var template = Template.Parse(printTemplateConfig.Content);
             try
             {
-                var result = template.Render(new { Model = obj }, member => member.Name);
+                var result = template.Render(new { Model = obj, PaperSize = printTemplateConfig.PrintPaperSize });
                 return Ok(result);
 
             }
