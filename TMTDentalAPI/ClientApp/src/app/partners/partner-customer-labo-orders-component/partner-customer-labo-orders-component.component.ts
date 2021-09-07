@@ -117,14 +117,11 @@ export class PartnerCustomerLaboOrdersComponentComponent implements OnInit {
 
   printLabo(item: any) {
     this.laboOrderService.getPrint(item.id).subscribe((result: any) => {
-      console.log(result);
       this.printService.printHtml(result);
     });
   }
 
   editItem(item) {
-    console.log(item);
-    
     const modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Cập nhật phiếu labo';
     modalRef.componentInstance.id = item.id;
