@@ -6,9 +6,12 @@
     <title>TDental.vn</title>
     <link rel="stylesheet" type="text/css" href="/css/print.css" />
     <style>
-        @@page {
-            size: A4 landscape !important;
-            margin: 0;
+         @@page {
+            size:{{paper_size.paper_format}} {{ paper_size.is_size == false ? "portrait" : "landscape" }} !important;
+            margin-top: {{paper_size.top_margin ?? 0}}mm;
+            margin-right: {{paper_size.right_margin ?? 0}}mm;
+            margin-bottom:{{paper_size.bottom_margin ?? 0}}mm;
+            margin-left:{{paper_size.left_margin ?? 0}}mm;
         }
     </style>
 </head>

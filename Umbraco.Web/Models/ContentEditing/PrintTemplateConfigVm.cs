@@ -65,6 +65,10 @@ namespace Umbraco.Web.Models.ContentEditing
     public class PrintTemplateConfigChangeType
     {
         public string Type { get; set; }
+
+        public bool? IsDefault { get; set; }
+
+        public Guid? PrintPaperSizeId { get; set; }
     }
 
     public class GenerateReq

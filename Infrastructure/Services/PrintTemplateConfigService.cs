@@ -36,24 +36,31 @@ namespace Infrastructure.Services
 
         public async Task<PrintTemplateConfigDisplay> GetDisplay(PrintTemplateConfigChangeType val)
         {
-            var printConfig = await SearchQuery(x => x.Type == val.Type && x.IsDefault)
-                .Include(x => x.PrintPaperSize)
-                .Include(x => x.Company)
-                .FirstOrDefaultAsync();
+            var query = SearchQuery(x => x.Type == val.Type);
+
+            if (val.PrintPaperSizeId.HasValue)
+                query = query.Where(x => x.PrintPaperSizeId == val.PrintPaperSizeId);
+
+            if (val.IsDefault.HasValue)
+                query = query.Where(x => x.IsDefault == val.IsDefault);
+
+            var printConfig = await query.Include(x => x.PrintPaperSize).FirstOrDefaultAsync();
 
             var display = _mapper.Map<PrintTemplateConfigDisplay>(printConfig);
 
             if(display == null)
-            {            
+            {
+                var paperSize = new PrintPaperSize();
                 var printTmp = await _printTemplateService.SearchQuery(x => x.Type == val.Type).FirstOrDefaultAsync();
-                if(printTmp == null)
-                {
-                    throw new Exception("Không tìm thấy mẫu in có sẵn");
-                }
 
-                var paperSize = await _modelData.GetRef<PrintPaperSize>("base.paperformat_a4");
-                if (paperSize == null)
-                    throw new Exception("Không tìm thấy khổ giấy mặc định");
+                if(printTmp == null)
+                    throw new Exception("Không tìm thấy mẫu in có sẵn");
+
+
+                if (val.PrintPaperSizeId.HasValue)
+                     paperSize = await _printPaperSizeService.SearchQuery(x => x.Id == val.PrintPaperSizeId).FirstOrDefaultAsync();
+                else
+                    paperSize = await _modelData.GetRef<PrintPaperSize>("base.paperformat_a4");
 
                 display = new PrintTemplateConfigDisplay();
                 display.Content = printTmp.Content;

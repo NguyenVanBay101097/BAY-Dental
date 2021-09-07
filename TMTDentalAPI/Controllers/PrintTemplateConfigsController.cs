@@ -20,7 +20,7 @@ namespace TMTDentalAPI.Controllers
         private readonly IPrintTemplateConfigService _printTemplateConfigService;
         private readonly IMapper _mapper;
 
-        public PrintTemplateConfigsController(IPrintTemplateConfigService printTemplateConfigService , IMapper mapper)
+        public PrintTemplateConfigsController(IPrintTemplateConfigService printTemplateConfigService, IMapper mapper)
         {
             _printTemplateConfigService = printTemplateConfigService;
             _mapper = mapper;
@@ -41,7 +41,7 @@ namespace TMTDentalAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
 
-             await _printTemplateConfigService.CreateOrUpdate(val);
+            await _printTemplateConfigService.CreateOrUpdate(val);
             return NoContent();
         }
 
@@ -53,16 +53,16 @@ namespace TMTDentalAPI.Controllers
             var printTemplateConfig = await _printTemplateConfigService.GetDisplay(new PrintTemplateConfigChangeType() { Type = val.Type });
             var template = Template.Parse(val.Content);
 
-            //try
-            //{
+            try
+            {
                 var result = template.Render(new { Model = obj, PaperSize = printTemplateConfig.PrintPaperSize });
                 return Ok(result);
 
-            //}
-            //catch (Exception e)
-            //{
-            //    throw new Exception("Không thể chuyển đổi do sai cú pháp");
-            //}
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Không thể chuyển đổi do sai cú pháp");
+            }
 
 
         }
@@ -71,7 +71,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> PrintTest(PrintTestReq val)
         {
             object obj = await _printTemplateConfigService.GetSampleData(val.Type);
-            var printTemplateConfig = await _printTemplateConfigService.GetDisplay(new PrintTemplateConfigChangeType() { Type = val.Type});
+            var printTemplateConfig = await _printTemplateConfigService.GetDisplay(new PrintTemplateConfigChangeType() { Type = val.Type });
             var template = Template.Parse(printTemplateConfig.Content);
             try
             {
