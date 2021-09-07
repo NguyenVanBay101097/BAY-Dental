@@ -44,8 +44,7 @@ namespace Infrastructure.Services
             var display = _mapper.Map<PrintTemplateConfigDisplay>(printConfig);
 
             if(display == null)
-            {
-               
+            {            
                 var printTmp = await _printTemplateService.SearchQuery(x => x.Type == val.Type).FirstOrDefaultAsync();
                 if(printTmp == null)
                 {
@@ -76,25 +75,21 @@ namespace Infrastructure.Services
             if(printConfigs.Any())
             {
                 var paperSize = await _printPaperSizeService.SearchQuery(x => x.Id == val.PrintPaperSizeId).FirstOrDefaultAsync();
-                foreach (var printConfig in printConfigs)
+                var tmpConfig = printConfigs.Where(x => x.PrintPaperSize.PaperFormat == paperSize.PaperFormat).FirstOrDefault();
+
+                if(tmpConfig == null)
                 {
-                    if(printConfig.PrintPaperSize.PaperFormat == paperSize.PaperFormat)
-                    {
-                        var res = _mapper.Map(val, printConfig);
-                        await UpdateAsync(res);
-                    }
-                    else
-                    {
-                        var res = _mapper.Map<PrintTemplateConfig>(val);
-                        await CreateAsync(res);
-                    }
+                    var res = _mapper.Map<PrintTemplateConfig>(val);
+                    await CreateAsync(res);
                 }
+
+                var rs = _mapper.Map(val, tmpConfig);
+                await UpdateAsync(rs);
 
                 foreach (var printConfig in printConfigs)
                     printConfig.IsDefault = printConfig.PrintPaperSize.PaperFormat == paperSize.PaperFormat ? true : false;
 
                 await UpdateAsync(printConfigs);
-
 
             }
             else
