@@ -42,7 +42,7 @@ namespace Infrastructure.Services
         {
             _SetNameNoSign(entities);
 
-           // await _GenerateCodeIfEmpty(entities);
+            await _GenerateCodeIfEmpty(entities);
 
             await base.CreateAsync(entities);
 
@@ -63,7 +63,7 @@ namespace Infrastructure.Services
         {
             _SetNameNoSign(entities);
 
-           // await _GenerateCodeIfEmpty(entities);
+            await _GenerateCodeIfEmpty(entities);
 
             await base.UpdateAsync(entities);
 
@@ -86,23 +86,23 @@ namespace Infrastructure.Services
 
         private async Task _GenerateCodeIfEmpty(IEnumerable<Product> self)
         {
+            //generate ma code duy nhat
             var seqObj = GetService<IIRSequenceService>();
             foreach (var product in self)
             {
                 if (!string.IsNullOrWhiteSpace(product.DefaultCode))
                     continue;
 
-                //Không phát sinh mã cho thuốc
-                //if (product.Type2 == "medicine")
-                //    continue;
-
-                product.DefaultCode = await seqObj.NextByCode("product_seq");
-
-                if (string.IsNullOrWhiteSpace(product.DefaultCode))
+                do
                 {
-                    await _InsertProductSequence();
                     product.DefaultCode = await seqObj.NextByCode("product_seq");
-                }
+
+                    if (string.IsNullOrWhiteSpace(product.DefaultCode))
+                    {
+                        await _InsertProductSequence();
+                        product.DefaultCode = await seqObj.NextByCode("product_seq");
+                    }
+                } while (SearchQuery(x => x.DefaultCode == product.DefaultCode).Any());
             }
         }
 
@@ -549,15 +549,15 @@ namespace Infrastructure.Services
         public async Task<Product> CreateProduct(ProductSave val)
         {
             var product = _mapper.Map<Product>(val);
-            if (string.IsNullOrEmpty(product.DefaultCode))
-            {
-                product.DefaultCode = await GenerateCodeIfEmpty();
-            }
-            else
-            {
-                if (await IsExistProductCode(product.DefaultCode))
-                    throw new Exception($"Đã tồn tại sản phầm với mã {val.DefaultCode}");
-            }
+            //if (string.IsNullOrEmpty(product.DefaultCode))
+            //{
+            //    product.DefaultCode = await GenerateCodeIfEmpty();
+            //}
+            //else
+            //{
+            //    if (await IsExistProductCode(product.DefaultCode))
+            //        throw new Exception($"Đã tồn tại sản phầm với mã {val.DefaultCode}");
+            //}
                 
             _SaveProductSteps(product, val.StepList);
 
@@ -570,8 +570,8 @@ namespace Infrastructure.Services
             product = await CreateAsync(product);
 
             SetStandardPrice(product, val.StandardPrice, force_company: product.CompanyId);
-            if (IsCorrectFormat(product.DefaultCode))
-                await UpdateNextCode(product.DefaultCode);
+            //if (IsCorrectFormat(product.DefaultCode))
+            //    await UpdateNextCode(product.DefaultCode);
             return product;
         }
 
@@ -581,15 +581,15 @@ namespace Infrastructure.Services
                 .Include(x => x.ProductUoMRels).Include(x => x.ProductStockInventoryCriteriaRels).FirstOrDefaultAsync();
 
             product = _mapper.Map(val, product);
-            if (string.IsNullOrEmpty(product.DefaultCode))
-            {
-                product.DefaultCode = await GenerateCodeIfEmpty();
-            }
-            else
-            {
-                if (await IsExistProductCode(product.DefaultCode))
-                    throw new Exception($"Đã tồn tại sản phầm với mã ${val.DefaultCode}");
-            }
+            //if (string.IsNullOrEmpty(product.DefaultCode))
+            //{
+            //    product.DefaultCode = await GenerateCodeIfEmpty();
+            //}
+            //else
+            //{
+            //    if (await IsExistProductCode(product.DefaultCode))
+            //        throw new Exception($"Đã tồn tại sản phầm với mã ${val.DefaultCode}");
+            //}
             product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
 
             _SaveProductSteps(product, val.StepList);
@@ -605,8 +605,8 @@ namespace Infrastructure.Services
             UpdateProductCriteriaRel(product, val);
 
             await UpdateAsync(product);
-            if (IsCorrectFormat(product.DefaultCode))
-                await UpdateNextCode(product.DefaultCode);
+            //if (IsCorrectFormat(product.DefaultCode))
+            //    await UpdateNextCode(product.DefaultCode);
         }
 
         private void UpdateProductCriteriaRel(Product product, ProductSave val)
