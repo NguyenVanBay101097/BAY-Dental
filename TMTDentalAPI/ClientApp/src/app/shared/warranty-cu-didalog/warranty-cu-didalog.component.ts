@@ -22,7 +22,7 @@ export class WarrantyCuDidalogComponent implements OnInit {
   @Input() laboWarrantyId: string;
   @Input() laboOrderId: any;
   @ViewChild('doctorCbx', { static: true }) doctorCbx: ComboBoxComponent;
-  
+
   title: string = "Tạo phiếu bảo hành";
   myForm: FormGroup;
   id: string;
@@ -31,6 +31,7 @@ export class WarrantyCuDidalogComponent implements OnInit {
   submitted = false;
   laboWarrantyName: string = '';
   laboTeeth: any;
+  invalid: boolean = false;
   constructor(
     private fb: FormBuilder,
     public activeModal: NgbActiveModal,
@@ -67,10 +68,18 @@ export class WarrantyCuDidalogComponent implements OnInit {
       this.loadData();
       this.title = "Cập nhật bảo hành";
     }
-
-    if (this.laboOrderId) {
-      this.loadDefault();
+    else {
+      if (this.laboOrderId) {
+        this.loadDefault();
+      }
     }
+
+    // Handle Form control valueChanges
+    this.myForm.controls['reason'].valueChanges.subscribe(
+      (selectedValue) => {
+        this.invalid = selectedValue ? false : true;
+      }
+    );
   }
 
   getControlFC(key: string) {
@@ -80,9 +89,9 @@ export class WarrantyCuDidalogComponent implements OnInit {
   getValueFC(key: string) {
     return this.myForm.get(key).value;
   }
-  
+
   get teethFA() { return this.myForm.get('teeth') as FormArray; }
-  
+
   get f() {
     return this.myForm.controls;
   }
@@ -102,6 +111,8 @@ export class WarrantyCuDidalogComponent implements OnInit {
 
   loadData() {
     this.laboWarrantyService.get(this.laboWarrantyId).subscribe((res: any) => {
+      this.infoLabo = res;
+      this.laboTeeth = res.teethLaboOrder;
       this.laboWarrantyName = res.name;
       this.myForm.patchValue(res);
       this.myForm.controls['dateReceiptObj'].setValue(new Date(res.dateReceiptWarranty));
@@ -120,9 +131,10 @@ export class WarrantyCuDidalogComponent implements OnInit {
     let val = {
       laboOrderId: this.laboOrderId
     }
-    this.laboWarrantyService.getDefault(val).subscribe((res:any) => {
+    this.laboWarrantyService.getDefault(val).subscribe((res: any) => {
       this.infoLabo = res;
       this.laboTeeth = res.teethLaboOrder;
+      this.myForm.controls['doctor'].setValue(res.employee);
     }, err => {
       console.log(err);
     })
@@ -156,6 +168,7 @@ export class WarrantyCuDidalogComponent implements OnInit {
     this.submitted = true;
 
     if (this.myForm.invalid) {
+      this.invalid = true;
       return;
     }
 

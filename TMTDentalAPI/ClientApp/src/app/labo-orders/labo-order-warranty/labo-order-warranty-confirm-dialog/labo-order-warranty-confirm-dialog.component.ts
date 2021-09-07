@@ -61,6 +61,7 @@ export class LaboOrderWarrantyConfirmDialogComponent implements OnInit {
       this.title = 'Lắp bảo hành';
       this.label = 'Ngày lắp';
       date = new Date(this.dateAssemblyWarranty);
+      this.f.date.disable();
     }
     this.formGroup.controls['date'].setValue(date);
   }

@@ -31,11 +31,11 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-primary" accesskey="s" (click)="onSave()">Lưu</button>
+    <button *ngIf="state != 'assembled'" type="button" class="btn btn-primary" accesskey="s" (click)="onSave()">Lưu</button>
     <button *ngIf="state != 'new'" type="button" class="btn btn-danger" accesskey="x" (click)="onCancel()">
-        <span *ngIf="state=='sent'">Hủy gửi</span>
-        <span *ngIf="state=='received'">Hủy nhận</span>
-        <span *ngIf="state=='assembled'">Hủy lắp</span>
+        <span *ngIf="state == 'sent'">Hủy gửi</span>
+        <span *ngIf="state == 'received'">Hủy nhận</span>
+        <span *ngIf="state == 'assembled'">Hủy lắp</span>
     </button>
     <button type="button" class="btn btn-secondary" accesskey="q" (click)="activeModal.dismiss()">Đóng</button>
 </div>

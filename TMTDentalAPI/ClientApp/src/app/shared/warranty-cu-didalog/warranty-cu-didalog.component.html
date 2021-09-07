@@ -96,12 +96,12 @@
                                         </label>
                                     </td>
                                     <td class="w-100">
-                                        <div [class.d-none]="getValueFC('state') === 'confirmed'">
+                                        <div [class.d-none]="getValueFC('state') != 'draft'">
                                             <kendo-combobox #doctorCbx [data]="filteredDoctors" [textField]="'name'"
                                                 [valueField]="'id'" [filterable]="true" formControlName="doctor">
                                             </kendo-combobox>
                                         </div>
-                                        <span *ngIf="getValueFC('state') === 'confirmed'">
+                                        <span *ngIf="getValueFC('state') != 'draft'">
                                             {{getValueFC('doctor')?.name}}
                                         </span>
                                         <div *ngIf="f.doctor.errors && (f.doctor.touched || f.doctor.dirty || submitted)"
@@ -141,8 +141,8 @@
                                     </td>
                                     <td class="w-100">
                                         <ng-container>
-                                            <button [disabled]="getValueFC('state') !== 'draft'" *ngFor="let tooth of laboTeeth"
-                                                (click)="onToothSelected(tooth)"
+                                            <button [disabled]="getValueFC('state') !== 'draft'"
+                                                *ngFor="let tooth of laboTeeth" (click)="onToothSelected(tooth)"
                                                 [ngClass]="isToothSelected(tooth)? 'btn-primary':'btn-light'"
                                                 type="button" class="btn btn-sm mr-1">{{tooth.name}}</button>
                                         </ng-container>
@@ -160,7 +160,7 @@
                                     <td class="w-100">
                                         <ng-container *ngIf="getValueFC('state') === 'draft'; else reason">
                                             <textarea type="text" formControlName="reason"
-                                                class="form-control"></textarea>
+                                                [class.border-danger]="invalid" class="form-control"></textarea>
                                         </ng-container>
                                         <ng-template #reason>
                                             <label style="white-space: pre-line;">
