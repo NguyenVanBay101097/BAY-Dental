@@ -8,10 +8,15 @@
     <style>
          @@page {
             size:{{paper_size.paper_format}} {{ paper_size.is_size == false ? "portrait" : "landscape" }} !important;
-            margin-top: {{paper_size.top_margin ?? 0}}mm;
+          /*  margin-top: {{paper_size.top_margin ?? 0}}mm;
             margin-right: {{paper_size.right_margin ?? 0}}mm;
             margin-bottom:{{paper_size.bottom_margin ?? 0}}mm;
-            margin-left:{{paper_size.left_margin ?? 0}}mm;
+            margin-left:{{paper_size.left_margin ?? 0}}mm;*/
+      
+        }
+
+        @@page{
+            margin: 50mm 50mm 50mm 50mm;
         }
     </style>
 </head>
@@ -104,10 +109,10 @@
                 </div>
             </div>
             <div>
+                {{~ for line in model.lines ~}}
                 <table class="table table-sm table-borderless">
-                    <tbody>
-                        {{ for line in model.lines }}
                         <tr>
+                            <td width="30"><span class="font-semibold">{{for.index + 1}}.</span></td>
                             <td>
                                 <div class="d-flex justify-content-between">
                                     <div class="font-semibold">{{line.product_name}}</div>
@@ -122,10 +127,10 @@
                                     uống trong <span class="font-semibold">{{line.number_of_days}}</span> ngày (<span class="font-semibold">{{line.get_use_at_display}}</span>)
                                 </div>
                             </td>
-                        </tr>
-                        {{ end }}
-                    </tbody>
+                        </tr>                 
                 </table>
+
+                {{~ end ~}}
             </div>
             <div>
                 <div class="o_form_view mb-2">
