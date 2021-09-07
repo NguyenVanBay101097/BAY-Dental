@@ -167,15 +167,14 @@ namespace Infrastructure.Services
             var query2 = movelineObj._QueryGet(companyId: val.CompanyId, state: "posted", dateFrom: yesterday.AbsoluteBeginOfDate(),
              dateTo: yesterday.AbsoluteEndOfDate());
 
-            query = query.Where(x => x.AccountInternalType == "receivable" && x.Reconciled == true && x.ExcludeFromInvoiceTab == false);
-
-            var items = await query.Include(x => x.Journal).ToListAsync();
+            var journalTypes = new string[] { "cash", "bank", "advance", "debt" }; //danh sach cac phuong thuc thanh toan
+            query = query.Where(x => x.AccountInternalType == "receivable");
 
             var sign = -1;
-            revenue.TotalBank = items.Where(x => x.Journal.Type == "bank").Sum(x => x.Debit - x.Credit * sign);
-            revenue.TotalCash = items.Where(x => x.Journal.Type == "cash").Sum(x => x.Debit - x.Credit * sign);
-            revenue.TotalAmount = items.Sum(x => x.Debit - x.Credit * sign);
-            revenue.TotalAmountYesterday = await query2.Where(x => x.AccountInternalType == "receivable" && x.Reconciled == true && x.ExcludeFromInvoiceTab == false).SumAsync(x => x.Debit - x.Credit * sign);
+            revenue.TotalBank = query.Where(x => x.Journal.Type == "bank").Sum(x => x.Debit - x.Credit * sign);
+            revenue.TotalCash = query.Where(x => x.Journal.Type == "cash").Sum(x => x.Debit - x.Credit * sign);
+            revenue.TotalAmount = query.Where(x => journalTypes.Contains(x.Journal.Type)).Sum(x => x.Debit - x.Credit * sign);
+            revenue.TotalAmountYesterday = await query2.Where(x => x.AccountInternalType == "receivable" && journalTypes.Contains(x.Journal.Type)).SumAsync(x => x.Debit - x.Credit * sign);
 
             return revenue;
         }

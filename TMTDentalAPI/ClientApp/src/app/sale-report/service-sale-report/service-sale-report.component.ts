@@ -95,7 +95,7 @@ export class ServiceSaleReportComponent implements OnInit {
     var val = new SaleOrderLinePaged();
     val.limit = this.filter.limit;
     val.offset = this.filter.offset;
-    val.search = this.search || '';
+    val.search = this.filter.search || '';
     val.companyId = this.companyId || '';
     val.employeeId = this.employeeId || '';
     val.dateOrderFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
