@@ -90,11 +90,15 @@
                             <div class="d-flex">
                                 <div class="left w-50 mr-1 p-2 border">
                                     <div class="mb-2">
-                                        <button (click)="onDefault()" class="btn btn-outline-primary">Sử dụng mẫu có
+                                        <button (click)="onDefault()" class="btn btn-outline-primary mr-2">Sử dụng mẫu
+                                            có
                                             sẵn</button>
+                                        <button (click)="onAddKeyWord()" class="btn btn-outline-primary">
+                                            Thêm từ khóa
+                                        </button>
                                     </div>
-                                    <ckeditor editorUrl="https://cdn.ckeditor.com/4.16.2/full-all/ckeditor.js"
-                                        [config]="configEditor" [(ngModel)]="configEdit.content"></ckeditor>
+                                    <ckeditor #editor editorUrl="https://cdn.ckeditor.com/4.16.2/full-all/ckeditor.js"
+                                        [config]="configEditor" [(data)]="configEdit.content"></ckeditor>
                                 </div>
                                 <div class="right w-50 ml-1 p-2 border">
                                     <div class="preview d-flex justify-content-between align-items-center mb-2">
