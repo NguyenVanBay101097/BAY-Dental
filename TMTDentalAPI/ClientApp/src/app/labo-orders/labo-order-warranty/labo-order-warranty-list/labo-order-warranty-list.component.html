@@ -33,7 +33,7 @@
                 </div>
                 <div class="o_cp_buttons">
                     <div class="o_form_buttons_view">
-                        <button type="button" class="btn btn-primary" (click)="exportExcel(grid)">
+                        <button type="button" class="btn btn-primary" (click)="exportExcel()">
                             <i class="fas fa-download"></i>&nbsp;Xuất Excel
                         </button>
                     </div>
@@ -46,7 +46,7 @@
 </div>
 <div class="o_content">
     <div>
-        <kendo-grid (excelExport)="onExcelExport($event)" [data]="gridData" #grid [pageSize]="limit" [skip]="skip"
+        <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip"
             [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
             <kendo-grid-column field="dateReceiptWarranty" title="Ngày nhận bảo hành" width="180">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
@@ -110,8 +110,6 @@
                     </button>
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-excel fileName="QuanLyBaoHanh.xlsx">
-            </kendo-grid-excel>
         </kendo-grid>
     </div>
 </div>

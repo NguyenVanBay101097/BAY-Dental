@@ -349,5 +349,54 @@ namespace Infrastructure.Services
 
             await UpdateAsync(self);
         }
+
+        public async Task<IEnumerable<LaboWarrantyBasic>> GetExcelFile(LaboWarrantyPaged val)
+        {
+            var query = SearchQuery();
+
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search) ||
+                                x.LaboOrder.Customer.Name.Contains(val.Search) ||
+                                x.LaboOrder.Name.Contains(val.Search));
+
+            if (val.SupplierId.HasValue)
+            {
+                query = query.Where(x => x.LaboOrder.PartnerId == val.SupplierId);
+            }
+
+            if (val.LaboOrderId.HasValue)
+            {
+                query = query.Where(x => x.LaboOrderId == val.LaboOrderId);
+            }
+
+            if (val.DateReceiptFrom.HasValue)
+            {
+                var dateFrom = val.DateReceiptFrom.Value.AbsoluteBeginOfDate();
+                query = query.Where(x => x.DateReceiptWarranty >= val.DateReceiptFrom);
+            }
+
+            if (val.DateReceiptTo.HasValue)
+            {
+                var dateTo = val.DateReceiptTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.DateReceiptWarranty <= val.DateReceiptTo);
+            }
+
+            if (!string.IsNullOrEmpty(val.States))
+            {
+                var states = val.States.Split(",");
+                query = query.Where(x => states.Contains(x.State));
+            }
+
+            if (val.NotDraft.HasValue && val.NotDraft == true)
+            {
+                query = query.Where(x => x.State != "draft");
+            }
+
+            query = query.Include(x => x.LaboOrder).Include(x => x.LaboOrder.Customer);
+
+            var result = await query.OrderByDescending(x => x.DateCreated).ToListAsync();
+
+            return _mapper.Map<IEnumerable<LaboWarrantyBasic>>(result);
+        }
     }
 }

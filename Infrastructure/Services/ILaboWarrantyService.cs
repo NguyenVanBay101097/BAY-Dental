@@ -24,5 +24,6 @@ namespace Infrastructure.Services
         Task CancelReceiptInspection(IEnumerable<Guid> ids);
         Task ConfirmAssemblyWarranty(LaboWarrantyConfirm val);
         Task CancelAssemblyWarranty(IEnumerable<Guid> ids);
+        Task<IEnumerable<LaboWarrantyBasic>> GetExcelFile(LaboWarrantyPaged val);
     }
 }

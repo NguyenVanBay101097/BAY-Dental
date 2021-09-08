@@ -107,4 +107,11 @@ export class LaboWarrantyService {
   cancelAssemblyWarranty(ids: string[]) {
     return this.http.post(this.baseApi + this.apiUrl + '/CancelAssemblyWarranty', ids);
   }
+
+  exportExcelFile(val: any) {
+    return this.http.post(
+        this.baseApi + this.apiUrl + "/GetExcelFile", val,
+        { responseType: "blob" }
+    );
+}
 }

@@ -236,8 +236,33 @@ export class LaboOrderWarrantyListComponent implements OnInit {
     });
   }
 
-  exportExcel(grid: GridComponent) {
-    grid.saveAsExcel();
+  exportExcel() {
+    let val = new LaboWarrantyPaged();
+    val.search = this.search || '';
+    val.supplierId = this.supplierId || '';
+    val.states = this.state || '';
+    val.laboOrderId = '';
+    val.notDraft = true;
+    val.dateReceiptFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
+    val.dateReceiptTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
+    // paged.categoryId = this.searchCateg ? this.searchCateg.id : null;
+    this.laboWarrantyService.exportExcelFile(val).subscribe((rs) => {
+      let filename = "QuanLyBaoHanh";
+      let newBlob = new Blob([rs], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
   }
 
   showState(state) {
