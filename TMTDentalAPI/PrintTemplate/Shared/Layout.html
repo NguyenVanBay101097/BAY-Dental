@@ -1,0 +1,21 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TDental.vn</title>
+    <link rel="stylesheet" type="text/css" href="/css/print.css" />
+    <style>
+        @page {
+            size:{{paper_size.paper_format}} {{ paper_size.is_size == false ? "portrait" : "landscape" }} !important;
+            margin-top: {{paper_size.top_margin ?? 0}}mm;
+            margin-right: {{paper_size.right_margin ?? 0}}mm;
+            margin-bottom:{{paper_size.bottom_margin ?? 0}}mm;
+            margin-left:{{paper_size.left_margin ?? 0}}mm;
+        }
+    </style>
+</head>
+<body>
+    <div></div>
+</body>
+</html>

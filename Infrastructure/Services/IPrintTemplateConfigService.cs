@@ -15,5 +15,7 @@ namespace Infrastructure.Services
 
         Task<object> GetSampleData(string type);
 
+        string GetLayout(string content);
+
     }
 }

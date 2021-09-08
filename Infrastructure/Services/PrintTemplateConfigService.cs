@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Specifications;
 using AutoMapper;
+using HtmlAgilityPack;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
@@ -24,7 +26,7 @@ namespace Infrastructure.Services
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IIRModelDataService _modelData;
 
-        public PrintTemplateConfigService(IAsyncRepository<PrintTemplateConfig> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper, IPrintTemplateService printTemplateService, IPrintPaperSizeService printPaperSizeService,IWebHostEnvironment webHostEnvironment, IIRModelDataService modelData)
+        public PrintTemplateConfigService(IAsyncRepository<PrintTemplateConfig> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper, IPrintTemplateService printTemplateService, IPrintPaperSizeService printPaperSizeService, IWebHostEnvironment webHostEnvironment, IIRModelDataService modelData)
             : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
@@ -48,17 +50,17 @@ namespace Infrastructure.Services
 
             var display = _mapper.Map<PrintTemplateConfigDisplay>(printConfig);
 
-            if(display == null)
+            if (display == null)
             {
                 var paperSize = new PrintPaperSize();
                 var printTmp = await _printTemplateService.SearchQuery(x => x.Type == val.Type).FirstOrDefaultAsync();
 
-                if(printTmp == null)
+                if (printTmp == null)
                     throw new Exception("Không tìm thấy mẫu in có sẵn");
 
 
                 if (val.PrintPaperSizeId.HasValue)
-                     paperSize = await _printPaperSizeService.SearchQuery(x => x.Id == val.PrintPaperSizeId).FirstOrDefaultAsync();
+                    paperSize = await _printPaperSizeService.SearchQuery(x => x.Id == val.PrintPaperSizeId).FirstOrDefaultAsync();
                 else
                     paperSize = await _modelData.GetRef<PrintPaperSize>("base.paperformat_a4");
 
@@ -79,12 +81,12 @@ namespace Infrastructure.Services
                 .Include(x => x.Company)
                 .ToListAsync();
 
-            if(printConfigs.Any())
+            if (printConfigs.Any())
             {
                 var paperSize = await _printPaperSizeService.SearchQuery(x => x.Id == val.PrintPaperSizeId).FirstOrDefaultAsync();
                 var tmpConfig = printConfigs.Where(x => x.PrintPaperSize.PaperFormat == paperSize.PaperFormat).FirstOrDefault();
 
-                if(tmpConfig == null)
+                if (tmpConfig == null)
                 {
                     var res = _mapper.Map<PrintTemplateConfig>(val);
                     await CreateAsync(res);
@@ -105,7 +107,7 @@ namespace Infrastructure.Services
                 res.IsDefault = true;
                 await CreateAsync(res);
             }
-          
+
         }
 
         public async Task<object> GetSampleData(string type)
@@ -119,7 +121,7 @@ namespace Infrastructure.Services
             {
                 var fileContent = reader.ReadToEnd();
                 var sample_data = JsonConvert.DeserializeObject<List<SampleDataPrintTemplate>>(fileContent);
-                var item = sample_data.Where(s=> s.Type == type).FirstOrDefault();
+                var item = sample_data.Where(s => s.Type == type).FirstOrDefault();
 
                 switch (type)
                 {
@@ -163,6 +165,18 @@ namespace Infrastructure.Services
             return obj;
         }
 
+        public string GetLayout(string content)
+        {
+            var html = File.ReadAllText("PrintTemplate/Shared/Layout.html");
+            var doc = new HtmlDocument();
+            doc.LoadHtml(html);
+            var body = doc.DocumentNode.SelectSingleNode("//div");
+            var contentBody = HtmlNode.CreateNode(content);
+            body.ParentNode.InsertAfter(contentBody, body);
+            var newHtml = doc.DocumentNode.OuterHtml;
+            return newHtml;
+        }
+
         public override ISpecification<PrintTemplateConfig> RuleDomainGet(IRRule rule)
         {
             switch (rule.Code)
@@ -174,7 +188,7 @@ namespace Infrastructure.Services
             }
         }
 
-       
+
 
     }
 }

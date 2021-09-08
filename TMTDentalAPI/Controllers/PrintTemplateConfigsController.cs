@@ -10,6 +10,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
 using Scriban;
+using Scriban.Runtime;
 
 namespace TMTDentalAPI.Controllers
 {
@@ -54,11 +55,17 @@ namespace TMTDentalAPI.Controllers
                 IsDefault = val.IsDefault,
                 PrintPaperSizeId = val.PrintPaperSizeId,
                 Type = val.Type });
-            var template = Template.Parse(val.Content);
 
+            // Creates 
+            var scriptObj = new ScriptObject();
+            scriptObj.Import(obj);
+            var context = new TemplateContext();
+            context.PushGlobal(scriptObj);
+            var template = Template.Parse(val.Content);
+            
             try
             {
-                var result = template.Render(new { Model = obj, PaperSize = printTemplateConfig.PrintPaperSize });
+                var result = await template.RenderAsync(context);
                 return Ok(result);
 
             }
@@ -75,10 +82,17 @@ namespace TMTDentalAPI.Controllers
         {
             object obj = await _printTemplateConfigService.GetSampleData(val.Type);
             var printTemplateConfig = await _printTemplateConfigService.GetDisplay(new PrintTemplateConfigChangeType() { Type = val.Type });
-            var template = Template.Parse(printTemplateConfig.Content);
+            // Creates 
+            var scriptObj = new ScriptObject();
+            scriptObj.Import(obj);
+            scriptObj.Add("paper_size", printTemplateConfig.PrintPaperSize);
+            var context = new TemplateContext();
+            context.PushGlobal(scriptObj);
+            var layout = _printTemplateConfigService.GetLayout(printTemplateConfig.Content);
+            var template = Template.Parse(layout);
             try
             {
-                var result = template.Render(new { Model = obj, PaperSize = printTemplateConfig.PrintPaperSize });
+                var result = template.Render(context);
                 return Ok(result);
 
             }

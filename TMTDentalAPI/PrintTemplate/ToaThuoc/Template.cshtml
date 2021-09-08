@@ -1,198 +1,171 @@
-﻿<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TDental.vn</title>
-    <link rel="stylesheet" type="text/css" href="/css/print.css" />
-    <style>
-         @@page {
-            size:{{paper_size.paper_format}} {{ paper_size.is_size == false ? "portrait" : "landscape" }} !important;
-          /*  margin-top: {{paper_size.top_margin ?? 0}}mm;
-            margin-right: {{paper_size.right_margin ?? 0}}mm;
-            margin-bottom:{{paper_size.bottom_margin ?? 0}}mm;
-            margin-left:{{paper_size.left_margin ?? 0}}mm;*/
-      
-        }
+﻿<div>
+    <div class="d-flex mb-2">
+        {{ if company.logo != "" && company.logo != null}}
+        <img class="img-fluid me-3 w-20" src="{{company.logo}}" alt="{{company.name}}">
+        {{ end }}
 
-        @@page{
-            margin: 50mm 50mm 50mm 50mm;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
         <div>
-            <div class="d-flex mb-2">
-                {{ if model.company.logo != "" && model.company.logo != null}}
-                <img class="img-fluid me-3 w-20" src="{{model.company.logo}}" alt="{{model.company.name}}">
-                {{ end }}
+            <div class="text-xl font-semibold">{{company.name}}</div>
+            {{if company.address != ""}}
 
-                <div>
-                    <div class="text-xl font-semibold">{{model.company.name}}</div>
-                    {{if model.company.address != ""}}
+            <div>Địa chỉ: {{company.address}}</div>
 
-                    <div>Địa chỉ: {{model.company.address}}</div>
+            {{ end }}
 
-                    {{ end }}
+            {{ if company.phone}}
 
-                    {{ if model.company.phone}}
+            <div>ĐT: {{company.phone}}</div>
 
-                    <div>ĐT: {{model.company.phone}}</div>
+            {{ end }}
 
-                    {{ end }}
+            {{if company.email }}
 
-                    {{if model.company.email }}
+            <div>Email: {{company.email}}</div>
 
-                    <div>Email: {{model.company.email}}</div>
-
-                    {{ end }}
-
-                </div>
-            </div>
-            <div class="text-center mb-2">
-                <div class="text-3xl font-semibold">ĐƠN THUỐC</div>
-                <div>Ngày {{model.date.day}} tháng {{model.date.month}} năm {{model.date.year}} </div>
-                <div class="font-semibold">Số: {{model.name}}</div>
-            </div>
-            <div class="o_form_view">
-                <div class="o_group">
-                    <table class="o_group o_inner_group o_group_col_8">
-                        <tbody>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Khách hàng
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">{{model.partner.display_name}}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Địa chỉ
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">{{model.partner.address}}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Bác sĩ
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">{{model.employee_name}}</td>
-                            </tr>
-                    </table>
-                    <table class="o_group o_inner_group o_group_col_4">
-                        <tbody>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Giới tính
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">{{model.partner.display_gender}}</td>
-                            </tr>
-
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Tuổi
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">{{model.partner.age}}</td>
-                            </tr>
-
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div>
-                {{~ for line in model.lines ~}}
-                <table class="table table-sm table-borderless">
-                        <tr>
-                            <td width="30"><span class="font-semibold">{{for.index + 1}}.</span></td>
-                            <td>
-                                <div class="d-flex justify-content-between">
-                                    <div class="font-semibold">{{line.product_name}}</div>
-                                    <div>
-                                        <span class="font-semibold">{{line.quantity}}</span>
-                                        {{line.product_uomname}}
-                                    </div>
-                                </div>
-                                <div>
-                                    Ngày uống <span class="font-semibold">{{line.number_of_times}}</span> lần,
-                                    mỗi lần <span class="font-semibold">{{line.amount_of_times}}</span> {{line.product_uomname}},
-                                    uống trong <span class="font-semibold">{{line.number_of_days}}</span> ngày (<span class="font-semibold">{{line.get_use_at_display}}</span>)
-                                </div>
-                            </td>
-                        </tr>                 
-                </table>
-
-                {{~ end ~}}
-            </div>
-            <div>
-                <div class="o_form_view mb-2">
-                    <table class="o_group o_inner_group">
-                        <tbody>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Lời dặn
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">{{model.note}}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Chẩn đoán bệnh
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">{{model.diagnostic}}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Tái khám
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    {{if model.re_examination_date }}
-                                    <div>{{date.parse model.re_examination_date | date.to_string '%d/%m/%Y'}}</div>
-
-                                    {{ end }}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <div class="text-center">
-                        <span class="font-semibold">Bác sĩ</span> <br />
-                        <i>(Ký, họ tên)</i> <br />
-                        <span></span> <br />
-                        <span></span> <br />
-                        <span></span> <br />
-                        <span class="font-semibold">{{model.employee_name ? (model.employee_name | string.upcase) : "" }}</span>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="text-center">
-                        <span class="font-semibold"> Bệnh nhân</span> <br />
-                        <i>(Ký, họ tên)</i> <br />
-                        <span></span> <br />
-                        <span></span> <br />
-                        <span></span> <br />
-                        <span class="font-semibold">{{model.partner ? (model.partner.name | string.upcase) : ""}}</span>
-                    </div>
-                </div>
-            </div>
+            {{ end }}
 
         </div>
     </div>
-</body>
-</html>
+    <div class="text-center mb-2">
+        <div class="text-3xl font-semibold">ĐƠN THUỐC</div>
+        <div>Ngày {{date.day}} tháng {{date.month}} năm {{date.year}} </div>
+        <div class="font-semibold">Số: {{name}}</div>
+    </div>
+    <div class="o_form_view">
+        <div class="o_group">
+            <table class="o_group o_inner_group o_group_col_8">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Khách hàng
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">{{partner.display_name}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Địa chỉ
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">{{partner.address}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Bác sĩ
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">{{employee_name}}</td>
+                    </tr>
+            </table>
+            <table class="o_group o_inner_group o_group_col_4">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Giới tính
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">{{partner.display_gender}}</td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Tuổi
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">{{partner.age}}</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div>
+        {{ for line in lines }}
+        <table class="table table-sm table-borderless">
+            <tr>
+                <td width="30"><span class="font-semibold">{{for.index + 1}}.</span></td>
+                <td>
+                    <div class="d-flex justify-content-between">
+                        <div class="font-semibold">{{line.product_name}}</div>
+                        <div>
+                            <span class="font-semibold">{{line.quantity}}</span>
+                            {{line.product_uomname}}
+                        </div>
+                    </div>
+                    <div>
+                        Ngày uống <span class="font-semibold">{{line.number_of_times}}</span> lần,
+                        mỗi lần <span class="font-semibold">{{line.amount_of_times}}</span> {{line.product_uomname}},
+                        uống trong <span class="font-semibold">{{line.number_of_days}}</span> ngày (<span class="font-semibold">{{line.get_use_at_display}}</span>)
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        {{ end }}
+    </div>
+    <div>
+        <div class="o_form_view mb-2">
+            <table class="o_group o_inner_group">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Lời dặn
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">{{note}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Chẩn đoán bệnh
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">{{diagnostic}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Tái khám
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{if re_examination_date }}
+                            <div>{{re_examination_date}}</div>
+
+                            {{ end }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="text-center">
+                <span class="font-semibold">Bác sĩ</span> <br />
+                <i>(Ký, họ tên)</i> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span class="font-semibold">{{employee_name ? (employee_name | string.upcase) : "" }}</span>
+            </div>
+        </div>
+        <div class="col">
+            <div class="text-center">
+                <span class="font-semibold"> Bệnh nhân</span> <br />
+                <i>(Ký, họ tên)</i> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span class="font-semibold">{{partner ? (partner.name | string.upcase) : ""}}</span>
+            </div>
+        </div>
+    </div>
+
+</div>
