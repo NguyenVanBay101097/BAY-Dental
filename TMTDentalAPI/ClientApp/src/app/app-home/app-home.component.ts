@@ -46,7 +46,6 @@ export class AppHomeComponent implements OnInit {
     {
       name: 'Labo',
       icon: 'fas fa-tooth',
-      url: '/labo-orders',
       children: [
         { name: 'Quản lý phiếu Labo', url: '/labo-orders/service', permissions: ['Labo.LaboOrder.Read', '.LaboOrder.Create', 'Labo.LaboOrder.Update', 'Labo.LaboOrder.Delete'] },
         { name: 'Đơn hàng Labo', url: '/labo-orders/order', permissions: ['Labo.OrderLabo.Read', 'Labo.OrderLabo.Update'] },
@@ -69,7 +68,6 @@ export class AppHomeComponent implements OnInit {
     {
       name: 'Mua hàng',
       icon: 'fas fa-shopping-cart',
-      url: '/purchase',
       children: [
         { name: 'Mua hàng', url: '/purchase/orders', linkProps: { queryParams: { type: 'order' } }, permissions: ['Purchase.Order.Read', 'Purchase.Order.Create', 'Purchase.Order.Update', 'Purchase.Order.Delete'] },
         { name: 'Trả hàng', url: '/purchase/orders', linkProps: { queryParams: { type: 'refund' } }, permissions: ['Purchase.Order.Read'] },
@@ -85,7 +83,6 @@ export class AppHomeComponent implements OnInit {
     {
       name: 'Lương',
       icon: 'fas fa-money-bill-alt',
-      url: '/hr',
       children: [
         { name: 'Bảng lương', url: '/hr/payslip-run/form', permissions: ['Salary.HrPayslipRun.Read', 'Salary.HrPayslipRun.Create', 'Salary.HrPayslipRun.Update'] },
         { name: 'Chấm công', url: '/hr/time-keepings', permissions: ['Salary.ChamCong.Read'] },
@@ -107,7 +104,6 @@ export class AppHomeComponent implements OnInit {
     {
       name: 'SMS Brandname',
       icon: 'fas fa-sms',
-      url: '/sms',
       children: [
         { name: 'Chúc mừng sinh nhật', url: '/sms/birthday-partners', permissions: ['SMS.Message.Read'] },
         { name: 'Nhắc lịch hẹn', url: '/sms/appointment-reminder', permissions: ['SMS.Message.Read'] },
@@ -125,7 +121,6 @@ export class AppHomeComponent implements OnInit {
     {
       name: 'Hoa hồng',
       icon: 'fas fa-poll',
-      url: '/commission-settlements',
       children: [
         { name: 'Người giới thiệu', url: '/commission-settlements/agent' },
         { name: 'Nhân viên', url: '/commission-settlements/employee', permissions: ['Report.Commission'] },
@@ -135,7 +130,6 @@ export class AppHomeComponent implements OnInit {
     {
       name: 'Danh mục',
       icon: 'fas fa-list',
-      url: '/catalog',
       children: [
         { name: 'Thông tin khách hàng', url: '/catalog/customer-management' },
         { name: 'Hạng thành viên', url: '/catalog/member-level/management' },
@@ -150,7 +144,7 @@ export class AppHomeComponent implements OnInit {
         { name: 'Loại thu chi', url: '/catalog/loai-thu-chi', permissions: ['Account.LoaiThuChi.Read'] },
         { name: 'Tiêu chí kiểm kho', url: '/catalog/stock/criterias', permissions: ['Stock.StockInventoryCriteria.Read'] },
         { name: 'Chẩn đoán răng', url: '/catalog/tooth-diagnosis', permissions: ['Catalog.ToothDiagnosis.Read'] },
-        { name: 'Nhãn khảo sát', url: '/catalog/surveys/survey-tag', groups: 'survey.group_survey' },
+        { name: 'Nhãn khảo sát', url: '/surveys/survey-tag', groups: 'survey.group_survey' },
         { name: 'Người giới thiệu', url: '/catalog/agents/list', Permissions: ['Catalog.Agent.Read'] },
       ],
       permissions: [
@@ -168,7 +162,7 @@ export class AppHomeComponent implements OnInit {
     {
       name: 'Cấu hình',
       icon: 'fas fa-cogs',
-      url: '/setting',
+      id: 'settingMenu',
       children: [
         { name: 'Chi nhánh', url: '/setting/companies', permissions: ['System.Company.Read'] },
         { name: 'Nhóm quyền', url: '/setting/roles', permissions: ['System.ApplicationRole.Read'] },
@@ -179,7 +173,7 @@ export class AppHomeComponent implements OnInit {
     {
       name: 'Báo cáo',
       icon: 'far fa-chart-bar',
-      url: '/report',
+      id: 'reportMenu',
       children: [
         { name: 'Báo cáo tổng quan', url: '/report/sale-dashboard-reports' },
         { name: 'Kết quả kinh doanh', url: '/report/financial-report', permissions: ['Report.Financial'] },

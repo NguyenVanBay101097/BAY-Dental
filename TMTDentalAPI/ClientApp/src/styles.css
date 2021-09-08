@@ -1517,29 +1517,21 @@ html:not([dir=rtl]) .sidebar {
 .sidebar .nav-item {
     position: relative;
     margin: 0;
-    transition: background .2s ease-in-out;
+    transition: background .3s ease-in-out;
 }
 
 .sidebar .nav-dropdown-items.nav-sub {
-    max-height: 0;
-	padding: 0;
-	margin: 0;
-	overflow-y: hidden;
-	transition: max-height .2s ease-in-out
-    /* height: 0;
-    margin-left: -20px;
+    height: 0;
     overflow: hidden;
     opacity: 0;
-    -webkit-transition: all .2s ease-in-out 0s;
-    transition: all .2s ease-in-out 0s; */
+    -webkit-transition: all .35s ease;
+    transition: all .35s ease;
 }
 
-.sidebar .nav-dropdown.open>.nav-dropdown-items {
-    max-height: 1500px;
-    /* height: auto !important;
-    margin-left: 0;
+.sidebar .nav-dropdown.active>.nav-dropdown-items {
+    height: auto !important;
     overflow: auto;
-    opacity: 1; */
+    opacity: 1;
 }
 
 .sidebar .nav-dropdown-items .nav-item {
@@ -1627,7 +1619,7 @@ html:not([dir=rtl]) .sidebar {
     background-image: url(data:image/svg+xml;charset=utf8;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxMSAxNCc+PHBhdGggZmlsbD0nI2ZmZicgZD0nTTkuMTQ4IDIuMzUybC00LjE0OCA0LjE0OCA0LjE0OCA0LjE0OHEwLjE0OCAwLjE0OCAwLjE0OCAwLjM1MnQtMC4xNDggMC4zNTJsLTEuMjk3IDEuMjk3cS0wLjE0OCAwLjE0OC0wLjM1MiAwLjE0OHQtMC4zNTItMC4xNDhsLTUuNzk3LTUuNzk3cS0wLjE0OC0wLjE0OC0wLjE0OC0wLjM1MnQwLjE0OC0wLjM1Mmw1Ljc5Ny01Ljc5N3EwLjE0OC0wLjE0OCAwLjM1Mi0wLjE0OHQwLjM1MiAwLjE0OGwxLjI5NyAxLjI5N3EwLjE0OCAwLjE0OCAwLjE0OCAwLjM1MnQtMC4xNDggMC4zNTJ6Jy8+PC9zdmc+);
 }
 
-.sidebar .nav-dropdown.open>.nav-dropdown-toggle:before {
+.sidebar .nav-dropdown.open>.nav-dropdown-toggle:before, .sidebar .nav-dropdown>.nav-dropdown-toggle:not(.collapsed):before {
     transform: rotate(-90deg);
 }
 
@@ -1868,7 +1860,7 @@ html:not([dir=rtl]) .sidebar {
 	.sidebar-minimized .sidebar .nav>.nav-dropdown:hover>.nav-dropdown-items {
 		position: absolute;
 		left: 50px;
-		display: inline
+		display: inline;
 	}
 	[dir=rtl] .sidebar-minimized .sidebar .nav {
 		list-style-image: url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7)

@@ -13,6 +13,7 @@ export class AppSidebarNavComponent implements OnChanges {
   @HostBinding('class.sidebar-nav') sidebarNavClass = true;
   @HostBinding('attr.role') @Input() role = 'nav';
 
+
   public navItemsArray: INavData[] = [];
 
   constructor(

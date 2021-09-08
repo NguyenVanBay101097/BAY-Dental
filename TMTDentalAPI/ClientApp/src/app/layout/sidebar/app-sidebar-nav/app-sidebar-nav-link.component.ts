@@ -46,6 +46,7 @@ export class AppSidebarNavLinkComponent implements OnInit, OnDestroy {
   }
 
   @Output() linkClick = new EventEmitter();
+  @Output() itemClick = new EventEmitter();
 
   public linkType: string;
   public href: string;
@@ -95,5 +96,6 @@ export class AppSidebarNavLinkComponent implements OnInit, OnDestroy {
 
   linkClicked() {
     this.linkClick.emit();
+    this.itemClick.emit(this.item);
   }
 }
