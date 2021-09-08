@@ -157,7 +157,7 @@
             </kendo-grid-column>
             <kendo-grid-column title="Kết quả khám mới" width="200">
                 <ng-template kendoGridCellTemplate let-dataItem>
-                    {{dataItem.state != 'done' ? '' : getTreatment(dataItem.isNoTreatment)}}
+                    {{dataItem.state == 'done' && !dataItem.isRepeatCustomer ? getTreatment(dataItem.isNoTreatment) : ''}}
                 </ng-template>
             </kendo-grid-column>
             <kendo-grid-column title="Trạng thái" width="120">

@@ -5,17 +5,16 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { validator } from 'fast-json-patch';
 import * as _ from 'lodash';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { WebService } from 'src/app/core/services/web.service';
 import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
-import { DotKhamDisplay } from 'src/app/dot-khams/dot-khams';
+import { EmployeePaged } from 'src/app/employees/employee';
+import { EmployeeService } from 'src/app/employees/employee.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { ImageViewerComponent } from 'src/app/shared/image-viewer/image-viewer.component';
 import { DotKhamLineDisplay, DotkhamOdataService } from 'src/app/shared/services/dotkham-odata.service';
-import { EmployeesOdataService } from 'src/app/shared/services/employeeOdata.service';
 import { PartnerImageBasic } from 'src/app/shared/services/partners.service';
 import { SaleOrdersOdataService } from 'src/app/shared/services/sale-ordersOdata.service';
 import { environment } from 'src/environments/environment';
@@ -25,7 +24,7 @@ import { environment } from 'src/environments/environment';
   templateUrl: './sale-orders-dotkham-cu.component.html',
   styleUrls: ['./sale-orders-dotkham-cu.component.css']
 })
-export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
+export class SaleOrdersDotkhamCuComponent implements OnInit {
 
   @ViewChild('empCbx', { static: true }) empCbx: ComboBoxComponent;
   @ViewChild('assCbx', { static: true }) assCbx: ComboBoxComponent;
@@ -53,76 +52,29 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   constructor(
     private webService: WebService,
     private fb: FormBuilder,
-    private empService: EmployeesOdataService,
+    private empService: EmployeeService,
     private intelService: IntlService,
-    private authService: AuthService,
-    private dotkhamODataService: DotkhamOdataService,
     private notificationService: NotificationService,
     private differs: KeyValueDiffers,
     private iterableDiffers: IterableDiffers,
     private modalService: NgbModal,
-    private saleOrdersOdataService: SaleOrdersOdataService,
     private dotKhamService: DotKhamService
   ) { }
-  ngDoCheck(): void {
-    const changes = this.differ.diff(this.dotkham.Lines);
-    if (changes) {
-      // console.log('1');
-      // changes.forEachOperation((record, previousIndex, currentIndex) => {
-      //   var item = record.item;
-      //   const linesFA = this.dotkhamForm.get('Lines') as FormArray;
-      //   var g = this.fb.group({
-      //     NameStep: null,
-      //     ProductId: null,
-      //     Product: null,
-      //     Note: null,
-      //     Teeth: this.fb.array([]),
-      //     SaleOrderLineId: null,
-      //   });
-
-      //   g.patchValue(item);
-      //   linesFA.push(g);
-      // });
-      // const linesFA = this.dotkhamForm.get('Lines') as FormArray;
-      // linesFA.clear();
-      // this.dotkham.Lines.forEach(line => {
-      //   const lineFG = this.fb.group({
-      //     NameStep: null,
-      //     DotKhamId: null,
-      //     ProductId: null,
-      //     Product: null,
-      //     Sequence: null,
-      //     State: null,
-      //     ToothIds: [],
-      //     Note: null,
-      //     Teeth: this.fb.array([]),
-      //     SaleOrderLineId: null,
-      //     SaleOrderLine: null
-      //   });
-      //   lineFG.patchValue(line);
-      //   line.Teeth.forEach(t => {
-      //     const teethFG = this.fb.group(t);
-      //     (lineFG.get('Teeth') as FormArray).push(teethFG);
-      //   });
-      //   linesFA.push(lineFG);
-      // });
-    }
-  }
 
   ngOnInit() {
     this.webImageApi = environment.uploadDomain + 'api/Web/Image';
     this.webContentApi = environment.uploadDomain + 'api/Web/Content';
     this.kvDiffer = this.differs.find(this.dotkham).create();
-    this.differ = this.iterableDiffers.find(this.dotkham.Lines).create();
+    this.differ = this.iterableDiffers.find(this.dotkham.lines).create();
 
     this.dotkhamForm = this.fb.group({
-      Date: [new Date(), Validators.required],
-      Reason: [null],
-      Doctor: [null, Validators.required],
-      Lines: this.fb.array([]),
-      DotKhamImages: this.fb.array([]),
+      date: [new Date(), Validators.required],
+      reason: [null],
+      doctor: [null, Validators.required],
+      lines: this.fb.array([]),
+      dotKhamImages: this.fb.array([]),
       sequence: this.sequence,
-      Assistant: null
+      assistant: null
     });
 
     this.loadRecord();
@@ -133,7 +85,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
       tap(() => (this.empCbx.loading = true)),
       switchMap(value => this.searchEmp(value))
     ).subscribe((result: any) => {
-      this.empList = result.data;
+      this.empList = result.items;
       this.empCbx.loading = false;
     });
 
@@ -142,7 +94,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
       tap(() => (this.assCbx.loading = true)),
       switchMap(value => this.searchEmp(value))
     ).subscribe((result: any) => {
-      this.assList = result.data;
+      this.assList = result.items;
       this.assCbx.loading = false;
     });
   }
@@ -151,51 +103,51 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     this.editModeActive = val;
   }
   get f() { return this.dotkhamForm.controls;}
-  get Id() { return this.dotkhamForm.get('Id').value; }
-  get Sequence() { return this.dotkhamForm.get('Sequence').value; }
-  get imgsFA() { return this.dotkhamForm.get('DotKhamImages') as FormArray; }
-  get linesFA() { return this.dotkhamForm.get('Lines') as FormArray; }
-  get dotkhamDate() { return this.dotkhamForm.get('Date').value; }
-  get employee() { return this.dotkhamForm.get('Doctor').value; }
-  get assistant() { return this.dotkhamForm.get('Assistant').value; }
-  get reason() { return this.dotkhamForm.get('Reason').value; }
+  get Id() { return this.dotkhamForm.get('id').value; }
+  get Sequence() { return this.dotkhamForm.get('sequence').value; }
+  get imgsFA() { return this.dotkhamForm.get('dotKhamImages') as FormArray; }
+  get linesFA() { return this.dotkhamForm.get('lines') as FormArray; }
+  get dotkhamDate() { return this.dotkhamForm.get('date').value; }
+  get employee() { return this.dotkhamForm.get('doctor').value; }
+  get assistant() { return this.dotkhamForm.get('assistant').value; }
+  get reason() { return this.dotkhamForm.get('reason').value; }
 
   stopPropagation(e) {
     e.stopPropagation();
   }
 
   loadRecord() {
-    this.dotkham.Date = new Date(this.dotkham.Date);
+    this.dotkham.date = new Date(this.dotkham.date);
     this.dotkhamForm.patchValue(this.dotkham);
     this.imgsFA.clear();
     this.linesFA.clear();
 
-    this.dotkham.DotKhamImages.forEach(e => {
+    this.dotkham.dotKhamImages.forEach(e => {
       const imgFG = this.fb.group(e);
       this.imgsFA.push(imgFG);
     });
 
-    this.dotkham.Lines.forEach(e => {
+    this.dotkham.lines.forEach(e => {
       const lineFG = this.fb.group({
-        Id: null,
-        NameStep: null,
-        DotKhamId: null,
-        ProductId: null,
-        Product: null,
-        Sequence: null,
-        State: null,
-        ToothIds: [],
-        Note: null,
-        Teeth: this.fb.array([]),
-        SaleOrderLineId: null,
-        SaleOrderLine: null
+        id: null,
+        nameStep: null,
+        dotKhamId: null,
+        productId: null,
+        product: null,
+        sequence: null,
+        state: null,
+        toothIds: [],
+        note: null,
+        teeth: this.fb.array([]),
+        saleOrderLineId: null,
+        saleOrderLine: null
       });
 
       lineFG.patchValue(e);
 
-      e.Teeth.forEach(t => {
+      e.teeth.forEach(t => {
         const teethFG = this.fb.group(t);
-        (lineFG.get('Teeth') as FormArray).push(teethFG);
+        (lineFG.get('teeth') as FormArray).push(teethFG);
       });
       this.linesFA.push(lineFG);
     });
@@ -204,34 +156,24 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   }
 
   searchEmp(val) {
-    const state = {
-      take: 20,
-      filter: {
-        logic: 'and',
-        filters: [
-          { field: 'Name', operator: 'contains', value: val || '' },
-          { field: 'IsDoctor', operator: 'eq', value: true },
-          { field: 'Active', operator: 'eq', value: true }
-        ]
-      }
-    };
-    const options = {
-      select: 'Id,Name'
-    };
-    return this.empService.getFetch(state, options);
+    return this.empService.getEmployeePaged(<EmployeePaged>{
+      search: val || '',
+      isDoctor: true,
+      active: true
+    });
   }
 
   loadEmployees() {
     this.searchEmp('').subscribe(
       (result: any) => {
-        this.empList = result.data;
-        this.assList = result.data;
-        if (this.dotkham.Doctor) {
-          this.empList = _.unionBy(this.empList, [this.dotkham.Doctor], 'Id');
+        this.empList = result.items;
+        this.assList = result.items;
+        if (this.dotkham.doctor) {
+          this.empList = _.unionBy(this.empList, [this.dotkham.doctor], 'id');
         }
 
-        if (this.dotkham.Assistant) {
-          this.assList = _.unionBy(this.assList, [this.dotkham.Assistant], 'Id');
+        if (this.dotkham.assistant) {
+          this.assList = _.unionBy(this.assList, [this.dotkham.assistant], 'id');
         }
       }
     );
@@ -246,10 +188,10 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     this.webService.uploadImages(formData).subscribe((res: any) => {
       res.forEach(img => {
         const imgObj = new PartnerImageBasic();
-        imgObj.DotKhamId = this.dotkham.Id;
-        imgObj.Name = img.fileName;
-        imgObj.UploadId = img.fileUrl;
-        imgObj.PartnerId = this.dotkham.PartnerId;
+        imgObj.dotKhamId = this.dotkham.id;
+        imgObj.name = img.fileName;
+        imgObj.uploadId = img.fileUrl;
+        imgObj.partnerId = this.dotkham.partnerId;
         const imgFG = this.fb.group(imgObj);
         this.imgsFA.push(imgFG);
       });
@@ -280,7 +222,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
     modalRef.componentInstance.body = "Bạn có chắc chắn xóa đợt khám?";
 
     modalRef.result.then(() => {
-      this.dotKhamService.delete(this.dotkham.Id).subscribe(() => {
+      this.dotKhamService.delete(this.dotkham.id).subscribe(() => {
         this.btnDeleteEvent.emit(this.dotkham);
         this.notificationService.show({
           content: 'Xóa thành công',
@@ -301,17 +243,17 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
       return;
     }
     const val = this.dotkhamForm.value;
-    val.Date = this.intelService.formatDate(val.Date, 'yyyy-MM-dd');
-    val.DoctorId = val.Doctor ? val.Doctor.Id : null;
-    val.AssistantId = val.Assistant ? val.Assistant.Id : null;
+    val.date = this.intelService.formatDate(val.date, 'yyyy-MM-dd');
+    val.doctorId = val.doctor ? val.doctor.id : null;
+    val.assistantId = val.assistant ? val.assistant.id : null;
     // val.CompanyId = this.authService.userInfo.companyId;
-    val.Lines.forEach(line => {
-      line.ToothIds = line.Teeth.map(x => x.Id);
+    val.lines.forEach(line => {
+      line.toothIds = line.teeth.map(x => x.id);
     });
 
-    if (!this.dotkham.Id) {
-      delete val['Id'];
-      val.Sequence = this.dotkham.Sequence;
+    if (!this.dotkham.id) {
+      delete val['id'];
+      val.sequence = this.dotkham.sequence;
       // val.SaleOrderId = this.dotkham.SaleOrderId;
       // this.saleOrdersOdataService.createDotkham(this.dotkham.SaleOrderId, val).subscribe((res: any) => {
       //   this.notify('success', 'Lưu thành công');
@@ -361,7 +303,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   }
 
   checkAccess() {
-    if (this.activeDotkham && this.activeDotkham.Sequence !== this.dotkham.Sequence) {
+    if (this.activeDotkham && this.activeDotkham.sequence !== this.dotkham.sequence) {
       this.notify('error', 'Bạn phải hoàn tất đợt khám đang thao tác');
       return false;
     }
@@ -379,8 +321,8 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   }
 
   showLineTeeth(line: FormGroup) {
-    const teeth = line.get('Teeth').value;
-    return teeth.map(x => x.Name).join(', ');
+    const teeth = line.get('teeth').value;
+    return teeth.map(x => x.name).join(', ');
   }
 
   onEmitDotkham(dotkham, isDelete = false, activeDotkham) {
@@ -398,12 +340,12 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
 
   eventTeeth(line, lineControl, i) {
     lineControl.patchValue(line);
-    lineControl.get('Teeth').clear();
-    line.Teeth.forEach(t => {
+    lineControl.get('teeth').clear();
+    line.teeth.forEach(t => {
       const g = this.fb.group(t);
-      lineControl.get('Teeth').push(g);
+      lineControl.get('teeth').push(g);
     });
-    this.dotkham.Lines[i] = line;
+    this.dotkham.lines[i] = line;
     // lineControl.get('ToothIds').clear();
     // line.Teeth.forEach(t => {
     //   const g = this.fb.group(t.Id);
@@ -414,19 +356,19 @@ export class SaleOrdersDotkhamCuComponent implements OnInit, DoCheck {
   onViewImg(imgObj: PartnerImageBasic) {
     const modalRef = this.modalService.open(ImageViewerComponent, { windowClass: 'o_image_viewer o_modal_fullscreen' });
     const img = {
-      id: imgObj.Id,
-      name: imgObj.Name,
-      date: imgObj.Date,
-      note: imgObj.Note,
-      uploadId: imgObj.UploadId
+      id: imgObj.id,
+      name: imgObj.name,
+      date: imgObj.date,
+      note: imgObj.note,
+      uploadId: imgObj.uploadId
     };
     const imgs = this.imgsFA.value.map(x => {
       return {
-        id: x.Id,
-        name: x.Name,
-        date: x.Date,
-        note: x.Note,
-        uploadId: x.UploadId
+        id: x.id,
+        name: x.name,
+        date: x.date,
+        note: x.note,
+        uploadId: x.uploadId
       };
     });
     modalRef.componentInstance.partnerImages = imgs;

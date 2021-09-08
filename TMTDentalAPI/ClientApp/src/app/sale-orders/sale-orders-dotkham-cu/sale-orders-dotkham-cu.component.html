@@ -2,7 +2,7 @@
     <div class="body">
         <div class="info">
             <div class="d-flex align-items-center justify-content-between">
-                <h5>Đợt khám {{sequence}}{{dotkham?.Name ? ' - ' + dotkham?.Name : ''}}</h5>
+                <h5>Đợt khám {{sequence}}{{dotkham?.name ? ' - ' + dotkham?.name : ''}}</h5>
                 <div>
                     <button *ngIf="!editModeActive" (click)="onEditDotkham()" class="btn btn-primary mr-1">Chỉnh sửa</button>
                     <button type="button" *ngIf="!editModeActive" (click)="onDeleteDotkham()" class="btn btn-danger">Xóa</button>
@@ -23,10 +23,10 @@
                                 </label>
                             </td>
                             <td colspan="1" class="b-td-value" style="width: 100%;">
-                                <kendo-datepicker *ngIf="editModeActive" formControlName="Date"></kendo-datepicker>
+                                <kendo-datepicker *ngIf="editModeActive" formControlName="date"></kendo-datepicker>
                                 <span *ngIf="!editModeActive">{{dotkhamDate | date: 'shortDate'}}</span>
-                                <div *ngIf="f.Date.errors && (f.Date.touched || f.Date.dirty || submitted)" class="text-danger">
-                                    <div *ngIf="f.Date.errors.required">Chọn ngày</div>
+                                <div *ngIf="f.date.errors && (f.date.touched || f.date.dirty || submitted)" class="text-danger">
+                                    <div *ngIf="f.date.errors.required">Chọn ngày</div>
                                 </div>
                             </td>
                         </tr>
@@ -41,11 +41,11 @@
                                 </label>
                             </td>
                             <td colspan="1" class="b-td-value" style="width: 100%;">
-                                <kendo-combobox [hidden]="!editModeActive" formControlName="Doctor" [data]="empList" [filterable]="true" [textField]="'Name'" [valueField]="'Id'" #empCbx placeholder="Chọn bác sĩ...">
+                                <kendo-combobox [hidden]="!editModeActive" formControlName="doctor" [data]="empList" [filterable]="true" [textField]="'name'" [valueField]="'id'" #empCbx placeholder="Chọn bác sĩ...">
                                 </kendo-combobox>
-                                <span *ngIf="!editModeActive">{{employee?.Name}}</span>
-                                <div *ngIf="f.Doctor.errors && (f.Doctor.touched || f.Doctor.dirty || submitted)" class="text-danger">
-                                    <div *ngIf="f.Doctor.errors.required">Chọn bác sĩ</div>
+                                <span *ngIf="!editModeActive">{{employee?.name}}</span>
+                                <div *ngIf="f.doctor.errors && (f.doctor.touched || f.doctor.dirty || submitted)" class="text-danger">
+                                    <div *ngIf="f.doctor.errors.required">Chọn bác sĩ</div>
                                 </div>
                             </td>
                         </tr>
@@ -56,9 +56,9 @@
                                 </label>
                             </td>
                             <td colspan="1" class="b-td-value" style="width: 100%;">
-                                <kendo-combobox [hidden]="!editModeActive" formControlName="Assistant" [data]="assList" [filterable]="true" [textField]="'Name'" [valueField]="'Id'" #assCbx placeholder="Chọn phụ tá...">
+                                <kendo-combobox [hidden]="!editModeActive" formControlName="assistant" [data]="assList" [filterable]="true" [textField]="'name'" [valueField]="'id'" #assCbx placeholder="Chọn phụ tá...">
                                 </kendo-combobox>
-                                <span *ngIf="!editModeActive">{{assistant?.Name}}</span>
+                                <span *ngIf="!editModeActive">{{assistant?.name}}</span>
                             </td>
                         </tr>
                     </tbody>
@@ -76,21 +76,21 @@
                         <th style="width: 5%" class="text-center">#</th>
                     </tr>
                 </thead>
-                <tbody formArrayName="Lines">
+                <tbody formArrayName="lines">
                     <ng-container *ngFor="let line of linesFA.controls; let i=index">
                         <tr [formGroupName]="i">
-                            <td>{{line.get('Product').value?.Name}}</td>
+                            <td>{{line.get('product').value?.name}}</td>
                             <td>
-                                {{line.get('NameStep').value}}
+                                {{line.get('nameStep').value}}
                             </td>
                             <td>
                                 <div class="d-flex">
                                     <div>
-                                        <div *ngIf="line.get('Teeth')?.value?.length">
+                                        <div *ngIf="line.get('teeth')?.value?.length">
                                             {{showLineTeeth(line)}}
                                         </div>
                                         <div>
-                                            {{line.get('Note').value}}
+                                            {{line.get('note').value}}
                                         </div>
                                     </div>
                                     <app-sale-order-dotkham-teeth-popover *ngIf="editModeActive" [line]="line.value" (eventTeeth)="eventTeeth($event,line, i)"></app-sale-order-dotkham-teeth-popover>
@@ -106,7 +106,7 @@
         </div>
         <div class="note">
             <h6>Mô tả</h6>
-            <textarea *ngIf="editModeActive" formControlName="Reason" rows="2" placeholder="Nhập mô tả..." class="form-control"></textarea>
+            <textarea *ngIf="editModeActive" formControlName="reason" rows="2" placeholder="Nhập mô tả..." class="form-control"></textarea>
             <label style="white-space: pre-line;" *ngIf="!editModeActive">
                 {{reason}}
             </label>
@@ -114,17 +114,17 @@
         <div class="image mt-2">
             <h6>Hình ảnh</h6>
             <div class="o_attachments_previews">
-                <ng-container formArrayName="DotKhamImages">
+                <ng-container formArrayName="dotKhamImages">
                     <div [formGroupName]="i" *ngFor="let img of imgsFA.controls; let i=index" class=" o_attachment mt-1 col-sm-6 col-md-4 col-lg-3 col-xl-2">
                         <div class="o_attachment_wrap" (click)="onViewImg(img.value)">
                             <div class="o_image_box">
-                                <div class="o_attachment_image" id="{{img.value.Name}}">
-                                    <img width="100%" [src]="img.value.UploadId + '?width=240&height=240)'" alt="">
+                                <div class="o_attachment_image" id="{{img.value.name}}">
+                                    <img width="100%" [src]="img.value.uploadId + '?width=240&height=240)'" alt="">
                                 </div>
                                 <div class="o_image_overlay o_attachment_view">
-                                    <span *ngIf="editModeActive" class="fa fa-times o_attachment_delete_cross" (click)="onRemoveImg(i)" title="Delete {{img.value.Name}}"></span>
-                                    <span class="o_attachment_title text-white">{{img.value.Name}}</span>
-                                    <a class="o_attachment_download" (click)="stopPropagation($event)" href="{{img.value.UploadId}}" target="_blank">
+                                    <span *ngIf="editModeActive" class="fa fa-times o_attachment_delete_cross" (click)="onRemoveImg(i)" title="Delete {{img.value.name}}"></span>
+                                    <span class="o_attachment_title text-white">{{img.value.name}}</span>
+                                    <a class="o_attachment_download" (click)="stopPropagation($event)" href="{{img.value.uploadId}}" target="_blank">
                                         <i aria-label="Download" class="fa fa-download text-white" role="img"></i>
                                     </a>
                                 </div>

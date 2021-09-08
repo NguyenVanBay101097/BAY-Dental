@@ -157,7 +157,7 @@ namespace Infrastructure.Services
         {
             var query = GetQueryable(val);
 
-            var items = await query.Where(x => x.State == "done").ToListAsync();
+            var items = await query.Where(x => x.State == "done" && !x.IsRepeatCustomer).ToListAsync();
 
             var totalItems = items.Count();
 

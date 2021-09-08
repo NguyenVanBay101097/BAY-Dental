@@ -12,6 +12,7 @@ using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -33,6 +34,7 @@ namespace TMTDentalAPI.Controllers
         private readonly IIrAttachmentService _attachmentService;
         private readonly ILaboOrderService _laboOrderService;
         private readonly IUploadService _uploadService;
+        private readonly IPartnerImageService _partnerImageService;
 
         public DotKhamsController(IDotKhamService dotKhamService,
             IMapper mapper, IUnitOfWorkAsync unitOfWork, IToaThuocService toaThuocService,
@@ -42,7 +44,8 @@ namespace TMTDentalAPI.Controllers
             IDotKhamStepService dotKhamStepService,
             IIrAttachmentService attachmentService,
             ILaboOrderService laboOrderService,
-            IUploadService uploadService)
+            IUploadService uploadService,
+            IPartnerImageService partnerImageService)
         {
             _dotKhamService = dotKhamService;
             _mapper = mapper;
@@ -55,6 +58,7 @@ namespace TMTDentalAPI.Controllers
             _attachmentService = attachmentService;
             _laboOrderService = laboOrderService;
             _uploadService = uploadService;
+            _partnerImageService = partnerImageService;
         }
 
         [HttpGet]
@@ -69,13 +73,11 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Basic.DotKham.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var dotKham = await _dotKhamService.GetDotKhamDisplayAsync(id);
-            if (dotKham == null)
-            {
+            var results = await _mapper.ProjectTo<DotKhamVm>(_dotKhamService.SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
+            if (results == null)
                 return NotFound();
-            }
 
-            return Ok(dotKham);
+            return Ok(results);
         }
 
         [HttpPost]
@@ -93,16 +95,14 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPut("{id}")]
         [CheckAccess(Actions = "Basic.DotKham.Update")]
-        public async Task<IActionResult> Update(Guid id, DotKhamSave val)
+        public async Task<IActionResult> PUT(Guid id, DotKhamSaveVm val)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            var dotKham = await _dotKhamService.GetByIdAsync(id);
-            if (dotKham == null)
-                return NotFound();
 
-            dotKham = _mapper.Map(val, dotKham);
-            await _dotKhamService.UpdateAsync(dotKham);
+            await _unitOfWork.BeginTransactionAsync();
+            await _dotKhamService.UpdateDotKham(id, val);
+            _unitOfWork.Commit();
 
             return NoContent();
         }
@@ -231,6 +231,63 @@ namespace TMTDentalAPI.Controllers
             return Ok(dotkham);
         }
 
+        [HttpGet("{id}/[action]")]
+        [CheckAccess(Actions = "Basic.DotKham.Read")]
+        public async Task<IActionResult> GetInfo(Guid id)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
 
+            //function return complex type
+            var dotkham = await _dotKhamService.SearchQuery(x => x.Id == id).Select(x => new DotKhamDisplayVm
+            {
+                Date = x.Date,
+                Doctor = x.Doctor != null ? new EmployeeSimple
+                {
+                    Id = x.Doctor.Id,
+                    Name = x.Doctor.Name
+                } : null,
+                Assistant = x.Assistant != null ? new EmployeeSimple
+                {
+                    Id = x.Assistant.Id,
+                    Name = x.Assistant.Name
+                } : null,
+                Id = x.Id,
+                Sequence = x.Sequence,
+                Reason = x.Reason,
+                Name = x.Name
+            }).FirstOrDefaultAsync();
+
+            if (dotkham == null)
+                return NotFound();
+
+            dotkham.Lines = await _dotKhamLineService.SearchQuery(x => x.DotKhamId == id).OrderBy(x => x.Sequence).Select(x => new DotKhamLineDisplay
+            {
+                Teeth = x.ToothRels.Select(x => new ToothDisplay
+                {
+                    Id = x.ToothId,
+                    Name = x.Tooth.Name
+                }),
+                Id = x.Id,
+                NameStep = x.NameStep,
+                Note = x.Note,
+                Product = new ProductSimple
+                {
+                    Id = x.ProductId.Value,
+                    Name = x.Product.Name
+                },
+                SaleOrderLineId = x.SaleOrderLineId
+            }).ToListAsync();
+
+            dotkham.DotKhamImages = await _partnerImageService.SearchQuery(x => x.DotkhamId.Value == id).Select(x => new PartnerImageDisplay
+            {
+                Id = x.Id,
+                Date = x.Date.Value,
+                Name = x.Name,
+                UploadId = x.UploadId
+            }).ToListAsync();
+
+            return Ok(dotkham);
+        }
     }
 }

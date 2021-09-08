@@ -1,19 +1,16 @@
 import { Component, ComponentFactoryResolver, ComponentRef, OnInit, QueryList, ViewChild, ViewChildren } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { DotKhamStepsOdataService } from 'src/app/shared/services/dot-kham-stepsOdata.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { DotKhamCreateUpdateDialogComponent } from 'src/app/shared/dot-kham-create-update-dialog/dot-kham-create-update-dialog.component';
-import { DotKhamLineDisplay, DotkhamOdataService, DotKhamVm } from 'src/app/shared/services/dotkham-odata.service';
-import { SaleOrdersOdataService } from "src/app/shared/services/sale-ordersOdata.service";
-import { SaleOrderCreateDotKhamDialogComponent } from '../sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
 import { TreatmentProcessServiceDialogComponent } from '../treatment-process-service-dialog/treatment-process-service-dialog.component';
-import { AuthService } from 'src/app/auth/auth.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { forkJoin } from 'rxjs';
 import { AnchorHostDirective } from 'src/app/shared/anchor-host.directive';
 import { SaleOrdersDotkhamCuComponent } from '../sale-orders-dotkham-cu/sale-orders-dotkham-cu.component';
 import { FormBuilder } from '@angular/forms';
+import { SaleOrderService } from "src/app/core/services/sale-order.service";
+import { DotKhamService } from "src/app/dot-khams/dot-kham.service";
+import { DotKhamStepService } from "src/app/dot-khams/dot-kham-step.service";
 
 @Component({
   selector: "app-treatment-process-service-list",
@@ -38,15 +35,14 @@ export class TreatmentProcessServiceListComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private dotKhamStepsOdataService: DotKhamStepsOdataService,
-    private dotkhamOdataService: DotkhamOdataService,
-    private saleOrdersOdataService: SaleOrdersOdataService,
     private modalService: NgbModal,
-    private authService: AuthService,
     private notificationService: NotificationService,
     private errorService: AppSharedShowErrorService,
     private componentFactoryResolver: ComponentFactoryResolver,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private saleOrderService: SaleOrderService,
+    private dotKhamService: DotKhamService,
+    private dotKhamStepService: DotKhamStepService
   ) { }
 
   ngOnInit() {
@@ -58,9 +54,9 @@ export class TreatmentProcessServiceListComponent implements OnInit {
 
   loadServiceList() {
     if (this.saleOrderId) {
-      this.saleOrdersOdataService.getDotKhamStepByOrderLine(this.saleOrderId).subscribe(
+      this.saleOrderService.getDotKhamStepByOrderLine(this.saleOrderId).subscribe(
         (result) => {
-          this.services = result['value'];
+          this.services = result;
         },
         (error) => {
         }
@@ -70,25 +66,24 @@ export class TreatmentProcessServiceListComponent implements OnInit {
 
   formatTeethList(service) {
     let teethList = '';
-    if(service.ToothType && service.ToothType != 'manual'){
-      teethList = this.toothType.find(x => x.value == service.ToothType).name;
+    if(service.toothType && service.toothType != 'manual'){
+      teethList = this.toothType.find(x => x.value == service.toothType).name;
     }
     else{
-      teethList = service.Teeth.map(x => x.Name).join(', ');
+      teethList = service.teeth.map(x => x.name).join(', ');
     }
     return teethList;
-    // return teethList.map(x => x.Name).join(', ');
   }
 
   checkStatusDotKhamStep(step) {
-    step.IsDone = !step.IsDone;
     var value = {
-      Id: step.Id,
-      IsDone: step.IsDone
+      id: step.id,
+      isDone: !step.isDone
     }
-    this.dotKhamStepsOdataService.patch(step.Id, value).subscribe(
+    this.dotKhamStepService.updateIsDone(value).subscribe(
       (result) => {
         this.notify('success', 'Cập nhật thành công');
+        step.isDone = !step.isDone;
       },
       (error) => {
         this.errorService.show(error);
@@ -115,15 +110,15 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     }
 
     this.activeDotKhamRef.instance.linesFA.push(this.fb.group({
-      NameStep: step.Name,
-      ProductId: service.ProductId,
-      Product: {
-        Id: service.ProductId,
-        Name: service.Name
+      nameStep: step.name,
+      productId: service.productId,
+      product: {
+        id: service.productId,
+        name: service.name
       },
-      Note: null,
-      Teeth: this.fb.array([]),
-      SaleOrderLineId: service.Id,
+      note: null,
+      teeth: this.fb.array([]),
+      saleOrderLineId: service.id,
     }));
   }
 
@@ -132,9 +127,9 @@ export class TreatmentProcessServiceListComponent implements OnInit {
       return;
     }
 
-    this.saleOrdersOdataService.getDotKhamListIds(this.saleOrderId).subscribe((res: any) => {
-      const obs = res.value.map(id => {
-        return this.dotkhamOdataService.getInfo(id);
+    this.saleOrderService.getDotKhamListIds(this.saleOrderId).subscribe((res: any) => {
+      const obs = res.map(id => {
+        return this.dotKhamService.getInfo(id);
       });
 
       forkJoin(obs).subscribe((result: any) => {
@@ -176,10 +171,10 @@ export class TreatmentProcessServiceListComponent implements OnInit {
       componentRef.instance.sequence = sequence;
 
       componentRef.instance.btnSaveEvent.subscribe((dkVal: any) => {
-        this.dotkhamOdataService.update(dotkham.Id, dkVal).subscribe(() => {
+        this.dotKhamService.update(dotkham.id, dkVal).subscribe(() => {
           this.notify('success', 'Lưu thành công');
 
-          this.dotkhamOdataService.getInfo(dotkham.Id).subscribe((result: any) => {
+          this.dotKhamService.getInfo(dotkham.id).subscribe((result: any) => {
             componentRef.instance.setEditModeActive(false);
             dotkham = result;
             componentRef.instance.dotkham = result;
@@ -190,7 +185,7 @@ export class TreatmentProcessServiceListComponent implements OnInit {
       });
 
       componentRef.instance.btnCancelEvent.subscribe(() => {
-        this.dotkhamOdataService.getInfo(dotkham.Id).subscribe((result: any) => {
+        this.dotKhamService.getInfo(dotkham.id).subscribe((result: any) => {
           componentRef.instance.setEditModeActive(false);
           dotkham = result;
           componentRef.instance.dotkham = result;
@@ -210,7 +205,6 @@ export class TreatmentProcessServiceListComponent implements OnInit {
       });
 
       componentRef.instance.btnDeleteEvent.subscribe((dk) => {
-        this.notify('success', 'Xóa thành công');
         var index = this.dotkhams.indexOf(dk);
         this.dotkhams.splice(index, 1);
         this.renderDotKhamList();
@@ -230,8 +224,10 @@ export class TreatmentProcessServiceListComponent implements OnInit {
 
     const componentRef = viewContainerRef.createComponent<SaleOrdersDotkhamCuComponent>(componentFactory, 0);
 
-    let dotkham = new DotKhamVm();
-    dotkham.Date = new Date();
+    let dotkham = <any>{};
+    dotkham.date = new Date();
+    dotkham.lines = [];
+    dotkham.dotKhamImages = [];
     this.dotkhams.unshift(dotkham);
 
     var index = this.dotkhams.indexOf(dotkham);
@@ -243,16 +239,16 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     this.activeDotKhamRef = componentRef;
 
     componentRef.instance.btnSaveEvent.subscribe((dkVal: any) => {
-      if (!dotkham.Id) {
-        this.saleOrdersOdataService.createDotkham(this.saleOrderId, dkVal).subscribe((res: any) => {
+      if (!dotkham.id) {
+        this.saleOrderService.createDotkham(this.saleOrderId, dkVal).subscribe((res: any) => {
           this.notify('success', 'Lưu thành công');
-          dotkham.Id = res.Id;
-          dotkham.Name = res.Name;
+          dotkham.id = res.id;
+          dotkham.name = res.name;
           componentRef.instance.setEditModeActive(false);
           this.activeDotKhamRef = null;
         });
       } else {
-        this.dotkhamOdataService.update(dotkham.Id, dkVal).subscribe((res: any) => {
+        this.dotKhamService.update(dotkham.id, dkVal).subscribe((res: any) => {
           this.notify('success', 'Lưu thành công');
           componentRef.instance.setEditModeActive(false);
           this.activeDotKhamRef = null;
@@ -278,12 +274,12 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     });
 
     componentRef.instance.btnCancelEvent.subscribe(() => {
-      if (!dotkham.Id) {
+      if (!dotkham.id) {
         viewContainerRef.remove(0);
         this.activeDotKhamRef = null;
         this.dotkhams.splice(0, 1);
       } else {
-        this.dotkhamOdataService.getInfo(dotkham.Id).subscribe((result: any) => {
+        this.dotKhamService.getInfo(dotkham.id).subscribe((result: any) => {
           componentRef.instance.setEditModeActive(false);
           dotkham = result;
           componentRef.instance.dotkham = result;
@@ -298,18 +294,18 @@ export class TreatmentProcessServiceListComponent implements OnInit {
   }
 
   onDkSaveEvent(val, dotkham) {
-    val.SaleOrderId = this.saleOrderId;
-    if (!val.Id) {
-      delete val['Id'];
-      this.dotkhamOdataService.create(val).subscribe((res: any) => {
+    val.saleOrderId = this.saleOrderId;
+    if (!val.id) {
+      delete val['id'];
+      this.dotKhamService.create(val).subscribe((res: any) => {
         this.notify('success', 'Lưu thành công');
         if (!dotkham.Id) {
-          dotkham.Id = res.Id;
+          dotkham.id = res.Id;
         }
         console.log(dotkham);
       });
     } else {
-      this.dotkhamOdataService.update(val.Id, val).subscribe((res: any) => {
+      this.dotKhamService.update(val.id, val).subscribe((res: any) => {
         this.notify('success', 'Lưu thành công');
         console.log(dotkham);
       });
