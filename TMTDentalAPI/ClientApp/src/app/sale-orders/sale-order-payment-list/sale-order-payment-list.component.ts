@@ -33,6 +33,7 @@ export class SaleOrderPaymentListComponent implements OnInit {
   ngOnInit() {
     this.loadPayments();
   }
+
   loadPayments() {
     var val = new SaleOrderPaymentPaged();
     val.limit = 0;
@@ -98,5 +99,11 @@ export class SaleOrderPaymentListComponent implements OnInit {
     else {
       return 'Hủy'
     }
+  }
+
+  showServicesName(saleOrderLines) {
+    if (!saleOrderLines || saleOrderLines.length == 0)
+      return "";
+    return saleOrderLines.map(x => x.name).join(", ");
   }
 }

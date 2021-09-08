@@ -28,6 +28,9 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid Id { get; set; }
         public decimal Amount { get; set; }
+
+        public IEnumerable<SaleOrderLineSimple> SaleOrderLines { get; set; } = new List<SaleOrderLineSimple>();
+
         public DateTime Date { get; set; }
 
         public string Note { get; set; }
@@ -140,6 +143,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public CompanyPrintVM Company { get; set; }
         public PartnerPrintVM OrderPartner { get; set; }
         public decimal Amount { get; set; }
+
+        public IEnumerable<SaleOrderLineSimple> SaleOrderLines { get; set; } = new List<SaleOrderLineSimple>();
+
         public DateTime Date { get; set; }
 
         public IEnumerable<SaleOrderPaymentJournalLineDisplay> JournalLines { get; set; } = new List<SaleOrderPaymentJournalLineDisplay>();

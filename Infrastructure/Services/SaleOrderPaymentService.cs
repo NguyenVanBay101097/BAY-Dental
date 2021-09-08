@@ -41,7 +41,8 @@ namespace Infrastructure.Services
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
-            var items = await query.Include(x => x.PaymentRels).ThenInclude(x => x.Payment).ThenInclude(x => x.Journal).ToListAsync();
+            var items = await query.Include(x => x.PaymentRels).ThenInclude(x => x.Payment).ThenInclude(x => x.Journal)
+                .Include(x => x.Lines).ThenInclude(x => x.SaleOrderLine).ToListAsync();
 
             var paged = new PagedResult2<SaleOrderPaymentBasic>(totalItems, val.Offset, val.Limit)
             {
@@ -634,6 +635,7 @@ namespace Infrastructure.Services
                 .Include(x => x.Order.Partner)
                 .Include(x => x.CreatedBy)
                 .Include(x => x.JournalLines).ThenInclude(x => x.Journal)
+                .Include(x => x.Lines).ThenInclude(x => x.SaleOrderLine)
                 ).FirstOrDefaultAsync();
 
             var result = _mapper.Map<SaleOrderPaymentPrintVM>(payment);

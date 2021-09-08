@@ -102,6 +102,16 @@
                     <tr>
                         <td colspan="1" class="o_td_label">
                             <div class="o_form_label o_form_label_help">
+                                Dịch vụ thực hiện
+                            </div>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            <div class="o_field_widget">@(string.Join(", ",Model.SaleOrderLines.Select(x => x.Name)))</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <div class="o_form_label o_form_label_help">
                                 Nội dung
                             </div>
                         </td>
