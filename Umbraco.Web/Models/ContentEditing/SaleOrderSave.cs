@@ -29,8 +29,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? PricelistId { get; set; }
         public Guid? JournalId { get; set; }
 
-        public Guid? QuotationId { get; set; }
-
         public bool? IsQuotation { get; set; }
         public bool IsFast { get; set; }
     }

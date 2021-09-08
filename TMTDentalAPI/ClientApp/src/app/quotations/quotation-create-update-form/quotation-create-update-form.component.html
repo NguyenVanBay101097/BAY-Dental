@@ -146,9 +146,17 @@
         </div>
         <div class="o_form_section">
           <div class="w-100 h-100 d-flex flex-column">
-            <div class="w-100 mb-2">
-              <app-service-list-search-dropdown (onSelectService)="addLine($event)">
-              </app-service-list-search-dropdown>
+            <div class="w-100 mb-2 d-flex justify-content-between">
+              <div>
+                <app-service-list-search-dropdown (onSelectService)="addLine($event)">
+                </app-service-list-search-dropdown>
+              </div>
+              <div>
+                <button type="button" class="btn btn-primary ml-auto" (click)="onOpenQuotationPromotion()">
+                  <img src="assets/icons/promotion-white.svg" alt="" />
+                  Thêm ưu đãi
+                </button>
+              </div>
             </div>
             <div class="d-flex w-100">
               <div class="d-flex flex-column" style="flex: 1 1 100%;">
@@ -270,7 +278,7 @@
               </div>
 
               <div class="pl-3" style="flex: 0 0 auto;width: 320px;">
-                <div class="card mb-3">
+                <!-- <div class="card mb-3">
                   <div class="card-header bg-primary text-white px-3 py-1 d-flex align-items-center">
                     Ưu đãi phiếu điều trị
                     <span class="ml-auto">{{
@@ -295,7 +303,7 @@
                       </button>
                     </div>
                   </div>
-                </div>
+                </div> -->
 
                 <div class="card mb-3">
                   <div class="card-header bg-primary text-white px-3 py-1">
