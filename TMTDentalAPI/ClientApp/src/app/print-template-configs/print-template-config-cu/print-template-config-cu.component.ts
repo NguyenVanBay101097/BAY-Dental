@@ -9,6 +9,7 @@ import { PrintPaperSizeBasic, PrintPaperSizeDisplay, PrintPaperSizePaged, PrintP
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PrintPaperSizeCreateUpdateDialogComponent } from 'src/app/config-prints/print-paper-size-create-update-dialog/print-paper-size-create-update-dialog.component';
 import * as _ from 'lodash';
+import * as constantData from '../constant-data';
 
 @Component({
     selector: 'app-print-template-config-cu',
@@ -24,7 +25,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         language: 'vi',
         height: 525,
         contentsCss: '/css/print.css',
-        fullPage: true,
+        // fullPage: true,
         allowedContent: true,
         entities: false,
         basicEntities: false,
@@ -45,7 +46,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.types = this.configService.types;
+        this.types = constantData.types;
         this.filter.type = "tmp_medicine_order";
         this.filter.isDefault = true;
         this.loadCurrentConfig();

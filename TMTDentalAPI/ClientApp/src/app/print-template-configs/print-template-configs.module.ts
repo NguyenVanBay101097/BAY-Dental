@@ -11,9 +11,10 @@ import { PrintTemplateConfigCuComponent } from './print-template-config-cu/print
 import { PrintTemplateConfigService, SafeHtmlPipe } from './print-template-config.service';
 import { PrintTemplateService } from './print-template.service';
 import { PrintPaperSizeCreateUpdateDialogComponent } from '../config-prints/print-paper-size-create-update-dialog/print-paper-size-create-update-dialog.component';
+import { KeywordListDialogComponent } from './keyword-list-dialog/keyword-list-dialog.component';
 
 @NgModule({
-  declarations: [PrintTemplateConfigListComponent, PrintTemplateConfigCuComponent, SafeHtmlPipe, PrintPaperSizeCreateUpdateDialogComponent],
+  declarations: [PrintTemplateConfigListComponent, PrintTemplateConfigCuComponent, SafeHtmlPipe, PrintPaperSizeCreateUpdateDialogComponent, KeywordListDialogComponent],
   imports: [
     CommonModule,
     PrintTemplatesRoutingModule,
