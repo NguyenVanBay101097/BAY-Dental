@@ -457,7 +457,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       dateOrder: this.saleOrder.dateOrder,
       partnerId: this.saleOrder.partner.id,
       companyId: this.saleOrder.companyId,
-      quotationId: this.saleOrder.quotationId,
       // orderLines: this.saleOrder.orderLines.map(x => {
       //   return {
       //     id: x.id,
