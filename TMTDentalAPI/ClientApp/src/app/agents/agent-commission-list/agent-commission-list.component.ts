@@ -87,7 +87,7 @@ export class AgentCommissionListComponent implements OnInit {
   clickItem(item) {
     if (item && item.dataItem) {
       var id = item.dataItem.agent.id;
-      this.router.navigate(['agents/commission', id]);
+      this.router.navigate(['commission-settlements/agent', id]);
     }
   }
 

@@ -142,13 +142,18 @@ const routes: Routes = [
         canActivate: [AuthGuard]
       },
       {
-        path:'treatment-lines',
-        loadChildren:() => import('./dot-kham-lines/dot-kham-lines.module').then(m => m.DotKhamLinesModule),
-        canActivate:[AuthGuard]
+        path: 'treatment-lines',
+        loadChildren: () => import('./dot-kham-lines/dot-kham-lines.module').then(m => m.DotKhamLinesModule),
+        canActivate: [AuthGuard]
       },
       {
         path: 'sms',
         loadChildren: () => import('./sms/sms.module').then(m => m.SmsModule),
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'commission-settlements',
+        loadChildren: () => import('./commission-settlements/commission-settlements.module').then(m => m.CommissionSettlementsModule),
         canActivate: [AuthGuard]
       },
       {
@@ -170,7 +175,6 @@ const routes: Routes = [
       }
     ]
   },
-
 ];
 
 @NgModule({
