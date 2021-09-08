@@ -199,13 +199,16 @@ namespace TMTDentalAPI.Controllers
             byte[] fileContent;
             var dateToDate = "";
             if (val.DateReceiptFrom.HasValue && val.DateReceiptTo.HasValue)
-                dateToDate = $"Từ ngày {val.DateReceiptFrom.Value.ToString("dd/MM/YYYY")} đến ngày {val.DateReceiptTo.Value.ToString("dd/MM/YYYY")}";
+                dateToDate = $"Từ ngày {val.DateReceiptFrom.Value.ToString("dd/MM/yyyy")} đến ngày {val.DateReceiptTo.Value.ToString("dd/MM/yyyy")}";
 
             using (var package = new ExcelPackage(stream))
             {
                 var worksheet = package.Workbook.Worksheets.Add("QuanLyBaoHanh");
 
                 worksheet.Cells[1, 1, 1, 10].Value = "QUẢN LÝ BẢO HÀNH";
+                worksheet.Cells[1, 1, 1, 10].Style.Font.Bold = true;
+                worksheet.Cells[1, 1, 1, 10].Style.Font.Size = 14;
+                worksheet.Cells[1, 1, 1, 10].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
                 worksheet.Cells[1, 1, 1, 10].Merge = true;
                 worksheet.Cells[2, 1, 2, 10].Value = dateToDate;
                 worksheet.Cells[2, 1, 2, 10].Merge = true;
