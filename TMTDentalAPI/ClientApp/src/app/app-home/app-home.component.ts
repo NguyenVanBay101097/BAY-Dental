@@ -72,8 +72,8 @@ export class AppHomeComponent implements OnInit {
       icon: 'fas fa-shopping-cart',
       url: '/purchase',
       children: [
-        { name: 'Mua hàng', url: '/purchase/orders', linkProps: { queryParams: { type: 'order' } }, permissions: ['Purchase.Order.Read', 'Purchase.Order.Create', 'Purchase.Order.Update', 'Purchase.Order.Delete'] },
-        { name: 'Trả hàng', url: '/purchase/orders', linkProps: { queryParams: { type: 'refund' } }, permissions: ['Purchase.Order.Read'] },
+        { name: 'Mua hàng', url: '/purchase/order', permissions: ['Purchase.Order.Read', 'Purchase.Order.Create', 'Purchase.Order.Update', 'Purchase.Order.Delete'] },
+        { name: 'Trả hàng', url: '/purchase/refund', permissions: ['Purchase.Order.Read'] },
       ],
       permissions: ['Purchase.Order.Read']
     },
@@ -186,7 +186,7 @@ export class AppHomeComponent implements OnInit {
         { name: 'Báo cáo dịch vụ', url: '/report/sale-report/service-report', permissions: ['Report.Sale'] },
         { name: 'Báo cáo khách hàng', url: '/report/report-account-common/partner-report-overview', permissions: ['Report.AccountPartner'] },
         { name: 'Báo cáo tiếp nhận', url: '/report/customer-receipt-reports' },
-        { name: 'Công nợ nhà cung cấp', url: '/report/report-account-common/partner', linkProps: { queryParams: { result_selection: 'supplier' }}, permissions: ['Report.AccountPartner'] },
+        { name: 'Công nợ nhà cung cấp', url: '/report/report-account-common/partner', linkProps: { queryParams: { result_selection: 'supplier' } }, permissions: ['Report.AccountPartner'] },
         { name: 'Khách hàng lân cận phòng khám', url: '/report/partner-report-location', permissions: ['Report.PartnerLocation'] },
         { name: 'Thống kê nguồn khách hàng', url: '/report/report-partner-sources', permissions: ['Report.PartnerSource'] },
         { name: 'Quản lý điều trị', url: '/report/sale-orders/management', permissions: ['Basic.SaleOrder.Read'] },

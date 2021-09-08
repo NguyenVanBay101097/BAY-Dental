@@ -1462,6 +1462,18 @@ html .o_web_client {
     .flex-xxl-column {
         flex-direction: column !important;
     }
+
+    .text-xxl-left {
+        text-align: left!important;
+    }
+
+    .text-xxl-center {
+        text-align: center!important;
+    }
+    
+    .text-xxl-right {
+        text-align: right!important;
+    }
 }
 
 /*Layout*/

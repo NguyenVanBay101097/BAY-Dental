@@ -89,7 +89,9 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     });
 
     this.id = this.route.snapshot.paramMap.get('id');
-    this.type = this.route.snapshot.queryParamMap.get('type');
+    this.route.data.subscribe(data => {
+      this.type = data.type;
+    });
     this.orderId = this.route.snapshot.queryParamMap.get('orderId');
 
     this.loadRecord();
@@ -255,7 +257,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
 
 
   onSaveConfirm() {
-    
+
     var index = _.findIndex(this.orderLines.controls, o => {
       return o.get('productQty').value == null || o.get('priceUnit').value == null;
     });
@@ -296,7 +298,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
         )
         .subscribe(rs => {
           this.notifyService.notify('success', 'Xác nhận thành công');
-          this.router.navigate(['/purchase/orders/edit/' + this.id]);
+          this.router.navigate([`/purchase/${this.type}/edit/` + this.id]);
         });
     }
   }
@@ -344,11 +346,11 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   }
 
   createNew() {
-    this.router.navigate(['/purchase/orders/create'], { queryParams: { type: this.purchaseOrder.type } });
+    this.router.navigate([`/purchase/${this.purchaseOrder.type}/create`]);
   }
 
   actionRefund() {
-    this.router.navigate(['/purchase/orders/create'], { queryParams: { type: 'refund', orderId: this.id } });
+    this.router.navigate(['/purchase/refund/create'], { queryParams: { orderId: this.id } });
   }
 
   focusProductSearchInput() {
@@ -481,7 +483,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
           animation: { type: 'fade', duration: 400 },
           type: { style: 'success', icon: true }
         });
-        this.router.navigate(['/purchase/orders/edit/' + result.id]);
+        this.router.navigate([`/purchase/${this.type}/edit/` + result.id]);
       });
     }
   }
