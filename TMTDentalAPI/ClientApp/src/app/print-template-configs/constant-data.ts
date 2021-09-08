@@ -22,15 +22,65 @@ export const types: { text: string, value: string }[] = [
     { text: 'Phiếu labo', value: 'tmp_labo_order' },
 ];
 
-export const keyWords: { [key: string]: { [keys: string]: { text: string, value: string }[] }[] } =
+export const keyWords =
 
 {
     'tmp_medicine_order': [
         {
-            "Thông tin chi nhánh": [
-                { text: 'Ảnh chi nhánh', value: 'company.logo' },
+            text: "Thông tin chi nhánh",
+            value: [
+                { text: 'Logo chi nhánh', value: 'company.logo' },
                 { text: 'Tên chi nhánh', value: 'company.name' },
-                { text: 'Địa chỉ chi nhánh', value: 'company.logo' },
+                { text: 'Địa chỉ chi nhánh', value: 'company.address' },
+                { text: 'Điện thoại chi nhánh', value: 'company.phone' },
+                { text: 'Email chi nhánh', value: 'company.email' },
+            ]
+        },
+        {
+            text: "Thông tin hóa đơn",
+            value: [
+                { text: 'Ngày lập hóa đơn', value: 'order_date.day' },
+                { text: 'Tháng lập hóa đơn', value: 'order_date.month' },
+                { text: 'Năm lập hóa đơn', value: 'order_date.year' },
+                { text: 'Mã hóa đơn', value: 'name' },
+                { text: 'Tổng tiền', value: 'amount' },
+                { text: 'Tài khoản thanh toán', value: 'account_payment' },
+                { text: 'Số tiền thanh toán', value: 'account_payment.amount' },
+            ]
+        },
+        {
+            text: "Thông tin khách hàng",
+            value: [
+                { text: 'Tên khách hàng', value: 'partner.name' },
+                { text: 'Địa chỉ khách hàng', value: 'partner.address' },
+            ]
+        },
+        {
+            text: "Thông tin bác sĩ",
+            value: [
+                { text: 'Tên bác sĩ', value: 'employee.name' },
+            ]
+        },
+        {
+            text: "Thông tin đơn thuốc",
+            value: [
+                { text: 'Danh sách đơn thuốc', value: 'medicine_order_lines' },
+                { text: 'Tên thuốc', value: 'product.name' },
+                { text: 'Ngày uống', value: 'toa_thuoc_line.number_of_times' },
+                { text: 'Số lần uống', value: 'toa_thuoc_line.amount_of_times' },
+                { text: 'Đơn vị tính', value: 'product.uomname' },
+                { text: 'Thời điểm sử dụng thuốc', value: 'toa_thuoc_line.get_use_at_display' },
+                { text: 'Số lượng thuốc', value: 'quantity' },
+                { text: 'Đơn giá thuốc', value: 'price' },
+                { text: 'Thành tiền', value: 'amount_total' },
+            ]
+        },
+        {
+            text: "Thông tin khám bệnh",
+            value: [
+                { text: 'Lời dặn bác sĩ', value: 'toa_thuoc.note' },
+                { text: 'Chẩn đoán bệnh', value: 'toa_thuoc.diagnostic' },
+                { text: 'Ngày tái khám', value: 'toa_thuoc.re_examination_date' },
             ]
         }
     ],

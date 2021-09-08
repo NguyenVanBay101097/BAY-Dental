@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GenerateReq, PrintTemplateConfigChangeType, PrintTemplateConfigDisplay, PrintTemplateConfigSave, PrintTemplateConfigService, PrintTestReq } from '../print-template-config.service';
 import { NotifyService } from 'src/app/shared/services/notify.service';
@@ -10,6 +10,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PrintPaperSizeCreateUpdateDialogComponent } from 'src/app/config-prints/print-paper-size-create-update-dialog/print-paper-size-create-update-dialog.component';
 import * as _ from 'lodash';
 import * as constantData from '../constant-data';
+import { KeywordListDialogComponent } from '../keyword-list-dialog/keyword-list-dialog.component';
 
 @Component({
     selector: 'app-print-template-config-cu',
@@ -35,6 +36,8 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     paperSizes: PrintPaperSizeBasic[] = [];
     filter = new PrintTemplateConfigChangeType();
 
+    @ViewChild("editor", { static: false }) editor;
+
     constructor(private configService: PrintTemplateConfigService,
         private activeRoute: ActivatedRoute,
         private notifyService: NotifyService,
@@ -42,7 +45,8 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         private printService: PrintService,
         private printTemplateService: PrintTemplateService,
         private paperSizeService: PrintPaperSizeService,
-        private modalService: NgbModal
+        private modalService: NgbModal,
+
     ) { }
 
     ngOnInit() {
@@ -178,5 +182,21 @@ export class PrintTemplateConfigCuComponent implements OnInit {
             this.onGenerate();
         }, () => {
         });
+    }
+
+    onAddKeyWord() {
+        const modalRef = this.modalService.open(KeywordListDialogComponent, { size: 'xl', scrollable: true, windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        modalRef.componentInstance.boxKeyWordSource =
+            JSON.parse(JSON.stringify(constantData.keyWords[this.filter.type]))
+        modalRef.result.then((res) => {
+            if (res) {
+                this.editor.instance.insertText(res.value);
+                setTimeout(() => {
+                    this.editor.instance.focus();
+                }, 0);
+            }
+        }, () => {
+        });
+
     }
 }
