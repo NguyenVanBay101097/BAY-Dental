@@ -182,4 +182,12 @@ export class SaleOrderLineService {
     getSaleReportExportPdf(val) {
         return this.http.get(this.baseApi + this.apiUrl + '/GetSaleReportExportPdf', { params: new HttpParams({ fromObject: val }),  responseType: 'blob'  });
     }
+
+    updateSteps(val) {
+        return this.http.post(this.baseApi + this.apiUrl + '/UpdateSteps', val);
+    }
+
+    getTeethList(id) {
+        return this.http.get(this.baseApi + this.apiUrl + '/'+ id + '/GetTeethList');
+    }
 }

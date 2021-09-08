@@ -111,7 +111,7 @@
                                 <label class="o_form_label">Dịch vụ</label>
                             </td>
                             <td colspan="1">
-                                <kendo-multiselect [data]="filteredServices" [valueField]="'id'" [allowCustom]="true"
+                                <kendo-multiselect [data]="filteredServices" [valueField]="'id'"
                                     [textField]="'name'" [placeholder]="'Chọn dịch vụ'" formControlName="services"
                                     [filterable]="true" #serviceMultiSelect  [attr.disabled]="id && customerReceipt?.state == 'done' ? true : null">
                                     <!-- <ng-template kendoMultiSelectTagTemplate let-dataItem>

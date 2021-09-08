@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
 import { SaleOrderLinesOdataService } from 'src/app/shared/services/sale-order-linesOdata.service';
 
 @Component({
@@ -18,22 +19,22 @@ export class SaleOrderDotkhamTeethPopoverComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private saleOrderLineService: SaleOrderLinesOdataService
+    private saleOrderLineService: SaleOrderLineService
   ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-     Note: null
+     note: null
     });
   }
 
   reLoad() {
-    this.saleOrderLineService.getTeethList(this.line.SaleOrderLineId).subscribe((res: any) => {
-      this.allTeeth = res.value;
+    this.saleOrderLineService.getTeethList(this.line.saleOrderLineId).subscribe((res: any) => {
+      this.allTeeth = res;
     });
     this.formGroup.patchValue(this.line);
-    if (this.line.Teeth) {
-      this.teethSelected = Object.assign([], this.line.Teeth);
+    if (this.line.teeth) {
+      this.teethSelected = Object.assign([], this.line.teeth);
     }
   }
 
@@ -49,7 +50,7 @@ export class SaleOrderDotkhamTeethPopoverComponent implements OnInit {
 
   isSelected(tooth: any) {
     for (var i = 0; i < this.teethSelected.length; i++) {
-      if (this.teethSelected[i].Id === tooth.Id) {
+      if (this.teethSelected[i].id === tooth.id) {
         return true;
       }
     }
@@ -67,9 +68,9 @@ export class SaleOrderDotkhamTeethPopoverComponent implements OnInit {
 
   onSave() {
     const val = this.formGroup.value;
-    this.line.Note = val.Note;
-    this.line.ToothIds = this.teethSelected.map(x => x.Id);
-    this.line.Teeth = this.teethSelected;
+    this.line.note = val.note;
+    this.line.toothIds = this.teethSelected.map(x => x.id);
+    this.line.teeth = this.teethSelected;
     this.eventTeeth.emit(this.line);
     this.popover.close();
   }

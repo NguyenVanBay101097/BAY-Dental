@@ -132,4 +132,7 @@ export class DotKhamService {
         return this.http.post<DotKhamDisplay>(this.baseApi + this.apiUrl + '/GetSearchedDotKham', search);
     }
 
+    getInfo(id) {
+        return this.http.get(this.baseApi + this.apiUrl + "/" + id + '/GetInfo');
+    }
 }

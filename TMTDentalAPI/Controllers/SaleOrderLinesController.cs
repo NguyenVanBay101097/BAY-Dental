@@ -327,5 +327,37 @@ namespace TMTDentalAPI.Controllers
             var file = _converter.Convert(pdf);
             return File(file, "application/pdf", "SaleReport.pdf");
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(Guid id)
+        {
+            var results = await _mapper.ProjectTo<SaleOrderLineViewModel>(_saleLineService.SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
+            return Ok(results);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> UpdateSteps(SaleOrderLineDotKhamSave val)
+        {
+            if (val == null)
+                return BadRequest();
+
+            await _saleLineService.UpdateDkByOrderLine(val.Id, val);
+            return NoContent();
+        }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetTeethList(Guid id)
+        {
+            var line = await _saleLineService.SearchQuery(x => x.Id == id).Select(x => new SaleOrderLineViewModel
+            {
+                Teeth = x.SaleOrderLineToothRels.Select(x => new ToothDisplay
+                {
+                    Id = x.ToothId,
+                    Name = x.Tooth.Name
+                })
+            }).FirstOrDefaultAsync();
+
+            return Ok(line.Teeth);
+        }
     }
 }

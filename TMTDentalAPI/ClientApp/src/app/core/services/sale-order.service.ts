@@ -301,4 +301,16 @@ export class SaleOrderService {
             { responseType: "blob" }
         );
     }
+
+    public createDotkham(id: any, val: any) {
+        return this.http.post(`${this.baseApi}${this.apiUrl}/${id}` + '/CreateDotKham', val);
+    }
+
+    public getDotKhamStepByOrderLine(id: any) {
+        return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetDotKhamStepByOrderLine');
+    }
+
+    getDotKhamListIds(id) {
+        return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetDotKhamListIds');
+    }
 }

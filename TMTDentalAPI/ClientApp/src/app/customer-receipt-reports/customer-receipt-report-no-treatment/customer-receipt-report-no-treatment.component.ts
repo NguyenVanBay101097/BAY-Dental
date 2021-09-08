@@ -97,6 +97,7 @@ export class CustomerReceiptReportNoTreatmentComponent implements OnInit {
     val.companyId = this.companyId || '';
     val.doctorId = this.employeeId || '';
     val.state = 'done';
+    val.isRepeatCustomer = 'false';
     val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
     val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
     return val;

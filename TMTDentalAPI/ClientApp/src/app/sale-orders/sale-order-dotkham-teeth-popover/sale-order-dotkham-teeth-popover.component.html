@@ -19,11 +19,11 @@
             <h6>Răng:</h6>
             <div>
                 <a (click)="onSelected(item)" [ngClass]="{'t_teeth_selected': isSelected(item)}"
-                    class="btn-sm border btn btn-light mb-1 mr-2" *ngFor="let item of allTeeth; let i = index">{{item.Name}}</a>
+                    class="btn-sm border btn btn-light mb-1 mr-2" *ngFor="let item of allTeeth; let i = index">{{item.name}}</a>
             </div>
         </div>
         <h6> Chi tiết điều trị</h6>
-        <textarea formControlName='Note' class="form-control"></textarea>
+        <textarea formControlName='note' class="form-control"></textarea>
         <div class="d-flex mt-2">
             <button (click)="onSave()" class="btn btn-primary mr-2">Lưu</button>
             <button (click)="popover.close()" class="btn bg-close mr-2">Đóng</button>

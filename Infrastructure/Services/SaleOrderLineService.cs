@@ -651,8 +651,6 @@ namespace Infrastructure.Services
                         SaleLineId = line.Id,
                         SaleOrderId = line.OrderId
                     });
-
-                    val.Steps.Remove(item);
                 }
             }
 

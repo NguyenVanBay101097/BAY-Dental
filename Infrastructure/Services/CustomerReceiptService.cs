@@ -189,10 +189,12 @@ namespace Infrastructure.Services
 
         public override ISpecification<CustomerReceipt> RuleDomainGet(IRRule rule)
         {
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
             switch (rule.Code)
             {
                 case "base.customer_receipt_comp_rule":
-                    return new InitialSpecification<CustomerReceipt>(x => x.CompanyId == CompanyId);
+                    return new InitialSpecification<CustomerReceipt>(x => companyIds.Contains(x.CompanyId));
                 default:
                     return null;
             }

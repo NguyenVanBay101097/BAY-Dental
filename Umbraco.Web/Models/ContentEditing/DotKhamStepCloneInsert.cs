@@ -14,4 +14,11 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string CloneInsert { get; set; }
     }
+
+    public class DotKhamStepUpdateIsDone
+    {
+        public Guid Id { get; set; }
+
+        public bool IsDone { get; set; }
+    }
 }

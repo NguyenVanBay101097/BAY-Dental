@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { SaleOrderLinesOdataService } from 'src/app/shared/services/sale-order-linesOdata.service';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 
 @Component({
@@ -18,22 +18,22 @@ export class TreatmentProcessServiceDialogComponent implements OnInit {
   saveDefault: boolean = false;
 
   constructor(private fb: FormBuilder, public activeModal: NgbActiveModal, 
-    private saleOrderLinesOdataService: SaleOrderLinesOdataService, 
+    private saleOrderLineService: SaleOrderLineService, 
     private errorService: AppSharedShowErrorService, 
     private notificationService: NotificationService, 
     private modalService: NgbModal) { }
 
   ngOnInit() {
-    this.title = this.service.Name;
+    this.title = this.service.name;
     this.formGroup = this.fb.group({
       steps: this.fb.array([])
     });
 
     const control = this.steps;
     control.clear();
-    this.service.Steps.forEach(step => {
+    this.service.steps.forEach(step => {
       var g = this.fb.group(step);
-      g.get('Name').setValidators(Validators.required);
+      g.get('name').setValidators(Validators.required);
       control.push(g);
     });
     this.formGroup.markAsPristine();
@@ -48,7 +48,7 @@ export class TreatmentProcessServiceDialogComponent implements OnInit {
 
     var val = this.getValueFormSave();
 
-    this.saleOrderLinesOdataService.update(this.service.Id, val).subscribe(
+    this.saleOrderLineService.updateSteps(val).subscribe(
       (result) => { 
         this.activeModal.close(true);
       },
@@ -90,23 +90,23 @@ export class TreatmentProcessServiceDialogComponent implements OnInit {
 
   add() {
     this.steps.push(this.fb.group({
-      Id: null,
-      Name: [null, Validators.required], 
-      IsDone: false, 
-      Order: this.steps.length + 1
+      id: null,
+      name: [null, Validators.required], 
+      isDone: false, 
+      order: this.steps.length + 1
     }));
     this.steps.markAsDirty();
   }
 
   getValueFormSave() {
     for (let i = 0; i <  this.steps.length; i++) {
-      this.steps.at(i).get('Order').setValue(i+1);
+      this.steps.at(i).get('order').setValue(i+1);
     }
 
     var val = {
-      Id: this.service.Id, 
-      Steps: this.steps.value, 
-      Default: this.saveDefault
+      id: this.service.id, 
+      steps: this.steps.value, 
+      default: this.saveDefault
     };
     return val;
   }

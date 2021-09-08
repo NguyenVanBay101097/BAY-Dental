@@ -75,5 +75,16 @@ namespace TMTDentalAPI.Controllers
             var display = await _dotKhamStepService.GetDisplay(step.Id);
             return Ok(display);
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> UpdateIsDone(DotKhamStepUpdateIsDone val)
+        {
+            var dotkham = await _dotKhamStepService.GetByIdAsync(val.Id);
+            if (dotkham == null)
+                return NotFound();
+            dotkham.IsDone = val.IsDone;
+            await _dotKhamStepService.UpdateAsync(dotkham);
+            return NoContent();
+        }
     }
 }
