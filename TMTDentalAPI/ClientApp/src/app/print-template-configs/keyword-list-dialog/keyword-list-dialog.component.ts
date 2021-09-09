@@ -25,7 +25,7 @@ export class KeywordListDialogComponent implements OnInit {
       .subscribe(value => {
         var temp = JSON.parse(JSON.stringify(this.boxKeyWordSource))
         temp = temp.filter(x => {
-          x.value = x.value.slice().filter(z => z.text.toLowerCase().includes(value.toLowerCase()))
+          x.value = x.value.filter(z => z.text.toLowerCase().includes(value.toLowerCase()) || z.value.toLowerCase().includes(value.toLowerCase()))
           return x.value.length > 0;
         });
         this.boxKeyWordList = temp;

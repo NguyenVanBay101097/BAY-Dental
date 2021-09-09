@@ -103,15 +103,13 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     }
 
     onPrint() {
-        if (this.isEditting) {
-            this.printService.printHtml(this.contentPrev);
-        } else {
-            var val = new PrintTestReq();
-            val.type = this.filter.type;
-            this.configService.printTest(val).subscribe(res => {
-                this.printService.printHtml(res);
-            });
-        }
+        var val = new PrintTestReq();
+        val.type = this.filter.type;
+        val.content = this.isEditting ? this.contentPrev : '';
+        val.printPaperSizeId = this.isEditting ? this.filter.printPaperSizeId : '';
+        this.configService.printTest(val).subscribe(res => {
+            this.printService.printHtml(res);
+        });
     }
 
     onSave() {
@@ -186,8 +184,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
 
     onAddKeyWord() {
         const modalRef = this.modalService.open(KeywordListDialogComponent, { size: 'xl', scrollable: true, windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-        modalRef.componentInstance.boxKeyWordSource =
-            JSON.parse(JSON.stringify(constantData.keyWords[this.filter.type]))
+        modalRef.componentInstance.boxKeyWordSource = constantData.getKeyWords()[this.filter.type];
         modalRef.result.then((res) => {
             if (res) {
                 this.editor.instance.insertText(res.value);
