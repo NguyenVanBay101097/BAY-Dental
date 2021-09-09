@@ -20,17 +20,17 @@
                         <div class="col-6">
                             <table class="w-100">
                                 <tr>
-                                    <td colspan="1" class="o_td_label o_td_label_sm">
+                                    <td style="width:50%" colspan="1" class="o_td_label o_td_label_sm">
                                         <label class="o_form_label">
                                             Diễn giải
                                         </label>
                                     </td>
-                                    <td colspan="1" class="o_td_label o_td_label_sm">
+                                    <td style="width:50%" colspan="1" class="o_td_label o_td_label_sm">
                                         <label class="o_form_label">
                                             Mã
                                         </label>
                                     </td>
-                                    <td colspan="1" class="o_td_label o_td_label_sm">
+                                    <td style="width:70px" colspan="1" class="o_td_label o_td_label_sm">
                                     </td>
                                 </tr>
                                 <tr *ngFor="let item of box.value | slice: 0: box.value.length/2 + 0.5 ">
@@ -50,17 +50,17 @@
                         <div class="col-6">
                             <table class="w-100" *ngIf="box.value.length > 1">
                                 <tr>
-                                    <td colspan="1" class="o_td_label o_td_label_sm">
+                                    <td style="width:50%" colspan="1" class="o_td_label o_td_label_sm">
                                         <label class="o_form_label">
                                             Diễn giải
                                         </label>
                                     </td>
-                                    <td colspan="1" class="o_td_label o_td_label_sm">
+                                    <td style="width:50%" colspan="1" class="o_td_label o_td_label_sm">
                                         <label class="o_form_label">
                                             Mã
                                         </label>
                                     </td>
-                                    <td colspan="1" class="o_td_label o_td_label_sm">
+                                    <td style="width:70px" colspan="1" class="o_td_label o_td_label_sm">
                                     </td>
                                 </tr>
                                 <tr *ngFor="let item of box.value | slice: -box.value.length/2">

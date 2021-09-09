@@ -186,8 +186,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
 
     onAddKeyWord() {
         const modalRef = this.modalService.open(KeywordListDialogComponent, { size: 'xl', scrollable: true, windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-        modalRef.componentInstance.boxKeyWordSource =
-            JSON.parse(JSON.stringify(constantData.keyWords[this.filter.type]))
+        modalRef.componentInstance.boxKeyWordSource = constantData.getKeyWords()[this.filter.type];
         modalRef.result.then((res) => {
             if (res) {
                 this.editor.instance.insertText(res.value);
