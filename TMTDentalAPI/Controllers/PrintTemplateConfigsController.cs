@@ -90,6 +90,7 @@ namespace TMTDentalAPI.Controllers
             context.PushGlobal(scriptObj);
             var layout = _printTemplateConfigService.GetLayout(printTemplateConfig.Content);
             var template = Template.Parse(layout);
+
             try
             {
                 var result = template.Render(context);
