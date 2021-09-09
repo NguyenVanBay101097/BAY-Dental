@@ -51,11 +51,6 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Generate(GenerateReq val)
         {
             object obj = await _printTemplateConfigService.GetSampleData(val.Type);
-            var printTemplateConfig = await _printTemplateConfigService.GetDisplay(new PrintTemplateConfigChangeType() { 
-                IsDefault = val.IsDefault,
-                PrintPaperSizeId = val.PrintPaperSizeId,
-                Type = val.Type });
-
             // Creates 
             var scriptObj = new ScriptObject();
             scriptObj.Import(obj);
@@ -80,27 +75,12 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> PrintTest(PrintTestReq val)
         {
-            object obj = await _printTemplateConfigService.GetSampleData(val.Type);
-            var printTemplateConfig = await _printTemplateConfigService.GetDisplay(new PrintTemplateConfigChangeType() { Type = val.Type });
-            // Creates 
-            var scriptObj = new ScriptObject();
-            scriptObj.Import(obj);
-            scriptObj.Add("paper_size", printTemplateConfig.PrintPaperSize);
-            var context = new TemplateContext();
-            context.PushGlobal(scriptObj);
-            var layout = _printTemplateConfigService.GetLayout(printTemplateConfig.Content);
-            var template = Template.Parse(layout);
+            if (string.IsNullOrEmpty(val.Content))
+                throw new Exception("Mẫu in rỗng , cấu hình mãu in để in thử");
 
-            try
-            {
-                var result = template.Render(context);
-                return Ok(result);
+            var result = await _printTemplateConfigService.PrintTest(val);
+            return Ok(result);
 
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Không thể chuyển đổi do sai cú pháp");
-            }
         }
     }
 }

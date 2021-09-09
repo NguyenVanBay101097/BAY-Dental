@@ -15,6 +15,8 @@ namespace Infrastructure.Services
 
         Task<object> GetSampleData(string type);
 
+        Task<string> PrintTest(PrintTestReq val);
+
         string GetLayout(string content);
 
     }

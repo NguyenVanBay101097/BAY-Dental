@@ -27,7 +27,7 @@
 </div>
 <div class="text-center mb-2">
     <div class="text-3xl font-semibold">ĐƠN THUỐC</div>
-    <div>Ngày {{date.day}} tháng {{date.month}} năm {{date.year}} </div>
+    <div>Ngày {{date_created.day}} tháng {{date_created.month}} năm {{date_created.year}} </div>
     <div class="font-semibold">Số: {{name}}</div>
 </div>
 <div class="o_form_view">
@@ -135,7 +135,7 @@
                     </td>
                     <td colspan="1" style="width: 100%;">
                         {{if re_examination_date }}
-                        <div>{{re_examination_date}}</div>
+                        <div>{{re_examination_date | date.to_string '%d/%m/%Y' }}</div>
 
                         {{ end }}
                     </td>

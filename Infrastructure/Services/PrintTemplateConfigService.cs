@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Scriban;
+using Scriban.Runtime;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -130,7 +132,6 @@ namespace Infrastructure.Services
                         res_toathuoc.Company = company;
                         res_toathuoc.ReExaminationDate = DateTime.Now.AddMonths(3);
                         obj = _mapper.Map<ToaThuocPrintViewModel>(res_toathuoc);
-
                         break;
                     case "tmp_labo_order":
                         var res_labo = JsonConvert.DeserializeObject<LaboOrderPrintVM>(item.Data.ToString());
@@ -141,7 +142,6 @@ namespace Infrastructure.Services
                     case "tmp_purchase_order":
                         var res_purchase_order = JsonConvert.DeserializeObject<PurchaseOrder>(item.Data.ToString());
                         res_purchase_order.Company = company;
-                        //res_purchase_order.User.Name = "Nguyễn Văn A";
                         obj = _mapper.Map<PurchaseOrderPrintVm>(res_purchase_order);
                         break;
                     case "tmp_purchase_refund":
@@ -154,6 +154,21 @@ namespace Infrastructure.Services
                         var res_medicine_order = JsonConvert.DeserializeObject<MedicineOrder>(item.Data.ToString());
                         res_medicine_order.Company = company;
                         obj = _mapper.Map<MedicineOrderPrint>(res_medicine_order);
+                        break;
+                    case "tmp_phieu_thu":
+                        var res_phieu_thu = JsonConvert.DeserializeObject<PhieuThuChi>(item.Data.ToString());
+                        res_phieu_thu.Company = company;
+                        obj = _mapper.Map<PhieuThuChiPrintVM>(res_phieu_thu);
+                        break;
+                    case "tmp_phieu_chi":
+                        var res_medicine_chi = JsonConvert.DeserializeObject<PhieuThuChi>(item.Data.ToString());
+                        res_medicine_chi.Company = company;
+                        obj = _mapper.Map<PhieuThuChiPrintVM>(res_medicine_chi);
+                        break;
+                    case "tmp_customer_debt":
+                        var res_customer_debt = JsonConvert.DeserializeObject<PhieuThuChi>(item.Data.ToString());
+                        res_customer_debt.Company = company;
+                        obj = _mapper.Map<PrintVM>(res_customer_debt);
                         break;
                     default:
                         break;
@@ -175,6 +190,24 @@ namespace Infrastructure.Services
             body.ParentNode.InsertAfter(contentBody, body);
             var newHtml = doc.DocumentNode.OuterHtml;
             return newHtml;
+        }
+
+        public async Task<string> PrintTest(PrintTestReq val)
+        {
+            object obj = await GetSampleData(val.Type);
+            var printPaperSize = await _printPaperSizeService.SearchQuery(x=> x.Id == val.PrintPaperSizeId).FirstOrDefaultAsync();
+            // Creates 
+            var scriptObj = new ScriptObject();
+            scriptObj.Import(obj);
+            scriptObj.Add("paper_size", printPaperSize);
+            var context = new TemplateContext();
+            context.PushGlobal(scriptObj);
+            var layout = GetLayout(val.Content);
+            var template = Template.Parse(layout);
+
+            var result = template.Render(context);
+
+            return result;
         }
 
         public override ISpecification<PrintTemplateConfig> RuleDomainGet(IRRule rule)

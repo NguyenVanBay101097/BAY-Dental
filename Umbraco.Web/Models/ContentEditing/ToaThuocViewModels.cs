@@ -90,7 +90,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public PartnerPrintVM Partner { get; set; }
 
         public string Name { get; set; }
-        public DateTime Date { get; set; }
+        public DateTime DateCreated { get; set; }
         public string Note { get; set; }
         public string Diagnostic { get; set; }
         public string EmployeeName { get; set; }

@@ -19,7 +19,7 @@ namespace ApplicationCore.Entities
         /// tmp_supplier_payment : biên lai thanh toán nhà cung cấp
         /// tmp_phieu_thu : phiếu thu
         /// tmp_phieu_chi : phiếu chi
-        /// tmp_partner_debt : công nợ khách hàng
+        /// tmp_customer_debt : công nợ khách hàng
         /// tmp_agent_commission : phiếu chi hoa hồng
         /// tmp_purchase_order   : phiếu mua hàng
         /// tmp_purchase_refund  : phiếu trả hàng

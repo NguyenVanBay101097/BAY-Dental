@@ -146,6 +146,7 @@
       "companyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
       "saleOrderId": "d4335032-f532-426e-657d-08d96ec5b873",
       "name": "TT030921-00001",
+      "dateCreated": "2021-09-03T17:43:43.8056985",
       "reExaminationDate": null,
       "diagnostic": null
     }
@@ -978,6 +979,141 @@
       "accountPaymentId": "a2b27ce4-3f1a-4779-e4f8-08d95d66ac0a",
       "note": "",
       "state": "confirmed"
+    }
+  },
+  {
+    "Type": "tmp_phieu_thu",
+    "Data": {
+      "id": "a597f262-a38e-4458-864d-08d9735e20a1",
+      "companyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+      "company": {
+        "id": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+        "name": "TPP"
+      },
+      "date": "2021-09-09T13:48:12",
+      "journalId": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+      "journal": {
+        "id": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+        "name": "Tiền mặt",
+        "type": "cash"
+      },
+      "state": "posted",
+      "name": "THU/2021/0001",
+      "type": "thu",
+      "amount": 200000,
+      "communication": null,
+      "accountType": "other",
+      "reason": null,
+      "loaiThuChiId": "f20b282e-351f-4bed-92b8-08d9735e06f5",
+      "loaiThuChi": {
+        "id": "f20b282e-351f-4bed-92b8-08d9735e06f5",
+        "name": "Khám ngoài giờ"
+      },
+      "partnerType": "employee",
+      "partner": {
+        "id": "9fe4aeca-9ac8-4a8f-127b-08d96ec504cd",
+        "name": "Bác sĩ A",
+        "displayName": "[NV00001] Bác sĩ A",
+        "gender": "male",
+        "genderConvertcom": "Nam",
+        "birthMonth": null,
+        "birthDay": null,
+        "birthYear": null,
+        "jobTitle": null,
+        "medicalHistory": null,
+        "categories": [],
+        "memberLevel": null
+      },
+      "isAccounting": false
+    }
+  },
+  {
+    "Type": "tmp_phieu_chi",
+    "Data": {
+      "id": "2c6f2715-ebd3-4ff5-864e-08d9735e20a1",
+      "companyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+      "company": {
+        "id": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+        "name": "TPP"
+      },
+      "date": "2021-09-09T13:50:42",
+      "journalId": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+      "journal": {
+        "id": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+        "name": "Tiền mặt",
+        "type": "cash"
+      },
+      "state": "posted",
+      "name": "CHI/2021/0001",
+      "type": "chi",
+      "amount": 300000,
+      "communication": null,
+      "accountType": "other",
+      "reason": null,
+      "loaiThuChiId": "da93d096-ed57-4756-92b9-08d9735e06f5",
+      "loaiThuChi": {
+        "id": "da93d096-ed57-4756-92b9-08d9735e06f5",
+        "name": "Văn Phòng Phẩm"
+      },
+      "partnerType": "employee",
+      "partner": {
+        "id": "9fe4aeca-9ac8-4a8f-127b-08d96ec504cd",
+        "name": "Bác sĩ A",
+        "displayName": "[NV00001] Bác sĩ A",
+        "gender": "male",
+        "genderConvertcom": "Nam",
+        "birthMonth": null,
+        "birthDay": null,
+        "birthYear": null,
+        "jobTitle": null,
+        "medicalHistory": null,
+        "categories": [],
+        "memberLevel": null
+      },
+      "isAccounting": false
+    }
+  },
+  {
+    "Type": "tmp_customer_debt",
+    "Data": {
+      "id": "7696ea0e-acd4-4906-864f-08d9735e20a1",
+      "companyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+      "company": {
+        "id": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+        "name": "TPP"
+      },
+      "date": "2021-09-09T14:02:31",
+      "journalId": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+      "journal": {
+        "id": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+        "name": "Tiền mặt",
+        "type": "cash"
+      },
+      "state": "posted",
+      "name": "THUCN/2021/0001",
+      "type": "thu",
+      "amount": 500000,
+      "communication": null,
+      "accountType": "customer_debt",
+      "reason": null,
+      "loaiThuChiId": "00000000-0000-0000-0000-000000000000",
+      "loaiThuChi": null,
+      "partnerType": null,
+      "partner": {
+        "id": "8a5316cc-14c3-4b92-1279-08d96ec504cd",
+        "name": "Khách hàng A",
+        "displayName": "[KH0007] Khách hàng A",
+        "gender": "male",
+        "genderConvertcom": "Nam",
+        "birthMonth": 10,
+        "birthDay": 15,
+        "birthYear": 1995,
+        "jobTitle": null,
+        "medicalHistory": null,
+        "categories": [],
+        "memberLevel": null
+      },
+      "isAccounting": false
     }
   }
 

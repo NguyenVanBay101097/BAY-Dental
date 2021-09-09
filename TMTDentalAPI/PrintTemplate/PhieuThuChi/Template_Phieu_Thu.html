@@ -1,0 +1,132 @@
+﻿<div class="d-flex mb-2">
+    {{ if company.logo != "" && company.logo != null}}
+    <img class="img-fluid me-3 w-20" src="{{company.logo}}" alt="{{company.name}}">
+    {{ end }}
+
+    <div>
+        <div class="text-xl font-semibold">{{company.name}}</div>
+        {{if company.address != ""}}
+
+        <div>Địa chỉ: {{company.address}}</div>
+
+        {{ end }}
+
+        {{ if company.phone}}
+
+        <div>ĐT: {{company.phone}}</div>
+
+        {{ end }}
+
+        {{if company.email }}
+
+        <div>Email: {{company.email}}</div>
+
+        {{ end }}
+
+    </div>
+</div>
+<div class="text-center mb-3">
+    <div class="text-3xl font-semibold">PHIẾU THU</div>
+    <div>Ngày {{date.day}} tháng {{date.month}} năm {{date.year}} </div>
+    <div class="font-semibold">Số: {{name}}</div>
+</div>
+<div class="o_form_view mb-2">
+    <div class="o_group">
+        <table class="o_group o_inner_group">
+            <tbody>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            <span>Người nộp</span>
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">
+                        {{partner_name}}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Địa chỉ
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">
+                        {{address}}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            <span>Loại thu</span>
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">
+                        {{loai_thu_chi_name}}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Số tiền
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">
+                        {{amount | math.format "N0" "vi-VN"}}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Phương thức
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">
+                        {{journal_name}}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Bằng chữ
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">
+                        {{amount_text}}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="1" class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Nội dung
+                        </label>
+                    </td>
+                    <td colspan="1" style="width: 100%;">
+                        {{reason}}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="d-flex">
+    <div class="col">
+        <div class="text-center">
+            <span class="font-semibold"> Người lập phiếu</span> <br />
+            <i>(Ký, họ tên)</i> <br />
+            <span></span> <br />
+            <span></span> <br />
+            <span></span> <br />
+            <span class="font-semibold">{{created_by_name ? (created_by_name | string.upcase) : "" }}</span>
+        </div>
+    </div>
+    <div class="col">
+        <div class="text-center">
+            <span class="font-semibold">Người nộp</span> <br />
+            <i>(Ký, họ tên)</i> <br />
+            <span></span> <br />
+            <span></span> <br />
+            <span></span> <br />
+            <span class="font-semibold">{{partner_name ? (partner_name | string.upcase) : ""}}</span>
+        </div>
+    </div>
+</div>
