@@ -1467,6 +1467,10 @@ html .o_web_client {
         text-align: left!important;
     }
 
+    .container, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
+        max-width: 1320px;
+    }
+
     .text-xxl-center {
         text-align: center!important;
     }
