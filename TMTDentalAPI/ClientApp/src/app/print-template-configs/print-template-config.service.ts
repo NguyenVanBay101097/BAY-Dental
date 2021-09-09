@@ -34,6 +34,8 @@ export class GenerateReq {
 
 export class PrintTestReq {
   type: string;
+  content: string;
+  printPaperSizeId: string;
 }
 
 
