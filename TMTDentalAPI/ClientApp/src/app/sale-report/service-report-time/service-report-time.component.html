@@ -1,62 +1,70 @@
-<div class="card">
-    <div class="card-body">
-        <h5 class="card-title">Dịch vụ theo thời gian</h5>
-        <div class="form-inline">
-            <app-date-range-picker-filter [opens]="'right'" class="mb-2 mr-2" [startDate]="filter.dateFrom"
-                [endDate]="filter.dateTo" (searchChange)="onSearchDateChange($event)" opens="right">
-            </app-date-range-picker-filter>
-            <kendo-combobox [placeholder]="'Tất cả bác sĩ'" class="mb-2 mr-2" [valueField]="'id'" [textField]="'name'"
-                [filterable]="true" [data]="employees" (valueChange)="onSelectEmployee($event)" #empCbx>
-            </kendo-combobox>
-            <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mb-2 mr-2" [valueField]="'id'"
-                [textField]="'name'" [filterable]="true" [data]="companies" (valueChange)="onSelectCompany($event)"
-                #companyCbx>
-            </kendo-combobox>
-            <input class="mb-2 mr-2 form-control filter-search" placeholder="Tìm kiếm khách hàng, dịch vụ" type="text"
-                [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)">
-            <div class="dropdown mb-2 mr-2">
-                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-download"></i> Xuất File</button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" (click)="exportExcel()">Xuất Excel</a>
-                    <a class="dropdown-item" (click)="onExportPDF()">Xuất PDF</a>
-                </div>
+<div class="container py-3">
+    <div class="form-inline">
+        <app-date-range-picker-filter [opens]="'right'" class="mb-2 mr-2" [startDate]="filter.dateFrom"
+            [endDate]="filter.dateTo" (searchChange)="onSearchDateChange($event)" opens="right">
+        </app-date-range-picker-filter>
+        <kendo-combobox [placeholder]="'Tất cả bác sĩ'" class="mb-2 mr-2" [valueField]="'id'" [textField]="'name'"
+            [filterable]="true" [data]="employees" (selectionChange)="onSelectEmployee($event)" #empCbx>
+        </kendo-combobox>
+        <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mb-2 mr-2" [valueField]="'id'"
+            [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)"
+            #companyCbx>
+        </kendo-combobox>
+        <input class="mb-2 mr-2 form-control filter-search" placeholder="Tìm kiếm khách hàng, dịch vụ" type="text"
+            [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)">
+        <div class="dropdown mb-2 mr-2">
+            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-download"></i> Xuất File</button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" (click)="exportExcel(grid)">Xuất Excel</a>
+                <a class="dropdown-item" (click)="onExportPDF()">Xuất PDF</a>
             </div>
-            <button class="btn btn-primary mb-2" (click)="onPrint()">In báo cáo</button>
         </div>
-        <div class="d-flex mb-2 order-state">
-            <button type="button" *ngFor="let item of filterState" class="btn active mr-2"
-                (click)="onChangeFilterState(item)" [class.btn-primary]="filter.state == item.value">
-                {{item.text}}
-            </button>
-            
-        </div>
-        <kendo-grid [resizable]="true" #grid class="" [loading]="loading"
-            [data]="gridData" [pageSize]="this.limit" [skip]="this.skip" [pageable]="true"
-            (pageChange)="pageChange($event)">
-            <kendo-grid-column field="date" title="Ngày tạo" width="150">
-                <ng-template kendoGridCellTemplate let-dataItem>
-                    {{dataItem.date | date: 'dd/MM/yyyy'}}
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column field="quantity" class="text-right" [headerClass]="'text-right'" title="Số lượng"
-                width="100">
-                <ng-template kendoGridCellTemplate let-dataItem>
-                    {{dataItem.quantity |number}}
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column class="text-right" [headerClass]="'text-right'" field="totalAmount" title="Tổng tiền"
-                width="150">
-                <ng-template kendoGridCellTemplate let-dataItem>
-                    {{dataItem.totalAmount |number}}
-                </ng-template>
-            </kendo-grid-column>
-            <!-- excel -->
-            <kendo-grid-excel fileName="baocaodichvu.xlsx" [fetchData]="allData"></kendo-grid-excel>
-            <div *kendoGridDetailTemplate="let dataItem">
-                <app-service-report-detail [parentFilter]="filter" [parent]="dataItem"></app-service-report-detail>
-            </div>
-        </kendo-grid>
+        <button class="btn btn-primary mb-2" (click)="onPrint()">In báo cáo</button>
     </div>
+    <div class="d-flex mb-2 order-state">
+        <!-- <input [(ngModel)]="filterState" (ngModelChange)="onChangeFilterState()" value="" type="radio"
+            class="btn-check hidden hide" name="orderStates" id="all" autocomplete="off" [checked]="true">
+        <label class="btn btn-outline-primary mr-2 mb-0" for="all">Tất cả</label>
+        <input [(ngModel)]="filterState" (ngModelChange)="onChangeFilterState()" value="sale" type="radio"
+            class="btn-check hidden hide" name="orderStates" id="sale" autocomplete="off" [checked]="true">
+        <label class="btn btn-outline-primary mr-2 mb-0" for="sale">Đang điều trị</label>
+        <input [(ngModel)]="filterState" (ngModelChange)="onChangeFilterState()" value="done" type="radio"
+            class="btn-check hidden hide" name="orderStates" id="done" autocomplete="off" [checked]="true">
+        <label class="btn btn-outline-primary mr-2 mb-0" for="done">Hoàn thành</label>
+        <input [(ngModel)]="filterState" (ngModelChange)="onChangeFilterState()" value="notActive" type="radio"
+            class="btn-check hidden hide" name="orderStates" id="notActive" autocomplete="off" [checked]="true">
+        <label class="btn btn-outline-primary mr-2 mb-0" for="notActive">Ngừng điều trị</label> -->
+
+        <button type="button" *ngFor="let item of filterState" class="btn btn-outline-primary mr-2"
+            (click)="onChangeFilterState(item)" [class.active]="state == item.value">
+            {{item.text}}
+        </button>
+        
+    </div>
+    <kendo-grid (excelExport)="onExcelExport($event)" [resizable]="true" #grid class="" [loading]="loading"
+        [data]="gridData" [pageSize]="this.limit" [skip]="this.skip" [pageable]="true"
+        (pageChange)="pageChange($event)">
+        <kendo-grid-column field="date" title="Ngày tạo">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.date | date: 'dd/MM/yyyy'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="quantity" class="text-right" [headerClass]="'text-right'" title="Số lượng">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.quantity |number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column class="text-right" [headerClass]="'text-right'" field="totalAmount" title="Tổng tiền">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.totalAmount |number}}
+            </ng-template>
+        </kendo-grid-column>
+        <!-- excel -->
+        <kendo-grid-excel fileName="baocaodichvu.xlsx" [fetchData]="allData"></kendo-grid-excel>
+        <div *kendoGridDetailTemplate="let dataItem">
+            <app-service-report-detail [parentFilter]="filter" [parent]="dataItem"></app-service-report-detail>
+        </div>
+    </kendo-grid>
 </div>
