@@ -51,7 +51,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
 
     ngOnInit() {
         this.types = constantData.types;
-        this.filter.type = "tmp_medicine_order";
+        this.filter.type = "tmp_toathuoc";
         this.filter.isDefault = true;
         this.loadCurrentConfig();
         this.loadPaperSizeList();

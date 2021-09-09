@@ -42,6 +42,7 @@ export class SafeHtmlPipe implements PipeTransform {
   constructor(private sanitizer: DomSanitizer) { }
 
   transform(value) {
+    value = `<link rel="stylesheet" type="text/css" href="/css/print.css" /> \n ` + value;
     return this.sanitizer.bypassSecurityTrustHtml(value);
   }
 }

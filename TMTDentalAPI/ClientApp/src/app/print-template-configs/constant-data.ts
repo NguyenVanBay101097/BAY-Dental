@@ -44,7 +44,6 @@ export const keyWords =
                 { text: 'Năm lập hóa đơn', value: 'order_date.year' },
                 { text: 'Mã hóa đơn', value: 'name' },
                 { text: 'Tổng tiền', value: 'amount' },
-                { text: 'Tài khoản thanh toán', value: 'account_payment' },
                 { text: 'Số tiền thanh toán', value: 'account_payment.amount' },
             ]
         },
@@ -62,9 +61,9 @@ export const keyWords =
             ]
         },
         {
-            text: "Thông tin đơn thuốc",
+            text: "Thông tin toa thuốc",
             value: [
-                { text: 'Danh sách đơn thuốc', value: 'medicine_order_lines' },
+                { text: 'Danh sách thuốc', value: 'medicine_order_lines' },
                 { text: 'Tên thuốc', value: 'product.name' },
                 { text: 'Ngày uống', value: 'toa_thuoc_line.number_of_times' },
                 { text: 'Số lần uống', value: 'toa_thuoc_line.amount_of_times' },
