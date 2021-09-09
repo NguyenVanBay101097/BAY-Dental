@@ -1462,6 +1462,10 @@ html .o_web_client {
     .flex-xxl-column {
         flex-direction: column !important;
     }
+
+    .container, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
+        max-width: 1320px;
+    }
 }
 
 /*Layout*/
