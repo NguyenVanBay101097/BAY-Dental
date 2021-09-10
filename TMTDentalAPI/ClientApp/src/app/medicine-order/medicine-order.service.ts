@@ -139,11 +139,11 @@ export class MedicineOrderService {
     return this.http.post<PrecscriptionPaymentReport>(this.base_api + this.apiUrl + '/GetReport', val);
   }
 
-  // getPrint(id: string) {
-  //   return this.http.get(this.base_api + this.apiUrl + "/" + id + '/GetPrint');
-  // }
-
   getPrint(id: string) {
-    return this.http.get(this.base_api + this.apiPrintUrl + "/Print" + `?id=${id}`, { responseType: 'text' });
+    return this.http.get(this.base_api + this.apiUrl + "/" + id + '/GetPrint');
   }
+
+  // getPrint(id: string) {
+  //   return this.http.get(this.base_api + this.apiPrintUrl + "/Print" + `?id=${id}`, { responseType: 'text' });
+  // }
 }

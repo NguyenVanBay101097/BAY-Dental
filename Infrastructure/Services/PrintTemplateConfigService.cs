@@ -210,6 +210,25 @@ namespace Infrastructure.Services
             return result;
         }
 
+        public async Task<string> PrintOfType(PrintOfTypeReq val)// in hóa đơn của 1 type cụ thể kèm data
+        {
+            PrintTemplateConfigDisplay printConfig = await GetDisplay(new PrintTemplateConfigChangeType() { IsDefault = true, Type = val.Type});
+
+            var printPaperSize = await _printPaperSizeService.SearchQuery(x => x.Id == printConfig.PrintPaperSizeId).FirstOrDefaultAsync();
+            // Creates 
+            var scriptObj = new ScriptObject();
+            scriptObj.Import(val.Obj);
+            scriptObj.Add("paper_size", printPaperSize);
+            var context = new TemplateContext();
+            context.PushGlobal(scriptObj);
+            var layout = GetLayout(printConfig.Content);
+            var template = Template.Parse(layout);
+
+            var result = template.Render(context);
+
+            return result;
+        }
+
         public override ISpecification<PrintTemplateConfig> RuleDomainGet(IRRule rule)
         {
             switch (rule.Code)

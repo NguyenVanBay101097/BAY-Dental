@@ -255,7 +255,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
 
 
   onSaveConfirm() {
-    
+
     var index = _.findIndex(this.orderLines.controls, o => {
       return o.get('productQty').value == null || o.get('priceUnit').value == null;
     });
@@ -488,7 +488,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
 
   getPrint(id) {
     this.purchaseOrderService.getPrint(id).subscribe((data: any) => {
-      this.printService.printHtml(data);
+      this.printService.printHtml(data.html);
     });
   }
 

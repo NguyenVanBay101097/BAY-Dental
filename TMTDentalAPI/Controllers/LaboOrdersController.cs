@@ -27,15 +27,18 @@ namespace TMTDentalAPI.Controllers
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly IDotKhamService _dotKhamService;
         private readonly IViewRenderService _viewRenderService;
+        private readonly IPrintTemplateConfigService _printTemplateConfigService;
 
         public LaboOrdersController(ILaboOrderService laboOrderService, IMapper mapper,
-            IUnitOfWorkAsync unitOfWork, IDotKhamService dotKhamService, IViewRenderService viewRenderService)
+            IUnitOfWorkAsync unitOfWork, IDotKhamService dotKhamService, IViewRenderService viewRenderService
+            , IPrintTemplateConfigService printTemplateConfigService)
         {
             _laboOrderService = laboOrderService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _dotKhamService = dotKhamService;
             _viewRenderService = viewRenderService;
+            _printTemplateConfigService = printTemplateConfigService;
         }
 
         [HttpGet]
@@ -156,7 +159,7 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpGet("{id}/[action]")]
+        [HttpGet("{id}/Print")]
         [CheckAccess(Actions = "Labo.LaboOrder.Read")]
         public async Task<IActionResult> GetPrint(Guid id)
         {
@@ -178,7 +181,8 @@ namespace TMTDentalAPI.Controllers
             if (order == null)
                 return NotFound();
 
-            var html = _viewRenderService.Render("LaboOrder/Print", order);
+            var obj = _mapper.Map<LaboOrderPrintVM>(order);
+            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = obj, Type = "tmp_labo_order" });
 
             return Ok(new PrintData() { html = html });
         }
