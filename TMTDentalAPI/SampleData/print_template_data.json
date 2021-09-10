@@ -1115,6 +1115,401 @@
       },
       "isAccounting": false
     }
+  },
+  {
+    "Type": "tmp_stock_picking_incoming",
+    "Data": {
+      "id": "6d60e560-a613-43b6-94bc-08d9743801c6",
+      "partnerId": "d0f349d6-870a-4960-b11b-08d9693d942f",
+      "partner": {
+        "id": "d0f349d6-870a-4960-b11b-08d9693d942f",
+        "name": "Labo Việt Tiến",
+        "displayName": "[NCC0001] Labo Việt Tiến",
+        "gender": "male",
+        "genderConvertcom": "Nam",
+        "birthMonth": null,
+        "birthDay": null,
+        "birthYear": null,
+        "jobTitle": null,
+        "medicalHistory": null,
+        "categories": [],
+        "memberLevel": null
+      },
+      "pickingTypeId": "51d0eaa8-7638-4533-abcd-08d9693d95b2",
+      "note": null,
+      "state": "done",
+      "date": "2021-09-10T15:49:53",
+      "name": "WH/IN/00002",
+      "moveLines": [
+        {
+          "id": "70bc4c1e-d0cd-4f89-4500-08d9743801c8",
+          "note": null,
+          "name": "Banh môi",
+          "productUOMQty": 50,
+          "productUOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+          "productUOM": {
+            "id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "name": "Cái",
+            "active": true,
+            "uomType": "reference",
+            "categoryName": null,
+            "categoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+          },
+          "productId": "f02bb537-b624-48fe-fec9-08d9693da293",
+          "product": {
+            "id": "f02bb537-b624-48fe-fec9-08d9693da293",
+            "name": "Banh môi",
+            "nameNoSign": "Banh môi|Banh moi|Bm",
+            "defaultCode": "SP0012",
+            "priceUnit": null,
+            "purchasePrice": 100000,
+            "standardPrice": 0,
+            "categId": "58529f50-691d-48d7-fe08-08d9693d95c7",
+            "categ": {
+              "id": "58529f50-691d-48d7-fe08-08d9693d95c7",
+              "name": "Dụng cụ",
+              "completeName": "Dụng cụ",
+              "parentId": null,
+              "parent": null
+            },
+            "type2": "product",
+            "listPrice": 0,
+            "firm": null,
+            "laboPrice": null,
+            "uomId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "uom": {
+              "id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+              "name": "Cái",
+              "active": true,
+              "uomType": "reference",
+              "categoryName": null,
+              "categoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+            }
+          },
+          "sequence": 1,
+          "priceUnit": 100000
+        },
+        {
+          "id": "54f9f907-d2e3-4fec-4501-08d9743801c8",
+          "note": null,
+          "name": "Kiêm tiêm",
+          "productUOMQty": 50,
+          "productUOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+          "productUOM": {
+            "id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "name": "Cái",
+            "active": true,
+            "uomType": "reference",
+            "categoryName": null,
+            "categoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+          },
+          "productId": "e90b3565-8603-4a20-fec8-08d9693da293",
+          "product": {
+            "id": "e90b3565-8603-4a20-fec8-08d9693da293",
+            "name": "Kiêm tiêm",
+            "nameNoSign": "Kiêm tiêm|Kiem tiem|Kt",
+            "defaultCode": "SP0011",
+            "priceUnit": null,
+            "purchasePrice": 15000,
+            "standardPrice": 0,
+            "categId": "58529f50-691d-48d7-fe08-08d9693d95c7",
+            "categ": {
+              "id": "58529f50-691d-48d7-fe08-08d9693d95c7",
+              "name": "Dụng cụ",
+              "completeName": "Dụng cụ",
+              "parentId": null,
+              "parent": null
+            },
+            "type2": "product",
+            "listPrice": 0,
+            "firm": null,
+            "laboPrice": null,
+            "uomId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "uom": {
+              "id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+              "name": "Cái",
+              "active": true,
+              "uomType": "reference",
+              "categoryName": null,
+              "categoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+            }
+          },
+          "sequence": 2,
+          "priceUnit": 15000
+        }
+      ],
+      "companyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+      "locationId": "5c4d21f9-1286-4b4e-29b3-08d9693d9511",
+      "locationDestId": "af2d8792-ef90-4c89-29b6-08d9693d9511",
+      "createdByName": "admin"
+    }
+  },
+  {
+    "Type": "tmp_stock_picking_outgoing",
+    "Data": {
+      "id": "55959f37-eee8-406b-94bd-08d9743801c6",
+      "partnerId": "d0f349d6-870a-4960-b11b-08d9693d942f",
+      "partner": {
+        "id": "d0f349d6-870a-4960-b11b-08d9693d942f",
+        "name": "Labo Việt Tiến",
+        "displayName": "[NCC0001] Labo Việt Tiến",
+        "gender": "male",
+        "genderConvertcom": "Nam",
+        "birthMonth": null,
+        "birthDay": null,
+        "birthYear": null,
+        "jobTitle": null,
+        "medicalHistory": null,
+        "categories": [],
+        "memberLevel": null
+      },
+      "pickingTypeId": "d9077f3a-8423-4536-abce-08d9693d95b2",
+      "note": null,
+      "state": "done",
+      "date": "2021-09-10T15:50:36",
+      "name": "WH/OUT/00002",
+      "moveLines": [
+        {
+          "id": "4aadacc2-babb-4225-4502-08d9743801c8",
+          "note": null,
+          "name": "Banh môi",
+          "productUOMQty": 20,
+          "productUOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+          "productUOM": {
+            "id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "name": "Cái",
+            "active": true,
+            "uomType": "reference",
+            "categoryName": null,
+            "categoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+          },
+          "productId": "f02bb537-b624-48fe-fec9-08d9693da293",
+          "product": {
+            "id": "f02bb537-b624-48fe-fec9-08d9693da293",
+            "name": "Banh môi",
+            "nameNoSign": "Banh môi|Banh moi|Bm",
+            "defaultCode": "SP0012",
+            "priceUnit": null,
+            "purchasePrice": 100000,
+            "standardPrice": 0,
+            "categId": "58529f50-691d-48d7-fe08-08d9693d95c7",
+            "categ": {
+              "id": "58529f50-691d-48d7-fe08-08d9693d95c7",
+              "name": "Dụng cụ",
+              "completeName": "Dụng cụ",
+              "parentId": null,
+              "parent": null
+            },
+            "type2": "product",
+            "listPrice": 0,
+            "firm": null,
+            "laboPrice": null,
+            "uomId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "uom": {
+              "id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+              "name": "Cái",
+              "active": true,
+              "uomType": "reference",
+              "categoryName": null,
+              "categoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+            }
+          },
+          "sequence": 1,
+          "priceUnit": 100000
+        },
+        {
+          "id": "3512d5ba-57a9-4fe7-4503-08d9743801c8",
+          "note": null,
+          "name": "Kiêm tiêm",
+          "productUOMQty": 20,
+          "productUOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+          "productUOM": {
+            "id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "name": "Cái",
+            "active": true,
+            "uomType": "reference",
+            "categoryName": null,
+            "categoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+          },
+          "productId": "e90b3565-8603-4a20-fec8-08d9693da293",
+          "product": {
+            "id": "e90b3565-8603-4a20-fec8-08d9693da293",
+            "name": "Kiêm tiêm",
+            "nameNoSign": "Kiêm tiêm|Kiem tiem|Kt",
+            "defaultCode": "SP0011",
+            "priceUnit": null,
+            "purchasePrice": 15000,
+            "standardPrice": 0,
+            "categId": "58529f50-691d-48d7-fe08-08d9693d95c7",
+            "categ": {
+              "id": "58529f50-691d-48d7-fe08-08d9693d95c7",
+              "name": "Dụng cụ",
+              "completeName": "Dụng cụ",
+              "parentId": null,
+              "parent": null
+            },
+            "type2": "product",
+            "listPrice": 0,
+            "firm": null,
+            "laboPrice": null,
+            "uomId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "uom": {
+              "id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+              "name": "Cái",
+              "active": true,
+              "uomType": "reference",
+              "categoryName": null,
+              "categoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+            }
+          },
+          "sequence": 2,
+          "priceUnit": 15000
+        }
+      ],
+      "companyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+      "locationId": "af2d8792-ef90-4c89-29b6-08d9693d9511",
+      "locationDestId": "4c49d9ee-bf6e-4402-29b4-08d9693d9511",
+      "createdByName": "admin"
+    }
+  },
+  {
+    "Type": "tmp_stock_inventory",
+    "Data": {
+      "id": "e68e8ccd-4aef-493c-1be9-08d97437d3cf",
+      "name": "KK00001",
+      "date": "2021-09-10T15:48:00",
+      "note": null,
+      "lines": [
+        {
+          "id": "e5be3e0b-9fa2-448a-6d9c-08d97437e102",
+          "locationId": "af2d8792-ef90-4c89-29b6-08d9693d9511",
+          "location": {
+            "id": "af2d8792-ef90-4c89-29b6-08d9693d9511",
+            "name": "Dự trữ",
+            "nameGet": "WH/Dự trữ"
+          },
+          "productId": "e90b3565-8603-4a20-fec8-08d9693da293",
+          "product": {
+            "id": "e90b3565-8603-4a20-fec8-08d9693da293",
+            "name": "Kiêm tiêm",
+            "nameNoSign": "Kiêm tiêm|Kiem tiem|Kt",
+            "defaultCode": "SP0011",
+            "priceUnit": null,
+            "purchasePrice": 15000,
+            "standardPrice": 0,
+            "categId": "58529f50-691d-48d7-fe08-08d9693d95c7",
+            "categ": null,
+            "type2": "product",
+            "listPrice": 0,
+            "firm": null,
+            "laboPrice": null,
+            "uomId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "uom": {
+              "id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+              "name": "Cái",
+              "active": true,
+              "uomType": "reference",
+              "categoryName": null,
+              "categoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+            }
+          },
+          "productUOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+          "productUOM": {
+            "id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "name": "Cái",
+            "active": true,
+            "uomType": "reference",
+            "categoryName": null,
+            "categoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+          },
+          "productQty": 30,
+          "theoreticalQty": 30,
+          "inventoryId": "e68e8ccd-4aef-493c-1be9-08d97437d3cf",
+          "inventory": {
+            "id": "e68e8ccd-4aef-493c-1be9-08d97437d3cf",
+            "name": "KK00001",
+            "date": "2021-09-10T15:48:00",
+            "state": "done"
+          },
+          "companyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+          "company": null,
+          "sequence": 0
+        },
+        {
+          "id": "02ecf1ca-9f27-44a3-6d9d-08d97437e102",
+          "locationId": "af2d8792-ef90-4c89-29b6-08d9693d9511",
+          "location": {
+            "id": "af2d8792-ef90-4c89-29b6-08d9693d9511",
+            "name": "Dự trữ",
+            "nameGet": "WH/Dự trữ"
+          },
+          "productId": "f02bb537-b624-48fe-fec9-08d9693da293",
+          "product": {
+            "id": "f02bb537-b624-48fe-fec9-08d9693da293",
+            "name": "Banh môi",
+            "nameNoSign": "Banh môi|Banh moi|Bm",
+            "defaultCode": "SP0012",
+            "priceUnit": null,
+            "purchasePrice": 100000,
+            "standardPrice": 0,
+            "categId": "58529f50-691d-48d7-fe08-08d9693d95c7",
+            "categ": null,
+            "type2": "product",
+            "listPrice": 0,
+            "firm": null,
+            "laboPrice": null,
+            "uomId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "uom": {
+              "id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+              "name": "Cái",
+              "active": true,
+              "uomType": "reference",
+              "categoryName": null,
+              "categoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+            }
+          },
+          "productUOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+          "productUOM": {
+            "id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "name": "Cái",
+            "active": true,
+            "uomType": "reference",
+            "categoryName": null,
+            "categoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+          },
+          "productQty": 30,
+          "theoreticalQty": 30,
+          "inventoryId": "e68e8ccd-4aef-493c-1be9-08d97437d3cf",
+          "inventory": {
+            "id": "e68e8ccd-4aef-493c-1be9-08d97437d3cf",
+            "name": "KK00001",
+            "date": "2021-09-10T15:48:00",
+            "state": "done"
+          },
+          "companyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+          "company": null,
+          "sequence": 1
+        }
+      ],
+      "moves": [],
+      "state": "done",
+      "locationId": "af2d8792-ef90-4c89-29b6-08d9693d9511",
+      "location": {
+        "id": "af2d8792-ef90-4c89-29b6-08d9693d9511",
+        "name": "Dự trữ",
+        "nameGet": "WH/Dự trữ"
+      },
+      "productId": null,
+      "product": null,
+      "categoryId": null,
+      "category": null,
+      "criteriaId": null,
+      "criteria": null,
+      "filter": "none",
+      "companyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+      "exhausted": false,
+      "createdByName": "admin"
+    }
   }
 
 

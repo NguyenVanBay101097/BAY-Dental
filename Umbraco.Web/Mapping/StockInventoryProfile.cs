@@ -26,6 +26,10 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.Lines, x => x.Ignore())
                 .ForMember(x => x.Moves, x => x.Ignore());
+
+            CreateMap<StockInventory, StockInventoryPrint>()
+                .ForMember(x=>x.DateCreated , x=>x.MapFrom(s=>s.Date));
+
         }
     }
 }

@@ -50,17 +50,11 @@ namespace ApplicationCore.Constants
            new PrintTemplateType {Type = "tmp_advisory" , PathTemplate = "" },
            new PrintTemplateType {Type = "tmp_partner_advance" , PathTemplate = "" },
            new PrintTemplateType {Type = "tmp_supplier_payment" , PathTemplate = "" },
-           new PrintTemplateType {Type = "tmp_phieu_thu" , PathTemplate = "" },
-           new PrintTemplateType {Type = "tmp_phieu_chi" , PathTemplate = "" },
-           new PrintTemplateType {Type = "tmp_partner_debt" , PathTemplate = "" },
            new PrintTemplateType {Type = "tmp_agent_commission" , PathTemplate = "" },
            new PrintTemplateType {Type = "tmp_quotation" , PathTemplate = "" },
            new PrintTemplateType {Type = "tmp_salary_employee" , PathTemplate = "" },
            new PrintTemplateType {Type = "tmp_salary_advance" , PathTemplate = "" },
            new PrintTemplateType {Type = "tmp_salary" , PathTemplate = "" },
-           new PrintTemplateType {Type = "tmp_stock_picking_incoming" , PathTemplate = "" },
-           new PrintTemplateType {Type = "tmp_stock_picking_outgoing" , PathTemplate = "" },
-           new PrintTemplateType {Type = "tmp_stock_inventory" , PathTemplate = "" },
         };
 
         public static PrintTemplateType[] PrintTemplateTypeDemo = new PrintTemplateType[] {
@@ -72,6 +66,9 @@ namespace ApplicationCore.Constants
            new PrintTemplateType {Type = "tmp_phieu_thu" , PathTemplate = "PrintTemplate/PhieuThuChi/Template_Phieu_Thu.html" },
            new PrintTemplateType {Type = "tmp_phieu_chi" , PathTemplate = "PrintTemplate/PhieuThuChi/Template_Phieu_Chi.html" },
            new PrintTemplateType {Type = "tmp_customer_debt" , PathTemplate = "PrintTemplate/PhieuThuChi/Template_Customer_Debt.html" },
+           new PrintTemplateType {Type = "tmp_stock_picking_incoming" , PathTemplate = "PrintTemplate/StockPicking/Template_Stock_Picking_Incoming.html" },
+           new PrintTemplateType {Type = "tmp_stock_picking_outgoing" , PathTemplate = "PrintTemplate/StockPicking/Template_Stock_Picking_Outgoing.html" },
+           new PrintTemplateType {Type = "tmp_stock_inventory" , PathTemplate = "PrintTemplate/StockPicking/Template_Stock_Inventory.html" },
         };
     }
 

@@ -311,7 +311,7 @@ namespace Infrastructure.Services
             {
                 Id = x.Id,
                 Name = x.Name,
-                Date = x.Date,
+                DateCreated = x.Date,
                 Company = x.Company != null ? new CompanyPrintVM
                 {
                     Name = x.Company.Name,

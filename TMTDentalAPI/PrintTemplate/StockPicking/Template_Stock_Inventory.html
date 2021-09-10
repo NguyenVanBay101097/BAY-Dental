@@ -1,40 +1,35 @@
-﻿@model Umbraco.Web.Models.ContentEditing.StockInventoryPrint
-@using Umbraco.Web.Models.ContentEditing;
-@{
-    var configPrint = ViewData["ConfigPrint"] as ConfigPrintDisplay;
-    var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
-    Layout = "~/Views/Shared/_PrintLayout.cshtml";
-}
+﻿<div>
+    <div class="d-flex mb-2">
+        {{ if company.logo != "" && company.logo != null}}
+        <img class="img-fluid me-3 w-20" src="{{company.logo}}" alt="{{company.name}}">
+        {{ end }}
 
-<div>
-    @if (!configPrint.IsInfoCompany)
-    {
-        <div class="d-flex mb-2">
-            @if (!string.IsNullOrEmpty(Model.Company.Logo))
-            {
-                <img class="img-fluid me-3 w-25" src="@Model.Company.Logo" alt="@Model.Company.Name">
-            }
-            <div>
-                <div class="text-xl font-semibold">@Model.Company.Name</div>
-                @if (!string.IsNullOrEmpty(Model.Company.Address))
-                {
-                    <div>Địa chỉ: @Model.Company.Address</div>
-                }
-                @if (!string.IsNullOrEmpty(Model.Company.Phone))
-                {
-                    <div>ĐT: @Model.Company.Phone</div>
-                }
-                @if (!string.IsNullOrEmpty(Model.Company.Email))
-                {
-                    <div>Email: @Model.Company.Email</div>
-                }
-            </div>
+        <div>
+            <div class="text-xl font-semibold">{{company.name}}</div>
+            {{if company.address != ""}}
+
+            <div>Địa chỉ: {{company.address}}</div>
+
+            {{ end }}
+
+            {{ if company.phone}}
+
+            <div>ĐT: {{company.phone}}</div>
+
+            {{ end }}
+
+            {{if company.email }}
+
+            <div>Email: {{company.email}}</div>
+
+            {{ end }}
+
         </div>
-    }
+    </div>
     <div class="text-center mb-3">
         <div class="text-3xl font-semibold">PHIẾU KIỂM KHO</div>
-        <div>Ngày @Model.DateCreated.Day tháng @Model.DateCreated.Month năm @Model.DateCreated.Year </div>
-        <div class="font-semibold">Số: @Model.Name</div>
+        <div>Ngày {{date_created.day}} tháng {{date_created.month}} năm {{date_created.year}} </div>
+        <div class="font-semibold">Số: {{name}}</div>
     </div>
     <div class="o_form_view mb-4">
         <div class="d-flex">
@@ -46,7 +41,7 @@
                                 Ngày kiểm
                             </label>
                         </td>
-                        <td colspan="1" style="width: 100%;">@(string.Format(culture, "{0:dd/MM/yyyy}", Model.DateCreated))</td>
+                        <td colspan="1" style="width: 100%;">{{date_created | date.to_string '%d/%m/%Y'}}</td>
                     </tr>
 
                 </tbody>
@@ -59,7 +54,7 @@
                                 Ghi Chú
                             </label>
                         </td>
-                        <td colspan="1" style="width: 100%;">@Model.Note</td>
+                        <td colspan="1" style="width: 100%;">{{note ? note : ""}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -82,18 +77,16 @@
             </tr>
         </thead>
         <tbody>
-            @{ var i = 1;}
-            @foreach (var item in Model.Lines)
-            {
-                <tr>
-                    <td>@(i++)</td>
-                    <td>@(item.ProductDefaultCode)</td>
-                    <td>@(item.ProductName)</td>
-                    <td>@(item.ProductUOMName)</td>
-                    <td class="text-right">@(item.TheoreticalQty.HasValue ? string.Format(culture, "{0:0}", item.TheoreticalQty.Value) : "0")</td>
-                    <td class="text-right">@(item.ProductQty.HasValue ? string.Format(culture, "{0:0}", item.ProductQty.Value) : "0")</td>
-                </tr>
-            }
+            {{for line in lines}}
+            <tr>
+                <td>{{for.index + 1}}</td>
+                <td>{{line.product_default_code}}</td>
+                <td>{{line.product_name}}</td>
+                <td>{{line.product_oumname}}</td>
+                <td class="text-right">{{line.theoretical_qty ? line.theoretical_qty : 0}}</td>
+                <td class="text-right">{{line.product_qty ? line.product_qty : 0}}</td>
+            </tr>
+            {{end}}           
         </tbody>
     </table>
     <div class="d-flex">
@@ -104,7 +97,7 @@
                 <span></span> <br />
                 <span></span> <br />
                 <span></span> <br />
-                <span class="font-semibold">@Model.UserName.ToUpper()</span>
+                <span class="font-semibold">{{created_by_name |  string.upcase}}</span>
             </div>
         </div>
         <div class="col">

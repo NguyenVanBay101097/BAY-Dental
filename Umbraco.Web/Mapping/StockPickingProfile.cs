@@ -23,6 +23,9 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<StockPickingSimple, StockPicking>();
             CreateMap<StockPicking, StockPickingSimple>();
+
+            CreateMap<StockPicking, StockPickingPrintVm>()
+                .ForMember(x => x.DateCreated, x => x.MapFrom(s => s.Date));
         }
     }
 }

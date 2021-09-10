@@ -151,7 +151,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Ngày kiểm kho
         /// </summary>
-        public DateTime Date { get; set; }
+        public DateTime DateCreated { get; set; }
 
         /// <summary>
         /// Ghi Chú

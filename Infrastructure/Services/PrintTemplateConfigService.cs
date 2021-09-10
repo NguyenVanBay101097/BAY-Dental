@@ -170,6 +170,21 @@ namespace Infrastructure.Services
                         res_customer_debt.Company = company;
                         obj = _mapper.Map<PrintVM>(res_customer_debt);
                         break;
+                    case "tmp_stock_picking_incoming":
+                        var res_stock_picking_incoming = JsonConvert.DeserializeObject<StockPicking>(item.Data.ToString());
+                        res_stock_picking_incoming.Company = company;
+                        obj = _mapper.Map<StockPickingPrintVm>(res_stock_picking_incoming);
+                        break;
+                    case "tmp_stock_picking_outgoing":
+                        var res_stock_picking_outgoing = JsonConvert.DeserializeObject<StockPicking>(item.Data.ToString());
+                        res_stock_picking_outgoing.Company = company;
+                        obj = _mapper.Map<StockPickingPrintVm>(res_stock_picking_outgoing);
+                        break;
+                    case "tmp_stock_inventory":
+                        var res_stock_inventory = JsonConvert.DeserializeObject<StockInventory>(item.Data.ToString());
+                        res_stock_inventory.Company = company;
+                        obj = _mapper.Map<StockInventoryPrint>(res_stock_inventory);
+                        break;
                     default:
                         break;
                 }
@@ -195,7 +210,7 @@ namespace Infrastructure.Services
         public async Task<string> PrintTest(PrintTestReq val)
         {
             object obj = await GetSampleData(val.Type);
-            var printPaperSize = await _printPaperSizeService.SearchQuery(x=> x.Id == val.PrintPaperSizeId).FirstOrDefaultAsync();
+            var printPaperSize = await _printPaperSizeService.SearchQuery(x => x.Id == val.PrintPaperSizeId).FirstOrDefaultAsync();
             // Creates 
             var scriptObj = new ScriptObject();
             scriptObj.Import(obj);
