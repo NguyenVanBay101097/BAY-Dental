@@ -117,5 +117,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
 
         public string Name { get; set; }
+
+        /// <summary>
+        /// Creation Date
+        /// </summary>
+        public DateTime? Date { get; set; }
     }
 }

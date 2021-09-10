@@ -32,9 +32,11 @@ export class ProductRequestDisplay {
     employeeId: string;
     employee: any;
     pickingId: string;
-    picking: Object;
+    picking: any;
     state: string;
     lines: ProductRequestLineDisplay;
+    saleOrderId: string;
+    saleOrder: any;
 }
 
 export class ProductRequestSave {
