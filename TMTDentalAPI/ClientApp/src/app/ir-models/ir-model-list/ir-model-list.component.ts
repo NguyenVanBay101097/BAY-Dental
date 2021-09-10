@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -9,6 +9,7 @@ import { IRModelPaged, IRModelBasic } from '../ir-model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IrModelCuDialogComponent } from '../ir-model-cu-dialog/ir-model-cu-dialog.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-ir-model-list',
@@ -23,13 +24,17 @@ export class IrModelListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   loading = false;
   search: string;
   searchUpdate = new Subject<string>();
   title = 'Đối tượng';
 
-  constructor(private modelService: IRModelService, private modalService: NgbModal) { }
+  constructor(
+    private modelService: IRModelService,
+    private modalService: NgbModal,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.searchUpdate.pipe(
@@ -68,12 +73,7 @@ export class IrModelListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
-    this.loadDataFromApi();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

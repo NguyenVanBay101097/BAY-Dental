@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -11,6 +11,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { NotifyService } from 'src/app/shared/services/notify.service';
 import { PartnerService } from '../partner.service';
 import { PrintService } from "src/app/shared/services/print.service";
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-partner-customer-debt-payment-history-list',
@@ -24,7 +25,7 @@ export class PartnerCustomerDebtPaymentHistoryListComponent implements OnInit {
   search: string;
   limit = 20;
   offset = 0;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   edit = false;
   dateFrom: Date;
   dateTo: Date;
@@ -39,7 +40,9 @@ export class PartnerCustomerDebtPaymentHistoryListComponent implements OnInit {
     private router: Router,
     private printService: PrintService,
     private route: ActivatedRoute,
-    private notifyService: NotifyService,) { }
+    private notifyService: NotifyService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.partnerId = this.route.parent.parent.snapshot.paramMap.get('id');
@@ -84,14 +87,10 @@ export class PartnerCustomerDebtPaymentHistoryListComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.offset = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 
-  onPageSizeChange(value: number): void {
-    this.offset = 0;
-    this.limit = value;
-    this.loadDataFromApi();
-  }
   onSearchDateChange(data) {
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;

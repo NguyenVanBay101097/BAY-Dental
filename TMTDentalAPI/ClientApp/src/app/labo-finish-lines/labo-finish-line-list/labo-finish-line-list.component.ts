@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { LaboFinishLineCuDialogComponent } from '../labo-finish-line-cu-dialog/labo-finish-line-cu-dialog.component';
 import { LaboFinishLineBasic, LaboFinishLinePaged, LaboFinishLineService } from '../labo-finish-line.service';
 import { LaboFinnishLineImportComponent } from '../labo-finnish-line-import/labo-finnish-line-import.component';
@@ -18,13 +19,14 @@ export class LaboFinishLineListComponent implements OnInit {
 
   constructor(
     private laboFinishLineService: LaboFinishLineService, private notificationService: NotificationService,
-    private modalService: NgbModal
-  ) { }
+    private modalService: NgbModal,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   loading = false;
 
   search: string;
@@ -70,12 +72,7 @@ export class LaboFinishLineListComponent implements OnInit {
 
   onPageChange(event: PageChangeEvent) {
     this.skip = event.skip;
-    this.loadDataFromApi();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

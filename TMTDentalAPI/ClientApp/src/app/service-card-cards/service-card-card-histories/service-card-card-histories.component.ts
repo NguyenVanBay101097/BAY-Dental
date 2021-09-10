@@ -1,7 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Inject } from '@angular/core';
 import { ServiceCardCardService } from '../service-card-card.service';
 import { PageChangeEvent, GridDataResult } from '@progress/kendo-angular-grid';
 import { aggregateBy } from '@progress/kendo-data-query';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-service-card-card-histories',
@@ -12,7 +13,7 @@ export class ServiceCardCardHistoriesComponent implements OnInit {
   @Input() public item: any;
   skip = 0;
   pageSize = 20;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   gridData: any;
   loading = false;
   gridView: GridDataResult;
@@ -22,7 +23,9 @@ export class ServiceCardCardHistoriesComponent implements OnInit {
     { field: 'amount', aggregate: 'sum' },
   ];
 
-  constructor(private cardService: ServiceCardCardService) { }
+  constructor(private cardService: ServiceCardCardService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -44,12 +47,7 @@ export class ServiceCardCardHistoriesComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
-    this.loadItems();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.pageSize = value;
+    this.pageSize = event.take;
     this.loadItems();
   }
 

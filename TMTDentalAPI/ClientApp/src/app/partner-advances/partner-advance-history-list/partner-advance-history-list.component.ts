@@ -1,5 +1,5 @@
 import { AccountPaymentPaged } from './../../account-payments/account-payment.service';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -10,6 +10,7 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { HistoryPartnerAdvanceFilter, SaleOrderPaymentPaged, SaleOrderPaymentService } from 'src/app/core/services/sale-order-payment.service';
 import { PartnerService } from 'src/app/partners/partner.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-partner-advance-history-list',
@@ -24,7 +25,7 @@ export class PartnerAdvanceHistoryListComponent implements OnInit {
   search: string;
   limit = 20;
   offset = 0;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   edit = false;
   dateFrom: Date;
   dateTo: Date;
@@ -39,7 +40,9 @@ export class PartnerAdvanceHistoryListComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private notificationService: NotificationService,
-    private saleOrderPaymentService: SaleOrderPaymentService) { }
+    private saleOrderPaymentService: SaleOrderPaymentService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.partnerId = this.route.parent.parent.snapshot.paramMap.get('id');
@@ -83,12 +86,7 @@ export class PartnerAdvanceHistoryListComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.offset = event.skip;
-    this.loadDataFromApi();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.offset = 0;
-    this.limit = value;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

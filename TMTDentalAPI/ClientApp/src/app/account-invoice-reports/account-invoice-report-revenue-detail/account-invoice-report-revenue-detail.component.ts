@@ -1,8 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { DataResult } from '@progress/kendo-data-query';
 import * as moment from 'moment';
 import { map } from 'rxjs/operators';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { AccountInvoiceReportService, RevenueReportDetailPaged } from '../account-invoice-report.service';
 
 @Component({
@@ -17,11 +18,12 @@ export class AccountInvoiceReportRevenueDetailComponent implements OnInit {
   @Input() showPartner: boolean = true;
   gridData: GridDataResult;
   loading = false;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
 
   constructor(
     private accInvService: AccountInvoiceReportService,
-  ) { }
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.initFilterData();
@@ -65,12 +67,7 @@ export class AccountInvoiceReportRevenueDetailComponent implements OnInit {
 
   pageChange(e) {
     this.filter.offset = e.skip;
-    this.loadReport();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.filter.offset = 0;
-    this.filter.limit = value;
+    this.filter.limit = e.take;
     this.loadReport();
   }
 }

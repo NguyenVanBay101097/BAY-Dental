@@ -1,4 +1,4 @@
-<kendo-grid [data]="gridData" [loading]="loading" [pageSize]="limit" [skip]="skip" [pageable]="true"
+<kendo-grid [data]="gridData" [loading]="loading" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings"
 [scrollable]="'none'" (pageChange)="pageChange($event)" [navigable]="true" >
     <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}" field="name"
         title="Dịch vụ" width="150">
@@ -33,16 +33,4 @@
             {{dataItem.amountResidual | number}}
         </ng-template>
     </kendo-grid-column>
-    <ng-template kendoPagerTemplate let-skip="skip" let-total="total" let-pageSize="pageSize">
-        <kendo-pager-prev-buttons></kendo-pager-prev-buttons>
-        <kendo-pager-numeric-buttons [buttonCount]="10"></kendo-pager-numeric-buttons>
-        <kendo-pager-next-buttons></kendo-pager-next-buttons>
-        <kendo-pager-info></kendo-pager-info>
-        <span class="ml-4">
-            <kendo-dropdownlist style="width: 80px;" [data]="pageSizes"
-                (valueChange)="onPageSizeChange($event)" [value]="limit">
-            </kendo-dropdownlist>
-            <label class="ml-2 mb-0">Số dòng trên trang</label>
-        </span>
-    </ng-template>
 </kendo-grid>

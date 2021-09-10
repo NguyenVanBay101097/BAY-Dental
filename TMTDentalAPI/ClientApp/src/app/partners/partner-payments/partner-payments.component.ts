@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, Inject } from '@angular/core';
 import { AccountPaymentPaged, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { PartnerService } from '../partner.service';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/shared/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-partner-payments',
@@ -20,11 +21,13 @@ export class PartnerPaymentsComponent implements OnInit {
   gridLoading = false;
   gridView: GridDataResult;
 
-  limit = 5;
+  limit = 10;
   skip = 0;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   constructor(private service: PartnerService, private modalService: NgbModal,
-    private paymentService: AccountPaymentService) { }
+    private paymentService: AccountPaymentService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettingsPopup }
 
   ngOnInit() {
     this.loadPayments();
@@ -71,12 +74,6 @@ export class PartnerPaymentsComponent implements OnInit {
     this.limit = event.take;
     this.loadPayments();
   }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
-    this.loadPayments();
-  } 
 
   registerPayment() {
     this.service.getDefaultRegisterPayment(this.partnerId).subscribe(result => {

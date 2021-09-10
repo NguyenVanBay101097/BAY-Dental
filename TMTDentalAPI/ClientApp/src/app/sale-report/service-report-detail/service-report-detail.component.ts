@@ -1,8 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { DataResult } from '@progress/kendo-data-query';
 import * as moment from 'moment';
 import { map } from 'rxjs/operators';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { ToothBasic } from 'src/app/teeth/tooth.service';
 import { SaleReportService, ServiceReportDetailReq, ServiceReportDetailRes } from '../sale-report.service';
 
@@ -24,11 +25,12 @@ export class ServiceReportDetailComponent implements OnInit {
     done: "Hoàn thành",
     cancel: 'Ngừng điều trị'
   }
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
 
   constructor(
     private saleReportService: SaleReportService,
-  ) { }
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.initFilterData();
@@ -72,12 +74,7 @@ export class ServiceReportDetailComponent implements OnInit {
 
   pageChange(e) {
     this.filter.offset = e.skip;
-    this.loadReport();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.filter.offset = 0;
-    this.filter.limit = value;
+    this.filter.limit = e.take;
     this.loadReport();
   }
 

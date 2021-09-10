@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Type } from '@angular/core';
+import { Component, Inject, Input, OnInit, Type } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -10,6 +10,7 @@ import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operato
 import { AuthService } from 'src/app/auth/auth.service';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { PartnerAdvanceCreateUpdateDialogComponent } from '../partner-advance-create-update-dialog/partner-advance-create-update-dialog.component';
 import { PartnerAdvancePaged, PartnerAdvanceService, PartnerAdvanceSummaryFilter } from '../partner-advance.service';
 
@@ -26,7 +27,7 @@ export class PartnerAdvanceListComponent implements OnInit {
   search: string;
   limit = 20;
   offset = 0;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   edit = false;
   dateFrom: Date;
   dateTo: Date;
@@ -53,8 +54,9 @@ export class PartnerAdvanceListComponent implements OnInit {
     private notificationService: NotificationService,
     private partnerAdvanceService: PartnerAdvanceService,
     private fb: FormBuilder,
-    private authService: AuthService
-  ) { }
+    private authService: AuthService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.partnerId = this.route.parent.parent.snapshot.paramMap.get('id');
@@ -103,12 +105,7 @@ export class PartnerAdvanceListComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.offset = event.skip;
-    this.loadDataFromApi();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.offset = 0;
-    this.limit = value;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

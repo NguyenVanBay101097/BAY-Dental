@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { SaleOrderPaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { SmsCampaignService } from '../sms-campaign.service';
 import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
 
@@ -22,7 +23,7 @@ export class SmsThanksFormManualComponent implements OnInit {
   gridData: any;
   skip: number = 0;
   limit: number = 20;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   isRowSelected: any[];
   search: string = '';
   selectedIds: string[] = [];
@@ -41,8 +42,9 @@ export class SmsThanksFormManualComponent implements OnInit {
     private intlService: IntlService,
     private saleOrderService: SaleOrderService,
     private smsCampaignService: SmsCampaignService,
-    private authService: AuthService
-  ) { }
+    private authService: AuthService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.dateFrom = this.yesterday;
@@ -85,12 +87,7 @@ export class SmsThanksFormManualComponent implements OnInit {
 
   pageChange(event) {
     this.skip = event.skip;
-    this.loadDataFromApi();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

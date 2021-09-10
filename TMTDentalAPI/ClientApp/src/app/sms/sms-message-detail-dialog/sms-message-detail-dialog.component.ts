@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { SmsComfirmDialogComponent } from '../sms-comfirm-dialog/sms-comfirm-dialog.component';
 import { SmsMessageDetailPaged, SmsMessageDetailService } from '../sms-message-detail.service';
 
@@ -19,7 +20,7 @@ export class SmsMessageDetailDialogComponent implements OnInit {
   state: string;
   limit: number = 20;
   offset: number = 0;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   loading = false;
   search: string;
   searchUpdate = new Subject<string>();
@@ -35,8 +36,9 @@ export class SmsMessageDetailDialogComponent implements OnInit {
     private smsMessageDetailService: SmsMessageDetailService, 
     public activeModal: NgbActiveModal,
     private notificationService: NotificationService, 
-    private modalService: NgbModal
-  ) { }
+    private modalService: NgbModal,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -74,12 +76,7 @@ export class SmsMessageDetailDialogComponent implements OnInit {
 
   pageChange(event): void {
     this.offset = event.skip;
-    this.loadDataFromApi();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.offset = 0;
-    this.limit = value;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

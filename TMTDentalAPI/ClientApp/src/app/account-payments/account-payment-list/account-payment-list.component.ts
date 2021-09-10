@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit, Inject } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
@@ -6,6 +6,7 @@ import { AccountPaymentService, AccountPaymentPaged, AccountPaymentBasic } from 
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 
 @Component({
@@ -18,7 +19,7 @@ export class AccountPaymentListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   loading = false;
 
   search: string;
@@ -28,9 +29,12 @@ export class AccountPaymentListComponent implements OnInit {
   selectedIds: string[] = [];
   title: 'Thanh toán';
 
-  constructor(private paymentService: AccountPaymentService, private route: ActivatedRoute, private modalService: NgbModal,
-    private router: Router) {
-  }
+  constructor(
+    private paymentService: AccountPaymentService, 
+    private route: ActivatedRoute, private modalService: NgbModal,
+    private router: Router,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.route.queryParamMap.subscribe(params => {
@@ -82,12 +86,7 @@ export class AccountPaymentListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
-    this.loadDataFromApi();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

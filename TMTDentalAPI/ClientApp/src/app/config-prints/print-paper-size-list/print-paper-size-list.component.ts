@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { PrintPaperSizeCreateUpdateDialogComponent } from '../print-paper-size-create-update-dialog/print-paper-size-create-update-dialog.component';
 import { PrintPaperSizePaged, PrintPaperSizeService } from '../print-paper-size.service';
 
@@ -19,14 +20,16 @@ export class PrintPaperSizeListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   
   search: string;
   searchUpdate = new Subject<string>();
   
   constructor(private route: ActivatedRoute, 
     private modalService: NgbModal, 
-    private printPaperSizeService: PrintPaperSizeService) { }
+    private printPaperSizeService: PrintPaperSizeService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -64,12 +67,7 @@ export class PrintPaperSizeListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
-    this.loadDataFromApi();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

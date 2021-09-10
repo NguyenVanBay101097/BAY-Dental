@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { WindowService, WindowRef, WindowCloseResult, DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
 import { SortDescriptor, orderBy } from '@progress/kendo-data-query';
 import { PartnerService, ImportExcelDirect } from '../partner.service';
@@ -15,6 +15,7 @@ import { PartnerImportComponent } from '../partner-import/partner-import.compone
 import { saveAs } from '@progress/kendo-drawing/pdf';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/shared/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 
 @Component({
@@ -35,7 +36,7 @@ export class PartnerListComponent implements OnInit {
   windowOpened: boolean;
   skip = 0;
   pageSize = 20;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
 
   queryCustomer: boolean = false;
   querySupplier: boolean = false;
@@ -59,7 +60,9 @@ export class PartnerListComponent implements OnInit {
   constructor(
     private partnerService: PartnerService, private windowService: WindowService,
     private activeRoute: ActivatedRoute, private dialogService: DialogService, private modalService: NgbModal,
-    private notificationService: NotificationService) { }
+    private notificationService: NotificationService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.windowOpened = false;
@@ -125,12 +128,6 @@ export class PartnerListComponent implements OnInit {
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
     this.pageSize = event.take;
-    this.getPartnersList();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.pageSize = value;
     this.getPartnersList();
   }
 

@@ -50,7 +50,7 @@
             </div>
             <div class="t_treatment_grid">
                 <div class="kendo-grid-data">
-                    <kendo-grid #grid [data]="saleOrdersData" [pageable]="true" [pageSize]="limit" [skip]="skip"
+                    <kendo-grid #grid [data]="saleOrdersData" [pageable]="pagerSettings" [pageSize]="limit" [skip]="skip"
                         (pageChange)="pageChange($event)" [resizable]="true" [loading]="loading"
                         (excelExport)="onExcelExport($event)">
                         <kendo-grid-column [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}"
@@ -86,18 +86,6 @@
                             <app-sale-order-line-management [saleOrderId]="dataItem.id">
                             </app-sale-order-line-management>
                         </div>
-                        <ng-template kendoPagerTemplate let-skip="skip" let-total="total" let-pageSize="pageSize">
-                            <kendo-pager-prev-buttons></kendo-pager-prev-buttons>
-                            <kendo-pager-numeric-buttons [buttonCount]="10"></kendo-pager-numeric-buttons>
-                            <kendo-pager-next-buttons></kendo-pager-next-buttons>
-                            <kendo-pager-info></kendo-pager-info>
-                            <span class="ml-4">
-                                <kendo-dropdownlist style="width: 80px;" [data]="pageSizes"
-                                    (valueChange)="onPageSizeChange($event)" [value]="limit">
-                                </kendo-dropdownlist>
-                                <label class="ml-2 mb-0">Số dòng trên trang</label>
-                            </span>
-                        </ng-template>
                     </kendo-grid>
                 </div>
             </div>

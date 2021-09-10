@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { AccountInvoiceService, AccountInvoicePaged, AccountInvoiceBasic } from '../account-invoice.service';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -12,6 +12,7 @@ import { AccountInvoiceRegisterPaymentDialogComponent } from '../account-invoice
 import { AccountRegisterPaymentService, AccountRegisterPaymentDefaultGet } from 'src/app/account-payments/account-register-payment.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/shared/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-account-invoice-list',
@@ -25,7 +26,7 @@ export class AccountInvoiceListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 10;
   skip = 0;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   loading = false;
   opened = false;
   searchInvoiceNumber: string;
@@ -41,7 +42,9 @@ export class AccountInvoiceListComponent implements OnInit {
 
   constructor(private accountInvoiceService: AccountInvoiceService, private intlService: IntlService,
     private router: Router, private dialogService: DialogService, private parserFormatter: NgbDateParserFormatter,
-    private modalService: NgbModal, private registerPaymentService: AccountRegisterPaymentService) { }
+    private modalService: NgbModal, private registerPaymentService: AccountRegisterPaymentService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettingsPopup }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -110,12 +113,7 @@ export class AccountInvoiceListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
-    this.loadDataFromApi();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

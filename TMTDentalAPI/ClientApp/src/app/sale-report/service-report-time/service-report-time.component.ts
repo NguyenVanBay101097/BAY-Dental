@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridComponent, GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -8,6 +8,7 @@ import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/op
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { SaleReportService, ServiceReportReq } from '../sale-report.service';
 import { ServiceReportManageService } from '../service-report-management/service-report-manage';
@@ -27,7 +28,7 @@ export class ServiceReportTimeComponent implements OnInit {
   loading = false;
   skip = 0;
   limit = 20;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   searchUpdate = new Subject<string>();
   // filterState = "";
   search: string;
@@ -54,8 +55,9 @@ export class ServiceReportTimeComponent implements OnInit {
     private employeeService: EmployeeService,
     private intlService: IntlService,
     private serviceReportManageService: ServiceReportManageService,
-    private printService: PrintService
-  ) { }
+    private printService: PrintService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.initFilterData();
@@ -189,12 +191,7 @@ export class ServiceReportTimeComponent implements OnInit {
 
   pageChange(e) {
     this.skip = e.skip;
-    this.loadReport();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
+    this.limit = e.take;
     this.loadReport();
   }
 

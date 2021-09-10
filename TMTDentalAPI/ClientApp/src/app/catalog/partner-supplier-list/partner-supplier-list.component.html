@@ -26,7 +26,7 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageable]="true" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)"
+    <kendo-grid [data]="gridData" [pageable]="pagerSettings" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)"
         [loading]="loading">
         <kendo-grid-column field="ref" title="Mã NCC" width="100"></kendo-grid-column>
         <kendo-grid-column field="name" title="Tên NCC" width="200">
@@ -52,18 +52,6 @@
                     class="btn btn-success"><i title="Hiện nhà cung cấp" class="fas fa-eye" ></i></button>
             </ng-template>
         </kendo-grid-command-column>
-        <ng-template kendoPagerTemplate let-skip="skip" let-total="total" let-pageSize="pageSize">
-            <kendo-pager-prev-buttons></kendo-pager-prev-buttons>
-            <kendo-pager-numeric-buttons [buttonCount]="10"></kendo-pager-numeric-buttons>
-            <kendo-pager-next-buttons></kendo-pager-next-buttons>
-            <kendo-pager-info></kendo-pager-info>
-            <span class="ml-4">
-                <kendo-dropdownlist style="width: 80px;" [data]="pageSizes"
-                    (valueChange)="onPageSizeChange($event)" [value]="limit">
-                </kendo-dropdownlist>
-                <label class="ml-2 mb-0">Số dòng trên trang</label>
-            </span>
-        </ng-template>
         <!-- <div *kendoGridDetailTemplate="let dataItem">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item">

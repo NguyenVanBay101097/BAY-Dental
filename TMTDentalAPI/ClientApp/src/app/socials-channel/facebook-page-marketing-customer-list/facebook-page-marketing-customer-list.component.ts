@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent, RowArgs } from '@progress/kendo-angular-grid';
 import { FacebookPageService, MultiUserProfilesVm } from '../facebook-page.service';
@@ -12,6 +12,7 @@ import { FacebookUserProfilesODataService } from 'src/app/shared/services/facebo
 import { CompositeFilterDescriptor, State } from '@progress/kendo-data-query';
 import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { Operation } from 'fast-json-patch';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-facebook-page-marketing-customer-list',
@@ -24,13 +25,15 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
     private facebookPageService: FacebookPageService,
     private facebookUserProfilesService: FacebookUserProfilesService,
     private notificationService: NotificationService, private route: ActivatedRoute,
-    private facebookUserProfilesODataService: FacebookUserProfilesODataService) { }
+    private facebookUserProfilesODataService: FacebookUserProfilesODataService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettingsPopup }
 
   dataSendMessage: any[] = [];
   gridData: GridDataResult;
   limit = 10;
   skip = 0;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   search: string;
   loading = false;
   searchUpdate = new Subject<string>();
@@ -231,12 +234,7 @@ export class FacebookPageMarketingCustomerListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
-    this.loadDataFromApi();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

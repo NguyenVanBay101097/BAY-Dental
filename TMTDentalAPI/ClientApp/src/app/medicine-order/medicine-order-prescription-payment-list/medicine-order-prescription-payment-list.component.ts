@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridComponent, GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -6,6 +6,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { matches } from 'lodash';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { MedicineOrderCreateDialogComponent } from '../medicine-order-create-dialog/medicine-order-create-dialog.component';
 import { MedicineOrderService, PrecscriptionPaymentPaged, PrecscriptionPaymentReport } from '../medicine-order.service';
 
@@ -26,7 +27,7 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
   state: string = '';
   limit = 20;
   skip = 0;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   states = [
     // { value: "draft", name: "Chưa thanh toán" },
     { value: "confirmed", name: "Đã thanh toán" },
@@ -37,8 +38,9 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
   constructor(
     private intlService: IntlService,
     private medicineOrderSerive: MedicineOrderService,
-    private modalService: NgbModal
-  ) { }
+    private modalService: NgbModal,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.dateFrom = this.monthStart;
@@ -82,12 +84,7 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
-    this.loadDataFromApi();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

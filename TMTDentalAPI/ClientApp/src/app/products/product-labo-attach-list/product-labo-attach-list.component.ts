@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DialogService, WindowService } from '@progress/kendo-angular-dialog';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -6,6 +6,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { ProductImportExcelDialogComponent } from '../product-import-excel-dialog/product-import-excel-dialog.component';
 import { ProductLaboAttachCuDialogComponent } from '../product-labo-attach-cu-dialog/product-labo-attach-cu-dialog.component';
 import { ProductLaboBasic, ProductPaged, ProductService } from '../product.service';
@@ -18,11 +19,13 @@ import { ProductLaboBasic, ProductPaged, ProductService } from '../product.servi
 
 export class ProductLaboAttachListComponent implements OnInit {
   constructor(private productService: ProductService, private notificationService: NotificationService,
-    private modalService: NgbModal) { }
+    private modalService: NgbModal,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   loading = false;
 
   search: string;
@@ -67,12 +70,7 @@ export class ProductLaboAttachListComponent implements OnInit {
 
   onPageChange(event: PageChangeEvent) {
     this.skip = event.skip;
-    this.loadDataFromApi();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

@@ -35,7 +35,7 @@
         <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo khách hàng" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
     </div>
 </div>
-<kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
+<kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading" (pageChange)="pageChange($event)">
     <div *kendoGridDetailTemplate="let dataItem" width="50">
         <app-agent-commmission-form-detail-item [partnerId]="dataItem.partner.id" [dateFrom]="dateFrom" [dateTo]="dateTo">
         </app-agent-commmission-form-detail-item>
@@ -62,16 +62,4 @@
                 <i class="fas fa-money-bill-alt fa-lg"></i></button>
         </ng-template>
     </kendo-grid-command-column>
-    <ng-template kendoPagerTemplate let-skip="skip" let-total="total" let-pageSize="pageSize">
-        <kendo-pager-prev-buttons></kendo-pager-prev-buttons>
-        <kendo-pager-numeric-buttons [buttonCount]="10"></kendo-pager-numeric-buttons>
-        <kendo-pager-next-buttons></kendo-pager-next-buttons>
-        <kendo-pager-info></kendo-pager-info>
-        <span class="ml-4">
-            <kendo-dropdownlist style="width: 80px;" [data]="pageSizes"
-                (valueChange)="onPageSizeChange($event)" [value]="limit">
-            </kendo-dropdownlist>
-            <label class="ml-2 mb-0">Số dòng trên trang</label>
-        </span>
-    </ng-template>
 </kendo-grid>

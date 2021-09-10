@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StockPickingPaged, StockPickingService, StockPickingBasic } from '../stock-picking.service';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { StockPickingTypeBasic, StockPickingTypeService } from 'src/app/stock-picking-types/stock-picking-type.service';
 import { Subject } from 'rxjs';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-stock-picking-list',
@@ -19,7 +20,7 @@ export class StockPickingListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 10;
   skip = 0;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   loading = false;
   pickingTypeId: string;
   pickingType: StockPickingTypeBasic;
@@ -27,7 +28,9 @@ export class StockPickingListComponent implements OnInit {
   searchUpdate = new Subject<string>();
 
   constructor(private route: ActivatedRoute, private stockPickingService: StockPickingService,
-    private pickingTypeService: StockPickingTypeService, private router: Router) { }
+    private pickingTypeService: StockPickingTypeService, private router: Router,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettingsPopup }
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
@@ -86,12 +89,7 @@ export class StockPickingListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
-    this.loadDataFromApi();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

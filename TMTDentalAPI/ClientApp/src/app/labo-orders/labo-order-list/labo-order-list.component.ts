@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, SimpleChanges, Output } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges, Output, Inject } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -10,6 +10,7 @@ import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { SaleOrderLineService, SaleOrderLinesLaboPaged, SaleOrderLinesPaged } from 'src/app/core/services/sale-order-line.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-labo-order-list',
@@ -23,7 +24,7 @@ export class LaboOrderListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   loading = false;
   opened = false;
   search: string;
@@ -55,8 +56,9 @@ export class LaboOrderListComponent implements OnInit {
     private router: Router,
     private saleOrderLineService: SaleOrderLineService,
     private modalService: NgbModal, private intlService: IntlService,
-    private checkPermissionService: CheckPermissionService
-    ) { }
+    private checkPermissionService: CheckPermissionService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.filterPaged.limit = this.limit;
@@ -172,12 +174,7 @@ export class LaboOrderListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
-    this.loadDataFromApi();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

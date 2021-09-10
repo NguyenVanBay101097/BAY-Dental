@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { NotificationService } from '@progress/kendo-angular-notification';
@@ -9,6 +9,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { BirthdayCustomerService, ListPagedBirthdayCustomerRequest } from 'src/app/core/services/birthday-customer.service';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { SmsCampaignService } from '../sms-campaign.service';
 import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
 import { SmsTemplateService, SmsTemplateFilter } from '../sms-template.service';
@@ -25,7 +26,7 @@ export class SmsBirthdayFormManualComponent implements OnInit {
   filteredTemplate: any[];
   skip: number = 0;
   limit: number = 20;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   day: number = 0;
   month: number = 0;
   isBirthday: boolean = true;
@@ -44,8 +45,9 @@ export class SmsBirthdayFormManualComponent implements OnInit {
     private notificationService: NotificationService,
     private smsCampaignService: SmsCampaignService,
     private birthCustomerService: BirthdayCustomerService,
-    private authService: AuthService
-  ) { }
+    private authService: AuthService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
 
@@ -101,12 +103,7 @@ export class SmsBirthdayFormManualComponent implements OnInit {
 
   pageChange(event) {
     this.skip = event.skip;
-    this.loadDataFromApi();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

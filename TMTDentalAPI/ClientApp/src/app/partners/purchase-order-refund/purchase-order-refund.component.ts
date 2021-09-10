@@ -1,9 +1,10 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Inject } from '@angular/core';
 import { PageChangeEvent, GridDataResult } from '@progress/kendo-angular-grid';
 import { PurchaseOrderPaged } from 'src/app/purchase-orders/purchase-order.service';
 import { PartnerService } from '../partner.service';
 import { map } from 'rxjs/operators';
 import { FormGroup, FormBuilder } from '@angular/forms';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-purchase-order-refund',
@@ -13,13 +14,15 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 export class PurchaseOrderRefundComponent implements OnInit {
 
   @Input() public id: string; // ID của NCC
-  constructor(private service: PartnerService, private fb: FormBuilder) { }
+  constructor(private service: PartnerService, private fb: FormBuilder,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettingsPopup }
 
   gridView: GridDataResult;
   loading = false;
   skip = 0;
-  pageSize = 5;
-  pageSizes = [20, 50, 100, 200];
+  pageSize = 10;
+  pagerSettings: any;
   gridLoading = false;
   formFilter: FormGroup;
 
@@ -63,12 +66,6 @@ export class PurchaseOrderRefundComponent implements OnInit {
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
     this.pageSize = event.take;
-    this.loadPurchaseOrder();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.pageSize = value;
     this.loadPurchaseOrder();
   }
 

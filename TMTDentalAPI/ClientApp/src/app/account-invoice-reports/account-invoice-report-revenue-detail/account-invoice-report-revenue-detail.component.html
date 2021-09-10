@@ -1,4 +1,4 @@
-<kendo-grid class="mt-2" [loading]="loading" [data]="gridData" [pageSize]="this.filter.limit" [skip]="this.filter.offset" [pageable]="true" (pageChange)="pageChange($event)">
+<kendo-grid class="mt-2" [loading]="loading" [data]="gridData" [pageSize]="this.filter.limit" [skip]="this.filter.offset" [pageable]="pagerSettings" (pageChange)="pageChange($event)">
     <kendo-grid-column field="invoiceDate" title="Ngày thanh toán" width="150">
         <ng-template kendoGridCellTemplate let-dataItem>
             {{dataItem.invoiceDate | date: 'dd/MM/yyyy'}}
@@ -19,16 +19,4 @@
             {{dataItem.priceSubTotal | number}}
         </ng-template>
     </kendo-grid-column>
-    <ng-template kendoPagerTemplate let-skip="skip" let-total="total" let-pageSize="pageSize">
-        <kendo-pager-prev-buttons></kendo-pager-prev-buttons>
-        <kendo-pager-numeric-buttons [buttonCount]="10"></kendo-pager-numeric-buttons>
-        <kendo-pager-next-buttons></kendo-pager-next-buttons>
-        <kendo-pager-info></kendo-pager-info>
-        <span class="ml-4">
-            <kendo-dropdownlist style="width: 80px;" [data]="pageSizes"
-                (valueChange)="onPageSizeChange($event)" [value]="this.filter.limit">
-            </kendo-dropdownlist>
-            <label class="ml-2 mb-0">Số dòng trên trang</label>
-        </span>
-    </ng-template>
 </kendo-grid>

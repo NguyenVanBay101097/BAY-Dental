@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map, debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -10,6 +10,7 @@ import { CheckPermissionService } from 'src/app/shared/check-permission.service'
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-sale-promotion-program-list',
@@ -23,7 +24,7 @@ export class SalePromotionProgramListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   loading = false;
   search: string;
   searchUpdate = new Subject<string>();
@@ -53,8 +54,9 @@ export class SalePromotionProgramListComponent implements OnInit {
     private router: Router, private modalService: NgbModal, 
     private checkPermissionService: CheckPermissionService,
     private notificationService: NotificationService,
-    private intlService: IntlService
-  ) { }
+    private intlService: IntlService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.ruleDateFromBegin = this.monthStart;
@@ -149,12 +151,7 @@ export class SalePromotionProgramListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
-    this.loadDataFromApi();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

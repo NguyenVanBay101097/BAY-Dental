@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { WorkbookSheetRowCell } from '@progress/kendo-angular-excel-export';
 import { GridComponent, GridDataResult } from '@progress/kendo-angular-grid';
@@ -7,6 +7,7 @@ import * as moment from 'moment';
 import { of, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { RevenueManageService } from '../account-invoice-report-revenue-manage/revenue-manage.service';
 import { AccountInvoiceReportService, RevenuePartnerReportPar } from '../account-invoice-report.service';
@@ -25,7 +26,7 @@ export class AccountInvoiceReportRevenuePartnerComponent implements OnInit {
   loading = false;
   skip = 0;
   limit = 20;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   searchUpdate = new Subject<string>();
 
 
@@ -37,7 +38,8 @@ export class AccountInvoiceReportRevenuePartnerComponent implements OnInit {
     private revenueManagePartner: RevenueManageService,
     private printPartner: PrintService,
     private intlPartner: IntlService,
-  ) { }
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.initFilterData();
@@ -140,12 +142,7 @@ export class AccountInvoiceReportRevenuePartnerComponent implements OnInit {
 
   pageChange(e) {
     this.skip = e.skip;
-    this.loadReport();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
+    this.limit = e.take;
     this.loadReport();
   }
 

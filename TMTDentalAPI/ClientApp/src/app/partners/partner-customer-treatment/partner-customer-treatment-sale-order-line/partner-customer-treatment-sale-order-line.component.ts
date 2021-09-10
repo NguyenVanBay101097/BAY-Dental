@@ -1,11 +1,12 @@
 import { HttpParams } from '@angular/common/http';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { SaleOrderLineService, SaleOrderLinesPaged } from 'src/app/core/services/sale-order-line.service';
 import { SaleOrderLineDisplay } from 'src/app/sale-orders/sale-order-line-display';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { SaleOrdersOdataService } from 'src/app/shared/services/sale-ordersOdata.service';
 
 @Component({
@@ -19,7 +20,7 @@ export class PartnerCustomerTreatmentSaleOrderLineComponent implements OnInit {
   @Input() public saleOrderId: string;
   skip = 0;
   limit = 20;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   gridData: GridDataResult;
   details: SaleOrderLineDisplay[];
   loading = false;
@@ -35,8 +36,9 @@ export class PartnerCustomerTreatmentSaleOrderLineComponent implements OnInit {
   constructor(
     private saleOrderlineService: SaleOrderLineService,
     private intlService: IntlService,
-    private saleOrderOdataService: SaleOrdersOdataService
-  ) { }
+    private saleOrderOdataService: SaleOrdersOdataService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     
@@ -99,12 +101,7 @@ export class PartnerCustomerTreatmentSaleOrderLineComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
-    this.loadDataFromApi();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
@@ -9,6 +9,7 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { SaleOrderPaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-partner-customer-treatment-list',
@@ -22,7 +23,7 @@ export class PartnerCustomerTreatmentListComponent implements OnInit {
   dateTo: Date;
   skip: number = 0;
   limit: number = 20;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   search: string;
   saleOrdersData: GridDataResult;
   searchUpdate = new Subject<string>();
@@ -37,7 +38,8 @@ export class PartnerCustomerTreatmentListComponent implements OnInit {
     private intlService: IntlService,
     private modalService: NgbModal,
     private notificationService: NotificationService,
-  ) { }
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loading = true;
@@ -98,12 +100,7 @@ export class PartnerCustomerTreatmentListComponent implements OnInit {
 
   pageChange(event){
     this.skip = event.skip;
-    this.getSaleOrders();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
+    this.limit = event.take;
     this.getSaleOrders();
   }
 

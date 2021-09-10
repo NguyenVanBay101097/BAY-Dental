@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridComponent, GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { map } from 'rxjs/operators';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { GetStockHistoryReq, StockReportService } from 'src/app/stock-reports/stock-report.service';
 
 @Component({
@@ -16,7 +17,7 @@ export class StockXuatNhapTonDetailDialogComponent implements OnInit {
   loading: boolean = false;
   limit: number = 10;
   skip: number = 0;
-  pageSizes = [10, 20, 50, 100, 200];
+  pagerSettings: any;
   item: any;
   allGridData: GridDataResult;
   fileExcelName: string;
@@ -24,8 +25,9 @@ export class StockXuatNhapTonDetailDialogComponent implements OnInit {
     public activeModal: NgbActiveModal,
     private stockReportService: StockReportService,
     private intlService: IntlService,
-
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) {
+    this.pagerSettings = config.pagerSettingsPopup
     this.allData = this.allData.bind(this);
   }
 
@@ -64,12 +66,7 @@ export class StockXuatNhapTonDetailDialogComponent implements OnInit {
 
   pageChange(event) {
     this.skip = event.skip;
-    this.loadDataFromApi();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

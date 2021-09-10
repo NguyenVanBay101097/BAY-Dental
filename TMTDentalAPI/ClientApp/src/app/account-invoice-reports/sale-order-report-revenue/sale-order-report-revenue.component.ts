@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { Workbook } from '@progress/kendo-angular-excel-export';
 import { GridComponent, GridDataResult } from '@progress/kendo-angular-grid';
 import { DataResult } from '@progress/kendo-data-query';
@@ -9,6 +9,7 @@ import { GetRevenueSumTotalReq, SaleOrderReportRevenuePaged, SaleOrderService } 
 import { saveAs } from '@progress/kendo-file-saver';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { PrintService } from 'src/app/shared/services/print.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-sale-order-report-revenue',
@@ -23,7 +24,7 @@ export class SaleOrderReportRevenueComponent implements OnInit {
   companies: CompanySimple[] = [];
   allDataReport: any;
   searchUpdate = new Subject<string>();
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
 
   sumRevenue = {
     amountTotal : 0,
@@ -35,8 +36,9 @@ export class SaleOrderReportRevenueComponent implements OnInit {
   constructor(
     private companyService: CompanyService,
     private saleOrderService: SaleOrderService,
-    private printService: PrintService
-  ) { }
+    private printService: PrintService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.initFilterData();
@@ -123,12 +125,7 @@ export class SaleOrderReportRevenueComponent implements OnInit {
 
   pageChange(e) {
     this.filter.offset = e.skip;
-    this.loadReport();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.filter.offset = 0;
-    this.filter.limit = value;
+    this.filter.limit = e.take;
     this.loadReport();
   }
 

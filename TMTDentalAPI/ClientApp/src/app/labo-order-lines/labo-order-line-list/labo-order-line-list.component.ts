@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit, Inject } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { WindowService, WindowCloseResult, DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
 import { LaboOrderLinePaged, LaboOrderLineService, LaboOrderLineDisplay } from '../labo-order-line.service';
@@ -7,6 +7,7 @@ import { LaboOrderLineCuDialogComponent } from '../labo-order-line-cu-dialog/lab
 import { Subject } from 'rxjs';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-labo-order-line-list',
@@ -20,7 +21,7 @@ export class LaboOrderLineListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   loading = false;
   opened = false;
   search: string;
@@ -35,8 +36,9 @@ export class LaboOrderLineListComponent implements OnInit {
 
   constructor(private laboOrderLineService: LaboOrderLineService,
     private windowService: WindowService, private dialogService: DialogService, private intlService: IntlService,
-    private modalService: NgbModal) {
-  }
+    private modalService: NgbModal,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -115,12 +117,7 @@ export class LaboOrderLineListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
-    this.loadDataFromApi();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

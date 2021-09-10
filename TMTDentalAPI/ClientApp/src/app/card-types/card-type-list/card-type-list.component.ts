@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -7,6 +7,7 @@ import { NgbDate, NgbDateParserFormatter, NgbModal } from '@ng-bootstrap/ng-boot
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { CardTypeService, CardTypePaged, CardTypeBasic } from '../card-type.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-card-type-list',
@@ -20,7 +21,7 @@ export class CardTypeListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   loading = false;
   opened = false;
   search: string;
@@ -28,7 +29,9 @@ export class CardTypeListComponent implements OnInit {
 
   constructor(private cardTypeService: CardTypeService,
     private router: Router,
-    private modalService: NgbModal, private intlService: IntlService) { }
+    private modalService: NgbModal, private intlService: IntlService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -64,12 +67,7 @@ export class CardTypeListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
-    this.loadDataFromApi();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

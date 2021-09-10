@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { DateRangeComponent } from '@progress/kendo-angular-dateinputs';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridComponent, GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -13,6 +13,7 @@ import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { SaleOrderLinePaged } from 'src/app/partners/partner.service';
 import { DateRangePickerFilterComponent } from 'src/app/shared/date-range-picker-filter/date-range-picker-filter.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { ToothBasic } from 'src/app/teeth/tooth.service';
 import { SaleReportService, ServiceReportReq } from '../sale-report.service';
@@ -31,7 +32,7 @@ export class ServiceSaleReportComponent implements OnInit {
   loading = false;
   skip = 0;
   limit = 20;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   searchUpdate = new Subject<string>();
   filterMonth: any = "";
   search: string;
@@ -62,8 +63,9 @@ export class ServiceSaleReportComponent implements OnInit {
     private companyService: CompanyService,
     private employeeService: EmployeeService,
     private intlService: IntlService,
-    private printService:PrintService
-  ) { }
+    private printService:PrintService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.initFilterData();
@@ -192,12 +194,7 @@ export class ServiceSaleReportComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
-    this.loadAllData();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
+    this.limit = event.take;
     this.loadAllData();
   }
 

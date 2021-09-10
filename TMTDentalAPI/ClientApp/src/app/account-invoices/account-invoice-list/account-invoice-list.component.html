@@ -43,11 +43,11 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"
         (pageChange)="pageChange($event)" [selectable]="true" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
         <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
         <kendo-grid-column field="partner" title="Đối tác">
-            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            <ng-template kendoGrisdCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.partner ? dataItem.partner.name : ''}}
             </ng-template>
         </kendo-grid-column>
@@ -89,17 +89,5 @@
                     <span class="fa fa-trash"></span> Xóa</button>
             </ng-template>
         </kendo-grid-column>
-        <ng-template kendoPagerTemplate let-skip="skip" let-total="total" let-pageSize="pageSize">
-            <kendo-pager-prev-buttons></kendo-pager-prev-buttons>
-            <kendo-pager-numeric-buttons [buttonCount]="10"></kendo-pager-numeric-buttons>
-            <kendo-pager-next-buttons></kendo-pager-next-buttons>
-            <kendo-pager-info></kendo-pager-info>
-            <span class="ml-4">
-                <kendo-dropdownlist style="width: 80px;" [data]="pageSizes"
-                    (valueChange)="onPageSizeChange($event)" [value]="limit">
-                </kendo-dropdownlist>
-                <label class="ml-2 mb-0">Số dòng trên trang</label>
-            </span>
-        </ng-template>
     </kendo-grid>
 </div>

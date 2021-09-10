@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { DotKhamPaged } from 'src/app/dot-khams/dot-khams';
 import { SaleOrderCreateDotKhamDialogComponent } from 'src/app/sale-orders/sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
 import { AppointmentBasic, AppointmentSearchByDate, AppointmentPaged } from 'src/app/appointment/appointment';
@@ -18,6 +18,7 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { PartnerService } from '../partner.service';
 import { PartnerDisplay } from '../partner-simple';
 import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-partner-customer-appointment',
@@ -30,7 +31,7 @@ export class PartnerCustomerAppointmentComponent implements OnInit {
   limit = 20;
   id: string;
   skip = 0;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   loading = false;
 
   constructor(
@@ -38,8 +39,9 @@ export class PartnerCustomerAppointmentComponent implements OnInit {
     private modalService: NgbModal,
     private partnerService: PartnerService,
     private notificationService: NotificationService,
-    private activeRoute: ActivatedRoute
-  ) { }
+    private activeRoute: ActivatedRoute,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.id = this.activeRoute.parent.snapshot.paramMap.get('id');
@@ -69,15 +71,10 @@ export class PartnerCustomerAppointmentComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadData();
   }
   
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
-    this.loadData();
-  }
-
   deleteAppointment(appointment: AppointmentBasic) {
     const modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa lịch hẹn';

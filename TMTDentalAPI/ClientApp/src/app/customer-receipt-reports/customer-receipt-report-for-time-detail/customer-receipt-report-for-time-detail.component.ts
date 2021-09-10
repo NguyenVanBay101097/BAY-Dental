@@ -1,10 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { CompanyService } from 'src/app/companies/company.service';
 import { EmployeeService } from 'src/app/employees/employee.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { CustomerReceiptReportFilter, CustomerReceiptReportService, CustomerReceiptTimeDetailFilter } from '../customer-receipt-report.service';
 
 @Component({
@@ -20,7 +21,7 @@ export class CustomerReceiptReportForTimeDetailComponent implements OnInit {
   loading = false;
   limit = 20;
   skip = 0;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   total: number;
   gridData: GridDataResult;
   customerReceiptTimes: any[] = [];
@@ -35,7 +36,8 @@ export class CustomerReceiptReportForTimeDetailComponent implements OnInit {
     private intlService: IntlService,
     private companyService: CompanyService,
     private employeeService: EmployeeService,
-  ) { }
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
 
@@ -81,12 +83,7 @@ export class CustomerReceiptReportForTimeDetailComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
-    this.loadDataApi();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
+    this.limit = event.take;
     this.loadDataApi();
   }
 

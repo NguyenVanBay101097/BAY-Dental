@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ExcelExportData, Workbook } from '@progress/kendo-angular-excel-export';
 import { saveAs } from '@progress/kendo-file-saver';
@@ -13,6 +13,7 @@ import { ProductSimple } from 'src/app/products/product-simple';
 import { StockReportService, StockReportXuatNhapTonItem, StockReportXuatNhapTonSearch } from 'src/app/stock-reports/stock-report.service';
 import { StockXuatNhapTonDetailDialogComponent } from '../stock-xuat-nhap-ton-detail-dialog/stock-xuat-nhap-ton-detail-dialog.component';
 import { AuthService } from 'src/app/auth/auth.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 @Component({
   selector: 'app-stock-xuat-nhap-ton',
   templateUrl: './stock-xuat-nhap-ton.component.html',
@@ -28,7 +29,7 @@ export class StockXuatNhapTonComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   dateFrom: Date;
   dateTo: Date;
   searchProduct: ProductSimple;
@@ -60,8 +61,10 @@ export class StockXuatNhapTonComponent implements OnInit {
     private reportService: StockReportService,
     private intlService: IntlService,
     private modalService: NgbModal,
-    private authService: AuthService
-  ) {
+    private authService: AuthService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { 
+    this.pagerSettings = config.pagerSettings 
     this.excelData = this.excelData.bind(this);
   }
 
@@ -107,12 +110,7 @@ export class StockXuatNhapTonComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
-    this.loadItems();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
+    this.limit = event.take;
     this.loadItems();
   }
 

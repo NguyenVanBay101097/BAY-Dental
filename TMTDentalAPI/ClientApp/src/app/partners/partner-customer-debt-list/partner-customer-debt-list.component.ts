@@ -1,5 +1,5 @@
 import { AuthService } from './../../auth/auth.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -12,6 +12,7 @@ import { SaleOrderPaymentService } from 'src/app/core/services/sale-order-paymen
 import { NotifyService } from 'src/app/shared/services/notify.service';
 import { PartnerCustomerDebtPaymentDialogComponent } from '../partner-customer-debt-payment-dialog/partner-customer-debt-payment-dialog.component';
 import { PartnerService } from '../partner.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-partner-customer-debt-list',
@@ -25,7 +26,7 @@ export class PartnerCustomerDebtListComponent implements OnInit {
   search: string;
   limit = 20;
   offset = 0;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   edit = false;
   dateFrom: Date;
   dateTo: Date;
@@ -43,7 +44,9 @@ export class PartnerCustomerDebtListComponent implements OnInit {
     private route: ActivatedRoute,
     private customerDebtReportService: CustomerDebtReportService,
     private notifyService: NotifyService,
-    private saleOrderPaymentService: SaleOrderPaymentService) { }
+    private saleOrderPaymentService: SaleOrderPaymentService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
 
   ngOnInit() {
@@ -91,12 +94,7 @@ export class PartnerCustomerDebtListComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.offset = event.skip;
-    this.loadDataFromApi();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.offset = 0;
-    this.limit = value;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Inject } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { AccountInvoicePaged } from 'src/app/account-invoices/account-invoice.service';
 import { PartnerService } from '../partner.service';
@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { SaleOrderPaged } from 'src/app/core/services/sale-order.service';
 import { LaboOrderPaged } from 'src/app/labo-orders/labo-order.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-partner-detail-list',
@@ -21,11 +22,14 @@ export class PartnerDetailListComponent implements OnInit {
   gridLoading = false;
   gridView: GridDataResult;
 
-  limit = 5;
+  limit = 10;
   skip = 0;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
 
-  constructor(private service: PartnerService, private router: Router) { }
+  constructor(
+    private service: PartnerService, private router: Router,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettingsPopup }
 
   ngOnInit() {
     if (this.isCustomer) {
@@ -95,12 +99,6 @@ export class PartnerDetailListComponent implements OnInit {
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
     this.limit = event.take;
-    this.loadInvoices();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
     this.loadInvoices();
   }
 

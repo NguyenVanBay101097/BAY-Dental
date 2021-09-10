@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { load } from '@progress/kendo-angular-intl';
@@ -7,6 +7,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { AccountPaymentPaged, AccountPaymentSave, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { SalaryPaymentDialogV2Component } from '../salary-payment-dialog-v2/salary-payment-dialog-v2.component';
 import { SalaryPaymentFormComponent } from '../salary-payment-form/salary-payment-form.component';
@@ -23,12 +24,13 @@ export class SalaryPaymentListV2Component implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   loading = false;
   constructor(
     private accountPaymentService: AccountPaymentService,
-    private modalService: NgbModal, private printService: PrintService
-  ) { }
+    private modalService: NgbModal, private printService: PrintService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.searchUpdate.pipe(
@@ -126,10 +128,5 @@ export class SalaryPaymentListV2Component implements OnInit {
       },
       () => { }
     );
-  }
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
-    this.loadDataFromApi();
   }
 }

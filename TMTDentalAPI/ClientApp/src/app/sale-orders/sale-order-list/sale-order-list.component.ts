@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, Inject } from '@angular/core';
 import { GridDataResult, PageChangeEvent, GridComponent } from '@progress/kendo-angular-grid';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -14,6 +14,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
 import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/shared/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-sale-order-list',
@@ -27,7 +28,7 @@ export class SaleOrderListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   loading = false;
   opened = false;
   searchInvoiceNumber: string;
@@ -49,7 +50,9 @@ export class SaleOrderListComponent implements OnInit {
   selectedIds: string[] = [];
 
   constructor(private saleOrderService: SaleOrderService, private intlService: IntlService, private router: Router, private dialogService: DialogService,
-    private modalService: NgbModal, private paymentService: AccountPaymentService, private notificationService: NotificationService) { }
+    private modalService: NgbModal, private paymentService: AccountPaymentService, private notificationService: NotificationService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -147,12 +150,7 @@ export class SaleOrderListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
-    this.loadDataFromApi();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

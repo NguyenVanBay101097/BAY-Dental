@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -8,6 +8,7 @@ import { ServiceCardTypeService } from '../service-card-type.service';
 import { ServiceCardTypePaged } from '../service-card-type-paged';
 import { ServiceCardTypeCuDialogComponent } from '../service-card-type-cu-dialog/service-card-type-cu-dialog.component';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-service-card-type-list',
@@ -22,7 +23,7 @@ export class ServiceCardTypeListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   loading = false;
   search: string;
   searchUpdate = new Subject<string>();
@@ -34,7 +35,9 @@ export class ServiceCardTypeListComponent implements OnInit {
   canServiceCardTypeDelete = this.checkPermissionService.check(["ServiceCard.Type.Delete"]);
 
   constructor(private cardTypeService: ServiceCardTypeService,
-    private modalService: NgbModal, private checkPermissionService: CheckPermissionService) { }
+    private modalService: NgbModal, private checkPermissionService: CheckPermissionService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -70,12 +73,7 @@ export class ServiceCardTypeListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
-    this.loadDataFromApi();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

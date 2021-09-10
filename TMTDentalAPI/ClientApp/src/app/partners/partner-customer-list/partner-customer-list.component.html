@@ -68,7 +68,7 @@
         <label class="btn btn-outline-primary mr-2 mb-0" for="draft">Chưa phát sinh</label>
 
     </div>
-    <kendo-grid [data]="gridData" [pageable]="true" (pageChange)="onPageChange($event)" [loading]="loading" [skip]="this.filter.offset" [pageSize]="this.filter.limit" #grid>
+    <kendo-grid [data]="gridData" [pageable]="pagerSettings" (pageChange)="onPageChange($event)" [loading]="loading" [skip]="this.filter.offset" [pageSize]="this.filter.limit" #grid>
         <kendo-grid-column class="" field="name" title="Họ tên" width="250">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <div [ngClass]="'pl-1 d-flex o_tag_bordercolor_' + dataItem.memberLevel?.color" [ngStyle]="{'border-left': '4px solid white'}" class="">
@@ -129,18 +129,6 @@
                     <i class="far fa-trash-alt"></i></button>
             </ng-template>
         </kendo-grid-column>
-        <ng-template kendoPagerTemplate let-skip="skip" let-total="total" let-pageSize="pageSize">
-            <kendo-pager-prev-buttons></kendo-pager-prev-buttons>
-            <kendo-pager-numeric-buttons [buttonCount]="10"></kendo-pager-numeric-buttons>
-            <kendo-pager-next-buttons></kendo-pager-next-buttons>
-            <kendo-pager-info></kendo-pager-info>
-            <span class="ml-4">
-                <kendo-dropdownlist style="width: 80px;" [data]="pageSizes"
-                    (valueChange)="onPageSizeChange($event)" [value]="this.filter.limit">
-                </kendo-dropdownlist>
-                <label class="ml-2 mb-0">Số dòng trên trang</label>
-            </span>
-        </ng-template>
     </kendo-grid>
     <app-partner-profile-print></app-partner-profile-print>
 

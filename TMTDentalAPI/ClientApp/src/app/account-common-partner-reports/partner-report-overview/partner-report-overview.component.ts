@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { Workbook, WorkbookSheetColumn, WorkbookSheetRow, WorkbookSheetRowCell } from '@progress/kendo-angular-excel-export';
@@ -14,6 +14,7 @@ import { GetSaleOrderPagedReq, PartnerOldNewReportReq, PartnerOldNewReportRes, P
 import { AddressDialogComponent } from 'src/app/shared/address-dialog/address-dialog.component';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { saveAs } from '@progress/kendo-file-saver';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-partner-report-overview',
@@ -53,7 +54,7 @@ export class PartnerReportOverviewComponent implements OnInit {
   revenueNew = 0;
   isFilterAdvance = false;
   addressFilter = null;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
 
   @ViewChild("companyCbx", { static: true }) companyVC: ComboBoxComponent;
   @ViewChild("pnSourceCbx", { static: true }) pnSourceVC: ComboBoxComponent;
@@ -65,8 +66,9 @@ export class PartnerReportOverviewComponent implements OnInit {
     private partnerOldNewRpService: PartnerOldNewReportService,
     private partnerCategoryService: PartnerCategoryService,
     private printService: PrintService,
-    private modalService: NgbModal
-  ) { }
+    private modalService: NgbModal,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.initFilterData();
@@ -266,12 +268,7 @@ export class PartnerReportOverviewComponent implements OnInit {
 
   pageChange(e) {
     this.filter.offset = e.skip;
-    this.loadData();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.filter.offset = 0;
-    this.filter.limit = value;
+    this.filter.limit = e.take;
     this.loadData();
   }
 

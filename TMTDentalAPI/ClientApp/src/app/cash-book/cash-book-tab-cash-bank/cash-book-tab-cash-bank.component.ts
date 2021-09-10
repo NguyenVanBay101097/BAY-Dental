@@ -1,7 +1,8 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Inject, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map } from 'rxjs/operators';
 import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { CashBookPaged, CashBookService, ReportDataResult } from '../cash-book.service';
 
 @Component({
@@ -14,7 +15,7 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: any;
   loading = false;
   reportData: ReportDataResult;
   changeDateFirst: boolean = true;
@@ -24,8 +25,9 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
 
   constructor(
     private cashBookService: CashBookService,
-    private accountPaymentService: AccountPaymentService
-  ) { }
+    private accountPaymentService: AccountPaymentService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.changeDateFirst == false) {
@@ -65,12 +67,7 @@ export class CashBookTabCashBankComponent implements OnInit, OnChanges {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
-    this.loadDataGetMoney();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
+    this.limit = event.take;
     this.loadDataGetMoney();
   }
 

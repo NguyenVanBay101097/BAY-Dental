@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { HrPayrollStructureService, HrPayrollStructurePaged } from '../hr-payroll-structure.service';
 import { Router } from '@angular/router';
@@ -9,6 +9,8 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { HrPayrollStructureTypePaged, HrPayrollStructureTypeService } from '../hr-payroll-structure-type.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { AnimationStyleMetadata } from '@angular/animations';
 
 @Component({
   selector: 'app-payroll-structure-list',
@@ -28,7 +30,7 @@ export class HrPayrollStructureListComponent implements OnInit {
   };
   limit = 20;
   skip = 0;
-  pageSizes = [20, 50, 100, 200];
+  pagerSettings: AnimationStyleMetadata;
   loading = false;
   search: string;
   searchUpdate = new Subject<string>();
@@ -38,7 +40,9 @@ export class HrPayrollStructureListComponent implements OnInit {
     private hrPayrollStructureService: HrPayrollStructureService,
     private hrPayrollStructureTypeService: HrPayrollStructureTypeService,
     private modalService: NgbModal,
-    private router: Router) { }
+    private router: Router,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.searchUpdate.pipe(
@@ -101,12 +105,7 @@ export class HrPayrollStructureListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
-    this.loadDataFromApi();
-  }
-
-  onPageSizeChange(value: number): void {
-    this.skip = 0;
-    this.limit = value;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 
