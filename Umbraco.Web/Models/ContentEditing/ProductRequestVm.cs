@@ -29,7 +29,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string State { get; set; }
 
-        public Guid SaleOrderId { get; set; }
+        public Guid? SaleOrderId { get; set; }
         public SaleOrderSimple SaleOrder { get; set; }
     }
 

@@ -49,8 +49,6 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Date <= dateOrderTo);
             }
 
-            query = query.Include(x => x.SaleOrder);
-
             var totalItems = await query.CountAsync();
 
             query = query.OrderByDescending(x => x.DateCreated);
