@@ -26,15 +26,17 @@ namespace TMTDentalAPI.Controllers
         private readonly IIRModelAccessService _modelAccessService;
         private readonly IViewRenderService _view;
         private readonly IUnitOfWorkAsync _unitOfWork;
+        private readonly IPrintTemplateConfigService _printTemplateConfigService;
 
         public ToaThuocsController(IToaThuocService toaThuocService, IMapper mapper, IViewRenderService view,
-            IIRModelAccessService modelAccessService, IUnitOfWorkAsync unitOfWork)
+            IIRModelAccessService modelAccessService, IUnitOfWorkAsync unitOfWork, IPrintTemplateConfigService printTemplateConfigService)
         {
             _toaThuocService = toaThuocService;
             _mapper = mapper;
             _modelAccessService = modelAccessService;
             _view = view;
             _unitOfWork = unitOfWork;
+            _printTemplateConfigService = printTemplateConfigService;
         }
 
         [HttpGet]
@@ -116,8 +118,8 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetPrint(Guid id)
         {
             var res = await _toaThuocService.GetToaThuocPrint(id);
-
-            var html = _view.Render("ToaThuoc/Print", res);
+            var obj = _mapper.Map<ToaThuocPrintViewModel>(res);
+            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = obj, Type = "tmp_toathuoc" });
 
             return Ok(new PrintData() { html = html });
         }

@@ -9,7 +9,7 @@ import { PrintPaperSizeBasic, PrintPaperSizeDisplay, PrintPaperSizePaged, PrintP
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PrintPaperSizeCreateUpdateDialogComponent } from 'src/app/config-prints/print-paper-size-create-update-dialog/print-paper-size-create-update-dialog.component';
 import * as _ from 'lodash';
-import * as constantData from '../constant-data';
+import * as constantData from '../print-template-config-constant-data';
 import { KeywordListDialogComponent } from '../keyword-list-dialog/keyword-list-dialog.component';
 
 @Component({
@@ -145,6 +145,8 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         val.content = content || this.configEdit.content;
         this.configService.generate(val).subscribe((res: any) => {
             this.contentPrev = res;
+        }, () => {
+            this.contentPrev = 'Không thể hiển thị do sai cú pháp';
         });
     }
 
@@ -183,7 +185,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     }
 
     onAddKeyWord() {
-        const modalRef = this.modalService.open(KeywordListDialogComponent, { size: 'xl', scrollable: true, windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        const modalRef = this.modalService.open(KeywordListDialogComponent, { size: 'xl', scrollable: true, windowClass: 'o_technical_modal', keyboard: true, backdrop: 'static' });
         modalRef.componentInstance.boxKeyWordSource = constantData.getKeyWords()[this.filter.type];
         modalRef.result.then((res) => {
             if (res) {

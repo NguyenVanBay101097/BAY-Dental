@@ -88,6 +88,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? PrintPaperSizeId { get; set; }
     }
 
+    public class PrintOfTypeReq
+    {
+        public string Type { get; set; }
+        public object Obj { get; set; }
+    }
     public class SampleDataPrintTemplate
     {
         public string Type { get; set; }

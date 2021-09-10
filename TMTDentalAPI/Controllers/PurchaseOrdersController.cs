@@ -22,13 +22,15 @@ namespace TMTDentalAPI.Controllers
         private readonly IPurchaseOrderService _purchaseOrderService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
+        private readonly IPrintTemplateConfigService _printTemplateConfigService;
 
         public PurchaseOrdersController(IPurchaseOrderService purchaseOrderService, IMapper mapper,
-            IUnitOfWorkAsync unitOfWork)
+            IUnitOfWorkAsync unitOfWork, IPrintTemplateConfigService printTemplateConfigService)
         {
             _purchaseOrderService = purchaseOrderService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _printTemplateConfigService = printTemplateConfigService;
         }
 
         [HttpGet]
@@ -196,6 +198,16 @@ namespace TMTDentalAPI.Controllers
             await _purchaseOrderService.Unlink(ids);
             _unitOfWork.Commit();
             return NoContent();
+        }
+
+        [HttpGet("{id}/Print")]
+        public async Task<IActionResult> GetPrint(Guid id)
+        {
+            var res = await _purchaseOrderService.GetPrint(id);
+            var obj = _mapper.Map<PurchaseOrderPrintVm>(res);
+            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = obj, Type = res.Type == "order" ? "tmp_purchase_order" : "tmp_purchase_refund" });
+
+            return Ok(new PrintData() { html = html });
         }
     }
 }

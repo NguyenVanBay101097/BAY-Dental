@@ -34,37 +34,51 @@ let companyInfo =
     ]
 };
 
+let pipes =
+{
+    text: "Một số định dạng bổ sung",
+    value: [
+        { text: 'Ngày hôm nay', value: '{{date.now}}' },
+        { text: 'định dạng số', value: '| math.format "N0" "vi-VN"' },
+        { text: 'định dạng ngày/tháng/năm', value: `| date.to_string '%d/%m/%Y'` },
+        { text: 'định dạng chữ hoa', value: '| string.upcase' },
+        { text: 'định dạng chữ thường', value: '| string.downcase' },
+    ],
+    links: [
+        { text: 'Link tham khảo 1', value: `https://github.com/scriban/scriban/blob/master/doc/language.md` },
+        { text: 'Link tham khảo 2', value: `https://github.com/scriban/scriban/blob/master/doc/builtins.md` },
+    ]
+};
+
 const keyWords =
 
 {
     'tmp_medicine_order': [
         companyInfo,//info key of company
         {
-            text: "Thông tin hóa đơn",
+            text: "Thông tin phiếu",
             value: [
                 { text: 'Ngày lập hóa đơn', value: '{{order_date.day}}' },
                 { text: 'Tháng lập hóa đơn', value: '{{order_date.month}}' },
                 { text: 'Năm lập hóa đơn', value: '{{order_date.year}}' },
                 { text: 'Mã hóa đơn', value: '{{name}}' },
-                { text: 'Tổng tiền', value: '{{amount}}' },
                 { text: 'Thanh toán', value: '{{account_payment.amount}}' },
+                { text: 'Tổng tiền', value: '{{amount}}' },
             ]
         },
         {
-            text: "Thông tin khách hàng",
+            text: "Thông tin chung",
             value: [
                 { text: 'Tên khách hàng', value: '{{partner.name}}' },
                 { text: 'Địa chỉ khách hàng', value: '{{partner.address}}' },
-            ]
-        },
-        {
-            text: "Thông tin bác sĩ",
-            value: [
                 { text: 'Tên bác sĩ', value: '{{employee.name}}' },
+                { text: 'Lời dặn bác sĩ', value: '{{toa_thuoc.note}}' },
+                { text: 'Chẩn đoán bệnh', value: '{{toa_thuoc.diagnostic}}' },
+                { text: 'Ngày tái khám', value: '{{toa_thuoc.re_examination_date}}' },
             ]
         },
         {
-            text: "Thông tin thuốc",
+            text: "Thông tin chi tiết",
             value: [
                 { text: 'Danh sách thuốc', value: '{{medicine_order_lines}} ' },
                 { text: 'Tên thuốc', value: '{{line.product.name}}' },
@@ -76,48 +90,35 @@ const keyWords =
                 { text: 'Đơn giá thuốc', value: '{{line.price}}' },
                 { text: 'Thành tiền', value: '{{line.amount_total}}' },
             ]
-        },
-        {
-            text: "Thông tin khám bệnh",
-            value: [
-                { text: 'Lời dặn bác sĩ', value: '{{toa_thuoc.note}}' },
-                { text: 'Chẩn đoán bệnh', value: '{{toa_thuoc.diagnostic}}' },
-                { text: 'Ngày tái khám', value: '{{toa_thuoc.re_examination_date}}' },
-            ]
         }
     ],
 
     'tmp_toathuoc': [
         companyInfo,//info key of company
         {
-            text: "Thông tin đơn thuốc",
+            text: "Thông tin phiếu",
             value: [
-                { text: 'Ngày lập đơn', value: '{{date.day}}' },
-                { text: 'Tháng lập đơn', value: '{{date.month}}' },
-                { text: 'Năm lập đơn', value: '{{date.year}}' },
+                { text: 'Ngày lập đơn', value: '{{date_created.day}}' },
+                { text: 'Tháng lập đơn', value: '{{date_created.month}}' },
+                { text: 'Năm lập đơn', value: '{{date_created.year}}' },
                 { text: 'Mã đơn', value: '{{name}}' },
+            ]
+        },
+        {
+            text: "Thông tin chung",
+            value: [
                 { text: 'Lời dặn', value: '{{note}}' },
                 { text: 'Chấn đoán bệnh', value: '{{diagnostic}}' },
                 { text: 'Ngày tái khám', value: '{{re_examination_date}}' },
-            ]
-        },
-        {
-            text: "Thông tin khách hàng",
-            value: [
                 { text: 'Tên khách hàng', value: '{{partner.display_name}}' },
                 { text: 'Địa chỉ khách hàng', value: '{{partner.address}}' },
-                { text: 'Giới tính', value: '{{partner.display_gender}}' },
-                { text: 'Tuổi', value: '{{partner.age}}' },
-            ]
-        },
-        {
-            text: "Thông tin bác sĩ",
-            value: [
+                { text: 'Giới tính khách hàng', value: '{{partner.display_gender}}' },
+                { text: 'Tuổi khách hàng', value: '{{partner.age}}' },
                 { text: 'Tên bác sĩ', value: '{{employee_name}}' },
             ]
         },
         {
-            text: "Thông tin Thuốc",
+            text: "Thông tin chi tiết",
             value: [
                 { text: 'Danh sách thuốc', value: '{{lines}}' },
                 { text: 'Số thứ tự', value: '{{for.index + 1}}' },
@@ -177,11 +178,6 @@ const keyWords =
                 { text: 'Kiểu nhịp', value: '{{labo_bridge.name}}' },
                 { text: 'Gửu kèm', value: '{{labo_order_products}}' },
                 { text: 'Ghi chú kỹ thuật', value: '{{technical_note}}' },
-            ]
-        },
-        {
-            text: "Thông số bảo hành",
-            value: [
                 { text: 'Mã bảo hành', value: '{{warranty_code}}' },
                 { text: 'Hạn bảo hành', value: '{{warranty_period}}' },
             ]
@@ -209,7 +205,7 @@ const keyWords =
             ]
         },
         {
-            text: 'Thông tin hàng hóa',
+            text: 'Thông tin chi tiết',
             value: [
                 { text: 'Danh sách hàng hóa', value: '{{order_lines}}' },
                 { text: 'Số thứ tự', value: '{{line.sequence}}' },
@@ -222,11 +218,90 @@ const keyWords =
             ]
         },
     ],
-    'tmp_purchase_refund': []
+    'tmp_purchase_refund': [],
+    'tmp_customer_debt': [
+        companyInfo,
+        {
+            text: 'Thông tin phiếu',
+            value: [
+                { text: 'Ngày tạo', value: '{{date_created.day}}' },
+                { text: 'Tháng tạo', value: '{{date_created.month}}' },
+                { text: 'Năm tạo', value: '{{date_created.year}}' },
+                { text: 'Mã phiếu', value: '{{name}}' },
+            ]
+        },
+        {
+            text: 'Thông tin chung',
+            value: [
+                { text: 'Ngày thanh toán', value: '{{date_created}}' },
+                { text: 'Phương thức thanh toán', value: '{{journal_name}}' },
+                { text: 'Số tiền thanh toán', value: '{{amount}}' },
+                { text: 'Số tiền bằng chữ', value: '{{amount_text}}' },
+                { text: 'Nội dung', value: '{{reason}}' },
+                { text: 'Tên khách hàng', value: '{{partner.display_name}}' },
+                { text: 'Địa chỉ khách hàng', value: '{{partner.address}}' },
+                { text: 'SĐT khách hàng', value: '{{partner.phone}}' },
+                { text: 'Người lập phiếu', value: '{{user.name}}' },
+            ]
+        }
+    ],
+    'tmp_phieu_thu': [
+        companyInfo,
+        {
+            text: 'Thông tin phiếu',
+            value: [
+                { text: 'Ngày tạo', value: '{{date.day}}' },
+                { text: 'Tháng tạo', value: '{{date.month}}' },
+                { text: 'Năm tạo', value: '{{date.year}}' },
+                { text: 'Mã phiếu', value: '{{name}}' },
+            ]
+        },
+        {
+            text: 'Thông tin chung',
+            value: [
+                { text: 'Người nộp', value: '{{partner_name}}' },
+                { text: 'Địa chỉ người nộp', value: '{{address}}' },
+                { text: 'Loại thu', value: '{{loai_thu_chi_name}}' },
+                { text: 'Số tiền', value: '{{amount}}' },
+                { text: 'Số tiền bằng chữ', value: '{{amount_text}}' },
+                { text: 'Phương thức', value: '{{journal_name}}' },
+                { text: 'Nội dung', value: '{{reason}}' },
+                { text: 'Người lập phiếu', value: '{{created_by_name}}' },
+            ]
+        }
+    ],
+    'tmp_phieu_chi': [
+        companyInfo,
+        {
+            text: 'Thông tin phiếu',
+            value: [
+                { text: 'Ngày tạo', value: '{{date.day}}' },
+                { text: 'Tháng tạo', value: '{{date.month}}' },
+                { text: 'Năm tạo', value: '{{date.year}}' },
+                { text: 'Mã phiếu', value: '{{name}}' },
+            ]
+        },
+        {
+            text: 'Thông tin chung',
+            value: [
+                { text: 'Người nhận', value: '{{partner_name}}' },
+                { text: 'Địa chỉ người nhận', value: '{{address}}' },
+                { text: 'Loại chi', value: '{{loai_thu_chi_name}}' },
+                { text: 'Số tiền', value: '{{amount}}' },
+                { text: 'Số tiền bằng chữ', value: '{{amount_text}}' },
+                { text: 'Phương thức', value: '{{journal_name}}' },
+                { text: 'Nội dung', value: '{{reason}}' },
+                { text: 'Người lập phiếu', value: '{{created_by_name}}' },
+            ]
+        }
+    ]
 };
 
 export function getKeyWords() {
     var res = JSON.parse(JSON.stringify(keyWords));
     res['tmp_purchase_refund'] = JSON.parse(JSON.stringify(res['tmp_purchase_order']));
+    for (const [key, value] of Object.entries(res)) {
+        (value as any).push(pipes as any);
+    }
     return res;
 }

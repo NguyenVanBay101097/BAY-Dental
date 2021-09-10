@@ -18,6 +18,7 @@ namespace Infrastructure.Services
         Task<string> PrintTest(PrintTestReq val);
 
         string GetLayout(string content);
+        Task<string> PrintOfType(PrintOfTypeReq val);
 
     }
 }

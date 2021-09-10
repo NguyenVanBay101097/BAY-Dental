@@ -17,7 +17,7 @@ import { CheckPermissionService } from 'src/app/shared/check-permission.service'
 export class LaboOrderDetailListComponent implements OnInit {
   @Input() public item: any;
   @Input() public state: string;
-  @Output() reload : Subject<boolean> = new Subject<boolean>();
+  @Output() reload: Subject<boolean> = new Subject<boolean>();
   skip = 0;
   limit = 10;
   gridData: GridDataResult;
@@ -25,14 +25,14 @@ export class LaboOrderDetailListComponent implements OnInit {
   loading = false;
 
   // check permissions
-  canAdd: boolean= false;
+  canAdd: boolean = false;
   canUpdate: boolean = false;
   canDelete: boolean = false;
 
   constructor(private laboOrderService: LaboOrderService, private modalService: NgbModal,
-    private printService: PrintService, 
+    private printService: PrintService,
     private checkPermissionService: CheckPermissionService
-    ) { }
+  ) { }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -120,11 +120,11 @@ export class LaboOrderDetailListComponent implements OnInit {
 
   printLabo(item: any) {
     this.laboOrderService.getPrint(item.id).subscribe((result: any) => {
-      this.printService.printHtml(result);
+      this.printService.printHtml(result.html);
     });
   }
 
-  checkRole(){
+  checkRole() {
     this.canAdd = this.checkPermissionService.check(['Labo.LaboOrder.Create']);
     this.canUpdate = this.checkPermissionService.check(['Labo.LaboOrder.Update']);
     this.canDelete = this.checkPermissionService.check(['Labo.LaboOrder.Delete']);

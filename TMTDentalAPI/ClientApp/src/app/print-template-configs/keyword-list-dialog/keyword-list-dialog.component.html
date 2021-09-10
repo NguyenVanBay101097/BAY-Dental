@@ -16,7 +16,7 @@
                     <h5 class="box-title text-center">
                         {{box.text}}
                     </h5>
-                    <div class="col-12 d-flex">
+                    <div *ngIf="box.value.length" class="col-12 d-flex">
                         <div class="col-6">
                             <table class="w-100">
                                 <tr>
@@ -76,6 +76,12 @@
                                     </td>
                                 </tr>
                             </table>
+                        </div>
+                    </div>
+                    <div *ngIf="box.links" class="pl-4">
+                        <div *ngFor="let link of box.links">
+                            <h6>{{link.text}}</h6>
+                            <div><a target="_blank" href="{{link.value}}">{{link.value}}</a></div>
                         </div>
                     </div>
                 </div>
