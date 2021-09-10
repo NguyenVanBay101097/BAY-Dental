@@ -105,8 +105,8 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     onPrint() {
         var val = new PrintTestReq();
         val.type = this.filter.type;
-        val.content = this.isEditting ? this.contentPrev : '';
-        val.printPaperSizeId = this.isEditting ? this.filter.printPaperSizeId : '';
+        val.content = !this.isEditting ? this.config.content : this.configEdit.content;
+        val.printPaperSizeId = this.filter.printPaperSizeId || '';
         this.configService.printTest(val).subscribe(res => {
             this.printService.printHtml(res);
         });
