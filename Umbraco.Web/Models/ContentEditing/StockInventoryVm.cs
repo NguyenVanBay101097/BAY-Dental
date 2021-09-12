@@ -204,6 +204,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Bao gồm những sản phẩm mà tồn <= 0
         /// </summary>
         //public bool? Exhausted { get; set; }
+
+        public string CreatedByName { get; set; }
     }
 
 

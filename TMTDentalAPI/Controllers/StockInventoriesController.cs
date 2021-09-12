@@ -138,7 +138,7 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Stock.Inventory.Read")]
         public async Task<IActionResult> GetPrint(Guid id)
         {
-            var res = await _stockInventoryService.GetStockInventoryPrint(id);
+            var res = await _stockInventoryService.GetPrint(id);
 
             var html = _view.Render("StockInventory/Print", res);
 
