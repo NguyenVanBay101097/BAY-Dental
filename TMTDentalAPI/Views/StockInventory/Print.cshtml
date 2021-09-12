@@ -87,9 +87,9 @@
             {
                 <tr>
                     <td>@(i++)</td>
-                    <td>@(item.ProductDefaultCode)</td>
-                    <td>@(item.ProductName)</td>
-                    <td>@(item.ProductUOMName)</td>
+                    <td>@(item.Product.DefaultCode)</td>
+                    <td>@(item.Product.Name)</td>
+                    <td>@(item.ProductUOM.Name)</td>
                     <td class="text-right">@(item.TheoreticalQty.HasValue ? string.Format(culture, "{0:0}", item.TheoreticalQty.Value) : "0")</td>
                     <td class="text-right">@(item.ProductQty.HasValue ? string.Format(culture, "{0:0}", item.ProductQty.Value) : "0")</td>
                 </tr>

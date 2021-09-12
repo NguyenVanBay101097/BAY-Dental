@@ -245,7 +245,7 @@ namespace Infrastructure.Services
                 var exhausted_product_ids = exhausted_products.Select(x => x.Id);
                 query = query.Where(x => exhausted_product_ids.Contains(x.Id));
             }
-            else if(quant_products.Any() || self.Filter == "none")
+            else if (quant_products.Any() || self.Filter == "none")
             {
                 var quant_product_ids = quant_products.Select(x => x.Id);
                 query = query.Where(x => !quant_product_ids.Contains(x.Id));
@@ -261,7 +261,7 @@ namespace Infrastructure.Services
                 UOMId = x.UOMId,
             }).ToList();
 
-           
+
             foreach (var product in exhausted_products2)
             {
                 vals.Add(new StockInventoryLine
@@ -302,44 +302,22 @@ namespace Infrastructure.Services
             return entity;
         }
 
-        public async Task<StockInventoryPrint> GetStockInventoryPrint(Guid id)
+        public async Task<StockInventoryPrint> GetPrint(Guid id)
         {
-            var lineObj = GetService<IStockInventoryLineService>();
-            var userObj = GetService<IUserService>();
-          
-            var inventory = await SearchQuery(x => x.Id == id).Select(x => new StockInventoryPrint
-            {
-                Id = x.Id,
-                Name = x.Name,
-                DateCreated = x.Date,
-                Company = x.Company != null ? new CompanyPrintVM
-                {
-                    Name = x.Company.Name,
-                    Email = x.Company.Email,
-                    Phone = x.Company.Phone,
-                    Logo = x.Company.Logo,
-                    PartnerCityName = x.Company.Partner.CityName,
-                    PartnerDistrictName = x.Company.Partner.DistrictName,
-                    PartnerWardName = x.Company.Partner.WardName,
-                    PartnerStreet = x.Company.Partner.Street,
-                } : null,
-                Note = x.Note,
-                CreatedById = x.CreatedById
-            }).FirstOrDefaultAsync();
-            var user = await userObj.GetByIdAsync(inventory.CreatedById);
-            inventory.UserName = user.Name;
-            inventory.Lines = await lineObj.SearchQuery(x=> x.InventoryId == inventory.Id).Select(x => new StockInventoryLinePrint { 
-                Id = x.Id,
-                ProductDefaultCode = x.Product.DefaultCode,
-                ProductName = x.Product.Name,
-                ProductUOMName = x.ProductUOM.Name,
-                ProductQty = x.ProductQty,
-                TheoreticalQty = x.TheoreticalQty,
-                Sequence = x.Sequence
-            }).OrderBy(x=>x.Sequence).ToListAsync();
+            var inventory = await SearchQuery(x => x.Id == id)
+                .Include(x => x.Company)
+                .ThenInclude(s => s.Partner)
+                .Include(x => x.Criteria)
+                .Include(x => x.Location)
+                .Include(x => x.Product)
+                .Include(x => x.Category)
+                .Include(x => x.Lines).ThenInclude(s => s.Product)
+                .Include(x => x.Lines).ThenInclude(s => s.ProductUOM)
+                .Include(x => x.CreatedBy)
+                .FirstOrDefaultAsync();
 
-
-            return inventory;
+            var res = _mapper.Map<StockInventoryPrint>(inventory);
+            return res;
         }
 
         private async Task _InsertStockInventorySequence()

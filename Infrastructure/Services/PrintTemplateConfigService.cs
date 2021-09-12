@@ -137,7 +137,6 @@ namespace Infrastructure.Services
                         var res_labo = JsonConvert.DeserializeObject<LaboOrderPrintVM>(item.Data.ToString());
                         res_labo.Company = _mapper.Map<CompanyPrintVM>(company);
                         obj = res_labo;
-
                         break;
                     case "tmp_purchase_order":
                         var res_purchase_order = JsonConvert.DeserializeObject<PurchaseOrder>(item.Data.ToString());
@@ -171,19 +170,13 @@ namespace Infrastructure.Services
                         obj = _mapper.Map<PrintVM>(res_customer_debt);
                         break;
                     case "tmp_stock_picking_incoming":
-                        var res_stock_picking_incoming = JsonConvert.DeserializeObject<StockPicking>(item.Data.ToString());
-                        res_stock_picking_incoming.Company = company;
-                        obj = _mapper.Map<StockPickingPrintVm>(res_stock_picking_incoming);
+                        obj = JsonConvert.DeserializeObject<StockPickingPrintVm>(item.Data.ToString());
                         break;
                     case "tmp_stock_picking_outgoing":
-                        var res_stock_picking_outgoing = JsonConvert.DeserializeObject<StockPicking>(item.Data.ToString());
-                        res_stock_picking_outgoing.Company = company;
-                        obj = _mapper.Map<StockPickingPrintVm>(res_stock_picking_outgoing);
+                        obj = JsonConvert.DeserializeObject<StockPickingPrintVm>(item.Data.ToString());
                         break;
                     case "tmp_stock_inventory":
-                        var res_stock_inventory = JsonConvert.DeserializeObject<StockInventory>(item.Data.ToString());
-                        res_stock_inventory.Company = company;
-                        obj = _mapper.Map<StockInventoryPrint>(res_stock_inventory);
+                        obj = JsonConvert.DeserializeObject<StockInventoryPrint>(item.Data.ToString());
                         break;
                     default:
                         break;
@@ -200,9 +193,7 @@ namespace Infrastructure.Services
             var html = File.ReadAllText("PrintTemplate/Shared/Layout.html");
             var doc = new HtmlDocument();
             doc.LoadHtml(html);
-            var body = doc.DocumentNode.SelectSingleNode("//div");
-            var contentBody = HtmlNode.CreateNode(content);
-            body.ParentNode.InsertAfter(contentBody, body);
+            doc.DocumentNode.SelectSingleNode("//div[@class='container']").InnerHtml += content;        
             var newHtml = doc.DocumentNode.OuterHtml;
             return newHtml;
         }
@@ -227,7 +218,7 @@ namespace Infrastructure.Services
 
         public async Task<string> PrintOfType(PrintOfTypeReq val)// in hóa đơn của 1 type cụ thể kèm data
         {
-            PrintTemplateConfigDisplay printConfig = await GetDisplay(new PrintTemplateConfigChangeType() { IsDefault = true, Type = val.Type});
+            PrintTemplateConfigDisplay printConfig = await GetDisplay(new PrintTemplateConfigChangeType() { IsDefault = true, Type = val.Type });
 
             var printPaperSize = await _printPaperSizeService.SearchQuery(x => x.Id == printConfig.PrintPaperSizeId).FirstOrDefaultAsync();
             // Creates 

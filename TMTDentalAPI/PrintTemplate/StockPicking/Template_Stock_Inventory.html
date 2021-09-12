@@ -80,9 +80,9 @@
             {{for line in lines}}
             <tr>
                 <td>{{for.index + 1}}</td>
-                <td>{{line.product_default_code}}</td>
-                <td>{{line.product_name}}</td>
-                <td>{{line.product_oumname}}</td>
+                <td>{{line.product.default_code}}</td>
+                <td>{{line.product.name}}</td>
+                <td>{{line.product_uom.name}}</td>
                 <td class="text-right">{{line.theoretical_qty ? line.theoretical_qty : 0}}</td>
                 <td class="text-right">{{line.product_qty ? line.product_qty : 0}}</td>
             </tr>
