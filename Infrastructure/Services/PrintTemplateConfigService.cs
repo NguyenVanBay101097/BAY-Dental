@@ -169,6 +169,11 @@ namespace Infrastructure.Services
                         res_customer_debt.Company = company;
                         obj = _mapper.Map<PrintVM>(res_customer_debt);
                         break;
+                    case "tmp_agent_commission":
+                        var res_agent_commission = JsonConvert.DeserializeObject<PhieuThuChi>(item.Data.ToString());
+                        res_agent_commission.Company = company;
+                        obj = _mapper.Map<PrintVM>(res_agent_commission);
+                        break;
                     case "tmp_stock_picking_incoming":
                         obj = JsonConvert.DeserializeObject<StockPickingPrintVm>(item.Data.ToString());
                         break;
