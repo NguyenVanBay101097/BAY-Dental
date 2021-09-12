@@ -1,0 +1,150 @@
+﻿<div class="page-break">
+    <div class="d-flex mb-2">
+        {{ if company.logo != "" && company.logo != null}}
+        <img class="img-fluid me-3 w-20" src="{{company.logo}}" alt="{{company.name}}">
+        {{ end }}
+
+        <div>
+            <div class="text-xl font-semibold">{{company.name}}</div>
+            {{if company.address != ""}}
+
+            <div>Địa chỉ: {{company.address}}</div>
+
+            {{ end }}
+
+            {{ if company.phone}}
+
+            <div>ĐT: {{company.phone}}</div>
+
+            {{ end }}
+
+            {{if company.email }}
+
+            <div>Email: {{company.email}}</div>
+
+            {{ end }}
+
+        </div>
+    </div>
+    <div class="text-center mb-2">
+        <div class="text-3xl font-semibold">PHIẾU CHI HOA HỒNG</div>
+        <div>Ngày {{date_created.day}} tháng {{date_created.month}} năm {{date_created.year}} </div>
+        <div class="font-semibold">Số: {{name}}</div>
+    </div>
+    <div class="o_form_view mb-2">
+        <div class="o_group">
+            <table class="o_group o_inner_group o_group_col_8">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <div class="o_form_label o_form_label_help">
+                                Ngày thanh toán
+                            </div>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            <div class="o_field_widget">{{date_created | date.to_string '%d/%m/%Y'}}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help font-weight-bold">
+                                Phương thức
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{journal_name}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help font-weight-bold">
+                                Số tiền
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{amount > 0 ? amount | (math.format "N0" "vi-VN") : 0}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help font-weight-bold">
+                                Bằng chữ
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{amount_text}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help font-weight-bold">
+                                Nội dung
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{reason ? reason : ""}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="o_group o_inner_group o_group_col_4">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <div class="o_form_label o_form_label_help">
+                                Người giới thiệu
+                            </div>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            <div class="o_field_widget">{{agent ? agent.name : ""}}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <div class="o_form_label o_form_label_help">
+                                Địa chỉ
+                            </div>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            <div class="o_field_widget">{{agent ? agent.address : ""}}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <div class="o_form_label o_form_label_help">
+                                Điện thoại
+                            </div>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            <div class="o_field_widget">{{agent ? agent.phone : ""}}</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="d-flex">
+        <div class="col">
+            <div class="text-center">
+                <span></span><br />
+                <span class="font-semibold"> Người lập phiếu</span> <br />
+                <i>(Ký, họ tên)</i> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span class="font-semibold">{{user ? (user.name | string.upcase) : ""}}</span>
+            </div>
+        </div>
+        <div class="col">
+            <div class="text-center">
+                <span> Ngày {{date.now.day}} tháng {{date.now.month}} năm {{date.now.year}}</span><br />
+                <span class="font-semibold">Người nhận tiền </span> <br />
+                <i>(Ký, họ tên)</i> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span class="font-semibold">{{agent ? (agent.name | string.upcase) : ""}}</span>
+            </div>
+        </div>
+    </div>
+</div>
