@@ -120,6 +120,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
             this.notifyService.notify('success', 'Lưu thành công');
             this.onToggleEdit();
             this.config = this.configEdit;
+            this.onGenerate(this.config.content);
         });
     }
 
