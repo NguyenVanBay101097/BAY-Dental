@@ -394,7 +394,9 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.State != "draft");
             }
 
-            query = query.Include(x => x.LaboOrder).Include(x => x.LaboOrder.Customer);
+            query = query.Include(x => x.LaboOrder)
+                .Include(x => x.LaboOrder.Customer)
+                .Include(x => x.LaboOrder.Partner);
 
             var result = await query.OrderByDescending(x => x.DateCreated).ToListAsync();
 

@@ -7,6 +7,7 @@ using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,7 +24,7 @@ namespace TMTDentalAPI.Controllers
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
         public LaboWarrantiesController(
-            ILaboWarrantyService laboWarrantyService, 
+            ILaboWarrantyService laboWarrantyService,
             IMapper mapper,
             IUnitOfWorkAsync unitOfWork)
         {
@@ -205,13 +206,15 @@ namespace TMTDentalAPI.Controllers
             {
                 var worksheet = package.Workbook.Worksheets.Add("QuanLyBaoHanh");
 
-                worksheet.Cells[1, 1, 1, 10].Value = "QUẢN LÝ BẢO HÀNH";
-                worksheet.Cells[1, 1, 1, 10].Style.Font.Bold = true;
-                worksheet.Cells[1, 1, 1, 10].Style.Font.Size = 14;
-                worksheet.Cells[1, 1, 1, 10].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
-                worksheet.Cells[1, 1, 1, 10].Merge = true;
-                worksheet.Cells[2, 1, 2, 10].Value = dateToDate;
-                worksheet.Cells[2, 1, 2, 10].Merge = true;
+                worksheet.Cells[1, 1, 1, 9].Value = "QUẢN LÝ BẢO HÀNH";
+                worksheet.Cells[1, 1, 1, 9].Style.Font.Bold = true;
+                worksheet.Cells[1, 1, 1, 9].Style.Font.Size = 14;
+                worksheet.Cells[1, 1, 1, 9].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
+                worksheet.Cells[1, 1, 1, 9].Merge = true;
+                worksheet.Cells[1, 1, 1, 9].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells[2, 1, 2, 9].Value = dateToDate;
+                worksheet.Cells[2, 1, 2, 9].Merge = true;
+                worksheet.Cells[2, 1, 2, 9].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
                 worksheet.Cells[4, 1].Value = "Ngày nhận bảo hành";
                 worksheet.Cells[4, 2].Value = "Phiếu bảo hành";
@@ -223,8 +226,12 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[4, 8].Value = "Lắp bảo hành";
                 worksheet.Cells[4, 9].Value = "Trạng thái";
 
-                worksheet.Cells["A4:J4"].Style.Font.Bold = true;
-                for (int i = 1; i<=10; i++)
+                worksheet.Cells["A4:I4"].Style.Font.Bold = true;
+                worksheet.Cells["A4:I4"].Style.Font.Size = 14;
+                worksheet.Cells["A4:I4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["A4:I4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
+                worksheet.Cells["A4:I4"].Style.Font.Color.SetColor(Color.White);
+                for (int i = 1; i <= 9; i++)
                 {
                     worksheet.Cells[4, i].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                 }
