@@ -657,6 +657,11 @@ select.ng-touched.ng-invalid {
     background-color: white;
 }
 
+.o_form_statusbar_new {
+  height: 64px;
+  padding-right: 16px;
+
+}
 
 /* 
 @media (min-width: 1534px) {
@@ -721,6 +726,21 @@ select.ng-touched.ng-invalid {
     transition: all 0.1s ease 0s;
 }
 
+.o_arrow_button_new {
+  width: 132px;
+}
+
+.o_arrow_button_new:first-child {
+    border-top-right-radius: 4px !important;
+    border-bottom-right-radius: 4px !important;
+}
+
+.o_arrow_button_new:last-child {
+    border-top-left-radius: 4px !important;
+    border-bottom-left-radius: 4px !important;
+}
+
+
 .o_form_view .o_form_statusbar>.o_statusbar_status>.o_arrow_button:not(:first-child):before,
 .o_form_view .o_form_statusbar>.o_statusbar_status>.o_arrow_button:not(:first-child):after {
     content: " ";
@@ -737,6 +757,11 @@ select.ng-touched.ng-invalid {
     transition: border 0.2s ease 0s;
 }
 
+
+.o_form_view .o_form_statusbar > .o_statusbar_status.o_statusbar_status_new > .o_arrow_button:not(:first-child):before,
+.o_form_view .o_form_statusbar > .o_statusbar_status.o_statusbar_status_new > .o_arrow_button:not(:first-child):after {
+  height: 32px;
+}
 .o_form_view .o_form_statusbar>.o_statusbar_status>.o_arrow_button:not(:first-child):before {
     right: -11px;
     border-left-color: #dee2e6;
