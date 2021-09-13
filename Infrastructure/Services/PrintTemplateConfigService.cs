@@ -183,6 +183,14 @@ namespace Infrastructure.Services
                     case "tmp_stock_inventory":
                         obj = JsonConvert.DeserializeObject<StockInventoryPrint>(item.Data.ToString());
                         break;
+                    case "tmp_partner_advance":
+                        obj = JsonConvert.DeserializeObject<PartnerAdvancePrint>(item.Data.ToString());
+                        (obj as PartnerAdvancePrint).Company = _mapper.Map<CompanyPrintVM>(company);
+                        break;
+                    case "tmp_partner_refund":
+                        obj = JsonConvert.DeserializeObject<PartnerAdvancePrint>(item.Data.ToString());
+                        (obj as PartnerAdvancePrint).Company = _mapper.Map<CompanyPrintVM>(company);
+                        break;
                     default:
                         break;
                 }

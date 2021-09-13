@@ -166,7 +166,7 @@ export class StockInventoryFormComponent implements OnInit {
           var g = this.fb.group(line);
           control.push(g);
         });
-        
+
         let moveControl = this.formGroup.get('moves') as FormArray;
         moveControl.clear();
         result.moves.forEach(move => {
@@ -177,7 +177,7 @@ export class StockInventoryFormComponent implements OnInit {
       });
     } else {
       var companyId = this.authService.userInfo.companyId;
-      this.stockInventorySevice.getDefault().subscribe((result:any) => {
+      this.stockInventorySevice.getDefault().subscribe((result: any) => {
         this.formGroup.patchValue(result);
         let date = new Date(result.date);
         this.formGroup.get('dateObj').patchValue(date);
@@ -216,13 +216,13 @@ export class StockInventoryFormComponent implements OnInit {
       this.formGroup.get("category").updateValueAndValidity();
       this.formGroup.get('criteria').clearValidators();
       this.formGroup.get('criteria').updateValueAndValidity();
-    } 
-    else if(res.filter === 'criteria'){
+    }
+    else if (res.filter === 'criteria') {
       this.formGroup.get("criteria").setValidators([Validators.minLength(0), Validators.required]);
       this.formGroup.get("criteria").updateValueAndValidity();
       this.formGroup.get('category').clearValidators();
       this.formGroup.get('category').updateValueAndValidity();
-    }   
+    }
     else {
       res.category = null;
       res.criteria = null;
@@ -323,7 +323,7 @@ export class StockInventoryFormComponent implements OnInit {
   }
 
   deleteLine(index: number) {
-    this.lines.removeAt(index);      
+    this.lines.removeAt(index);
   }
 
   onChangeSearch(value) {
@@ -375,7 +375,7 @@ export class StockInventoryFormComponent implements OnInit {
     }
   }
 
-  actionCancel(){
+  actionCancel() {
     if (this.id) {
       let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = 'Hủy phiếu kiểm kho';
@@ -405,7 +405,7 @@ export class StockInventoryFormComponent implements OnInit {
       return;
     }
     this.stockInventorySevice.getPrint(this.id).subscribe((result: any) => {
-      this.printService.printHtml(result);
+      this.printService.printHtml(result.html);
     });
   }
 
@@ -422,9 +422,9 @@ export class StockInventoryFormComponent implements OnInit {
     }
   }
 
-  checkRole(){
+  checkRole() {
     this.canCreate = this.checkPermissionRole.check(["Stock.Inventory.Create"]);
-    this.canCreateUpdate = this.checkPermissionRole.check(["Stock.Inventory.Create","Stock.Inventory.Update"]);
+    this.canCreateUpdate = this.checkPermissionRole.check(["Stock.Inventory.Create", "Stock.Inventory.Update"]);
     this.canPrint = this.checkPermissionRole.check(["Stock.Inventory.Read"]);
     this.canprepareInventory = this.checkPermissionRole.check(["Stock.Inventory.Update"]);
     this.canCancel = this.checkPermissionRole.check(["Stock.Inventory.Update"]);
