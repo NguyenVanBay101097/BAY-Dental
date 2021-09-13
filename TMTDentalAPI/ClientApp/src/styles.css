@@ -730,7 +730,7 @@ select.ng-touched.ng-invalid {
   width: 132px;
 }
 
-.o_arrow_button_new:first-child {
+.btn.o_arrow_button_new:first-child {
     border-top-right-radius: 4px !important;
     border-bottom-right-radius: 4px !important;
 }
@@ -750,8 +750,8 @@ select.ng-touched.ng-invalid {
     left: auto;
     bottom: auto;
     right: -10px;
-    border-top: 18px solid transparent;
-    border-bottom: 21px solid transparent;
+    border-top: 19px solid transparent;
+    border-bottom: 20px solid transparent;
     border-right: none;
     border-left: 10px solid white;
     transition: border 0.2s ease 0s;
@@ -761,6 +761,8 @@ select.ng-touched.ng-invalid {
 .o_form_view .o_form_statusbar > .o_statusbar_status.o_statusbar_status_new > .o_arrow_button:not(:first-child):before,
 .o_form_view .o_form_statusbar > .o_statusbar_status.o_statusbar_status_new > .o_arrow_button:not(:first-child):after {
   height: 32px;
+  border-top: 20px solid transparent;
+  border-bottom: 20px solid transparent;
 }
 .o_form_view .o_form_statusbar>.o_statusbar_status>.o_arrow_button:not(:first-child):before {
     right: -11px;
@@ -1162,7 +1164,7 @@ html .o_web_client {
 }
 
 .o_form_view .o_form_statusbar>.o_statusbar_status>.o_arrow_button.o_arrow_button_bg_primary:not(:first-child):before {
-    right: -11px;
+    right: -10px;
     border-left-color: white !important;
 }
 

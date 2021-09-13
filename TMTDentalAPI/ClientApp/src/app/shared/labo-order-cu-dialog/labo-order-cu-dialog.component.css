@@ -120,27 +120,6 @@ textarea[readonly] {
     background: #555;
 }
 
-/* .o_form_view .o_form_statusbar>.o_statusbar_status>.o_arrow_button.btn-primary.disabled {
-    color: #ffff;
-    font-size: 11px;
-    background-color: #007bff;
-    cursor: default;
-}
-
-.o_form_view .o_form_statusbar>.o_statusbar_status>.o_arrow_button.btn-secondary.disabled {
-    background-color: #e9ecef;
-} */
-
-/* td h5 {
-    border-radius: 2px;
-    padding: 2px 12px;
-    height: 32px;
-    background-color: #F2F7FF;
-    line-height: 1.9rem;
-    color: #1A6DE3;
-    margin-top: 10px;
-} */
-
 .o_form_label {
     min-width: 150px;
 }
@@ -148,4 +127,16 @@ textarea[readonly] {
 .card-header {
     background-color: #F2F7FF;
     color: #1A6DE3;
+}
+
+.o_form_view .o_form_sheet_bg .o_form_sheet{
+    border: none;
+}
+
+.o_form_view .o_form_statusbar {
+    border: none;
+}
+
+.modal-footer {
+    border: none;
 }
