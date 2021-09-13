@@ -73,7 +73,9 @@ namespace Infrastructure.Services
 
             var totalItems = await query.CountAsync();
 
-            query = query.Include(x => x.LaboOrder).Include(x => x.LaboOrder.Customer);
+            query = query.Include(x => x.LaboOrder)
+                .Include(x => x.LaboOrder.Customer)
+                .Include(x => x.LaboOrder.Partner);
 
             query = query.OrderByDescending(x => x.DateCreated);
 

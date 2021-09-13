@@ -507,6 +507,10 @@
           {
             "Name": "Xóa",
             "Permission": "Labo.LaboWarranty.Delete"
+          },
+          {
+            "Name": "Hủy phiếu",
+            "Permission": "Labo.LaboWarranty.Cancel"
           }
         ]
       }

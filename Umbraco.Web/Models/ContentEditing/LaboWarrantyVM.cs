@@ -130,6 +130,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public string CustomerDisplayName { get; set; }
 
         /// <summary>
+        /// Nhà cung cấp
+        /// </summary>
+        public string SupplierName { get; set; }
+
+        /// <summary>
         /// Ngày nhận bảo hành
         /// </summary>
         public DateTime? DateReceiptWarranty { get; set; }

@@ -27,19 +27,21 @@
         <div class="o_cp_right">
             <div class="o_search_options">
                 <div class="mr-1">
+                    <app-date-range-picker-filter [opens]="'right'" [title]="'Ngày nhận bảo hành'"
+                        [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="searchChangeDate($event)">
+                    </app-date-range-picker-filter>
+                </div>
+                <div class="mr-1">
                     <kendo-combobox [data]="supplierData" [popupSettings]="" placeholder="Nhà cung cấp"
                         [valuePrimitive]="true" [valueField]="'id'" [textField]="'name'" #supplierDataCbx
                         (valueChange)="supplierChange($event)">
                     </kendo-combobox>
                 </div>
-                <div class="mr-1">
+                <div class="">
                     <kendo-combobox [data]="stateFilterOptions" [textField]="'text'" [valueField]="'value'"
                         [filterable]="true" [placeholder]="'Trạng thái'" (valueChange)="onChangeState($event)">
                     </kendo-combobox>
                 </div>
-                <app-date-range-picker-filter [opens]="'right'" [title]="'Ngày nhận bảo hành'" [startDate]="dateFrom"
-                    [endDate]="dateTo" (searchChange)="searchChangeDate($event)">
-                </app-date-range-picker-filter>
             </div>
         </div>
     </div>
@@ -82,6 +84,8 @@
                 <ng-template #elseBlock kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{dataItem?.customerName}}
                 </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="supplierName" title="Nhà cung cấp" width="150">
             </kendo-grid-column>
             <!-- <kendo-grid-column field="reason" title="Lý do bảo hành" width="150">
             </kendo-grid-column>
