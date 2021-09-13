@@ -217,12 +217,11 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[4, 2].Value = "Phiếu bảo hành";
                 worksheet.Cells[4, 3].Value = "Phiếu Labo";
                 worksheet.Cells[4, 4].Value = "Khách hàng";
-                worksheet.Cells[4, 5].Value = "Lý do bảo hành";
-                worksheet.Cells[4, 6].Value = "Nội dung bảo hành";
-                worksheet.Cells[4, 7].Value = "Gửi bảo hành";
-                worksheet.Cells[4, 8].Value = "Nhận nghiệm thu";
-                worksheet.Cells[4, 9].Value = "Lắp bảo hành";
-                worksheet.Cells[4, 10].Value = "Trạng thái";
+                worksheet.Cells[4, 5].Value = "Nhà cung cấp";
+                worksheet.Cells[4, 6].Value = "Gửi bảo hành";
+                worksheet.Cells[4, 7].Value = "Nhận nghiệm thu";
+                worksheet.Cells[4, 8].Value = "Lắp bảo hành";
+                worksheet.Cells[4, 9].Value = "Trạng thái";
 
                 worksheet.Cells["A4:J4"].Style.Font.Bold = true;
                 for (int i = 1; i<=10; i++)
@@ -237,16 +236,15 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 2].Value = item.Name;
                     worksheet.Cells[row, 3].Value = item.LaboOrderName;
                     worksheet.Cells[row, 4].Value = item.CustomerName;
-                    worksheet.Cells[row, 5].Value = item.Reason;
-                    worksheet.Cells[row, 6].Value = item.Content;
-                    worksheet.Cells[row, 7].Value = item.DateSendWarranty;
+                    worksheet.Cells[row, 5].Value = item.SupplierName;
+                    worksheet.Cells[row, 6].Value = item.DateSendWarranty;
+                    worksheet.Cells[row, 6].Style.Numberformat.Format = "d/m/yyyy";
+                    worksheet.Cells[row, 7].Value = item.DateReceiptInspection;
                     worksheet.Cells[row, 7].Style.Numberformat.Format = "d/m/yyyy";
-                    worksheet.Cells[row, 8].Value = item.DateReceiptInspection;
+                    worksheet.Cells[row, 8].Value = item.DateAssemblyWarranty;
                     worksheet.Cells[row, 8].Style.Numberformat.Format = "d/m/yyyy";
-                    worksheet.Cells[row, 9].Value = item.DateAssemblyWarranty;
-                    worksheet.Cells[row, 9].Style.Numberformat.Format = "d/m/yyyy";
-                    worksheet.Cells[row, 10].Value = GetState(item.State);
-                    for (int i = 1; i <= 10; i++)
+                    worksheet.Cells[row, 9].Value = GetState(item.State);
+                    for (int i = 1; i <= 9; i++)
                     {
                         worksheet.Cells[row, i].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                     }
