@@ -69,6 +69,9 @@ namespace ApplicationCore.Constants
            new PrintTemplateType {Type = "tmp_stock_picking_incoming" , PathTemplate = "PrintTemplate/StockPicking/Template_Stock_Picking_Incoming.html" },
            new PrintTemplateType {Type = "tmp_stock_picking_outgoing" , PathTemplate = "PrintTemplate/StockPicking/Template_Stock_Picking_Outgoing.html" },
            new PrintTemplateType {Type = "tmp_stock_inventory" , PathTemplate = "PrintTemplate/StockPicking/Template_Stock_Inventory.html" },
+           new PrintTemplateType {Type = "tmp_salary_employee" , PathTemplate = "PrintTemplate/Salary/Template_Salary_Employee.html" },
+           new PrintTemplateType {Type = "tmp_salary_advance" , PathTemplate = "PrintTemplate/Salary/Template_Salary_Advance.html" },
+           new PrintTemplateType {Type = "tmp_salary" , PathTemplate = "PrintTemplate/Salary/Template_Salary.html" },
         };
     }
 

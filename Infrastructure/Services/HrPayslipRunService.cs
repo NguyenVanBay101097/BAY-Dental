@@ -83,7 +83,7 @@ namespace Infrastructure.Services
                     PartnerWardName = x.Company.Partner.WardName,
                     PartnerStreet = x.Company.Partner.Street,
                 },
-                Date = x.Date,
+                DateSalary = x.Date,
                 DateStart = x.DateStart,
                 DateEnd = x.DateEnd,
                 State = x.State,

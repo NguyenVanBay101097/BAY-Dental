@@ -149,8 +149,8 @@ namespace TMTDentalAPI.Controllers
                 return BadRequest();
 
             var salaryPayments = await _mapper.ProjectTo<SalaryPaymentPrintVm>(_salaryPaymentService.SearchQuery(x => ids.Contains(x.Id))).ToListAsync();
-            foreach (var print in salaryPayments)
-                print.AmountString = AmountToText.amount_to_text(print.Amount);
+            //foreach (var print in salaryPayments)
+            //    print.AmountText = AmountToText.amount_to_text(print.Amount);
 
             var html = _view.Render("SalaryPayment/Print", salaryPayments);
             return Ok(new PrintData() { html = html });

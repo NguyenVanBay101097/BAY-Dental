@@ -178,6 +178,15 @@ namespace Infrastructure.Services
                     case "tmp_stock_inventory":
                         obj = JsonConvert.DeserializeObject<StockInventoryPrint>(item.Data.ToString());
                         break;
+                    case "tmp_salary_employee":
+                        obj = JsonConvert.DeserializeObject<SalaryPaymentPrint>(item.Data.ToString());
+                        break;
+                    case "tmp_salary_advance":
+                        obj = JsonConvert.DeserializeObject<SalaryPaymentPrint>(item.Data.ToString());
+                        break;
+                    case "tmp_salary":
+                        obj = JsonConvert.DeserializeObject<HrPayslipRunPrintVm>(item.Data.ToString());
+                        break;
                     default:
                         break;
                 }
@@ -193,7 +202,7 @@ namespace Infrastructure.Services
             var html = File.ReadAllText("PrintTemplate/Shared/Layout.html");
             var doc = new HtmlDocument();
             doc.LoadHtml(html);
-            doc.DocumentNode.SelectSingleNode("//div[@class='container']").InnerHtml += content;        
+            doc.DocumentNode.SelectSingleNode("//div[@class='container']").InnerHtml += content;
             var newHtml = doc.DocumentNode.OuterHtml;
             return newHtml;
         }

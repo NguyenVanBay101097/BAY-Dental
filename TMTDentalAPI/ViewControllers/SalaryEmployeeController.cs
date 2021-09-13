@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ApplicationCore.Constants;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -31,7 +32,8 @@ namespace TMTDentalAPI.ViewControllers
 
             if (ids != null && ids.Any())
             {
-                res.Slips = res.Slips.Where(x => ids.Contains(x.Id));            
+                res.Slips = res.Slips.Where(x => ids.Contains(x.Id));
+                string json = JsonConvert.SerializeObject(res);
                 return View(res);
             }
             else

@@ -1593,6 +1593,195 @@
       },
       "createdByName": "admin"
     }
+  },
+  {
+    "Type": "tmp_salary_employee",
+    "Data": {
+      "salaries": [
+        {
+          "id": "f681e7d9-f5a0-4ec0-5591-08d9768f0c19",
+          "date": "2021-09-13T00:00:00",
+          "companyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+          "company": {
+            "name": "TPP",
+            "partnerName": "TPP",
+            "partnerCityName": "Thành phố Hồ Chí Minh",
+            "partnerDistrictName": "Quận Tân Phú",
+            "partnerWardName": "Phường Tân Thành",
+            "partnerStreet": "54/35 Diệp Minh Châu",
+            "address": "54/35 Diệp Minh Châu, Phường Tân Thành, Quận Tân Phú, Thành phố Hồ Chí Minh",
+            "phone": "0938551226",
+            "email": null,
+            "logo": null
+          },
+          "name": "PW/2021/0001",
+          "type": "salary",
+          "employeeId": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+          "employee": {
+            "id": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+            "name": "Bác sĩ A",
+            "partnerId": "9fe4aeca-9ac8-4a8f-127b-08d96ec504cd"
+          },
+          "journalId": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+          "journal": {
+            "id": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+            "name": "Tiền mặt",
+            "type": "cash"
+          },
+          "amount": 10000000,
+          "amountText": "Mười triệu đồng",
+          "userName": "admin",
+          "createdById": "fb3c81c4-90b2-4918-aeaf-1689263ee7fa",
+          "reason": "Chi lương tháng 08/2021"
+        }
+      ]
+    }
+  },
+  {
+    "Type": "tmp_salary_advance",
+    "Data": {
+      "salaries": [
+        {
+          "id": "ac53cbc6-6d92-4bd9-5590-08d9768f0c19",
+          "date": "2021-09-13T00:00:00",
+          "companyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+          "company": {
+            "name": "TPP",
+            "partnerName": "TPP",
+            "partnerCityName": "Thành phố Hồ Chí Minh",
+            "partnerDistrictName": "Quận Tân Phú",
+            "partnerWardName": "Phường Tân Thành",
+            "partnerStreet": "54/35 Diệp Minh Châu",
+            "address": "54/35 Diệp Minh Châu, Phường Tân Thành, Quận Tân Phú, Thành phố Hồ Chí Minh",
+            "phone": "0938551226",
+            "email": null,
+            "logo": null
+          },
+          "name": "AVC/2021/0001",
+          "type": "advance",
+          "employeeId": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+          "employee": {
+            "id": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+            "name": "Bác sĩ A",
+            "partnerId": "9fe4aeca-9ac8-4a8f-127b-08d96ec504cd"
+          },
+          "journalId": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+          "journal": {
+            "id": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+            "name": "Tiền mặt",
+            "type": "cash"
+          },
+          "amount": 3000000,
+          "amountText": "Ba triệu đồng",
+          "userName": "admin",
+          "createdById": "fb3c81c4-90b2-4918-aeaf-1689263ee7fa",
+          "reason": null
+        }
+      ]
+    }
+  },
+  {
+    "Type": "tmp_salary",
+    "Data": {
+      "Id": "b3223e96-4bfb-4b82-4002-08d9768f2ae8",
+      "Name": "Bảng lương tháng 8 năm 2021",
+      "DateStart": "0001-01-01T00:00:00",
+      "DateEnd": "0001-01-01T00:00:00",
+      "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+      "Company": {
+        "Name": "TPP",
+        "PartnerName": null,
+        "PartnerCityName": "Thành phố Hồ Chí Minh",
+        "PartnerDistrictName": "Quận Tân Phú",
+        "PartnerWardName": "Phường Tân Thành",
+        "PartnerStreet": "54/35 Diệp Minh Châu",
+        "Address": "54/35 Diệp Minh Châu, Phường Tân Thành, Quận Tân Phú, Thành phố Hồ Chí Minh",
+        "Phone": "0938551226",
+        "Email": null,
+        "Logo": null
+      },
+      "State": "done",
+      "DateSalary": "2021-08-13T00:00:00",
+      "CreatedById": "fb3c81c4-90b2-4918-aeaf-1689263ee7fa",
+      "Slips": [
+        {
+          "Id": "fda5749b-aed0-417e-c2cf-08d9768f2b0b",
+          "StructId": null,
+          "Struct": null,
+          "Name": "Phiếu lương tháng 8 2021 Bác sĩ A",
+          "Number": null,
+          "EmployeeId": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+          "Employee": {
+            "Id": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+            "Name": "Bác sĩ A",
+            "IsDoctor": true,
+            "IsAssistant": false,
+            "Ref": "NV00001",
+            "Phone": "0369835014",
+            "Email": null,
+            "CategoryId": null,
+            "Category": null,
+            "Wage": 10000000.00,
+            "StructureTypeId": null,
+            "LeavePerMonth": 0.00,
+            "RegularHour": 8.00,
+            "OvertimeRate": 150.00,
+            "RestDayRate": 100.00,
+            "Allowance": 0.00,
+            "Active": true,
+            "UserName": null,
+            "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+            "Company": {
+              "Id": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+              "Name": "TPP",
+              "Logo": null,
+              "Active": true
+            }
+          },
+          "DateFrom": "0001-01-01T00:00:00",
+          "DateTo": "0001-01-01T00:00:00",
+          "State": "draft",
+          "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+          "TotalAmount": 0.00,
+          "StructureTypeId": null,
+          "StructureType": null,
+          "WorkedDaysLines": [],
+          "PayslipRunId": "b3223e96-4bfb-4b82-4002-08d9768f2ae8",
+          "DaySalary": 322580.64516129032258064516129,
+          "WorkedDay": 31.00,
+          "TotalBasicSalary": 10000000.0,
+          "OverTimeHour": 0.0,
+          "OverTimeHourSalary": 0.0,
+          "OverTimeDay": 0.00,
+          "OverTimeDaySalary": 0.0,
+          "Allowance": 0.00,
+          "OtherAllowance": 0.0,
+          "RewardSalary": 0.0,
+          "HolidayAllowance": 0.0,
+          "TotalSalary": 10000000.00,
+          "CommissionSalary": 0.0,
+          "Tax": 0.0,
+          "SocialInsurance": 0.0,
+          "AmercementMoney": 0.0,
+          "AdvancePayment": 0.0,
+          "NetSalary": 10000000.00,
+          "ActualLeavePerMonth": 0.0,
+          "LeavePerMonthUnpaid": 0.00,
+          "SalaryPayment": {
+            "Id": "f681e7d9-f5a0-4ec0-5591-08d9768f0c19",
+            "Date": "2021-09-13T00:00:00",
+            "JournalName": null,
+            "State": "done",
+            "Name": "PW/2021/0001",
+            "Type": "salary",
+            "Amount": 10000000.00,
+            "EmployeeName": "Bác sĩ A"
+          }
+        }
+      ],
+      "UserName": "admin",
+      "IsExistSalaryPayment": false
+    }
   }
 
 
