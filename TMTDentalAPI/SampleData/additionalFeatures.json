@@ -7,7 +7,9 @@
       "Catalog.PartnerTitle.Read",
       "Basic.Appointment.Read",
       "Basic.DotKham.Read",
-      "Report.AccountPartner"
+      "Report.AccountPartner",
+      "Report.PartnerOldNew",
+      "Report.Sale"
     ]
   },
   {

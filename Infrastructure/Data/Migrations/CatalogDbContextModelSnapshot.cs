@@ -4512,6 +4512,90 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("LaboOrderToothRels");
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.LaboWarranty", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateAssemblyWarranty")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateReceiptInspection")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateReceiptWarranty")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateSendWarranty")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("LaboOrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("State")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("LaboOrderId");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("LaboWarranty");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.LaboWarrantyToothRel", b =>
+                {
+                    b.Property<Guid>("LaboWarrantyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ToothId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("LaboWarrantyId", "ToothId");
+
+                    b.HasIndex("ToothId");
+
+                    b.ToTable("LaboWarrantyToothRels");
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.LoaiThuChi", b =>
                 {
                     b.Property<Guid>("Id")
@@ -13722,6 +13806,46 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasOne("ApplicationCore.Entities.Tooth", "Tooth")
                         .WithMany()
+                        .HasForeignKey("ToothId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.LaboWarranty", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId");
+
+                    b.HasOne("ApplicationCore.Entities.LaboOrder", "LaboOrder")
+                        .WithMany("LaboWarranties")
+                        .HasForeignKey("LaboOrderId");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.LaboWarrantyToothRel", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.LaboWarranty", "LaboWarranty")
+                        .WithMany("LaboWarrantyToothRels")
+                        .HasForeignKey("LaboWarrantyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.Tooth", "Tooth")
+                        .WithMany("LaboWarrantyToothRels")
                         .HasForeignKey("ToothId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

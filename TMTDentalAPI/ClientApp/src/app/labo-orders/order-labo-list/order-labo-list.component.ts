@@ -142,6 +142,20 @@ export class OrderLaboListComponent implements OnInit {
       this.loadDataFromApi();
     }, er => { });
   }
+  
+  editLabo(item){
+    console.log(item);
+    const modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Cập nhật phiếu labo';
+    modalRef.componentInstance.id = item.id;
+    modalRef.componentInstance.saleOrderLineId = item.saleOrderLine.id;
+    modalRef.componentInstance.saleOrderLineLabo = item;
+
+    modalRef.result.then(res => {
+      this.loadDataFromApi();
+    }, () => {
+    });
+  }
 
   cellClick(item) {
     console.log(item);

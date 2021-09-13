@@ -105,6 +105,8 @@ import { IsEllipsisActiveDirective } from './is-ellipsis-active.directive';
 import { AddressDialogComponent } from './address-dialog/address-dialog.component';
 import { ChartsModule } from 'ng2-charts';
 import { ReceiveAppointmentDialogComponent } from './receive-appointment-dialog/receive-appointment-dialog.component';
+import { WarrantyCuDidalogComponent } from './warranty-cu-didalog/warranty-cu-didalog.component';
+import { LaboWarrantyDetailListComponent } from './labo-warranty-detail-list/labo-warranty-detail-list.component';
 
 const config: LocaleConfig = {};
 @NgModule({
@@ -204,7 +206,9 @@ const config: LocaleConfig = {};
         CustomerReceipCreateUpdateComponent,
         CustomerReceiptStatePopoverComponent,
         AddressDialogComponent,
-        ReceiveAppointmentDialogComponent
+        ReceiveAppointmentDialogComponent,
+        WarrantyCuDidalogComponent,
+        LaboWarrantyDetailListComponent
     ],
     exports: [
         ConfirmDialogComponent,
@@ -293,7 +297,9 @@ const config: LocaleConfig = {};
         CustomerReceipCreateUpdateComponent,
         CustomerReceiptStatePopoverComponent,
         AddressDialogComponent,
-        ReceiveAppointmentDialogComponent
+        ReceiveAppointmentDialogComponent,
+        WarrantyCuDidalogComponent,
+        LaboWarrantyDetailListComponent
     ],
     imports: [
         NgbModule,
@@ -347,7 +353,8 @@ const config: LocaleConfig = {};
         ToothSelectionDialogComponent,        
         CustomerReceipCreateUpdateComponent,
         AddressDialogComponent,
-        ReceiveAppointmentDialogComponent
+        ReceiveAppointmentDialogComponent,
+        WarrantyCuDidalogComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

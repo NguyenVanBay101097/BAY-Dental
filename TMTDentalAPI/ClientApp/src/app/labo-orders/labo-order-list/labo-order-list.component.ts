@@ -40,7 +40,12 @@ export class LaboOrderListComponent implements OnInit {
     { name: 'Nháp', value: 'draft' },
     { name: 'Đơn hàng', value: 'confirmed' },
   ];
-
+  toothTypeDict = [
+    { name: "Hàm trên", value: "upper_jaw" },
+    { name: "Nguyên hàm", value: "whole_jaw" },
+    { name: "Hàm dưới", value: "lower_jaw" },
+    { name: "Chọn răng", value: "manual" },
+  ];
   // dateOrderFrom: Date;
   // dateOrderTo: Date;
   // datePlannedFrom: Date;
@@ -152,6 +157,8 @@ export class LaboOrderListComponent implements OnInit {
       }))
     ).subscribe(res => {
       this.gridData = res;
+      console.log(this.gridData);
+      
       this.loading = false;
     }, err => {
       console.log(err);
@@ -212,5 +219,10 @@ export class LaboOrderListComponent implements OnInit {
 
   checkRole(){
     this.canUpdateSaleOrder = this.checkPermissionService.check(['Basic.SaleOrder.Update']);
+  }
+
+  getToothType(key) {
+    var type = this.toothTypeDict.find(x=> x.value == key);
+    return type;
   }
 }

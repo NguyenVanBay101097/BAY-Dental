@@ -114,6 +114,9 @@ export class ExportLaboPaged {
     dateExportFrom: string;
     dateExportTo: string;
     dateExport: string;
+    dateReceiptFrom: string;
+    dateReceiptTo: string;
+    partnerId: string;
 }
 
 @Injectable({ providedIn: 'root' })

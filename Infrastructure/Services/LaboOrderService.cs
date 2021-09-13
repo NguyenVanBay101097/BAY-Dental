@@ -165,6 +165,11 @@ namespace Infrastructure.Services
                 }
             }
 
+            if (val.PartnerId.HasValue)
+            {
+                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.PartnerId == val.PartnerId));
+            }
+
             if (val.DateExportFrom.HasValue)
                 spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DateExport >= val.DateExportFrom));
 
@@ -172,6 +177,15 @@ namespace Infrastructure.Services
             {
                 var dateOrderTo = val.DateExportTo.Value.AbsoluteEndOfDate();
                 spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DateExport <= dateOrderTo));
+            }
+
+            if (val.DateReceiptFrom.HasValue)
+                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DateReceipt >= val.DateReceiptFrom));
+
+            if (val.DateReceiptTo.HasValue)
+            {
+                var dateReceipt = val.DateReceiptTo.Value.AbsoluteEndOfDate();
+                spec = spec.And(new InitialSpecification<LaboOrder>(x => x.DateReceipt <= dateReceipt));
             }
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
@@ -276,22 +290,35 @@ namespace Infrastructure.Services
         public async Task<LaboOrderDisplay> GetLaboDisplay(Guid id)
         {
             var attachmentObj = GetService<IIrAttachmentService>();
+            var toothObj = GetService<IToothService>();
             var labo = await SearchQuery(x => x.Id == id).Include(x => x.Partner)
                 .Include(x => x.LaboBridge)
                 .Include(x => x.LaboBiteJoint)
                 .Include(x => x.LaboFinishLine)
                 .Include(x => x.Product)
-                .Include(x => x.SaleOrderLine)
+                .Include(x => x.Customer)
+                .Include(x => x.SaleOrderLine).ThenInclude(x => x.Employee)
+                .Include(x => x.SaleOrderLine).ThenInclude(x => x.Order)
                 .Include(x => x.LaboOrderProductRel).ThenInclude(x => x.Product)
-                .Include(x => x.LaboOrderToothRel)
+                .Include(x => x.LaboOrderToothRel).ThenInclude(x => x.Tooth)
                 .Include("SaleOrderLine.Product").FirstOrDefaultAsync();
 
             var res = _mapper.Map<LaboOrderDisplay>(labo);
             var saleOrderLineObj = GetService<ISaleOrderLineService>();
-            var teeth = await saleOrderLineObj.SearchQuery(x => x.Id == labo.SaleOrderLineId).SelectMany(x => x.SaleOrderLineToothRels)
+            var type = res.SaleOrderLine.ToothType;
+            if (type == "manual")
+            {
+                var teeth = await saleOrderLineObj.SearchQuery(x => x.Id == res.SaleOrderLineId).SelectMany(x => x.SaleOrderLineToothRels)
                 .Select(x => x.Tooth).ToListAsync();
-            res.Teeth = _mapper.Map<IEnumerable<ToothDisplay>>(labo.LaboOrderToothRel.Select(x => x.Tooth).ToList());
-            res.SaleOrderLine.Teeth = _mapper.Map<IEnumerable<ToothDisplay>>(teeth);
+                res.SaleOrderLine.Teeth = _mapper.Map<IEnumerable<ToothDisplay>>(teeth);
+            }
+            else
+            {
+                var teeth = await GetTeeth(type, res.SaleOrderLine.ToothCategoryId.Value);
+                res.SaleOrderLine.Teeth = _mapper.Map<IEnumerable<ToothDisplay>>(teeth);
+            }
+            var teethOrderLine = labo.LaboOrderToothRel.Select(x => x.Tooth);
+            res.TeethOrderLine = _mapper.Map<IEnumerable<ToothDisplay>>(teethOrderLine);
             var attachments = await attachmentObj.GetAttachments("labo", res.Id);
             res.Images = _mapper.Map<IEnumerable<IrAttachmentBasic>>(attachments);
             return res;
@@ -563,11 +590,30 @@ namespace Infrastructure.Services
             if (val.SaleOrderLineId.HasValue)
             {
                 var saleOrderLineObj = GetService<ISaleOrderLineService>();
-                var orderLine = await saleOrderLineObj.SearchQuery(x => x.Id == val.SaleOrderLineId).Include(x => x.Product).FirstOrDefaultAsync();
-                var teeth = await saleOrderLineObj.SearchQuery(x => x.Id == val.SaleOrderLineId).SelectMany(x => x.SaleOrderLineToothRels)
-                    .Select(x => x.Tooth).ToListAsync();
+                var toothObj = GetService<IToothService>();
+                var orderLine = await saleOrderLineObj.SearchQuery(x => x.Id == val.SaleOrderLineId)
+                    .Include(x => x.Product)
+                    .Include(x => x.OrderPartner)
+                    .Include(x => x.Employee)
+                    .Include(x => x.Order)
+                    .FirstOrDefaultAsync();
+
+                var type = orderLine.ToothType;
                 res.SaleOrderLine = _mapper.Map<SaleOrderLineDisplay>(orderLine);
-                res.SaleOrderLine.Teeth = _mapper.Map<IEnumerable<ToothDisplay>>(teeth);
+                res.Employee = _mapper.Map<EmployeeSimple>(orderLine.Employee);
+                res.Customer = _mapper.Map<PartnerSimple>(orderLine.OrderPartner);
+                if (orderLine.ToothType == "manual")
+                {
+                    var teeth = await saleOrderLineObj.SearchQuery(x => x.Id == val.SaleOrderLineId).SelectMany(x => x.SaleOrderLineToothRels)
+                    .Select(x => x.Tooth).ToListAsync();
+                    res.SaleOrderLine.Teeth = _mapper.Map<IEnumerable<ToothDisplay>>(teeth);
+                }
+                else
+                {
+                    var teeth = await GetTeeth(type, orderLine.ToothCategoryId.Value);
+                    res.SaleOrderLine.Teeth = _mapper.Map<IEnumerable<ToothDisplay>>(teeth);
+                }
+
                 res.State = "draft";
                 res.SaleOrderLineId = val.SaleOrderLineId;
             }
@@ -745,6 +791,17 @@ namespace Infrastructure.Services
             }
 
             return false;
+        }
+
+        public async Task<IEnumerable<ToothDisplay>> GetTeeth(string type, Guid toothCateId)
+        {
+            var toothObj = GetService<IToothService>();
+            if (type == "upper_jaw")
+                return _mapper.Map<IEnumerable<ToothDisplay>>(await toothObj.SearchQuery(x => x.CategoryId == toothCateId && x.ViTriHam == "0_up").ToListAsync());
+            else if (type == "lower_jaw")
+                return _mapper.Map<IEnumerable<ToothDisplay>>(await toothObj.SearchQuery(x => x.CategoryId == toothCateId && x.ViTriHam == "1_down").ToListAsync());
+            else
+                return _mapper.Map<IEnumerable<ToothDisplay>>(await toothObj.SearchQuery(x => x.CategoryId == toothCateId).ToListAsync());
         }
     }
 }

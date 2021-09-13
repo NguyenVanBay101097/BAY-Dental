@@ -88,8 +88,9 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public IEnumerable<ToothDisplay> Teeth { get; set; } = new List<ToothDisplay>();
 
-
         public string State { get; set; }
+
+        public string ToothType { get; set; }
     }
 
     public class LaboOrderReceiptBasic

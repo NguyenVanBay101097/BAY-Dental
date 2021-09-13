@@ -488,6 +488,27 @@
             "Permission": "Labo.ExportLabo.Update"
           }
         ]
+      },
+      {
+        "Name": "Quản lý bảo hành",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Labo.LaboWarranty.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Labo.LaboWarranty.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Labo.LaboWarranty.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Labo.LaboWarranty.Delete"
+          }
+        ]
       }
     ]
   },
@@ -938,15 +959,15 @@
           }
         ]
       },
-      {
-        "Name": "Tiền mặt ngân hàng",
-        "Ops": [
-          {
-            "Name": "Xem",
-            "Permission": "Report.CashBankAccount"
-          }
-        ]
-      },
+      //{
+      //  "Name": "Tiền mặt ngân hàng",
+      //  "Ops": [
+      //    {
+      //      "Name": "Xem",
+      //      "Permission": "Report.CashBankAccount"
+      //    }
+      //  ]
+      //},
       {
         "Name": "Thống kê doanh thu",
         "Ops": [
@@ -957,11 +978,20 @@
         ]
       },
       {
-        "Name": "Thống kê điều trị",
+        "Name": "Báo cáo dịch vụ",
         "Ops": [
           {
             "Name": "Xem",
             "Permission": "Report.Sale"
+          }
+        ]
+      },
+      {
+        "Name": "Báo cáo khách hàng",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.PartnerOldNew"
           }
         ]
       },
@@ -1019,15 +1049,15 @@
           }
         ]
       },
-      {
-        "Name": "Thống kê khách hàng cũ mới",
-        "Ops": [
-          {
-            "Name": "Xem",
-            "Permission": "Report.PartnerOldNew"
-          }
-        ]
-      },
+      //{
+      //  "Name": "Thống kê khách hàng cũ mới",
+      //  "Ops": [
+      //    {
+      //      "Name": "Xem",
+      //      "Permission": "Report.PartnerOldNew"
+      //    }
+      //  ]
+      //},
       {
         "Name": "Thống kê labo",
         "Ops": [
@@ -1087,74 +1117,74 @@
       //}
     ]
   },
-  {
-    "Name": "Thẻ tiền mặt",
-    "Functions": [
-      {
-        "Name": "Đơn bán thẻ",
-        "Ops": [
-          {
-            "Name": "Xem",
-            "Permission": "ServiceCard.Order.Read"
-          },
-          {
-            "Name": "Thêm",
-            "Permission": "ServiceCard.Order.Create"
-          },
-          {
-            "Name": "Cập nhật",
-            "Permission": "ServiceCard.Order.Update"
-          },
-          {
-            "Name": "Xóa",
-            "Permission": "ServiceCard.Order.Delete"
-          }
-        ]
-      },
-      {
-        "Name": "Loại thẻ",
-        "Ops": [
-          {
-            "Name": "Xem",
-            "Permission": "ServiceCard.Type.Read"
-          },
-          {
-            "Name": "Thêm",
-            "Permission": "ServiceCard.Type.Create"
-          },
-          {
-            "Name": "Cập nhật",
-            "Permission": "ServiceCard.Type.Update"
-          },
-          {
-            "Name": "Xóa",
-            "Permission": "ServiceCard.Type.Delete"
-          }
-        ]
-      },
-      {
-        "Name": "Danh sách thẻ",
-        "Ops": [
-          {
-            "Name": "Xem",
-            "Permission": "ServiceCard.Card.Read"
-          },
-          {
-            "Name": "Thêm",
-            "Permission": "ServiceCard.Card.Create"
-          },
-          {
-            "Name": "Cập nhật",
-            "Permission": "ServiceCard.Card.Update"
-          },
-          {
-            "Name": "Xóa",
-            "Permission": "ServiceCard.Card.Delete"
-          }
-        ]
-      }
-    ]
-  },
+  //{
+  //  "Name": "Thẻ tiền mặt",
+  //  "Functions": [
+  //    {
+  //      "Name": "Đơn bán thẻ",
+  //      "Ops": [
+  //        {
+  //          "Name": "Xem",
+  //          "Permission": "ServiceCard.Order.Read"
+  //        },
+  //        {
+  //          "Name": "Thêm",
+  //          "Permission": "ServiceCard.Order.Create"
+  //        },
+  //        {
+  //          "Name": "Cập nhật",
+  //          "Permission": "ServiceCard.Order.Update"
+  //        },
+  //        {
+  //          "Name": "Xóa",
+  //          "Permission": "ServiceCard.Order.Delete"
+  //        }
+  //      ]
+  //    },
+  //    {
+  //      "Name": "Loại thẻ",
+  //      "Ops": [
+  //        {
+  //          "Name": "Xem",
+  //          "Permission": "ServiceCard.Type.Read"
+  //        },
+  //        {
+  //          "Name": "Thêm",
+  //          "Permission": "ServiceCard.Type.Create"
+  //        },
+  //        {
+  //          "Name": "Cập nhật",
+  //          "Permission": "ServiceCard.Type.Update"
+  //        },
+  //        {
+  //          "Name": "Xóa",
+  //          "Permission": "ServiceCard.Type.Delete"
+  //        }
+  //      ]
+  //    },
+  //    {
+  //      "Name": "Danh sách thẻ",
+  //      "Ops": [
+  //        {
+  //          "Name": "Xem",
+  //          "Permission": "ServiceCard.Card.Read"
+  //        },
+  //        {
+  //          "Name": "Thêm",
+  //          "Permission": "ServiceCard.Card.Create"
+  //        },
+  //        {
+  //          "Name": "Cập nhật",
+  //          "Permission": "ServiceCard.Card.Update"
+  //        },
+  //        {
+  //          "Name": "Xóa",
+  //          "Permission": "ServiceCard.Card.Delete"
+  //        }
+  //      ]
+  //    }
+  //  ]
+  //},
   //{
   //  "Name": "Thành viên",
   //  "Functions": [

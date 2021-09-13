@@ -9,6 +9,7 @@ import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/
 import { Subject } from 'rxjs';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { NotifyService } from 'src/app/shared/services/notify.service';
 
 @Component({
   selector: 'app-labo-order-detail-list',
@@ -25,7 +26,12 @@ export class LaboOrderDetailListComponent implements OnInit {
   gridData: GridDataResult;
   details: LaboOrderBasic[];
   loading = false;
-
+  toothTypeDict = [
+    { name: "Hàm trên", value: "upper_jaw" },
+    { name: "Nguyên hàm", value: "whole_jaw" },
+    { name: "Hàm dưới", value: "lower_jaw" },
+    { name: "Chọn răng", value: "manual" },
+  ];
   // check permissions
   canAdd: boolean= false;
   canUpdate: boolean = false;
@@ -33,7 +39,8 @@ export class LaboOrderDetailListComponent implements OnInit {
 
   constructor(private laboOrderService: LaboOrderService, private modalService: NgbModal,
     private printService: PrintService, 
-    private checkPermissionService: CheckPermissionService,
+      private checkPermissionService: CheckPermissionService,
+      private notifyService: NotifyService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -56,6 +63,8 @@ export class LaboOrderDetailListComponent implements OnInit {
       }))
     ).subscribe(res => {
       this.gridData = res;
+      console.log(this.gridData);
+      
       this.loading = false;
     }, err => {
       console.log(err);
@@ -69,7 +78,7 @@ export class LaboOrderDetailListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  GetTeeth(val) {
+  getTeeth(val) {
     var list = [];
     if (val.teeth.length) {
       list.push(val.teeth.map(x => x.name).join(','));
@@ -90,6 +99,7 @@ export class LaboOrderDetailListComponent implements OnInit {
     const modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Tạo phiếu Labo';
     modalRef.componentInstance.saleOrderLineId = this.item.id;
+    // modalRef.componentInstance.saleOrderLineLabo = this.item;
     modalRef.result.then(res => {
       this.loadDataFromApi();
       this.reload.next(true);
@@ -97,11 +107,12 @@ export class LaboOrderDetailListComponent implements OnInit {
     });
   }
 
-  editItem(item) {
+  editItem(item) {    
     const modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Cập nhật phiếu labo';
     modalRef.componentInstance.id = item.id;
     modalRef.componentInstance.saleOrderLineId = item.saleOrderLineId;
+    // modalRef.componentInstance.saleOrderLineLabo = this.item;
 
     modalRef.result.then(res => {
       this.loadDataFromApi();
@@ -111,11 +122,12 @@ export class LaboOrderDetailListComponent implements OnInit {
   }
 
   deleteItem(item) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Xóa phiếu Labo';
     modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa?';
     modalRef.result.then(() => {
       this.laboOrderService.unlink([item.id]).subscribe(() => {
+        this.notifyService.notify("success", "Xóa phiếu Labo thành công");
         this.loadDataFromApi();
         this.reload.next(true);
       });
@@ -132,5 +144,10 @@ export class LaboOrderDetailListComponent implements OnInit {
     this.canAdd = this.checkPermissionService.check(['Labo.LaboOrder.Create']);
     this.canUpdate = this.checkPermissionService.check(['Labo.LaboOrder.Update']);
     this.canDelete = this.checkPermissionService.check(['Labo.LaboOrder.Delete']);
+  }
+
+  getToothType(key) {
+    var type = this.toothTypeDict.find(x=> x.value == key);
+    return type;
   }
 }

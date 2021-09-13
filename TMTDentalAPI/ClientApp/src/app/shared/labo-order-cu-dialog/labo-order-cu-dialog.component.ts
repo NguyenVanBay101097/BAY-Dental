@@ -17,10 +17,12 @@ import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
 import { PartnerImageBasic, PartnerService } from 'src/app/partners/partner.service';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductFilter, ProductService } from 'src/app/products/product.service';
-import { ToothBasic, ToothDisplay } from 'src/app/teeth/tooth.service';
+import { ToothBasic, ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
+import { ToothCategoryBasic } from 'src/app/tooth-categories/tooth-category.service';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { ImageViewerComponent } from '../image-viewer/image-viewer.component';
 import { PartnerSupplierCuDialogComponent } from '../partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
+import { PrintService } from '../services/print.service';
 import { IrAttachmentBasic } from '../shared';
 
 @Component({
@@ -36,6 +38,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
   id: string;// có thể là input
   saleOrderLineId: string; // có thể là input
   laboOrder: LaboOrderDisplay = new LaboOrderDisplay();
+  // saleOrderLineLabo: any; // là input
 
   partners: any = [];
   labos: ProductSimple[] = [];
@@ -43,13 +46,12 @@ export class LaboOrderCuDialogComponent implements OnInit {
   biteJoints: LaboBiteJointBasic[] = [];
   bridges: LaboBridgeBasic[] = [];
   attachs: ProductSimple[] = [];
-  toothTypeDict = [
-    { name: "Hàm trên", value: "upper_jaw" },
-    { name: "Nguyên hàm", value: "whole_jaw" },
-    { name: "Hàm dưới", value: "lower_jaw" },
-    { name: "Chọn răng", value: "manual" },
-  ];
-
+  listType = {
+    'up_right':[],
+    'up_left':[],
+    'down_right':[],
+    'down_left':[]
+  };
   constructor(private fb: FormBuilder,
     public activeModal: NgbActiveModal,
     private modalService: NgbModal,
@@ -61,7 +63,9 @@ export class LaboOrderCuDialogComponent implements OnInit {
     private finishLineService: LaboFinishLineService,
     private biteJointService: LaboBiteJointService,
     private bridgeService: LaboBridgeService,
-    private webService: WebService
+    private webService: WebService,
+    private printService: PrintService,
+    private toothService: ToothService
   ) { }
 
   ngOnInit() {
@@ -220,6 +224,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
     this.laboOrderService.get(this.id).subscribe(result => {
       this.laboOrder = result;
       this.patchValue(result);
+      this.processTeeth(result.saleOrderLine.teeth);
     });
   }
 
@@ -228,6 +233,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
     df.saleOrderLineId = this.saleOrderLineId;
     this.laboOrderService.defaultGet(df).subscribe(result => {
       this.laboOrder = result;
+      this.processTeeth(result.saleOrderLine.teeth);
       result.quantity = 1;
       this.patchValue(result);
     (result.saleOrderLine && result.saleOrderLine.product )? this.priceUnitFC.patchValue(result.saleOrderLine.product.laboPrice) : '';
@@ -400,7 +406,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
       }
       this.laboOrderService.buttonConfirm([this.id]).subscribe(() => {
         this.activeModal.close();
-        this.notify('success', 'Lưu thành công');
+        this.notify('success', 'Đặt hàng thành công');
       });
     });
   }
@@ -445,9 +451,25 @@ export class LaboOrderCuDialogComponent implements OnInit {
     });
   }
 
-  getToothType(key) {
-    var type = this.toothTypeDict.find(x=> x.value == key);
-    return type;
+  processTeeth(teeth: ToothDisplay[]) {
+    for (var i = 0; i < teeth.length; i++) {
+      var tooth = teeth[i];
+      if (tooth.viTriHam == '0_up' && tooth.position == '0_right')
+        this.listType.up_right.push(tooth);
+      if (tooth.viTriHam == '0_up' && tooth.position == '1_left')
+        this.listType.up_left.push(tooth);
+      if (tooth.viTriHam == '1_down' && tooth.position == '0_right')
+        this.listType.down_right.push(tooth);
+      if (tooth.viTriHam == '1_down' && tooth.position == '1_left')
+        this.listType.down_left.push(tooth);
+    }
   }
 
+  printLaboOrder(){
+    if(this.id){
+      this.laboOrderService.getPrint(this.id).subscribe(result => {
+        this.printService.printHtml(result);
+      })
+    }
+  }
 }

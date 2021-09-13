@@ -71,7 +71,7 @@ namespace TMTDentalAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            GlobalConfiguration.Configuration.UseBatches();
+            //GlobalConfiguration.Configuration.UseBatches();
             services.AddMultitenancy<AppTenant, CachingAppTenantResolver>();
             services.AddDbContext<TenantDbContext>(c => c.UseSqlServer(Configuration.GetConnectionString("TenantConnection")));
 
@@ -367,6 +367,8 @@ namespace TMTDentalAPI
             services.AddScoped<IDashboardReportService, DashboardReportService>();
             services.AddScoped<ICustomerReceiptReportService, CustomerReceiptReportService>();
 
+            services.AddScoped<ILaboWarrantyService, LaboWarrantyService>();
+
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
@@ -559,6 +561,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new CustomerReceiptProfile());
                 mc.AddProfile(new CustomerReceiptReportProfile());
                 mc.AddProfile(new AccountCommonPartnerReportProfile());
+                mc.AddProfile(new LaboWarrantyProfile());
             };
 
             #endregion
