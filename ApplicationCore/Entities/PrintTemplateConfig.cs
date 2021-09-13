@@ -15,7 +15,8 @@ namespace ApplicationCore.Entities
         /// tmp_sale_order : phiếu điều trị
         /// tmp_account_payment : biên lai khách hàng thanh toán
         /// tmp_advisory : tình trạng răng
-        /// tmp_partner_advance : khách hàng tạm ứng
+        /// tmp_partner_advance : khách hàng đóng tạm ứng
+        /// tmp_partner_refund : khách hàng hoàn tạm ứng
         /// tmp_supplier_payment : biên lai thanh toán nhà cung cấp
         /// tmp_phieu_thu : phiếu thu
         /// tmp_phieu_chi : phiếu chi

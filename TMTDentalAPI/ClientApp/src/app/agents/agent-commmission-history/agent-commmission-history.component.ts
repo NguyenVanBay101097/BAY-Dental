@@ -19,7 +19,7 @@ import { PrintService } from 'src/app/shared/services/print.service';
 export class AgentCommmissionHistoryComponent implements OnInit {
   gridData: GridDataResult;
   searchUpdate = new Subject<string>();
-  agentId : string;
+  agentId: string;
   search: string;
   limit = 20;
   offset = 0;
@@ -29,7 +29,7 @@ export class AgentCommmissionHistoryComponent implements OnInit {
   loading = false;
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
-  
+
   constructor(private intlService: IntlService,
     private modalService: NgbModal,
     private partnerService: PartnerService,
@@ -57,8 +57,8 @@ export class AgentCommmissionHistoryComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  
-  loadDataFromApi(){
+
+  loadDataFromApi() {
     this.loading = true;
     var paged = new PhieuThuChiPaged();
     paged.limit = this.limit;
@@ -95,7 +95,7 @@ export class AgentCommmissionHistoryComponent implements OnInit {
 
   printItem(item) {
     this.phieuthuchiService.getPrint2(item.id).subscribe((data: any) => {
-      this.printService.printHtml(data);
+      this.printService.printHtml(data.html);
     });
   }
 
@@ -104,9 +104,9 @@ export class AgentCommmissionHistoryComponent implements OnInit {
     modalRef.componentInstance.title = 'Xóa phiếu chi hoa hồng';
     modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa phiếu chi hoa hồng ?';
     modalRef.result.then(() => {
-      this.phieuthuchiService.actionCancel([item.id]).subscribe(() =>{
+      this.phieuthuchiService.actionCancel([item.id]).subscribe(() => {
         this.phieuthuchiService.delete(item.id).subscribe(() => {
-          this.notifyService.notify('success','Xóa thành công');
+          this.notifyService.notify('success', 'Xóa thành công');
           this.loadDataFromApi();
         }, () => {
         });

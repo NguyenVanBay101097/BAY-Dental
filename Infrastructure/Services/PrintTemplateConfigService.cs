@@ -169,6 +169,11 @@ namespace Infrastructure.Services
                         res_customer_debt.Company = company;
                         obj = _mapper.Map<PrintVM>(res_customer_debt);
                         break;
+                    case "tmp_agent_commission":
+                        var res_agent_commission = JsonConvert.DeserializeObject<PhieuThuChi>(item.Data.ToString());
+                        res_agent_commission.Company = company;
+                        obj = _mapper.Map<PrintVM>(res_agent_commission);
+                        break;
                     case "tmp_stock_picking_incoming":
                         obj = JsonConvert.DeserializeObject<StockPickingPrintVm>(item.Data.ToString());
                         break;
@@ -186,6 +191,14 @@ namespace Infrastructure.Services
                         break;
                     case "tmp_salary":
                         obj = JsonConvert.DeserializeObject<HrPayslipRunPrintVm>(item.Data.ToString());
+                        break;
+                    case "tmp_partner_advance":
+                        obj = JsonConvert.DeserializeObject<PartnerAdvancePrint>(item.Data.ToString());
+                        (obj as PartnerAdvancePrint).Company = _mapper.Map<CompanyPrintVM>(company);
+                        break;
+                    case "tmp_partner_refund":
+                        obj = JsonConvert.DeserializeObject<PartnerAdvancePrint>(item.Data.ToString());
+                        (obj as PartnerAdvancePrint).Company = _mapper.Map<CompanyPrintVM>(company);
                         break;
                     default:
                         break;

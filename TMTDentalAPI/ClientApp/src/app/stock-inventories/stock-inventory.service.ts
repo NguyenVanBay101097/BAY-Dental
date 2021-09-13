@@ -92,10 +92,9 @@ export class StockInventoryLineDisplay {
   theoreticalQty: number;
 }
 
-export class StockInventoryLineByProductId
-{
-    productId: string;
-    inventoryId: string;
+export class StockInventoryLineByProductId {
+  productId: string;
+  inventoryId: string;
 }
 
 export class StockInventoryDefaultGet {
@@ -120,7 +119,7 @@ export class StockInventoryService {
     return this.http.get<StockInventoryDisplay>(this.base_api + this.apiUrl + "/" + id);
   }
 
-  getDefault(){
+  getDefault() {
     return this.http.get(this.base_api + this.apiUrl + '/DefaultGet');
   }
 
@@ -156,11 +155,11 @@ export class StockInventoryService {
     return this.http.delete(this.base_api + this.apiUrl + "/" + id);
   }
 
-  // getPrint(id: string) {
-  //   return this.http.get(this.base_api + this.apiUrl + "/" + id + '/GetPrint');
-  // }
-
   getPrint(id: string) {
-    return this.http.get(this.base_api + this.apiPrintUrl + "/Print" + `?id=${id}`, { responseType: 'text' });
+    return this.http.get(this.base_api + this.apiUrl + "/" + id + '/Print');
   }
+
+  // getPrint(id: string) {
+  //   return this.http.get(this.base_api + this.apiPrintUrl + "/Print" + `?id=${id}`, { responseType: 'text' });
+  // }
 }

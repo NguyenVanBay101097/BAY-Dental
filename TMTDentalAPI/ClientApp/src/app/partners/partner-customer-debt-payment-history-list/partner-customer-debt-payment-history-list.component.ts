@@ -31,7 +31,7 @@ export class PartnerCustomerDebtPaymentHistoryListComponent implements OnInit {
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
 
-  constructor( private intlService: IntlService,
+  constructor(private intlService: IntlService,
     private modalService: NgbModal,
     private partnerService: PartnerService,
     private phieuthuchiService: PhieuThuChiService,
@@ -58,7 +58,7 @@ export class PartnerCustomerDebtPaymentHistoryListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  loadDataFromApi(){
+  loadDataFromApi() {
     this.loading = true;
     var paged = new PhieuThuChiPaged();
     paged.limit = this.limit;
@@ -95,7 +95,7 @@ export class PartnerCustomerDebtPaymentHistoryListComponent implements OnInit {
 
   printItem(item) {
     this.phieuthuchiService.getPrint2(item.id).subscribe((data: any) => {
-      this.printService.printHtml(data);
+      this.printService.printHtml(data.html);
     });
   }
 
@@ -104,9 +104,9 @@ export class PartnerCustomerDebtPaymentHistoryListComponent implements OnInit {
     modalRef.componentInstance.title = 'Xóa thanh toán công nợ';
     modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa thanh toán công nợ ?';
     modalRef.result.then(() => {
-      this.phieuthuchiService.actionCancel([item.id]).subscribe(() =>{
+      this.phieuthuchiService.actionCancel([item.id]).subscribe(() => {
         this.phieuthuchiService.delete(item.id).subscribe(() => {
-          this.notifyService.notify('success','Xóa thành công');
+          this.notifyService.notify('success', 'Xóa thành công');
           this.loadDataFromApi();
         }, () => {
         });

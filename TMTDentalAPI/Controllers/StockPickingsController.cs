@@ -26,9 +26,11 @@ namespace TMTDentalAPI.Controllers
         private readonly IIRModelAccessService _modelAccessService;
         private readonly IStockMoveService _stockMoveService;
         private readonly IViewRenderService _viewRenderService;
+        private readonly IPrintTemplateConfigService _printTemplateConfigService;
 
         public StockPickingsController(IStockPickingService stockPickingService, IMapper mapper,
-            IUnitOfWorkAsync unitOfWork, IIRModelAccessService modelAccessService, IStockMoveService stockMoveService, IViewRenderService viewRenderService)
+            IUnitOfWorkAsync unitOfWork, IIRModelAccessService modelAccessService, IStockMoveService stockMoveService, IViewRenderService viewRenderService
+            , IPrintTemplateConfigService printTemplateConfigService)
         {
             _stockPickingService = stockPickingService;
             _mapper = mapper;
@@ -36,6 +38,7 @@ namespace TMTDentalAPI.Controllers
             _modelAccessService = modelAccessService;
             _stockMoveService = stockMoveService;
             _viewRenderService = viewRenderService;
+            _printTemplateConfigService = printTemplateConfigService;
         }
 
         [HttpGet]
@@ -204,7 +207,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpPost("[action]/{id}")]
+        [HttpPost("{id}/Print")]
         [CheckAccess(Actions = "Stock.Picking.Read")]
         public async Task<IActionResult> Print(Guid id)
         {
@@ -221,7 +224,9 @@ namespace TMTDentalAPI.Controllers
 
             picking.MoveLines = picking.MoveLines.OrderBy(x=> x.Sequence).ToList();
 
-            var html = _viewRenderService.Render("StockPicking/Print", picking);
+            var obj = _mapper.Map<StockPickingPrintVm>(picking);
+            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() 
+            { Obj = obj, Type = picking.PickingType.Code == "outgoing" ? "tmp_stock_picking_outgoing" : "tmp_stock_picking_incoming" });
 
             return Ok(new PrintData() { html = html });
         }

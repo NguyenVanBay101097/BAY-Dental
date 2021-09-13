@@ -1212,6 +1212,69 @@
     }
   },
   {
+    "Type": "tmp_agent_commission",
+    "Data": {
+      "company": {
+        "name": "TPP",
+        "partnerName": "TPP",
+        "partnerCityName": "Thành phố Hồ Chí Minh",
+        "partnerDistrictName": "Quận Tân Phú",
+        "partnerWardName": "Phường Tân Thành",
+        "partnerStreet": "54/35 Diệp Minh Châu",
+        "address": "54/35 Diệp Minh Châu, Phường Tân Thành, Quận Tân Phú, Thành phố Hồ Chí Minh",
+        "phone": "0938551226",
+        "email": null,
+        "logo": null
+      },
+      "agent": {
+        "id": "26cee801-bc6f-46a6-40c3-08d9761b016a",
+        "name": "Người giới thiệu 1",
+        "gender": "male",
+        "birthYear": null,
+        "birthMonth": null,
+        "birthDay": null,
+        "jobTitle": null,
+        "phone": null,
+        "email": null,
+        "address": ""
+      },
+      "partner": {
+        "id": "e1954d38-4cf2-4924-fe28-08d9761b0157",
+        "name": "Người giới thiệu 1",
+        "displayName": "Người giới thiệu 1",
+        "phone": null,
+        "ref": null,
+        "gender": "male",
+        "address": "",
+        "street": null,
+        "wardName": null,
+        "districtName": null,
+        "cityName": null,
+        "birthYear": null,
+        "debt": 0,
+        "age": "",
+        "companyName": "TPP",
+        "categories": []
+      },
+      "dateCreated": "2021-09-10T15:49:53",
+      "journalId": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+      "journal": {
+        "id": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+        "name": "Tiền mặt",
+        "type": "cash"
+      },
+      "name": "WH/IN/00002",
+      "note": null,
+      "state": "done",
+      "createdByName": "admin",
+      "userId": "fb3c81c4-90b2-4918-aeaf-1689263ee7fa",
+      "user": {
+        "id": "fb3c81c4-90b2-4918-aeaf-1689263ee7fa",
+        "name": "admin"
+      }
+    }
+  },
+  {
     "Type": "tmp_stock_picking_incoming",
     "Data": {
       "company": {
@@ -1783,6 +1846,5 @@
       "IsExistSalaryPayment": false
     }
   }
-
 
 ]

@@ -26,14 +26,17 @@ namespace TMTDentalAPI.Controllers
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly IViewRenderService _viewRenderService;
         private readonly IAccountJournalService _journalService;
+        private readonly IPrintTemplateConfigService _printTemplateConfigService;
         public PhieuThuChisController(IPhieuThuChiService phieuThuChiService, IMapper mapper, IUnitOfWorkAsync unitOfWork,
-            IViewRenderService viewRenderService, IAccountJournalService journalService)
+            IViewRenderService viewRenderService, IAccountJournalService journalService,
+            IPrintTemplateConfigService printTemplateConfigService)
         {
             _phieuThuChiService = phieuThuChiService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _viewRenderService = viewRenderService;
             _journalService = journalService;
+            _printTemplateConfigService = printTemplateConfigService;
         }
 
         //api get phan trang loai thu , chi
@@ -140,24 +143,31 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [AllowAnonymous]
-        [HttpGet("{id}/[action]")]
+        [HttpGet("{id}/Print")]
         //[CheckAccess(Actions = "Account.PhieuThuChi.Read")]
         public async Task<IActionResult> GetPrint(Guid id)
         {
-            var phieu = await _mapper.ProjectTo<PhieuThuChiPrintVM>(_phieuThuChiService.SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
-            if (phieu == null)
+            var res = await _phieuThuChiService.SearchQuery(x => x.Id == id)
+                .Include(x => x.Company)
+                .Include(x => x.CreatedBy)
+                .Include(x => x.Partner)
+                .Include(x => x.LoaiThuChi)
+                .Include(x => x.Journal)
+                .FirstOrDefaultAsync();
+            if (res == null)
                 return NotFound();
 
-            phieu.AmountText = AmountToText.amount_to_text(phieu.Amount);
+            var obj = _mapper.Map<PhieuThuChiPrintVM>(res);
 
-            var html = _viewRenderService.Render("PhieuThuChi/Print", phieu);
+            obj.AmountText = AmountToText.amount_to_text(res.Amount);
+
+            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = obj, Type = obj.Type == "thu"? "tmp_phieu_thu" : "tmp_phieu_chi" });
 
             return Ok(new PrintData() { html = html });
         }
 
-        [AllowAnonymous]
-        [HttpGet("{id}/[action]")]
+        [HttpGet("{id}/Print2")]
+        //[CheckAccess(Actions = "Account.PhieuThuChi.Read")]
         public async Task<IActionResult> GetPrint2(Guid id)
         {
             var res = await _phieuThuChiService.GetPrint(id);
@@ -165,8 +175,7 @@ namespace TMTDentalAPI.Controllers
                 return NotFound();
 
             res.AmountText = AmountToText.amount_to_text(res.Amount);
-
-            var html = _viewRenderService.Render("PhieuThuChi/Print2", res);
+            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = res, Type = res.AccountType == "customer_debt" ? "tmp_customer_debt" : "tmp_agent_commission" });
 
             return Ok(new PrintData() { html = html });
         }

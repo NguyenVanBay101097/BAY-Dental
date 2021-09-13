@@ -2,11 +2,12 @@ export const types: { text: string, value: string }[] = [
     { text: 'Phiếu điều trị', value: 'tmp_sale_order' },
     { text: 'Biên lai khách hàng thanh toán', value: 'tmp_account_payment' },
     { text: 'Tình trạng răng', value: 'tmp_advisory' },
-    { text: 'Khách hàng tạm ứng', value: 'tmp_partner_advance' },
+    { text: 'Khách hàng đóng tạm ứng', value: 'tmp_partner_advance' },
+    { text: 'Khách hàng hoàn tạm ứng', value: 'tmp_partner_refund' },
     { text: 'Biên lai thanh toán nhà cung cấp', value: 'tmp_supplier_payment' },
     { text: 'Phiếu thu', value: 'tmp_phieu_thu' },
     { text: 'Phiếu chi', value: 'tmp_phieu_chi' },
-    { text: 'Công nợ khách hàng', value: 'tmp_customer_debt' },
+    { text: 'Phiếu thu công nợ khách hàng', value: 'tmp_customer_debt' },
     { text: 'Phiếu chi hoa hồng', value: 'tmp_agent_commission' },
     { text: 'Phiếu mua hàng', value: 'tmp_purchase_order' },
     { text: 'Phiếu trả hàng', value: 'tmp_purchase_refund' },
@@ -43,6 +44,8 @@ let pipes =
         { text: 'định dạng ngày/tháng/năm', value: `| date.to_string '%d/%m/%Y'` },
         { text: 'định dạng chữ hoa', value: '| string.upcase' },
         { text: 'định dạng chữ thường', value: '| string.downcase' },
+        { text: 'định dạng danh sách', value: '{{for line in <Mã danh sách>}}\n<nội dung>\n{{end}}' },
+        { text: 'định dạng điều kiện', value: '{{if <điều kiện>}}\n<nội dung>\n{{else}}\n<nội dung>\n{{end}}' },
     ],
     links: [
         { text: 'Link tham khảo 1', value: `https://github.com/scriban/scriban/blob/master/doc/language.md` },
@@ -80,7 +83,7 @@ const keyWords =
         {
             text: "Thông tin chi tiết",
             value: [
-                { text: 'Danh sách thuốc', value: '{{medicine_order_lines}} ' },
+                { text: 'Danh sách thuốc', value: 'medicine_order_lines' },
                 { text: 'Tên thuốc', value: '{{line.product.name}}' },
                 { text: 'Số lần uống/ngày', value: '{{line.toa_thuoc_line.number_of_times}}' },
                 { text: 'Số lượng uống/lần', value: '{{line.toa_thuoc_line.amount_of_times}}' },
@@ -120,7 +123,7 @@ const keyWords =
         {
             text: "Thông tin chi tiết",
             value: [
-                { text: 'Danh sách thuốc', value: '{{lines}}' },
+                { text: 'Danh sách thuốc', value: 'lines' },
                 { text: 'Số thứ tự', value: '{{for.index + 1}}' },
                 { text: 'Tên thuốc', value: '{{line.product_name}}' },
                 { text: 'Số lượng', value: '{{line.quantity}}' },
@@ -207,7 +210,7 @@ const keyWords =
         {
             text: 'Thông tin chi tiết',
             value: [
-                { text: 'Danh sách hàng hóa', value: '{{order_lines}}' },
+                { text: 'Danh sách hàng hóa', value: 'order_lines' },
                 { text: 'Số thứ tự', value: '{{line.sequence}}' },
                 { text: 'Tên hàng hóa', value: '{{line.name}}' },
                 { text: 'Số lượng', value: '{{line.product_qty}}' },
@@ -292,6 +295,177 @@ const keyWords =
                 { text: 'Phương thức', value: '{{journal_name}}' },
                 { text: 'Nội dung', value: '{{reason}}' },
                 { text: 'Người lập phiếu', value: '{{created_by_name}}' },
+            ]
+        }
+    ],
+    'tmp_stock_inventory': [
+        companyInfo,
+        {
+            text: 'Thông tin phiếu',
+            value: [
+                { text: 'Ngày tạo', value: '{{date_created.day}}' },
+                { text: 'Tháng tạo', value: '{{date_created.month}}' },
+                { text: 'Năm tạo', value: '{{date_created.year}}' },
+                { text: 'Mã phiếu', value: '{{name}}' },
+            ]
+        },
+        {
+            text: 'Thông tin chung',
+            value: [
+                { text: 'Người kiểm', value: '{{date_created}}' },
+                { text: 'Ghi chú', value: '{{note}}' },
+                { text: 'Nhân viên kiểm kho', value: '{{created_by_name}}' },
+            ]
+        },
+        {
+            text: 'Thông tin chi tiết',
+            value: [
+                { text: 'Danh sách sản phẩm', value: 'lines' },
+                { text: 'Số thứ tự', value: '{{for.index + 1}}' },
+                { text: 'Mã sản phẩm', value: '{{line.product.default_code}}' },
+                { text: 'Tên sản phẩm', value: '{{line.product.name}}' },
+                { text: 'Đơn vị tính', value: '{{line.product_uom.name}}' },
+                { text: 'Số lượng tồn kho', value: '{{line.theoretical_qty}}' },
+                { text: 'Số lượng thực tế', value: '{{line.product_qty}}' },
+            ]
+        }
+    ],
+    'tmp_stock_picking_outgoing': [
+        companyInfo,
+        {
+            text: 'Thông tin phiếu',
+            value: [
+                { text: 'Ngày tạo', value: '{{date.now.day}}' },
+                { text: 'Tháng tạo', value: '{{date.now.month}}' },
+                { text: 'Năm tạo', value: '{{date.now.year}}' },
+                { text: 'Mã phiếu', value: '{{name}}' },
+            ]
+        },
+        {
+            text: 'Thông tin chung',
+            value: [
+                { text: 'Đối tác', value: '{{partner.name}}' },
+                { text: 'Ghi chú', value: '{{note}}' },
+                { text: 'Ngày xuất kho', value: '{{date_created}}' },
+                { text: 'Ngày lập phiếu', value: '{{created_by_name}}' },
+            ]
+        },
+        {
+            text: 'Thông tin chi tiết',
+            value: [
+                { text: 'Danh sách sản phẩm', value: 'move_lines' },
+                { text: 'Số thứ tự', value: '{{for.index + 1}}' },
+                { text: 'Mã sản phẩm', value: '{{line.product.default_code}}' },
+                { text: 'Tên sản phẩm', value: '{{line.name}}' },
+                { text: 'Loại sản phẩm', value: '{{line.product.categ.name}}' },
+                { text: 'Số lượng', value: '{{line.product_uomqty}}' },
+                { text: 'Đơn vị tính', value: '{{line.product_uom.name}}' },
+            ]
+        }
+    ],
+    'tmp_stock_picking_incoming': [
+        companyInfo,
+        {
+            text: 'Thông tin phiếu',
+            value: [
+                { text: 'Ngày tạo', value: '{{date.now.day}}' },
+                { text: 'Tháng tạo', value: '{{date.now.month}}' },
+                { text: 'Năm tạo', value: '{{date.now.year}}' },
+                { text: 'Mã phiếu', value: '{{name}}' },
+            ]
+        },
+        {
+            text: 'Thông tin chung',
+            value: [
+                { text: 'Đối tác', value: '{{partner.name}}' },
+                { text: 'Ghi chú', value: '{{note}}' },
+                { text: 'Ngày nhập kho', value: '{{date_created}}' },
+                { text: 'Ngày lập phiếu', value: '{{created_by_name}}' },
+            ]
+        },
+        {
+            text: 'Thông tin chi tiết',
+            value: [
+                { text: 'Danh sách sản phẩm', value: 'move_lines' },
+                { text: 'Số thứ tự', value: '{{for.index + 1}}' },
+                { text: 'Mã sản phẩm', value: '{{line.product.default_code}}' },
+                { text: 'Tên sản phẩm', value: '{{line.name}}' },
+                { text: 'Loại sản phẩm', value: '{{line.product.categ.name}}' },
+                { text: 'Số lượng', value: '{{line.product_uomqty}}' },
+                { text: 'Đơn vị tính', value: '{{line.product_uom.name}}' },
+            ]
+        }
+    ],
+    'tmp_partner_advance': [
+        companyInfo,
+        {
+            text: 'Thông tin phiếu',
+            value: [
+                { text: 'Ngày tạo', value: '{{date.day}}' },
+                { text: 'Tháng tạo', value: '{{date.month}}' },
+                { text: 'Năm tạo', value: '{{date.year}}' },
+                { text: 'Mã phiếu', value: '{{name}}' },
+            ]
+        },
+        {
+            text: 'Thông tin chung',
+            value: [
+                { text: 'Người nộp tiền', value: '{{partner_name}}' },
+                { text: 'Phương thức thanh toán', value: '{{journal_name}}' },
+                { text: 'Số tiền', value: '{{amount}}' },
+                { text: 'Số tiền bằng chữ', value: '{{amount_text}}' },
+                { text: 'Nội dung', value: '{{note}}' },
+                { text: 'Người lập phiếu', value: '{{user_name}}' },
+            ]
+        }
+    ],
+    'tmp_partner_refund': [
+        companyInfo,
+        {
+            text: 'Thông tin phiếu',
+            value: [
+                { text: 'Ngày tạo', value: '{{date.day}}' },
+                { text: 'Tháng tạo', value: '{{date.month}}' },
+                { text: 'Năm tạo', value: '{{date.year}}' },
+                { text: 'Mã phiếu', value: '{{name}}' },
+            ]
+        },
+        {
+            text: 'Thông tin chung',
+            value: [
+                { text: 'Người nhận tiền', value: '{{partner_name}}' },
+                { text: 'Phương thức thanh toán', value: '{{journal_name}}' },
+                { text: 'Số tiền', value: '{{amount}}' },
+                { text: 'Số tiền bằng chữ', value: '{{amount_text}}' },
+                { text: 'Nội dung', value: '{{note}}' },
+                { text: 'Người lập phiếu', value: '{{user_name}}' },
+            ]
+        }
+    ],
+    'tmp_agent_commission': [
+        companyInfo,
+        {
+            text: 'Thông tin phiếu',
+            value: [
+                { text: 'Ngày tạo', value: '{{date_created.day}}' },
+                { text: 'Tháng tạo', value: '{{date_created.month}}' },
+                { text: 'Năm tạo', value: '{{date_created.year}}' },
+                { text: 'Mã phiếu', value: '{{name}}' },
+            ]
+        },
+        {
+            text: 'Thông tin chung',
+            value: [
+                { text: 'Ngày thanh toán', value: '{{date_created}}' },
+                { text: 'Phương thức thanh toán', value: '{{journal_name}}' },
+                { text: 'Số tiền', value: '{{amount}}' },
+                { text: 'Số tiền bằng chữ', value: '{{amount_text}}' },
+                { text: 'Nội dung', value: '{{reason}}' },
+                { text: 'Tên người giới thiệu', value: '{{agent.name}}' },
+                { text: 'Địa chỉ người giới thiệu', value: '{{agent.address}}' },
+                { text: 'Số điện thoại người giới thiệu', value: '{{agent.phone}}' },
+                { text: 'Người lập phiếu', value: '{{user.name}}' },
+                { text: 'Người nhận tiền', value: '{{agent.name}}' },
             ]
         }
     ]
