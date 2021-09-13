@@ -51,9 +51,6 @@ namespace ApplicationCore.Constants
            new PrintTemplateType {Type = "tmp_partner_advance" , PathTemplate = "" },
            new PrintTemplateType {Type = "tmp_supplier_payment" , PathTemplate = "" },
            new PrintTemplateType {Type = "tmp_quotation" , PathTemplate = "" },
-           new PrintTemplateType {Type = "tmp_salary_employee" , PathTemplate = "" },
-           new PrintTemplateType {Type = "tmp_salary_advance" , PathTemplate = "" },
-           new PrintTemplateType {Type = "tmp_salary" , PathTemplate = "" },
         };
 
         public static PrintTemplateType[] PrintTemplateTypeDemo = new PrintTemplateType[] {
