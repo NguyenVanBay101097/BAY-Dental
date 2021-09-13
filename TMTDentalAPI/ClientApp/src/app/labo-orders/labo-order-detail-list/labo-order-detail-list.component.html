@@ -6,7 +6,7 @@
         <div class="mb-2" *ngIf="canAdd">
             <button type="button" class="btn btn-primary" (click)="createItem()">Tạo phiếu Labo</button>
         </div>
-        <kendo-grid [data]="gridData" [loading]="loading" [pageSize]="limit" [skip]="skip" [pageable]="true" (pageChange)="pageChange($event)" [navigable]="true" kendoGridFocusable>
+        <kendo-grid [data]="gridData" [loading]="loading" [pageSize]="limit" [skip]="skip" [pageable]="true" (pageChange)="pageChange($event)" [navigable]="pagerSettings" kendoGridFocusable>
             <!-- <kendo-grid-column field="date" title="Ngày">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{dataItem.date | date: 'shortDate'}}

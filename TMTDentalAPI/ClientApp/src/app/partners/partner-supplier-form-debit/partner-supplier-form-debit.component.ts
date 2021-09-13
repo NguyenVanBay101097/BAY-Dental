@@ -1,7 +1,7 @@
 import { AccountInvoiceRegisterPaymentDialogV2Component } from './../../shared/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
 import { offset } from '@progress/kendo-date-math';
 import { PartnerGetDebtPagedFilter } from './../partner.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridComponent, GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -13,6 +13,7 @@ import { AccountPaymentService } from 'src/app/account-payments/account-payment.
 import { AuthService } from 'src/app/auth/auth.service';
 import { PartnerSupplierFormDebitPaymentDialogComponent } from '../partner-supplier-form-debit-payment-dialog/partner-supplier-form-debit-payment-dialog.component';
 import { PartnerService } from '../partner.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-partner-supplier-form-debit',
@@ -24,6 +25,7 @@ export class PartnerSupplierFormDebitComponent implements OnInit {
   skip = 0;
   countPayment = 0;
   limit = 10;
+  pagerSettings: any
   gridData: GridDataResult;
   details: AccountMoveBasic[];
   loading = false;
@@ -42,8 +44,9 @@ export class PartnerSupplierFormDebitComponent implements OnInit {
     private partnerService: PartnerService,
     private notificationService: NotificationService,
     private accountPaymentService: AccountPaymentService,
-
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { 
+    this.pagerSettings = config.pagerSettingsPopup
     this.allData = this.allData.bind(this);
   }
 
@@ -151,6 +154,7 @@ export class PartnerSupplierFormDebitComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadItems();
   }
 

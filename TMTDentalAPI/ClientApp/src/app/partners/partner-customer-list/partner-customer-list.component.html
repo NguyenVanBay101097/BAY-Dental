@@ -68,7 +68,7 @@
         <label class="btn btn-outline-primary mr-2 mb-0" for="draft">Chưa phát sinh</label>
 
     </div>
-    <kendo-grid [data]="gridData" [pageable]="true" (pageChange)="onPageChange($event)" [loading]="loading" [skip]="this.filter.offset" [pageSize]="this.filter.limit" #grid>
+    <kendo-grid [data]="gridData" [pageable]="pagerSettings" (pageChange)="onPageChange($event)" [loading]="loading" [skip]="this.filter.offset" [pageSize]="this.filter.limit" #grid>
         <kendo-grid-column class="" field="name" title="Họ tên" width="250">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <div [ngClass]="'pl-1 d-flex o_tag_bordercolor_' + dataItem.memberLevel?.color" [ngStyle]="{'border-left': '4px solid white'}" class="">

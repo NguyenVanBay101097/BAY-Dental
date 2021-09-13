@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { PartnerService, PartnerReportLocationCity, PartnerReportLocationCitySearch } from 'src/app/partners/partner.service';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { aggregateBy } from '@progress/kendo-data-query';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-partner-report-location',
@@ -18,6 +19,7 @@ export class PartnerReportLocationComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
 
   cityCode: string;
   districtCode: string;
@@ -28,7 +30,10 @@ export class PartnerReportLocationComponent implements OnInit {
     { field: 'total', aggregate: 'sum' },
   ];
 
-  constructor(private partnerService: PartnerService) { }
+  constructor(
+    private partnerService: PartnerService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -60,6 +65,7 @@ export class PartnerReportLocationComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadItems();
   }
 

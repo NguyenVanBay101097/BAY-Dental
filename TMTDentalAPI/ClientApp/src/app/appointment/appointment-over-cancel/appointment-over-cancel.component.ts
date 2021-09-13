@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbDropdownToggle, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
@@ -11,6 +11,7 @@ import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { AppointmentPaged } from '../appointment';
 import { AppointmentService } from '../appointment.service';
 
@@ -30,6 +31,7 @@ export class AppointmentOverCancelComponent implements OnInit {
   dateTo: Date;
   limit: number = 20;
   offset: number = 0
+  pagerSettings: any;
   state: string = "cancel,confirmed";
   search: string;
   searchUpdate = new Subject<string>();
@@ -53,8 +55,9 @@ export class AppointmentOverCancelComponent implements OnInit {
     private modalService: NgbModal,
     private notificationService: NotificationService,
     private employeeService: EmployeeService, 
-    private checkPermissionService: CheckPermissionService
-  ) { }
+    private checkPermissionService: CheckPermissionService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.dateFrom = this.monthStart;
@@ -133,6 +136,7 @@ export class AppointmentOverCancelComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.offset = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

@@ -1,6 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Inject } from '@angular/core';
 import { AccountCommonPartnerReportService, AccountCommonPartnerReportItemDetail, AccountCommonPartnerReportItem } from '../account-common-partner-report.service';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-account-common-partner-report-detail',
@@ -10,12 +11,16 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 export class AccountCommonPartnerReportDetailComponent implements OnInit {
   @Input() public item: AccountCommonPartnerReportItem;
   skip = 0;
-  limit = 10;
+  limit = 20;
+  pagerSettings: any;
   gridData: GridDataResult;
   details: AccountCommonPartnerReportItemDetail[];
   loading = false;
 
-  constructor(private reportService: AccountCommonPartnerReportService) { }
+  constructor(
+    private reportService: AccountCommonPartnerReportService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -36,6 +41,7 @@ export class AccountCommonPartnerReportDetailComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadItems();
   }
 

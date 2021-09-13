@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Inject } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { CommissionSettlementReportDetailOutput, CommissionSettlementsService, CommissionSettlementReportOutput, CommissionSettlementDetailReportPar, CommissionSettlementFilterReport } from '../commission-settlements.service';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
@@ -8,6 +8,7 @@ import * as _ from 'lodash';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-commission-settlement-report-detail',
@@ -19,6 +20,7 @@ export class CommissionSettlementReportDetailComponent implements OnInit {
   loading = false;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   search: string = '';
   searchUpdate = new Subject<string>();
   dateFrom: Date;
@@ -40,8 +42,8 @@ export class CommissionSettlementReportDetailComponent implements OnInit {
     private commissionSettlementsService: CommissionSettlementsService,
     private employeeService: EmployeeService,
     private intl: IntlService,
-
-  ) { }
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -108,6 +110,7 @@ export class CommissionSettlementReportDetailComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

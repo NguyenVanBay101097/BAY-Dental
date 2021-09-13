@@ -1,5 +1,5 @@
 <h6>Danh sách phiếu điều trị</h6>
-<kendo-grid #grid [data]="gridData" [pageable]="true" [pageSize]="limit" [skip]="offset"
+<kendo-grid #grid [data]="gridData" [pageable]="pagerSettings" [pageSize]="limit" [skip]="offset"
 (pageChange)="pageChange($event)" [resizable]="true" [loading]="loading">
 <kendo-grid-column field="dateOrder" title="Ngày tạo" width="100">
     <ng-template kendoGridCellTemplate let-dataItem>

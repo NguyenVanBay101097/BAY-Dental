@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
@@ -13,6 +13,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { PhieuThuChiPaged, PhieuThuChiService } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-cash-book-tab-page-re-pa',
@@ -24,6 +25,7 @@ export class CashBookTabPageRePaComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   type: string;
   search: string;
   searchUpdate = new Subject<string>();
@@ -45,8 +47,9 @@ export class CashBookTabPageRePaComponent implements OnInit {
     private phieuThuChiService: PhieuThuChiService,
     private notificationService: NotificationService,
     private printService: PrintService, 
-    private checkPermissionService: CheckPermissionService
-  ) { }
+    private checkPermissionService: CheckPermissionService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.dateFrom = this.monthStart;
@@ -89,6 +92,7 @@ export class CashBookTabPageRePaComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

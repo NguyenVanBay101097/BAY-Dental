@@ -19,7 +19,7 @@
         </div>
         <button class="btn btn-primary" (click)="printReport()">In báo cáo</button>
     </div>
-    <kendo-grid (excelExport)="onExcelExport($event)" [resizable]="true" #grid class="mt-2" [loading]="loading" [data]="gridData" [pageSize]="this.limit" [skip]="this.skip" [pageable]="true" (pageChange)="pageChange($event)">
+    <kendo-grid (excelExport)="onExcelExport($event)" [resizable]="true" #grid class="mt-2" [loading]="loading" [data]="gridData" [pageSize]="this.limit" [skip]="this.skip" [pageable]="pagerSettings" (pageChange)="pageChange($event)">
         <kendo-grid-column field="employeeName" title="Nhân viên">
             <ng-template kendoGridCellTemplate let-dataItem>
                 {{dataItem.employeeName|| 'Không xác định'}}

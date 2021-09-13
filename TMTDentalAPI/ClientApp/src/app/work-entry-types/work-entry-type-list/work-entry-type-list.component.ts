@@ -1,5 +1,5 @@
 
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { WorkEntryTypeService, WorkEntryTypePage } from '../work-entry-type.service';
@@ -8,6 +8,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { WorkEntryTypeCreateUpdateDialogComponent } from '../work-entry-type-create-update-dialog/work-entry-type-create-update-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-work-entry-type-list',
@@ -19,6 +20,7 @@ export class WorkEntryTypeListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   opened = false;
   searchUpdate = new Subject<string>();
@@ -28,7 +30,8 @@ export class WorkEntryTypeListComponent implements OnInit {
     private workEntryTypeService: WorkEntryTypeService,
     private notificationService: NotificationService,
     private modalService: NgbModal,
-  ) { }
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.searchUpdate.pipe(
@@ -72,6 +75,7 @@ export class WorkEntryTypeListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

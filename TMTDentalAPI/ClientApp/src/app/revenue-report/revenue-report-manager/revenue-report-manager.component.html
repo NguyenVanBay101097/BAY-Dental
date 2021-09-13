@@ -55,7 +55,7 @@
         <h4 class="text-success">{{reportResult.balance | number}}</h4>
     </div>
     <div>
-        <kendo-grid *ngIf="viewType == 'list'" [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
+        <kendo-grid *ngIf="viewType == 'list'" [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading" (pageChange)="pageChange($event)">
             <kendo-grid-column field="name" [title]="getTitle()">
             </kendo-grid-column>
             <kendo-grid-column field="priceTotal" class="text-right" title="Tổng doanh thu" footerClass="text-right font-weight-bold">

@@ -1,5 +1,5 @@
 import { PartnerSourcePaged, PartnerSourceBasic } from "./../partner-source.service";
-import { Component, OnInit } from "@angular/core";
+import { Component, Inject, OnInit } from "@angular/core";
 import { GridDataResult, PageChangeEvent } from "@progress/kendo-angular-grid";
 import { Subject } from "rxjs";
 import { PartnerSourceService } from "../partner-source.service";
@@ -8,6 +8,7 @@ import { map, debounceTime, distinctUntilChanged } from "rxjs/operators";
 import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
 import { PartnerSourceCreateUpdateDialogComponent } from "../partner-source-create-update-dialog/partner-source-create-update-dialog.component";
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from "src/app/shared/pager-grid-kendo.config";
 
 @Component({
   selector: "app-partner-source-list",
@@ -18,6 +19,7 @@ export class PartnerSourceListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
 
   search: string;
@@ -25,8 +27,9 @@ export class PartnerSourceListComponent implements OnInit {
   constructor(
     private partnerSourceService: PartnerSourceService,
     private modalService: NgbModal,
-    private showErrorService: AppSharedShowErrorService
-  ) { }
+    private showErrorService: AppSharedShowErrorService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -64,6 +67,7 @@ export class PartnerSourceListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

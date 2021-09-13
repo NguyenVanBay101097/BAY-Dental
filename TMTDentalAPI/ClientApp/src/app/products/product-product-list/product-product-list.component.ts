@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { ProductService, ProductPaged } from '../product.service';
 import { ProductDialogComponent } from '../product-dialog/product-dialog.component';
@@ -18,6 +18,7 @@ import { ProductProductCuDialogComponent } from '../product-product-cu-dialog/pr
 import { HasGroupsDirective } from 'src/app/shared/has-groups-directive';
 import { PermissionService } from 'src/app/shared/permission.service';
 import { AuthService } from 'src/app/auth/auth.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-product-product-list',
@@ -31,6 +32,7 @@ export class ProductProductListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   opened = false;
   title = 'Vật tư';
@@ -49,8 +51,9 @@ export class ProductProductListComponent implements OnInit {
     private route: ActivatedRoute,
     private modalService: NgbModal,
     public permissionService: PermissionService,
-    private authService: AuthService
-  ) { }
+    private authService: AuthService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.searchUpdate.pipe(
@@ -75,9 +78,9 @@ export class ProductProductListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
-
 
   loadDataFromApi() {
     this.loading = true;

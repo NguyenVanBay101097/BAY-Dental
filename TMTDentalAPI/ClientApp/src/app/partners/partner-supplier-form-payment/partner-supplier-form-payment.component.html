@@ -1,4 +1,4 @@
-<kendo-grid [data]="gridView" [pageable]="true" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)" [loading]="gridLoading">
+<kendo-grid [data]="gridView" [pageable]="pagerSettings" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)" [loading]="gridLoading">
     <kendo-grid-column field="paymentDate" title="Ngày" width="120">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{dataItem.paymentDate | date : 'shortDate' }}

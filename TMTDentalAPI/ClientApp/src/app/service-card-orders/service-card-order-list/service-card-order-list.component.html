@@ -24,7 +24,7 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageable]="true" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)"
+    <kendo-grid [data]="gridData" [pageable]="pagerSettings" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)"
     [loading]="loading">
         <kendo-grid-column field="name" title="Mã" width="100">
         </kendo-grid-column>

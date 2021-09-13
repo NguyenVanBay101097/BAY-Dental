@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -8,6 +8,7 @@ import { ProductCategory } from 'src/app/product-categories/product-category';
 import { ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { ProductCategoryDialogComponent } from 'src/app/shared/product-category-dialog/product-category-dialog.component';
 import { Product } from '../product';
 import { ProductImportExcelDialogComponent } from '../product-import-excel-dialog/product-import-excel-dialog.component';
@@ -26,6 +27,7 @@ export class ProductManagementServicesComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   searchService: string;
   cateId: string;
   selectedCateg: any;
@@ -39,8 +41,9 @@ export class ProductManagementServicesComponent implements OnInit {
     private productCategoryService: ProductCategoryService,
     private productService: ProductService,
     private modalService: NgbModal,
-    private checkPermissionService: CheckPermissionService
-  ) { }
+    private checkPermissionService: CheckPermissionService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.searchServiceUpdate
@@ -106,6 +109,7 @@ export class ProductManagementServicesComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadServices();
   }
 

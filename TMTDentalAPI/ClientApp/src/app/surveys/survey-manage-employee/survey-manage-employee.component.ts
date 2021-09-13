@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, takeUntil } from 'rxjs/operators';
 import { EmployeeService } from 'src/app/employees/employee.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { SurveyAssignmentService } from '../survey.service';
 
 @Component({
@@ -13,8 +14,9 @@ import { SurveyAssignmentService } from '../survey.service';
 })
 export class SurveyManageEmployeeComponent implements OnInit {
   gridData: GridDataResult;
-  limit = 10;
+  limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   search = '';
   searchSB = new Subject<string>();
@@ -28,7 +30,8 @@ export class SurveyManageEmployeeComponent implements OnInit {
   constructor(
     private employeeService: EmployeeService,
     private intlService: IntlService,
-  ) { }
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.dateFrom = this.monthStart;
@@ -78,7 +81,7 @@ export class SurveyManageEmployeeComponent implements OnInit {
 
   pageChange(e) {
     this.skip = e.skip;
+    this.limit = e.take;
     this.loadDataFromApi();
   }
-
 }

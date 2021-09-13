@@ -2052,4 +2052,8 @@ html:not([dir=rtl]) .sidebar-show .sidebar {
     min-width: 0;
 }
 
-
+kendo-pager-page-sizes select{
+    padding: .375rem .75rem;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+}

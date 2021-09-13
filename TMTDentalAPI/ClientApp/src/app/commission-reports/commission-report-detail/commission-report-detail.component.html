@@ -1,4 +1,4 @@
-<kendo-grid [data]="details" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" 
+<kendo-grid [data]="details" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading" 
 (pageChange)="pageChange($event)">
 <kendo-grid-column field="date" title="Ngày">
     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">

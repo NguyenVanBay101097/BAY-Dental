@@ -17,7 +17,7 @@
         <input type="text" [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)" placeholder="Tìm kiếm theo mã, tên, số điện thoại khách hàng" class="ml-auto form-control search-input">
 
     </div>
-    <kendo-grid (excelExport)="onExcelExport($event)" [resizable]="true" #grid class="mt-2" [loading]="loading" [data]="gridData" [pageSize]="this.limit" [skip]="this.skip" [pageable]="true" (pageChange)="pageChange($event)">
+    <kendo-grid (excelExport)="onExcelExport($event)" [resizable]="true" #grid class="mt-2" [loading]="loading" [data]="gridData" [pageSize]="this.limit" [skip]="this.skip" [pageable]="paperSettings" (pageChange)="pageChange($event)">
         <kendo-grid-column field="partnerName" title="Khách hàng">
             <ng-template kendoGridCellTemplate let-dataItem>
                 {{dataItem.partnerName || 'Không xác định'}}

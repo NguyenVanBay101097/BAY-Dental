@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -9,6 +9,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AdvisoryPaged, AdvisoryService, AdvisoryToothAdvise, CreateFromAdvisoryInput } from 'src/app/advisories/advisory.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
 import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
@@ -34,8 +35,9 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
   filteredToothCategories: any[] = [];
   cateId: string;
   gridData: GridDataResult;
-  limit: number = 10;
+  limit: number = 20;
   skip: number = 0;
+  pagerSettings: any;
   loading = false;
   customerId: string;
   mySelection = [];
@@ -50,7 +52,8 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     private notificationService: NotificationService,
     private printService: PrintService,
     private router: Router,
-  ) { }
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadToothCategories();
@@ -252,6 +255,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
 
   pageChange(event:PageChangeEvent){
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

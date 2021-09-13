@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map, debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -13,6 +13,7 @@ import { PartnerBasic, PartnerPaged, PartnerSimple } from 'src/app/partners/part
 import { PartnerService } from 'src/app/partners/partner.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { NotifyService } from 'src/app/shared/services/notify.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-purchase-order-list',
@@ -26,6 +27,7 @@ export class PurchaseOrderListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   opened = false;
   search: string;
@@ -52,8 +54,9 @@ export class PurchaseOrderListComponent implements OnInit {
     private modalService: NgbModal, private route: ActivatedRoute, private intlService: IntlService,
     private checkPermissionService: CheckPermissionService,
     private partnerService: PartnerService,
-    private notifyService: NotifyService
-  ) { }
+    private notifyService: NotifyService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
@@ -195,6 +198,7 @@ export class PurchaseOrderListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

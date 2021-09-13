@@ -1,7 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import * as moment from 'moment';
 import { GetSaleOrderPagedReq, PartnerOldNewReportReq, PartnerOldNewReportService } from 'src/app/sale-report/partner-old-new-report.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-partner-report-sale-order',
@@ -15,8 +16,12 @@ export class PartnerReportSaleOrderComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   offset = 0;
+  pagerSettings: any;
 
-  constructor(private partnerOldNewRpService: PartnerOldNewReportService) { }
+  constructor(
+    private partnerOldNewRpService: PartnerOldNewReportService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadData();
@@ -54,6 +59,7 @@ export class PartnerReportSaleOrderComponent implements OnInit {
 
   pageChange(e) {
     this.offset = e.skip;
+    this.limit = e.take;
     this.loadData();
   }
 }

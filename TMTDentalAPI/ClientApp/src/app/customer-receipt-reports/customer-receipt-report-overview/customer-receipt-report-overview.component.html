@@ -111,7 +111,7 @@
             </div>
         </div>
     </div>
-    <kendo-grid #grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [resizable]="true"
+    <kendo-grid #grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [resizable]="true"
         [loading]="loading" (pageChange)="pageChange($event)">
         <kendo-grid-column title="Ngày tiếp nhận" width="120">
             <ng-template kendoGridCellTemplate let-dataItem>

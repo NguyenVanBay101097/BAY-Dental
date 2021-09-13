@@ -119,7 +119,7 @@
 
         </div>
         <div class="overflow-auto">
-            <kendo-grid [resizable]="true" #grid class="mt-2" [loading]="loading" [data]="gridData" [pageSize]="this.filter.limit" [skip]="this.filter.offset" [pageable]="true" (pageChange)="pageChange($event)">
+            <kendo-grid [resizable]="true" #grid class="mt-2" [loading]="loading" [data]="gridData" [pageSize]="this.filter.limit" [skip]="this.filter.offset" [pageable]="pagerSettings" (pageChange)="pageChange($event)">
                 <kendo-grid-column field="name" title="Khách hàng" width="110">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                         <a class="text-primary" [routerLink]="['/partners/customer/' + dataItem.id]">{{dataItem.name}}</a>

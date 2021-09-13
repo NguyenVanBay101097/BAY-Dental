@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -6,6 +6,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { SaleCouponService, SaleCouponPaged, SaleCouponBasic } from '../sale-coupon.service';
 import { SaleCouponProgramBasic, SaleCouponProgramService, SaleCouponProgramPaged } from '../sale-coupon-program.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-sale-coupon-list-dialog',
@@ -16,13 +17,16 @@ export class SaleCouponListDialogComponent implements OnInit {
   gridData: GridDataResult;
   limit = 10;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   search: string;
   searchUpdate = new Subject<string>();
   programId: string;
   title = 'Coupon';
 
-  constructor(private couponService: SaleCouponService, public activeModal: NgbActiveModal) { }
+  constructor(private couponService: SaleCouponService, public activeModal: NgbActiveModal,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettingsPopup }
 
   ngOnInit() {
 
@@ -78,6 +82,7 @@ export class SaleCouponListDialogComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

@@ -1,5 +1,5 @@
 import { LaboOrderBasic, LaboOrderPaged, LaboOrderService } from './../labo-order.service';
-import { Component, Input, OnInit, Output } from '@angular/core';
+import { Component, Inject, Input, OnInit, Output } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -8,6 +8,7 @@ import { PrintService } from 'src/app/shared/services/print.service';
 import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { Subject } from 'rxjs';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-labo-order-detail-list',
@@ -19,7 +20,8 @@ export class LaboOrderDetailListComponent implements OnInit {
   @Input() public state: string;
   @Output() reload : Subject<boolean> = new Subject<boolean>();
   skip = 0;
-  limit = 10;
+  limit = 20;
+  pagerSettings: any;
   gridData: GridDataResult;
   details: LaboOrderBasic[];
   loading = false;
@@ -31,8 +33,9 @@ export class LaboOrderDetailListComponent implements OnInit {
 
   constructor(private laboOrderService: LaboOrderService, private modalService: NgbModal,
     private printService: PrintService, 
-    private checkPermissionService: CheckPermissionService
-    ) { }
+    private checkPermissionService: CheckPermissionService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -62,6 +65,7 @@ export class LaboOrderDetailListComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

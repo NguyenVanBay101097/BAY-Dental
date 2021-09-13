@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -12,6 +12,7 @@ import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { PartnerSimple } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { SurveyAssignmentGetSummaryFilter, SurveyAssignmentPaged, SurveyAssignmentService } from '../survey.service';
 
 @Component({
@@ -29,6 +30,7 @@ export class SurveyAssignmentListComponent implements OnInit {
   search: string;
   limit = 20;
   offset = 0;
+  pagerSettings: any;
   edit = false;
   dateFrom: Date;
   dateTo: Date;
@@ -63,8 +65,9 @@ export class SurveyAssignmentListComponent implements OnInit {
     private employeeService: EmployeeService,
     private surveyAssignmentService: SurveyAssignmentService,
     private fb: FormBuilder,
-    private authService: AuthService
-  ) { }
+    private authService: AuthService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.dateFrom = this.monthStart;
@@ -150,6 +153,7 @@ export class SurveyAssignmentListComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.offset = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

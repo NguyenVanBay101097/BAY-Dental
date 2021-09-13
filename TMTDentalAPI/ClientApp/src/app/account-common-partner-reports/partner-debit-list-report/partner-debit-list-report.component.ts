@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { Workbook } from '@progress/kendo-angular-excel-export';
 import { GridComponent, GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -11,6 +11,7 @@ import { AccountCommonPartnerReportService, ReportPartnerDebitDetailReq, ReportP
 import { saveAs } from '@progress/kendo-file-saver';
 import { PrintService } from 'src/app/shared/services/print.service';
 import * as moment from 'moment';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 @Component({
   selector: 'app-partner-debit-list-report',
   templateUrl: './partner-debit-list-report.component.html',
@@ -26,6 +27,7 @@ export class PartnerDebitListReportComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   dateFrom: Date;
   dateTo: Date;
   resultSelection: string;
@@ -43,7 +45,9 @@ export class PartnerDebitListReportComponent implements OnInit {
   constructor(private reportService: AccountCommonPartnerReportService,
     private intlService: IntlService,
     private companyService: CompanyService,
-    private printService: PrintService) { }
+    private printService: PrintService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
@@ -122,6 +126,7 @@ export class PartnerDebitListReportComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadItems();
   }
 

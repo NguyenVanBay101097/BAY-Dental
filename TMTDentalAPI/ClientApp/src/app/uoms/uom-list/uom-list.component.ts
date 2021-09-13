@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { UoMCategoryPaged } from 'src/app/uom-categories/uom-category.service';
@@ -8,6 +8,7 @@ import { UomCrUpComponent } from '../uom-cr-up/uom-cr-up.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { UomImportExcelDialogComponent } from '../uom-import-excel-dialog/uom-import-excel-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-uom-list',
@@ -18,6 +19,7 @@ export class UomListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   title = 'Đơn vị tính';
   loading = false;
   opened = false;
@@ -25,8 +27,9 @@ export class UomListComponent implements OnInit {
   search: string;
   constructor(
     private uoMService: UomService,
-    private modalService: NgbModal
-  ) { }
+    private modalService: NgbModal,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.searchUpdate.pipe(
@@ -88,6 +91,7 @@ export class UomListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

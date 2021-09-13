@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { EmployeePaged, EmployeeBasic } from '../employee';
 import { FormGroup, FormBuilder } from '@angular/forms';
@@ -11,6 +11,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { ActivatedRoute } from '@angular/router';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { AuthService } from 'src/app/auth/auth.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-employee-list',
@@ -29,13 +30,16 @@ export class EmployeeListComponent implements OnInit {
   constructor(private fb: FormBuilder, private service: EmployeeService,
     private notificationService: NotificationService,
     private activeroute: ActivatedRoute, private modalService: NgbModal,
-    private authService: AuthService) { }
+    private authService: AuthService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   loading = false;
   gridView: GridDataResult;
   windowOpened: boolean = false;
   skip = 0;
-  pageSize = 20;
+  limit = 20;
+  pagerSettings: any;
   active: boolean = true;
 
   search: string;
@@ -55,7 +59,7 @@ export class EmployeeListComponent implements OnInit {
   getEmployeesList() {
     this.loading = true;
     var empPaged = new EmployeePaged();
-    empPaged.limit = this.pageSize;
+    empPaged.limit = this.limit;
     empPaged.offset = this.skip;
     empPaged.companyId = this.authService.userInfo.companyId;
     empPaged.active = (this.active || this.active == false) ? this.active : '';
@@ -96,6 +100,7 @@ export class EmployeeListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.getEmployeesList();
   }
 

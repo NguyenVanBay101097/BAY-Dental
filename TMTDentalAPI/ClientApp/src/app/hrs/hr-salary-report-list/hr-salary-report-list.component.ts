@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
@@ -11,6 +11,7 @@ import { AccountCommonPartnerReportItem, AccountCommonPartnerReportSearch, Accou
 import { AuthService } from 'src/app/auth/auth.service';
 import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-hr-salary-report-list',
@@ -23,6 +24,7 @@ export class HrSalaryReportListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   date: Date = new Date();
   dateFrom: Date = new Date(this.date.getFullYear(), this.date.getMonth(), 1);;
   dateTo: Date = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate());
@@ -46,8 +48,9 @@ export class HrSalaryReportListComponent implements OnInit {
     private partnerService: PartnerService,
     private route: ActivatedRoute,
     private fb: FormBuilder,
-    private authService: AuthService
-  ) { }
+    private authService: AuthService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -124,6 +127,7 @@ export class HrSalaryReportListComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadItems();
   }
 

@@ -50,7 +50,7 @@
             </div>
             <div class="t_treatment_grid">
                 <div class="kendo-grid-data">
-                    <kendo-grid #grid [data]="saleOrdersData" [pageable]="true" [pageSize]="limit" [skip]="skip"
+                    <kendo-grid #grid [data]="saleOrdersData" [pageable]="pagerSettings" [pageSize]="limit" [skip]="skip"
                         (pageChange)="pageChange($event)" [resizable]="true" [loading]="loading"
                         (excelExport)="onExcelExport($event)">
                         <kendo-grid-column [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}"

@@ -25,7 +25,7 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"
         (pageChange)="pageChange($event)">
         <!-- <kendo-grid-column title="STT" width="250">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">

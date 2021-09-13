@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -6,6 +6,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SaleCouponService, SaleCouponPaged, SaleCouponBasic } from '../sale-coupon.service';
 import { SaleCouponProgramBasic, SaleCouponProgramService, SaleCouponProgramPaged } from '../sale-coupon-program.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-sale-coupon-list',
@@ -19,6 +20,7 @@ export class SaleCouponListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   search: string;
   searchUpdate = new Subject<string>();
@@ -26,7 +28,9 @@ export class SaleCouponListComponent implements OnInit {
   programId: string;
 
   constructor(private couponService: SaleCouponService, private route: ActivatedRoute,
-    private router: Router, private programService: SaleCouponProgramService) { }
+    private router: Router, private programService: SaleCouponProgramService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.route.queryParamMap.subscribe(params => {
@@ -81,6 +85,7 @@ export class SaleCouponListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

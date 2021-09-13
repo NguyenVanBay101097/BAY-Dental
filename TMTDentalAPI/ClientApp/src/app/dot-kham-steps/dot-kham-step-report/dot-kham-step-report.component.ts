@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, tap, switchMap } from 'rxjs/operators';
@@ -13,6 +13,7 @@ import { PartnerService } from 'src/app/partners/partner.service';
 import { UserPaged, UserService } from 'src/app/users/user.service';
 import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-dot-kham-step-report',
@@ -31,6 +32,7 @@ export class DotKhamStepReportComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   dateFrom: Date;
   userSimpleFilter: EmployeeBasic[] = [];
   partnerSimpleFilter: PartnerSimple[] = [];
@@ -47,8 +49,9 @@ export class DotKhamStepReportComponent implements OnInit {
     private intl: IntlService,
     private partnerService: PartnerService,
     private userService: UserService,
-    private employeeService: EmployeeService
-  ) { }
+    private employeeService: EmployeeService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -156,9 +159,9 @@ export class DotKhamStepReportComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadData();
   }
-
 
   onSearchDateChange(data) {
     this.dateFrom = data.dateFrom;

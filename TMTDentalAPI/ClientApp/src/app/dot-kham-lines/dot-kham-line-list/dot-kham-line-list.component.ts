@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Inject, OnInit } from "@angular/core";
 import { GridDataResult, PageChangeEvent } from "@progress/kendo-angular-grid";
 import { IntlService } from "@progress/kendo-angular-intl";
 import { take } from "lodash";
@@ -9,6 +9,7 @@ import {
   DotKhamLinePaging,
   DotKhamLineService,
 } from "src/app/dot-kham-lines/dot-kham-line.service";
+import { PageGridConfig, PAGER_GRID_CONFIG } from "src/app/shared/pager-grid-kendo.config";
 
 @Component({
   selector: "app-dot-kham-line-list",
@@ -23,7 +24,8 @@ export class DotKhamLineListComponent implements OnInit {
     0
   );
   skip = 0;
-  pageSize = 20;
+  limit = 20;
+  pagerSettings: any;
   loading = false;
   search: string;
   searchUpdate = new Subject<string>();
@@ -31,8 +33,9 @@ export class DotKhamLineListComponent implements OnInit {
 
   constructor(
     private lineService: DotKhamLineService,
-    private intlService: IntlService
-  ) {}
+    private intlService: IntlService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.searchUpdate
@@ -47,7 +50,7 @@ export class DotKhamLineListComponent implements OnInit {
 
   loadDataFromApi() {
     var page = new DotKhamLinePaging();
-    page.limit = this.pageSize;
+    page.limit = this.limit;
     page.offset = this.skip;
     page.search = this.search ? this.search : "";
     page.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd")
@@ -85,6 +88,7 @@ export class DotKhamLineListComponent implements OnInit {
 
   pageChange(e: PageChangeEvent) {
     this.skip = e.skip;
+    this.limit = e.take;
     this.loadDataFromApi();
   }
 

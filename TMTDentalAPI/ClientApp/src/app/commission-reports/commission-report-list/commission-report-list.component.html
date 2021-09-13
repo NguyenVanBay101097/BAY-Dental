@@ -61,7 +61,7 @@
             </div>
         </div> -->
         <div>
-            <kendo-grid [data]="reportResults" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+            <kendo-grid [data]="reportResults" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"
             (pageChange)="pageChange($event)">
             
             <kendo-grid-column field="name" title="Bác sĩ">

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
@@ -9,6 +9,7 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { SmsComfirmDialogComponent } from '../sms-comfirm-dialog/sms-comfirm-dialog.component';
 import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
 import { SmsMessageDetailPaged, SmsMessageDetailService } from '../sms-message-detail.service';
@@ -31,6 +32,7 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
   listMessageDetails: any[];
   smsCampaignId: string;
   limit: number = 20;
+  pagerSettings: any;
   isRowSelected: any[];
   search: string = '';
   selectedIds: string[] = [];
@@ -54,8 +56,9 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private notificationService: NotificationService,
     private intlService: IntlService,
-    private authService: AuthService
-  ) { }
+    private authService: AuthService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     // this.dateFrom = this.monthStart;
@@ -120,6 +123,7 @@ export class SmsMessageDetailStatisticComponent implements OnInit {
 
   pageChange(event) {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

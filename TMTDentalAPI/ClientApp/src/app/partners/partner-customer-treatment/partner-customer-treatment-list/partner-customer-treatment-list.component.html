@@ -27,7 +27,7 @@
         </div>
         <div class="t_treatment_grid">
             <div class="kendo-grid-data">
-                <kendo-grid [data]="saleOrdersData" [pageable]="true" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)" [resizable]="true" [loading]="loading">
+                <kendo-grid [data]="saleOrdersData" [pageable]="pagerSettings" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)" [resizable]="true" [loading]="loading">
                     <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}" field="Name" title="Số phiếu" width="100">
                         <ng-template kendoGridCellTemplate let-dataItem>
                             <a class="text-primary" (click)="getFormSaleOrder(dataItem.id)">{{dataItem.name}}</a>

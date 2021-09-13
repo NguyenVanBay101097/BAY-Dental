@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -6,6 +6,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { SurveyTagDialogComponent } from '../survey-tag-dialog/survey-tag-dialog.component';
 import { SurveyTagPaged, SurveyTagService } from '../survey-tag.service';
 
@@ -18,6 +19,7 @@ export class SurveyTagListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   opened = false;
 
@@ -28,8 +30,10 @@ export class SurveyTagListComponent implements OnInit {
   constructor(private surveyTagService: SurveyTagService,
     private notificationService: NotificationService,
     private modalService: NgbModal,
-    private route: ActivatedRoute) {
-  }
+    private route: ActivatedRoute,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
+
   ngOnInit() {
     this.loadDataFromApi();
 
@@ -65,6 +69,7 @@ export class SurveyTagListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

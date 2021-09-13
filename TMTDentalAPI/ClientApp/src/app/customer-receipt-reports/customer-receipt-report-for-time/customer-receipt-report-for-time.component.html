@@ -39,7 +39,7 @@
             </kendo-chart>
         </div>
     </div>
-    <kendo-grid #grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+    <kendo-grid #grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"
         (pageChange)="pageChange($event)">
         <kendo-grid-column title="Giờ tiếp nhận">
             <ng-template kendoGridCellTemplate let-dataItem>

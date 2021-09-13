@@ -28,7 +28,7 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"
     (pageChange)="pageChange($event)">
         <kendo-grid-column field="name" title="Tên người giới thiệu" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">

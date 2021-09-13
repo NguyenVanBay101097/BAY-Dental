@@ -9,7 +9,7 @@
 
 </div>
 <div class="o_content">
-    <kendo-grid [resizable]="true" [data]="gridData" [pageable]="true" (pageChange)="pageChange($event)" [pageSize]="limit" [skip]="skip" [loading]="loading">
+    <kendo-grid [resizable]="true" [data]="gridData" [pageable]="pagerSettings" (pageChange)="pageChange($event)" [pageSize]="limit" [skip]="skip" [loading]="loading">
         <kendo-grid-column field="ref" title="Mã nhân viên" width="150">
         </kendo-grid-column>
         <kendo-grid-column field="name" title="Tên nhân viên" width="200">

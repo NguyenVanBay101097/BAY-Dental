@@ -1,5 +1,5 @@
 import { HistoryImportExcelBaseViewModel } from './../history.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { HistoryService } from '../history.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -10,6 +10,7 @@ import { HistoriesCreateUpdateComponent } from '../histories-create-update/histo
 import { HistoryPaged } from '../history';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { HistoryImportExcelDialogComponent } from '../history-import-excel-dialog/history-import-excel-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-histories-list',
@@ -18,13 +19,19 @@ import { HistoryImportExcelDialogComponent } from '../history-import-excel-dialo
 })
 export class HistoriesListComponent implements OnInit {
 
-  constructor(private fb: FormBuilder, private service: HistoryService, private modalService: NgbModal) { }
+  constructor(
+    private fb: FormBuilder,
+    private service: HistoryService,
+    private modalService: NgbModal,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   loading = false;
   gridView: GridDataResult;
   windowOpened: boolean = false;
   skip = 0;
   pageSize = 20;
+  pagerSettings: any;
 
   search: string;
   searchUpdate = new Subject<string>();

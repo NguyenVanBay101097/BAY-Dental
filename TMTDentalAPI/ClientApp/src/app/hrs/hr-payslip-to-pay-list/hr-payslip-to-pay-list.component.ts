@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { HrPayslipService, HrPayslipPaged } from '../hr-payslip.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -13,6 +13,7 @@ import { EmployeeService } from 'src/app/employees/employee.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ValueAxisLabelsComponent } from '@progress/kendo-angular-charts';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-hr-payslip-to-pay-list',
@@ -28,6 +29,7 @@ export class HrPayslipToPayListComponent implements OnInit {
   };
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   collectionSize = 0;
   StateFilters = [
@@ -45,7 +47,9 @@ export class HrPayslipToPayListComponent implements OnInit {
     private employeeService: EmployeeService,
     private modalService: NgbModal, private intlService: IntlService,
     private fb: FormBuilder,
-    private router: Router) { }
+    private router: Router,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.searchForm = this.fb.group({
@@ -109,6 +113,7 @@ export class HrPayslipToPayListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

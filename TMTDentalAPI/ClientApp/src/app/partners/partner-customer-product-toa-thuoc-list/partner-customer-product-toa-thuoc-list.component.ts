@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { ProductCategoryBasic } from 'src/app/product-categories/product-category.service';
@@ -9,6 +9,7 @@ import { ToaThuocPaged, ToaThuocService } from 'src/app/toa-thuocs/toa-thuoc.ser
 import { ToaThuocPrintComponent } from 'src/app/shared/toa-thuoc-print/toa-thuoc-print.component';
 import { ToaThuocCuDialogSaveComponent } from 'src/app/shared/toa-thuoc-cu-dialog-save/toa-thuoc-cu-dialog-save.component';
 import { PrintService } from 'src/app/shared/services/print.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-partner-customer-product-toa-thuoc-list',
@@ -21,6 +22,7 @@ export class PartnerCustomerProductToaThuocListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   search: string;
   searchCateg: ProductCategoryBasic;
@@ -29,8 +31,9 @@ export class PartnerCustomerProductToaThuocListComponent implements OnInit {
     private activeRoute: ActivatedRoute, 
     private toaThuocService: ToaThuocService, 
     private modalService: NgbModal,
-    private printService: PrintService
-  ) { }
+    private printService: PrintService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.id = this.activeRoute.parent.snapshot.paramMap.get('id'); 
@@ -80,6 +83,7 @@ printToaThuoc(item) {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadData();
   }
 

@@ -21,7 +21,7 @@
         <app-date-range-picker-filter class="mr-2" [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="searchChangeDate($event)"></app-date-range-picker-filter>
     </div>
     <div class="o_content">
-        <kendo-grid #grid [data]="gridView" [pageable]="true" [pageSize]="pageSize" [skip]="skip" (pageChange)="pageChange($event)">
+        <kendo-grid #grid [data]="gridView" [pageable]="pagerSettings" [pageSize]="pageSize" [skip]="skip" (pageChange)="pageChange($event)">
             <kendo-grid-column field="datePromotion" title="Ngày sử dụng" width="100">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{dataItem.datePromotion | date : 'shortDate'}}

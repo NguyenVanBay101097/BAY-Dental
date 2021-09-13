@@ -1,5 +1,5 @@
 import { AuthService } from './../../auth/auth.service';
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -10,6 +10,7 @@ import { NotifyService } from 'src/app/shared/services/notify.service';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { AgentCommmissionPaymentDialogComponent } from '../agent-commmission-payment-dialog/agent-commmission-payment-dialog.component';
 import { AgentService, CommissionAgentDetailFilter, TotalAmountAgentFilter } from '../agent.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-agent-commmission-form-detail',
@@ -22,6 +23,7 @@ export class AgentCommmissionFormDetailComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   search: string;
   searchUpdate = new Subject<string>();
@@ -37,7 +39,9 @@ export class AgentCommmissionFormDetailComponent implements OnInit {
     private authService: AuthService,
     private intlService: IntlService,
     private notifyService: NotifyService,
-    private printService: PrintService) { }
+    private printService: PrintService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.id = this.route.parent.snapshot.paramMap.get('id');
@@ -79,6 +83,7 @@ export class AgentCommmissionFormDetailComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

@@ -5,7 +5,7 @@
 </header>
 
 <div class="modal-body o_act_window p-2">
-    <kendo-grid [data]="gridData" #grid [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+    <kendo-grid [data]="gridData" #grid [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"
         (pageChange)="pageChange($event)">
         <kendo-grid-column field="moveName" title="Diễn giải" width="120">
         </kendo-grid-column>

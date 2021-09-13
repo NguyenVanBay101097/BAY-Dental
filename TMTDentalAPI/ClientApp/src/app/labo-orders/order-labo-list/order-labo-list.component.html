@@ -45,7 +45,7 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [class]="'pointer'" (cellClick)="cellClick($event.dataItem)" [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
+    <kendo-grid [class]="'pointer'" (cellClick)="cellClick($event.dataItem)" [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading" (pageChange)="pageChange($event)">
         <kendo-grid-column field="partner" title="NCC Labo" width="200">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.partner.displayName}}

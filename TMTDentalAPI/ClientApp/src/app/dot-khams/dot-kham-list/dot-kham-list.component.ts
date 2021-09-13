@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { WindowService, WindowCloseResult, DialogRef, DialogService, DialogCloseResult, WindowRef } from '@progress/kendo-angular-dialog';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -9,6 +9,7 @@ import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { DotKhamCreateUpdateComponent } from '../dot-kham-create-update/dot-kham-create-update.component';
 import { ProductDialogComponent } from 'src/app/products/product-dialog/product-dialog.component';
 import { DotKhamPaged, DotKhamBasic } from '../dot-khams';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-dot-kham-list',
@@ -20,13 +21,16 @@ export class DotKhamListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   windowOpened = false;
   search: string;
   searchUpdate = new Subject<string>();
 
   constructor(private dotKhamService: DotKhamService, private windowService: WindowService,
-    private dialogService: DialogService, public intl: IntlService, private router: Router) { }
+    private dialogService: DialogService, public intl: IntlService, private router: Router,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -63,6 +67,7 @@ export class DotKhamListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

@@ -17,7 +17,7 @@
         <button class="btn btn-primary mb-2" (click)="onPrint()">In báo cáo</button>
     </div>
     <div>
-        <kendo-grid [resizable]="true" #grid [loading]="loading" [data]="gridData" [pageSize]="this.filter.limit" [skip]="this.filter.offset" [pageable]="true" (pageChange)="pageChange($event)">
+        <kendo-grid [resizable]="true" #grid [loading]="loading" [data]="gridData" [pageSize]="this.filter.limit" [skip]="this.filter.offset" [pageable]="pagerSettings" (pageChange)="pageChange($event)">
             <kendo-grid-column field="date" title="Ngày tạo" width="110">
                 <ng-template kendoGridCellTemplate let-dataItem>
                     {{dataItem.date | date: 'dd/MM/yyyy'}}

@@ -44,7 +44,7 @@
         
     </div>
     <kendo-grid (excelExport)="onExcelExport($event)" [resizable]="true" #grid class="" [loading]="loading"
-        [data]="gridData" [pageSize]="this.limit" [skip]="this.skip" [pageable]="true"
+        [data]="gridData" [pageSize]="this.limit" [skip]="this.skip" [pageable]="pagerSettings"
         (pageChange)="pageChange($event)">
         <kendo-grid-column field="date" title="Ngày tạo">
             <ng-template kendoGridCellTemplate let-dataItem>
