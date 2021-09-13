@@ -131,7 +131,7 @@ textarea[readonly] {
     background-color: #e9ecef;
 } */
 
-td h5 {
+/* td h5 {
     border-radius: 2px;
     padding: 2px 12px;
     height: 32px;
@@ -139,4 +139,13 @@ td h5 {
     line-height: 1.9rem;
     color: #1A6DE3;
     margin-top: 10px;
+} */
+
+.o_form_label {
+    min-width: 150px;
+}
+
+.card-header {
+    background-color: #F2F7FF;
+    color: #1A6DE3;
 }
