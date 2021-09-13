@@ -27,6 +27,8 @@ export class LaboOrderExportNotExportComponent implements OnInit {
   searchUpdate = new Subject<string>();
   dateExportFrom: Date;
   dateExportTo: Date;
+  dateReceiptFrom: Date;
+  dateReceiptTo: Date;
   supplierData: any[]=[];
   partnerId: string = '';
   canUpdate: boolean = false;
@@ -66,12 +68,8 @@ export class LaboOrderExportNotExportComponent implements OnInit {
     val.search = this.search || '';
     val.state = 'chuaxuat';
     val.partnerId = this.partnerId ? this.partnerId : '';
-    if (this.dateExportFrom) {
-      val.dateExportFrom = this.intlService.formatDate(this.dateExportFrom, 'd', 'en-US');
-    }
-    if (this.dateExportTo) {
-      val.dateExportTo = this.intlService.formatDate(this.dateExportTo, 'd', 'en-US');
-    }
+    val.dateReceiptFrom = this.dateReceiptFrom ? this.intlService.formatDate(this.dateReceiptFrom, 'yyyy-MM-dd') : '';
+    val.dateReceiptTo = this.dateReceiptTo ? this.intlService.formatDate(this.dateReceiptTo, 'yyyy-MM-dd') : '';
     this.laboOrderService.getExportLabo(val).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
@@ -102,9 +100,9 @@ export class LaboOrderExportNotExportComponent implements OnInit {
     return this.partnerService.getAutocompleteSimple(val);
   }
 
-  dateExportChange(data) {
-    this.dateExportFrom = data.dateFrom;
-    this.dateExportTo = data.dateTo;
+  dateReceiptChange(data) {
+    this.dateReceiptFrom = data.dateFrom;
+    this.dateReceiptTo = data.dateTo;
     this.skip = 0;
     this.loadDataFromApi();
   }

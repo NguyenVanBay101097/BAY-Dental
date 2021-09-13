@@ -51,13 +51,13 @@ namespace Infrastructure.Services
             if (val.DateReceiptFrom.HasValue)
             {
                 var dateFrom = val.DateReceiptFrom.Value.AbsoluteBeginOfDate();
-                query = query.Where(x => x.DateReceiptWarranty >= val.DateReceiptFrom);
+                query = query.Where(x => x.DateReceiptWarranty >= dateFrom);
             }
 
             if (val.DateReceiptTo.HasValue)
             {
                 var dateTo = val.DateReceiptTo.Value.AbsoluteEndOfDate();
-                query = query.Where(x => x.DateReceiptWarranty <= val.DateReceiptTo);
+                query = query.Where(x => x.DateReceiptWarranty <= dateTo);
             }
 
             if (!string.IsNullOrEmpty(val.States))

@@ -14,23 +14,7 @@
             </div>
         </div>
         <div class="o_cp_left">
-            <div class="o_search_options flex-wrap">
-                <div class="mr-1 mb-1">
-                    <kendo-combobox [data]="supplierData" [popupSettings]="" placeholder="Nhà cung cấp"
-                        [valuePrimitive]="true" [valueField]="'id'" [textField]="'name'" #supplierDataCbx
-                        (valueChange)="supplierChange($event)">
-                    </kendo-combobox>
-                </div>
-                <div class="mr-1 mb-1">
-                    <kendo-combobox [data]="stateFilterOptions" [textField]="'text'" [valueField]="'value'"
-                        [filterable]="true" [placeholder]="'Trạng thái'" (valueChange)="onChangeState($event)">
-                    </kendo-combobox>
-                </div>
-                <div class="mr-1 mb-1">
-                    <app-date-range-picker-filter [opens]="'right'" [title]="'Ngày nhận bảo hành'"
-                        [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchChange($event)">
-                    </app-date-range-picker-filter>
-                </div>
+            <div class="o_search_options">
                 <div class="o_cp_buttons">
                     <div class="o_form_buttons_view">
                         <button type="button" class="btn btn-primary" (click)="exportExcel()">
@@ -41,20 +25,37 @@
             </div>
         </div>
         <div class="o_cp_right">
+            <div class="o_search_options">
+                <div class="mr-1">
+                    <kendo-combobox [data]="supplierData" [popupSettings]="" placeholder="Nhà cung cấp"
+                        [valuePrimitive]="true" [valueField]="'id'" [textField]="'name'" #supplierDataCbx
+                        (valueChange)="supplierChange($event)">
+                    </kendo-combobox>
+                </div>
+                <div class="mr-1">
+                    <kendo-combobox [data]="stateFilterOptions" [textField]="'text'" [valueField]="'value'"
+                        [filterable]="true" [placeholder]="'Trạng thái'" (valueChange)="onChangeState($event)">
+                    </kendo-combobox>
+                </div>
+                <app-date-range-picker-filter [opens]="'right'" [title]="'Ngày nhận bảo hành'" [startDate]="dateFrom"
+                    [endDate]="dateTo" (searchChange)="searchChangeDate($event)">
+                </app-date-range-picker-filter>
+            </div>
         </div>
     </div>
 </div>
 <div class="o_content">
     <div>
-        <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip"
-            [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
+        <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+            (pageChange)="pageChange($event)">
             <kendo-grid-column field="dateReceiptWarranty" title="Ngày nhận bảo hành" width="180">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{dataItem.dateReceiptWarranty | date : 'shortDate'}}
                 </ng-template>
             </kendo-grid-column>
             <kendo-grid-column field="name" title="Phiếu bảo hành" width="120">
-                <ng-template *ngIf="canUpdate else elseBlock" kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <ng-template *ngIf="canUpdate else elseBlock" kendoGridCellTemplate let-dataItem
+                    let-rowIndex="rowIndex">
                     <a class="text-primary" (click)="editWarranty(dataItem)"> {{dataItem.name}}</a>
                 </ng-template>
                 <ng-template #elseBlock kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
@@ -62,7 +63,8 @@
                 </ng-template>
             </kendo-grid-column>
             <kendo-grid-column field="laboOrderName" title="Phiếu Labo" width="150">
-                <ng-template *ngIf="canUpdateLabo else elseBlock" kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <ng-template *ngIf="canUpdateLabo else elseBlock" kendoGridCellTemplate let-dataItem
+                    let-rowIndex="rowIndex">
                     <a class="text-primary" (click)="editLabo(dataItem)"> {{dataItem.laboOrderName}}</a>
                 </ng-template>
                 <ng-template #elseBlock kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
@@ -70,8 +72,10 @@
                 </ng-template>
             </kendo-grid-column>
             <kendo-grid-column field="customerName" title="Khách hàng" width="150">
-                <ng-template *ngIf="canReadPartner else elseBlock" kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    <a *ngIf="dataItem.customerId" class="text-primary" title="Xem hồ sơ khách hàng" [routerLink]="['/partners/customer/' + dataItem.customerId]">
+                <ng-template *ngIf="canReadPartner else elseBlock" kendoGridCellTemplate let-dataItem
+                    let-rowIndex="rowIndex">
+                    <a *ngIf="dataItem.customerId" class="text-primary" title="Xem hồ sơ khách hàng"
+                        [routerLink]="['/partners/customer/' + dataItem.customerId]">
                         {{dataItem?.customerName}}
                     </a>
                 </ng-template>
@@ -79,10 +83,10 @@
                     {{dataItem?.customerName}}
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column field="reason" title="Lý do bảo hành" width="150">
+            <!-- <kendo-grid-column field="reason" title="Lý do bảo hành" width="150">
             </kendo-grid-column>
             <kendo-grid-column field="content" title="Nội dung bảo hành" width="150">
-            </kendo-grid-column>
+            </kendo-grid-column> -->
             <kendo-grid-column field="dateSendWarranty" title="Gửi bảo hành" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{dataItem.dateSendWarranty | date : 'shortDate'}}

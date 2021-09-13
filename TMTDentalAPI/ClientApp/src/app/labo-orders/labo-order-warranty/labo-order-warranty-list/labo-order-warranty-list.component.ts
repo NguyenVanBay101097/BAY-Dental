@@ -170,7 +170,7 @@ export class LaboOrderWarrantyListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  onSearchChange(data){
+  searchChangeDate(data){
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;
     this.skip = 0;
