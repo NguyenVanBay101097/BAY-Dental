@@ -22,7 +22,7 @@ namespace TMTDentalAPI.ViewControllers
             _viewToStringRenderService = viewToStringRenderService;
         }
 
-        [HttpPut]
+        [HttpPost]
         [PrinterNameFilterAttribute(Name = AppConstants.SalaryPaymentPaperCode)]
         public async Task<IActionResult> Print(Guid id, [FromBody] HrPayslipRunSave val)
         {

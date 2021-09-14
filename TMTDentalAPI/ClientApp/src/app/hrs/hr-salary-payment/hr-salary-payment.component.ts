@@ -53,15 +53,15 @@ export class HrSalaryPaymentComponent implements OnInit {
   get paymentFA() { return this.paymentForm.get('paymentFA') as FormArray; }
 
   loadDefaultRecord() {
-      if (!this.payslipIds || !this.payslipIds.length) {
+    if (!this.payslipIds || !this.payslipIds.length) {
       this.isDisable = true;
     }
     if (this.payments.length > 0) {
-        this.paymentFA.clear();
-        this.payments.forEach(e => {
-            const fg = this.fb.group(e);
-            this.paymentFA.push(fg);
-        });
+      this.paymentFA.clear();
+      this.payments.forEach(e => {
+        const fg = this.fb.group(e);
+        this.paymentFA.push(fg);
+      });
     }
   }
 
@@ -127,8 +127,8 @@ export class HrSalaryPaymentComponent implements OnInit {
           this.notify('error', 'Không có phiếu chi lương để in');
         }
         this.paymentService.getPrint(res).subscribe(
-          result => {
-            this.printService.printHtml(result);
+          (result: any) => {
+            this.printService.printHtml(result.html);
           }
         );
 

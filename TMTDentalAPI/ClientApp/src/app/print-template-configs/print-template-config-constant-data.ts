@@ -1,10 +1,10 @@
 export const types: { text: string, value: string }[] = [
     { text: 'Phiếu điều trị', value: 'tmp_sale_order' },
-    { text: 'Biên lai khách hàng thanh toán', value: 'tmp_account_payment' },
-    { text: 'Tình trạng răng', value: 'tmp_advisory' },
+    // { text: 'Biên lai khách hàng thanh toán', value: 'tmp_account_payment' },
+    // { text: 'Tình trạng răng', value: 'tmp_advisory' },
     { text: 'Khách hàng đóng tạm ứng', value: 'tmp_partner_advance' },
     { text: 'Khách hàng hoàn tạm ứng', value: 'tmp_partner_refund' },
-    { text: 'Biên lai thanh toán nhà cung cấp', value: 'tmp_supplier_payment' },
+    // { text: 'Biên lai thanh toán nhà cung cấp', value: 'tmp_supplier_payment' },
     { text: 'Phiếu thu', value: 'tmp_phieu_thu' },
     { text: 'Phiếu chi', value: 'tmp_phieu_chi' },
     { text: 'Phiếu thu công nợ khách hàng', value: 'tmp_customer_debt' },
@@ -37,11 +37,14 @@ let companyInfo =
 
 let pipes =
 {
-    text: "Một số định dạng bổ sung",
+    text: "Một số định dạng hỗ trợ",
     value: [
         { text: 'Ngày hôm nay', value: '{{date.now}}' },
         { text: 'định dạng số', value: '| math.format "N0" "vi-VN"' },
         { text: 'định dạng ngày/tháng/năm', value: `| date.to_string '%d/%m/%Y'` },
+        { text: 'định dạng lấy ngày', value: `| date.to_string '%d'` },
+        { text: 'định dạng lấy tháng', value: `| date.to_string '%m'` },
+        { text: 'định dạng lấy năm', value: `| date.to_string '%Y'` },
         { text: 'định dạng chữ hoa', value: '| string.upcase' },
         { text: 'định dạng chữ thường', value: '| string.downcase' },
         { text: 'định dạng danh sách', value: '{{for line in <Mã danh sách>}}\n<nội dung>\n{{end}}' },
@@ -53,7 +56,7 @@ let pipes =
     ]
 };
 
-const keyWords =
+const keyWorDatas =
 
 {
     'tmp_medicine_order': [
@@ -468,14 +471,165 @@ const keyWords =
                 { text: 'Người nhận tiền', value: '{{agent.name}}' },
             ]
         }
+    ],
+    'tmp_salary': [
+        companyInfo,
+        {
+            text: 'Thông tin phiếu',
+            value: [
+                { text: 'Ngày tạo', value: '{{date_salary.day}}' },
+                { text: 'Tháng tạo', value: '{{date_salary.month}}' },
+                { text: 'Năm tạo', value: '{{date_salary.year}}' },
+                { text: 'Người lập phiếu', value: '{{user_name}}' },
+            ]
+        },
+        {
+            text: 'Thông tin chi tiết',
+            value: [
+                { text: 'Danh sách Phiếu', value: 'slips' },
+                { text: 'Tên nhân viên', value: '{{slip.employee.name}}' },
+                { text: 'Lương/tháng', value: '{{slip.employee.wage}}' },
+                { text: 'Số ngày nghỉ/tháng', value: '{{slip.employee.leave_per_month}}' },
+                { text: 'Số giờ làm/ngày', value: '{{slip.employee.regular_hour}}' },
+                { text: 'Số ngày công', value: '{{slip.worked_day}}' },
+                { text: 'Số ngày nghỉ', value: '{{slip.actual_leave_per_month}}' },
+                { text: 'Ngày nghỉ không lương', value: '{{slip.leave_per_month_unpaid}}' },
+                { text: 'Ngày làm thêm', value: '{{slip.over_time_day}}' },
+                { text: 'Số giờ tăng ca', value: '{{slip.over_time_hour}}' },
+                { text: 'Lương cơ bản', value: '{{slip.total_basic_salary}}' },
+                { text: 'Lương tăng ca', value: '{{slip.over_time_hour_salary}}' },
+                { text: 'Lương làm thêm', value: '{{slip.over_time_day_salary}}' },
+                { text: 'Phụ cấp xác định', value: '{{slip.employee.allowance}}' },
+                { text: 'Phụ cấp khác', value: '{{slip.other_allowance}}' },
+                { text: 'Thưởng', value: '{{slip.reward_salary}}' },
+                { text: 'Phụ cấp lễ tết', value: '{{slip.holiday_allowance}}' },
+                { text: 'Hoa hồng', value: '{{slip.commission_salary}}' },
+                { text: 'Phạt', value: '{{slip.amercement_money}}' },
+                { text: 'Tổng thu nhập', value: '{{slip.total_salary}}' },
+                { text: 'Thuế', value: '{{slip.tax}}' },
+                { text: 'BHXH', value: '{{slip.social_insurance}}' },
+                { text: 'Thực lĩnh', value: '{{slip.net_salary}}' },
+                { text: 'Tạm ứng', value: '{{slip.advance_payment}}' },
+            ]
+        }
+    ],
+    'tmp_salary_advance': [
+        {
+            text: "Thông tin chi nhánh",
+            value: [
+                { text: 'Logo chi nhánh', value: '{{item.company.logo}}' },
+                { text: 'Tên chi nhánh', value: '{{item.company.name}}' },
+                { text: 'Địa chỉ chi nhánh', value: '{{item.company.address}}' },
+                { text: 'Điện thoại chi nhánh', value: '{{item.company.phone}}' },
+                { text: 'Email chi nhánh', value: '{{item.company.email}}' },
+            ]
+        },
+        {
+            text: 'Thông tin phiếu',
+            value: [
+                { text: 'Ngày tạo', value: '{{item.date.day}}' },
+                { text: 'Tháng tạo', value: '{{item.date.month}}' },
+                { text: 'Năm tạo', value: '{{item.date.year}}' },
+                { text: 'Mã phiếu', value: '{{item.name}}' },
+                { text: 'Người lập phiếu', value: '{{item.user_name}}' },
+            ]
+        },
+        {
+            text: 'Thông tin chi tiết',
+            value: [
+                { text: 'Danh sách phiếu tạm ứng', value: '{{salaries}}' },
+                { text: 'Người nhận', value: '{{item.employee.name}}' },
+                { text: 'Số tiền', value: '{{item.amount}}' },
+                { text: 'Số tiền bằng chữ', value: '{{item.amount_text}}' },
+                { text: 'Phương thức thanh toán', value: '{{item.journal.name}}' },
+                { text: 'Nội dung   ', value: '{{item.reason}}' },
+            ]
+        }
+    ],
+    'tmp_salary_employee': [],
+    'tmp_sale_order': [
+        companyInfo,
+        {
+            text: 'Thông tin phiếu',
+            value: [
+                { text: 'Ngày tạo', value: '{{date_order.day}}' },
+                { text: 'Tháng tạo', value: '{{date_order.month}}' },
+                { text: 'Năm tạo', value: '{{date_order.year}}' },
+                { text: 'Mã phiếu', value: '{{name}}' },
+            ]
+        },
+        {
+            text: 'Thông tin chung',
+            value: [
+                { text: 'Tên khách hàng', value: '{partner.name}}' },
+
+            ]
+        },
+        {
+            text: 'Thông tin danh sách dịch vụ',
+            value: [
+                { text: 'Tên khách hàng', value: '{partner.name}}' },
+
+            ]
+        },
+        {
+            text: 'Thông tin theo dõi thanh toán',
+            value: [
+                { text: 'Tên khách hàng', value: '{partner.name}}' },
+
+            ]
+        },
+        {
+            text: 'Thông tin đợt khám',
+            value: [
+                { text: 'Tên khách hàng', value: '{partner.name}}' },
+
+            ]
+        },
+    ],
+    'tmp_quotation': [
+        companyInfo,
+        {
+            text: 'Thông tin phiếu',
+            value: [
+                { text: 'Ngày tạo', value: '{{date_order.day}}' },
+                { text: 'Tháng tạo', value: '{{date_order.month}}' },
+                { text: 'Năm tạo', value: '{{date_order.year}}' },
+                { text: 'Mã phiếu', value: '{{name}}' },
+            ]
+        },
+        {
+            text: 'Thông tin chung',
+            value: [
+                { text: 'Tên khách hàng', value: '{partner.name}}' },
+
+            ]
+        },
+        {
+            text: 'Thông tin danh sách dịch vụ',
+            value: [
+                { text: 'Tên khách hàng', value: '{partner.name}}' },
+
+            ]
+        },
+        {
+            text: 'Thông tin tiến độ thanh toán',
+            value: [
+                { text: 'Tên khách hàng', value: '{partner.name}}' },
+
+            ]
+        }
     ]
 };
 
-export function getKeyWords() {
-    var res = JSON.parse(JSON.stringify(keyWords));
-    res['tmp_purchase_refund'] = JSON.parse(JSON.stringify(res['tmp_purchase_order']));
+function getKeyWords() {
+    var res = keyWorDatas;
+    res['tmp_purchase_refund'] = res['tmp_purchase_order'];
+    res['tmp_salary_employee'] = res['tmp_salary_advance'];
     for (const [key, value] of Object.entries(res)) {
         (value as any).push(pipes as any);
     }
     return res;
 }
+
+export const keyWords = getKeyWords();

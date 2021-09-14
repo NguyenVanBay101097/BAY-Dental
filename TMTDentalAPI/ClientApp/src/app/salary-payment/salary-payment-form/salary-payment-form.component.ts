@@ -56,7 +56,7 @@ export class SalaryPaymentFormComponent implements OnInit {
     private accountJournalService: AccountJournalService,
     private employeeService: EmployeeService,
     private intlService: IntlService,
-    private printService: PrintService, 
+    private printService: PrintService,
     private checkPermissionService: CheckPermissionService
   ) { }
 
@@ -248,9 +248,9 @@ export class SalaryPaymentFormComponent implements OnInit {
 
   printItem(id) {
     this.salaryPaymentService.getPrint([id]).subscribe(
-      (result:any) => {
+      (result: any) => {
         if (result) {
-          this.printService.printHtml(result);
+          this.printService.printHtml(result.html);
         } else {
           alert('Có lỗi xảy ra, thử lại sau');
         }

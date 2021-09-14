@@ -18,11 +18,14 @@ namespace TMTDentalAPI.Controllers
         private readonly IQuotationService _quotationService;
         private readonly IViewRenderService _viewRenderService;
         private readonly IUnitOfWorkAsync _unitOfWork;
-        public QuotationsController(IViewRenderService viewRenderService, IUnitOfWorkAsync unitOfWork, IQuotationService quotationService)
+        private readonly IPrintTemplateConfigService _printTemplateConfigService;
+        public QuotationsController(IViewRenderService viewRenderService, IUnitOfWorkAsync unitOfWork, IQuotationService quotationService
+            , IPrintTemplateConfigService printTemplateConfigService)
         {
             _quotationService = quotationService;
             _unitOfWork = unitOfWork;
             _viewRenderService = viewRenderService;
+            _printTemplateConfigService = printTemplateConfigService;
         }
 
         [HttpGet]
@@ -138,7 +141,8 @@ namespace TMTDentalAPI.Controllers
             {
                 return NotFound();
             }
-            var html = _viewRenderService.Render<QuotationPrintVM>("Quotation/Print", quotation);
+            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = quotation, Type = "tmp_quotation" });
+
             return Ok(new PrintData() { html = html });
         }
     }
