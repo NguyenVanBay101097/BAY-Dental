@@ -467,7 +467,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
 
   printLaboOrder(){
     if(this.id){
-      this.laboOrderService.getPrint(this.id).subscribe(result => {
+      this.laboOrderService.getPrint(this.id).subscribe((result:any) => {
         this.printService.printHtml(result);
       })
     }

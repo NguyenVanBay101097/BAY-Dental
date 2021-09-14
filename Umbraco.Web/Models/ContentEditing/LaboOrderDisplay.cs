@@ -92,7 +92,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// số lượng
         /// </summary>
         public decimal Quantity { get; set; }
-        public PartnerSimple Customer { get; set; }
+        //public PartnerSimple Customer { get; set; }
 
         /// <summary>
         /// đơn giá
