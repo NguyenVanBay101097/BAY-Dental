@@ -24,7 +24,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     configEdit = new PrintTemplateConfigDisplay();
     configEditor = {
         language: 'vi',
-        height: 525,
+        height: 650,
         contentsCss: '/css/print.css',
         // fullPage: true,//this support html full page
         allowedContent: true,
