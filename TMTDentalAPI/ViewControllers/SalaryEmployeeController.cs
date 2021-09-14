@@ -32,8 +32,7 @@ namespace TMTDentalAPI.ViewControllers
 
             if (ids != null && ids.Any())
             {
-                res.Slips = res.Slips.Where(x => ids.Contains(x.Id));
-                string json = JsonConvert.SerializeObject(res);
+                res.Slips = res.Slips.Where(x => ids.Contains(x.Id));             
                 return View(res);
             }
             else

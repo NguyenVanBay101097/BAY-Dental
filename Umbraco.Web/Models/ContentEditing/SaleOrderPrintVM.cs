@@ -25,7 +25,13 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public decimal AmountTotal { get; set; }
 
+        /// <summary>
+        /// Tổng thanh toán
+        /// </summary>
+        public decimal TotalPaid { get; set; }
+
         public decimal Residual { get; set; }
+
     }
 
     public class PaymentInfoContentPrintVm

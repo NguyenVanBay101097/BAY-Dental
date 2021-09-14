@@ -1,5 +1,154 @@
 ﻿[
   {
+    "Type": "tmp_sale_order",
+    "Data": {
+      "Id": "f99bf6d1-e611-4236-52da-08d97734bbe3",
+      "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+      "Company": {
+        "Name": "TPP",
+        "PartnerName": null,
+        "PartnerCityName": "Thành phố Hồ Chí Minh",
+        "PartnerDistrictName": "Quận Tân Phú",
+        "PartnerWardName": "Phường Tân Thành",
+        "PartnerStreet": "54/35 Diệp Minh Châu",
+        "Address": "54/35 Diệp Minh Châu, Phường Tân Thành, Quận Tân Phú, Thành phố Hồ Chí Minh",
+        "Phone": "0938551226",
+        "Email": null,
+        "Logo": null
+      },
+      "User": {
+        "Id": "fb3c81c4-90b2-4918-aeaf-1689263ee7fa",
+        "Name": "admin"
+      },
+      "Partner": {
+        "Id": "00000000-0000-0000-0000-000000000000",
+        "Name": "Khách hàng A",
+        "DisplayName": null,
+        "Phone": "0369835014",
+        "Ref": "KH0007",
+        "Gender": null,
+        "Address": "246/16 Độc Lập, Phường Tân Thành, Quận Tân Phú, Thành phố Hồ Chí Minh",
+        "Street": "246/16 Độc Lập",
+        "WardName": "Phường Tân Thành",
+        "DistrictName": "Quận Tân Phú",
+        "CityName": "Thành phố Hồ Chí Minh",
+        "BirthYear": null,
+        "Debt": 0.0,
+        "Age": "",
+        "CompanyName": null,
+        "Categories": []
+      },
+      "Name": "SO00006",
+      "DateOrder": "2021-09-14T11:04:11",
+      "OrderLines": [
+        {
+          "ProductName": "Tẩy trắng răng tại nhà",
+          "ProductUOMQty": 1.00,
+          "PriceUnit": 1500000.00,
+          "PriceSubTotal": 1350000.00,
+          "PriceTotal": 0.0,
+          "Sequence": 10,
+          "AmountDiscountTotal": 150000.00000000003
+        },
+        {
+          "ProductName": "Tẩy trắng răng bằng đèn Laser Zoom II",
+          "ProductUOMQty": 2.00,
+          "PriceUnit": 2500000.00,
+          "PriceSubTotal": 4000000.00,
+          "PriceTotal": 0.0,
+          "Sequence": 10,
+          "AmountDiscountTotal": 500000.0
+        }
+      ],
+      "HistoryPayments": [
+        {
+          "Id": "471cdd4c-3e72-4a50-248b-08d977369c30",
+          "Amount": 5350000.00,
+          "Date": "2021-09-14T00:00:00",
+          "Note": "SO00006 - Khách hàng thanh toán",
+          "Payments": [
+            {
+              "Id": "ba9e570d-7ca3-4b07-fe3d-08d977369cc4",
+              "PartnerName": null,
+              "PaymentDate": "2021-09-14T00:00:00",
+              "PartnerType": "customer",
+              "PaymentType": "inbound",
+              "JournalName": "Tiền mặt",
+              "State": "posted",
+              "Name": "CUST.IN/2021/0005",
+              "Amount": 3000000.00,
+              "Communication": "SO00006 - Khách hàng thanh toán",
+              "DisplayPaymentType": "Phiếu thu",
+              "AmountSigned": 3000000.00,
+              "DisplayState": "Đã xác nhận"
+            },
+            {
+              "Id": "5584bf3e-32f1-44f3-fe3e-08d977369cc4",
+              "PartnerName": null,
+              "PaymentDate": "2021-09-14T00:00:00",
+              "PartnerType": "customer",
+              "PaymentType": "inbound",
+              "JournalName": "Ngân hàng",
+              "State": "posted",
+              "Name": "CUST.IN/2021/0006",
+              "Amount": 2350000.00,
+              "Communication": "SO00006 - Khách hàng thanh toán",
+              "DisplayPaymentType": "Phiếu thu",
+              "AmountSigned": 2350000.00,
+              "DisplayState": "Đã xác nhận"
+            }
+          ],
+          "State": "posted"
+        }
+      ],
+      "DotKhams": [
+        {
+          "Id": "b7b6a167-5f43-415e-a9aa-08d977366d48",
+          "Sequence": 1,
+          "Date": "2021-09-14T00:00:00",
+          "Reason": "",
+          "Doctor": {
+            "Id": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+            "Name": "Bác sĩ A",
+            "PartnerId": null
+          },
+          "Assistant": null,
+          "Lines": [
+            {
+              "Id": "90668731-5a69-432e-e36e-08d977366d4b",
+              "NameStep": "Công đoạn 1",
+              "Product": {
+                "Id": "5a0c19f6-f2ee-433c-febf-08d9693da293",
+                "Name": "Tẩy trắng răng tại nhà",
+                "NameNoSign": null,
+                "DefaultCode": null,
+                "PriceUnit": null,
+                "PurchasePrice": null,
+                "StandardPrice": 0.0,
+                "CategId": null,
+                "Categ": null,
+                "Type2": null,
+                "ListPrice": null,
+                "Firm": null,
+                "LaboPrice": null,
+                "UOMId": "00000000-0000-0000-0000-000000000000",
+                "UOM": null
+              },
+              "SaleOrderLineId": "f39f266b-2f64-4725-316b-08d97734bc02",
+              "Note": null,
+              "Teeth": []
+            }
+          ],
+          "DotKhamImages": [],
+          "Name": null
+        }
+      ],
+      "AmountTotal": 5350000.00,
+      "TotalPaid": 5350000.00,
+      "Residual": 0.00
+    }
+  },
+  {
     "Type": "tmp_toathuoc",
     "Data": {
       "partnerId": "8a5316cc-14c3-4b92-1279-08d96ec504cd",

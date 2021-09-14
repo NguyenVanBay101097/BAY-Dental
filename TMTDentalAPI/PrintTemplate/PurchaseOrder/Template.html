@@ -91,7 +91,7 @@
             </tr>
         </thead>
         <tbody>
-            {{~ for line in order_lines ~}}
+            {{for line in order_lines }}
             <tr>
                 <td>{{line.sequence}}</td>
                 <td>{{line.name}}</td>
@@ -101,7 +101,7 @@
                 <td class="text-right">  {{line.discount}}</td>
                 <td class="text-right">  {{line.price_subtotal | math.format "N0" "vi-VN"}}</td>
             </tr>
-            {{~ end ~}}
+            {{end}}
         </tbody>
     </table>
 
