@@ -1750,6 +1750,38 @@
       "UserName": "admin",
       "IsExistSalaryPayment": false
     }
+  },
+  {
+    "Type": "tmp_partner_advance",
+    "Data": {
+      "company": null,
+      "date": "2021-09-13T11:58:00",
+      "name": "TUKH/2021/0002",
+      "journalName": "Tiền mặt",
+      "partnerName": "khách hàng mới 3",
+      "amount": 100000.00,
+      "amountText": "Một trăm nghìn đồng",
+      "note": "Khách hàng đóng tạm ứng",
+      "userName": "Nguyễn Văn A",
+      "type": "refund",
+      "state": "confirmed"
+    }
+  },
+  {
+    "Type": "tmp_partner_refund",
+    "Data": {
+      "company": null,
+      "date": "2021-09-13T11:58:00",
+      "name": "TUKH/2021/0002",
+      "journalName": "Tiền mặt",
+      "partnerName": "khách hàng mới 3",
+      "amount": 100000.00,
+      "amountText": "Một trăm nghìn đồng",
+      "note": "hoàn trả tiền cho khách hàng",
+      "userName": "Nguyễn Văn A",
+      "type": "refund",
+      "state": "confirmed"
+    }
   }
 
 ]
