@@ -2012,8 +2012,8 @@
           "qty": 1,
           "discountType": "percent",
           "discountAmountPercent": 10,
-          "sub_price": 10000000,
-          "amount_discount_total": 1000000,
+          "subPrice": 10000000,
+          "amountDiscountTotal": 1000000,
           "amount": 9000000
         }
       ],
