@@ -38,9 +38,7 @@ namespace ApplicationCore.Constants
         public const string AdvisoryPaperCode = "Advisory";
         public const string SaleOrderLineCode = "SaleOrderLine";
         public const string SaleReport = "SaleReport";
-
         public const string RevenuePartnerReport = "RevenuePartnerReport";
-
         public const string PartnerOldNewReport = "PartnerOldNewReport";
         public const string ReportPartnerDebit = "ReportPartnerDebit";
 
@@ -50,7 +48,6 @@ namespace ApplicationCore.Constants
            new PrintTemplateType {Type = "tmp_advisory" , PathTemplate = "" },
            new PrintTemplateType {Type = "tmp_partner_advance" , PathTemplate = "" },
            new PrintTemplateType {Type = "tmp_supplier_payment" , PathTemplate = "" },
-           new PrintTemplateType {Type = "tmp_quotation" , PathTemplate = "" },
         };
 
         public static PrintTemplateType[] PrintTemplateTypeDemo = new PrintTemplateType[] {
@@ -72,6 +69,7 @@ namespace ApplicationCore.Constants
            new PrintTemplateType {Type = "tmp_salary" , PathTemplate = "PrintTemplate/Salary/Template_Salary.html" },
            new PrintTemplateType {Type = "tmp_partner_advance" , PathTemplate = "PrintTemplate/PartnerAdvance/Template_advance.html" },
            new PrintTemplateType {Type = "tmp_partner_refund" , PathTemplate = "PrintTemplate/PartnerAdvance/Template_refund.html" },
+           new PrintTemplateType {Type = "tmp_quotation" , PathTemplate = "PrintTemplate/Quotation/Template.html" },
         };
     }
 

@@ -144,8 +144,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   printQuotation() {
     if (this.quotationId) {
       this.quotationService.printQuotation(this.quotationId).subscribe((result: any) => {
-        // this.printService.printHtml(result.html);
-        this.printService.printHtml(result);
+        this.printService.printHtml(result.html);
       })
     }
   }

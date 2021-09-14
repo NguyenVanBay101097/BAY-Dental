@@ -1931,6 +1931,113 @@
       "type": "refund",
       "state": "confirmed"
     }
+  },
+  {
+    "Type": "tmp_quotation",
+    "Data": {
+      "company": {
+        "name": "TPP",
+        "partnerName": "TPP",
+        "partnerCityName": "Thành phố Hồ Chí Minh",
+        "partnerDistrictName": "Quận Tân Phú",
+        "partnerWardName": "Phường Tân Thành",
+        "partnerStreet": "54/35 Diệp Minh Châu",
+        "address": "54/35 Diệp Minh Châu, Phường Tân Thành, Quận Tân Phú, Thành phố Hồ Chí Minh",
+        "phone": "0938551226",
+        "email": null,
+        "logo": null
+      },
+      "partner": {
+        "id": "e1954d38-4cf2-4924-fe28-08d9761b0157",
+        "name": "Người giới thiệu 1",
+        "displayName": "Người giới thiệu 1",
+        "phone": null,
+        "ref": null,
+        "gender": "male",
+        "address": "",
+        "street": null,
+        "wardName": null,
+        "districtName": null,
+        "cityName": null,
+        "birthYear": null,
+        "debt": 0,
+        "age": "",
+        "companyName": "TPP",
+        "categories": []
+      },
+      "dateApplies": 10,
+      "dateQuotation": "2021-09-10T15:49:53",
+      "dateEndQuotation": "2021-09-15T15:49:53",
+      "employeeId": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+      "employee": {
+        "id": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+        "name": "Bác sĩ A",
+        "partnerId": "9fe4aeca-9ac8-4a8f-127b-08d96ec504cd"
+      },
+      "lines": [
+        {
+          "id": "9caf8e88-b4ac-462a-adb4-08d977650141",
+          "name": "Răng sứ Nacera Q thế hệ mới",
+          "productId": "607a44d2-235b-4ac2-f358-08d945ec03ac",
+          "product": {
+            "id": "607a44d2-235b-4ac2-f358-08d945ec03ac",
+            "name": "Lấy cao răng và đánh bóng",
+            "nameNoSign": "Lấy cao răng và đánh bóng|Lay cao rang va danh bong|Lcrvdb",
+            "defaultCode": "SP0001",
+            "priceUnit": null,
+            "purchasePrice": null,
+            "standardPrice": 0,
+            "categId": "0c318cc4-55ed-43c4-e815-08d945ebf18e",
+            "categ": {
+              "id": "0c318cc4-55ed-43c4-e815-08d945ebf18e",
+              "name": "Nha khoa tổng quát",
+              "completeName": "Nha khoa tổng quát",
+              "parentId": null,
+              "parent": null
+            },
+            "type2": "service",
+            "listPrice": 100000,
+            "firm": null,
+            "laboPrice": null,
+            "uomId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "uom": {
+              "id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+              "name": "Cái",
+              "active": true,
+              "uomType": "reference",
+              "categoryName": null,
+              "categoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+            }
+          },
+          "qty": 1,
+          "discountType": "percent",
+          "discountAmountPercent": 10,
+          "subPrice": 10000000,
+          "amountDiscountTotal": 1000000,
+          "amount": 9000000
+        }
+      ],
+      "totalAmount": 9000000,
+      "name": "BG00001",
+      "note": null,
+      "payments": [
+        {
+          "id": "11bd82cd-744e-4400-4beb-08d9778790f7",
+          "sequence": 0,
+          "discountPercentType": "cash",
+          "payment": 999994,
+          "amount": 0,
+          "date": "2021-09-14T11:58:00"
+        },
+        {
+          "id": "709c039e-ab1f-44fe-4bec-08d9778790f7",
+          "sequence": 0,
+          "discountPercentType": "percent",
+          "payment": 10,
+          "amount": 0,
+          "date": "2021-09-14T11:58:00"
+        }
+      ]
+    }
   }
-
 ]

@@ -203,6 +203,10 @@ namespace Infrastructure.Services
                         obj = JsonConvert.DeserializeObject<PartnerAdvancePrint>(item.Data.ToString());
                         (obj as PartnerAdvancePrint).Company = _mapper.Map<CompanyPrintVM>(company);
                         break;
+                    case "tmp_quotation":
+                        obj = JsonConvert.DeserializeObject<QuotationPrintVM>(item.Data.ToString());
+                        (obj as QuotationPrintVM).Company = _mapper.Map<CompanyPrintVM>(company);
+                        break;
                     default:
                         break;
                 }
