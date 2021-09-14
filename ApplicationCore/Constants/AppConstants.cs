@@ -70,8 +70,8 @@ namespace ApplicationCore.Constants
            new PrintTemplateType {Type = "tmp_salary_employee" , PathTemplate = "PrintTemplate/Salary/Template_Salary_Employee.html" },
            new PrintTemplateType {Type = "tmp_salary_advance" , PathTemplate = "PrintTemplate/Salary/Template_Salary_Advance.html" },
            new PrintTemplateType {Type = "tmp_salary" , PathTemplate = "PrintTemplate/Salary/Template_Salary.html" },
-           new PrintTemplateType {Type = "tmp_partner_advance" , PathTemplate = "PrintTemplate/PartnerAvance/Template_advance.html" },
-           new PrintTemplateType {Type = "tmp_partner_refund" , PathTemplate = "PrintTemplate/PartnerAvance/Template_refund.html" },
+           new PrintTemplateType {Type = "tmp_partner_advance" , PathTemplate = "PrintTemplate/PartnerAdvance/Template_advance.html" },
+           new PrintTemplateType {Type = "tmp_partner_refund" , PathTemplate = "PrintTemplate/PartnerAdvance/Template_refund.html" },
         };
     }
 

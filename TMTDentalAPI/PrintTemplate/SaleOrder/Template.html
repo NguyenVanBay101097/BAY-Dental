@@ -160,7 +160,7 @@
                 {{for item in payment.payments}}
                 <tr>
                     <td>{{item.name}}</td>
-                    {{if (item.id == (payment.payments | array.map "id" | array.first)}}
+                    {{if (item.id == (payment.payments | array.map "id" | array.first))}}
                     <td rowspan="{{(payment.payments | array.size)}}">{{item.payment_date | date.to_string '%d/%m/%Y'}}</td>
                     <td rowspan="{{(payment.payments | array.size)}}">{{payment.amount | math.format "N0" "vi-VN" }}</td>
                     {{end}}
@@ -192,22 +192,22 @@
                 </tr>
             </thead>
             <tbody>
-                {{for item in dot_khams}}
-                {{for line in item.lines}}
+                {{for dotkham in dot_khams}}
+                {{for line in dotkham.lines}}
                 <tr>
-                    {{if line.id == (item.lines | array.map "id" | array.first)}}
+                    {{if line.id == (dotkham.lines | array.map "id" | array.first)}}
 
-                    <td class="align-middle text-center" rowspan="{{(item.lines | array.size)}}"> {{for.index + 1}}</td>
-                    <td class="align-middle" rowspan="{{(item.lines | array.size)}}">@dotkham.Date.ToString("dd/MM/yyyy")</td>
-                    <td class="align-middle" rowspan="{{(item.lines | array.size)}}">@dotkham.Doctor.Name</td>
-                    <td class="align-middle" style="vertical-align: top" rowspan="{{(item.lines | array.size)}}">@dotkham.Reason</td>
+                    <td class="align-middle text-center" rowspan="{{(dotkham.lines | array.size)}}"> {{for.index + 1}}</td>
+                    <td class="align-middle" rowspan="{{(dotkham.lines | array.size)}}">{{dotkham.date | date.to_string '%d/%m/%Y' }}</td>
+                    <td class="align-middle" rowspan="{{(dotkham.lines | array.size)}}">{{dotkham.doctor ? dotkham.doctor.name : ""}}</td>
+                    <td class="align-middle" style="vertical-align: top" rowspan="{{(dotkham.lines | array.size)}}">{{dotkham.reason}}</td>
 
                     {{end}}
 
                     <td style="vertical-align: top">{{line.product.name}}</td>
                     <td style="vertical-align: top">{{line.name_step}}</td>
                     <td class="text-left" style="vertical-align: top">
-                        <span>@String.Join(", ", line.Teeth.Select(x => x.Name).ToArray()) {{line.teeth ? (line.teeth | array.map "name" | array.join ",") : ""}}</span>
+                        <span>{{line.teeth ? (line.teeth | array.map "name" | array.join ",") : ""}}</span>
                         <p>{{line.note}}</p>
                     </td>
                 </tr>
