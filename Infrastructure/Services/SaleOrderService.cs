@@ -1951,6 +1951,7 @@ namespace Infrastructure.Services
                 Name = x.Name,
                 DateOrder = x.DateOrder,
                 AmountTotal = x.AmountTotal.HasValue ? x.AmountTotal.Value : 0,
+                TotalPaid = x.TotalPaid.HasValue ? x.TotalPaid.Value : 0,
                 Residual = x.Residual.HasValue ? x.Residual.Value : 0,
                 Partner = x.Partner != null ? new PartnerSimpleInfo
                 {
