@@ -1,4 +1,7 @@
 export const types: { text: string, value: string }[] = [
+    { text: 'Đơn thuốc', value: 'tmp_toathuoc' },
+    { text: 'Hóa đơn thuốc', value: 'tmp_medicine_order' },
+    { text: 'Phiếu labo', value: 'tmp_labo_order' },
     { text: 'Phiếu điều trị', value: 'tmp_sale_order' },
     // { text: 'Biên lai khách hàng thanh toán', value: 'tmp_account_payment' },
     // { text: 'Tình trạng răng', value: 'tmp_advisory' },
@@ -18,9 +21,7 @@ export const types: { text: string, value: string }[] = [
     { text: 'Phiếu nhập kho', value: 'tmp_stock_picking_incoming' },
     { text: 'Phiếu xuất kho', value: 'tmp_stock_picking_outgoing' },
     { text: 'Phiếu kiểm kho', value: 'tmp_stock_inventory' },
-    { text: 'Đơn thuốc', value: 'tmp_toathuoc' },
-    { text: 'Hóa đơn thuốc', value: 'tmp_medicine_order' },
-    { text: 'Phiếu labo', value: 'tmp_labo_order' },
+
 ];
 
 let companyInfo =
@@ -561,29 +562,50 @@ const keyWorDatas =
         {
             text: 'Thông tin chung',
             value: [
-                { text: 'Tên khách hàng', value: '{partner.name}}' },
-
+                { text: 'Tên khách hàng', value: '{{partner.name}}' },
+                { text: 'SĐT khách hàng', value: '{{partner.phone}}' },
+                { text: 'Địa chỉ khách hàng', value: '{{partner.address}}' },
+                { text: 'Tổng tiền', value: '{{amount_total}}' },
+                { text: 'Đã thanh toán', value: '{{total_paid}}' },
+                { text: 'Số tiền còn lại', value: '{{residual}}' },
             ]
         },
         {
             text: 'Thông tin danh sách dịch vụ',
             value: [
-                { text: 'Tên khách hàng', value: '{partner.name}}' },
+                { text: 'Danh sách dịch vụ', value: 'order_lines' },
+                { text: 'Tên dịch vụ', value: '{{line.product_name}}' },
+                { text: 'Số lượng', value: '{{line.product_uomqty}}' },
+                { text: 'Đơn giá', value: '{{line.price_unit}}' },
+                { text: 'Giảm giá', value: '{{line.amount_discount_total}}' },
+                { text: 'Thành tiền', value: '{{line.price_sub_total}}' },
 
             ]
         },
         {
             text: 'Thông tin theo dõi thanh toán',
             value: [
-                { text: 'Tên khách hàng', value: '{partner.name}}' },
-
+                { text: 'Danh sách theo dõi thanh toán', value: 'history_payments' },
+                { text: 'Danh sách hóa đơn thanht toán', value: 'payment.payments' },
+                { text: 'Mã thanh toán', value: '{{item.name}}' },
+                { text: 'Ngày thanh toán', value: '{{item.payment_date}}' },
+                { text: 'Số tiền thanh toán', value: '{{item.amount}}' },
+                { text: 'Phương thức thanh toán', value: '{{item.journal_name}}' },
             ]
         },
         {
             text: 'Thông tin đợt khám',
             value: [
-                { text: 'Tên khách hàng', value: '{partner.name}}' },
-
+                { text: 'Danh sách đợt khám', value: 'dot_khams' },
+                { text: 'Danh sách dịch vụ đợt khám', value: 'dotkham.lines' },
+                { text: 'Số thứ tự', value: '{{for.index + 1}}' },
+                { text: 'Ngày khám', value: '{{dotkham.date}}' },
+                { text: 'Tên bác sĩ', value: '{{dotkham.doctor.name}}' },
+                { text: 'Mô tả', value: '{{dotkham.reason}}' },
+                { text: 'Tên dịch vụ', value: '{{line.product.name}}' },
+                { text: 'Công đoạn', value: '{{line.name_step}}' },
+                { text: 'Răng, Chi tiết điều trị', value: '{{line.teeth ? (line.teeth | array.map "name" | array.join ",") : ""}}}' },
+                { text: 'ghi chú', value: '{{line.note}}' },
             ]
         },
     ],
@@ -592,30 +614,47 @@ const keyWorDatas =
         {
             text: 'Thông tin phiếu',
             value: [
-                { text: 'Ngày tạo', value: '{{date_order.day}}' },
-                { text: 'Tháng tạo', value: '{{date_order.month}}' },
-                { text: 'Năm tạo', value: '{{date_order.year}}' },
+                { text: 'Ngày tạo', value: '{{date.now.day}}' },
+                { text: 'Tháng tạo', value: '{{date.now.month}}' },
+                { text: 'Năm tạo', value: '{{date.now.year}}' },
                 { text: 'Mã phiếu', value: '{{name}}' },
             ]
         },
         {
             text: 'Thông tin chung',
             value: [
-                { text: 'Tên khách hàng', value: '{partner.name}}' },
-
+                { text: 'Tên khách hàng có mã KH', value: '{{partner.display_name}}' },
+                { text: 'SĐT khách hàng', value: '{{partner.phone}}' },
+                { text: 'Địa chỉ khách hàng', value: '{{partner.address}}' },
+                { text: 'Ghi chú', value: '{{note}}' },
+                { text: 'Ngày báo giá', value: '{{date_quotation}}' },
+                { text: 'Người báo giá', value: '{{employee.name}}' },
+                { text: 'Số ngày áp dụng', value: '{{date_applies}}' },
+                { text: 'Ngày hết hạn', value: '{{date_end_quotation}}' },
+                { text: 'Tổng tiền', value: '{{total_amount}}' },
+                { text: 'Tên khách hàng', value: '{{partner.partner.name}}' },
             ]
         },
         {
             text: 'Thông tin danh sách dịch vụ',
             value: [
-                { text: 'Tên khách hàng', value: '{partner.name}}' },
+                { text: 'Danh sách dịch vụ', value: 'line' },
+                { text: 'Tên dịch vụ', value: '{{line.product_name}}' },
+                { text: 'Số lượng', value: '{{line.qty}}' },
+                { text: 'Đơn giá', value: '{{(line.sub_price - line.amount_discount_total)}}' },
+                { text: 'Thành tiền', value: '{{line.amount}}' },
 
             ]
         },
         {
             text: 'Thông tin tiến độ thanh toán',
             value: [
-                { text: 'Tên khách hàng', value: '{partner.name}}' },
+                { text: 'Danh sách tiến độ thanh toán', value: 'payments' },
+                { text: 'STT tiến độ', value: '{{payment.sequence}}' },
+                { text: 'Thanh toán', value: '{{payment.payment}}' },
+                { text: 'Loại giảm giá', value: '{{payment.discount_percent_type}}' },
+                { text: 'Ngày thanh toán', value: '{{payment.date}}' },
+                { text: 'Số tiền cần thanh toán', value: '{{payment.amount}}' },
 
             ]
         }
