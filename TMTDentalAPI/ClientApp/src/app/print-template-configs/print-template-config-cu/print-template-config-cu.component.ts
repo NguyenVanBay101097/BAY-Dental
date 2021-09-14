@@ -125,6 +125,8 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     }
 
     onChangeType(e) {
+        console.log(e);
+        
         var prev = this.filter.type;
         this.filter.type = e;
         this.loadCurrentConfig(prev);
