@@ -93,7 +93,7 @@
                 </tr>
             </thead>
             <tbody>
-                {{for line in order_lines}}
+                <!--{{for line in order_lines}}-->
                 <tr *ngFor="let line of saleOrderPrint.orderLines; let i=index">
                     <td>{{line.product_name}}</td>
                     <td class="text-right">{{line.product_uomqty ? line.product_uomqty : 0}}</td>
@@ -101,7 +101,7 @@
                     <td class="text-right">{{line.amount_discount_total | math.format "N0" "vi-VN" }} </td>
                     <td class="text-right">{{line.price_sub_total | math.format "N0" "vi-VN" }}</td>
                 </tr>
-                {{end}}
+                <!--{{end}}-->
             </tbody>
         </table>
         <div class="o_form_view float-right">
@@ -156,8 +156,8 @@
                 </tr>
             </thead>
             <tbody>
-                {{for payment in history_payments}}
-                {{for item in payment.payments}}
+                <!--{{for payment in history_payments}}-->
+                <!--{{for item in payment.payments}}-->
                 <tr>
                     <td>{{item.name}}</td>
                     {{if (item.id == (payment.payments | array.map "id" | array.first))}}
@@ -167,8 +167,8 @@
                     <td>{{item.journal_name}}</td>
                     <td class="text-right">{{item.amount | math.format "N0" "vi-VN"}}</td>
                 </tr>
-                {{end}}
-                {{end}}
+                <!--{{end}}-->
+                <!--{{end}}-->
             </tbody>
         </table>
         <div class="clearfix"></div>
@@ -192,8 +192,8 @@
                 </tr>
             </thead>
             <tbody>
-                {{for dotkham in dot_khams}}
-                {{for line in dotkham.lines}}
+                <!--{{for dotkham in dot_khams}}-->
+                <!--{{for line in dotkham.lines}}-->
                 <tr>
                     {{if line.id == (dotkham.lines | array.map "id" | array.first)}}
 
@@ -211,8 +211,8 @@
                         <p>{{line.note}}</p>
                     </td>
                 </tr>
-                {{end}}
-                {{end}}
+                <!--{{end}}-->
+                <!--{{end}}-->
             </tbody>
         </table>
         <div class="clearfix"></div>

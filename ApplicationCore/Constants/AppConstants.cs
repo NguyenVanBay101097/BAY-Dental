@@ -56,8 +56,8 @@ namespace ApplicationCore.Constants
         public static PrintTemplateType[] PrintTemplateTypeDemo = new PrintTemplateType[] {
            new PrintTemplateType {Type = "tmp_sale_order" , PathTemplate = "PrintTemplate/SaleOrder/Template.html" },
            new PrintTemplateType {Type = "tmp_labo_order" , PathTemplate = "PrintTemplate/LaboOrder/Template.html" },
-           new PrintTemplateType {Type = "tmp_purchase_order" , PathTemplate = "PrintTemplate/PurchaseOrder/Template.html" },
-           new PrintTemplateType {Type = "tmp_purchase_refund" , PathTemplate = "PrintTemplate/PurchaseOrder/Template.html" },
+           new PrintTemplateType {Type = "tmp_purchase_order" , PathTemplate = "PrintTemplate/PurchaseOrder/Template_order.html" },
+           new PrintTemplateType {Type = "tmp_purchase_refund" , PathTemplate = "PrintTemplate/PurchaseOrder/Template_refund.html" },
            new PrintTemplateType {Type = "tmp_toathuoc" , PathTemplate = "PrintTemplate/ToaThuoc/Template.html" },       
            new PrintTemplateType {Type = "tmp_medicine_order" , PathTemplate = "PrintTemplate/MedicineOrder/Template.html" },
            new PrintTemplateType {Type = "tmp_phieu_thu" , PathTemplate = "PrintTemplate/PhieuThuChi/Template_Phieu_Thu.html" },

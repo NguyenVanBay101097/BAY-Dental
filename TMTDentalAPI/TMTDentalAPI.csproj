@@ -65,7 +65,7 @@
     <None Remove="PrintTemplate\MedicineOrder\Template.html" />
     <None Remove="PrintTemplate\PartnerAdvance\Template_advance.html" />
     <None Remove="PrintTemplate\PartnerAdvance\Template_refund.html" />
-    <None Remove="PrintTemplate\PurchaseOrder\Template.html" />
+    <None Remove="PrintTemplate\PurchaseOrder\Template_order.html" />
     <None Remove="PrintTemplate\ToaThuoc\Template.html" />
   </ItemGroup>
 
@@ -74,7 +74,7 @@
     <Content Include="PrintTemplate\MedicineOrder\Template.html" />
     <Content Include="PrintTemplate\PartnerAdvance\Template_refund.html" />
     <Content Include="PrintTemplate\PartnerAdvance\Template_advance.html" />
-    <Content Include="PrintTemplate\PurchaseOrder\Template.html" />
+    <Content Include="PrintTemplate\PurchaseOrder\Template_order.html" />
     <Content Include="PrintTemplate\ToaThuoc\Template.html" />
   </ItemGroup>
 
