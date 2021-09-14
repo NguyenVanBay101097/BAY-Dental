@@ -632,14 +632,14 @@ const keyWorDatas =
                 { text: 'Số ngày áp dụng', value: '{{date_applies}}' },
                 { text: 'Ngày hết hạn', value: '{{date_end_quotation}}' },
                 { text: 'Tổng tiền', value: '{{total_amount}}' },
-                { text: 'Tên khách hàng', value: '{{partner.partner.name}}' },
+                { text: 'Tên khách hàng', value: '{{partner.name}}' },
             ]
         },
         {
             text: 'Thông tin danh sách dịch vụ',
             value: [
                 { text: 'Danh sách dịch vụ', value: 'line' },
-                { text: 'Tên dịch vụ', value: '{{line.product_name}}' },
+                { text: 'Tên dịch vụ', value: '{{line.name}}' },
                 { text: 'Số lượng', value: '{{line.qty}}' },
                 { text: 'Đơn giá', value: '{{(line.sub_price - line.amount_discount_total)}}' },
                 { text: 'Thành tiền', value: '{{line.amount}}' },
