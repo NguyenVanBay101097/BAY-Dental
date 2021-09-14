@@ -204,8 +204,11 @@ export class SaleOrderService {
         return this.http.post(this.baseApi + this.apiUrl + '/CreateFastSaleOrder', val)
     }
 
+    // printSaleOrder(id: string) {
+    //     return this.http.get(this.baseApi + this.apiUrlPrint + '/Print' + `?id=${id}`, { responseType: 'text' });
+    // }
     printSaleOrder(id: string) {
-        return this.http.get(this.baseApi + this.apiUrlPrint + '/Print' + `?id=${id}`, { responseType: 'text' });
+        return this.http.get(this.baseApi + this.apiUrl + `/${id}/Print`);
     }
 
     getPaymentBasicList(val): Observable<AccountPaymentBasic[]> {

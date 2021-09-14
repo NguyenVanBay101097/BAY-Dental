@@ -127,6 +127,9 @@ namespace Infrastructure.Services
 
                 switch (type)
                 {
+                    case "tmp_sale_order":
+                        obj = JsonConvert.DeserializeObject<SaleOrderPrintVM>(item.Data.ToString());
+                        break;
                     case "tmp_toathuoc":
                         var res_toathuoc = JsonConvert.DeserializeObject<ToaThuoc>(item.Data.ToString());
                         res_toathuoc.Company = company;

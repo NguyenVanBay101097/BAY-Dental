@@ -77,7 +77,7 @@
             </tr>
         </thead>
         <tbody>
-            {{for line in lines}}
+            <!--{{for line in lines}}-->
             <tr>
                 <td>{{for.index + 1}}</td>
                 <td>{{line.product.default_code}}</td>
@@ -86,7 +86,7 @@
                 <td class="text-right">{{line.theoretical_qty ? line.theoretical_qty : 0}}</td>
                 <td class="text-right">{{line.product_qty ? line.product_qty : 0}}</td>
             </tr>
-            {{end}}           
+            <!--{{end}}-->           
         </tbody>
     </table>
     <div class="d-flex">

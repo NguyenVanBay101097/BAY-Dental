@@ -26,7 +26,7 @@
     </div>
 </div>
 <div class="text-center mb-3">
-    <div class="text-3xl font-semibold">{{type == "order" ? "Phiếu mua hàng" : "Phiếu trả hàng" }}</div>
+    <div class="text-3xl font-semibold">Phiếu trả hàng</div>
     <div>Ngày {{date_order.day}} tháng {{date_order.month}} năm {{date_order.year}} </div>
     <div class="font-semibold">Số: {{name}}</div>
 </div>
@@ -48,7 +48,7 @@
                     <tr>
                         <td colspan="1" class="o_td_label">
                             <label class="o_form_label o_form_label_help font-weight-bold">
-                                {{type == "order" ? "Tham chiếu nhập kho" : "Tham chiếu xuất kho" }}
+                                Tham chiếu xuất kho                            
                             </label>
                         </td>
                         <td colspan="1" style="width: 100%;">
@@ -91,7 +91,7 @@
             </tr>
         </thead>
         <tbody>
-            {{~ for line in order_lines ~}}
+            <!--{{for line in order_lines }}-->
             <tr>
                 <td>{{line.sequence}}</td>
                 <td>{{line.name}}</td>
@@ -101,7 +101,7 @@
                 <td class="text-right">  {{line.discount}}</td>
                 <td class="text-right">  {{line.price_subtotal | math.format "N0" "vi-VN"}}</td>
             </tr>
-            {{~ end ~}}
+            <!--{{end}}-->
         </tbody>
     </table>
 

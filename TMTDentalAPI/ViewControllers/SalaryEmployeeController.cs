@@ -22,7 +22,7 @@ namespace TMTDentalAPI.ViewControllers
             _viewToStringRenderService = viewToStringRenderService;
         }
 
-        [HttpPut]
+        [HttpPost]
         [PrinterNameFilterAttribute(Name = AppConstants.SalaryPaymentPaperCode)]
         public async Task<IActionResult> Print(Guid id, [FromBody] HrPayslipRunSave val)
         {
@@ -32,8 +32,7 @@ namespace TMTDentalAPI.ViewControllers
 
             if (ids != null && ids.Any())
             {
-                res.Slips = res.Slips.Where(x => ids.Contains(x.Id));
-                string json = JsonConvert.SerializeObject(res);
+                res.Slips = res.Slips.Where(x => ids.Contains(x.Id));             
                 return View(res);
             }
             else

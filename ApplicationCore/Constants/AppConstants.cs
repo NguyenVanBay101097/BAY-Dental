@@ -51,9 +51,10 @@ namespace ApplicationCore.Constants
         };
 
         public static PrintTemplateType[] PrintTemplateTypeDemo = new PrintTemplateType[] {
+           new PrintTemplateType {Type = "tmp_sale_order" , PathTemplate = "PrintTemplate/SaleOrder/Template.html" },
            new PrintTemplateType {Type = "tmp_labo_order" , PathTemplate = "PrintTemplate/LaboOrder/Template.html" },
-           new PrintTemplateType {Type = "tmp_purchase_order" , PathTemplate = "PrintTemplate/PurchaseOrder/Template.html" },
-           new PrintTemplateType {Type = "tmp_purchase_refund" , PathTemplate = "PrintTemplate/PurchaseOrder/Template.html" },
+           new PrintTemplateType {Type = "tmp_purchase_order" , PathTemplate = "PrintTemplate/PurchaseOrder/Template_order.html" },
+           new PrintTemplateType {Type = "tmp_purchase_refund" , PathTemplate = "PrintTemplate/PurchaseOrder/Template_refund.html" },
            new PrintTemplateType {Type = "tmp_toathuoc" , PathTemplate = "PrintTemplate/ToaThuoc/Template.html" },       
            new PrintTemplateType {Type = "tmp_medicine_order" , PathTemplate = "PrintTemplate/MedicineOrder/Template.html" },
            new PrintTemplateType {Type = "tmp_phieu_thu" , PathTemplate = "PrintTemplate/PhieuThuChi/Template_Phieu_Thu.html" },
@@ -66,8 +67,8 @@ namespace ApplicationCore.Constants
            new PrintTemplateType {Type = "tmp_salary_employee" , PathTemplate = "PrintTemplate/Salary/Template_Salary_Employee.html" },
            new PrintTemplateType {Type = "tmp_salary_advance" , PathTemplate = "PrintTemplate/Salary/Template_Salary_Advance.html" },
            new PrintTemplateType {Type = "tmp_salary" , PathTemplate = "PrintTemplate/Salary/Template_Salary.html" },
-           new PrintTemplateType {Type = "tmp_partner_advance" , PathTemplate = "PrintTemplate/PartnerAvance/Template_advance.html" },
-           new PrintTemplateType {Type = "tmp_partner_refund" , PathTemplate = "PrintTemplate/PartnerAvance/Template_refund.html" },
+           new PrintTemplateType {Type = "tmp_partner_advance" , PathTemplate = "PrintTemplate/PartnerAdvance/Template_advance.html" },
+           new PrintTemplateType {Type = "tmp_partner_refund" , PathTemplate = "PrintTemplate/PartnerAdvance/Template_refund.html" },
            new PrintTemplateType {Type = "tmp_quotation" , PathTemplate = "PrintTemplate/Quotation/Template.html" },
         };
     }
