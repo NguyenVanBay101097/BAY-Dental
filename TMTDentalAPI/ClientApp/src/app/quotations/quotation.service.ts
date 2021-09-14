@@ -217,8 +217,12 @@ export class QuotationService {
       );
   }
 
+  // printQuotation(id: string) {
+  //   return this.http.get(this.baseApi + 'Quotation' + '/Print' + `?id=${id}`, { responseType: 'text' });
+  // }
+
   printQuotation(id: string) {
-    return this.http.get(this.baseApi + 'Quotation' + '/Print' + `?id=${id}`, { responseType: 'text' });
+    return this.http.get(this.baseApi + this.apiUrl + `/${id}/Print`);
   }
 
   defaultGet(partnerId: string): Observable<QuotationsDisplay> {

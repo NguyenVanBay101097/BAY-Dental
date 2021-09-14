@@ -12,13 +12,13 @@ export class KeywordListDialogComponent implements OnInit {
   search = '';
   searchUpdate = new Subject<string>();
   @Input() boxKeyWordSource = [];
-  @Input() boxKeyWordList = [];
+  boxKeyWordList = [];
   constructor(
     public activeModal: NgbActiveModal
   ) { }
 
   ngOnInit() {
-    this.boxKeyWordList = JSON.parse(JSON.stringify(this.boxKeyWordSource));
+    this.boxKeyWordList = this.boxKeyWordSource;
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())

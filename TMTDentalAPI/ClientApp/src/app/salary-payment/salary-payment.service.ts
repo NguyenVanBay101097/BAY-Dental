@@ -82,15 +82,15 @@ export class SalaryPaymentService {
         return this.http.post(this.baseApi + this.apiUrl + "/ActionConfirm", ids);
     }
 
-    // getPrint(ids: string[]) {
-    //     return this.http.post(this.baseApi + this.apiUrl + "/GetPrint", ids);
-    // }
-
     getPrint(ids: string[]) {
-        return this.http.post(this.baseApi + this.apiPrintUrl + "/Print", ids , { responseType: 'text' });
+        return this.http.post(this.baseApi + this.apiUrl + "/Print", ids);
     }
 
-    public actionMultiSalaryPayment(val:any){
+    // getPrint(ids: string[]) {
+    //     return this.http.post(this.baseApi + this.apiPrintUrl + "/Print", ids , { responseType: 'text' });
+    // }
+
+    public actionMultiSalaryPayment(val: any) {
         return this.http.post(this.baseApi + this.apiUrl + "/CreateMultiSalaryPayment", val);
     }
 

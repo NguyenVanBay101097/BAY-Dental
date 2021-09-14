@@ -34,13 +34,14 @@ namespace TMTDentalAPI.Controllers
         private readonly ISaleOrderLineService _saleLineService;
         private readonly IViewRenderService _viewRenderService;
         private readonly IViewToStringRenderService _viewToStringRenderService;
+        private readonly IPrintTemplateConfigService _printTemplateConfigService;
         private IConverter _converter;
 
         public SaleOrdersController(ISaleOrderService saleOrderService, IMapper mapper,
             IUnitOfWorkAsync unitOfWork, IDotKhamService dotKhamService,
             ICardCardService cardService, IProductPricelistService pricelistService,
             ISaleOrderLineService saleLineService, IViewRenderService viewRenderService, IConverter converter,
-        IViewToStringRenderService viewToStringRenderService)
+        IViewToStringRenderService viewToStringRenderService, IPrintTemplateConfigService printTemplateConfigService)
         {
             _saleOrderService = saleOrderService;
             _mapper = mapper;
@@ -52,6 +53,7 @@ namespace TMTDentalAPI.Controllers
             _viewRenderService = viewRenderService;
             _viewToStringRenderService = viewToStringRenderService;
             _converter = converter;
+            _printTemplateConfigService = printTemplateConfigService;
         }
 
         [HttpGet]
@@ -283,13 +285,17 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpGet("{id}/[action]")]
+        [HttpGet("{id}/Print")]
         [CheckAccess(Actions = "Basic.SaleOrder.Read")]
         public async Task<IActionResult> GetPrint(Guid id)
         {
             var res = await _saleOrderService.GetPrint(id);
-            res.OrderLines = res.OrderLines.OrderBy(x => x.Sequence);
-            return Ok(res);
+            if (res == null)
+                return NotFound();
+            //res.OrderLines = res.OrderLines.OrderBy(x => x.Sequence);
+            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = res, Type = "tmp_sale_order" });
+
+            return Ok(new PrintData() { html = html });
         }
 
         private async Task SaveOrderLines(SaleOrderSave val, SaleOrder order)

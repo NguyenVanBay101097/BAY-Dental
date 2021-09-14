@@ -413,7 +413,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   printSaleOrder() {
     if (this.saleOrderId) {
       this.saleOrderService.printSaleOrder(this.saleOrderId).subscribe((result: any) => {
-        this.printService.printHtml(result);
+        this.printService.printHtml(result.html);
       });
     }
   }
@@ -993,21 +993,21 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onOpenSaleOrderPromotion() {
-    var getData_OpenDialog = ()=> {
-       //Nếu có chi tiết đang chỉnh sửa thì cập nhật
-       if (this.lineSelected != null) {
+    var getData_OpenDialog = () => {
+      //Nếu có chi tiết đang chỉnh sửa thì cập nhật
+      if (this.lineSelected != null) {
         var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
         var rs = viewChild.updateLineInfo();
         if (rs) {
           viewChild.onUpdateSignSubject.subscribe(value => {
-            this.saleOrderService.get(this.saleOrderId).subscribe((rs:any) => {
+            this.saleOrderService.get(this.saleOrderId).subscribe((rs: any) => {
               this.resetData(rs);
               this.openSaleOrderPromotionDialog();
             });
           })
         }
       } else {
-        this.saleOrderService.get(this.saleOrderId).subscribe((rs:any) => {
+        this.saleOrderService.get(this.saleOrderId).subscribe((rs: any) => {
           this.resetData(rs);
           this.openSaleOrderPromotionDialog();
         });
@@ -1026,7 +1026,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
         this.saleOrderId = result.id;
         this.router.navigate(['/sale-orders/form'], { queryParams: { id: result.id } });
         getData_OpenDialog();
-       
+
       });
     } else if (this.lineSelected != null) { //Nếu dữ liệu cần lưu lại
       if (!this.formGroup.valid) {
@@ -1037,7 +1037,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       const val = this.getFormDataSave();
 
       this.saleOrderService.update(this.saleOrderId, val).subscribe((result: any) => {
-       getData_OpenDialog();
+        getData_OpenDialog();
       });
     } else {
       this.openSaleOrderPromotionDialog();
@@ -1158,7 +1158,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onUpdateOpenLinePromotion(i) {
-    var getData_OpenDialog = ()=> {
+    var getData_OpenDialog = () => {
       //Nếu có chi tiết đang chỉnh sửa thì cập nhật
 
       if (this.lineSelected != null) {

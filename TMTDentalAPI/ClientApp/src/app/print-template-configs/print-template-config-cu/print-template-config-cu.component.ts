@@ -26,11 +26,14 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         language: 'vi',
         height: 525,
         contentsCss: '/css/print.css',
-        // fullPage: true,
+        // fullPage: true,//this support html full page
         allowedContent: true,
         entities: false,
         basicEntities: false,
-        forceSimpleAmpersand: true
+        forceSimpleAmpersand: true,
+        enterMode: 2,//this support not format string to p tag
+        // protectedSource: [/{{[\s\S]*?}}/g] // this support loop code
+        // skin: 'kama'
     };
     contentPrev = "";
     paperSizes: PrintPaperSizeBasic[] = [];
@@ -187,7 +190,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
 
     onAddKeyWord() {
         const modalRef = this.modalService.open(KeywordListDialogComponent, { size: 'xl', scrollable: true, windowClass: 'o_technical_modal', keyboard: true, backdrop: 'static' });
-        modalRef.componentInstance.boxKeyWordSource = constantData.getKeyWords()[this.filter.type];
+        modalRef.componentInstance.boxKeyWordSource = constantData.keyWords[this.filter.type];
         modalRef.result.then((res) => {
             if (res) {
                 this.editor.instance.insertText(res.value);

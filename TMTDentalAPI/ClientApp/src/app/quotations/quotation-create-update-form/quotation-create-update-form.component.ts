@@ -144,7 +144,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   printQuotation() {
     if (this.quotationId) {
       this.quotationService.printQuotation(this.quotationId).subscribe((result: any) => {
-        this.printService.printHtml(result);
+        this.printService.printHtml(result.html);
       })
     }
   }
@@ -234,7 +234,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           id: x.id,
           payment: x.payment,
           discountPercentType: x.discountPercentType,
-          date: this.intlService.formatDate(x.date,'yyyy-MM-dd'),
+          date: this.intlService.formatDate(x.date, 'yyyy-MM-dd'),
           amount: x.amount,
         }
       }),
@@ -246,15 +246,15 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   getAmountPayment(payment: PaymentQuotationDisplay) {
     if (payment.discountPercentType == 'cash') {
       return payment.payment || 0;
-    } else {    
+    } else {
       var totalAmount = this.getAmountSubTotal() - this.getTotalDiscount();
       return (payment.payment / 100) * totalAmount;
     }
   }
 
-  changeDiscountType(value, index){
+  changeDiscountType(value, index) {
     var payment = this.quotation.payments[index];
-    if(payment && payment.discountPercentType == value){
+    if (payment && payment.discountPercentType == value) {
       payment.payment = null;
     }
   }
@@ -265,7 +265,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     if (this.lineSelected != null) {
       var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
       var rs = viewChild.updateLineInfo();
-      if(!rs) return;
+      if (!rs) return;
     }
 
     var val = this.getDataFormGroup();
@@ -377,7 +377,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       var rs = viewChild.updateLineInfo();
       if (!rs) return;
     }
-   
+
     const val = this.getDataFormGroup();
     this.submitted = true;
     if (!this.quotationId) {
@@ -473,7 +473,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           this.quotation = res;
           var newLine = this.quotation.lines[i];
           modalRef.componentInstance.quotationLine = newLine;
-          this.notifyService.notify('success','Xóa khuyến mãi thành công');
+          this.notifyService.notify('success', 'Xóa khuyến mãi thành công');
         }, err => {
           this.notify('error', err.error.error);
         });
@@ -484,8 +484,8 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   onOpenQuotationPromotion() {
     if (this.lineSelected != null) {
       var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
-      var rs  = viewChild.updateLineInfo();
-      if(!rs) return;
+      var rs = viewChild.updateLineInfo();
+      if (!rs) return;
     }
 
     this.submitted = true;
@@ -593,7 +593,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
         .subscribe(res => {
           this.quotation = res;
           modalRef.componentInstance.quotation = this.quotation;
-          this.notifyService.notify('success','Xóa khuyến mãi thành công');
+          this.notifyService.notify('success', 'Xóa khuyến mãi thành công');
         }, err => {
           this.notify('error', err.error.error);
         });

@@ -26,14 +26,17 @@ namespace TMTDentalAPI.Controllers
         private readonly IMapper _mapper;
         private readonly IViewRenderService _view;
         private readonly IUnitOfWorkAsync _unitOfWork;
+        private readonly IPrintTemplateConfigService _printTemplateConfigService;
 
-        public HrPayslipRunsController(ICompanyService companyService, IHrPayslipRunService payslipRunService, IViewRenderService view, IMapper mapper, IUnitOfWorkAsync unitOfWork, IHrPayslipService payslipService)
+        public HrPayslipRunsController(ICompanyService companyService, IHrPayslipRunService payslipRunService, IViewRenderService view, IMapper mapper, IUnitOfWorkAsync unitOfWork, IHrPayslipService payslipService
+            , IPrintTemplateConfigService printTemplateConfigService)
         {
             _payslipRunService = payslipRunService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _view = view;
             _payslipServie = payslipService;
+            _printTemplateConfigService = printTemplateConfigService;
         }
 
         [HttpGet]
@@ -53,17 +56,20 @@ namespace TMTDentalAPI.Controllers
         }
 
 
-        [HttpPut("{id}/[action]")]
+        [HttpPost("{id}/[action]")]
         [CheckAccess(Actions = "Salary.HrPayslipRun.Read")]
         public async Task<IActionResult> Print(Guid id, HrPayslipRunSave val)
         {
             var ids = val.Slips.Where(x => x.IsCheck == true).Select(x => x.Id);
             await _payslipRunService.UpdatePayslipRun(id, val);
-            var res = await _payslipRunService.GetHrPayslipRunForDisplay(id);
+            var res = await _payslipRunService.GetHrPayslipRunForPrint(id);
+
             if (ids != null && ids.Any())
             {
                 res.Slips = res.Slips.Where(x => ids.Contains(x.Id));
-                var html = _view.Render("SalaryEmployee/Print", res);
+
+                var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = res, Type = "tmp_salary" });
+
                 return Ok(new PrintData() { html = html });
             }
             else
