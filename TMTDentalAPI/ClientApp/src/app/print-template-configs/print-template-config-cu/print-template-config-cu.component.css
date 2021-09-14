@@ -1,0 +1,15 @@
+/* :host ::ng-deep .ck-editor__editable_inline {
+    min-height: 500px;
+}
+
+.ck_contents {
+    min-height: 700px !important;
+} */
+.preview .title {
+    color: #919191;
+    font-size: 28px;
+    font-weight: 700
+}
+
+html, body, iframe { height: 100%; width: 100%;}
+html { overflow: hidden; }

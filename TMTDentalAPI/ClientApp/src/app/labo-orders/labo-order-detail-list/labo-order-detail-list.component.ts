@@ -19,7 +19,7 @@ import { NotifyService } from 'src/app/shared/services/notify.service';
 export class LaboOrderDetailListComponent implements OnInit {
   @Input() public item: any;
   @Input() public state: string;
-  @Output() reload : Subject<boolean> = new Subject<boolean>();
+  @Output() reload: Subject<boolean> = new Subject<boolean>();
   skip = 0;
   limit = 20;
   pagerSettings: any;
@@ -33,7 +33,7 @@ export class LaboOrderDetailListComponent implements OnInit {
     { name: "Chọn răng", value: "manual" },
   ];
   // check permissions
-  canAdd: boolean= false;
+  canAdd: boolean = false;
   canUpdate: boolean = false;
   canDelete: boolean = false;
 
@@ -136,11 +136,11 @@ export class LaboOrderDetailListComponent implements OnInit {
 
   printLabo(item: any) {
     this.laboOrderService.getPrint(item.id).subscribe((result: any) => {
-      this.printService.printHtml(result);
+      this.printService.printHtml(result.html);
     });
   }
 
-  checkRole(){
+  checkRole() {
     this.canAdd = this.checkPermissionService.check(['Labo.LaboOrder.Create']);
     this.canUpdate = this.checkPermissionService.check(['Labo.LaboOrder.Update']);
     this.canDelete = this.checkPermissionService.check(['Labo.LaboOrder.Delete']);

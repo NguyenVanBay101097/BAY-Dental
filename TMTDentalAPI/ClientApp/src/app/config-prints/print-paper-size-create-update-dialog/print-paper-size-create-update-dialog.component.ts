@@ -17,12 +17,12 @@ export class PrintPaperSizeCreateUpdateDialogComponent implements OnInit {
   title: string;
   submitted = false;
 
-  constructor(private fb: FormBuilder, 
-    public activeModal: NgbActiveModal, 
+  constructor(private fb: FormBuilder,
+    public activeModal: NgbActiveModal,
     private printPaperSizeService: PrintPaperSizeService,
     private authService: AuthService,
     public notifyService: NotifyService
-    ) { }
+  ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -31,16 +31,17 @@ export class PrintPaperSizeCreateUpdateDialogComponent implements OnInit {
       topMargin: 0,
       bottomMargin: 0,
       leftMargin: 0,
-      rightMargin: 0
+      rightMargin: 0,
+      isSize: false
     });
 
-    if(this.id){
+    if (this.id) {
       this.loadDataFromApi();
     }
   }
 
   loadDataFromApi() {
-    this.printPaperSizeService.get(this.id).subscribe(res =>{
+    this.printPaperSizeService.get(this.id).subscribe(res => {
       this.formGroup.patchValue(res);
     });
   }
@@ -51,7 +52,7 @@ export class PrintPaperSizeCreateUpdateDialogComponent implements OnInit {
     if (this.formGroup.invalid) {
       return;
     }
-   
+
 
     var val = this.formGroup.value;
     val.companyId = this.authService.userInfo.companyId;
@@ -60,7 +61,7 @@ export class PrintPaperSizeCreateUpdateDialogComponent implements OnInit {
       this.printPaperSizeService.update(this.id, val).subscribe(res => {
         this.notifyService.notify('success', 'Lưu thành công');
         this.submitted = false;
-        this.activeModal.close(res);
+        this.activeModal.close(val);
       })
     } else {
       this.printPaperSizeService.create(val).subscribe(res => {

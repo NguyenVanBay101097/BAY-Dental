@@ -33,7 +33,7 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) ||
                 x.Partner.Name.Contains(val.Search) ||
-                x.Partner.NameNoSign.Contains(val.Search) || 
+                x.Partner.NameNoSign.Contains(val.Search) ||
                 x.Partner.Ref.Contains(val.Search) ||
                 x.SaleOrderLine.Order.Name.Contains(val.Search));
 
@@ -106,8 +106,8 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) ||
                 x.Partner.Name.Contains(val.Search) ||
-                x.Partner.NameNoSign.Contains(val.Search) || 
-                x.Partner.Ref.Contains(val.Search) || 
+                x.Partner.NameNoSign.Contains(val.Search) ||
+                x.Partner.Ref.Contains(val.Search) ||
                 x.SaleOrderLine.Order.Name.Contains(val.Search));
 
             var now = DateTime.Now;
@@ -194,7 +194,7 @@ namespace Infrastructure.Services
 
             var totalItems = await query.CountAsync();
 
-            if(val.Limit > 0)
+            if (val.Limit > 0)
             {
                 query = query.Skip(val.Offset).Take(val.Limit);
             }
@@ -716,7 +716,7 @@ namespace Infrastructure.Services
                .FirstOrDefaultAsync();
             var res = _mapper.Map<LaboOrderPrintVM>(order);
             var partnerObj = GetService<IPartnerService>();
-            res.PartnerAddress = partnerObj.GetFormatAddress(order.Partner);
+            //res.PartnerAddress = partnerObj.GetFormatAddress(order.Partner);
             return res;
         }
 

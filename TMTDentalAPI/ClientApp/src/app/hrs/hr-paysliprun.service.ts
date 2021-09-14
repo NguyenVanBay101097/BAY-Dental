@@ -112,13 +112,13 @@ export class HrPaysliprunService {
     return this.http.post(this.base_api + this.apiUrl + '/CheckExist?date=' + d.toISOString(), null);
   }
 
-  // printAllEmpSalary(id: string, val: any) {
-  //   return this.http.put(this.base_api + this.apiUrl + `/${id}/Print`, val);
-  // }
-
-  printAllEmpSalary(id: string, val : any ) {
-    return this.http.put(this.base_api + this.apiPrintUrl + '/Print' + `?id=${id}`, val, { responseType: 'text' } );
+  printAllEmpSalary(id: string, val: any) {
+    return this.http.post(this.base_api + this.apiUrl + `/${id}/Print`, val);
   }
+
+  // printAllEmpSalary(id: string, val : any ) {
+  //   return this.http.post(this.base_api + this.apiPrintUrl + '/Print' + `?id=${id}`, val, { responseType: 'text' } );
+  // }
 
   ExportExcelFile(payslipIds: string[]) {
     return this.http.post(this.base_api + this.apiUrl + '/ExportExcelFile', payslipIds, { responseType: 'blob' }

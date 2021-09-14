@@ -38,7 +38,7 @@ export class SalaryPaymentListComponent implements OnInit {
   constructor(
     private modalService: NgbModal,
     private salaryPaymentService: SalaryPaymentService,
-    private printService: PrintService, 
+    private printService: PrintService,
     private checkPermissionService: CheckPermissionService,
     private notifyService: NotifyService,
     private authService: AuthService,
@@ -111,7 +111,7 @@ export class SalaryPaymentListComponent implements OnInit {
 
   printItem(id) {
     this.salaryPaymentService.getPrint([id]).subscribe((data: any) => {
-      this.printService.printHtml(data);
+      this.printService.printHtml(data.html);
     });
   }
 
@@ -121,7 +121,7 @@ export class SalaryPaymentListComponent implements OnInit {
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(
       (result: any) => {
-        this.notifyService.notify('success','Lưu thành công')
+        this.notifyService.notify('success', 'Lưu thành công')
         this.loadData();
         if (result && result.print) {
           this.printItem(item.id);

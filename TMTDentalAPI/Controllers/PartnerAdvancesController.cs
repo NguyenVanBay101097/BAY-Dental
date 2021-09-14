@@ -21,13 +21,15 @@ namespace TMTDentalAPI.Controllers
         private readonly IPartnerAdvanceService _partnerAdvanceService;
         private readonly IViewRenderService _view;
         private readonly IUnitOfWorkAsync _unitOfWork;
-
-        public PartnerAdvancesController(IMapper mapper, IPartnerAdvanceService partnerAdvanceService, IViewRenderService view, IUnitOfWorkAsync unitOfWork)
+        private readonly IPrintTemplateConfigService _printTemplateConfigService;
+        public PartnerAdvancesController(IMapper mapper, IPartnerAdvanceService partnerAdvanceService, IViewRenderService view, IUnitOfWorkAsync unitOfWork
+            , IPrintTemplateConfigService printTemplateConfigService)
         {
             _mapper = mapper;
             _partnerAdvanceService = partnerAdvanceService;
             _view = view;
             _unitOfWork = unitOfWork;
+            _printTemplateConfigService = printTemplateConfigService;
         }
 
         [HttpGet]
@@ -110,7 +112,9 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _partnerAdvanceService.GetPartnerAdvancePrint(id);
 
-            var html = _view.Render("PartnerAdvance/Print", res);
+            var obj = _mapper.Map<PartnerAdvancePrint>(res);
+            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq()
+            { Obj = obj, Type = res.Type == "advance"? "tmp_partner_advance" : "tmp_partner_refund" });
 
             return Ok(new PrintData() { html = html });
         }

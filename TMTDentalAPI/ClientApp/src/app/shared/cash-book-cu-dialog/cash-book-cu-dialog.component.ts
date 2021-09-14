@@ -397,7 +397,7 @@ export class CashBookCuDialogComponent implements OnInit {
                 animation: { type: "fade", duration: 400 },
                 type: { style: "success", icon: true },
               });
-              
+
               if (print) {
                 this.printPhieu(this.id);
               }
@@ -428,7 +428,7 @@ export class CashBookCuDialogComponent implements OnInit {
 
   printPhieu(id: string) {
     this.phieuThuChiService.getPrint(id).subscribe((data: any) => {
-      this.printService.printHtml(data);
+      this.printService.printHtml(data.html);
     });
   }
 

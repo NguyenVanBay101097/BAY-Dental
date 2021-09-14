@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
-   public class StockInventoryLineBasic
+    public class StockInventoryLineBasic
     {
         public Guid Id { get; set; }
         public Guid LocationId { get; set; }
@@ -96,11 +96,20 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
         //public Guid LocationId { get; set; }
 
-        //public StockLocationSimple Location { get; set; }
-        public string ProductDefaultCode { get; set; }
-        public string ProductName { get; set; }
+        public Guid? ProductUOMId { get; set; }
+        public UoMBasic ProductUOM { get; set; }
 
-        public string ProductUOMName { get; set; }
+        /// <summary>
+        /// sản phẩm di chuyển
+        /// </summary>
+        public Guid ProductId { get; set; }
+        public ProductSimple Product { get; set; }
+
+        //public StockLocationSimple Location { get; set; }
+        //public string ProductDefaultCode { get; set; }
+        //public string ProductName { get; set; }
+
+        //public string ProductUOMName { get; set; }
 
         /// <summary>
         /// Số lượng chính thực tế

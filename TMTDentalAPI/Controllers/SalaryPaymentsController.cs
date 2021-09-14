@@ -24,6 +24,7 @@ namespace TMTDentalAPI.Controllers
         private readonly IUserService _userService;
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly IAccountJournalService _journalService;
+        private readonly IPrintTemplateConfigService _printTemplateConfigService;
 
         public SalaryPaymentsController(
             IMapper mapper,
@@ -31,7 +32,7 @@ namespace TMTDentalAPI.Controllers
             IViewRenderService view,
             IUserService userService,
             IUnitOfWorkAsync unitOfWork,
-            IAccountJournalService journalService
+            IAccountJournalService journalService, IPrintTemplateConfigService printTemplateConfigService
           )
         {
             _mapper = mapper;
@@ -40,6 +41,7 @@ namespace TMTDentalAPI.Controllers
             _userService = userService;
             _unitOfWork = unitOfWork;
             _journalService = journalService;
+            _printTemplateConfigService = printTemplateConfigService;
         }
 
         [HttpGet]
@@ -141,7 +143,7 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpPost("[action]")]
+        [HttpPost("Print")]
         [CheckAccess(Actions = "Salary.SalaryPayment.Read")]
         public async Task<IActionResult> GetPrint(IEnumerable<Guid> ids)
         {
@@ -149,10 +151,12 @@ namespace TMTDentalAPI.Controllers
                 return BadRequest();
 
             var salaryPayments = await _mapper.ProjectTo<SalaryPaymentPrintVm>(_salaryPaymentService.SearchQuery(x => ids.Contains(x.Id))).ToListAsync();
-            foreach (var print in salaryPayments)
-                print.AmountString = AmountToText.amount_to_text(print.Amount);
+            //foreach (var print in salaryPayments)
+            //    print.AmountText = AmountToText.amount_to_text(print.Amount);
 
-            var html = _view.Render("SalaryPayment/Print", salaryPayments);
+            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq()
+            { Obj = new SalaryPaymentPrint() { Salaries = salaryPayments}, Type = salaryPayments.Any(z=> z.Type == "advance") ? "tmp_salary_advance" : "tmp_salary_employee" });
+
             return Ok(new PrintData() { html = html });
         }
 

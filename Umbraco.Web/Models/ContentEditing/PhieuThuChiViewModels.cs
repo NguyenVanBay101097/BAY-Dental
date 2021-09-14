@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApplicationCore.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -48,7 +49,13 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string LoaiThuChiName { get; set; }
 
-        public string AmountText { get; set; }
+        public string AmountText {
+            get
+            {
+               
+                return AmountToText.amount_to_text(Amount);
+            } set { } 
+        }
 
         public string CreatedByName { get; set; }
 
@@ -68,7 +75,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Ngày lập phiếu
         /// </summary>
-        public DateTime Date { get; set; }
+        public DateTime DateCreated { get; set; }
 
         public string JournalName { get; set; }
 
@@ -90,7 +97,15 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Reason { get; set; }
 
 
-        public string AmountText { get; set; }
+        public string AmountText
+        {
+            get
+            {
+
+                return AmountToText.amount_to_text(Amount);
+            }
+            set { }
+        }
 
         public string CreatedByName { get; set; }
 

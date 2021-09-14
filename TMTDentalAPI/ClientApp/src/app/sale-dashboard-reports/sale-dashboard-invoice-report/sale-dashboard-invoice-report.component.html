@@ -3,6 +3,14 @@
     <kendo-chart-title color="black" text="BIỂU ĐỒ DOANH THU - THỰC THU">
     </kendo-chart-title>
     <kendo-chart-legend position='bottom'></kendo-chart-legend>
+    <!-- <kendo-chart-tooltip [shared]="true">
+        <ng-template kendoChartSharedTooltipTemplate let-category="revenuCateg" let-points="points">          
+            <div *ngFor="let point of points">
+                <span>{{point.category}}</span> 
+               <span>{{ point.series.name }} : {{ point.value | number}}</span> 
+            </div>
+        </ng-template>
+      </kendo-chart-tooltip> -->
     <kendo-chart-category-axis>
         <kendo-chart-category-axis-item [categories]="revenuCateg">
             <kendo-chart-category-axis-item-labels [content]="labelContent" [rotation]="'auto'">

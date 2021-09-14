@@ -1,0 +1,119 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">Tùy chỉnh mẫu in</li>
+        </ol>
+        <div class="o_cp_searchview">
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <button type="button" class="btn btn-outline-primary mr-2" accesskey="c" (click)="onPrint()">In
+                    thử</button>
+                <button *ngIf="!isEditting" type="button" class="btn btn-primary mr-2" accesskey="c"
+                    (click)="onEdit()">Sửa</button>
+                <button *ngIf="isEditting" type="button" class="btn btn-primary mr-2" accesskey="c"
+                    (click)="onSave()">Lưu</button>
+                <button *ngIf="isEditting" (click)="onCancel()" class="btn btn-danger mr-2">
+                    Hủy
+                </button>
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+<div class="o_content">
+    <div class="o_form_view">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+
+                <div class="d-flex align-items-center">
+                    <table class="mr-2">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label o_td_label_sm">
+                                    <label class="o_form_label">
+                                        Chọn mẫu in
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" style="width: 100%;">
+                                    <select (ngModelChange)="onChangeType($event)" [(ngModel)]="this.filter.type"
+                                        class="form-control">
+                                        <option [value]="item.value" *ngFor="let item of types">{{item.text}}
+                                        </option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table *ngIf="isEditting" class="mr-2">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label o_td_label_sm">
+                                    <label class="o_form_label">
+                                        Chọn khổ in
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" style="width: 100%;" class="d-flex">
+                                    <select (ngModelChange)="onChangePaperSize($event)"
+                                        [(ngModel)]="this.filter.printPaperSizeId" class="form-control">
+                                        <option [value]="item.id" *ngFor="let item of paperSizes">{{item.name}}
+                                        </option>
+                                    </select>
+                                    <!-- <button (click)="onEditPaperSize()" title="Sửa khổ in"
+                                        class="btn btn-sm btn-light"><span class="far fa-edit"></span></button> -->
+                                    <button (click)="onCreatePaperSize()" title="Thêm khổ in"
+                                        class="btn btn-sm btn-light"><span class="k-icon k-i-plus"></span></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <ng-container *ngIf="!isEditting; else EditTemplate">
+                        <hr>
+                        <div class="view d-flex justify-content-center">
+                            <iframe class="w-75" frameborder="0" style="height: 100vh;"
+                                [srcdoc]="contentPrev | safeHtml "></iframe>
+                        </div>
+                    </ng-container>
+                    <ng-template #EditTemplate>
+                        <div class="d-flex flex-column">
+                            <div class="w-100 d-flex justify-content-center mb-2">
+                                <button type="button" class="btn btn-primary" accesskey="c" (click)="onGenerate()">Xem
+                                    trước</button>
+                            </div>
+                            <div class="d-flex">
+                                <div class="left w-50 mr-1 p-2 border">
+                                    <div class="mb-2">
+                                        <button (click)="onDefault()" class="btn btn-outline-primary mr-2">Sử dụng mẫu
+                                            có
+                                            sẵn</button>
+                                        <button (click)="onAddKeyWord()" class="btn btn-outline-primary">
+                                            Thêm từ khóa
+                                        </button>
+                                    </div>
+                                    <ckeditor #editor [config]="configEditor" [(data)]="configEdit.content"></ckeditor>
+                                </div>
+                                <div class="right w-50 ml-1 p-2 border d-flex flex-column">
+                                    <div class="preview d-flex justify-content-between align-items-center mb-2">
+                                        <h5 class="title">Bản xem trước</h5>
+                                        <!-- <button (click)="onPrint()" class="btn btn-outline-primary">In thử</button> -->
+                                    </div>
+                                    <iframe #iframe style="height: 100%; width: 100%;" frameBorder="0"
+                                        sandbox="allow-same-origin" [attr.srcdoc]="contentPrev | safeHtml "></iframe>
+                                    <!-- <div [innerHTML]="configEdit.content | safeHtml "></div> -->
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

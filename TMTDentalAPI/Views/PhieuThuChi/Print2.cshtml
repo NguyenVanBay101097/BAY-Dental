@@ -36,7 +36,7 @@
         {
             <div class="text-3xl font-semibold">PHIẾU CHI HOA HỒNG</div>
         }
-        <div>Ngày @Model.Date.Day tháng @Model.Date.Month năm @Model.Date.Year </div>
+        <div>Ngày @Model.DateCreated.Day tháng @Model.DateCreated.Month năm @Model.DateCreated.Year </div>
         <div class="font-semibold">Số: @Model.Name</div>
     </div>
     <div class="o_form_view mb-2">
@@ -51,7 +51,7 @@
                                 </div>
                             </td>
                             <td colspan="1" style="width: 100%;">
-                                <div class="o_field_widget">@(string.Format(culture, "{0:dd/MM/yyyy}", Model.Date))</div>
+                                <div class="o_field_widget">@(string.Format(culture, "{0:dd/MM/yyyy}", Model.DateCreated))</div>
                             </td>
                         </tr>
                         <tr>

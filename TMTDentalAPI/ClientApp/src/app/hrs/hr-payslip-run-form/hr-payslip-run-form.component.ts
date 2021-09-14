@@ -42,7 +42,7 @@ export class HrPayslipRunFormComponent implements OnInit {
     private paymentService: SalaryPaymentService,
     private router: Router, private intlService: IntlService,
     private checkPermissionService: CheckPermissionService
-    ) { }
+  ) { }
 
   ngOnInit() {
     this.FormGroup = this.fb.group({
@@ -204,8 +204,8 @@ export class HrPayslipRunFormComponent implements OnInit {
             this.notify('success', 'Bảng lương xác nhận thành công');
             this.loadRecord();
           });
-        });    
-      }else{
+        });
+      } else {
         this.hrPaysliprunService.create(val).pipe(
           mergeMap((result: any) => {
             return this.hrPaysliprunService.CreatePayslipByRunId(result.id);
@@ -218,7 +218,7 @@ export class HrPayslipRunFormComponent implements OnInit {
         });
       }
     });
-   
+
   }
 
   actionCancel() {
@@ -306,16 +306,17 @@ export class HrPayslipRunFormComponent implements OnInit {
     }
 
     var value = this.getFormData();
+    debugger
     if (value)
-    this.hrPaysliprunService.printAllEmpSalary(this.id, value).subscribe(
-      (result:any) => {
-        if (result) {
-          this.printService.printHtml(result);
-        } else {
-          alert('Bạn chưa chọn nhân viên nào để in, vui lòng chọn nhân viên để tiếp tục.');
+      this.hrPaysliprunService.printAllEmpSalary(this.id, value).subscribe(
+        (result: any) => {
+          if (result) {
+            this.printService.printHtml(result.html);
+          } else {
+            alert('Bạn chưa chọn nhân viên nào để in, vui lòng chọn nhân viên để tiếp tục.');
+          }
         }
-      }
-    )
+      )
   }
 
   onExport() {
@@ -345,11 +346,11 @@ export class HrPayslipRunFormComponent implements OnInit {
 
   onPayment() {
     const slipIds = this.slipsFormArray.value.filter(x => x.isCheck === true).map(x => x.id);
-    if(slipIds.length == 0) this.notify('error','Chưa chọn phiếu lương để chi lương');
-   
-      this.paymentService.defaulCreateBy(slipIds).subscribe((res: any) => {
+    if (slipIds.length == 0) this.notify('error', 'Chưa chọn phiếu lương để chi lương');
 
-      if(res.data.length > 0) {
+    this.paymentService.defaulCreateBy(slipIds).subscribe((res: any) => {
+
+      if (res.data.length > 0) {
 
         const modalRef = this.modalService.open(HrSalaryPaymentComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = `PHIẾU CHI LƯƠNG THÁNG  ${this.dateFC.value.getMonth() + 1}/${this.dateFC.value.getFullYear()}`;
@@ -358,7 +359,7 @@ export class HrPayslipRunFormComponent implements OnInit {
         modalRef.result.then((res: any) => {
           this.loadRecord();
         });
-      } 
+      }
 
       res.errors.forEach(e => {
         this.notify('error', e);

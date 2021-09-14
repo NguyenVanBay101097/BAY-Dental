@@ -149,13 +149,13 @@ export class LaboOrderService {
         return this.http.post<LaboOrderDisplay>(this.baseApi + this.apiUrl + '/DefaultGet', val);
     }
 
-    // getPrint(id) {
-    //     return this.http.get(this.baseApi + this.apiUrl + "/" + id + '/GetPrint');
-    // }
-
     getPrint(id) {
-        return this.http.get(this.baseApi + this.apiPrintUrl  + '/Print' + `?id=${id}`, { responseType: 'text' });
+        return this.http.get(this.baseApi + this.apiUrl + "/" + id + '/Print');
     }
+
+    // getPrint(id) {
+    //     return this.http.get(this.baseApi + this.apiPrintUrl  + '/Print' + `?id=${id}`, { responseType: 'text' });
+    // }
 
     buttonConfirm(ids: string[]) {
         return this.http.post(this.baseApi + this.apiUrl + '/ButtonConfirm', ids);

@@ -20,6 +20,8 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<StockInventoryLineDisplay, StockInventoryLine>()
                 .ForMember(x => x.Id, x => x.Ignore());
+
+            CreateMap<StockInventoryLine, StockInventoryLinePrint>();
         }
     }
 }

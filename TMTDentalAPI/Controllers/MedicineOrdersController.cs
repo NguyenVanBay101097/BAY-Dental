@@ -21,14 +21,17 @@ namespace TMTDentalAPI.Controllers
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly IViewRenderService _viewRenderService;
+        private readonly IPrintTemplateConfigService _printTemplateConfigService;
 
         public MedicineOrdersController(IMedicineOrderService medicineOrderService, IMapper mapper, IUnitOfWorkAsync unitOfWork,
-            IViewRenderService viewRenderService)
+            IViewRenderService viewRenderService,
+            IPrintTemplateConfigService printTemplateConfigService)
         {
             _medicineOrderService = medicineOrderService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _viewRenderService = viewRenderService;
+            _printTemplateConfigService = printTemplateConfigService;
         }
 
         [HttpGet]
@@ -123,8 +126,8 @@ namespace TMTDentalAPI.Controllers
             //get viewmodel và truyền vào view
 
             var res = await _medicineOrderService.GetPrint(id);
-
-            var html = _viewRenderService.Render("MedicineOrder/Print", res);
+            var obj = _mapper.Map<MedicineOrderPrint>(res);
+            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() {Obj = obj, Type = "tmp_medicine_order" });
 
             return Ok(new PrintData() { html = html });
         }

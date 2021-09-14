@@ -490,7 +490,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
 
   getPrint(id) {
     this.purchaseOrderService.getPrint(id).subscribe((data: any) => {
-      this.printService.printHtml(data);
+      this.printService.printHtml(data.html);
     });
   }
 

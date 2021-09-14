@@ -167,7 +167,8 @@ export class AppHomeComponent implements OnInit {
       children: [
         { name: 'Chi nhánh', url: '/setting/companies', permissions: ['System.Company.Read'] },
         { name: 'Nhóm quyền', url: '/setting/roles', permissions: ['System.ApplicationRole.Read'] },
-        { name: 'Cấu hình chung', url: '/setting/config-settings' }
+        { name: 'Cấu hình chung', url: '/setting/config-settings' },
+        { name: 'Mẫu in', url: '/setting/print-template-config' }
       ],
       permissions: ['System.Company.Read', 'System.ApplicationUser.Read', 'System.ApplicationRole.Read']
     },

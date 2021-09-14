@@ -21,13 +21,16 @@ namespace TMTDentalAPI.Controllers
         private readonly IStockInventoryService _stockInventoryService;
         private readonly IViewRenderService _view;
         private readonly IUnitOfWorkAsync _unitOfWork;
+        private readonly IPrintTemplateConfigService _printTemplateConfigService;
 
-        public StockInventoriesController(IMapper mapper, IStockInventoryService stockInventoryService, IViewRenderService view, IUnitOfWorkAsync unitOfWork)
+        public StockInventoriesController(IMapper mapper, IStockInventoryService stockInventoryService, IViewRenderService view, IUnitOfWorkAsync unitOfWork
+            ,IPrintTemplateConfigService printTemplateConfigService)
         {
             _mapper = mapper;
             _stockInventoryService = stockInventoryService;
             _view = view;
             _unitOfWork = unitOfWork;
+            _printTemplateConfigService = printTemplateConfigService;
         }
 
         [HttpGet]
@@ -134,13 +137,14 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpGet("{id}/[action]")]
+        [HttpGet("{id}/Print")]
         [CheckAccess(Actions = "Stock.Inventory.Read")]
         public async Task<IActionResult> GetPrint(Guid id)
         {
-            var res = await _stockInventoryService.GetStockInventoryPrint(id);
+            var res = await _stockInventoryService.GetPrint(id);
 
-            var html = _view.Render("StockInventory/Print", res);
+            var obj = _mapper.Map<StockInventoryPrint>(res);
+            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = obj, Type = "tmp_stock_inventory" });
 
             return Ok(new PrintData() { html = html });
         }

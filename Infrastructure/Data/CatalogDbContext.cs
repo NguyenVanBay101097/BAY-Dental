@@ -317,6 +317,13 @@ namespace Infrastructure.Data
         public DbSet<LaboWarranty> LaboWarranty { get; set; }
         public DbSet<LaboWarrantyToothRel> LaboWarrantyToothRels { get; set; }
 
+        /// <summary>
+        /// cấu hình mẫu in
+        /// </summary>
+        public DbSet<PrintTemplate> PrintTemplates { get; set; }
+        public DbSet<PrintTemplateConfig> PrintTemplateConfigs { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new ProductConfiguration());
@@ -568,6 +575,8 @@ namespace Infrastructure.Data
 
             builder.ApplyConfiguration(new LaboWarrantyConfiguration());
             builder.ApplyConfiguration(new LaboWarrantyToothRelConfiguration());
+            builder.ApplyConfiguration(new PrintTemplateConfiguration());
+            builder.ApplyConfiguration(new PrintTemplateConfigConfiguration());
             //builder.ApplyConfiguration(new SaleOrderLineProductRequestedConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
