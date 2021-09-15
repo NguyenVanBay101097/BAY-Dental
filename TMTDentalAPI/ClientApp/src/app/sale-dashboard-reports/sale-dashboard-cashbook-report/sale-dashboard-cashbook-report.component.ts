@@ -84,13 +84,18 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
   };
 
   loadChartOption() {
-    // let ticksLimit = 0;
-    // let length = this.barChartLabels.length;
-    // if (length <= 20) {
-    //   ticksLimit = 10;
-    // } else if (length > 20 && length <= 30) {
-    //   ticksLimit = 15;
-    // }
+    var tickLimit = 0;
+    const length = this.barChartLabels.length;
+    if (this.groupby == 'groupby:day' && length < 32)
+      tickLimit = 31;
+    else if (this.groupby == 'groupby:day' && length > 31 && length < 61)
+      tickLimit = Math.floor(length / 2) + 1;
+    else if (this.groupby == 'groupby:day' && length > 60 && length < 91)
+      tickLimit = Math.floor(length / 7) + 1;
+    else if (this.groupby == 'groupby:day' && length > 90 && length < 211)
+      tickLimit = Math.floor(length / 13) + 1;
+    else
+      tickLimit = Math.floor(length / 30) + 1;
 
     this.barChartOptions = {
       scaleShowVerticalLines: false,
@@ -110,7 +115,7 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
       scales: {
         xAxes: [{
           ticks: {
-            maxTicksLimit: 10,
+            maxTicksLimit: tickLimit, //10
           }
         }],
         yAxes: [{
@@ -142,8 +147,6 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
         console.log(dateArr);
         for (let key of dateArr) {
           const value = cashBooksData[key];
-          console.log(value);
-          
           this.dataThu.push(value ? value.totalThu : 0);
           this.dataChi.push(value ? value.totalChi : 0);
           this.dataTonQuy.push(value ? value.totalAmount : 0);
@@ -164,11 +167,6 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
         { data: this.dataChi, label: 'Chi', order: 2, backgroundColor: '#28A745', hoverBackgroundColor: '#53B96A' },
         { data: this.dataTonQuy, type: "line", order: 0, fill: false, label: 'Tồn sổ quỹ', backgroundColor: '#ff0000', hoverBackgroundColor: '#ff0000', borderColor: '#ff0000' },
       ];
-      console.log(cashBooksData);
-      console.log(this.dataThu);
-      console.log(this.dataChi);
-      console.log(this.dataTonQuy);
-      
     }
   }
 
