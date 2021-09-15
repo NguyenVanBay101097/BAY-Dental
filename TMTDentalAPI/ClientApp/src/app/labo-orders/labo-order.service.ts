@@ -68,6 +68,9 @@ export class LaboOrderDisplay {
     product: ProductSimple;
     laboOrderProducts: ProductSimple[];
     images: IrAttachmentBasic[];
+    customer: any;
+    dateReceipt: any;
+    dateExport: any;
 }
 
 export class LaboOrderStatisticsPaged {
