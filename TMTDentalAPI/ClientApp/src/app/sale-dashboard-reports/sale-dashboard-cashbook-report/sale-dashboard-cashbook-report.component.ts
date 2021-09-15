@@ -3,6 +3,8 @@ import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { IntlService, load } from '@progress/kendo-angular-intl';
 import { CashBookReportFilter, CashBookReportItem, CashBookService } from 'src/app/cash-book/cash-book.service';
+import { ChartOptions, ChartType } from 'chart.js';
+import { Label, SingleDataSet } from 'ng2-charts';
 
 @Component({
   selector: 'app-sale-dashboard-cashbook-report',
@@ -14,11 +16,13 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
   @Input() cashBooks: any;
   @Input() dataCashBooks: any;
   @Input() totalDataCashBook: any;
+  @Input() dateFrom: any;
+  @Input() dateTo: any;
   cashBookData: CashBookReportItem[] = [];
   cashbookThu: any[] = [];
   cashbookChi: any[] = [];
   cashbookTotal: any[] = [];
-  cashbookCategs: any[] = [];
+  // cashbookCategs: any[] = [];
   cashbookSeries: any[] = [];
   public cashbookCashBank: any;
   public cashbookCusDebt: any;
@@ -29,31 +33,156 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
   public cashbookAgentCommission: any;
   public totalCashbook: any;
 
+  barChartType = 'bar';
+  barChartLegend = true;
+  barChartLabels: any[] = [];
+  dataThu: any[] = [];
+  dataChi: any[] = [];
+  dataTonQuy: any[] = [];
+  barChartOptions: any;
+  barChartData = [
+    { data: this.dataThu, label: 'Thu', order: 1, backgroundColor: '#2395FF', hoverBackgroundColor: '#4FAAFF' },
+    { data: this.dataChi, label: 'Chi', order: 2, backgroundColor: '#28A745', hoverBackgroundColor: '#53B96A' },
+    { data: this.dataTonQuy, type: "line", order: 0, fill: false, label: 'Tồn sổ quỹ', backgroundColor: '#ff0000', hoverBackgroundColor: '#ff0000', borderColor: '#ff0000' },
+  ];
+
+
   constructor(private cashBookService: CashBookService,
     private router: Router,
     private intlService: IntlService) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.loadDataApi();
+    this.loadChartData();
+    this.loadChartOption();
   }
 
   ngOnInit() {
     this.loadDataApi();
   }
 
+  getDaysArray(start, end) {
+    // if (start == "" && end == "") {
+    //   start = new Date("2021-09-01 00:00")
+    //   end = new Date("2021-09-30 00:00")
+    // }
+    for (var arr = [], date = new Date(start); date <= end; date.setDate(date.getDate() + 1)) {
+      arr.push(this.intlService.formatDate(new Date(date), 'yyyy-MM-ddTHH:mm:ss'));
+    }
+    return arr;
+  };
+
+  getMonthsArray(start, end) {
+    let arr = [];
+    if (start && end) {
+      for (const val of this.cashBooks) {
+        arr.push(val.date)
+      }
+    } else {
+      let year = new Date().getFullYear();
+      for (let i = 1; i <= 12; i++) {
+        arr.push(this.intlService.formatDate(new Date(`${year}-${i}-01 00:00`), 'yyyy-MM-ddTHH:mm:ss'))
+      }
+    }
+    return arr;
+  };
+
+  loadChartOption() {
+    let ticksLimit = 0;
+    let length = this.barChartLabels.length;
+    if (length <= 20) {
+      ticksLimit = 10;
+    } else if (length > 20 && length <= 30) {
+      ticksLimit = 15;
+    }
+
+    this.barChartOptions = {
+      scaleShowVerticalLines: false,
+      responsive: true,
+      legend: {
+        position: 'bottom',
+      },
+      tooltips: {
+        mode: 'label',
+        borderWidth: 0,
+      },
+      title: {
+        text: 'BIỂU ĐỒ THU CHI',
+        display: true,
+        fontSize: '16',
+      },
+      scales: {
+        xAxes: [{
+          ticks: {
+            maxTicksLimit: ticksLimit,
+          }
+        }],
+        yAxes: [{
+          ticks: {
+            callback: function (val, index) {
+              // return Intl.NumberFormat().format(val);
+              return val / 1000000 + ' triệu';
+            },
+          }
+        }]
+      }
+    };
+  }
+
+  loadChartData() {
+    if (this.cashBooks) {
+      this.dataThu = [];
+      this.dataChi = [];
+      this.dataTonQuy = [];
+      this.barChartLabels = [];
+
+      var cashBooksData = this.cashBooks.reduce(function (map, obj) {
+        map[obj.date] = obj;
+        return map;
+      }, Object.create(null));
+
+      if (this.groupby == 'groupby:day') {
+        let dateArr = this.getDaysArray(this.dateFrom, this.dateTo);
+        for (let key of dateArr) {
+          const value = cashBooksData[key];
+          this.dataThu.push(value ? value.totalThu : 0);
+          this.dataChi.push(value ? value.totalChi : 0);
+          this.dataTonQuy.push(value ? value.totalAmount : 0);
+        }
+        this.barChartLabels = dateArr.map(date => this.intlService.formatDate(new Date(date), 'dd/MM'));
+      } else {
+        let monthArr = this.getMonthsArray(this.dateFrom, this.dateTo);
+        for (let key of monthArr) {
+          const value = cashBooksData[key];
+          this.dataThu.push(value ? value.totalThu : 0);
+          this.dataChi.push(value ? value.totalChi : 0);
+          this.dataTonQuy.push(value ? value.totalAmount : 0);
+        }
+        this.barChartLabels = monthArr.map(date => this.intlService.formatDate(new Date(date), 'MM/yyyy'));
+      }
+      this.barChartData = [
+        { data: this.dataThu, label: 'Thu', order: 1, backgroundColor: '#2395FF', hoverBackgroundColor: '#4FAAFF' },
+        { data: this.dataChi, label: 'Chi', order: 2, backgroundColor: '#28A745', hoverBackgroundColor: '#53B96A' },
+        { data: this.dataTonQuy, type: "line", order: 0, fill: false, label: 'Tồn sổ quỹ', backgroundColor: '#ff0000', hoverBackgroundColor: '#ff0000', borderColor: '#ff0000' },
+      ];
+    }
+
+
+  }
+
   loadDataApi() {
     if (this.cashBooks) {
       this.cashBookData = this.cashBooks;
       this.cashbookSeries = [];
-      this.loadCashbookGroupby();
+      // this.loadCashbookGroupby();
       this.loadDataCashbookSeries();
     }
   }
 
-  public labelContent = (e: any) => {
-    var res = this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(e.value), 'dd/MM/yyyy') : this.intlService.formatDate(new Date(e.value), 'MM/yyyy');
-    return res;
-  };
+  // public labelContent = (e: any) => {
+  //   var res = this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(e.value), 'dd/MM/yyyy') : this.intlService.formatDate(new Date(e.value), 'MM/yyyy');
+  //   return res;
+  // };
 
 
   loadDataCashbookSeries() {
@@ -97,11 +226,11 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
     return (this.cashbookSupp ? this.cashbookSupp.debit : 0) + (this.cashbookCusAdvance ? this.cashbookCusAdvance.debit : 0) + (this.cashbookCusSalary ? this.cashbookCusSalary.debit : 0) + (this.cashbookAgentCommission ? this.cashbookAgentCommission.debit : 0) + this.ortherChi;
   }
 
-  loadCashbookGroupby() {
-    if (this.cashBookData) {
-      this.cashbookCategs = this.cashBookData.map(s => s.date).sort();
-    }
-  }
+  // loadCashbookGroupby() {
+  //   if (this.cashBookData) {
+  //     this.cashbookCategs = this.cashBookData.map(s => s.date).sort();
+  //   }
+  // }
 
   redirectTo() {
     return this.router.navigateByUrl("cash-book/tab-cabo");

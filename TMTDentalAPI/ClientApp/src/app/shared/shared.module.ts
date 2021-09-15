@@ -299,7 +299,8 @@ const config: LocaleConfig = {};
         AddressDialogComponent,
         ReceiveAppointmentDialogComponent,
         WarrantyCuDidalogComponent,
-        LaboWarrantyDetailListComponent
+        LaboWarrantyDetailListComponent,
+        ChartsModule
     ],
     imports: [
         NgbModule,

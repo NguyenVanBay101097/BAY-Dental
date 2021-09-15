@@ -1,5 +1,5 @@
 <h4 class="ml-3 my-2 title-header">Sổ quỹ</h4>
-<kendo-chart class="mh-chart-year p-2 mb-2">
+<!-- <kendo-chart class="mh-chart-year p-2 mb-2">
     <kendo-chart-title color="black" text="BIỂU ĐỒ THU CHI">
     </kendo-chart-title>
     <kendo-chart-legend position='bottom' orientation='horizontal'></kendo-chart-legend>
@@ -43,7 +43,16 @@
         <kendo-chart-value-axis-item [labels]="{format: 'n0'}">
         </kendo-chart-value-axis-item>
     </kendo-chart-value-axis>
-</kendo-chart>
+</kendo-chart> -->
+
+<div style="display: block">
+    <canvas baseChart
+            [datasets]="barChartData"
+            [labels]="barChartLabels"
+            [options]="barChartOptions"
+            [chartType]="barChartType">
+    </canvas>
+</div>
 <div class="container-fluid pb-4 bg-white">
     <div class="row">
         <div class="col">
