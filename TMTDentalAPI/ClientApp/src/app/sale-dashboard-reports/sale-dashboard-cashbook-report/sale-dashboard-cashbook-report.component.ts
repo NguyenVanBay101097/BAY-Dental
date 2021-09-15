@@ -119,10 +119,10 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
         }],
         yAxes: [{
           ticks: {
-            callback: function (val, index) {
-              // return Intl.NumberFormat().format(val);
-              return val / 1000000 + ' triệu';
-            },
+            // callback: function (val, index) {
+            //   // return Intl.NumberFormat().format(val);
+            //   return val / 1000000 + ' triệu';
+            // },
           }
         }]
       }
@@ -143,8 +143,11 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
 
       if (this.groupby == 'groupby:day') {
         let dateArr = this.getDaysArray(this.dateFrom, this.dateTo);
+        console.log(dateArr);
         for (let key of dateArr) {
           const value = cashBooksData[key];
+          console.log(value);
+          
           this.dataThu.push(value ? value.totalThu : 0);
           this.dataChi.push(value ? value.totalChi : 0);
           this.dataTonQuy.push(value ? value.totalAmount : 0);
@@ -165,6 +168,11 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
         { data: this.dataChi, label: 'Chi', order: 2, backgroundColor: '#28A745', hoverBackgroundColor: '#53B96A' },
         { data: this.dataTonQuy, type: "line", order: 0, fill: false, label: 'Tồn sổ quỹ', backgroundColor: '#ff0000', hoverBackgroundColor: '#ff0000', borderColor: '#ff0000' },
       ];
+      console.log(cashBooksData);
+      console.log(this.dataThu);
+      console.log(this.dataChi);
+      console.log(this.dataTonQuy);
+      
     }
 
 

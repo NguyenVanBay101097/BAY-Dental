@@ -1,24 +1,29 @@
 import { KeyValue } from '@angular/common';
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { AccountInvoiceReportService, RevenueReportFilter, RevenueReportItem } from 'src/app/account-invoice-reports/account-invoice-report.service';
 import { CashBookReportItem } from 'src/app/cash-book/cash-book.service';
 import { RevenueReportService } from 'src/app/revenue-report/revenue-report.service';
+import * as Chart from 'chart.js';
 
 @Component({
   selector: 'app-sale-dashboard-invoice-report',
   templateUrl: './sale-dashboard-invoice-report.component.html',
   styleUrls: ['./sale-dashboard-invoice-report.component.css']
 })
-export class SaleDashboardInvoiceReportComponent implements OnInit {
+export class SaleDashboardInvoiceReportComponent implements AfterViewInit {
   @Input() groupby: string;
   @Input() revenues: RevenueReportItem[] = [];
   @Input() cashBooks: any;
   @Input() dataRevenues: any[] = [];
   @Input() dataCashBooks: any;
   @Input() totalDataCashBook: any;
+  @Input() dateFrom: any;
+  @Input() dateTo: any;
+  barChart: any;
   cashBookData: CashBookReportItem[] = [];
   revenuCateg: any[] = [];
+  dateCount:number = 0;
   public revenueCashBank: any;
   public revenueDebt: any;
   public revenueAdvance: any;
@@ -30,17 +35,20 @@ export class SaleDashboardInvoiceReportComponent implements OnInit {
   revenueSeries: any[] = [];
   revenue: any;
   realIncome: any;
-
+  data: any = {};
+  options: any = {};
 
   constructor(private revenueReportService: AccountInvoiceReportService,
     private intlService: IntlService) { }
+  ngAfterViewInit(): void {
+    // this.barChartMethod();
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.loadRevenueSeries();
     this.loadDataCashbookSeries();
-  }
-
-  ngOnInit() {
+    this.barChartMethod();
+    
   }
 
   loadRevenueSeries() {
@@ -52,13 +60,12 @@ export class SaleDashboardInvoiceReportComponent implements OnInit {
   }
 
   loadDataCashbookSeries() {
-    console.log(this.revenues);
     this.revenueSeries = [];
     if (this.cashBooks && this.revenues && this.dataCashBooks) {
       this.cashBookData = this.cashBooks;
       this.loadCashbookGroupby();
-      this.realIncome = this.loadDataColCashBook();
-      this.revenue = this.loadDataColRevenue();
+      // this.realIncome = this.loadDataColCashBook();
+      // this.revenue = this.loadDataColRevenue();
       this.cashbookCashBank = this.dataCashBooks[0];
       this.cashbookCusDebt = this.dataCashBooks[1];
       this.cashbookCusAdvance = this.dataCashBooks[2];
@@ -73,6 +80,7 @@ export class SaleDashboardInvoiceReportComponent implements OnInit {
       var item = {date: total ? total.invoiceDate : this.intlService.formatDate(new Date(x), 'yyyy-MM-ddT00:00:00') , total: total ? total.priceSubTotal : 0};
       res.push(item);
     })
+    
     return res;
   }
 
@@ -87,7 +95,7 @@ export class SaleDashboardInvoiceReportComponent implements OnInit {
   }
 
   get totalDebit() {
-    if (this.dataCashBooks) {
+    if (this.revenueCashBank) {
       return (this.revenueCashBank.balance ? this.revenueCashBank.balance : 0) + (this.revenueCusDebt.debit || 0) + (this.revenueCusAdvance.debit || 0);
     }
 
@@ -105,9 +113,10 @@ export class SaleDashboardInvoiceReportComponent implements OnInit {
   loadCashbookGroupby() {
 
     if (this.revenues && this.cashBookData) {
-      var dateRevenues = this.revenues.map(s => this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(s.invoiceDate), 'dd/MM/yyyy') : this.intlService.formatDate(new Date(s.invoiceDate), 'MM/yyyy'));
-      var dateCashbooks = this.cashBookData.map(s => this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(s.date), 'dd/MM/yyyy') : this.intlService.formatDate(new Date(s.date), 'MM/yyyy'));
+      var dateRevenues = this.revenues.map(s => this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(s.invoiceDate), 'yyyy-MM-ddT00:00:00') : this.intlService.formatDate(new Date(s.invoiceDate), 'MM/yyyy'));
+      var dateCashbooks = this.cashBookData.map(s => this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(s.date), 'yyyy-MM-ddT00:00:00') : this.intlService.formatDate(new Date(s.date), 'MM/yyyy'));
       this.revenuCateg = this.arrayUnique(dateRevenues.concat(dateCashbooks).sort());
+      
     }
   }
 
@@ -122,12 +131,138 @@ export class SaleDashboardInvoiceReportComponent implements OnInit {
     return a;
   }
 
-
-
   public labelContent = (e: any) => {
     var res = e.value;
     return res;
   };
 
+  barChartMethod() {
+    var dates = [];
+    var totals = [];
+    var dateBettween = this.getAllDateBettween(this.dateFrom,this.dateTo);
+    this.dateCount = dateBettween.length;
+    var dateArr = this.arrayUnique(dateBettween.concat(this.revenuCateg));
+    if (this.revenues){
+      dateArr.forEach(x => {     
+        var item = this.revenues.find(s => (this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(s.invoiceDate), 'yyyy-MM-ddT00:00:00') : this.intlService.formatDate(new Date(s.invoiceDate), 'MM/yyyy')) == x);
+        // var item = {date: total ? total.invoiceDate : this.intlService.formatDate(new Date(x), 'yyyy-MM-ddT00:00:00') , total: total ? total.priceSubTotal : 0};
+        // var date = item ? this.intlService.formatDate(new Date(item.invoiceDate), 'dd/MM/yyyy') : this.intlService.formatDate(new Date(x), 'dd/MM/yyyy');
+       if (item){
+        var date = this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(item.invoiceDate), 'dd/MM/yyyy') : this.intlService.formatDate(new Date(item.invoiceDate), 'MM/yyyy') ;
+        var total = item.priceSubTotal;
+        dates.push(date);
+        totals.push(total);
+       }
+       else {
+        var date = this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(x), 'dd/MM/yyyy') : this.intlService.formatDate(new Date(x), 'MM/yyyy') ;
+        var total = 0;
+        dates.push(date);
+        totals.push(total);
+       }
+        
+      });
+    }
+    
+    // var realIncomeDates = [];
+    var realTotals = [];
+    dateArr.forEach(x => {     
+      var item = this.cashBookData.find(s => (this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(s.date), 'yyyy-MM-ddT00:00:00') : this.intlService.formatDate(new Date(s.date), 'MM/yyyy')) == x);
+      // var item = {date: total ? total.date : this.intlService.formatDate(new Date(x), 'yyyy-MM-ddT00:00:00') , total: total ? total.totalThu : 0};
+      var total = item ? item.totalThu : 0;
+      realTotals.push(total);
+    })
+    var tickLimit = 0;
+      if (this.groupby == 'groupby:day' && this.dateCount < 32)
+        tickLimit = 31;
+      else if (this.groupby == 'groupby:day' && this.dateCount > 31  && this.dateCount < 61)
+        tickLimit = Math.floor(this.dateCount/2) + 1;
+      else if (this.groupby == 'groupby:day' && this.dateCount > 60  && this.dateCount < 91)
+        tickLimit = Math.floor(this.dateCount/7) + 1;
+      else if (this.groupby == 'groupby:day' && this.dateCount > 90  && this.dateCount < 211)
+        tickLimit = Math.floor(this.dateCount/13) + 1;
+      else 
+      tickLimit = Math.floor(this.dateCount/30) + 1;
+    this.data = {
+      labels: dates,
+      datasets: [{
+        label: 'Doanh thu',
+        data: totals,
+        backgroundColor: 'rgba(35, 149, 255, 1)',
+        hoverBackgroundColor: 'rgba(35, 149, 255, 0.8)',
+        hoverBorderColor: 'rgba(35, 149, 255, 1)'
+      },
+      {
+        label: 'Thực thu',
+        data: realTotals,
+        backgroundColor: 'rgba(40, 167, 69, 1)',
+        hoverBackgroundColor: 'rgba(40, 167, 69, 0.8)',
+        hoverBorderColor: 'rgba(40, 167, 69, 1)'
+      }
+      ]
+    };
+
+    this.options = {
+      scales: {
+        xAxes: [{
+          ticks: {
+            maxTicksLimit: tickLimit,
+            // stepSize: 5
+          }
+        }],
+        yAxes: [{
+          ticks: {
+            beginAtZero: true,
+            callback: function (val,index) {
+              return Intl.NumberFormat().format(val)
+            }
+          }
+        }]
+      },
+      responsive: true,
+      tooltips: {
+        mode: 'label',
+        borderWidth: 0
+      },
+      legend: {
+        position: 'bottom'
+      },
+      title: {
+        text: 'BIỂU ĐỒ DOANH THU - THỰC THU',
+        display: true,
+        fontSize: '16',
+      },
+     
+    };
+
+    
+  }
+
+  getAllDateBettween(startDate,endDate){
+    var arr = [];
+    if (this.groupby == 'groupby:day'){
+      for (var date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
+        arr.push(this.intlService.formatDate(new Date(date), 'yyyy-MM-ddTHH:mm:ss'));
+      }
+    }
+    else {
+      if (startDate && endDate) {
+        for (const val of this.cashBooks) {
+          arr.push(this.intlService.formatDate(new Date(val.date),'MM/yyyy'));
+        }
+      } else {
+        let year = new Date().getFullYear();
+        for (let i = 1; i <= 12; i++) {
+          arr.push(this.intlService.formatDate(new Date(`${year}-${i}-01 00:00`), 'MM/yyyy'))
+        }
+      }
+    }
+    return arr;
+  }
+
+  getMonthsArray(start, end) {
+    let arr = [];
+    
+    return arr;
+  };
 
 }

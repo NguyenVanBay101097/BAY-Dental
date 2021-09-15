@@ -89,7 +89,8 @@ export class SaleDashboardReportFormComponent implements OnInit {
   dataRevenues: any[];
   dataNoTreatment: any[];
   dataCustomer: any[];
-
+  startDate: any = {};
+  endDate: any = {};
   currentYear = new Date().getFullYear();
   oldYear = this.currentYear - 1;
   companyChangeSubject = new Subject();
@@ -154,7 +155,8 @@ export class SaleDashboardReportFormComponent implements OnInit {
     var dateTo = this.filterMonthDate ? new Date(this.filterMonthDate.getFullYear(), this.filterMonthDate.getMonth(), new Date(this.filterMonthDate.getFullYear(), this.filterMonthDate.getMonth() + 1, 0).getDate()) : null;
     this.dateFrom = dateFrom;
     this.dateTo = dateTo;
-
+    this.startDate = new Date(this.dateFrom);
+    this.endDate = new Date(this.dateTo);
     this.companyCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => this.companyCbx.loading = true),
@@ -390,6 +392,8 @@ export class SaleDashboardReportFormComponent implements OnInit {
     var dateTo = this.filterMonthDate ? new Date(this.filterMonthDate.getFullYear(), this.filterMonthDate.getMonth(), new Date(this.filterMonthDate.getFullYear(), this.filterMonthDate.getMonth() + 1, 0).getDate()) : null;
     this.dateFrom = dateFrom;
     this.dateTo = dateTo;
+    this.startDate = new Date(this.dateFrom);
+    this.endDate = new Date(this.dateTo);
     this.loadByMonthAndCompany();
     setTimeout(() => {
       this.monthReport.loadData();
@@ -405,6 +409,8 @@ export class SaleDashboardReportFormComponent implements OnInit {
   onSearchDateChange(e) {
     this.dateFrom = e.dateFrom || '';
     this.dateTo = e.dateTo || '';
+    this.startDate = new Date(this.dateFrom);
+    this.endDate = new Date(this.dateTo);
     this.loadDataCashbookChartApi();
     this.loadDataRevenueChartApi();
     this.loadDataRevenueApi();
@@ -473,7 +479,6 @@ export class SaleDashboardReportFormComponent implements OnInit {
         this.totalAmountNCC = total['end'] ? total['end'].sum : 0;
       }
     }, err => {
-      console.log(err);
     })
   }
 
