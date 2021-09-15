@@ -28,16 +28,16 @@ export class PartnerCustomerProductToaThuocListComponent implements OnInit {
   searchCateg: ProductCategoryBasic;
 
   constructor(
-    private activeRoute: ActivatedRoute, 
-    private toaThuocService: ToaThuocService, 
+    private activeRoute: ActivatedRoute,
+    private toaThuocService: ToaThuocService,
     private modalService: NgbModal,
     private printService: PrintService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
-    this.id = this.activeRoute.parent.snapshot.paramMap.get('id'); 
-    this.loadData(); 
+    this.id = this.activeRoute.parent.snapshot.paramMap.get('id');
+    this.loadData();
   }
 
   loadData() {
@@ -62,9 +62,9 @@ export class PartnerCustomerProductToaThuocListComponent implements OnInit {
     })
   }
 
-printToaThuoc(item) {
-    this.toaThuocService.getPrint(item.id).subscribe((result:any) => {
-      this.printService.printHtml(result);
+  printToaThuoc(item) {
+    this.toaThuocService.getPrint(item.id).subscribe((result: any) => {
+      this.printService.printHtml(result.html);
     });
   }
 
@@ -114,5 +114,5 @@ printToaThuoc(item) {
     }, () => {
     });
   }
-  
+
 }

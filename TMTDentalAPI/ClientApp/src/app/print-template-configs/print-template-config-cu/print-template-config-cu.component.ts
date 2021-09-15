@@ -32,7 +32,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         basicEntities: false,
         forceSimpleAmpersand: true,
         enterMode: 2,//this support not format string to p tag
-        protectedSource: [/{{[\s\S]*?}}/g] // this support loop code
+        // protectedSource: [/{{[\s\S]*?}}/g] // this support loop code
         // skin: 'kama'
     };
     contentPrev = "";

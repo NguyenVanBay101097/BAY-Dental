@@ -14,20 +14,26 @@
         </div>
     </div>
     <div class="form-inline">
-        <kendo-combobox width="auto" [placeholder]="'Tất cả chi nhánh'" class="mr-1" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
+        <kendo-combobox width="auto" [placeholder]="'Tất cả chi nhánh'" class="mr-1" [valueField]="'id'"
+            [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)"
+            #companyCbx>
         </kendo-combobox>
         <div class="dropdown mr-1">
-            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-download"></i> Xuất File</button>
+            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-download"></i> Xuất File</button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" (click)="exportExcel(grid)">Xuất Excel</a>
+                <a class="dropdown-item" (click)="exportExcel()">Xuất Excel</a>
                 <a class="dropdown-item" (click)="onExportPDF()">Xuất PDF</a>
             </div>
         </div>
         <button class="btn btn-primary" (click)="printReport()">In báo cáo</button>
-        <input type="text" [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)" placeholder="Tìm kiếm theo số phiếu, khách hàng" class="ml-auto form-control w-50">
+        <input type="text" [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)"
+            placeholder="Tìm kiếm theo số phiếu, khách hàng" class="ml-auto form-control w-50">
     </div>
-    <kendo-grid (excelExport)="onExcelExport($event)" [resizable]="true" #grid class="mt-2" [loading]="loading" [data]="gridData" [pageSize]="this.filter.limit" [skip]="this.filter.offset" [pageable]="paperSettings" (pageChange)="pageChange($event)">
+    <kendo-grid (excelExport)="onExcelExport($event)" [resizable]="true" #grid class="mt-2" [loading]="loading"
+        [data]="gridData" [pageSize]="this.filter.limit" [skip]="this.filter.offset" [pageable]="pagerSettings"
+        (pageChange)="pageChange($event)">
         <kendo-grid-column field="name" title="Số phiếu" width="120">
         </kendo-grid-column>
         <kendo-grid-column field="partnerName" title="Khách hàng" width="120">

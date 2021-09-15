@@ -358,8 +358,8 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
   }
 
   printToaThuoc(item: ToaThuocBasic) {
-    this.toaThuocService.getPrint(item.id).subscribe(result => {
-      this.toaThuocPrintComponent.print(result);
+    this.toaThuocService.getPrint(item.id).subscribe((result: any) => {
+      this.toaThuocPrintComponent.print(result.html);
     });
   }
 
