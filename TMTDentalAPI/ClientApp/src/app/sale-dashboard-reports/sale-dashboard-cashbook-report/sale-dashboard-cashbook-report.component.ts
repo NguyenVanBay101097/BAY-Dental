@@ -46,7 +46,6 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
     { data: this.dataTonQuy, type: "line", order: 0, fill: false, label: 'Tồn sổ quỹ', backgroundColor: '#ff0000', hoverBackgroundColor: '#ff0000', borderColor: '#ff0000' },
   ];
 
-
   constructor(private cashBookService: CashBookService,
     private router: Router,
     private intlService: IntlService) { }
@@ -62,10 +61,6 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
   }
 
   getDaysArray(start, end) {
-    // if (start == "" && end == "") {
-    //   start = new Date("2021-09-01 00:00")
-    //   end = new Date("2021-09-30 00:00")
-    // }
     for (var arr = [], date = new Date(start); date <= end; date.setDate(date.getDate() + 1)) {
       arr.push(this.intlService.formatDate(new Date(date), 'yyyy-MM-ddTHH:mm:ss'));
     }
@@ -75,9 +70,10 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
   getMonthsArray(start, end) {
     let arr = [];
     if (start && end) {
-      for (const val of this.cashBooks) {
-        arr.push(val.date)
+      for (let date = new Date(start); date <= end; date.setDate(date.getDate() + 1)) {
+        arr.push(this.intlService.formatDate(new Date(date.getFullYear(), date.getMonth(), 1), 'yyyy-MM-ddTHH:mm:ss'));
       }
+      arr = [...new Set(arr)];
     } else {
       let year = new Date().getFullYear();
       for (let i = 1; i <= 12; i++) {
@@ -88,13 +84,13 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
   };
 
   loadChartOption() {
-    let ticksLimit = 0;
-    let length = this.barChartLabels.length;
-    if (length <= 20) {
-      ticksLimit = 10;
-    } else if (length > 20 && length <= 30) {
-      ticksLimit = 15;
-    }
+    // let ticksLimit = 0;
+    // let length = this.barChartLabels.length;
+    // if (length <= 20) {
+    //   ticksLimit = 10;
+    // } else if (length > 20 && length <= 30) {
+    //   ticksLimit = 15;
+    // }
 
     this.barChartOptions = {
       scaleShowVerticalLines: false,
@@ -114,7 +110,7 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
       scales: {
         xAxes: [{
           ticks: {
-            maxTicksLimit: ticksLimit,
+            maxTicksLimit: 10,
           }
         }],
         yAxes: [{
@@ -174,8 +170,6 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
       console.log(this.dataTonQuy);
       
     }
-
-
   }
 
   loadDataApi() {
@@ -245,3 +239,8 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
   }
 
 }
+
+
+[
+  '2021-08-01', '2021-09-01', '2021-10-01'
+]
