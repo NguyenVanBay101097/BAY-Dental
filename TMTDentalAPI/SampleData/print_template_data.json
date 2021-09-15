@@ -2039,5 +2039,126 @@
         }
       ]
     }
+  },
+  {
+    "Type": "tmp_advisory",
+    "Data": {
+      "Company": {
+        "Name": "TPP",
+        "PartnerName": null,
+        "PartnerCityName": "Thành phố Hồ Chí Minh",
+        "PartnerDistrictName": "Quận Tân Phú",
+        "PartnerWardName": "Phường Tân Thành",
+        "PartnerStreet": "54/35 Diệp Minh Châu",
+        "Address": "54/35 Diệp Minh Châu, Phường Tân Thành, Quận Tân Phú, Thành phố Hồ Chí Minh",
+        "Phone": "0938551226",
+        "Email": null,
+        "Logo": null
+      },
+      "Partner": {
+        "Id": "8a5316cc-14c3-4b92-1279-08d96ec504cd",
+        "Name": "Khách hàng A",
+        "DisplayName": "[KH0007] Khách hàng A",
+        "Phone": "0369835014",
+        "BirthYear": 1995,
+        "Age": "26",
+        "Street": "246/16 Độc Lập",
+        "WardName": "Phường Tân Thành",
+        "DistrictName": "Quận Tân Phú",
+        "CityName": "Thành phố Hồ Chí Minh",
+        "Address": "246/16 Độc Lập, Phường Tân Thành, Quận Tân Phú, Thành phố Hồ Chí Minh",
+        "Email": "khachhanga@gmail.com",
+        "Tags": []
+      },
+      "Advisories": [
+        {
+          "Date": "2021-09-15T15:01:24",
+          "EmployeeId": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+          "Employee": {
+            "Id": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+            "Name": "Bác sĩ A",
+            "PartnerId": null
+          },
+          "ToothType": "manual",
+          "Tooths": "14,15",
+          "Diagnosis": "Niềng răng,Điều trị tủy răng",
+          "Services": "Lấy cao răng và đánh bóng,Điều trị tủy răng vĩnh viễn"
+        }
+      ]
+    }
+  },
+  {
+    "Type": "tmp_account_payment",
+    "Data": {
+      "Id": "471cdd4c-3e72-4a50-248b-08d977369c30",
+      "Company": {
+        "Name": "TPP",
+        "PartnerName": "TPP",
+        "PartnerCityName": "Thành phố Hồ Chí Minh",
+        "PartnerDistrictName": "Quận Tân Phú",
+        "PartnerWardName": "Phường Tân Thành",
+        "PartnerStreet": "54/35 Diệp Minh Châu",
+        "Address": "54/35 Diệp Minh Châu, Phường Tân Thành, Quận Tân Phú, Thành phố Hồ Chí Minh",
+        "Phone": "0938551226",
+        "Email": null,
+        "Logo": null
+      },
+      "OrderPartner": {
+        "DisplayName": "[KH0007] Khách hàng A",
+        "Name": "Khách hàng A",
+        "Gender": "male",
+        "DateOfBirth": "15/10/1995",
+        "Phone": "0369835014",
+        "BirthYear": 1995,
+        "Age": "26",
+        "DisplayGender": "Nam",
+        "Address": "246/16 Độc Lập, Phường Tân Thành, Quận Tân Phú, Thành phố Hồ Chí Minh",
+        "Street": "246/16 Độc Lập",
+        "WardName": "Phường Tân Thành",
+        "DistrictName": "Quận Tân Phú",
+        "CityName": "Thành phố Hồ Chí Minh"
+      },
+      "Amount": 5350000.00,
+      "DatePayment": "2021-09-14T00:00:00",
+      "JournalName": "Tiền mặt, Ngân hàng",
+      "Note": "SO00006 - Khách hàng thanh toán",
+      "User": {
+        "Id": "fb3c81c4-90b2-4918-aeaf-1689263ee7fa",
+        "Name": "admin"
+      }
+    }
+  },
+  {
+    "Type": "tmp_supplier_payment",
+    "Data": {
+      "CompanyName": "TPP",
+      "CompanyCity": "Thành phố Hồ Chí Minh",
+      "CompanyDistrict": "Quận Tân Phú",
+      "CompanyWard": "Phường Tân Thành",
+      "CompanyStreet": "54/35 Diệp Minh Châu",
+      "CompanyPhone": "0938551226",
+      "CompanyEmail": null,
+      "CompanyAddress": "54/35 Diệp Minh Châu, Phường Tân Thành, Quận Tân Phú, Thành phố Hồ Chí Minh",
+      "CompanyLogo": null,
+      "PartnerRef": "NCC0001",
+      "PartnerName": "Labo Việt Tiến",
+      "PartnerDisplayName": "[NCC0001] Labo Việt Tiến",
+      "PartnerCity": null,
+      "PartnerDistrict": null,
+      "PartnerType": "supplier",
+      "PartnerWard": null,
+      "PartnerStreet": null,
+      "PartnerAddress": "",
+      "PartnerPhone": "0983830609",
+      "PaymentDate": "2021-09-15T00:00:00",
+      "JournalName": "Tiền mặt",
+      "Amount": 2000000.00,
+      "AmountText": "Hai triệu đồng",
+      "Communication": null,
+      "PaymentType": "outbound",
+      "PaymentName": "SUPP.OUT/2021/0001",
+      "SaleOrders": [],
+      "UserName": "admin"
+    }
   }
 ]

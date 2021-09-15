@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ApplicationCore.Constants;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -28,6 +29,8 @@ namespace TMTDentalAPI.ViewControllers
             var res = await _accountPaymentService.GetPrint(id);
             if (res == null)
                 NotFound();
+
+            string json = JsonConvert.SerializeObject(res);
 
             return View(res);
         }

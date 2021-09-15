@@ -160,10 +160,10 @@
                 <!--{{for item in payment.payments}}-->
                 <tr>
                     <td>{{item.name}}</td>
-                    {{if (item.id == (payment.payments | array.map "id" | array.first))}}
+                    <!--{{if (item.id == (payment.payments | array.map "id" | array.first))}}-->
                     <td rowspan="{{(payment.payments | array.size)}}">{{item.payment_date | date.to_string '%d/%m/%Y'}}</td>
                     <td rowspan="{{(payment.payments | array.size)}}">{{payment.amount | math.format "N0" "vi-VN" }}</td>
-                    {{end}}
+                    <!--{{end}}-->
                     <td>{{item.journal_name}}</td>
                     <td class="text-right">{{item.amount | math.format "N0" "vi-VN"}}</td>
                 </tr>
@@ -195,14 +195,14 @@
                 <!--{{for dotkham in dot_khams}}-->
                 <!--{{for line in dotkham.lines}}-->
                 <tr>
-                    {{if line.id == (dotkham.lines | array.map "id" | array.first)}}
+                    <!--{{if line.id == (dotkham.lines | array.map "id" | array.first)}}-->
 
                     <td class="align-middle text-center" rowspan="{{(dotkham.lines | array.size)}}"> {{for.index + 1}}</td>
                     <td class="align-middle" rowspan="{{(dotkham.lines | array.size)}}">{{dotkham.date | date.to_string '%d/%m/%Y' }}</td>
                     <td class="align-middle" rowspan="{{(dotkham.lines | array.size)}}">{{dotkham.doctor ? dotkham.doctor.name : ""}}</td>
                     <td class="align-middle" style="vertical-align: top" rowspan="{{(dotkham.lines | array.size)}}">{{dotkham.reason}}</td>
 
-                    {{end}}
+                    <!--{{end}}-->
 
                     <td style="vertical-align: top">{{line.product.name}}</td>
                     <td style="vertical-align: top">{{line.name_step}}</td>

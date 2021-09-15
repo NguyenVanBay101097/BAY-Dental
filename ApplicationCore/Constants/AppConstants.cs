@@ -70,6 +70,9 @@ namespace ApplicationCore.Constants
            new PrintTemplateType {Type = "tmp_partner_advance" , PathTemplate = "PrintTemplate/PartnerAdvance/Template_advance.html" },
            new PrintTemplateType {Type = "tmp_partner_refund" , PathTemplate = "PrintTemplate/PartnerAdvance/Template_refund.html" },
            new PrintTemplateType {Type = "tmp_quotation" , PathTemplate = "PrintTemplate/Quotation/Template.html" },
+           new PrintTemplateType {Type = "tmp_account_payment" , PathTemplate = "PrintTemplate/AccountPayment/Template_partner_payment.html" },       
+           new PrintTemplateType {Type = "tmp_supplier_payment" , PathTemplate = "PrintTemplate/AccountPayment/Template_supplier_payment.html" },
+           new PrintTemplateType {Type = "tmp_advisory" , PathTemplate = "PrintTemplate/Advisory/Template.html" },
         };
     }
 

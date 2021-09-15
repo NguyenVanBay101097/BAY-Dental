@@ -195,6 +195,15 @@ namespace Infrastructure.Services
                     case "tmp_salary":
                         obj = JsonConvert.DeserializeObject<HrPayslipRunPrintVm>(item.Data.ToString());
                         break;
+                    case "tmp_advisory":
+                        obj = JsonConvert.DeserializeObject<AdvisoryPrintVM>(item.Data.ToString());
+                        break;
+                    case "tmp_account_payment":
+                        obj = JsonConvert.DeserializeObject<SaleOrderPaymentPrintVM>(item.Data.ToString());
+                        break;
+                    case "tmp_supplier_payment":
+                        obj = JsonConvert.DeserializeObject<AccountPaymentPrintVM>(item.Data.ToString());
+                        break;
                     case "tmp_partner_advance":
                         obj = JsonConvert.DeserializeObject<PartnerAdvancePrint>(item.Data.ToString());
                         (obj as PartnerAdvancePrint).Company = _mapper.Map<CompanyPrintVM>(company);

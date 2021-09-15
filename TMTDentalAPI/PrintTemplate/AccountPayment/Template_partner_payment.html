@@ -1,36 +1,35 @@
-﻿@model Umbraco.Web.Models.ContentEditing.SaleOrderPaymentPrintVM
-@{
-    Layout = "~/Views/Shared/_PrintLayout.cshtml";
-    var info = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
-}
-
-
+﻿
 <div>
     <div class="d-flex mb-2">
-        @if (!string.IsNullOrEmpty(Model.Company.Logo))
-        {
-            <img class="img-fluid me-3 w-25" src="@Model.Company.Logo" alt="@Model.Company.Name">
-        }
+        {{ if company.logo != "" && company.logo != null}}
+        <img class="img-fluid me-3 w-20" src="{{company.logo}}" alt="{{company.name}}">
+        {{ end }}
+
         <div>
-            <div class="text-xl font-semibold">@Model.Company.Name</div>
-            @if (!string.IsNullOrEmpty(Model.Company.Address))
-            {
-                <div>Địa chỉ: @Model.Company.Address</div>
-            }
-            @if (!string.IsNullOrEmpty(Model.Company.Phone))
-            {
-                <div>ĐT: @Model.Company.Phone</div>
-            }
-            @if (!string.IsNullOrEmpty(Model.Company.Email))
-            {
-                <div>Email: @Model.Company.Email</div>
-            }
+            <div class="text-xl font-semibold">{{company.name}}</div>
+            {{if company.address != ""}}
+
+            <div>Địa chỉ: {{company.address}}</div>
+
+            {{ end }}
+
+            {{ if company.phone}}
+
+            <div>ĐT: {{company.phone}}</div>
+
+            {{ end }}
+
+            {{if company.email }}
+
+            <div>Email: {{company.email}}</div>
+
+            {{ end }}
+
         </div>
     </div>
     <div class="text-center mb-2">
         <div class="text-3xl font-semibold">BIÊN LAI THANH TOÁN</div>
-        <div>Ngày @Model.DatePayment.Day tháng @Model.DatePayment.Month năm @Model.DatePayment.Year </div>
-        @*<div class="font-semibold">Số: @Model.Name</div>*@
+        <div>Ngày {{date_payment.day}} tháng {{date_payment.month}} năm {{date_payment.year}} </div>      
     </div>
     <div class="o_form_view mb-2">
         <div class="d-flex">
@@ -43,22 +42,19 @@
                             </div>
                         </td>
                         <td colspan="1" style="width: 100%;">
-                            <div class="o_field_widget">@Model.OrderPartner.DisplayName</div>
+                            <div class="o_field_widget">{{order_partner.display_name}}</div>
                         </td>
                     </tr>
-                    @if (!string.IsNullOrEmpty(Model.OrderPartner.Phone))
-                    {
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <div class="o_form_label o_form_label_help">
-                                    Điện thoại
-                                </div>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                <div class="o_field_widget">@(Model.OrderPartner.Phone)</div>
-                            </td>
-                        </tr>
-                    }
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <div class="o_form_label o_form_label_help">
+                                Điện thoại
+                            </div>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            <div class="o_field_widget">{{order_partner.phone ? order_partner.phone : ""}}</div>
+                        </td>
+                    </tr>
                     <tr>
                         <td colspan="1" class="o_td_label">
                             <div class="o_form_label o_form_label_help">
@@ -66,7 +62,7 @@
                             </div>
                         </td>
                         <td colspan="1" style="width: 100%;">
-                            <div class="o_field_widget">@Model.OrderPartner.Address</div>
+                            <div class="o_field_widget">{{order_partner.address ? order_partner.address : ""}}</div>
                         </td>
                     </tr>
                     <tr>
@@ -76,7 +72,7 @@
                             </div>
                         </td>
                         <td colspan="1" style="width: 100%;">
-                            <div class="o_field_widget">@(string.Format(info, "{0:dd/MM/yyyy}", Model.DatePayment))</div>
+                            <div class="o_field_widget">{{date_payment | date.to_string '%d/%m/%Y'}}</div>
                         </td>
                     </tr>
                     <tr>
@@ -86,7 +82,7 @@
                             </div>
                         </td>
                         <td colspan="1" style="width: 100%;">
-                            <div class="o_field_widget">@(Model.JournalName)</div>
+                            <div class="o_field_widget">{{journal_name ? journal_name : ""}}</div>
                         </td>
                     </tr>
                     <tr>
@@ -96,7 +92,7 @@
                             </div>
                         </td>
                         <td colspan="1" style="width: 100%;">
-                            <div class="o_field_widget">@(string.Format(info, "{0:0,0}", Model.Amount))</div>
+                            <div class="o_field_widget">{{amount | math.format "N0" "vi-VN"}}</div>
                         </td>
                     </tr>
                     <tr>
@@ -106,7 +102,7 @@
                             </div>
                         </td>
                         <td colspan="1" style="width: 100%;">
-                            <div class="o_field_widget">@Model.Note</div>
+                            <div class="o_field_widget">{{note ? note : ""}}</div>
                         </td>
                     </tr>
                 </tbody>
@@ -121,7 +117,7 @@
                 <span></span> <br />
                 <span></span> <br />
                 <span></span> <br />
-                <span class="font-semibold">@(!string.IsNullOrEmpty(Model.OrderPartner.Name) ? Model.OrderPartner.Name.ToUpper() : "")</span>
+                              <span class="font-semibold">{{order_partner ? (order_partner.name | string.upcase) : ""}}</span>
             </div>
         </div>
         <div class="col">
@@ -131,7 +127,7 @@
                 <span></span> <br />
                 <span></span> <br />
                 <span></span> <br />
-                <span class="font-semibold">@(Model.User == null ? "" : Model.User.Name.ToUpper())</span>
+                              <span class="font-semibold">{{user ? (user.name | string.upcase) : ""}}</span>
             </div>
         </div>
     </div>
