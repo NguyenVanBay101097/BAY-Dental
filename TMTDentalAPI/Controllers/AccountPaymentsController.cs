@@ -27,10 +27,11 @@ namespace TMTDentalAPI.Controllers
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly IAccountMoveService _accountMoveService;
         private readonly IPartnerService _partnerService;
+        private readonly IPrintTemplateConfigService _printTemplateConfigService;
 
         public AccountPaymentsController(IAccountPaymentService paymentService, IViewRenderService viewRenderService,
             IMapper mapper, IUnitOfWorkAsync unitOfWork, IAccountMoveService accountMoveService,
-            IPartnerService partnerService)
+            IPartnerService partnerService, IPrintTemplateConfigService printTemplateConfigService)
         {
             _paymentService = paymentService;
             _viewRenderService = viewRenderService;
@@ -38,6 +39,7 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork = unitOfWork;
             _accountMoveService = accountMoveService;
             _partnerService = partnerService;
+            _printTemplateConfigService = printTemplateConfigService;
         }
 
         [HttpGet]
@@ -188,7 +190,9 @@ namespace TMTDentalAPI.Controllers
             if (res.PartnerType == "customer")
                 html = _viewRenderService.Render("AccountPayments/Print", res);
             else
-                html = _viewRenderService.Render("PaymentSupplier/Print", res);
+            {
+                html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = res, Type = "tmp_supplier_payment" });
+            }    
             return Ok(new PrintData() { html = html });
         }
 

@@ -22,14 +22,16 @@ namespace TMTDentalAPI.Controllers
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly IViewRenderService _viewRenderService;
+        private readonly IPrintTemplateConfigService _printTemplateConfigService;
 
         public AdvisoriesController(IAdvisoryService advisoryService, IViewRenderService viewRenderService,
-            IMapper mapper, IUnitOfWorkAsync unitOfWork)
+            IMapper mapper, IUnitOfWorkAsync unitOfWork, IPrintTemplateConfigService printTemplateConfigService)
         {
             _advisoryService = advisoryService;
             _mapper = mapper;
             _viewRenderService = viewRenderService;
             _unitOfWork = unitOfWork;
+            _printTemplateConfigService = printTemplateConfigService;
         }
 
         [HttpGet]
@@ -119,7 +121,8 @@ namespace TMTDentalAPI.Controllers
 
             if (res == null)
                 return NotFound();
-            var html = _viewRenderService.Render("Advisory/Print", res);
+
+            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = res, Type = "tmp_advisory" });
 
             return Ok(new PrintData() { html = html });
         }

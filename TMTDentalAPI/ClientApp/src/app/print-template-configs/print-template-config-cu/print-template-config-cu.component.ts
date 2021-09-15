@@ -18,9 +18,8 @@ import { KeywordListDialogComponent } from '../keyword-list-dialog/keyword-list-
     styleUrls: ['./print-template-config-cu.component.css']
 })
 export class PrintTemplateConfigCuComponent implements OnInit {
-    isEditting = false;
     types: { text: string, value: string }[] = [];
-    config = new PrintTemplateConfigDisplay();
+    // config = new PrintTemplateConfigDisplay();
     configEdit = new PrintTemplateConfigDisplay();
     configEditor = {
         language: 'vi',
@@ -81,12 +80,9 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     loadCurrentConfig(preType?) {
         var val = Object.assign({}, this.filter);
         this.configService.getDisplay(val).subscribe(res => {
-            this.config = res;
-            this.filter.printPaperSizeId = this.config.printPaperSizeId;
-            this.onGenerate(this.config.content);
-            if (this.isEditting) {
-                this.configEdit = Object.assign({}, this.config);
-            }
+            this.configEdit = res;
+            this.filter.printPaperSizeId = this.configEdit.printPaperSizeId;
+            this.onGenerate(this.configEdit.content);
         },
             err => {
                 if (preType) this.filter.type = preType;
@@ -108,7 +104,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     onPrint() {
         var val = new PrintTestReq();
         val.type = this.filter.type;
-        val.content = !this.isEditting ? this.config.content : this.configEdit.content;
+        val.content = this.configEdit.content;
         val.printPaperSizeId = this.filter.printPaperSizeId || '';
         this.configService.printTest(val).subscribe(res => {
             this.printService.printHtml(res);
@@ -121,9 +117,6 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         val.type = this.filter.type;
         this.configService.createOrUpdate(val).subscribe(res => {
             this.notifyService.notify('success', 'Lưu thành công');
-            this.onToggleEdit();
-            this.config = this.configEdit;
-            this.onGenerate(this.config.content);
         });
     }
 
@@ -134,14 +127,9 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     }
 
     onEdit() {
-        this.configEdit = Object.assign({}, this.config);
-        this.filter.printPaperSizeId = this.config.printPaperSizeId;
+        this.configEdit = Object.assign({}, this.configEdit);
+        this.filter.printPaperSizeId = this.configEdit.printPaperSizeId;
         delete this.filter.isDefault;
-        this.onToggleEdit();
-    }
-
-    onToggleEdit() {
-        this.isEditting = !this.isEditting;
     }
 
     onGenerate(content?) {
@@ -160,7 +148,6 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     }
 
     onCancel() {
-        this.onToggleEdit();
         this.filter.isDefault = true;
         delete this.filter.printPaperSizeId;
         this.loadCurrentConfig();

@@ -658,6 +658,90 @@ const keyWorDatas =
 
             ]
         }
+    ],
+    'tmp_advisory': [
+        companyInfo,
+        {
+            text: 'Thông tin phiếu',
+            value: [
+                { text: 'Ngày tạo', value: '{{date.now.day}}' },
+                { text: 'Tháng tạo', value: '{{date.now.month}}' },
+                { text: 'Năm tạo', value: '{{date.now.year}}' },
+            ]
+        },
+        {
+            text: 'Thông tin chung',
+            value: [
+                { text: 'Tên khách hàng có Mã KH', value: '{{partner.display_name}}' },
+                { text: 'Tên khách hàng', value: '{{partner.name}}' },
+                { text: 'Địa chỉ khách hàng ', value: '{{partner.address}}' },
+                { text: 'SĐT khách hàng ', value: '{{partner.phone}}' },
+            ]
+        },
+        {
+            text: 'Thông tin chi tiết',
+            value: [
+                { text: 'Danh sách tiểu sử răng', value: 'advisories' },
+                { text: 'Ngày tạo', value: '{{item.date}}' },
+                { text: 'Người tạo', value: '{{item.employee.name}}' },
+                { text: 'Răng hàm', value: '{{item.tooth_type}}' },
+                { text: 'Răng', value: '{{item.tooths}}' },
+                { text: 'Chẩn đoán', value: '{{item.diagnosis}}' },
+                { text: 'Dịch vụ', value: '{{item.services}}' },
+            ]
+        }
+    ],
+    'tmp_account_payment': [
+        companyInfo,
+        {
+            text: 'Thông tin phiếu',
+            value: [
+                { text: 'Ngày tạo', value: '{{date_payment.day}}' },
+                { text: 'Tháng tạo', value: '{{date_payment.month}}' },
+                { text: 'Năm tạo', value: '{{date_payment.year}}' },
+            ]
+        },
+        {
+            text: 'Thông tin chung',
+            value: [
+                { text: 'Tên khách hàng có mã KH', value: '{{order_partner.display_name}}' },
+                { text: 'Tên khách hàng', value: '{{order_partner.name}}' },
+                { text: 'SĐT khách hàng', value: '{{order_partner.phone}}' },
+                { text: 'Địa chỉ khách hàng', value: '{{order_partner.address}}' },
+                { text: 'Ngày thanh toán', value: '{{date_payment}}' },
+                { text: 'Phương thức thanh toán', value: '{{journal_name}}' },
+                { text: 'Số tiền', value: '{{amount}}' },
+                { text: 'Nội dung', value: '{{note}}' },
+                { text: 'Tên nhân viên', value: '{{user.name}}' },
+            ]
+        }
+    ],
+    'tmp_supplier_payment': [
+        companyInfo,
+        {
+            text: 'Thông tin phiếu',
+            value: [
+                { text: 'Ngày tạo', value: '{{payment_date.day}}' },
+                { text: 'Tháng tạo', value: '{{payment_date.month}}' },
+                { text: 'Năm tạo', value: '{{payment_date.year}}' },
+                { text: 'Mã phiếu', value: '{{payment_name}}' },
+            ]
+        },
+        {
+            text: 'Thông tin chung',
+            value: [
+                { text: 'Ngày thanh toán', value: '{{payment_date}}' },
+                { text: 'Phương thức thanh toán', value: '{{journal_name}}' },
+                { text: 'Số tiền', value: '{{amount}}' },
+                { text: 'Số tiền bằng chữ', value: '{{amount_text}}' },
+                { text: 'Nội dung', value: '{{communication}}' },
+                { text: 'Nhà cung cấp', value: '{{partner_name}}' },
+                { text: 'Địa chỉ', value: '{{partner_address}}' },
+                { text: 'SĐT nhà cung cấp', value: '{{partner_phone}}' },
+                { text: 'Người lập phiếu', value: '{{user_name}}' },
+                { text: 'Người nhận tiền', value: '{{partner_name}}' },
+            ]
+        }
     ]
 };
 

@@ -23,13 +23,17 @@ namespace TMTDentalAPI.Controllers
         private readonly ISaleOrderPaymentService _saleOrderPaymentService;
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly IViewRenderService _viewRenderService;
+        private readonly IPrintTemplateConfigService _printTemplateConfigService;
 
-        public SaleOrderPaymentsController(IMapper mapper, ISaleOrderPaymentService saleOrderPaymentService, IUnitOfWorkAsync unitOfWork, IViewRenderService viewRenderService)
+        public SaleOrderPaymentsController(IMapper mapper, ISaleOrderPaymentService saleOrderPaymentService, IUnitOfWorkAsync unitOfWork, IViewRenderService viewRenderService,
+            IPrintTemplateConfigService printTemplateConfigService
+            )
         {
             _mapper = mapper;
             _saleOrderPaymentService = saleOrderPaymentService;
             _unitOfWork = unitOfWork;
             _viewRenderService = viewRenderService;
+            _printTemplateConfigService = printTemplateConfigService;
         }
 
         [HttpGet]
@@ -94,7 +98,7 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _saleOrderPaymentService.GetPrint(id);
             if (res == null) return NotFound();
-            var html = _viewRenderService.Render("SaleOrderPayment/Print", res);
+            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = res, Type = "tmp_account_payment" });
 
             return Ok(new PrintData() { html = html });
         }

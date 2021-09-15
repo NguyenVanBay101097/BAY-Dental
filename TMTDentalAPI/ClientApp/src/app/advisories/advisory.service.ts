@@ -126,13 +126,13 @@ export class AdvisoryService {
     return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
   }
 
-  // getPrint(ids) {
-  //   return this.http.get(this.baseApi + this.apiUrl + "/GetPrint", { params: new HttpParams({ fromObject: { ids: ids } }) });
-  // }
-  getPrint(ids){
-    var queryParams = ids.map(x => 'ids=' + x).join('&');
-    return this.http.get(this.baseApi + "Advisory/Print?" + queryParams ,{ responseType: "text" });
+  getPrint(ids) {
+    return this.http.get(this.baseApi + this.apiUrl + "/GetPrint", { params: new HttpParams({ fromObject: { ids: ids } }) });
   }
+  // getPrint(ids){
+  //   var queryParams = ids.map(x => 'ids=' + x).join('&');
+  //   return this.http.get(this.baseApi + "Advisory/Print?" + queryParams ,{ responseType: "text" });
+  // }
 
   getToothAdvise(val?: AdvisoryToothAdvise) {
     return this.http.post(this.baseApi + this.apiUrl + "/" + "getToothAdvise", val);
@@ -142,12 +142,12 @@ export class AdvisoryService {
     return this.http.get<AdvisoryLinePagedResult>(this.baseApi + this.apiUrl + "/GetAdvisoryLinesPaged", { params: new HttpParams({ fromObject: val }) });
   }
 
-  createQuotations(val:CreateFromAdvisoryInput){
+  createQuotations(val: CreateFromAdvisoryInput) {
     return this.http.post<any>(this.baseApi + this.apiUrl + "/" + "CreateQuotation", val);
   }
 
-  createSaleOrder(val:CreateFromAdvisoryInput){
+  createSaleOrder(val: CreateFromAdvisoryInput) {
     return this.http.post<any>(this.baseApi + this.apiUrl + "/" + "CreateSaleOrder", val);
   }
-  
+
 }

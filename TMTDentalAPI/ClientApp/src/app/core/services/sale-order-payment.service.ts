@@ -111,22 +111,22 @@ export class SaleOrderPaymentService {
     return this.http.post<SaleOrderPaymentDisplay>(this.baseApi + this.apiUrl, val);
   }
 
-  actionCancel(val: string[]){
+  actionCancel(val: string[]) {
     return this.http.post(this.baseApi + this.apiUrl + "/ActionCancel", val);
   }
 
-  // print(id){
-  //   return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/print');
-  // }
+  getPrint(id) {
+    return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetPrint');
+  }
 
-  actionPayment(val: string[]){
+  actionPayment(val: string[]) {
     return this.http.post(this.baseApi + this.apiUrl + "/ActionPayment", val);
   }
 
-  getPrint(id) {
-    return this.http.get(this.baseApi + "SaleOrderPayment/Print?id=" + id, { responseType: 'text' });
-  }
+  // getPrint(id) {
+  //   return this.http.get(this.baseApi + "SaleOrderPayment/Print?id=" + id, { responseType: 'text' });
+  // }
 
- 
+
 
 }

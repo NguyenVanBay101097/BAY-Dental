@@ -105,8 +105,8 @@ export class PartnerSupplierFormPaymentComponent implements OnInit {
     //   }
     // });
     if (payment && payment.id) {
-      this.paymentService.getPrint(payment.id).subscribe(result => {
-        this.printService.printHtml(result);
+      this.paymentService.getPrint(payment.id).subscribe((result: any) => {
+        this.printService.printHtml(result.html);
       });
     }
   }

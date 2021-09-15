@@ -9,13 +9,7 @@
             <div class="o_cp_buttons">
                 <button type="button" class="btn btn-outline-primary mr-2" accesskey="c" (click)="onPrint()">In
                     thử</button>
-                <button *ngIf="!isEditting" type="button" class="btn btn-primary mr-2" accesskey="c"
-                    (click)="onEdit()">Sửa</button>
-                <button *ngIf="isEditting" type="button" class="btn btn-primary mr-2" accesskey="c"
-                    (click)="onSave()">Lưu</button>
-                <button *ngIf="isEditting" (click)="onCancel()" class="btn btn-danger mr-2">
-                    Hủy
-                </button>
+                <button type="button" class="btn btn-primary mr-2" accesskey="c" (click)="onSave()">Lưu</button>
             </div>
         </div>
         <div class="o_cp_right">
@@ -48,7 +42,7 @@
                             </tr>
                         </tbody>
                     </table>
-                    <table *ngIf="isEditting" class="mr-2">
+                    <table class="mr-2">
                         <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label o_td_label_sm">
@@ -74,43 +68,41 @@
                     </table>
                 </div>
                 <div>
-                    <ng-container *ngIf="!isEditting; else EditTemplate">
+                    <!-- <ng-container *ngIf="!isEditting; else EditTemplate">
                         <hr>
                         <div class="view d-flex justify-content-center">
                             <iframe class="w-75" frameborder="0" style="height: 100vh;"
                                 [srcdoc]="contentPrev | safeHtml "></iframe>
                         </div>
-                    </ng-container>
-                    <ng-template #EditTemplate>
-                        <div class="d-flex flex-column">
-                            <div class="w-100 d-flex justify-content-center mb-2">
-                                <button type="button" class="btn btn-primary" accesskey="c" (click)="onGenerate()">Xem
-                                    trước</button>
+                    </ng-container> -->
+                    <div class="d-flex flex-column">
+                        <div class="w-100 d-flex justify-content-center mb-2">
+                            <button type="button" class="btn btn-primary" accesskey="c" (click)="onGenerate()">Xem
+                                trước</button>
+                        </div>
+                        <div class="d-flex">
+                            <div class="left w-50 mr-1 p-2 border">
+                                <div class="mb-2">
+                                    <button (click)="onDefault()" class="btn btn-outline-primary mr-2">Sử dụng mẫu
+                                        có
+                                        sẵn</button>
+                                    <button (click)="onAddKeyWord()" class="btn btn-outline-primary">
+                                        Thêm từ khóa
+                                    </button>
+                                </div>
+                                <ckeditor #editor [config]="configEditor" [(data)]="configEdit.content"></ckeditor>
                             </div>
-                            <div class="d-flex">
-                                <div class="left w-50 mr-1 p-2 border">
-                                    <div class="mb-2">
-                                        <button (click)="onDefault()" class="btn btn-outline-primary mr-2">Sử dụng mẫu
-                                            có
-                                            sẵn</button>
-                                        <button (click)="onAddKeyWord()" class="btn btn-outline-primary">
-                                            Thêm từ khóa
-                                        </button>
-                                    </div>
-                                    <ckeditor #editor [config]="configEditor" [(data)]="configEdit.content"></ckeditor>
+                            <div class="right w-50 ml-1 p-2 border d-flex flex-column">
+                                <div class="preview d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="title">Bản xem trước</h5>
+                                    <!-- <button (click)="onPrint()" class="btn btn-outline-primary">In thử</button> -->
                                 </div>
-                                <div class="right w-50 ml-1 p-2 border d-flex flex-column">
-                                    <div class="preview d-flex justify-content-between align-items-center mb-2">
-                                        <h5 class="title">Bản xem trước</h5>
-                                        <!-- <button (click)="onPrint()" class="btn btn-outline-primary">In thử</button> -->
-                                    </div>
-                                    <iframe #iframe style="height: 100%; width: 100%;" frameBorder="0"
-                                        sandbox="allow-same-origin" [attr.srcdoc]="contentPrev | safeHtml "></iframe>
-                                    <!-- <div [innerHTML]="configEdit.content | safeHtml "></div> -->
-                                </div>
+                                <iframe #iframe style="height: 100%; width: 100%;" frameBorder="0"
+                                    sandbox="allow-same-origin" [attr.srcdoc]="contentPrev | safeHtml "></iframe>
+                                <!-- <div [innerHTML]="configEdit.content | safeHtml "></div> -->
                             </div>
                         </div>
-                    </ng-template>
+                    </div>
                 </div>
             </div>
         </div>

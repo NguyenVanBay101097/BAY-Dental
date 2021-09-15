@@ -139,7 +139,7 @@ export class PartnerCustomerTreatmentHistoryComponent implements OnInit {
     this.saleOrderService.getPaged(val).subscribe(res => {
       this.listSaleOrder = res.items;
       console.log(res.items);
-      
+
       if (this.listSaleOrder && this.listSaleOrder.length) {
         this.saleOrderId = this.listSaleOrder[0].id;
       }
@@ -1060,7 +1060,7 @@ export class PartnerCustomerTreatmentHistoryComponent implements OnInit {
     return this.formGroup.get('partner').value;
   }
 
-  get getAmountPaidTotal(){
+  get getAmountPaidTotal() {
     let total = 0;
     this.orderLines.controls.forEach(line => {
       total += line.get('amountPaid').value;
@@ -1167,8 +1167,8 @@ export class PartnerCustomerTreatmentHistoryComponent implements OnInit {
   }
 
   printPayment(payment) {
-    this.paymentService.getPrint(payment.accountPaymentId).subscribe(result => {
-      this.accountPaymentPrintComponent.print(result);
+    this.paymentService.getPrint(payment.accountPaymentId).subscribe((result: any) => {
+      this.accountPaymentPrintComponent.print(result.html);
     });
   }
 
@@ -1203,7 +1203,7 @@ export class PartnerCustomerTreatmentHistoryComponent implements OnInit {
 
   }
 
-  onChangePriceUnit(line: FormGroup){
+  onChangePriceUnit(line: FormGroup) {
     debugger
     var res = this.orderLines.controls.find(x => x.value.productId === line.value.productId);
     if (res) {

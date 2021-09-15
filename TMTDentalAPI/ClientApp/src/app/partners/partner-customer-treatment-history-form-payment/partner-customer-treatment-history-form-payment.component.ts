@@ -72,7 +72,7 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
     private pricelistService: PriceListService, private errorService: AppSharedShowErrorService,
     private registerPaymentService: AccountRegisterPaymentService, private paymentService: AccountPaymentService,
     private laboOrderService: LaboOrderService) { }
-    
+
   ngOnChanges(changes: SimpleChanges): void {
     if (this.saleOrderLine) {
       this.addLine(this.saleOrderLine);
@@ -1150,8 +1150,8 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
   }
 
   printPayment(payment) {
-    this.paymentService.getPrint(payment.accountPaymentId).subscribe(result => {
-      this.accountPaymentPrintComponent.print(result);
+    this.paymentService.getPrint(payment.accountPaymentId).subscribe((result: any) => {
+      this.accountPaymentPrintComponent.print(result.html);
     });
   }
 
