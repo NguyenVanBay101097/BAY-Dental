@@ -117,7 +117,7 @@ export class DotKhamCreateUpdateComponent implements OnInit {
     private employeeService: EmployeeService, private injector: Injector, private modalService: NgbModal,
     private dotKhamStepService: DotKhamStepService,
     private printService: PrintService
-    ) { }
+  ) { }
 
 
   ngOnInit() {
@@ -422,8 +422,8 @@ export class DotKhamCreateUpdateComponent implements OnInit {
   }
 
   printToaThuoc(item: ToaThuocBasic) {
-    this.toaThuocService.getPrint(item.id).subscribe((result:any) => {
-     this.printService.printHtml(result); 
+    this.toaThuocService.getPrint(item.id).subscribe((result: any) => {
+      this.printService.printHtml(result.html);
     });
   }
 
