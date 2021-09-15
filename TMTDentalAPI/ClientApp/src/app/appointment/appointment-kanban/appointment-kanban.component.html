@@ -236,6 +236,15 @@
                                     </label>
                                 </div>
                             </div>
+                            <div class="filter-label">Loại khám</div>
+                            <div class="filter-content">
+                                <div class="form-check t-form-check mb-1" *ngFor="let type of types; index as i">
+                                    <input class="form-check-input" type="radio" (change)="onChangeType(type.value)" name="type" [id]="'type-' + i" [value]="type.value" [(ngModel)]="typeSelected">
+                                    <label class="form-check-label" [for]="'type-' + i">
+                                        {{type.text}}
+                                    </label>
+                                </div>
+                            </div>
                             <div class="filter-label">Bác sĩ</div>
                             <div class="filter-content">
                                 <div class="form-check t-form-check mb-1">

@@ -184,6 +184,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? CompanyId { get; set; }
         public Guid? DoctorId { get; set; }
+
+        public bool? IsRepeatCustomer { get; set; }
     }
 
     public class AppointmentSearch
