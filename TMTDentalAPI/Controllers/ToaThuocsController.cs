@@ -119,7 +119,7 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _toaThuocService.GetToaThuocPrint(id);
             var obj = _mapper.Map<ToaThuocPrintViewModel>(res);
-            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = obj, Type = "tmp_toathuoc" });
+            var html = await _printTemplateConfigService.Print( obj,"tmp_toathuoc" );
 
             return Ok(new PrintData() { html = html });
         }

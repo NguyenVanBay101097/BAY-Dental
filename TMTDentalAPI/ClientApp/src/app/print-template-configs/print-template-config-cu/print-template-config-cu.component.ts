@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { GenerateReq, PrintTemplateConfigChangeType, PrintTemplateConfigDisplay, PrintTemplateConfigSave, PrintTemplateConfigService, PrintTestReq } from '../print-template-config.service';
+import { GenerateReq, PrintTemplateConfigChangePaperSize, PrintTemplateConfigDisplay, PrintTemplateConfigSave, PrintTemplateConfigService, PrintTestReq } from '../print-template-config.service';
 import { NotifyService } from 'src/app/shared/services/notify.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PrintService } from 'src/app/shared/services/print.service';
@@ -36,7 +36,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     };
     contentPrev = "";
     paperSizes: PrintPaperSizeBasic[] = [];
-    filter = new PrintTemplateConfigChangeType();
+    filter = new PrintTemplateConfigChangePaperSize();
 
     @ViewChild("editor", { static: false }) editor;
 
@@ -54,7 +54,6 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     ngOnInit() {
         this.types = constantData.types;
         this.filter.type = "tmp_toathuoc";
-        this.filter.isDefault = true;
         this.loadCurrentConfig();
         this.loadPaperSizeList();
         // this.activeRoute.paramMap.subscribe(x => {
@@ -121,15 +120,19 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     }
 
     onChangeType(e) {
-        var prev = this.filter.type;
-        this.filter.type = e;
-        this.loadCurrentConfig(prev);
+        var val = Object.assign({}, this.filter);
+        val.type = e;
+        this.configService.changePaperSize(this.filter).subscribe((res: any) => {
+            this.configEdit = res;
+            this.filter.type = e;
+            this.filter.printPaperSizeId = this.configEdit.printPaperSizeId;
+            this.onGenerate(this.configEdit.content);
+        });
     }
 
     onEdit() {
         this.configEdit = Object.assign({}, this.configEdit);
         this.filter.printPaperSizeId = this.configEdit.printPaperSizeId;
-        delete this.filter.isDefault;
     }
 
     onGenerate(content?) {
@@ -143,12 +146,17 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     }
 
     onChangePaperSize(e) {
-        this.filter.printPaperSizeId = e;
-        this.loadCurrentConfig();
+        var val = Object.assign({}, this.filter);
+        val.printPaperSizeId = e;
+        this.configService.changePaperSize(this.filter).subscribe((res: any) => {
+            this.configEdit = res;
+            this.filter.printPaperSizeId = e;
+            this.filter.printPaperSizeId = this.configEdit.printPaperSizeId;
+            this.onGenerate(this.configEdit.content);
+        });
     }
 
     onCancel() {
-        this.filter.isDefault = true;
         delete this.filter.printPaperSizeId;
         this.loadCurrentConfig();
     }

@@ -143,22 +143,22 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpPost("Print")]
-        [CheckAccess(Actions = "Salary.SalaryPayment.Read")]
-        public async Task<IActionResult> GetPrint(IEnumerable<Guid> ids)
-        {
-            if (ids == null || !ids.Any())
-                return BadRequest();
+        //[HttpPost("Print")]
+        //[CheckAccess(Actions = "Salary.SalaryPayment.Read")]
+        //public async Task<IActionResult> GetPrint(IEnumerable<Guid> ids)
+        //{
+        //    if (ids == null || !ids.Any())
+        //        return BadRequest();
 
-            var salaryPayments = await _mapper.ProjectTo<SalaryPaymentPrintVm>(_salaryPaymentService.SearchQuery(x => ids.Contains(x.Id))).ToListAsync();
-            //foreach (var print in salaryPayments)
-            //    print.AmountText = AmountToText.amount_to_text(print.Amount);
+        //    var salaryPayments = await _mapper.ProjectTo<SalaryPaymentPrintVm>(_salaryPaymentService.SearchQuery(x => ids.Contains(x.Id))).ToListAsync();
+        //    //foreach (var print in salaryPayments)
+        //    //    print.AmountText = AmountToText.amount_to_text(print.Amount);
 
-            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq()
-            { Obj = new SalaryPaymentPrint() { Salaries = salaryPayments}, Type = salaryPayments.Any(z=> z.Type == "advance") ? "tmp_salary_advance" : "tmp_salary_employee" });
+        //    var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq()
+        //    { Obj = new SalaryPaymentPrint() { Salaries = salaryPayments}, Type = salaryPayments.Any(z=> z.Type == "advance") ? "tmp_salary_advance" : "tmp_salary_employee" });
 
-            return Ok(new PrintData() { html = html });
-        }
+        //    return Ok(new PrintData() { html = html });
+        //}
 
         [HttpDelete("{id}")]
         [CheckAccess(Actions = "Salary.SalaryPayment.Delete")]

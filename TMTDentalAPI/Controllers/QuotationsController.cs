@@ -133,17 +133,17 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpGet("{id}/[action]")]
-        public async Task<IActionResult> Print(Guid id)
-        {
-            var quotation = await _quotationService.Print(id);
-            if (quotation == null)
-            {
-                return NotFound();
-            }
-            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = quotation, Type = "tmp_quotation" });
+        //[HttpGet("{id}/[action]")]
+        //public async Task<IActionResult> Print(Guid id)
+        //{
+        //    var quotation = await _quotationService.Print(id);
+        //    if (quotation == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = quotation, Type = "tmp_quotation" });
 
-            return Ok(new PrintData() { html = html });
-        }
+        //    return Ok(new PrintData() { html = html });
+        //}
     }
 }

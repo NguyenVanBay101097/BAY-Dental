@@ -119,17 +119,17 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpGet("{id}/[action]")]
-        [CheckAccess(Actions = "Medicine.MedicineOrder.Read")]
-        public async Task<IActionResult> GetPrint(Guid id)
-        {
-            //get viewmodel và truyền vào view
+        //[HttpGet("{id}/[action]")]
+        //[CheckAccess(Actions = "Medicine.MedicineOrder.Read")]
+        //public async Task<IActionResult> GetPrint(Guid id)
+        //{
+        //    //get viewmodel và truyền vào view
 
-            var res = await _medicineOrderService.GetPrint(id);
-            var obj = _mapper.Map<MedicineOrderPrint>(res);
-            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() {Obj = obj, Type = "tmp_medicine_order" });
+        //    var res = await _medicineOrderService.GetPrint(id);
+        //    var obj = _mapper.Map<MedicineOrderPrint>(res);
+        //    var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() {Obj = obj, Type = "tmp_medicine_order" });
 
-            return Ok(new PrintData() { html = html });
-        }
+        //    return Ok(new PrintData() { html = html });
+        //}
     }
 }

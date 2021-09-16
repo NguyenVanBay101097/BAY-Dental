@@ -161,31 +161,31 @@ namespace TMTDentalAPI.Controllers
 
         [HttpGet("{id}/Print")]
         [CheckAccess(Actions = "Labo.LaboOrder.Read")]
-        public async Task<IActionResult> GetPrint(Guid id)
-        {
-            var order = await _laboOrderService.SearchQuery(x => x.Id == id)
-                .Include(x => x.Company.Partner)
-                .Include(x => x.Product)
-                .Include(x => x.LaboBridge)
-                .Include(x => x.LaboBiteJoint)
-                .Include(x => x.LaboFinishLine)
-                .Include(x => x.SaleOrderLine.Product)
-                .Include(x => x.SaleOrderLine.Order)
-                .Include(x => x.SaleOrderLine.Employee)
-                .Include(x => x.LaboOrderProductRel).ThenInclude(x => x.Product)
-                .Include(x => x.Partner)
-                .Include(x => x.Customer)
-                .Include("LaboOrderToothRel.Tooth")
-                .FirstOrDefaultAsync();
+        //public async Task<IActionResult> GetPrint(Guid id)
+        //{
+        //    var order = await _laboOrderService.SearchQuery(x => x.Id == id)
+        //        .Include(x => x.Company.Partner)
+        //        .Include(x => x.Product)
+        //        .Include(x => x.LaboBridge)
+        //        .Include(x => x.LaboBiteJoint)
+        //        .Include(x => x.LaboFinishLine)
+        //        .Include(x => x.SaleOrderLine.Product)
+        //        .Include(x => x.SaleOrderLine.Order)
+        //        .Include(x => x.SaleOrderLine.Employee)
+        //        .Include(x => x.LaboOrderProductRel).ThenInclude(x => x.Product)
+        //        .Include(x => x.Partner)
+        //        .Include(x => x.Customer)
+        //        .Include("LaboOrderToothRel.Tooth")
+        //        .FirstOrDefaultAsync();
 
-            if (order == null)
-                return NotFound();
+        //    if (order == null)
+        //        return NotFound();
 
-            var obj = _mapper.Map<LaboOrderPrintVM>(order);
-            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = obj, Type = "tmp_labo_order" });
+        //    var obj = _mapper.Map<LaboOrderPrintVM>(order);
+        //    var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = obj, Type = "tmp_labo_order" });
 
-            return Ok(new PrintData() { html = html });
-        }
+        //    return Ok(new PrintData() { html = html });
+        //}
 
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Labo.LaboOrder.Read")] 

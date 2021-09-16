@@ -82,121 +82,6 @@ namespace Infrastructure.Services
 
             return printConfig;
         }
-  
-
-        public async Task<object> GetSampleData(string type)
-        {
-            var comObj = GetService<ICompanyService>();
-            var company = await comObj.SearchQuery(x => x.Id == CompanyId).Include(x => x.Partner).FirstOrDefaultAsync();
-            var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, @"SampleData\print_template_data.json");
-            object obj = new object();
-
-            using (var reader = new StreamReader(filePath))
-            {
-                var fileContent = reader.ReadToEnd();
-                var sample_data = JsonConvert.DeserializeObject<List<SampleDataPrintTemplate>>(fileContent);
-                var item = sample_data.Where(s => s.Type == type).FirstOrDefault();
-
-                switch (type)
-                {
-                    case "tmp_sale_order":
-                        obj = JsonConvert.DeserializeObject<SaleOrderPrintVM>(item.Data.ToString());
-                        break;
-                    case "tmp_toathuoc":
-                        var res_toathuoc = JsonConvert.DeserializeObject<ToaThuoc>(item.Data.ToString());
-                        res_toathuoc.Company = company;
-                        res_toathuoc.ReExaminationDate = DateTime.Now.AddMonths(3);
-                        obj = _mapper.Map<ToaThuocPrintViewModel>(res_toathuoc);
-                        break;
-                    case "tmp_labo_order":
-                        var res_labo = JsonConvert.DeserializeObject<LaboOrderPrintVM>(item.Data.ToString());
-                        res_labo.Company = _mapper.Map<CompanyPrintVM>(company);
-                        obj = res_labo;
-                        break;
-                    case "tmp_purchase_order":
-                        var res_purchase_order = JsonConvert.DeserializeObject<PurchaseOrder>(item.Data.ToString());
-                        res_purchase_order.Company = company;
-                        obj = _mapper.Map<PurchaseOrderPrintVm>(res_purchase_order);
-                        break;
-                    case "tmp_purchase_refund":
-                        var res_purchase_refund = JsonConvert.DeserializeObject<PurchaseOrder>(item.Data.ToString());
-                        res_purchase_refund.Company = company;
-                        obj = _mapper.Map<PurchaseOrderPrintVm>(res_purchase_refund);
-
-                        break;
-                    case "tmp_medicine_order":
-                        var res_medicine_order = JsonConvert.DeserializeObject<MedicineOrder>(item.Data.ToString());
-                        res_medicine_order.Company = company;
-                        obj = _mapper.Map<MedicineOrderPrint>(res_medicine_order);
-                        break;
-                    case "tmp_phieu_thu":
-                        var res_phieu_thu = JsonConvert.DeserializeObject<PhieuThuChi>(item.Data.ToString());
-                        res_phieu_thu.Company = company;
-                        obj = _mapper.Map<PhieuThuChiPrintVM>(res_phieu_thu);
-                        break;
-                    case "tmp_phieu_chi":
-                        var res_medicine_chi = JsonConvert.DeserializeObject<PhieuThuChi>(item.Data.ToString());
-                        res_medicine_chi.Company = company;
-                        obj = _mapper.Map<PhieuThuChiPrintVM>(res_medicine_chi);
-                        break;
-                    case "tmp_customer_debt":
-                        var res_customer_debt = JsonConvert.DeserializeObject<PhieuThuChi>(item.Data.ToString());
-                        res_customer_debt.Company = company;
-                        obj = _mapper.Map<PrintVM>(res_customer_debt);
-                        break;
-                    case "tmp_agent_commission":
-                        var res_agent_commission = JsonConvert.DeserializeObject<PhieuThuChi>(item.Data.ToString());
-                        res_agent_commission.Company = company;
-                        obj = _mapper.Map<PrintVM>(res_agent_commission);
-                        break;
-                    case "tmp_stock_picking_incoming":
-                        obj = JsonConvert.DeserializeObject<StockPickingPrintVm>(item.Data.ToString());
-                        break;
-                    case "tmp_stock_picking_outgoing":
-                        obj = JsonConvert.DeserializeObject<StockPickingPrintVm>(item.Data.ToString());
-                        break;
-                    case "tmp_stock_inventory":
-                        obj = JsonConvert.DeserializeObject<StockInventoryPrint>(item.Data.ToString());
-                        break;
-                    case "tmp_salary_employee":
-                        obj = JsonConvert.DeserializeObject<SalaryPaymentPrint>(item.Data.ToString());
-                        break;
-                    case "tmp_salary_advance":
-                        obj = JsonConvert.DeserializeObject<SalaryPaymentPrint>(item.Data.ToString());
-                        break;
-                    case "tmp_salary":
-                        obj = JsonConvert.DeserializeObject<HrPayslipRunPrintVm>(item.Data.ToString());
-                        break;
-                    case "tmp_advisory":
-                        obj = JsonConvert.DeserializeObject<AdvisoryPrintVM>(item.Data.ToString());
-                        break;
-                    case "tmp_account_payment":
-                        obj = JsonConvert.DeserializeObject<SaleOrderPaymentPrintVM>(item.Data.ToString());
-                        break;
-                    case "tmp_supplier_payment":
-                        obj = JsonConvert.DeserializeObject<AccountPaymentPrintVM>(item.Data.ToString());
-                        break;
-                    case "tmp_partner_advance":
-                        obj = JsonConvert.DeserializeObject<PartnerAdvancePrint>(item.Data.ToString());
-                        (obj as PartnerAdvancePrint).Company = _mapper.Map<CompanyPrintVM>(company);
-                        break;
-                    case "tmp_partner_refund":
-                        obj = JsonConvert.DeserializeObject<PartnerAdvancePrint>(item.Data.ToString());
-                        (obj as PartnerAdvancePrint).Company = _mapper.Map<CompanyPrintVM>(company);
-                        break;
-                    case "tmp_quotation":
-                        obj = JsonConvert.DeserializeObject<QuotationPrintVM>(item.Data.ToString());
-                        (obj as QuotationPrintVM).Company = _mapper.Map<CompanyPrintVM>(company);
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-
-
-            return obj;
-        }
 
         public string ConnectLayoutForContent(string layout , string content)
         {          
@@ -207,9 +92,8 @@ namespace Infrastructure.Services
             return newHtml;
         }
 
-        public async Task<string> PrintTest(string content , string type , Guid paperSizeId)
+        public async Task<string> PrintTest(string content , Guid paperSizeId, object data)
         {
-            object data = await GetSampleData(type);
             var printPaperSize = await _printPaperSizeService.SearchQuery(x => x.Id == paperSizeId).FirstOrDefaultAsync();                
             var layout = File.ReadAllText("PrintTemplate/Shared/Layout.html");
 

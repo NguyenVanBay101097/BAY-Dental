@@ -200,14 +200,14 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpGet("{id}/Print")]
-        public async Task<IActionResult> GetPrint(Guid id)
-        {
-            var res = await _purchaseOrderService.GetPrint(id);
-            var obj = _mapper.Map<PurchaseOrderPrintVm>(res);
-            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = obj, Type = res.Type == "order" ? "tmp_purchase_order" : "tmp_purchase_refund" });
+        //[HttpGet("{id}/Print")]
+        //public async Task<IActionResult> GetPrint(Guid id)
+        //{
+        //    var res = await _purchaseOrderService.GetPrint(id);
+        //    var obj = _mapper.Map<PurchaseOrderPrintVm>(res);
+        //    var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = obj, Type = res.Type == "order" ? "tmp_purchase_order" : "tmp_purchase_refund" });
 
-            return Ok(new PrintData() { html = html });
-        }
+        //    return Ok(new PrintData() { html = html });
+        //}
     }
 }

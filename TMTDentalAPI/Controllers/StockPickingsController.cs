@@ -207,28 +207,28 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpPost("{id}/Print")]
-        [CheckAccess(Actions = "Stock.Picking.Read")]
-        public async Task<IActionResult> Print(Guid id)
-        {
-            var picking = await _stockPickingService.SearchQuery(x => x.Id == id).Include(x => x.Partner).Include(x=>x.PickingType)
-                .Include(x => x.MoveLines)
-                .Include("Company.Partner")
-                .Include(x=> x.CreatedBy)
-                .Include("MoveLines.Product")
-                .Include("MoveLines.Product.Categ")
-                 .Include("MoveLines.ProductUOM")
-                .FirstOrDefaultAsync();
-            if (picking == null)
-                return NotFound();
+        //[HttpPost("{id}/Print")]
+        //[CheckAccess(Actions = "Stock.Picking.Read")]
+        //public async Task<IActionResult> Print(Guid id)
+        //{
+        //    var picking = await _stockPickingService.SearchQuery(x => x.Id == id).Include(x => x.Partner).Include(x=>x.PickingType)
+        //        .Include(x => x.MoveLines)
+        //        .Include("Company.Partner")
+        //        .Include(x=> x.CreatedBy)
+        //        .Include("MoveLines.Product")
+        //        .Include("MoveLines.Product.Categ")
+        //         .Include("MoveLines.ProductUOM")
+        //        .FirstOrDefaultAsync();
+        //    if (picking == null)
+        //        return NotFound();
 
-            picking.MoveLines = picking.MoveLines.OrderBy(x=> x.Sequence).ToList();
+        //    picking.MoveLines = picking.MoveLines.OrderBy(x=> x.Sequence).ToList();
 
-            var obj = _mapper.Map<StockPickingPrintVm>(picking);
-            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() 
-            { Obj = obj, Type = picking.PickingType.Code == "outgoing" ? "tmp_stock_picking_outgoing" : "tmp_stock_picking_incoming" });
+        //    var obj = _mapper.Map<StockPickingPrintVm>(picking);
+        //    var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() 
+        //    { Obj = obj, Type = picking.PickingType.Code == "outgoing" ? "tmp_stock_picking_outgoing" : "tmp_stock_picking_incoming" });
 
-            return Ok(new PrintData() { html = html });
-        }
+        //    return Ok(new PrintData() { html = html });
+        //}
     }
 }

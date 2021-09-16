@@ -13,9 +13,7 @@ namespace Infrastructure.Services
 
         Task<PrintTemplateConfig> ChangePaperSize(string type, Guid paperSizeId);
 
-        Task<object> GetSampleData(string type);
-
-        Task<string> PrintTest(string content, string type, Guid paperSizeId);
+        Task<string> PrintTest(string content, Guid paperSizeId, object data);
 
         Task<string> Print(object data, string type);
 

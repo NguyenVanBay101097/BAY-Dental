@@ -191,7 +191,7 @@ namespace TMTDentalAPI.Controllers
                 html = _viewRenderService.Render("AccountPayments/Print", res);
             else
             {
-                html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = res, Type = "tmp_supplier_payment" });
+                html = await _printTemplateConfigService.Print( res,res.PaymentType == "inbound" ? "tmp_supplier_payment_inbound" : "tmp_supplier_payment");
             }    
             return Ok(new PrintData() { html = html });
         }

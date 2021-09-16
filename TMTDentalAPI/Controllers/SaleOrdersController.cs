@@ -287,18 +287,18 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpGet("{id}/Print")]
-        [CheckAccess(Actions = "Basic.SaleOrder.Read")]
-        public async Task<IActionResult> GetPrint(Guid id)
-        {
-            var res = await _saleOrderService.GetPrint(id);
-            if (res == null)
-                return NotFound();
-            //res.OrderLines = res.OrderLines.OrderBy(x => x.Sequence);
-            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = res, Type = "tmp_sale_order" });
+        //[HttpGet("{id}/Print")]
+        //[CheckAccess(Actions = "Basic.SaleOrder.Read")]
+        //public async Task<IActionResult> GetPrint(Guid id)
+        //{
+        //    var res = await _saleOrderService.GetPrint(id);
+        //    if (res == null)
+        //        return NotFound();
+        //    //res.OrderLines = res.OrderLines.OrderBy(x => x.Sequence);
+        //    var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = res, Type = "tmp_sale_order" });
 
-            return Ok(new PrintData() { html = html });
-        }
+        //    return Ok(new PrintData() { html = html });
+        //}
 
         private async Task SaveOrderLines(SaleOrderSave val, SaleOrder order)
         {

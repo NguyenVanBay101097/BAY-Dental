@@ -143,42 +143,42 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpGet("{id}/Print")]
-        //[CheckAccess(Actions = "Account.PhieuThuChi.Read")]
-        public async Task<IActionResult> GetPrint(Guid id)
-        {
-            var res = await _phieuThuChiService.SearchQuery(x => x.Id == id)
-                .Include(x => x.Company)
-                .Include(x => x.CreatedBy)
-                .Include(x => x.Partner)
-                .Include(x => x.LoaiThuChi)
-                .Include(x => x.Journal)
-                .FirstOrDefaultAsync();
-            if (res == null)
-                return NotFound();
+        //[HttpGet("{id}/Print")]
+        ////[CheckAccess(Actions = "Account.PhieuThuChi.Read")]
+        //public async Task<IActionResult> GetPrint(Guid id)
+        //{
+        //    var res = await _phieuThuChiService.SearchQuery(x => x.Id == id)
+        //        .Include(x => x.Company)
+        //        .Include(x => x.CreatedBy)
+        //        .Include(x => x.Partner)
+        //        .Include(x => x.LoaiThuChi)
+        //        .Include(x => x.Journal)
+        //        .FirstOrDefaultAsync();
+        //    if (res == null)
+        //        return NotFound();
 
-            var obj = _mapper.Map<PhieuThuChiPrintVM>(res);
+        //    var obj = _mapper.Map<PhieuThuChiPrintVM>(res);
 
-            obj.AmountText = AmountToText.amount_to_text(res.Amount);
+        //    obj.AmountText = AmountToText.amount_to_text(res.Amount);
 
-            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = obj, Type = obj.Type == "thu"? "tmp_phieu_thu" : "tmp_phieu_chi" });
+        //    var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = obj, Type = obj.Type == "thu"? "tmp_phieu_thu" : "tmp_phieu_chi" });
 
-            return Ok(new PrintData() { html = html });
-        }
+        //    return Ok(new PrintData() { html = html });
+        //}
 
-        [HttpGet("{id}/Print2")]
-        //[CheckAccess(Actions = "Account.PhieuThuChi.Read")]
-        public async Task<IActionResult> GetPrint2(Guid id)
-        {
-            var res = await _phieuThuChiService.GetPrint(id);
-            if (res == null)
-                return NotFound();
+        //[HttpGet("{id}/Print2")]
+        ////[CheckAccess(Actions = "Account.PhieuThuChi.Read")]
+        //public async Task<IActionResult> GetPrint2(Guid id)
+        //{
+        //    var res = await _phieuThuChiService.GetPrint(id);
+        //    if (res == null)
+        //        return NotFound();
 
-            res.AmountText = AmountToText.amount_to_text(res.Amount);
-            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = res, Type = res.AccountType == "customer_debt" ? "tmp_customer_debt" : "tmp_agent_commission" });
+        //    res.AmountText = AmountToText.amount_to_text(res.Amount);
+        //    var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = res, Type = res.AccountType == "customer_debt" ? "tmp_customer_debt" : "tmp_agent_commission" });
 
-            return Ok(new PrintData() { html = html });
-        }
+        //    return Ok(new PrintData() { html = html });
+        //}
 
         [HttpGet("[action]")]
         public async Task<IActionResult> ExportExcelFile([FromQuery] PhieuThuChiPaged val)

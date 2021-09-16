@@ -93,14 +93,14 @@ namespace TMTDentalAPI.Controllers
 
        
 
-        [HttpGet("{id}/[action]")]
-        public async Task<IActionResult> GetPrint(Guid id)
-        {
-            var res = await _saleOrderPaymentService.GetPrint(id);
-            if (res == null) return NotFound();
-            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = res, Type = "tmp_account_payment" });
+        //[HttpGet("{id}/[action]")]
+        //public async Task<IActionResult> GetPrint(Guid id)
+        //{
+        //    var res = await _saleOrderPaymentService.GetPrint(id);
+        //    if (res == null) return NotFound();
+        //    var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = res, Type = "tmp_account_payment" });
 
-            return Ok(new PrintData() { html = html });
-        }
+        //    return Ok(new PrintData() { html = html });
+        //}
     }
 }

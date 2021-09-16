@@ -56,27 +56,27 @@ namespace TMTDentalAPI.Controllers
         }
 
 
-        [HttpPost("{id}/[action]")]
-        [CheckAccess(Actions = "Salary.HrPayslipRun.Read")]
-        public async Task<IActionResult> Print(Guid id, HrPayslipRunSave val)
-        {
-            var ids = val.Slips.Where(x => x.IsCheck == true).Select(x => x.Id);
-            await _payslipRunService.UpdatePayslipRun(id, val);
-            var res = await _payslipRunService.GetHrPayslipRunForPrint(id);
+        //[HttpPost("{id}/[action]")]
+        //[CheckAccess(Actions = "Salary.HrPayslipRun.Read")]
+        //public async Task<IActionResult> Print(Guid id, HrPayslipRunSave val)
+        //{
+        //    var ids = val.Slips.Where(x => x.IsCheck == true).Select(x => x.Id);
+        //    await _payslipRunService.UpdatePayslipRun(id, val);
+        //    var res = await _payslipRunService.GetHrPayslipRunForPrint(id);
 
-            if (ids != null && ids.Any())
-            {
-                res.Slips = res.Slips.Where(x => ids.Contains(x.Id));
+        //    if (ids != null && ids.Any())
+        //    {
+        //        res.Slips = res.Slips.Where(x => ids.Contains(x.Id));
 
-                var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = res, Type = "tmp_salary" });
+        //        var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = res, Type = "tmp_salary" });
 
-                return Ok(new PrintData() { html = html });
-            }
-            else
-            {
-                return Ok(new PrintData() { html = null });
-            }
-        }
+        //        return Ok(new PrintData() { html = html });
+        //    }
+        //    else
+        //    {
+        //        return Ok(new PrintData() { html = null });
+        //    }
+        //}
 
         [HttpPost]
         [CheckAccess(Actions = "Salary.HrPayslipRun.Create")]

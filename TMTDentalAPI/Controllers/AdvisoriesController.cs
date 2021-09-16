@@ -114,18 +114,18 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetPrint([FromQuery] IEnumerable<Guid> ids)
-        {
+        //public async Task<IActionResult> GetPrint([FromQuery] IEnumerable<Guid> ids)
+        //{
 
-            var res = await _advisoryService.Print(ids);
+        //    var res = await _advisoryService.Print(ids);
 
-            if (res == null)
-                return NotFound();
+        //    if (res == null)
+        //        return NotFound();
 
-            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = res, Type = "tmp_advisory" });
+        //    var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = res, Type = "tmp_advisory" });
 
-            return Ok(new PrintData() { html = html });
-        }
+        //    return Ok(new PrintData() { html = html });
+        //}
 
         [HttpPost("[action]")]
         public async Task<IActionResult> CreateSaleOrder(CreateFromAdvisoryInput val)

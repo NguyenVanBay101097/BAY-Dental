@@ -137,17 +137,17 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpGet("{id}/Print")]
-        [CheckAccess(Actions = "Stock.Inventory.Read")]
-        public async Task<IActionResult> GetPrint(Guid id)
-        {
-            var res = await _stockInventoryService.GetPrint(id);
+        //[HttpGet("{id}/Print")]
+        //[CheckAccess(Actions = "Stock.Inventory.Read")]
+        //public async Task<IActionResult> GetPrint(Guid id)
+        //{
+        //    var res = await _stockInventoryService.GetPrint(id);
 
-            var obj = _mapper.Map<StockInventoryPrint>(res);
-            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = obj, Type = "tmp_stock_inventory" });
+        //    var obj = _mapper.Map<StockInventoryPrint>(res);
+        //    var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = obj, Type = "tmp_stock_inventory" });
 
-            return Ok(new PrintData() { html = html });
-        }
+        //    return Ok(new PrintData() { html = html });
+        //}
 
         [HttpDelete("{id}")]
         [CheckAccess(Actions = "Stock.Inventory.Delete")]

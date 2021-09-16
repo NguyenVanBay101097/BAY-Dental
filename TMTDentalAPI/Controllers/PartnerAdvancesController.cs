@@ -106,18 +106,18 @@ namespace TMTDentalAPI.Controllers
 
 
 
-        [HttpGet("{id}/[action]")]
-        [CheckAccess(Actions = "Basic.PartnerAdvance.Read")]
-        public async Task<IActionResult> GetPrint(Guid id)
-        {
-            var res = await _partnerAdvanceService.GetPartnerAdvancePrint(id);
+        //[HttpGet("{id}/[action]")]
+        //[CheckAccess(Actions = "Basic.PartnerAdvance.Read")]
+        //public async Task<IActionResult> GetPrint(Guid id)
+        //{
+        //    var res = await _partnerAdvanceService.GetPartnerAdvancePrint(id);
 
-            var obj = _mapper.Map<PartnerAdvancePrint>(res);
-            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq()
-            { Obj = obj, Type = res.Type == "advance"? "tmp_partner_advance" : "tmp_partner_refund" });
+        //    var obj = _mapper.Map<PartnerAdvancePrint>(res);
+        //    var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq()
+        //    { Obj = obj, Type = res.Type == "advance"? "tmp_partner_advance" : "tmp_partner_refund" });
 
-            return Ok(new PrintData() { html = html });
-        }
+        //    return Ok(new PrintData() { html = html });
+        //}
 
         [HttpDelete("{id}")]
         [CheckAccess(Actions = "Basic.PartnerAdvance.Delete")]
