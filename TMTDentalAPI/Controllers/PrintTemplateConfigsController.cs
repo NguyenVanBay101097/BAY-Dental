@@ -224,7 +224,6 @@ namespace TMTDentalAPI.Controllers
                     case "tmp_supplier_payment_inbound":
                         obj = JsonConvert.DeserializeObject<AccountPaymentPrintVM>(item.Data.ToString());
                         break;
-                        break;
                     default:
                         break;
                 }
