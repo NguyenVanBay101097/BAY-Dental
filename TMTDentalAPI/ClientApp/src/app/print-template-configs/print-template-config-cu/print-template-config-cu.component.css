@@ -1,8 +1,8 @@
-/* :host ::ng-deep .ck-editor__editable_inline {
+:host ::ng-deep .ck-editor__editable_inline {
     min-height: 500px;
 }
 
-.ck_contents {
+/* .ck_contents {
     min-height: 700px !important;
 } */
 .preview .title {

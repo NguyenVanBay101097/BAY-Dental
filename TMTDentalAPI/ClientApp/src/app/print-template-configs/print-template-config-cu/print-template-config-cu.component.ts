@@ -11,6 +11,9 @@ import { PrintPaperSizeCreateUpdateDialogComponent } from 'src/app/config-prints
 import * as _ from 'lodash';
 import * as constantData from '../print-template-config-constant-data';
 import { KeywordListDialogComponent } from '../keyword-list-dialog/keyword-list-dialog.component';
+import * as DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
+import { CKEditorComponent } from '@ckeditor/ckeditor5-angular';
+import SourceEditing from '@ckeditor/ckeditor5-source-editing/src/sourceediting';
 
 @Component({
     selector: 'app-print-template-config-cu',
@@ -18,6 +21,7 @@ import { KeywordListDialogComponent } from '../keyword-list-dialog/keyword-list-
     styleUrls: ['./print-template-config-cu.component.css']
 })
 export class PrintTemplateConfigCuComponent implements OnInit {
+    public editor = DecoupledEditor;
     types: { text: string, value: string }[] = [];
     // config = new PrintTemplateConfigDisplay();
     configEdit = new PrintTemplateConfigDisplay();
@@ -33,12 +37,19 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         enterMode: 2,//this support not format string to p tag
         // protectedSource: [/{{[\s\S]*?}}/g] // this support loop code
         // skin: 'kama'
+        // plugins: [SourceEditing],
+        // toolbar: ['sourceEditing']
+        toolbar: {
+            // items: ['bold'],
+            // toolbar: Array.from(this.editor.ui.componentFactory.names()),
+            shouldNotGroupWhenFull: true
+        },
     };
     contentPrev = "";
     paperSizes: PrintPaperSizeBasic[] = [];
     filter = new PrintTemplateConfigChangePaperSize();
 
-    @ViewChild("editor", { static: false }) editor;
+    @ViewChild('editorRef', { static: false }) editorComponent: CKEditorComponent;
 
     constructor(private configService: PrintTemplateConfigService,
         private activeRoute: ActivatedRoute,
@@ -63,10 +74,13 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     }
 
     public onReady(editor) {
+        // editor.config.plugins.push(SourceEditing);
+
         editor.ui.getEditableElement().parentElement.insertBefore(
             editor.ui.view.toolbar.element,
             editor.ui.getEditableElement()
         );
+
     }
 
     loadPaperSizeList() {
