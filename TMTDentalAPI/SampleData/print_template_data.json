@@ -2160,5 +2160,38 @@
       "SaleOrders": [],
       "UserName": "admin"
     }
+  },
+  {
+    "Type": "tmp_supplier_payment_inbound",
+    "Data": {
+      "CompanyName": "TPP",
+      "CompanyCity": "Thành phố Hồ Chí Minh",
+      "CompanyDistrict": "Quận Tân Phú",
+      "CompanyWard": "Phường Tân Thành",
+      "CompanyStreet": "54/35 Diệp Minh Châu",
+      "CompanyPhone": "0938551226",
+      "CompanyEmail": null,
+      "CompanyAddress": "54/35 Diệp Minh Châu, Phường Tân Thành, Quận Tân Phú, Thành phố Hồ Chí Minh",
+      "CompanyLogo": null,
+      "PartnerRef": "NCC0001",
+      "PartnerName": "Labo Việt Tiến",
+      "PartnerDisplayName": "[NCC0001] Labo Việt Tiến",
+      "PartnerCity": null,
+      "PartnerDistrict": null,
+      "PartnerType": "supplier",
+      "PartnerWard": null,
+      "PartnerStreet": null,
+      "PartnerAddress": "",
+      "PartnerPhone": "0983830609",
+      "PaymentDate": "2021-09-15T00:00:00",
+      "JournalName": "Tiền mặt",
+      "Amount": 2000000.00,
+      "AmountText": "Hai triệu đồng",
+      "Communication": null,
+      "PaymentType": "outbound",
+      "PaymentName": "SUPP.OUT/2021/0001",
+      "SaleOrders": [],
+      "UserName": "admin"
+    }
   }
 ]

@@ -221,6 +221,10 @@ namespace TMTDentalAPI.Controllers
                         obj = JsonConvert.DeserializeObject<QuotationPrintVM>(item.Data.ToString());
                         (obj as QuotationPrintVM).Company = _mapper.Map<CompanyPrintVM>(company);
                         break;
+                    case "tmp_supplier_payment_inbound":
+                        obj = JsonConvert.DeserializeObject<AccountPaymentPrintVM>(item.Data.ToString());
+                        break;
+                        break;
                     default:
                         break;
                 }

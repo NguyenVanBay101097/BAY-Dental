@@ -122,10 +122,9 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     onChangeType(e) {
         var val = Object.assign({}, this.filter);
         val.type = e;
-        this.configService.changePaperSize(this.filter).subscribe((res: any) => {
+        this.configService.changePaperSize(val).subscribe((res: any) => {
             this.configEdit = res;
             this.filter.type = e;
-            this.filter.printPaperSizeId = this.configEdit.printPaperSizeId;
             this.onGenerate(this.configEdit.content);
         });
     }
@@ -146,12 +145,10 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     }
 
     onChangePaperSize(e) {
+        this.filter.printPaperSizeId = e;
         var val = Object.assign({}, this.filter);
-        val.printPaperSizeId = e;
-        this.configService.changePaperSize(this.filter).subscribe((res: any) => {
+        this.configService.changePaperSize(val).subscribe((res: any) => {
             this.configEdit = res;
-            this.filter.printPaperSizeId = e;
-            this.filter.printPaperSizeId = this.configEdit.printPaperSizeId;
             this.onGenerate(this.configEdit.content);
         });
     }
