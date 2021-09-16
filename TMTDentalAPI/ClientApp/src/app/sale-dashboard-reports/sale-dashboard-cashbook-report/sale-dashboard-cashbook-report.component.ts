@@ -16,8 +16,8 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
   @Input() cashBooks: any;
   @Input() dataCashBooks: any;
   @Input() totalDataCashBook: any;
-  @Input() dateFrom: any;
-  @Input() dateTo: any;
+  // @Input() dateFrom: any;
+  // @Input() dateTo: any;
   cashBookData: CashBookReportItem[] = [];
   cashbookThu: any[] = [];
   cashbookChi: any[] = [];
@@ -33,18 +33,10 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
   public cashbookAgentCommission: any;
   public totalCashbook: any;
 
-  barChartType = 'bar';
-  barChartLegend = true;
-  barChartLabels: any[] = [];
-  dataThu: any[] = [];
-  dataChi: any[] = [];
-  dataTonQuy: any[] = [];
-  barChartOptions: any;
-  barChartData = [
-    { data: this.dataThu, label: 'Thu', order: 1, backgroundColor: '#2395FF', hoverBackgroundColor: '#4FAAFF' },
-    { data: this.dataChi, label: 'Chi', order: 2, backgroundColor: '#28A745', hoverBackgroundColor: '#53B96A' },
-    { data: this.dataTonQuy, type: "line", order: 0, fill: false, label: 'Tồn sổ quỹ', backgroundColor: '#ff0000', hoverBackgroundColor: '#ff0000', borderColor: '#ff0000' },
-  ];
+  chartOptions: any = {};
+  chartType: string = 'bar';
+  dataSet: any[] = [];
+  maxTicks: number = 11;
 
   constructor(private cashBookService: CashBookService,
     private router: Router,
@@ -60,113 +52,92 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
     this.loadDataApi();
   }
 
-  getDaysArray(start, end) {
-    for (var arr = [], date = new Date(start); date <= end; date.setDate(date.getDate() + 1)) {
-      arr.push(this.intlService.formatDate(new Date(date), 'yyyy-MM-ddTHH:mm:ss'));
-    }
-    return arr;
-  };
-
-  getMonthsArray(start, end) {
-    let arr = [];
-    if (start && end) {
-      for (let date = new Date(start); date <= end; date.setDate(date.getDate() + 1)) {
-        arr.push(this.intlService.formatDate(new Date(date.getFullYear(), date.getMonth(), 1), 'yyyy-MM-ddTHH:mm:ss'));
-      }
-      arr = [...new Set(arr)];
-    } else {
-      let year = new Date().getFullYear();
-      for (let i = 1; i <= 12; i++) {
-        arr.push(this.intlService.formatDate(new Date(`${year}-${i}-01 00:00`), 'yyyy-MM-ddTHH:mm:ss'))
-      }
-    }
-    return arr;
-  };
-
   loadChartOption() {
-    var tickLimit = 0;
-    const length = this.barChartLabels.length;
-    if (this.groupby == 'groupby:day' && length < 32)
-      tickLimit = 31;
-    else if (this.groupby == 'groupby:day' && length > 31 && length < 61)
-      tickLimit = Math.floor(length / 2) + 1;
-    else if (this.groupby == 'groupby:day' && length > 60 && length < 91)
-      tickLimit = Math.floor(length / 7) + 1;
-    else if (this.groupby == 'groupby:day' && length > 90 && length < 211)
-      tickLimit = Math.floor(length / 13) + 1;
-    else
-      tickLimit = Math.floor(length / 30) + 1;
-
-    this.barChartOptions = {
+    this.chartOptions = {
       scaleShowVerticalLines: false,
       responsive: true,
-      legend: {
-        position: 'bottom',
-      },
-      tooltips: {
-        mode: 'label',
-        borderWidth: 0,
-      },
+      maintainAspectRatio: false,
       title: {
-        text: 'BIỂU ĐỒ THU CHI',
+        text: 'BIỂU ĐỒ THU - CHI',
         display: true,
         fontSize: '16',
       },
+      legend: { position: 'bottom', },
+      tooltips: {
+        mode: 'label',
+        // usePointStyle: true,
+        titleFontStyle: 'bold',
+        borderWidth: 1,
+        callbacks: {
+          label: function (tooltipItem, data) {
+            let labelContent = data.datasets[tooltipItem.datasetIndex].label;
+            const labelData = Number(tooltipItem.yLabel).toFixed(0).replace(/./g, function (c, i, a) {
+              return i > 0 && c !== "," && (a.length - i) % 3 === 0 ? "." + c : c;
+            });
+            return `${labelContent}: ${labelData}`;
+          }
+        }
+      },
       scales: {
         xAxes: [{
+          distribution: 'linear',
+          type: 'time',
+          time: {
+            tooltipFormat: this.groupby == 'groupby:day' ? 'DD/MM/YYYY' : 'MM/YYYY',
+            displayFormats: {
+              'day': 'DD/MM',
+              'month': 'MM/YYYY',
+            },
+            unit: this.groupby == 'groupby:day' ? 'day' : 'month'
+          },
           ticks: {
-            maxTicksLimit: tickLimit, //10
+            maxTicksLimit: this.maxTicks
           }
         }],
         yAxes: [{
           ticks: {
-            // callback: function (val, index) {
-            //   // return Intl.NumberFormat().format(val);
-            //   return val / 1000000 + ' triệu';
-            // },
+            beginAtZero: true,
+            callback: function (val, index) {
+              return Intl.NumberFormat().format(val);
+            },
           }
-        }]
+        }],
       }
-    };
+    }
   }
 
   loadChartData() {
     if (this.cashBooks) {
-      this.dataThu = [];
-      this.dataChi = [];
-      this.dataTonQuy = [];
-      this.barChartLabels = [];
+      let dataThu = [];
+      let dataChi = [];
+      let dataTonQuy = [];
 
-      var cashBooksData = this.cashBooks.reduce(function (map, obj) {
-        map[obj.date] = obj;
-        return map;
-      }, Object.create(null));
+      // console.log(this.cashBooks);
 
-      if (this.groupby == 'groupby:day') {
-        let dateArr = this.getDaysArray(this.dateFrom, this.dateTo);
-        console.log(dateArr);
-        for (let key of dateArr) {
-          const value = cashBooksData[key];
-          this.dataThu.push(value ? value.totalThu : 0);
-          this.dataChi.push(value ? value.totalChi : 0);
-          this.dataTonQuy.push(value ? value.totalAmount : 0);
-        }
-        this.barChartLabels = dateArr.map(date => this.intlService.formatDate(new Date(date), 'dd/MM'));
-      } else {
-        let monthArr = this.getMonthsArray(this.dateFrom, this.dateTo);
-        for (let key of monthArr) {
-          const value = cashBooksData[key];
-          this.dataThu.push(value ? value.totalThu : 0);
-          this.dataChi.push(value ? value.totalChi : 0);
-          this.dataTonQuy.push(value ? value.totalAmount : 0);
-        }
-        this.barChartLabels = monthArr.map(date => this.intlService.formatDate(new Date(date), 'MM/yyyy'));
+      for (const data of this.cashBooks) {
+        const date = this.intlService.formatDate(new Date(data.date), 'yyyy-MM-dd');
+
+        const thu = Object.create(null);
+        thu.x = date
+        thu.y = data.totalThu;
+        dataThu.push(thu);
+
+        const chi = Object.create(null);
+        chi.x = date
+        chi.y = data.totalChi;
+        dataChi.push(chi);
+
+        const tonQuy = Object.create(null);
+        tonQuy.x = date
+        tonQuy.y = data.totalAmount;
+        dataTonQuy.push(tonQuy);
       }
-      this.barChartData = [
-        { data: this.dataThu, label: 'Thu', order: 1, backgroundColor: '#2395FF', hoverBackgroundColor: '#4FAAFF' },
-        { data: this.dataChi, label: 'Chi', order: 2, backgroundColor: '#28A745', hoverBackgroundColor: '#53B96A' },
-        { data: this.dataTonQuy, type: "line", order: 0, fill: false, label: 'Tồn sổ quỹ', backgroundColor: '#ff0000', hoverBackgroundColor: '#ff0000', borderColor: '#ff0000' },
-      ];
+
+      this.dataSet = [
+        { data: dataThu, order: 1, label: "Thu", backgroundColor: '#2395FF', hoverBackgroundColor: '#4FAAFF', borderColor: '#2395FF' },
+        { data: dataChi, order: 2, label: "Chi", backgroundColor: '#28A745', hoverBackgroundColor: '#53B96A', borderColor: '#28A745' },
+        { data: dataTonQuy, order: 0, label: "Tồn Quỹ", fill: false, type: "line", backgroundColor: '#ff0000', hoverBackgroundColor: '#ff0000', borderColor: '#ff0000' }
+      ]
     }
   }
 
@@ -237,8 +208,3 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
   }
 
 }
-
-
-[
-  '2021-08-01', '2021-09-01', '2021-10-01'
-]

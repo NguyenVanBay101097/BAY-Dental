@@ -1,9 +1,9 @@
-.total-amount{
+.total-amount {
     font-size: 16px;
     color: green;
 }
 
-.title-header{
+.title-header {
     font-weight: 600;
     font-size: 18px;
     line-height: 28px;
@@ -15,4 +15,9 @@
     font-size: 14px;
     line-height: 12px;
     font-weight: 500;
+}
+
+.chart {
+    display: block;
+    height: 380px;
 }

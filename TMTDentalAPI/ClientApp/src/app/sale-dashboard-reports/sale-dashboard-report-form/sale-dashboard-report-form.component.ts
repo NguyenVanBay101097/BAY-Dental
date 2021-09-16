@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { aggregateBy } from '@progress/kendo-data-query';
+import * as _ from 'lodash';
 import { values } from 'lodash';
 import { forkJoin, observable, Observable, of, Subject } from 'rxjs';
 import { debounceTime, map, switchMap, tap, groupBy } from 'rxjs/operators';
@@ -89,8 +90,8 @@ export class SaleDashboardReportFormComponent implements OnInit {
   dataRevenues: any[];
   dataNoTreatment: any[];
   dataCustomer: any[];
-  startDate: any = {};
-  endDate: any = {};
+  // startDate: any = {};
+  // endDate: any = {};
   currentYear = new Date().getFullYear();
   oldYear = this.currentYear - 1;
   companyChangeSubject = new Subject();
@@ -127,7 +128,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
     { value: 'customerdebit', text: 'Công nợ phải thu' },
     { value: 'residual', text: 'Dự kiến thu' },
   ];
-
+  yearList: number[] = [];
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
   constructor(
@@ -155,8 +156,8 @@ export class SaleDashboardReportFormComponent implements OnInit {
     var dateTo = this.filterMonthDate ? new Date(this.filterMonthDate.getFullYear(), this.filterMonthDate.getMonth(), new Date(this.filterMonthDate.getFullYear(), this.filterMonthDate.getMonth() + 1, 0).getDate()) : null;
     this.dateFrom = dateFrom;
     this.dateTo = dateTo;
-    this.startDate = new Date(this.dateFrom);
-    this.endDate = new Date(this.dateTo);
+    // this.startDate = new Date(this.dateFrom);
+    // this.endDate = new Date(this.dateTo);
     this.companyCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => this.companyCbx.loading = true),
@@ -174,6 +175,9 @@ export class SaleDashboardReportFormComponent implements OnInit {
     this.loadDataNotreatmentApi();
     this.loadDataCashbookApi();
     this.loadTotalDataFromApi();
+
+    this.yearList = _.range(new Date().getFullYear(), 2000, -1);
+
   }
 
   loadAllData() {
@@ -392,8 +396,8 @@ export class SaleDashboardReportFormComponent implements OnInit {
     var dateTo = this.filterMonthDate ? new Date(this.filterMonthDate.getFullYear(), this.filterMonthDate.getMonth(), new Date(this.filterMonthDate.getFullYear(), this.filterMonthDate.getMonth() + 1, 0).getDate()) : null;
     this.dateFrom = dateFrom;
     this.dateTo = dateTo;
-    this.startDate = new Date(this.dateFrom);
-    this.endDate = new Date(this.dateTo);
+    // this.startDate = new Date(this.dateFrom);
+    // this.endDate = new Date(this.dateTo);
     this.loadByMonthAndCompany();
     setTimeout(() => {
       this.monthReport.loadData();
@@ -402,6 +406,18 @@ export class SaleDashboardReportFormComponent implements OnInit {
 
   onChangeType(value) {
     this.groupBy = value;
+    this.currentYear = new Date().getFullYear();
+    if(this.groupBy=='groupby:month'){
+      let dateFrom = new Date(this.currentYear, 0, 1);
+      let dateTo = new Date(this.currentYear, 11, 31);
+      this.dateFrom = dateFrom;
+      this.dateTo = dateTo;
+    }
+    else{
+      this.dateFrom = this.monthStart;
+      this.dateTo = this.monthEnd;
+    }
+
     this.loadDataCashbookChartApi();
     this.loadDataRevenueChartApi();
   }
@@ -409,8 +425,8 @@ export class SaleDashboardReportFormComponent implements OnInit {
   onSearchDateChange(e) {
     this.dateFrom = e.dateFrom || '';
     this.dateTo = e.dateTo || '';
-    this.startDate = new Date(this.dateFrom);
-    this.endDate = new Date(this.dateTo);
+    // this.startDate = new Date(this.dateFrom);
+    // this.endDate = new Date(this.dateTo);
     this.loadDataCashbookChartApi();
     this.loadDataRevenueChartApi();
     this.loadDataRevenueApi();
@@ -556,5 +572,17 @@ export class SaleDashboardReportFormComponent implements OnInit {
       default:
         break;
     }
+  }
+
+  changeDateOption(val){
+    let year = val ? val : this.currentYear;
+    if(this.groupBy=='groupby:month' && year){
+      let dateFrom = new Date(year, 0, 1);
+      let dateTo = new Date(year, 11, 31);
+      this.dateFrom = dateFrom;
+      this.dateTo = dateTo;
+    }
+    this.loadDataCashbookChartApi();
+    this.loadDataRevenueChartApi();
   }
 }

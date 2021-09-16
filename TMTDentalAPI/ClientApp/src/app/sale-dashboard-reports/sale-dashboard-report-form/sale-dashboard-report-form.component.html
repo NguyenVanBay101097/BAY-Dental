@@ -321,10 +321,15 @@
                 <label class="btn btn-outline-primary mr-2" for="month">
                     Tháng
                 </label>
-                <app-date-range-picker-filter [opens]="'right'" class="mr-1" [startDate]="dateFrom" [endDate]="dateTo"
-                    (searchChange)="onSearchDateChange($event)">
+                <app-date-range-picker-filter *ngIf="groupBy=='groupby:day';else elseTemplate" [opens]="'right'"
+                    class="mr-1" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)">
                 </app-date-range-picker-filter>
-
+                <ng-template #elseTemplate>
+                    <select class="form-control" [(ngModel)]="currentYear" style="width: 100px;" (change)="changeDateOption($event.target.value)">
+                        <!-- <option value="">Năm</option> -->
+                        <option [value]="i" *ngFor="let i of yearList"> {{i}}</option>
+                    </select>
+                </ng-template>
 
 
             </div>
@@ -333,7 +338,7 @@
             <div class="border-group">
                 <app-sale-dashboard-invoice-report [revenues]="revenues" [dataRevenues]="dataRevenues"
                     [cashBooks]="cashBooks" [dataCashBooks]="dataCashBooks" [totalDataCashBook]="totalDataCashBook"
-                    [groupby]="groupBy" [dateFrom]="this.startDate" [dateTo]="this.endDate">
+                    [groupby]="groupBy">
                 </app-sale-dashboard-invoice-report>
             </div>
         </div>
@@ -341,7 +346,7 @@
             <div class="o_group o_group_col_12">
                 <div class="border-group">
                     <app-sale-dashboard-cashbook-report [cashBooks]="cashBooks" [dataCashBooks]="dataCashBooks"
-                        [totalDataCashBook]="totalDataCashBook" [groupby]="groupBy" [dateFrom]="this.dateFrom" [dateTo]="this.dateTo">
+                        [totalDataCashBook]="totalDataCashBook" [groupby]="groupBy">
                     </app-sale-dashboard-cashbook-report>
                 </div>
             </div>
