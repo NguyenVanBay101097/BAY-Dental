@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
 using Scriban;
 using Scriban.Runtime;
+using Microsoft.EntityFrameworkCore;
 
 namespace TMTDentalAPI.Controllers
 {
@@ -19,21 +20,34 @@ namespace TMTDentalAPI.Controllers
     public class PrintTemplateConfigsController : BaseApiController
     {
         private readonly IPrintTemplateConfigService _printTemplateConfigService;
+        private readonly IPrintPaperSizeService _printPaperSizeService;
         private readonly IMapper _mapper;
 
-        public PrintTemplateConfigsController(IPrintTemplateConfigService printTemplateConfigService, IMapper mapper)
+        public PrintTemplateConfigsController(IPrintTemplateConfigService printTemplateConfigService,IPrintPaperSizeService printPaperSizeService ,IMapper mapper)
         {
             _printTemplateConfigService = printTemplateConfigService;
+            _printPaperSizeService = printPaperSizeService;
             _mapper = mapper;
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> GetDisplay(PrintTemplateConfigChangeType val)
+        public async Task<IActionResult> GetDisplay(string type)
+        {
+            if (!ModelState.IsValid || type == null)
+                return BadRequest();
+            var res = await _printTemplateConfigService.GetPrintTemplateConfig(type);
+            var display = _mapper.Map<PrintTemplateConfigDisplay>(res);
+            return Ok(display);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ChangePareSize(PrintTemplateConfigChangePaperSize val)
         {
             if (!ModelState.IsValid || val == null)
                 return BadRequest();
-            var res = await _printTemplateConfigService.GetDisplay(val);
-            return Ok(res);
+            var res = await _printTemplateConfigService.ChangePaperSize(val.Type , val.PrintPaperSizeId);
+            var display = _mapper.Map<PrintTemplateConfigDisplay>(res);
+            return Ok(display);
         }
 
         [HttpPut("[action]")]
@@ -42,7 +56,38 @@ namespace TMTDentalAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            await _printTemplateConfigService.CreateOrUpdate(val);
+            var printConfigs = await _printTemplateConfigService.SearchQuery(x => x.Type == val.Type)
+                 .Include(x => x.PrintPaperSize)
+                 .Include(x => x.Company)
+                 .ToListAsync();
+
+            if (printConfigs.Any())
+            {
+                var paperSize = await _printPaperSizeService.SearchQuery(x => x.Id == val.PrintPaperSizeId).FirstOrDefaultAsync();
+                var tmpConfig = printConfigs.Where(x => x.PrintPaperSize.PaperFormat == paperSize.PaperFormat).FirstOrDefault();
+
+                if (tmpConfig == null)
+                {
+                    var res = _mapper.Map<PrintTemplateConfig>(val);
+                    await _printTemplateConfigService.CreateAsync(res);
+                }
+
+                var rs = _mapper.Map(val, tmpConfig);
+                await _printTemplateConfigService.UpdateAsync(rs);
+
+                foreach (var printConfig in printConfigs)
+                    printConfig.IsDefault = printConfig.PrintPaperSize.PaperFormat == paperSize.PaperFormat ? true : false;
+
+                await _printTemplateConfigService.UpdateAsync(printConfigs);
+
+            }
+            else
+            {
+                var res = _mapper.Map<PrintTemplateConfig>(val);
+                res.IsDefault = true;
+                await _printTemplateConfigService.CreateAsync(res);
+            }
+
             return NoContent();
         }
 
@@ -50,26 +95,9 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Generate(GenerateReq val)
         {
-            object obj = await _printTemplateConfigService.GetSampleData(val.Type);
-            // Creates 
-            var scriptObj = new ScriptObject();
-            scriptObj.Import(obj);
-            var context = new TemplateContext();
-            context.PushGlobal(scriptObj);
-            var template = Template.Parse(val.Content);
-            
-            try
-            {
-                var result = await template.RenderAsync(context);
-                return Ok(result);
-
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Không thể chuyển đổi do sai cú pháp");
-            }
-
-
+            object data = await _printTemplateConfigService.GetSampleData(val.Type);
+            var result = await _printTemplateConfigService.RenderTemplate(data, val.Content);
+            return Ok(result);
         }
 
         [HttpPost("[action]")]
@@ -78,7 +106,7 @@ namespace TMTDentalAPI.Controllers
             if (string.IsNullOrEmpty(val.Content))
                 throw new Exception("Mẫu in rỗng , cấu hình mãu in để in thử");
 
-            var result = await _printTemplateConfigService.PrintTest(val);
+            var result = await _printTemplateConfigService.PrintTest(val.Content, val.Type, val.PrintPaperSizeId);
             return Ok(result);
 
         }

@@ -9,16 +9,17 @@ namespace Infrastructure.Services
 {
     public interface IPrintTemplateConfigService : IBaseService<PrintTemplateConfig>
     {
-        Task<PrintTemplateConfigDisplay> GetDisplay(PrintTemplateConfigChangeType val);
+        Task<PrintTemplateConfig> GetPrintTemplateConfig(string type);
 
-        Task CreateOrUpdate(PrintTemplateConfigSave val);
+        Task<PrintTemplateConfig> ChangePaperSize(string type, Guid paperSizeId);
 
         Task<object> GetSampleData(string type);
 
-        Task<string> PrintTest(PrintTestReq val);
+        Task<string> PrintTest(string content, string type, Guid paperSizeId);
 
-        string GetLayout(string content);
-        Task<string> PrintOfType(PrintOfTypeReq val);
+        Task<string> Print(object data, string type);
+
+        Task<string> RenderTemplate(object data, string content);
 
     }
 }

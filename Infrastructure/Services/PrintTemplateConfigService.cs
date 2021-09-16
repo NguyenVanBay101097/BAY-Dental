@@ -38,79 +38,51 @@ namespace Infrastructure.Services
             _modelData = modelData;
         }
 
-        public async Task<PrintTemplateConfigDisplay> GetDisplay(PrintTemplateConfigChangeType val)
-        {
-            var query = SearchQuery(x => x.Type == val.Type);
+        public async Task<PrintTemplateConfig> GetPrintTemplateConfig(string type)
+        {         
+            var printConfig = await SearchQuery(x => x.Type == type && x.IsDefault).Include(x => x.PrintPaperSize).FirstOrDefaultAsync();          
 
-            if (val.PrintPaperSizeId.HasValue)
-                query = query.Where(x => x.PrintPaperSizeId == val.PrintPaperSizeId);
-
-            if (val.IsDefault.HasValue)
-                query = query.Where(x => x.IsDefault == val.IsDefault);
-
-            var printConfig = await query.Include(x => x.PrintPaperSize).FirstOrDefaultAsync();
-
-            var display = _mapper.Map<PrintTemplateConfigDisplay>(printConfig);
-
-            if (display == null)
+            if (printConfig == null)
             {
-                var paperSize = new PrintPaperSize();
-                var printTmp = await _printTemplateService.SearchQuery(x => x.Type == val.Type).FirstOrDefaultAsync();
+                var printTmp = await _printTemplateService.SearchQuery(x => x.Type == type).FirstOrDefaultAsync();
 
                 if (printTmp == null)
                     throw new Exception("Không tìm thấy mẫu in có sẵn");
 
+                var paperSize = await _modelData.GetRef<PrintPaperSize>("base.paperformat_a4");
 
-                if (val.PrintPaperSizeId.HasValue)
-                    paperSize = await _printPaperSizeService.SearchQuery(x => x.Id == val.PrintPaperSizeId).FirstOrDefaultAsync();
-                else
-                    paperSize = await _modelData.GetRef<PrintPaperSize>("base.paperformat_a4");
-
-                display = new PrintTemplateConfigDisplay();
-                display.Content = printTmp.Content;
-                display.Type = printTmp.Type;
-                display.PrintPaperSizeId = paperSize.Id;
-                display.PrintPaperSize = _mapper.Map<PrintPaperSizeDisplay>(paperSize);
+                printConfig = new PrintTemplateConfig();
+                printConfig.Content = printTmp.Content;
+                printConfig.Type = printTmp.Type;
+                printConfig.PrintPaperSizeId = paperSize.Id;
+                printConfig.PrintPaperSize = paperSize;
             }
 
-            return display;
+            return printConfig;
         }
 
-        public async Task CreateOrUpdate(PrintTemplateConfigSave val)
+        public async Task<PrintTemplateConfig> ChangePaperSize(string type , Guid paperSizeId)
         {
-            var printConfigs = await SearchQuery(x => x.Type == val.Type)
-                .Include(x => x.PrintPaperSize)
-                .Include(x => x.Company)
-                .ToListAsync();
-
-            if (printConfigs.Any())
+            var printConfig = await SearchQuery(x => x.Type == type && x.PrintPaperSizeId == paperSizeId).Include(x => x.PrintPaperSize).FirstOrDefaultAsync();
+            if (printConfig == null)
             {
-                var paperSize = await _printPaperSizeService.SearchQuery(x => x.Id == val.PrintPaperSizeId).FirstOrDefaultAsync();
-                var tmpConfig = printConfigs.Where(x => x.PrintPaperSize.PaperFormat == paperSize.PaperFormat).FirstOrDefault();
+                var printTmp = await _printTemplateService.SearchQuery(x => x.Type == type).FirstOrDefaultAsync();
 
-                if (tmpConfig == null)
-                {
-                    var res = _mapper.Map<PrintTemplateConfig>(val);
-                    await CreateAsync(res);
-                }
+                if (printTmp == null)
+                    throw new Exception("Không tìm thấy mẫu in có sẵn");
 
-                var rs = _mapper.Map(val, tmpConfig);
-                await UpdateAsync(rs);
+                var paperSize = await _modelData.GetRef<PrintPaperSize>("base.paperformat_a4");
 
-                foreach (var printConfig in printConfigs)
-                    printConfig.IsDefault = printConfig.PrintPaperSize.PaperFormat == paperSize.PaperFormat ? true : false;
-
-                await UpdateAsync(printConfigs);
-
-            }
-            else
-            {
-                var res = _mapper.Map<PrintTemplateConfig>(val);
-                res.IsDefault = true;
-                await CreateAsync(res);
+                printConfig = new PrintTemplateConfig();
+                printConfig.Content = printTmp.Content;
+                printConfig.Type = printTmp.Type;
+                printConfig.PrintPaperSizeId = paperSize.Id;
+                printConfig.PrintPaperSize = paperSize;
             }
 
+            return printConfig;
         }
+  
 
         public async Task<object> GetSampleData(string type)
         {
@@ -226,50 +198,48 @@ namespace Infrastructure.Services
             return obj;
         }
 
-        public string GetLayout(string content)
-        {
-            var html = File.ReadAllText("PrintTemplate/Shared/Layout.html");
+        public string ConnectLayoutForContent(string layout , string content)
+        {          
             var doc = new HtmlDocument();
-            doc.LoadHtml(html);
+            doc.LoadHtml(layout);
             doc.DocumentNode.SelectSingleNode("//div[@class='container']").InnerHtml += content;
             var newHtml = doc.DocumentNode.OuterHtml;
             return newHtml;
         }
 
-        public async Task<string> PrintTest(PrintTestReq val)
+        public async Task<string> PrintTest(string content , string type , Guid paperSizeId)
         {
-            object obj = await GetSampleData(val.Type);
-            var printPaperSize = await _printPaperSizeService.SearchQuery(x => x.Id == val.PrintPaperSizeId).FirstOrDefaultAsync();
-            // Creates 
-            var scriptObj = new ScriptObject();
-            scriptObj.Import(obj);
-            scriptObj.Add("paper_size", printPaperSize);
-            var context = new TemplateContext();
-            context.PushGlobal(scriptObj);
-            var layout = GetLayout(val.Content);
-            var template = Template.Parse(layout);
+            object data = await GetSampleData(type);
+            var printPaperSize = await _printPaperSizeService.SearchQuery(x => x.Id == paperSizeId).FirstOrDefaultAsync();                
+            var layout = File.ReadAllText("PrintTemplate/Shared/Layout.html");
 
-            var result = template.Render(context);
+            var renderContent = await RenderTemplate(data, content);
+            var renderLayout = await RenderTemplate(printPaperSize, layout);
+
+            var result = ConnectLayoutForContent(renderLayout, renderContent);
 
             return result;
         }
 
-        public async Task<string> PrintOfType(PrintOfTypeReq val)// in hóa đơn của 1 type cụ thể kèm data
+        public async Task<string> Print(object data , string type)// in hóa đơn của 1 type cụ thể kèm data
         {
-            PrintTemplateConfigDisplay printConfig = await GetDisplay(new PrintTemplateConfigChangeType() { IsDefault = true, Type = val.Type });
+            
+            var printConfig = await GetPrintTemplateConfig(type);
+            var renderContent = await RenderTemplate(data, printConfig.Content);
 
             var printPaperSize = await _printPaperSizeService.SearchQuery(x => x.Id == printConfig.PrintPaperSizeId).FirstOrDefaultAsync();
-            // Creates 
-            var scriptObj = new ScriptObject();
-            scriptObj.Import(val.Obj);
-            scriptObj.Add("paper_size", printPaperSize);
-            var context = new TemplateContext();
-            context.PushGlobal(scriptObj);
-            var layout = GetLayout(printConfig.Content);
-            var template = Template.Parse(layout);
+            var layoutHtml = File.ReadAllText("PrintTemplate/Shared/Layout.html");
+            var renderLayout = await RenderTemplate(printPaperSize, layoutHtml);        
 
-            var result = template.Render(context);
+            var result = ConnectLayoutForContent(renderLayout,renderContent);
 
+            return result;
+        }
+
+        public async Task<string> RenderTemplate(object data, string content)
+        {        
+            var template = Template.Parse(content);
+            var result = await template.RenderAsync(data);
             return result;
         }
 

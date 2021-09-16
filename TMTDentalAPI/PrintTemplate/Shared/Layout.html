@@ -7,15 +7,15 @@
     <link rel="stylesheet" type="text/css" href="/css/print.css" />
     <style>
         @page {
-            size:{{paper_size.paper_format}} {{ paper_size.is_size == false ? "portrait" : "landscape" }} !important;
+            size:{{paper_format}} {{is_size == false ? "portrait" : "landscape" }} !important;
             margin-top: {{paper_size.top_margin ?? 0}}mm;
-            margin-right: {{paper_size.right_margin ?? 0}}mm;
-            margin-bottom:{{paper_size.bottom_margin ?? 0}}mm;
-            margin-left:{{paper_size.left_margin ?? 0}}mm;
+            margin-right: {{right_margin ?? 0}}mm;
+            margin-bottom:{{bottom_margin ?? 0}}mm;
+            margin-left:{{left_margin ?? 0}}mm;
         }
     </style>
 </head>
-<body class="{{paper_size.paper_format}}">
+<body class="{{paper_format}}">
     <div class="container"></div>
 </body>
 </html>

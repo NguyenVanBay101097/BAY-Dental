@@ -62,13 +62,11 @@ namespace Umbraco.Web.Models.ContentEditing
 
     }
 
-    public class PrintTemplateConfigChangeType
+    public class PrintTemplateConfigChangePaperSize
     {
         public string Type { get; set; }
 
-        public bool? IsDefault { get; set; }
-
-        public Guid? PrintPaperSizeId { get; set; }
+        public Guid PrintPaperSizeId { get; set; }
     }
 
     public class GenerateReq
@@ -85,7 +83,7 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public string Type { get; set; }
         public string Content { get; set; }
-        public Guid? PrintPaperSizeId { get; set; }
+        public Guid PrintPaperSizeId { get; set; }
     }
 
     public class PrintOfTypeReq
@@ -93,6 +91,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Type { get; set; }
         public object Obj { get; set; }
     }
+
     public class SampleDataPrintTemplate
     {
         public string Type { get; set; }
