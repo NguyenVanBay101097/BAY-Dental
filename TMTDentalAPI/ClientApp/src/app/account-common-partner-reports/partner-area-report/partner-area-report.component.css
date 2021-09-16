@@ -1,0 +1,61 @@
+.o_group_col_6 {
+    flex: 1;
+}
+
+.card-header {
+    background-color: #FFFFFF;
+}
+
+.pie-chart {
+    min-height: 600px;
+}
+
+.chart-detail {
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.chart-detail-block {
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+}
+
+.chart-detail-item {
+    display: flex;
+    align-items: center;
+    width: calc(50% - 15px);
+    justify-content: space-between;
+    padding: 8px;
+}
+
+.district-list {
+    flex-wrap: wrap;
+    justify-content: space-between;
+    max-height: 600px;
+    overflow-y: scroll;
+}
+
+.card-title {
+    justify-content: space-between;
+}
+
+.card-detail {
+    justify-content: space-between;
+}
+
+.card-title-item {
+    flex: 1;
+    text-align: center;
+}
+
+.card-detail-item {
+    flex: 1;
+    text-align: center;
+}
+
+.card-item {
+    width: calc(50% - 2px);
+}

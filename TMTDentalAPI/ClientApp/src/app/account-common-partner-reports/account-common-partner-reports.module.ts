@@ -15,19 +15,23 @@ import { PartnerReportManagementComponent } from './partner-report-management/pa
 import { PartnerReportOverviewComponent } from './partner-report-overview/partner-report-overview.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PartnerReportSaleOrderComponent } from './partner-report-sale-order/partner-report-sale-order.component';
+import { PartnerAreaReportComponent } from './partner-area-report/partner-area-report.component';
+import { ChartsModule, ThemeService } from 'ng2-charts';
 
 @NgModule({
-  declarations: [AccountCommonCustomerReportListComponent, AccountCommonPartnerReportDetailComponent, AccountCommonPartnerReportListComponent, PartnerDebitListReportComponent, PartnerDebitDetailListReportComponent, PartnerReportManagementComponent, PartnerReportOverviewComponent, PartnerReportSaleOrderComponent],
+  declarations: [AccountCommonCustomerReportListComponent, AccountCommonPartnerReportDetailComponent, AccountCommonPartnerReportListComponent, PartnerDebitListReportComponent, PartnerDebitDetailListReportComponent, PartnerReportManagementComponent, PartnerReportOverviewComponent, PartnerReportSaleOrderComponent, PartnerAreaReportComponent],
   imports: [
     CommonModule,
     AccountCommonPartnerReportsRoutingModule,
     MyCustomKendoModule,
     FormsModule,
     SharedModule,
-    NgbModule
+    NgbModule,
+    ChartsModule
   ],
   providers: [
-    AccountCommonPartnerReportService
+    AccountCommonPartnerReportService,
+    ThemeService
   ]
 })
 export class AccountCommonPartnerReportsModule { }
