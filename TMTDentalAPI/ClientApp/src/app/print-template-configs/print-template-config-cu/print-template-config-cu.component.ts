@@ -13,6 +13,7 @@ import * as constantData from '../print-template-config-constant-data';
 import { KeywordListDialogComponent } from '../keyword-list-dialog/keyword-list-dialog.component';
 import * as DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
 import { CKEditorComponent } from '@ckeditor/ckeditor5-angular';
+import '@ckeditor/ckeditor5-build-decoupled-document/build/translations/vi'
 import SourceEditing from '@ckeditor/ckeditor5-source-editing/src/sourceediting';
 
 @Component({
@@ -37,7 +38,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         enterMode: 2,//this support not format string to p tag
         // protectedSource: [/{{[\s\S]*?}}/g] // this support loop code
         // skin: 'kama'
-        // plugins: [SourceEditing],
+        // plugins: [Bold],
         // toolbar: ['sourceEditing']
         toolbar: {
             // items: ['bold'],
