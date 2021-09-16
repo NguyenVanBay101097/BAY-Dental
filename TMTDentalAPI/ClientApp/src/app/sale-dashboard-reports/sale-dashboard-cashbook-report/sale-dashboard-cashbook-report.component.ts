@@ -33,9 +33,57 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
   public cashbookAgentCommission: any;
   public totalCashbook: any;
 
-  chartOptions: any = {};
+  chartOptions: any = {}
+  // chartOptions: any = {
+  //   scaleShowVerticalLines: false,
+  //   responsive: true,
+  //   maintainAspectRatio: false,
+  //   title: {
+  //     text: 'BIỂU ĐỒ THU - CHI',
+  //     display: true,
+  //     fontSize: '16',
+  //   },
+  //   legend: { position: 'bottom', },
+  //   scales: {
+  //     xAxes: [{
+  //       distribution: 'linear',
+  //       type: 'time',
+  //       time: {
+  //         unit: 'day'
+  //       },
+  //       // type: "time",
+  //       // time: {
+  //       //   format: 'DD/MM/YYYY',
+  //       //   // tooltipFormat: 'll',
+  //       //   unit: 'month'
+  //       // }
+  //       ticks: {
+  //         // maxTicksLimit: 10, //10
+  //       }
+  //     }],
+  //     yAxes: [{
+  //       // ticks: {
+  //       //   min: 0,
+  //       //   max: 100,
+  //       //   stepSize: 20,
+  //       // }
+  //     }],
+
+  //   }
+  // };
   chartType: string = 'bar';
   dataSet: any[] = [];
+  defaultDataSet = [{ x: '', y: 0 }];
+  // dataSet: any[] = [
+  //   {
+  //     label: "# of Votes",
+  //     fill: false,
+  //     data: [
+  //       { x: '', y: 0 }
+  //       // { x: '2021-09-01', y: 20 }
+  //     ]
+  //   }
+  // ];
   maxTicks: number = 11;
 
   constructor(private cashBookService: CashBookService,
@@ -107,16 +155,13 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
   }
 
   loadChartData() {
-    if (this.cashBooks) {
-      let dataThu = [];
-      let dataChi = [];
-      let dataTonQuy = [];
+    let dataThu = [];
+    let dataChi = [];
+    let dataTonQuy = [];
 
-      // console.log(this.cashBooks);
-
+    if (this.cashBooks && this.cashBooks.length > 0) {
       for (const data of this.cashBooks) {
         const date = this.intlService.formatDate(new Date(data.date), 'yyyy-MM-dd');
-
         const thu = Object.create(null);
         thu.x = date
         thu.y = data.totalThu;
@@ -132,13 +177,17 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
         tonQuy.y = data.totalAmount;
         dataTonQuy.push(tonQuy);
       }
-
-      this.dataSet = [
-        { data: dataThu, order: 1, label: "Thu", backgroundColor: '#2395FF', hoverBackgroundColor: '#4FAAFF', borderColor: '#2395FF' },
-        { data: dataChi, order: 2, label: "Chi", backgroundColor: '#28A745', hoverBackgroundColor: '#53B96A', borderColor: '#28A745' },
-        { data: dataTonQuy, order: 0, label: "Tồn Quỹ", fill: false, type: "line", backgroundColor: '#ff0000', hoverBackgroundColor: '#ff0000', borderColor: '#ff0000' }
-      ]
+    } else {
+      dataThu = this.defaultDataSet;
+      dataChi = this.defaultDataSet;
+      dataTonQuy = this.defaultDataSet;
     }
+    
+    this.dataSet = [
+      { data: dataThu, order: 1, label: "Thu", backgroundColor: '#2395FF', hoverBackgroundColor: '#4FAAFF', borderColor: '#2395FF' },
+      { data: dataChi, order: 2, label: "Chi", backgroundColor: '#28A745', hoverBackgroundColor: '#53B96A', borderColor: '#28A745' },
+      { data: dataTonQuy, order: 0, label: "Tồn Quỹ", fill: false, type: "line", backgroundColor: '#ff0000', hoverBackgroundColor: '#ff0000', borderColor: '#ff0000' }
+    ]
   }
 
   loadDataApi() {

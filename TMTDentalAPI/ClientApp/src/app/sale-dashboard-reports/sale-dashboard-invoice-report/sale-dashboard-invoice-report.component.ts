@@ -39,6 +39,7 @@ export class SaleDashboardInvoiceReportComponent implements AfterViewInit {
   options: any = {};
   maxTicks: number = 11;
   dataSet: any[] = [];
+  defaultDataSet = [{ x: '', y: 0 }];
 
   constructor(private revenueReportService: AccountInvoiceReportService,
     private intlService: IntlService) { }
@@ -138,7 +139,7 @@ export class SaleDashboardInvoiceReportComponent implements AfterViewInit {
     var res = e.value;
     return res;
   };
-  
+
   loadChartOption() {
     this.options = {
       scaleShowVerticalLines: false,
@@ -195,7 +196,7 @@ export class SaleDashboardInvoiceReportComponent implements AfterViewInit {
   loadChartData() {
     let totalRevenues = [];
     let totalCashBooks = [];
-    if (this.revenues) {
+    if (this.revenues && this.revenues.length > 0) {
       for (const data of this.revenues) {
         const date = this.intlService.formatDate(new Date(data.invoiceDate), 'yyyy-MM-dd');
         const val = Object.create(null);
@@ -203,9 +204,11 @@ export class SaleDashboardInvoiceReportComponent implements AfterViewInit {
         val.y = data.priceSubTotal;
         totalRevenues.push(val);
       }
+    } else {
+      totalRevenues = this.defaultDataSet;
     }
 
-    if (this.cashBooks) {
+    if (this.cashBooks && this.cashBooks.length > 0) {
       for (const data of this.cashBooks) {
         const date = this.intlService.formatDate(new Date(data.date), 'yyyy-MM-dd');
         const val = Object.create(null);
@@ -213,11 +216,14 @@ export class SaleDashboardInvoiceReportComponent implements AfterViewInit {
         val.y = data.totalThu;
         totalCashBooks.push(val);
       }
-      this.dataSet = [
-        { data: totalRevenues, label: "Doanh thu", backgroundColor: '#2395FF', hoverBackgroundColor: '#4FAAFF', borderColor: '#2395FF' },
-        { data: totalCashBooks, label: "Thực thu", backgroundColor: '#28A745', hoverBackgroundColor: '#53B96A', borderColor: '#28A745' },
-      ]
+    } else {
+      totalCashBooks = this.defaultDataSet;
     }
+
+    this.dataSet = [
+      { data: totalRevenues, label: "Doanh thu", backgroundColor: '#2395FF', hoverBackgroundColor: '#4FAAFF', borderColor: '#2395FF' },
+      { data: totalCashBooks, label: "Thực thu", backgroundColor: '#28A745', hoverBackgroundColor: '#53B96A', borderColor: '#28A745' },
+    ]
   }
 
   // barChartMethod() {
