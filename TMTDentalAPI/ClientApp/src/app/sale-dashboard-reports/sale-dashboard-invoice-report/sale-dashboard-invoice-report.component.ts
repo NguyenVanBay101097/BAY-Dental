@@ -142,6 +142,14 @@ export class SaleDashboardInvoiceReportComponent implements AfterViewInit {
 
   loadChartOption() {
     this.options = {
+      layout: {
+        padding: {
+          left: 50,
+          right: 0,
+          top: 0,
+          bottom: 0
+        }
+      },
       scaleShowVerticalLines: false,
       responsive: true,
       maintainAspectRatio: false,
@@ -167,6 +175,8 @@ export class SaleDashboardInvoiceReportComponent implements AfterViewInit {
       },
       scales: {
         xAxes: [{
+          display: true,
+          offset: true,
           distribution: 'linear',
           type: 'time',
           time: {

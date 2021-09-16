@@ -128,6 +128,8 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
       },
       scales: {
         xAxes: [{
+          display: true,
+          offset: true,
           distribution: 'linear',
           type: 'time',
           time: {
