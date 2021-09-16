@@ -71,7 +71,7 @@ namespace Infrastructure.Services
                 if (printTmp == null)
                     throw new Exception("Không tìm thấy mẫu in có sẵn");
 
-                var paperSize = await _modelData.GetRef<PrintPaperSize>("base.paperformat_a4");
+                var paperSize = await _printPaperSizeService.SearchQuery(x=> x.Id == paperSizeId).FirstOrDefaultAsync();
 
                 printConfig = new PrintTemplateConfig();
                 printConfig.Content = printTmp.Content;
