@@ -60,12 +60,12 @@ export class AppointmentKanbanComponent implements OnInit {
 
   // appointmentByDate: { [id: string]: AppointmentBasic[]; } = {};
 
-  states: { text: string, value: string, color?: string }[] = [
-    { text: 'Tất cả', value: '', color: '' },
-    { text: 'Đang hẹn', value: 'confirmed', color: '#2395FF' },
-    { text: 'Đã đến', value: 'done', color: '#28A745' },
-    { text: 'Hủy hẹn', value: 'cancel', color: '#EB3B5B' },
-    { text: 'Quá hẹn', value: 'overdue', color: '#FFC107' }
+  states: { text: string, value: string }[] = [
+    { text: 'Tất cả', value: '' },
+    { text: 'Đang hẹn', value: 'confirmed' },
+    { text: 'Đã đến', value: 'done' },
+    { text: 'Hủy hẹn', value: 'cancel' },
+    { text: 'Quá hẹn', value: 'overdue' }
   ];
   stateSelected: string = this.states[0].value;
   
