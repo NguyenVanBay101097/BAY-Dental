@@ -46,6 +46,10 @@ const routes: Routes = [
     path: 'commission-settlements',
     loadChildren: () => import('../commission-settlements/commission-settlements.module').then(m => m.CommissionSettlementsModule),
   },
+  {
+    path: 'day-dashboard-report',
+    loadChildren: () => import('../day-dashboard-report/day-dashboard-report.module').then(m => m.DayDashboardReportModule),
+  },
 ];
 
 @NgModule({

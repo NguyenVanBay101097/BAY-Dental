@@ -1,1 +1,65 @@
-<p>day-dashboard-report-management works!</p>
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">
+                <span>Báo cáo tổng quan ngày</span>
+            </li>
+        </ol>
+        <div class="o_cp_searchview">
+            <div class="o_searchview">
+
+            </div>
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button type="button" class="btn btn-primary r-2">
+                        <i class="fas fa-download mr-2"></i>Xuất Excel
+                    </button>
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <div class=" py-3 container">
+        <ul class="nav nav-pills" id="myTab" role="tablist">
+            <li class="">
+                <a class="mr-1 btn btn-outline-primary active" id="home-tab" data-toggle="tab" href="#home" role="tab"
+                    aria-controls="home" aria-selected="true">Dịch vụ đăng kí mới</a>
+            </li>
+            <li class=" ">
+                <a class="mr-1 btn btn-outline-primary" id="service-tab" data-toggle="tab" href="#service" role="tab"
+                    aria-controls="service" aria-selected="false">Doanh thu dịch vụ</a>
+            </li>
+            <li class=" ">
+                <a class="mr-1 btn btn-outline-primary" id="medicines-tab" data-toggle="tab" href="#medicines"
+                    role="tab" aria-controls="medicines" aria-selected="false">Doanh thu thuốc</a>
+            </li>
+            <li class=" ">
+                <a class="mr-1 btn btn-outline-primary" id="cashbook-tab" data-toggle="tab" href="#cashbook" role="tab"
+                    aria-controls="cashbook" aria-selected="false">Tình hình thu chi</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                <app-day-dashboard-report-service></app-day-dashboard-report-service>
+            </div>
+            <div class="tab-pane fade" id="service" role="tabpanel" aria-labelledby="service-tab">
+                <app-day-dashboard-report-revenue-service></app-day-dashboard-report-revenue-service>
+            </div>
+            <div class="tab-pane fade" id="medicines" role="tabpanel" aria-labelledby="medicines-tab">
+                <app-day-dashboard-report-revenue-medicines></app-day-dashboard-report-revenue-medicines>
+            </div>
+            <div class="tab-pane fade" id="cashbook" role="tabpanel" aria-labelledby="cashbook-tab">
+                <app-day-dashboard-report-cashbook></app-day-dashboard-report-cashbook>
+            </div>
+        </div>
+    </div>
+</div>
