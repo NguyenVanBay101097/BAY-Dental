@@ -593,17 +593,42 @@ namespace Infrastructure.Services
             return res;
         }
 
-
-
-        //public override ISpecification<AccountInvoiceReport> RuleDomainGet(IRRule rule)
+        //public async Task<IEnumerable<RevenueDistrictAreaDisplay>> GetRevenueDistrictArea(RevenueDistrictAreaPar val)
         //{
-        //    var companyId = CompanyId;
-        //    switch (rule.Code)
+        //    var filter = new RevenueReportQueryCommon();
+        //    filter.DateFrom = val.DateFrom;
+        //    filter.DateTo = val.DateTo;
+        //    var query = GetRevenueReportQuery(filter);
+        //    if (!string.IsNullOrEmpty(val.CityCode))
+        //        query = query.Where(x => x.Company.Partner.CityCode == val.CityCode);
+        //    if (val.CompanyId.HasValue)
+        //        query = query.Where(x => x.CompanyId == val.CompanyId);
+
+        //    var revenueTotal = Math.Abs(query.Sum(x => x.PriceSubTotal));
+        //    var partnerTotal = await query.Where(x => string.IsNullOrEmpty(x.Company.Partner.CityCode)).CountAsync();
+        //    var resDistrict = await query.Where(x => x.Company.Partner != null)
+        //        .GroupBy(x => new {DistrictName = x.Company.Partner.DistrictName,DistrictCode = x.Company.Partner.DistrictCode})
+        //        .Select(x => new RevenueDistrictAreaDisplay()
+        //        {
+        //            DistrictName = x.Key.DistrictName,
+        //            DistrictCode = x.Key.DistrictCode,
+        //            Revenue = Math.Abs(x.Sum(z => z.PriceSubTotal)),
+        //            PartnerCount = x.Count(p => p.PartnerId.HasValue),
+        //            Percent = String.Format("{0:0.##}", x.Sum(z => z.PriceSubTotal)/revenueTotal * 100) + "%"
+
+        //        }).ToListAsync();
+        //    var revenueDistrict = Math.Abs(resDistrict.Sum(x => x.Revenue));
+        //    var revenueNotDistrict = Math.Abs(revenueTotal - revenueDistrict);
+            
+        //    if (revenueNotDistrict > 0)
         //    {
-        //        case "account.invoice_comp_rule":
-        //            return new InitialSpecification<AccountInvoiceReport>(x => x.company_id == companyId);
-        //        default:
-        //            return null;
+        //        var obj = new RevenueDistrictAreaDisplay()
+        //        {
+        //            DistrictName = "Khác",
+        //            Revenue = revenueNotDistrict,
+
+        //            Percent = String.Format("{0:0.##}", revenueNotDistrict / revenueTotal * 100) + "%"
+        //        };
         //    }
         //}
     }

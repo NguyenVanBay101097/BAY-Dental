@@ -1318,6 +1318,9 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search));
 
+            if (!string.IsNullOrEmpty(val.CityCode))
+                query = query.Where(x => x.Partner.CityCode == val.CityCode);
+
             if (val.Active != null)
             {
                 query = query.Where(x => x.Active == val.Active);

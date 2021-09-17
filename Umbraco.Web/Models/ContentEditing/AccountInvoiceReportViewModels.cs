@@ -7,6 +7,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class RevenueReportQueryCommon
     {
+        public RevenueReportQueryCommon() { }
         public RevenueReportQueryCommon(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string searchPartner = "")
         {
             this.DateFrom = dateFrom;
@@ -296,6 +297,48 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateTo { get; set; }
         public Guid? CompanyId { get; set; }
         public Guid ToDetailEmployeeId { get; set; }
+    }
+
+    public class RevenueDistrictAreaPar
+    {
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public Guid? CompanyId { get; set; }
+        public string CityCode { get; set; }
+    }
+
+    public class RevenueDistrictAreaDisplay
+    {
+        /// <summary>
+         /// Mã tỉnh/thành phố
+         /// </summary>
+        public string CityCode { get; set; }
+
+        /// <summary>
+        /// Tên tỉnh/thành phố
+        /// </summary>
+        public string CityName { get; set; }
+
+        /// <summary>
+        /// Mã quận/huyện
+        /// </summary>
+        public string DistrictCode { get; set; }
+        /// <summary>
+        /// Tên quận/huyện
+        /// </summary>
+        public string DistrictName { get; set; }
+        /// <summary>
+        /// Tổng doanh thu
+        /// </summary>
+        public decimal Revenue { get; set; }
+        /// <summary>
+        /// Tỷ lệ
+        /// </summary>
+        public string Percent { get; set; }
+        /// <summary>
+        /// Số lượng khách hàng của quận/huyện
+        /// </summary>
+        public decimal PartnerCount { get; set; }
     }
 
 

@@ -1,11 +1,11 @@
 <div class="card">
     <div class="card-body">
         <div class="form-inline">
-            <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1" [valueField]="'id'" [textField]="'name'"
-                [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
+            <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1" valuePrimitive="true" [valueField]="'id'" [textField]="'name'"
+                [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" [value]="currentCompany" #companyCbx>
             </kendo-combobox>
-            <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1" [valueField]="'id'" [textField]="'name'"
-                [filterable]="true" [data]="cities" (selectionChange)="onSelectCity($event)" #cityCbx>
+            <kendo-combobox class="mr-1" [data]="dataResultCities" valuePrimitive="true" [textField]="'name'" [filterable]="true" [value]="currentCity"
+            [placeholder]="'Tỉnh/Thành'" (selectionChange)="onSelectCity($event)" (filterChange)="handleCityFilter($event)" [filterable]="true" #cityCbx [valueField]="'code'">
             </kendo-combobox>
             <app-date-range-picker-filter [opens]="'right'" class="mr-1" [startDate]="dateFrom"
                 [endDate]="dateTo" (searchChange)="onSearchDateChange($event)" opens="right">
@@ -20,12 +20,13 @@
                             <div>
                                 <ng-container *ngIf="1 == 1; else elseTemplate">
                                     <div style="display: block;">
-                                        <canvas baseChart 
+                                        <canvas baseChart #pieChart
                                           [data]="pieChartData"                        
                                           [chartType]="pieChartType"
                                           [options]="pieChartOptions"
                                           [colors]="pieChartColors"
                                           [plugins]="pieChartPlugins"
+                                          [labels]="pieChartLabels"
                                           >
                                         </canvas>
                                       </div>
@@ -36,7 +37,7 @@
                                     </div>
                                 </ng-template>
                             </div>
-                            <div class="chart-detail-block">
+                            <!-- <div class="chart-detail-block">
                                 <div class="d-flex chart-detail">
                                     <div *ngFor="let item of pieObjData" class="chart-detail-item">
                                         <span><i class="fas fa-circle mr-2" [style.color]="item.color"></i>
@@ -44,7 +45,7 @@
                                         <span>({{item.percent}})</span>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>
