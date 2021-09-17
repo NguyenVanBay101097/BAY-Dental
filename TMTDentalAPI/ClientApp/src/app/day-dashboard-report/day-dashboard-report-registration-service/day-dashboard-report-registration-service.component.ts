@@ -3,11 +3,11 @@ import { GridDataResult } from '@progress/kendo-angular-grid';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
-  selector: 'app-day-dashboard-report-revenue-service',
-  templateUrl: './day-dashboard-report-revenue-service.component.html',
-  styleUrls: ['./day-dashboard-report-revenue-service.component.css']
+  selector: 'app-day-dashboard-report-registration-service',
+  templateUrl: './day-dashboard-report-registration-service.component.html',
+  styleUrls: ['./day-dashboard-report-registration-service.component.css']
 })
-export class DayDashboardReportRevenueServiceComponent implements OnInit {
+export class DayDashboardReportRegistrationServiceComponent implements OnInit {
   gridData: GridDataResult;
   loading = false;
   skip = 0;
@@ -26,4 +26,5 @@ export class DayDashboardReportRevenueServiceComponent implements OnInit {
     this.limit = e.take;
     // this.loadReport();
   }
+
 }

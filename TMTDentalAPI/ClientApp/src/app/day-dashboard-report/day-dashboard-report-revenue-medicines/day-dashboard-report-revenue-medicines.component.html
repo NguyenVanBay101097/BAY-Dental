@@ -1,1 +1,29 @@
-<p>day-dashboard-report-revenue-medicines works!</p>
+<div class="mt-3 d-flex flex-row summary flex-wrap">
+    <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
+        <label style="font-weight: 600;"> Doanh thu</label>
+        <h5 class="text-success">100000</h5>
+    </div>
+    <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
+        <label style="font-weight: 600;"> Tiền mặt </label>
+        <h5 class="text-primary">100000</h5>
+    </div>
+    <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
+        <label style="font-weight: 600;"> Ngân hàng </label>
+        <h5 class="text-info">100000</h5>
+    </div>
+</div>
+<kendo-grid #grid [data]="gridData" [pageable]="pagerSettings" [skip]="skip" [pageSize]="limit" [resizable]="true"
+    [loading]="loading" (pageChange)="pageChange($event)">
+    <kendo-grid-column title="Số hóa đơn" width="150">
+    </kendo-grid-column>
+    <kendo-grid-column title="Phiếu điều trị" width="150">
+    </kendo-grid-column>
+    <kendo-grid-column title="Khách hàng" width="180">
+    </kendo-grid-column>
+    <kendo-grid-column title="Bác sĩ" width="180">
+    </kendo-grid-column>
+    <kendo-grid-column title="Số tiền" width="150">
+    </kendo-grid-column>
+    <kendo-grid-column title="Phương thức" width="100">
+    </kendo-grid-column>
+</kendo-grid>

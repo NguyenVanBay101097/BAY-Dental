@@ -1,1 +1,116 @@
-<p>day-dashboard-report-cashbook works!</p>
+<div>
+    <kendo-combobox [data]="stateOptions" class="mt-2" [textField]="'text'" [valueField]="'value'" [filterable]="true"
+        (selectionChange)="onSelectChange($event)" [placeholder]="'Phương thức'">
+    </kendo-combobox>
+
+    <div class="mt-2 d-flex flex-row summary flex-wrap">
+        <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
+            <label style="font-weight: 600;"> Quỹ đầu kỳ </label>
+            <h5 class="text-primary">100000</h5>
+        </div>
+        <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
+            <label style="font-weight: 600;"> Tổng thu </label>
+            <h5 class="text-info">100000</h5>
+        </div>
+        <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
+            <label style="font-weight: 600;"> Tổng chi </label>
+            <h5 class="text-danger">100000</h5>
+        </div>
+        <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
+            <label style="font-weight: 600;"> Tổng sổ quỹ </label>
+            <h5 class="text-success">100000</h5>
+        </div>
+        <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
+            <label style="font-weight: 600;"> Quỹ tiền mặt </label>
+            <h5 class="text-success">100000</h5>
+        </div>
+        <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
+            <label style="font-weight: 600;"> Quỹ ngân hàng </label>
+            <h5 class="text-success">100000</h5>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title text-primary">Thu</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="my-2 d-flex justify-content-between">
+                            <span class="title-detail">
+                                Khách hàng thanh toán dịch vụ và thuốc
+                                <span class="text-primary t-tooltip ml-1" placement="top"
+                                    ngbTooltip="Không bao gồm tiền khách hàng thanh toán bằng phương thức Ghi công nợ và Tạm ứng">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                </span>
+                            </span>
+                            <span>0</span>
+                        </div>
+                        <div class="my-2 d-flex justify-content-between">
+                            <span class="title-detail">Khách hàng đóng tạm ứng</span>
+                            <span>0</span>
+                        </div>
+                        <div class="my-2 d-flex justify-content-between">
+                            <span class="title-detail">Thu công nợ khách hàng</span>
+                            <span>0</span>
+                        </div>
+                        <div class="my-2 d-flex justify-content-between">
+                            <span class="title-detail">Nhà cung cấp hoàn tiền</span>
+                            <span>0</span>
+                        </div>
+                        <div class="my-2 d-flex justify-content-between">
+                            <span class="title-detail">Thu ngoài</span>
+                            <span>0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title text-primary">Chi</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="my-2 d-flex justify-content-between">
+                            <span class="title-detail">Thanh toán cho nhà cung cấp</span>
+                            <span>0</span>
+                        </div>
+                        <div class="my-2 d-flex justify-content-between">
+                            <span class="title-detail">Hoàn tạm ứng cho khách hàng</span>
+                            <span>0</span>
+                        </div>
+                        <div class="my-2 d-flex justify-content-between">
+                            <span class="title-detail">Chi lương nhân viên</span>
+                            <span>0</span>
+                        </div>
+                        <div class="my-2 d-flex justify-content-between">
+                            <span class="title-detail">Hoa hồng người giới thiệu</span>
+                            <span>0</span>
+                        </div>
+                        <div class="my-2 d-flex justify-content-between">
+                            <span class="title-detail">Chi ngoài</span>
+                            <span>0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <kendo-grid #grid [data]="gridData" [pageable]="pagerSettings" [skip]="skip" [pageSize]="limit" [resizable]="true"
+        [loading]="loading" (pageChange)="pageChange($event)">
+        <kendo-grid-column title="Số phiếu" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column title="Nội dung" width="250">
+        </kendo-grid-column>
+        <kendo-grid-column title="Phương thức" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column title="Loại thu chi" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column title="Số tiền" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column title="Đối tác" width="180">
+        </kendo-grid-column>
+    </kendo-grid>
+</div>

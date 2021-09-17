@@ -13,7 +13,12 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary r-2">
+                    <kendo-datepicker (valueChange)="onChangeDate($event)" class="mr-2" [value]="date"></kendo-datepicker>
+                    <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-2" [valueField]="'id'"
+                        [textField]="'name'" [filterable]="true" [data]="listCompany"
+                        (selectionChange)="onSelectCompany($event)" #companyCbx>
+                    </kendo-combobox>
+                    <button type="button" class="btn btn-primary" (click)="exportExcelFile()">
                         <i class="fas fa-download mr-2"></i>Xuất Excel
                     </button>
                 </div>
@@ -49,7 +54,7 @@
         </ul>
         <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                <app-day-dashboard-report-service></app-day-dashboard-report-service>
+                <app-day-dashboard-report-registration-service></app-day-dashboard-report-registration-service>
             </div>
             <div class="tab-pane fade" id="service" role="tabpanel" aria-labelledby="service-tab">
                 <app-day-dashboard-report-revenue-service></app-day-dashboard-report-revenue-service>

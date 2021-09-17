@@ -1,0 +1,15 @@
+.mw-200 {
+    min-width: 200px;
+}
+
+.summary label, h5 {
+    margin: 0 !important;
+}
+
+.card-header{
+    background-color: #F2F7FF;
+}
+
+.card-body{
+    padding: .5rem 1rem !important;
+}
