@@ -57,5 +57,20 @@
 }
 
 .card-item {
-    width: calc(50% - 2px);
+    width: calc(50% - .5rem);
+    margin-bottom: 1rem;
+    border: 1px solid #007bff;
+}
+
+.card-item:first-of-type {
+    border: none !important;
+    background: #CCE7FF;
+}
+
+.card-item:first-of-type .card-header {
+    background: transparent !important;
+}
+
+.card-item:last-of-type {
+    margin-bottom: 0;
 }
