@@ -11,10 +11,11 @@ import { PrintPaperSizeCreateUpdateDialogComponent } from 'src/app/config-prints
 import * as _ from 'lodash';
 import * as constantData from '../print-template-config-constant-data';
 import { KeywordListDialogComponent } from '../keyword-list-dialog/keyword-list-dialog.component';
-import * as DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
+// import * as DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
 import { CKEditorComponent } from '@ckeditor/ckeditor5-angular';
-import '@ckeditor/ckeditor5-build-decoupled-document/build/translations/vi'
-import SourceEditing from '@ckeditor/ckeditor5-source-editing/src/sourceediting';
+// import '@ckeditor/ckeditor5-build-decoupled-document/build/translations/vi'
+// import SourceEditing from '@ckeditor/ckeditor5-source-editing/src/sourceediting';
+import * as Editor from '../../ckCustomBuild/build/ckEditor'
 
 @Component({
     selector: 'app-print-template-config-cu',
@@ -22,26 +23,43 @@ import SourceEditing from '@ckeditor/ckeditor5-source-editing/src/sourceediting'
     styleUrls: ['./print-template-config-cu.component.css']
 })
 export class PrintTemplateConfigCuComponent implements OnInit {
-    public editor = DecoupledEditor;
+    public editor = Editor;
     types: { text: string, value: string }[] = [];
     // config = new PrintTemplateConfigDisplay();
     configEdit = new PrintTemplateConfigDisplay();
     configEditor = {
-        language: 'vi',
-        height: 650,
-        contentsCss: '/css/print.css',
-        // fullPage: true,//this support html full page
-        allowedContent: true,
-        entities: false,
-        basicEntities: false,
-        forceSimpleAmpersand: true,
-        enterMode: 2,//this support not format string to p tag
+        // language: 'vi',
+        // height: 650,
+        // contentsCss: '/css/print.css',
+        // // fullPage: true,//this support html full page
+        // allowedContent: true,
+        // entities: false,
+        // basicEntities: false,
+        // forceSimpleAmpersand: true,
+        // enterMode: 2,//this support not format string to p tag
         // protectedSource: [/{{[\s\S]*?}}/g] // this support loop code
         // skin: 'kama'
         // plugins: [Bold],
         // toolbar: ['sourceEditing']
         toolbar: {
-            // items: ['bold'],
+            items: ['heading',
+                '|',
+                'bold',
+                'italic',
+                'link',
+                'bulletedList',
+                'numberedList',
+                '|',
+                'outdent',
+                'indent',
+                '|',
+                'imageUpload',
+                'blockQuote',
+                'insertTable',
+                'mediaEmbed',
+                'undo',
+                'redo',
+                'sourceEditing'],
             // toolbar: Array.from(this.editor.ui.componentFactory.names()),
             shouldNotGroupWhenFull: true
         },
