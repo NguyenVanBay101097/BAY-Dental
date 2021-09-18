@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,8 @@ namespace Umbraco.Web.Mapping
             CreateMap<AccountJournal, AccountJournalSave>()
                 .ForMember(x=>x.AccountNumber,x=>x.MapFrom(y=>y.BankAccount.AccountNumber))
                 .ForMember(x=>x.BankId,x=>x.MapFrom(y=>y.BankAccount.Bank.Id));
+
+            CreateMap<AccountJournal, AccountJournalSimplePrintTemplate>();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,8 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<PartnerAdvanceDisplay, PartnerAdvance>()
                 .ForMember(x => x.Id, x => x.Ignore());
+
+            CreateMap<PartnerAdvance, PartnerAdvancePrintTemplate>();
         }
     }
 }

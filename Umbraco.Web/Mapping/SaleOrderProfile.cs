@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -46,7 +47,9 @@ namespace Umbraco.Web.Mapping
             CreateMap<SaleOrder, SaleOrderRevenueReport>();
             CreateMap<SaleOrderBasic, GetPrintManagementItemRes>();
             CreateMap<SaleOrderBasic, GetExcelManagementItemRes>();
-            
+
+            CreateMap<SaleOrder, SaleOrderPrintTemplate>();
+
         }
     }
 }

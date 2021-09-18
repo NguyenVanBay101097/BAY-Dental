@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,9 @@ namespace Umbraco.Web.Mapping
             CreateMap<PhieuThuChi, PhieuThuChiDisplay>();
             CreateMap<PhieuThuChi, PhieuThuChiPrintVM>();
             CreateMap<PhieuThuChi, PrintVM>()
+                .ForMember(x => x.DateCreated, x => x.MapFrom(s => s.Date));
+
+            CreateMap<PhieuThuChi, PhieuThuChiPrintTemplate>()
                 .ForMember(x => x.DateCreated, x => x.MapFrom(s => s.Date));
         }
     }

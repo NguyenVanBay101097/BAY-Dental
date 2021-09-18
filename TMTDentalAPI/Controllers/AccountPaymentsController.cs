@@ -181,20 +181,20 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpGet("{id}/[action]")]
-        [CheckAccess(Actions = "Basic.AccountPayment.Read")]
-        public async Task<IActionResult> GetPrint(Guid id)
-        {
-            var res = await _paymentService.GetPrint(id);
-            string html;
-            if (res.PartnerType == "customer")
-                html = _viewRenderService.Render("AccountPayments/Print", res);
-            else
-            {
-                html = await _printTemplateConfigService.Print( res,res.PaymentType == "inbound" ? "tmp_supplier_payment_inbound" : "tmp_supplier_payment");
-            }    
-            return Ok(new PrintData() { html = html });
-        }
+        //[HttpGet("{id}/[action]")]
+        //[CheckAccess(Actions = "Basic.AccountPayment.Read")]
+        //public async Task<IActionResult> GetPrint(Guid id)
+        //{
+        //    var res = await _paymentService.GetPrint(id);
+        //    string html;
+        //    if (res.PartnerType == "customer")
+        //        html = _viewRenderService.Render("AccountPayments/Print", res);
+        //    else
+        //    {
+        //        html = await _printTemplateConfigService.Print( res,res.PaymentType == "inbound" ? "tmp_supplier_payment_inbound" : "tmp_supplier_payment");
+        //    }    
+        //    return Ok(new PrintData() { html = html });
+        //}
 
         //get default thanh toán cho nhà cung cấp
         [HttpPost("[action]")]

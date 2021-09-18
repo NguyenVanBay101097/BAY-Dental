@@ -10,5 +10,9 @@ namespace Infrastructure.Services
     public interface IPrintTemplateService : IBaseService<PrintTemplate>
     {
         Task<string> GetPrintTemplate(PrintTemplateDefault val);
+        Task<string> RenderTemplate(PrintTemplate self, Guid id);
+        Task<string> GeneratePrintHtml(PrintTemplate self, Guid id, PrintPaperSize paperSize = null);
+        Task<PrintTemplate> GetDefaultTemplate(string type);
+        string GetModelTemplate(string type);
     }
 }

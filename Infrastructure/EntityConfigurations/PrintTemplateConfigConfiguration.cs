@@ -19,6 +19,10 @@ namespace Infrastructure.EntityConfigurations
            .WithMany()
            .HasForeignKey(x => x.PrintPaperSizeId);
 
+            builder.HasOne(x => x.PrintTemplate)
+        .WithMany()
+        .HasForeignKey(x => x.PrintTemplateId);
+
             builder.HasOne(x => x.CreatedBy)
             .WithMany()
             .HasForeignKey(x => x.CreatedById);

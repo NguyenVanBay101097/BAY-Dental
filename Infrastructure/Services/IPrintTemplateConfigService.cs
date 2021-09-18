@@ -15,9 +15,6 @@ namespace Infrastructure.Services
 
         Task<string> PrintTest(string content, Guid paperSizeId, object data);
 
-        Task<string> Print(object data, string type);
-
         Task<string> RenderTemplate(object data, string content);
-
     }
 }

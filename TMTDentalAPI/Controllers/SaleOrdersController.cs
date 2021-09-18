@@ -295,8 +295,7 @@ namespace TMTDentalAPI.Controllers
         //    if (res == null)
         //        return NotFound();
         //    //res.OrderLines = res.OrderLines.OrderBy(x => x.Sequence);
-        //    var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = res, Type = "tmp_sale_order" });
-
+        //    var html = await _printTemplateConfigService.Print( res, "tmp_sale_order");
         //    return Ok(new PrintData() { html = html });
         //}
 

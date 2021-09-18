@@ -91,14 +91,14 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-       
+
 
         //[HttpGet("{id}/[action]")]
         //public async Task<IActionResult> GetPrint(Guid id)
         //{
         //    var res = await _saleOrderPaymentService.GetPrint(id);
         //    if (res == null) return NotFound();
-        //    var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = res, Type = "tmp_account_payment" });
+        //    var html = await _printTemplateConfigService.Print(res, "tmp_account_payment");
 
         //    return Ok(new PrintData() { html = html });
         //}

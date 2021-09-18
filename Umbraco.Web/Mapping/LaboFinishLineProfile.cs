@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,8 @@ namespace Umbraco.Web.Mapping
             CreateMap<LaboFinishLineSave, LaboFinishLine>();
             CreateMap<LaboFinishLineDisplay, LaboFinishLine>().ForMember(x=>x.Id, x=> x.Ignore());
             CreateMap<LaboFinishLine, LaboFinishLineSimple>();
+
+            CreateMap<LaboFinishLine, LaboFinishLineSimpleTemplate>();
         }
 
     }
