@@ -22,7 +22,12 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/manifest.webmanifest"
+              "src/manifest.webmanifest",
+              {
+                "glob": "**/*",
+                "input": "src/ckeditor",
+                "output": "./ckeditor"
+              }
             ],
             "styles": [
               "node_modules/@progress/kendo-theme-bootstrap/dist/all.css",
@@ -39,7 +44,9 @@
               "node_modules/popper.js/dist/umd/popper.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.min.js",
               "node_modules/autosize/dist/autosize.js",
-              "node_modules/webcamjs/webcam.min.js"
+              "node_modules/webcamjs/webcam.min.js",
+              "src/assets/js/ckeditor.conf.js",
+              "src/ckeditor/ckeditor.js"
             ]
           },
           "configurations": {

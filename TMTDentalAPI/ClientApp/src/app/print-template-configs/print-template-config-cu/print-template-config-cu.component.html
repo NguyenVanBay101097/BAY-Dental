@@ -90,9 +90,7 @@
                                         Thêm từ khóa
                                     </button>
                                 </div>
-                                <!-- <ckeditor #editor [config]="configEditor" [(data)]="configEdit.content"></ckeditor> -->
-                                <ckeditor #editorRef [config]="configEditor" [editor]="editor"
-                                    data="<p>Hello, world!</p>" (ready)="onReady($event)">
+                                <ckeditor #editor [config]="configEditor" [(data)]="configEdit.content">
                                 </ckeditor>
                             </div>
                             <div class="right w-50 ml-1 p-2 border d-flex flex-column">

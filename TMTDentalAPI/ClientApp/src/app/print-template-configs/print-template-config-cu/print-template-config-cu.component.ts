@@ -11,64 +11,58 @@ import { PrintPaperSizeCreateUpdateDialogComponent } from 'src/app/config-prints
 import * as _ from 'lodash';
 import * as constantData from '../print-template-config-constant-data';
 import { KeywordListDialogComponent } from '../keyword-list-dialog/keyword-list-dialog.component';
-// import * as DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
-import { CKEditorComponent } from '@ckeditor/ckeditor5-angular';
-// import '@ckeditor/ckeditor5-build-decoupled-document/build/translations/vi'
-// import SourceEditing from '@ckeditor/ckeditor5-source-editing/src/sourceediting';
-import * as Editor from '../../ckCustomBuild/build/ckEditor'
-
+// import { CKEditor4 } from 'ckeditor4-angular';
+// import * as edit4 from '../../ckCustomBuild/ckeditor.js'
+// var CKEDITOR_BASEPATH = '/ckeditor/';
 @Component({
     selector: 'app-print-template-config-cu',
     templateUrl: './print-template-config-cu.component.html',
     styleUrls: ['./print-template-config-cu.component.css']
 })
 export class PrintTemplateConfigCuComponent implements OnInit {
-    public editor = Editor;
+    // public editor = Editor;
     types: { text: string, value: string }[] = [];
     // config = new PrintTemplateConfigDisplay();
     configEdit = new PrintTemplateConfigDisplay();
     configEditor = {
-        // language: 'vi',
-        // height: 650,
-        // contentsCss: '/css/print.css',
-        // // fullPage: true,//this support html full page
-        // allowedContent: true,
-        // entities: false,
-        // basicEntities: false,
-        // forceSimpleAmpersand: true,
-        // enterMode: 2,//this support not format string to p tag
+        // extraPlugins: "easyimage,dialogui,dialog,a11yhelp,about,basicstyles,bidi,blockquote,clipboard," +
+        //     "button,panelbutton,panel,floatpanel,colorbutton,colordialog,menu," +
+        //     "contextmenu,dialogadvtab,div,elementspath,enterkey,entities,popup," +
+        //     "filebrowser,find,fakeobjects,flash,floatingspace,listblock,richcombo," +
+        //     "font,format,forms,horizontalrule,htmlwriter,iframe,image,indent," +
+        //     "indentblock,indentlist,justify,link,list,liststyle,magicline," +
+        //     "maximize,newpage,pagebreak,pastefromword,pastetext,preview,print," +
+        //     "removeformat,resize,save,menubutton,scayt,selectall,showblocks," +
+        //     "showborders,smiley,sourcearea,specialchar,stylescombo,tab,table," +
+        //     "tabletools,templates,toolbar,undo,wsc,wysiwygarea",
+        // extraPlugins: 'easyimage',
+        // removePlugins: 'image',
+        language: 'vi',
+        height: 650,
+        contentsCss: ['/css/print.css'],
+        // fullPage: true,//this support html full page
+        allowedContent: true,
+        entities: false,
+        basicEntities: false,
+        forceSimpleAmpersand: true,
+        enterMode: 2,//this support not format string to p tag
         // protectedSource: [/{{[\s\S]*?}}/g] // this support loop code
         // skin: 'kama'
-        // plugins: [Bold],
-        // toolbar: ['sourceEditing']
-        toolbar: {
-            items: ['heading',
-                '|',
-                'bold',
-                'italic',
-                'link',
-                'bulletedList',
-                'numberedList',
-                '|',
-                'outdent',
-                'indent',
-                '|',
-                'imageUpload',
-                'blockQuote',
-                'insertTable',
-                'mediaEmbed',
-                'undo',
-                'redo',
-                'sourceEditing'],
-            // toolbar: Array.from(this.editor.ui.componentFactory.names()),
-            shouldNotGroupWhenFull: true
-        },
+        // plugins: ['EasyImage'],
+        toolbar: [
+            { name: 'document', items: ['Source'] },
+            { name: 'styles', items: ['Format', 'Font', 'FontSize'] },
+            { name: 'colors', items: ['TextColor', 'BGColor'] },
+            { name: 'insert', items: ['EasyImageUpload', 'Table', 'HorizontalRule', 'Smiley'] },
+            { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline'] },
+            { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'] }
+        ]
     };
     contentPrev = "";
     paperSizes: PrintPaperSizeBasic[] = [];
     filter = new PrintTemplateConfigChangePaperSize();
 
-    @ViewChild('editorRef', { static: false }) editorComponent: CKEditorComponent;
+    @ViewChild("editor", { static: false }) editor;
 
     constructor(private configService: PrintTemplateConfigService,
         private activeRoute: ActivatedRoute,
@@ -93,8 +87,6 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     }
 
     public onReady(editor) {
-        // editor.config.plugins.push(SourceEditing);
-
         editor.ui.getEditableElement().parentElement.insertBefore(
             editor.ui.view.toolbar.element,
             editor.ui.getEditableElement()
