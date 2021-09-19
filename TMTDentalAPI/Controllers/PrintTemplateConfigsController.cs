@@ -14,6 +14,7 @@ using Scriban.Runtime;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Hosting;
+using ApplicationCore.Models.PrintTemplate;
 
 namespace TMTDentalAPI.Controllers
 {
@@ -23,15 +24,17 @@ namespace TMTDentalAPI.Controllers
     {
         private readonly IPrintTemplateConfigService _printTemplateConfigService;
         private readonly IPrintPaperSizeService _printPaperSizeService;
+        private readonly IPrintTemplateService _printTemplateService;
         private readonly IMapper _mapper;
         private readonly ICompanyService _companyService;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public PrintTemplateConfigsController(IPrintTemplateConfigService printTemplateConfigService,IPrintPaperSizeService printPaperSizeService ,IMapper mapper,
+        public PrintTemplateConfigsController(IPrintTemplateConfigService printTemplateConfigService,IPrintPaperSizeService printPaperSizeService , IPrintTemplateService printTemplateService,IMapper mapper,
             ICompanyService companyService, IWebHostEnvironment webHostEnvironment
             )
         {
             _printTemplateConfigService = printTemplateConfigService;
             _printPaperSizeService = printPaperSizeService;
+            _printTemplateService = printTemplateService;
             _mapper = mapper;
             _companyService = companyService;
             _webHostEnvironment = webHostEnvironment;
@@ -63,37 +66,41 @@ namespace TMTDentalAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var printConfigs = await _printTemplateConfigService.SearchQuery(x => x.Type == val.Type)
-                 .Include(x => x.PrintPaperSize)
-                 .Include(x => x.Company)
-                 .ToListAsync();
+            var printConfig = await _printTemplateConfigService.SearchQuery(x => x.Type == val.Type && x.CompanyId == val.CompanyId && x.PrintPaperSizeId == val.PrintPaperSizeId)
+                .Include(x => x.PrintTemplate)
+                .FirstOrDefaultAsync();
 
-            if (printConfigs.Any())
+            if (printConfig != null)
             {
-                var paperSize = await _printPaperSizeService.SearchQuery(x => x.Id == val.PrintPaperSizeId).FirstOrDefaultAsync();
-                var tmpConfig = printConfigs.Where(x => x.PrintPaperSize.PaperFormat == paperSize.PaperFormat).FirstOrDefault();
+                printConfig.IsDefault = true;
+                await _printTemplateConfigService.UpdateAsync(printConfig);
 
-                if (tmpConfig == null)
-                {
-                    var res = _mapper.Map<PrintTemplateConfig>(val);
-                    await _printTemplateConfigService.CreateAsync(res);
-                }
-
-                var rs = _mapper.Map(val, tmpConfig);
-                await _printTemplateConfigService.UpdateAsync(rs);
-
-                foreach (var printConfig in printConfigs)
-                    printConfig.IsDefault = printConfig.PrintPaperSize.PaperFormat == paperSize.PaperFormat ? true : false;
-
-                await _printTemplateConfigService.UpdateAsync(printConfigs);
-
+                var template = printConfig.PrintTemplate;
+                template.Content = val.Content;
+                await _printTemplateService.UpdateAsync(template);               
             }
             else
             {
+                var model = _printTemplateService.GetModelTemplate(val.Type);
+
+                var template = new PrintTemplate { Content = val.Content, Model = model };
+                await _printTemplateService.CreateAsync(template);
+
                 var res = _mapper.Map<PrintTemplateConfig>(val);
+                res.PrintTemplateId = template.Id;
                 res.IsDefault = true;
+
                 await _printTemplateConfigService.CreateAsync(res);
+                printConfig = res;
             }
+
+            var otherConfigs = await _printTemplateConfigService.SearchQuery(x => x.Type == val.Type && x.CompanyId == val.CompanyId && x.Id != printConfig.Id)
+               .ToListAsync();
+
+            foreach (var config in otherConfigs)
+                printConfig.IsDefault = false;
+
+            await _printTemplateConfigService.UpdateAsync(otherConfigs);
 
             return NoContent();
         }
@@ -207,7 +214,7 @@ namespace TMTDentalAPI.Controllers
                         obj = JsonConvert.DeserializeObject<SaleOrderPaymentPrintVM>(item.Data.ToString());
                         break;
                     case "tmp_supplier_payment":
-                        obj = JsonConvert.DeserializeObject<AccountPaymentPrintVM>(item.Data.ToString());
+                        obj = JsonConvert.DeserializeObject<AccountPaymentPrintTemplate>(item.Data.ToString());
                         break;
                     case "tmp_partner_advance":
                         obj = JsonConvert.DeserializeObject<PartnerAdvancePrint>(item.Data.ToString());
@@ -222,7 +229,7 @@ namespace TMTDentalAPI.Controllers
                         (obj as QuotationPrintVM).Company = _mapper.Map<CompanyPrintVM>(company);
                         break;
                     case "tmp_supplier_payment_inbound":
-                        obj = JsonConvert.DeserializeObject<AccountPaymentPrintVM>(item.Data.ToString());
+                        obj = JsonConvert.DeserializeObject<AccountPaymentPrintTemplate>(item.Data.ToString());
                         break;
                     default:
                         break;

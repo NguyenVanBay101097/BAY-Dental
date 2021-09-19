@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,8 @@ namespace Umbraco.Web.Mapping
               .ForMember(x => x.Product, x => x.Ignore());
 
             CreateMap<IGrouping<Guid?, DotKhamLine>, DotKhamLineBasic>();
+
+            CreateMap<DotKhamLine, DotKhamLinePrintTemplate>();
         }
     }
 }

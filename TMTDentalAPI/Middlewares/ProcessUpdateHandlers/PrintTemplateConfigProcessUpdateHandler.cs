@@ -82,9 +82,17 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                     if (printTemplate == null)
                     {
                         
-                        printTemplate = new PrintTemplate { Type = type.Type, Content = html };
+                        printTemplate = new PrintTemplate { Type = type.Type, Content = html , Model = type.Model};
                         context.PrintTemplates.Add(printTemplate);
                         context.SaveChanges();
+
+                        var iRmodelData = context.IRModelDatas.Where(x => x.Name == type.NameIRModel && x.Module == "base" && x.Model == "print.template").FirstOrDefault();
+                        if (iRmodelData == null)
+                        {
+                            iRmodelData = new IRModelData { Name = type.NameIRModel, Module = "base", ResId = printTemplate.Id.ToString(), Model = "print.template" };
+                            context.IRModelDatas.Add(iRmodelData);
+                            context.SaveChanges();
+                        }
                     }
                     else
                     {

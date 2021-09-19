@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Entities;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
@@ -28,10 +29,14 @@ namespace TMTDentalAPI.Controllers
         private readonly IAccountMoveService _accountMoveService;
         private readonly IPartnerService _partnerService;
         private readonly IPrintTemplateConfigService _printTemplateConfigService;
+        private readonly IPrintTemplateService _printTemplateService;
+        private readonly IIRModelDataService _modelDataService;
 
         public AccountPaymentsController(IAccountPaymentService paymentService, IViewRenderService viewRenderService,
             IMapper mapper, IUnitOfWorkAsync unitOfWork, IAccountMoveService accountMoveService,
-            IPartnerService partnerService, IPrintTemplateConfigService printTemplateConfigService)
+            IPartnerService partnerService, IPrintTemplateConfigService printTemplateConfigService,
+            IPrintTemplateService printTemplateService,
+            IIRModelDataService modelDataService)
         {
             _paymentService = paymentService;
             _viewRenderService = viewRenderService;
@@ -40,6 +45,8 @@ namespace TMTDentalAPI.Controllers
             _accountMoveService = accountMoveService;
             _partnerService = partnerService;
             _printTemplateConfigService = printTemplateConfigService;
+            _printTemplateService = printTemplateService;
+            _modelDataService = modelDataService;
         }
 
         [HttpGet]
@@ -185,15 +192,33 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Basic.AccountPayment.Read")]
         public async Task<IActionResult> GetPrint(Guid id)
         {
-            var res = await _paymentService.GetPrint(id);
-            string html;
-            if (res.PartnerType == "customer")
-                html = _viewRenderService.Render("AccountPayments/Print", res);
-            else
+            var res = await _paymentService.GetByIdAsync(id);
+            //tim trong bảng config xem có dòng nào để lấy ra template
+            var printConfig = await _printTemplateConfigService.SearchQuery(x => x.Type == (res.PaymentType == "inbound" ? "tmp_supplier_payment_inbound" : "tmp_supplier_payment") && x.IsDefault)
+                .Include(x => x.PrintPaperSize)
+                .Include(x => x.PrintTemplate)
+                .FirstOrDefaultAsync();
+
+            PrintTemplate template = printConfig != null ? printConfig.PrintTemplate : null;
+            PrintPaperSize paperSize = printConfig != null ? printConfig.PrintPaperSize : null;
+            if (template == null)
             {
-                html = await _printTemplateConfigService.Print( res,res.PaymentType == "inbound" ? "tmp_supplier_payment_inbound" : "tmp_supplier_payment");
-            }    
-            return Ok(new PrintData() { html = html });
+                //tìm template mặc định sử dụng chung cho tất cả chi nhánh, sử dụng bảng IRModelData hoặc bảng IRConfigParameter
+                template = await _modelDataService.GetRef<PrintTemplate>(res.PaymentType == "inbound" ? "base.print_template_supplier_payment_inbound" : "base.print_template_supplier_payment");
+                if (template == null)
+                    throw new Exception("Không tìm thấy mẫu in mặc định");
+            }
+
+            var result = await _printTemplateService.GeneratePrintHtml(template, new List<Guid>() { id }, paperSize);
+
+            //string html;
+            //if (res.PartnerType == "customer")
+            //    html = _viewRenderService.Render("AccountPayments/Print", res);
+            //else
+            //{
+            //    html = await _printTemplateConfigService.Print(res, res.PaymentType == "inbound" ? "tmp_supplier_payment_inbound" : "tmp_supplier_payment");
+            //}
+            return Ok(new PrintData() { html = result });
         }
 
         //get default thanh toán cho nhà cung cấp

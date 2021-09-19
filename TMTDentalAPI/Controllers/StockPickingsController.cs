@@ -27,9 +27,13 @@ namespace TMTDentalAPI.Controllers
         private readonly IStockMoveService _stockMoveService;
         private readonly IViewRenderService _viewRenderService;
         private readonly IPrintTemplateConfigService _printTemplateConfigService;
+        private readonly IPrintTemplateService _printTemplateService;
+        private readonly IIRModelDataService _modelDataService;
 
         public StockPickingsController(IStockPickingService stockPickingService, IMapper mapper,
-            IUnitOfWorkAsync unitOfWork, IIRModelAccessService modelAccessService, IStockMoveService stockMoveService, IViewRenderService viewRenderService
+            IUnitOfWorkAsync unitOfWork, IIRModelAccessService modelAccessService, IStockMoveService stockMoveService, IViewRenderService viewRenderService,
+             IPrintTemplateService printTemplateService,
+            IIRModelDataService modelDataService
             , IPrintTemplateConfigService printTemplateConfigService)
         {
             _stockPickingService = stockPickingService;
@@ -39,6 +43,8 @@ namespace TMTDentalAPI.Controllers
             _stockMoveService = stockMoveService;
             _viewRenderService = viewRenderService;
             _printTemplateConfigService = printTemplateConfigService;
+            _printTemplateService = printTemplateService;
+            _modelDataService = modelDataService;
         }
 
         [HttpGet]
@@ -207,28 +213,31 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        //[HttpPost("{id}/Print")]
-        //[CheckAccess(Actions = "Stock.Picking.Read")]
-        //public async Task<IActionResult> Print(Guid id)
-        //{
-        //    var picking = await _stockPickingService.SearchQuery(x => x.Id == id).Include(x => x.Partner).Include(x=>x.PickingType)
-        //        .Include(x => x.MoveLines)
-        //        .Include("Company.Partner")
-        //        .Include(x=> x.CreatedBy)
-        //        .Include("MoveLines.Product")
-        //        .Include("MoveLines.Product.Categ")
-        //         .Include("MoveLines.ProductUOM")
-        //        .FirstOrDefaultAsync();
-        //    if (picking == null)
-        //        return NotFound();
+        [HttpPost("{id}/Print")]
+        [CheckAccess(Actions = "Stock.Picking.Read")]
+        public async Task<IActionResult> Print(Guid id)
+        {
 
-        //    picking.MoveLines = picking.MoveLines.OrderBy(x=> x.Sequence).ToList();
+            var res = await _stockPickingService.SearchQuery(x => x.Id == id).Include(x => x.PickingType).FirstOrDefaultAsync();
+            //tim trong bảng config xem có dòng nào để lấy ra template
+            var printConfig = await _printTemplateConfigService.SearchQuery(x => x.Type == (res.PickingType.Code == "outgoing" ? "tmp_stock_picking_outgoing" : "tmp_stock_picking_incoming") && x.IsDefault)
+                .Include(x => x.PrintPaperSize)
+                .Include(x => x.PrintTemplate)
+                .FirstOrDefaultAsync();
 
-        //    var obj = _mapper.Map<StockPickingPrintVm>(picking);
-        //    var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() 
-        //    { Obj = obj, Type = picking.PickingType.Code == "outgoing" ? "tmp_stock_picking_outgoing" : "tmp_stock_picking_incoming" });
+            PrintTemplate template = printConfig != null ? printConfig.PrintTemplate : null;
+            PrintPaperSize paperSize = printConfig != null ? printConfig.PrintPaperSize : null;
+            if (template == null)
+            {
+                //tìm template mặc định sử dụng chung cho tất cả chi nhánh, sử dụng bảng IRModelData hoặc bảng IRConfigParameter
+                template = await _modelDataService.GetRef<PrintTemplate>(res.PickingType.Code == "outgoing" ? "base.print_template_stock_picking_outgoing" : "base.print_template_stock_picking_incoming");
+                if (template == null)
+                    throw new Exception("Không tìm thấy mẫu in mặc định");
+            }
 
-        //    return Ok(new PrintData() { html = html });
-        //}
+            var result = await _printTemplateService.GeneratePrintHtml(template, new List<Guid>() { id }, paperSize);
+
+            return Ok(new PrintData() { html = result });
+        }
     }
 }

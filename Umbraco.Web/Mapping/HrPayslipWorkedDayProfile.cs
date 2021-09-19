@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ namespace Umbraco.Web.Mapping
             CreateMap<HrPayslipWorkedDayDisplay, HrPayslipWorkedDays>().ForMember(x => x.Id, x => x.Ignore());
             CreateMap<HrPayslipWorkedDaySave, HrPayslipWorkedDays>().ForMember(x => x.Id, x => x.Ignore());
             CreateMap<HrPayslipWorkedDayDisplay, HrPayslipWorkedDaySave>().ForMember(x => x.Id, x => x.Ignore());
+            CreateMap<HrPayslipWorkedDays, HrPayslipWorkedDayPrintTemplate>();
         }
     }
 }

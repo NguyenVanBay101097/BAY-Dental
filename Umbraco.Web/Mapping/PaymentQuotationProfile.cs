@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,8 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<PaymentQuotation, PaymentQuotationDisplay>();
             CreateMap<PaymentQuotationSave, PaymentQuotation>();
+
+            CreateMap<PaymentQuotation, PaymentQuotationPrintTemplate>();
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Text;
 namespace ApplicationCore.Entities
 {
     /// <summary>
-    /// mẫu in mặc định của hệ thống
+    /// Lưu danh sách mẫu in mặc định và tùy chỉnh của khách hàng
     /// </summary>
    public class PrintTemplate : BaseEntity
     {
@@ -36,8 +36,16 @@ namespace ApplicationCore.Entities
         /// tmp_toathuoc : đơn thuốc
         /// tmp_medicine_order : hóa đơn thuốc
         /// tmp_labo_order : phiếu labo
+        /// Không cần dùng nữa
         /// </summary>
         public string Type { get; set; }
+
+        /// <summary>
+        /// toa.thuoc
+        /// sale.order
+        /// appointment
+        /// </summary>
+        public string Model { get; set; }
 
 
     }

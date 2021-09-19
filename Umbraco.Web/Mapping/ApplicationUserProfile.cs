@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,7 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Groups, x => x.MapFrom(s => s.ResGroupsUsersRels.Select(m => m.Group).Where(k => !k.CategoryId.HasValue)));
 
             CreateMap<ApplicationUserRowExcel, ApplicationUser>();
+            CreateMap<ApplicationUser, ApplicationUserPrintTemplate>();
         }
     }
 }

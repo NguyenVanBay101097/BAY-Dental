@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,8 @@ namespace Umbraco.Web.Mapping
             CreateMap<Tooth, ToothDisplay>();
             CreateMap<ToothDisplay, Tooth>()
                 .ForMember(x => x.Category, x => x.Ignore());
+
+            CreateMap<Tooth, ToothSimplePrintTemplate>();
         }
     }
 }

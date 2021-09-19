@@ -56,9 +56,9 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// khổ in
         /// </summary>
-        public Guid? PrintPaperSizeId { get; set; }
+        public Guid PrintPaperSizeId { get; set; }
 
-        public Guid? CompanyId { get; set; }
+        public Guid CompanyId { get; set; }
 
     }
 

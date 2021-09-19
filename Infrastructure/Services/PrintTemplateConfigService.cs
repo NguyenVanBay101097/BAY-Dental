@@ -40,11 +40,15 @@ namespace Infrastructure.Services
 
         public async Task<PrintTemplateConfig> GetPrintTemplateConfig(string type)
         {         
-            var printConfig = await SearchQuery(x => x.Type == type && x.IsDefault).Include(x => x.PrintPaperSize).FirstOrDefaultAsync();          
+            var printConfig = await SearchQuery(x => x.Type == type && x.IsDefault)
+                .Include(x => x.PrintPaperSize)
+                .Include(x => x.PrintTemplate)
+                .FirstOrDefaultAsync();          
 
             if (printConfig == null)
             {
-                var printTmp = await _printTemplateService.SearchQuery(x => x.Type == type).FirstOrDefaultAsync();
+                var templateObj = GetService<IPrintTemplateService>();
+                var printTmp = await _printTemplateService.GetDefaultTemplate(type);
 
                 if (printTmp == null)
                     throw new Exception("Không tìm thấy mẫu in có sẵn");
@@ -54,6 +58,8 @@ namespace Infrastructure.Services
                 printConfig = new PrintTemplateConfig();
                 printConfig.Content = printTmp.Content;
                 printConfig.Type = printTmp.Type;
+                printConfig.PrintTemplate = printTmp;
+                printConfig.PrintTemplateId = printTmp.Id;
                 printConfig.PrintPaperSizeId = paperSize.Id;
                 printConfig.PrintPaperSize = paperSize;
             }
@@ -66,7 +72,8 @@ namespace Infrastructure.Services
             var printConfig = await SearchQuery(x => x.Type == type && x.PrintPaperSizeId == paperSizeId).Include(x => x.PrintPaperSize).FirstOrDefaultAsync();
             if (printConfig == null)
             {
-                var printTmp = await _printTemplateService.SearchQuery(x => x.Type == type).FirstOrDefaultAsync();
+                var templateObj = GetService<IPrintTemplateService>();
+                var printTmp = await _printTemplateService.GetDefaultTemplate(type);
 
                 if (printTmp == null)
                     throw new Exception("Không tìm thấy mẫu in có sẵn");
@@ -76,6 +83,8 @@ namespace Infrastructure.Services
                 printConfig = new PrintTemplateConfig();
                 printConfig.Content = printTmp.Content;
                 printConfig.Type = printTmp.Type;
+                printConfig.PrintTemplate = printTmp;
+                printConfig.PrintTemplateId = printTmp.Id;
                 printConfig.PrintPaperSizeId = paperSize.Id;
                 printConfig.PrintPaperSize = paperSize;
             }
@@ -105,27 +114,13 @@ namespace Infrastructure.Services
             return result;
         }
 
-        public async Task<string> Print(object data , string type)// in hóa đơn của 1 type cụ thể kèm data
-        {
-            
-            var printConfig = await GetPrintTemplateConfig(type);
-            var renderContent = await RenderTemplate(data, printConfig.Content);
-
-            var printPaperSize = await _printPaperSizeService.SearchQuery(x => x.Id == printConfig.PrintPaperSizeId).FirstOrDefaultAsync();
-            var layoutHtml = File.ReadAllText("PrintTemplate/Shared/Layout.html");
-            var renderLayout = await RenderTemplate(printPaperSize, layoutHtml);        
-
-            var result = ConnectLayoutForContent(renderLayout,renderContent);
-
-            return result;
-        }
-
         public async Task<string> RenderTemplate(object data, string content)
         {        
             var template = Template.Parse(content);
             var result = await template.RenderAsync(data);
             return result;
-        }
+        }     
+
 
         public override ISpecification<PrintTemplateConfig> RuleDomainGet(IRRule rule)
         {

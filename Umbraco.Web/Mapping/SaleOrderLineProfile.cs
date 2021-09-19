@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -46,6 +47,8 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Promotions, x => x.Ignore());
 
             CreateMap<SaleOrderLine, SaleOrderLinePrintVM>();
+
+            CreateMap<SaleOrderLine, SaleOrderLinePrintTemplate>();
 
             CreateMap<SaleOrderLine, SaleOrderLineBasic>()
                 .ForMember(x => x.Teeth, x => x.MapFrom(s => s.SaleOrderLineToothRels.Select(m => m.Tooth)))
