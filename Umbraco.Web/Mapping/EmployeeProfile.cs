@@ -43,6 +43,7 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Allowance, x => x.Ignore());
 
             CreateMap<Employee, EmployeePrintTemplate>();
+            CreateMap<Employee, EmployeeBasicPrintTemplate>();
         }
     }
 }

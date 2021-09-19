@@ -25,7 +25,8 @@ namespace Umbraco.Web.Mapping
             CreateMap<PartnerAdvanceDisplay, PartnerAdvance>()
                 .ForMember(x => x.Id, x => x.Ignore());
 
-            CreateMap<PartnerAdvance, PartnerAdvancePrintTemplate>();
+            CreateMap<PartnerAdvance, PartnerAdvancePrintTemplate>()
+                 .ForMember(x => x.UserName, o => o.MapFrom(s => s.CreatedBy.UserName));
         }
     }
 }

@@ -29,7 +29,8 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<PurchaseOrder, PurchaseOrderPrintVm>();
 
-            CreateMap<PurchaseOrder, PurchaseOrderPrintTemplate>();
+            CreateMap<PurchaseOrder, PurchaseOrderPrintTemplate>()
+                .ForMember(x => x.StockPickingName, x => x.MapFrom(s => s.Picking.Name));
         }
     }
 }

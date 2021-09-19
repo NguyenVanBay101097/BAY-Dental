@@ -27,7 +27,7 @@ namespace ApplicationCore.Models.PrintTemplate
 
         public string Number { get; set; }
 
-        public EmployeePrintTemplate Employee { get; set; }
+        public EmployeeBasicPrintTemplate Employee { get; set; }
 
         public DateTime DateFrom { get; set; }
 
@@ -63,6 +63,13 @@ namespace ApplicationCore.Models.PrintTemplate
         public decimal? NetSalary { get; set; }
         public decimal? ActualLeavePerMonth { get; set; }
         public decimal? LeavePerMonthUnpaid { get; set; }
+
+        public decimal? ResidualSalery { 
+            get 
+            {
+                return (NetSalary ?? 0) - (AdvancePayment ?? 0);
+            } set { } }
+
         public SalaryPaymentBasicPrintTemplate SalaryPayment { get; set; }
     }
 

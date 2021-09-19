@@ -5,6 +5,11 @@ using System.Text;
 
 namespace ApplicationCore.Models.PrintTemplate
 {
+    public class SalaryPaymentsPrint
+    {
+        public IEnumerable<SalaryPaymentPrintTemplate> Salaries { get; set; } = new List<SalaryPaymentPrintTemplate>();
+    }
+
     public class SalaryPaymentPrintTemplate
     {
         /// <summary>

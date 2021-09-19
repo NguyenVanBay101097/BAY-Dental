@@ -71,6 +71,8 @@ namespace ApplicationCore.Models.PrintTemplate
 
     public class AccountPaymentDisplayPrintTemplate
     {
+        public Guid Id { get; set; }
+
         public string PartnerName { get; set; }
 
         public DateTime PaymentDate { get; set; }

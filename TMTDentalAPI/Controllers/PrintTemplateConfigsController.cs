@@ -14,6 +14,7 @@ using Scriban.Runtime;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Hosting;
+using ApplicationCore.Models.PrintTemplate;
 
 namespace TMTDentalAPI.Controllers
 {
@@ -213,7 +214,7 @@ namespace TMTDentalAPI.Controllers
                         obj = JsonConvert.DeserializeObject<SaleOrderPaymentPrintVM>(item.Data.ToString());
                         break;
                     case "tmp_supplier_payment":
-                        obj = JsonConvert.DeserializeObject<AccountPaymentPrintVM>(item.Data.ToString());
+                        obj = JsonConvert.DeserializeObject<AccountPaymentPrintTemplate>(item.Data.ToString());
                         break;
                     case "tmp_partner_advance":
                         obj = JsonConvert.DeserializeObject<PartnerAdvancePrint>(item.Data.ToString());
@@ -228,7 +229,7 @@ namespace TMTDentalAPI.Controllers
                         (obj as QuotationPrintVM).Company = _mapper.Map<CompanyPrintVM>(company);
                         break;
                     case "tmp_supplier_payment_inbound":
-                        obj = JsonConvert.DeserializeObject<AccountPaymentPrintVM>(item.Data.ToString());
+                        obj = JsonConvert.DeserializeObject<AccountPaymentPrintTemplate>(item.Data.ToString());
                         break;
                     default:
                         break;

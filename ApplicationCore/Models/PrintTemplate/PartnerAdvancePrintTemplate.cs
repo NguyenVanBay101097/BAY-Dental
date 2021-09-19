@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApplicationCore.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -33,7 +34,7 @@ namespace ApplicationCore.Models.PrintTemplate
 
         public decimal Amount { get; set; }
 
-        public string AmountText { get; set; }
+        public string AmountText { get { return AmountToText.amount_to_text(Amount); } set { } }
 
         public string State { get; set; }
 

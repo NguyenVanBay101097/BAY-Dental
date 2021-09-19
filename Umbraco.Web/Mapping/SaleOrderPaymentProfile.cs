@@ -25,6 +25,7 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<SaleOrderPayment, SaleOrderPaymentPrintTemplate>()
                .ForMember(x => x.DatePayment, x => x.MapFrom(s => s.Date))
+               .ForMember(x => x.User, x => x.MapFrom(s => s.CreatedBy))
                .ForMember(x => x.JournalName, x => x.MapFrom(s => string.Join(", ", s.JournalLines.Select(c => c.Journal.Name))));
 
             CreateMap<SaleOrderPaymentSave, SaleOrderPayment>()

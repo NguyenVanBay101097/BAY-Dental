@@ -31,7 +31,9 @@ namespace Umbraco.Web.Mapping
                  .ForMember(x => x.Journal, x => x.Ignore());
 
             CreateMap<PhieuThuChi, PhieuThuChiDisplay>();
-            CreateMap<PhieuThuChi, PhieuThuChiPrintVM>();
+            CreateMap<PhieuThuChi, PhieuThuChiPrintVM>()
+                .ForMember(x => x.DateCreated, x => x.MapFrom(s => s.Date));
+
             CreateMap<PhieuThuChi, PrintVM>()
                 .ForMember(x => x.DateCreated, x => x.MapFrom(s => s.Date));
 

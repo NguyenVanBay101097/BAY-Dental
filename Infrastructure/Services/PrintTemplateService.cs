@@ -5,6 +5,7 @@ using AutoMapper;
 using HtmlAgilityPack;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Scriban;
 using System;
 using System.Collections.Generic;
@@ -34,7 +35,7 @@ namespace Infrastructure.Services
             return template.Content;
         }
 
-        public async Task<string> GeneratePrintHtml(PrintTemplate self, Guid resId, PrintPaperSize paperSize = null)
+        public async Task<string> GeneratePrintHtml(PrintTemplate self, IEnumerable<Guid> resIds, PrintPaperSize paperSize = null)
         {
             var modelDataService = GetService<IIRModelDataService>();
             var paper = paperSize != null ? paperSize : await modelDataService.GetRef<PrintPaperSize>("base.paperformat_a4");
@@ -45,7 +46,7 @@ namespace Infrastructure.Services
             var template = Template.Parse(layoutHtml);
             var renderLayout = await template.RenderAsync(paper);
 
-            var renderContent = await RenderTemplate(self, resId);
+            var renderContent = await RenderTemplate(self, resIds);
 
             var result = ConnectLayoutForContent(renderLayout, renderContent);
             return result;
@@ -60,9 +61,14 @@ namespace Infrastructure.Services
             return newHtml;
         }
 
-        public async Task<string> RenderTemplate(PrintTemplate self, Guid resId)
+        public async Task<string> RenderTemplate(PrintTemplate self, IEnumerable<Guid> resIds)
         {
-            var data = await GetObjectRender(self.Model, resId);
+            object data = default(object);
+            if (resIds.Count() <= 1)
+                data = await GetObjectRender(self.Model, resIds.FirstOrDefault());
+            else
+                data = await GetMutipleObjectRender(self.Model, resIds);
+
             var template = Template.Parse(self.Content);
             var result = await template.RenderAsync(data);
             return result;
@@ -76,115 +82,246 @@ namespace Infrastructure.Services
                 case "toa.thuoc":
                     {
                         var toaThuocObj = GetService<IToaThuocService>();
-                        data = await _mapper.ProjectTo<ToaThuocPrintTemplate>(toaThuocObj.SearchQuery(x => x.Id == resId)).FirstOrDefaultAsync();
+                        var res = await toaThuocObj.SearchQuery(x => x.Id == resId)
+                            .Include(x => x.Company).Include(x => x.Partner)
+                            .Include(x => x.Employee).Include(x => x.Lines)
+                            .FirstOrDefaultAsync();
+                        data = _mapper.Map<ToaThuocPrintTemplate>(res);
                         return data;
                     }
                 case "sale.order":
                     {
                         var saleOrderObj = GetService<ISaleOrderService>();
-                        data = await _mapper.ProjectTo<SaleOrderPrintTemplate>(saleOrderObj.SearchQuery(x => x.Id == resId)).FirstOrDefaultAsync();
+                        data = await saleOrderObj.GetPrintTemplate(resId);
                         return data;
                     }
                 case "labo.order":
                     {
                         var laboOrderObj = GetService<ILaboOrderService>();
-                        data = await _mapper.ProjectTo<LaboOrderPrintTemplate>(laboOrderObj.SearchQuery(x => x.Id == resId)).FirstOrDefaultAsync();
+                        var res = await laboOrderObj.SearchQuery(x => x.Id == resId)
+                          .Include(x => x.Company).Include(x => x.Partner)
+                          .Include(x => x.Customer)
+                          .Include(x => x.LaboBiteJoint).Include(x => x.LaboBridge)
+                          .Include(x => x.LaboFinishLine).Include(x => x.SaleOrderLine)
+                          .Include(x => x.Product)
+                          .Include(x => x.LaboOrderToothRel).ThenInclude(s => s.Tooth)
+                          .FirstOrDefaultAsync();
+
+                        data = _mapper.Map<LaboOrderPrintTemplate>(res);
                         return data;
                     }
                 case "purchase.order":
                     {
                         var purchaseOrderObj = GetService<IPurchaseOrderService>();
-                        data = await _mapper.ProjectTo<PurchaseOrderPrintTemplate>(purchaseOrderObj.SearchQuery(x => x.Id == resId)).FirstOrDefaultAsync();
+                        var res = await purchaseOrderObj.SearchQuery(x => x.Id == resId)
+                          .Include(x => x.Company).Include(x => x.Partner)
+                          .Include(x => x.Journal).Include(x => x.CreatedBy)
+                          .Include(x => x.Picking)
+                          .Include(x => x.OrderLines).ThenInclude(x => x.Product)
+                          .Include(x => x.OrderLines).ThenInclude(x => x.ProductUOM)
+                          .FirstOrDefaultAsync();
+
+                        data = _mapper.Map<PurchaseOrderPrintTemplate>(res);
                         return data;
                     }
                 case "medicine.order":
                     {
                         var medicineOrderObj = GetService<IMedicineOrderService>();
-                        data = await _mapper.ProjectTo<MedicineOrderPrintTemplate>(medicineOrderObj.SearchQuery(x => x.Id == resId)).FirstOrDefaultAsync();
+                        var res = await medicineOrderObj.GetPrint(resId);
+                        data = _mapper.Map<MedicineOrderPrintTemplate>(res);
                         return data;
                     }
                 case "phieu.thu.chi":
                     {
                         var phieuThuChiObj = GetService<IPhieuThuChiService>();
-                        data = await _mapper.ProjectTo<PhieuThuChiPrintTemplate>(phieuThuChiObj.SearchQuery(x => x.Id == resId)).FirstOrDefaultAsync();
+                        var res = await phieuThuChiObj.GetPrintTemplate(resId);
+                        data = _mapper.Map<PhieuThuChiPrintTemplate>(res);
                         return data;
                     }
                 case "customer.debt":
                     {
                         var phieuThuChiObj = GetService<IPhieuThuChiService>();
-                        data = await _mapper.ProjectTo<PhieuThuChiPrintTemplate>(phieuThuChiObj.SearchQuery(x => x.Id == resId)).FirstOrDefaultAsync();
+                        var res = await phieuThuChiObj.GetPrintTemplate(resId);
+                        data = _mapper.Map<PhieuThuChiPrintTemplate>(res);
                         return data;
                     }
                 case "agent.commission":
                     {
                         var phieuThuChiObj = GetService<IPhieuThuChiService>();
-                        data = await _mapper.ProjectTo<PhieuThuChiPrintTemplate>(phieuThuChiObj.SearchQuery(x => x.Id == resId)).FirstOrDefaultAsync();
+                        var res = await phieuThuChiObj.GetPrintTemplate(resId);
+                        data = _mapper.Map<PhieuThuChiPrintTemplate>(res);
                         return data;
                     }
                 case "stock.picking":
                     {
                         var stockPickingObj = GetService<IStockPickingService>();
-                        data = await _mapper.ProjectTo<StockPickingPrintTemplate>(stockPickingObj.SearchQuery(x => x.Id == resId)).FirstOrDefaultAsync();
+                        var res = await stockPickingObj.SearchQuery(x => x.Id == resId).Include(x => x.Partner).Include(x => x.PickingType)
+                        .Include(x => x.MoveLines).ThenInclude(s => s.Product).ThenInclude(c => c.Categ)
+                        .Include(x => x.MoveLines).ThenInclude(s => s.ProductUOM)
+                        .Include(x => x.Company).ThenInclude(s => s.Partner)
+                        .Include(x => x.CreatedBy)
+                        .FirstOrDefaultAsync();
+
+                        data = _mapper.Map<StockPickingPrintTemplate>(res);
                         return data;
                     }
                 case "stock.inventory":
                     {
                         var stockInventoryObj = GetService<IStockInventoryService>();
-                        data = await _mapper.ProjectTo<StockInventoryPrintTemplate>(stockInventoryObj.SearchQuery(x => x.Id == resId)).FirstOrDefaultAsync();
-                        return data;
-                    }
-                case "salary.employee":
-                    {
-                        var salaryPaymentObj = GetService<ISalaryPaymentService>();
-                        data = await _mapper.ProjectTo<SalaryPaymentPrintTemplate>(salaryPaymentObj.SearchQuery(x => x.Id == resId)).FirstOrDefaultAsync();
-                        return data;
-                    }
-                case "salary.advance":
-                    {
-                        var salaryPaymentObj = GetService<ISalaryPaymentService>();
-                        data = await _mapper.ProjectTo<SalaryPaymentPrintTemplate>(salaryPaymentObj.SearchQuery(x => x.Id == resId)).FirstOrDefaultAsync();
+                        var inventory = await stockInventoryObj.SearchQuery(x => x.Id == resId)
+                            .Include(x => x.Company)
+                            .ThenInclude(s => s.Partner)
+                            .Include(x => x.Criteria)
+                            .Include(x => x.Location)
+                            .Include(x => x.Product)
+                            .Include(x => x.Category)
+                            .Include(x => x.Lines).ThenInclude(s => s.Product)
+                            .Include(x => x.Lines).ThenInclude(s => s.ProductUOM)
+                            .Include(x => x.CreatedBy)
+                            .FirstOrDefaultAsync();
+
+                        data = _mapper.Map<StockInventoryPrintTemplate>(inventory);
                         return data;
                     }
                 case "salary":
                     {
                         var hrPayslipRunObj = GetService<IHrPayslipRunService>();
-                        data = await _mapper.ProjectTo<HrPayslipRunPrintTemplate>(hrPayslipRunObj.SearchQuery(x => x.Id == resId)).FirstOrDefaultAsync();
+                        var res = await hrPayslipRunObj.SearchQuery(x => x.Id == resId)
+                            .Include(x => x.Company).ThenInclude(s => s.Partner)
+                            .Include(x => x.CreatedBy)
+                            .Include(x => x.Slips).ThenInclude(x => x.Employee)
+                            .Include(x => x.Slips).ThenInclude(x => x.SalaryPayment)
+                            .FirstOrDefaultAsync();
+
+                        data = _mapper.Map<HrPayslipRunPrintTemplate>(res);
                         return data;
                     }
                 case "partner.advance":
                     {
                         var partnerAdvanceObj = GetService<IPartnerAdvanceService>();
-                        data = await _mapper.ProjectTo<PartnerAdvancePrintTemplate>(partnerAdvanceObj.SearchQuery(x => x.Id == resId)).FirstOrDefaultAsync();
+                        var res = await partnerAdvanceObj.SearchQuery(x => x.Id == resId)
+                            .Include(x => x.Company)
+                            .Include(x => x.Partner)
+                            .Include(x => x.Journal)
+                            .Include(x => x.CreatedBy)
+                            .FirstOrDefaultAsync();
+
+                        data = _mapper.Map<PartnerAdvancePrintTemplate>(res);
                         return data;
                     }
                 case "quotation":
                     {
                         var quotationObj = GetService<IQuotationService>();
-                        data = await _mapper.ProjectTo<QuotationPrintTemplate>(quotationObj.SearchQuery(x => x.Id == resId)).FirstOrDefaultAsync();
+                        var quotation = await quotationObj.SearchQuery(x => x.Id == resId)
+                            .Include(x => x.Partner)
+                            .Include(x => x.Employee)
+                            .Include(x => x.Lines)
+                            .Include(x => x.Company).ThenInclude(x => x.Partner)
+                            .Include(x => x.Payments).FirstOrDefaultAsync();
+
+                        data = _mapper.Map<QuotationPrintTemplate>(quotation);
                         return data;
                     }
                 case "sale.order.payment":
                     {
                         var saleOrderPaymentObj = GetService<ISaleOrderPaymentService>();
-                        data = await _mapper.ProjectTo<SaleOrderPaymentPrintTemplate>(saleOrderPaymentObj.SearchQuery(x => x.Id == resId)).FirstOrDefaultAsync();
+                        var payment = await saleOrderPaymentObj.SearchQuery(x => x.Id == resId).Include(x => x.Company.Partner)
+                                .Include(x => x.Order.Partner)
+                                .Include(x => x.CreatedBy)
+                                .Include(x => x.JournalLines).ThenInclude(x => x.Journal)
+                                .FirstOrDefaultAsync();
+
+                        data = _mapper.Map<SaleOrderPaymentPrintTemplate>(payment);
                         return data;
                     }
                 case "supplier.payment":
                     {
                         var accountPaymentObj = GetService<IAccountPaymentService>();
-                        data = await _mapper.ProjectTo<AccountPaymentPrintTemplate>(accountPaymentObj.SearchQuery(x => x.Id == resId)).FirstOrDefaultAsync();
+                        var payment = await accountPaymentObj.SearchQuery(x => x.Id == resId)
+                            .Include(x => x.Company.Partner)
+                            .Include(x => x.Partner)
+                            .Include(x => x.Journal)
+                            .Include(x => x.CreatedBy)
+                            .Include(x => x.SaleOrderPaymentRels).ThenInclude(s => s.Payment)
+                            .FirstOrDefaultAsync();
+
+                        data = _mapper.Map<AccountPaymentPrintTemplate>(payment);
+                        return data;
+                    }
+                case "salary.employee":
+                    {
+                        var salaryPaymentObj = GetService<ISalaryPaymentService>();
+                        var salaryPayment = await salaryPaymentObj.SearchQuery(x => x.Id == resId)
+                            .Include(x => x.Company)
+                            .Include(x => x.Employee)
+                            .Include(x => x.Journal)
+                            .FirstOrDefaultAsync();
+                        var salary = _mapper.Map<SalaryPaymentPrintTemplate>(salaryPayment);
+                        data = new SalaryPaymentsPrint() { Salaries = new List<SalaryPaymentPrintTemplate>() { salary } };
+                        return data;
+                    }
+                case "salary.advance":
+                    {
+                        var salaryPaymentObj = GetService<ISalaryPaymentService>();
+                        var salaryPayment = await salaryPaymentObj.SearchQuery(x => x.Id == resId)
+                           .Include(x => x.Company)
+                           .Include(x => x.Employee)
+                           .Include(x => x.Journal)
+                           .FirstOrDefaultAsync();
+                        var salary = _mapper.Map<SalaryPaymentPrintTemplate>(salaryPayment);
+                        data = new SalaryPaymentsPrint() { Salaries = new List<SalaryPaymentPrintTemplate>() { salary } };
                         return data;
                     }
                 case "advisory":
                     {
                         var advisoryObj = GetService<IAdvisoryService>();
-                        data = await _mapper.ProjectTo<SaleOrderPrintTemplate>(advisoryObj.SearchQuery(x => x.Id == resId)).FirstOrDefaultAsync();
+                        data = await advisoryObj.PrintTemplate(new List<Guid>() { resId });
                         return data;
                     }
 
-
             }
 
+
+            return data;
+        }
+
+        public async Task<object> GetMutipleObjectRender(string model, IEnumerable<Guid> resIds)
+        {
+            object data = default(object);
+            switch (model)
+            {
+                case "salary.employee":
+                    {
+                        var salaryPaymentObj = GetService<ISalaryPaymentService>();
+                        var salaryPayments = await salaryPaymentObj.SearchQuery(x => resIds.Contains(x.Id))
+                            .Include(x => x.Company)
+                            .Include(x => x.Employee)
+                            .Include(x => x.Journal)
+                            .ToListAsync();
+                        var salaries = _mapper.Map<IEnumerable<SalaryPaymentPrintTemplate>>(salaryPayments);
+                        data = new SalaryPaymentsPrint() { Salaries = salaries };
+                        return data;
+                    }
+                case "salary.advance":
+                    {
+                        var salaryPaymentObj = GetService<ISalaryPaymentService>();
+                        var salaryPayments = await salaryPaymentObj.SearchQuery(x => resIds.Contains(x.Id))
+                           .Include(x => x.Company)
+                           .Include(x => x.Employee)
+                           .Include(x => x.Journal)
+                           .ToListAsync();
+                        var salaries = _mapper.Map<IEnumerable<SalaryPaymentPrintTemplate>>(salaryPayments);
+                        data = new SalaryPaymentsPrint() { Salaries = salaries };
+                        return data;
+                    }
+                case "advisory":
+                    {
+                        var advisoryObj = GetService<IAdvisoryService>();
+                        data = await advisoryObj.PrintTemplate(resIds);
+                        return data;
+                    }
+
+            }
 
             return data;
         }

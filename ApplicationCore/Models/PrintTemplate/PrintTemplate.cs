@@ -47,6 +47,7 @@ namespace ApplicationCore.Models.PrintTemplate
         public string Name { get; set; }
         public string Gender { get; set; }
         public string DateOfBirth { get; set; }
+        public string Email { get; set; }
         public string Phone { get; set; }
         public int? BirthYear { get; set; }
 
@@ -114,6 +115,57 @@ namespace ApplicationCore.Models.PrintTemplate
 
         public string Name { get; set; }
     }
+
+    public class EmployeeBasicPrintTemplate
+    {
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+        public bool IsDoctor { get; set; }
+
+        public bool IsAssistant { get; set; }
+
+        /// <summary>
+        /// Mã
+        /// </summary>
+        public string Ref { get; set; }
+
+        public string Phone { get; set; }
+
+
+        public string Email { get; set; }
+        public decimal? Wage { get; set; }
+        public Guid? StructureTypeId { get; set; }
+        /// <summary>
+        /// Số ngày nghỉ/tháng
+        /// </summary>
+        public decimal? LeavePerMonth { get; set; }
+
+        /// <summary>
+        /// số giờ công chuẩn 1 ngày
+        /// </summary>
+        public decimal? RegularHour { get; set; }
+
+        /// <summary>
+        /// tỉ lệ lương tăng ca
+        /// </summary>
+        public decimal? OvertimeRate { get; set; }
+        /// <summary>
+        /// tỉ lệ lương ngày đi làm thêm
+        /// </summary>
+        public decimal? RestDayRate { get; set; }
+        /// <summary>
+        /// trợ cấp
+        /// </summary>
+        public decimal? Allowance { get; set; }
+
+        public bool Active { get; set; }
+
+        public string UserName { get; set; }
+    }
+
+
 
     public class ProductSimplePrintTemplate
     {

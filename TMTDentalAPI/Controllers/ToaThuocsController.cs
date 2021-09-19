@@ -31,7 +31,8 @@ namespace TMTDentalAPI.Controllers
         private readonly IIRModelDataService _modelDataService;
 
         public ToaThuocsController(IToaThuocService toaThuocService, IMapper mapper, IViewRenderService view,
-            IIRModelAccessService modelAccessService, IUnitOfWorkAsync unitOfWork, IPrintTemplateConfigService printTemplateConfigService, IPrintTemplateService printTemplateService,
+            IIRModelAccessService modelAccessService, IUnitOfWorkAsync unitOfWork, IPrintTemplateConfigService printTemplateConfigService,
+            IPrintTemplateService printTemplateService,
             IIRModelDataService modelDataService)
         {
             _toaThuocService = toaThuocService;
@@ -138,7 +139,7 @@ namespace TMTDentalAPI.Controllers
                     throw new Exception("Không tìm thấy mẫu in mặc định");
             }
 
-            var result = await _printTemplateService.GeneratePrintHtml(template, id, paperSize);
+            var result = await _printTemplateService.GeneratePrintHtml(template, new List<Guid>() { id }, paperSize);
             return Ok(new PrintData() { html = result });
         }
 

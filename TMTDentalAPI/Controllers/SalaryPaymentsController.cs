@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Entities;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
@@ -25,6 +26,8 @@ namespace TMTDentalAPI.Controllers
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly IAccountJournalService _journalService;
         private readonly IPrintTemplateConfigService _printTemplateConfigService;
+        private readonly IPrintTemplateService _printTemplateService;
+        private readonly IIRModelDataService _modelDataService;
 
         public SalaryPaymentsController(
             IMapper mapper,
@@ -32,7 +35,9 @@ namespace TMTDentalAPI.Controllers
             IViewRenderService view,
             IUserService userService,
             IUnitOfWorkAsync unitOfWork,
-            IAccountJournalService journalService, IPrintTemplateConfigService printTemplateConfigService
+            IAccountJournalService journalService, IPrintTemplateConfigService printTemplateConfigService,
+            IPrintTemplateService printTemplateService,
+            IIRModelDataService modelDataService
           )
         {
             _mapper = mapper;
@@ -42,6 +47,8 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork = unitOfWork;
             _journalService = journalService;
             _printTemplateConfigService = printTemplateConfigService;
+            _printTemplateService = printTemplateService;
+            _modelDataService = modelDataService;
         }
 
         [HttpGet]
@@ -143,22 +150,35 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        //[HttpPost("Print")]
-        //[CheckAccess(Actions = "Salary.SalaryPayment.Read")]
-        //public async Task<IActionResult> GetPrint(IEnumerable<Guid> ids)
-        //{
-        //    if (ids == null || !ids.Any())
-        //        return BadRequest();
+        [HttpPost("Print")]
+        [CheckAccess(Actions = "Salary.SalaryPayment.Read")]
+        public async Task<IActionResult> GetPrint(IEnumerable<Guid> ids)
+        {
+            if (ids == null || !ids.Any())
+                return BadRequest();
 
-        //    var salaryPayments = await _mapper.ProjectTo<SalaryPaymentPrintVm>(_salaryPaymentService.SearchQuery(x => ids.Contains(x.Id))).ToListAsync();
-        //    //foreach (var print in salaryPayments)
-        //    //    print.AmountText = AmountToText.amount_to_text(print.Amount);
+            var res = await _salaryPaymentService.SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            var type = res.GroupBy(z => z.Type).Select(x => x.Key).FirstOrDefault();
+            //tim trong bảng config xem có dòng nào để lấy ra template
+            var printConfig = await _printTemplateConfigService.SearchQuery(x => x.Type == (type == "advance" ? "tmp_salary_advance" : "tmp_salary_employee") && x.IsDefault)
+                .Include(x => x.PrintPaperSize)
+                .Include(x => x.PrintTemplate)
+                .FirstOrDefaultAsync();
 
-        //    var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq()
-        //    { Obj = new SalaryPaymentPrint() { Salaries = salaryPayments}, Type = salaryPayments.Any(z=> z.Type == "advance") ? "tmp_salary_advance" : "tmp_salary_employee" });
+            PrintTemplate template = printConfig != null ? printConfig.PrintTemplate : null;
+            PrintPaperSize paperSize = printConfig != null ? printConfig.PrintPaperSize : null;
+            if (template == null)
+            {
+                //tìm template mặc định sử dụng chung cho tất cả chi nhánh, sử dụng bảng IRModelData hoặc bảng IRConfigParameter
+                template = await _modelDataService.GetRef<PrintTemplate>(type == "advance" ? "base.print_template_salary_advance" : "base.print_template_salary_employee");
+                if (template == null)
+                    throw new Exception("Không tìm thấy mẫu in mặc định");
+            }
 
-        //    return Ok(new PrintData() { html = html });
-        //}
+            var result = await _printTemplateService.GeneratePrintHtml(template, ids, paperSize);
+
+            return Ok(new PrintData() { html = result });
+        }
 
         [HttpDelete("{id}")]
         [CheckAccess(Actions = "Salary.SalaryPayment.Delete")]
@@ -183,7 +203,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> DefaultGet([FromQuery]string type)
+        public async Task<IActionResult> DefaultGet([FromQuery] string type)
         {
             var res = new SalaryPaymentDisplay();
             res.Type = type;

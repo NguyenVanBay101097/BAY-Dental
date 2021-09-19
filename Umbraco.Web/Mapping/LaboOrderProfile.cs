@@ -43,7 +43,8 @@ namespace Umbraco.Web.Mapping
             CreateMap<LaboOrder, LaboOrderPrintVM>();
             CreateMap<LaboOrder, LaboOrderReceiptBasic>();
 
-            CreateMap<LaboOrder, LaboOrderPrintTemplate>();
+            CreateMap<LaboOrder, LaboOrderPrintTemplate>()
+                .ForMember(x => x.Teeth, x => x.MapFrom(s => s.LaboOrderToothRel.Select(m => m.Tooth)));
         }
     }
 }

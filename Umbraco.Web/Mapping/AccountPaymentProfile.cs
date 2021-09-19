@@ -22,7 +22,8 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<AccountPayment, AccountPaymentBasicPrintTemplate>();
 
-            CreateMap<AccountPayment, AccountPaymentPrintTemplate>();
+            CreateMap<AccountPayment, AccountPaymentPrintTemplate>()
+                .ForMember(x=>x.UserName, x=>x.MapFrom(s=>s.CreatedBy.Name));
         }
     }
 }

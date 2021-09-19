@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Entities;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
@@ -24,9 +26,13 @@ namespace TMTDentalAPI.Controllers
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly IViewRenderService _viewRenderService;
         private readonly IPrintTemplateConfigService _printTemplateConfigService;
+        private readonly IPrintTemplateService _printTemplateService;
+        private readonly IIRModelDataService _modelDataService;
 
         public SaleOrderPaymentsController(IMapper mapper, ISaleOrderPaymentService saleOrderPaymentService, IUnitOfWorkAsync unitOfWork, IViewRenderService viewRenderService,
-            IPrintTemplateConfigService printTemplateConfigService
+            IPrintTemplateConfigService printTemplateConfigService,
+            IPrintTemplateService printTemplateService,
+            IIRModelDataService modelDataService
             )
         {
             _mapper = mapper;
@@ -34,6 +40,8 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork = unitOfWork;
             _viewRenderService = viewRenderService;
             _printTemplateConfigService = printTemplateConfigService;
+            _printTemplateService = printTemplateService;
+            _modelDataService = modelDataService;
         }
 
         [HttpGet]
@@ -93,14 +101,28 @@ namespace TMTDentalAPI.Controllers
 
 
 
-        //[HttpGet("{id}/[action]")]
-        //public async Task<IActionResult> GetPrint(Guid id)
-        //{
-        //    var res = await _saleOrderPaymentService.GetPrint(id);
-        //    if (res == null) return NotFound();
-        //    var html = await _printTemplateConfigService.Print(res, "tmp_account_payment");
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetPrint(Guid id)
+        {
+            //tim trong bảng config xem có dòng nào để lấy ra template
+            var printConfig = await _printTemplateConfigService.SearchQuery(x => x.Type == "tmp_account_payment" && x.IsDefault)
+                .Include(x => x.PrintPaperSize)
+                .Include(x => x.PrintTemplate)
+                .FirstOrDefaultAsync();
 
-        //    return Ok(new PrintData() { html = html });
-        //}
+            PrintTemplate template = printConfig != null ? printConfig.PrintTemplate : null;
+            PrintPaperSize paperSize = printConfig != null ? printConfig.PrintPaperSize : null;
+            if (template == null)
+            {
+                //tìm template mặc định sử dụng chung cho tất cả chi nhánh, sử dụng bảng IRModelData hoặc bảng IRConfigParameter
+                template = await _modelDataService.GetRef<PrintTemplate>("base.print_template_account_payment");
+                if (template == null)
+                    throw new Exception("Không tìm thấy mẫu in mặc định");
+            }
+
+            var result = await _printTemplateService.GeneratePrintHtml(template, new List<Guid>() { id }, paperSize);
+
+            return Ok(new PrintData() { html = result });
+        }
     }
 }
