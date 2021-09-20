@@ -41,8 +41,8 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         contentsCss: ['/css/print.css'],
         // fullPage: true,//this support html full page
         // allowedContent: true,
-        // entities: false,
-        // basicEntities: false,
+        entities: false,
+        basicEntities: false,
         // forceSimpleAmpersand: true,
         // enterMode: 2,//this support not format string to p tag
         // protectedSource: [/{{[\s\S]*?}}/g] // this support loop code
