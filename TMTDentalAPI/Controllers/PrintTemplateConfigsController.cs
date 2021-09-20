@@ -28,7 +28,7 @@ namespace TMTDentalAPI.Controllers
         private readonly IMapper _mapper;
         private readonly ICompanyService _companyService;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public PrintTemplateConfigsController(IPrintTemplateConfigService printTemplateConfigService,IPrintPaperSizeService printPaperSizeService , IPrintTemplateService printTemplateService,IMapper mapper,
+        public PrintTemplateConfigsController(IPrintTemplateConfigService printTemplateConfigService, IPrintPaperSizeService printPaperSizeService, IPrintTemplateService printTemplateService, IMapper mapper,
             ICompanyService companyService, IWebHostEnvironment webHostEnvironment
             )
         {
@@ -40,7 +40,7 @@ namespace TMTDentalAPI.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
-        [HttpPost("[action]")]
+        [HttpGet("[action]")]
         public async Task<IActionResult> GetDisplay(string type)
         {
             if (!ModelState.IsValid || type == null)
@@ -55,7 +55,7 @@ namespace TMTDentalAPI.Controllers
         {
             if (!ModelState.IsValid || val == null)
                 return BadRequest();
-            var res = await _printTemplateConfigService.ChangePaperSize(val.Type , val.PrintPaperSizeId);
+            var res = await _printTemplateConfigService.ChangePaperSize(val.Type, val.PrintPaperSizeId);
             var display = _mapper.Map<PrintTemplateConfigDisplay>(res);
             return Ok(display);
         }
@@ -77,7 +77,7 @@ namespace TMTDentalAPI.Controllers
 
                 var template = printConfig.PrintTemplate;
                 template.Content = val.Content;
-                await _printTemplateService.UpdateAsync(template);               
+                await _printTemplateService.UpdateAsync(template);
             }
             else
             {

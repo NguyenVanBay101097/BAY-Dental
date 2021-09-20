@@ -53,8 +53,8 @@ export class PrintTemplateConfigService {
   apiUrl = 'api/PrintTemplateConfigs';
   constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
-  getDisplay(val: any): Observable<PrintTemplateConfigDisplay> {
-    return this.http.post<PrintTemplateConfigDisplay>(this.baseApi + this.apiUrl + '/GetDisplay', null, { params: val });
+  getDisplay(type: string): Observable<PrintTemplateConfigDisplay> {
+    return this.http.get<PrintTemplateConfigDisplay>(this.baseApi + this.apiUrl + '/GetDisplay?type=' + type);
   }
 
   createOrUpdate(val: PrintTemplateConfigSave) {
