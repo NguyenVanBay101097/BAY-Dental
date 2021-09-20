@@ -36,14 +36,15 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         //     "showborders,smiley,sourcearea,specialchar,stylescombo,tab,table," +
         //     "tabletools,templates,toolbar,undo,wsc,wysiwygarea",
         language: 'vi',
-        height: '100%',
+        defaultLanguage: 'vi',
+        height: 650,
         contentsCss: ['/css/print.css'],
         // fullPage: true,//this support html full page
-        allowedContent: true,
-        entities: false,
-        basicEntities: false,
-        forceSimpleAmpersand: true,
-        enterMode: 2,//this support not format string to p tag
+        // allowedContent: true,
+        // entities: false,
+        // basicEntities: false,
+        // forceSimpleAmpersand: true,
+        // enterMode: 2,//this support not format string to p tag
         // protectedSource: [/{{[\s\S]*?}}/g] // this support loop code
         // skin: 'kama'
         // plugins: ['EasyImage'],

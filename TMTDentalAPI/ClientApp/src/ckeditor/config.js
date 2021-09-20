@@ -3,8 +3,9 @@
  * For licensing, see https://ckeditor.com/legal/ckeditor-oss-license
  */
 
-CKEDITOR.editorConfig = function( config ) {
+CKEDITOR.editorConfig = function (config) {
 	// Define changes to default configuration here. For example:
-	// config.language = 'fr';
+	config.language = 'vi';
+	config.defaultLanguage = 'vi',
 	// config.uiColor = '#AADC6E';
 };
