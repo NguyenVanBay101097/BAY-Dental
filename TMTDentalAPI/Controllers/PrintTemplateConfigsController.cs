@@ -143,10 +143,7 @@ namespace TMTDentalAPI.Controllers
                         obj = JsonConvert.DeserializeObject<SaleOrderPrintVM>(item.Data.ToString());
                         break;
                     case "tmp_toathuoc":
-                        var res_toathuoc = JsonConvert.DeserializeObject<ToaThuoc>(item.Data.ToString());
-                        res_toathuoc.Company = company;
-                        res_toathuoc.ReExaminationDate = DateTime.Now.AddMonths(3);
-                        obj = _mapper.Map<ToaThuocPrintViewModel>(res_toathuoc);
+                        obj = JsonConvert.DeserializeObject<ToaThuocPrintTemplate>(item.Data.ToString());
                         break;
                     case "tmp_labo_order":
                         var res_labo = JsonConvert.DeserializeObject<LaboOrderPrintVM>(item.Data.ToString());

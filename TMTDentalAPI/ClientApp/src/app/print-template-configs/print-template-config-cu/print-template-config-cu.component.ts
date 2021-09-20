@@ -119,13 +119,18 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     }
 
     onPrint() {
+        debugger
         var val = new PrintTestReq();
         val.type = this.filter.type;
-        val.content = this.configEdit.content;
-        val.printPaperSizeId = this.filter.printPaperSizeId || '';
+        val.content = this.content;
+        val.printPaperSizeId = this.formGroup.get('printPaperSizeId').value;
         this.configService.printTest(val).subscribe(res => {
             this.printService.printHtml(res);
         });
+    }
+
+    get content() {
+        return this.formGroup.get('content').value;
     }
 
     onSave() {
@@ -181,10 +186,10 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         });
     }
 
-    onCancel() {
-        delete this.filter.printPaperSizeId;
-        this.loadCurrentConfig();
-    }
+    // onCancel() {
+    //     delete this.filter.printPaperSizeId;
+    //     this.loadCurrentConfig();
+    // }
 
     onCreatePaperSize() {
         const modalRef = this.modalService.open(PrintPaperSizeCreateUpdateDialogComponent, { scrollable: true, windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });

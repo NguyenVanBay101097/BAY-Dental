@@ -83,10 +83,15 @@ namespace Infrastructure.Services
                     {
                         var toaThuocObj = GetService<IToaThuocService>();
                         var res = await toaThuocObj.SearchQuery(x => x.Id == resId)
-                            .Include(x => x.Company).Include(x => x.Partner)
-                            .Include(x => x.Employee).Include(x => x.Lines)
+                            .Include(x => x.Company).ThenInclude(x => x.Partner)
+                            .Include(x => x.Partner)
+                            .Include(x => x.Employee)
+                            .Include(x => x.Lines).ThenInclude(s => s.ProductUoM)
+                            .Include(x => x.Lines).ThenInclude(s => s.Product)
                             .FirstOrDefaultAsync();
+
                         data = _mapper.Map<ToaThuocPrintTemplate>(res);
+                        var json = JsonConvert.SerializeObject(data);
                         return data;
                     }
                 case "sale.order":
