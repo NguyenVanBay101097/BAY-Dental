@@ -77,30 +77,25 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                 var types = AppConstants.PrintTemplateTypeDemo;
                 foreach (var type in types)
                 {
-                    var printTemplate = context.PrintTemplates.Where(x => x.Type == type.Type).FirstOrDefault();
                     var html = File.ReadAllText(type.PathTemplate);
-                    if (printTemplate == null)
+                    var iRmodelData = context.IRModelDatas.Where(x => x.Name == type.NameIRModel && x.Module == "base" && x.Model == "print.template").FirstOrDefault();
+                    if (iRmodelData == null)
                     {
-                        
-                        printTemplate = new PrintTemplate { Type = type.Type, Content = html , Model = type.Model};
+                        var printTemplate = new PrintTemplate { Content = html, Model = type.Model };
                         context.PrintTemplates.Add(printTemplate);
                         context.SaveChanges();
 
-                        var iRmodelData = context.IRModelDatas.Where(x => x.Name == type.NameIRModel && x.Module == "base" && x.Model == "print.template").FirstOrDefault();
-                        if (iRmodelData == null)
-                        {
-                            iRmodelData = new IRModelData { Name = type.NameIRModel, Module = "base", ResId = printTemplate.Id.ToString(), Model = "print.template" };
-                            context.IRModelDatas.Add(iRmodelData);
-                            context.SaveChanges();
-                        }
+                        iRmodelData = new IRModelData { Name = type.NameIRModel, Module = "base", ResId = printTemplate.Id.ToString(), Model = "print.template" };
+                        context.IRModelDatas.Add(iRmodelData);
+                        context.SaveChanges();
                     }
                     else
                     {
+                        var printTemplate = context.PrintTemplates.Where(x => x.Id == Guid.Parse(iRmodelData.ResId)).FirstOrDefault();
                         printTemplate.Content = html;
                         context.SaveChanges();
                     }
                 }
-
             }
 
             return Task.CompletedTask;
