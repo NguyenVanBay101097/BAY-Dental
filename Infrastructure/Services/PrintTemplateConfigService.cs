@@ -39,11 +39,11 @@ namespace Infrastructure.Services
         }
 
         public async Task<PrintTemplateConfig> GetPrintTemplateConfig(string type)
-        {         
+        {
             var printConfig = await SearchQuery(x => x.Type == type && x.IsDefault)
                 .Include(x => x.PrintPaperSize)
                 .Include(x => x.PrintTemplate)
-                .FirstOrDefaultAsync();          
+                .FirstOrDefaultAsync();
 
             if (printConfig == null)
             {
@@ -67,9 +67,13 @@ namespace Infrastructure.Services
             return printConfig;
         }
 
-        public async Task<PrintTemplateConfig> ChangePaperSize(string type , Guid paperSizeId)
+        public async Task<PrintTemplateConfig> ChangePaperSize(string type, Guid paperSizeId)
         {
-            var printConfig = await SearchQuery(x => x.Type == type && x.PrintPaperSizeId == paperSizeId).Include(x => x.PrintPaperSize).FirstOrDefaultAsync();
+            var printConfig = await SearchQuery(x => x.Type == type && x.PrintPaperSizeId == paperSizeId)
+                .Include(x => x.PrintPaperSize)
+                .Include(x => x.PrintTemplate)
+                .FirstOrDefaultAsync();
+
             if (printConfig == null)
             {
                 var templateObj = GetService<IPrintTemplateService>();
@@ -78,7 +82,7 @@ namespace Infrastructure.Services
                 if (printTmp == null)
                     throw new Exception("Không tìm thấy mẫu in có sẵn");
 
-                var paperSize = await _printPaperSizeService.SearchQuery(x=> x.Id == paperSizeId).FirstOrDefaultAsync();
+                var paperSize = await _printPaperSizeService.SearchQuery(x => x.Id == paperSizeId).FirstOrDefaultAsync();
 
                 printConfig = new PrintTemplateConfig();
                 printConfig.Content = printTmp.Content;
@@ -92,8 +96,8 @@ namespace Infrastructure.Services
             return printConfig;
         }
 
-        public string ConnectLayoutForContent(string layout , string content)
-        {          
+        public string ConnectLayoutForContent(string layout, string content)
+        {
             var doc = new HtmlDocument();
             doc.LoadHtml(layout);
             doc.DocumentNode.SelectSingleNode("//div[@class='container']").InnerHtml += content;
@@ -101,9 +105,9 @@ namespace Infrastructure.Services
             return newHtml;
         }
 
-        public async Task<string> PrintTest(string content , Guid paperSizeId, object data)
+        public async Task<string> PrintTest(string content, Guid paperSizeId, object data)
         {
-            var printPaperSize = await _printPaperSizeService.SearchQuery(x => x.Id == paperSizeId).FirstOrDefaultAsync();                
+            var printPaperSize = await _printPaperSizeService.SearchQuery(x => x.Id == paperSizeId).FirstOrDefaultAsync();
             var layout = File.ReadAllText("PrintTemplate/Shared/Layout.html");
 
             var renderContent = await RenderTemplate(data, content);
@@ -115,11 +119,11 @@ namespace Infrastructure.Services
         }
 
         public async Task<string> RenderTemplate(object data, string content)
-        {        
+        {
             var template = Template.Parse(content);
             var result = await template.RenderAsync(data);
             return result;
-        }     
+        }
 
 
         public override ISpecification<PrintTemplateConfig> RuleDomainGet(IRRule rule)

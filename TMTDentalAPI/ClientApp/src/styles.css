@@ -645,11 +645,6 @@ select.ng-touched.ng-invalid {
     /* red */
 }
 
-.ng-invalid>.k-dropdown-wrap {
-    color: hsl(0deg 0% 26%)!important;
-    border-color: #dc3545!important;
-}
-
 .o_form_view .o_form_statusbar {
     position: relative;
     display: -webkit-box;

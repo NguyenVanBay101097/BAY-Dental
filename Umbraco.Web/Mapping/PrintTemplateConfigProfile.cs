@@ -11,8 +11,7 @@ namespace Umbraco.Web.Mapping
     {
         public PrintTemplateConfigProfile()
         {
-            CreateMap<PrintTemplateConfig, PrintTemplateConfigDisplay>()
-                .ForMember(x => x.Content, x => x.MapFrom(s => s.Content));
+            CreateMap<PrintTemplateConfig, PrintTemplateConfigDisplay>();
 
             CreateMap<PrintTemplateConfigDisplay, PrintTemplateConfig>()
                 .ForMember(x => x.Id, x => x.Ignore());

@@ -11,6 +11,8 @@ import { PrintPaperSizeCreateUpdateDialogComponent } from 'src/app/config-prints
 import * as _ from 'lodash';
 import * as constantData from '../print-template-config-constant-data';
 import { KeywordListDialogComponent } from '../keyword-list-dialog/keyword-list-dialog.component';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 // import { CKEditor4 } from 'ckeditor4-angular';
 // import * as edit4 from '../../ckCustomBuild/ckeditor.js'
 // var CKEDITOR_BASEPATH = '/ckeditor/';
@@ -60,6 +62,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     contentPrev = "";
     paperSizes: PrintPaperSizeBasic[] = [];
     filter = new PrintTemplateConfigChangePaperSize();
+    formGroup: FormGroup;
 
     @ViewChild("editor", { static: false }) editor;
 
@@ -71,18 +74,18 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         private printTemplateService: PrintTemplateService,
         private paperSizeService: PrintPaperSizeService,
         private modalService: NgbModal,
-
+        private fb: FormBuilder
     ) { }
 
     ngOnInit() {
+        this.formGroup = this.fb.group({
+            type: [null, Validators.required],
+            printPaperSizeId: [null, Validators.required],
+            content: ''
+        });
+
         this.types = constantData.types;
-        this.filter.type = "tmp_toathuoc";
-        this.loadCurrentConfig();
         this.loadPaperSizeList();
-        // this.activeRoute.paramMap.subscribe(x => {
-        //   this.typeFilter = x.get("type");
-        //   this.loadCurrentConfig();
-        // });
     }
 
     public onReady(editor) {
@@ -100,28 +103,19 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         });
     }
 
-    loadCurrentConfig(preType?) {
-        var val = Object.assign({}, this.filter);
-        this.configService.getDisplay(val).subscribe(res => {
-            this.configEdit = res;
-            this.filter.printPaperSizeId = this.configEdit.printPaperSizeId;
-            this.onGenerate(this.configEdit.content);
-        },
-            err => {
-                if (preType) this.filter.type = preType;
-            }
-        );
-
-    }
-
-
     onDefault() {
-        var val = new PrintTemplateDefault();
-        val.type = this.filter.type;
-        this.printTemplateService.getDisplay(val).subscribe((res: any) => {
-            this.configEdit.content = res.content;
-            this.onGenerate();
-        });
+        var type = this.formGroup.get('type').value;
+        if (type) {
+            let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
+            modalRef.componentInstance.title = 'Sử dụng mẫu mặc định';
+            modalRef.componentInstance.body = 'Nội dung sẽ chuyển về mẫu mặc định, bạn có chắc chắn?';
+            modalRef.result.then(() => {
+                this.printTemplateService.getPrintTemplateDefault({type}).subscribe((res: any) => {
+                    this.formGroup.get('content').setValue(res.content);
+                    this.onGenerate();
+                });
+            });
+        }
     }
 
     onPrint() {
@@ -135,22 +129,26 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     }
 
     onSave() {
-        var val = Object.assign({}, this.configEdit) as PrintTemplateConfigSave;
+        if (this.formGroup.invalid) {
+            return false;
+        }
+
+        var val = this.formGroup.value;
         val.companyId = this.authService.userInfo ? this.authService.userInfo.companyId : '';
-        val.type = this.filter.type;
         this.configService.createOrUpdate(val).subscribe(res => {
             this.notifyService.notify('success', 'Lưu thành công');
         });
     }
 
     onChangeType(e) {
-        var val = Object.assign({}, this.filter);
-        val.type = e;
-        this.configService.changePaperSize(val).subscribe((res: any) => {
-            this.configEdit = res;
-            this.filter.type = e;
-            this.onGenerate(this.configEdit.content);
-        });
+        var type = this.formGroup.get('type').value;
+        if (type) {
+            this.configService.getDisplay(type).subscribe((res: any) => {
+                this.formGroup.get('printPaperSizeId').setValue(res.printPaperSizeId);
+                this.formGroup.get('content').setValue(res.printTemplateContent);
+                this.onGenerate();
+            });
+        }
     }
 
     onEdit() {
@@ -159,8 +157,11 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     }
 
     onGenerate(content?) {
-        var val = Object.assign({}, this.filter) as GenerateReq;
-        val.content = content || this.configEdit.content;
+        if (this.formGroup.invalid) {
+            return false;
+        }
+        
+        var val = this.formGroup.value;
         this.configService.generate(val).subscribe((res: any) => {
             this.contentPrev = res;
         }, () => {
@@ -169,11 +170,14 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     }
 
     onChangePaperSize(e) {
-        this.filter.printPaperSizeId = e;
-        var val = Object.assign({}, this.filter);
+        var val = {
+            type: this.formGroup.get('type').value,
+            printPaperSizeId: this.formGroup.get('printPaperSizeId').value,
+        };
         this.configService.changePaperSize(val).subscribe((res: any) => {
-            this.configEdit = res;
-            this.onGenerate(this.configEdit.content);
+            this.formGroup.get('printPaperSizeId').setValue(res.printPaperSizeId);
+            this.formGroup.get('content').setValue(res.printTemplateContent);
+            this.onGenerate();
         });
     }
 

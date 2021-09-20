@@ -17,27 +17,23 @@
     </div>
 </div>
 <div class="o_content">
-    <div class="o_form_view">
+    <div class="o_form_view" [formGroup]="formGroup">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="d-flex">
                     <div class="mb-2 mr-2">
                         <label>Chọn mẫu in</label>
-                        <select (ngModelChange)="onChangeType($event)" [(ngModel)]="this.filter.type"
-                            class="form-control">
+                        <select (change)="onChangeType($event)" 
+                            class="form-control" formControlName="type">
                             <option [value]="item.value" *ngFor="let item of types">{{item.text}}
                             </option>
                         </select>
                     </div>
                     <div class="mb-2 mr-2">
                         <label>Chọn khổ in</label>
-                        <select (ngModelChange)="onChangePaperSize($event)" [(ngModel)]="this.filter.printPaperSizeId"
-                            class="form-control">
-                            <option [value]="item.id" *ngFor="let item of paperSizes">{{item.name}}
-                            </option>
-                        </select>
-                        <!-- <button (click)="onCreatePaperSize()" title="Thêm khổ in"
-                        class="btn btn-sm btn-light"><span class="k-icon k-i-plus"></span></button> -->
+                        <kendo-combobox style="width: 100%;" (valueChange)="onChangePaperSize($event)" [data]="paperSizes" textField="name"
+                            valueField="id" [valuePrimitive]="true" formControlName="printPaperSizeId">
+                        </kendo-combobox>
                     </div>
                 </div>
                 <div class="mb-2">
@@ -50,7 +46,7 @@
                 </div>
                 <div class="row">
                     <div class="col">
-                        <ckeditor #editor [config]="configEditor" [(ngModel)]="configEdit.content">
+                        <ckeditor #editor [config]="configEditor" formControlName="content">
                         </ckeditor>
                     </div>
                     <div class="col">
