@@ -6,3 +6,7 @@
     background-color: #F2F7FF;
     color: #1A6DE3;
 }
+
+.o_td_label{
+    vertical-align: top !important;
+}
