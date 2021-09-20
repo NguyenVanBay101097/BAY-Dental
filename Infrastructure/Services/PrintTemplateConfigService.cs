@@ -121,7 +121,7 @@ namespace Infrastructure.Services
         public async Task<string> RenderTemplate(object data, string content)
         {
             var template = Template.Parse(content);
-            var result = await template.RenderAsync(data);
+            var result = await template.RenderAsync(new { o = data });
             return result;
         }
 

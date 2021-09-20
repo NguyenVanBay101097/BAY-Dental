@@ -1901,23 +1901,24 @@ namespace Infrastructure.Services
             return invoices;
         }
 
-        public async Task<SaleOrderPrintTemplate> GetPrintTemplate(Guid id)
+        public async Task<IEnumerable<SaleOrder>> GetPrintTemplate(IEnumerable<Guid> ids)
         {
             var saleOrderLineObj = GetService<ISaleOrderLineService>();
             var saleOrderPaymentObj = GetService<ISaleOrderPaymentService>();
-            var order = await SearchQuery(x => x.Id == id).Include(x => x.Company).Include(x => x.Partner)
+            var orders = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Company).Include(x => x.Partner)
                 .Include(x => x.DotKhams).ThenInclude(s => s.Doctor)
                 .Include(x => x.DotKhams).ThenInclude(s => s.Lines)
                 .Include(x => x.CreatedBy)
-                .FirstOrDefaultAsync();
+                .ToListAsync();
 
-            //Lược bỏ những dòng số lượng bằng 0
-            order.OrderLines = await saleOrderLineObj.SearchQuery(x => x.OrderId == order.Id).OrderBy(x => x.Sequence).Where(x => x.ProductUOMQty != 0).Include(x => x.Product).ToListAsync();
-                
-            var saleOrderPrintTemplate = _mapper.Map<SaleOrderPrintTemplate>(order);
-            saleOrderPrintTemplate.HistoryPayments = _mapper.Map<IEnumerable<SaleOrderPaymentBasicPrintTemplate>>(await saleOrderPaymentObj.SearchQuery(x => x.OrderId == id).Include(x => x.PaymentRels).ThenInclude(x => x.Payment).ThenInclude(x => x.Journal).ToListAsync());
+            foreach(var order in orders)
+            {
+                //Lược bỏ những dòng số lượng bằng 0
+                order.OrderLines = await saleOrderLineObj.SearchQuery(x => x.OrderId == order.Id).OrderBy(x => x.Sequence).Where(x => x.ProductUOMQty != 0).Include(x => x.Product).ToListAsync();
+                order.SaleOrderPayments = await saleOrderPaymentObj.SearchQuery(x => x.OrderId == order.Id).Include(x => x.PaymentRels).ThenInclude(x => x.Payment).ThenInclude(x => x.Journal).ToListAsync();
+            }
 
-            return saleOrderPrintTemplate;
+            return orders;
         }
 
         public async Task<SaleOrderPrintVM> GetPrint(Guid id)

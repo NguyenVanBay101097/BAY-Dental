@@ -425,16 +425,16 @@ namespace Infrastructure.Services
 
         }
 
-        public async Task<PhieuThuChi> GetPrintTemplate(Guid id)
+        public async Task<IEnumerable<PhieuThuChi>> GetPrintTemplate(IEnumerable<Guid> resIds)
         {
-            var res = await SearchQuery(x => x.Id == id)
+            var res = await SearchQuery(x => resIds.Contains(x.Id))
                .Include(x => x.Company)
                .Include(x => x.CreatedBy)
                .Include(x => x.Partner)
                .Include(x => x.LoaiThuChi)
                 .Include(x => x.Journal)
                 .Include(x => x.Agent)
-               .FirstOrDefaultAsync();
+               .ToListAsync();
 
             return res;
         }

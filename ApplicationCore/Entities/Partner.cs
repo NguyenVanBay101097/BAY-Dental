@@ -220,6 +220,23 @@ namespace ApplicationCore.Entities
             return string.Join(", ", list);
         }
 
+        public string Address
+        {
+            get
+            {
+                var list = new List<string>();
+                if (!string.IsNullOrEmpty(Street))
+                    list.Add(Street);
+                if (!string.IsNullOrEmpty(WardName))
+                    list.Add(WardName);
+                if (!string.IsNullOrEmpty(DistrictName))
+                    list.Add(DistrictName);
+                if (!string.IsNullOrEmpty(CityName))
+                    list.Add(CityName);
+                return string.Join(", ", list);
+            }
+        }
+
         public string GetDateOfBirth()
         {
             if (!BirthDay.HasValue && !BirthMonth.HasValue && !BirthYear.HasValue) return "";

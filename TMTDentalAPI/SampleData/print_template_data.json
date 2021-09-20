@@ -153,12 +153,12 @@
     "Data": {
       "Company": {
         "Name": "TPP",
-        "PartnerName": "TPP",
-        "PartnerCityName": "Thành phố Hồ Chí Minh",
-        "PartnerDistrictName": "Quận Tân Phú",
-        "PartnerWardName": "Phường Tân Thành",
-        "PartnerStreet": "54/35 Diệp Minh Châu",
-        "Address": "54/35 Diệp Minh Châu, Phường Tân Thành, Quận Tân Phú, Thành phố Hồ Chí Minh",
+        "Partner": {
+          "CityName": "Thành phố Hồ Chí Minh",
+          "DistrictName": "Quận Tân Phú",
+          "WardName": "Phường Tân Thành",
+          "Street": "54/35 Diệp Minh Châu"
+        },
         "Phone": "0938551226",
         "Email": null,
         "Logo": "http://statics.tdental.vn/images/localhost/210920/1345070036_logo.jpg"
@@ -167,13 +167,10 @@
         "DisplayName": "[KH0007] Khách hàng A",
         "Name": "Khách hàng A",
         "Gender": "male",
-        "DateOfBirth": "15/10/1995",
         "Email": "khachhanga@gmail.com",
         "Phone": "0369835014",
         "BirthYear": 1995,
         "Age": "26",
-        "DisplayGender": "Nam",
-        "Address": "246/16 Độc Lập, Phường Tân Thành, Quận Tân Phú, Thành phố Hồ Chí Minh",
         "Street": "246/16 Độc Lập",
         "WardName": "Phường Tân Thành",
         "DistrictName": "Quận Tân Phú",
@@ -187,22 +184,27 @@
       "ReExaminationDate": null,
       "Lines": [
         {
-          "ProductName": "Paracetamol",
-          "ProductUOMName": "Cái",
-          "Name": "Ngày uống 1 lần, mỗi lần 1 Cái, uống sau khi ăn",
+          "Product": {
+            "Name": "Paracetamol"
+          },
+          "ProductUoM": {
+            "Name": "Cái"
+          },
           "Quantity": 1.00,
           "Sequence": 1,
           "NumberOfTimes": 1,
           "NumberOfDays": 1,
           "AmountOfTimes": 1.00,
           "UseAt": "after_meal",
-          "Note": null,
-          "GetUseAtDisplay": "Sau khi ăn"
+          "Note": null
         },
         {
-          "ProductName": "Metanol",
-          "ProductUOMName": "Cái",
-          "Name": "Ngày uống 1 lần, mỗi lần 1 Cái, uống sau khi ăn",
+          "Product": {
+            "Name": "Metanol"
+          },
+          "ProductUoM": {
+            "Name": "Cái"
+          },
           "Quantity": 1.00,
           "Sequence": 2,
           "NumberOfTimes": 1,

@@ -98,7 +98,7 @@ namespace TMTDentalAPI.Controllers
                .ToListAsync();
 
             foreach (var config in otherConfigs)
-                printConfig.IsDefault = false;
+                config.IsDefault = false;
 
             await _printTemplateConfigService.UpdateAsync(otherConfigs);
 
@@ -143,7 +143,7 @@ namespace TMTDentalAPI.Controllers
                         obj = JsonConvert.DeserializeObject<SaleOrderPrintVM>(item.Data.ToString());
                         break;
                     case "tmp_toathuoc":
-                        obj = JsonConvert.DeserializeObject<ToaThuocPrintTemplate>(item.Data.ToString());
+                        obj = JsonConvert.DeserializeObject<ToaThuoc>(item.Data.ToString());
                         break;
                     case "tmp_labo_order":
                         var res_labo = JsonConvert.DeserializeObject<LaboOrderPrintVM>(item.Data.ToString());
