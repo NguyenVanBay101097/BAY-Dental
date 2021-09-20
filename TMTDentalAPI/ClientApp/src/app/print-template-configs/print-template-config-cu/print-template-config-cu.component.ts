@@ -186,11 +186,6 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         });
     }
 
-    // onCancel() {
-    //     delete this.filter.printPaperSizeId;
-    //     this.loadCurrentConfig();
-    // }
-
     onCreatePaperSize() {
         const modalRef = this.modalService.open(PrintPaperSizeCreateUpdateDialogComponent, { scrollable: true, windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = 'Thêm khổ giấy in';
