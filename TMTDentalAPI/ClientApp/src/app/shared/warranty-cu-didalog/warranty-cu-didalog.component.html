@@ -118,7 +118,7 @@
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
-                                                <span>{{infoLabo?.saleOrderLineName}}</span>
+                                                <span style="word-break: break-word;">{{infoLabo?.saleOrderLineName}}</span>
                                             </td>
                                         </tr>
                                         <tr>
@@ -148,9 +148,9 @@
                                                         [class.border-danger]="invalid" class="form-control"></textarea>
                                                 </ng-container>
                                                 <ng-template #reason>
-                                                    <label style="white-space: pre-line;">
+                                                    <span style="word-break: break-word;">
                                                         {{getValueFC('reason')}}
-                                                    </label>
+                                                    </span>
                                                 </ng-template>
                                                 <div *ngIf="f.reason.errors && (f.reason.touched || f.reason.dirty || submitted)"
                                                     class="text-danger">
@@ -170,9 +170,9 @@
                                                         class="form-control"></textarea>
                                                 </ng-container>
                                                 <ng-template #content>
-                                                    <label style="white-space: pre-line;">
+                                                    <span style="word-break: break-word;">
                                                         {{getValueFC('content')}}
-                                                    </label>
+                                                    </span>
                                                 </ng-template>
                                             </td>
                                         </tr>
@@ -188,9 +188,9 @@
                                                         class="form-control"></textarea>
                                                 </ng-container>
                                                 <ng-template #note>
-                                                    <label style="white-space: pre-line;">
+                                                    <span style="word-break: break-word;">
                                                         {{getValueFC('note')}}
-                                                    </label>
+                                                    </span>
                                                 </ng-template>
                                             </td>
                                         </tr>
