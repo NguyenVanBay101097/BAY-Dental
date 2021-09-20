@@ -35,10 +35,8 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         //     "removeformat,resize,save,menubutton,scayt,selectall,showblocks," +
         //     "showborders,smiley,sourcearea,specialchar,stylescombo,tab,table," +
         //     "tabletools,templates,toolbar,undo,wsc,wysiwygarea",
-        // extraPlugins: 'easyimage',
-        // removePlugins: 'image',
         language: 'vi',
-        height: 650,
+        height: '100%',
         contentsCss: ['/css/print.css'],
         // fullPage: true,//this support html full page
         allowedContent: true,
@@ -53,7 +51,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
             { name: 'document', items: ['Source'] },
             { name: 'styles', items: ['Format', 'Font', 'FontSize'] },
             { name: 'colors', items: ['TextColor', 'BGColor'] },
-            { name: 'insert', items: ['EasyImageUpload', 'Table', 'HorizontalRule', 'Smiley'] },
+            { name: 'insert', items: ['Image', 'Table', 'HorizontalRule', 'Smiley'] },
             { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline'] },
             { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'] }
         ]
@@ -117,7 +115,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
 
 
     onDefault() {
-        var val = Object.assign({}, this.configEdit) as PrintTemplateDefault;
+        var val = new PrintTemplateDefault();
         val.type = this.filter.type;
         this.printTemplateService.getDisplay(val).subscribe(res => {
             this.configEdit.content = res;
