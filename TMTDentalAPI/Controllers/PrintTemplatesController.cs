@@ -29,7 +29,9 @@ namespace TMTDentalAPI.Controllers
         {
             if (!ModelState.IsValid || val == null)
                 return BadRequest();
-            var res = await _printTemplateService.GetDefaultTemplate(val.Type);
+
+            var printTemplate = await _printTemplateService.GetDefaultTemplate(val.Type);
+            var res = _mapper.Map<PrintTemplateBasic>(printTemplate);
             return Ok(res);
         }
 
