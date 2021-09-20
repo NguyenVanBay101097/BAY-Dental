@@ -13,10 +13,10 @@
  * (1) https://ckeditor.com/cke4/builder
  *     Visit online builder to build CKEditor from scratch.
  *
- * (2) https://ckeditor.com/cke4/builder/594ae85382185989d487acb1419a0e6d
+ * (2) https://ckeditor.com/cke4/builder/80793dc1191b3815167ee0dea9a83625
  *     Visit online builder to build CKEditor, starting with the same setup as before.
  *
- * (3) https://ckeditor.com/cke4/builder/download/594ae85382185989d487acb1419a0e6d
+ * (3) https://ckeditor.com/cke4/builder/download/80793dc1191b3815167ee0dea9a83625
  *     Straight download link to the latest version of CKEditor (Optimized) with the same setup as before.
  *
  * NOTE:
@@ -67,7 +67,6 @@ var CKBUILDER_CONFIG = {
 		'dialogadvtab' : 1,
 		'div' : 1,
 		'divarea' : 1,
-		'easyimage' : 1,
 		'editorplaceholder' : 1,
 		'elementspath' : 1,
 		'enterkey' : 1,
@@ -124,7 +123,6 @@ var CKBUILDER_CONFIG = {
 		'wysiwygarea' : 1
 	},
 	languages : {
-		'en' : 1,
-		'vi' : 1
+		'en' : 1
 	}
 };
