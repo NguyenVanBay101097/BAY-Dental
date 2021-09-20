@@ -124,7 +124,7 @@ export class LaboOrderDetailListComponent implements OnInit {
   deleteItem(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Xóa phiếu Labo';
-    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa?';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa phiếu Labo?';
     modalRef.result.then(() => {
       this.laboOrderService.unlink([item.id]).subscribe(() => {
         this.notifyService.notify("success", "Xóa phiếu Labo thành công");

@@ -83,7 +83,14 @@ export class LaboOrderExportDialogComponent implements OnInit {
 
   onCancelReceipt() {
     this.laboOrderService.actionCancelReceipt([this.labo.id]).subscribe(() => {   
-      var status = 'remove';      
+      var status = 'remove';
+      this.notificationService.show({
+        content: 'Hủy nhận thành công',
+        hideAfter: 3000,
+        position: { horizontal: 'center', vertical: 'top' },
+        animation: { type: 'fade', duration: 400 },
+        type: { style: 'success', icon: true }
+      });   
       this.activeModal.close(status);
     });
   }

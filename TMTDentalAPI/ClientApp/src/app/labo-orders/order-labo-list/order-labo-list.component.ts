@@ -133,7 +133,7 @@ export class OrderLaboListComponent implements OnInit {
     modalRef.componentInstance.labo = item;
     modalRef.result.then(() => {
       this.notificationService.show({
-        content: 'Cập nhật thành công',
+        content: 'Lưu thành công',
         hideAfter: 3000,
         position: { horizontal: 'center', vertical: 'top' },
         animation: { type: 'fade', duration: 400 },
