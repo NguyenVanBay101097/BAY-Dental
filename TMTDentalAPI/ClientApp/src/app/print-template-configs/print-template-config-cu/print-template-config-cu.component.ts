@@ -117,8 +117,8 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     onDefault() {
         var val = new PrintTemplateDefault();
         val.type = this.filter.type;
-        this.printTemplateService.getDisplay(val).subscribe(res => {
-            this.configEdit.content = res;
+        this.printTemplateService.getDisplay(val).subscribe((res: any) => {
+            this.configEdit.content = res.content;
             this.onGenerate();
         });
     }
