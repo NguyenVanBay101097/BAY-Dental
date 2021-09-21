@@ -45,7 +45,7 @@ namespace Infrastructure.Services
 
             var layoutHtml = File.ReadAllText("PrintTemplate/Shared/Layout.html");
             var template = Template.Parse(layoutHtml);
-            var renderLayout = await template.RenderAsync(paper);
+            var renderLayout = await template.RenderAsync(new { o = paper });
 
             var renderContent = await RenderTemplate(self, resIds);
 
@@ -66,13 +66,15 @@ namespace Infrastructure.Services
         {
             //mảng data từ resids
             var data = await GetObjectRender(self.Model, resIds);
+            var userObj = GetService<IUserService>();
+            var user = await userObj.GetCurrentUser();
 
             var results = "";
             foreach (var item in data)
             {
                 //làm sao page break
                 var template = Template.Parse(self.Content);
-                var result = await template.RenderAsync(new { o = item });
+                var result = await template.RenderAsync(new { o = item , u = user});
                 var tmp = $"<div class=\"page-break\">{result}</div>";
                 results += tmp;
             }
@@ -194,7 +196,7 @@ namespace Infrastructure.Services
                             .Include(x => x.Partner)
                             .Include(x => x.Journal)
                             .Include(x => x.CreatedBy)
-                            .ToListAsync();                      
+                            .ToListAsync();
 
                         return res;
                     }
@@ -242,7 +244,7 @@ namespace Infrastructure.Services
                             .Include(x => x.Employee)
                             .Include(x => x.Journal)
                             .ToListAsync();
-                     
+
                         return salaryPayments;
                     }
                 //case "advisory":

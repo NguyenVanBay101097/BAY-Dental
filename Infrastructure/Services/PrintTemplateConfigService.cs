@@ -120,8 +120,11 @@ namespace Infrastructure.Services
 
         public async Task<string> RenderTemplate(object data, string content)
         {
+            var userObj = GetService<IUserService>();
+            var user = await userObj.GetCurrentUser();
+
             var template = Template.Parse(content);
-            var result = await template.RenderAsync(new { o = data });
+            var result = await template.RenderAsync(new { o = data , u = user});
             return result;
         }
 

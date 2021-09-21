@@ -7,11 +7,11 @@
     <link rel="stylesheet" type="text/css" href="/css/print.css" />
     <style>
         @page {
-            size:{{paper_format}} {{is_size == false ? "portrait" : "landscape" }} !important;
-            margin-top: {{top_margin ?? 0}}mm;
-            margin-right: {{right_margin ?? 0}}mm;
-            margin-bottom:{{bottom_margin ?? 0}}mm;
-            margin-left:{{left_margin ?? 0}}mm;
+            size:{{o.paper_format}} {{o.is_size == false ? "portrait" : "landscape" }} !important;
+            margin-top: {{o.top_margin ?? 0}}mm;
+            margin-right: {{o.right_margin ?? 0}}mm;
+            margin-bottom:{{o.bottom_margin ?? 0}}mm;
+            margin-left:{{o.left_margin ?? 0}}mm;
         }
     </style>
 </head>
