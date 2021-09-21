@@ -19,10 +19,10 @@
 <div style="text-align:center">Ngày {{o.date_order.day}} tháng {{o.date_order.month}} năm {{o.date_order.year}}</div>
 
 <div style="text-align:center"><strong>Số: {{o.name}}</strong></div>
-
+<br />
 <div>THÔNG TIN CHI TIẾT</div>
 
-<table border="0" cellpadding="0" cellspacing="1" style="width:100%">
+<table border="0" cellpadding="2" cellspacing="1" style="width:100%">
     <tbody>
         <tr>
             <td style="width:120px"><strong>Khách hàng</strong></td>
@@ -151,23 +151,21 @@
 <table border="0" cellpadding="0" cellspacing="1" style="width:100%">
     <tbody>
         <tr>
-            <td>
-                <p style="text-align:center">
-                    <strong>Người lập phiếu</strong><br />
-                    <em>(Ký, họ tên)</em><br />
-                    <br />
-                </p>
-
-                <p style="text-align:center"><strong>{{o.user?.name | string.upcase}}</strong></p>
+            <td style="text-align:center">
+                <strong>Người lập phiếu</strong><br />
+                <em>(Ký, họ tên)</em><br />
+                <br />
+                <br />
+                <br />
+                <strong>{{u.name | string.upcase}}</strong>
             </td>
-            <td>
-                <p style="text-align:center">
-                    <strong>Khách hàng</strong><br />
-                    <em>(Ký, họ tên)</em><br />
-                    <br />
-                </p>
-
-                <p style="text-align:center"><strong>{{o.partner?.name | string.upcase}}</strong></p>
+            <td style="text-align:center">
+                <strong>Khách hàng</strong><br />
+                <em>(Ký, họ tên)</em><br />
+                <br />
+                <br />
+                <br />
+                <strong>{{o.partner?.name}}</strong>
             </td>
         </tr>
     </tbody>

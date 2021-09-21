@@ -14,13 +14,13 @@
     </tbody>
 </table>
 
-<h3 style="text-align:center">BÁO GIÁ DỊCH VỤ3</h3>
+<h3 style="text-align:center">BÁO GIÁ DỊCH VỤ</h3>
 
 <div style="text-align:center">Ngày {{date.now.day}} tháng {{date.now.month}} năm {{date.now.year}}</div>
 
 <div style="text-align:center"><strong>Số: {{o.name}}</strong></div>
-
-<table border="0" cellpadding="1" cellspacing="1" style="width:100%">
+<br />
+<table border="0" cellpadding="2" cellspacing="1" style="width:100%">
     <tbody>
         <tr>
             <td style="width:120px"><strong>Khách hàng</strong></td>
@@ -107,29 +107,30 @@
             <td style="text-align:right">{{payment.amount | math.format "N0" "vi" }}</td>
         </tr>
         <!--{{end }}-->
-        <dy
     </tbody>
 </table>
 <br />
+
 <!--{{end }}-->
+
 <table border="0" cellpadding="0" cellspacing="1" style="width:100%">
     <tbody>
         <tr>
-            <td>
-                <p style="text-align:center">
-                    <strong>Người báo giá</strong><br />
-                    <em>(Ký, họ tên)</em><br />
-                </p>
-
-                <p style="text-align:center"><strong>{{o.employee?.name | string.upcase}}</strong></p>
+            <td style="text-align:center">
+                <strong>Người báo giá</strong><br />
+                <em>(Ký, họ tên)</em><br />
+                <br />
+                <br />
+                <br />
+                <strong>{{o.employee?.name | string.upcase}}</strong>
             </td>
-            <td>
-                <p style="text-align:center">
-                    <strong>Khách hàng</strong><br />
-                    <em>(Ký, họ tên)</em><br />
-                </p>
-
-                <p style="text-align:center"><strong>{{o.partner?.name | string.upcase}}</strong></p>
+            <td style="text-align:center">
+                <strong>Khách hàng</strong><br />
+                <em>(Ký, họ tên)</em><br />
+                <br />
+                <br />
+                <br />
+                <strong>{{o.partner?.name}}</strong>
             </td>
         </tr>
     </tbody>
