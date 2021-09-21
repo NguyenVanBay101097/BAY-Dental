@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace ApplicationCore.Entities
@@ -237,6 +238,37 @@ namespace ApplicationCore.Entities
             }
         }
 
+        [NotMapped]
+        public string GetAge
+        {
+            get
+            {
+                if (!BirthYear.HasValue)
+                {
+                    return string.Empty;
+                }
+
+                return (DateTime.Now.Year - BirthYear.Value).ToString();
+            }
+        }
+
+        [NotMapped]
+        public string GetGender
+        {
+            get
+            {
+                switch (Gender)
+                {
+                    case "female":
+                        return "Nữ";
+                    case "other":
+                        return "Khác";
+                    default:
+                        return "Nam";
+                }
+            }
+        }
+
         public string GetDateOfBirth()
         {
             if (!BirthDay.HasValue && !BirthMonth.HasValue && !BirthYear.HasValue) return "";
@@ -245,28 +277,28 @@ namespace ApplicationCore.Entities
                 $"{(BirthYear.HasValue ? BirthYear.Value.ToString() : "----")}";
         }
 
-        public string GetGender()
-        {
-            switch (Gender)
-            {
-                case "female":
-                    return "Nữ";
-                case "other":
-                    return "Khác";
-                default:
-                    return "Nam";
-            }
-        }
+        //public string GetGender()
+        //{
+        //    switch (Gender)
+        //    {
+        //        case "female":
+        //            return "Nữ";
+        //        case "other":
+        //            return "Khác";
+        //        default:
+        //            return "Nam";
+        //    }
+        //}
 
-        public string GetAge()
-        {
-            if (!BirthYear.HasValue)
-            {
-                return string.Empty;
-            }
+        //public string GetAge()
+        //{
+        //    if (!BirthYear.HasValue)
+        //    {
+        //        return string.Empty;
+        //    }
 
-            return (DateTime.Now.Year - BirthYear.Value).ToString();
-        }
+        //    return (DateTime.Now.Year - BirthYear.Value).ToString();
+        //}
 
     }
 }

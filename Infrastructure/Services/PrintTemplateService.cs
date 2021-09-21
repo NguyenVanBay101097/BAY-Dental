@@ -74,7 +74,7 @@ namespace Infrastructure.Services
             {
                 //làm sao page break
                 var template = Template.Parse(self.Content);
-                var result = await template.RenderAsync(new { o = item , u = user});
+                var result = await template.RenderAsync(new { o = item, u = user });
                 var tmp = $"<div class=\"page-break\">{result}</div>";
                 results += tmp;
             }

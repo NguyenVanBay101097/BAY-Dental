@@ -19,7 +19,7 @@
 <div style="text-align:center">
     <strong>Số: {{o.name}}</strong><br />
 </div>
-
+<br />
 <div>
     <table border="0" cellpadding="0" cellspacing="1" style="width:100%">
         <tbody>
@@ -28,14 +28,14 @@
                 <td>{{o.partner.display_name}}</td>
                 <td> </td>
                 <td style="width:120px"><strong>Giới tính</strong> </td>
-                <td>{{o.partner.display_gender}}</td>
+                <td>{{o.partner.get_gender}}</td>
             </tr>
             <tr>
                 <td style="width:120px"><strong>Địa chỉ</strong></td>
                 <td>{{o.partner.address}}</td>
                 <td> </td>
                 <td style="width:120px"><strong>Tuổi</strong></td>
-                <td>{{o.partner?.age}}</td>
+                <td>{{o.partner?.get_age}}</td>
             </tr>
             <tr>
                 <td style="width:120px"><strong>Bác sĩ</strong></td>
@@ -46,24 +46,24 @@
             </tr>
         </tbody>
     </table>
-
-
+    <br />
     <table border="0" cellpadding="0" cellspacing="1" style="width:100%">
         <tbody>
+
             <!--{{ for line in o.lines }}-->
             <tr>
                 <td style="width:50px"><strong>{{for.index + 1}}</strong>.</td>
                 <td>
                     <strong>{{line.product.name}}</strong><br />
-                    Ngày uống <strong>{{line.number_of_times}}</strong> lần, mỗi lần <strong>{{line.amount_of_times}}</strong> <strong>{{line.product_uo_m.name}}</strong>, uống trong <strong>{{line.number_of_days}}</strong> ngày (<strong>{{line.get_use_at_display}}</strong>)
+                    Ngày uống <strong>{{line.number_of_times}}</strong> lần, mỗi lần <strong>{{line.amount_of_times}}</strong> <strong>{{line.product_uo_m.name}}</strong>, uống trong <strong>{{line.number_of_days}}</strong> ngày (<strong>{{line.use_at_display}}</strong>)
                 </td>
                 <td><strong>{{line.quantity}}</strong> </td>
             </tr>
+
             <!--{{ end }}-->
         </tbody>
     </table>
-
-
+    <br />
     <table border="0" cellspacing="1" style="width:100%">
         <tbody>
             <tr>
@@ -80,8 +80,7 @@
             </tr>
         </tbody>
     </table>
-
-
+    <br />
     <table border="0" cellpadding="0" cellspacing="1" style="width:100%">
         <tbody>
             <tr>
@@ -92,7 +91,6 @@
                     </p>
                     <br />
                     <br />
-
                     <p style="text-align:center"><strong>{{o.employee ? (o.employee.name | string.upcase) : "" }}</strong></p>
                 </td>
                 <td>
@@ -102,12 +100,9 @@
                     </p>
                     <br />
                     <br />
-
                     <p style="text-align:center"><strong>{{o.partner ? (o.partner.name | string.upcase) : ""}}</strong></p>
                 </td>
             </tr>
         </tbody>
     </table>
-
-    <p> </p>
 </div>

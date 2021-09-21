@@ -957,8 +957,7 @@
         "DateOfBirth": "15/10/1995",
         "AppointmnetId": "00000000-0000-0000-0000-000000000000",
         "AppointmnetName": null,
-        "Time": null,
-        "Date": "03/09/2021 12:00:00 SA"
+        "Time": null
       },
       "AccountPaymentId": "24a0abb8-6e25-443d-2d3c-08d978f24849",
       "AccountPayment": {
@@ -998,7 +997,6 @@
           "AppointmnetId": "00000000-0000-0000-0000-000000000000",
           "AppointmnetName": null,
           "Time": null,
-          "Date": "03/09/2021 12:00:00 SA"
         },
         "PartnerType": "customer",
         "PaymentDate": "2021-09-16T09:13:29.685",
@@ -1817,6 +1815,10 @@
         "Name": "Tiền mặt",
         "Type": "cash"
       },
+      "CreatedBy": {
+        "Id": "fb3c81c4-90b2-4918-aeaf-1689263ee7fa",
+        "Name": "admin"
+      },
       "Amount": 10000000.00,
       "Reason": "Chi lương tháng 08/2021"
     }
@@ -1840,6 +1842,10 @@
         "Id": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
         "Name": "Tiền mặt",
         "Type": "cash"
+      },
+      "CreatedBy": {
+        "Id": "fb3c81c4-90b2-4918-aeaf-1689263ee7fa",
+        "Name": "admin"
       },
       "Amount": 3000000.00,
       "Reason": null
@@ -2093,6 +2099,73 @@
       "Id": "471cdd4c-3e72-4a50-248b-08d977369c30",
       "Amount": 5350000.00,
       "Date": "2021-09-14T00:00:00",
+      "Order": {
+        "Id": "f99bf6d1-e611-4236-52da-08d97734bbe3",
+        "DateOrder": "2021-09-14T11:04:11",
+        "PartnerId": "8a5316cc-14c3-4b92-1279-08d96ec504cd",
+        "Partner": {
+          "Id": "8a5316cc-14c3-4b92-1279-08d96ec504cd",
+          "Name": "Khách hàng A",
+          "DisplayName": "[KH0007] Khách hàng A",
+          "Phone": "0369835014",
+          "Ref": "KH0007",
+          "Gender": "male",
+          "Address": "246/16 Độc Lập, Phường Tân Thành, Quận Tân Phú, Thành phố Hồ Chí Minh",
+          "Street": "246/16 Độc Lập",
+          "WardName": "Phường Tân Thành",
+          "DistrictName": "Quận Tân Phú",
+          "CityName": "Thành phố Hồ Chí Minh",
+          "BirthYear": 1995,
+          "Debt": 0.0,
+          "Age": "26",
+          "LastAppointmentDate": null,
+          "Debit": 0.0,
+          "Credit": 0.0,
+          "Balance": null,
+          "CompanyName": "TPP",
+          "Categories": [],
+          "DateCreated": "2021-09-03T17:24:31",
+          "Source": null,
+          "JobTitle": null,
+          "Email": "khachhanga@gmail.com",
+          "comment": null,
+          "BirthMonth": 10,
+          "BirthDay": 15,
+          "Active": true,
+          "CountLine": 0.0,
+          "DateOfBirth": "15/10/1995",
+          "AppointmnetId": "00000000-0000-0000-0000-000000000000",
+          "AppointmnetName": null,
+          "Time": null
+        },
+        "AmountTax": 0.00,
+        "AmountUntaxed": 5350000.00,
+        "AmountTotal": 5350000.00,
+        "AmountDiscountTotal": 0.0,
+        "Note": null,
+        "State": "sale",
+        "Name": "SO00006",
+        "OrderLines": [],
+        "Promotions": [],
+        "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+        "UserId": null,
+        "User": null,
+        "Residual": 0.00,
+        "Paid": null,
+        "PricelistId": null,
+        "Pricelist": null,
+        "JournalId": null,
+        "Journal": null,
+        "QuotationId": null,
+        "Quotation": null,
+        "IsQuotation": false,
+        "IsFast": false,
+        "Quote": null,
+        "Order": null,
+        "InvoiceStatus": "to invoice",
+        "InvoiceCount": 0,
+        "TotalPaid": 5350000.00
+      },
       "JournalLines": [
         {
           "Id": "8b7e3f16-49a3-4698-5cf8-08d977369c32",
@@ -2119,6 +2192,7 @@
       "Note": "SO00006 - Khách hàng thanh toán",
       "State": "posted"
     }
+    
   },
   {
     "Type": "tmp_supplier_payment",
