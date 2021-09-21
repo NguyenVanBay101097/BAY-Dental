@@ -209,6 +209,17 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
       return false;
     }
 
+    var error = false;
+    for (let i = 0; i < this.lines.value.length; i++) {
+      if (this.lines.value[i]["productQty"] <= 0) {
+        this.lines.at(i).get('productQty').setErrors({ 'incorrect': true });
+        error = true;
+      }
+    }
+    if (error == true) {
+      return;
+    }
+
     var val = Object.assign({}, this.formGroup.value);
     val.userId = val.user.id;
     val.employeeId = val.employee.id;
