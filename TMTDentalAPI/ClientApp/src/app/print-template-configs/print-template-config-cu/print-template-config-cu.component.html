@@ -23,16 +23,16 @@
                 <div class="d-flex">
                     <div class="mb-2 mr-2">
                         <label>Chọn mẫu in</label>
-                        <select (change)="onChangeType($event)" 
-                            class="form-control" formControlName="type">
+                        <select (change)="onChangeType($event)" class="form-control" formControlName="type">
                             <option [value]="item.value" *ngFor="let item of types">{{item.text}}
                             </option>
                         </select>
                     </div>
                     <div class="mb-2 mr-2">
                         <label>Chọn khổ in</label>
-                        <kendo-combobox style="width: 100%;" (valueChange)="onChangePaperSize($event)" [data]="paperSizes" textField="name"
-                            valueField="id" [valuePrimitive]="true" formControlName="printPaperSizeId">
+                        <kendo-combobox style="width: 100%;" (valueChange)="onChangePaperSize($event)"
+                            [data]="paperSizes" textField="name" valueField="id" [valuePrimitive]="true"
+                            formControlName="printPaperSizeId">
                         </kendo-combobox>
                     </div>
                 </div>
@@ -45,7 +45,7 @@
                     </button>
                 </div>
                 <div class="row">
-                    <div class="col">
+                    <div class="col overflow-auto">
                         <ckeditor #editor [config]="configEditor" formControlName="content">
                         </ckeditor>
                     </div>
