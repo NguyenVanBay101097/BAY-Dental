@@ -17,6 +17,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PartnerReportSaleOrderComponent } from './partner-report-sale-order/partner-report-sale-order.component';
 import { PartnerAreaReportComponent } from './partner-area-report/partner-area-report.component';
 import { ChartsModule, ThemeService } from 'ng2-charts';
+import { AccountInvoiceReportService } from '../account-invoice-reports/account-invoice-report.service';
 
 @NgModule({
   declarations: [AccountCommonCustomerReportListComponent, AccountCommonPartnerReportDetailComponent, AccountCommonPartnerReportListComponent, PartnerDebitListReportComponent, PartnerDebitDetailListReportComponent, PartnerReportManagementComponent, PartnerReportOverviewComponent, PartnerReportSaleOrderComponent, PartnerAreaReportComponent],
@@ -31,7 +32,8 @@ import { ChartsModule, ThemeService } from 'ng2-charts';
   ],
   providers: [
     AccountCommonPartnerReportService,
-    ThemeService
+    ThemeService,
+    AccountInvoiceReportService
   ]
 })
 export class AccountCommonPartnerReportsModule { }

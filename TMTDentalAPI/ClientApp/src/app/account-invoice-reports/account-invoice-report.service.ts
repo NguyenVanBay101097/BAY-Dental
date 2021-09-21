@@ -30,6 +30,13 @@ export class RevenuePartnerReportPar{
     search?: string;
 }
 
+export class RevenueDistrictAreaPar{
+    dateFrom?: any;
+    dateTo?: any;
+    companyId?: string;
+    cityCode?: string;
+}
+
 export class RevenueTimeReportDisplay {
     invoiceDate?: any;
     priceSubTotal: number;
@@ -188,6 +195,10 @@ export class AccountInvoiceReportService {
     getPrintRevenueEmployeeReport(val: any) {
         return this.http.post(this.baseApi + "AccountInvoiceReport/PrintRevenueEmployeeReport", val, { responseType: "text" });
 
+    }
+
+    getRevenueDistrictArea(val: any){
+        return this.http.post<any[]>(this.baseApi + this.apiUrl + "/GetRevenueDistrictArea", val);
     }
 
     exportRevenueTimeReportExcel(paged) {
