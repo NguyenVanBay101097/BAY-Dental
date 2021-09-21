@@ -5,6 +5,7 @@ import { ChartOptions, ChartType } from 'chart.js';
 import { Label, SingleDataSet } from 'ng2-charts';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { CompanyPaged, CompanyService } from 'src/app/companies/company.service';
+import { PartnerOldNewReportService } from 'src/app/sale-report/partner-old-new-report.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -66,24 +67,6 @@ export class PartnerAreaReportComponent implements OnInit {
     }
   };
 
-  barChartData = {
-    labels: ['Hòa thạnh',  'Tân thạnh','Hòa thạnh',  'Tân thạnh','Hòa thạnh',  'Tân thạnh'],
-    datasets: [
-      {
-        label: 'Khách mới',
-        data: [100,200,450,350,900,120],
-        backgroundColor: '#2395FF',
-        hoverBackgroundColor: 'rgba(35,149,255,0.8)'
-      },
-      {
-        label: 'Khách quay lại',
-        data: [100,700,850,550,700,220],
-        backgroundColor: '#28A745',
-        hoverBackgroundColor: 'rgba(40,167,69,0.8)'
-      }
-    ]
-  }
-  barChartType: ChartType = 'bar';
   barChartOptions = {
     responsive: true,
     indexAxis: 'y',
@@ -97,9 +80,43 @@ export class PartnerAreaReportComponent implements OnInit {
       display: true
     }
   }
+
+  barChartData = {
+    labels: ['Hòa thạnh',  'Tân thạnh','Hòa thạnh',  'Tân thạnh','Hòa thạnh',  'Tân thạnh'],
+    partnerOldNewCount_datasets: [
+      {
+        label: 'Khách mới',
+        data: [],
+        backgroundColor: '#2395FF',
+        hoverBackgroundColor: 'rgba(35,149,255,0.8)'
+      },
+      {
+        label: 'Khách quay lại',
+        data: [],
+        backgroundColor: '#28A745',
+        hoverBackgroundColor: 'rgba(40,167,69,0.8)'
+      }
+    ], 
+    partnerOldNewRevenue_datasets: [
+      {
+        label: 'Khách mới',
+        data: [],
+        backgroundColor: '#2395FF',
+        hoverBackgroundColor: 'rgba(35,149,255,0.8)'
+      },
+      {
+        label: 'Khách quay lại',
+        data: [],
+        backgroundColor: '#28A745',
+        hoverBackgroundColor: 'rgba(40,167,69,0.8)'
+      }
+    ]
+  }
   
   constructor(private http: HttpClient,
-    private companyService: CompanyService) { }
+    private companyService: CompanyService, 
+    private partnerOldNewRpService: PartnerOldNewReportService
+  ) { }
 
   ngOnInit() {
     this.initFilterData();

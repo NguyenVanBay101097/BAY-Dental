@@ -80,9 +80,9 @@
                             <div style="display: block;">
                                 <canvas baseChart 
                                 [chartType]="'horizontalBar'"
-                                [datasets]="barChartData.datasets"
+                                [options]="barChartOptions"
                                 [labels]="barChartData.labels"
-                                [options]="barChartOptions">
+                                [datasets]="barChartData.partnerOldNewCount_datasets">
                                 </canvas>
                             </div>
                         </div>
@@ -92,9 +92,9 @@
                             <div style="display: block;">
                                 <canvas baseChart 
                                 [chartType]="'horizontalBar'"
-                                [datasets]="barChartData.datasets"
+                                [options]="barChartOptions"
                                 [labels]="barChartData.labels"
-                                [options]="barChartOptions">
+                                [datasets]="barChartData.partnerOldNewRevenue_datasets">
                                 </canvas>
                             </div>
                         </div>
