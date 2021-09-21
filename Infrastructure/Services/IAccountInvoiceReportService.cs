@@ -29,5 +29,6 @@ namespace Infrastructure.Services
         Task<RevenueReportExcelVM<RevenueServiceReportExcel>> GetRevenueServiceReportExcel(RevenueServiceReportPar val);
         Task<RevenueReportExcelVM<RevenueEmployeeReportExcel>> GetRevenueEmployeeReportExcel(RevenueEmployeeReportPar val);
         Task<RevenueReportExcelVM<RevenuePartnerReportExcel>> GetRevenuePartnerReportExcel(RevenuePartnerReportPar val);
+        Task<IEnumerable<RevenueDistrictAreaDisplay>> GetRevenueDistrictArea(RevenueDistrictAreaPar val);
     }
 }
