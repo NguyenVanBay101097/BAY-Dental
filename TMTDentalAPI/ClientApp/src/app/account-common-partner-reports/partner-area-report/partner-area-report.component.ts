@@ -1,9 +1,12 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { IntlService } from '@progress/kendo-angular-intl';
+import * as Chart from 'chart.js';
 import { ChartOptions, ChartType } from 'chart.js';
 import { Label, SingleDataSet } from 'ng2-charts';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { AccountInvoiceReportService, RevenueDistrictAreaPar } from 'src/app/account-invoice-reports/account-invoice-report.service';
 import { CompanyPaged, CompanyService } from 'src/app/companies/company.service';
 import { environment } from 'src/environments/environment';
 
@@ -12,10 +15,11 @@ import { environment } from 'src/environments/environment';
   templateUrl: './partner-area-report.component.html',
   styleUrls: ['./partner-area-report.component.css']
 })
-export class PartnerAreaReportComponent implements OnInit {
+export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
   @ViewChild('companyCbx',{static:true}) companyCbx: ComboBoxComponent;
   @ViewChild('cityCbx',{static:true}) cityCbx: ComboBoxComponent;
-  @ViewChild('pieChart', {static: true}) pieChart: any;
+  @ViewChild('pieCanvas', {static: true}) pieCanvas: ElementRef;
+  pieChart: any;
   companies: any[] = [{id:'01',name:'Chi nhánh 01'},{id:'02',name:'Chi nhánh 02'}]
   cities: any[] = [{id:'01',name:'TP.Hồ Chí Minh'}];
   dateFrom: any;
@@ -24,47 +28,23 @@ export class PartnerAreaReportComponent implements OnInit {
   currentCity: any;
   dataSourceCities: Array<{ code: string; name: string }>;
   dataResultCities: Array<{ code: string; name: string }>;
-  pieObjData: any[] = [
-    {name: 'Quận 1',total: 100,percent: '20%', color: '#4271C9'},
-    {name: 'Quận 2',total: 200,percent: '30%', color: '#F57A27'},
-    {name: 'Quận 3',total: 300,percent: '40%', color: '#A8A8A8'},
-    {name: 'Quận 4',total: 400,percent: '20%', color: '#F5C000'},
-    {name: 'Quận 5',total: 500,percent: '30%', color: '#4C93D4'},
-    {name: 'Quận 6',total: 600,percent: '40%', color: '#6FB342'},
-    {name: 'Quận 7',total: 700,percent: '20%', color: '#22427D'},
-    {name: 'Quận 8',total: 800,percent: '30%', color: '#A64D15'},
-    {name: 'Quận 9',total: 900,percent: '40%', color: '#A5ABB8'},
-    {name: 'Quận 10',total: 950,percent: '20%', color: '#A17702'},
-    {name: 'Khác',total: 330,percent: '30%', color: '#000000'},
-  ]
-  pieChartLabels: Label[] = this.pieObjData.map(x => x.name);
-  pieChartData: SingleDataSet = [];
-  pieChartType: ChartType = 'pie';
-  pieChartLegend = true;
-  pieChartPlugins = [this.pieChartLabels];
-  pieChartColors = [
-    {
-      backgroundColor: this.pieObjData.map(x => x.color),
-    },
-  ];
-  pieChartOptions = {
-    responsive: true,
-    tooltips: {
-      enabled: true
-    },
-    legend: {
-      position: 'bottom',
-      display: true,
-      legendCallback: function() {
-        console.log('legendCallback');
-        
-      }
-    },
-    title: {
-      display: true,
-      text: 'Chart.js Pie Chart'
-    }
-  };
+  // pieObjData: any[] = [
+  //   {name: 'Quận 1',total: 100,percent: '20%', color: '#4271C9'},
+  //   {name: 'Quận 2',total: 200,percent: '30%', color: '#F57A27'},
+  //   {name: 'Quận 3',total: 300,percent: '40%', color: '#A8A8A8'},
+  //   {name: 'Quận 4',total: 400,percent: '20%', color: '#F5C000'},
+  //   {name: 'Quận 5',total: 500,percent: '30%', color: '#4C93D4'},
+  //   {name: 'Quận 6',total: 600,percent: '40%', color: '#6FB342'},
+  //   {name: 'Quận 7',total: 700,percent: '20%', color: '#22427D'},
+  //   {name: 'Quận 8',total: 800,percent: '30%', color: '#A64D15'},
+  //   {name: 'Quận 9',total: 900,percent: '40%', color: '#A5ABB8'},
+  //   {name: 'Quận 10',total: 950,percent: '20%', color: '#A17702'},
+  //   {name: 'Khác',total: 330,percent: '30%', color: '#000000'},
+  // ]
+  pieObjData: any[] = []
+  pieChartData: any[] = [];
+  pieChartColors = ['#4271C9','#F57A27','#A8A8A8','#F5C000','#4C93D4','#6FB342','#22427D','#A64D15','#A5ABB8','#A17702','#000000'];
+  colorArr: string[] = [];
 
   barChartData = {
     labels: ['Hòa thạnh',  'Tân thạnh','Hòa thạnh',  'Tân thạnh','Hòa thạnh',  'Tân thạnh'],
@@ -99,17 +79,39 @@ export class PartnerAreaReportComponent implements OnInit {
   }
   
   constructor(private http: HttpClient,
-    private companyService: CompanyService) { }
+    private companyService: CompanyService,
+    private accountInvoiceReportService: AccountInvoiceReportService,
+    private intlService: IntlService,
+    private _elementRef : ElementRef) { }
 
   ngOnInit() {
     this.initFilterData();
-    this.loadPieChart();
-    this.loadSourceCities();
+    // this.loadSourceCities();
     this.loadCompanies();
     this.loadCurrentCompany();
-    console.log(this.pieChart);
-    
-    
+    debugger
+    this.loadDataFromApi();
+    // this.loadPieChart();
+  }
+
+  ngAfterViewInit(){
+  }
+
+  loadDataFromApi(){
+    var val = new RevenueDistrictAreaPar();
+    var colors = this.pieChartColors;
+    val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : null;
+    val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null;
+    val.cityCode = this.currentCity ? this.currentCity : null;
+    val.companyId = this.currentCompany ? this.currentCompany : null;
+    this.accountInvoiceReportService.getRevenueDistrictArea(val).subscribe(result => {
+      this.pieObjData = result;
+      this.pieObjData.forEach(function(item,index){
+        item.color = colors[index];
+      });
+      this.pieChartData = this.pieObjData.map(x => x.revenue);
+      this.loadPieChart();
+    });
   }
 
   loadSourceCities() {
@@ -124,7 +126,66 @@ export class PartnerAreaReportComponent implements OnInit {
   }
 
   loadPieChart(){
-    this.pieChartData = this.pieObjData.map(x => x.total);
+    var pieData = this.pieObjData;
+    var chart = new Chart(this.pieCanvas.nativeElement, {
+      type: 'pie',
+      data: {
+        labels:this.pieObjData.map(x => x.districtName),
+        datasets: [{
+          backgroundColor: this.pieChartColors.slice(0,this.pieObjData.length),
+          data: this.pieChartData
+        }]
+        
+      },
+    options: {
+      responsive: true,
+      tooltips: {
+        enabled: true
+      },
+        legend: {
+          position: 'bottom',
+          display: false,
+          labels: {
+            usePointStyle: true,
+          }
+        },
+        legendCallback: function(chart){
+          var ulHtml = '';
+          var leftLegendHtml = [];
+          var rightLegendHtml = [];
+          if (pieData.length > 6){
+            var leftData = pieData.slice(0,6);
+            leftData.forEach(item => {
+              var html = '<li style="display:flex; padding-top: 3px; padding-bottom:3px"><span style="flex:1; min-width: 115px"><i class="fas fa-circle mr-2" style="color:'+item.color+'"></i>'+item.name+'</span>'+
+              '<span style="padding-left:3px">('+item.percent+')</span>';
+              leftLegendHtml.push(html);
+            });
+            var rightData = pieData.slice(6,11);
+            rightData.forEach(item => {
+              var html = '<li style="display:flex; padding-top: 3px; padding-bottom:3px"><span style="flex:1; min-width: 115px"><i class="fas fa-circle mr-2" style="color:'+item.color+'"></i>'+item.districtName+'</span>'+
+              '<span style="padding-left:3px">('+item.percent+')</span>';
+              rightLegendHtml.push(html);
+            });
+            ulHtml = '<ul style="list-style-type: none; margin-left: auto; margin-right:auto; padding:0">'
+            +leftLegendHtml.join('')+'</ul>'+
+            '<ul style="list-style-type: none; margin-left: auto; margin-right:auto; padding:0">'
+            +rightLegendHtml.join('')+'</ul>';
+          }
+          else {
+            pieData.forEach(item => {
+              var html = '<li style="display:flex; padding-top: 3px; padding-bottom:3px"><span style="flex:1; min-width: 115px"><i class="fas fa-circle mr-2" style="color:'+item.color+'"></i>'+item.districtName+'</span>'+
+              '<span style="padding-left:3px">('+item.percent+')</span>';
+              leftLegendHtml.push(html);
+            });
+            ulHtml ='<ul style="list-style-type: none; margin-left: auto; margin-right:auto; padding:0">' + leftLegendHtml.join('')+
+            '</ul>';
+          }
+         return ulHtml;
+        }
+      }
+    });
+    let legend = this._elementRef.nativeElement.querySelector(`#pie-chart-legend`);
+    legend.innerHTML = chart.generateLegend();
   }
 
   searchCompany$(search?) {
@@ -176,7 +237,6 @@ export class PartnerAreaReportComponent implements OnInit {
   }
 
   onSelectCompany(event){
-    console.log(event);
     if (event){
       let companyId = event.id;
       this.companyService.get(companyId).subscribe(result => {
@@ -189,7 +249,6 @@ export class PartnerAreaReportComponent implements OnInit {
   }
 
   onSelectCity(event){
-    console.log(event);
     if (event){
       var val = new CompanyPaged();
       val.cityCode = event.code;
