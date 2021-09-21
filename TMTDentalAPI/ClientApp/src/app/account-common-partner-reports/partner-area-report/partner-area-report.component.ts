@@ -98,7 +98,6 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
     private accountInvoiceReportService: AccountInvoiceReportService,
     private intlService: IntlService,
     private _elementRef : ElementRef,
-    private companyService: CompanyService, 
     private partnerOldNewRpService: PartnerOldNewReportService
   ) { }
 
