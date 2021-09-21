@@ -8,7 +8,7 @@ import { Label, SingleDataSet } from 'ng2-charts';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { AccountInvoiceReportService, RevenueDistrictAreaPar } from 'src/app/account-invoice-reports/account-invoice-report.service';
 import { CompanyPaged, CompanyService } from 'src/app/companies/company.service';
-import { PartnerOldNewReportService } from 'src/app/sale-report/partner-old-new-report.service';
+import { PartnerOldNewReportByWardReq, PartnerOldNewReportService } from 'src/app/sale-report/partner-old-new-report.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -47,7 +47,7 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
   pieChartColors = ['#4271C9','#F57A27','#A8A8A8','#F5C000','#4C93D4','#6FB342','#22427D','#A64D15','#A5ABB8','#A17702','#000000'];
   colorArr: string[] = [];
 
-  barChartOptions = {
+  barChartOptions_PartnerCount = {
     responsive: true,
     indexAxis: 'y',
     title: {
@@ -61,9 +61,9 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
     }
   }
 
-  barChartData = {
-    labels: ['Hòa thạnh',  'Tân thạnh','Hòa thạnh',  'Tân thạnh','Hòa thạnh',  'Tân thạnh'],
-    partnerOldNewCount_datasets: [
+  barChartData_PartnerCount = {
+    labels: [],
+    datasets: [
       {
         label: 'Khách mới',
         data: [],
@@ -76,8 +76,26 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
         backgroundColor: '#28A745',
         hoverBackgroundColor: 'rgba(40,167,69,0.8)'
       }
-    ], 
-    partnerOldNewRevenue_datasets: [
+    ]
+  }
+
+  barChartOptions_PartnerRevenue = {
+    responsive: true,
+    indexAxis: 'y',
+    title: {
+      position: 'top',
+      display: true,
+      text:'Doanh thu khách mới - quay lại'
+    },
+    legend: {
+      position: 'bottom',
+      display: true
+    }
+  }
+
+  barChartData_PartnerRevenue = {
+    labels: [],
+    datasets: [
       {
         label: 'Khách mới',
         data: [],
@@ -109,6 +127,7 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
     debugger
     this.loadDataFromApi();
     // this.loadPieChart();
+    this.loadDataReportByWard();
   }
 
   ngAfterViewInit(){
@@ -257,7 +276,7 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
     if (event){
       let companyId = event.id;
       this.companyService.get(companyId).subscribe(result => {
-      this.currentCity = {code: result.city.code, name: result.city.name};
+        this.currentCity = {code: result.city.code, name: result.city.name};
       });
     }
     else {
@@ -270,8 +289,8 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
       var val = new CompanyPaged();
       val.cityCode = event.code;
       this.companyService.getPaged(val).subscribe(result => {
-      this.companies = result.items;
-      this.currentCompany = this.companies ? this.companies[0] : {};
+        this.companies = result.items;
+        this.currentCompany = this.companies ? this.companies[0] : {};
       });
     }
     else {
@@ -283,5 +302,34 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
   onSearchDateChange(event) {
     this.dateFrom = event.dateFrom;
     this.dateTo = event.dateTo;
+    this.loadDataReportByWard();
+  }
+
+  loadDataReportByWard() {
+    var val = new PartnerOldNewReportByWardReq();
+    val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
+    val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
+    val.cityCode = this.currentCity ? this.currentCity.code || '' : '';
+    val.companyId = this.currentCompany ? this.currentCompany.id || '' : '';
+    
+    this.partnerOldNewRpService.reportByWard(val).subscribe((res: any) => {
+      if (res && res.length > 0) {
+        this.barChartData_PartnerCount.labels = res.map(x => x.wardName);
+        this.barChartData_PartnerCount.datasets[0].data = res.map(x => x.partnerOldCount);
+        this.barChartData_PartnerCount.datasets[1].data = res.map(x => x.partnerNewCount);
+        this.barChartData_PartnerRevenue.labels = res.map(x => x.wardName);
+        this.barChartData_PartnerRevenue.datasets[0].data = res.map(x => x.partnerOldRevenue);
+        this.barChartData_PartnerRevenue.datasets[1].data = res.map(x => x.partnerNewRevenue);
+      } else {
+        this.barChartData_PartnerCount.labels = [];
+        this.barChartData_PartnerCount.datasets[0].data = [];
+        this.barChartData_PartnerCount.datasets[1].data = [];
+        this.barChartData_PartnerRevenue.labels = [];
+        this.barChartData_PartnerRevenue.datasets[0].data = [];
+        this.barChartData_PartnerRevenue.datasets[1].data = [];
+      }
+    }, err => {
+      console.log(err);
+    })
   }
 }
