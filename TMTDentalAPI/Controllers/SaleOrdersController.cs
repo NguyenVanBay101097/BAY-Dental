@@ -297,7 +297,7 @@ namespace TMTDentalAPI.Controllers
         {
 
             //tim trong bảng config xem có dòng nào để lấy ra template
-            var printConfig = await _printTemplateConfigService.SearchQuery(x => x.Type == "tmp_toathuoc" && x.IsDefault)
+            var printConfig = await _printTemplateConfigService.SearchQuery(x => x.Type == "tmp_sale_order" && x.IsDefault)
                 .Include(x => x.PrintPaperSize)
                 .Include(x => x.PrintTemplate)
                 .FirstOrDefaultAsync();

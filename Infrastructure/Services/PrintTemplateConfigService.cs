@@ -125,6 +125,162 @@ namespace Infrastructure.Services
             return result;
         }
 
+        public async Task<object> GetSampleData(string type)
+        {
+            var companyObj = GetService<ICompanyService>();
+            var company = await companyObj.SearchQuery(x => x.Id == CompanyId).Include(x => x.Partner).FirstOrDefaultAsync();
+            var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, @"SampleData\print_template_data.json");
+            using (var reader = new StreamReader(filePath))
+            {
+                var fileContent = reader.ReadToEnd();
+                var sample_data = JsonConvert.DeserializeObject<List<SampleDataPrintTemplate>>(fileContent);
+                var item = sample_data.Where(s => s.Type == type).FirstOrDefault();
+
+                switch (type)
+                {
+                    case "tmp_sale_order":
+                        {
+                            var res = JsonConvert.DeserializeObject<SaleOrder>(item.Data.ToString());
+                            res.Company = company;
+                            return res;
+                        }
+                    case "tmp_toathuoc":
+                        {
+                            var res = JsonConvert.DeserializeObject<ToaThuoc>(item.Data.ToString());
+                            res.Company = company;
+                            return res;
+                        }
+                    case "tmp_labo_order":
+                        {
+                            var res = JsonConvert.DeserializeObject<LaboOrder>(item.Data.ToString());
+                            res.Company = company;
+                            return res;
+                        }
+                    case "tmp_purchase_order":
+                        {
+                            var res = JsonConvert.DeserializeObject<PurchaseOrder>(item.Data.ToString());
+                            res.Company = company;
+                            return res;
+                        }
+                    case "tmp_purchase_refund":
+                        {
+                            var res = JsonConvert.DeserializeObject<PurchaseOrder>(item.Data.ToString());
+                            res.Company = company;
+                            return res;
+                        }
+                    case "tmp_medicine_order":
+                        {
+                            var res = JsonConvert.DeserializeObject<MedicineOrder>(item.Data.ToString());
+                            res.Company = company;
+                            return res;
+                        }
+                    case "tmp_phieu_thu":
+                        {
+                            var res = JsonConvert.DeserializeObject<PhieuThuChi>(item.Data.ToString());
+                            res.Company = company;
+                            return res;
+                        }
+                    case "tmp_phieu_chi":
+                        {
+                            var res = JsonConvert.DeserializeObject<PhieuThuChi>(item.Data.ToString());
+                            res.Company = company;
+                            return res;
+                        }
+                    case "tmp_customer_debt":
+                        {
+                            var res = JsonConvert.DeserializeObject<PhieuThuChi>(item.Data.ToString());
+                            res.Company = company;
+                            return res;
+                        }
+                    case "tmp_agent_commission":
+                        {
+                            var res = JsonConvert.DeserializeObject<PhieuThuChi>(item.Data.ToString());
+                            res.Company = company;
+                            return res;
+                        }
+                    case "tmp_stock_picking_incoming":
+                        {
+                            var res = JsonConvert.DeserializeObject<StockPicking>(item.Data.ToString());
+                            res.Company = company;
+                            return res;
+                        }
+                    case "tmp_stock_picking_outgoing":
+                        {
+                            var res = JsonConvert.DeserializeObject<StockPicking>(item.Data.ToString());
+                            res.Company = company;
+                            return res;
+                        }
+                    case "tmp_stock_inventory":
+                        {
+                            var res = JsonConvert.DeserializeObject<StockInventory>(item.Data.ToString());
+                            res.Company = company;
+                            return res;
+                        }
+                    case "tmp_salary_employee":
+                        {
+                            var res = JsonConvert.DeserializeObject<SalaryPayment>(item.Data.ToString());
+                            res.Company = company;
+                            return res;
+                        }
+                    case "tmp_salary_advance":
+                        {
+                            var res = JsonConvert.DeserializeObject<SalaryPayment>(item.Data.ToString());
+                            res.Company = company;
+                            return res;
+                        }
+                    case "tmp_salary":
+                        {
+                            var res = JsonConvert.DeserializeObject<HrPayslip>(item.Data.ToString());
+                            res.Company = company;
+                            return res;
+                        }
+                    case "tmp_advisory":
+                        {
+                            var res = JsonConvert.DeserializeObject<Advisory>(item.Data.ToString());
+                            res.Company = company;
+                            return res;
+                        }
+                    case "tmp_account_payment":
+                        {
+                            var res = JsonConvert.DeserializeObject<SaleOrderPayment>(item.Data.ToString());
+                            res.Company = company;
+                            return res;
+                        }
+                    case "tmp_supplier_payment":
+                        {
+                            var res = JsonConvert.DeserializeObject<AccountPayment>(item.Data.ToString());
+                            res.Company = company;
+                            return res;
+                        }
+                    case "tmp_partner_advance":
+                        {
+                            var res = JsonConvert.DeserializeObject<PartnerAdvance>(item.Data.ToString());
+                            res.Company = company;
+                            return res;
+                        }
+                    case "tmp_partner_refund":
+                        {
+                            var res = JsonConvert.DeserializeObject<PartnerAdvance>(item.Data.ToString());
+                            res.Company = company;
+                            return res;
+                        }
+                    case "tmp_quotation":
+                        {
+                            var res = JsonConvert.DeserializeObject<Quotation>(item.Data.ToString());
+                            res.Company = company;
+                            return res;
+                        }
+                    case "tmp_supplier_payment_inbound":
+                        {
+                            var res = JsonConvert.DeserializeObject<AccountPayment>(item.Data.ToString());
+                            res.Company = company;
+                            return res;
+                        }
+                    default:
+                        return null;
+                }
+            }
+        }
 
         public override ISpecification<PrintTemplateConfig> RuleDomainGet(IRRule rule)
         {

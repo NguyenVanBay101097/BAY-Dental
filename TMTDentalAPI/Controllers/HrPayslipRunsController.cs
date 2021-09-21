@@ -87,7 +87,7 @@ namespace TMTDentalAPI.Controllers
                     throw new Exception("Không tìm thấy mẫu in mặc định");
             }
 
-            var result = await _printTemplateService.GeneratePrintHtml(template, new List<Guid>() { id }, paperSize);
+            var result = await _printTemplateService.GeneratePrintHtml(template, ids, paperSize);
             return Ok(new PrintData() { html = result });         
         }
 
