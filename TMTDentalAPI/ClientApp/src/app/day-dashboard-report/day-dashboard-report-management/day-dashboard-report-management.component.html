@@ -6,9 +6,6 @@
             </li>
         </ol>
         <div class="o_cp_searchview">
-            <div class="o_searchview">
-
-            </div>
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
@@ -33,7 +30,7 @@
 </div>
 
 <div class="o_content">
-    <div class=" py-3 container">
+    <div class=" p-3">
         <ul class="nav nav-pills" id="myTab" role="tablist">
             <li class="">
                 <a class="mr-1 btn btn-outline-primary active" id="home-tab" data-toggle="tab" href="#home" role="tab"
@@ -54,16 +51,16 @@
         </ul>
         <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                <app-day-dashboard-report-registration-service></app-day-dashboard-report-registration-service>
+                <app-day-dashboard-report-registration-service [dateFrom]="dateFrom" [dateTo]="dateTo" [company]="company"></app-day-dashboard-report-registration-service>
             </div>
             <div class="tab-pane fade" id="service" role="tabpanel" aria-labelledby="service-tab">
-                <app-day-dashboard-report-revenue-service></app-day-dashboard-report-revenue-service>
+                <app-day-dashboard-report-revenue-service [dateFrom]="dateFrom" [dateTo]="dateTo" [company]="company"></app-day-dashboard-report-revenue-service>
             </div>
             <div class="tab-pane fade" id="medicines" role="tabpanel" aria-labelledby="medicines-tab">
-                <app-day-dashboard-report-revenue-medicines></app-day-dashboard-report-revenue-medicines>
+                <app-day-dashboard-report-revenue-medicines [dateFrom]="dateFrom" [dateTo]="dateTo" [company]="company"></app-day-dashboard-report-revenue-medicines>
             </div>
             <div class="tab-pane fade" id="cashbook" role="tabpanel" aria-labelledby="cashbook-tab">
-                <app-day-dashboard-report-cashbook></app-day-dashboard-report-cashbook>
+                <app-day-dashboard-report-cashbook [dateFrom]="dateFrom" [dateTo]="dateTo" [company]="company"></app-day-dashboard-report-cashbook>
             </div>
         </div>
     </div>

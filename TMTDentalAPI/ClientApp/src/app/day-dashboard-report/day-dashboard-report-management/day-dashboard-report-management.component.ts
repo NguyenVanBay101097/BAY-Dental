@@ -13,13 +13,17 @@ export class DayDashboardReportManagementComponent implements OnInit {
   @ViewChild("companyCbx", { static: true }) companyCbx: ComboBoxComponent;
   listCompany: CompanySimple[] = [];
   date = new Date();
-
+  dateFrom: any;
+  dateTo: any;
+  company: any;
   constructor(
     private companyService: CompanyService,
     private dayDashboardReportService: DayDashboardReportService
   ) { }
 
   ngOnInit() {
+    this.dateFrom = this.date;
+    this.dateTo = this.date;
     this.loadCompanies();
     this.companyCbx.filterChange.asObservable().pipe(
       debounceTime(300),
@@ -54,11 +58,12 @@ export class DayDashboardReportManagementComponent implements OnInit {
   }
 
   onSelectCompany(e) {
-
+    this.company = e;
   }
 
   onChangeDate(e) {
-
+    this.dateFrom = e;
+    this.dateTo = e;
   }
 
   exportExcelFile() {

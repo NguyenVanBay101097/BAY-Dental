@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
@@ -8,6 +8,9 @@ import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-ken
   styleUrls: ['./day-dashboard-report-revenue-service.component.css']
 })
 export class DayDashboardReportRevenueServiceComponent implements OnInit {
+  @Input('dateFrom') dateFrom: any;
+  @Input('dateTo') dateTo: any;
+  @Input('company') company: any;
   gridData: GridDataResult;
   loading = false;
   skip = 0;
