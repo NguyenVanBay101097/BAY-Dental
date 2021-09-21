@@ -1907,13 +1907,14 @@ namespace Infrastructure.Services
             var saleOrderPaymentObj = GetService<ISaleOrderPaymentService>();
             var orders = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Company).Include(x => x.Partner)
                 .Include(x => x.DotKhams).ThenInclude(s => s.Doctor)
-                .Include(x => x.DotKhams).ThenInclude(s => s.Lines)
+                .Include(x => x.DotKhams).ThenInclude(s => s.Lines).ThenInclude(x=> x.ToothRels).ThenInclude(x=> x.Tooth)
                 .Include(x => x.CreatedBy)
                 .ToListAsync();
-
-            foreach(var order in orders)
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId);
+            foreach (var order in orders)
             {
                 //Lược bỏ những dòng số lượng bằng 0
+                order.User = user;
                 order.OrderLines = await saleOrderLineObj.SearchQuery(x => x.OrderId == order.Id).OrderBy(x => x.Sequence).Where(x => x.ProductUOMQty != 0).Include(x => x.Product).ToListAsync();
                 order.SaleOrderPayments = await saleOrderPaymentObj.SearchQuery(x => x.OrderId == order.Id).Include(x => x.PaymentRels).ThenInclude(x => x.Payment).ThenInclude(x => x.Journal).ToListAsync();
             }

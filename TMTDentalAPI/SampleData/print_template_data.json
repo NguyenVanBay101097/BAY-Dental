@@ -2,72 +2,130 @@
   {
     "Type": "tmp_sale_order",
     "Data": {
-      "Id": "f99bf6d1-e611-4236-52da-08d97734bbe3",
-      "DateOrder": "2021-09-14T11:04:11",
-      "PartnerId": "8a5316cc-14c3-4b92-1279-08d96ec504cd",
+      "Company": {
+        "Name": "TPP",
+        "Partner": {
+          "CityName": "Thành phố Hồ Chí Minh",
+          "DistrictName": "Quận Tân Phú",
+          "WardName": "Phường Tân Thành",
+          "Street": "54/35 Diệp Minh Châu"
+        },
+        "Phone": "0938551226",
+        "Email": null,
+        "Logo": "http://statics.tdental.vn/images/localhost/210920/1345070036_logo.jpg"
+      },
+      "User": {
+        "Name": "admin"
+      },
       "Partner": {
-        "Id": "8a5316cc-14c3-4b92-1279-08d96ec504cd",
-        "Name": "Khách hàng A",
         "DisplayName": "[KH0007] Khách hàng A",
-        "Phone": "0369835014",
-        "Ref": "KH0007",
+        "Name": "Khách hàng A",
         "Gender": "male",
-        "Address": "246/16 Độc Lập, Phường Tân Thành, Quận Tân Phú, Thành phố Hồ Chí Minh",
+        "Email": "khachhanga@gmail.com",
+        "Phone": "0369835014",
+        "BirthYear": 1995,
+        "Age": "26",
         "Street": "246/16 Độc Lập",
         "WardName": "Phường Tân Thành",
         "DistrictName": "Quận Tân Phú",
-        "CityName": "Thành phố Hồ Chí Minh",
-        "BirthYear": 1995,
-        "Debt": 0.0,
-        "Age": "26",
-        "LastAppointmentDate": null,
-        "Debit": 0.0,
-        "Credit": 0.0,
-        "Balance": null,
-        "CompanyName": "TPP",
-        "Categories": [],
-        "DateCreated": "2021-09-03T17:24:31",
-        "Source": null,
-        "JobTitle": null,
-        "Email": "khachhanga@gmail.com",
-        "comment": null,
-        "BirthMonth": 10,
-        "BirthDay": 15,
-        "Active": true,
-        "CountLine": 0.0,
-        "DateOfBirth": "15/10/1995",
-        "AppointmnetId": "00000000-0000-0000-0000-000000000000",
-        "AppointmnetName": null,
-        "Time": null,
-        "Date": "03/09/2021 12:00:00 SA"
+        "CityName": "Thành phố Hồ Chí Minh"
       },
-      "AmountTax": 0.00,
-      "AmountUntaxed": 5350000.00,
-      "AmountTotal": 5350000.00,
-      "AmountDiscountTotal": 1150000.0,
-      "Note": null,
-      "State": "sale",
       "Name": "SO00006",
-      "OrderLines": [],
-      "Promotions": [],
-      "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
-      "UserId": null,
-      "User": null,
-      "Residual": 0.00,
-      "Paid": null,
-      "PricelistId": null,
-      "Pricelist": null,
-      "JournalId": null,
-      "Journal": null,
-      "QuotationId": null,
-      "Quotation": null,
-      "IsQuotation": false,
-      "IsFast": false,
-      "Quote": null,
-      "Order": null,
-      "InvoiceStatus": "to invoice",
-      "InvoiceCount": 0,
-      "TotalPaid": 5350000.00
+      "DateOrder": "2021-09-14T11:04:11",
+      "OrderLines": [
+        {
+          "Product": {
+            "Name": "Tẩy trắng răng bằng đèn Laser Zoom II"
+          },
+          "Name": "Tẩy trắng răng tại nhà",
+          "ProductUOMQty": 1.00,
+          "PriceUnit": 1500000.00,
+          "PriceSubTotal": 1350000.00,
+          "PriceTotal": 0.0,
+          "Sequence": 10,
+          "AmountDiscountTotal": 150000.00000000003
+        },
+        {
+          "Product": {
+            "Name": "Tẩy trắng răng bằng đèn Laser Zoom II"
+          },
+          "Name": "Tẩy trắng răng bằng đèn Laser Zoom II",
+          "ProductUOMQty": 2.00,
+          "PriceUnit": 2500000.00,
+          "PriceSubTotal": 4000000.00,
+          "PriceTotal": 0.0,
+          "Sequence": 10,
+          "AmountDiscountTotal": 500000.0
+        }
+      ],
+      "SaleOrderPayments": [
+        {
+          "Id": "471cdd4c-3e72-4a50-248b-08d977369c30",
+          "Amount": 5350000.00,
+          "Date": "2021-09-14T00:00:00",
+          "Note": "SO00006 - Khách hàng thanh toán",
+          "PaymentRels": [
+            {
+              "Payment": {
+                "Id": "ba9e570d-7ca3-4b07-fe3d-08d977369cc4",
+                "Name": "CUST.IN/2021/0005",
+                "PaymentDate": "2021-09-14T00:00:00",
+                "Journal": {
+                  "Name": "Tiền mặt"
+                },
+                "Amount": 3000000.00,
+                "State": "posted"
+              }
+            },
+            {
+              "Payment": {
+                "Id": "5584bf3e-32f1-44f3-fe3e-08d977369cc4",
+                "Name": "CUST.IN/2021/0006",
+                "PaymentDate": "2021-09-14T00:00:00",
+                "Journal": {
+                  "Name": "Ngân hàng"
+                },
+                "Amount": 2350000.00,
+                "State": "posted"
+              }
+            }
+          ],
+          "State": "posted"
+        }
+      ],
+      "DotKhams": [
+        {
+          "Id": "b7b6a167-5f43-415e-a9aa-08d977366d48",
+          "Sequence": 1,
+          "Date": "2021-09-14T00:00:00",
+          "Reason": "Đợt khám mới của bệnh nhân",
+          "Doctor": {
+            "Id": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+            "Name": "Bác sĩ A"
+          },
+          "Lines": [
+            {
+              "Id": "90668731-5a69-432e-e36e-08d977366d4b",
+              "NameStep": "Công đoạn 1",
+              "Product": {
+                "Id": "5a0c19f6-f2ee-433c-febf-08d9693da293",
+                "Name": "Tẩy trắng răng tại nhà"
+              },
+              "ToothRels": [
+                {
+                  "Tooth": {
+                    "Name": "11"
+                  }
+                }
+              ],
+              "Note": ""
+            }
+          ]
+        }
+      ],
+      "AmountTotal": 5350000.00,
+      "TotalPaid": 5350000.00,
+      "Residual": 0.00
     }
   },
   {
@@ -1776,12 +1834,17 @@
         "Type": "cash"
       },
       "PartnerId": "8a5316cc-14c3-4b92-1279-08d96ec504cd",
-      "PartnerName": "Khách hàng A",
+      "Partner": {
+        "Name": "Khách hàng A"
+      },
       "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
       "Type": "advance",
       "Amount": 10000000.00,
       "State": "confirmed",
-      "Note": null
+      "Note": "Khách hàng đóng tạm ứng",
+      "User": {
+        "Name": "Nguyễn Văn C"
+      }
     }
   },
   {
@@ -1808,106 +1871,72 @@
   {
     "Type": "tmp_quotation",
     "Data": {
-      "Id": "32fd3d2f-ba07-4a85-dec6-08d97b44dac8",
-      "Name": "BG00001",
+      "Company": {
+        "Name": "TPP",
+        "Partner": {
+          "CityName": "Thành phố Hồ Chí Minh",
+          "DistrictName": "Quận Tân Phú",
+          "WardName": "Phường Tân Thành",
+          "Street": "54/35 Diệp Minh Châu"
+        },
+        "Phone": "0938551226",
+        "Email": null,
+        "Logo": "http://statics.tdental.vn/images/localhost/210920/1345070036_logo.jpg"
+      },
       "Partner": {
-        "Id": "8a5316cc-14c3-4b92-1279-08d96ec504cd",
-        "Name": "Khách hàng A",
         "DisplayName": "[KH0007] Khách hàng A",
+        "Name": "Khách hàng A",
         "Gender": "male",
-        "GenderConvertcom": "Nam",
-        "BirthMonth": 10,
-        "BirthDay": 15,
+        "Email": "khachhanga@gmail.com",
+        "Phone": "0369835014",
         "BirthYear": 1995,
-        "JobTitle": null,
-        "MedicalHistory": null,
-        "Categories": [],
-        "MemberLevel": null
+        "Age": "26",
+        "Street": "246/16 Độc Lập",
+        "WardName": "Phường Tân Thành",
+        "DistrictName": "Quận Tân Phú",
+        "CityName": "Thành phố Hồ Chí Minh"
       },
-      "PartnerId": "8a5316cc-14c3-4b92-1279-08d96ec504cd",
-      "Employee": {
-        "Id": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
-        "Name": "Bác sĩ A",
-        "PartnerId": "9fe4aeca-9ac8-4a8f-127b-08d96ec504cd"
+      "dateApplies": 10,
+      "dateQuotation": "2021-09-10T15:49:53",
+      "dateEndQuotation": "2021-09-15T15:49:53",
+      "employeeId": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+      "employee": {
+        "id": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+        "name": "Bác sĩ A"
       },
-      "EmployeeId": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
-      "DateQuotation": "2021-09-19T00:00:00",
-      "DateApplies": 30,
-      "DateEndQuotation": "2021-10-19T00:00:00",
-      "Note": null,
-      "TotalAmount": 2000000.00,
-      "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
-      "Orders": [],
-      "Lines": [
+      "lines": [
         {
-          "Id": "aa9992ea-f104-4ee4-e233-08d97b44dad0",
-          "Name": "Tẩy trắng răng tại nhà",
-          "Product": null,
-          "ProductId": "5a0c19f6-f2ee-433c-febf-08d9693da293",
-          "Qty": 1,
-          "Discount": 0,
-          "DiscountType": null,
-          "Amount": 1500000.00,
-          "SubPrice": 1500000.00,
-          "AmountDiscountTotal": null,
-          "Diagnostic": "",
-          "AdvisoryId": null,
-          "Advisory": null,
-          "EmployeeId": null,
-          "Employee": null,
-          "AssistantId": null,
-          "Assistant": null,
-          "CounselorId": null,
-          "Counselor": null,
-          "ToothCategory": null,
-          "ToothCategoryId": "7f8e8b6b-da51-4b2a-8313-08d9693d9601",
-          "Teeth": [],
-          "ToothType": "manual",
-          "AmountPromotionToOrder": 0.0,
-          "AmountPromotionToOrderLine": 0.0,
-          "Promotions": []
+          "id": "9caf8e88-b4ac-462a-adb4-08d977650141",
+          "name": "Răng sứ Nacera Q thế hệ mới",
+          "qty": 1,
+          "discountType": "percent",
+          "discountAmountPercent": 10,
+          "subPrice": 10000000,
+          "amountDiscountTotal": 1000000,
+          "amount": 9000000
+        }
+      ],
+      "totalAmount": 9000000,
+      "name": "BG00001",
+      "note": "Tư vấn cho khách hàng về dịch vụ",
+      "payments": [
+        {
+          "id": "11bd82cd-744e-4400-4beb-08d9778790f7",
+          "sequence": 0,
+          "discountPercentType": "cash",
+          "payment": 100000,
+          "amount": 100000,
+          "date": "2021-09-14T11:58:00"
         },
         {
-          "Id": "7475e870-abff-49c8-e234-08d97b44dad0",
-          "Name": "Điều trị tủy răng vĩnh viễn",
-          "Product": null,
-          "ProductId": "8e6c508b-aebf-43ab-fec4-08d9693da293",
-          "Qty": 1,
-          "Discount": 0,
-          "DiscountType": null,
-          "Amount": 500000.00,
-          "SubPrice": 500000.00,
-          "AmountDiscountTotal": null,
-          "Diagnostic": "",
-          "AdvisoryId": null,
-          "Advisory": null,
-          "EmployeeId": null,
-          "Employee": null,
-          "AssistantId": null,
-          "Assistant": null,
-          "CounselorId": null,
-          "Counselor": null,
-          "ToothCategory": null,
-          "ToothCategoryId": "7f8e8b6b-da51-4b2a-8313-08d9693d9601",
-          "Teeth": [],
-          "ToothType": "manual",
-          "AmountPromotionToOrder": 0.0,
-          "AmountPromotionToOrderLine": 0.0,
-          "Promotions": []
+          "id": "709c039e-ab1f-44fe-4bec-08d9778790f7",
+          "sequence": 1,
+          "discountPercentType": "percent",
+          "payment": 10,
+          "amount": 0,
+          "date": "2021-09-14T11:58:00"
         }
-      ],
-      "Payments": [
-        {
-          "Id": "6ed552a9-a695-4b48-3f37-08d97b44dadb",
-          "Sequence": 0,
-          "DiscountPercentType": "cash",
-          "Payment": 1000000.00,
-          "Amount": 0.00,
-          "Date": "2021-09-19T00:00:00"
-        }
-      ],
-      "Promotions": [],
-      "TotalAmountDiscount": 0.0
+      ]
     }
   },
   {
