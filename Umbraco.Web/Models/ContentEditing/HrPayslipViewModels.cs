@@ -99,6 +99,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public IEnumerable<HrPayslipWorkedDayDisplay> WorkedDaysLines { get; set; } = new List<HrPayslipWorkedDayDisplay>();
         public Guid? PayslipRunId { get; set; }
+        public HrPayslipRunBasic PayslipRun { get; set; }
+
         public decimal? DaySalary { get; set; }
         public decimal? WorkedDay { get; set; }
         public decimal? TotalBasicSalary { get; set; }

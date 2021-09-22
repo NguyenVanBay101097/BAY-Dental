@@ -1895,6 +1895,15 @@
       "StructureType": null,
       "WorkedDaysLines": [],
       "PayslipRunId": "b3223e96-4bfb-4b82-4002-08d9768f2ae8",
+      "PayslipRun": {
+        "Id": "b3223e96-4bfb-4b82-4002-08d9768f2ae8",
+        "Name": "Bảng lương tháng 8 năm 2021",
+        "Date": "2021-08-13T00:00:00",
+        "DateStart": "0001-01-01T00:00:00",
+        "DateEnd": "0001-01-01T00:00:00",
+        "TotalAmount": 0.00,
+        "State": "done"
+      },
       "DaySalary": 322580.64516129032258064516129,
       "WorkedDay": 31.00,
       "TotalBasicSalary": 10000000.0,
@@ -1924,6 +1933,10 @@
         "Type": "salary",
         "Amount": 10000000.00,
         "EmployeeName": "Bác sĩ A"
+      },
+      "CreatedBy": {
+        "Id": "fb3c81c4-90b2-4918-aeaf-1689263ee7fa",
+        "Name": "admin"
       }
     }
   },

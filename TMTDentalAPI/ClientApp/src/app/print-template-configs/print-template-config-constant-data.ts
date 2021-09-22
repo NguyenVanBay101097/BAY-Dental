@@ -16,7 +16,7 @@ export const types: { text: string, value: string }[] = [
     // { text: 'Phiếu mua hàng', value: 'tmp_purchase_order' },
     // { text: 'Phiếu trả hàng', value: 'tmp_purchase_refund' },
     { text: 'Phiếu báo giá', value: 'tmp_quotation' },
-    // { text: 'Phiếu thanh toán lương nhân viên', value: 'tmp_salary' },
+    { text: 'Phiếu thanh toán lương nhân viên', value: 'tmp_salary' },
     { text: 'Phiếu tạm ứng lương', value: 'tmp_salary_advance' },
     { text: 'Phiếu chi lương', value: 'tmp_salary_employee' },
     // { text: 'Phiếu nhập kho', value: 'tmp_stock_picking_incoming' },

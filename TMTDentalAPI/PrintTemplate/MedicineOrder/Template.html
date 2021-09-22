@@ -51,14 +51,18 @@
         <tr>
             <td>
                 <strong>{{line.product.name}}</strong><br />
-                <em>Ngày uống {{line.toa_thuoc_line.number_of_times | math.format "#,###.##" "vi"}} lần, mỗi lần {{line.toa_thuoc_line.amount_of_times | math.format "#,###.##" "vi"}} {{line.product_uo_m.name}}, {{line.toa_thuoc_line.use_at_display}}</em>
+                <em>Ngày uống {{line.toa_thuoc_line.number_of_times | math.format "N0"}} lần, mỗi lần {{line.toa_thuoc_line.amount_of_times | math.format "N0"}} {{line.product_uo_m.name}}, {{line.toa_thuoc_line.use_at_display}}</em>
             </td>
-            <td style="text-align:right; width:50px">{{line.quantity | math.format "#,###.##" "vi"}}</td>
-            <td style="text-align:right">{{line.price | math.format "#,###.##" "vi"}}</td>
-            <td style="text-align:right">{{line.amount_total | math.format "#,###.##" "vi"}}</td>
+            <td style="text-align:right; width:50px">{{line.quantity | math.format "N0"}}</td>
+            <td style="text-align:right">{{line.price | math.format "N0"}}</td>
+            <td style="text-align:right">{{line.amount_total | math.format "N0"}}</td>
         </tr>
+
         <!--{{ end }}-->
     </tbody>
+    
+<
+    e>
 </table>
 
 
@@ -68,19 +72,19 @@
             <td style="width:150px"> </td>
             <td style="width:150px"> </td>
             <td style="width:80px">Tổng tiền</td>
-            <td style="text-align:right; width:80px">{{o.amount | math.format "#,###.##" "vi"}}</td>
+            <td style="text-align:right; width:80px">{{o.amount | math.format "N0"}}</td>
         </tr>
         <tr>
             <td> </td>
             <td> </td>
             <td>Thanh toán</td>
-            <td style="text-align:right">{{o.account_payment ? (o.account_payment.amount | math.format "#,###.##" "vi") : 0}}</td>
+            <td style="text-align:right">{{o.account_payment ? (o.account_payment.amount | math.format "N0") : 0}}</td>
         </tr>
         <tr>
             <td> </td>
             <td> </td>
             <td>Còn lại</td>
-            <td style="text-align:right">{{o.amount - (o.account_payment == null ? 0 : o.account_payment.amount) | math.format "#,###.##" "vi"}}</td>
+            <td style="text-align:right">{{o.amount - (o.account_payment == null ? 0 : o.account_payment.amount) | math.format "N0"}}</td>
         </tr>
     </tbody>
 </table>
