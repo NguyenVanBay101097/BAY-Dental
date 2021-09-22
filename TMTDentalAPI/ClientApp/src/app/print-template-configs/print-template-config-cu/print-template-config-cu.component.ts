@@ -50,11 +50,12 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         // protectedSource: [/{{[\s\S]*?}}/g] // this support loop code
         // skin: 'kama'
         // plugins: ['EasyImage'],
+        extraPlugins: 'btgrid',
         toolbar: [
             { name: 'document', items: ['Source'] },
             { name: 'styles', items: ['Format', 'Font', 'FontSize'] },
             { name: 'colors', items: ['TextColor', 'BGColor'] },
-            { name: 'insert', items: ['Image', 'Table', 'HorizontalRule', 'Smiley'] },
+            { name: 'insert', items: ['Image', 'Table', 'HorizontalRule', 'Smiley', 'btgrid'] },
             { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline'] },
             { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'] }
         ]
