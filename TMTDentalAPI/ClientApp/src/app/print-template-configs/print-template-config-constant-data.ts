@@ -13,15 +13,15 @@ export const types: { text: string, value: string }[] = [
     // { text: 'Phiếu chi', value: 'tmp_phieu_chi' },
      { text: 'Phiếu thu công nợ khách hàng', value: 'tmp_customer_debt' },
     // { text: 'Phiếu chi hoa hồng', value: 'tmp_agent_commission' },
-    // { text: 'Phiếu mua hàng', value: 'tmp_purchase_order' },
-    // { text: 'Phiếu trả hàng', value: 'tmp_purchase_refund' },
+    { text: 'Phiếu mua hàng', value: 'tmp_purchase_order' },
+    { text: 'Phiếu trả hàng', value: 'tmp_purchase_refund' },
     { text: 'Phiếu báo giá', value: 'tmp_quotation' },
     { text: 'Phiếu thanh toán lương nhân viên', value: 'tmp_salary' },
     { text: 'Phiếu tạm ứng lương', value: 'tmp_salary_advance' },
     { text: 'Phiếu chi lương', value: 'tmp_salary_employee' },
-    // { text: 'Phiếu nhập kho', value: 'tmp_stock_picking_incoming' },
-    // { text: 'Phiếu xuất kho', value: 'tmp_stock_picking_outgoing' },
-    // { text: 'Phiếu kiểm kho', value: 'tmp_stock_inventory' },
+    { text: 'Phiếu nhập kho', value: 'tmp_stock_picking_incoming' },
+    { text: 'Phiếu xuất kho', value: 'tmp_stock_picking_outgoing' },
+    { text: 'Phiếu kiểm kho', value: 'tmp_stock_inventory' },
 
 ];
 

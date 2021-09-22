@@ -1,107 +1,76 @@
-﻿<div class="d-flex mb-2">
-    {{ if company.logo != "" && company.logo != null}}
-    <img class="img-fluid me-3 w-20" src="{{company.logo}}" alt="{{company.name}}">
-    {{ end }}
-
-    <div>
-        <div class="text-xl font-semibold">{{company.name}}</div>
-        {{if company.address != ""}}
-
-        <div>Địa chỉ: {{company.address}}</div>
-
-        {{ end }}
-
-        {{ if company.phone}}
-
-        <div>ĐT: {{company.phone}}</div>
-
-        {{ end }}
-
-        {{if company.email }}
-
-        <div>Email: {{company.email}}</div>
-
-        {{ end }}
-
-    </div>
-</div>
-<div class="text-center mb-2">
-    <div class="text-3xl font-semibold">PHIẾU XUẤT KHO</div>
-    <div>Ngày {{date.now.day}} tháng {{date.now.month}} năm {{date.now.year}} </div>
-    <div class="font-semibold">Số: {{name}}</div>
-</div>
-<div class="o_form_view mb-2">
-    <div class="d-flex">
-        <table class="o_group o_inner_group col-6">
-            <tbody>
-                <tr>
-                    <td colspan="1" class="o_td_label">
-                        <label class="o_form_label o_form_label_help">
-                            Đối tác
-                        </label>
-                    </td>
-                    <td colspan="1" style="width: 100%;">{{partner ? partner.name : ""}}</td>
-                </tr>
-                <tr>
-                    <td colspan="1" class="o_td_label">
-                        <label class="o_form_label o_form_label_help">
-                            Ghi chú
-                        </label>
-                    </td>
-                    <td colspan="1" style="width: 100%;">{{note ? note : ""}}</td>
-                </tr>
-            </tbody>
-        </table>
-        <table class="o_group o_inner_group col-6">
-            <tbody>
-                <tr>
-                    <td colspan="1" class="o_td_label">
-                        <label class="o_form_label o_form_label_help">
-                            Ngày
-                        </label>
-                    </td>
-                    <td colspan="1" style="width: 100%;">{{date_created | date.to_string '%d/%m/%Y'}}</td>
-                </tr>
-
-            </tbody>
-        </table>
-    </div>
-</div>
-<table class="table table-bordered  table-sm">
+﻿<table border="0" cellpadding="5" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="width:100px"><img alt="{{o.company.name}}" class="img-fuild" src="{{o.company.logo}}" style="width:150px" /></td>
+            <td>
+                <strong>{{o.company.name}}</strong><br />
+                Địa chỉ: {{o.company.address}}<br />
+                ĐT: {{o.company.phone}}<br />
+                Email: {{o.company.email}}
+            </td>
+        </tr>
+    </tbody>
+</table>
+<h3 style="text-align:center">PHIẾU XUẤT KHO</h3>
+<div style="text-align:center">Ngày {{date.now.day}} tháng {{date.now.month}} năm {{date.now.year}}</div>
+<div style="text-align:center"><strong>Số: {{o.name}}</strong></div>
+<br />
+<table border="0" cellpadding="1" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td>Đối tác</td>
+            <td>{{o.partner ? o.partner.name : ""}}</td>
+            <td>Ngày</td>
+            <td>{{o.date | date.to_string '%d/%m/%Y'}}</td>
+        </tr>
+        <tr>
+            <td>Ghi chú</td>
+            <td>{{o.note ? o.note : ""}}</td>
+            <td> </td>
+            <td> </td>
+        </tr>
+    </tbody>
+</table>
+<br />
+<table border="1" cellpadding="5" cellspacing="0" style="width:100%">
     <thead>
         <tr>
-            <th class="text-center">STT</th>
-            <th class="text-center">Mã sản phẩm</th>
-            <th class="text-center">Sản phẩm</th>
-            <th class="text-center">Loại sản phẩm</th>
-            <th class="text-center">Số lượng</th>
-            <th class="text-center">Đơn vị tính</th>
+            <th scope="col" style="width:50px">STT</th>
+            <th scope="col" style="width:100px">Mã sản phẩm</th>
+            <th scope="col" style="width:150px">Sản phẩm</th>
+            <th scope="col" style="width:100px">Loại sản phẩm</th>
+            <th scope="col" style="width:80px">Số lượng</th>
+            <th scope="col" style="width:80px">Đơn vị tính</th>
         </tr>
     </thead>
     <tbody>
-        <!--{{ for line in move_lines }}-->
+        <!--{{ for line in o.move_lines }}-->
         <tr>
-            <td class="text-center">{{for.index + 1}}</td>
-            <td class="text-center">{{line.product.default_code}}</td>
-            <td class="text-center">{{line.name}}</td>
-            <td class="text-center">{{line.product.categ.name}}</td>
-            <td class="text-center">{{line.product_uomqty}}</td>
-            <td class="text-center">{{line.product_uom.name}}</td>
+            <td style="text-align:center">{{for.index + 1}}</td>
+            <td>{{line.product.default_code}}</td>
+            <td>{{line.name}}</td>
+            <td>{{line.product.categ.name}}</td>
+            <td style="text-align:right">{{line.product_uomqty}}</td>
+            <td>{{line.product_uom.name}}</td>
         </tr>
         <!--{{end}}-->
     </tbody>
 </table>
-<div class="d-flex">
-    <div class="col col-sm">
-    </div>
-    <div class="col col-sm">
-        <div class="text-center">
-            <span class="font-semibold">Người lập phiếu</span> <br />
-            <i>(Ký, họ tên)</i> <br />
-            <span></span> <br />
-            <span></span> <br />
-            <span></span> <br />
-            <span class="font-semibold"> {{created_by_name |  string.upcase}}</span>
-        </div>
-    </div>
-</div>
+
+
+<p> </p>
+
+<table border="0" cellpadding="0" cellspacing="1" style="float:right; width:50%">
+    <tbody>
+        <tr>
+            <td style="text-align:center">
+                <strong>Người lập phiếu</strong><br />
+                <em>(Ký, họ tên)</em><br />
+                <br />
+                <br />
+                <br />
+                <strong>{{o.created_by ? (o.created_by.name | string.upcase) : ""}}</strong>
+            </td>
+        </tr>
+    </tbody>
+</table>

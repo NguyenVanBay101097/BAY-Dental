@@ -1519,7 +1519,11 @@
       "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
       "LocationId": "5c4d21f9-1286-4b4e-29b3-08d9693d9511",
       "LocationDestId": "af2d8792-ef90-4c89-29b6-08d9693d9511",
-      "CreatedByName": "admin"
+      "CreatedByName": "admin",
+      "CreatedBy": {
+        "Id": "fb3c81c4-90b2-4918-aeaf-1689263ee7fa",
+        "Name": "admin"
+      }
     }
   },
   {
@@ -1647,7 +1651,11 @@
       "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
       "LocationId": "af2d8792-ef90-4c89-29b6-08d9693d9511",
       "LocationDestId": "5c4d21f9-1286-4b4e-29b3-08d9693d9511",
-      "CreatedByName": "admin"
+      "CreatedByName": "admin",
+      "CreatedBy": {
+        "Id": "fb3c81c4-90b2-4918-aeaf-1689263ee7fa",
+        "Name": "admin"
+      }
     }
   },
   {
@@ -1791,7 +1799,11 @@
       "Criteria": null,
       "Filter": "none",
       "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
-      "Exhausted": false
+      "Exhausted": false,
+      "CreatedBy": {
+        "Id": "fb3c81c4-90b2-4918-aeaf-1689263ee7fa",
+        "Name": "admin"
+      }
     }
   },
   {
