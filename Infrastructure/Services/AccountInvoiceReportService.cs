@@ -613,7 +613,7 @@ namespace Infrastructure.Services
                                     DistrictCode = !string.IsNullOrEmpty(x.Key.DistrictCode) ? x.Key.DistrictCode : "Không xác định",
                                     Revenue = Math.Abs(x.Sum(z => z.PriceSubTotal)),
                                     PartnerCount = x.Count(p => p.PartnerId.HasValue),
-                                    Percent = String.Format("{0:0.##}", x.Sum(z => z.PriceSubTotal) / revenueTotal * 100) + "%"
+                                    Percent =  Math.Round(x.Sum(z => z.PriceSubTotal) / revenueTotal * 100,2) + "%"
                                 }).OrderByDescending(x => x.Revenue);
 
             if (grList.Count() <= 10)
@@ -630,7 +630,7 @@ namespace Infrastructure.Services
                 DistrictName = "Khác",
                 Revenue = revenueOther,
                 PartnerCount = partnerOtherCount,
-                Percent = String.Format("{0:0.##}", revenueOther / revenueTotal * 100) + "%"
+                Percent = Math.Round(revenueOther / revenueTotal * 100,2) + "%"
             };
 
             result.AddRange(top10);

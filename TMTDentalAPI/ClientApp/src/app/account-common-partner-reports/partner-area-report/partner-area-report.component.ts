@@ -29,6 +29,7 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
   currentCity: any;
   dataSourceCities: Array<{ code: string; name: string }>;
   dataResultCities: Array<{ code: string; name: string }>;
+  cityName: string = '';
   // pieObjData: any[] = [
   //   {name: 'Quận 1',total: 100,percent: '20%', color: '#4271C9'},
   //   {name: 'Quận 2',total: 200,percent: '30%', color: '#F57A27'},
@@ -42,6 +43,9 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
   //   {name: 'Quận 10',total: 950,percent: '20%', color: '#A17702'},
   //   {name: 'Khác',total: 330,percent: '30%', color: '#000000'},
   // ]
+  pieLabels: any[] = []
+  pieOptions: any= {};
+  pieDatasets: any[] = [];
   pieObjData: any[] = []
   pieChartData: any[] = [];
   pieChartColors = ['#4271C9','#F57A27','#A8A8A8','#F5C000','#4C93D4','#6FB342','#22427D','#A64D15','#A5ABB8','#A17702','#000000'];
@@ -121,13 +125,13 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
 
   ngOnInit() {
     this.initFilterData();
-    // this.loadSourceCities();
+    this.loadSourceCities();
     this.loadCompanies();
     this.loadCurrentCompany();
-    debugger
     this.loadDataFromApi();
     // this.loadPieChart();
     this.loadDataReportByWard();
+    
   }
 
   ngAfterViewInit(){
@@ -138,9 +142,14 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
     var colors = this.pieChartColors;
     val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : null;
     val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null;
-    val.cityCode = this.currentCity ? this.currentCity : null;
-    val.companyId = this.currentCompany ? this.currentCompany : null;
+    val.cityCode = this.currentCity ? this.currentCity.code : null;
+    val.companyId = this.currentCompany ? this.currentCompany.id : null;
     this.accountInvoiceReportService.getRevenueDistrictArea(val).subscribe(result => {
+      this.pieLabels = result.map(x => x.districtName);
+      this.pieDatasets = [{
+        backgroundColor: this.pieChartColors.slice(0,result.length),
+        data: result.map(x => x.revenue)
+      }];
       this.pieObjData = result;
       this.pieObjData.forEach(function(item,index){
         item.color = colors[index];
@@ -163,66 +172,168 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
 
   loadPieChart(){
     var pieData = this.pieObjData;
-    var chart = new Chart(this.pieCanvas.nativeElement, {
-      type: 'pie',
-      data: {
-        labels:this.pieObjData.map(x => x.districtName),
-        datasets: [{
-          backgroundColor: this.pieChartColors.slice(0,this.pieObjData.length),
-          data: this.pieChartData
-        }]
-        
-      },
-    options: {
+    var itemId = 0;
+    this.pieOptions = {
       responsive: true,
-      tooltips: {
-        enabled: true
+      legend: {
+        display: false,
       },
-        legend: {
-          position: 'bottom',
-          display: false,
-          labels: {
-            usePointStyle: true,
-          }
-        },
-        legendCallback: function(chart){
-          var ulHtml = '';
-          var leftLegendHtml = [];
-          var rightLegendHtml = [];
-          if (pieData.length > 6){
-            var leftData = pieData.slice(0,6);
-            leftData.forEach(item => {
-              var html = '<li style="display:flex; padding-top: 3px; padding-bottom:3px"><span style="flex:1; min-width: 115px"><i class="fas fa-circle mr-2" style="color:'+item.color+'"></i>'+item.name+'</span>'+
-              '<span style="padding-left:3px">('+item.percent+')</span>';
-              leftLegendHtml.push(html);
-            });
-            var rightData = pieData.slice(6,11);
-            rightData.forEach(item => {
-              var html = '<li style="display:flex; padding-top: 3px; padding-bottom:3px"><span style="flex:1; min-width: 115px"><i class="fas fa-circle mr-2" style="color:'+item.color+'"></i>'+item.districtName+'</span>'+
-              '<span style="padding-left:3px">('+item.percent+')</span>';
-              rightLegendHtml.push(html);
-            });
-            ulHtml = '<ul style="list-style-type: none; margin-left: auto; margin-right:auto; padding:0">'
-            +leftLegendHtml.join('')+'</ul>'+
-            '<ul style="list-style-type: none; margin-left: auto; margin-right:auto; padding:0">'
-            +rightLegendHtml.join('')+'</ul>';
-          }
-          else {
-            pieData.forEach(item => {
-              var html = '<li style="display:flex; padding-top: 3px; padding-bottom:3px"><span style="flex:1; min-width: 115px"><i class="fas fa-circle mr-2" style="color:'+item.color+'"></i>'+item.districtName+'</span>'+
-              '<span style="padding-left:3px">('+item.percent+')</span>';
-              leftLegendHtml.push(html);
-            });
-            ulHtml ='<ul style="list-style-type: none; margin-left: auto; margin-right:auto; padding:0">' + leftLegendHtml.join('')+
-            '</ul>';
-          }
-         return ulHtml;
-        }
+      legendCallback: function(chart){
+              var ulHtml = '';
+              var leftLegendHtml = [];
+              var rightLegendHtml = [];
+              if (pieData.length > 6){
+                var leftData = pieData.slice(0,6);
+                leftData.forEach(item => {
+                  var html = '<li style="display:flex; padding-top: 3px; padding-bottom:3px"><span style="flex:1; min-width: 115px"><i class="fas fa-circle mr-2" style="color:'+item.color+'"></i>'+item.name+'</span>'+
+                  '<span style="padding-left:3px">('+item.percent+')</span>';
+                  leftLegendHtml.push(html);
+                });
+                var rightData = pieData.slice(6,11);
+                rightData.forEach(item => {
+                  var html = '<li style="display:flex; padding-top: 3px; padding-bottom:3px"><span style="flex:1; min-width: 115px"><i class="fas fa-circle mr-2" style="color:'+item.color+'"></i>'+item.districtName+'</span>'+
+                  '<span style="padding-left:3px">('+item.percent+')</span>';
+                  rightLegendHtml.push(html);
+                });
+                ulHtml = '<ul style="list-style-type: none; margin-left: auto; margin-right:auto; padding:0">'
+                +leftLegendHtml.join('')+'</ul>'+
+                '<ul style="list-style-type: none; margin-left: auto; margin-right:auto; padding:0">'
+                +rightLegendHtml.join('')+'</ul>';
+              }
+              else {
+                pieData.forEach(item => {
+                  var html = '<li style="display:flex; padding-top: 3px; padding-bottom:3px"><span style="flex:1; min-width: 115px"><i class="fas fa-circle mr-2" style="color:'+item.color+'"></i>'+item.districtName+'</span>'+
+                  '<span style="padding-left:3px">('+item.percent+')</span>';
+                  leftLegendHtml.push(html);
+                });
+                ulHtml ='<ul style="list-style-type: none; margin-left: auto; margin-right:auto; padding:0">' + leftLegendHtml.join('')+
+                '</ul>';
+              }
+             return ulHtml;
+      },
+      tooltips: {
+              enabled: true,
+              callbacks: {
+                title: function(tooltipItem, data) {
+                   let id = tooltipItem[0] ? tooltipItem[0].index : 1; 
+                   itemId = id
+                  return data.labels[id].toString();
+                },
+                label: function(tooltipItem, data) {
+                  let labels =  "Tổng doanh thu "+ Intl.NumberFormat().format(pieData[itemId].revenue); 
+                  return labels;
+                },
+                afterLabel: function(tooltipItem, data) {
+                  // let id = tooltipItem[0] ? tooltipItem[0].index : 1;
+                  let percent = "Chiếm tỷ lệ "+ pieData[itemId].percent; 
+                  return percent;
+                }
+              },
+              backgroundColor: '#FFF',
+              titleFontSize: 16,
+              titleFontColor: '#0066ff',
+              bodyFontColor: '#000',
+              bodyFontSize: 14,
+              displayColors: false
+            }
+    }
+
+    let legend = this._elementRef.nativeElement.querySelector(`#pie-chart-legend`);
+    legend.innerHTML = "";
+    Chart.helpers.each(Chart.instances, function(instance){
+      if (instance.canvas.id == "pie-chart"){
+        legend.innerHTML = instance.generateLegend();
       }
     });
-    let legend = this._elementRef.nativeElement.querySelector(`#pie-chart-legend`);
-    legend.innerHTML = chart.generateLegend();
   }
+
+  
+    // var chart = new Chart(this.pieCanvas.nativeElement, {
+    //   type: 'pie',
+    //   data: {
+    //     labels:this.pieObjData.map(x => x.districtName),
+    //     datasets: [{
+    //       backgroundColor: this.pieChartColors.slice(0,this.pieObjData.length),
+    //       data: this.pieChartData
+    //     }]
+        
+    //   },
+    // options: {
+    //   responsive: true,
+    //     legend: {
+    //       position: 'bottom',
+    //       display: false,
+    //       labels: {
+    //         usePointStyle: true,
+    //       }
+    //     },
+    //     legendCallback: function(chart){
+    //       var ulHtml = '';
+    //       var leftLegendHtml = [];
+    //       var rightLegendHtml = [];
+    //       if (pieData.length > 6){
+    //         var leftData = pieData.slice(0,6);
+    //         leftData.forEach(item => {
+    //           var html = '<li style="display:flex; padding-top: 3px; padding-bottom:3px"><span style="flex:1; min-width: 115px"><i class="fas fa-circle mr-2" style="color:'+item.color+'"></i>'+item.name+'</span>'+
+    //           '<span style="padding-left:3px">('+item.percent+')</span>';
+    //           leftLegendHtml.push(html);
+    //         });
+    //         var rightData = pieData.slice(6,11);
+    //         rightData.forEach(item => {
+    //           var html = '<li style="display:flex; padding-top: 3px; padding-bottom:3px"><span style="flex:1; min-width: 115px"><i class="fas fa-circle mr-2" style="color:'+item.color+'"></i>'+item.districtName+'</span>'+
+    //           '<span style="padding-left:3px">('+item.percent+')</span>';
+    //           rightLegendHtml.push(html);
+    //         });
+    //         ulHtml = '<ul style="list-style-type: none; margin-left: auto; margin-right:auto; padding:0">'
+    //         +leftLegendHtml.join('')+'</ul>'+
+    //         '<ul style="list-style-type: none; margin-left: auto; margin-right:auto; padding:0">'
+    //         +rightLegendHtml.join('')+'</ul>';
+    //       }
+    //       else {
+    //         pieData.forEach(item => {
+    //           var html = '<li style="display:flex; padding-top: 3px; padding-bottom:3px"><span style="flex:1; min-width: 115px"><i class="fas fa-circle mr-2" style="color:'+item.color+'"></i>'+item.districtName+'</span>'+
+    //           '<span style="padding-left:3px">('+item.percent+')</span>';
+    //           leftLegendHtml.push(html);
+    //         });
+    //         ulHtml ='<ul style="list-style-type: none; margin-left: auto; margin-right:auto; padding:0">' + leftLegendHtml.join('')+
+    //         '</ul>';
+    //       }
+    //      return ulHtml;
+    //     },
+    //     tooltips: {
+    //       enabled: true,
+    //       callbacks: {
+    //         title: function(tooltipItem, data) {
+    //            let id = tooltipItem[0] ? tooltipItem[0].index : 1; 
+    //            itemId = id
+    //           return data.labels[id].toString();
+    //         },
+    //         label: function(tooltipItem, data) {
+    //           let labels =  "Tổng doanh thu "+ Intl.NumberFormat().format(pieData[itemId].revenue); 
+    //           return labels;
+    //         },
+    //         afterLabel: function(tooltipItem, data) {
+    //           // let id = tooltipItem[0] ? tooltipItem[0].index : 1;
+    //           let percent = "Chiếm tỷ lệ "+ pieData[itemId].percent; 
+    //           return percent;
+    //         }
+    //       },
+    //       backgroundColor: '#FFF',
+    //       titleFontSize: 16,
+    //       titleFontColor: '#0066ff',
+    //       bodyFontColor: '#000',
+    //       bodyFontSize: 14,
+    //       displayColors: false
+    //     }
+    //   },
+    // // });
+    // let legend = this._elementRef.nativeElement.querySelector(`#pie-chart-legend`);
+    // legend.innerHTML = chart.generateLegend();
+    // Chart.helpers.each(Chart.instances, function(instance){
+    //   console.log(instance);
+      
+    // })
+
 
   searchCompany$(search?) {
     var val = new CompanyPaged();
@@ -234,6 +345,7 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
   loadCompanies() {
     this.searchCompany$().subscribe(res => {
       this.companies = res.items;
+      // this.loadCurrentCompany();
     });
   }
 
@@ -242,6 +354,9 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
     this.companyService.get(companyId).subscribe(result => {
       this.currentCompany = {id: result.id, name: result.name};
       this.currentCity = {code: result.city.code, name: result.city.name};
+      // this.cityName = result.city.name.toUpperCase();
+      
+      this.loadDataFromApi();
     });
   }
 
@@ -277,32 +392,41 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
       let companyId = event.id;
       this.companyService.get(companyId).subscribe(result => {
         this.currentCity = {code: result.city.code, name: result.city.name};
+        this.loadDataFromApi();
+        // this.cityName = result.city.name.toUpperCase();
       });
     }
     else {
       this.currentCity = {code: '79'};
+      this.loadDataFromApi();
     }
+
   }
 
   onSelectCity(event){
     if (event){
       var val = new CompanyPaged();
       val.cityCode = event.code;
+      // this.cityName = event.name.toUpperCase();
       this.companyService.getPaged(val).subscribe(result => {
         this.companies = result.items;
         this.currentCompany = this.companies ? this.companies[0] : {};
+        this.loadDataFromApi();
       });
     }
     else {
       this.loadCompanies();
+      // this.cityName = '';
       // this.currentCompany = this.companies ? this.companies[0] : {};
     }
+    
   }
 
   onSearchDateChange(event) {
     this.dateFrom = event.dateFrom;
     this.dateTo = event.dateTo;
     this.loadDataReportByWard();
+    this.loadDataFromApi();
   }
 
   loadDataReportByWard() {
@@ -333,3 +457,4 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
     })
   }
 }
+
