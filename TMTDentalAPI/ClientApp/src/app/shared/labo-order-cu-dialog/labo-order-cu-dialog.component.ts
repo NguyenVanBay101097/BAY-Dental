@@ -227,7 +227,9 @@ export class LaboOrderCuDialogComponent implements OnInit {
     this.laboOrderService.get(this.id).subscribe(result => {
       this.laboOrder = result;
       this.patchValue(result);
-      this.processTeeth(result.saleOrderLine.teeth);
+      if (result.saleOrderLine.teeth){
+        this.processTeeth(result.saleOrderLine.teeth);
+      }
     });
   }
 
@@ -236,7 +238,9 @@ export class LaboOrderCuDialogComponent implements OnInit {
     df.saleOrderLineId = this.saleOrderLineId;
     this.laboOrderService.defaultGet(df).subscribe(result => {
       this.laboOrder = result;
-      this.processTeeth(result.saleOrderLine.teeth);
+      if (result.saleOrderLine.teeth){
+        this.processTeeth(result.saleOrderLine.teeth);
+      }
       result.quantity = 1;
       this.patchValue(result);
     (result.saleOrderLine && result.saleOrderLine.product )? this.priceUnitFC.patchValue(result.saleOrderLine.product.laboPrice) : '';
