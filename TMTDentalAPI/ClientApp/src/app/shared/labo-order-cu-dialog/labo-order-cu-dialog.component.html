@@ -70,11 +70,11 @@
                                                 <div class="d-flex">
                                                     <kendo-combobox #partnerCbx [data]="partners" [textField]="'name'" [filterable]="true" #NCCLaboCbx formControlName="partner" [valueField]="'id'">
                                                     </kendo-combobox>
-                                                    <a [class.d-none]="state != 'draft'" title="Cập nhật labo" class="ml-1 btn btn-sm btn-light" type="button" *ngIf="partnerFC.value" (click)="onQuickUpdatePartner()">
+                                                    <!-- <a [class.d-none]="state != 'draft'" title="Cập nhật labo" class="ml-1 btn btn-sm btn-light" type="button" *ngIf="partnerFC.value" (click)="onQuickUpdatePartner()">
                                                         <i class="fas fa-external-link-alt"></i>
-                                                    </a>
-                                                    <a class="ml-1 btn btn-sm btn-light" (click)="onQuickCreatePartner()">
-                                                        <span class="k-icon k-i-plus"></span>
+                                                    </a> -->
+                                                    <a class="ml-1 btn btn-primary" (click)="onQuickCreatePartner()">
+                                                        <i class="fas fa-plus text-white"></i>
                                                     </a>
                                                 </div>
                                             </div>
