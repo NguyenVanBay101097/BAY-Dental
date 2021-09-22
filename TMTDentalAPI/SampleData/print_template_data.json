@@ -1966,7 +1966,9 @@
         "Type": "cash"
       },
       "PartnerId": "8a5316cc-14c3-4b92-1279-08d96ec504cd",
-      "PartnerName": "Khách hàng A",
+      "Partner": {
+        "Name": "Khách hàng A"
+      },
       "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
       "Type": "refund",
       "Amount": 5000000.00,

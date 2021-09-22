@@ -110,7 +110,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
             modalRef.componentInstance.title = 'Sử dụng mẫu mặc định';
             modalRef.componentInstance.body = 'Nội dung sẽ chuyển về mẫu mặc định, bạn có chắc chắn?';
             modalRef.result.then(() => {
-                this.printTemplateService.getPrintTemplateDefault({type}).subscribe((res: any) => {
+                this.printTemplateService.getPrintTemplateDefault({ type }).subscribe((res: any) => {
                     this.formGroup.get('content').setValue(res.content);
                     this.onGenerate();
                 });
@@ -164,7 +164,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         if (this.formGroup.invalid) {
             return false;
         }
-        
+
         var val = this.formGroup.value;
         this.configService.generate(val).subscribe((res: any) => {
             this.contentPrev = res;
@@ -209,7 +209,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
 
     onAddKeyWord() {
         const modalRef = this.modalService.open(KeywordListDialogComponent, { size: 'xl', scrollable: true, windowClass: 'o_technical_modal', keyboard: true, backdrop: 'static' });
-        modalRef.componentInstance.boxKeyWordSource = constantData.keyWords[this.filter.type];
+        modalRef.componentInstance.boxKeyWordSource = constantData.keyWords[this.formGroup.get('type').value];
         modalRef.result.then((res) => {
             if (res) {
                 this.editor.instance.insertText(res.value);
