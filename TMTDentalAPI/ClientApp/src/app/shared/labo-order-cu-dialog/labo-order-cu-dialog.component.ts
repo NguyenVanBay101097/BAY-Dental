@@ -74,6 +74,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
       partner: [null, Validators.required],
       dateOrderObj: [null, Validators.required],
       datePlannedObj: null,
+      dateReceiptObj: null,
       teeth: this.fb.array([]),
       color: null,
       quantity: 1,
@@ -139,6 +140,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
   get laboFinishLineId() {return this.myForm.get('laboFinishLineId').value};
   get laboBiteJointId() {return this.myForm.get('laboBiteJointId').value};
   get laboBridgeId() {return this.myForm.get('laboBridgeId').value};
+  get dateReceiptObj() {return this.myForm.get('dateReceiptObj')};
   validateWarrantyCode(
     control: AbstractControl
   ): Observable<ValidationErrors | null> {
@@ -189,6 +191,10 @@ export class LaboOrderCuDialogComponent implements OnInit {
     if (res.datePlanned) {
       let datePlanned = this.intlService.parseDate(res.datePlanned);
       this.datePlannedObjFC.patchValue(datePlanned);
+    }
+    if (res.dateReceipt){
+      let dateReceipt = this.intlService.parseDate(res.dateReceipt);
+      this.dateReceiptObj.patchValue(dateReceipt);
     }
 
     if (res.warrantyPeriod) {
@@ -254,28 +260,24 @@ export class LaboOrderCuDialogComponent implements OnInit {
     laboPaged.type2 = 'labo';
     this.productService.autocomplete2(laboPaged).subscribe(res => {
       this.labos = res;
-      console.log(res);
       
     });
     //load labofinishline
     const finishPaged = new LaboFinishLinePageSimple();
     this.finishLineService.autoComplete(finishPaged).subscribe((res: any) => {
       this.finishlines = res;
-      console.log(res);
       
     });
     //load bitejoint
     const biteJointPaged = new LaboFinishLinePageSimple();
     this.biteJointService.autoComplete(biteJointPaged).subscribe((res: any) => {
       this.biteJoints = res;
-      console.log(res);
 
     });
     //load bridge
     const bridgePaged = new LaboBridgePageSimple();
     this.bridgeService.autoComplete(bridgePaged).subscribe((res: any) => {
       this.bridges = res;
-      console.log(res);
     });
     //load attach
     const attachPaged = new ProductFilter();
@@ -283,7 +285,6 @@ export class LaboOrderCuDialogComponent implements OnInit {
     attachPaged.type2 = 'labo_attach';
     this.productService.autocomplete2(attachPaged).subscribe(res => {
       this.attachs = res;
-      console.log(res);
     });
   }
 
@@ -384,6 +385,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
     val.datePlanned = val.datePlannedObj ? this.intlService.formatDate(val.datePlannedObj, 'yyyy-MM-ddTHH:mm:ss') : null;
     val.warrantyPeriod = val.warrantyPeriodObj ? this.intlService.formatDate(val.warrantyPeriodObj, 'yyyy-MM-ddTHH:mm:ss') : null;
     val.partnerId = val.partner.id;
+    val.dateReceipt = val.dateReceiptObj ? this.intlService.formatDate(val.dateReceiptObj, 'yyyy-MM-ddTHH:mm:ss') : null;
     // val.productId = val.product ? val.product.id : null;
     // val.laboBridgeId = val.laboBridge ? val.laboBridge.id : null;
     // val.laboBiteJointId = val.laboBiteJoint ? val.laboBiteJoint.id : null;
