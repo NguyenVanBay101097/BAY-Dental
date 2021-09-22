@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using Umbraco.Web.Models.ContentEditing;
+using ApplicationCore.Models.PrintTemplate;
 
 namespace Umbraco.Web.Mapping
 {
@@ -41,6 +42,9 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<LaboOrder, LaboOrderPrintVM>();
             CreateMap<LaboOrder, LaboOrderReceiptBasic>();
+
+            CreateMap<LaboOrder, LaboOrderPrintTemplate>()
+                .ForMember(x => x.Teeth, x => x.MapFrom(s => s.LaboOrderToothRel.Select(m => m.Tooth)));
         }
     }
 }

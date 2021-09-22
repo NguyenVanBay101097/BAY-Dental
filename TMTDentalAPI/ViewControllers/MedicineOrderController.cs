@@ -26,11 +26,12 @@ namespace TMTDentalAPI.ViewControllers
         public async Task<IActionResult> Print(Guid id)
         {
 
-            var res = await _medicineOrderService.GetPrint(id);
-            if (res == null)
-                return NotFound();
+            //var res = await _medicineOrderService.GetPrint(id);
+            //if (res == null)
+            //    return NotFound();
 
-            return View(res);
+            //return View(res);
+            return null;
         }
     }
 }

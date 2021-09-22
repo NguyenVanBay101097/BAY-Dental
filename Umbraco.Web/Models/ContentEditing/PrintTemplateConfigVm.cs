@@ -7,11 +7,6 @@ namespace Umbraco.Web.Models.ContentEditing
     public class PrintTemplateConfigDisplay
     {
         /// <summary>
-        /// html
-        /// </summary>
-        public string Content { get; set; }
-
-        /// <summary>
         /// tmp_sale_order : phiếu điều trị
         /// tmp_account_payment : biên lai khách hàng thanh toán
         /// tmp_advisory : tình trạng răng
@@ -40,8 +35,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// khổ in
         /// </summary>
         public Guid? PrintPaperSizeId { get; set; }
-        public PrintPaperSizeDisplay PrintPaperSize { get; set; }
 
+        public string PrintTemplateContent { get; set; }
     }
 
     public class PrintTemplateConfigSave
@@ -56,19 +51,17 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// khổ in
         /// </summary>
-        public Guid? PrintPaperSizeId { get; set; }
+        public Guid PrintPaperSizeId { get; set; }
 
-        public Guid? CompanyId { get; set; }
+        public Guid CompanyId { get; set; }
 
     }
 
-    public class PrintTemplateConfigChangeType
+    public class PrintTemplateConfigChangePaperSize
     {
         public string Type { get; set; }
 
-        public bool? IsDefault { get; set; }
-
-        public Guid? PrintPaperSizeId { get; set; }
+        public Guid PrintPaperSizeId { get; set; }
     }
 
     public class GenerateReq
@@ -85,7 +78,7 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public string Type { get; set; }
         public string Content { get; set; }
-        public Guid? PrintPaperSizeId { get; set; }
+        public Guid PrintPaperSizeId { get; set; }
     }
 
     public class PrintOfTypeReq
@@ -93,6 +86,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Type { get; set; }
         public object Obj { get; set; }
     }
+
     public class SampleDataPrintTemplate
     {
         public string Type { get; set; }

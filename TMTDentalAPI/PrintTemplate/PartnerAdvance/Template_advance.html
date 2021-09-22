@@ -1,114 +1,70 @@
-﻿<div class="d-flex mb-2">
-    {{ if company.logo != "" && company.logo != null}}
-    <img class="img-fluid me-3 w-20" src="{{company.logo}}" alt="{{company.name}}">
-    {{ end }}
+﻿<table border="0" cellpadding="0" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="width:100px"><img alt="{{o.company.name}}" class="img-fuild" src="{{o.company.logo}}" style="width:150px" /></td>
+            <td>
+                <p style="margin-left:20px">
+                    <strong>{{o.company.name}}</strong><br />
+                    Địa chỉ: {{o.company.address}}<br />
+                    ĐT: {{o.company.phone}}<br />
+                    Email: {{o.company.email}}
+                </p>
+            </td>
+        </tr>
+    </tbody>
+</table>
 
-    <div>
-        <div class="text-xl font-semibold">{{company.name}}</div>
-        {{if company.address != ""}}
+<h3 style="text-align:center">PHIẾU ĐÓNG TẠM ỨNG</h3>
 
-        <div>Địa chỉ: {{company.address}}</div>
+<div style="text-align:center">Ngày {{date.day}} tháng {{date.month}} năm {{date.year}}</div>
 
-        {{ end }}
+<div style="text-align:center"><strong>Số: {{o.name}}</strong></div>
+<br/>
+<table border="0" cellpadding="2" cellspacing="100" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="width:150px"><strong>Người nộp tiền</strong></td>
+            <td>{{o.partner.name}}</td>
+        </tr>
+        <tr>
+            <td style="width:150px"><strong>Phương thức thanh toán</strong></td>
+            <td style="vertical-align:top">{{o.journal.name}}</td>
+        </tr>
+        <tr>
+            <td style="width:150px"><strong>Số tiền</strong></td>
+            <td>{{o.amount | math.format "N0" "vi-VN"}} VNĐ</td>
+        </tr>
+        <tr>
+            <td style="width:150px"><strong>Bằng chữ</strong></td>
+            <td>{{o.amount_text}}</td>
+        </tr>
+        <tr>
+            <td style="width:150px"><strong>Nội dung</strong></td>
+            <td>{{o.note}}</td>
+        </tr>
+    </tbody>
+</table>
+<br />
 
-        {{ if company.phone}}
-
-        <div>ĐT: {{company.phone}}</div>
-
-        {{ end }}
-
-        {{if company.email }}
-
-        <div>Email: {{company.email}}</div>
-
-        {{ end }}
-
-    </div>
-</div>
-
-<div class="text-center mb-2">
-    <div class="text-3xl font-semibold"> PHIẾU ĐÓNG TẠM ỨNG </div>
-    <div>Ngày {{date.day}} tháng {{date.month}} năm {{date.year}} </div>
-    <div class="font-semibold">Số: {{name}}</div>
-</div>
-<div class="o_form_view mb-4">
-    <div class="o_group">
-        <table class="o_group o_inner_group">
-            <tbody>
-                <tr>
-                    <td colspan="1" class="o_td_label">
-                        <label class="o_form_label o_form_label_help">
-                            <span>Người nộp tiền </span>
-                        </label>
-                    </td>
-                    <td colspan="1" style="width: 100%;">
-                        {{partner_Name}}
-                    </td>
-                </tr>
-
-                <tr>
-                    <td colspan="1" class="o_td_label">
-                        <label class="o_form_label o_form_label_help">
-                            <span>Phương thức thanh toán</span>
-                        </label>
-                    </td>
-                    <td colspan="1" style="width: 100%;">
-                        {{journal_name}}
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="1" class="o_td_label">
-                        <label class="o_form_label o_form_label_help">
-                            Số tiền
-                        </label>
-                    </td>
-                    <td colspan="1" style="width: 100%;">
-                        <strong>{{amount | math.format "N0" "vi-VN"}} VNĐ</strong>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="1" class="o_td_label">
-                        <label class="o_form_label o_form_label_help">
-                            Bằng chữ
-                        </label>
-                    </td>
-                    <td colspan="1" style="width: 100%;">
-                        {{amount_text}}
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="1" class="o_td_label">
-                        <label class="o_form_label o_form_label_help">
-                            Nội dung
-                        </label>
-                    </td>
-                    <td colspan="1" style="width: 100%;">
-                        {{note}}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-<div class="d-flex">
-    <div class="col">
-        <div class="text-center">
-            <span class="font-semibold"> Người lập phiếu</span> <br />
-            <i>(Ký, họ tên)</i> <br />
-            <span></span> <br />
-            <span></span> <br />
-            <span></span> <br />
-            <span class="font-semibold">{{user_name}}</span>
-        </div>
-    </div>
-    <div class="col">
-        <div class="text-center">
-            <span class="font-semibold">Người nộp tiền</span> <br />
-            <i>(Ký, họ tên)</i> <br />
-            <span></span> <br />
-            <span></span> <br />
-            <span></span> <br />
-            <span class="font-semibold">{{partner_name}}</span>
-        </div>
-    </div>
-</div>
+<table border="0" cellpadding="1" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="text-align:center">
+                <strong>Người lập phiếu</strong><br />
+                <em>(Ký, họ tên)</em><br />
+                <br />
+                <br />
+                <br />
+                <strong>{{u.name | string.upcase}}</strong>
+            </td>
+            <td style="text-align:center">
+                <strong>Người nộp tiền</strong><br />
+                <em>(Ký, họ tên)</em><br />
+                <br />
+                <br />
+                <br />
+                <strong>{{o.partner?.name}}</strong>
+            </td>
+        </tr>
+    </tbody>
+</table>
