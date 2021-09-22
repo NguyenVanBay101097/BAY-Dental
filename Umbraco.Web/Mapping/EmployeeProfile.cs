@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -40,6 +41,9 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.OvertimeRate, x => x.Ignore())
                 .ForMember(x => x.RestDayRate, x => x.Ignore())
                 .ForMember(x => x.Allowance, x => x.Ignore());
+
+            CreateMap<Employee, EmployeePrintTemplate>();
+            CreateMap<Employee, EmployeeBasicPrintTemplate>();
         }
     }
 }

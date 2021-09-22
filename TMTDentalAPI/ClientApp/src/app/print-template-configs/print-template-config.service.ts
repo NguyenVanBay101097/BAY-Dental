@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable, Pipe, PipeTransform } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Observable } from 'rxjs';
@@ -19,10 +19,9 @@ export class PrintTemplateConfigSave {
   companyId: string;
 }
 
-export class PrintTemplateConfigChangeType {
+export class PrintTemplateConfigChangePaperSize {
   type: string;
   printPaperSizeId: string;
-  isDefault: boolean;
 }
 
 export class GenerateReq {
@@ -54,8 +53,8 @@ export class PrintTemplateConfigService {
   apiUrl = 'api/PrintTemplateConfigs';
   constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
-  getDisplay(val: PrintTemplateConfigChangeType): Observable<PrintTemplateConfigDisplay> {
-    return this.http.post<PrintTemplateConfigDisplay>(this.baseApi + this.apiUrl + '/GetDisplay', val);
+  getDisplay(type: string): Observable<PrintTemplateConfigDisplay> {
+    return this.http.get<PrintTemplateConfigDisplay>(this.baseApi + this.apiUrl + '/GetDisplay?type=' + type);
   }
 
   createOrUpdate(val: PrintTemplateConfigSave) {
@@ -68,6 +67,10 @@ export class PrintTemplateConfigService {
 
   printTest(val: PrintTestReq) {
     return this.http.post(this.baseApi + this.apiUrl + '/PrintTest', val, { responseType: 'text' });
+  }
+
+  changePaperSize(val) {
+    return this.http.post(this.baseApi + this.apiUrl + '/ChangePaperSize', val);
   }
 
 }

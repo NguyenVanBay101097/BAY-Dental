@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Entities;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
@@ -27,9 +28,14 @@ namespace TMTDentalAPI.Controllers
         private readonly IViewRenderService _viewRenderService;
         private readonly IAccountJournalService _journalService;
         private readonly IPrintTemplateConfigService _printTemplateConfigService;
+        private readonly IPrintTemplateService _printTemplateService;
+        private readonly IIRModelDataService _modelDataService;
+
         public PhieuThuChisController(IPhieuThuChiService phieuThuChiService, IMapper mapper, IUnitOfWorkAsync unitOfWork,
             IViewRenderService viewRenderService, IAccountJournalService journalService,
-            IPrintTemplateConfigService printTemplateConfigService)
+            IPrintTemplateConfigService printTemplateConfigService,
+            IPrintTemplateService printTemplateService,
+            IIRModelDataService modelDataService)
         {
             _phieuThuChiService = phieuThuChiService;
             _mapper = mapper;
@@ -37,6 +43,8 @@ namespace TMTDentalAPI.Controllers
             _viewRenderService = viewRenderService;
             _journalService = journalService;
             _printTemplateConfigService = printTemplateConfigService;
+            _printTemplateService = printTemplateService;
+            _modelDataService = modelDataService;
         }
 
         //api get phan trang loai thu , chi
@@ -147,37 +155,52 @@ namespace TMTDentalAPI.Controllers
         //[CheckAccess(Actions = "Account.PhieuThuChi.Read")]
         public async Task<IActionResult> GetPrint(Guid id)
         {
-            var res = await _phieuThuChiService.SearchQuery(x => x.Id == id)
-                .Include(x => x.Company)
-                .Include(x => x.CreatedBy)
-                .Include(x => x.Partner)
-                .Include(x => x.LoaiThuChi)
-                .Include(x => x.Journal)
+            var res = await _phieuThuChiService.GetByIdAsync(id);
+            //tim trong bảng config xem có dòng nào để lấy ra template
+            var printConfig = await _printTemplateConfigService.SearchQuery(x => x.Type == (res.Type == "thu" ? "tmp_phieu_thu" : "tmp_phieu_chi") && x.IsDefault)
+                .Include(x => x.PrintPaperSize)
+                .Include(x => x.PrintTemplate)
                 .FirstOrDefaultAsync();
-            if (res == null)
-                return NotFound();
 
-            var obj = _mapper.Map<PhieuThuChiPrintVM>(res);
+            PrintTemplate template = printConfig != null ? printConfig.PrintTemplate : null;
+            PrintPaperSize paperSize = printConfig != null ? printConfig.PrintPaperSize : null;
+            if (template == null)
+            {
+                //tìm template mặc định sử dụng chung cho tất cả chi nhánh, sử dụng bảng IRModelData hoặc bảng IRConfigParameter
+                template = await _modelDataService.GetRef<PrintTemplate>(res.Type == "thu" ? "base.print_template_phieu_thu" : "base.print_template_phieu_chi");
+                if (template == null)
+                    throw new Exception("Không tìm thấy mẫu in mặc định");
+            }
 
-            obj.AmountText = AmountToText.amount_to_text(res.Amount);
+            var result = await _printTemplateService.GeneratePrintHtml(template, new List<Guid>() { id }, paperSize);
 
-            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = obj, Type = obj.Type == "thu"? "tmp_phieu_thu" : "tmp_phieu_chi" });
-
-            return Ok(new PrintData() { html = html });
+            return Ok(new PrintData() { html = result });
         }
 
         [HttpGet("{id}/Print2")]
         //[CheckAccess(Actions = "Account.PhieuThuChi.Read")]
         public async Task<IActionResult> GetPrint2(Guid id)
         {
-            var res = await _phieuThuChiService.GetPrint(id);
-            if (res == null)
-                return NotFound();
+            var res = await _phieuThuChiService.GetByIdAsync(id);
+            //tim trong bảng config xem có dòng nào để lấy ra template
+            var printConfig = await _printTemplateConfigService.SearchQuery(x => x.Type == (res.AccountType == "customer_debt" ? "tmp_customer_debt" : "tmp_agent_commission") && x.IsDefault)
+                .Include(x => x.PrintPaperSize)
+                .Include(x => x.PrintTemplate)
+                .FirstOrDefaultAsync();
 
-            res.AmountText = AmountToText.amount_to_text(res.Amount);
-            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = res, Type = res.AccountType == "customer_debt" ? "tmp_customer_debt" : "tmp_agent_commission" });
+            PrintTemplate template = printConfig != null ? printConfig.PrintTemplate : null;
+            PrintPaperSize paperSize = printConfig != null ? printConfig.PrintPaperSize : null;
+            if (template == null)
+            {
+                //tìm template mặc định sử dụng chung cho tất cả chi nhánh, sử dụng bảng IRModelData hoặc bảng IRConfigParameter
+                template = await _modelDataService.GetRef<PrintTemplate>(res.AccountType == "customer_debt" ? "base.print_template_customer_debt" : "base.print_template_agent_commission");
+                if (template == null)
+                    throw new Exception("Không tìm thấy mẫu in mặc định");
+            }
 
-            return Ok(new PrintData() { html = html });
+            var result = await _printTemplateService.GeneratePrintHtml(template, new List<Guid>() { id }, paperSize);
+
+            return Ok(new PrintData() { html = result });
         }
 
         [HttpGet("[action]")]
@@ -232,6 +255,6 @@ namespace TMTDentalAPI.Controllers
             return new FileContentResult(fileContent, mimeType);
         }
 
-      
+
     }
 }

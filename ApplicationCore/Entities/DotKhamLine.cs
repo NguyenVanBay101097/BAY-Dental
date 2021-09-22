@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Text;
 
 namespace ApplicationCore.Entities
@@ -38,5 +40,13 @@ namespace ApplicationCore.Entities
         /// răng
         /// </summary>
         public ICollection<DotKhamLineToothRel> ToothRels { get; set; } = new List<DotKhamLineToothRel>();
+        [NotMapped]
+        public string TeethDisplay
+        {
+            get
+            {
+                return ToothRels.Count > 0 ? string.Join(" ,",ToothRels.Select(x=> x.Tooth.Name)) : "";
+            }
+        }
     }
 }

@@ -5931,6 +5931,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Model")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
 
@@ -5973,6 +5976,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("PrintPaperSizeId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("PrintTemplateId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
 
@@ -5986,6 +5992,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("PrintPaperSizeId");
+
+                    b.HasIndex("PrintTemplateId");
 
                     b.HasIndex("WriteById");
 
@@ -14480,6 +14488,10 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.PrintPaperSize", "PrintPaperSize")
                         .WithMany()
                         .HasForeignKey("PrintPaperSizeId");
+
+                    b.HasOne("ApplicationCore.Entities.PrintTemplate", "PrintTemplate")
+                        .WithMany()
+                        .HasForeignKey("PrintTemplateId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()

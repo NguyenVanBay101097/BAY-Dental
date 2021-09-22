@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,8 @@ namespace Umbraco.Web.Mapping
             CreateMap<LaboBiteJointSave, LaboBiteJoint>();
             CreateMap<LaboBiteJointDisplay, LaboBiteJoint>().ForMember(x => x.Id, x => x.Ignore());
             CreateMap<LaboBiteJoint, LaboBiteJointSimple>();
+
+            CreateMap<LaboBiteJoint, LaboBiteJointSimplePrintTemplate>();
         }
 
     }

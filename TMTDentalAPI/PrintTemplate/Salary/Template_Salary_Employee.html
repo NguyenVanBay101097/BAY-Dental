@@ -1,121 +1,77 @@
-﻿<!--{{for item in salaries}}-->
-<div class="page-break">
+﻿
+<table border="0" cellpadding="5" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="width:100px"><img alt="{{o.company.name}}" class="img-fuild" src="{{o.company.logo}}" style="width:150px" /></td>
+            <td>
+                <strong>{{o.company.name}}</strong><br />
+                Địa chỉ: {{o.company.address}}<br />
+                ĐT: {{o.company.phone}}<br />
+                Email: {{o.company.email}}
+            </td>
+        </tr>
+    </tbody>
+</table>
+<h3 style="text-align:center">PHIẾU CHI LƯƠNG</h3>
+<div style="text-align:center">Ngày {{o.date.day}} tháng {{o.date.month}} năm {{o.date.year}}</div>
+<div style="text-align:center"><strong>Số: {{o.name}}</strong></div>
+<br />
+<table cellpadding="5" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="width:150px">Người nhận</td>
+            <td>{{o.employee ? o.employee.name : ""}}</td>
+        </tr>
+        <tr>
+            <td>Số tiền</td>
+            <td>{{o.amount ? (o.amount | math.format "N0" "vi-VN") : 0 }}</td>
+        </tr>
+        <tr>
+            <td>Phương thức</td>
+            <td>{{o.journal ? o.journal.name : ""}}</td>
+        </tr>
+        <tr>
+            <td>Bằng chữ</td>
+            <td> {{o.amount_text ? o.amount_text : ""}}</td>
+        </tr>
+        <tr>
+            <td> Nội dung</td>
+            <td>{{o.reason}}</td>
+        </tr>
+    </tbody>
+</table>
+<br />
+<table border="0" cellpadding="0" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td>
+                <div style="text-align:center">
+                    <br />
+                    <strong>Người lập phiếu</strong><br />
+                    <em>(Ký, họ tên)</em><br />
+                    <br />
+                    <br />
+                    <br />
+                    {{o.created_by ? (o.created_by.name | string.upcase) : ""}}
+                </div>
+            </td>
+            <td>
+                <div style="text-align:center">
+                    {{date.now | date.to_string "%A" "vi-VN"}}, Ngày {{date.now.day}} tháng {{date.now.month}} năm {{date.now.year}}<br />
+                    <strong>Người lao động</strong><br />
+                    <em>(Ký, họ tên)</em><br />
+                    <br />
+                    <br />
+                    <br />
+                    {{o.employee ? (o.employee.name | string.upcase) : ""}}
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
 
-    <div class="d-flex mb-2">
-        {{ if item.company.logo != "" && item.company.logo != null}}
-        <img class="img-fluid me-3 w-20" src="{{item.company.logo}}" alt="{{item.company.name}}">
-        {{ end }}
 
-        <div>
-            <div class="text-xl font-semibold">{{item.company.name}}</div>
-            {{if item.company.address != ""}}
 
-            <div>Địa chỉ: {{item.company.address}}</div>
 
-            {{ end }}
 
-            {{ if item.company.phone}}
 
-            <div>ĐT: {{item.company.phone}}</div>
-
-            {{ end }}
-
-            {{if item.company.email }}
-
-            <div>Email: {{item.company.email}}</div>
-
-            {{ end }}
-
-        </div>
-    </div>
-
-    <div class="text-center mb-2">
-        <div class="text-3xl font-semibold">PHIẾU CHI LƯƠNG</div>
-        <div>Ngày {{item.date.Day}} tháng {{item.date.month}} năm {{item.date.year}} </div>
-        <div class="font-semibold">Số: {{item.name}}</div>
-    </div>
-    <div class="o_form_view mb-2">
-        <div class="o_group">
-            <table class="o_group o_inner_group col-8">
-                <tbody>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help font-weight-bold">
-                                Người nhận
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">
-                            {{item.employee ? item.employee.name : ""}}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help font-weight-bold">
-                                Số tiền
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">
-                            {{item.amount ? (item.amount | math.format "N0" "vi-VN") : 0 }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help font-weight-bold">
-                                Phương thức
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">
-                            {{item.journal ? item.journal.name : ""}}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help font-weight-bold">
-                                Bằng chữ
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">
-                            {{item.amount_text ? item.amount_text : ""}}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help font-weight-bold">
-                                Nội dung
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">
-                            {{item.reason ? item.reason : ""}}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
-        </div>
-    </div>
-    <div class="d-flex">
-        <div class="col">
-            <div class="text-center">
-                <span></span><br />
-                <span class="font-semibold"> Người lập phiếu</span> <br />
-                <i>(Ký, họ tên)</i> <br />
-                <span></span> <br />
-                <span></span> <br />
-                <span></span> <br />
-                <span class="font-semibold"> {{item.user_name ? (item.user_name |  string.upcase) : ""}}</span>
-            </div>
-        </div>
-        <div class="col">
-            <div class="text-center">
-                <span> {{date.now | date.to_string "%A" "vi-VN"}}, Ngày {{date.now.day}} tháng {{date.now.month}} năm {{date.now.year}} </span> <br />
-                <span class="font-semibold"> Người lao động</span> <br />
-                <i>(Ký, họ tên)</i> <br />
-                <span></span> <br />
-                <span></span> <br />
-                <span></span> <br />
-                <span class="font-semibold"> {{item.employee ? (item.employee.name |  string.upcase) : ""}}</span>
-            </div>
-        </div>
-    </div>
-</div>
-<!--{{end}}-->
