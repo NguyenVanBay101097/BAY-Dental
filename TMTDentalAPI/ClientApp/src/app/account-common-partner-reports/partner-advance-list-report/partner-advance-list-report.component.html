@@ -1,0 +1,99 @@
+<div class="card">
+    <div class="card-body">
+        <div class="filter d-flex flex-0-0-auto justify-content-between">
+            <div class="d-flex w-50">
+                <app-date-range-picker-filter [opens]="'right'" class="date-picker" [startDate]="dateFrom"
+                    [endDate]="dateTo" (searchChange)="searchChangeDate($event)" opens="right">
+                </app-date-range-picker-filter>
+                <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="ml-1 kendo-combobox" [valueField]="'id'"
+                    [textField]="'name'" [filterable]="true" [data]="companies"
+                    (selectionChange)="onSelectCompany($event)" #companyCbx>
+                </kendo-combobox>
+                <button class="btn btn-primary ml-1" (click)="exportExcel()">Xuất Excel</button>
+                <button class="btn btn-primary ml-1" (click)="printReport()">In báo cáo</button>
+            </div>
+            <div class="o_searchview w-30">
+                <input type="text" class="o_searchview_input"
+                    placeholder="Tìm kiếm theo mã, tên, số điện thoại khách hàng" [(ngModel)]="search"
+                    (ngModelChange)="this.searchUpdate.next($event)" />
+                <span class="o_searchview_icon fas fa-search"></span>
+            </div>
+        </div>
+        <div class="o_dashboard_view">
+            <div class="">
+                <div class="o_group o_group_col_12">
+                    <div class="o_aggregate_col o_group_col_3">
+                        <div class="o_aggregate">
+                            <label class="font-weight-600">Dư đầu kỳ</label>
+                            <!-- <div class="o_value text-info">{{sum('begin') | number }}</div> -->
+                        </div>
+                    </div>
+                    <div class="o_aggregate_col o_group_col_3">
+                        <div class="o_aggregate">
+                            <label class="font-weight-600">Tiền phát sinh</label>
+                            <!-- <div class="o_value text-primary">{{sum('debit') | number }}</div> -->
+                        </div>
+                    </div>
+                    <div class="o_aggregate_col o_group_col_3">
+                        <div class="o_aggregate">
+                            <label class="font-weight-600">Tiền thanh toán</label>
+                            <!-- <div class="o_value text-success">{{sum('credit') | number }}</div> -->
+                        </div>
+                    </div>
+                    <div class="o_aggregate_col o_group_col_3">
+                        <div class="o_aggregate text-danger">
+                            <label class="font-weight-600">Dư cuối kỳ</label>
+                            <!-- <div class="o_value text-dnager">{{sum('end') | number }}</div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="overflow-auto">
+                <kendo-grid #grid (excelExport)="onExcelExport($event)" [data]="gridData" [pageSize]="limit"
+                    [skip]="skip" [pageable]="pagerSettings" [loading]="loading" (pageChange)="pageChange($event)">
+                    <kendo-grid-column title="Khách hàng" width="200">
+                        <!-- <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                            <a class="text-primary" [routerLink]="['/partners/customer/' + dataItem.partnerId]">{{dataItem.partnerName}}</a>
+                        </ng-template> -->
+                    </kendo-grid-column>
+                    <kendo-grid-column title="Số điện thoại" width="120">
+                    </kendo-grid-column>
+                    <kendo-grid-column format="{0:n0}" [headerClass]="'text-right'" class="text-right" title="Dư đầu kỳ"
+                        width="150">
+                    </kendo-grid-column>
+                    <kendo-grid-column format="{0:n0}" [headerClass]="'text-right'" class="text-right" title="Phát sinh"
+                        width="150">
+                    </kendo-grid-column>
+                    <kendo-grid-column format="{0:n0}" [headerClass]="'text-right'" class="text-right"
+                        title="Thanh toán" width="150">
+                    </kendo-grid-column>
+                    <kendo-grid-column format="{0:n0}" [headerClass]="'text-right'" class="text-right"
+                        title="Dư cuối kỳ" footerClass="text-right font-weight-600" width="150">
+                    </kendo-grid-column>
+
+                    <!-- <kendo-grid-excel fileName="BaoCaoCongNoKH.xlsx">
+                        <kendo-excelexport-column field="partnerName" title="Khách hàng" width="200">
+                        </kendo-excelexport-column>
+                        <kendo-excelexport-column field="partnerRef" title="Mã KH" width="120">
+                        </kendo-excelexport-column>
+                        <kendo-excelexport-column field="partnerPhone" title="Số điện thoại" width="120">
+                        </kendo-excelexport-column>
+                        <kendo-excelexport-column field="begin" title="Nợ đầu kỳ" [cellOptions]="{format: '#,##0'}" width="150">
+                        </kendo-excelexport-column>
+                        <kendo-excelexport-column field="debit" title="Phát sinh" [cellOptions]="{format: '#,##0'}" width="150">
+                        </kendo-excelexport-column>
+                        <kendo-excelexport-column field="credit" title="Thanh toán" [cellOptions]="{format: '#,##0'}" width="150">
+                        </kendo-excelexport-column>
+                        <kendo-excelexport-column field="end" title="Nợ cuối kỳ" [cellOptions]="{format: '#,##0'}" width="150">
+                        </kendo-excelexport-column>
+                    </kendo-grid-excel> -->
+                    <div *kendoGridDetailTemplate="let dataItem">
+                        <app-partner-advance-detail-list-report [parent]="dataItem">
+                        </app-partner-advance-detail-list-report>
+                    </div>
+                </kendo-grid>
+            </div>
+        </div>
+
+    </div>
+</div>
