@@ -439,11 +439,11 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
     this.partnerOldNewRpService.reportByWard(val).subscribe((res: any) => {
       if (res && res.length > 0) {
         this.barChartData_PartnerCount.labels = res.map(x => x.wardName);
-        this.barChartData_PartnerCount.datasets[0].data = res.map(x => x.partnerOldCount);
-        this.barChartData_PartnerCount.datasets[1].data = res.map(x => x.partnerNewCount);
+        this.barChartData_PartnerCount.datasets[0].data = res.map(x => x.partnerNewCount);
+        this.barChartData_PartnerCount.datasets[1].data = res.map(x => x.partnerOldCount);
         this.barChartData_PartnerRevenue.labels = res.map(x => x.wardName);
-        this.barChartData_PartnerRevenue.datasets[0].data = res.map(x => x.partnerOldRevenue);
-        this.barChartData_PartnerRevenue.datasets[1].data = res.map(x => x.partnerNewRevenue);
+        this.barChartData_PartnerRevenue.datasets[0].data = res.map(x => x.partnerNewRevenue);
+        this.barChartData_PartnerRevenue.datasets[1].data = res.map(x => x.partnerOldRevenue);
       } else {
         this.barChartData_PartnerCount.labels = [];
         this.barChartData_PartnerCount.datasets[0].data = [];

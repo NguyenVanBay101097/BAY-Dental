@@ -223,6 +223,15 @@ namespace Infrastructure.Services
             if (val.DateTo.HasValue)
                 query = query.Where(x => x.DateOrder.Date <= val.DateTo.Value.AbsoluteEndOfDate());
 
+            var querySub = query.Select(x => new
+            {
+                Id = x.Id,
+                IsNew = !queryWithCompany.Any(z => z.PartnerId == x.PartnerId && z.DateOrder < x.DateOrder)
+            });
+
+            var querySubNew = query.Join(querySub.Where(x => x.IsNew), o => o.Id, s => s.Id, (o, s) => o);
+            var querySubOld = query.Join(querySub.Where(x => !x.IsNew), o => o.Id, s => s.Id, (o, s) => o);
+
             var list = await query.Include(x => x.Partner).ToListAsync();
 
             var result = list.AsEnumerable().GroupBy(x => new { WardCode = x.Partner.WardCode, WardName = x.Partner.WardName })
@@ -230,14 +239,14 @@ namespace Infrastructure.Services
                     {
                         WardCode = !string.IsNullOrEmpty(x.Key.WardCode) ? x.Key.WardCode : "Không xác định",
                         WardName = !string.IsNullOrEmpty(x.Key.WardName) ? x.Key.WardName : "Không xác định",
-                        PartnerOldCount = x.GroupBy(s => s.PartnerId).Select(x => x.LastOrDefault())
-                            .Where(x => !queryWithCompany.Any(z => z.PartnerId == x.PartnerId && z.DateOrder < x.DateOrder)).Count(),
-                        PartnerNewCount = x.GroupBy(s => s.PartnerId).Select(x => x.LastOrDefault())
-                            .Where(x => queryWithCompany.Any(z => z.PartnerId == x.PartnerId && z.DateOrder < x.DateOrder)).Count(),
-                        PartnerOldRevenue = x.GroupBy(s => s.PartnerId).Select(x => x.LastOrDefault())
-                            .Where(x => !queryWithCompany.Any(z => z.PartnerId == x.PartnerId && z.DateOrder < x.DateOrder)).Sum(z => z.TotalPaid ?? 0),
-                        PartnerNewRevenue = x.GroupBy(s => s.PartnerId).Select(x => x.LastOrDefault())
-                            .Where(x => queryWithCompany.Any(z => z.PartnerId == x.PartnerId && z.DateOrder < x.DateOrder)).Sum(z => z.TotalPaid ?? 0)
+                        PartnerNewCount = querySubNew.Where(s => s.Partner.WardCode == x.Key.WardCode)
+                            .GroupBy(s => s.PartnerId).Select(s => s.Key).Count(),
+                        PartnerOldCount = querySubOld.Where(s => s.Partner.WardCode == x.Key.WardCode)
+                            .GroupBy(x => x.PartnerId).Select(x => x.Key).Count(),
+                        PartnerOldRevenue = querySubNew.Where(s => s.Partner.WardCode == x.Key.WardCode)
+                            .Sum(z => z.TotalPaid ?? 0),
+                        PartnerNewRevenue = querySubOld.Where(s => s.Partner.WardCode == x.Key.WardCode)
+                            .Sum(z => z.TotalPaid ?? 0),
                     }).OrderByDescending(x => x.WardName).ToList();
             return result;
         }
