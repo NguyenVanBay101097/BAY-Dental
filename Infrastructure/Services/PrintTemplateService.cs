@@ -124,6 +124,7 @@ namespace Infrastructure.Services
                           .Include(x => x.LaboFinishLine).Include(x => x.SaleOrderLine)
                           .Include(x => x.Product)
                           .Include(x => x.LaboOrderToothRel).ThenInclude(s => s.Tooth)
+                          .Include(x => x.LaboOrderProductRel).ThenInclude(s => s.Product)
                           .ToListAsync();
 
                         return res;

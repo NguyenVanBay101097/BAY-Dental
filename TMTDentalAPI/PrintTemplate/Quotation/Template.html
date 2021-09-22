@@ -65,9 +65,9 @@
         <!--{{for line in o.lines }}-->
         <tr>
             <td>{{line.name}}</td>
-            <td>{{line.qty | math.format "N0" "vi" }}</td>
-            <td>{{line.sub_price - line.amount_discount_total | math.format "N0" "vi" }}</td>
-            <td style="text-align:right">{{line.amount | math.format "N0" "vi" }}</td>
+            <td>{{line.qty | math.format "N0"  }}</td>
+            <td>{{line.sub_price - line.amount_discount_total | math.format "N0" }}</td>
+            <td style="text-align:right">{{line.amount | math.format "N0" }}</td>
         </tr>
         <!--{{end}}-->
     </tbody>
@@ -79,7 +79,7 @@
         <tbody>
             <tr>
                 <td><strong>Tổng tiền</strong></td>
-                <td>{{o. total_amount | math.format "N0" "vi" }}</td>
+                <td>{{o. total_amount | math.format "N0" }}</td>
             </tr>
         </tbody>
     </table>
@@ -102,9 +102,9 @@
         <!--{{for payment in o.payments }}-->
         <tr>
             <td>{{payment.sequence }}</td>
-            <td style="text-align:right">{{(payment.payment | math.format "N0" "vi")}}{{payment.discount_percent_type ==  "percent" ? '%' : '' }}</td>
+            <td style="text-align:right">{{(payment.payment | math.format "N0")}}{{payment.discount_percent_type ==  "percent" ? '%' : '' }}</td>
             <td>{{payment.date | date.to_string '%d/%m/%Y' }}</td>
-            <td style="text-align:right">{{payment.amount | math.format "N0" "vi" }}</td>
+            <td style="text-align:right">{{payment.amount | math.format "N0"}}</td>
         </tr>
         <!--{{end }}-->
     </tbody>

@@ -289,7 +289,18 @@
   {
     "Type": "tmp_labo_order",
     "Data": {
-      "Images": [],
+      "Company": {
+        "Name": "TPP",
+        "Partner": {
+          "CityName": "Thành phố Hồ Chí Minh",
+          "DistrictName": "Quận Tân Phú",
+          "WardName": "Phường Tân Thành",
+          "Street": "54/35 Diệp Minh Châu"
+        },
+        "Phone": "0938551226",
+        "Email": null,
+        "Logo": "http://statics.tdental.vn/images/localhost/210920/1345070036_logo.jpg"
+      },
       "Id": "4a7ddc3a-490a-48fd-e8bd-08d96efc0cea",
       "Name": "LB00001",
       "PartnerId": "d0f349d6-870a-4960-b11b-08d9693d942f",
@@ -365,7 +376,13 @@
         "Id": "4257ae89-9d6d-4d39-8d2c-08d96ef04f27",
         "Name": "Nhịp hình trứng"
       },
-      "LaboOrderProducts": [],
+      "LaboOrderProductRel": [
+        {
+          "Product": {
+            "Name": "Hàm đối diện"
+          }
+        }
+      ],
       "Quantity": 2.00,
       "PriceUnit": 1000000.00,
       "SaleOrderLineId": "d70aacf4-32ca-4a7a-30b3-08d96edead93",
@@ -402,11 +419,15 @@
         "IsRewardLine": false,
         "IsCancelled": false,
         "EmployeeId": null,
-        "Employee": null,
+        "Employee": {
+          "Name": "Nguyễn Văn A"
+        },
         "AssistantId": null,
         "Assistant": null,
         "OrderId": "21b5efed-8fb5-4240-0468-08d96edead70",
-        "Order": null,
+        "Order": {
+          "Name": "SO00969"
+        },
         "OrderPartnerId": "8a5316cc-14c3-4b92-1279-08d96ec504cd",
         "OrderPartner": {
           "Id": "8a5316cc-14c3-4b92-1279-08d96ec504cd",
@@ -432,20 +453,11 @@
       "State": "confirmed",
       "WarrantyCode": null,
       "WarrantyPeriod": null,
-      "Teeth": [
+      "LaboOrderToothRel": [
         {
-          "ViTriHam": "0_up",
-          "Position": "0_right",
-          "Id": "1b66ff77-fb22-4036-d0a8-08d9693d9608",
-          "Name": "14",
-          "CategoryId": "7f8e8b6b-da51-4b2a-8313-08d9693d9601"
-        },
-        {
-          "ViTriHam": "0_up",
-          "Position": "0_right",
-          "Id": "ecaf054e-1387-4546-d0a9-08d9693d9608",
-          "Name": "15",
-          "CategoryId": "7f8e8b6b-da51-4b2a-8313-08d9693d9601"
+          "Tooth": {
+            "Name": "14"
+          }
         }
       ],
       "TeethOrderLine": []
@@ -1215,10 +1227,19 @@
       "Id": "a597f262-a38e-4458-864d-08d9735e20a1",
       "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
       "Company": {
-        "Id": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
-        "Name": "TPP"
+        "Name": "TPP",
+        "Partner": {
+          "CityName": "Thành phố Hồ Chí Minh",
+          "DistrictName": "Quận Tân Phú",
+          "WardName": "Phường Tân Thành",
+          "Street": "54/35 Diệp Minh Châu"
+        },
+        "Phone": "0938551226",
+        "Email": null,
+        "Logo": "http://statics.tdental.vn/images/localhost/210920/1345070036_logo.jpg"
       },
       "Date": "2021-09-09T13:48:12",
+      "DateCreated": "2021-09-09T13:48:12",
       "JournalId": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
       "Journal": {
         "Id": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
@@ -1231,7 +1252,7 @@
       "Amount": 200000.00,
       "Communication": null,
       "AccountType": "other",
-      "Reason": null,
+      "Reason": "Thu thêm",
       "LoaiThuChiId": "f20b282e-351f-4bed-92b8-08d9735e06f5",
       "LoaiThuChi": {
         "Id": "f20b282e-351f-4bed-92b8-08d9735e06f5",
@@ -1239,20 +1260,22 @@
       },
       "PartnerType": "employee",
       "Partner": {
-        "Id": "9fe4aeca-9ac8-4a8f-127b-08d96ec504cd",
-        "Name": "Bác sĩ A",
-        "DisplayName": "[NV00001] Bác sĩ A",
+        "DisplayName": "[KH0007] Khách hàng A",
+        "Name": "Khách hàng A",
         "Gender": "male",
-        "GenderConvertcom": "Nam",
-        "BirthMonth": null,
-        "BirthDay": null,
-        "BirthYear": null,
-        "JobTitle": null,
-        "MedicalHistory": null,
-        "Categories": [],
-        "MemberLevel": null
+        "Email": "khachhanga@gmail.com",
+        "Phone": "0369835014",
+        "BirthYear": 1995,
+        "Age": "26",
+        "Street": "246/16 Độc Lập",
+        "WardName": "Phường Tân Thành",
+        "DistrictName": "Quận Tân Phú",
+        "CityName": "Thành phố Hồ Chí Minh"
       },
       "Agent": null,
+      "CreatedBy": {
+        "Name": "Nguyễn Văn A"
+      },
       "IsAccounting": false
     }
   },

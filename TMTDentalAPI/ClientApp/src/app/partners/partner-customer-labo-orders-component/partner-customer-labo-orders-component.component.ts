@@ -37,10 +37,10 @@ export class PartnerCustomerLaboOrdersComponentComponent implements OnInit {
   canUpdateSaleOrder: boolean = false;
   canReadLaboWarranty: boolean = false;
 
-  constructor(private laboOrderService: LaboOrderService, 
-    private route: ActivatedRoute, private modalService: NgbModal, 
-      private printService: PrintService,
-      private checkPermissionService: CheckPermissionService,
+  constructor(private laboOrderService: LaboOrderService,
+    private route: ActivatedRoute, private modalService: NgbModal,
+    private printService: PrintService,
+    private checkPermissionService: CheckPermissionService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -120,7 +120,7 @@ export class PartnerCustomerLaboOrdersComponentComponent implements OnInit {
 
   printLabo(item: any) {
     this.laboOrderService.getPrint(item.id).subscribe((result: any) => {
-      this.printService.printHtml(result);
+      this.printService.printHtml(result.html);
     });
   }
 
@@ -155,7 +155,7 @@ export class PartnerCustomerLaboOrdersComponentComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  checkRole(){
+  checkRole() {
     this.canUpdateSaleOrder = this.checkPermissionService.check(['Basic.SaleOrder.Update']);
     this.canReadLaboWarranty = this.checkPermissionService.check(['Labo.LaboWarranty.Read']);
   }

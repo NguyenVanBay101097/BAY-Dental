@@ -1,132 +1,80 @@
-﻿<div class="d-flex mb-2">
-    {{ if company.logo != "" && company.logo != null}}
-    <img class="img-fluid me-3 w-20" src="{{company.logo}}" alt="{{company.name}}">
-    {{ end }}
+﻿<table border="0" cellpadding="0" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="width:100px"><img alt="{{o.company.name}}" class="img-fuild" src="{{o.company.logo}}" style="width:150px" /></td>
+            <td>
+                <p style="margin-left:20px">
+                    <strong>{{o.company.name}}</strong><br />
+                    Địa chỉ: {{o.company.address}}<br />
+                    ĐT: {{o.company.phone}}<br />
+                    Email: {{o.company.email}}
+                </p>
+            </td>
+        </tr>
+    </tbody>
+</table>
 
-    <div>
-        <div class="text-xl font-semibold">{{company.name}}</div>
-        {{if company.address != ""}}
+<h3 style="text-align:center">PHIẾU THU</h3>
 
-        <div>Địa chỉ: {{company.address}}</div>
+<div style="text-align:center">Ngày {{o.date_created.day}} tháng {{o.date_created.month}} năm {{o.date_created.year}}</div>
 
-        {{ end }}
-
-        {{ if company.phone}}
-
-        <div>ĐT: {{company.phone}}</div>
-
-        {{ end }}
-
-        {{if company.email }}
-
-        <div>Email: {{company.email}}</div>
-
-        {{ end }}
-
-    </div>
+<div style="text-align:center">
+    <strong>Số: {{o.name}}</strong><br />
 </div>
-<div class="text-center mb-3">
-    <div class="text-3xl font-semibold">PHIẾU THU</div>
-    <div>Ngày {{date_created.day}} tháng {{date_created.month}} năm {{date_created.year}} </div>
-    <div class="font-semibold">Số: {{name}}</div>
-</div>
-<div class="o_form_view mb-2">
-    <div class="o_group">
-        <table class="o_group o_inner_group">
-            <tbody>
-                <tr>
-                    <td colspan="1" class="o_td_label">
-                        <label class="o_form_label o_form_label_help">
-                            <span>Người nộp</span>
-                        </label>
-                    </td>
-                    <td colspan="1" style="width: 100%;">
-                        {{partner_name}}
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="1" class="o_td_label">
-                        <label class="o_form_label o_form_label_help">
-                            Địa chỉ
-                        </label>
-                    </td>
-                    <td colspan="1" style="width: 100%;">
-                        {{address}}
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="1" class="o_td_label">
-                        <label class="o_form_label o_form_label_help">
-                            <span>Loại thu</span>
-                        </label>
-                    </td>
-                    <td colspan="1" style="width: 100%;">
-                        {{loai_thu_chi_name}}
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="1" class="o_td_label">
-                        <label class="o_form_label o_form_label_help">
-                            Số tiền
-                        </label>
-                    </td>
-                    <td colspan="1" style="width: 100%;">
-                        {{amount | math.format "N0" "vi-VN"}}
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="1" class="o_td_label">
-                        <label class="o_form_label o_form_label_help">
-                            Phương thức
-                        </label>
-                    </td>
-                    <td colspan="1" style="width: 100%;">
-                        {{journal_name}}
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="1" class="o_td_label">
-                        <label class="o_form_label o_form_label_help">
-                            Bằng chữ
-                        </label>
-                    </td>
-                    <td colspan="1" style="width: 100%;">
-                        {{amount_text}}
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="1" class="o_td_label">
-                        <label class="o_form_label o_form_label_help">
-                            Nội dung
-                        </label>
-                    </td>
-                    <td colspan="1" style="width: 100%;">
-                        {{reason}}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-<div class="d-flex">
-    <div class="col">
-        <div class="text-center">
-            <span class="font-semibold"> Người lập phiếu</span> <br />
-            <i>(Ký, họ tên)</i> <br />
-            <span></span> <br />
-            <span></span> <br />
-            <span></span> <br />
-            <span class="font-semibold">{{created_by_name ? (created_by_name | string.upcase) : "" }}</span>
-        </div>
-    </div>
-    <div class="col">
-        <div class="text-center">
-            <span class="font-semibold">Người nộp</span> <br />
-            <i>(Ký, họ tên)</i> <br />
-            <span></span> <br />
-            <span></span> <br />
-            <span></span> <br />
-            <span class="font-semibold">{{partner_name ? (partner_name | string.upcase) : ""}}</span>
-        </div>
-    </div>
-</div>
+
+<table border="0" cellpadding="4" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="width:150px"><strong>Người nộp</strong></td>
+            <td>{{o.partner?.name}}</td>
+        </tr>
+        <tr>
+            <td style="width:150px"><strong>Địa chỉ</strong></td>
+            <td>{{o.partner?.address}}</td>
+        </tr>
+        <tr>
+            <td style="width:150px"><strong>Loại thu</strong></td>
+            <td>{{o.loai_thu_chi.name}}</td>
+        </tr>
+        <tr>
+            <td style="width:150px"><strong>Số tiền</strong></td>
+            <td>{{o.amount | math.format "n0"}}</td>
+        </tr>
+        <tr>
+            <td style="width:150px"><strong>Phương thức</strong></td>
+            <td>{{o.journal.name}}</td>
+        </tr>
+        <tr>
+            <td style="width:150px"><strong>Bằng chữ</strong></td>
+            <td>{{o.amount_text}}</td>
+        </tr>
+        <tr>
+            <td style="width:150px"><strong>Nội dung</strong></td>
+            <td>{{o.reason}}</td>
+        </tr>
+    </tbody>
+</table>
+
+
+<table border="0" cellpadding="0" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="text-align:center">
+                <strong>Người lập phiếu</strong><br />
+                <em>(Ký, họ tên)</em><br />
+                <br />
+                <br />
+                <br />
+                <strong>{{o.created_by?.name | string.upcase}}</strong>
+            </td>
+            <td style="text-align:center">
+                <strong>Người nộp</strong><br />
+                <em>(Ký, họ tên)</em><br />
+                <br />
+                <br />
+                <br />
+                <strong>{{o.partner?.name}}</strong>
+            </td>
+        </tr>
+    </tbody>
+</table>
