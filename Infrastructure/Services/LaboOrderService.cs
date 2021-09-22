@@ -35,7 +35,8 @@ namespace Infrastructure.Services
                 x.Partner.Name.Contains(val.Search) ||
                 x.Partner.NameNoSign.Contains(val.Search) ||
                 x.Partner.Ref.Contains(val.Search) ||
-                x.SaleOrderLine.Order.Name.Contains(val.Search));
+                x.SaleOrderLine.Order.Name.Contains(val.Search) ||
+                x.WarrantyCode.Contains(val.Search));
 
             if (val.CustomerId.HasValue)
             {
@@ -45,6 +46,15 @@ namespace Infrastructure.Services
             if (val.SaleOrderLineId.HasValue)
             {
                 query = query.Where(x => x.SaleOrderLineId == val.SaleOrderLineId);
+            }
+
+            if (val.DateExportFrom.HasValue)
+                query = query.Where(x => x.DateExport >= val.DateExportFrom);
+
+            if (val.DateExportTo.HasValue)
+            {
+                var dateOrderTo = val.DateExportTo.Value.AbsoluteEndOfDate();
+                query = query.Where(x => x.DateExport <= dateOrderTo);
             }
 
             if (!string.IsNullOrEmpty(val.State))

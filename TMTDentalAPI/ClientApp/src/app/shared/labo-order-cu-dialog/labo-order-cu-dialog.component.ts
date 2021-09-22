@@ -135,7 +135,10 @@ export class LaboOrderCuDialogComponent implements OnInit {
   get indicatedFC() { return this.myForm.get('indicated'); }
   get noteFC() { return this.myForm.get('note'); }
   get technicalNoteFC() { return this.myForm.get('technicalNote'); }
-
+  get productId() {return this.myForm.get('productId').value};
+  get laboFinishLineId() {return this.myForm.get('laboFinishLineId').value};
+  get laboBiteJointId() {return this.myForm.get('laboBiteJointId').value};
+  get laboBridgeId() {return this.myForm.get('laboBridgeId').value};
   validateWarrantyCode(
     control: AbstractControl
   ): Observable<ValidationErrors | null> {
@@ -247,22 +250,28 @@ export class LaboOrderCuDialogComponent implements OnInit {
     laboPaged.type2 = 'labo';
     this.productService.autocomplete2(laboPaged).subscribe(res => {
       this.labos = res;
+      console.log(res);
+      
     });
     //load labofinishline
     const finishPaged = new LaboFinishLinePageSimple();
     this.finishLineService.autoComplete(finishPaged).subscribe((res: any) => {
       this.finishlines = res;
+      console.log(res);
+      
     });
     //load bitejoint
     const biteJointPaged = new LaboFinishLinePageSimple();
     this.biteJointService.autoComplete(biteJointPaged).subscribe((res: any) => {
       this.biteJoints = res;
+      console.log(res);
 
     });
     //load bridge
     const bridgePaged = new LaboBridgePageSimple();
     this.bridgeService.autoComplete(bridgePaged).subscribe((res: any) => {
       this.bridges = res;
+      console.log(res);
     });
     //load attach
     const attachPaged = new ProductFilter();
@@ -270,6 +279,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
     attachPaged.type2 = 'labo_attach';
     this.productService.autocomplete2(attachPaged).subscribe(res => {
       this.attachs = res;
+      console.log(res);
     });
   }
 
@@ -293,6 +303,13 @@ export class LaboOrderCuDialogComponent implements OnInit {
 
   getAmountTotal() {
     return this.priceUnitFC.value * this.quantityFC.value;
+  }
+
+  getItem(arr: any[],id:any){
+    var item = arr.find(x => x.id == id);
+    if (item)
+      return item.name;
+    return '';
   }
 
   isAttachSelected(attach: ProductSimple) {

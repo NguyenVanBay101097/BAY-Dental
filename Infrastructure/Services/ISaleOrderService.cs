@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Models;
+using ApplicationCore.Models.PrintTemplate;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -95,5 +96,7 @@ namespace Infrastructure.Services
         Task<RevenueReportPrintVM<SaleOrderRevenueReport>> GetRevenueReportPrint(SaleOrderRevenueReportPaged val);
         Task<GetPrintManagementRes> GetPrintManagement(SaleOrderPaged val);
         Task<IEnumerable<GetExcelManagementItemRes>> ExportManagementExcel(SaleOrderPaged val);
+
+        Task<IEnumerable<SaleOrder>> GetPrintTemplate(IEnumerable<Guid> ids);
     }
 }

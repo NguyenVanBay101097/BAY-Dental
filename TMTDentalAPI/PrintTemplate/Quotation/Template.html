@@ -1,220 +1,137 @@
-﻿<div class="">
-    <div class="d-flex mb-2">
-        {{ if company.logo != "" && company.logo != null }}
-            <img class="img-fluid me-3 w-20" src="{{ company.logo }}" alt="{{ company.name }}">
-        {{ end }}
+﻿<table border="0" cellpadding="0" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="width:100px"><img alt="{{o.company.name}}" class="img-fuild" src="{{o.company.logo}}" style="width:150px" /></td>
+            <td>
+                <p style="margin-left:20px">
+                    <strong>{{o.company.name}}</strong><br />
+                    Địa chỉ: {{o.company.address}}<br />
+                    ĐT: {{o.company.phone}}<br />
+                    Email: {{o.company.email}}
+                </p>
+            </td>
+        </tr>
+    </tbody>
+</table>
 
-        <div>
-            <div class="text-xl font-semibold">{{ company.name }}</div>
-            {{ if company.address != "" }}
-                <div>Địa chỉ: {{ company.address }}</div>
-            {{ end }}
-            {{ if company.phone }}
-                <div>ĐT: {{ company.phone }}</div>
-            {{ end }}
-            {{ if company.email }}
-                <div>Email: {{ company.email }}</div>
-            {{ end }}
-        </div>
-    </div>
-    <div class="text-center">
-        <div class="text-3xl font-semibold mt-4">BÁO GIÁ DỊCH VỤ</div>
-        <div>Ngày {{ date.now.day }} tháng {{ date.now.month }} năm {{ date.now.year }}</div>
-        <div class="font-semibold mb-2">Số: {{ name }}</div>
-    </div>
-    <div class="o_form_view">
-        <div class="o_group mt-0 mb-0">
-            <div class="d-flex">
-                <table class="o_group o_inner_group o_group_col_6">
-                    <tbody>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label o_form_label_help">
-                                    Khách hàng
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                {{partner.display_name}}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label o_form_label_help">
-                                    Điện thoại
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                {{partner.phone}}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label o_form_label_help">
-                                    Địa chỉ
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                {{partner.address}}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label o_form_label_help">
-                                    Ghi chú
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                {{note}}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <table class="o_group o_inner_group o_group_col_6">
-                    <tbody>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <div class="o_form_label o_form_label_help">
-                                    Ngày báo giá
-                                </div>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                <div class="o_field_widget">
-                                    {{date_quotation | date.to_string '%d/%m/%Y'}}
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label o_form_label_help">
-                                    Người báo giá
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                {{employee.name}}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label o_form_label_help">
-                                    Số ngày áp dụng
-                                </label>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                {{date_applies}} ngày
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <div class="o_form_label o_form_label_help">
-                                    Ngày hết hạn
-                                </div>
-                            </td>
-                            <td colspan="1" style="width: 100%;">
-                                <div class="o_field_widget">
-                                    {{date_end_quotation | date.to_string '%d/%m/%Y'}}
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div>
-        <div class="text-lg font-semibold mb-1">DANH SÁCH DỊCH VỤ BÁO GIÁ</div>
-        <table class="table table-sm table-bordered mb-1">
-            <thead>
-                <tr>
-                    <th>Dịch vụ</th>
-                    <th class="text-left">Số lượng</th>
-                    <th class="text-left">Đơn giá</th>
-                    <th class="text-left">Thành tiền</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{ for line in lines }}
-                    <tr>
-                        <td>{{ line.name }}</td>
-                        <td class="text-right">{{ line.qty | math.format "#,###.##" "vi" }}</td>
-                        <td class="text-right">{{ line.sub_price - line.amount_discount_total | math.format "#,###.##" "vi" }}</td>
-                        <td class="text-right">{{ line.amount | math.format "#,###.##" "vi" }}</td>
-                    </tr>
-                {{ end }}
-            </tbody>
-        </table>
-        <div class="o_form_view float-right">
-            <table class="o_group o_inner_group">
-                <tbody>
-                    <tr>
-                        <td colspan="1" class="o_td_label pr-3">
-                            <label class="o_form_label mb-2">
-                                Tổng tiền
-                            </label>
-                        </td>
-                        <td colspan="1" class="text-right pe-0">
-                            <h5 class="o_form_field o_form_field_number">
-                                {{ total_amount | math.format "#,###.##" "vi" }}
-                            </h5>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="clearfix"></div>
-    </div>
-    {{ if payments }}
-        <div>
-            <div class="text-lg font-semibold mb-1">TIẾN ĐỘ THANH TOÁN</div>
-            <table class="table table-sm table-bordered">
-                <thead>
-                    <tr>
-                        <th>Tiến độ</th>
-                        <th>Thanh toán</th>
-                        <th>Ngày thanh toán</th>
-                        <th>Số tiền cần thanh toán</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{ for payment in payments }}
-                    <tr>
-                        <td>{{ payment.sequence }}</td>
-                        <td class="text-right">
-                            {{ if payment.discount_percent_type ==  "percent" }}
-                            {{ payment.payment | math.format "#,###.##" "vi" }} %
-                            {{else}}
-                            {{ payment.payment | math.format "#,###.##" "vi" }}
-                            {{ end }}
-                        </td>
-                        <td>{{ payment.date | date.to_string '%d/%m/%Y' }}</td>
-                        <td>{{ payment.amount | math.format "#,###.##" "vi" }}</td>
-                    </tr>
-                    {{ end }}
-                </tbody>
-            </table>
-            <div class="clearfix"></div>
-        </div>
-    {{ end }}
-    <div class="d-flex mt-2">
-        <div class="col">
-            <div class="text-center">
-                <span></span><br />
-                <span class="font-semibold">Người báo giá</span> <br />
-                <i>(Ký, họ tên)</i> <br />
-                <span></span> <br />
-                <span></span> <br />
-                <span></span> <br />
-                <span class="font-semibold">{{ employee ? (employee.name | string.upcase) : "" }}</span>
-            </div>
-        </div>
-        <div class="col">
-            <div class="text-center">
-                <span class="font-semibold">Khách Hàng</span> <br />
-                <i>(Ký, họ tên)</i> <br />
-                <span></span> <br />
-                <span></span> <br />
-                <span></span> <br />
-                <span class="font-semibold">{{ partner ? (partner.name | string.upcase) : "" }}</span>
-            </div>
-        </div>
-    </div>
+<h3 style="text-align:center">BÁO GIÁ DỊCH VỤ</h3>
+
+<div style="text-align:center">Ngày {{date.now.day}} tháng {{date.now.month}} năm {{date.now.year}}</div>
+
+<div style="text-align:center"><strong>Số: {{o.name}}</strong></div>
+<br />
+<table border="0" cellpadding="2" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="width:120px"><strong>Khách hàng</strong></td>
+            <td>{{o.partner.display_name}}</td>
+            <td style="width:120px"><strong>Ngày báo giá</strong></td>
+            <td>{{o.date_quotation | date.to_string '%d/%m/%Y'}}</td>
+        </tr>
+        <tr>
+            <td style="width:120px"><strong>Điện thoại</strong></td>
+            <td>{{o.partner.phone}}</td>
+            <td style="width:120px"><strong>Người báo giá</strong></td>
+            <td>{{o.employee.name}}</td>
+        </tr>
+        <tr>
+            <td style="width:120px"><strong>Địa chỉ</strong></td>
+            <td>{{o.partner.address}}</td>
+            <td style="width:120px"><strong>Số ngày áp dụng</strong></td>
+            <td>{{o.date_applies}} ngày</td>
+        </tr>
+        <tr>
+            <td style="width:120px"><strong>Ghi chú</strong></td>
+            <td>{{o.note}}</td>
+            <td style="width:120px"><strong>Ngày hết hạn</strong></td>
+            <td>{{o.date_end_quotation | date.to_string '%d/%m/%Y'}}</td>
+        </tr>
+    </tbody>
+</table>
+
+<h6>
+    <br />
+    DANH SÁCH DỊCH VỤ BÁO GIÁ
+</h6>
+
+<table border="1" cellpadding="3" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td><strong>Dịch vụ</strong></td>
+            <td><strong>Số lượng</strong></td>
+            <td><strong>Đơn giá</strong></td>
+            <td style="text-align:right"><strong>Thành tiền</strong></td>
+        </tr>
+        <!--{{for line in o.lines }}-->
+        <tr>
+            <td>{{line.name}}</td>
+            <td>{{line.qty | math.format "N0" "vi" }}</td>
+            <td>{{line.sub_price - line.amount_discount_total | math.format "N0" "vi" }}</td>
+            <td style="text-align:right">{{line.amount | math.format "N0" "vi" }}</td>
+        </tr>
+        <!--{{end}}-->
+    </tbody>
+</table>
+
+
+<div style="text-align:right">
+    <table align="right" border="0" cellpadding="1" cellspacing="1">
+        <tbody>
+            <tr>
+                <td><strong>Tổng tiền</strong></td>
+                <td>{{o. total_amount | math.format "N0" "vi" }}</td>
+            </tr>
+        </tbody>
+    </table>
 </div>
+<!--{{if o.payments | array.size > 0}}-->
+
+<h6>
+    <br />
+    TIẾN ĐỘ THANH TOÁN
+</h6>
+
+<table border="1" cellpadding="3" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td><strong>Tiến độ</strong></td>
+            <td style="text-align:right"><strong>Thanh toán</strong></td>
+            <td><strong>Ngày thanh toán</strong></td>
+            <td style="text-align:right"><strong>Số tiền cần thanh toán</strong></td>
+        </tr>
+        <!--{{for payment in o.payments }}-->
+        <tr>
+            <td>{{payment.sequence }}</td>
+            <td style="text-align:right">{{(payment.payment | math.format "N0" "vi")}}{{payment.discount_percent_type ==  "percent" ? '%' : '' }}</td>
+            <td>{{payment.date | date.to_string '%d/%m/%Y' }}</td>
+            <td style="text-align:right">{{payment.amount | math.format "N0" "vi" }}</td>
+        </tr>
+        <!--{{end }}-->
+    </tbody>
+</table>
+<br />
+
+<!--{{end }}-->
+
+<table border="0" cellpadding="0" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="text-align:center">
+                <strong>Người báo giá</strong><br />
+                <em>(Ký, họ tên)</em><br />
+                <br />
+                <br />
+                <br />
+                <strong>{{o.employee?.name | string.upcase}}</strong>
+            </td>
+            <td style="text-align:center">
+                <strong>Khách hàng</strong><br />
+                <em>(Ký, họ tên)</em><br />
+                <br />
+                <br />
+                <br />
+                <strong>{{o.partner?.name}}</strong>
+            </td>
+        </tr>
+    </tbody>
+</table>

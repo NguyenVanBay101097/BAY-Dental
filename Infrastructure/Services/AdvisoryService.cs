@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
+using ApplicationCore.Models.PrintTemplate;
 using ApplicationCore.Specifications;
 using ApplicationCore.Utilities;
 using AutoMapper;
@@ -325,6 +326,60 @@ namespace Infrastructure.Services
             }).ToListAsync();
 
             res.Advisories = advisories;        
+
+            return res;
+        }
+
+        public async Task<AdvisoryPrintTemplate> PrintTemplate(IEnumerable<Guid> ids)
+        {
+            var _partnerObj = GetService<IPartnerService>();
+            var _companyObj = GetService<ICompanyService>();
+
+
+            var res = new AdvisoryPrintTemplate();
+            var partnerId = await SearchQuery(x => ids.Contains(x.Id)).GroupBy(x => x.CustomerId).Select(x => x.Key).FirstOrDefaultAsync();
+            var companyId = await SearchQuery(x => ids.Contains(x.Id)).GroupBy(x => x.CompanyId).Select(x => x.Key).FirstOrDefaultAsync();
+
+            res.Partner = await _partnerObj.SearchQuery(x => x.Id == partnerId).Select(x => new PartnerPrintTemplate
+            {
+                BirthYear = x.BirthYear,
+                DisplayName = x.DisplayName,
+                Name = x.Name,
+                Phone = x.Phone,
+                Email = x.Email,
+                CityName = x.CityName,
+                DistrictName = x.DistrictName,
+                WardName = x.WardName,
+                Street = x.Street,
+            }).FirstOrDefaultAsync();
+
+            res.Company = await _companyObj.SearchQuery(x => x.Id == companyId).Select(x => new CompanyPrintTemplate
+            {
+                Name = x.Name,
+                Email = x.Email,
+                Phone = x.Phone,
+                Logo = x.Logo,
+                PartnerCityName = x.Partner.CityName,
+                PartnerDistrictName = x.Partner.DistrictName,
+                PartnerWardName = x.Partner.WardName,
+                PartnerStreet = x.Partner.Street,
+            }).FirstOrDefaultAsync();
+
+            var advisories = await SearchQuery(x => ids.Contains(x.Id)).Select(x => new AdvisoryItemPrintTemplate
+            {
+                Date = x.Date,
+                Employee = x.Employee != null ? new EmployeePrintTemplate
+                {
+                    Id = x.Employee.Id,
+                    Name = x.Employee.Name,
+                } : null,
+                ToothType = x.ToothType,
+                Tooths = String.Join(",", x.AdvisoryToothRels.Select(x => x.Tooth.Name)),
+                Diagnosis = x.AdvisoryToothDiagnosisRels.Any() ? String.Join(",", x.AdvisoryToothDiagnosisRels.Select(x => x.ToothDiagnosis.Name)) : null,
+                Services = x.AdvisoryProductRels.Any() ? String.Join(",", x.AdvisoryProductRels.Select(x => x.Product.Name)) : null
+            }).ToListAsync();
+
+            res.Advisories = advisories;
 
             return res;
         }

@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,8 @@ namespace Umbraco.Web.Mapping
             CreateMap<ToaThuoc, ToaThuocBasic>();
 
             CreateMap<ToaThuoc, ToaThuocPrintViewModel>();
+
+            CreateMap<ToaThuoc, ToaThuocPrintTemplate>();
 
             CreateMap<ToaThuocSave, ToaThuoc>()
                 .ForMember(x => x.Lines, x => x.Ignore());

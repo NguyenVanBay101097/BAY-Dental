@@ -1,5 +1,7 @@
-﻿using System;
+﻿using ApplicationCore.Utilities;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace ApplicationCore.Entities
@@ -67,5 +69,19 @@ namespace ApplicationCore.Entities
         /// </summary>
         public Guid? MoveId { get; set; }
         public AccountMove Move { get; set; }
+
+        /// <summary>
+        /// Số tiền bằng chữ
+        /// </summary>
+        [NotMapped]
+        public string AmountText
+        {
+            get
+            {
+
+                return AmountToText.amount_to_text(Amount);
+            }
+            set { }
+        }
     }
 }

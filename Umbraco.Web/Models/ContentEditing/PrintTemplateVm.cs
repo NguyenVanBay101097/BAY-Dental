@@ -8,4 +8,14 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public string Type { get; set; }
     }
+
+    public class PrintTemplateBasic
+    {
+        public Guid Id { get; set; }
+
+        /// <summary>
+        /// html
+        /// </summary>
+        public string Content { get; set; }
+    }
 }

@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Entities;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -22,9 +24,12 @@ namespace TMTDentalAPI.Controllers
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly IViewRenderService _viewRenderService;
         private readonly IPrintTemplateConfigService _printTemplateConfigService;
+        private readonly IPrintTemplateService _printTemplateService;
+        private readonly IIRModelDataService _modelDataService;
 
         public MedicineOrdersController(IMedicineOrderService medicineOrderService, IMapper mapper, IUnitOfWorkAsync unitOfWork,
-            IViewRenderService viewRenderService,
+            IViewRenderService viewRenderService, IPrintTemplateService printTemplateService,
+            IIRModelDataService modelDataService,
             IPrintTemplateConfigService printTemplateConfigService)
         {
             _medicineOrderService = medicineOrderService;
@@ -32,6 +37,8 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork = unitOfWork;
             _viewRenderService = viewRenderService;
             _printTemplateConfigService = printTemplateConfigService;
+            _printTemplateService = printTemplateService;
+            _modelDataService = modelDataService;
         }
 
         [HttpGet]
@@ -123,13 +130,25 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Medicine.MedicineOrder.Read")]
         public async Task<IActionResult> GetPrint(Guid id)
         {
-            //get viewmodel và truyền vào view
+            //tim trong bảng config xem có dòng nào để lấy ra template
+            var printConfig = await _printTemplateConfigService.SearchQuery(x => x.Type == "tmp_medicine_order" && x.IsDefault)
+                .Include(x => x.PrintPaperSize)
+                .Include(x => x.PrintTemplate)
+                .FirstOrDefaultAsync();
 
-            var res = await _medicineOrderService.GetPrint(id);
-            var obj = _mapper.Map<MedicineOrderPrint>(res);
-            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() {Obj = obj, Type = "tmp_medicine_order" });
+            PrintTemplate template = printConfig != null ? printConfig.PrintTemplate : null;
+            PrintPaperSize paperSize = printConfig != null ? printConfig.PrintPaperSize : null;
+            if (template == null)
+            {
+                //tìm template mặc định sử dụng chung cho tất cả chi nhánh, sử dụng bảng IRModelData hoặc bảng IRConfigParameter
+                template = await _modelDataService.GetRef<PrintTemplate>("base.print_template_medicine_order");
+                if (template == null)
+                    throw new Exception("Không tìm thấy mẫu in mặc định");
+            }
 
-            return Ok(new PrintData() { html = html });
+            var result = await _printTemplateService.GeneratePrintHtml(template, new List<Guid>() { id }, paperSize);
+
+            return Ok(new PrintData() { html = result });
         }
     }
 }

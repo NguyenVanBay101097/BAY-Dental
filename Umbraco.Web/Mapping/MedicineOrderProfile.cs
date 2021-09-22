@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,8 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.MedicineOrderLines, x => x.Ignore());
 
             CreateMap<MedicineOrder, MedicineOrderPrint>();
+
+            CreateMap<MedicineOrder, MedicineOrderPrintTemplate>();
 
         }
     }

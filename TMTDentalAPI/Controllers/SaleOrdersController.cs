@@ -37,13 +37,15 @@ namespace TMTDentalAPI.Controllers
         private readonly IViewRenderService _viewRenderService;
         private readonly IViewToStringRenderService _viewToStringRenderService;
         private readonly IPrintTemplateConfigService _printTemplateConfigService;
+        private readonly IPrintTemplateService _printTemplateService;
+        private readonly IIRModelDataService _modelDataService;
         private IConverter _converter;
 
         public SaleOrdersController(ISaleOrderService saleOrderService, IMapper mapper,
             IUnitOfWorkAsync unitOfWork, IDotKhamService dotKhamService,
             ICardCardService cardService, IProductPricelistService pricelistService,
             ISaleOrderLineService saleLineService, IViewRenderService viewRenderService, IConverter converter,
-        IViewToStringRenderService viewToStringRenderService, IPrintTemplateConfigService printTemplateConfigService)
+        IViewToStringRenderService viewToStringRenderService, IPrintTemplateConfigService printTemplateConfigService , IPrintTemplateService printTemplateService, IIRModelDataService modelDataService)
         {
             _saleOrderService = saleOrderService;
             _mapper = mapper;
@@ -56,6 +58,8 @@ namespace TMTDentalAPI.Controllers
             _viewToStringRenderService = viewToStringRenderService;
             _converter = converter;
             _printTemplateConfigService = printTemplateConfigService;
+            _modelDataService = modelDataService;
+            _printTemplateService = printTemplateService;
         }
 
         [HttpGet]
@@ -291,13 +295,25 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Basic.SaleOrder.Read")]
         public async Task<IActionResult> GetPrint(Guid id)
         {
-            var res = await _saleOrderService.GetPrint(id);
-            if (res == null)
-                return NotFound();
-            //res.OrderLines = res.OrderLines.OrderBy(x => x.Sequence);
-            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = res, Type = "tmp_sale_order" });
 
-            return Ok(new PrintData() { html = html });
+            //tim trong bảng config xem có dòng nào để lấy ra template
+            var printConfig = await _printTemplateConfigService.SearchQuery(x => x.Type == "tmp_sale_order" && x.IsDefault)
+                .Include(x => x.PrintPaperSize)
+                .Include(x => x.PrintTemplate)
+                .FirstOrDefaultAsync();
+
+            PrintTemplate template = printConfig != null ? printConfig.PrintTemplate : null;
+            PrintPaperSize paperSize = printConfig != null ? printConfig.PrintPaperSize : null;
+            if (template == null)
+            {
+                //tìm template mặc định sử dụng chung cho tất cả chi nhánh, sử dụng bảng IRModelData hoặc bảng IRConfigParameter
+                template = await _modelDataService.GetRef<PrintTemplate>("base.print_template_sale_order");
+                if (template == null)
+                    throw new Exception("Không tìm thấy mẫu in mặc định");
+            }
+
+            var result = await _printTemplateService.GeneratePrintHtml(template, new List<Guid>() { id }, paperSize);     
+            return Ok(new PrintData() { html = result });
         }
 
         private async Task SaveOrderLines(SaleOrderSave val, SaleOrder order)

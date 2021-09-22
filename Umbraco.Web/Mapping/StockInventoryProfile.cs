@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -29,6 +30,9 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<StockInventory, StockInventoryPrint>()
                 .ForMember(x=>x.DateCreated , x=>x.MapFrom(s=>s.Date));
+
+            CreateMap<StockInventory, StockInventoryPrintTemplate>()
+               .ForMember(x => x.DateCreated, x => x.MapFrom(s => s.Date));
 
         }
     }
