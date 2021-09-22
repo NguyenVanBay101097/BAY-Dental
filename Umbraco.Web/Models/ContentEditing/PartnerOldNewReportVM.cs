@@ -179,20 +179,21 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string WardName { get; set; }
         /// <summary>
-        /// Số lượng khách hàng cũ của phường/xã
-        /// </summary>
-        public decimal PartnerOldCount { get; set; }
-        /// <summary>
         /// Số lượng khách hàng mới của phường/xã
         /// </summary>
         public decimal PartnerNewCount { get; set; }
         /// <summary>
-        /// Doanh thu từ khách hàng cũ của phường/xã
+        /// Số lượng khách hàng cũ của phường/xã
         /// </summary>
-        public decimal PartnerOldRevenue { get; set; }
+        public decimal PartnerOldCount { get; set; }
         /// <summary>
         /// Doanh thu từ khách hàng mới của phường/xã
         /// </summary>
         public decimal PartnerNewRevenue { get; set; }
+
+        /// <summary>
+        /// Doanh thu từ khách hàng cũ của phường/xã
+        /// </summary>
+        public decimal PartnerOldRevenue { get; set; }
     }
 }
