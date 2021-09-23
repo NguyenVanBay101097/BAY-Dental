@@ -145,7 +145,7 @@ namespace TMTDentalAPI.Controllers
                             numberTeeth += te.Name +", ";
                         }
                     }
-                    worksheet.Cells[row, 6].Value = numberTeeth;
+                    worksheet.Cells[row, 6].Value = item.ToothType == "manual" ? numberTeeth : GetToothType(item.ToothType); ;
                     worksheet.Cells[row, 7].Value = item.Diagnostic;
                    
                     worksheet.Cells[row, 8].Value = item.PriceSubTotal;
@@ -154,7 +154,7 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 9].Style.Numberformat.Format = ((item.PriceSubTotal) - (item.AmountResidual ?? 0)) > 0 && item.State != "draft" ? "#,###" : "0"; 
                     worksheet.Cells[row, 10].Value = item.AmountResidual;
                     worksheet.Cells[row, 10].Style.Numberformat.Format = (item.AmountResidual ?? 0) > 0 ? "#,###" : "0";
-                    worksheet.Cells[row, 11].Value = item.State == "done" ? "Hoàn thành" : (item.State == "sale" ? "Đang điều trị" : "");
+                    worksheet.Cells[row, 11].Value = GetSaleOrderState(item.State);
                     row++;
                 }
 
@@ -304,7 +304,29 @@ namespace TMTDentalAPI.Controllers
 
         }
 
-       
+        private string GetToothType(string toothType)
+        {
+            if (toothType == "whole_jaw")
+                return "Nguyên hàm";
+            else if (toothType == "upper_jaw")
+                return "Hàm trên";
+            else
+                return "Hàm dưới";
+        }
+
+        private string GetSaleOrderState(string state)
+        {
+            if (state == "done")
+                return "Hoàn thành";
+            else if (state == "sale")
+                return "Đang điều trị";
+            else if (state == "cancel")
+                return "Ngừng điều trị";
+            else
+                return "";
+        }
+
+
     }
 
 }

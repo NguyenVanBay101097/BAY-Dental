@@ -87,8 +87,8 @@ export class SaleOrderLineLaboOrdersDialogComponent implements OnInit {
 
   deleteLabo(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = 'Xóa phiếu labo';
-    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
+    modalRef.componentInstance.title = 'Xóa phiếu Labo';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa phiếu Labo?';
     modalRef.result.then(() => {
       this.laboOrderService.delete(item.id).subscribe(res => {
         this.loadLaboOrderList();

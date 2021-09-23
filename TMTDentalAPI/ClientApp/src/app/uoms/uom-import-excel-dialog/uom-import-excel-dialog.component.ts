@@ -12,7 +12,7 @@ import { UomService } from '../uom.service';
 export class UomImportExcelDialogComponent implements OnInit {
   fileBase64 = '';
   type: string;
-  errors: string[];
+  errors: string[] = [];
   title: string = "Import đơn vị tính";
   isUpdate: boolean = false;
   constructor(private uomService: UomService, public activeModal: NgbActiveModal, private notificationService: NotificationService) { }
