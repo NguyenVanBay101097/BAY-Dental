@@ -37,28 +37,16 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         //     "removeformat,resize,save,menubutton,scayt,selectall,showblocks," +
         //     "showborders,smiley,sourcearea,specialchar,stylescombo,tab,table," +
         //     "tabletools,templates,toolbar,undo,wsc,wysiwygarea",
-        language: 'vi',
-        defaultLanguage: 'vi',
         height: 650,
-        contentsCss: ['/css/print.css'],
         // fullPage: true,//this support html full page
         // allowedContent: true,
-        entities: false,
-        basicEntities: false,
+        // basicEntities: false,
         // forceSimpleAmpersand: true,
         // enterMode: 2,//this support not format string to p tag
         // protectedSource: [/{{[\s\S]*?}}/g] // this support loop code
         // skin: 'kama'
         // plugins: ['EasyImage'],
-        extraPlugins: 'btgrid',
-        toolbar: [
-            { name: 'document', items: ['Source'] },
-            { name: 'styles', items: ['Format', 'Font', 'FontSize'] },
-            { name: 'colors', items: ['TextColor', 'BGColor'] },
-            { name: 'insert', items: ['Image', 'Table', 'HorizontalRule', 'Smiley', 'btgrid'] },
-            { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline'] },
-            { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'] }
-        ]
+
     };
     contentPrev = "";
     paperSizes: PrintPaperSizeBasic[] = [];

@@ -101,7 +101,7 @@
         <!--{{for payment in o.payments }}-->
         <tr>
             <td>{{payment.sequence }}</td>
-            <td style="text-align:right">{{(payment.payment | math.format "N0")}}{{payment.discount_percent_type ==  "percent" ? '%' : '' }}</td>
+            <td style="text-align:right">{{(payment.payment | math.format "N0")}}{{payment.discount_percent_type == "percent" ? '%' : '' }}</td>
             <td>{{payment.date | date.to_string '%d/%m/%Y' }}</td>
             <td style="text-align:right">{{payment.amount | math.format "N0"}}</td>
         </tr>
