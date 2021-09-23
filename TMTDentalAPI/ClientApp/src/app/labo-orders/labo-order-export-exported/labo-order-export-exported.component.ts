@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -11,6 +11,7 @@ import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/labo-order-cu-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { ExportLaboPaged, LaboOrderService } from '../labo-order.service';
 
 @Component({
@@ -24,6 +25,7 @@ export class LaboOrderExportExportedComponent implements OnInit {
   limit = 20;
   skip = 0;
   loading = false;
+  pagerSettings: any;
   search: string;
   searchUpdate = new Subject<string>();
   dateExportFrom: Date;
@@ -41,8 +43,9 @@ export class LaboOrderExportExportedComponent implements OnInit {
     private modalService: NgbModal,
     private notificationService: NotificationService,
     private checkPermissionService: CheckPermissionService,
-    private partnerService: PartnerService
-  ) { }
+    private partnerService: PartnerService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.checkRole();
@@ -105,7 +108,7 @@ export class LaboOrderExportExportedComponent implements OnInit {
   searchSupplier(search?: string){
     var val = new PartnerPaged();
     val.offset = 0;
-    this.limit = 1000;
+    val.limit = 1000;
     val.search = search || '';
     val.supplier = true;
     val.active = true;
@@ -134,6 +137,7 @@ export class LaboOrderExportExportedComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

@@ -164,6 +164,7 @@ namespace Umbraco.Web.Models.ContentEditing
     public class ProductMedicineImportExcelRow
     {
         public string Name { get; set; }
+        public string DefaultCode { get; set; }
         public string CategName { get; set; }
         public decimal ListPrice { get; set; }
         public string UoM { get; set; }
