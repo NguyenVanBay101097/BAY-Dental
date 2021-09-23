@@ -9,7 +9,7 @@ export const types: { text: string, value: string }[] = [
     { text: 'Khách hàng hoàn tạm ứng', value: 'tmp_partner_refund' },
     // { text: 'Biên lai thanh toán nhà cung cấp', value: 'tmp_supplier_payment' },
     // { text: 'Biên lai nhà cung cấp hoàn tiền', value: 'tmp_supplier_payment_inbound' },
-    { text: 'Phiếu thu', value: 'tmp_phieu_thu' },
+    // { text: 'Phiếu thu', value: 'tmp_phieu_thu' },
     // { text: 'Phiếu chi', value: 'tmp_phieu_chi' },
     { text: 'Phiếu thu công nợ khách hàng', value: 'tmp_customer_debt' },
     // { text: 'Phiếu chi hoa hồng', value: 'tmp_agent_commission' },

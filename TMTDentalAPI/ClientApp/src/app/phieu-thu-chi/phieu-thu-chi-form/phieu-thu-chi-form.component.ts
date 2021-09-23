@@ -261,7 +261,7 @@ export class PhieuThuChiFormComponent implements OnInit {
 
   printPhieu(id: string) {
     this.phieuThuChiService.getPrint(id).subscribe((data: any) => {
-      this.printService.printHtml(data.html);
+      this.printService.printHtml(data);
     });
   }
 

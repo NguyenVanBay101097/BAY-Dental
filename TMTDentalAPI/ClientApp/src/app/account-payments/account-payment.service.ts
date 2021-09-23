@@ -123,13 +123,13 @@ export class AccountPaymentService {
         return this.http.post(this.baseApi + this.apiUrl + '/Post', ids);
     }
 
-    getPrint(id: string) {
-        return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetPrint');
-    }
-
     // getPrint(id: string) {
-    //     return this.http.get(this.baseApi + this.apiPrintUrl +  '/Print' + `?id=${id}`, { responseType: 'text' });
+    //     return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetPrint');
     // }
+
+    getPrint(id: string) {
+        return this.http.get(this.baseApi + this.apiPrintUrl + '/Print' + `?id=${id}`, { responseType: 'text' });
+    }
 
     supplierDefaultGet(val: AccountPaymentSupplierDefaultGetRequest) {
         return this.http.post(this.baseApi + this.apiUrl + '/SupplierDefaultGet', val);

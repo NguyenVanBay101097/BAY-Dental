@@ -914,7 +914,7 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit, OnC
 
   printPayment(payment) {
     this.paymentService.getPrint(payment.accountPaymentId).subscribe((result: any) => {
-      this.accountPaymentPrintComponent.print(result.html);
+      this.accountPaymentPrintComponent.print(result);
     });
   }
 
