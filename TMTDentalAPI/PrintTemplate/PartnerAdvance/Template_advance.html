@@ -1,7 +1,7 @@
 ﻿<table border="0" cellpadding="0" cellspacing="1" style="width:100%">
     <tbody>
         <tr>
-            <td style="width:100px"><img alt="{{o.company.name}}" class="img-fuild" src="{{o.company.logo}}" style="width:150px" /></td>
+            <td style="width:100px"><img alt="{{o.company.name}}" class="img-fuild" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
             <td>
                 <p style="margin-left:20px">
                     <strong>{{o.company.name}}</strong><br />
@@ -24,11 +24,11 @@
     <tbody>
         <tr>
             <td style="width:150px"><strong>Người nộp tiền</strong></td>
-            <td>{{o.partner.name}}</td>
+            <td>{{o.partner?.name}}</td>
         </tr>
         <tr>
             <td style="width:150px"><strong>Phương thức thanh toán</strong></td>
-            <td style="vertical-align:top">{{o.journal.name}}</td>
+            <td style="vertical-align:top">{{o.journal?.name}}</td>
         </tr>
         <tr>
             <td style="width:150px"><strong>Số tiền</strong></td>

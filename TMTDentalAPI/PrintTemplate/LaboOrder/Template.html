@@ -1,7 +1,7 @@
 ﻿<table border="0" cellpadding="0" cellspacing="1" style="width:100%">
 	<tbody>
 		<tr>
-			<td style="width:100px"><img alt="{{o.company.name}}" class="img-fuild" src="{{o.company.logo}}" style="width:150px" /></td>
+			<td style="width:100px"><img alt="{{o.company.name}}" class="img-fuild" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
 			<td>
 				<p style="margin-left:20px">
 					<strong>{{o.company.name}}</strong><br />
@@ -25,25 +25,45 @@
 
 <h6>THÔNG TIN CHUNG</h6>
 
-<table border="0" cellpadding="2" cellspacing="1" style="width:100%">
+<table border="0" cellpadding="0" cellspacing="1" style="width:100%">
 	<tbody>
 		<tr>
-			<td style="width:150px"><strong>Bác sĩ</strong></td>
-			<td>{{o.sale_order_line?.employee?.name}}</td>
-			<td style="width:150px"><strong>NCC Labo</strong></td>
-			<td>{{o.partner?.name}}</td>
-		</tr>
-		<tr>
-			<td style="width:150px"><strong>Số phiếu điều trị</strong></td>
-			<td>{{o.sale_order_line?.order?.name}}</td>
-			<td style="width:150px"><strong>Ngày gửi</strong></td>
-			<td>{{o.date_order | date.to_string '%d/%m/%Y' }}</td>
-		</tr>
-		<tr>
-			<td style="width:150px"><strong>Khách hàng</strong></td>
-			<td>{{o.customer?.name}}</td>
-			<td style="width:150px"><strong>Ngày nhận dự kiến</strong></td>
-			<td>{{o.date_planned | date.to_string '%d/%m/%Y' }}</td>
+			<td style="width:50%">
+				<table border="0" cellpadding="3" cellspacing="1" style="width:100%">
+					<tbody>
+						<tr>
+							<td style="width:150px"><strong>Bác sĩ</strong></td>
+							<td>{{o.sale_order_line?.employee?.name}}</td>
+						</tr>
+						<tr>
+							<td style="width:150px"><strong>Số phiếu điều trị</strong></td>
+							<td>{{o.sale_order_line?.order?.name}}</td>
+						</tr>
+						<tr>
+							<td style="width:150px"><strong>Khách hàng</strong></td>
+							<td>{{o.customer?.name}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</td>
+			<td style="width:50%">
+				<table border="0" cellpadding="3" cellspacing="1" style="width:100%">
+					<tbody>
+						<tr>
+							<td style="width:150px"><strong>NCC Labo</strong></td>
+							<td>{{o.partner?.name}}</td>
+						</tr>
+						<tr>
+							<td style="width:150px"><strong>Ngày gửi</strong></td>
+							<td>{{o.date_order | date.to_string '%d/%m/%Y' }}</td>
+						</tr>
+						<tr>
+							<td style="width:150px"><strong>Ngày nhận dự kiến</strong></td>
+							<td>{{o.date_planned | date.to_string '%d/%m/%Y' }}</td>
+						</tr>
+					</tbody>
+				</table>
+			</td>
 		</tr>
 	</tbody>
 </table>
@@ -140,13 +160,29 @@
 
 		<h6>THÔNG TIN BẢO HÀNH</h6>
 
-		<table border="0" cellpadding="3" cellspacing="1" style="width:100%">
+		<table border="0" cellpadding="0" cellspacing="1" style="width:100%">
 			<tbody>
 				<tr>
-					<td style="width:150px"><strong>Mã bảo hành</strong></td>
-					<td>{{o.warranty_code}}</td>
-					<td style="width:150px"><strong>Hạn bảo hành</strong></td>
-					<td>{{o.warranty_period | date.to_string '%d/%m/%Y'}}</td>
+					<td style="width:50%">
+						<table border="0" cellpadding="2" cellspacing="1" style="width:100%">
+							<tbody>
+								<tr>
+									<td style="width:150px"><strong>Mã bảo hành</strong></td>
+									<td>{{o.warranty_code}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</td>
+					<td style="width:50%">
+						<table border="0" cellpadding="2" cellspacing="1" style="width:100%">
+							<tbody>
+								<tr>
+									<td style="width:150px"><strong>Hạn bảo hành</strong></td>
+									<td>{{o.warranty_period | date.to_string '%d/%m/%Y'}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</td>
 				</tr>
 			</tbody>
 		</table>

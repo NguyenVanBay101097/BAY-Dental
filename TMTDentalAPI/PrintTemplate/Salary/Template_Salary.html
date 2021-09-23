@@ -1,7 +1,7 @@
 ﻿<table border="0" cellpadding="5" cellspacing="1" style="width:100%">
     <tbody>
         <tr>
-            <td style="width:100px"><img alt="{{o.company.name}}" class="img-fuild" src="{{o.company.logo}}" style="width:150px" /></td>
+            <td style="width:100px"><img alt="{{o.company.name}}" class="img-fuild" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
             <td>
                 <strong>{{o.company.name}}</strong><br />
                 Địa chỉ: {{o.company.address}}<br />
@@ -14,7 +14,7 @@
 
 <h3 style="text-align:center">PHIẾU THANH TOÁN LƯƠNG NHÂN VIÊN</h3>
 
-<div style="text-align:center">Ngày {{o.payslip_run.date.day}} tháng {{o.payslip_run.date.month}} năm {{o.payslip_run.date.year}}</div>
+<div style="text-align:center">Ngày {{o.payslip_run?.date.day}} tháng {{o.payslip_run?.date?.month}} năm {{o.payslip_run?.date?.year}}</div>
 
 <br />
 <table border="0" cellpadding="1" cellspacing="1" style="width:100%">

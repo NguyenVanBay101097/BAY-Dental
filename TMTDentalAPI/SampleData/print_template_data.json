@@ -448,11 +448,15 @@
         "IsActive": true,
         "AmountPromotionToOrder": 0.0,
         "AmountPromotionToOrderLine": 0.0,
-        "Date": "2021-09-03T20:28:00"
+        "Date": "2021-09-03T20:28:00",
+        "product": {
+          "name": "Răng sứ Titan",
+          "firm": "Thiên an Firm"
+        }
       },
       "State": "confirmed",
-      "WarrantyCode": null,
-      "WarrantyPeriod": null,
+      "WarrantyCode": "BH122",
+      "WarrantyPeriod": "2021-09-10T00:00:00",
       "LaboOrderToothRel": [
         {
           "Tooth": {
@@ -460,7 +464,11 @@
           }
         }
       ],
-      "TeethOrderLine": []
+      "TeethOrderLine": [],
+      "color": "đỏ",
+      "indicated": "chỉ định labo",
+      "note": "ghi chú labo",
+      "technicalnote": "ghi chú kỹ thuật labo"
     }
   },
   {
