@@ -11,6 +11,7 @@ using Scriban;
 using Scriban.Runtime;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -108,13 +109,13 @@ namespace Infrastructure.Services
         public async Task<string> PrintTest(string content, Guid paperSizeId, object data)
         {
             var printPaperSize = await _printPaperSizeService.SearchQuery(x => x.Id == paperSizeId).FirstOrDefaultAsync();
-            var layout = File.ReadAllText("PrintTemplate/Shared/Layout.html");
+            var layoutHtml = File.ReadAllText("PrintTemplate/Shared/Layout.html");
+            var template = Template.Parse(layoutHtml);
+            var renderLayout = await template.RenderAsync(new { o = printPaperSize });
 
             var renderContent = await RenderTemplate(data, content);
-            var renderLayout = await RenderTemplate(printPaperSize, layout);
 
             var result = ConnectLayoutForContent(renderLayout, renderContent);
-
             return result;
         }
 
@@ -123,8 +124,16 @@ namespace Infrastructure.Services
             var userObj = GetService<IUserService>();
             var user = await userObj.GetCurrentUser();
 
+            var scriptObject = new ScriptObject();
+            scriptObject.Add("o", data);
+            scriptObject.Add("u", user);
+
+            var context = new TemplateContext();
+            context.PushCulture(CultureInfo.CurrentCulture);
+            context.PushGlobal(scriptObject);
+
             var template = Template.Parse(content);
-            var result = await template.RenderAsync(new { o = data , u = user});
+            var result = await template.RenderAsync(context);
             return result;
         }
 

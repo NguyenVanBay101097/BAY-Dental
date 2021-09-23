@@ -42,7 +42,7 @@
             </tr>
             <tr>
                 <td>Số tiền</td>
-                <td>{{o.amount | math.format "N0" "vi-VN"}}</td>
+                <td>{{o.amount | math.format "N0"}}</td>
             </tr>
             <tr>
                 <td>Nội dung</td>
@@ -62,6 +62,8 @@
                     </p>
                     <br />
                     <br />
+                    <br />
+                    <br />
                     <p style="text-align:center"><strong>{{o.order.partner.name | string.upcase}}</strong></p>
                 </td>
                 <td>
@@ -69,6 +71,8 @@
                         <strong>Nhân viên</strong><br />
                         <em>(Ký, họ tên)</em>
                     </p>
+                    <br />
+                    <br />
                     <br />
                     <br />
                     <p style="text-align:center"><strong>{{u.name | string.upcase}}</strong></p>

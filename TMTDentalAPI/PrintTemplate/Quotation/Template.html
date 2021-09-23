@@ -19,7 +19,7 @@
 <div style="text-align:center">Ngày {{date.now.day}} tháng {{date.now.month}} năm {{date.now.year}}</div>
 
 <div style="text-align:center"><strong>Số: {{o.name}}</strong></div>
-<br />
+
 <table border="0" cellpadding="2" cellspacing="1" style="width:100%">
     <tbody>
         <tr>
@@ -65,21 +65,20 @@
         <!--{{for line in o.lines }}-->
         <tr>
             <td>{{line.name}}</td>
-            <td>{{line.qty | math.format "N0" "vi" }}</td>
-            <td>{{line.sub_price - line.amount_discount_total | math.format "N0" "vi" }}</td>
-            <td style="text-align:right">{{line.amount | math.format "N0" "vi" }}</td>
+            <td>{{line.qty | math.format "N0" }}</td>
+            <td>{{line.sub_price - line.amount_discount_total | math.format "N0" }}</td>
+            <td style="text-align:right">{{line.amount | math.format "N0" }}</td>
         </tr>
         <!--{{end}}-->
     </tbody>
 </table>
-
-
+<br />
 <div style="text-align:right">
     <table align="right" border="0" cellpadding="1" cellspacing="1">
         <tbody>
             <tr>
                 <td><strong>Tổng tiền</strong></td>
-                <td>{{o. total_amount | math.format "N0" "vi" }}</td>
+                <td>{{o. total_amount | math.format "N0" }}</td>
             </tr>
         </tbody>
     </table>
@@ -102,36 +101,37 @@
         <!--{{for payment in o.payments }}-->
         <tr>
             <td>{{payment.sequence }}</td>
-            <td style="text-align:right">{{(payment.payment | math.format "N0" "vi")}}{{payment.discount_percent_type ==  "percent" ? '%' : '' }}</td>
+            <td style="text-align:right">{{(payment.payment | math.format "N0")}}{{payment.discount_percent_type == "percent" ? '%' : '' }}</td>
             <td>{{payment.date | date.to_string '%d/%m/%Y' }}</td>
-            <td style="text-align:right">{{payment.amount | math.format "N0" "vi" }}</td>
+            <td style="text-align:right">{{payment.amount | math.format "N0"}}</td>
         </tr>
         <!--{{end }}-->
     </tbody>
 </table>
-<br />
-
 <!--{{end }}-->
 
-<table border="0" cellpadding="0" cellspacing="1" style="width:100%">
-    <tbody>
-        <tr>
-            <td style="text-align:center">
-                <strong>Người báo giá</strong><br />
-                <em>(Ký, họ tên)</em><br />
-                <br />
-                <br />
-                <br />
-                <strong>{{o.employee?.name | string.upcase}}</strong>
-            </td>
-            <td style="text-align:center">
-                <strong>Khách hàng</strong><br />
-                <em>(Ký, họ tên)</em><br />
-                <br />
-                <br />
-                <br />
-                <strong>{{o.partner?.name}}</strong>
-            </td>
-        </tr>
-    </tbody>
-</table>
+<div>
+    <br />
+    <table border="0" cellpadding="0" cellspacing="1" style="width:100%">
+        <tbody>
+            <tr>
+                <td style="text-align:center">
+                    <strong>Người báo giá</strong><br />
+                    <em>(Ký, họ tên)</em><br />
+                    <br />
+                    <br />
+                    <br />
+                    <strong>{{o.employee?.name | string.upcase}}</strong>
+                </td>
+                <td style="text-align:center">
+                    <strong>Khách hàng</strong><br />
+                    <em>(Ký, họ tên)</em><br />
+                    <br />
+                    <br />
+                    <br />
+                    <strong>{{o.partner?.name}}</strong>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

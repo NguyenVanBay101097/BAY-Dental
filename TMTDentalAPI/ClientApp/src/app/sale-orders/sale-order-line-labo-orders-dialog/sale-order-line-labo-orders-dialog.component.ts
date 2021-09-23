@@ -81,7 +81,7 @@ export class SaleOrderLineLaboOrdersDialogComponent implements OnInit {
 
   printLabo(item: any) {
     this.laboOrderService.getPrint(item.id).subscribe((result: any) => {
-      this.printService.printHtml(result);
+      this.printService.printHtml(result.html);
     });
   }
 
@@ -94,7 +94,7 @@ export class SaleOrderLineLaboOrdersDialogComponent implements OnInit {
         this.loadLaboOrderList();
       }, (err) => {
       });
-    }, () => {});
+    }, () => { });
   }
 }
 

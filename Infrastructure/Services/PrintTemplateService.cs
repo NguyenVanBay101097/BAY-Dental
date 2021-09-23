@@ -8,8 +8,10 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Scriban;
+using Scriban.Runtime;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -72,9 +74,16 @@ namespace Infrastructure.Services
             var results = "";
             foreach (var item in data)
             {
+                var scriptObject = new ScriptObject();
+                scriptObject.Add("o", item);
+                scriptObject.Add("u", user);
+
+                var context = new TemplateContext();
+                context.PushCulture(CultureInfo.CurrentCulture);
+                context.PushGlobal(scriptObject);
                 //làm sao page break
                 var template = Template.Parse(self.Content);
-                var result = await template.RenderAsync(new { o = item, u = user });
+                var result = await template.RenderAsync(context);
                 var tmp = $"<div class=\"page-break\">{result}</div>";
                 results += tmp;
             }
@@ -115,6 +124,7 @@ namespace Infrastructure.Services
                           .Include(x => x.LaboFinishLine).Include(x => x.SaleOrderLine)
                           .Include(x => x.Product)
                           .Include(x => x.LaboOrderToothRel).ThenInclude(s => s.Tooth)
+                          .Include(x => x.LaboOrderProductRel).ThenInclude(s => s.Product)
                           .ToListAsync();
 
                         return res;
@@ -186,6 +196,9 @@ namespace Infrastructure.Services
                             .Include(x => x.SalaryPayment)
                             .ToListAsync();
 
+                        var display = _mapper.Map<HrPayslipDisplay>(res.FirstOrDefault());
+                        var json = JsonConvert.SerializeObject(display);
+
                         return res;
                     }
                 case "partner.advance":
@@ -219,8 +232,7 @@ namespace Infrastructure.Services
                                 .Include(x => x.Order.Partner)
                                 .Include(x => x.CreatedBy)
                                 .Include(x => x.JournalLines).ThenInclude(x => x.Journal)
-                                .ToListAsync();
-
+                                .ToListAsync();                     
                         return payments;
                     }
                 case "supplier.payment":

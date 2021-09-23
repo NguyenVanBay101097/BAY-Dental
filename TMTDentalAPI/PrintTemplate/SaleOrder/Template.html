@@ -26,15 +26,15 @@
     <tbody>
         <tr>
             <td style="width:120px"><strong>Khách hàng</strong></td>
-            <td>{{o.partner.name}}</td>
+            <td>{{o.partner?.name}}</td>
         </tr>
         <tr>
             <td style="width:120px"><strong>Điện thoại</strong></td>
-            <td>{{o.partner.phone}}</td>
+            <td>{{o.partner?.phone}}</td>
         </tr>
         <tr>
             <td style="width:120px"><strong>Địa chỉ</strong></td>
-            <td>{{o.partner.address}}</td>
+            <td>{{o.partner?.address}}</td>
         </tr>
     </tbody>
 </table>
@@ -55,10 +55,10 @@
         <!--{{for line in o.order_lines}}-->
         <tr>
             <td>{{line.product.name}}</td>
-            <td style="text-align:right">{{(line.product_uomqty ? line.product_uomqty : 0) | math.format "N0" "vi-VN"}}</td>
-            <td style="text-align:right">{{line.price_unit | math.format "N0" "vi-VN"}}</td>
-            <td style="text-align:right">{{line.amount_discount_total | math.format "N0" "vi-VN" }}</td>
-            <td style="text-align:right">{{line.price_sub_total | math.format "N0" "vi-VN" }}</td>
+            <td style="text-align:right">{{(line.product_uomqty ? line.product_uomqty : 0) | math.format "N0" }}</td>
+            <td style="text-align:right">{{line.price_unit | math.format "N0" }}</td>
+            <td style="text-align:right">{{line.amount_discount_total | math.format "N0"  }}</td>
+            <td style="text-align:right">{{line.price_sub_total | math.format "N0" }}</td>
         </tr>
         <!--{{end}}-->
     </tbody>
@@ -70,15 +70,15 @@
     <tbody>
         <tr>
             <td><strong>Tổng tiền</strong></td>
-            <td>{{o.amount_total | math.format "N0" "vi-VN" }}</td>
+            <td>{{o.amount_total | math.format "N0"  }}</td>
         </tr>
         <tr>
             <td><strong>Đã thanh toán</strong></td>
-            <td>{{o.total_paid | math.format "N0" "vi-VN" }}</td>
+            <td>{{o.total_paid | math.format "N0"}}</td>
         </tr>
         <tr>
             <td><strong>Còn lại</strong></td>
-            <td>{{o.residual | math.format "N0" "vi-VN" }}</td>
+            <td>{{o.residual | math.format "N0" }}</td>
         </tr>
     </tbody>
 </table>
@@ -102,10 +102,10 @@
             <td>{{item.payment.name}}</td>
             <!--{{if item.payment.id == sop.payment_rels[0].payment.id}}-->
             <td rowspan="{{sop.payments | array.size}}">{{item.payment.payment_date | date.to_string '%d/%m/%Y'}}</td>
-            <td rowspan="{{sop.payments | array.size}}" style="text-align:right">{{sop.amount | math.format "N0" "vi-VN" }}</td>
+            <td rowspan="{{sop.payments | array.size}}" style="text-align:right">{{sop.amount | math.format "N0" }}</td>
             <!--{{end}}-->
             <td>{{item.payment.journal.name}}</td>
-            <td style="text-align:right">{{item.payment.amount | math.format "N0" "vi-VN"}}</td>
+            <td style="text-align:right">{{item.payment.amount | math.format "N0"}}</td>
         </tr>
         <!--{{end}}--><!--{{end}}-->
     </tbody>
@@ -157,11 +157,13 @@
                 <br />
                 <br />
                 <br />
+                <br />
                 <strong>{{u.name | string.upcase}}</strong>
             </td>
             <td style="text-align:center">
                 <strong>Khách hàng</strong><br />
                 <em>(Ký, họ tên)</em><br />
+                <br />
                 <br />
                 <br />
                 <br />

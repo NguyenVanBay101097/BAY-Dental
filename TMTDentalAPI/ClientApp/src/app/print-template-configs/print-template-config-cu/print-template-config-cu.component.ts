@@ -37,27 +37,16 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         //     "removeformat,resize,save,menubutton,scayt,selectall,showblocks," +
         //     "showborders,smiley,sourcearea,specialchar,stylescombo,tab,table," +
         //     "tabletools,templates,toolbar,undo,wsc,wysiwygarea",
-        language: 'vi',
-        defaultLanguage: 'vi',
         height: 650,
-        contentsCss: ['/css/print.css'],
         // fullPage: true,//this support html full page
         // allowedContent: true,
-        entities: false,
-        basicEntities: false,
+        // basicEntities: false,
         // forceSimpleAmpersand: true,
         // enterMode: 2,//this support not format string to p tag
         // protectedSource: [/{{[\s\S]*?}}/g] // this support loop code
         // skin: 'kama'
         // plugins: ['EasyImage'],
-        toolbar: [
-            { name: 'document', items: ['Source'] },
-            { name: 'styles', items: ['Format', 'Font', 'FontSize'] },
-            { name: 'colors', items: ['TextColor', 'BGColor'] },
-            { name: 'insert', items: ['Image', 'Table', 'HorizontalRule', 'Smiley'] },
-            { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline'] },
-            { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'] }
-        ]
+
     };
     contentPrev = "";
     paperSizes: PrintPaperSizeBasic[] = [];
@@ -110,7 +99,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
             modalRef.componentInstance.title = 'Sử dụng mẫu mặc định';
             modalRef.componentInstance.body = 'Nội dung sẽ chuyển về mẫu mặc định, bạn có chắc chắn?';
             modalRef.result.then(() => {
-                this.printTemplateService.getPrintTemplateDefault({type}).subscribe((res: any) => {
+                this.printTemplateService.getPrintTemplateDefault({ type }).subscribe((res: any) => {
                     this.formGroup.get('content').setValue(res.content);
                     this.onGenerate();
                 });
@@ -164,7 +153,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         if (this.formGroup.invalid) {
             return false;
         }
-        
+
         var val = this.formGroup.value;
         this.configService.generate(val).subscribe((res: any) => {
             this.contentPrev = res;
@@ -209,7 +198,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
 
     onAddKeyWord() {
         const modalRef = this.modalService.open(KeywordListDialogComponent, { size: 'xl', scrollable: true, windowClass: 'o_technical_modal', keyboard: true, backdrop: 'static' });
-        modalRef.componentInstance.boxKeyWordSource = constantData.keyWords[this.filter.type];
+        modalRef.componentInstance.boxKeyWordSource = constantData.keyWords[this.formGroup.get('type').value];
         modalRef.result.then((res) => {
             if (res) {
                 this.editor.instance.insertText(res.value);

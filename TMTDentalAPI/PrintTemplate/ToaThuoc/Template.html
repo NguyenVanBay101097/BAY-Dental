@@ -25,14 +25,14 @@
         <tbody>
             <tr>
                 <td style="width:120px"><strong>Khách hàng</strong></td>
-                <td>{{o.partner.display_name}}</td>
+                <td>{{o.partner?.display_name}}</td>
                 <td> </td>
                 <td style="width:120px"><strong>Giới tính</strong> </td>
-                <td>{{o.partner.get_gender}}</td>
+                <td>{{o.partner?.get_gender}}</td>
             </tr>
             <tr>
                 <td style="width:120px"><strong>Địa chỉ</strong></td>
-                <td>{{o.partner.address}}</td>
+                <td>{{o.partner?.address}}</td>
                 <td> </td>
                 <td style="width:120px"><strong>Tuổi</strong></td>
                 <td>{{o.partner?.get_age}}</td>
@@ -91,6 +91,8 @@
                     </p>
                     <br />
                     <br />
+                    <br />
+                    <br />
                     <p style="text-align:center"><strong>{{o.employee ? (o.employee.name | string.upcase) : "" }}</strong></p>
                 </td>
                 <td>
@@ -98,6 +100,8 @@
                         <strong>Bệnh nhân</strong><br />
                         <em>(Ký, họ tên)</em>
                     </p>
+                    <br />
+                    <br />
                     <br />
                     <br />
                     <p style="text-align:center"><strong>{{o.partner ? (o.partner.name | string.upcase) : ""}}</strong></p>

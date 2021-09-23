@@ -92,7 +92,7 @@ export class SalaryPaymentListV2Component implements OnInit {
 
   printItem(id) {
     this.accountPaymentService.getPrint(id).subscribe((result: any) => {
-      this.printService.printHtml(result.html);
+      this.printService.printHtml(result);
     });
   }
 

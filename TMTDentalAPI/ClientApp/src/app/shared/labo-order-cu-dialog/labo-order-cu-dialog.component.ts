@@ -47,10 +47,10 @@ export class LaboOrderCuDialogComponent implements OnInit {
   bridges: LaboBridgeBasic[] = [];
   attachs: ProductSimple[] = [];
   listType = {
-    'up_right':[],
-    'up_left':[],
-    'down_right':[],
-    'down_left':[]
+    'up_right': [],
+    'up_left': [],
+    'down_right': [],
+    'down_left': []
   };
   constructor(private fb: FormBuilder,
     public activeModal: NgbActiveModal,
@@ -82,7 +82,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
       amountTotal: 0,
       indicated: null,
       note: null,
-      warrantyCode: [null,Validators.compose([]), this.validateWarrantyCode.bind(this)],
+      warrantyCode: [null, Validators.compose([]), this.validateWarrantyCode.bind(this)],
       warrantyPeriodObj: null,
       productId: [null],
       product: [null],
@@ -122,7 +122,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
   get dateOrderObjFC() { return this.myForm.get('dateOrderObj'); }
   get datePlannedObjFC() { return this.myForm.get('datePlannedObj'); }
   get warrantyPeriodObjFC() { return this.myForm.get('warrantyPeriodObj'); }
-  get warrantyCodeFC() {return this.myForm.get('warrantyCode');}
+  get warrantyCodeFC() { return this.myForm.get('warrantyCode'); }
   get saleOrderLine() { return this.laboOrder.saleOrderLine; }
   get teethFA() { return this.myForm.get('teeth') as FormArray; }
   get teeth() { return this.myForm.get('teeth').value; }
@@ -145,14 +145,14 @@ export class LaboOrderCuDialogComponent implements OnInit {
     control: AbstractControl
   ): Observable<ValidationErrors | null> {
     const val = control.value;
-    if(!val || (val && val.trim() == '')) {
+    if (!val || (val && val.trim() == '')) {
       return of(null);
     }
     return timer(500).pipe(
       switchMap(() =>
-        this.laboOrderService.checkExistWarrantyCode({code: control.value, id: this.id}).pipe(
+        this.laboOrderService.checkExistWarrantyCode({ code: control.value, id: this.id }).pipe(
           map(ex => {
-            if(ex == false) return null; 
+            if (ex == false) return null;
             return ({ exist: true })
           })
         )
@@ -249,7 +249,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
       }
       result.quantity = 1;
       this.patchValue(result);
-    (result.saleOrderLine && result.saleOrderLine.product )? this.priceUnitFC.patchValue(result.saleOrderLine.product.laboPrice) : '';
+      (result.saleOrderLine && result.saleOrderLine.product) ? this.priceUnitFC.patchValue(result.saleOrderLine.product.laboPrice) : '';
     });
   }
 
@@ -488,10 +488,10 @@ export class LaboOrderCuDialogComponent implements OnInit {
     }
   }
 
-  printLaboOrder(){
-    if(this.id){
-      this.laboOrderService.getPrint(this.id).subscribe((result:any) => {
-        this.printService.printHtml(result);
+  printLaboOrder() {
+    if (this.id) {
+      this.laboOrderService.getPrint(this.id).subscribe((result: any) => {
+        this.printService.printHtml(result.html);
       })
     }
   }
