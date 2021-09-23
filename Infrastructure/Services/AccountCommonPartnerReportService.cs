@@ -19,7 +19,7 @@ namespace Infrastructure.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
-        public AccountCommonPartnerReportService(IMapper mapper, IHttpContextAccessor httpContextAccessor, 
+        public AccountCommonPartnerReportService(IMapper mapper, IHttpContextAccessor httpContextAccessor,
             UserManager<ApplicationUser> userManager)
         {
             _mapper = mapper;
@@ -173,7 +173,7 @@ namespace Infrastructure.Services
                     ResultSelection = val.ResultSelection,
                     PartnerRef = value.PartnerRef,
                     Begin = begin,
-                    Debit = debit,  
+                    Debit = debit,
                     Credit = credit,
                     End = end,
                     PartnerName = value.PartnerName,
@@ -521,7 +521,7 @@ namespace Infrastructure.Services
                        PartnerRef = x.Key.PartnerRef,
                        PartnerPhone = x.Key.PartnerPhone,
                        Begin = x.Sum(s => s.Debit - s.Credit),
-                   }).Where(x=> x.Begin != 0).ToListAsync();
+                   }).Where(x => x.Begin != 0).ToListAsync();
             }
 
             var query2 = amlObj._QueryGet(dateFrom: date_from, dateTo: date_to, companyId: val.CompanyId);
@@ -618,6 +618,112 @@ namespace Infrastructure.Services
 
         }
 
+        public async Task<IEnumerable<ReportPartnerAdvance>> ReportPartnerAdvance(ReportPartnerAdvanceFilter val)
+        {
+            var amlObj = GetService<IAccountMoveLineService>();
+
+            var dateFrom = val.DateFrom;
+            if (dateFrom.HasValue)
+                dateFrom = dateFrom.Value.AbsoluteBeginOfDate();
+
+            var dateTo = val.DateTo;
+            if (dateTo.HasValue)
+                dateTo = dateTo.Value.AbsoluteEndOfDate();
+
+            var query = amlObj._QueryGet(dateFrom: dateFrom, dateTo: dateTo, state: "posted", companyId: val.CompanyId);
+
+            query = query.Where(x => x.Account.Code == "KHTU");
+
+            if (!string.IsNullOrWhiteSpace(val.Search))
+            {
+                query = query.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search) ||
+                x.Partner.Phone.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
+            }
+
+            var res = new List<ReportPartnerAdvance>();
+            res = await query
+                   .GroupBy(x => new
+                   {
+                       PartnerId = x.Partner.Id,
+                       PartnerName = x.Partner.Name,
+                       PartnerPhone = x.Partner.Phone,
+                   })
+                   .Select(x => new ReportPartnerAdvance
+                   {
+                       PartnerId = x.Key.PartnerId,
+                       PartnerName = x.Key.PartnerName,
+                       PartnerPhone = x.Key.PartnerPhone,
+                       Debit = x.Sum(s => s.Credit),
+                       Credit = x.Sum(s => s.Debit)
+                   }).ToListAsync();
+
+            if (dateFrom.HasValue)
+            {
+                foreach (var item in res)
+                {
+                    var query1 = amlObj._QueryGet(dateFrom: dateFrom, state: "posted", companyId: val.CompanyId, initBal: true);
+                    query1 = query1.Where(x => x.Account.Code == "KHTU" );
+                    query1 = query1.Where(x => x.PartnerId == item.PartnerId);
+                    var begin = await query1.SumAsync(x => x.Credit - x.Debit);
+                    item.Begin = begin;
+                }
+            }
+
+            foreach (var item in res)
+                item.End = item.Begin + (item.Debit - item.Credit);
+
+            return res;
+        }
+
+        public async Task<IEnumerable<ReportPartnerAdvanceDetail>> ReportPartnerAdvanceDetail(ReportPartnerAdvanceDetailFilter val)
+        {
+            var amlObj = GetService<IAccountMoveLineService>();
+
+            var dateFrom = val.DateFrom;
+            if (dateFrom.HasValue)
+                dateFrom = dateFrom.Value.AbsoluteBeginOfDate();
+
+            var dateTo = val.DateTo;
+            if (dateTo.HasValue)
+                dateTo = dateTo.Value.AbsoluteEndOfDate();
+
+            var query = amlObj._QueryGet(dateFrom: dateFrom, dateTo: dateTo, state: "posted", companyId: val.CompanyId);
+
+            query = query.Where(x => x.Account.Code == "KHTU");
+
+            if (val.PartnerId.HasValue)
+                query = query.Where(x => x.PartnerId == val.PartnerId);
+
+            var res = await query.Select(x => new ReportPartnerAdvanceDetail
+            {
+                Date = x.Date,
+                Debit = x.Credit,
+                Credit = x.Debit,
+                InvoiceOrigin = x.Move.InvoiceOrigin,
+                Ref = x.Ref,             
+            }).ToListAsync();
+
+            decimal begin = 0;
+            if (dateFrom.HasValue)
+            {
+                var query1 = amlObj._QueryGet(dateFrom: dateFrom, state: "posted", companyId: val.CompanyId, initBal: true);
+                query1 = query1.Where(x => x.Account.Code == "KHTU");
+                if (val.PartnerId.HasValue)
+                    query1 = query1.Where(x => x.PartnerId == val.PartnerId);
+                begin = await query1.SumAsync(x => x.Credit - x.Debit);
+            }
+
+            foreach (var item in res)
+            {
+                item.Begin = begin;
+                item.End = item.Begin + item.Debit - item.Credit;
+                begin = item.End;
+            }
+
+            return res;
+
+        }
+
         public async Task<ReportPartnerDebitSummaryRes> ReportPartnerDebitSummary(ReportPartnerDebitReq val)
         {
             var amlObj = GetService<IAccountMoveLineService>();
@@ -676,7 +782,7 @@ namespace Infrastructure.Services
 
             return result;
 
-        }
+        }     
 
         public async Task<IEnumerable<ReportPartnerDebitExcel>> ExportReportPartnerDebitExcel(ReportPartnerDebitReq val)
         {
