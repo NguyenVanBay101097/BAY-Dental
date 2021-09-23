@@ -68,12 +68,13 @@ export class PrintTemplateConfigCuComponent implements OnInit {
 
     ngOnInit() {
         this.formGroup = this.fb.group({
-            type: [null, Validators.required],
+            type: ['tmp_sale_order', Validators.required],
             printPaperSizeId: [null, Validators.required],
             content: ''
         });
 
         this.types = constantData.types;
+        this.onChangeType();
         this.loadPaperSizeList();
     }
 
@@ -133,7 +134,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         });
     }
 
-    onChangeType(e) {
+    onChangeType(e?) {
         var type = this.formGroup.get('type').value;
         if (type) {
             this.configService.getDisplay(type).subscribe((res: any) => {
@@ -163,6 +164,8 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     }
 
     onChangePaperSize(e) {
+        if (!e)
+            return;
         var val = {
             type: this.formGroup.get('type').value,
             printPaperSizeId: this.formGroup.get('printPaperSizeId').value,
