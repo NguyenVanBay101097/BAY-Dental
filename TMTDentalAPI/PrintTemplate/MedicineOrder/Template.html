@@ -18,7 +18,6 @@
 
 <div style="text-align:center"><strong>Số: {{o.name}}</strong></div>
 
-
 <table cellpadding="5" cellspacing="1" style="width:100%">
     <tbody>
         <tr>
@@ -35,8 +34,7 @@
         </tr>
     </tbody>
 </table>
-
-
+<br />
 <table border="1" cellpadding="2" cellspacing="0" style="width:100%">
     <thead>
         <tr>
@@ -57,14 +55,9 @@
             <td style="text-align:right">{{line.price | math.format "N0"}}</td>
             <td style="text-align:right">{{line.amount_total | math.format "N0"}}</td>
         </tr>
-
         <!--{{ end }}-->
     </tbody>
-    
-<
-    e>
 </table>
-
 
 <table cellpadding="1" cellspacing="1" style="width:100%">
     <tbody>
@@ -89,7 +82,6 @@
     </tbody>
 </table>
 
-
 <table border="0" cellpadding="0" cellspacing="1" style="width:100%">
     <tbody>
         <tr>
@@ -99,7 +91,6 @@
                     <em>(Ký, họ tên)</em>
                 </p>
 
-
                 <p style="text-align:center"><strong>{{o.employee ? (o.employee.name | string.upcase) : "" }}</strong></p>
             </td>
             <td>
@@ -107,7 +98,6 @@
                     <strong>Bệnh nhân</strong><br />
                     <em>(Ký, họ tên)</em>
                 </p>
-
 
                 <p style="text-align:center"><strong>{{o.partner ? (o.partner.name | string.upcase) : ""}}</strong></p>
             </td>
