@@ -139,7 +139,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
             this.configService.getDisplay(type).subscribe((res: any) => {
                 this.formGroup.get('printPaperSizeId').setValue(res.printPaperSizeId);
                 this.formGroup.get('content').setValue(res.printTemplateContent);
-                //this.onGenerate();
+                this.onGenerate();
             });
         }
     }

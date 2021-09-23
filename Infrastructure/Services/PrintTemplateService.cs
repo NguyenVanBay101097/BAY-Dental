@@ -125,6 +125,9 @@ namespace Infrastructure.Services
                           .Include(x => x.Product)
                           .Include(x => x.LaboOrderToothRel).ThenInclude(s => s.Tooth)
                           .Include(x => x.LaboOrderProductRel).ThenInclude(s => s.Product)
+                          .Include(x=> x.SaleOrderLine).ThenInclude(x=> x.Employee)
+                          .Include(x=> x.SaleOrderLine).ThenInclude(x=> x.Order)
+                          .Include(x=> x.SaleOrderLine).ThenInclude(x => x.Product)
                           .ToListAsync();
 
                         return res;

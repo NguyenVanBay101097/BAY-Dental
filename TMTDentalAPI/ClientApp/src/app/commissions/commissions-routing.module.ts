@@ -7,7 +7,7 @@ import { CommissionListV2Component } from './commission-list-v2/commission-list-
 const routes: Routes = [
   {
     path: '',
-    component: CommissionListComponent
+    component: CommissionListV2Component
   },
   {
     path: 'form',
