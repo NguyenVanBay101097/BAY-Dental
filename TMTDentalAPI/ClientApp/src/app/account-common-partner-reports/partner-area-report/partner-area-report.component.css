@@ -61,14 +61,19 @@
     width: calc(50% - .5rem);
     margin-bottom: 1rem;
     border: 1px solid #007bff;
+    cursor: pointer;
 }
 
-.card-item:first-of-type {
+.card-item:hover {
+    background: #CCE7FF;
+}
+
+.card-item.active {
     border: none !important;
     background: #CCE7FF;
 }
 
-.card-item:first-of-type .card-header {
+.card-item .card-header {
     background: transparent !important;
 }
 

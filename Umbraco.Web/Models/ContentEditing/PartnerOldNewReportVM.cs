@@ -164,6 +164,7 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid? CompanyId { get; set; }
         public string CityCode { get; set; }
+        public string DistrictCode { get; set; }
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
     }

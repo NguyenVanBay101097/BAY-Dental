@@ -27,6 +27,7 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
   dateTo: any;
   currentCompany: any;
   currentCity: any;
+  currentDistrictCode: any;
   dataSourceCities: Array<{ code: string; name: string }>;
   dataResultCities: Array<{ code: string; name: string }>;
   cityName: string = '';
@@ -130,8 +131,6 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
     this.loadCurrentCompany();
     this.loadDataFromApi();
     // this.loadPieChart();
-    this.loadDataReportByWard();
-    
   }
 
   ngAfterViewInit(){
@@ -156,6 +155,11 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
       });
       this.pieChartData = this.pieObjData.map(x => x.revenue);
       this.loadPieChart();
+
+      if (this.pieObjData && this.pieObjData.length > 0) {
+        this.currentDistrictCode = this.pieObjData[0].districtCode;
+        this.loadDataReportByWard();
+      }
     });
   }
 
@@ -419,7 +423,13 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
       // this.cityName = '';
       // this.currentCompany = this.companies ? this.companies[0] : {};
     }
-    
+  }
+
+  onSelectDistrict(event) {
+    if (event && event.districtCode != this.currentDistrictCode) {
+      this.currentDistrictCode = event.districtCode;
+      this.loadDataReportByWard();
+    }
   }
 
   onSearchDateChange(event) {
@@ -434,6 +444,7 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
     val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
     val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
     val.cityCode = this.currentCity ? this.currentCity.code || '' : '';
+    val.districtCode = this.currentDistrictCode || '';
     val.companyId = this.currentCompany ? this.currentCompany.id || '' : '';
     
     this.partnerOldNewRpService.reportByWard(val).subscribe((res: any) => {

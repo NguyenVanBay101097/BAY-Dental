@@ -218,6 +218,8 @@ namespace Infrastructure.Services
             }
             if (!string.IsNullOrEmpty(val.CityCode))
                 query = query.Where(x => x.Partner.CityCode == val.CityCode);
+            if (!string.IsNullOrEmpty(val.DistrictCode))
+                query = query.Where(x => x.Partner.DistrictCode == val.DistrictCode);
             if (val.DateFrom.HasValue)
                 query = query.Where(x => x.DateOrder.Date >= val.DateFrom.Value.AbsoluteBeginOfDate());
             if (val.DateTo.HasValue)

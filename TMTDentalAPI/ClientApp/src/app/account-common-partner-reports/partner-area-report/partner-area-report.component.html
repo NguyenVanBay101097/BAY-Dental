@@ -58,7 +58,9 @@
                     <div class="card">
                         <h5 class="text-primary card-title card-header mb-0">DANH SÁCH QUẬN/HUYỆN</h5>
                         <div class="card-body d-flex district-list">
-                            <div class="card card-item" *ngFor="let item of pieObjData">
+                            <div class="card card-item" *ngFor="let item of pieObjData"
+                                [class.active]="item.districtCode == this.currentDistrictCode"
+                                (click)="onSelectDistrict(item)">
                                 <h5 class="card-header border-0 text-center">{{item.districtName}}</h5>
                                 <div class="card-body">
                                     <div class="d-flex card-title">

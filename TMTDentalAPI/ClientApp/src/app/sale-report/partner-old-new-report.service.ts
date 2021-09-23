@@ -83,6 +83,7 @@ export class PartnerOldNewReportSumReq {
 export class PartnerOldNewReportByWardReq {
   companyId: string;
   cityCode: string;
+  districtCode: string;
   dateFrom: any;
   dateTo: any;
 }
