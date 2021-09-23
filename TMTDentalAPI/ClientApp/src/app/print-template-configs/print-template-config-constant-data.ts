@@ -43,15 +43,15 @@ let pipes =
     text: "Một số định dạng hỗ trợ",
     value: [
         { text: 'Ngày hôm nay', value: '{{date.now}}' },
-        { text: 'định dạng số', value: '| math.format "N0"' },
-        { text: 'định dạng ngày/tháng/năm', value: `| date.to_string '%d/%m/%Y'` },
-        { text: 'định dạng lấy ngày', value: `| date.to_string '%d'` },
-        { text: 'định dạng lấy tháng', value: `| date.to_string '%m'` },
-        { text: 'định dạng lấy năm', value: `| date.to_string '%Y'` },
-        { text: 'định dạng chữ hoa', value: '| string.upcase' },
-        { text: 'định dạng chữ thường', value: '| string.downcase' },
-        { text: 'định dạng danh sách', value: '{{for line in <Mã danh sách>}}\n<nội dung>\n{{end}}' },
-        { text: 'định dạng điều kiện', value: '{{if <điều kiện>}}\n<nội dung>\n{{else}}\n<nội dung>\n{{end}}' },
+        { text: 'Định dạng số', value: '| math.format "N0"' },
+        { text: 'Định dạng ngày/tháng/năm', value: `| date.to_string '%d/%m/%Y'` },
+        { text: 'Định dạng lấy ngày', value: `| date.to_string '%d'` },
+        { text: 'Định dạng lấy tháng', value: `| date.to_string '%m'` },
+        { text: 'Định dạng lấy năm', value: `| date.to_string '%Y'` },
+        { text: 'Định dạng chữ hoa', value: '| string.upcase' },
+        { text: 'Định dạng chữ thường', value: '| string.downcase' },
+        { text: 'Định dạng danh sách', value: '{{for line in <Mã danh sách>}}\n<nội dung>\n{{end}}' },
+        { text: 'Định dạng điều kiện', value: '{{if <điều kiện>}}\n<nội dung>\n{{else}}\n<nội dung>\n{{end}}' },
     ],
     links: [
         { text: 'Link tham khảo 1', value: `https://github.com/scriban/scriban/blob/master/doc/language.md` },
@@ -78,7 +78,7 @@ const keyWorDatas =
         {
             text: "Thông tin chung",
             value: [
-                { text: 'Tên khách hàng', value: '{{o.partner.name}}' },
+                { text: 'Họ tên khách hàng', value: '{{o.partner.name}}' },
                 { text: 'Địa chỉ khách hàng', value: '{{o.partner.address}}' },
                 { text: 'Tên bác sĩ', value: '{{o.employee.name}}' },
                 { text: 'Lời dặn bác sĩ', value: '{{o.toa_thuoc.note}}' },
@@ -119,7 +119,7 @@ const keyWorDatas =
                 { text: 'Lời dặn', value: '{{o.note}}' },
                 { text: 'Chấn đoán bệnh', value: '{{o.diagnostic}}' },
                 { text: 'Ngày tái khám', value: '{{o.re_examination_date}}' },
-                { text: 'Tên khách hàng', value: '{{o.partner.display_name}}' },
+                { text: 'Họ tên khách hàng', value: '{{o.partner.display_name}}' },
                 { text: 'Địa chỉ khách hàng', value: '{{o.partner.address}}' },
                 { text: 'Giới tính khách hàng', value: '{{o.partner.get_gender}}' },
                 { text: 'Tuổi khách hàng', value: '{{partner.get_age}}' },
@@ -159,7 +159,7 @@ const keyWorDatas =
             value: [
                 { text: 'Tên bác sĩ', value: '{{o.sale_order_line.employee.name}}' },
                 { text: 'Số phiếu điều trị', value: '{{o.sale_order_line.order.name }}' },
-                { text: 'Tên khách hàng', value: '{{o.customer.name}}' },
+                { text: 'Họ tên khách hàng', value: '{{o.customer.name}}' },
                 { text: 'Tên nhà cung cấp', value: '{{o.partner.name}}' },
                 { text: 'Ngày gửu', value: '{{o.date_order}}' },
                 { text: 'Ngày nhận dự kiến', value: '{{o.date_planned}}' },
@@ -247,7 +247,7 @@ const keyWorDatas =
                 { text: 'Số tiền thanh toán', value: '{{o.amount}}' },
                 { text: 'Số tiền bằng chữ', value: '{{o.amount_text}}' },
                 { text: 'Nội dung', value: '{{o.reason}}' },
-                { text: 'Tên khách hàng', value: '{{o.partner.display_name}}' },
+                { text: 'Họ tên khách hàng', value: '{{o.partner.display_name}}' },
                 { text: 'Địa chỉ khách hàng', value: '{{o.partner.address}}' },
                 { text: 'SĐT khách hàng', value: '{{o.partner.phone}}' },
                 { text: 'Người lập phiếu', value: '{{u.name}}' },
@@ -552,7 +552,7 @@ const keyWorDatas =
         {
             text: 'Thông tin chung',
             value: [
-                { text: 'Tên khách hàng', value: '{{o.partner.name}}' },
+                { text: 'Họ tên khách hàng', value: '{{o.partner.name}}' },
                 { text: 'SĐT khách hàng', value: '{{o.partner.phone}}' },
                 { text: 'Địa chỉ khách hàng', value: '{{o.partner.address}}' },
                 { text: 'Tổng tiền', value: '{{o.amount_total}}' },
@@ -615,7 +615,7 @@ const keyWorDatas =
         {
             text: 'Thông tin chung',
             value: [
-                { text: 'Tên khách hàng có mã KH', value: '{{o.partner.display_name}}' },
+                { text: 'Họ tên khách hàng có mã KH', value: '{{o.partner.display_name}}' },
                 { text: 'SĐT khách hàng', value: '{{o.partner.phone}}' },
                 { text: 'Địa chỉ khách hàng', value: '{{o.partner.address}}' },
                 { text: 'Ghi chú', value: '{{o.note}}' },
@@ -624,7 +624,7 @@ const keyWorDatas =
                 { text: 'Số ngày áp dụng', value: '{{o.date_applies}}' },
                 { text: 'Ngày hết hạn', value: '{{o.date_end_quotation}}' },
                 { text: 'Tổng tiền', value: '{{o.total_amount}}' },
-                { text: 'Tên khách hàng', value: '{{o.partner.name}}' },
+                { text: 'Họ tên khách hàng', value: '{{o.partner.name}}' },
             ]
         },
         {
@@ -664,8 +664,8 @@ const keyWorDatas =
         {
             text: 'Thông tin chung',
             value: [
-                { text: 'Tên khách hàng có Mã KH', value: '{{o.partner.display_name}}' },
-                { text: 'Tên khách hàng', value: '{{o.partner.name}}' },
+                { text: 'Họ tên khách hàng có Mã KH', value: '{{o.partner.display_name}}' },
+                { text: 'Họ tên khách hàng', value: '{{o.partner.name}}' },
                 { text: 'Địa chỉ khách hàng ', value: '{{o.partner.address}}' },
                 { text: 'SĐT khách hàng ', value: '{{o.partner.phone}}' },
             ]
@@ -696,8 +696,8 @@ const keyWorDatas =
         {
             text: 'Thông tin chung',
             value: [
-                { text: 'Tên khách hàng có mã KH', value: '{{o.order.partner.display_name}}' },
-                { text: 'Tên khách hàng', value: '{{o.order.partner.name}}' },
+                { text: 'Họ tên khách hàng có mã KH', value: '{{o.order.partner.display_name}}' },
+                { text: 'Họ tên khách hàng', value: '{{o.order.partner.name}}' },
                 { text: 'SĐT khách hàng', value: '{{o.order.partner.phone}}' },
                 { text: 'Địa chỉ khách hàng', value: '{{o.order.partner.address}}' },
                 { text: 'Ngày thanh toán', value: '{{o.date}}' },

@@ -10,6 +10,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 })
 export class KeywordListDialogComponent implements OnInit {
   search = '';
+  title = 'Danh sách từ khóa';
   searchUpdate = new Subject<string>();
   @Input() boxKeyWordSource = [];
   boxKeyWordList = [];

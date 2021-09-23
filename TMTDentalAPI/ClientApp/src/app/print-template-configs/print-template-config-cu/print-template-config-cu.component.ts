@@ -202,6 +202,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     onAddKeyWord() {
         const modalRef = this.modalService.open(KeywordListDialogComponent, { size: 'xl', scrollable: true, windowClass: 'o_technical_modal', keyboard: true, backdrop: 'static' });
         modalRef.componentInstance.boxKeyWordSource = constantData.keyWords[this.formGroup.get('type').value];
+        modalRef.componentInstance.title = 'Danh sách từ khóa ' + this.types.find(x => x.value == this.formGroup.get('type').value).text.toLowerCase();
         modalRef.result.then((res) => {
             if (res) {
                 this.editor.instance.insertText(res.value);
