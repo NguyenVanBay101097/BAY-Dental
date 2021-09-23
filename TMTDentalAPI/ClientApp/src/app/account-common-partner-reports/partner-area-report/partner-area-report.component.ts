@@ -130,7 +130,6 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
     this.loadCompanies();
     this.loadCurrentCompany();
     this.loadDataFromApi();
-    // this.loadPieChart();
     this.loadDataReportByWard();
     
   }
@@ -156,18 +155,7 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
         item.color = colors[index];
       });
       this.pieChartData = this.pieObjData.map(x => x.revenue);
-      if (result.length > 0){
-        this.loadPieChart();
-      }
-      else {
-        let legend = this._elementRef.nativeElement.querySelector(`#pie-chart-legend`);
-        Chart.helpers.each(Chart.instances, function(instance){
-          if (instance.config.type == "pie"){
-            legend.innerHTML = "";
-          }
-        });
-      }
-      
+      this.loadPieChart();
     });
   }
 
@@ -183,7 +171,6 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
   }
 
   loadPieChart(){
-    debugger
     var pieData = this.pieObjData;
     var itemId = 0;
     this.pieOptions = {
@@ -191,44 +178,7 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
       legend: {
         display: false,
       },
-      legendCallback: function(chart){
-              var ulHtml = '';
-              var leftLegendHtml = [];
-              var rightLegendHtml = [];
-              if (pieData.length == 0)
-                return ulHtml;
-              else if (pieData.length > 6){
-                var leftData = pieData.slice(0,6);
-                leftData.forEach(item => {
-                  var html = '<li style="display:flex; padding-top: 3px; padding-bottom:3px"><span style="flex:1; min-width: 115px"><i class="fas fa-circle mr-2" style="color:'+item.color+'"></i>'+item.name+'</span>'+
-                  '<span style="padding-left:3px">('+item.percent+')</span>';
-                  leftLegendHtml.push(html);
-                });
-                var rightData = pieData.slice(6,11);
-                rightData.forEach(item => {
-                  var html = '<li style="display:flex; padding-top: 3px; padding-bottom:3px"><span style="flex:1; min-width: 115px"><i class="fas fa-circle mr-2" style="color:'+item.color+'"></i>'+item.districtName+'</span>'+
-                  '<span style="padding-left:3px">('+item.percent+')</span>';
-                  rightLegendHtml.push(html);
-                });
-                ulHtml = '<ul style="list-style-type: none; margin-left: auto; margin-right:auto; padding:0">'
-                +leftLegendHtml.join('')+'</ul>'+
-                '<ul style="list-style-type: none; margin-left: auto; margin-right:auto; padding:0">'
-                +rightLegendHtml.join('')+'</ul>';
-
-                return ulHtml;
-              }
-              else {
-                pieData.forEach(item => {
-                  var html = '<li style="display:flex; padding-top: 3px; padding-bottom:3px"><span style="flex:1; min-width: 115px"><i class="fas fa-circle mr-2" style="color:'+item.color+'"></i>'+item.districtName+'</span>'+
-                  '<span style="padding-left:3px">('+item.percent+')</span>';
-                  leftLegendHtml.push(html);
-                });
-                ulHtml ='<ul style="list-style-type: none; margin-left: auto; margin-right:auto; padding:0">' + leftLegendHtml.join('')+
-                '</ul>';
-                
-              return ulHtml;
-              }
-      },
+     
       tooltips: {
               enabled: true,
               callbacks: {
@@ -253,107 +203,48 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
               bodyFontColor: '#000',
               bodyFontSize: 14,
               displayColors: false
-            }
+      }
     }
+    var ulHtml = '';
+              var leftLegendHtml = [];
+              var rightLegendHtml = [];
+              if (pieData.length == 0)
+                ulHtml = '';
+              else if (pieData.length > 6){
+                var leftData = pieData.slice(0,6);
+                leftData.forEach(item => {
+                  var html = '<li style="display:flex; padding-top: 3px; padding-bottom:3px"><span style="flex:1; min-width: 115px"><i class="fas fa-circle mr-2" style="color:'+item.color+'"></i>'+item.name+'</span>'+
+                  '<span style="padding-left:3px">('+item.percent+')</span>';
+                  leftLegendHtml.push(html);
+                });
+                var rightData = pieData.slice(6,11);
+                rightData.forEach(item => {
+                  var html = '<li style="display:flex; padding-top: 3px; padding-bottom:3px"><span style="flex:1; min-width: 115px"><i class="fas fa-circle mr-2" style="color:'+item.color+'"></i>'+item.districtName+'</span>'+
+                  '<span style="padding-left:3px">('+item.percent+')</span>';
+                  rightLegendHtml.push(html);
+                });
+                ulHtml = '<ul style="list-style-type: none; margin-left: auto; margin-right:auto; padding:0">'
+                +leftLegendHtml.join('')+'</ul>'+
+                '<ul style="list-style-type: none; margin-left: auto; margin-right:auto; padding:0">'
+                +rightLegendHtml.join('')+'</ul>';
+              }
+              else {
+                pieData.forEach(item => {
+                  var html = '<li style="display:flex; padding-top: 3px; padding-bottom:3px"><span style="flex:1; min-width: 115px"><i class="fas fa-circle mr-2" style="color:'+item.color+'"></i>'+item.districtName+'</span>'+
+                  '<span style="padding-left:3px">('+item.percent+')</span>';
+                  leftLegendHtml.push(html);
+                });
+                ulHtml ='<ul style="list-style-type: none; margin-left: auto; margin-right:auto; padding:0">' + leftLegendHtml.join('')+
+                '</ul>';
+              }
 
     let legend = this._elementRef.nativeElement.querySelector(`#pie-chart-legend`);
-    legend.innerHTML = "";
     Chart.helpers.each(Chart.instances, function(instance){
-      console.log(instance);
-      
       if (instance.config.type == "pie"){
-        legend.innerHTML = instance.generateLegend();
+        legend.innerHTML = ulHtml;
       }
     });
   }
-
-  
-    // var chart = new Chart(this.pieCanvas.nativeElement, {
-    //   type: 'pie',
-    //   data: {
-    //     labels:this.pieObjData.map(x => x.districtName),
-    //     datasets: [{
-    //       backgroundColor: this.pieChartColors.slice(0,this.pieObjData.length),
-    //       data: this.pieChartData
-    //     }]
-        
-    //   },
-    // options: {
-    //   responsive: true,
-    //     legend: {
-    //       position: 'bottom',
-    //       display: false,
-    //       labels: {
-    //         usePointStyle: true,
-    //       }
-    //     },
-    //     legendCallback: function(chart){
-    //       var ulHtml = '';
-    //       var leftLegendHtml = [];
-    //       var rightLegendHtml = [];
-    //       if (pieData.length > 6){
-    //         var leftData = pieData.slice(0,6);
-    //         leftData.forEach(item => {
-    //           var html = '<li style="display:flex; padding-top: 3px; padding-bottom:3px"><span style="flex:1; min-width: 115px"><i class="fas fa-circle mr-2" style="color:'+item.color+'"></i>'+item.name+'</span>'+
-    //           '<span style="padding-left:3px">('+item.percent+')</span>';
-    //           leftLegendHtml.push(html);
-    //         });
-    //         var rightData = pieData.slice(6,11);
-    //         rightData.forEach(item => {
-    //           var html = '<li style="display:flex; padding-top: 3px; padding-bottom:3px"><span style="flex:1; min-width: 115px"><i class="fas fa-circle mr-2" style="color:'+item.color+'"></i>'+item.districtName+'</span>'+
-    //           '<span style="padding-left:3px">('+item.percent+')</span>';
-    //           rightLegendHtml.push(html);
-    //         });
-    //         ulHtml = '<ul style="list-style-type: none; margin-left: auto; margin-right:auto; padding:0">'
-    //         +leftLegendHtml.join('')+'</ul>'+
-    //         '<ul style="list-style-type: none; margin-left: auto; margin-right:auto; padding:0">'
-    //         +rightLegendHtml.join('')+'</ul>';
-    //       }
-    //       else {
-    //         pieData.forEach(item => {
-    //           var html = '<li style="display:flex; padding-top: 3px; padding-bottom:3px"><span style="flex:1; min-width: 115px"><i class="fas fa-circle mr-2" style="color:'+item.color+'"></i>'+item.districtName+'</span>'+
-    //           '<span style="padding-left:3px">('+item.percent+')</span>';
-    //           leftLegendHtml.push(html);
-    //         });
-    //         ulHtml ='<ul style="list-style-type: none; margin-left: auto; margin-right:auto; padding:0">' + leftLegendHtml.join('')+
-    //         '</ul>';
-    //       }
-    //      return ulHtml;
-    //     },
-    //     tooltips: {
-    //       enabled: true,
-    //       callbacks: {
-    //         title: function(tooltipItem, data) {
-    //            let id = tooltipItem[0] ? tooltipItem[0].index : 1; 
-    //            itemId = id
-    //           return data.labels[id].toString();
-    //         },
-    //         label: function(tooltipItem, data) {
-    //           let labels =  "Tổng doanh thu "+ Intl.NumberFormat().format(pieData[itemId].revenue); 
-    //           return labels;
-    //         },
-    //         afterLabel: function(tooltipItem, data) {
-    //           // let id = tooltipItem[0] ? tooltipItem[0].index : 1;
-    //           let percent = "Chiếm tỷ lệ "+ pieData[itemId].percent; 
-    //           return percent;
-    //         }
-    //       },
-    //       backgroundColor: '#FFF',
-    //       titleFontSize: 16,
-    //       titleFontColor: '#0066ff',
-    //       bodyFontColor: '#000',
-    //       bodyFontSize: 14,
-    //       displayColors: false
-    //     }
-    //   },
-    // // });
-    // let legend = this._elementRef.nativeElement.querySelector(`#pie-chart-legend`);
-    // legend.innerHTML = chart.generateLegend();
-    // Chart.helpers.each(Chart.instances, function(instance){
-    //   console.log(instance);
-      
-    // })
-
 
   searchCompany$(search?) {
     var val = new CompanyPaged();
@@ -374,8 +265,7 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
     this.companyService.get(companyId).subscribe(result => {
       this.currentCompany = {id: result.id, name: result.name};
       this.currentCity = {code: result.city.code, name: result.city.name};
-      // this.cityName = result.city.name.toUpperCase();
-      
+      this.cityName = result.city.name;
       this.loadDataFromApi();
     });
   }
@@ -411,11 +301,13 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
     if (event){
       let companyId = event.id;
       this.currentCompany.id = companyId;
+      this.currentCity.code = '';
+      this.loadDataFromApi();
       this.companyService.get(companyId).subscribe(result => {
         this.currentCity = {code: result.city.code, name: result.city.name};
         this.cityName = result.city.name;
       });
-      this.loadDataFromApi();
+      
     }
     else {
       this.currentCity = this.dataResultCities.find(x => x.code == '79');
@@ -431,18 +323,18 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
       val.cityCode = event.code;
       this.cityName = event.name;
       this.currentCity.code = event.code;
-      // this.cityName = event.name.toUpperCase();
       this.companyService.getPaged(val).subscribe(result => {
         this.companies = result.items;
-        this.currentCompany = this.companies ? this.companies[0] : {};
+        this.currentCompany.id ='';
         this.loadDataFromApi();
+        // this.currentCompany = this.companies ? this.companies[0] : {};
+        
       });
       
     }
     else {
       this.loadCompanies();
       this.cityName = '';
-      // this.currentCompany = this.companies ? this.companies[0] : {};
     }
     
   }
@@ -450,7 +342,7 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
   onSearchDateChange(event) {
     this.dateFrom = event.dateFrom;
     this.dateTo = event.dateTo;
-    this.loadDataReportByWard();
+    this.loadDataReportByWard(); 
     this.loadDataFromApi();
   }
 
