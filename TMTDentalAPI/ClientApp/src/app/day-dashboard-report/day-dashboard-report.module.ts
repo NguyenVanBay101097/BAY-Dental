@@ -12,9 +12,10 @@ import { SharedModule } from '../shared/shared.module';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { DayDashboardReportRegistrationServiceComponent } from './day-dashboard-report-registration-service/day-dashboard-report-registration-service.component';
 import { DayDashboardReportService } from './day-dashboard-report.service';
+import { DayDashboardReportRevenueComponent } from './day-dashboard-report-revenue/day-dashboard-report-revenue.component';
 
 @NgModule({
-  declarations: [DayDashboardReportManagementComponent, DayDashboardReportRevenueServiceComponent, DayDashboardReportRevenueMedicinesComponent, DayDashboardReportCashbookComponent, DayDashboardReportRegistrationServiceComponent],
+  declarations: [DayDashboardReportManagementComponent, DayDashboardReportRevenueServiceComponent, DayDashboardReportRevenueMedicinesComponent, DayDashboardReportCashbookComponent, DayDashboardReportRegistrationServiceComponent, DayDashboardReportRevenueComponent],
   imports: [
     CommonModule,
     DayDashboardReportRoutingModule,

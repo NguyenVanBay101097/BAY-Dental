@@ -1,21 +1,5 @@
 <div>
-    <kendo-combobox [data]="stateOptions" class="mt-2" [textField]="'text'" [valueField]="'value'" [filterable]="true"
-        (selectionChange)="onSelectChange($event)" [placeholder]="'Phương thức'">
-    </kendo-combobox>
-
     <div class="mt-2 d-flex flex-row summary flex-wrap">
-        <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
-            <label style="font-weight: 600;"> Quỹ đầu kỳ </label>
-            <h5 class="text-primary">{{(summarySearchResult ? summarySearchResult.begin : 0) | number}}</h5>
-        </div>
-        <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
-            <label style="font-weight: 600;"> Tổng thu </label>
-            <h5 class="text-info">{{(summarySearchResult ? summarySearchResult.totalThu : 0) | number}}</h5>
-        </div>
-        <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
-            <label style="font-weight: 600;"> Tổng chi </label>
-            <h5 class="text-danger">{{(summarySearchResult ? summarySearchResult.totalChi : 0) | number}}</h5>
-        </div>
         <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
             <label style="font-weight: 600;"> Tổng sổ quỹ </label>
             <h5 class="text-success">{{(totalCash + totalBank) | number}}</h5>
@@ -30,7 +14,11 @@
         </div>
     </div>
 
-    <div class="mb-4">
+    <kendo-combobox [data]="stateOptions" class="mb-2" [textField]="'text'" [valueField]="'value'" [filterable]="true"
+        (selectionChange)="onSelectChange($event)" [placeholder]="'Phương thức'">
+    </kendo-combobox>
+
+    <div class="mb-2">
         <div class="row">
             <div class="col">
                 <div class="card">
@@ -98,6 +86,22 @@
             </div>
         </div>
     </div>
+
+    <div class="mt-2 d-flex flex-row summary flex-wrap">
+        <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
+            <label style="font-weight: 600;"> Quỹ đầu kỳ </label>
+            <h5 class="text-primary">{{(summarySearchResult ? summarySearchResult.begin : 0) | number}}</h5>
+        </div>
+        <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
+            <label style="font-weight: 600;"> Tổng thu </label>
+            <h5 class="text-info">{{(summarySearchResult ? summarySearchResult.totalThu : 0) | number}}</h5>
+        </div>
+        <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
+            <label style="font-weight: 600;"> Tổng chi </label>
+            <h5 class="text-danger">{{(summarySearchResult ? summarySearchResult.totalChi : 0) | number}}</h5>
+        </div>
+    </div>
+
     <kendo-grid #grid [data]="gridData" [pageable]="pagerSettings" [skip]="skip" [pageSize]="limit" [resizable]="true"
         [loading]="loading" (pageChange)="pageChange($event)">
         <kendo-grid-column field="invoiceOrigin" title="Số phiếu" width="150">

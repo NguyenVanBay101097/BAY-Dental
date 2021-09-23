@@ -73,8 +73,8 @@ namespace Umbraco.Web.Models.ContentEditing
         }
         public decimal ProductUOMQty { get; set; }
         public decimal PriceSubTotal { get; set; }
-        public decimal amountPaid { get; set; }
-        public decimal amountResidual { get; set; }
+        public decimal AmountPaid { get; set; }
+        public decimal AmountResidual { get; set; }
         public string State { get; set; }
         public string StateDisplay
         {
