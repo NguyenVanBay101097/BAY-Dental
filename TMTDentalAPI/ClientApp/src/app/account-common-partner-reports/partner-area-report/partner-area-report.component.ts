@@ -21,11 +21,11 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
   @ViewChild('cityCbx',{static:true}) cityCbx: ComboBoxComponent;
   @ViewChild('pieCanvas', {static: true}) pieCanvas: ElementRef;
   pieChart: any;
-  companies: any[] = [{id:'01',name:'Chi nhánh 01'},{id:'02',name:'Chi nhánh 02'}]
+  companies: any[] = [];
   cities: any[] = [{id:'01',name:'TP.Hồ Chí Minh'}];
   dateFrom: any;
   dateTo: any;
-  currentCompany: any;
+  currentCompany: any = {};
   currentCity: any;
   dataSourceCities: Array<{ code: string; name: string }>;
   dataResultCities: Array<{ code: string; name: string }>;
@@ -124,6 +124,7 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
   ) { }
 
   ngOnInit() {
+    this.currentCompany.id = JSON.parse(localStorage.getItem('user_info')).companyId;
     this.initFilterData();
     this.loadSourceCities();
     this.loadCompanies();
@@ -155,7 +156,18 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
         item.color = colors[index];
       });
       this.pieChartData = this.pieObjData.map(x => x.revenue);
-      this.loadPieChart();
+      if (result.length > 0){
+        this.loadPieChart();
+      }
+      else {
+        let legend = this._elementRef.nativeElement.querySelector(`#pie-chart-legend`);
+        Chart.helpers.each(Chart.instances, function(instance){
+          if (instance.config.type == "pie"){
+            legend.innerHTML = "";
+          }
+        });
+      }
+      
     });
   }
 
@@ -171,6 +183,7 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
   }
 
   loadPieChart(){
+    debugger
     var pieData = this.pieObjData;
     var itemId = 0;
     this.pieOptions = {
@@ -182,7 +195,9 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
               var ulHtml = '';
               var leftLegendHtml = [];
               var rightLegendHtml = [];
-              if (pieData.length > 6){
+              if (pieData.length == 0)
+                return ulHtml;
+              else if (pieData.length > 6){
                 var leftData = pieData.slice(0,6);
                 leftData.forEach(item => {
                   var html = '<li style="display:flex; padding-top: 3px; padding-bottom:3px"><span style="flex:1; min-width: 115px"><i class="fas fa-circle mr-2" style="color:'+item.color+'"></i>'+item.name+'</span>'+
@@ -199,6 +214,8 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
                 +leftLegendHtml.join('')+'</ul>'+
                 '<ul style="list-style-type: none; margin-left: auto; margin-right:auto; padding:0">'
                 +rightLegendHtml.join('')+'</ul>';
+
+                return ulHtml;
               }
               else {
                 pieData.forEach(item => {
@@ -208,8 +225,9 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
                 });
                 ulHtml ='<ul style="list-style-type: none; margin-left: auto; margin-right:auto; padding:0">' + leftLegendHtml.join('')+
                 '</ul>';
+                
+              return ulHtml;
               }
-             return ulHtml;
       },
       tooltips: {
               enabled: true,
@@ -241,7 +259,9 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
     let legend = this._elementRef.nativeElement.querySelector(`#pie-chart-legend`);
     legend.innerHTML = "";
     Chart.helpers.each(Chart.instances, function(instance){
-      if (instance.canvas.id == "pie-chart"){
+      console.log(instance);
+      
+      if (instance.config.type == "pie"){
         legend.innerHTML = instance.generateLegend();
       }
     });
@@ -390,14 +410,16 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
   onSelectCompany(event){
     if (event){
       let companyId = event.id;
+      this.currentCompany.id = companyId;
       this.companyService.get(companyId).subscribe(result => {
         this.currentCity = {code: result.city.code, name: result.city.name};
-        this.loadDataFromApi();
-        // this.cityName = result.city.name.toUpperCase();
+        this.cityName = result.city.name;
       });
+      this.loadDataFromApi();
     }
     else {
-      this.currentCity = {code: '79'};
+      this.currentCity = this.dataResultCities.find(x => x.code == '79');
+      this.cityName = this.currentCity ? this.currentCity.name : '';
       this.loadDataFromApi();
     }
 
@@ -407,16 +429,19 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
     if (event){
       var val = new CompanyPaged();
       val.cityCode = event.code;
+      this.cityName = event.name;
+      this.currentCity.code = event.code;
       // this.cityName = event.name.toUpperCase();
       this.companyService.getPaged(val).subscribe(result => {
         this.companies = result.items;
         this.currentCompany = this.companies ? this.companies[0] : {};
         this.loadDataFromApi();
       });
+      
     }
     else {
       this.loadCompanies();
-      // this.cityName = '';
+      this.cityName = '';
       // this.currentCompany = this.companies ? this.companies[0] : {};
     }
     
