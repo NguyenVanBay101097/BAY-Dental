@@ -130,6 +130,9 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     if (item) {
       var bom = item.boms.find(x => x.materialProductId == productId);
       if (bom) {
+        if (bom.quantity === 0) {
+          return undefined;
+        }
         return bom.quantity - bom.requestedQuantity;
       }
     }
@@ -307,8 +310,10 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
   }
 
   clickBom(bom, saleOrderLineId) {
-    if (bom.requestedQuantity >= bom.quantity) {
-      return;
+    if (bom.quantity !== 0) {
+      if (bom.requestedQuantity >= bom.quantity) {
+        return;
+      }
     }
 
     var index = this.lines.value.findIndex(item => (item.saleOrderLineId == saleOrderLineId && item.productId == bom.materialProductId));
@@ -322,7 +327,11 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
       });
     } else {
       var line = this.lines.at(index) as FormGroup;
-      if (line.get('productQty').value < this.getMax(line)) {
+      if (bom.quantity !== 0) {
+        if (line.get('productQty').value < this.getMax(line)) {
+          line.get('productQty').setValue(line.get('productQty').value + 1);
+        }
+      } else {
         line.get('productQty').setValue(line.get('productQty').value + 1);
       }
     }

@@ -114,7 +114,9 @@
                                         <td>{{line.get('saleOrderLine').value ? line.get('saleOrderLine').value.name : ''}}</td>
                                         <td>{{line.get('producUOM').value ? line.get('producUOM').value.name : ''}}</td>
                                         <td class="text-right">
-                                            <kendo-numerictextbox *ngIf="!seeForm" style="width: 100px" [min]="0" [max]="getMax(line)" [format]="'n0'" [autoCorrect]="true" formControlName="productQty">
+                                            <kendo-numerictextbox *ngIf="!seeForm" style="width: 100px" 
+                                                [min]="0" [max]="getMax(line)" [format]="'n0'" 
+                                                [autoCorrect]="true" formControlName="productQty">
                                             </kendo-numerictextbox>
                                             <span *ngIf="seeForm">{{line.get('productQty').value}}</span>
                                         </td>
