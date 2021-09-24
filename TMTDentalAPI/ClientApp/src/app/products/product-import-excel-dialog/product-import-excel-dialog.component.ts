@@ -14,7 +14,7 @@ import { of } from 'rxjs';
 export class ProductImportExcelDialogComponent implements OnInit {
   fileBase64 = '';
   type: string;
-  errors: string[];
+  errors: string[] = [];
   title: string;
   isUpdate: boolean = false;
   correctFormat = true;
@@ -26,6 +26,7 @@ export class ProductImportExcelDialogComponent implements OnInit {
 
   onFileChange(value) {
     this.fileBase64 = value;
+    this.errors = [];
   }
 
   notify(Style, Content) {
@@ -40,7 +41,7 @@ export class ProductImportExcelDialogComponent implements OnInit {
 
   onSave() {
     if (!this.correctFormat){
-      this.notify('error','Dữ liệu không đúng định dạng mẫu');
+      this.notify('error','File import sai định dạng. Vui lòng tải file mẫu và nhập dữ liệu đúng');
       return;
     }
     if (!this.fileBase64 || this.fileBase64 === '') {

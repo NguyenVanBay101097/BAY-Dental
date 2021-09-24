@@ -307,7 +307,7 @@ namespace TMTDentalAPI.Controllers
                         for (var row = 2; row <= worksheet.Dimension.Rows; row++)
                         {
                             var errs = new List<string>();
-                            var name = Convert.ToString(worksheet.Cells[row, 1].Value);
+                            var name = Convert.ToString(worksheet.Cells[row, 2].Value);
                             var categName = Convert.ToString(worksheet.Cells[row, 4].Value);
 
                             if (string.IsNullOrEmpty(name))
@@ -324,7 +324,7 @@ namespace TMTDentalAPI.Controllers
                             var item = new ProductServiceImportExcelRow
                             {
                                 Name = name,
-                                DefaultCode = Convert.ToString(worksheet.Cells[row, 2].Value),
+                                DefaultCode = Convert.ToString(worksheet.Cells[row, 1].Value),
                                 IsLabo = Convert.ToBoolean(worksheet.Cells[row, 3].Value),
                                 CategName = categName,
                                 ListPrice = Convert.ToDecimal(worksheet.Cells[row, 5].Value),
@@ -594,7 +594,7 @@ namespace TMTDentalAPI.Controllers
                         for (var row = 2; row <= worksheet.Dimension.Rows; row++)
                         {
                             var errs = new List<string>();
-                            var name = Convert.ToString(worksheet.Cells[row, 1].Value);
+                            var name = Convert.ToString(worksheet.Cells[row, 2].Value);
                             var categName = Convert.ToString(worksheet.Cells[row, 3].Value);
                             var price = Convert.ToString(worksheet.Cells[row, 4].Value);
                             //var defaultCode = Convert.ToString(worksheet.Cells[row, 5].Value);
@@ -619,7 +619,7 @@ namespace TMTDentalAPI.Controllers
                             var item = new ProductMedicineImportExcelRow
                             {
                                 Name = name,
-                                DefaultCode = Convert.ToString(worksheet.Cells[row, 2].Value),
+                                DefaultCode = Convert.ToString(worksheet.Cells[row, 1].Value),
                                 CategName = categName,
                                 ListPrice = Convert.ToDecimal(worksheet.Cells[row, 4].Value),
                                 UoM = uomName,
@@ -876,7 +876,7 @@ namespace TMTDentalAPI.Controllers
                         for (var row = 2; row <= worksheet.Dimension.Rows; row++)
                         {
                             var errs = new List<string>();
-                            var name = Convert.ToString(worksheet.Cells[row, 1].Value);
+                            var name = Convert.ToString(worksheet.Cells[row, 2].Value);
                             var categName = Convert.ToString(worksheet.Cells[row, 4].Value);
                             var type = Convert.ToString(worksheet.Cells[row, 3].Value);
                             var uomName = Convert.ToString(worksheet.Cells[row, 6].Value);
@@ -905,7 +905,7 @@ namespace TMTDentalAPI.Controllers
                             var item = new ProductProductImportExcelRow
                             {
                                 Name = name,
-                                DefaultCode = Convert.ToString(worksheet.Cells[row, 2].Value),
+                                DefaultCode = Convert.ToString(worksheet.Cells[row, 1].Value),
                                 Type = type,
                                 CategName = categName,
                                 PurchasePrice = Convert.ToDecimal(worksheet.Cells[row, 5].Value),
