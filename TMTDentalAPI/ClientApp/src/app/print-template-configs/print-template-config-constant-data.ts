@@ -89,7 +89,7 @@ const keyWorDatas =
         {
             text: "Thông tin chi tiết",
             value: [
-                { text: 'Danh sách thuốc', value: 'o.medicine_order_lines' },
+                { text: 'Danh sách thuốc', value: '{{o.medicine_order_lines}}' },
                 { text: 'Tên thuốc', value: '{{line.product?.name}}' },
                 { text: 'Số lần uống/ngày', value: '{{line.toa_thuoc_line?.number_of_times}}' },
                 { text: 'Số lượng uống/lần', value: '{{line.toa_thuoc_line?.amount_of_times}}' },
@@ -129,7 +129,7 @@ const keyWorDatas =
         {
             text: "Thông tin chi tiết",
             value: [
-                { text: 'Danh sách thuốc', value: 'o.lines' },
+                { text: 'Danh sách thuốc', value: '{{o.lines}}' },
                 { text: 'Số thứ tự', value: '{{for.index + 1}}' },
                 { text: 'Tên thuốc', value: '{{line.product?.name}}' },
                 { text: 'Số lượng', value: '{{line.quantity}}' },
@@ -216,7 +216,7 @@ const keyWorDatas =
         {
             text: 'Thông tin chi tiết',
             value: [
-                { text: 'Danh sách hàng hóa', value: 'order_lines' },
+                { text: 'Danh sách hàng hóa', value: '{{o.order_lines}}' },
                 { text: 'Số thứ tự', value: '{{line.sequence}}' },
                 { text: 'Tên hàng hóa', value: '{{line.name}}' },
                 { text: 'Số lượng', value: '{{line.product_qty}}' },
@@ -326,7 +326,7 @@ const keyWorDatas =
         {
             text: 'Thông tin chi tiết',
             value: [
-                { text: 'Danh sách sản phẩm', value: 'o.lines' },
+                { text: 'Danh sách sản phẩm', value: '{{o.lines}}' },
                 { text: 'Số thứ tự', value: '{{for.index + 1}}' },
                 { text: 'Mã sản phẩm', value: '{{line.product.default_code}}' },
                 { text: 'Tên sản phẩm', value: '{{line.product.name}}' },
@@ -358,7 +358,7 @@ const keyWorDatas =
         {
             text: 'Thông tin chi tiết',
             value: [
-                { text: 'Danh sách sản phẩm', value: 'o.move_lines' },
+                { text: 'Danh sách sản phẩm', value: '{{o.move_lines}}' },
                 { text: 'Số thứ tự', value: '{{for.index + 1}}' },
                 { text: 'Mã sản phẩm', value: '{{line.product.default_code}}' },
                 { text: 'Tên sản phẩm', value: '{{line.name}}' },
@@ -390,7 +390,7 @@ const keyWorDatas =
         {
             text: 'Thông tin chi tiết',
             value: [
-                { text: 'Danh sách sản phẩm', value: 'o.move_lines' },
+                { text: 'Danh sách sản phẩm', value: '{{o.move_lines}}' },
                 { text: 'Số thứ tự', value: '{{for.index + 1}}' },
                 { text: 'Mã sản phẩm', value: '{{line.product.default_code}}' },
                 { text: 'Tên sản phẩm', value: '{{line.name}}' },
@@ -576,8 +576,8 @@ const keyWorDatas =
         {
             text: 'Thông tin theo dõi thanh toán',
             value: [
-                { text: 'Danh sách theo dõi thanh toán', value: 'o.sale_order_payments' },
-                { text: 'Danh sách hóa đơn thanh toán', value: 'sop.payment_rels' },
+                { text: 'Danh sách theo dõi thanh toán', value: '{{o.sale_order_payments}}' },
+                { text: 'Danh sách hóa đơn thanh toán', value: '{{sop.payment_rels}}' },
                 { text: 'Mã thanh toán', value: '{{item.payment?.name}}' },
                 { text: 'Ngày thanh toán', value: '{{item.payment?.payment_date}}' },
                 { text: 'Số tiền cần thanh toán', value: '{{sop.amount}}' },
@@ -588,8 +588,8 @@ const keyWorDatas =
         {
             text: 'Thông tin đợt khám',
             value: [
-                { text: 'Danh sách đợt khám', value: 'o.dot_khams' },
-                { text: 'Danh sách dịch vụ đợt khám', value: 'dotkham.lines' },
+                { text: 'Danh sách đợt khám', value: '{{o.dot_khams}}' },
+                { text: 'Danh sách dịch vụ đợt khám', value: '{{dotkham.lines}}' },
                 { text: 'Số thứ tự', value: '{{for.index + 1}}' },
                 { text: 'Ngày khám', value: '{{dotkham.date}}' },
                 { text: 'Họ tên bác sĩ', value: '{{dotkham.doctor?.name}}' },
@@ -630,7 +630,7 @@ const keyWorDatas =
         {
             text: 'Thông tin danh sách dịch vụ',
             value: [
-                { text: 'Danh sách dịch vụ', value: 'o.lines' },
+                { text: 'Danh sách dịch vụ', value: '{{o.lines}}' },
                 { text: 'Tên dịch vụ', value: '{{line.name}}' },
                 { text: 'Số lượng', value: '{{line.qty}}' },
                 { text: 'Đơn giá', value: '{{(line.sub_price - line.amount_discount_total)}}' },
@@ -641,7 +641,7 @@ const keyWorDatas =
         {
             text: 'Thông tin tiến độ thanh toán',
             value: [
-                { text: 'Danh sách tiến độ thanh toán', value: 'o.payments' },
+                { text: 'Danh sách tiến độ thanh toán', value: '{{o.payments}}' },
                 { text: 'STT tiến độ', value: '{{payment.sequence}}' },
                 { text: 'Thanh toán', value: '{{payment.payment}}' },
                 { text: 'Loại giảm giá', value: '{{payment.discount_percent_type}}' },
