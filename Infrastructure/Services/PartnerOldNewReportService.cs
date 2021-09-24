@@ -129,7 +129,7 @@ namespace Infrastructure.Services
             if (val.DateFrom.HasValue)
                 query = query.Where(x => x.DateOrder.Date >= val.DateFrom.Value.AbsoluteBeginOfDate());
             if (val.DateTo.HasValue)
-                query = query.Where(x => x.DateOrder.Date <= val.DateTo.Value.AbsoluteBeginOfDate());
+                query = query.Where(x => x.DateOrder.Date <= val.DateTo.Value.AbsoluteEndOfDate());
             if (val.CompanyId.HasValue)
             {
                 query = query.Where(x => x.CompanyId == val.CompanyId);
