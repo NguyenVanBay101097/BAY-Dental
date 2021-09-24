@@ -2,7 +2,7 @@
 <table border="0" cellpadding="5" cellspacing="1" style="width:100%">
     <tbody>
         <tr>
-            <td style="width:100px"><img alt="{{o.company.name}}" class="img-fuild" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
+            <td style="width:100px"><img alt="{{o.company.name}}" class="img-fluid" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
             <td>
                 <strong>{{o.company.name}}</strong><br />
                 Địa chỉ: {{o.company.address}}<br />
@@ -20,7 +20,7 @@
     <tbody>
         <tr>
             <td style="width:150px">Người nhận</td>
-            <td>{{o.employee ? o.employee.name : ""}}</td>
+            <td>{{o.employee ? o.employee?.name : ""}}</td>
         </tr>
         <tr>
             <td>Số tiền</td>
@@ -28,7 +28,7 @@
         </tr>
         <tr>
             <td>Phương thức</td>
-            <td>{{o.journal ? o.journal.name : ""}}</td>
+            <td>{{o.journal ? o.journal?.name : ""}}</td>
         </tr>
         <tr>
             <td>Bằng chữ</td>
@@ -52,7 +52,7 @@
                     <br />
                     <br />
                     <br />
-                    {{o.created_by ? (o.created_by.name | string.upcase) : ""}}
+                    {{o.created_by ? (o.created_by?.name | string.upcase) : ""}}
                 </div>
             </td>
             <td>
@@ -63,7 +63,7 @@
                     <br />
                     <br />
                     <br />
-                    {{o.employee ? (o.employee.name | string.upcase) : ""}}
+                    {{o.employee ? (o.employee?.name | string.upcase) : ""}}
                 </div>
             </td>
         </tr>

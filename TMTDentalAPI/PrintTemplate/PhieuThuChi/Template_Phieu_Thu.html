@@ -1,9 +1,9 @@
 ﻿<table border="0" cellpadding="0" cellspacing="1" style="width:100%">
     <tbody>
         <tr>
-            <td style="width:100px"><img alt="{{o.company.name}}" class="img-fuild" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
+            <td style="width:100px"><img alt="{{o.company.name}}" class="img-fluid" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
             <td>
-                <p style="margin-left:20px">
+                <p>
                     <strong>{{o.company.name}}</strong><br />
                     Địa chỉ: {{o.company.address}}<br />
                     ĐT: {{o.company.phone}}<br />
@@ -36,7 +36,7 @@
             </tr>
             <tr>
                 <td style="width:150px"><strong>Loại thu</strong></td>
-                <td>{{o.loai_thu_chi.name}}</td>
+                <td>{{o.loai_thu_chi?.name}}</td>
             </tr>
             <tr>
                 <td style="width:150px"><strong>Số tiền</strong></td>
@@ -44,7 +44,7 @@
             </tr>
             <tr>
                 <td style="width:150px"><strong>Phương thức</strong></td>
-                <td>{{o.journal.name}}</td>
+                <td>{{o.journal?.name}}</td>
             </tr>
             <tr>
                 <td style="width:150px"><strong>Bằng chữ</strong></td>

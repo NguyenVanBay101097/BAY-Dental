@@ -1,7 +1,7 @@
 ﻿<table border="0" cellpadding="5" cellspacing="1" style="width:100%">
     <tbody>
         <tr>
-            <td style="width:100px"><img alt="{{o.company.name}}" class="img-fuild" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
+            <td style="width:100px"><img alt="{{o.company.name}}" class="img-fluid" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
             <td>
                 <strong>{{o.company.name}}</strong><br />
                 Địa chỉ: {{o.company.address}}<br />
@@ -38,15 +38,15 @@
             </tr>
             <tr>
                 <td>Lương/tháng</td>
-                <td>{{o.employee ? (o.employee.wage | math.format "N0") : 0}}</td>
+                <td>{{o.employee ? (o.employee?.wage | math.format "N0") : 0}}</td>
             </tr>
             <tr>
                 <td>Số ngày nghỉ/tháng</td>
-                <td>{{o.employee.leave_per_month ? (o.employee.leave_per_month | math.format "N0") : 0}}</td>
+                <td>{{o.employee?.leave_per_month ? (o.employee?.leave_per_month | math.format "N0") : 0}}</td>
             </tr>
             <tr>
                 <td>Số giờ làm/ngày</td>
-                <td>{{o.employee.regular_hour ? (o.employee.regular_hour | math.format "N0") : 0}}</td>
+                <td>{{o.employee?.regular_hour ? (o.employee?.regular_hour | math.format "N0") : 0}}</td>
             </tr>
         </tbody>
     </table>
@@ -192,7 +192,7 @@
                     <br />
                     <br />
                     <br />
-                    <strong>{{o.created_by ? (o.created_by.name | string.upcase) : ""}}</strong>
+                    <strong>{{o.created_by ? (o.created_by?.name | string.upcase) : ""}}</strong>
                 </div>
             </td>
             <td>
@@ -202,7 +202,7 @@
                     <br />
                     <br />
                     <br />
-                    <strong>{{o.employee ? (o.employee.name | string.upcase) : ""}}</strong>
+                    <strong>{{o.employee ? (o.employee?.name | string.upcase) : ""}}</strong>
                 </div>
             </td>
         </tr>

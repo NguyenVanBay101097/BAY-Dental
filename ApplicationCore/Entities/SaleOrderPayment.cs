@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Text;
 
 namespace ApplicationCore.Entities
@@ -48,6 +50,15 @@ namespace ApplicationCore.Entities
         //public ICollection<AccountMoveLine> MoveLines { get; set; } = new List<AccountMoveLine>();
 
         public ICollection<SaleOrderPaymentAccountPaymentRel> PaymentRels { get; set; } = new List<SaleOrderPaymentAccountPaymentRel>();
+        [NotMapped]
+        public String JournalLinesDisplay
+        {
+            get
+            {
+                return string.Join(", ", JournalLines.Select(x => x.Journal.Name));
+            }
+        }
+
 
     }
 }

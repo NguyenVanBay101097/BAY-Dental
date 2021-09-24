@@ -1,7 +1,7 @@
 ﻿<table border="0" cellpadding="5" cellspacing="1" style="width:100%">
     <tbody>
         <tr>
-            <td style="width:100px"><img alt="{{o.company.name}}" class="img-fuild" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
+            <td style="width:100px"><img alt="{{o.company.name}}" class="img-fluid" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
             <td>
                 <strong>{{o.company.name}}</strong><br />
                 Địa chỉ: {{o.company.address}}<br />
@@ -23,13 +23,13 @@
     <tbody>
         <tr>
             <td style="width:150px"><strong>Nhà cung cấp</strong></td>
-            <td>{{o.partner ? o.partner.name : ""}}</td>
+            <td>{{o.partner ? o.partner?.name : ""}}</td>
             <td style="width:150px"><strong>Ghi chú</strong></td>
             <td>{{o.note}}</td>
         </tr>
         <tr>
             <td style="width:150px"><strong>Tham chiếu xuất kho</strong></td>
-            <td>{{o.picking ? o.picking.name : "" }}</td>
+            <td>{{o.picking ? o.picking?.name : "" }}</td>
             <td> </td>
             <td> </td>
         </tr>
@@ -55,7 +55,7 @@
             <td style="width:50px">{{line.sequence}}</td>
             <td>{{line.name}}</td>
             <td style="width:80px">{{line.product_qty}}</td>
-            <td>{{line.product_uom.name}}</td>
+            <td>{{line.product_uom?.name}}</td>
             <td style="text-align:right">{{line.price_unit | math.format "N0"}}</td>
             <td style="text-align:right">{{line.discount}}</td>
             <td style="text-align:right">{{line.price_subtotal | math.format "N0"}}</td>
@@ -86,7 +86,7 @@
                 <br />
                 <br />
                 <br />
-                <strong>{{o.user ? (o.user.name | string.upcase) : ""}}</strong>
+                <strong>{{o.user ? (o.user?.name | string.upcase) : ""}}</strong>
             </td>
         </tr>
     </tbody>

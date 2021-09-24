@@ -47,7 +47,6 @@ export class SurveyTagListComponent implements OnInit {
   }
 
   loadDataFromApi() {
-    this.loading = true;
     var val = new SurveyTagPaged();
     val.limit = this.limit;
     val.offset = this.skip;
@@ -60,10 +59,8 @@ export class SurveyTagListComponent implements OnInit {
       }))
     ).subscribe(res => {
       this.gridData = res;
-      this.loading = false;
     }, err => {
       console.log(err);
-      this.loading = false;
     })
   }
 

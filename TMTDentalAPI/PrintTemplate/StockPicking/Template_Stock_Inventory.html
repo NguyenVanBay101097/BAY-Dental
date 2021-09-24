@@ -1,7 +1,7 @@
 ﻿<table border="0" cellpadding="5" cellspacing="1" style="width:100%">
     <tbody>
         <tr>
-            <td style="width:100px"><img alt="{{o.company.name}}" class="img-fuild" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
+            <td style="width:100px"><img alt="{{o.company.name}}" class="img-fluid" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
             <td>
                 <strong>{{o.company.name}}</strong><br />
                 Địa chỉ: {{o.company.address}}<br />
@@ -45,9 +45,9 @@
         <!--{{for line in o.lines}}-->
         <tr>
             <td>{{for.index + 1}}</td>
-            <td>{{line.product.default_code}}</td>
-            <td>{{line.product.name}}</td>
-            <td>{{line.product_uom.name}}</td>
+            <td>{{line.product?.default_code}}</td>
+            <td>{{line.product?.name}}</td>
+            <td>{{line.product_uom?.name}}</td>
             <td style="text-align:right; width:100px">{{line.theoretical_qty ? line.theoretical_qty : 0}}</td>
             <td style="text-align:right">{{line.product_qty ? line.product_qty : 0}}</td>
         </tr>
