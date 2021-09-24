@@ -244,11 +244,14 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
               }
 
     let legend = this._elementRef.nativeElement.querySelector(`#pie-chart-legend`);
-    Chart.helpers.each(Chart.instances, function(instance){
-      if (instance.config.type == "pie"){
-        legend.innerHTML = ulHtml;
-      }
-    });
+    legend.innerHTML = ulHtml;
+    // Chart.helpers.each(Chart.instances, function(instance){
+    //   if (instance.config.type == "pie"){
+    //     console.log(instance);
+        
+    //     legend.innerHTML = ulHtml;
+    //   }
+    // });
   }
 
   searchCompany$(search?) {
@@ -315,7 +318,8 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
       
     }
     else {
-      this.currentCity = this.dataResultCities.find(x => x.code == '79');
+      this.currentCity.code = '79';
+      this.currentCompany.id = '';
       this.cityName = this.currentCity ? this.currentCity.name : '';
       this.loadDataFromApi();
     }
@@ -324,22 +328,17 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
 
   onSelectCity(event){
     if (event){
-      var val = new CompanyPaged();
-      val.cityCode = event.code;
       this.cityName = event.name;
+      this.currentCompany.id = '';
       this.currentCity.code = event.code;
-      this.companyService.getPaged(val).subscribe(result => {
-        this.companies = result.items;
-        this.currentCompany.id ='';
-        this.loadDataFromApi();
-        // this.currentCompany = this.companies ? this.companies[0] : {};
-        
-      });
+      this.loadDataFromApi();
       
     }
     else {
-      this.loadCompanies();
       this.cityName = '';
+      this.currentCompany.id = '';
+      this.currentCity.code = '';
+      this.loadDataFromApi();
     }
   }
 
