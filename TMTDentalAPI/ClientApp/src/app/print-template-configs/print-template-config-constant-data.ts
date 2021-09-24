@@ -5,7 +5,7 @@ export const types: { text: string, value: string }[] = [
     { text: 'Khách hàng hoàn tạm ứng', value: 'tmp_partner_refund' },
     { text: 'Biên lai thanh toán điều trị', value: 'tmp_account_payment' },
     { text: 'Phiếu thu công nợ khách hàng', value: 'tmp_customer_debt' },
-    { text: 'Phiếu labo', value: 'tmp_labo_order' },
+    { text: 'Phiếu Labo', value: 'tmp_labo_order' },
     { text: 'Đơn thuốc', value: 'tmp_toathuoc' },
     { text: 'Hóa đơn thuốc', value: 'tmp_medicine_order' },
     { text: 'Phiếu chi lương', value: 'tmp_salary_employee' },
