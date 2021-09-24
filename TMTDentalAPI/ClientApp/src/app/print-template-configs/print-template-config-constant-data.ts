@@ -131,7 +131,7 @@ const keyWorDatas =
             value: [
                 { text: 'Danh sách thuốc', value: 'o.lines' },
                 { text: 'Số thứ tự', value: '{{for.index + 1}}' },
-                { text: 'Tên thuốc', value: '{{line.product_name}}' },
+                { text: 'Tên thuốc', value: '{{line.product.name}}' },
                 { text: 'Số lượng', value: '{{line.quantity}}' },
                 { text: 'Số lần uống/ngày', value: '{{line.number_of_times}}' },
                 { text: 'Số lượng uống/lần', value: '{{line.amount_of_times}}' },
@@ -564,8 +564,8 @@ const keyWorDatas =
         {
             text: 'Thông tin danh sách dịch vụ',
             value: [
-                { text: 'Danh sách dịch vụ', value: 'o.order_lines' },
-                { text: 'Tên dịch vụ', value: '{{line.product_name}}' },
+                { text: 'Danh sách dịch vụ', value: '{{o.order_lines}}' },
+                { text: 'Tên dịch vụ', value: '{{line.product.name}}' },
                 { text: 'Số lượng', value: '{{line.product_uomqty}}' },
                 { text: 'Đơn giá', value: '{{line.price_unit}}' },
                 { text: 'Giảm giá', value: '{{line.amount_discount_total}}' },
@@ -766,11 +766,11 @@ const keyWorDatas =
 
 function getKeyWords() {
     var res = keyWorDatas;
-    res['tmp_purchase_refund'] = res['tmp_purchase_order'];
-    res['tmp_salary_employee'] = res['tmp_salary_advance'];
     for (const [key, value] of Object.entries(res)) {
         (value as any).push(pipes as any);
     }
+    res['tmp_purchase_refund'] = res['tmp_purchase_order'];
+    res['tmp_salary_employee'] = res['tmp_salary_advance'];
     return res;
 }
 
