@@ -463,10 +463,10 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells["A4:C4"].Value = "Khách hàng";
                 worksheet.Cells["A4:C4"].Merge = true;
                 worksheet.Cells["D4"].Value = "Số điện thoại";
-                worksheet.Cells["E4"].Value = "Nợ đầu kỳ";
+                worksheet.Cells["E4"].Value = "Dư đầu kỳ";
                 worksheet.Cells["F4"].Value = "Phát sinh";
                 worksheet.Cells["G4"].Value = "Thanh toán";
-                worksheet.Cells["H4"].Value = "Nợ cuối kỳ";
+                worksheet.Cells["H4"].Value = "Dư cuối kỳ";
                 worksheet.Cells["A4:H4"].Style.Font.Bold = true;
                 worksheet.Cells["A4:H4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
                 worksheet.Cells["A4:H4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
@@ -507,10 +507,10 @@ namespace TMTDentalAPI.Controllers
                         worksheet.Cells[row, 2].Value = "Ngày";
                         worksheet.Cells[row, 3].Value = "Số phiếu";
                         worksheet.Cells[row, 4].Value = "Nội dung";
-                        worksheet.Cells[row, 5].Value = "Nợ đầu kỳ";
+                        worksheet.Cells[row, 5].Value = "Dư đầu kỳ";
                         worksheet.Cells[row, 6].Value = "Phát sinh";
                         worksheet.Cells[row, 7].Value = "Thanh toán";
-                        worksheet.Cells[row, 8].Value = "Nợ cuối kỳ";
+                        worksheet.Cells[row, 8].Value = "Dư cuối kỳ";
                         worksheet.Cells[row, 2].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                         worksheet.Cells[row, 3].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                         worksheet.Cells[row, 4].Style.Border.BorderAround(ExcelBorderStyle.Thin);
