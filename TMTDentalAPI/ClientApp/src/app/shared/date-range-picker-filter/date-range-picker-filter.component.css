@@ -9,12 +9,13 @@
 .clear:hover {
     opacity: 0.8;
 }
-.date-picker {
-    width: 200px !important;
-}
 
 .title {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+}
+
+:host .input-group {
+    min-width: 212px;
 }

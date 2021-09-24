@@ -14,7 +14,8 @@ export class DateRangePickerFilterComponent implements OnInit {
   @Output() searchChange = new EventEmitter<any>();
   @Input() opens: string = 'auto';
   @Input() drops: string = 'auto';
-  @Input() title: string = 'Chọn thời gian văn tuấn';
+  @Input() title: string;
+  @Input() showClearButton: boolean = true;
 
   @Input() selected: any;
   @Input() showDropdowns = true;
