@@ -80,7 +80,7 @@ const keyWorDatas =
             value: [
                 { text: 'Họ tên khách hàng', value: '{{o.partner.name}}' },
                 { text: 'Địa chỉ khách hàng', value: '{{o.partner.address}}' },
-                { text: 'Tên bác sĩ', value: '{{o.employee.name}}' },
+                { text: 'Họ tên bác sĩ', value: '{{o.employee.name}}' },
                 { text: 'Lời dặn bác sĩ', value: '{{o.toa_thuoc.note}}' },
                 { text: 'Chẩn đoán bệnh', value: '{{o.toa_thuoc.diagnostic}}' },
                 { text: 'Ngày tái khám', value: '{{o.toa_thuoc.re_examination_date}}' },
@@ -123,7 +123,7 @@ const keyWorDatas =
                 { text: 'Địa chỉ khách hàng', value: '{{o.partner.address}}' },
                 { text: 'Giới tính khách hàng', value: '{{o.partner.get_gender}}' },
                 { text: 'Tuổi khách hàng', value: '{{partner.get_age}}' },
-                { text: 'Tên bác sĩ', value: '{{o.employee.name}}' },
+                { text: 'Họ tên bác sĩ', value: '{{o.employee.name}}' },
             ]
         },
         {
@@ -157,10 +157,10 @@ const keyWorDatas =
         {
             text: "Thông tin chung",
             value: [
-                { text: 'Tên bác sĩ', value: '{{o.sale_order_line.employee.name}}' },
+                { text: 'Họ tên bác sĩ', value: '{{o.sale_order_line.employee.name}}' },
                 { text: 'Số phiếu điều trị', value: '{{o.sale_order_line.order.name }}' },
                 { text: 'Họ tên khách hàng', value: '{{o.customer.name}}' },
-                { text: 'Tên nhà cung cấp', value: '{{o.partner.name}}' },
+                { text: 'Họ tên nhà cung cấp', value: '{{o.partner.name}}' },
                 { text: 'Ngày gửu', value: '{{o.date_order}}' },
                 { text: 'Ngày nhận dự kiến', value: '{{o.date_planned}}' },
 
@@ -207,7 +207,7 @@ const keyWorDatas =
         {
             text: 'Thông tin chung',
             value: [
-                { text: 'Tên nhà cung cấp', value: '{{o.partner.name}}' },
+                { text: 'Họ tên nhà cung cấp', value: '{{o.partner.name}}' },
                 { text: 'Mã tham chiếu kho', value: '{{o.picking.name }}' },
                 { text: 'Ghi chú', value: '{{o.note}}' },
                 { text: 'Người lập phiếu', value: '{{u.name}}' },
@@ -244,9 +244,9 @@ const keyWorDatas =
             value: [
                 { text: 'Ngày thanh toán', value: '{{o.date_created}}' },
                 { text: 'Phương thức thanh toán', value: '{{o.journal.name}}' },
-                { text: 'Số tiền thanh toán', value: '{{o.amount}}' },
-                { text: 'Số tiền bằng chữ', value: '{{o.amount_text}}' },
-                { text: 'Nội dung', value: '{{o.reason}}' },
+                { text: 'Số tiền thu công nợ', value: '{{o.amount}}' },
+                { text: 'Số tiền thu công nợ bằng chữ', value: '{{o.amount_text}}' },
+                { text: 'Nội dung thu công nợ', value: '{{o.reason}}' },
                 { text: 'Họ tên khách hàng', value: '{{o.partner.display_name}}' },
                 { text: 'Địa chỉ khách hàng', value: '{{o.partner.address}}' },
                 { text: 'SĐT khách hàng', value: '{{o.partner.phone}}' },
@@ -465,7 +465,7 @@ const keyWorDatas =
                 { text: 'Số tiền', value: '{{amount}}' },
                 { text: 'Số tiền bằng chữ', value: '{{amount_text}}' },
                 { text: 'Nội dung', value: '{{reason}}' },
-                { text: 'Tên người giới thiệu', value: '{{agent.name}}' },
+                { text: 'Họ tên người giới thiệu', value: '{{agent.name}}' },
                 { text: 'Địa chỉ người giới thiệu', value: '{{agent.address}}' },
                 { text: 'Số điện thoại người giới thiệu', value: '{{agent.phone}}' },
                 { text: 'Người lập phiếu', value: '{{user.name}}' },
@@ -487,7 +487,7 @@ const keyWorDatas =
         {
             text: 'Thông tin chi tiết',
             value: [
-                { text: 'Tên nhân viên', value: '{{o.employee.name}}' },
+                { text: 'Họ tên nhân viên', value: '{{o.employee.name}}' },
                 { text: 'Mã nhân viên', value: '{{o.employee.name}}' },
                 { text: 'Lương/tháng', value: '{{o.employee.wage}}' },
                 { text: 'Số ngày nghỉ/tháng', value: '{{o.employee.leave_per_month}}' },
@@ -592,7 +592,7 @@ const keyWorDatas =
                 { text: 'Danh sách dịch vụ đợt khám', value: 'dotkham.lines' },
                 { text: 'Số thứ tự', value: '{{for.index + 1}}' },
                 { text: 'Ngày khám', value: '{{dotkham.date}}' },
-                { text: 'Tên bác sĩ', value: '{{dotkham.doctor.name}}' },
+                { text: 'Họ tên bác sĩ', value: '{{dotkham.doctor.name}}' },
                 { text: 'Mô tả', value: '{{dotkham.reason}}' },
                 { text: 'Tên dịch vụ', value: '{{line.product.name}}' },
                 { text: 'Công đoạn', value: '{{line.name_step}}' },
@@ -704,7 +704,7 @@ const keyWorDatas =
                 { text: 'danh sách Phương thức thanh toán', value: '{{o.journal_lines}}' },
                 { text: 'Số tiền', value: '{{o.amount}}' },
                 { text: 'Nội dung', value: '{{o.note}}' },
-                { text: 'Tên nhân viên', value: '{{u.name}}' },
+                { text: 'Họ tên nhân viên', value: '{{u.name}}' },
             ]
         }
     ],
