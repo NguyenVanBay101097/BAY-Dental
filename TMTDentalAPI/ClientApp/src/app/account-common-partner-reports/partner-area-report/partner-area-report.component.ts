@@ -31,19 +31,6 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
   dataSourceCities: Array<{ code: string; name: string }>;
   dataResultCities: Array<{ code: string; name: string }>;
   cityName: string = '';
-  // pieObjData: any[] = [
-  //   {name: 'Quận 1',total: 100,percent: '20%', color: '#4271C9'},
-  //   {name: 'Quận 2',total: 200,percent: '30%', color: '#F57A27'},
-  //   {name: 'Quận 3',total: 300,percent: '40%', color: '#A8A8A8'},
-  //   {name: 'Quận 4',total: 400,percent: '20%', color: '#F5C000'},
-  //   {name: 'Quận 5',total: 500,percent: '30%', color: '#4C93D4'},
-  //   {name: 'Quận 6',total: 600,percent: '40%', color: '#6FB342'},
-  //   {name: 'Quận 7',total: 700,percent: '20%', color: '#22427D'},
-  //   {name: 'Quận 8',total: 800,percent: '30%', color: '#A64D15'},
-  //   {name: 'Quận 9',total: 900,percent: '40%', color: '#A5ABB8'},
-  //   {name: 'Quận 10',total: 950,percent: '20%', color: '#A17702'},
-  //   {name: 'Khác',total: 330,percent: '30%', color: '#000000'},
-  // ]
   pieLabels: any[] = []
   pieOptions: any= {};
   pieDatasets: any[] = [];
@@ -218,7 +205,7 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
               else if (pieData.length > 6){
                 var leftData = pieData.slice(0,6);
                 leftData.forEach(item => {
-                  var html = '<li style="display:flex; padding-top: 3px; padding-bottom:3px"><span style="flex:1; min-width: 115px"><i class="fas fa-circle mr-2" style="color:'+item.color+'"></i>'+item.name+'</span>'+
+                  var html = '<li style="display:flex; padding-top: 3px; padding-bottom:3px"><span style="flex:1; min-width: 115px"><i class="fas fa-circle mr-2" style="color:'+item.color+'"></i>'+item.districtName+'</span>'+
                   '<span style="padding-left:3px">('+item.percent+')</span>';
                   leftLegendHtml.push(html);
                 });
@@ -318,7 +305,7 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
       
     }
     else {
-      this.currentCity.code = '79';
+      this.currentCity = {code: '79', name: 'Thành phố Hồ Chí Minh'};
       this.currentCompany.id = '';
       this.cityName = this.currentCity ? this.currentCity.name : '';
       this.loadDataFromApi();
