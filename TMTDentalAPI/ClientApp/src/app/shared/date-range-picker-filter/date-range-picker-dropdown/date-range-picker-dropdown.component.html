@@ -35,7 +35,7 @@
                             <ng-container *ngIf="showDropdowns && calendarVariables.left.dropdowns">
                                 <div class="dropdowns">
                                     <!-- {{this.locale.monthNames[calendarVariables?.left?.calendar[1][1].month()]}} -->
-                                    <select class="monthselect float-left"
+                                    <select class="monthselect float-left form-control"
                                         (change)="monthChanged($event, sideEnum.left)">
                                         <option
                                             [disabled]="(calendarVariables.left.dropdowns.inMinYear && m < calendarVariables.left.minDate.month()) || (calendarVariables.left.dropdowns.inMaxYear && m > calendarVariables.left.maxDate.month())"
@@ -47,7 +47,7 @@
                                 </div>
                                 <div class="dropdowns">
                                     <!-- {{ calendarVariables?.left?.calendar[1][1].format(" YYYY")}} -->
-                                    <select class="yearselect float-right"
+                                    <select class="yearselect float-right form-control"
                                         (change)="yearChanged($event, sideEnum.left)">
                                         <option *ngFor="let y of calendarVariables.left.dropdowns.yearArrays"
                                             [selected]="y === calendarVariables.left.dropdowns.currentYear">
@@ -163,7 +163,7 @@
                             <ng-container *ngIf="showDropdowns && calendarVariables.right.dropdowns">
                                 <div class="dropdowns">
                                     <!-- {{this.locale.monthNames[calendarVariables?.right?.calendar[1][1].month()]}} -->
-                                    <select class="monthselect float-left"
+                                    <select class="monthselect float-left form-control"
                                         (change)="monthChanged($event, sideEnum.right)">
                                         <option
                                             [disabled]="(calendarVariables.right.dropdowns.inMinYear && calendarVariables.right.minDate && m < calendarVariables.right.minDate.month()) || (calendarVariables.right.dropdowns.inMaxYear && calendarVariables.right.maxDate && m > calendarVariables.right.maxDate.month())"
@@ -175,7 +175,7 @@
                                 </div>
                                 <div class="dropdowns">
                                     <!-- {{ calendarVariables?.right?.calendar[1][1].format(" YYYY")}} -->
-                                    <select class="yearselect float-right"
+                                    <select class="yearselect float-right form-control"
                                         (change)="yearChanged($event, sideEnum.right)">
                                         <option *ngFor="let y of calendarVariables.right.dropdowns.yearArrays"
                                             [selected]="y === calendarVariables.right.dropdowns.currentYear">
