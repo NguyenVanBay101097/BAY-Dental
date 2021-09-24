@@ -122,7 +122,7 @@ const keyWorDatas =
                 { text: 'Họ tên khách hàng', value: '{{o.partner?.display_name}}' },
                 { text: 'Địa chỉ khách hàng', value: '{{o.partner?.address}}' },
                 { text: 'Giới tính khách hàng', value: '{{o.partner?.get_gender}}' },
-                { text: 'Tuổi khách hàng', value: '{{partner?.get_age}}' },
+                { text: 'Tuổi khách hàng', value: '{{o.partner?.get_age}}' },
                 { text: 'Họ tên bác sĩ', value: '{{o.employee?.name}}' },
             ]
         },
@@ -701,7 +701,7 @@ const keyWorDatas =
                 { text: 'SĐT khách hàng', value: '{{o.order?.partner?.phone}}' },
                 { text: 'Địa chỉ khách hàng', value: '{{o.order?.partner?.address}}' },
                 { text: 'Ngày thanh toán', value: '{{o.date}}' },
-                { text: 'danh sách Phương thức thanh toán', value: '{{o.journal_lines}}' },
+                { text: 'danh sách Phương thức thanh toán', value: '{{o.journal_lines_display}}' },
                 { text: 'Số tiền', value: '{{o.amount}}' },
                 { text: 'Nội dung', value: '{{o.note}}' },
                 { text: 'Họ tên nhân viên', value: '{{u.name}}' },
