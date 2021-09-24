@@ -93,7 +93,7 @@ const keyWorDatas =
                 { text: 'Tên thuốc', value: '{{line.product?.name}}' },
                 { text: 'Số lần uống/ngày', value: '{{line.toa_thuoc_line?.number_of_times}}' },
                 { text: 'Số lượng uống/lần', value: '{{line.toa_thuoc_line?.amount_of_times}}' },
-                { text: 'Đơn vị mỗi lần uống', value: '{{ine.product_uo_m?.name}}' },
+                { text: 'Đơn vị mỗi lần uống', value: '{{line.product_uo_m?.name}}' },
                 { text: 'Thời điểm uống', value: '{{line.toa_thuoc_line?.use_at_display}}' },
                 { text: 'Số lượng thuốc', value: '{{line.quantity}}' },
                 { text: 'Đơn giá thuốc', value: '{{line.price}}' },
