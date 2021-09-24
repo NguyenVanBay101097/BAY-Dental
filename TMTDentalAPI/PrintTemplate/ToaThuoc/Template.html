@@ -1,7 +1,7 @@
 ﻿<table border="0" cellpadding="5" cellspacing="1" style="width:100%">
     <tbody>
         <tr>
-            <td style="width:100px"><img alt="{{o.company.name}}" class="img-fuild" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
+            <td style="width:100px"><img alt="{{o.company.name}}" class="img-fluid" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
             <td>
                 <strong>{{o.company.name}}</strong><br />
                 Địa chỉ: {{o.company.address}}<br />
@@ -54,7 +54,7 @@
             <tr>
                 <td style="width:50px"><strong>{{for.index + 1}}</strong>.</td>
                 <td>
-                    <strong>{{line.product.name}}</strong><br />
+                    <strong>{{line.product?.name}}</strong><br />
                     Ngày uống <strong>{{line.number_of_times}}</strong> lần, mỗi lần <strong>{{line.amount_of_times}}</strong> <strong>{{line.product_uo_m.name}}</strong>, uống trong <strong>{{line.number_of_days}}</strong> ngày (<strong>{{line.use_at_display}}</strong>)
                 </td>
                 <td><strong>{{line.quantity}}</strong> </td>
@@ -93,7 +93,7 @@
                     <br />
                     <br />
                     <br />
-                    <p style="text-align:center"><strong>{{o.employee ? (o.employee.name | string.upcase) : "" }}</strong></p>
+                    <p style="text-align:center"><strong>{{o.employee ? (o.employee?.name | string.upcase) : "" }}</strong></p>
                 </td>
                 <td>
                     <p style="text-align:center">
@@ -104,7 +104,7 @@
                     <br />
                     <br />
                     <br />
-                    <p style="text-align:center"><strong>{{o.partner ? (o.partner.name | string.upcase) : ""}}</strong></p>
+                    <p style="text-align:center"><strong>{{o.partner ? (o.partner?.name | string.upcase) : ""}}</strong></p>
                 </td>
             </tr>
         </tbody>

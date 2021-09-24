@@ -2,7 +2,7 @@
     <table border="0" cellpadding="5" cellspacing="1" style="width:100%">
         <tbody>
             <tr>
-                <td style="width:100px"><img alt="{{o.company.name}}" class="img-fuild" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
+                <td style="width:100px"><img alt="{{o.company.name}}" class="img-fluid" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
                 <td>
                     <strong>{{o.company.name}}</strong><br />
                     Địa chỉ: {{o.company.address}}<br />
@@ -22,15 +22,15 @@
         <tbody>
             <tr>
                 <td style="width:150px">Khách hàng</td>
-                <td>{{o.order.partner.display_name}}</td>
+                <td>{{o.order?.partner?.display_name}}</td>
             </tr>
             <tr>
                 <td>Điện thoại</td>
-                <td>{{o.order.partner.phone}}</td>
+                <td>{{o.order?.partner?.phone}}</td>
             </tr>
             <tr>
                 <td>Địa chỉ</td>
-                <td>{{o.order.partner.address}}</td>
+                <td>{{o.order?.partner?.address}}</td>
             </tr>
             <tr>
                 <td>Ngày thanh toán</td>
@@ -64,7 +64,7 @@
                     <br />
                     <br />
                     <br />
-                    <p style="text-align:center"><strong>{{o.order.partner.name | string.upcase}}</strong></p>
+                    <p style="text-align:center"><strong>{{o.order?.partner?.name | string.upcase}}</strong></p>
                 </td>
                 <td>
                     <p style="text-align:center">

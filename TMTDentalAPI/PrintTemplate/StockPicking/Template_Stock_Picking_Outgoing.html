@@ -1,7 +1,7 @@
 ﻿<table border="0" cellpadding="5" cellspacing="1" style="width:100%">
     <tbody>
         <tr>
-            <td style="width:100px"><img alt="{{o.company.name}}" class="img-fuild" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
+            <td style="width:100px"><img alt="{{o.company.name}}" class="img-fluid" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
             <td>
                 <strong>{{o.company.name}}</strong><br />
                 Địa chỉ: {{o.company.address}}<br />
@@ -19,7 +19,7 @@
     <tbody>
         <tr>
             <td>Đối tác</td>
-            <td>{{o.partner ? o.partner.name : ""}}</td>
+            <td>{{o.partner ? o.partner?.name : ""}}</td>
             <td>Ngày</td>
             <td>{{o.date | date.to_string '%d/%m/%Y'}}</td>
         </tr>
@@ -47,11 +47,11 @@
         <!--{{ for line in o.move_lines }}-->
         <tr>
             <td style="text-align:center">{{for.index + 1}}</td>
-            <td>{{line.product.default_code}}</td>
+            <td>{{line.product?.default_code}}</td>
             <td>{{line.name}}</td>
-            <td>{{line.product.categ.name}}</td>
+            <td>{{line.product?.categ?.name}}</td>
             <td style="text-align:right">{{line.product_uomqty}}</td>
-            <td>{{line.product_uom.name}}</td>
+            <td>{{line.product_uom?.name}}</td>
         </tr>
         <!--{{end}}-->
     </tbody>
@@ -69,7 +69,7 @@
                 <br />
                 <br />
                 <br />
-                <strong>{{o.created_by ? (o.created_by.name | string.upcase) : ""}}</strong>
+                <strong>{{o.created_by ? (o.created_by?.name | string.upcase) : ""}}</strong>
             </td>
         </tr>
     </tbody>
