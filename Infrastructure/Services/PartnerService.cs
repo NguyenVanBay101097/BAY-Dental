@@ -150,6 +150,8 @@ namespace Infrastructure.Services
             var query = GetQueryPaged(val);
             var totalItems = await query.CountAsync();
 
+            query = query.OrderByDescending(x => x.DateCreated);
+
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
 
             if (val.ComputeCreditDebit)
