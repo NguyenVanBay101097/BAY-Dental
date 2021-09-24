@@ -19,12 +19,12 @@
                                         </kendo-chart>
                                     </div>
                                     <div class="ml-1 note-chart">
-                                        <div class="d-flex">
+                                        <div class="d-flex align-items-center justify-content-center">
                                             <div>
-                                               <h5>Tổng lượng khách:</h5>
+                                               <span class="item-header">Tổng lượng khách:</span>
                                             </div>
                                             <div class="ml-2">
-                                                <span class="numeric-revenue">{{countdataCustomer | number}}</span>
+                                                <span class="numeric-revenue item-header">{{countdataCustomer | number}}</span>
                                             </div>
                                         </div>
                                         <div *ngFor="let item of pieDataCustomer" class="d-flex">
@@ -70,12 +70,12 @@
                                         </kendo-chart>
                                     </div>
                                     <div class="ml-1 note-chart">
-                                        <div class="d-flex">
+                                        <div class="d-flex align-items-center justify-content-center">
                                             <div>
-                                               <h5>Lượng tiếp nhận:</h5>
+                                               <span class="item-header">Lượng tiếp nhận:</span>
                                             </div>
                                             <div class="ml-2">
-                                                <span class="numeric-revenue">{{countdataNoTreatment | number}}</span>
+                                                <span class="numeric-revenue item-header">{{countdataNoTreatment | number}}</span>
                                             </div>
                                         </div>
                                         <div *ngFor="let item of dataNoTreatment" class="d-flex">
