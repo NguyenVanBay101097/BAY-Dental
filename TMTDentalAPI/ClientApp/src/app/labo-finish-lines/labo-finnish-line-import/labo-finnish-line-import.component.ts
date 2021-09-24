@@ -43,7 +43,7 @@ export class LaboFinnishLineImportComponent implements OnInit {
 
   onSave() {
     if (!this.correctFormat){
-      this.notify('error','Dữ liệu không đúng định dạng mẫu');
+      this.notify('error','File import sai định dạng. Vui lòng tải file mẫu và nhập dữ liệu đúng');
       return;
     }
     if (!this.fileBase64 || this.fileBase64 === '') {
