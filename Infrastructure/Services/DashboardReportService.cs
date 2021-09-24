@@ -207,6 +207,8 @@ namespace Infrastructure.Services
             return RevenueReport;
         }
 
+
+
         protected T GetService<T>()
         {
             return (T)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(T));
