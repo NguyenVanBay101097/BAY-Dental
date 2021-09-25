@@ -22,7 +22,6 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
   @ViewChild('pieCanvas', {static: true}) pieCanvas: ElementRef;
   pieChart: any;
   companies: any[] = [];
-  cities: any[] = [{id:'01',name:'TP.Hồ Chí Minh'}];
   dateFrom: any;
   dateTo: any;
   currentCompany: any = {};
@@ -112,13 +111,10 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
   ) { }
 
   ngOnInit() {
-    this.currentCompany.id = JSON.parse(localStorage.getItem('user_info')).companyId;
     this.initFilterData();
     this.loadSourceCities();
     this.loadCompanies();
     this.loadCurrentCompany();
-    this.loadDataFromApi();
-    
   }
 
   ngAfterViewInit(){
@@ -232,13 +228,6 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
 
     let legend = this._elementRef.nativeElement.querySelector(`#pie-chart-legend`);
     legend.innerHTML = ulHtml;
-    // Chart.helpers.each(Chart.instances, function(instance){
-    //   if (instance.config.type == "pie"){
-    //     console.log(instance);
-        
-    //     legend.innerHTML = ulHtml;
-    //   }
-    // });
   }
 
   searchCompany$(search?) {
@@ -251,7 +240,6 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
   loadCompanies() {
     this.searchCompany$().subscribe(res => {
       this.companies = res.items;
-      // this.loadCurrentCompany();
     });
   }
 
@@ -294,18 +282,18 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
 
   onSelectCompany(event){
     if (event){
-      let companyId = event.id;
+      let companyId = event;
       this.currentCompany.id = companyId;
       this.currentCity.code = '';
-      this.loadDataFromApi();
       this.companyService.get(companyId).subscribe(result => {
         this.currentCity = {code: result.city.code, name: result.city.name};
+        this.loadDataFromApi();
         this.cityName = result.city.name;
       });
       
     }
     else {
-      this.currentCity = {code: '79', name: 'Thành phố Hồ Chí Minh'};
+      this.currentCity = {code:"79",name:"Thành phố Hồ Chí Minh"};
       this.currentCompany.id = '';
       this.cityName = this.currentCity ? this.currentCity.name : '';
       this.loadDataFromApi();
@@ -315,15 +303,13 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
 
   onSelectCity(event){
     if (event){
-      this.cityName = event.name;
-      this.currentCompany.id = '';
-      this.currentCity.code = event.code;
+      this.cityName = this.dataSourceCities.find(x => x.code == event).name;
+      this.currentCity.code = event;
       this.loadDataFromApi();
       
     }
     else {
       this.cityName = '';
-      this.currentCompany.id = '';
       this.currentCity.code = '';
       this.loadDataFromApi();
     }

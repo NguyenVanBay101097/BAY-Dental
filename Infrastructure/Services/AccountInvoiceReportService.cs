@@ -599,11 +599,11 @@ namespace Infrastructure.Services
             filter.DateFrom = val.DateFrom;
             filter.DateTo = val.DateTo;
             var query = GetRevenueReportQuery(filter);
-            if (!string.IsNullOrEmpty(val.CityCode))
-                query = query.Where(x => x.Company.Partner.CityCode == val.CityCode);
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId);
-            var count = query.Count();
+            if (!string.IsNullOrEmpty(val.CityCode))
+                query = query.Where(x => x.Partner.CityCode == val.CityCode);
+
             var revenueTotal = Math.Abs(query.Sum(x => x.PriceSubTotal));
             var revenueList = await query.Include(x => x.Partner).ToListAsync();
             var grList = revenueList.GroupBy(x => new { DistrictName = x.Partner.DistrictName, DistrictCode = x.Partner.DistrictCode })

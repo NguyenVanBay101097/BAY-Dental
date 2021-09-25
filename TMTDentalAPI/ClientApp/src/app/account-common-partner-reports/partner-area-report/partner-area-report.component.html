@@ -2,10 +2,10 @@
     <div class="card-body">
         <div class="form-inline">
             <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1" valuePrimitive="true" [valueField]="'id'" [textField]="'name'"
-                [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" [value]="currentCompany" #companyCbx>
+                [filterable]="true" [data]="companies" (valueChange)="onSelectCompany($event)" [value]="currentCompany" #companyCbx>
             </kendo-combobox>
             <kendo-combobox class="mr-1" [data]="dataResultCities" valuePrimitive="true" [textField]="'name'" [filterable]="true" [value]="currentCity"
-            [placeholder]="'Tỉnh/Thành'" (selectionChange)="onSelectCity($event)" (filterChange)="handleCityFilter($event)" [filterable]="true" #cityCbx [valueField]="'code'">
+            [placeholder]="'Tỉnh/Thành'" (valueChange)="onSelectCity($event)" (filterChange)="handleCityFilter($event)" [filterable]="true" #cityCbx [valueField]="'code'">
             </kendo-combobox>
             <app-date-range-picker-filter [opens]="'right'" class="mr-1" [startDate]="dateFrom"
                 [endDate]="dateTo" (searchChange)="onSearchDateChange($event)" opens="right">
@@ -36,15 +36,6 @@
                             </div>
                             <div id="pie-chart-legend" class="d-flex">
                             </div>
-                            <!-- <div class="chart-detail-block">
-                                <div class="d-flex chart-detail">
-                                    <div *ngFor="let item of pieObjData" class="chart-detail-item">
-                                        <span><i class="fas fa-circle mr-2" [style.color]="item.color"></i>
-                                            {{item.name}}</span>
-                                        <span>({{item.percent}})</span>
-                                    </div>
-                                </div>
-                            </div> -->
                         </div>
                     </div>
                 </div>
