@@ -699,7 +699,7 @@ namespace Infrastructure.Services
                 Date = x.Date,
                 Debit = x.Credit,
                 Credit = x.Debit,
-                InvoiceOrigin = x.Move.InvoiceOrigin,
+                InvoiceOrigin = x.Name,
                 Ref = x.Ref,             
             }).ToListAsync();
 
