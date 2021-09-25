@@ -699,8 +699,8 @@ namespace Infrastructure.Services
                 Date = x.Date,
                 Debit = x.Credit,
                 Credit = x.Debit,
-                InvoiceOrigin = x.Name,
-                Ref = x.Ref,             
+                InvoiceOrigin = x.Move.InvoiceOrigin,
+                Ref = x.Name,             
             }).ToListAsync();
 
             decimal begin = 0;
