@@ -109,7 +109,7 @@ namespace TMTDentalAPI.Controllers
 
                 worksheet.Cells["A2:K2"].Value = $"Ngày {val.DateFrom.Value.ToShortDateString()}";
                 worksheet.Cells["A2:K2"].Style.Numberformat.Format = "dd/mm/yyyy";
-                worksheet.Cells["A2:K2"].Merge = true;          
+                worksheet.Cells["A2:K2"].Merge = true;
 
                 worksheet.Cells[4, 1].Value = "Dịch vụ";
                 worksheet.Cells[4, 2].Value = "Phếu điều trị";
@@ -118,7 +118,7 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[4, 5].Value = "Bác sĩ";
                 worksheet.Cells[4, 6].Value = "Răng";
                 worksheet.Cells[4, 7].Value = "Chuẩn đoán";
-              
+
                 worksheet.Cells[4, 8].Value = "Thành tiền";
                 worksheet.Cells[4, 9].Value = "Thanh toán";
                 worksheet.Cells[4, 10].Value = "Còn lại";
@@ -138,20 +138,12 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 4].Value = item.ProductUOMQty;
                     worksheet.Cells[row, 4].Style.Numberformat.Format = "0";
                     worksheet.Cells[row, 5].Value = item.Employee != null ? item.Employee.Name : "";
-                    if (item.Teeth.Any())
-                    {
-                        foreach (var te in item.Teeth)
-                        {
-                            numberTeeth += te.Name +", ";
-                        }
-                    }
-                    worksheet.Cells[row, 6].Value = item.ToothType == "manual" ? numberTeeth : GetToothType(item.ToothType); ;
+                    worksheet.Cells[row, 6].Value = string.Join(",", item.Teeth.Select(x => x.Name).ToList());
                     worksheet.Cells[row, 7].Value = item.Diagnostic;
-                   
                     worksheet.Cells[row, 8].Value = item.PriceSubTotal;
                     worksheet.Cells[row, 8].Style.Numberformat.Format = "#,###";
                     worksheet.Cells[row, 9].Value = (item.PriceSubTotal - item.AmountResidual);
-                    worksheet.Cells[row, 9].Style.Numberformat.Format = ((item.PriceSubTotal) - (item.AmountResidual ?? 0)) > 0 && item.State != "draft" ? "#,###" : "0"; 
+                    worksheet.Cells[row, 9].Style.Numberformat.Format = ((item.PriceSubTotal) - (item.AmountResidual ?? 0)) > 0 && item.State != "draft" ? "#,###" : "0";
                     worksheet.Cells[row, 10].Value = item.AmountResidual;
                     worksheet.Cells[row, 10].Style.Numberformat.Format = (item.AmountResidual ?? 0) > 0 ? "#,###" : "0";
                     worksheet.Cells[row, 11].Value = GetSaleOrderState(item.State);
@@ -238,7 +230,7 @@ namespace TMTDentalAPI.Controllers
                 ColorMode = ColorMode.Color,
                 Orientation = Orientation.Landscape,
                 PaperSize = PaperKind.A4,
-                Margins = new MarginSettings { Top = 5},
+                Margins = new MarginSettings { Top = 5 },
                 DocumentTitle = "PDF Report"
             };
             var objectSettings = new ObjectSettings

@@ -1,4 +1,8 @@
-﻿*, ::after, ::before {
+﻿:root {
+    font-size: 14px;
+}
+
+*, ::after, ::before {
     box-sizing: border-box;
 }
 
@@ -177,7 +181,7 @@ body.letter, body.legal {
 
 body {
     margin: 0;
-    line-height: 1.2;
+    line-height: 1.42857;
     width: 100%;
     padding: 0;
 }
@@ -686,12 +690,21 @@ body.A5 .o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_label {
 table {
     caption-side: bottom;
     border-collapse: collapse;
+    vertical-align: top;
 }
 
     table thead th {
         font-weight: 600;
         text-align: left;
     }
+
+table > tbody {
+    vertical-align: inherit;
+}
+
+strong {
+    font-weight: 600;
+}
 
 .table {
     width: 100%;

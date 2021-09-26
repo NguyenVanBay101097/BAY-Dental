@@ -87,7 +87,7 @@ export class SaleDashboardInvoiceReportComponent implements OnInit {
   }
 
   get totalDebit() {
-    if (this.dataCashBooks) {
+    if (this.revenueCashBank) {
       return (this.revenueCashBank.balance ? this.revenueCashBank.balance : 0) + (this.revenueCusDebt.debit || 0) + (this.revenueCusAdvance.debit || 0);
     }
 
@@ -107,7 +107,9 @@ export class SaleDashboardInvoiceReportComponent implements OnInit {
     if (this.revenues && this.cashBookData) {
       var dateRevenues = this.revenues.map(s => this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(s.invoiceDate), 'dd/MM/yyyy') : this.intlService.formatDate(new Date(s.invoiceDate), 'MM/yyyy'));
       var dateCashbooks = this.cashBookData.map(s => this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(s.date), 'dd/MM/yyyy') : this.intlService.formatDate(new Date(s.date), 'MM/yyyy'));
-      this.revenuCateg = this.arrayUnique(dateRevenues.concat(dateCashbooks).sort());
+      debugger
+      var res = this.arrayUnique(dateRevenues.concat(dateCashbooks)) as Array<string>;
+      this.revenuCateg = res.sort();
     }
   }
 

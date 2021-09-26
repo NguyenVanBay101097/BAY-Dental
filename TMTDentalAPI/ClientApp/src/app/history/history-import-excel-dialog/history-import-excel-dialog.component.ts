@@ -53,7 +53,7 @@ export class HistoryImportExcelDialogComponent implements OnInit {
     onSave() {
       if (!this.correctFormat){
         this.notificationService.show({
-          content: 'Dữ liệu không đúng định dạng mẫu',
+          content: 'File import sai định dạng. Vui lòng tải file mẫu và nhập dữ liệu đúng',
           hideAfter: 3000,
           position: { horizontal: 'center', vertical: 'top' },
           animation: { type: 'fade', duration: 400 },

@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" href="/css/print.css" />
     <style>
         @page {
-            size:{{o.paper_format}} {{o.is_size == false ? "portrait" : "landscape" }} !important;
+            size:{{o.paper_format}} portrait landscape!important;
             margin-top: {{o.top_margin ?? 0}}mm;
             margin-right: {{o.right_margin ?? 0}}mm;
             margin-bottom:{{o.bottom_margin ?? 0}}mm;
@@ -16,6 +16,5 @@
     </style>
 </head>
 <body class="{{paper_format}}">
-    <div class="container"></div>
 </body>
 </html>
