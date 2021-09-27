@@ -691,6 +691,7 @@ table {
     caption-side: bottom;
     border-collapse: collapse;
     vertical-align: top;
+    margin-bottom: 1rem;
 }
 
     table thead th {
