@@ -20,6 +20,7 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
   @ViewChild('companyCbx',{static:true}) companyCbx: ComboBoxComponent;
   @ViewChild('cityCbx',{static:true}) cityCbx: ComboBoxComponent;
   @ViewChild('pieCanvas', {static: true}) pieCanvas: ElementRef;
+  @ViewChild('contPieChart', {static: true}) contPieChart: ElementRef;
   pieChart: any;
   companies: any[] = [];
   dateFrom: any;
@@ -356,6 +357,10 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
     }, err => {
       console.log(err);
     })
+  }
+
+  getMaxHeightPieChart() {
+    return this.contPieChart.nativeElement.offsetHeight;
   }
 }
 

@@ -7,10 +7,6 @@
     background-color: #FFFFFF;
 }
 
-.pie-chart {
-    min-height: 600px;
-}
-
 .chart-detail {
     flex-wrap: wrap;
     width: 100%;
@@ -33,10 +29,10 @@
 }
 
 .district-list {
+    display: flex;
+    align-content: flex-start;
     flex-wrap: wrap;
-    justify-content: space-between;
-    height: 600px;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .card-title {
@@ -67,6 +63,10 @@
 
 .card-item:hover {
     background: #CCE7FF;
+}
+
+.card-item:nth-child(odd) {
+    margin-right: 1rem;
 }
 
 .card-item.active {
