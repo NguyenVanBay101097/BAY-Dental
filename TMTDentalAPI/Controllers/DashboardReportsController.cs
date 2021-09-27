@@ -53,6 +53,13 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        public async Task<IActionResult> GetRevenueChartReport(ReportRevenueChartFilter val)
+        {
+            var res = await _dashboardService.GetRevenueChartReport(val.DateFrom, val.DateTo, val.CompanyId, val.GroupBy);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
         public async Task<IActionResult> GetSumaryRevenueReport(SumaryRevenueReportFilter val)
         {
             var res = await _dashboardService.GetSumaryRevenueReport(val);
