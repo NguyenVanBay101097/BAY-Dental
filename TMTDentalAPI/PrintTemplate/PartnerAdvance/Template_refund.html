@@ -1,14 +1,12 @@
-﻿<table border="0" cellpadding="0" cellspacing="1" style="width:100%">
+﻿<table border="0" cellpadding="5" cellspacing="0" style="width:100%">
     <tbody>
         <tr>
             <td style="width:100px"><img alt="{{o.company.name}}" class="img-fluid" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
             <td>
-                <p>
-                    <strong>{{o.company.name}}</strong><br />
-                    Địa chỉ: {{o.company.address}}<br />
-                    ĐT: {{o.company.phone}}<br />
-                    Email: {{o.company.email}}
-                </p>
+                <strong>{{o.company.name}}</strong><br />
+                Địa chỉ: {{o.company.address}}<br />
+                ĐT: {{o.company.phone}}<br />
+                Email: {{o.company.email}}
             </td>
         </tr>
     </tbody>
@@ -16,10 +14,11 @@
 
 <h3 style="text-align:center">PHIẾU HOÀN TẠM ỨNG</h3>
 
-<div style="text-align:center">Ngày {{o.date?.day}} tháng {{o.date?.month}} năm {{o.date?.year}}</div>
+<p style="text-align:center">
+    Ngày {{o.date?.day}} tháng {{o.date?.month}} năm {{o.date?.year}}<br />
+    <strong>Số: {{o.name}}</strong>
+</p>
 
-<div style="text-align:center"><strong>Số: {{o.name}}</strong></div>
-<br />
 <table border="0" cellpadding="5" cellspacing="100" style="width:100%">
     <tbody>
         <tr>
@@ -44,7 +43,6 @@
         </tr>
     </tbody>
 </table>
-<br />
 
 <table border="0" cellpadding="1" cellspacing="1" style="width:100%">
     <tbody>
@@ -68,3 +66,5 @@
         </tr>
     </tbody>
 </table>
+
+<p>&nbsp;</p>

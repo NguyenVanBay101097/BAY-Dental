@@ -1,14 +1,12 @@
-﻿<table border="0" cellpadding="0" cellspacing="1" style="width:100%">
+﻿<table border="0" cellpadding="5" cellspacing="0" style="width:100%">
     <tbody>
         <tr>
             <td style="width:100px"><img alt="{{o.company.name}}" class="img-fluid" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
             <td>
-                <p>
-                    <strong>{{o.company.name}}</strong><br />
-                    Địa chỉ: {{o.company.address}}<br />
-                    ĐT: {{o.company.phone}}<br />
-                    Email: {{o.company.email}}
-                </p>
+                <strong>{{o.company.name}}</strong><br />
+                Địa chỉ: {{o.company.address}}<br />
+                ĐT: {{o.company.phone}}<br />
+                Email: {{o.company.email}}
             </td>
         </tr>
     </tbody>
@@ -16,10 +14,11 @@
 
 <h3 style="text-align:center">PHIẾU ĐIỀU TRỊ</h3>
 
-<div style="text-align:center">Ngày {{o.date_order.day}} tháng {{o.date_order.month}} năm {{o.date_order.year}}</div>
+<p style="text-align: center;">
+    Ngày {{o.date_order.day}} tháng {{o.date_order.month}} năm {{o.date_order.year}}<br />
+    <strong>Số: {{o.name}}</strong>
+</p>
 
-<div style="text-align:center"><strong>Số: {{o.name}}</strong></div>
-<br />
 <h6>THÔNG TIN CHI TIẾT</h6>
 
 <table border="0" cellpadding="2" cellspacing="1" style="width:100%">
@@ -39,8 +38,6 @@
     </tbody>
 </table>
 
-<h6> </h6>
-
 <h6>BẢNG KÊ DỊCH VỤ</h6>
 
 <table border="1" cellpadding="3" cellspacing="1" style="width:100%">
@@ -57,35 +54,36 @@
             <td>{{line.product?.name}}</td>
             <td style="text-align:right">{{(line.product_uomqty ? line.product_uomqty : 0) | math.format "N0" }}</td>
             <td style="text-align:right">{{line.price_unit | math.format "N0" }}</td>
-            <td style="text-align:right">{{line.amount_discount_total | math.format "N0"  }}</td>
+            <td style="text-align:right">{{line.amount_discount_total | math.format "N0" }}</td>
             <td style="text-align:right">{{line.price_sub_total | math.format "N0" }}</td>
         </tr>
         <!--{{end}}-->
     </tbody>
 </table>
 
-<div> </div>
+<div class="row">
+    <div class="col">&nbsp;</div>
 
-<table align="right" border="0" cellspacing="1">
-    <tbody>
-        <tr>
-            <td><strong>Tổng tiền</strong></td>
-            <td>{{o.amount_total | math.format "N0"  }}</td>
-        </tr>
-        <tr>
-            <td><strong>Đã thanh toán</strong></td>
-            <td>{{o.total_paid | math.format "N0"}}</td>
-        </tr>
-        <tr>
-            <td><strong>Còn lại</strong></td>
-            <td>{{o.residual | math.format "N0" }}</td>
-        </tr>
-    </tbody>
-</table>
-<br />
-<br />
-<br />
-<!--{{if o.sale_order_payments  | array.size > 0}}-->
+    <div class="col">
+        <table align="right" border="0" cellspacing="1">
+            <tbody>
+                <tr>
+                    <td><strong>Tổng tiền</strong></td>
+                    <td>{{o.amount_total | math.format "N0" }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Đã thanh toán</strong></td>
+                    <td>{{o.total_paid | math.format "N0"}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Còn lại</strong></td>
+                    <td>{{o.residual | math.format "N0" }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <h6>THEO DÕI THANH TOÁN</h6>
 
 <table border="1" cellpadding="3" cellspacing="1" style="width:100%">
@@ -110,12 +108,8 @@
         <!--{{end}}--><!--{{end}}-->
     </tbody>
 </table>
-<!--{{end}}--><!--{{if o.dot_khams | array.size > 0}}-->
 
-<h6>
-    <br />
-    THÔNG TIN ĐỢT KHÁM
-</h6>
+<h6>THÔNG TIN ĐỢT KHÁM</h6>
 
 <table border="1" cellpadding="3" cellspacing="1" style="width:100%">
     <tbody>
@@ -146,8 +140,7 @@
         <!--{{end}}--><!--{{end}}-->
     </tbody>
 </table>
-<br />
-<!--{{end}}-->
+
 <table border="0" cellpadding="0" cellspacing="1" style="width:100%">
     <tbody>
         <tr>

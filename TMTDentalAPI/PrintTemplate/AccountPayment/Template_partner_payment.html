@@ -1,5 +1,4 @@
-﻿<div>
-    <table border="0" cellpadding="5" cellspacing="1" style="width:100%">
+﻿    <table border="0" cellpadding="5" cellspacing="1" style="width:100%">
         <tbody>
             <tr>
                 <td style="width:100px"><img alt="{{o.company.name}}" class="img-fluid" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
@@ -15,9 +14,8 @@
 
     <h3 style="text-align:center">BIÊN LAI THANH TOÁN</h3>
 
-    <div style="text-align:center">Ngày {{o.date.day}} tháng {{o.date.month}} năm {{o.date.year}}</div>
+    <p style="text-align:center">Ngày {{o.date.day}} tháng {{o.date.month}} năm {{o.date.year}}</p>
 
-    <br />
     <table cellpadding="5" cellspacing="1" style="width:100%">
         <tbody>
             <tr>
@@ -50,7 +48,6 @@
             </tr>
         </tbody>
     </table>
-    <br />
 
     <table border="0" cellpadding="0" cellspacing="1" style="width:100%">
         <tbody>
@@ -63,7 +60,7 @@
                     <br />
                     <br />
                     <br />
-                    <br />
+                    &nbsp;
                     <p style="text-align:center"><strong>{{o.order?.partner?.name | string.upcase}}</strong></p>
                 </td>
                 <td>
@@ -74,10 +71,9 @@
                     <br />
                     <br />
                     <br />
-                    <br />
+                    &nbsp;
                     <p style="text-align:center"><strong>{{u.name | string.upcase}}</strong></p>
                 </td>
             </tr>
         </tbody>
     </table>
-</div>
