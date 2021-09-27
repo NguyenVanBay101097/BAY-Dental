@@ -4,7 +4,7 @@
     <span *ngIf="selected?.startDate && selected?.endDate" class="form-control custom-input border-right-0">
         {{ selected.startDate | date:'dd/MM/yyyy' }} - {{ selected.endDate| date:'dd/MM/yyyy' }}
     </span>
-    <span class="form-control custom-input border-right-0 px-1 title"
+    <span class="form-control custom-input border-right-0 title"
         *ngIf="!selected?.startDate && !selected?.endDate">{{title}}</span>
     <div (click)="open()" class="input-group-append cursor-pointer">
         <span class="input-group-text">

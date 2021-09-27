@@ -9,7 +9,7 @@ export const types: { text: string, value: string }[] = [
     { text: 'Đơn thuốc', value: 'tmp_toathuoc' },
     { text: 'Hóa đơn thuốc', value: 'tmp_medicine_order' },
     { text: 'Phiếu chi lương', value: 'tmp_salary_employee' },
-    { text: 'Phiếu tạm ứng lương', value: 'tmp_salary_advance' },
+    { text: 'Phiếu chi tạm ứng lương', value: 'tmp_salary_advance' },
 
     // { text: 'Tình trạng răng', value: 'tmp_advisory' },
     // { text: 'Biên lai thanh toán nhà cung cấp', value: 'tmp_supplier_payment' },

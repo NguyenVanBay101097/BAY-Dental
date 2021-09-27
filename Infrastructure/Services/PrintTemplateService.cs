@@ -59,7 +59,7 @@ namespace Infrastructure.Services
         {
             var doc = new HtmlDocument();
             doc.LoadHtml(layout);
-            doc.DocumentNode.SelectSingleNode("//div[@class='container']").InnerHtml += content;
+            doc.DocumentNode.SelectSingleNode("//body").InnerHtml += content;
             var newHtml = doc.DocumentNode.OuterHtml;
             return newHtml;
         }
