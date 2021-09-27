@@ -34,56 +34,9 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
   public totalCashbook: any;
 
   chartOptions: any = {}
-  // chartOptions: any = {
-  //   scaleShowVerticalLines: false,
-  //   responsive: true,
-  //   maintainAspectRatio: false,
-  //   title: {
-  //     text: 'BIỂU ĐỒ THU - CHI',
-  //     display: true,
-  //     fontSize: '16',
-  //   },
-  //   legend: { position: 'bottom', },
-  //   scales: {
-  //     xAxes: [{
-  //       distribution: 'linear',
-  //       type: 'time',
-  //       time: {
-  //         unit: 'day'
-  //       },
-  //       // type: "time",
-  //       // time: {
-  //       //   format: 'DD/MM/YYYY',
-  //       //   // tooltipFormat: 'll',
-  //       //   unit: 'month'
-  //       // }
-  //       ticks: {
-  //         // maxTicksLimit: 10, //10
-  //       }
-  //     }],
-  //     yAxes: [{
-  //       // ticks: {
-  //       //   min: 0,
-  //       //   max: 100,
-  //       //   stepSize: 20,
-  //       // }
-  //     }],
-
-  //   }
-  // };
   chartType: string = 'bar';
   dataSet: any[] = [];
   defaultDataSet = [{ x: '', y: 0 }];
-  // dataSet: any[] = [
-  //   {
-  //     label: "# of Votes",
-  //     fill: false,
-  //     data: [
-  //       { x: '', y: 0 }
-  //       // { x: '2021-09-01', y: 20 }
-  //     ]
-  //   }
-  // ];
   maxTicks: number = 11;
 
   constructor(private cashBookService: CashBookService,
@@ -113,7 +66,6 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
       legend: { position: 'bottom', },
       tooltips: {
         mode: 'label',
-        // usePointStyle: true,
         titleFontStyle: 'bold',
         borderWidth: 1,
         callbacks: {

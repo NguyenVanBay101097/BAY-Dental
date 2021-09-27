@@ -131,6 +131,8 @@ export class SaleDashboardReportFormComponent implements OnInit {
   yearList: number[] = [];
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
+  monthFrom = new Date(this.currentYear, 0, 1);
+  monthTo = new Date(this.currentYear, 11, 1);
   constructor(
     private partnerService: PartnerService,
     private fb: FormBuilder,
@@ -574,15 +576,4 @@ export class SaleDashboardReportFormComponent implements OnInit {
     }
   }
 
-  changeDateOption(val){
-    let year = val ? val : this.currentYear;
-    if(this.groupBy=='groupby:month' && year){
-      let dateFrom = new Date(year, 0, 1);
-      let dateTo = new Date(year, 11, 31);
-      this.dateFrom = dateFrom;
-      this.dateTo = dateTo;
-    }
-    this.loadDataCashbookChartApi();
-    this.loadDataRevenueChartApi();
-  }
 }

@@ -325,13 +325,8 @@
                     class="mr-1" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)">
                 </app-date-range-picker-filter>
                 <ng-template #elseTemplate>
-                    <select class="form-control" [(ngModel)]="currentYear" style="width: 100px;" (change)="changeDateOption($event.target.value)">
-                        <!-- <option value="">Năm</option> -->
-                        <option [value]="i" *ngFor="let i of yearList"> {{i}}</option>
-                    </select>
+                    <app-month-range-filter-dropdown [dateFrom]="monthFrom" [dateTo]="monthTo" (searchChange)="onSearchDateChange($event)"></app-month-range-filter-dropdown>
                 </ng-template>
-
-
             </div>
         </div>
         <div class="o_group mb-2 bg-white">
