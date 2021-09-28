@@ -18,5 +18,7 @@ namespace Infrastructure.Services
         Task<IEnumerable<CashBookReportItem>> GetChartReport(CashBookReportFilter val);
 
         Task<SumaryCashBook> GetSumaryCashBookReport(SumaryCashBookFilter val);
+
+        Task<IEnumerable<DataInvoiceItem>> GetDataInvoices(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string resultSelection);
     }
 }

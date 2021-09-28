@@ -49,6 +49,14 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Account.Read")]
+        public async Task<IActionResult> GetDataInvoices(DataInvoiceFilter val)
+        {
+            var res = await _cashBookService.GetDataInvoices(val.DateFrom, val.DateTo , val.CompanyId , val.ResultSelection);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Account.Read")]
         public async Task<IActionResult> GetChartReport(CashBookReportFilter val)
         {
             var res = await _cashBookService.GetChartReport(val);

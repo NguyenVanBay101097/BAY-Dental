@@ -41,12 +41,12 @@
             </li>
             <li class=" ">
                 <a class="mr-1 btn btn-outline-primary" id="service-tab" data-toggle="tab" href="#service" role="tab"
-                    aria-controls="service" aria-selected="false">Doanh thu dịch vụ</a>
+                    aria-controls="service" aria-selected="false">Doanh thu</a>
             </li>
-            <li class=" ">
+            <!-- <li class=" ">
                 <a class="mr-1 btn btn-outline-primary" id="medicines-tab" data-toggle="tab" href="#medicines"
                     role="tab" aria-controls="medicines" aria-selected="false">Doanh thu thuốc</a>
-            </li>
+            </li> -->
             <li class=" ">
                 <a class="mr-1 btn btn-outline-primary" id="cashbook-tab" data-toggle="tab" href="#cashbook" role="tab"
                     aria-controls="cashbook" aria-selected="false">Tình hình thu chi</a>
@@ -54,14 +54,14 @@
         </ul>
         <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                <app-day-dashboard-report-registration-service></app-day-dashboard-report-registration-service>
+                <app-day-dashboard-report-registration-service [services]="services"></app-day-dashboard-report-registration-service>
             </div>
             <div class="tab-pane fade" id="service" role="tabpanel" aria-labelledby="service-tab">
-                <app-day-dashboard-report-revenue-service></app-day-dashboard-report-revenue-service>
+                <app-day-dashboard-report-revenue-service [dataInvoices]="dataInvoices"></app-day-dashboard-report-revenue-service>
             </div>
-            <div class="tab-pane fade" id="medicines" role="tabpanel" aria-labelledby="medicines-tab">
+            <!-- <div class="tab-pane fade" id="medicines" role="tabpanel" aria-labelledby="medicines-tab">
                 <app-day-dashboard-report-revenue-medicines></app-day-dashboard-report-revenue-medicines>
-            </div>
+            </div> -->
             <div class="tab-pane fade" id="cashbook" role="tabpanel" aria-labelledby="cashbook-tab">
                 <app-day-dashboard-report-cashbook></app-day-dashboard-report-cashbook>
             </div>

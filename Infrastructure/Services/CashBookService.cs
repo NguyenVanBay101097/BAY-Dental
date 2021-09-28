@@ -192,6 +192,48 @@ namespace Infrastructure.Services
             };
         }
 
+        public async Task<IEnumerable<DataInvoiceItem>> GetDataInvoices(DateTime? dateFrom , DateTime? dateTo, Guid? companyId, string resultSelection)
+        {
+            var amlObj = GetService<IAccountMoveLineService>();
+
+            var types = new string[] { "cash", "bank" };
+            if (resultSelection == "cash")
+                types = new string[] { "cash" };
+            else if (resultSelection == "bank")
+                types = new string[] { "bank" };
+            else if (resultSelection == "debt")
+                types = new string[] { "debt" };
+            else if (resultSelection == "advance")
+                types = new string[] { "advance" };
+            else if (resultSelection == "all")
+                types = new string[] { "cash", "bank" , "debt" , "advance" };
+
+            if (dateFrom.HasValue)
+                dateFrom = dateFrom.Value.AbsoluteBeginOfDate();
+
+            if (dateTo.HasValue)
+                dateTo = dateTo.Value.AbsoluteEndOfDate();
+
+            var query = amlObj._QueryGet(dateFrom: dateFrom, dateTo: dateTo, state: "posted", companyId: companyId);
+            query = query.Where(x => types.Contains(x.Journal.Type) && x.AccountInternalType != "liquidity");          
+
+            var totalItems = await query.CountAsync();
+            var res = await query.OrderByDescending(x => x.Date).Select(x => new DataInvoiceItem
+            {
+                AccountName = x.Account.Name,
+                Amount = x.Credit - x.Debit,
+                Date = x.Date,
+                JournalName = x.Journal.Name,
+                JournalType = x.Journal.Type,
+                Name = x.Name,
+                PartnerId = x.PartnerId.Value,
+                PartnerName = x.Partner.Name,
+                InvoiceOrigin = x.Move.InvoiceOrigin
+            }).ToListAsync();
+
+            return res;
+        }
+
         public async Task<IEnumerable<CashBookReportItem>> GetChartReport(CashBookReportFilter val)
         {
             var amlObj = GetService<IAccountMoveLineService>();
