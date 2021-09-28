@@ -7,18 +7,23 @@ CKEDITOR.editorConfig = function (config) {
 	// Define changes to default configuration here. For example:
 	config.language = 'vi';
 	config.defaultLanguage = 'vi',
-		// config.enterMode = CKEDITOR.ENTER_BR;
-		// config.uiColor = '#AADC6E';
-		config.entities = false;
+	config.entities = false;
 	config.allowedContent = true;
-	config.removePlugins = 'divarea',
-		config.toolbar = [
-			{ name: 'document', items: ['Source'] },
-			{ name: 'styles', items: ['Format', 'Font', 'FontSize'] },
-			{ name: 'colors', items: ['TextColor', 'BGColor'] },
-			{ name: 'insert', items: ['Image', 'Table', 'HorizontalRule', 'Smiley'] },
-			{ name: 'basicstyles', items: ['Bold', 'Italic', 'Underline'] },
-			{ name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'] }
-		]
+
+	config.toolbarGroups = [
+		{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
+		{ name: 'styles', groups: [ 'styles' ] },
+		{ name: 'colors', groups: [ 'colors' ] },
+		'/',
+		{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+		{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
+		{ name: 'links', groups: [ 'links' ] },
+		{ name: 'insert', groups: [ 'insert' ] },
+		{ name: 'tools', groups: [ 'tools' ] },
+	];
+
+	config.removeButtons = 'Save,ExportPdf,Preview,Templates,Find,Replace,Scayt,Flash,Smiley,PageBreak,Iframe,CopyFormatting,RemoveFormat,Blockquote,JustifyBlock,Language,Form,Radio,Checkbox,TextField,Textarea,Select,Button,ImageButton,HiddenField,Link,Unlink,Anchor,About,Maximize,NewPage,Print,Cut,Copy,Paste,PasteText,PasteFromWord,Undo,Redo,SelectAll,Strike,BidiLtr,BidiRtl';
+	config.removePlugins = 'divarea';
 	config.contentsCss = ['/css/print.css', CKEDITOR.basePath + 'content.config.css'];
+	config.bodyClass = 'container';
 };

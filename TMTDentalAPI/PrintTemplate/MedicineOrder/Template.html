@@ -19,24 +19,24 @@
     <strong>Số: {{o.name}}</strong>
 </p>
 
-<table cellpadding="5" cellspacing="1" style="width:100%">
+<table cellpadding="3" cellspacing="1" style="width:100%">
     <tbody>
         <tr>
-            <td style="width:120px">Khách hàng</td>
+            <td style="width:120px"><strong>Khách hàng</strong></td>
             <td>{{o.partner?.name}}</td>
         </tr>
         <tr>
-            <td style="width:120px">Địa chỉ</td>
+            <td style="width:120px"><strong>Địa chỉ</strong></td>
             <td>{{o.partner?.address}}</td>
         </tr>
         <tr>
-            <td style="width:120px">Bác sĩ</td>
+            <td style="width:120px"><strong>Bác sĩ</strong></td>
             <td>{{o.employee?.name}}</td>
         </tr>
     </tbody>
 </table>
 
-<table border="1" cellpadding="2" cellspacing="0" style="width:100%">
+<table border="1" cellpadding="3" cellspacing="0" style="width:100%">
     <thead>
         <tr>
             <th scope="col" style="width:200px">Tên thuốc</th>
@@ -52,63 +52,52 @@
                 <strong>{{line.product?.name}}</strong><br />
                 <em>Ngày uống {{line.toa_thuoc_line?.number_of_times | math.format "N0"}} lần, mỗi lần {{line.toa_thuoc_line?.amount_of_times | math.format "N0"}} {{line.product_uo_m?.name}}, {{line.toa_thuoc_line?.use_at_display}}</em>
             </td>
-            <td style="text-align:right; width:50px">{{line.quantity | math.format "N0"}}</td>
+            <td style="text-align:right">{{line.quantity | math.format "N0"}}</td>
             <td style="text-align:right">{{line.price | math.format "N0"}}</td>
             <td style="text-align:right">{{line.amount_total | math.format "N0"}}</td>
         </tr>
+
         <!--{{ end }}-->
     </tbody>
 </table>
 
-<table cellpadding="1" cellspacing="1" style="width:100%">
+<table align="right" cellpadding="3" cellspacing="1">
     <tbody>
         <tr>
-            <td style="width:150px">&nbsp;</td>
-            <td style="width:150px">&nbsp;</td>
-            <td style="width:80px">Tổng tiền</td>
-            <td style="text-align:right; width:80px">{{o.amount | math.format "N0"}}</td>
+            <td style="width:120px"><strong>Tổng tiền</strong></td>
+            <td style="text-align:right">{{o.amount | math.format "N0"}}</td>
         </tr>
         <tr>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>Thanh toán</td>
-            <td style="text-align:right">{{o.account_payment ? (o.account_payment?.amount | math.format "N0") : 0}}</td>
+            <td style="width:120px"><strong>Thanh toán</strong></td>
+            <td style="text-align:right">{{o.account_payment?.amount | math.format "N0"}}</td>
         </tr>
         <tr>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>Còn lại</td>
-            <td style="text-align:right">{{o.amount - (o.account_payment == null ? 0 : o.account_payment?.amount) | math.format "N0"}}</td>
+            <td style="width:120px"><strong>Còn lại</strong></td>
+            <td style="text-align:right">{{o.amount - o.account_payment?.amount | math.format "N0"}}</td>
         </tr>
     </tbody>
 </table>
 
+<div class="clearfix"></div>
+
 <table border="0" cellpadding="0" cellspacing="1" style="width:100%">
     <tbody>
         <tr>
-            <td>
-                <p style="text-align:center">
-                    <strong>Người lập phiếu</strong><br />
-                    <em>(Ký, họ tên)</em><br />
-                    <br />
-                    <br />
-                    <br />
-                    &nbsp;
-                </p>
-
-                <p style="text-align:center"><strong>{{o.employee ? (o.employee?.name | string.upcase) : "" }}</strong></p>
+            <td style="text-align:center;width:50%">
+                <strong>Người lập phiếu</strong><br />
+                <em>(Ký, họ tên)</em><br />
+                <br />
+                <br />
+                <br />
+                <strong>{{ o.employee?.name | string.upcase }}</strong>
             </td>
-            <td>
-                <p style="text-align:center">
-                    <strong>Bệnh nhân</strong><br />
-                    <em>(Ký, họ tên)</em><br />
-                    <br />
-                    <br />
-                    <br />
-                    &nbsp;
-                </p>
-
-                <p style="text-align:center"><strong>{{o.partner ? (o.partner?.name | string.upcase) : ""}}</strong></p>
+            <td style="text-align:center;width:50%">
+                <strong>Bệnh nhân</strong><br />
+                <em>(Ký, họ tên)</em><br />
+                <br />
+                <br />
+                <br />
+                <strong>{{o.partner?.name | string.upcase}}</strong>
             </td>
         </tr>
     </tbody>

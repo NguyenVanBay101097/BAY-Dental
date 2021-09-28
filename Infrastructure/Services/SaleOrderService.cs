@@ -1905,9 +1905,11 @@ namespace Infrastructure.Services
         {
             var saleOrderLineObj = GetService<ISaleOrderLineService>();
             var saleOrderPaymentObj = GetService<ISaleOrderPaymentService>();
-            var orders = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Company).Include(x => x.Partner)
+            var orders = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.Company).ThenInclude(x => x.Partner)
+                .Include(x => x.Partner)
                 .Include(x => x.DotKhams).ThenInclude(s => s.Doctor)
-                .Include(x => x.DotKhams).ThenInclude(s => s.Lines).ThenInclude(x=> x.ToothRels).ThenInclude(x=> x.Tooth)
+                .Include(x => x.DotKhams).ThenInclude(s => s.Lines).ThenInclude(x => x.ToothRels).ThenInclude(x => x.Tooth)
                 .Include(x => x.CreatedBy)
                 .ToListAsync();
             foreach (var order in orders)
