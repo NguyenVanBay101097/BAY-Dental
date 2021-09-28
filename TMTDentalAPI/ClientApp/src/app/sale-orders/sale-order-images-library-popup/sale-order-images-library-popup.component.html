@@ -1,0 +1,52 @@
+<header class="modal-header">
+    <h5 class="modal-title">Thư viện ảnh<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body">
+    <div class="o_searchview mb-3">
+        <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo tên hình ảnh" [(ngModel)]="search"
+        (ngModelChange)="this.searchUpdate.next($event)" />
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div *ngIf="imagesGroup.length > 0; else no_data" class="card border-0">
+                <div class="card-body img-list">
+                    <ng-container *ngFor="let itemGroup of imagesGroup;let i = index">
+                        <h5 class="card-title">{{getTitleDate(itemGroup[0])}}</h5>
+                        <div class="o_attachments_previews o_attachments_previews">
+                            <div class="o_attachment" [ngClass]="{'img-selected' : isSelected(img)}"
+                                *ngFor="let img of itemGroup[1]">
+                                <div class="o_attachment_wrap" (click)="chooseImage(img)">
+                                    <div class="o_image_box">
+                                        <div class="o_attachment_image" id="{{img.name}}">
+                                            <img width="100%" [src]="img.url + '?width=140&height=140)'" alt="">
+                                            <span class="o_attachment_title text-white">{{img.name}}</span>
+                                        </div>
+                                        <div class="o_image_overlay o_attachment_view">
+                                            <span class="o_attachment_title text-white">{{img.name}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                </div>
+
+            </div>
+            <ng-template #no_data>
+                <div style="margin: auto; text-align: center;">
+                    <img src="../../../../assets/icons/NoData.svg" class="img-nodata">
+                </div>
+            </ng-template>
+        </div>
+    </div>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onChoose()" accesskey="s"><span>Chọn</span></button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()"
+        accesskey="q"><span>Đóng</span></button>
+</footer>

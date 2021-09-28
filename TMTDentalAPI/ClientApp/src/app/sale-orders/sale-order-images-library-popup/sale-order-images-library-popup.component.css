@@ -1,0 +1,37 @@
+.images-of-date {
+    width: 100%;
+    display: flex;
+}
+
+.o_attachments_previews {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.img-list {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.o_attachment {
+    width: 30%;
+    margin-bottom: 1rem;
+    margin-left: 1rem;
+}
+
+.o_attachment_image {
+    position: relative;
+}
+
+.o_attachment .o_attachment_view {
+    cursor: pointer;
+}
+
+.modal-footer {
+    justify-content: flex-start;
+}
+
+.img-selected {
+    border: 2px solid #007bff;
+}
+

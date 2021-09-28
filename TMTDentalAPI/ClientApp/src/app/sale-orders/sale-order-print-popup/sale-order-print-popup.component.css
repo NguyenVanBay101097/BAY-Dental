@@ -1,0 +1,12 @@
+.modal-footer {
+    justify-content: flex-start;
+}
+
+.input-file {
+    pointer-events: none;
+    opacity: 0;
+}
+
+.o_attachment .o_attachment_view {
+    cursor: default;
+}
