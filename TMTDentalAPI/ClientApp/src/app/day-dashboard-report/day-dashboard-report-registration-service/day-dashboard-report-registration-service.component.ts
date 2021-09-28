@@ -9,6 +9,9 @@ import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-ken
   styleUrls: ['./day-dashboard-report-registration-service.component.css']
 })
 export class DayDashboardReportRegistrationServiceComponent implements OnInit {
+  @Input('dateFrom') dateFrom: any;
+  @Input('dateTo') dateTo: any;
+  @Input('company') company: any;
   gridData: GridDataResult;
   loading = false;
   skip = 0;
