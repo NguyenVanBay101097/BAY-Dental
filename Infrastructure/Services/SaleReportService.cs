@@ -338,10 +338,10 @@ namespace Infrastructure.Services
             }
 
             if (val.DateFrom.HasValue)
-                query = query.Where(x => x.Date >= val.DateFrom.Value);
+                query = query.Where(x => x.Date >= val.DateFrom.Value.AbsoluteBeginOfDate());
 
             if (val.DateTo.HasValue)
-                query = query.Where(x => x.Date <= val.DateTo.Value);
+                query = query.Where(x => x.Date <= val.DateTo.Value.AbsoluteEndOfDate());
 
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId.Value);

@@ -73,8 +73,8 @@ export class DayDashboardReportManagementComponent implements OnInit {
 
   loadDataServiceApi() {
     var val = new SaleReportSearch();
-    val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
-    val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-ddT23:59');
+    val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : null;
+    val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : null;
     val.companyId = this.authService.userInfo.companyId;
     val.state = 'draft';
     this.saleReportService.getReportService(val).pipe(
@@ -112,8 +112,9 @@ export class DayDashboardReportManagementComponent implements OnInit {
   }
   
   onChangeDate(value: any) {
-    this.dateFrom = value.dateFrom;
-    this.dateTo = value.dateTo;    
+    debugger
+    this.dateFrom = value;
+    this.dateTo = value;    
     this.loadAllData();
   }
 

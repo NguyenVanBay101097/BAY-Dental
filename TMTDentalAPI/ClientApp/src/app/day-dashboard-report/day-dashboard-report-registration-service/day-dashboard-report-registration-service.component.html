@@ -22,7 +22,7 @@
     </kendo-grid-column>
     <kendo-grid-column field="order.name" title="Phiếu điều trị" width="150">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            <a class="text-primary" [routerLink]="['/sale-orders/form/' + dataItem.order.id]">{{dataItem.order.name}}</a>
+            <a class="text-primary" (click)="redirectSaleOrder(dataItem.order)">{{dataItem.order.name}}</a>
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column title="Khách hàng" width="180">

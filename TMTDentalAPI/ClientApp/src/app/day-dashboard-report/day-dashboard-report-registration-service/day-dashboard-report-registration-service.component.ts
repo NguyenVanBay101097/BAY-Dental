@@ -1,4 +1,5 @@
 import { Component, Inject, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Router } from '@angular/router';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { aggregateBy } from '@progress/kendo-data-query';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
@@ -19,7 +20,8 @@ export class DayDashboardReportRegistrationServiceComponent implements OnInit {
   pagerSettings: any;
   @Input() services: any[] = [];
   
-  constructor(@Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  constructor(@Inject(PAGER_GRID_CONFIG) config: PageGridConfig,
+  private router: Router
   ) { this.pagerSettings = config.pagerSettings }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -40,6 +42,12 @@ export class DayDashboardReportRegistrationServiceComponent implements OnInit {
       data: this.services.slice(this.skip, this.skip + this.limit),
       total: this.services.length
     };
+  }
+
+  redirectSaleOrder(item) {
+    if (item) {
+      this.router.navigateByUrl(`sale-orders/form?id=${item.id}`)
+    }
   }
 
   sum(field) : any{
