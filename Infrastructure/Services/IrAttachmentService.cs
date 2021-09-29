@@ -80,6 +80,43 @@ namespace Infrastructure.Services
             return res;
         }
 
+        public async Task UpdateListAttachmentRes(Guid resId, string resModel, IEnumerable<IrAttachment> atts)
+        {
+            var attObj = GetService<IIrAttachmentService>();
+            var existAtts = await attObj.GetAttachments(resModel, resId);
+            //remove 
+            var toRemoves = new List<IrAttachment>();
+            foreach (var ex in existAtts)
+            {
+                if (!atts.Any(x => x.Id == ex.Id))
+                    toRemoves.Add(ex);
+            }
+            
+            if(toRemoves.Any())
+            await attObj.DeleteAsync(toRemoves);
+
+            var toAdds = new List<IrAttachment>();
+            foreach (var att in atts)
+            {
+                if (att.Id == Guid.Empty)
+                {
+                    var item = new IrAttachment()
+                    {
+                        ResModel = "dot.kham",
+                        ResId = resId,
+                        Name = att.Name,
+                        Type = "upload",
+                        Url = att.Url,
+                        CompanyId = CompanyId
+                    };
+                    toAdds.Add(item);
+                }
+
+            }
+            if (toAdds.Any())
+                await attObj.CreateAsync(toAdds);
+        }
+
         //public override ISpecification<IrAttachment> RuleDomainGet(IRRule rule)
         //{
         //    var userObj = GetService<IUserService>();
