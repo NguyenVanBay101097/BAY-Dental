@@ -2,21 +2,19 @@
     <div class="mt-2 d-flex flex-row summary flex-wrap">
         <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
             <label style="font-weight: 600;"> Tổng sổ quỹ </label>
-            <h5 class="text-success">{{(totalCash + totalBank) | number}}</h5>
+            <h5 class="text-success">{{totalCashBook[0]?.totalAmount || 0 | number}}</h5>
         </div>
         <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
             <label style="font-weight: 600;"> Quỹ tiền mặt </label>
-            <h5 class="text-success">{{totalCash | number}}</h5>
+            <h5 class="text-success">{{totalCashBook[1]?.totalAmount || 0 | number}}</h5>
         </div>
         <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
             <label style="font-weight: 600;"> Quỹ ngân hàng </label>
-            <h5 class="text-success">{{totalBank | number}}</h5>
+            <h5 class="text-success">{{totalCashBook[2]?.totalAmount || 0 | number}}</h5>
         </div>
     </div>
 
-    <kendo-combobox [data]="stateOptions" class="mb-2" [textField]="'text'" [valueField]="'value'" [filterable]="true"
-        (selectionChange)="onSelectChange($event)" [placeholder]="'Phương thức'">
-    </kendo-combobox>
+
 
     <div class="mb-2">
         <div class="row">
@@ -86,19 +84,25 @@
             </div>
         </div>
     </div>
-
+    <kendo-combobox [data]="stateOptions" class="mb-2" [textField]="'text'" [valueField]="'value'" [filterable]="true"
+        (selectionChange)="onSelectChange($event)" [placeholder]="'Phương thức'">
+    </kendo-combobox>
     <div class="mt-2 d-flex flex-row summary flex-wrap">
         <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
             <label style="font-weight: 600;"> Quỹ đầu kỳ </label>
-            <h5 class="text-primary">{{(summarySearchResult ? summarySearchResult.begin : 0) | number}}</h5>
+            <h5 class="text-primary">{{(summaryResult ? summaryResult.begin : 0) | number}}</h5>
         </div>
         <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
             <label style="font-weight: 600;"> Tổng thu </label>
-            <h5 class="text-info">{{(summarySearchResult ? summarySearchResult.totalThu : 0) | number}}</h5>
+            <h5 class="text-info">{{(summaryResult ? summaryResult.totalThu : 0) | number}}</h5>
         </div>
         <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
             <label style="font-weight: 600;"> Tổng chi </label>
-            <h5 class="text-danger">{{(summarySearchResult ? summarySearchResult.totalChi : 0) | number}}</h5>
+            <h5 class="text-danger">{{(summaryResult ? summaryResult.totalChi : 0) | number}}</h5>
+        </div>
+        <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
+            <label style="font-weight: 600;"> Tổng sổ quỹ </label>
+            <h5 class="text-success">{{(summaryResult ? summaryResult.totalAmount : 0) | number}}</h5>
         </div>
     </div>
 
