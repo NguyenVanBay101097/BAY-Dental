@@ -14,6 +14,7 @@ namespace Infrastructure.Services
         Task<IrAttachment> GetAttachment(string resModel, Guid? resId, string resField);
 
         Task<IEnumerable<IrAttachment>> GetAttachments(string resModel, Guid? resId);
+        Task UpdateListAttachmentRes(Guid resId, string resModel, IEnumerable<IrAttachment> atts);
 
     }
 }

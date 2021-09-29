@@ -66,10 +66,10 @@ export class TreatmentProcessServiceListComponent implements OnInit {
 
   formatTeethList(service) {
     let teethList = '';
-    if(service.toothType && service.toothType != 'manual'){
+    if (service.toothType && service.toothType != 'manual') {
       teethList = this.toothType.find(x => x.value == service.toothType).name;
     }
-    else{
+    else {
       teethList = service.teeth.map(x => x.name).join(', ');
     }
     return teethList;
@@ -227,7 +227,7 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     let dotkham = <any>{};
     dotkham.date = new Date();
     dotkham.lines = [];
-    dotkham.dotKhamImages = [];
+    dotkham.irAttachments = [];
     this.dotkhams.unshift(dotkham);
 
     var index = this.dotkhams.indexOf(dotkham);

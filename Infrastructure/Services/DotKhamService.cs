@@ -106,18 +106,15 @@ namespace Infrastructure.Services
                 dotKham.Lines.Add(line);
             }
 
-            ///tạo dot kham images
-            foreach (var img in val.DotKhamImages)
-            {
-                var image = _mapper.Map<PartnerImage>(img);
-                image.PartnerId = dotKham.PartnerId;
-                dotKham.DotKhamImages.Add(image);
-            }
-
             await CreateAsync(dotKham);
+
+            ///cập nhật irattachment
+            var attObj = GetService<IIrAttachmentService>();
+            await attObj.UpdateListAttachmentRes(dotKham.Id, "dot.kham", _mapper.Map<IEnumerable<IrAttachment>>(val.IrAttachments));
             return dotKham;
 
         }
+
 
         public async Task UpdateDotKham(Guid id, DotKhamSaveVm val)
         {
@@ -132,7 +129,12 @@ namespace Infrastructure.Services
 
             SaveLines(val, dotKham);
 
-            SaveDotKhamImages(val, dotKham);
+            //SaveDotKhamImages(val, dotKham);
+
+              ///cập nhật irattachment
+            var attObj = GetService<IIrAttachmentService>();
+            await attObj.UpdateListAttachmentRes(dotKham.Id, "dot.kham", _mapper.Map<IEnumerable<IrAttachment>>(val.IrAttachments));
+          
 
             await UpdateAsync(dotKham);
 
