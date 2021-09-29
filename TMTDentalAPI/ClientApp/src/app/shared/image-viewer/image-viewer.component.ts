@@ -34,10 +34,10 @@ export class ImageViewerComponent implements OnInit {
   stopPropagation(e) {
     e.stopPropagation();
   }
-  
+
   showPrevious() {
     this.resetAll();
-    const index = this.images.findIndex(x => x.uploadId === this.selectedImage.uploadId);
+    const index = this.images.findIndex(x => x.url === this.selectedImage.url);
     if (index > 0) {
       this.selectedImage = this.images[index - 1];
     } else if (index === 0) {
@@ -56,7 +56,7 @@ export class ImageViewerComponent implements OnInit {
 
   showNext() {
     this.resetAll();
-    const index = this.images.findIndex(x => x.uploadId === this.selectedImage.uploadId);
+    const index = this.images.findIndex(x => x.url === this.selectedImage.url);
     if (index < (this.images.length - 1)) {
       this.selectedImage = this.images[index + 1];
     } else {
@@ -126,7 +126,6 @@ export class ImageViewerComponent implements OnInit {
     // this.style.msTransform = this.style.transform;
     // this.style.webkitTransform = this.style.transform;
     // this.style.oTransform = this.style.transform;
-    console.log(this.style);
   }
 
   close() {
