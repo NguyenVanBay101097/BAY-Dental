@@ -44,6 +44,7 @@ import { SaleOrderApplyCouponComponent } from './sale-order-apply-coupon/sale-or
 import { SaleOrderLineApplyCouponComponent } from './sale-order-line-apply-coupon/sale-order-line-apply-coupon.component';
 import { SaleOrderManagementComponent } from './sale-order-management/sale-order-management.component';
 import { SaleOrderLineManagementComponent } from './sale-order-line-management/sale-order-line-management.component';
+import { SaleOrderImageComponent } from './sale-order-image/sale-order-image.component';
 
 @NgModule({
   declarations: [
@@ -80,6 +81,7 @@ import { SaleOrderLineManagementComponent } from './sale-order-line-management/s
     SaleOrderLineApplyCouponComponent,
     SaleOrderManagementComponent,
     SaleOrderLineManagementComponent,
+    SaleOrderImageComponent,
   ],
   imports: [
     CommonModule,
