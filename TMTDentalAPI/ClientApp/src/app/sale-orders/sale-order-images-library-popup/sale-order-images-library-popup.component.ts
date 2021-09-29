@@ -31,7 +31,7 @@ export class SaleOrderImagesLibraryPopupComponent implements OnInit {
       distinctUntilChanged())
       .subscribe((val) => {
         var items = this.images.filter((img,index)=> {
-          return img.name.toUpperCase().indexOf(val) != -1
+          return img.name.toUpperCase().search(val.toUpperCase()) != -1
         });
         this.groupByImages(items);
       });

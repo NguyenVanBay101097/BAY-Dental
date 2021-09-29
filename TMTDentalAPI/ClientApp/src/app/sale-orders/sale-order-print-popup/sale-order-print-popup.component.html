@@ -13,18 +13,21 @@
         </button>
     </div>
     <ng-template #hasData>
-        <div class="w-100 view-img h-75" >
-            <div class="o_attachments_previews">
-                <div class="o_attachment" *ngFor="let img of imagesPreview;let i = index">
-                    <div class="o_attachment_wrap">
-                        <div class="o_image_box">
-                            <div class="o_attachment_image" id="{{img.name}}">
-                                <img width="100%" [src]="img.url + '?width=240&height=240)'" alt="">
-                            </div>
-                            <div class="o_image_overlay o_attachment_view">
-                                <span class="fa fa-times o_attachment_delete_cross"
-                                    (click)="deleteImage(img.id)" title="Delete {{img.name}}"></span>
-                                <span class="o_attachment_title text-white">{{img.name}}</span>
+        <p class="card-title">Hình ảnh đính kèm</p>
+        <div class="w-100 view-img h-75 card">
+            <div class="card-body">
+                <div class="o_attachments_previews">
+                    <div class="o_attachment" *ngFor="let img of imagesPreview;let i = index">
+                        <div class="o_attachment_wrap">
+                            <div class="o_image_box">
+                                <div class="o_attachment_image" id="{{img.name}}">
+                                    <img width="100%" [src]="img.url + '?width=240&height=240)'" alt="">
+                                </div>
+                                <div class="o_image_overlay o_attachment_view">
+                                    <span class="fa fa-times o_attachment_delete_cross"
+                                        (click)="deleteImage(img.id)" title="Delete {{img.name}}"></span>
+                                    <span class="o_attachment_title text-white">{{img.name}}</span>
+                                </div>
                             </div>
                         </div>
                     </div>

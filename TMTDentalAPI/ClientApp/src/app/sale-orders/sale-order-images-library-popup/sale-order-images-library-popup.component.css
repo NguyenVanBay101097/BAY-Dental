@@ -16,7 +16,8 @@
 .o_attachment {
     width: 30%;
     margin-bottom: 1rem;
-    margin-left: 1rem;
+    margin-right: 1rem;
+    padding: 0;
 }
 
 .o_attachment_image {
@@ -32,6 +33,7 @@
 }
 
 .img-selected {
-    border: 2px solid #007bff;
+    border: 3px solid #007bff;
+    border-radius: 2px;
 }
 
