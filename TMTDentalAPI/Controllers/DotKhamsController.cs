@@ -203,7 +203,7 @@ namespace TMTDentalAPI.Controllers
                     ResId = id,
                     Name = item.FileName,
                     Type = "upload",
-                    UploadId = item.FileUrl,
+                    Url = item.FileUrl,
                 };
 
                 list.Add(attachment);

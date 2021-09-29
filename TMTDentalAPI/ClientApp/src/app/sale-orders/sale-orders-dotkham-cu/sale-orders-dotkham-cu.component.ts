@@ -17,6 +17,7 @@ import { ImageViewerComponent } from 'src/app/shared/image-viewer/image-viewer.c
 import { DotKhamLineDisplay, DotkhamOdataService } from 'src/app/shared/services/dotkham-odata.service';
 import { PartnerImageBasic } from 'src/app/shared/services/partners.service';
 import { SaleOrdersOdataService } from 'src/app/shared/services/sale-ordersOdata.service';
+import { IrAttachmentBasic } from 'src/app/shared/shared';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -102,7 +103,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
   setEditModeActive(val: boolean) {
     this.editModeActive = val;
   }
-  get f() { return this.dotkhamForm.controls;}
+  get f() { return this.dotkhamForm.controls; }
   get Id() { return this.dotkhamForm.get('id').value; }
   get Sequence() { return this.dotkhamForm.get('sequence').value; }
   get imgsFA() { return this.dotkhamForm.get('dotKhamImages') as FormArray; }
@@ -187,11 +188,9 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
 
     this.webService.uploadImages(formData).subscribe((res: any) => {
       res.forEach(img => {
-        const imgObj = new PartnerImageBasic();
-        imgObj.dotKhamId = this.dotkham.id;
+        const imgObj = new IrAttachmentBasic();
         imgObj.name = img.fileName;
         imgObj.uploadId = img.fileUrl;
-        imgObj.partnerId = this.dotkham.partnerId;
         const imgFG = this.fb.group(imgObj);
         this.imgsFA.push(imgFG);
       });

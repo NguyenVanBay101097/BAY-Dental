@@ -80,17 +80,17 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public override ISpecification<IrAttachment> RuleDomainGet(IRRule rule)
-        {
-            var userObj = GetService<IUserService>();
-            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
-            switch (rule.Code)
-            {
-                case "base.res_partner_rule":
-                    return new InitialSpecification<IrAttachment>(x => !x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value));
-                default:
-                    return null;
-            }
-        }
+        //public override ISpecification<IrAttachment> RuleDomainGet(IRRule rule)
+        //{
+        //    var userObj = GetService<IUserService>();
+        //    var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+        //    switch (rule.Code)
+        //    {
+        //        case "base.res_partner_rule":
+        //            return new InitialSpecification<IrAttachment>(x => !x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value));
+        //        default:
+        //            return null;
+        //    }
+        //}
     }
 }
