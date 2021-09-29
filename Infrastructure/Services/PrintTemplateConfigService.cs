@@ -41,7 +41,7 @@ namespace Infrastructure.Services
 
         public async Task<PrintTemplateConfig> GetPrintTemplateConfig(string type)
         {
-            var printConfig = await SearchQuery(x => x.Type == type && x.IsDefault)
+            var printConfig = await SearchQuery(x => x.Type == type && x.IsDefault && x.CompanyId == CompanyId)
                 .Include(x => x.PrintPaperSize)
                 .Include(x => x.PrintTemplate)
                 .FirstOrDefaultAsync();
