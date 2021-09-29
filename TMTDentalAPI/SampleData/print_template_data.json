@@ -125,7 +125,27 @@
       ],
       "AmountTotal": 5350000.00,
       "TotalPaid": 5350000.00,
-      "Residual": 0.00
+      "Residual": 0.00,
+      "IrAttachments": [
+        {
+          "Id": "892ea719-afd3-4514-e7f3-08d982fda2ab",
+          "Name": "1102206422_vforum.vn-hinh-nen-thap-eiifel-phap-full-hd-twalls-4.jpg",
+          "Url": "http://statics.tdental.vn/images/localhost/210929/1102206422_vforum.vn-hinh-nen-thap-eiifel-phap-full-hd-twalls-4.jpg",
+          "DateCreated": "2021-09-03T17:43:43.8056985"
+        },
+        {
+          "Id": "b77f39ee-1821-4980-e7f1-08d982fda2ab",
+          "Name": "1768333976_1-76b4.jpg",
+          "Url": "http://statics.tdental.vn/images/localhost/210929/1768333976_1-76b4.jpg",
+          "DateCreated": "2021-09-29T11:28:39"
+        },
+        {
+          "Id": "fa255c20-aefa-48a6-e7ef-08d982fda2ab",
+          "Name": "1455600794_mercedes-amg-g63-brabus-dat-gap-3-lan-chinh-hang-sap-ve-viet-nam-hinh-2.png",
+          "Url": "http://statics.tdental.vn/images/localhost/210929/1455600794_mercedes-amg-g63-brabus-dat-gap-3-lan-chinh-hang-sap-ve-viet-nam-hinh-2.png",
+          "DateCreated": "2021-09-29T11:00:36"
+        }
+      ]
     }
   },
   {

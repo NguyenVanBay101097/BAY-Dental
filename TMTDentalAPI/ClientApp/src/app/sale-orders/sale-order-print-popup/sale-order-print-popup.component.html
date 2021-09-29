@@ -23,7 +23,7 @@
                             </div>
                             <div class="o_image_overlay o_attachment_view">
                                 <span class="fa fa-times o_attachment_delete_cross"
-                                    (click)="deleteImage(img.name)" title="Delete {{img.name}}"></span>
+                                    (click)="deleteImage(img.id)" title="Delete {{img.name}}"></span>
                                 <span class="o_attachment_title text-white">{{img.name}}</span>
                             </div>
                         </div>
@@ -36,7 +36,7 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary" style="min-width: 33.45px;" (click)="onPrint()" accesskey="s"><span>In</span></button>
+    <button type="button" class="btn btn-primary" (click)="onPrint()" accesskey="s"><span style="padding-left: 0.6rem; padding-right: 0.6rem;">In</span></button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()"
         accesskey="q"><span>Đóng</span></button>
 </footer>

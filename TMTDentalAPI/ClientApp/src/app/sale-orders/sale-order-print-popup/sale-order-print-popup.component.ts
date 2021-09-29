@@ -11,11 +11,11 @@ import { SaleOrderImagesLibraryPopupComponent } from '../sale-order-images-libra
 export class SaleOrderPrintPopupComponent implements OnInit {
 
   title: string;
-  imagesPreview: PartnerImageBasic[];
+  imagesPreview: PartnerImageBasic[] = [];
+  id: string = '';
   constructor(public activeModal: NgbActiveModal,private modalService: NgbModal,) { }
 
   ngOnInit() {
-    this.imagesPreview = [];
   }
 
   onPrint(){
@@ -28,13 +28,14 @@ export class SaleOrderPrintPopupComponent implements OnInit {
 
   attachImg(){
     let modalRef = this.modalService.open(SaleOrderImagesLibraryPopupComponent, {size: 'md'});
+    modalRef.componentInstance.id = this.id;
     modalRef.result.then(result =>{
       this.imagesPreview = result;
     });
   }
 
-  deleteImage(name){
-    let index = this.imagesPreview.findIndex(x => x.name == name);
+  deleteImage(id){
+    let index = this.imagesPreview.findIndex(x => x.id == id);
     if (index != -1)
       this.imagesPreview.splice(index,1);
   }
