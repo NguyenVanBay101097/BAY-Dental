@@ -61,6 +61,7 @@ import { SaleOrderPaymentService } from 'src/app/core/services/sale-order-paymen
 import { SmsMessageService } from 'src/app/sms/sms-message.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import * as moment from 'moment';
+import { SaleOrderPrintPopupComponent } from '../sale-order-print-popup/sale-order-print-popup.component';
 declare var $: any;
 
 @Component({
@@ -411,11 +412,14 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   printSaleOrder() {
-    if (this.saleOrderId) {
-      this.saleOrderService.printSaleOrder(this.saleOrderId).subscribe((result: any) => {
-        this.printService.printHtml(result.html);
-      });
-    }
+    let modalRef = this.modalService.open(SaleOrderPrintPopupComponent, {size: 'md'});
+    modalRef.result.then(()=>{
+      if (this.saleOrderId) {
+        this.saleOrderService.printSaleOrder(this.saleOrderId).subscribe((result: any) => {
+          this.printService.printHtml(result.html);
+        });
+      }
+    })
   }
 
   actionDone() {
