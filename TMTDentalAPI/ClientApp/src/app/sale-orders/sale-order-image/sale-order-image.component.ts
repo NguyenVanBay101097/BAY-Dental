@@ -1,6 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
+import { SaleOrderService } from 'src/app/core/services/sale-order.service';
+import { WebService } from 'src/app/core/services/web.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { ImageViewerComponent } from 'src/app/shared/image-viewer/image-viewer.component';
 import { NotifyService } from 'src/app/shared/services/notify.service';
@@ -59,8 +61,9 @@ export class SaleOrderImageComponent implements OnInit {
   dataFilter: any
   constructor(
     private modalService: NgbModal,
-    public notifyService: NotifyService
-
+    public notifyService: NotifyService,
+    private saleOrderService: SaleOrderService,
+    private webService: WebService
   ) { }
 
   ngOnInit() {
@@ -88,39 +91,46 @@ export class SaleOrderImageComponent implements OnInit {
 
   loadData() {
     // call api
+    this.saleOrderService.getListAttachment(this.saleOrderId).subscribe((res: any) => {
+      console.log(res);
+
+    }, err => console.log(err))
 
     this.convertData();
   }
 
   addImages(e) {
-    // var file_node = e.target;
-    // var count = file_node.files.length;
-    // var formData = new FormData();
-    // for (let i = 0; i < count; i++) {
-    //   var file = file_node.files[i];
-    //   console.log(file);
-    //   console.log(file.size);
+    var file_node = e.target;
+    var count = file_node.files.length;
+    var formData = new FormData();
+    formData.append('id', this.saleOrderId);
 
-    //   let size = file.size / (1024 * 1024);
-    //   if (size > 30) {
-    //     this.notifyService.notify('error', 'Không thể thêm ảnh có dung lượng lớn hơn 30MB');
-    //     return false;
-    //   }
+    for (let i = 0; i < count; i++) {
+      var file = file_node.files[i];
+      // let size = file.size / (1024 * 1024);
+      // if (size > 30) {
+      //   this.notifyService.notify('error', 'Không thể thêm ảnh có dung lượng lớn hơn 30MB');
+      //   return false;
+      // }
 
-    //   formData.append('files', file);
-    //   var filereader = new FileReader();
-    //   filereader.readAsDataURL(file);
-    // }
-
-    const a = {
-      id: '4',
-      name: 'ảnh số 4',
-      date: '2021-09-23',
-      note: 'ghi chú 4',
-      uploadId: 'https://cdn.pixabay.com/photo/2021/09/17/12/14/coffee-6632533__340.jpg'
+      formData.append('files', file);
+      var filereader = new FileReader();
+      filereader.readAsDataURL(file);
     }
-    this.imagesPreview.push(a);
-    this.convertData();
+    this.webService.binaryUploadAttachment(formData).subscribe((res: any) => {
+      console.log(res);
+
+    }, (err) => { console.log(err) })
+
+    // const a = {
+    //   id: '4',
+    //   name: 'ảnh số 4',
+    //   date: '2021-09-23',
+    //   note: 'ghi chú 4',
+    //   uploadId: 'https://cdn.pixabay.com/photo/2021/09/17/12/14/coffee-6632533__340.jpg'
+    // }
+    // this.imagesPreview.push(a);
+    // this.convertData();
   }
 
   viewImage(image) {
