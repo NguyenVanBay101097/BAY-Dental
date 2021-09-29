@@ -316,4 +316,8 @@ export class SaleOrderService {
     getDotKhamListIds(id) {
         return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetDotKhamListIds');
     }
+
+    getListAttachment(id){
+        return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetListAttachment');
+    }
 }

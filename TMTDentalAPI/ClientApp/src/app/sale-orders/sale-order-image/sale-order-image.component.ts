@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
+import { SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { ImageViewerComponent } from 'src/app/shared/image-viewer/image-viewer.component';
 import { NotifyService } from 'src/app/shared/services/notify.service';
@@ -59,8 +60,8 @@ export class SaleOrderImageComponent implements OnInit {
   dataFilter: any
   constructor(
     private modalService: NgbModal,
-    public notifyService: NotifyService
-
+    public notifyService: NotifyService,
+    private saleOrderService: SaleOrderService
   ) { }
 
   ngOnInit() {
@@ -88,6 +89,10 @@ export class SaleOrderImageComponent implements OnInit {
 
   loadData() {
     // call api
+    this.saleOrderService.getListAttachment(this.saleOrderId).subscribe((res: any) => {
+      console.log(res);
+
+    }, err => console.log(err))
 
     this.convertData();
   }
