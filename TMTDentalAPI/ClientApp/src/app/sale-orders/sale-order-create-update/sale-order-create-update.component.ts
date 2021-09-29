@@ -1,4 +1,4 @@
-import { DiscountDefault } from '../../core/services/sale-order.service';
+import { DiscountDefault, SaleOrderPrint } from '../../core/services/sale-order.service';
 import { Component, EventEmitter, KeyValueDiffer, KeyValueDiffers, OnChanges, OnInit, QueryList, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
 import { FormControl, FormGroup, FormBuilder, FormArray, Validators, NgForm } from '@angular/forms';
 import { switchMap, mergeMap, catchError } from 'rxjs/operators';
@@ -99,7 +99,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   partner: any;
   partnerDisplay: any;
   saleOrder: any;
-  saleOrderPrint: any;
+  saleOrderPrint: SaleOrderPrint;
   laboOrders: LaboOrderBasic[] = [];
   saleOrderLine: any;
   payments: AccountPaymentBasic[] = [];
@@ -115,7 +115,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   defaultToothCate: ToothCategoryBasic;
   tags: any[] = [];
   checkedAccordion: boolean = true;
-
   childEmiter = new BehaviorSubject<any>(null);
   @ViewChildren('lineTemplate') lineVCR: QueryList<SaleOrderLineCuComponent>;
   lineSelected = null;
@@ -416,7 +415,11 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.id = this.saleOrderId;
     modalRef.result.then(result =>{
       if (this.saleOrderId && result) {
-        this.saleOrderService.printSaleOrder(this.saleOrderId).subscribe((result: any) => {
+        var attachIds = result.map(x => x.id);
+        var val = new SaleOrderPrint();
+        val.id = this.saleOrderId;
+        val.attachmentIds = attachIds;
+        this.saleOrderService.printSaleOrder(val).subscribe((result: any) => {
           this.printService.printHtml(result.html);
         });
       }

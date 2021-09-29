@@ -19,7 +19,7 @@ export class SaleOrderPrintPopupComponent implements OnInit {
   }
 
   onPrint(){
-    this.activeModal.close(true);
+    this.activeModal.close(this.imagesPreview);
   }
 
   onCancel(){
