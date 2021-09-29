@@ -795,7 +795,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetListAttachment(Guid id)
         {
             var res = await _partnerService.GetListAttachment(id);
-            return Ok(res);
+            return Ok(_mapper.Map<IEnumerable<IrAttachmentBasic>>(res));
         }
     }
 }
