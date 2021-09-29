@@ -11,6 +11,10 @@
     </div>
 
     <div class="o_attachments py-2">
+        <div *ngIf="dataFilter.length == 0" class="p-5 text-center">
+            <img class="" src="assets/images/box.svg" alt="">
+            <p>Chưa có dữ liệu</p>
+        </div>
         <div class="p-2" *ngFor="let item of dataFilter;let i=index">
             <h5 class="ml-1 mb-0">{{getTitleDate(item[0])}}</h5>
             <div class="o_attachments_previews">
@@ -21,11 +25,11 @@
                                 <img width="100%" height="100%" [src]="img.url + '?width=240&height=240)'" alt="">
                             </div>
                             <div class="o_image_overlay o_attachment_view">
-                                <span class="fa fa-times o_attachment_delete_cross"
-                                    (click)="deleteImages(img, $event)" title="Delete {{img.name}}"></span>
+                                <span class="fa fa-times o_attachment_delete_cross" (click)="deleteImages(img, $event)"
+                                    title="Delete {{img.name}}"></span>
                                 <span class="o_attachment_title text-white">{{img.name}}</span>
-                                <a class="o_attachment_download" (click)="stopPropagation($event)"
-                                    href="{{img.url}}" target="_blank">
+                                <a class="o_attachment_download" (click)="stopPropagation($event)" href="{{img.url}}"
+                                    target="_blank">
                                     <i aria-label="Download" class="fa fa-download text-white" role="img"></i>
                                 </a>
                             </div>

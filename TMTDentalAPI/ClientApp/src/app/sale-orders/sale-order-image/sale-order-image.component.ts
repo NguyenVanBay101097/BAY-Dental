@@ -16,7 +16,7 @@ import { NotifyService } from 'src/app/shared/services/notify.service';
 export class SaleOrderImageComponent implements OnInit {
   @Input('saleOrderId') saleOrderId: string;
   imagesPreview: any[] = []
-  dataFilter: any;
+  dataFilter: any[] = [];
 
   constructor(
     private modalService: NgbModal,
