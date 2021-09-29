@@ -39,12 +39,14 @@ namespace TMTDentalAPI.Controllers
         private readonly IPrintTemplateConfigService _printTemplateConfigService;
         private readonly IPrintTemplateService _printTemplateService;
         private readonly IIRModelDataService _modelDataService;
+        private readonly IIrAttachmentService _irAttachmentService;
         private IConverter _converter;
 
         public SaleOrdersController(ISaleOrderService saleOrderService, IMapper mapper,
             IUnitOfWorkAsync unitOfWork, IDotKhamService dotKhamService,
             ICardCardService cardService, IProductPricelistService pricelistService,
             ISaleOrderLineService saleLineService, IViewRenderService viewRenderService, IConverter converter,
+            IIrAttachmentService irAttachmentService,
         IViewToStringRenderService viewToStringRenderService, IPrintTemplateConfigService printTemplateConfigService , IPrintTemplateService printTemplateService, IIRModelDataService modelDataService)
         {
             _saleOrderService = saleOrderService;
@@ -60,6 +62,7 @@ namespace TMTDentalAPI.Controllers
             _printTemplateConfigService = printTemplateConfigService;
             _modelDataService = modelDataService;
             _printTemplateService = printTemplateService;
+            _irAttachmentService = irAttachmentService;
         }
 
         [HttpGet]
@@ -291,9 +294,9 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpGet("{id}/Print")]
+        [HttpPost("Print")]
         [CheckAccess(Actions = "Basic.SaleOrder.Read")]
-        public async Task<IActionResult> GetPrint(Guid id)
+        public async Task<IActionResult> GetPrint(SaleOrderPrint val)
         {
 
             //tim trong bảng config xem có dòng nào để lấy ra template
@@ -302,6 +305,8 @@ namespace TMTDentalAPI.Controllers
                 .Include(x => x.PrintTemplate)
                 .FirstOrDefaultAsync();
 
+            var attachments = await _irAttachmentService.SearchQuery(x => val.AttachmentIds.Contains(x.Id)).ToListAsync();
+            var irAttachments = _mapper.Map<IEnumerable<IrAttachmentBasic>>(attachments);
             PrintTemplate template = printConfig != null ? printConfig.PrintTemplate : null;
             PrintPaperSize paperSize = printConfig != null ? printConfig.PrintPaperSize : null;
             if (template == null)
@@ -312,8 +317,9 @@ namespace TMTDentalAPI.Controllers
                     throw new Exception("Không tìm thấy mẫu in mặc định");
             }
 
-            var result = await _printTemplateService.GeneratePrintHtml(template, new List<Guid>() { id }, paperSize);     
-            return Ok(new PrintData() { html = result });
+            var result = await _printTemplateService.GeneratePrintHtml(template, new List<Guid>() { val.Id }, paperSize);     
+
+            return Ok(new PrintData() { html = result, IrAttachments = irAttachments });
         }
 
         private async Task SaveOrderLines(SaleOrderSave val, SaleOrder order)

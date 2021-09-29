@@ -67,7 +67,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string SaleOrderLineName { get; set; }
     }
 
-    public class SaleOrderManagementExcel{
+    public class SaleOrderManagementExcel {
         public Guid Id { get; set; }
 
         /// <summary>
@@ -100,5 +100,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? Residual { get; set; }
 
         public IEnumerable<SaleOrderLineDisplay> SaleOrderLineDisplays { get; set; } = new List<SaleOrderLineDisplay>();
+    }
+
+    public class SaleOrderPrint{
+        public Guid Id { get; set; }
+        public IEnumerable<Guid> AttachmentIds { get; set; } = new List<Guid>();
     }
 }
