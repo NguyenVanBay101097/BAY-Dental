@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace ApplicationCore.Entities
@@ -164,5 +165,9 @@ namespace ApplicationCore.Entities
         /// Tổng thanh toán
         /// </summary>
         public decimal? TotalPaid { get; set; }
+
+        [NotMapped]
+        public ICollection<IrAttachment> IrAttachments { get; set; } = new List<IrAttachment>();
+
     }
 }

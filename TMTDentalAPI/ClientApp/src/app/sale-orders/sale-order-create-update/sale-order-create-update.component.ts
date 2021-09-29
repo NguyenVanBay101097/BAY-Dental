@@ -413,8 +413,9 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   printSaleOrder() {
     let modalRef = this.modalService.open(SaleOrderPrintPopupComponent, {size: 'md'});
-    modalRef.result.then(()=>{
-      if (this.saleOrderId) {
+    modalRef.componentInstance.id = this.saleOrderId;
+    modalRef.result.then(result =>{
+      if (this.saleOrderId && result) {
         this.saleOrderService.printSaleOrder(this.saleOrderId).subscribe((result: any) => {
           this.printService.printHtml(result.html);
         });
