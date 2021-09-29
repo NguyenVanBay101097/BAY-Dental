@@ -839,5 +839,12 @@ namespace TMTDentalAPI.Controllers
             return Ok(dotKhamIds);
         }
 
+        [HttpGet("{id}/[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Read")]
+        public async Task<IActionResult> GetListAttachment(Guid id)
+        {
+            var res = await _saleOrderService.GetListAttachment(id);
+            return Ok(res);
+        }
     }
 }

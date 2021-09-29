@@ -3170,5 +3170,21 @@ namespace Infrastructure.Services
 
             return allData;
         }
+
+        public async Task<IEnumerable<IrAttachment>> GetListAttachment(Guid id)
+        {
+            var attObj = GetService<IIrAttachmentService>();
+            var dotkhamObj = GetService<IDotKhamService>();
+
+            var attQr = attObj.SearchQuery();
+            var dotkhamQr = dotkhamObj.SearchQuery();
+
+            var resQr = from att in attQr
+                        from dk in dotkhamQr.Where(x => x.Id == att.ResId).DefaultIfEmpty()
+                        where att.ResId == id || dk.SaleOrderId == id
+                        select att;
+            var res = await resQr.OrderByDescending(x => x.DateCreated).ToListAsync();
+            return res;
+        }
     }
 }

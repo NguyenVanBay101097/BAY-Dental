@@ -790,5 +790,12 @@ namespace TMTDentalAPI.Controllers
 
             return Ok(result);
         }
+        [HttpGet("{id}/[action]")]
+        [CheckAccess(Actions = "Basic.Partner.Read")]
+        public async Task<IActionResult> GetListAttachment(Guid id)
+        {
+            var res = await _partnerService.GetListAttachment(id);
+            return Ok(res);
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,5 +14,6 @@ namespace Infrastructure.Services
         Task<IrAttachment> GetAttachment(string resModel, Guid? resId, string resField);
 
         Task<IEnumerable<IrAttachment>> GetAttachments(string resModel, Guid? resId);
+
     }
 }
