@@ -38,7 +38,6 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
 
   search: string;
   searchUpdate = new Subject<string>();
-
   public aggregates: any[] = [
     { field: 'end', aggregate: 'sum' },
   ];
