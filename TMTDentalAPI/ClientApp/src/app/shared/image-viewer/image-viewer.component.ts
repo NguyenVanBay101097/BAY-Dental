@@ -12,8 +12,8 @@ import { PartnerImageViewModel, PartnerImageBasic } from 'src/app/partners/partn
 })
 export class ImageViewerComponent implements OnInit {
 
-  partnerImages: PartnerImageBasic[] = [];
-  partnerImageSelected: PartnerImageBasic;
+  images: IrAttachmentBasic[] = [];
+  selectedImage: IrAttachmentBasic;
 
   imageApi: string;
   imageDownloadApi: string;
@@ -37,18 +37,18 @@ export class ImageViewerComponent implements OnInit {
   
   showPrevious() {
     this.resetAll();
-    const index = this.partnerImages.findIndex(x => x.uploadId === this.partnerImageSelected.uploadId);
+    const index = this.images.findIndex(x => x.uploadId === this.selectedImage.uploadId);
     if (index > 0) {
-      this.partnerImageSelected = this.partnerImages[index - 1];
+      this.selectedImage = this.images[index - 1];
     } else if (index === 0) {
-      this.partnerImageSelected = this.partnerImages[this.partnerImages.length - 1];
+      this.selectedImage = this.images[this.images.length - 1];
     }
     // if (model) {
-    //   var index = _.findIndex(model.partnerImages, o => o.id == this.partnerImageSelected.id);
+    //   var index = _.findIndex(model.images, o => o.id == this.selectedImage.id);
     //   if (index > 0) {
-    //     this.partnerImageSelected = model.partnerImages[index - 1];
+    //     this.selectedImage = model.images[index - 1];
     //   } else {
-    //     this.partnerImageSelected = model.partnerImages[model.partnerImages.length - 1];
+    //     this.selectedImage = model.images[model.images.length - 1];
     //   }
     // }
     return false;
@@ -56,19 +56,19 @@ export class ImageViewerComponent implements OnInit {
 
   showNext() {
     this.resetAll();
-    const index = this.partnerImages.findIndex(x => x.uploadId === this.partnerImageSelected.uploadId);
-    if (index < (this.partnerImages.length - 1)) {
-      this.partnerImageSelected = this.partnerImages[index + 1];
+    const index = this.images.findIndex(x => x.uploadId === this.selectedImage.uploadId);
+    if (index < (this.images.length - 1)) {
+      this.selectedImage = this.images[index + 1];
     } else {
-      this.partnerImageSelected = this.partnerImages[0];
+      this.selectedImage = this.images[0];
     }
-    // var model = this.partnerImages.find(x => x.date == this.partnerImageSelected.date);
+    // var model = this.images.find(x => x.date == this.selectedImage.date);
     // if (model) {
-    //   var index = _.findIndex(model.partnerImages, o => o.id == this.partnerImageSelected.id);
-    //   if (index < model.partnerImages.length - 1) {
-    //     this.partnerImageSelected = model.partnerImages[index + 1];
+    //   var index = _.findIndex(model.images, o => o.id == this.selectedImage.id);
+    //   if (index < model.images.length - 1) {
+    //     this.selectedImage = model.images[index + 1];
     //   } else {
-    //     this.partnerImageSelected = model.partnerImages[0];
+    //     this.selectedImage = model.images[0];
     //   }
     // }
     return false;
