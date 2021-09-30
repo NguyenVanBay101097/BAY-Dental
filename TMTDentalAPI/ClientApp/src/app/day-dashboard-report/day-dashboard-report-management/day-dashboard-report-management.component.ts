@@ -29,7 +29,7 @@ export class DayDashboardReportManagementComponent implements OnInit {
   totalCashBook: any[] = [];
   gridDataCashBook: any[] = [];
   cashBookDataReport: any[] = [];
-
+  keyTab = 'registration_service';
   filterResultSelection: any[] = [
     { value: '', text: 'TM/CK' },
     { value: 'cash', text: 'Tiền mặt' },
@@ -72,7 +72,8 @@ export class DayDashboardReportManagementComponent implements OnInit {
         this.companyCbx.loading = false;
       });
 
-    this.loadAllData();
+    // this.loadAllData();
+    this.onLoadTabData(this.keyTab)
   }
 
   searchCompany$(search?) {
@@ -181,13 +182,30 @@ export class DayDashboardReportManagementComponent implements OnInit {
 
   onSelectCompany(e) {
     this.companyId = e ? e.id : null;
-    this.loadAllData();
+    // this.loadAllData();
+    this.onLoadTabData(this.keyTab)
   }
 
   onChangeDate(value: any) {
     this.dateFrom = value;
     this.dateTo = value;
-    this.loadAllData();
+    // this.loadAllData();
+    this.onLoadTabData(this.keyTab)
+  }
+
+  onLoadTabData(value){
+    this.keyTab = value;
+    if(this.keyTab == 'registration_service'){
+      this.loadDataServiceApi();
+    }
+    if(this.keyTab == 'revenue'){
+      this.loadDataInvoiceApi();
+    }
+    if(this.keyTab == 'cashbook'){
+      this.loadCashBankTotal();
+      this.loadCashbookReportApi();
+      this.loadCashBookGridData();
+    }
   }
 
   exportExcelFile() {

@@ -75,7 +75,6 @@ export class DayDashboardReportCashbookComponent implements OnInit {
   }
 
   loadData(): void {
-    debugger
     var res = this.resultSelection == null ? this.gridDataCashBook : this.gridDataCashBook.filter(x => x.journalType == this.resultSelection);
     this.gridData = {
       data: res.slice(this.skip, this.skip + this.limit),
