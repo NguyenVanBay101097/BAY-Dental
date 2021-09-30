@@ -342,7 +342,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
       name: imgObj.name,
       date: null,
       note: null,
-      uploadId: imgObj.url
+      url: imgObj.url
     };
     const imgs = this.imagesFA.value.map(x => {
       return {
@@ -350,11 +350,11 @@ export class LaboOrderCuDialogComponent implements OnInit {
         name: x.name,
         date: null,
         note: null,
-        uploadId: x.url
+        url: x.url
       };
     });
-    modalRef.componentInstance.partnerImages = imgs;
-    modalRef.componentInstance.partnerImageSelected = img;
+    modalRef.componentInstance.images = imgs;
+    modalRef.componentInstance.selectedImage = img;
   }
 
   onRemoveImg(i) {
