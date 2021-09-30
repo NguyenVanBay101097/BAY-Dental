@@ -18,19 +18,37 @@
                     </div>
                 </div>
                 <div class="w-100 view-img h-75">
+                    <!-- <div class="o_attachments_previews">
+                    <div class="o_attachment" *ngFor="let img of imagesPreview;let i = index">
+                        <div class="o_attachment_wrap" (click)="viewImage(img)">
+                            <div class="o_image_box">
+                                <div class="o_attachment_image" id="{{img.name}}">
+                                    <img width="100%" [src]="img.url + '?width=240&height=240)'" alt="">
+                                </div>
+                                <div class="o_image_overlay o_attachment_view">
+                                    <span class="fa fa-times o_attachment_delete_cross"
+                                        (click)="deletePartnerImages(i, $event)" title="Delete {{img.name}}"></span>
+                                    <span class="o_attachment_title text-white">{{img.name}}</span>
+                                    <a class="o_attachment_download" (click)="stopPropagation($event)"
+                                        href="{{img.url}}" target="_blank">
+                                        <i aria-label="Download" class="fa fa-download text-white" role="img"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+
                     <div class="o_attachments_previews">
-                        <!-- Preview hình ảnh -->
                         <div class="o_attachment" *ngFor="let img of imagesPreview;let i = index">
                             <div class="o_attachment_wrap" (click)="viewImage(img)">
-                                <div class="o_image_box">
-                                    <div class="o_attachment_image" id="{{img.name}}">
-                                        <img width="100%" [src]="img.url + '?width=240&height=240)'" alt="">
-                                    </div>
-                                    <div class="o_image_overlay o_attachment_view">
-                                        <span class="fa fa-times o_attachment_delete_cross"
-                                            (click)="deletePartnerImages(i, $event)" title="Delete {{img.name}}"></span>
-                                        <span class="o_attachment_title text-white">{{img.name}}</span>
-                                        <a class="o_attachment_download" (click)="stopPropagation($event)"
+                                <img width="100%" [src]="img.url + '?width=240&height=240'" alt="">
+                                <div class="o_attachment_overlay">
+                                    <div class="o_attachment_filename">{{img.name}}</div>
+                                    <div class="o_attachment_actions">
+                                        <span class="fa fa-times o_attachment_action" title="Delete {{img.name}}"
+                                            (click)="deletePartnerImages(i, $event)"></span>
+                                        <a class="o_attachment_action" (click)="stopPropagation($event)"
                                             href="{{img.url}}" target="_blank">
                                             <i aria-label="Download" class="fa fa-download text-white" role="img"></i>
                                         </a>

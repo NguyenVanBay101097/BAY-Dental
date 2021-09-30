@@ -1,22 +1,5 @@
-.o_attachments {
-    border: 1px solid #ced4da;
-    overflow: auto;
-}
-
-.o_attachments_previews {
-    /* overflow: auto; */
-    height: 100%;
-    /* padding: 10px; */
-}
-
-.o_attachments_previews>.o_attachment {
-    width: 33.33333333%;
-}
-
-.o_attachment_wrap {
-    border: 1px solid #ced4da;
-}
 
 .o_input_file {
     display: none;
 }
+

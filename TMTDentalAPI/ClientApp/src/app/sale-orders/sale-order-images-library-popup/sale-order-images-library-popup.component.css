@@ -3,29 +3,10 @@
     display: flex;
 }
 
-.o_attachments_previews {
-    display: flex;
-    justify-content: flex-start;
-}
 
 .img-list {
     max-height: 500px;
     overflow-y: auto;
-}
-
-.o_attachment {
-    width: 30%;
-    margin-bottom: 1rem;
-    margin-right: 1rem;
-    padding: 0;
-}
-
-.o_attachment_image {
-    position: relative;
-}
-
-.o_attachment .o_attachment_view {
-    cursor: pointer;
 }
 
 .modal-footer {
@@ -33,7 +14,6 @@
 }
 
 .img-selected {
-    border: 3px solid #007bff;
-    border-radius: 2px;
+    border: 1px solid #007bff;
 }
 

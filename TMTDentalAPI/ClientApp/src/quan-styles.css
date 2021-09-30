@@ -86,26 +86,83 @@
     font-weight: 700;
     background: #fff;
 }
-
 .o_attachments_list,
-.o_attachments_previews {
+.o_attachments_previews{
     display: flex;
-    flex-flow: row wrap;
+    flex-flow: wrap;
 }
 
-.o_attachment {
+.o_attachment{
+    padding-bottom: 0.25rem;
+    padding-top: 0.25rem;
+    padding-right: 0.25rem;
+    max-width: 100%;
+}
+
+.o_attachment_wrap{
+    background-size: auto;
+    background-repeat: no-repeat;
+    background-position: center;
+    min-width: 100px;
+    min-height: 100px;
     position: relative;
-    width: 20%;
-    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
-.o_attachments_previews>.o_attachment {
-    width: 16.66666667%;
-}
-
-.o_attachments_previews {
+.o_attachment_overlay {
+    left: 0;
+    padding: 10px;
+    right: 0;
+    top: 0;
+    position: absolute;
+    opacity: 0;
+    background-image: linear-gradient(180deg, rgba(0, 0, 0, .2), rgba(0, 0, 0, .9));
+    border-radius: 5px;
+    color: white;
+    bottom: 0;
     display: flex;
-    flex-flow: row wrap;
+    flex-direction: row;
+    justify-content: flex-end;
+    transition: all 0.3s ease 0s;
+    cursor: zoom-in;
+    font-size: 13px;
+
+}
+
+.o_attachment_wrap:hover .o_attachment_overlay{
+    opacity: 1;
+}
+
+.o_attachment_filename {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    margin-right: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    margin-top: auto;
+}
+
+.o_attachment_actions {
+    justify-content: space-between;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.o_attachment_action:hover {
+    background: rgba(255, 255, 255, 0.2)
+}
+
+.o_attachment_action {
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: center;
+    min-width: 20px;
+    line-height: 1.5;
 }
 
 .oe_chatter .o_mail_chatter_attachments .o_chatter_attachment input.o_input_file {
@@ -120,14 +177,6 @@
     cursor: pointer;
 }
 
-.o_attachment .o_attachment_wrap {
-    overflow: hidden;
-    position: relative;
-    border-bottom: 1px solid rgba(0, 0, 0, .1);
-    border-radius: 2px;
-    padding: 4px 6px 0 4px;
-    background-color: rgba(0, 0, 0, .05);
-}
 
 .o_attachment .o_image.o_hover {
     opacity: 1;
@@ -291,10 +340,6 @@ small {
 
 .text-uppercase {
     text-transform: uppercase!important;
-}
-
-.o_attachments_previews>.o_attachment .o_image_overlay .o_attachment_delete_cross {
-    color: #fff;
 }
 
 .o_content .o_form_view .o_form_sheet_bg .o_form_maxwidth {

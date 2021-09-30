@@ -128,7 +128,7 @@
                 <ng-container formArrayName="irAttachments">
                     <div [formGroupName]="i" *ngFor="let img of imgsFA.controls; let i=index"
                         class=" o_attachment mt-1 col-sm-6 col-md-4 col-lg-3 col-xl-2">
-                        <div class="o_attachment_wrap" (click)="onViewImg(img.value)">
+                        <!-- <div class="o_attachment_wrap" (click)="onViewImg(img.value)">
                             <div class="o_image_box">
                                 <div class="o_attachment_image" id="{{img.value.name}}">
                                     <img width="100%" [src]="img.value.url + '?width=240&height=240)'" alt="">
@@ -138,6 +138,21 @@
                                         (click)="onRemoveImg(i)" title="Delete {{img.value.name}}"></span>
                                     <span class="o_attachment_title text-white">{{img.value.name}}</span>
                                     <a class="o_attachment_download" (click)="stopPropagation($event)"
+                                        href="{{img.value.url}}" target="_blank">
+                                        <i aria-label="Download" class="fa fa-download text-white" role="img"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div> -->
+
+                        <div class="o_attachment_wrap" (click)="onViewImg(img.value)">
+                            <img width="100%" [src]="img.value.url + '?width=240&height=240'" alt="">
+                            <div class="o_attachment_overlay">
+                                <span class="o_attachment_filename">{{img.value.name}}</span>
+                                <div class="o_attachment_actions">
+                                    <span class="fa fa-times o_attachment_action" title="Delete {{img.value.name}}"
+                                        (click)="onRemoveImg(i)"></span>
+                                    <a class="o_attachment_action" (click)="stopPropagation($event)"
                                         href="{{img.value.url}}" target="_blank">
                                         <i aria-label="Download" class="fa fa-download text-white" role="img"></i>
                                     </a>

@@ -600,6 +600,14 @@ const keyWorDatas =
                 { text: 'Ghi chú', value: '{{line.note}}' },
             ]
         },
+        {
+            text: 'Thông tin phim XQKTS',
+            value: [
+                { text: 'Danh sách phim XQKTS', value: '{{o.ir_attachments}}' },
+                { text: 'Tên ảnh', value: '{{ir.name}}' },
+                { text: 'Đường dẫn ảnh', value: '{{ir.url}}' },
+            ]
+        },
     ],
     'tmp_quotation': [
         companyInfo,

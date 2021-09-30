@@ -1,6 +1,7 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title || 'In phiếu điều trị'}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
 </header>
 
 <div class="modal-body">
@@ -16,7 +17,7 @@
         <p class="card-title">Hình ảnh đính kèm</p>
         <div class="w-100 view-img h-75 card">
             <div class="card-body">
-                <div class="o_attachments_previews">
+                <!-- <div class="o_attachments_previews">
                     <div class="o_attachment" *ngFor="let img of imagesPreview;let i = index">
                         <div class="o_attachment_wrap">
                             <div class="o_image_box">
@@ -31,15 +32,31 @@
                             </div>
                         </div>
                     </div>
+                </div> -->
+
+                <div class="o_attachments_previews">
+                    <div class="o_attachment" *ngFor="let img of imagesPreview;let i = index">
+                        <div class="o_attachment_wrap">
+                            <img width="100%" [src]="img.url + '?width=100&height=100'" alt="">
+                            <div class="o_attachment_overlay cursor-pointer">
+                                <div class="o_attachment_filename">{{img.name}}</div>
+                                <div class="o_attachment_actions">
+                                    <span class="fa fa-times o_attachment_action" title="Delete {{img.name}}"
+                                        (click)="deleteImage(img.id)"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </ng-template>
-    
+
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="onPrint()" accesskey="s"><span style="padding-left: 0.6rem; padding-right: 0.6rem;">In</span></button>
+    <button type="button" class="btn btn-primary" (click)="onPrint()" accesskey="s"><span
+            style="padding-left: 0.6rem; padding-right: 0.6rem;">In</span></button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()"
         accesskey="q"><span>Đóng</span></button>
 </footer>

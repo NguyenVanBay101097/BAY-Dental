@@ -38,7 +38,7 @@ namespace Infrastructure.Services
             return template.Content;
         }
 
-        public async Task<string> GeneratePrintHtml(PrintTemplate self, IEnumerable<Guid> resIds, PrintPaperSize paperSize = null)
+        public async Task<string> GeneratePrintHtml(PrintTemplate self, IEnumerable<Guid> resIds, PrintPaperSize paperSize = null, IEnumerable<object> resObjs = null)
         {
             var modelDataService = GetService<IIRModelDataService>();
             var paper = paperSize != null ? paperSize : await modelDataService.GetRef<PrintPaperSize>("base.paperformat_a4");
@@ -49,7 +49,7 @@ namespace Infrastructure.Services
             var template = Template.Parse(layoutHtml);
             var renderLayout = await template.RenderAsync(new { o = paper });
 
-            var renderContent = await RenderTemplate(self, resIds);
+            var renderContent = await RenderTemplate(self, resIds, resObjs);
 
             var result = ConnectLayoutForContent(renderLayout, renderContent);
             return result;
@@ -64,10 +64,10 @@ namespace Infrastructure.Services
             return newHtml;
         }
 
-        public async Task<string> RenderTemplate(PrintTemplate self, IEnumerable<Guid> resIds)
+        public async Task<string> RenderTemplate(PrintTemplate self, IEnumerable<Guid> resIds, IEnumerable<object> resObjs = null)
         {
             //mảng data từ resids
-            var data = await GetObjectRender(self.Model, resIds);
+            var data = resObjs ?? await GetObjectRender(self.Model, resIds);
             var userObj = GetService<IUserService>();
             var user = await userObj.GetCurrentUser();
 

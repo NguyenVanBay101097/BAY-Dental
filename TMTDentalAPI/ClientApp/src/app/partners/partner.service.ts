@@ -102,6 +102,7 @@ export class PartnerImageBasic {
     date: string;
     note: string;
     uploadId: string;
+    url: string;
 }
 
 
