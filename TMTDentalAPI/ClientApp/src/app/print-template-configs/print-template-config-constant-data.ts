@@ -17,8 +17,8 @@ export const types: { text: string, value: string }[] = [
     // { text: 'Phiếu thu', value: 'tmp_phieu_thu' },
     // { text: 'Phiếu chi', value: 'tmp_phieu_chi' },
     // { text: 'Phiếu chi hoa hồng', value: 'tmp_agent_commission' },
-    // { text: 'Phiếu mua hàng', value: 'tmp_purchase_order' },
-    // { text: 'Phiếu trả hàng', value: 'tmp_purchase_refund' },
+    { text: 'Phiếu mua hàng', value: 'tmp_purchase_order' },
+    { text: 'Phiếu trả hàng', value: 'tmp_purchase_refund' },
     // { text: 'Phiếu thanh toán lương nhân viên', value: 'tmp_salary' },
     // { text: 'Phiếu nhập kho', value: 'tmp_stock_picking_incoming' },
     // { text: 'Phiếu xuất kho', value: 'tmp_stock_picking_outgoing' },
@@ -207,10 +207,10 @@ const keyWorDatas =
         {
             text: 'Thông tin chung',
             value: [
-                { text: 'Họ tên nhà cung cấp', value: '{{o.partner.name}}' },
-                { text: 'Mã tham chiếu kho', value: '{{o.picking.name }}' },
+                { text: 'Họ tên nhà cung cấp', value: '{{o.partner?.name}}' },
+                { text: 'Mã tham chiếu kho', value: '{{o.picking?.name }}' },
                 { text: 'Ghi chú', value: '{{o.note}}' },
-                { text: 'Người lập phiếu', value: '{{u.name}}' },
+                { text: 'Người lập phiếu', value: '{{o.user?.name}}' },
             ]
         },
         {
@@ -220,7 +220,7 @@ const keyWorDatas =
                 { text: 'Số thứ tự', value: '{{line.sequence}}' },
                 { text: 'Tên hàng hóa', value: '{{line.name}}' },
                 { text: 'Số lượng', value: '{{line.product_qty}}' },
-                { text: 'Đơn vị', value: '{{line.product_uomname}}' },
+                { text: 'Đơn vị', value: '{{line.product_uom?.name}}' },
                 { text: 'Đơn giá', value: '{{line.price_unit}}' },
                 { text: 'Chiết khấu (%)', value: '{{line.discount}}' },
                 { text: 'Thành tiền', value: '{{line.price_subtotal}}' },
