@@ -69,7 +69,10 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                             Name = img.Name,
                             Type = "upload",
                             Url = img.UploadId,
-                            CompanyId = companyId
+                            CompanyId = companyId,
+                            DateCreated = img.Date,
+                            CreatedById = img.CreatedById,
+                            WriteById = img.WriteById
                         });
                     }
                     await attObj.CreateAsync(atts);
