@@ -106,8 +106,9 @@
     min-width: 100px;
     min-height: 100px;
     position: relative;
-    border: 1px solid #ccc;
     border-radius: 5px;
+    border-bottom: 1px solid rgba(0,0,0,.1);
+    background-color: rgba(0,0,0,.05);
 }
 
 .o_attachment_overlay {
