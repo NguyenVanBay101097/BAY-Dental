@@ -20,8 +20,8 @@ export const types: { text: string, value: string }[] = [
     { text: 'Phiếu mua hàng', value: 'tmp_purchase_order' },
     { text: 'Phiếu trả hàng', value: 'tmp_purchase_refund' },
     { text: 'Phiếu thanh toán lương nhân viên', value: 'tmp_salary' },
-    // { text: 'Phiếu nhập kho', value: 'tmp_stock_picking_incoming' },
-    // { text: 'Phiếu xuất kho', value: 'tmp_stock_picking_outgoing' },
+    { text: 'Phiếu nhập kho', value: 'tmp_stock_picking_incoming' },
+    { text: 'Phiếu xuất kho', value: 'tmp_stock_picking_outgoing' },
     { text: 'Phiếu kiểm kho', value: 'tmp_stock_inventory' },
 
 ];
@@ -350,9 +350,10 @@ const keyWorDatas =
         {
             text: 'Thông tin chung',
             value: [
-                { text: 'Đối tác', value: '{{o.partner.name}}' },
+                { text: 'Đối tác', value: '{{o.partner?.name}}' },
                 { text: 'Ghi chú', value: '{{o.note}}' },
-                { text: 'Người lập phiếu', value: '{{o.created_by.name}}' },
+                { text: 'Người lập phiếu', value: '{{o.created_by?.name}}' },
+                { text: 'Ngày lập phiếu', value: '{{o.date}}' },
             ]
         },
         {
@@ -360,11 +361,11 @@ const keyWorDatas =
             value: [
                 { text: 'Danh sách sản phẩm', value: '{{o.move_lines}}' },
                 { text: 'Số thứ tự', value: '{{for.index + 1}}' },
-                { text: 'Mã sản phẩm', value: '{{line.product.default_code}}' },
+                { text: 'Mã sản phẩm', value: '{{line.product?.default_code}}' },
                 { text: 'Tên sản phẩm', value: '{{line.name}}' },
-                { text: 'Loại sản phẩm', value: '{{line.product.categ.name}}' },
+                { text: 'Loại sản phẩm', value: '{{line.product?.categ?.name}}' },
                 { text: 'Số lượng', value: '{{line.product_uomqty}}' },
-                { text: 'Đơn vị tính', value: '{{line.product_uom.name}}' },
+                { text: 'Đơn vị tính', value: '{{line.product_uom?.name}}' },
             ]
         }
     ],
@@ -382,9 +383,10 @@ const keyWorDatas =
         {
             text: 'Thông tin chung',
             value: [
-                { text: 'Đối tác', value: '{{o.partner.name}}' },
+                { text: 'Đối tác', value: '{{o.partner?.name}}' },
                 { text: 'Ghi chú', value: '{{o.note}}' },
-                { text: 'Ngày lập phiếu', value: '{{o.created_by.name}}' },
+                { text: 'Người lập phiếu', value: '{{o.created_by?.name}}' },
+                { text: 'Ngày lập phiếu', value: '{{o.date}}' },
             ]
         },
         {
@@ -392,11 +394,11 @@ const keyWorDatas =
             value: [
                 { text: 'Danh sách sản phẩm', value: '{{o.move_lines}}' },
                 { text: 'Số thứ tự', value: '{{for.index + 1}}' },
-                { text: 'Mã sản phẩm', value: '{{line.product.default_code}}' },
+                { text: 'Mã sản phẩm', value: '{{line.product?.default_code}}' },
                 { text: 'Tên sản phẩm', value: '{{line.name}}' },
-                { text: 'Loại sản phẩm', value: '{{line.product.categ.name}}' },
+                { text: 'Loại sản phẩm', value: '{{line.product?.categ?.name}}' },
                 { text: 'Số lượng', value: '{{line.product_uomqty}}' },
-                { text: 'Đơn vị tính', value: '{{line.product_uom.name}}' },
+                { text: 'Đơn vị tính', value: '{{line.product_uom?.name}}' },
             ]
         }
     ],
@@ -489,7 +491,7 @@ const keyWorDatas =
             text: 'Thông tin chi tiết',
             value: [
                 { text: 'Họ tên nhân viên', value: '{{o.employee?.name}}' },
-                { text: 'Mã nhân viên', value: '{{o.employee?.name}}' },
+                { text: 'Mã nhân viên', value: '{{o.employee?.ref}}' },
                 { text: 'Lương/tháng', value: '{{o.employee?.wage}}' },
                 { text: 'Số ngày nghỉ/tháng', value: '{{o.employee?.leave_per_month}}' },
                 { text: 'Số giờ làm/ngày', value: '{{o.employee?.regular_hour}}' },
@@ -501,7 +503,7 @@ const keyWorDatas =
                 { text: 'Lương cơ bản', value: '{{o.total_basic_salary}}' },
                 { text: 'Lương tăng ca', value: '{{o.over_time_hour_salary}}' },
                 { text: 'Lương làm thêm', value: '{{o.over_time_day_salary}}' },
-                { text: 'Phụ cấp xác định', value: '{{o.employee.allowance}}' },
+                { text: 'Phụ cấp xác định', value: '{{o.employee?.allowance}}' },
                 { text: 'Phụ cấp khác', value: '{{o.other_allowance}}' },
                 { text: 'Thưởng', value: '{{o.reward_salary}}' },
                 { text: 'Phụ cấp lễ tết', value: '{{o.holiday_allowance}}' },

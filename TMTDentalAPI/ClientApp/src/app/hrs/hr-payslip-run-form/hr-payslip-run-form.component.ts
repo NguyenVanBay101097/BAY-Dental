@@ -306,7 +306,6 @@ export class HrPayslipRunFormComponent implements OnInit {
     }
 
     var value = this.getFormData();
-    debugger
     if (value)
       this.hrPaysliprunService.printAllEmpSalary(this.id, value).subscribe(
         (result: any) => {
