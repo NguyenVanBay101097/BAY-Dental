@@ -1297,6 +1297,7 @@
         "Name": "TPP"
       },
       "Date": "2021-09-09T13:50:42",
+      "DateCreated": "2021-09-09T13:48:12",
       "JournalId": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
       "Journal": {
         "Id": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
@@ -1328,7 +1329,11 @@
         "JobTitle": null,
         "MedicalHistory": null,
         "Categories": [],
-        "MemberLevel": null
+        "MemberLevel": null,
+        "Street": "246/16 Độc Lập",
+        "WardName": "Phường Tân Thành",
+        "DistrictName": "Quận Tân Phú",
+        "CityName": "Thành phố Hồ Chí Minh"
       },
       "Agent": null,
       "IsAccounting": false

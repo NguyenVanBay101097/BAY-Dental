@@ -14,15 +14,15 @@ export const types: { text: string, value: string }[] = [
     // { text: 'Tình trạng răng', value: 'tmp_advisory' },
     // { text: 'Biên lai thanh toán nhà cung cấp', value: 'tmp_supplier_payment' },
     // { text: 'Biên lai nhà cung cấp hoàn tiền', value: 'tmp_supplier_payment_inbound' },
-    // { text: 'Phiếu thu', value: 'tmp_phieu_thu' },
-    // { text: 'Phiếu chi', value: 'tmp_phieu_chi' },
-    // { text: 'Phiếu chi hoa hồng', value: 'tmp_agent_commission' },
+    { text: 'Phiếu thu', value: 'tmp_phieu_thu' },
+    { text: 'Phiếu chi', value: 'tmp_phieu_chi' },
+    { text: 'Phiếu chi hoa hồng', value: 'tmp_agent_commission' },
     { text: 'Phiếu mua hàng', value: 'tmp_purchase_order' },
     { text: 'Phiếu trả hàng', value: 'tmp_purchase_refund' },
     { text: 'Phiếu thanh toán lương nhân viên', value: 'tmp_salary' },
     { text: 'Phiếu nhập kho', value: 'tmp_stock_picking_incoming' },
     { text: 'Phiếu xuất kho', value: 'tmp_stock_picking_outgoing' },
-    // { text: 'Phiếu kiểm kho', value: 'tmp_stock_inventory' },
+    { text: 'Phiếu kiểm kho', value: 'tmp_stock_inventory' },
 
 ];
 
