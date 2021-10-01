@@ -16,13 +16,13 @@ export const types: { text: string, value: string }[] = [
     // { text: 'Biên lai nhà cung cấp hoàn tiền', value: 'tmp_supplier_payment_inbound' },
     // { text: 'Phiếu thu', value: 'tmp_phieu_thu' },
     // { text: 'Phiếu chi', value: 'tmp_phieu_chi' },
-    // { text: 'Phiếu chi hoa hồng', value: 'tmp_agent_commission' },
+    { text: 'Phiếu chi hoa hồng', value: 'tmp_agent_commission' },
     { text: 'Phiếu mua hàng', value: 'tmp_purchase_order' },
     { text: 'Phiếu trả hàng', value: 'tmp_purchase_refund' },
-    // { text: 'Phiếu thanh toán lương nhân viên', value: 'tmp_salary' },
+    { text: 'Phiếu thanh toán lương nhân viên', value: 'tmp_salary' },
     // { text: 'Phiếu nhập kho', value: 'tmp_stock_picking_incoming' },
     // { text: 'Phiếu xuất kho', value: 'tmp_stock_picking_outgoing' },
-    // { text: 'Phiếu kiểm kho', value: 'tmp_stock_inventory' },
+    { text: 'Phiếu kiểm kho', value: 'tmp_stock_inventory' },
 
 ];
 
@@ -309,18 +309,18 @@ const keyWorDatas =
         {
             text: 'Thông tin phiếu',
             value: [
-                { text: 'Ngày tạo', value: '{{o.date_created.day}}' },
-                { text: 'Tháng tạo', value: '{{o.date_created.month}}' },
-                { text: 'Năm tạo', value: '{{o.date_created.year}}' },
+                { text: 'Ngày tạo', value: '{{o.date.day}}' },
+                { text: 'Tháng tạo', value: '{{o.date.month}}' },
+                { text: 'Năm tạo', value: '{{o.date.year}}' },
                 { text: 'Mã phiếu', value: '{{o.name}}' },
             ]
         },
         {
             text: 'Thông tin chung',
             value: [
-                { text: 'Người kiểm', value: '{{o.date_created}}' },
+                { text: 'Ngày kiểm', value: '{{o.date}}' },
                 { text: 'Ghi chú', value: '{{o.note}}' },
-                { text: 'Nhân viên kiểm kho', value: '{{o.created_by.name}}' },
+                { text: 'Nhân viên kiểm kho', value: '{{o.created_by?.name}}' },
             ]
         },
         {
@@ -328,9 +328,9 @@ const keyWorDatas =
             value: [
                 { text: 'Danh sách sản phẩm', value: '{{o.lines}}' },
                 { text: 'Số thứ tự', value: '{{for.index + 1}}' },
-                { text: 'Mã sản phẩm', value: '{{line.product.default_code}}' },
-                { text: 'Tên sản phẩm', value: '{{line.product.name}}' },
-                { text: 'Đơn vị tính', value: '{{line.product_uom.name}}' },
+                { text: 'Mã sản phẩm', value: '{{line.product?.default_code}}' },
+                { text: 'Tên sản phẩm', value: '{{line.product?.name}}' },
+                { text: 'Đơn vị tính', value: '{{line.product_uom?.name}}' },
                 { text: 'Số lượng tồn kho', value: '{{line.theoretical_qty}}' },
                 { text: 'Số lượng thực tế', value: '{{line.product_qty}}' },
             ]
@@ -451,25 +451,25 @@ const keyWorDatas =
         {
             text: 'Thông tin phiếu',
             value: [
-                { text: 'Ngày tạo', value: '{{date_created.day}}' },
-                { text: 'Tháng tạo', value: '{{date_created.month}}' },
-                { text: 'Năm tạo', value: '{{date_created.year}}' },
-                { text: 'Mã phiếu', value: '{{name}}' },
+                { text: 'Ngày tạo', value: '{{o.date_created.day}}' },
+                { text: 'Tháng tạo', value: '{{o.date_created.month}}' },
+                { text: 'Năm tạo', value: '{{o.date_created.year}}' },
+                { text: 'Mã phiếu', value: '{{o.name}}' },
             ]
         },
         {
             text: 'Thông tin chung',
             value: [
-                { text: 'Ngày thanh toán', value: '{{date_created}}' },
-                { text: 'Phương thức thanh toán', value: '{{journal_name}}' },
-                { text: 'Số tiền', value: '{{amount}}' },
-                { text: 'Số tiền bằng chữ', value: '{{amount_text}}' },
-                { text: 'Nội dung', value: '{{reason}}' },
-                { text: 'Họ tên người giới thiệu', value: '{{agent.name}}' },
-                { text: 'Địa chỉ người giới thiệu', value: '{{agent.address}}' },
-                { text: 'Số điện thoại người giới thiệu', value: '{{agent.phone}}' },
-                { text: 'Người lập phiếu', value: '{{user.name}}' },
-                { text: 'Người nhận tiền', value: '{{agent.name}}' },
+                { text: 'Ngày thanh toán', value: '{{o.date_created}}' },
+                { text: 'Phương thức thanh toán', value: '{{o.journal?.name}}' },
+                { text: 'Số tiền', value: '{{o.amount}}' },
+                { text: 'Số tiền bằng chữ', value: '{{o.amount_text}}' },
+                { text: 'Nội dung', value: '{{o.reason}}' },
+                { text: 'Họ tên người giới thiệu', value: '{{o.agent?.name}}' },
+                { text: 'Địa chỉ người giới thiệu', value: '{{o.agent?.address}}' },
+                { text: 'Số điện thoại người giới thiệu', value: '{{o.agent?.phone}}' },
+                { text: 'Người lập phiếu', value: '{{u.name}}' },
+                { text: 'Người nhận tiền', value: '{{o.agent?.name}}' },
             ]
         }
     ],
@@ -482,16 +482,17 @@ const keyWorDatas =
                 { text: 'Tháng tạo', value: '{{o.payslip_run?.date?.month}}' },
                 { text: 'Năm tạo', value: '{{o.payslip_run?.date?.year}}' },
                 { text: 'Người lập phiếu', value: '{{o.created_by?.name}}' },
+                { text: 'Người lao động', value: '{{o.employee?.name}}' },
             ]
         },
         {
             text: 'Thông tin chi tiết',
             value: [
-                { text: 'Họ tên nhân viên', value: '{{o.employee.name}}' },
-                { text: 'Mã nhân viên', value: '{{o.employee.name}}' },
-                { text: 'Lương/tháng', value: '{{o.employee.wage}}' },
-                { text: 'Số ngày nghỉ/tháng', value: '{{o.employee.leave_per_month}}' },
-                { text: 'Số giờ làm/ngày', value: '{{o.employee.regular_hour}}' },
+                { text: 'Họ tên nhân viên', value: '{{o.employee?.name}}' },
+                { text: 'Mã nhân viên', value: '{{o.employee?.name}}' },
+                { text: 'Lương/tháng', value: '{{o.employee?.wage}}' },
+                { text: 'Số ngày nghỉ/tháng', value: '{{o.employee?.leave_per_month}}' },
+                { text: 'Số giờ làm/ngày', value: '{{o.employee?.regular_hour}}' },
                 { text: 'Số ngày công', value: '{{o.worked_day}}' },
                 { text: 'Số ngày nghỉ', value: '{{o.actual_leave_per_month}}' },
                 { text: 'Ngày nghỉ không lương', value: '{{o.leave_per_month_unpaid}}' },
