@@ -2290,7 +2290,7 @@
         "AppointmnetId": "00000000-0000-0000-0000-000000000000",
         "AppointmnetName": null,
         "Time": null,
-        "Date": "27/08/2021 12:00:00 SA"
+        "Date": "2021-08-27T00:00:00"
       },
       "PartnerType": "supplier",
       "PaymentDate": "2021-09-15T00:00:00",
@@ -2348,7 +2348,7 @@
         "AppointmnetId": "00000000-0000-0000-0000-000000000000",
         "AppointmnetName": null,
         "Time": null,
-        "Date": "27/08/2021 12:00:00 SA"
+        "Date": "2021-08-27T00:00:00"
       },
       "PartnerType": "supplier",
       "PaymentDate": "2021-09-19T00:00:00",
