@@ -28,14 +28,14 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Account.Read")]
         public async Task<IActionResult> GetSumary(CashBookSearch val)
         {
-            var res = await _cashBookService.GetSumary(val);
+            var res = await _cashBookService.GetSumary(val.DateFrom, val.DateTo, val.CompanyId, val.ResultSelection);
             return Ok(res);
         }
 
         [HttpPost("[action]")]
         public async Task<IActionResult> GetSumaryCashBookReport(SumaryCashBookFilter val)
         {
-            var res = await _cashBookService.GetSumaryCashBookReport(val);
+            var res = await _cashBookService.GetSumaryCashBookReport(val.DateFrom, val.DateTo, val.CompanyId, val.PartnerType, val.AccountCode, val.ResultSelection);
             return Ok(res);
         }
 
@@ -43,7 +43,7 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Account.Read")]
         public async Task<IActionResult> GetDetails(CashBookDetailFilter val)
         {
-            var res = await _cashBookService.GetDetails(val);
+            var res = await _cashBookService.GetDetails(val.DateFrom, val.DateTo, val.Limit, val.Offset, val.CompanyId, val.Search, val.ResultSelection);
             return Ok(res);
         }
 
@@ -51,7 +51,7 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Account.Read")]
         public async Task<IActionResult> GetDataInvoices(DataInvoiceFilter val)
         {
-            var res = await _cashBookService.GetDataInvoices(val.DateFrom, val.DateTo , val.CompanyId , val.ResultSelection);
+            var res = await _cashBookService.GetDataInvoices(val.DateFrom, val.DateTo, val.CompanyId, val.ResultSelection);
             return Ok(res);
         }
 
@@ -78,7 +78,7 @@ namespace TMTDentalAPI.Controllers
             var stream = new MemoryStream();
             val.Limit = int.MaxValue;
             val.Offset = 0;
-            var services = await _cashBookService.GetDetails(val);
+            var services = await _cashBookService.GetDetails(val.DateFrom, val.DateTo, val.Limit, val.Offset, val.CompanyId.Value, val.Search, val.ResultSelection);
             var sheetName = "Tổng sổ quỹ";
             if (val.ResultSelection == "cash")
             {

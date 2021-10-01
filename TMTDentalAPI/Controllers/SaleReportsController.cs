@@ -58,7 +58,7 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Report.Sale")]
         public async Task<IActionResult> GetReportService(SaleReportSearch val)
         {
-            var res = await _saleReportService.GetReportService(val);
+            var res = await _saleReportService.GetReportService(val.DateFrom, val.DateTo, val.CompanyId, val.Search, val.State);
             return Ok(res);
         }
 
@@ -95,7 +95,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> ExportServiceReportExcelFile(SaleReportSearch val)
         {
             var stream = new MemoryStream();
-            var data = await _saleReportService.GetReportService(val);
+            var data = await _saleReportService.GetReportService(val.DateFrom, val.DateTo, val.CompanyId, val.Search, val.State);
             byte[] fileContent;
 
             using (var package = new ExcelPackage(stream))
@@ -109,7 +109,7 @@ namespace TMTDentalAPI.Controllers
 
                 worksheet.Cells["A2:K2"].Value = $"Ngày {val.DateFrom.Value.ToShortDateString()}";
                 worksheet.Cells["A2:K2"].Style.Numberformat.Format = "dd/mm/yyyy";
-                worksheet.Cells["A2:K2"].Merge = true;          
+                worksheet.Cells["A2:K2"].Merge = true;
 
                 worksheet.Cells[4, 1].Value = "Dịch vụ";
                 worksheet.Cells[4, 2].Value = "Phếu điều trị";
@@ -118,7 +118,7 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[4, 5].Value = "Bác sĩ";
                 worksheet.Cells[4, 6].Value = "Răng";
                 worksheet.Cells[4, 7].Value = "Chuẩn đoán";
-              
+
                 worksheet.Cells[4, 8].Value = "Thành tiền";
                 worksheet.Cells[4, 9].Value = "Thanh toán";
                 worksheet.Cells[4, 10].Value = "Còn lại";
@@ -142,16 +142,16 @@ namespace TMTDentalAPI.Controllers
                     {
                         foreach (var te in item.Teeth)
                         {
-                            numberTeeth += te.Name +", ";
+                            numberTeeth += te.Name + ", ";
                         }
                     }
                     worksheet.Cells[row, 6].Value = numberTeeth;
                     worksheet.Cells[row, 7].Value = item.Diagnostic;
-                   
+
                     worksheet.Cells[row, 8].Value = item.PriceSubTotal;
                     worksheet.Cells[row, 8].Style.Numberformat.Format = "#,###";
                     worksheet.Cells[row, 9].Value = (item.PriceSubTotal - item.AmountResidual);
-                    worksheet.Cells[row, 9].Style.Numberformat.Format = ((item.PriceSubTotal) - (item.AmountResidual ?? 0)) > 0 && item.State != "draft" ? "#,###" : "0"; 
+                    worksheet.Cells[row, 9].Style.Numberformat.Format = ((item.PriceSubTotal) - (item.AmountResidual ?? 0)) > 0 && item.State != "draft" ? "#,###" : "0";
                     worksheet.Cells[row, 10].Value = item.AmountResidual;
                     worksheet.Cells[row, 10].Style.Numberformat.Format = (item.AmountResidual ?? 0) > 0 ? "#,###" : "0";
                     worksheet.Cells[row, 11].Value = item.State == "done" ? "Hoàn thành" : (item.State == "sale" ? "Đang điều trị" : "");
@@ -238,7 +238,7 @@ namespace TMTDentalAPI.Controllers
                 ColorMode = ColorMode.Color,
                 Orientation = Orientation.Landscape,
                 PaperSize = PaperKind.A4,
-                Margins = new MarginSettings { Top = 5},
+                Margins = new MarginSettings { Top = 5 },
                 DocumentTitle = "PDF Report"
             };
             var objectSettings = new ObjectSettings
@@ -304,7 +304,7 @@ namespace TMTDentalAPI.Controllers
 
         }
 
-       
+
     }
 
 }

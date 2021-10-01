@@ -119,4 +119,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public string AccountCode { get; set; }
     }
 
+    public class ExportExcelDashBoardDayFilter
+    {
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
+
+        public Guid? CompanyId { get; set; }
+    }
+
 }

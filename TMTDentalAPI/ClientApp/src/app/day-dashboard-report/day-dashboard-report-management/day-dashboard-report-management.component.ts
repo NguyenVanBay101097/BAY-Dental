@@ -10,7 +10,7 @@ import { CashBookDetailFilter, CashBookService, CashBookSummarySearch, DataInvoi
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
 import { DashboardReportService } from 'src/app/core/services/dashboard-report.service';
 import { SaleReportSearch, SaleReportService } from 'src/app/sale-report/sale-report.service';
-import { DayDashboardReportService } from '../day-dashboard-report.service';
+import { DayDashboardReportService, ExportExcelDashBoardDayFilter } from '../day-dashboard-report.service';
 
 @Component({
   selector: 'app-day-dashboard-report-management',
@@ -144,7 +144,7 @@ export class DayDashboardReportManagementComponent implements OnInit {
       );
     })).subscribe((result) => {
       this.totalCashBook = result.map(x => x.total);
-    });   
+    });
   }
 
   loadCashbookReportApi() {
@@ -165,15 +165,24 @@ export class DayDashboardReportManagementComponent implements OnInit {
   }
 
   loadCashBookGridData() {
-      var gridPaged = new DataInvoiceFilter();
-      gridPaged.companyId = this.companyId || '';
-      gridPaged.resultSelection = '';
-      gridPaged.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : null;
-      gridPaged.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : null;
-  
-      this.cashBookService.getDataInvoices(gridPaged).subscribe(
-        (res: any) => {
-          this.gridDataCashBook = res;
+    var gridPaged = new CashBookDetailFilter();
+    gridPaged.companyId = this.companyId || '';
+    gridPaged.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : null;
+    gridPaged.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : null;
+    gridPaged.offset = 0;
+    gridPaged.limit = 0;
+
+    this.cashBookService.getDetails(gridPaged)
+      .pipe(
+        map((response: any) =>
+          <GridDataResult>{
+            data: response.items,
+            total: response.totalItems,
+          })
+      ).subscribe(
+        (res) => {
+          console.log(res);
+          this.gridDataCashBook = res.data;
         },
         (err) => {
         }
@@ -193,15 +202,15 @@ export class DayDashboardReportManagementComponent implements OnInit {
     this.onLoadTabData(this.keyTab)
   }
 
-  onLoadTabData(value){
+  onLoadTabData(value) {
     this.keyTab = value;
-    if(this.keyTab == 'registration_service'){
+    if (this.keyTab == 'registration_service') {
       this.loadDataServiceApi();
     }
-    if(this.keyTab == 'revenue'){
+    if (this.keyTab == 'revenue') {
       this.loadDataInvoiceApi();
     }
-    if(this.keyTab == 'cashbook'){
+    if (this.keyTab == 'cashbook') {
       this.loadCashBankTotal();
       this.loadCashbookReportApi();
       this.loadCashBookGridData();
@@ -209,8 +218,12 @@ export class DayDashboardReportManagementComponent implements OnInit {
   }
 
   exportExcelFile() {
-    let val;
-    this.dayDashboardReportService.exportExcelReport(val).subscribe((res: any) => {
+    let val = new ExportExcelDashBoardDayFilter();
+    val.dateFrom = this.companyId || '';
+    val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : null;
+    val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : null;
+
+    this.dayDashboardReportService.exportReportDayExcel(val).subscribe((res: any) => {
       let filename = "BaoCaoTongQuanNgay";
       let newBlob = new Blob([res], {
         type:

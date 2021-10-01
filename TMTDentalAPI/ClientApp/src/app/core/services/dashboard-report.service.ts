@@ -51,6 +51,8 @@ export class SumaryRevenueReport {
   balance: number;
 }
 
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -78,7 +80,5 @@ export class DashboardReportService {
   getSumaryRevenueReport(val: any) {
     return this.http.post<SumaryRevenueReport>(this.baseApi + this.apiUrl + "/GetSumaryRevenueReport", val);
   }
-
-
 
 }
