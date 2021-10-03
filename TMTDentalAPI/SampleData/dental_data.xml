@@ -468,6 +468,147 @@
       <field name="bottomMargin">5</field>
       <field name="leftMargin">5</field>
       <field name="rightMargin">5</field>
-    </record> 
+    </record>
+
+	  <!--
+    print template
+    -->
+	  <record id="base.print_template_sale_order" model="print.template">
+		  <field name="pathPrintTemplate">PrintTemplate/SaleOrder/Template.html</field>
+		  <field name="type">tmp_sale_order</field>
+		  <field name="model">sale.order</field>
+	  </record>
+
+	  <record id="base.print_template_labo_orde" model="print.template">
+		  <field name="pathPrintTemplate">PrintTemplate/LaboOrder/Template.html</field>
+		  <field name="type">tmp_labo_order</field>
+		  <field name="model">labo.order</field>
+	  </record>
+
+	  <record id="base.print_template_purchase_order" model="print.template">
+		  <field name="pathPrintTemplate">PrintTemplate/PurchaseOrder/Template_order.html</field>
+		  <field name="type">tmp_purchase_order</field>
+		  <field name="model">purchase.order</field>
+	  </record>
+
+	  <record id="base.print_template_purchase_refund" model="print.template">
+		  <field name="pathPrintTemplate">PrintTemplate/PurchaseOrder/Template_order.html</field>
+		  <field name="type">tmp_purchase_refund</field>
+		  <field name="model">purchase.order</field>
+	  </record>
+
+	  <record id="base.print_template_toa_thuoc" model="print.template">
+		  <field name="pathPrintTemplate">PrintTemplate/ToaThuoc/Template.html</field>
+		  <field name="type">tmp_toathuoc</field>
+		  <field name="model">toa.thuoc</field>
+	  </record>
+
+	  <record id="base.print_template_medicine_order" model="print.template">
+		  <field name="pathPrintTemplate">PrintTemplate/MedicineOrder/Template.html</field>
+		  <field name="type">tmp_medicine_order</field>
+		  <field name="model">medicine.order</field>
+	  </record>
+
+	  <record id="base.print_template_phieu_thu" model="print.template">
+		  <field name="pathPrintTemplate">PrintTemplate/PhieuThuChi/Template_Phieu_Thu.html</field>
+		  <field name="type">tmp_phieu_thu</field>
+		  <field name="model">phieu.thu.chi</field>
+	  </record>
+
+	  <record id="base.print_template_phieu_chi" model="print.template">
+		  <field name="pathPrintTemplate">PrintTemplate/PhieuThuChi/Template_Phieu_Chi.html</field>
+		  <field name="type">tmp_phieu_chi</field>
+		  <field name="model">phieu.thu.chi</field>
+	  </record>
+
+	  <record id="base.print_template_customer_debt" model="print.template">
+		  <field name="pathPrintTemplate">PrintTemplate/PhieuThuChi/Template_Customer_Debt.html</field>
+		  <field name="type">tmp_customer_debt</field>
+		  <field name="model">phieu.thu.chi</field>
+	  </record>
+
+	  <record id="base.print_template_agent_commission" model="print.template">
+		  <field name="pathPrintTemplate">PrintTemplate/PhieuThuChi/Template_Agent_Commission.html</field>
+		  <field name="type">tmp_agent_commission</field>
+		  <field name="model">phieu.thu.chi</field>
+	  </record>
+
+	  <record id="base.print_template_stock_picking_incoming" model="print.template">
+		  <field name="pathPrintTemplate">PrintTemplate/StockPicking/Template_Stock_Picking_Incoming.html</field>
+		  <field name="type">tmp_stock_picking_incoming</field>
+		  <field name="model">stock.picking</field>
+	  </record>
+
+	  <record id="base.print_template_stock_picking_outgoing" model="print.template">
+		  <field name="pathPrintTemplate">PrintTemplate/StockPicking/Template_Stock_Picking_Outgoing.html</field>
+		  <field name="type">tmp_stock_picking_outgoing</field>
+		  <field name="model">stock.picking</field>
+	  </record>
+
+	  <record id="base.print_template_stock_inventory" model="print.template">
+		  <field name="pathPrintTemplate">PrintTemplate/StockPicking/Template_Stock_Inventory.html</field>
+		  <field name="type">tmp_stock_inventory</field>
+		  <field name="model">stock.inventory</field>
+	  </record>
+
+	  <record id="base.print_template_salary_employee" model="print.template">
+		  <field name="pathPrintTemplate">PrintTemplate/Salary/Template_Salary_Employee.html</field>
+		  <field name="type">tmp_salary_employee</field>
+		  <field name="model">salary.payment</field>
+	  </record>
+
+	  <record id="base.print_template_salary_advance" model="print.template">
+		  <field name="pathPrintTemplate">PrintTemplate/Salary/Template_Salary_Advance.html</field>
+		  <field name="type">tmp_salary_advance</field>
+		  <field name="model">salary.payment</field>
+	  </record>
+
+	  <record id="base.print_template_salary" model="print.template">
+		  <field name="pathPrintTemplate">PrintTemplate/Salary/Template_Salary.html</field>
+		  <field name="type">tmp_salary</field>
+		  <field name="model">salary</field>
+	  </record>
+
+	  <record id="base.print_template_partner_advance" model="print.template">
+		  <field name="pathPrintTemplate">PrintTemplate/PartnerAdvance/Template_advance.html</field>
+		  <field name="type">tmp_partner_advance</field>
+		  <field name="model">partner.advance</field>
+	  </record>
+
+	  <record id="base.print_template_partner_refund" model="print.template">
+		  <field name="pathPrintTemplate">PrintTemplate/PartnerAdvance/Template_refund.html</field>
+		  <field name="type">tmp_partner_refund</field>
+		  <field name="model">partner.advance</field>
+	  </record>
+
+	  <record id="base.print_template_quotation" model="print.template">
+		  <field name="pathPrintTemplate">PrintTemplate/Quotation/Template.html</field>
+		  <field name="type">tmp_quotation</field>
+		  <field name="model">quotation</field>
+	  </record>
+
+	  <record id="base.print_template_account_payment" model="print.template">
+		  <field name="pathPrintTemplate">PrintTemplate/AccountPayment/Template_partner_payment.html</field>
+		  <field name="type">tmp_account_payment</field>
+		  <field name="model">sale.order.payment</field>
+	  </record>
+
+	  <record id="base.print_template_supplier_payment" model="print.template">
+		  <field name="pathPrintTemplate">PrintTemplate/AccountPayment/Template_supplier_payment.html</field>
+		  <field name="type">tmp_supplier_payment</field>
+		  <field name="model">supplier.payment</field>
+	  </record>
+
+	  <record id="base.print_template_supplier_payment_inbound" model="print.template">
+		  <field name="pathPrintTemplate">PrintTemplate/AccountPayment/Template_supplier_payment_inbound.html</field>
+		  <field name="type">tmp_supplier_payment_inbound</field>
+		  <field name="model">supplier.payment</field>
+	  </record>
+
+	  <record id="base.print_template_advisory" model="print.template">
+		  <field name="pathPrintTemplate">PrintTemplate/Advisory/Template.html</field>
+		  <field name="type">tmp_advisory</field>
+		  <field name="model">advisory</field>
+	  </record>
   </data>
 </odoo>
