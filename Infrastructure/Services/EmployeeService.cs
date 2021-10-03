@@ -203,7 +203,6 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<EmployeeSimple>> GetAllowSurveyList()
         {
-            Sudo = true;
             var items = await SearchQuery(x => x.Active && x.IsAllowSurvey).Select(x => new EmployeeSimple
             {
                 Id = x.Id,

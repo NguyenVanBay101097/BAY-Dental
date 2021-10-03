@@ -140,7 +140,10 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
   loadLinesToFormArray(lines) {
     this.lines.clear();
     lines.forEach(line => {
-      var fg = this.fb.group(line);
+      var fg = this.fb.group({
+        ...line,
+        productQty: [line.productQty, Validators.required]
+      });
       this.lines.push(fg);
     });
   }
@@ -209,23 +212,11 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
       return false;
     }
 
-    var error = false;
-    for (let i = 0; i < this.lines.value.length; i++) {
-      if (this.lines.value[i]["productQty"] <= 0) {
-        this.lines.at(i).get('productQty').setErrors({ 'incorrect': true });
-        error = true;
-      }
-    }
-    if (error == true) {
-      return;
-    }
-
     var val = Object.assign({}, this.formGroup.value);
     val.userId = val.user.id;
     val.employeeId = val.employee.id;
     val.saleOrderId = this.saleOrderId;
     val.date = this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm:ss");
-    console.log(val);
     if (!this.id) {
       this.productRequestService.create(val).subscribe((res: any) => {
         this.notify('success', 'Lưu thành công');
@@ -247,17 +238,6 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     this.submitted = true;
     if (!this.formGroup.valid) {
       return false;
-    }
-
-    var error = false;
-    for (let i = 0; i < this.lines.value.length; i++) {
-      if (this.lines.value[i]["productQty"] <= 0) {
-        this.lines.at(i).get('productQty').setErrors({ 'incorrect': true });
-        error = true;
-      }
-    }
-    if (error == true) {
-      return;
     }
 
     if (this.lines.value.length <= 0) {
@@ -328,7 +308,11 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
       val.saleOrderLineId = saleOrderLineId;
       val.productBomId = bom.id;
       this.productRequestLineService.getLine(val).subscribe((res: any) => {
-        this.lines.push(this.fb.group(res));
+        console.log(res);
+        this.lines.push(this.fb.group({
+          ...res,
+          productQty: [res.productQty, Validators.required]
+        }));
       }, (err) => {
       });
     } else {

@@ -382,11 +382,21 @@ namespace Infrastructure.Services
             if (val.OrderId.HasValue)
                 query = query.Where(x => x.OrderId == val.OrderId);
             if (!string.IsNullOrEmpty(val.State))
-                query = query.Where(x => x.State.Contains(val.State));
+            {
+                var states = val.State.Split(",");
+                query = query.Where(x => states.Contains(x.State));
+            }
+              
             if (val.DateOrderFrom.HasValue)
                 query = query.Where(x => x.Date >= val.DateOrderFrom.Value.AbsoluteBeginOfDate());
             if (val.DateOrderTo.HasValue)
                 query = query.Where(x => x.Date <= val.DateOrderTo.Value.AbsoluteEndOfDate());
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Date >= val.DateFrom.Value.AbsoluteBeginOfDate());
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.Date <= val.DateTo.Value.AbsoluteEndOfDate());
+
             if (val.IsLabo == true)
                 query = query.Where(x => x.Product.IsLabo);
 
