@@ -286,7 +286,11 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public decimal End { get; set; }
 
+        public DateTime? DateFrom { get; set; }
 
+        public DateTime? DateTo { get; set; }
+
+        public Guid? CompanyId { get; set; }
     }
 
     public class ReportPartnerAdvanceDetailFilter
@@ -312,7 +316,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal Credit { get; set; }
 
         public decimal End { get; set; }
-        public string Ref { get; set; }
+        public string Name { get; set; }
 
     }
 

@@ -531,7 +531,7 @@ namespace TMTDentalAPI.Controllers
                             worksheet.Cells[row, 2].Value = line.Date;
                             worksheet.Cells[row, 2].Style.Numberformat.Format = "dd/mm/yyyy";
                             worksheet.Cells[row, 3].Value = line.InvoiceOrigin;
-                            worksheet.Cells[row, 4].Value = line.Ref;
+                            worksheet.Cells[row, 4].Value = line.Name;
                             worksheet.Cells[row, 5].Value = line.Begin;
                             worksheet.Cells[row, 6].Value = line.Debit;
                             worksheet.Cells[row, 7].Value = line.Credit;

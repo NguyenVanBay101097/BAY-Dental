@@ -630,17 +630,7 @@ namespace Infrastructure.Services
             if (dateTo.HasValue)
                 dateTo = dateTo.Value.AbsoluteEndOfDate();
 
-            var query = amlObj._QueryGet(dateFrom: dateFrom, dateTo: dateTo, state: "posted", companyId: val.CompanyId);
-
-            query = query.Where(x => x.Account.Code == "KHTU");
-
-            if (!string.IsNullOrWhiteSpace(val.Search))
-            {
-                query = query.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search) ||
-                x.Partner.Phone.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
-            }
-
-            var res = new List<ReportPartnerAdvance>();
+            var dict = new Dictionary<Guid, ReportPartnerAdvance>();
             if (dateFrom.HasValue)
             {
                 var query1 = amlObj._QueryGet(dateFrom: dateFrom, state: "posted", companyId: val.CompanyId, initBal: true);
@@ -651,57 +641,105 @@ namespace Infrastructure.Services
                     x.Partner.Phone.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
                 }
 
-                res = await query1.Where(x => x.Account.Code == "KHTU").GroupBy(x => new
+                var list1 = await query1.Where(x => x.Account.Code == "KHTU").GroupBy(x => new
                 {
                     PartnerId = x.Partner.Id,
                     PartnerName = x.Partner.Name,
                     PartnerPhone = x.Partner.Phone,
                 })
-                   .Select(x => new ReportPartnerAdvance
-                   {
-                       PartnerId = x.Key.PartnerId,
-                       PartnerName = x.Key.PartnerName,
-                       PartnerPhone = x.Key.PartnerPhone,                    
-                       Begin = x.Sum(s => s.Credit - s.Debit),
-                   }).Where(x => x.Begin != 0).ToListAsync();
+                .Select(x => new
+                {
+                    PartnerId = x.Key.PartnerId,
+                    PartnerName = x.Key.PartnerName,
+                    PartnerPhone = x.Key.PartnerPhone,
+                    Balance = x.Sum(s => s.Debit - s.Credit),
+                }).ToListAsync();
 
+                foreach (var item in list1)
+                {
+                    if (!dict.ContainsKey(item.PartnerId))
+                    {
+                        dict.Add(item.PartnerId, new ReportPartnerAdvance()
+                        {
+                            PartnerId = item.PartnerId,
+                            PartnerName = item.PartnerName,
+                            PartnerPhone = item.PartnerPhone,
+                            Begin = -item.Balance
+                        });
+                    }
+                }
             }
 
+            var query = amlObj._QueryGet(dateFrom: dateFrom, dateTo: dateTo, state: "posted", companyId: val.CompanyId);
+            query = query.Where(x => x.Account.Code == "KHTU");
 
-            var list2 = new List<ReportPartnerAdvance>();
-            list2 = await query
+            if (!string.IsNullOrWhiteSpace(val.Search))
+            {
+                query = query.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search) ||
+                x.Partner.Phone.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
+            }
+
+            var list2 = await query
                    .GroupBy(x => new
                    {
                        PartnerId = x.Partner.Id,
                        PartnerName = x.Partner.Name,
                        PartnerPhone = x.Partner.Phone,
                    })
-                   .Select(x => new ReportPartnerAdvance
+                   .Select(x => new
                    {
                        PartnerId = x.Key.PartnerId,
                        PartnerName = x.Key.PartnerName,
                        PartnerPhone = x.Key.PartnerPhone,
-                       Debit = x.Sum(s => s.Credit),
-                       Credit = x.Sum(s => s.Debit),
-                       Begin = 0
+                       Debit = x.Sum(s => s.Debit),
+                       Credit = x.Sum(s => s.Credit),
                    }).ToListAsync();
 
             foreach (var item in list2)
             {
-                var resItem = res.FirstOrDefault(x => x.PartnerId == item.PartnerId);
-                if (resItem == null)
+                if (!dict.ContainsKey(item.PartnerId))
                 {
-                    res.Add(item);
+                    dict.Add(item.PartnerId, new ReportPartnerAdvance()
+                    {
+                        PartnerId = item.PartnerId,
+                        PartnerName = item.PartnerName,
+                        PartnerPhone = item.PartnerPhone,
+                        Debit = item.Credit,
+                        Credit = item.Debit,
+                    });
+
+                    continue;
                 }
-                else
-                {
-                    resItem.Debit = item.Debit;
-                    resItem.Credit = item.Credit;
-                }
+
+                dict[item.PartnerId].Debit = item.Credit;
+                dict[item.PartnerId].Credit = item.Debit;
             }
 
-            foreach (var item in res)
-                item.End = item.Begin + (item.Debit - item.Credit);
+            var res = new List<ReportPartnerAdvance>();
+            foreach (var item in dict)
+            {
+                var begin = dict[item.Key].Begin;
+                var debit = dict[item.Key].Debit;
+                var credit = dict[item.Key].Credit;
+                if (begin == 0 && debit == 0 && credit == 0)
+                    continue;
+
+                var end = begin + debit - credit;
+                var value = item.Value;
+                res.Add(new ReportPartnerAdvance
+                {
+                    Begin = begin,
+                    Debit = debit,
+                    Credit = credit,
+                    End = end,
+                    PartnerName = value.PartnerName,
+                    PartnerPhone = value.PartnerPhone,
+                    PartnerId = item.Key,
+                    DateFrom = val.DateFrom,
+                    DateTo = val.DateTo,
+                    CompanyId = val.CompanyId
+                });
+            }
 
             return res;
         }
@@ -731,7 +769,7 @@ namespace Infrastructure.Services
                 Debit = x.Credit,
                 Credit = x.Debit,
                 InvoiceOrigin = x.Move.InvoiceOrigin,
-                Ref = x.Name,
+                Name = x.Name,
             }).ToListAsync();
 
             decimal begin = 0;
