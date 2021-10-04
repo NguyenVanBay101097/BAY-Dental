@@ -660,11 +660,14 @@ namespace Infrastructure.Services
             if (dateFrom.HasValue)
             {
                 var query1 = amlObj._QueryGet(dateFrom: dateFrom, state: "posted", companyId: val.CompanyId, initBal: true);
-                var partnerIds = res.Select(x => x.PartnerId).ToList();
-                var res1 = await query1.Where(x => x.Account.Code == "KHTU" && partnerIds.Contains(x.PartnerId.Value)).ToListAsync();
-                var advance_begin_dict = res1.ToDictionary(x => x.PartnerId.Value, x => x);
+                var res1 = await query1.Where(x => x.Account.Code == "KHTU").GroupBy(x=>x.PartnerId).Select(x => new {
+                    PartnerId = x.Key,
+                    Debit = x.Sum(s => s.Credit),
+                    Credit = x.Sum(s => s.Debit)
+                }).ToListAsync();
+                var advance_begin_dict = res1.ToDictionary(x => x.PartnerId, x => x);
                 foreach (var item in res)
-                    item.Begin = advance_begin_dict.ContainsKey(item.PartnerId) ? (advance_begin_dict[item.PartnerId].Credit - advance_begin_dict[item.PartnerId].Debit) : 0;
+                    item.Begin = advance_begin_dict.ContainsKey(item.PartnerId) ? (advance_begin_dict[item.PartnerId].Debit - advance_begin_dict[item.PartnerId].Credit) : 0;
 
             }
 
