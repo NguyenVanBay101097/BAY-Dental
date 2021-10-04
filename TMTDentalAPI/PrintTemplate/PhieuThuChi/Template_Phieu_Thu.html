@@ -18,47 +18,41 @@
 
 <div style="text-align:center">Ngày {{o.date_created.day}} tháng {{o.date_created.month}} năm {{o.date_created.year}}</div>
 
-<div style="text-align:center">
+<p style="text-align:center">
     <strong>Số: {{o.name}}</strong><br />
-    &nbsp;
-</div>
-
-<div>
-    <table border="0" cellpadding="4" cellspacing="1" style="width:100%">
-        <tbody>
-            <tr>
-                <td style="width:150px"><strong>Người nộp</strong></td>
-                <td>{{o.partner?.name}}</td>
-            </tr>
-            <tr>
-                <td style="width:150px"><strong>Địa chỉ</strong></td>
-                <td>{{o.partner?.address}}</td>
-            </tr>
-            <tr>
-                <td style="width:150px"><strong>Loại thu</strong></td>
-                <td>{{o.loai_thu_chi?.name}}</td>
-            </tr>
-            <tr>
-                <td style="width:150px"><strong>Số tiền</strong></td>
-                <td>{{o.amount | math.format "n0"}}</td>
-            </tr>
-            <tr>
-                <td style="width:150px"><strong>Phương thức</strong></td>
-                <td>{{o.journal?.name}}</td>
-            </tr>
-            <tr>
-                <td style="width:150px"><strong>Bằng chữ</strong></td>
-                <td>{{o.amount_text}}</td>
-            </tr>
-            <tr>
-                <td style="width:150px"><strong>Nội dung</strong></td>
-                <td>{{o.reason}}</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-&nbsp;
-
+</p>
+<table border="0" cellpadding="4" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="width:150px"><strong>Người nộp</strong></td>
+            <td>{{o.partner?.name}}</td>
+        </tr>
+        <tr>
+            <td style="width:150px"><strong>Địa chỉ</strong></td>
+            <td>{{o.partner?.address}}</td>
+        </tr>
+        <tr>
+            <td style="width:150px"><strong>Loại thu</strong></td>
+            <td>{{o.loai_thu_chi?.name}}</td>
+        </tr>
+        <tr>
+            <td style="width:150px"><strong>Số tiền</strong></td>
+            <td>{{o.amount | math.format "n0"}}</td>
+        </tr>
+        <tr>
+            <td style="width:150px"><strong>Phương thức</strong></td>
+            <td>{{o.journal?.name}}</td>
+        </tr>
+        <tr>
+            <td style="width:150px"><strong>Bằng chữ</strong></td>
+            <td>{{o.amount_text}}</td>
+        </tr>
+        <tr>
+            <td style="width:150px"><strong>Nội dung</strong></td>
+            <td>{{o.reason}}</td>
+        </tr>
+    </tbody>
+</table>
 <table border="0" cellpadding="0" cellspacing="1" style="width:100%">
     <tbody>
         <tr>
