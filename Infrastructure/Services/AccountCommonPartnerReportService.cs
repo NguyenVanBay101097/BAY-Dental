@@ -521,7 +521,7 @@ namespace Infrastructure.Services
                        PartnerRef = x.Key.PartnerRef,
                        PartnerPhone = x.Key.PartnerPhone,
                        Begin = x.Sum(s => s.Debit - s.Credit),
-                   }).Where(x => x.Begin != 0).ToListAsync();
+                   }).ToListAsync();
             }
 
             var query2 = amlObj._QueryGet(dateFrom: date_from, dateTo: date_to, companyId: val.CompanyId);
