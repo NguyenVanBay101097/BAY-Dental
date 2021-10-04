@@ -641,7 +641,35 @@ namespace Infrastructure.Services
             }
 
             var res = new List<ReportPartnerAdvance>();
-            res = await query
+            if (dateFrom.HasValue)
+            {
+                var query1 = amlObj._QueryGet(dateFrom: dateFrom, state: "posted", companyId: val.CompanyId, initBal: true);
+
+                if (!string.IsNullOrWhiteSpace(val.Search))
+                {
+                    query1 = query1.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search) ||
+                    x.Partner.Phone.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
+                }
+
+                res = await query1.Where(x => x.Account.Code == "KHTU").GroupBy(x => new
+                {
+                    PartnerId = x.Partner.Id,
+                    PartnerName = x.Partner.Name,
+                    PartnerPhone = x.Partner.Phone,
+                })
+                   .Select(x => new ReportPartnerAdvance
+                   {
+                       PartnerId = x.Key.PartnerId,
+                       PartnerName = x.Key.PartnerName,
+                       PartnerPhone = x.Key.PartnerPhone,                    
+                       Begin = x.Sum(s => s.Credit - s.Debit),
+                   }).Where(x => x.Begin != 0).ToListAsync();
+
+            }
+
+
+            var list2 = new List<ReportPartnerAdvance>();
+            list2 = await query
                    .GroupBy(x => new
                    {
                        PartnerId = x.Partner.Id,
@@ -654,21 +682,22 @@ namespace Infrastructure.Services
                        PartnerName = x.Key.PartnerName,
                        PartnerPhone = x.Key.PartnerPhone,
                        Debit = x.Sum(s => s.Credit),
-                       Credit = x.Sum(s => s.Debit)
+                       Credit = x.Sum(s => s.Debit),
+                       Begin = 0
                    }).ToListAsync();
 
-            if (dateFrom.HasValue)
+            foreach (var item in list2)
             {
-                var query1 = amlObj._QueryGet(dateFrom: dateFrom, state: "posted", companyId: val.CompanyId, initBal: true);
-                var res1 = await query1.Where(x => x.Account.Code == "KHTU").GroupBy(x=>x.PartnerId).Select(x => new {
-                    PartnerId = x.Key,
-                    Debit = x.Sum(s => s.Credit),
-                    Credit = x.Sum(s => s.Debit)
-                }).ToListAsync();
-                var advance_begin_dict = res1.ToDictionary(x => x.PartnerId, x => x);
-                foreach (var item in res)
-                    item.Begin = advance_begin_dict.ContainsKey(item.PartnerId) ? (advance_begin_dict[item.PartnerId].Debit - advance_begin_dict[item.PartnerId].Credit) : 0;
-
+                var resItem = res.FirstOrDefault(x => x.PartnerId == item.PartnerId);
+                if (resItem == null)
+                {
+                    res.Add(item);
+                }
+                else
+                {
+                    resItem.Debit = item.Debit;
+                    resItem.Credit = item.Credit;
+                }
             }
 
             foreach (var item in res)
