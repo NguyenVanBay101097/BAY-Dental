@@ -740,11 +740,6 @@ namespace Infrastructure.Services
                     CompanyId = val.CompanyId
                 });
             }
-                item.DateFrom = dateFrom;
-                item.DateTo = dateTo;
-                item.CompanyId = val.CompanyId;
-            }
-                
 
             return res;
         }
