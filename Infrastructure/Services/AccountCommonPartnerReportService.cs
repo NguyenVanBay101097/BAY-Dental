@@ -659,14 +659,11 @@ namespace Infrastructure.Services
 
             if (dateFrom.HasValue)
             {
+                var query1 = amlObj._QueryGet(dateFrom: dateFrom, state: "posted", companyId: val.CompanyId, initBal: true);
+                var advance_begin_dict = query1.Where(x => x.Account.Code == "KHTU").ToDictionary(x => x.PartnerId.Value, x => x);
                 foreach (var item in res)
-                {
-                    var query1 = amlObj._QueryGet(dateFrom: dateFrom, state: "posted", companyId: val.CompanyId, initBal: true);
-                    query1 = query1.Where(x => x.Account.Code == "KHTU" );
-                    query1 = query1.Where(x => x.PartnerId == item.PartnerId);
-                    var begin = await query1.SumAsync(x => x.Credit - x.Debit);
-                    item.Begin = begin;
-                }
+                    item.Begin = advance_begin_dict.ContainsKey(item.PartnerId) ? (advance_begin_dict[item.PartnerId].Credit - advance_begin_dict[item.PartnerId].Debit) : 0;
+
             }
 
             foreach (var item in res)
@@ -700,7 +697,7 @@ namespace Infrastructure.Services
                 Debit = x.Credit,
                 Credit = x.Debit,
                 InvoiceOrigin = x.Move.InvoiceOrigin,
-                Ref = x.Name,             
+                Ref = x.Name,
             }).ToListAsync();
 
             decimal begin = 0;
@@ -782,7 +779,7 @@ namespace Infrastructure.Services
 
             return result;
 
-        }     
+        }
 
         public async Task<IEnumerable<ReportPartnerDebitExcel>> ExportReportPartnerDebitExcel(ReportPartnerDebitReq val)
         {
