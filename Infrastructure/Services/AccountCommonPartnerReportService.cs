@@ -701,7 +701,13 @@ namespace Infrastructure.Services
             }
 
             foreach (var item in res)
+            {
                 item.End = item.Begin + (item.Debit - item.Credit);
+                item.DateFrom = dateFrom;
+                item.DateTo = dateTo;
+                item.CompanyId = val.CompanyId;
+            }
+                
 
             return res;
         }

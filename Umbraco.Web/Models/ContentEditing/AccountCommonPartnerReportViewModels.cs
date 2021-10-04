@@ -278,6 +278,12 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string PartnerPhone { get; set; }
 
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
+
+        public Guid? CompanyId { get; set; }
+
         public decimal Begin { get; set; }
 
         public decimal Debit { get; set; }

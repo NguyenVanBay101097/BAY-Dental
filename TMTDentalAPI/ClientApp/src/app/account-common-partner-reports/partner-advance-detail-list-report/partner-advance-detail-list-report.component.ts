@@ -10,9 +10,6 @@ import { AccountCommonPartnerReportService, ReportPartnerAdvanceDetail, ReportPa
   styleUrls: ['./partner-advance-detail-list-report.component.css']
 })
 export class PartnerAdvanceDetailListReportComponent implements OnInit {
-  @Input() dateFrom: Date;
-  @Input() dateTo: Date;
-  @Input() companyId: string;
   @Input() item: any;
   gridData: GridDataResult;
   loading = false;
@@ -34,9 +31,9 @@ export class PartnerAdvanceDetailListReportComponent implements OnInit {
 
   loadDataFromApi() {
     var val = new ReportPartnerAdvanceDetailFilter();
-    val.companyId = this.companyId || '';
-    val.dateFrom = this.dateFrom ? this.intlService.formatDate(new Date(this.dateFrom), 'yyyy-MM-dd') : '';
-    val.dateTo = this.dateTo ? this.intlService.formatDate(new Date(this.dateTo), 'yyyy-MM-dd') : '';
+    val.companyId = this.item.companyId || '';
+    val.dateFrom = this.item.dateFrom ? this.intlService.formatDate(new Date(this.item.dateFrom), 'yyyy-MM-dd') : '';
+    val.dateTo = this.item.dateTo ? this.intlService.formatDate(new Date(this.item.dateTo), 'yyyy-MM-dd') : '';
     val.partnerId = this.item.partnerId || '';
 
     this.reportService.reportPartnerAdvanceDetail(val).subscribe(res => {
