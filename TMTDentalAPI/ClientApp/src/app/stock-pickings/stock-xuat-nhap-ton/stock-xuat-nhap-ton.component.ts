@@ -27,6 +27,7 @@ export class StockXuatNhapTonComponent implements OnInit {
   loading = false;
   items: StockReportXuatNhapTonItem[];
   gridData: GridDataResult;
+  excelDataExport: ExcelExportData;
   limit = 20;
   skip = 0;
   pagerSettings: any;
@@ -46,6 +47,8 @@ export class StockXuatNhapTonComponent implements OnInit {
 
   sumBegin: number = 0;
   sumEnd: number = 0;
+  inventoryValue: string = '';
+  excelItems: any[]=[];
   sumImport: number = 0;
   sumExport: number = 0;
 
@@ -65,7 +68,8 @@ export class StockXuatNhapTonComponent implements OnInit {
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { 
     this.pagerSettings = config.pagerSettings 
-    this.excelData = this.excelData.bind(this);
+    // this.excelData = this.excelData.bind(this);
+    this.allData = this.allData.bind(this);
   }
 
   ngOnInit() {
@@ -99,6 +103,7 @@ export class StockXuatNhapTonComponent implements OnInit {
     val.companyId = this.authService.userInfo.companyId;
     this.reportService.getXuatNhapTonSummary(val).subscribe(res => {
       this.items = res;
+      this.excelItems = res;
       this.computeAggregate();
       this.loadItems();
       this.loading = false;
@@ -123,6 +128,7 @@ export class StockXuatNhapTonComponent implements OnInit {
   }
 
   loadItems2(items): void {
+    this.excelItems = items;
     this.gridData = {
       data: items.slice(this.skip, this.skip + this.limit),
       total: items.length
@@ -165,32 +171,45 @@ export class StockXuatNhapTonComponent implements OnInit {
     this.sumEnd = result.end ? result.end.sum : 0;
   }
 
+  getDataAfterInventoryChange(value){
+    var items = [];
+    if (value == 'above_minInventory') {
+      items = this.items.filter(x => x.end >= x.minInventory);
+    } else if (value == 'below_minInventory') {
+      items = this.items.filter(x => x.end < x.minInventory);
+    } else {
+      items = this.items.slice();
+    }
+
+    return items;
+  }
+
   inventoryChange(value) {
     this.skip = 0;
-    if (value == 'above_minInventory') {
-      var items = this.items.filter(x => x.end >= x.minInventory);
-      this.loadItems2(items);
-    } else if (value == 'below_minInventory') {
-      var items = this.items.filter(x => x.end < x.minInventory);
-      this.loadItems2(items);
-    } else {
-      var items = this.items.slice();
-      this.loadItems2(items);
-    }
+    this.inventoryValue = value;
+    var items = this.getDataAfterInventoryChange(value);
+    this.loadItems2(items);
   }
 
   public exportExcelFile(grid: GridComponent) {
     grid.saveAsExcel();
   }
 
-  public excelData(): ExcelExportData {
+  public allData(): ExcelExportData {
     const result: ExcelExportData = {
-      data: process(this.items, {
-        sort: [{ field: 'productCode', dir: 'asc' }]
-      }).data
-    };
+      data: this.excelItems
+    }
     return result;
   }
+
+  // public excelData(): ExcelExportData {
+  //   const result: ExcelExportData = {
+  //     data: process(this.items, {
+  //       sort: [{ field: 'productCode', dir: 'asc' }]
+  //     }).data
+  //   };
+  //   return result;
+  // }
 
   onExcelExport(args) {
     args.preventDefault();

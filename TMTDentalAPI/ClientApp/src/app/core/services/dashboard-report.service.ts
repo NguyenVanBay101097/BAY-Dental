@@ -51,6 +51,13 @@ export class SumaryRevenueReport {
   balance: number;
 }
 
+export class ReportRevenueChartFilter {
+  dateFrom: string;
+  dateTo: string;
+  companyId: string; 
+  groupBy: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -79,6 +86,8 @@ export class DashboardReportService {
     return this.http.post<SumaryRevenueReport>(this.baseApi + this.apiUrl + "/GetSumaryRevenueReport", val);
   }
 
-
+  getRevenueChartReport(val: any) {
+    return this.http.post(this.baseApi + this.apiUrl + "/GetRevenueChartReport", val);
+  }
 
 }

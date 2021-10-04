@@ -87,7 +87,6 @@ namespace Infrastructure.Services
                 dateTo: val.DateTimeTo, userId: val.UserId, companyId: val.CompanyId, 
                 dotKhamId: val.DotKhamId, isRepeatCustomer: val.IsRepeatCustomer);
 
-            query = query.OrderByDescending(x => x.DateCreated);
             var totalItems = await query.CountAsync();
             var limit = val.Limit > 0 ? val.Limit : int.MaxValue;
 
@@ -95,7 +94,7 @@ namespace Infrastructure.Services
                 .Include(x => x.Partner)
                 .Include(x => x.Doctor)
                 .Include(x => x.AppointmentServices).ThenInclude(x => x.Product)
-                .OrderBy(x => x.Date).ThenBy(x => x.Time)
+                .OrderByDescending(x => x.Date).ThenBy(x => x.Time)
                 .Skip(val.Offset)
                 .Take(limit)
                 .ToListAsync();

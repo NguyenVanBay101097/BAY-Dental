@@ -119,4 +119,31 @@ namespace Umbraco.Web.Models.ContentEditing
         public string AccountCode { get; set; }
     }
 
+    public class ReportRevenueChart
+    {
+        public DateTime Date { get; set; }
+
+        public decimal AmountRevenue { get; set; }
+
+        public decimal AmountCashBook { get; set; }
+    }
+
+    public class ReportRevenueChartFilter
+    {
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }      
+
+        public Guid? CompanyId { get; set; }
+
+        /// <summary>
+        /// groupby:day  group theo ngày
+        /// groupby:month: group theo tháng
+        /// groupby:product: group theo dịch vụ
+        /// groupby:employee: group theo nhân viên
+        /// groupby:assistant: group theo phụ tá
+        /// </summary>
+        public string GroupBy { get; set; }
+    }
+
 }

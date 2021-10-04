@@ -1,145 +1,91 @@
-﻿<div class="d-flex mb-2">
-    {{ if company.logo != "" && company.logo != null}}
-    <img class="img-fluid me-3 w-20" src="{{company.logo}}" alt="{{company.name}}">
-    {{ end }}
+﻿<table border="0" cellpadding="5" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="width:100px"><img alt="{{o.company.name}}" class="img-fluid" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
+            <td>
+                <strong>{{o.company.name}}</strong><br />
+                Địa chỉ: {{o.company.address}}<br />
+                ĐT: {{o.company.phone}}<br />
+                Email: {{o.company.email}}
+            </td>
+        </tr>
+    </tbody>
+</table>
 
-    <div>
-        <div class="text-xl font-semibold">{{company.name}}</div>
-        {{if company.address != ""}}
+<h3 style="text-align:center">PHIẾU MUA HÀNG</h3>
 
-        <div>Địa chỉ: {{company.address}}</div>
+<p style="text-align:center">
+    Ngày {{o.date_order.day}} tháng {{o.date_order.month}} năm {{o.date_order.year}}<br />
+    <strong>Số: {{o.name}}</strong>
+</p>
 
-        {{ end }}
+<table border="0" cellpadding="1" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="width:150px"><strong>Nhà cung cấp</strong></td>
+            <td>{{o.partner?.name}}</td>
+            <td style="width:150px"><strong>Ghi chú</strong></td>
+            <td>{{o.note}}</td>
+        </tr>
+        <tr>
+            <td style="width:150px"><strong>Tham chiếu nhập kho</strong></td>
+            <td>{{o.picking?.name}}</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+    </tbody>
+</table>
 
-        {{ if company.phone}}
+<table border="1" cellpadding="4" cellspacing="0" style="width:100%">
+    <thead>
+        <tr>
+            <th scope="col" style="width:50px">STT</th>
+            <th scope="col" style="width:150px">Tên hàng hóa</th>
+            <th scope="col" style="width:80px">Số lượng</th>
+            <th scope="col" style="width:80px">Đơn vị</th>
+            <th scope="col" style="width:100px">Đơn giá</th>
+            <th scope="col" style="width:80px">CK (%)</th>
+            <th scope="col" style="width:120px">Thành tiền</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!--{{for line in o.order_lines }}-->
+        <tr>
+            <td style="width:50px">{{line.sequence}}</td>
+            <td>{{line.name}}</td>
+            <td style="width:80px">{{line.product_qty}}</td>
+            <td>{{line.product_uom?.name}}</td>
+            <td style="text-align:right">{{line.price_unit | math.format "N0"}}</td>
+            <td style="text-align:right">{{line.discount}}</td>
+            <td style="text-align:right">{{line.price_subtotal | math.format "N0"}}</td>
+        </tr>
+        <!--{{end}}-->
+    </tbody>
+</table>
 
-        <div>ĐT: {{company.phone}}</div>
+<table border="0" cellpadding="1" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td style="text-align:right; width:150px"><strong>Tổng tiền</strong></td>
+            <td style="text-align:right; width:150px">{{o.amount_total | math.format "N0"}}</td>
+        </tr>
+    </tbody>
+</table>
 
-        {{ end }}
-
-        {{if company.email }}
-
-        <div>Email: {{company.email}}</div>
-
-        {{ end }}
-
-    </div>
-</div>
-<div class="text-center mb-3">
-    <div class="text-3xl font-semibold">Phiếu mua hàng</div>
-    <div>Ngày {{date_order.day}} tháng {{date_order.month}} năm {{date_order.year}} </div>
-    <div class="font-semibold">Số: {{name}}</div>
-</div>
-<div class="o_form_view mb-2">
-    <div class="container">
-        <div class="row">
-            <table class="o_group o_inner_group col">
-                <tbody>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <div class="o_form_label o_form_label_help">
-                                Nhà cung cấp
-                            </div>
-                        </td>
-                        <td colspan="1" style="width: 100%;">
-                            <div class="o_field_widget">{{partner_name ? partner_name : ""}}</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help font-weight-bold">
-                                Tham chiếu nhập kho
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">
-                            {{stock_picking_name ? stock_picking_name : "" }}
-                        </td>
-                    </tr>
-
-                </tbody>
-            </table>
-            <table class="o_group o_inner_group col">
-                <tbody>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help font-weight-bold">
-                                Ghi chú
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">
-                            {{note ? note : "" }}
-                        </td>
-                    </tr>
-
-                </tbody>
-            </table>
-        </div>
-
-    </div>
-</div>
-<div class="o_form_view mb-2">
-    <table class="table table-sm table-bordered mb-0">
-        <thead>
-            <tr>
-                <th>STT</th>
-                <th>Tên hàng hóa</th>
-                <th>Số lượng</th>
-                <th>Đơn vị</th>
-                <th>Đơn giá</th>
-                <th>CK (%)</th>
-                <th>Thành tiền</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!--{{for line in order_lines }}-->
-            <tr>
-                <td>{{line.sequence}}</td>
-                <td>{{line.name}}</td>
-                <td class="text-right"> {{line.product_qty}}</td>
-                <td> {{line.product_uomname}}</td>
-                <td class="text-right">{{line.price_unit | math.format "N0" "vi-VN"}}</td>
-                <td class="text-right">  {{line.discount}}</td>
-                <td class="text-right">  {{line.price_subtotal | math.format "N0" "vi-VN"}}</td>
-            </tr>
-            <!--{{end}}-->
-        </tbody>
-    </table>
-
-</div>
-<div class="o_form_view float-right mb-2">
-    <div class="d-flex">
-        <div>
-            <table class="o_group o_inner_group">
-                <tbody>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help font-semibold">
-                                Tổng tiền
-                            </label>
-                        </td>
-                        <td class="pe-0 text-right " colspan="1" style="width: 100%;">{{amount_total | math.format "N0" "vi-VN"}}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-</div>
-<div class="clearfix"></div>
-<div class="d-flex">
-    <div class="col">
-
-    </div>
-    <div class="col">
-        <div class="text-center">
-            <div class="text-center">
-                <span class="font-semibold"> Người lập phiếu</span> <br />
-                <i>(Ký, họ tên)</i> <br />
-                <span></span> <br />
-                <span></span> <br />
-                <span></span> <br />
-                <span class="font-semibold">{{user_name ? (user_name | string.upcase) : ""}}</span>
-            </div>
-        </div>
-    </div>
-</div>
+<table border="0" cellpadding="0" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="text-align: center; width: 50%;">&nbsp;</td>
+            <td style="text-align:center">
+                <strong>Người lập phiếu</strong><br />
+                <em>(Ký, họ tên)</em><br />
+                <br />
+                <br />
+                <br />
+                <strong>{{o.user?.name}}</strong>
+            </td>
+        </tr>
+    </tbody>
+</table>

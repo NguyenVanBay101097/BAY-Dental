@@ -425,6 +425,20 @@ namespace Infrastructure.Services
 
         }
 
+        public async Task<IEnumerable<PhieuThuChi>> GetPrintTemplate(IEnumerable<Guid> resIds)
+        {
+            var res = await SearchQuery(x => resIds.Contains(x.Id))
+               .Include(x => x.Company)
+               .Include(x => x.CreatedBy)
+               .Include(x => x.Partner)
+               .Include(x => x.LoaiThuChi)
+                .Include(x => x.Journal)
+                .Include(x => x.Agent)
+               .ToListAsync();
+
+            return res;
+        }
+
         public async Task InsertModelsIfNotExists()
         {
             var modelObj = GetService<IIRModelService>();

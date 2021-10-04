@@ -24,6 +24,8 @@ export class LaboOrderPaged {
     saleOrderId: string;
     saleOrderLineId: string;
     customerId: string;
+    dateExportFrom: string;
+    dateExportTo: string;
 }
 
 export class LaboOrderBasic {

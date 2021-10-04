@@ -27,8 +27,8 @@ export class PhieuThuChiListComponent implements OnInit {
 
   search: string;
   searchUpdate = new Subject<string>();
-  
-  constructor(private route: ActivatedRoute, private modalService: NgbModal, 
+
+  constructor(private route: ActivatedRoute, private modalService: NgbModal,
     private phieuThuChiService: PhieuThuChiService, private router: Router,
     private printService: PrintService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
@@ -126,7 +126,7 @@ export class PhieuThuChiListComponent implements OnInit {
 
   printItem(id) {
     this.phieuThuChiService.getPrint(id).subscribe((data: any) => {
-      this.printService.printHtml(data.html);
+      this.printService.printHtml(data);
     });
   }
 }

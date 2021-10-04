@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,8 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Product, x => x.Ignore())
                 .ForMember(x => x.ProductUOM, x => x.Ignore());
             CreateMap<StockMove, StockMoveDisplay>();
+
+            CreateMap<StockMove, StockMovePrintTemplate>();
         }
     }
 }

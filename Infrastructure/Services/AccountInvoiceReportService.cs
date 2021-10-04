@@ -80,6 +80,87 @@ namespace Infrastructure.Services
             return query;
         }
 
+        public async Task<IEnumerable<RevenueReportItem>> GetRevenueChartReport(DateTime? dateFrom, DateTime? dateTo , Guid? companyId , string groupBy)
+        {
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            var res = new List<RevenueReportItem>();
+
+            var query = _context.AccountInvoiceReports.Where(x => (x.Type == "out_invoice" || x.Type == "out_refund") && x.State == "posted"
+            && x.AccountInternalType != "receivable");
+
+            if (dateFrom.HasValue)
+                query = query.Where(x => x.InvoiceDate >= dateFrom.Value.AbsoluteBeginOfDate());
+
+
+            if (dateTo.HasValue)
+                query = query.Where(x => x.InvoiceDate <= dateTo.Value.AbsoluteEndOfDate());
+
+
+            if (companyId.HasValue)
+                query = query.Where(x => x.CompanyId == companyId);
+
+            if (groupBy == "groupby:day")
+            {
+
+                res = await query.GroupBy(x => x.InvoiceDate.Value.Date)
+                  .Select(x => new RevenueReportItem
+                  {
+                      InvoiceDate = x.Key,
+                      PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal)),
+                  }).ToListAsync();
+            }
+            else if (groupBy == "groupby:month")
+            {
+                res = await query.GroupBy(x => new
+                {
+                    x.InvoiceDate.Value.Year,
+                    x.InvoiceDate.Value.Month,
+                })
+                 .Select(x => new RevenueReportItem
+                 {
+                     InvoiceDate = new DateTime(x.Key.Year, x.Key.Month, 1),
+                     PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal)),
+                 }).ToListAsync();
+            }
+            else if (groupBy == "groupby:employee")
+            {
+                res = await query.GroupBy(x => new { x.EmployeeId, x.Employee.Name }).Select(x => new RevenueReportItem
+                {
+                    Id = x.Key.EmployeeId,
+                    Name = x.Key.Name,
+                    PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal)),
+                    ToDetailEmployeeId = x.Key.EmployeeId ?? Guid.Empty
+                }).ToListAsync();
+
+            }
+            else if (groupBy == "groupby:assistant")
+            {
+
+                res = await query.GroupBy(x => new { x.AssistantId, x.Assistant.Name }).Select(x => new RevenueReportItem
+                {
+                    Id = x.Key.AssistantId,
+                    Name = x.Key.Name,
+                    PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal)),
+                    ToDetailEmployeeId = x.Key.AssistantId ?? Guid.Empty
+                }).ToListAsync();
+
+            }
+            else if (groupBy == "groupby:product")
+            {
+
+                res = await query.GroupBy(x => new { x.ProductId, x.Product.Name }).Select(x => new RevenueReportItem
+                {
+                    Id = x.Key.ProductId.Value,
+                    Name = x.Key.Name,
+                    PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal)),
+                }).ToListAsync();
+            }
+
+
+            return res;
+        }
+
         public async Task<IEnumerable<RevenueReportItem>> GetRevenueReport(RevenueReportFilter val)
         {
             var userObj = GetService<IUserService>();

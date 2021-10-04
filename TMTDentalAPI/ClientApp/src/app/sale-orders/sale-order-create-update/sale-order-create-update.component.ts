@@ -808,8 +808,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   printPayment(paymentId) {
-    this.saleOrderPaymentService.getPrint(paymentId).subscribe(result => {
-      this.printService.printHtml(result);
+    this.saleOrderPaymentService.getPrint(paymentId).subscribe((result: any) => {
+      this.printService.printHtml(result.html);
     });
   }
 

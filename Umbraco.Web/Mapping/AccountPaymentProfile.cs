@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,13 @@ namespace Umbraco.Web.Mapping
             CreateMap<AccountPayment, AccountPaymentViewModel>();
             CreateMap<AccountPaymentSave, AccountPayment>()
                 .ForMember(x => x.SaleOrderLinePaymentRels, x => x.Ignore());
+
+            CreateMap<AccountPayment, AccountPaymentDisplayPrintTemplate>();
+
+            CreateMap<AccountPayment, AccountPaymentBasicPrintTemplate>();
+
+            CreateMap<AccountPayment, AccountPaymentPrintTemplate>()
+                .ForMember(x=>x.UserName, x=>x.MapFrom(s=>s.CreatedBy.Name));
         }
     }
 }

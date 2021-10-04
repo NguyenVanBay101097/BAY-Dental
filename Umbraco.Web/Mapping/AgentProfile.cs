@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,8 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Id, x => x.Ignore());
 
             CreateMap<Agent, AgentPrintVM>();
+
+            CreateMap<Agent, AgentPrintTemplate>();
         }
     }
 }

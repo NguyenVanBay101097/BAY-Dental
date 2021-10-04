@@ -48,7 +48,7 @@ export class SaleOrderPaymentListComponent implements OnInit {
   }
 
   deletePayment(payment) {
-    if(payment.state == "cancel"){
+    if (payment.state == "cancel") {
       this.notificationService.show({
         content: 'Không thể hủy phiếu ở trạng thái hủy',
         hideAfter: 3000,
@@ -84,7 +84,7 @@ export class SaleOrderPaymentListComponent implements OnInit {
 
   printPayment(payment) {
     this.saleOrderPaymentService.getPrint(payment.id).subscribe((result: any) => {
-      this.printService.printHtml(result);
+      this.printService.printHtml(result.html);
     });
   }
 

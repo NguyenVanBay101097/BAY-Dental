@@ -307,8 +307,8 @@ namespace TMTDentalAPI.Controllers
                         for (var row = 2; row <= worksheet.Dimension.Rows; row++)
                         {
                             var errs = new List<string>();
-                            var name = Convert.ToString(worksheet.Cells[row, 1].Value);
-                            var categName = Convert.ToString(worksheet.Cells[row, 3].Value);
+                            var name = Convert.ToString(worksheet.Cells[row, 2].Value);
+                            var categName = Convert.ToString(worksheet.Cells[row, 4].Value);
 
                             if (string.IsNullOrEmpty(name))
                                 errs.Add("Tên dịch vụ là bắt buộc");
@@ -324,13 +324,14 @@ namespace TMTDentalAPI.Controllers
                             var item = new ProductServiceImportExcelRow
                             {
                                 Name = name,
-                                IsLabo = Convert.ToBoolean(worksheet.Cells[row, 2].Value),
+                                DefaultCode = Convert.ToString(worksheet.Cells[row, 1].Value),
+                                IsLabo = Convert.ToBoolean(worksheet.Cells[row, 3].Value),
                                 CategName = categName,
-                                ListPrice = Convert.ToDecimal(worksheet.Cells[row, 4].Value),
-                                StandardPrice = Convert.ToDecimal(worksheet.Cells[row, 5].Value),
-                                Steps = Convert.ToString(worksheet.Cells[row, 6].Value),
-                                LaboPrice = Convert.ToDecimal(worksheet.Cells[row, 7].Value),
-                                Firm = Convert.ToString(worksheet.Cells[row, 8].Value),
+                                ListPrice = Convert.ToDecimal(worksheet.Cells[row, 5].Value),
+                                StandardPrice = Convert.ToDecimal(worksheet.Cells[row, 6].Value),
+                                Steps = Convert.ToString(worksheet.Cells[row, 7].Value),
+                                LaboPrice = Convert.ToDecimal(worksheet.Cells[row, 8].Value),
+                                Firm = Convert.ToString(worksheet.Cells[row, 9].Value),
                             };
                             data.Add(item);
                         }
@@ -389,6 +390,7 @@ namespace TMTDentalAPI.Controllers
                 product.UOMId = uom.Id;
                 product.UOMPOId = uom.Id;
                 product.Name = item.Name;
+                product.DefaultCode = item.DefaultCode;
                 product.SaleOK = true;
                 product.PurchaseOK = false;
                 product.Type = "service";
@@ -592,9 +594,9 @@ namespace TMTDentalAPI.Controllers
                         for (var row = 2; row <= worksheet.Dimension.Rows; row++)
                         {
                             var errs = new List<string>();
-                            var name = Convert.ToString(worksheet.Cells[row, 1].Value);
-                            var categName = Convert.ToString(worksheet.Cells[row, 2].Value);
-                            var price = Convert.ToString(worksheet.Cells[row, 3].Value);
+                            var name = Convert.ToString(worksheet.Cells[row, 2].Value);
+                            var categName = Convert.ToString(worksheet.Cells[row, 3].Value);
+                            var price = Convert.ToString(worksheet.Cells[row, 4].Value);
                             //var defaultCode = Convert.ToString(worksheet.Cells[row, 5].Value);
 
                             if (string.IsNullOrEmpty(name))
@@ -604,7 +606,7 @@ namespace TMTDentalAPI.Controllers
                             if (string.IsNullOrEmpty(price))
                                 errs.Add("Giá thuốc là bắt buộc");
 
-                            var uomName = Convert.ToString(worksheet.Cells[row, 4].Value).Trim();
+                            var uomName = Convert.ToString(worksheet.Cells[row, 5].Value).Trim();
                             if (string.IsNullOrEmpty(uomName))
                                 errs.Add("Đơn vị mặc định là bắt buộc");
 
@@ -617,10 +619,11 @@ namespace TMTDentalAPI.Controllers
                             var item = new ProductMedicineImportExcelRow
                             {
                                 Name = name,
+                                DefaultCode = Convert.ToString(worksheet.Cells[row, 1].Value),
                                 CategName = categName,
-                                ListPrice = Convert.ToDecimal(worksheet.Cells[row, 3].Value),
+                                ListPrice = Convert.ToDecimal(worksheet.Cells[row, 4].Value),
                                 UoM = uomName,
-                                MinInventory = Convert.ToDecimal(worksheet.Cells[row, 5].Value),
+                                MinInventory = Convert.ToDecimal(worksheet.Cells[row, 6].Value),
                             };
                             data.Add(item);
                         }
@@ -678,6 +681,7 @@ namespace TMTDentalAPI.Controllers
                 pd.UOMId = uomDict[item.UoM].Id;
                 pd.UOMPOId = uomDict[item.UoM].Id;
                 pd.Name = item.Name;
+                pd.DefaultCode = item.DefaultCode;
                 pd.SaleOK = false;
                 pd.PurchaseOK = false;
                 pd.KeToaOK = true;
@@ -872,11 +876,11 @@ namespace TMTDentalAPI.Controllers
                         for (var row = 2; row <= worksheet.Dimension.Rows; row++)
                         {
                             var errs = new List<string>();
-                            var name = Convert.ToString(worksheet.Cells[row, 1].Value);
-                            var categName = Convert.ToString(worksheet.Cells[row, 3].Value);
-                            var type = Convert.ToString(worksheet.Cells[row, 2].Value);
-                            var uomName = Convert.ToString(worksheet.Cells[row, 5].Value);
-                            var uomPOName = Convert.ToString(worksheet.Cells[row, 6].Value);
+                            var name = Convert.ToString(worksheet.Cells[row, 2].Value);
+                            var categName = Convert.ToString(worksheet.Cells[row, 4].Value);
+                            var type = Convert.ToString(worksheet.Cells[row, 3].Value);
+                            var uomName = Convert.ToString(worksheet.Cells[row, 6].Value);
+                            var uomPOName = Convert.ToString(worksheet.Cells[row, 7].Value);
 
                             if (string.IsNullOrEmpty(name))
                                 errs.Add("Tên vật tư là bắt buộc");
@@ -901,12 +905,13 @@ namespace TMTDentalAPI.Controllers
                             var item = new ProductProductImportExcelRow
                             {
                                 Name = name,
+                                DefaultCode = Convert.ToString(worksheet.Cells[row, 1].Value),
                                 Type = type,
                                 CategName = categName,
-                                PurchasePrice = Convert.ToDecimal(worksheet.Cells[row, 4].Value),
+                                PurchasePrice = Convert.ToDecimal(worksheet.Cells[row, 5].Value),
                                 UOM = uomName,
                                 UOMPO = uomPOName,
-                                MinInventory = Convert.ToDecimal(worksheet.Cells[row, 7].Value),
+                                MinInventory = Convert.ToDecimal(worksheet.Cells[row, 8].Value),
                             };
                             data.Add(item);
                         }
@@ -954,6 +959,7 @@ namespace TMTDentalAPI.Controllers
                 product.UOMId = uom.Id;
                 product.UOMPOId = uomPO.Id;
                 product.Name = item.Name;
+                product.DefaultCode = item.DefaultCode;
                 product.NameNoSign = StringUtils.RemoveSignVietnameseV2(item.Name);
                 product.SaleOK = false;
                 product.Type = typeDict[item.Type];

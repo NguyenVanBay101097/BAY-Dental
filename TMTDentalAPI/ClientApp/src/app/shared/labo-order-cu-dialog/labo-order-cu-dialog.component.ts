@@ -47,10 +47,10 @@ export class LaboOrderCuDialogComponent implements OnInit {
   bridges: LaboBridgeBasic[] = [];
   attachs: ProductSimple[] = [];
   listType = {
-    'up_right':[],
-    'up_left':[],
-    'down_right':[],
-    'down_left':[]
+    'up_right': [],
+    'up_left': [],
+    'down_right': [],
+    'down_left': []
   };
   constructor(private fb: FormBuilder,
     public activeModal: NgbActiveModal,
@@ -74,6 +74,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
       partner: [null, Validators.required],
       dateOrderObj: [null, Validators.required],
       datePlannedObj: null,
+      dateReceiptObj: null,
       teeth: this.fb.array([]),
       color: null,
       quantity: 1,
@@ -81,7 +82,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
       amountTotal: 0,
       indicated: null,
       note: null,
-      warrantyCode: [null,Validators.compose([]), this.validateWarrantyCode.bind(this)],
+      warrantyCode: [null, Validators.compose([]), this.validateWarrantyCode.bind(this)],
       warrantyPeriodObj: null,
       productId: [null],
       product: [null],
@@ -121,7 +122,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
   get dateOrderObjFC() { return this.myForm.get('dateOrderObj'); }
   get datePlannedObjFC() { return this.myForm.get('datePlannedObj'); }
   get warrantyPeriodObjFC() { return this.myForm.get('warrantyPeriodObj'); }
-  get warrantyCodeFC() {return this.myForm.get('warrantyCode');}
+  get warrantyCodeFC() { return this.myForm.get('warrantyCode'); }
   get saleOrderLine() { return this.laboOrder.saleOrderLine; }
   get teethFA() { return this.myForm.get('teeth') as FormArray; }
   get teeth() { return this.myForm.get('teeth').value; }
@@ -135,19 +136,23 @@ export class LaboOrderCuDialogComponent implements OnInit {
   get indicatedFC() { return this.myForm.get('indicated'); }
   get noteFC() { return this.myForm.get('note'); }
   get technicalNoteFC() { return this.myForm.get('technicalNote'); }
-
+  get productId() {return this.myForm.get('productId').value};
+  get laboFinishLineId() {return this.myForm.get('laboFinishLineId').value};
+  get laboBiteJointId() {return this.myForm.get('laboBiteJointId').value};
+  get laboBridgeId() {return this.myForm.get('laboBridgeId').value};
+  get dateReceiptObj() {return this.myForm.get('dateReceiptObj')};
   validateWarrantyCode(
     control: AbstractControl
   ): Observable<ValidationErrors | null> {
     const val = control.value;
-    if(!val || (val && val.trim() == '')) {
+    if (!val || (val && val.trim() == '')) {
       return of(null);
     }
     return timer(500).pipe(
       switchMap(() =>
-        this.laboOrderService.checkExistWarrantyCode({code: control.value, id: this.id}).pipe(
+        this.laboOrderService.checkExistWarrantyCode({ code: control.value, id: this.id }).pipe(
           map(ex => {
-            if(ex == false) return null; 
+            if (ex == false) return null;
             return ({ exist: true })
           })
         )
@@ -187,6 +192,10 @@ export class LaboOrderCuDialogComponent implements OnInit {
       let datePlanned = this.intlService.parseDate(res.datePlanned);
       this.datePlannedObjFC.patchValue(datePlanned);
     }
+    if (res.dateReceipt){
+      let dateReceipt = this.intlService.parseDate(res.dateReceipt);
+      this.dateReceiptObj.patchValue(dateReceipt);
+    }
 
     if (res.warrantyPeriod) {
       let warrantyPeriod = this.intlService.parseDate(res.warrantyPeriod);
@@ -224,7 +233,9 @@ export class LaboOrderCuDialogComponent implements OnInit {
     this.laboOrderService.get(this.id).subscribe(result => {
       this.laboOrder = result;
       this.patchValue(result);
-      this.processTeeth(result.saleOrderLine.teeth);
+      if (result.saleOrderLine.teeth){
+        this.processTeeth(result.saleOrderLine.teeth);
+      }
     });
   }
 
@@ -233,10 +244,12 @@ export class LaboOrderCuDialogComponent implements OnInit {
     df.saleOrderLineId = this.saleOrderLineId;
     this.laboOrderService.defaultGet(df).subscribe(result => {
       this.laboOrder = result;
-      this.processTeeth(result.saleOrderLine.teeth);
+      if (result.saleOrderLine.teeth){
+        this.processTeeth(result.saleOrderLine.teeth);
+      }
       result.quantity = 1;
       this.patchValue(result);
-    (result.saleOrderLine && result.saleOrderLine.product )? this.priceUnitFC.patchValue(result.saleOrderLine.product.laboPrice) : '';
+      (result.saleOrderLine && result.saleOrderLine.product) ? this.priceUnitFC.patchValue(result.saleOrderLine.product.laboPrice) : '';
     });
   }
 
@@ -247,11 +260,13 @@ export class LaboOrderCuDialogComponent implements OnInit {
     laboPaged.type2 = 'labo';
     this.productService.autocomplete2(laboPaged).subscribe(res => {
       this.labos = res;
+      
     });
     //load labofinishline
     const finishPaged = new LaboFinishLinePageSimple();
     this.finishLineService.autoComplete(finishPaged).subscribe((res: any) => {
       this.finishlines = res;
+      
     });
     //load bitejoint
     const biteJointPaged = new LaboFinishLinePageSimple();
@@ -293,6 +308,13 @@ export class LaboOrderCuDialogComponent implements OnInit {
 
   getAmountTotal() {
     return this.priceUnitFC.value * this.quantityFC.value;
+  }
+
+  getItem(arr: any[],id:any){
+    var item = arr.find(x => x.id == id);
+    if (item)
+      return item.name;
+    return '';
   }
 
   isAttachSelected(attach: ProductSimple) {
@@ -363,6 +385,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
     val.datePlanned = val.datePlannedObj ? this.intlService.formatDate(val.datePlannedObj, 'yyyy-MM-ddTHH:mm:ss') : null;
     val.warrantyPeriod = val.warrantyPeriodObj ? this.intlService.formatDate(val.warrantyPeriodObj, 'yyyy-MM-ddTHH:mm:ss') : null;
     val.partnerId = val.partner.id;
+    val.dateReceipt = val.dateReceiptObj ? this.intlService.formatDate(val.dateReceiptObj, 'yyyy-MM-ddTHH:mm:ss') : null;
     // val.productId = val.product ? val.product.id : null;
     // val.laboBridgeId = val.laboBridge ? val.laboBridge.id : null;
     // val.laboBiteJointId = val.laboBiteJoint ? val.laboBiteJoint.id : null;
@@ -465,10 +488,10 @@ export class LaboOrderCuDialogComponent implements OnInit {
     }
   }
 
-  printLaboOrder(){
-    if(this.id){
-      this.laboOrderService.getPrint(this.id).subscribe((result:any) => {
-        this.printService.printHtml(result);
+  printLaboOrder() {
+    if (this.id) {
+      this.laboOrderService.getPrint(this.id).subscribe((result: any) => {
+        this.printService.printHtml(result.html);
       })
     }
   }
