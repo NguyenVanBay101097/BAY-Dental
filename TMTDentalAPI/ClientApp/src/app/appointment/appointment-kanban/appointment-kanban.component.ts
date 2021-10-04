@@ -28,6 +28,7 @@ import { CustomerReceipCreateUpdateComponent } from 'src/app/shared/customer-rec
 import { AppointmentFilterExportExcelDialogComponent } from '../appointment-filter-export-excel-dialog/appointment-filter-export-excel-dialog.component';
 import { ReceiveAppointmentService } from 'src/app/customer-receipt/receive-appointment.service';
 import { ReceiveAppointmentDialogComponent } from 'src/app/shared/receive-appointment-dialog/receive-appointment-dialog.component';
+import { PrintService } from 'src/app/shared/services/print.service';
 @Component({
   encapsulation: ViewEncapsulation.None, //<<<<< this one! 
   // To css active with innerHTML
@@ -68,8 +69,8 @@ export class AppointmentKanbanComponent implements OnInit {
     { text: 'Quá hẹn', value: 'overdue' }
   ];
   stateSelected: string = this.states[0].value;
-  
-  types: { text: string, value: string } [] = [
+
+  types: { text: string, value: string }[] = [
     { text: 'Tất cả', value: '' },
     { text: 'Tái khám', value: 'repeat' },
     { text: 'Khám mới', value: 'new' }
@@ -126,7 +127,8 @@ export class AppointmentKanbanComponent implements OnInit {
     private employeeService: EmployeeService,
     private checkPermissionService: CheckPermissionService,
     private elementRef: ElementRef,
-    private receiveAppointmentService: ReceiveAppointmentService
+    private receiveAppointmentService: ReceiveAppointmentService,
+    private printService: PrintService
   ) { }
 
   ngOnInit() {
@@ -1103,4 +1105,11 @@ export class AppointmentKanbanComponent implements OnInit {
       })
     }
   }
+
+  onPrint(id) {
+    this.appointmentService.print(id).subscribe((res: any) => {
+      this.printService.printHtml(res.html);
+    });
+  }
+
 }

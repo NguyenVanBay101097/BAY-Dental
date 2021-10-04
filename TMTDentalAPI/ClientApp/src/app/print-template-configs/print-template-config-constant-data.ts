@@ -23,6 +23,7 @@ export const types: { text: string, value: string }[] = [
     { text: 'Phiếu nhập kho', value: 'tmp_stock_picking_incoming' },
     { text: 'Phiếu xuất kho', value: 'tmp_stock_picking_outgoing' },
     { text: 'Phiếu kiểm kho', value: 'tmp_stock_inventory' },
+    { text: 'Phiếu hẹn', value: 'tmp_appointment' },
 
 ];
 
@@ -45,6 +46,8 @@ let pipes =
         { text: 'Ngày hôm nay', value: '{{date.now}}' },
         { text: 'Định dạng số', value: '| math.format "N0"' },
         { text: 'Định dạng ngày/tháng/năm', value: `| date.to_string '%d/%m/%Y'` },
+        { text: 'Định dạng lấy giờ', value: `| date.to_string '%R'` },
+        { text: 'Định dạng lấy thứ', value: `| date.to_string '%A'` },
         { text: 'Định dạng lấy ngày', value: `| date.to_string '%d'` },
         { text: 'Định dạng lấy tháng', value: `| date.to_string '%m'` },
         { text: 'Định dạng lấy năm', value: `| date.to_string '%Y'` },
@@ -762,6 +765,33 @@ const keyWorDatas =
                 { text: 'SĐT nhà cung cấp', value: '{{partner_phone}}' },
                 { text: 'Người lập phiếu', value: '{{partner_name}}' },
                 { text: 'Người nhận tiền', value: '{{user_name}}' },
+            ]
+        }
+    ],
+    'tmp_appointment': [
+        companyInfo,
+        {
+            text: 'Thông tin phiếu',
+            value: [
+                { text: 'Ngày tạo', value: '{{date.day}}' },
+                { text: 'Tháng tạo', value: '{{date.month}}' },
+                { text: 'Năm tạo', value: '{{date.year}}' },
+                { text: 'Mã phiếu', value: '{{o.name}}' },
+                { text: 'Người lập phiếu', value: '{{u.name}}' },
+            ]
+        },
+        {
+            text: 'Thông tin chung',
+            value: [
+                { text: 'Tên khách hàng', value: '{{o.partner?.name}}' },
+                { text: 'SĐT khách hàng', value: '{{o.partner?.phone}}' },
+                { text: 'Địa chỉ khách hàng', value: '{{o.partner?.address}}' },
+                { text: 'Ngày hẹn', value: '{{o.date}}' },
+                { text: 'Giờ hẹn', value: '{{o.date}}' },
+                { text: 'Loại khám', value: '{{o.is_repeat_customer_display}}' },
+                { text: 'Tên bác sĩ', value: '{{o.doctor?.name}}' },
+                { text: 'Tên dịch vụ', value: '{{o.services_display}}' },
+                { text: 'Nội dung', value: '{{o.note}}' },
             ]
         }
     ]

@@ -74,6 +74,7 @@ namespace ApplicationCore.Constants
            new PrintTemplateType {Type = "tmp_supplier_payment" , PathTemplate = "PrintTemplate/AccountPayment/Template_supplier_payment.html", Model = "supplier.payment" , NameIRModel = "print_template_supplier_payment" },
            new PrintTemplateType {Type = "tmp_supplier_payment_inbound" , PathTemplate = "PrintTemplate/AccountPayment/Template_supplier_payment_inbound.html", Model = "supplier.payment" , NameIRModel = "print_template_supplier_payment_inbound" },
            new PrintTemplateType {Type = "tmp_advisory" , PathTemplate = "PrintTemplate/Advisory/Template.html", Model = "advisory" , NameIRModel = "print_template_advisory" },
+           new PrintTemplateType {Type = "tmp_appointment" , PathTemplate = "PrintTemplate/Appointment/Template.html", Model = "appointment" , NameIRModel = "print_template_appointment" },
         };
     }
 
