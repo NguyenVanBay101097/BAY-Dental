@@ -212,7 +212,8 @@ namespace Infrastructure.Services
             var invoiceObj = GetService<IAccountInvoiceReportService>();
             var cashbookObj = GetService<ICashBookService>();
 
-            var revenues = await invoiceObj.GetRevenueChartReport(dateFrom: dateFrom, dateTo: dateTo, companyId: companyId, groupBy: groupBy);
+            var accCodes = new string[] { "131", "CNKH" , "KHTU" };
+            var revenues = await invoiceObj.GetRevenueChartReport(dateFrom: dateFrom, dateTo: dateTo, companyId: companyId, groupBy: groupBy ,accountCode: accCodes);
             var revenue_dict = revenues.ToDictionary(x => x.InvoiceDate, x => x);
 
             var cashbooks = await cashbookObj.GetCashBookChartReport(dateFrom: dateFrom, dateTo: dateTo, companyId: companyId, groupBy: groupBy);

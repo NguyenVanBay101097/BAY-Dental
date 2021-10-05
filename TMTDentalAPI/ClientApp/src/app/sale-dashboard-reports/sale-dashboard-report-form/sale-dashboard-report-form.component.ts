@@ -112,12 +112,12 @@ export class SaleDashboardReportFormComponent implements OnInit {
   ];
 
   filterSumaryCashbookReport: any[] = [
-    { value: 'cash_bank', text: 'TM/CK', code: '131' , type: 'customer' },
-    { value: 'debt', text: 'công nợ khách hàng', code: 'CNKH' , type: 'customer' },
-    { value: 'advance', text: 'khách hàng tạm ứng', code: 'KHTU' , type: 'customer' },
-    { value: 'cash_bank', text: 'Nhà cung cấp ', code: '331' , type: 'supplier' },
-    { value: 'payroll', text: 'Chi lương và tạm ứng lương nhân viên', code: '334' , type: 'customer' },
-    { value: 'commission', text: 'Hoa hồng', code: 'HHNGT' , type: 'agent' },
+    { value: 'cash_bank', text: 'TM/CK', code: '131', type: 'customer' },
+    { value: 'debt', text: 'công nợ khách hàng', code: 'CNKH', type: 'customer' },
+    { value: 'advance', text: 'khách hàng tạm ứng', code: 'KHTU', type: 'customer' },
+    { value: 'cash_bank', text: 'Nhà cung cấp ', code: '331', type: 'supplier' },
+    { value: 'payroll', text: 'Chi lương và tạm ứng lương nhân viên', code: '334', type: 'customer' },
+    { value: 'commission', text: 'Hoa hồng', code: 'HHNGT', type: 'agent' },
     { value: 'all', text: 'Total' },
   ];
 
@@ -133,6 +133,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
   monthFrom = new Date(this.currentYear, 0, 1);
   monthTo = new Date(this.currentYear, 11, 1);
+
   constructor(
     private partnerService: PartnerService,
     private fb: FormBuilder,
@@ -288,7 +289,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
       return this.dashboardReportService.getSumaryRevenueReport(filter).pipe(
         switchMap(total => of({ text: x.value, total: total }))
       );
-    })).subscribe((result) => {     
+    })).subscribe((result) => {
       this.dataCashBooks = result.map(x => x.total);
     });
   }
@@ -412,13 +413,13 @@ export class SaleDashboardReportFormComponent implements OnInit {
   onChangeType(value) {
     this.groupBy = value;
     this.currentYear = new Date().getFullYear();
-    if(this.groupBy=='groupby:month'){
+    if (this.groupBy == 'groupby:month') {
       let dateFrom = new Date(this.currentYear, 0, 1);
       let dateTo = new Date(this.currentYear, 11, 31);
       this.dateFrom = dateFrom;
       this.dateTo = dateTo;
     }
-    else{
+    else {
       this.dateFrom = this.monthStart;
       this.dateTo = this.monthEnd;
     }
