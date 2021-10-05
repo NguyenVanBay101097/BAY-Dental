@@ -129,7 +129,12 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
     val.cityCode = this.currentCity ? this.currentCity.code : null;
     val.companyId = this.currentCompany ? this.currentCompany.id : null;
     this.accountInvoiceReportService.getRevenueDistrictArea(val).subscribe(result => {
-      this.pieLabels = result.map(x => x.districtName);
+      this.pieLabels = result.map(x => {
+        if(x.districtName){
+          return x.districtName;
+        }
+        return 'Không xác định';
+      });
       this.pieDatasets = [{
         backgroundColor: this.pieChartColors.slice(0,result.length),
         data: result.map(x => x.revenue)
@@ -202,13 +207,15 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
               else if (pieData.length > 6){
                 var leftData = pieData.slice(0,6);
                 leftData.forEach(item => {
-                  var html = '<li style="display:flex; padding-top: 3px; padding-bottom:3px"><span style="flex:1; min-width: 115px"><i class="fas fa-circle mr-2" style="color:'+item.color+'"></i>'+item.districtName+'</span>'+
+                  var districtName = item.districtName ? item.districtName : 'Không xác định';
+                  var html = '<li style="display:flex; padding-top: 3px; padding-bottom:3px"><span style="flex:1; min-width: 115px"><i class="fas fa-circle mr-2" style="color:'+item.color+'"></i>'+districtName+'</span>'+
                   '<span style="padding-left:3px">('+item.percent+')</span>';
                   leftLegendHtml.push(html);
                 });
                 var rightData = pieData.slice(6,11);
                 rightData.forEach(item => {
-                  var html = '<li style="display:flex; padding-top: 3px; padding-bottom:3px"><span style="flex:1; min-width: 115px"><i class="fas fa-circle mr-2" style="color:'+item.color+'"></i>'+item.districtName+'</span>'+
+                  var districtName = item.districtName ? item.districtName : 'Không xác định';
+                  var html = '<li style="display:flex; padding-top: 3px; padding-bottom:3px"><span style="flex:1; min-width: 115px"><i class="fas fa-circle mr-2" style="color:'+item.color+'"></i>'+districtName+'</span>'+
                   '<span style="padding-left:3px">('+item.percent+')</span>';
                   rightLegendHtml.push(html);
                 });
@@ -219,7 +226,8 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
               }
               else {
                 pieData.forEach(item => {
-                  var html = '<li style="display:flex; padding-top: 3px; padding-bottom:3px"><span style="flex:1; min-width: 115px"><i class="fas fa-circle mr-2" style="color:'+item.color+'"></i>'+item.districtName+'</span>'+
+                  var districtName = item.districtName ? item.districtName : 'Không xác định';
+                  var html = '<li style="display:flex; padding-top: 3px; padding-bottom:3px"><span style="flex:1; min-width: 115px"><i class="fas fa-circle mr-2" style="color:'+item.color+'"></i>'+districtName+'</span>'+
                   '<span style="padding-left:3px">('+item.percent+')</span>';
                   leftLegendHtml.push(html);
                 });

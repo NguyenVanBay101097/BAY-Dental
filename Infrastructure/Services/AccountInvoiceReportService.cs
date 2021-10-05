@@ -592,37 +592,57 @@ namespace Infrastructure.Services
             };
             return res;
         }
-
+        // doanh thu khách hàng điều trị theo khu vực
         public async Task<IEnumerable<RevenueDistrictAreaDisplay>> GetRevenueDistrictArea(RevenueDistrictAreaPar val)
         {
-            var filter = new RevenueReportQueryCommon();
-            filter.DateFrom = val.DateFrom;
-            filter.DateTo = val.DateTo;
-            var query = GetRevenueReportQuery(filter);
+            var saleOrderObj = GetService<ISaleOrderService>();
+            var query = saleOrderObj.SearchQuery(x => x.State != "draft" && x.Partner.Customer);
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.DateOrder.Date >= val.DateFrom.Value.AbsoluteBeginOfDate());
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.DateOrder.Date <= val.DateTo.Value.AbsoluteEndOfDate());
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId);
             if (!string.IsNullOrEmpty(val.CityCode))
                 query = query.Where(x => x.Partner.CityCode == val.CityCode);
 
-            var revenueTotal = Math.Abs(query.Sum(x => x.PriceSubTotal));
-            var revenueList = await query.Include(x => x.Partner).ToListAsync();
-            var grList = revenueList.GroupBy(x => new { DistrictName = x.Partner.DistrictName, DistrictCode = x.Partner.DistrictCode })
+            var revenueTotal = query.Sum(x => x.TotalPaid ?? 0);
+            var saleOrderPartners = query.GroupBy(x => new
+            {
+                PartnerId = x.PartnerId,
+                DistrictName = x.Partner.DistrictName,
+                DistrictCode = x.Partner.DistrictCode,
+            })
+            .Select(x => new
+            {
+                PartnerId = x.Key.PartnerId,
+                DistrictName = x.Key.DistrictName,
+                DistrictCode = x.Key.DistrictCode,
+                Revenue = x.Sum(z => z.TotalPaid)
+            });
+            var grList = await saleOrderPartners.GroupBy(x => new RevenuePartnerDistrict(){ DistrictName = x.DistrictName, DistrictCode = x.DistrictCode })
                                 .Select(x => new RevenueDistrictAreaDisplay()
                                 {
-                                    DistrictName = !string.IsNullOrEmpty(x.Key.DistrictName)? x.Key.DistrictName : "Không xác định",
-                                    DistrictCode = !string.IsNullOrEmpty(x.Key.DistrictCode) ? x.Key.DistrictCode : "Không xác định",
-                                    Revenue = Math.Abs(x.Sum(z => z.PriceSubTotal)),
-                                    PartnerCount = x.Count(p => p.PartnerId.HasValue),
-                                    Percent =  Math.Round(x.Sum(z => z.PriceSubTotal) / revenueTotal * 100,2) + "%"
-                                }).OrderByDescending(x => x.Revenue);
+                                    DistrictName = x.Key.DistrictName,
+                                    DistrictCode = x.Key.DistrictCode,
+                                    Revenue = x.Sum(z => z.Revenue),
+                                    PartnerCount = x.Count(),
 
-            if (grList.Count() <= 10)
-                return grList;
+                                }).OrderByDescending(x => x.Revenue).ToListAsync();
+            var dictGrList = grList.ToDictionary(x => x.DistrictCode, x => x);
+            foreach(var item in dictGrList)
+            {
+                dictGrList[item.Key].Percent = (revenueTotal != 0 && dictGrList[item.Key].Revenue.HasValue) ? Math.Round(dictGrList[item.Key].Revenue.Value / revenueTotal * 100, 2) + "%" : "0%";
+            }
+
+            var list = dictGrList.Values.ToList();
+            if (list.Count() <= 10)
+                return list;
 
             var result = new List<RevenueDistrictAreaDisplay>();
-            var top10 = grList.Skip(0).Take(10);
-            var otherList = grList.Skip(10);
-            var revenueOther = otherList.Sum(x => x.Revenue);
+            var top10 = list.Skip(0).Take(10);
+            var otherList = list.Skip(10);
+            var revenueOther = otherList.Sum(x => x.Revenue ?? 0);
             var partnerOtherCount = otherList.Sum(x => x.PartnerCount);
 
             var otherObj = new RevenueDistrictAreaDisplay()
@@ -630,7 +650,7 @@ namespace Infrastructure.Services
                 DistrictName = "Khác",
                 Revenue = revenueOther,
                 PartnerCount = partnerOtherCount,
-                Percent = Math.Round(revenueOther / revenueTotal * 100,2) + "%"
+                Percent = revenueTotal != 0 ? Math.Round(revenueOther / revenueTotal * 100, 2) + "%" : "0%"
             };
 
             result.AddRange(top10);

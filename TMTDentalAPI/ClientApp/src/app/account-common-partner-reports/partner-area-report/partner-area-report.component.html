@@ -46,7 +46,7 @@
                             <div class="card card-item" *ngFor="let item of pieObjData"
                                 [class.active]="item.districtCode == this.currentDistrictCode"
                                 (click)="onSelectDistrict(item)">
-                                <h5 class="card-header border-0 text-center">{{item.districtName}}</h5>
+                                <h5 class="card-header border-0 text-center">{{item.districtName ? item.districtName : 'Không xác định'}}</h5>
                                 <div class="card-body">
                                     <div class="d-flex card-title">
                                         <h5 class="card-title-item">Doanh thu</h5>

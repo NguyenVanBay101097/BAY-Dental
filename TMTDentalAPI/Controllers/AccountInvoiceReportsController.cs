@@ -74,6 +74,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        // doanh thu khách hàng điều trị theo khu vực
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Report.Revenue")]
         public async Task<IActionResult> GetRevenueDistrictArea(RevenueDistrictAreaPar val)

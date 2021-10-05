@@ -330,7 +330,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Tổng doanh thu
         /// </summary>
-        public decimal Revenue { get; set; }
+        public decimal? Revenue { get; set; }
         /// <summary>
         /// Tỷ lệ
         /// </summary>
@@ -338,9 +338,21 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Số lượng khách hàng của quận/huyện
         /// </summary>
-        public decimal PartnerCount { get; set; }
+        public decimal? PartnerCount { get; set; }
     }
 
-
+    public class RevenuePartnerDistrict
+    {
+        public Guid PartnerId { get; set; }
+        public string DistrictCode { get; set; }
+        /// <summary>
+        /// Tên quận/huyện
+        /// </summary>
+        public string DistrictName { get; set; }
+        /// <summary>
+        /// Tổng doanh thu
+        /// </summary>
+        public decimal? Revenue { get; set; }
+    }
 
 }
