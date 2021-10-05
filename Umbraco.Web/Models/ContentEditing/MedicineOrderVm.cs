@@ -121,7 +121,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class MedicineOrderPrint
     {
-        public Company Company { get; set; }
+        public CompanyPrintVM Company { get; set; }
         public Guid Id { get; set; }
 
         public string Name { get; set; }
@@ -143,7 +143,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public AccountJournalSimple Journal { get; set; }
 
         public Guid PartnerId { get; set; }
-        public PartnerDisplay Partner { get; set; }
+        public PartnerPrintVM Partner { get; set; }
 
         public Guid? AccountPaymentId { get; set; }
         public AccountPaymentDisplay AccountPayment { get; set; }

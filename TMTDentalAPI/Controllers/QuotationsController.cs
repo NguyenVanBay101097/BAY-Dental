@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Entities;
 using ApplicationCore.Utilities;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -18,11 +20,20 @@ namespace TMTDentalAPI.Controllers
         private readonly IQuotationService _quotationService;
         private readonly IViewRenderService _viewRenderService;
         private readonly IUnitOfWorkAsync _unitOfWork;
-        public QuotationsController(IViewRenderService viewRenderService, IUnitOfWorkAsync unitOfWork, IQuotationService quotationService)
+        private readonly IPrintTemplateConfigService _printTemplateConfigService;
+        private readonly IPrintTemplateService _printTemplateService;
+        private readonly IIRModelDataService _modelDataService;
+        public QuotationsController(IViewRenderService viewRenderService, IUnitOfWorkAsync unitOfWork, IQuotationService quotationService
+            , IPrintTemplateConfigService printTemplateConfigService,
+            IPrintTemplateService printTemplateService,
+            IIRModelDataService modelDataService)
         {
             _quotationService = quotationService;
             _unitOfWork = unitOfWork;
             _viewRenderService = viewRenderService;
+            _printTemplateConfigService = printTemplateConfigService;
+            _printTemplateService = printTemplateService;
+            _modelDataService = modelDataService;
         }
 
         [HttpGet]
@@ -132,14 +143,26 @@ namespace TMTDentalAPI.Controllers
 
         [HttpGet("{id}/[action]")]
         public async Task<IActionResult> Print(Guid id)
-        {
-            var quotation = await _quotationService.Print(id);
-            if (quotation == null)
+        {          
+            //tim trong bảng config xem có dòng nào để lấy ra template
+            var printConfig = await _printTemplateConfigService.SearchQuery(x => x.Type == "tmp_quotation" && x.IsDefault)
+                .Include(x => x.PrintPaperSize)
+                .Include(x => x.PrintTemplate)
+                .FirstOrDefaultAsync();
+
+            PrintTemplate template = printConfig != null ? printConfig.PrintTemplate : null;
+            PrintPaperSize paperSize = printConfig != null ? printConfig.PrintPaperSize : null;
+            if (template == null)
             {
-                return NotFound();
+                //tìm template mặc định sử dụng chung cho tất cả chi nhánh, sử dụng bảng IRModelData hoặc bảng IRConfigParameter
+                template = await _modelDataService.GetRef<PrintTemplate>("base.print_template_quotation");
+                if (template == null)
+                    throw new Exception("Không tìm thấy mẫu in mặc định");
             }
-            var html = _viewRenderService.Render<QuotationPrintVM>("Quotation/Print", quotation);
-            return Ok(new PrintData() { html = html });
+
+            var result = await _printTemplateService.GeneratePrintHtml(template, new List<Guid>() { id }, paperSize);
+
+            return Ok(new PrintData() { html = result });
         }
     }
 }

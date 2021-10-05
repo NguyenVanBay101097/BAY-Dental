@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Entities;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -21,13 +23,22 @@ namespace TMTDentalAPI.Controllers
         private readonly IStockInventoryService _stockInventoryService;
         private readonly IViewRenderService _view;
         private readonly IUnitOfWorkAsync _unitOfWork;
+        private readonly IPrintTemplateConfigService _printTemplateConfigService;
+        private readonly IPrintTemplateService _printTemplateService;
+        private readonly IIRModelDataService _modelDataService;
 
-        public StockInventoriesController(IMapper mapper, IStockInventoryService stockInventoryService, IViewRenderService view, IUnitOfWorkAsync unitOfWork)
+        public StockInventoriesController(IMapper mapper, IStockInventoryService stockInventoryService, IViewRenderService view, IUnitOfWorkAsync unitOfWork,
+            IPrintTemplateService printTemplateService,
+            IIRModelDataService modelDataService
+            , IPrintTemplateConfigService printTemplateConfigService)
         {
             _mapper = mapper;
             _stockInventoryService = stockInventoryService;
             _view = view;
             _unitOfWork = unitOfWork;
+            _printTemplateConfigService = printTemplateConfigService;
+            _printTemplateService = printTemplateService;
+            _modelDataService = modelDataService;
         }
 
         [HttpGet]
@@ -134,15 +145,29 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpGet("{id}/[action]")]
+        [HttpGet("{id}/Print")]
         [CheckAccess(Actions = "Stock.Inventory.Read")]
         public async Task<IActionResult> GetPrint(Guid id)
         {
-            var res = await _stockInventoryService.GetStockInventoryPrint(id);
+            //tim trong bảng config xem có dòng nào để lấy ra template
+            var printConfig = await _printTemplateConfigService.SearchQuery(x => x.Type == "tmp_stock_inventory" && x.IsDefault)
+                .Include(x => x.PrintPaperSize)
+                .Include(x => x.PrintTemplate)
+                .FirstOrDefaultAsync();
 
-            var html = _view.Render("StockInventory/Print", res);
+            PrintTemplate template = printConfig != null ? printConfig.PrintTemplate : null;
+            PrintPaperSize paperSize = printConfig != null ? printConfig.PrintPaperSize : null;
+            if (template == null)
+            {
+                //tìm template mặc định sử dụng chung cho tất cả chi nhánh, sử dụng bảng IRModelData hoặc bảng IRConfigParameter
+                template = await _modelDataService.GetRef<PrintTemplate>("base.print_template_stock_inventory");
+                if (template == null)
+                    throw new Exception("Không tìm thấy mẫu in mặc định");
+            }
 
-            return Ok(new PrintData() { html = html });
+            var result = await _printTemplateService.GeneratePrintHtml(template, new List<Guid>() { id }, paperSize);
+
+            return Ok(new PrintData() { html = result });
         }
 
         [HttpDelete("{id}")]

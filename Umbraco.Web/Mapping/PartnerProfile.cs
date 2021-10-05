@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -54,6 +55,7 @@ namespace Umbraco.Web.Mapping
             CreateMap<PartnerChangePhone, Partner>();
             CreateMap<Partner, PartnerPrintVM>();
             CreateMap<Partner, PartnerViewModel>();
+            CreateMap<Partner, PartnerPrintTemplate>();
 
             CreateMap<Partner, PartnerInfoVm>();
             CreateMap<Partner, PartnerCustomerDonThuoc>();

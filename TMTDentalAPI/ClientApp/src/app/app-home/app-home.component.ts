@@ -139,7 +139,7 @@ export class AppHomeComponent implements OnInit {
         { name: 'Đơn thuốc mẫu', url: '/catalog/sample-prescriptions', permissions: ['Catalog.SamplePrescription.Read'] },
         { name: 'Đơn vị tính', url: '/catalog/uoms', groups: 'product.group_uom', permissions: ['UoM.UoMs.Read'] },
         { name: 'Nhóm Đơn vị tính', url: '/catalog/uom-categories', groups: 'product.group_uom', permissions: ["UoM.UoMCategory.Read"] },
-        { name: 'Bảng hoa hồng', url: '/catalog/commissions/v2', permissions: ['Catalog.Commission.Read'] },
+        { name: 'Bảng hoa hồng', url: '/catalog/commissions', permissions: ['Catalog.Commission.Read'] },
         { name: 'Nhân viên', url: '/catalog/employees', permissions: ['Catalog.Employee.Read'] },
         { name: 'Thông số Labo', url: '/catalog/labo-managerment', permissions: ['Catalog.LaboFinishLine.Read', 'Catalog.LaboBridge.Read', 'Catalog.LaboBiteJoint.Read'] },
         { name: 'Loại thu chi', url: '/catalog/loai-thu-chi', permissions: ['Account.LoaiThuChi.Read'] },
@@ -167,7 +167,8 @@ export class AppHomeComponent implements OnInit {
       children: [
         { name: 'Chi nhánh', url: '/setting/companies', permissions: ['System.Company.Read'] },
         { name: 'Nhóm quyền', url: '/setting/roles', permissions: ['System.ApplicationRole.Read'] },
-        { name: 'Cấu hình chung', url: '/setting/config-settings' }
+        { name: 'Cấu hình chung', url: '/setting/config-settings' },
+        { name: 'Mẫu in', url: '/setting/print-template-config' }
       ],
       permissions: ['System.Company.Read', 'System.ApplicationUser.Read', 'System.ApplicationRole.Read']
     },

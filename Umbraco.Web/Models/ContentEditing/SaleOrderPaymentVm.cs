@@ -140,10 +140,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public CompanyPrintVM Company { get; set; }
         public PartnerPrintVM OrderPartner { get; set; }
         public decimal Amount { get; set; }
-        public DateTime Date { get; set; }
-
-        public IEnumerable<SaleOrderPaymentJournalLineDisplay> JournalLines { get; set; } = new List<SaleOrderPaymentJournalLineDisplay>();
-
+        public DateTime DatePayment { get; set; }
+        public string JournalName { get; set; }
         public string Note { get; set; }
         public ApplicationUserSimple User { get; set; }
     }

@@ -215,7 +215,7 @@ export class SaleOrderLineCuComponent implements OnInit {
       }
     );
 
-    modalRef.componentInstance.title = "Danh sách phiếu labo";
+    modalRef.componentInstance.title = "Danh sách phiếu Labo";
     modalRef.componentInstance.saleOrderLineId = id;
     modalRef.result.then(
       (val) => { },

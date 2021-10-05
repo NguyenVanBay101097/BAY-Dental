@@ -2,6 +2,10 @@
     font-size: 14px;
 }
 
+body {
+    overflow: hidden;
+}
+
 label {
     display: inline-block;
     margin-bottom: 0.5rem;
@@ -639,11 +643,6 @@ input.ng-touched.ng-invalid:not(form),
 select.ng-touched.ng-invalid {
     border: 1px solid #dc3545;
     /* red */
-}
-
-.ng-invalid>.k-dropdown-wrap {
-    color: hsl(0deg 0% 26%)!important;
-    border-color: #dc3545!important;
 }
 
 .o_form_view .o_form_statusbar {

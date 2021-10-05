@@ -91,7 +91,8 @@ registerLocaleData(localeVi, "vi");
     },
     { provide: LOCALE_ID, useValue: "vi-VN" },
     { provide: NgbDateParserFormatter, useClass: NgbDateCustomParserFormatter },
-    { provide: ErrorHandler, useClass: MyErrorHandler }
+    { provide: ErrorHandler, useClass: MyErrorHandler },
+    ThemeService
   ],
   bootstrap: [AppComponent],
 })

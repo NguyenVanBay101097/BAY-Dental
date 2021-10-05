@@ -1,4 +1,8 @@
-﻿*, ::after, ::before {
+﻿:root {
+    font-size: 14px;
+}
+
+*, ::after, ::before {
     box-sizing: border-box;
 }
 
@@ -177,7 +181,7 @@ body.letter, body.legal {
 
 body {
     margin: 0;
-    line-height: 1.2;
+    line-height: 1.42857;
     width: 100%;
     padding: 0;
 }
@@ -686,12 +690,22 @@ body.A5 .o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_label {
 table {
     caption-side: bottom;
     border-collapse: collapse;
+    vertical-align: top;
+    margin-bottom: 1rem;
 }
 
     table thead th {
         font-weight: 600;
         text-align: left;
     }
+
+table > tbody {
+    vertical-align: inherit;
+}
+
+strong {
+    font-weight: 600;
+}
 
 .table {
     width: 100%;
@@ -796,7 +810,7 @@ table {
 
 .col-8 {
     flex: 0 0 auto;
-    width: 66.6666666667%;
+    width: 66.6666666667% ;
 }
 
 .col-4 {
@@ -806,7 +820,7 @@ table {
 
 .col-6 {
     flex: 0 0 auto;
-    width: 50%;
+    width: 50% !important;
 }
 
 .justify-content-center {
@@ -919,4 +933,8 @@ table {
 
 .border-5 {
     border-width: 5px !important;
+}
+
+.table-border-top-0 tr:first-child td {
+    border-top: none;
 }

@@ -382,7 +382,7 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     };
 
     if (this.appointId) {
-      this.appointmentService.get(this.appointId).subscribe(
+      this.dashboardReportService.getDefaultCustomerReceipt(this.appointId).subscribe(
         (rs: any) => {
           this.formGroup.get('partner').setValue(rs.partner);
           this.onChangePartner();

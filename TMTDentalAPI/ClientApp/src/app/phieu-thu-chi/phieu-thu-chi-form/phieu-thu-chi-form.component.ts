@@ -30,13 +30,13 @@ export class PhieuThuChiFormComponent implements OnInit {
   filteredJournals: any = [];
   phieuThuChi: any;
   @ViewChild('journalCbx', { static: true }) journalCbx: ComboBoxComponent;
-  
-  constructor(private fb: FormBuilder, 
-    private phieuThuChiService: PhieuThuChiService, 
-    private loaiThuChiService: LoaiThuChiService, 
+
+  constructor(private fb: FormBuilder,
+    private phieuThuChiService: PhieuThuChiService,
+    private loaiThuChiService: LoaiThuChiService,
     private route: ActivatedRoute, private modalService: NgbModal,
-    private accountJournalService: AccountJournalService, 
-    private notificationService: NotificationService, 
+    private accountJournalService: AccountJournalService,
+    private notificationService: NotificationService,
     private router: Router, private intlService: IntlService, private authService: AuthService,
     private printService: PrintService) { }
 
@@ -56,7 +56,7 @@ export class PhieuThuChiFormComponent implements OnInit {
     this.myForm = this.fb.group({
       companyId: null,
       dateObj: [null, Validators.required],
-      journal: [null, Validators.required], 
+      journal: [null, Validators.required],
       name: null,
       type: null,
       amount: 0,
@@ -64,14 +64,14 @@ export class PhieuThuChiFormComponent implements OnInit {
       reason: null,
       payerReceiver: null,
       address: null,
-      loaiThuChi: [null, Validators.required] 
+      loaiThuChi: [null, Validators.required]
     });
 
     setTimeout(() => {
       this.loadLoaiThuChiList();
       this.loadFilteredJournals();
     });
-    
+
   }
 
   loadDefault() {
@@ -108,11 +108,11 @@ export class PhieuThuChiFormComponent implements OnInit {
     var val = new AccountJournalFilter();
     val.type = this.type;
     this.loaiThuChiService.getPaged(val)
-    .subscribe(res => {
-      this.loaiThuChiList = res.items;
-    }, err => {
-      console.log(err);
-    })
+      .subscribe(res => {
+        this.loaiThuChiList = res.items;
+      }, err => {
+        console.log(err);
+      })
   }
 
   loadFilteredJournals() {
@@ -129,12 +129,12 @@ export class PhieuThuChiFormComponent implements OnInit {
   loadItem() {
     if (this.itemId) {
       this.phieuThuChiService.get(this.itemId)
-      .subscribe((result: any) => {
-        this.myForm.patchValue(result);
-        this.myForm.get('dateObj').patchValue(new Date(result.date));
-      }, err => {
-        console.log(err);
-      })
+        .subscribe((result: any) => {
+          this.myForm.patchValue(result);
+          this.myForm.get('dateObj').patchValue(new Date(result.date));
+        }, err => {
+          console.log(err);
+        })
     }
   }
 
@@ -173,11 +173,11 @@ export class PhieuThuChiFormComponent implements OnInit {
     }
 
     this.phieuThuChiService.actionConfirm([this.itemId])
-    .subscribe(() => {
-      this.loadRecord();
-    }, err => {
-      console.log(err);
-    });
+      .subscribe(() => {
+        this.loadRecord();
+      }, err => {
+        console.log(err);
+      });
   }
 
   onSave() {
@@ -192,31 +192,31 @@ export class PhieuThuChiFormComponent implements OnInit {
 
     if (!this.itemId) {
       this.phieuThuChiService.create(val)
-      .subscribe((result: any) => {
-        this.notificationService.show({
-          content: 'Lưu thành công',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
-        this.router.navigate(['/phieu-thu-chi/form'], { queryParams: { id: result.id, type: this.type } });
-      }, err => {
-        console.log(err);
-      })
+        .subscribe((result: any) => {
+          this.notificationService.show({
+            content: 'Lưu thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+          this.router.navigate(['/phieu-thu-chi/form'], { queryParams: { id: result.id, type: this.type } });
+        }, err => {
+          console.log(err);
+        })
     } else {
       this.phieuThuChiService.update(this.itemId, val)
-      .subscribe(() => {
-        this.notificationService.show({
-          content: 'Lưu thành công',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
-      }, err => {
-        console.log(err);
-      })
+        .subscribe(() => {
+          this.notificationService.show({
+            content: 'Lưu thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+        }, err => {
+          console.log(err);
+        })
     }
   }
 
@@ -271,11 +271,11 @@ export class PhieuThuChiFormComponent implements OnInit {
     modalRef.componentInstance.body = 'Bạn có chắc chắn muốn hủy?';
     modalRef.result.then(() => {
       this.phieuThuChiService.actionCancel([this.itemId])
-      .subscribe(() => {
-        this.loadRecord();
-      }, err => {
-        console.log(err);
-      })
+        .subscribe(() => {
+          this.loadRecord();
+        }, err => {
+          console.log(err);
+        })
     }, () => {
     });
   }
@@ -286,7 +286,7 @@ export class PhieuThuChiFormComponent implements OnInit {
     modalRef.componentInstance.type = this.type;
     modalRef.result.then((result: any) => {
       this.myForm.get('loaiThuChi').patchValue(result);
-      this.loaiThuChiList = _.unionBy(this.loaiThuChiList, [result], 'id'); 
+      this.loaiThuChiList = _.unionBy(this.loaiThuChiList, [result], 'id');
     }, () => {
     });
   }

@@ -197,7 +197,11 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<ProductBasic>> GetPagedResultAsync(ProductPaged val)
         {
             var query = GetQueryPaged(val);
-            query = query.OrderBy(x => x.Name);
+
+            if (val.Type2 == "labo" || val.Type2 == "labo_attach")
+                query = query.OrderByDescending(x => x.DateCreated);
+            else
+                query = query.OrderBy(x => x.Name);
 
             var totalItems = await query.CountAsync();
             if (val.Limit > 0)
@@ -486,7 +490,7 @@ namespace Infrastructure.Services
 
             var res = _mapper.Map<IEnumerable<ProductSimple>>(items);
 
-            foreach (var item in res.Where(x=> x.Type2 == "medicine"))
+            foreach (var item in res.Where(x => x.Type2 == "medicine"))
                 item.StandardPrice = _GetStandardPrice(item.Id);
 
             return res;
@@ -558,7 +562,7 @@ namespace Infrastructure.Services
             //    if (await IsExistProductCode(product.DefaultCode))
             //        throw new Exception($"Đã tồn tại sản phầm với mã {val.DefaultCode}");
             //}
-                
+
             _SaveProductSteps(product, val.StepList);
 
             _SaveProductBoms(product, val.Boms);
@@ -1199,7 +1203,8 @@ namespace Infrastructure.Services
             var isMatching = rg.IsMatch(productCode);
             return isMatching;
         }
-        private async Task<string> GenerateCodeIfEmpty() {
+        private async Task<string> GenerateCodeIfEmpty()
+        {
             var seqObj = GetService<IIRSequenceService>();
 
             var code = await seqObj.NextByCode("product_seq");
@@ -1211,7 +1216,8 @@ namespace Infrastructure.Services
             }
             return code;
         }
-        private async Task UpdateNextCode(string productCode) {
+        private async Task UpdateNextCode(string productCode)
+        {
             Regex rgx = new Regex(@"SP", RegexOptions.IgnoreCase);
             var result = rgx.Split(productCode, 2, 0);
             var numberCode = result[1];
@@ -1223,7 +1229,7 @@ namespace Infrastructure.Services
                 await _InsertProductSequence();
                 sequence = await sequenceObj.SearchQuery(x => x.Code == "product_seq").FirstOrDefaultAsync();
             }
-                
+
             if (number > sequence.NumberNext)
             {
                 sequence.NumberNext = number + sequence.NumberIncrement;

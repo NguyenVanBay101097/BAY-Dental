@@ -562,7 +562,7 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit, OnC
       .subscribe(() => {
         this.onSetOrderId(this.saleOrder.id);
         // this.reload.emit(true);
-        
+
       })
   }
 
@@ -913,7 +913,7 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit, OnC
   }
 
   printPayment(payment) {
-    this.paymentService.getPrint(payment.accountPaymentId).subscribe(result => {
+    this.paymentService.getPrint(payment.accountPaymentId).subscribe((result: any) => {
       this.accountPaymentPrintComponent.print(result);
     });
   }
@@ -1012,7 +1012,7 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit, OnC
     this.computeAmountTotal();
   }
 
-  onChangeTeeth(line:FormGroup , event){
+  onChangeTeeth(line: FormGroup, event) {
     debugger
     var res = this.orderLines.controls.find(x => x.value.id === line.value.id);
     if (res) {
@@ -1021,7 +1021,7 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit, OnC
     }
   }
 
- 
+
 
 
   chosseSaleOrderLine(event) {
@@ -1029,19 +1029,19 @@ export class PartnerCustomerTreatmentHistoryFormComponent implements OnInit, OnC
     debugger
     event.teeth = this.fb.array(event.teeth);
     var res = this.fb.group(event);
-   if (!this.orderLines.controls.some(x => x.value.id === res.value.id)) {
-    this.orderLines.push(res);
-  } else {
-    var line = this.orderLines.controls.find(x => x.value.id === res.value.id);
-    if (line) {
-      line.value.productUOMQty += 1;
-      line.patchValue(line.value);
+    if (!this.orderLines.controls.some(x => x.value.id === res.value.id)) {
+      this.orderLines.push(res);
+    } else {
+      var line = this.orderLines.controls.find(x => x.value.id === res.value.id);
+      if (line) {
+        line.value.productUOMQty += 1;
+        line.patchValue(line.value);
+      }
     }
-  }
 
-  this.getPriceSubTotal();
-  this.orderLines.markAsDirty();
-  this.computeAmountTotal();
+    this.getPriceSubTotal();
+    this.orderLines.markAsDirty();
+    this.computeAmountTotal();
 
     if (this.formGroup.get('state').value == "sale") {
       var val = this.getFormDataSave();

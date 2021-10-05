@@ -67,3 +67,9 @@
   text-transform: uppercase;
   color: #1A6DE3;
 }
+
+.item-header{
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 20px;
+}

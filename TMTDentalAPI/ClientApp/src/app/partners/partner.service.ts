@@ -40,6 +40,8 @@ export class SaleOrderLineBasic {
     product: any;
     toothType: string;
     toothCategoryId: string;
+    order: any;
+    employee: any;
 }
 
 export class SaleOrderLinePaged {
@@ -54,6 +56,8 @@ export class SaleOrderLinePaged {
     dateOrderTo: any;
     employeeId: string;
     companyId: string;
+    dateFrom: string;
+    dateTo: string;
 }
 
 export class PartnerReportLocationCitySearch {
@@ -166,28 +170,28 @@ export class PartnerGetDebtPagedFilter {
 }
 
 export class PartnerInfoDisplay {
-	id: string;
-	dateCreated: string;
-	ref: string;
-	avatar?: any;
-	displayName: string;
-	name: string;
-	phone: string;
-	email: string;
-	birthYear: number;
-	birthMonth: number;
-	birthDay: number;
-	orderState: string;
-	orderResidual?: any;
-	totalDebit?: any;
-	memberLevelId?: any;
-	memberLevel?: any;
-	categories: any[];
-	dateOfBirth: string;
-	age: string;
+    id: string;
+    dateCreated: string;
+    ref: string;
+    avatar?: any;
+    displayName: string;
+    name: string;
+    phone: string;
+    email: string;
+    birthYear: number;
+    birthMonth: number;
+    birthDay: number;
+    orderState: string;
+    orderResidual?: any;
+    totalDebit?: any;
+    memberLevelId?: any;
+    memberLevel?: any;
+    categories: any[];
+    dateOfBirth: string;
+    age: string;
 }
 
-export class PartnerInfoPaged{
+export class PartnerInfoPaged {
     limit: number;
     offset: number;
     search: string;
@@ -556,15 +560,15 @@ export class PartnerService {
         return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetDebtPaged', { params: new HttpParams({ fromObject: val }) });
     }
 
-    getAmountAdvanceBalance(id){
+    getAmountAdvanceBalance(id) {
         return this.http.get<number>(this.baseApi + this.apiUrl + '/' + id + '/GetAmountAdvanceBalance');
     }
 
-    getAmountAdvanceUsed(id){
+    getAmountAdvanceUsed(id) {
         return this.http.get<number>(this.baseApi + this.apiUrl + '/' + id + '/GetAmountAdvanceUsed');
     }
 
-    getCustomerInfo(id){
+    getCustomerInfo(id) {
         return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/CustomerInfo');
     }
 
@@ -575,21 +579,21 @@ export class PartnerService {
     getCustomerBirthDay(val: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/GetCustomerBirthDay', val);
     }
-    
+
     getCustomerAppointments(val: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/GetCustomerAppointments', val);
     }
 
-    getAmountDebtBalance(id){
+    getAmountDebtBalance(id) {
         return this.http.get<number>(this.baseApi + this.apiUrl + '/' + id + '/GetAmountDebtBalance');
     }
 
     getPartnerInfoPaged(val) {
-        return this.http.get<PagedResult2<PartnerInfoDisplay>>(this.baseApi + this.apiUrl + '/GetPartnerInfoPaged', {params: new HttpParams({fromObject: val})});
+        return this.http.get<PagedResult2<PartnerInfoDisplay>>(this.baseApi + this.apiUrl + '/GetPartnerInfoPaged', { params: new HttpParams({ fromObject: val }) });
     }
 
     getPartnerInfoPaged2(val) {
-        return this.http.get<PagedResult2<PartnerInfoDisplay>>(this.baseApi + this.apiUrl + '/GetPartnerInfoPaged2', {params: new HttpParams({fromObject: val})});
+        return this.http.get<PagedResult2<PartnerInfoDisplay>>(this.baseApi + this.apiUrl + '/GetPartnerInfoPaged2', { params: new HttpParams({ fromObject: val }) });
     }
 }
 

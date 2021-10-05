@@ -31,7 +31,7 @@ export class HttpHandleErrorInterceptor implements HttpInterceptor {
                     // Server Error
                     message = error.message;
                     if (error.error) {
-                        message = error.error.message;
+                        message = request.responseType == 'json' ? error.error.message : JSON.parse(error.error).message;
                     }
 
                     if (message) {

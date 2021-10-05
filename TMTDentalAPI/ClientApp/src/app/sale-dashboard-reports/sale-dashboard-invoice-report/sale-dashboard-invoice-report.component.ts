@@ -13,7 +13,7 @@ import * as Chart from 'chart.js';
 })
 export class SaleDashboardInvoiceReportComponent implements AfterViewInit {
   @Input() groupby: string;
-  @Input() revenues: RevenueReportItem[] = [];
+  @Input() revenues: any[] = [];
   @Input() cashBooks: any;
   @Input() dataRevenues: any[] = [];
   @Input() dataCashBooks: any;
@@ -23,6 +23,7 @@ export class SaleDashboardInvoiceReportComponent implements AfterViewInit {
   barChart: any;
   cashBookData: CashBookReportItem[] = [];
   revenuCateg: any[] = [];
+  revenueChart: any[] = [];
   dateCount: number = 0;
   public revenueCashBank: any;
   public revenueDebt: any;
@@ -67,9 +68,8 @@ export class SaleDashboardInvoiceReportComponent implements AfterViewInit {
     this.revenueSeries = [];
     if (this.cashBooks && this.revenues && this.dataCashBooks) {
       this.cashBookData = this.cashBooks;
+      this.revenueChart = this.revenues;
       this.loadCashbookGroupby();
-      // this.realIncome = this.loadDataColCashBook();
-      // this.revenue = this.loadDataColRevenue();
       this.cashbookCashBank = this.dataCashBooks[0];
       this.cashbookCusDebt = this.dataCashBooks[1];
       this.cashbookCusAdvance = this.dataCashBooks[2];
@@ -77,26 +77,25 @@ export class SaleDashboardInvoiceReportComponent implements AfterViewInit {
 
   }
 
-  loadDataColRevenue() {
-    let res = [];
-    this.revenuCateg.forEach(x => {
-      var total = this.revenues.find(s => (this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(s.invoiceDate), 'dd/MM/yyyy') : this.intlService.formatDate(new Date(s.invoiceDate), 'MM/yyyy')) == x);
-      var item = { date: total ? total.invoiceDate : this.intlService.formatDate(new Date(x), 'yyyy-MM-ddT00:00:00'), total: total ? total.priceSubTotal : 0 };
-      res.push(item);
-    })
+  // loadDataColRevenue() {
+  //   let res = [];
+  //   this.revenuCateg.forEach(x => {     
+  //     var total = this.revenues.find(s => (this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(s.invoiceDate), 'dd/MM/yyyy') : this.intlService.formatDate(new Date(s.invoiceDate), 'MM/yyyy')) == x);
+  //     var item = {date: total ? total.invoiceDate : this.intlService.formatDate(new Date(x), 'yyyy-MM-ddT00:00:00') , total: total ? total.priceSubTotal : 0};
+  //     res.push(item);
+  //   })
+  //   return res;
+  // }
 
-    return res;
-  }
-
-  loadDataColCashBook() {
-    let res = [];
-    this.revenuCateg.forEach(x => {
-      var total = this.cashBookData.find(s => (this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(s.date), 'dd/MM/yyyy') : this.intlService.formatDate(new Date(s.date), 'MM/yyyy')) == x);
-      var item = { date: total ? total.date : this.intlService.formatDate(new Date(x), 'yyyy-MM-ddT00:00:00'), total: total ? total.totalThu : 0 };
-      res.push(item);
-    })
-    return res;
-  }
+  // loadDataColCashBook() {
+  //   let res = [];
+  //   this.revenuCateg.forEach(x => {     
+  //     var total = this.cashBookData.find(s => (this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(s.date), 'dd/MM/yyyy') : this.intlService.formatDate(new Date(s.date), 'MM/yyyy')) == x);
+  //     var item = {date: total ? total.date : this.intlService.formatDate(new Date(x), 'yyyy-MM-ddT00:00:00') , total: total ? total.totalThu : 0};
+  //     res.push(item);
+  //   })
+  //   return res;
+  // }
 
   get totalDebit() {
     if (this.revenueCashBank) {
@@ -115,15 +114,16 @@ export class SaleDashboardInvoiceReportComponent implements AfterViewInit {
   }
 
   loadCashbookGroupby() {
-
-    if (this.revenues && this.cashBookData) {
-      var dateRevenues = this.revenues.map(s => this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(s.invoiceDate), 'yyyy-MM-ddT00:00:00') : this.intlService.formatDate(new Date(s.invoiceDate), 'MM/yyyy'));
-      var dateCashbooks = this.cashBookData.map(s => this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(s.date), 'yyyy-MM-ddT00:00:00') : this.intlService.formatDate(new Date(s.date), 'MM/yyyy'));
-      this.revenuCateg = this.arrayUnique(dateRevenues.concat(dateCashbooks).sort());
-
+    if (this.revenues ) {
+      // var dateRevenues = this.revenues.map(s => this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(s.invoiceDate), 'dd/MM/yyyy') : this.intlService.formatDate(new Date(s.invoiceDate), 'MM/yyyy'));
+      // var dateCashbooks = this.cashBookData.map(s => this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(s.date), 'dd/MM/yyyy') : this.intlService.formatDate(new Date(s.date), 'MM/yyyy'));
+      // var res = this.arrayUnique(dateRevenues.concat(dateCashbooks)) as Array<string>;
+      // this.revenuCateg = res.sort();
+      this.revenuCateg = this.revenues.map(s => this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(s.date), 'dd/MM/yyyy') : this.intlService.formatDate(new Date(s.date), 'MM/yyyy'));
     }
   }
 
+  
   arrayUnique(array) {
     var a = array.concat();
     for (var i = 0; i < a.length; ++i) {

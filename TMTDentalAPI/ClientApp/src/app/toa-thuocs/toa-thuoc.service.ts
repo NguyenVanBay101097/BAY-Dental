@@ -178,13 +178,13 @@ export class ToaThuocService {
         return this.http.post(this.baseApi + this.apiUrl + `/${id}/ActionConfirm`, null);
     }
 
-    // getPrint(id: string) {
-    //     return this.http.get(this.baseApi + this.apiUrl + `/${id}/Print`);
-    // }
-
     getPrint(id: string) {
-        return this.http.get(this.baseApi + this.apiPrintUrl + '/Print' + `?id=${id}`, { responseType: 'text' });
+        return this.http.get(this.baseApi + this.apiUrl + `/${id}/Print`);
     }
+
+    // getPrint(id: string) {
+    //     return this.http.get(this.baseApi + this.apiPrintUrl + '/Print' + `?id=${id}`, { responseType: 'text' });
+    // }
 
     getFromUI(id): Observable<ToaThuocDisplay> {
         return this.http.get<ToaThuocDisplay>(this.baseApi + this.apiUrl + `/${id}/GetFromUI`);

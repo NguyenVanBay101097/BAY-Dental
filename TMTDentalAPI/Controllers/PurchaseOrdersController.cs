@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Entities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
@@ -22,13 +24,19 @@ namespace TMTDentalAPI.Controllers
         private readonly IPurchaseOrderService _purchaseOrderService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
+        private readonly IPrintTemplateConfigService _printTemplateConfigService;
+        private readonly IPrintTemplateService _printTemplateService;
+        private readonly IIRModelDataService _modelDataService;
 
         public PurchaseOrdersController(IPurchaseOrderService purchaseOrderService, IMapper mapper,
-            IUnitOfWorkAsync unitOfWork)
+            IUnitOfWorkAsync unitOfWork, IPrintTemplateConfigService printTemplateConfigService, IPrintTemplateService printTemplateService, IIRModelDataService modelDataService)
         {
             _purchaseOrderService = purchaseOrderService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _printTemplateConfigService = printTemplateConfigService;
+            _printTemplateService = printTemplateService;
+            _modelDataService = modelDataService;
         }
 
         [HttpGet]
@@ -196,6 +204,30 @@ namespace TMTDentalAPI.Controllers
             await _purchaseOrderService.Unlink(ids);
             _unitOfWork.Commit();
             return NoContent();
+        }
+
+        [HttpGet("{id}/Print")]
+        public async Task<IActionResult> GetPrint(Guid id)
+        {
+            var res = await _purchaseOrderService.GetByIdAsync(id);        
+            //tim trong bảng config xem có dòng nào để lấy ra template
+            var printConfig = await _printTemplateConfigService.SearchQuery(x => x.Type == (res.Type == "order" ? "tmp_purchase_order" : "tmp_purchase_refund") && x.IsDefault)
+                .Include(x => x.PrintPaperSize)
+                .Include(x => x.PrintTemplate)
+                .FirstOrDefaultAsync();
+
+            PrintTemplate template = printConfig != null ? printConfig.PrintTemplate : null;
+            PrintPaperSize paperSize = printConfig != null ? printConfig.PrintPaperSize : null;
+            if (template == null)
+            {
+                //tìm template mặc định sử dụng chung cho tất cả chi nhánh, sử dụng bảng IRModelData hoặc bảng IRConfigParameter
+                template = await _modelDataService.GetRef<PrintTemplate>(res.Type == "order" ? "base.print_template_purchase_order" : "base.print_template_purchase_refund");
+                if (template == null)
+                    throw new Exception("Không tìm thấy mẫu in mặc định");
+            }
+
+            var result = await _printTemplateService.GeneratePrintHtml(template, new List<Guid>() { id }, paperSize);
+            return Ok(new PrintData() { html = result });
         }
     }
 }

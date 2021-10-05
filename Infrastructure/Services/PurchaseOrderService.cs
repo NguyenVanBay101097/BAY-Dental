@@ -755,7 +755,7 @@ namespace Infrastructure.Services
             {
                 Id = x.Id,
                 Name = x.Name,
-                Date = x.DateOrder,
+                DateOrder = x.DateOrder,
                 Note = x.Notes,
                 Company = x.Company != null ? new CompanyPrintVM
                 {
@@ -776,7 +776,7 @@ namespace Infrastructure.Services
                 CreatedById = x.CreatedById
             }).FirstOrDefaultAsync();
 
-            purchaseOrder.Lines = await lineObj.SearchQuery(x=> x.OrderId == purchaseOrder.Id).Select(s => new PurchaseOrderLinePrintVm
+            purchaseOrder.OrderLines = await lineObj.SearchQuery(x=> x.OrderId == purchaseOrder.Id).Select(s => new PurchaseOrderLinePrintVm
             {
                 Sequence = s.Sequence,
                 Name = s.Name,

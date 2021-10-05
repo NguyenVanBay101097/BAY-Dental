@@ -252,7 +252,10 @@ export class SaleDashboardReportFormComponent implements OnInit {
     filter.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
     filter.companyId = this.companyId ? this.companyId : '';
     filter.groupBy = this.groupBy;
-    this.revenueReportService.getRevenueReport(filter).subscribe((result: any) => {
+    // this.revenueReportService.getRevenueReport(filter).subscribe((result: any) => {
+    //   this.revenues = result;
+    // });   
+    this.dashboardReportService.getRevenueChartReport(filter).subscribe((result: any) => {
       this.revenues = result;
     });
   }

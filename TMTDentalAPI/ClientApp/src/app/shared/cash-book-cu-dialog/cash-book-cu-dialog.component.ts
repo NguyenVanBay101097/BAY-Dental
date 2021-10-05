@@ -397,7 +397,7 @@ export class CashBookCuDialogComponent implements OnInit {
                 animation: { type: "fade", duration: 400 },
                 type: { style: "success", icon: true },
               });
-              
+
               if (print) {
                 this.printPhieu(this.id);
               }
