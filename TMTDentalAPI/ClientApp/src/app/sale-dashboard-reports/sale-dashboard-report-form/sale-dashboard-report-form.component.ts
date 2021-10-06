@@ -90,6 +90,10 @@ export class SaleDashboardReportFormComponent implements OnInit {
   dataRevenues: any[];
   dataNoTreatment: any[];
   dataCustomer: any[];
+  parentSubject: Subject<any> = new Subject();
+  parentSubjectObj = {
+    'groupby': this.groupBy
+  }
   // startDate: any = {};
   // endDate: any = {};
   currentYear = new Date().getFullYear();
@@ -244,6 +248,8 @@ export class SaleDashboardReportFormComponent implements OnInit {
     filter.groupBy = this.groupBy;
     this.cashBookService.getChartReport(filter).subscribe((result: any) => {
       this.cashBooks = result;
+      this.parentSubjectObj['cashBooks'] = this.cashBooks;
+      this.emitSubject();
     });
   }
 
@@ -258,6 +264,8 @@ export class SaleDashboardReportFormComponent implements OnInit {
     // });   
     this.dashboardReportService.getRevenueChartReport(filter).subscribe((result: any) => {
       this.revenues = result;
+      this.parentSubjectObj['revenues'] = this.revenues;
+      this.emitSubject();
     });
   }
 
@@ -274,6 +282,8 @@ export class SaleDashboardReportFormComponent implements OnInit {
       );
     })).subscribe((result) => {
       this.dataRevenues = result.map(x => x.total);
+      this.parentSubjectObj['dataRevenues'] = this.dataRevenues;
+      this.emitSubject();
     });
   }
 
@@ -291,6 +301,8 @@ export class SaleDashboardReportFormComponent implements OnInit {
       );
     })).subscribe((result) => {
       this.dataCashBooks = result.map(x => x.total);
+      this.parentSubjectObj['dataCashBooks'] = this.dataCashBooks;
+      this.emitSubject();
     });
   }
 
@@ -305,6 +317,8 @@ export class SaleDashboardReportFormComponent implements OnInit {
       .subscribe(
         (res) => {
           this.totalDataCashBook = res;
+          this.parentSubjectObj['totalDataCashBook'] = this.totalDataCashBook;
+          this.emitSubject();
           this.loading = false;
         },
         (err) => {
@@ -424,6 +438,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
       this.dateTo = this.monthEnd;
     }
 
+    this.parentSubjectObj['groupby'] = this.groupBy;
     this.loadDataCashbookChartApi();
     this.loadDataRevenueChartApi();
   }
@@ -431,6 +446,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
   onSearchDateChange(e) {
     this.dateFrom = e.dateFrom || '';
     this.dateTo = e.dateTo || '';
+    this.parentSubjectObj = Object.create({});
     // this.startDate = new Date(this.dateFrom);
     // this.endDate = new Date(this.dateTo);
     this.loadDataCashbookChartApi();
@@ -577,6 +593,13 @@ export class SaleDashboardReportFormComponent implements OnInit {
         break;
       default:
         break;
+    }
+  }
+
+  emitSubject() {
+    this.parentSubjectObj['groupby'] = this.groupBy
+    if (_.size(this.parentSubjectObj) == 6) {
+      this.parentSubject.next(this.parentSubjectObj);
     }
   }
 

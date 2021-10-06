@@ -331,17 +331,14 @@
         </div>
         <div class="o_group mb-2 bg-white">
             <div class="border-group">
-                <app-sale-dashboard-invoice-report [revenues]="revenues" [dataRevenues]="dataRevenues"
-                    [cashBooks]="cashBooks" [dataCashBooks]="dataCashBooks" [totalDataCashBook]="totalDataCashBook"
-                    [groupby]="groupBy">
+                <app-sale-dashboard-invoice-report [parentSubject]="parentSubject">
                 </app-sale-dashboard-invoice-report>
             </div>
         </div>
         <div class="o_group mb-2">
             <div class="o_group o_group_col_12">
                 <div class="border-group">
-                    <app-sale-dashboard-cashbook-report [cashBooks]="cashBooks" [dataCashBooks]="dataCashBooks"
-                        [totalDataCashBook]="totalDataCashBook" [groupby]="groupBy">
+                    <app-sale-dashboard-cashbook-report [parentSubject]="parentSubject">
                     </app-sale-dashboard-cashbook-report>
                 </div>
             </div>

@@ -5,6 +5,7 @@ import { IntlService, load } from '@progress/kendo-angular-intl';
 import { CashBookReportFilter, CashBookReportItem, CashBookService } from 'src/app/cash-book/cash-book.service';
 import { ChartOptions, ChartType } from 'chart.js';
 import { Label, SingleDataSet } from 'ng2-charts';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-sale-dashboard-cashbook-report',
@@ -12,10 +13,12 @@ import { Label, SingleDataSet } from 'ng2-charts';
   styleUrls: ['./sale-dashboard-cashbook-report.component.css']
 })
 export class SaleDashboardCashbookReportComponent implements OnInit {
-  @Input() groupby: string;
-  @Input() cashBooks: any;
-  @Input() dataCashBooks: any;
-  @Input() totalDataCashBook: any;
+  groupby: string;
+  cashBooks: any;
+  dataCashBooks: any;
+  totalDataCashBook: any;
+  @Input() parentSubject: Subject<any>;
+
   // @Input() dateFrom: any;
   // @Input() dateTo: any;
   cashBookData: CashBookReportItem[] = [];
@@ -44,13 +47,23 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
     private intlService: IntlService) { }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.loadDataApi();
-    this.loadChartData();
-    this.loadChartOption();
+    // this.loadDataApi();
+    // this.loadChartData();
+    // this.loadChartOption();
   }
 
   ngOnInit() {
-    this.loadDataApi();
+    this.parentSubject.subscribe(event => {
+      this.groupby = event['groupby'];
+      this.cashBooks = event['cashBooks'];
+      this.dataCashBooks = event['dataCashBooks'];
+      this.totalDataCashBook = event['totalDataCashBook'];
+
+      this.loadDataApi();
+      this.loadChartData();
+      this.loadChartOption();
+    })
+    // this.loadDataApi();
   }
 
   loadChartOption() {

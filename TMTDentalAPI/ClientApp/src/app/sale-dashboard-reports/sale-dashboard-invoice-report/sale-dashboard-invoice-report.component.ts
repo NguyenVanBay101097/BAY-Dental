@@ -12,16 +12,15 @@ import { Subject } from 'rxjs';
   templateUrl: './sale-dashboard-invoice-report.component.html',
   styleUrls: ['./sale-dashboard-invoice-report.component.css']
 })
-export class SaleDashboardInvoiceReportComponent implements AfterViewInit {
-  @Input() groupby: string;
-  @Input() revenues: any[] = [];
-  @Input() cashBooks: any;
-  @Input() dataRevenues: any[] = [];
-  @Input() dataCashBooks: any;
-  @Input() totalDataCashBook: any;
+export class SaleDashboardInvoiceReportComponent implements AfterViewInit, OnInit {
+ groupby: string;
+ revenues: any[] = [];
+ cashBooks: any;
+ dataRevenues: any[] = [];
+ dataCashBooks: any;
+ totalDataCashBook: any;
 
   @Input() parentSubject: Subject<any>;
-
   // @Input() dateFrom: any;
   // @Input() dateTo: any;
   barChart: any;
@@ -45,17 +44,35 @@ export class SaleDashboardInvoiceReportComponent implements AfterViewInit {
   defaultDataSet = [{ x: '', y: 0 }];
 
   constructor(private revenueReportService: AccountInvoiceReportService,
-    private intlService: IntlService) { }
+    private intlService: IntlService,
+    ) { }
   ngAfterViewInit(): void {
     // this.barChartMethod();
   }
 
+  ngOnInit(){
+    this.parentSubject.subscribe(event => {
+      this.groupby = event['groupby'];
+      this.revenues = event['revenues'];
+      this.cashBooks = event['cashBooks'];
+      this.dataRevenues = event['dataRevenues'];
+      this.dataCashBooks = event['dataCashBooks'];
+      this.totalDataCashBook = event['totalDataCashBook'];
+
+      this.loadRevenueSeries();
+      this.loadDataCashbookSeries();
+      this.loadChartData();
+      this.loadChartOption();
+    });
+   
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
-    this.loadRevenueSeries();
-    this.loadDataCashbookSeries();
-    // this.barChartMethod();
-    this.loadChartData();
-    this.loadChartOption();
+    // this.loadRevenueSeries();
+    // this.loadDataCashbookSeries();
+    // // this.barChartMethod();
+    // this.loadChartData();
+    // this.loadChartOption();
   }
 
   loadRevenueSeries() {
