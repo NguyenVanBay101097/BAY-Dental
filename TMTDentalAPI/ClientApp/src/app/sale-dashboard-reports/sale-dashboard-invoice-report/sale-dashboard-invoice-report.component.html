@@ -1,9 +1,17 @@
-<h4 class="ml-3 my-2 title-header">Doanh thu</h4>
+<div style="position: relative; height:320px;">
+    <canvas baseChart
+      [datasets]="barChartData"
+      [options]="barChartOptions"
+      [chartType]="'bar'">
+    </canvas>
+  </div>
+
+<!-- <h4 class="ml-3 my-2 title-header">Doanh thu</h4>
 <div class="chart">
     <canvas baseChart [chartType]="'bar'" [datasets]="dataSet" [options]="options"></canvas>
-</div>
+</div> -->
 
-
+<!-- 
 <div class="container-fluid pb-4">
     <div class="row">
         <div class="col">
@@ -47,4 +55,4 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->

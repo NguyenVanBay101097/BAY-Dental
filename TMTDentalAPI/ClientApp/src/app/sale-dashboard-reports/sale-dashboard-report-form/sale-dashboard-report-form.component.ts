@@ -11,7 +11,7 @@ import { debounceTime, map, switchMap, tap, groupBy } from 'rxjs/operators';
 import { AccountCommonPartnerReport, AccountCommonPartnerReportSearch, AccountCommonPartnerReportSearchV2, AccountCommonPartnerReportService, ReportPartnerDebitReq } from 'src/app/account-common-partner-reports/account-common-partner-report.service';
 import { AccountFinancialReportBasic, AccountFinancialReportService } from 'src/app/account-financial-report/account-financial-report.service';
 import { AccoutingReport, ReportFinancialService } from 'src/app/account-financial-report/report-financial.service';
-import { AccountInvoiceReportService, RevenueReportFilter } from 'src/app/account-invoice-reports/account-invoice-report.service';
+import { AccountInvoiceReportService, RevenueReportFilter, RevenueTimeReportPar } from 'src/app/account-invoice-reports/account-invoice-report.service';
 import { AccountReportGeneralLedgerService, ReportCashBankGeneralLedger } from 'src/app/account-report-general-ledgers/account-report-general-ledger.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { CashBookReportFilter, CashBookService, CashBookSummarySearch, SumaryCashBookFilter } from 'src/app/cash-book/cash-book.service';
@@ -86,7 +86,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
   cashBooks: any[];
   dataCashBooks: any[];
   totalDataCashBook: any;
-  revenues: any[];
+  revenues: any[] = [];
   dataRevenues: any[];
   dataNoTreatment: any[];
   dataCustomer: any[];
@@ -137,6 +137,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
   monthFrom = new Date(this.currentYear, 0, 1);
   monthTo = new Date(this.currentYear, 11, 1);
+  chartTimeUnit = 'day';
 
   constructor(
     private partnerService: PartnerService,
@@ -254,19 +255,34 @@ export class SaleDashboardReportFormComponent implements OnInit {
   }
 
   loadDataRevenueChartApi() {
-    var filter = new RevenueReportFilter();
-    filter.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
-    filter.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
-    filter.companyId = this.companyId ? this.companyId : '';
-    filter.groupBy = this.groupBy;
+    // var filter = new RevenueReportFilter();
+    // filter.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
+    // filter.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
+    // filter.companyId = this.companyId ? this.companyId : '';
+    // filter.groupBy = this.groupBy;
     // this.revenueReportService.getRevenueReport(filter).subscribe((result: any) => {
     //   this.revenues = result;
     // });   
-    this.dashboardReportService.getRevenueChartReport(filter).subscribe((result: any) => {
-      this.revenues = result;
-      this.parentSubjectObj['revenues'] = this.revenues;
-      this.emitSubject();
-    });
+    // this.dashboardReportService.getRevenueChartReport(filter).subscribe((result: any) => {
+    //   this.revenues = result;
+    //   this.parentSubjectObj['revenues'] = this.revenues;
+    //   this.emitSubject();
+    // });
+
+    var val = new RevenueTimeReportPar();
+    val.companyId = val.companyId || '';
+    val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
+    val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
+
+    if (this.groupBy == 'groupby:month') {
+      this.revenueReportService.getRevenueTimeByMonth(val).subscribe((result: any) => {
+        this.revenues = result;
+      });
+    } else {
+      this.revenueReportService.getRevenueTimeReport(val).subscribe((result: any) => {
+        this.revenues = result;
+      });
+    }
   }
 
   loadDataRevenueApi() {
@@ -432,10 +448,12 @@ export class SaleDashboardReportFormComponent implements OnInit {
       let dateTo = new Date(this.currentYear, 11, 31);
       this.dateFrom = dateFrom;
       this.dateTo = dateTo;
+      this.chartTimeUnit = 'month';
     }
     else {
       this.dateFrom = this.monthStart;
       this.dateTo = this.monthEnd;
+      this.chartTimeUnit = 'day';
     }
 
     this.parentSubjectObj['groupby'] = this.groupBy;

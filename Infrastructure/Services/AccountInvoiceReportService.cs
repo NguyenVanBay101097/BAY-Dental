@@ -288,6 +288,28 @@ namespace Infrastructure.Services
             return res;
         }
 
+        public async Task<IEnumerable<RevenueTimeReportDisplay>> GetRevenueTimeByMonth(RevenueTimeReportPar val)
+        {
+            var query = (GetRevenueReportQuery(new RevenueReportQueryCommon(val.DateFrom, val.DateTo, val.CompanyId)))
+                            .GroupBy(x => new { 
+                                Month = x.InvoiceDate.Value.Month,
+                                Year = x.InvoiceDate.Value.Year
+                            });
+
+            var res = await query.Select(x => new RevenueTimeReportDisplay
+            {
+                InvoiceDate = new DateTime(x.Key.Year, x.Key.Month, 1),
+                PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal)),
+                CompanyId = val.CompanyId,
+                DateFrom = val.DateFrom,
+                DateTo = val.DateTo
+            }).ToListAsync();
+
+            res = res.OrderByDescending(z => z.InvoiceDate.Value).ToList();
+
+            return res;
+        }
+
         public async Task<IEnumerable<RevenueServiceReportDisplay>> GetRevenueServiceReport(RevenueServiceReportPar val)
         {
             var query = GetRevenueReportQuery(new RevenueReportQueryCommon(val.DateFrom, val.DateTo, val.CompanyId));

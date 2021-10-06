@@ -1,24 +1,27 @@
 import { KeyValue } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { AccountInvoiceReportService, RevenueReportFilter, RevenueReportItem } from 'src/app/account-invoice-reports/account-invoice-report.service';
 import { CashBookReportItem } from 'src/app/cash-book/cash-book.service';
 import { RevenueReportService } from 'src/app/revenue-report/revenue-report.service';
-import * as Chart from 'chart.js';
 import { Subject } from 'rxjs';
+import { Label } from 'ng2-charts';
+import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
 
 @Component({
   selector: 'app-sale-dashboard-invoice-report',
   templateUrl: './sale-dashboard-invoice-report.component.html',
   styleUrls: ['./sale-dashboard-invoice-report.component.css']
 })
-export class SaleDashboardInvoiceReportComponent implements AfterViewInit, OnInit {
- groupby: string;
- revenues: any[] = [];
- cashBooks: any;
- dataRevenues: any[] = [];
- dataCashBooks: any;
- totalDataCashBook: any;
+export class SaleDashboardInvoiceReportComponent implements AfterViewInit, OnInit, OnChanges {
+  groupby: string;
+  @Input() revenues: any[];
+  @Input() timeUnit: any;
+  cashBooks: any;
+  dataRevenues: any[] = [];
+  dataCashBooks: any;
+  totalDataCashBook: any;
 
   @Input() parentSubject: Subject<any>;
   // @Input() dateFrom: any;
@@ -40,39 +43,117 @@ export class SaleDashboardInvoiceReportComponent implements AfterViewInit, OnIni
   data: any = {};
   options: any = {};
   maxTicks: number = 11;
-  dataSet: any[] = [];
+  // dataSet: any[] = [];
+  dataSet: any[] = [
+    {
+      data: [
+        { x: new Date(2021, 10, 2), y: 1 },
+        { x: new Date(2021, 10, 6), y: 1 },
+        { x: new Date(2021, 10, 28), y: 2 }
+      ],
+      label: 'Doanh thu',
+      backgroundColor: 'rgba(35, 149, 255, 1)',
+      hoverBackgroundColor: 'rgba(35, 149, 255, 0.8)',
+      hoverBorderColor: 'rgba(35, 149, 255, 1)'
+    },
+  ];
   defaultDataSet = [{ x: '', y: 0 }];
+
+  public barChartOptions: ChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    title: {
+      text: 'BIỂU ĐỒ DOANH THU',
+      display: true,
+      fontSize: 16,
+    },
+    legend: {
+      display: false
+    },
+    tooltips: {
+      mode: 'index',
+      callbacks: {
+        label: function (tooltipItems, data) {
+          return data.datasets[tooltipItems.datasetIndex].label + ': ' + tooltipItems.yLabel.toLocaleString();
+        }
+      }
+    },
+    // We use these empty structures as placeholders for dynamic theming.
+    scales: {
+      xAxes: [{
+        offset: true,
+        distribution: 'linear',
+        type: 'time',
+        time: {
+          tooltipFormat: 'DD/MM/YYYY',
+          displayFormats: {
+            'day': 'DD/MM',
+            'month': 'MM/YYYY',
+          },
+          unit: 'day'
+        },
+        // ticks: {
+        //   maxTicksLimit: this.maxTicks
+        // }
+      }],
+      yAxes: [{
+        ticks: {
+          beginAtZero: true,
+        }
+      }],
+    },
+  };
+
+  public barChartData: ChartDataSets[] = [
+    {
+      data: [],
+      label: 'Doanh thu',
+      backgroundColor: 'rgba(35, 149, 255, 1)',
+      hoverBackgroundColor: 'rgba(35, 149, 255, 0.8)',
+      hoverBorderColor: 'rgba(35, 149, 255, 1)'
+    },
+  ];
+
+  @ViewChild(BaseChartDirective, { static: true }) private chart;
 
   constructor(private revenueReportService: AccountInvoiceReportService,
     private intlService: IntlService,
-    ) { }
+  ) { }
   ngAfterViewInit(): void {
-    // this.barChartMethod();
   }
 
-  ngOnInit(){
-    this.parentSubject.subscribe(event => {
-      this.groupby = event['groupby'];
-      this.revenues = event['revenues'];
-      this.cashBooks = event['cashBooks'];
-      this.dataRevenues = event['dataRevenues'];
-      this.dataCashBooks = event['dataCashBooks'];
-      this.totalDataCashBook = event['totalDataCashBook'];
+  ngOnInit() {
+    // this.parentSubject.subscribe(event => {
+    //   this.groupby = event['groupby'];
+    //   this.revenues = event['revenues'];
+    //   this.cashBooks = event['cashBooks'];
+    //   this.dataRevenues = event['dataRevenues'];
+    //   this.dataCashBooks = event['dataCashBooks'];
+    //   this.totalDataCashBook = event['totalDataCashBook'];
 
-      this.loadRevenueSeries();
-      this.loadDataCashbookSeries();
-      this.loadChartData();
-      this.loadChartOption();
-    });
-   
+    //   this.loadRevenueSeries();
+    //   this.loadDataCashbookSeries();
+    //   this.loadChartData();
+    //   this.loadChartOption();
+    // });
+
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // this.loadRevenueSeries();
-    // this.loadDataCashbookSeries();
-    // // this.barChartMethod();
-    // this.loadChartData();
-    // this.loadChartOption();
+    if (changes['revenues'] && !changes['revenues'].firstChange) {
+      this.barChartData[0].data = this.revenues.map(item => {
+        return {
+          x: new Date(item.invoiceDate),
+          y: item.priceSubTotal
+        }
+      });
+
+      this.barChartOptions.scales.xAxes[0].time.unit = this.timeUnit;
+      this.barChartOptions.scales.xAxes[0].time.tooltipFormat = this.timeUnit == 'day' ? 'DD/MM/YYYY' : 'MM/YYYY';
+      setTimeout(() => {
+        this.chart.refresh();
+      }, 10);
+    }
   }
 
   loadRevenueSeries() {
