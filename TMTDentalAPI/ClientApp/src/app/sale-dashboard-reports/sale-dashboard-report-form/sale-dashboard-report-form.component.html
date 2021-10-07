@@ -35,7 +35,7 @@
                 <div class="o_aggregate_col o_group_col_2">
                     <div class="o_aggregate">
                         <h5>Quỹ tiền mặt</h5>
-                        <div class="o_value text-success">{{(moneyCash ? moneyCash : 0) | number}}</div>
+                        <div class="o_value text-success">{{summaryReport?.cashTotal || 0 | number}}</div>
                         <div class="link-details">
                             <a (click)="redirectTo('cash-book-cash')">Chi tiết</a>
                         </div>
@@ -44,7 +44,7 @@
                 <div class="o_aggregate_col o_group_col_2">
                     <div class="o_aggregate">
                         <h5>Quỹ ngân hàng</h5>
-                        <div class="o_value text-primary"> {{(moneyBank ? moneyBank : 0) | number}}</div>
+                        <div class="o_value text-primary"> {{summaryReport?.bankTotal || 0 | number}}</div>
                         <div class="link-details">
                             <a (click)="redirectTo('cash-book-bank')">Chi tiết</a>
                         </div>
@@ -53,7 +53,7 @@
                 <div class="o_aggregate_col o_group_col_2">
                     <div class="o_aggregate">
                         <h5>Công nợ phải trả</h5>
-                        <div class="o_value text-danger">{{totalDebitNCC | number }}</div>
+                        <div class="o_value text-danger">{{summaryReport?.payableTotal || 0 | number }}</div>
                         <div class="link-details">
                             <a (click)="redirectTo('ncc-debit-report')">Chi tiết</a>
                         </div>
@@ -62,7 +62,7 @@
                 <div class="o_aggregate_col o_group_col_2">
                     <div class="o_aggregate ">
                         <h5>Công nợ phải thu</h5>
-                        <div class="o_value text-primary">{{totalDebitCustomer | number }}</div>
+                        <div class="o_value text-primary">{{summaryReport?.debtTotal || 0 | number }}</div>
                         <div class="link-details">
                             <a (click)="redirectTo('customer-debit-report')">Chi tiết</a>
                         </div>
@@ -71,7 +71,7 @@
                 <div class="o_aggregate_col o_group_col_2">
                     <div class="o_aggregate ">
                         <h5>Dự kiến thu</h5>
-                        <div class="o_value text-success">{{sumRevenue || 0 | number }}</div>
+                        <div class="o_value text-success">{{summaryReport?.expectTotal || 0 | number }}</div>
                         <div class="link-details">
                             <a (click)="redirectTo('account-invoice-reports')">Chi tiết</a>
                         </div>
@@ -101,15 +101,15 @@
         </div>
         <div class="o_group mb-2 bg-white">
             <div class="border">
-                <app-sale-dashboard-invoice-report [revenues]="revenues" [timeUnit]="chartTimeUnit">
+                <app-sale-dashboard-invoice-report [revenues]="revenues" [timeUnit]="chartTimeUnit" [cashBooks]="cashBooks" [revenueActualReportData]="revenueActualReportData">
                 </app-sale-dashboard-invoice-report>
             </div>
         </div>
         <div class="o_group mb-2">
             <div class="o_group o_group_col_12">
                 <div class="border-group">
-                    <!-- <app-sale-dashboard-cashbook-report [parentSubject]="parentSubject">
-                    </app-sale-dashboard-cashbook-report> -->
+                    <app-sale-dashboard-cashbook-report [cashBooks]="cashBooks" [timeUnit]="chartTimeUnit" [thuChiReportData]="thuChiReportData">
+                    </app-sale-dashboard-cashbook-report>
                 </div>
             </div>
         </div>
