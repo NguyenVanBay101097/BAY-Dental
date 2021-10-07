@@ -182,19 +182,19 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Số lượng khách hàng mới của phường/xã
         /// </summary>
-        public decimal PartnerNewCount { get; set; }
+        public decimal? PartnerNewCount { get; set; }
         /// <summary>
         /// Số lượng khách hàng cũ của phường/xã
         /// </summary>
-        public decimal PartnerOldCount { get; set; }
+        public decimal? PartnerOldCount { get; set; }
         /// <summary>
         /// Doanh thu từ khách hàng mới của phường/xã
         /// </summary>
-        public decimal PartnerNewRevenue { get; set; }
+        public decimal? PartnerNewRevenue { get; set; }
 
         /// <summary>
         /// Doanh thu từ khách hàng cũ của phường/xã
         /// </summary>
-        public decimal PartnerOldRevenue { get; set; }
+        public decimal? PartnerOldRevenue { get; set; }
     }
 }

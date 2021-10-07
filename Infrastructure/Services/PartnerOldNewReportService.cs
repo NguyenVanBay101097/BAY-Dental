@@ -4,13 +4,11 @@ using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -207,49 +205,54 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<PartnerOldNewReportByWard>> ReportByWard(PartnerOldNewReportByWardReq val)
         {
-            var saleOrderObj = GetService<ISaleOrderService>();
-            var query = saleOrderObj.SearchQuery(x => x.State != "draft");
-            var queryWithCompany = query;
 
+            var userObj = GetService<IUserService>();
+            var company_ids = userObj.GetListCompanyIdsAllowCurrentUser();
+            var query = _context.PartnerOldNewInSaleOrders.Where(x => company_ids.Contains(x.CompanyId));
             if (val.CompanyId.HasValue)
-            {
-                query = query.Where(x => x.CompanyId == val.CompanyId);
-                queryWithCompany = query;
-            }
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+
             if (!string.IsNullOrEmpty(val.CityCode))
                 query = query.Where(x => x.Partner.CityCode == val.CityCode);
             if (!string.IsNullOrEmpty(val.DistrictCode))
                 query = query.Where(x => x.Partner.DistrictCode == val.DistrictCode);
             if (val.DateFrom.HasValue)
-                query = query.Where(x => x.DateOrder.Date >= val.DateFrom.Value.AbsoluteBeginOfDate());
+                query = query.Where(x => x.DateOrder >= val.DateFrom.Value);
+
             if (val.DateTo.HasValue)
-                query = query.Where(x => x.DateOrder.Date <= val.DateTo.Value.AbsoluteEndOfDate());
+                query = query.Where(x => x.DateOrder <= val.DateTo.Value);
 
-            var querySub = query.Select(x => new
+            //group by theo wardcode, wardname, những dòng isNew true là số khách mới, những dòng isnew false là số khách quay lại, count distince
+            var result = await query.GroupBy(x => new
             {
-                Id = x.Id,
-                IsNew = !queryWithCompany.Any(z => z.PartnerId == x.PartnerId && z.DateOrder < x.DateOrder)
-            });
+                WardCode = x.Partner.WardCode,
+                WardName = x.Partner.WardName,
+                PartnerId = x.PartnerId,
+                IsNew = x.IsNew
+            }).Select(x => new
+            {
+                WardCode = x.Key.WardCode,
+                WardName = x.Key.WardName,
+                IsNew = x.Key.IsNew,
+                PartnerCount = x.Sum(s => 1),
+                PartnerRevenue = x.Sum(s => s.TotalPaid),
+            })
+            .GroupBy(x => new
+            {
+                WardCode = x.WardCode,
+                WardName = x.WardName,
+            })
+            .Select(x => new PartnerOldNewReportByWard()
+            {
+                WardCode = x.Key.WardCode,
+                WardName = x.Key.WardName,
+                PartnerNewCount = x.Sum(s => s.IsNew ? s.PartnerCount : 0),
+                PartnerNewRevenue = x.Sum(s => s.IsNew ? s.PartnerRevenue : 0),
+                PartnerOldCount = x.Sum(s => !s.IsNew ? s.PartnerCount : 0),
+                PartnerOldRevenue = x.Sum(s => !s.IsNew ? s.PartnerRevenue : 0),
+            })
+            .ToListAsync();
 
-            var querySubNew = query.Join(querySub.Where(x => x.IsNew), o => o.Id, s => s.Id, (o, s) => o);
-            var querySubOld = query.Join(querySub.Where(x => !x.IsNew), o => o.Id, s => s.Id, (o, s) => o);
-
-            var list = await query.Include(x => x.Partner).ToListAsync();
-
-            var result = list.AsEnumerable().GroupBy(x => new { WardCode = x.Partner.WardCode, WardName = x.Partner.WardName })
-                    .Select(x => new PartnerOldNewReportByWard()
-                    {
-                        WardCode = !string.IsNullOrEmpty(x.Key.WardCode) ? x.Key.WardCode : "Không xác định",
-                        WardName = !string.IsNullOrEmpty(x.Key.WardName) ? x.Key.WardName : "Không xác định",
-                        PartnerNewCount = querySubNew.Where(s => s.Partner.WardCode == x.Key.WardCode)
-                            .GroupBy(s => s.PartnerId).Select(s => s.Key).Count(),
-                        PartnerOldCount = querySubOld.Where(s => s.Partner.WardCode == x.Key.WardCode)
-                            .GroupBy(x => x.PartnerId).Select(x => x.Key).Count(),
-                        PartnerOldRevenue = querySubNew.Where(s => s.Partner.WardCode == x.Key.WardCode)
-                            .Sum(z => z.TotalPaid ?? 0),
-                        PartnerNewRevenue = querySubOld.Where(s => s.Partner.WardCode == x.Key.WardCode)
-                            .Sum(z => z.TotalPaid ?? 0),
-                    }).OrderByDescending(x => x.WardName).ToList();
             return result;
         }
 
