@@ -54,7 +54,7 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
     scales: {
       xAxes : [{
           ticks : {   
-              min : 0
+              min : 0,
           }
       }]
   }
@@ -93,10 +93,21 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
     scales: {
       xAxes : [{
           ticks : {   
-              min : 0
+              min : 0,
+              callback: function(value, index, values) {
+                return Intl.NumberFormat().format(value);
+            }
           }
       }]
-  }
+    },tooltips: {
+      enabled: true,
+      callbacks: {
+        label: function(context) {
+          return Intl.NumberFormat().format(context.value);
+        }
+      }
+
+    }
   }
 
   barChartData_PartnerRevenue = {
