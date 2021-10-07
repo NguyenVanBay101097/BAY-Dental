@@ -25,7 +25,7 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
       fontSize: 16,
     },
     legend: {
-      display: false
+      position: 'bottom'
     },
     tooltips: {
       mode: 'index',
@@ -68,26 +68,13 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
       backgroundColor: 'rgba(35, 149, 255, 1)',
       hoverBackgroundColor: 'rgba(35, 149, 255, 0.8)',
       hoverBorderColor: 'rgba(35, 149, 255, 1)',
-      order: 2
     },
     {
       label: 'Chi',
       data: [],
       backgroundColor: 'rgba(40, 167, 69, 1)',
       hoverBackgroundColor: 'rgba(40, 167, 69, 0.8)',
-      hoverBorderColor: 'rgba(40, 167, 69, 1)',
-      order: 2
-    },
-    {
-      label: 'Tồn sổ quỹ',
-      type: 'line',
-      data: [],
-      borderColor: '#b21f2d',
-      fill: false,
-      backgroundColor: '#bd2130',
-      hoverBackgroundColor: '#bb2d3b',
-      hoverBorderColor: '#b02a37',
-      order: 1
+      hoverBorderColor: 'rgba(40, 167, 69, 1)'
     }
   ];
 

@@ -23,7 +23,7 @@ export class SaleDashboardInvoiceReportComponent implements OnInit, OnChanges {
       fontSize: 16,
     },
     legend: {
-      display: false
+      position: 'bottom'
     },
     tooltips: {
       mode: 'index',
@@ -46,7 +46,7 @@ export class SaleDashboardInvoiceReportComponent implements OnInit, OnChanges {
             'month': 'MM/YYYY',
           },
           unit: 'day'
-        },
+        }
       }],
       yAxes: [{
         ticks: {
