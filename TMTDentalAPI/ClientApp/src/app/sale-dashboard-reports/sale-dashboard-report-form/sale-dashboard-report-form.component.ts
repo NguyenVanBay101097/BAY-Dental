@@ -81,6 +81,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
   }
 
   changeCompany(e) {
+    console.log(this.companyId);
     this.loadReportAmountTotal();
     this.loadDataRevenueChartApi();
     this.loadDataRevenueApi();
@@ -118,7 +119,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
 
   loadDataRevenueChartApi() {
     var val = new RevenueTimeReportPar();
-    val.companyId = val.companyId || '';
+    val.companyId = this.companyId || '';
     val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
     val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
 

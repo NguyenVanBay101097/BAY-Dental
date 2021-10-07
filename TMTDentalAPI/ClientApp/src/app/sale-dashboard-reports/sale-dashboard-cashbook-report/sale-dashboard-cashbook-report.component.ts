@@ -67,14 +67,16 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
       data: [],
       backgroundColor: 'rgba(35, 149, 255, 1)',
       hoverBackgroundColor: 'rgba(35, 149, 255, 0.8)',
-      hoverBorderColor: 'rgba(35, 149, 255, 1)'
+      hoverBorderColor: 'rgba(35, 149, 255, 1)',
+      order: 2
     },
     {
       label: 'Chi',
       data: [],
       backgroundColor: 'rgba(40, 167, 69, 1)',
       hoverBackgroundColor: 'rgba(40, 167, 69, 0.8)',
-      hoverBorderColor: 'rgba(40, 167, 69, 1)'
+      hoverBorderColor: 'rgba(40, 167, 69, 1)',
+      order: 2
     },
     {
       label: 'Tồn sổ quỹ',
@@ -85,6 +87,7 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
       backgroundColor: '#bd2130',
       hoverBackgroundColor: '#bb2d3b',
       hoverBorderColor: '#b02a37',
+      order: 1
     }
   ];
 

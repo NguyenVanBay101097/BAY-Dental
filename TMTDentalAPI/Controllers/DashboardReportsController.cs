@@ -147,7 +147,7 @@ namespace TMTDentalAPI.Controllers
             var bankTotal = await query.Where(x => x.Journal.Type == "bank" && x.AccountInternalType == "liquidity").SumAsync(x => x.Debit - x.Credit);
             var payableTotal = await query.Where(x => x.AccountInternalType == "payable").SumAsync(x => x.Credit - x.Debit);
             var debtTotal = await query.Where(x => x.Account.Code == "CNKH").SumAsync(x => x.Debit - x.Credit);
-            var expectTotal = await _saleOrderService.SearchQuery(x => (!val.CompanyId.HasValue || x.CompanyId == val.CompanyId)).SumAsync(x => (x.AmountTotal ?? 0) - (x.TotalPaid ?? 0));
+            var expectTotal = await _saleOrderService.SearchQuery(x => (!val.CompanyId.HasValue || x.CompanyId == val.CompanyId) && x.State != "draft").SumAsync(x => (x.AmountTotal ?? 0) - (x.TotalPaid ?? 0));
 
             return Ok(new GetSummaryReportResponse
             {
