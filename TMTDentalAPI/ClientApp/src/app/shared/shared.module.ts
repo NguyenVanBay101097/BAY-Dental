@@ -107,6 +107,7 @@ import { ChartsModule } from 'ng2-charts';
 import { ReceiveAppointmentDialogComponent } from './receive-appointment-dialog/receive-appointment-dialog.component';
 import { WarrantyCuDidalogComponent } from './warranty-cu-didalog/warranty-cu-didalog.component';
 import { LaboWarrantyDetailListComponent } from './labo-warranty-detail-list/labo-warranty-detail-list.component';
+import { MonthRangeFilterDropdownComponent } from './month-range-filter-dropdown/month-range-filter-dropdown.component';
 
 const config: LocaleConfig = {};
 @NgModule({
@@ -208,7 +209,8 @@ const config: LocaleConfig = {};
         AddressDialogComponent,
         ReceiveAppointmentDialogComponent,
         WarrantyCuDidalogComponent,
-        LaboWarrantyDetailListComponent
+        LaboWarrantyDetailListComponent,
+        MonthRangeFilterDropdownComponent
     ],
     exports: [
         ConfirmDialogComponent,
@@ -299,7 +301,9 @@ const config: LocaleConfig = {};
         AddressDialogComponent,
         ReceiveAppointmentDialogComponent,
         WarrantyCuDidalogComponent,
-        LaboWarrantyDetailListComponent
+        LaboWarrantyDetailListComponent,
+        ChartsModule,
+        MonthRangeFilterDropdownComponent
     ],
     imports: [
         NgbModule,

@@ -36,7 +36,7 @@ export class SaleDashboardApCrChartComponent implements OnInit {
 
 
   loadPieDataCustomer() {
-    if(this.dataCustomer){
+    if (this.dataCustomer && this.dataCustomer.some(x => x.count > 0)) {
       this.pieDataCustomer = [];
       for (let i = 0; i < this.dataCustomer.length; i++) {
         this.pieDataCustomer.push({ category: this.dataCustomer[i].text, value: this.dataCustomer[i].count, color: this.dataCustomer[i].text == 'old' ? '#1A6DE3' : '#95C8FF' })

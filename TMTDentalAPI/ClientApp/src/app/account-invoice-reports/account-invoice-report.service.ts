@@ -136,6 +136,10 @@ export class AccountInvoiceReportService {
         return this.http.get<RevenueTimeReportDisplay[]>(this.baseApi + this.apiUrl + "/GetRevenueTimeReportPaged", { params: new HttpParams({ fromObject: val }) });
     }
 
+    getRevenueTimeByMonth(val: any) {
+        return this.http.get<RevenueTimeReportDisplay[]>(this.baseApi + this.apiUrl + "/GetRevenueTimeByMonth", { params: new HttpParams({ fromObject: val }) });
+    }
+
     getRevenueServiceReport(val: any) {
         return this.http.get<RevenueServiceReportDisplay[]>(this.baseApi + this.apiUrl + "/GetRevenueServiceReportPaged", { params: new HttpParams({ fromObject: val }) });
     }
