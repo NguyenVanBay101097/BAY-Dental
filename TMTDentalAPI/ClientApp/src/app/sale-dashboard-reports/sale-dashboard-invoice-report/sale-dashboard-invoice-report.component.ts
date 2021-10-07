@@ -111,7 +111,8 @@ export class SaleDashboardInvoiceReportComponent implements OnInit, OnChanges {
 
       this.barChartData[0].data = revenueData;
 
-      var cashBookData = this.cashBooks.map(item => {
+      var cashBookData = this.cashBooks.sort(function(a, b) { return new Date(a.date).getTime() - new Date(b.date).getTime() })
+      .map(item => {
         return {
           x: new Date(item.date),
           y: item.totalThu

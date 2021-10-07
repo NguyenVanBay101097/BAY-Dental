@@ -100,13 +100,6 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
         }
       });
 
-      this.barChartData[2].data = this.cashBooks.map(item => {
-        return {
-          x: new Date(item.date),
-          y: item.totalAmount
-        }
-      });
-
       this.barChartOptions.scales.xAxes[0].time.unit = this.timeUnit;
       this.barChartOptions.scales.xAxes[0].time.tooltipFormat = this.timeUnit == 'day' ? 'DD/MM/YYYY' : 'MM/YYYY';
       setTimeout(() => {
