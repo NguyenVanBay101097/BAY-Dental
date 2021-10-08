@@ -11,6 +11,8 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { IntlService } from '@progress/kendo-angular-intl';
+import { NotifyService } from 'src/app/shared/services/notify.service';
 
 @Component({
   selector: 'app-partner-customer-labo-orders-component',
@@ -41,6 +43,8 @@ export class PartnerCustomerLaboOrdersComponentComponent implements OnInit {
     private route: ActivatedRoute, private modalService: NgbModal, 
       private printService: PrintService,
       private checkPermissionService: CheckPermissionService,
+      private intlService: IntlService, 
+      private notifyService: NotifyService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -66,6 +70,12 @@ export class PartnerCustomerLaboOrdersComponentComponent implements OnInit {
     val.state = this.state == undefined ? '' : this.state;
     val.customerId = this.customerId || '';
     val.search = this.search || '';
+    if (this.dateExportFrom) {
+      val.dateExportFrom = this.intlService.formatDate(this.dateExportFrom, 'd', 'en-US');
+    }
+    if (this.dateExportTo) {
+      val.dateExportTo = this.intlService.formatDate(this.dateExportTo, 'd', 'en-US');
+    }
     this.laboOrderService.getLaboForSaleOrderLine(val).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
@@ -120,13 +130,13 @@ export class PartnerCustomerLaboOrdersComponentComponent implements OnInit {
 
   printLabo(item: any) {
     this.laboOrderService.getPrint(item.id).subscribe((result: any) => {
-      this.printService.printHtml(result);
+      this.printService.printHtml(result.html);
     });
   }
 
   editItem(item) {
     const modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Cập nhật phiếu labo';
+    modalRef.componentInstance.title = 'Cập nhật phiếu Labo';
     modalRef.componentInstance.id = item.id;
     modalRef.componentInstance.saleOrderLineId = item.saleOrderLineId;
     // modalRef.componentInstance.saleOrderLineLabo = item;
@@ -140,9 +150,10 @@ export class PartnerCustomerLaboOrdersComponentComponent implements OnInit {
   deleteItem(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'md', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Xóa phiếu Labo';
-    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa?';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa phiếu Labo?';
     modalRef.result.then(() => {
       this.laboOrderService.unlink([item.id]).subscribe(() => {
+        this.notifyService.notify("success", "Xóa phiếu Labo thành công");
         this.loadDataFromApi();
       });
     });
@@ -155,7 +166,7 @@ export class PartnerCustomerLaboOrdersComponentComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  checkRole(){
+  checkRole() {
     this.canUpdateSaleOrder = this.checkPermissionService.check(['Basic.SaleOrder.Update']);
     this.canReadLaboWarranty = this.checkPermissionService.check(['Labo.LaboWarranty.Read']);
   }

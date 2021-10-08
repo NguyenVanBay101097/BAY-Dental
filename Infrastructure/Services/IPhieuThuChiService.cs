@@ -25,5 +25,7 @@ namespace Infrastructure.Services
 
         Task<List<PhieuThuChiExportExcel>> GetExportExcel(PhieuThuChiPaged val);
         Task<PrintVM> GetPrint(Guid id);
+
+        Task<IEnumerable<PhieuThuChi>> GetPrintTemplate(IEnumerable<Guid> resIds);
     }
 }

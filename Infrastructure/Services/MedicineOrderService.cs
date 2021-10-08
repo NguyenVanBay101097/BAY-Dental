@@ -601,9 +601,9 @@ namespace Infrastructure.Services
             });
         }
 
-        public async Task<MedicineOrder> GetPrint(Guid id)
+        public async Task<IEnumerable<MedicineOrder>> GetPrint(IEnumerable<Guid> ids)
         {
-            var medicineOrder = await SearchQuery(x => x.Id == id)
+            var medicineOrders = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.MedicineOrderLines).ThenInclude(x => x.ToaThuocLine)
                 .Include(x => x.MedicineOrderLines).ThenInclude(x => x.Product).ThenInclude(x => x.UOM)
                 .Include(x => x.AccountPayment)
@@ -612,9 +612,9 @@ namespace Infrastructure.Services
                 .Include(x => x.Partner)
                 .Include(x => x.ToaThuoc)
                 .Include(x => x.Journal)
-                .FirstOrDefaultAsync();
+                .ToListAsync();
 
-            return medicineOrder;
+            return medicineOrders;
         }
 
         public async Task<MedicineOrderReport> GetReport(MedicineOrderFilterReport val)

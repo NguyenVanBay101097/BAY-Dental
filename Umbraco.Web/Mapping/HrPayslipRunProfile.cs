@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<HrPayslipRun, HrPayslipRunBasic>()
                 .ForMember(x => x.TotalAmount, x => x.MapFrom(s => s.Slips.Sum(m => m.TotalAmount)));
-           
+
             CreateMap<HrPayslipRun, HrPayslipRunDisplay>();
 
             CreateMap<HrPayslipRunDisplay, HrPayslipRun>()
@@ -28,6 +29,9 @@ namespace Umbraco.Web.Mapping
                  .ForMember(x => x.Id, x => x.Ignore())
                 .ForMember(x => x.Company, x => x.Ignore())
                 .ForMember(x => x.Slips, x => x.Ignore());
+
+            CreateMap<HrPayslipRun, HrPayslipRunPrintTemplate>()
+                .ForMember(x => x.DateSalary, x => x.MapFrom(s => s.Date));
         }
     }
 }

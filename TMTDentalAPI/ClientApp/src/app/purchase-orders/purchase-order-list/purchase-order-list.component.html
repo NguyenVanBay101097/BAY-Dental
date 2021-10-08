@@ -40,7 +40,7 @@
         <div class="o_cp_right">
             <div class="o_search_options">
                 <app-date-range-picker-filter [opens]="'left'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
-                <kendo-combobox [data]="stateFilterOptions" [textField]="'text'" [valueField]="'value'" [filterable]="true" (selectionChange)="onStateSelectChange($event)" [placeholder]="'Trạng thái'" class="mr-1">
+                <kendo-combobox [data]="stateFilterOptions" [textField]="'text'" [valueField]="'value'" [filterable]="true" (selectionChange)="onStateSelectChange($event)" [placeholder]="'Trạng thái'" class="mr-1 ml-1">
                 </kendo-combobox>
                 <!-- <app-tmt-option-select-dropdown title="Trạng thái" [options]="stateFilterOptions"
                     (selectChange)="onStateSelectChange($event)">

@@ -15,12 +15,14 @@ import { PartnerReportManagementComponent } from './partner-report-management/pa
 import { PartnerReportOverviewComponent } from './partner-report-overview/partner-report-overview.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PartnerReportSaleOrderComponent } from './partner-report-sale-order/partner-report-sale-order.component';
+import { PartnerAdvanceListReportComponent } from './partner-advance-list-report/partner-advance-list-report.component';
+import { PartnerAdvanceDetailListReportComponent } from './partner-advance-detail-list-report/partner-advance-detail-list-report.component';
 import { PartnerAreaReportComponent } from './partner-area-report/partner-area-report.component';
 import { ChartsModule, ThemeService } from 'ng2-charts';
 import { AccountInvoiceReportService } from '../account-invoice-reports/account-invoice-report.service';
 
 @NgModule({
-  declarations: [AccountCommonCustomerReportListComponent, AccountCommonPartnerReportDetailComponent, AccountCommonPartnerReportListComponent, PartnerDebitListReportComponent, PartnerDebitDetailListReportComponent, PartnerReportManagementComponent, PartnerReportOverviewComponent, PartnerReportSaleOrderComponent, PartnerAreaReportComponent],
+    declarations: [AccountCommonCustomerReportListComponent, AccountCommonPartnerReportDetailComponent, AccountCommonPartnerReportListComponent, PartnerDebitListReportComponent, PartnerDebitDetailListReportComponent, PartnerReportManagementComponent, PartnerReportOverviewComponent, PartnerReportSaleOrderComponent, PartnerAdvanceListReportComponent, PartnerAdvanceDetailListReportComponent, PartnerAreaReportComponent],
   imports: [
     CommonModule,
     AccountCommonPartnerReportsRoutingModule,

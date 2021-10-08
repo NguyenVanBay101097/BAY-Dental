@@ -565,6 +565,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new AccountCommonPartnerReportProfile());
                 mc.AddProfile(new LaboWarrantyProfile());
                 mc.AddProfile(new PrintTemplateConfigProfile());
+                mc.AddProfile(new PrintTemplateProfile());
             };
 
             #endregion

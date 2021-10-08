@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AccountCommonCustomerReportListComponent } from './account-common-customer-report-list/account-common-customer-report-list.component';
+import { PartnerAdvanceListReportComponent } from './partner-advance-list-report/partner-advance-list-report.component';
 import { PartnerAreaReportComponent } from './partner-area-report/partner-area-report.component';
 import { PartnerDebitListReportComponent } from './partner-debit-list-report/partner-debit-list-report.component';
 import { PartnerReportManagementComponent } from './partner-report-management/partner-report-management.component';
@@ -22,6 +23,10 @@ const routes: Routes = [
       {
         path: 'partner-debit',
         component: PartnerDebitListReportComponent
+      },
+      {
+        path: 'partner-advance',
+        component: PartnerAdvanceListReportComponent
       },
       {
         path: 'partner-report-overview',

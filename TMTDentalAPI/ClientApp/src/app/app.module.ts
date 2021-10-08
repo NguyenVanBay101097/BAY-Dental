@@ -29,6 +29,7 @@ import { AppHomeComponent } from './app-home/app-home.component';
 import { AppSidebarModule } from "./layout/sidebar/app-sidebar.module";
 import { AppHeaderModule } from "./layout/header/app-header.module";
 import { MyCustomNgbModule } from "./shared/my-custom-ngb.module";
+import { ThemeService } from "ng2-charts";
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -69,6 +70,7 @@ registerLocaleData(localeVi, "vi");
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [
+    ThemeService,
     JwtInterceptor, // Providing JwtInterceptor allow to inject JwtInterceptor manually into RefreshTokenInterceptor
     {
       provide: HTTP_INTERCEPTORS,
@@ -89,7 +91,8 @@ registerLocaleData(localeVi, "vi");
     },
     { provide: LOCALE_ID, useValue: "vi-VN" },
     { provide: NgbDateParserFormatter, useClass: NgbDateCustomParserFormatter },
-    { provide: ErrorHandler, useClass: MyErrorHandler }
+    { provide: ErrorHandler, useClass: MyErrorHandler },
+    ThemeService
   ],
   bootstrap: [AppComponent],
 })

@@ -26,7 +26,7 @@
     </div>
 </div>
 <div>
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading" (pageChange)="pageChange($event)">
         <div>
             <div *kendoGridDetailTemplate="let dataItem">
                 <app-labo-warranty-detail-list [item]="dataItem" [dateReceiptFrom]="dateReceiptFrom" [dateReceiptTo]="dateReceiptTo"></app-labo-warranty-detail-list>

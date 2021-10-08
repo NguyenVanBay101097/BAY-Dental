@@ -66,13 +66,21 @@ export class LaboWarrantyDetailListComponent implements OnInit {
   }
 
   createNewWarranty() {
-    const modalRef = this.modalService.open(WarrantyCuDidalogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.laboOrderId = this.item.id;
-    modalRef.componentInstance.laboTeeth = this.item.teeth;
+    const date = new Date(this.item.warrantyPeriod);
+    const today = new Date();
+    if (this.item.warrantyPeriod && date < today) {
+        this.notifyService.notify("error", "Labo đã hết hạn bảo hành");
+    } else if (!this.item.dateExport) {
+      this.notifyService.notify("error", "Không thể tạo bảo hành khi chưa xuất Labo cho khách");
+    } else {
+      const modalRef = this.modalService.open(WarrantyCuDidalogComponent, { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.laboOrderId = this.item.id;
+      modalRef.componentInstance.laboTeeth = this.item.teeth;
 
-    modalRef.result.then((res) => {
-      this.loadDataFromApi()
-    }, (err) => { console.log(err) });
+      modalRef.result.then((res) => {
+        this.loadDataFromApi()
+      }, (err) => { console.log(err) });
+    }
   }
 
   editItem(item) {
@@ -102,7 +110,7 @@ export class LaboWarrantyDetailListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  checkRole(){
+  checkRole() {
     this.canAdd = this.checkPermissionService.check(['Labo.LaboWarranty.Create']);
     this.canUpdate = this.checkPermissionService.check(['Labo.LaboWarranty.Update']);
     this.canDelete = this.checkPermissionService.check(['Labo.LaboWarranty.Delete']);

@@ -166,9 +166,9 @@ export class WarrantyCuDidalogComponent implements OnInit {
 
   onSave() {
     this.submitted = true;
+    this.getValueFC('reason') ? this.invalid = false : this.invalid = true;
 
     if (this.myForm.invalid) {
-      this.invalid = true;
       return;
     }
 
@@ -180,6 +180,7 @@ export class WarrantyCuDidalogComponent implements OnInit {
 
   onConfirm() {
     this.submitted = true;
+    this.getValueFC('reason') ? this.invalid = false : this.invalid = true;
 
     if (this.myForm.invalid) {
       return;

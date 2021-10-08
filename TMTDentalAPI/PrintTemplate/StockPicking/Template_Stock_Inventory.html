@@ -1,114 +1,86 @@
-﻿<div>
-    <div class="d-flex mb-2">
-        {{ if company.logo != "" && company.logo != null}}
-        <img class="img-fluid me-3 w-20" src="{{company.logo}}" alt="{{company.name}}">
-        {{ end }}
+﻿<table border="0" cellpadding="5" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="width:100px"><img alt="{{o.company.name}}" class="img-fluid" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
+            <td>
+                <strong>{{o.company.name}}</strong><br />
+                Địa chỉ: {{o.company.address}}<br />
+                ĐT: {{o.company.phone}}<br />
+                Email: {{o.company.email}}
+            </td>
+        </tr>
+    </tbody>
+</table>
 
-        <div>
-            <div class="text-xl font-semibold">{{company.name}}</div>
-            {{if company.address != ""}}
+<h3 style="text-align:center">PHIẾU KIỂM KHO</h3>
 
-            <div>Địa chỉ: {{company.address}}</div>
+<p style="text-align:center">
+    Ngày {{o.date.day}} tháng {{o.date.month}} năm {{o.date.year}}<br />
+    <strong>Số: {{o.name}}</strong>
+</p>
 
-            {{ end }}
+<table border="0" cellpadding="1" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="width:150px"><strong>Ngày kiểm</strong></td>
+            <td>{{o.date | date.to_string '%d/%m/%Y'}}</td>
+            <td style="width:150px"><strong>Ghi Chú</strong></td>
+            <td>{{o.note}}</td>
+        </tr>
+    </tbody>
+</table>
 
-            {{ if company.phone}}
+<p><strong>&nbsp;DANH SÁCH SẢN PHẨM KIỂM KHO</strong></p>
 
-            <div>ĐT: {{company.phone}}</div>
+<table border="1" cellpadding="4" cellspacing="1" style="width:100%">
+    <thead>
+        <tr>
+            <th scope="col" style="width:50px">STT</th>
+            <th scope="col" style="width:80px">Mã sản phẩm</th>
+            <th scope="col" style="width:150px">Sản phẩm</th>
+            <th scope="col" style="width:80px">Đơn vị tính</th>
+            <th scope="col">Tồn kho</th>
+            <th scope="col" style="width:100px">Thực tế</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!--{{for line in o.lines}}-->
+        <tr>
+            <td>{{for.index + 1}}</td>
+            <td>{{line.product?.default_code}}</td>
+            <td>{{line.product?.name}}</td>
+            <td>{{line.product_uom?.name}}</td>
+            <td style="text-align:right; width:100px">{{line.theoretical_qty ?? 0 | math.format "N0"}}</td>
+            <td style="text-align:right">{{line.product_qty ?? 0 | math.format "N0"}}</td>
+        </tr>
+        <!--{{end}}-->
+    </tbody>
+</table>
 
-            {{ end }}
+<table border="0" cellpadding="0" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="width:50%">
+                <div style="text-align:center">
+                    <strong>Nhân viên kiểm kho</strong><br />
+                    <em>(Ký, họ tên)</em><br />
+                    <br />
+                    <br />
+                    <br />
+                    <strong>{{o.created_by?.name | string.upcase}}</strong>
+                </div>
+            </td>
+            <td style="width:50%">
+                <div style="text-align:center">
+                    <strong>Quản lý</strong><br />
+                    <em>(Ký, họ tên)</em><br />
+                    <br />
+                    <br />
+                    &nbsp;
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
 
-            {{if company.email }}
-
-            <div>Email: {{company.email}}</div>
-
-            {{ end }}
-
-        </div>
-    </div>
-    <div class="text-center mb-3">
-        <div class="text-3xl font-semibold">PHIẾU KIỂM KHO</div>
-        <div>Ngày {{date_created.day}} tháng {{date_created.month}} năm {{date_created.year}} </div>
-        <div class="font-semibold">Số: {{name}}</div>
-    </div>
-    <div class="o_form_view mb-4">
-        <div class="d-flex">
-            <table class="o_group o_inner_group col-6">
-                <tbody>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Ngày kiểm
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">{{date_created | date.to_string '%d/%m/%Y'}}</td>
-                    </tr>
-
-                </tbody>
-            </table>
-            <table class="o_group o_inner_group col-6">
-                <tbody>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Ghi Chú
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">{{note ? note : ""}}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div class="mb-1">
-        <h6>
-            DANH SÁCH SẢN PHẨM KIỂM KHO
-        </h6>
-    </div>
-    <table class="table table-sm table-bordered mb-4">
-        <thead>
-            <tr>
-                <th>STT</th>
-                <th>Mã sản phẩm</th>
-                <th>Sản phẩm</th>
-                <th>Đơn vị tính</th>
-                <th class="text-right">Tồn kho</th>
-                <th class="text-right">Thực tế</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!--{{for line in lines}}-->
-            <tr>
-                <td>{{for.index + 1}}</td>
-                <td>{{line.product.default_code}}</td>
-                <td>{{line.product.name}}</td>
-                <td>{{line.product_uom.name}}</td>
-                <td class="text-right">{{line.theoretical_qty ? line.theoretical_qty : 0}}</td>
-                <td class="text-right">{{line.product_qty ? line.product_qty : 0}}</td>
-            </tr>
-            <!--{{end}}-->           
-        </tbody>
-    </table>
-    <div class="d-flex">
-        <div class="col">
-            <div class="text-center">
-                <span class="font-semibold">Nhân viên kiểm kho</span> <br />
-                <i>(Ký, họ tên)</i> <br />
-                <span></span> <br />
-                <span></span> <br />
-                <span></span> <br />
-                <span class="font-semibold">{{created_by_name |  string.upcase}}</span>
-            </div>
-        </div>
-        <div class="col">
-            <div class="text-center">
-                <span class="font-semibold"> Quản lý</span> <br />
-                <i>(Ký, họ tên)</i> <br />
-                <span></span> <br />
-                <span></span> <br />
-                <span></span> <br />
-                <span class="font-semibold"></span>
-            </div>
-        </div>
-    </div>
-</div>
+<p>&nbsp;</p>

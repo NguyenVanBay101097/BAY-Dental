@@ -80,6 +80,91 @@ namespace Infrastructure.Services
             return query;
         }
 
+        public async Task<IEnumerable<RevenueReportItem>> GetRevenueChartReport(DateTime? dateFrom, DateTime? dateTo , Guid? companyId , string groupBy , string[] accountCode = null)
+        {
+            var amlObj = GetService<IAccountMoveLineService>();
+            var res = new List<RevenueReportItem>();
+
+            var query = amlObj._QueryGet(dateFrom: dateFrom, dateTo: dateTo, state: "posted", companyId: companyId);
+        
+            if (dateFrom.HasValue)
+                query = query.Where(x => x.Date >= dateFrom.Value.AbsoluteBeginOfDate());
+
+
+            if (dateTo.HasValue)
+                query = query.Where(x => x.Date <= dateTo.Value.AbsoluteEndOfDate());
+
+
+            if (companyId.HasValue)
+                query = query.Where(x => x.CompanyId == companyId);
+
+            var types = new string[] { "cash", "bank" };
+            query = query.Where(x => types.Contains(x.Journal.Type));
+
+            if (accountCode.Any())
+                query = query.Where(x => accountCode.Contains(x.Account.Code));
+
+            if (groupBy == "groupby:day")
+            {
+
+                res = await query.GroupBy(x => x.Date.Value.Date)
+                  .Select(x => new RevenueReportItem
+                  {
+                      InvoiceDate = x.Key,
+                      PriceSubTotal = Math.Abs(x.Sum(z => z.Credit)),
+                  }).ToListAsync();
+            }
+            else if (groupBy == "groupby:month")
+            {
+                res = await query.GroupBy(x => new
+                {
+                    x.Date.Value.Year,
+                    x.Date.Value.Month,
+                })
+                 .Select(x => new RevenueReportItem
+                 {
+                     InvoiceDate = new DateTime(x.Key.Year, x.Key.Month, 1),
+                     PriceSubTotal = Math.Abs(x.Sum(z => z.Credit)),
+                 }).ToListAsync();
+            }
+            else if (groupBy == "groupby:employee")
+            {
+                res = await query.GroupBy(x => new { x.EmployeeId, x.Employee.Name }).Select(x => new RevenueReportItem
+                {
+                    Id = x.Key.EmployeeId,
+                    Name = x.Key.Name,
+                    PriceSubTotal = Math.Abs(x.Sum(z => z.Credit)),
+                    ToDetailEmployeeId = x.Key.EmployeeId ?? Guid.Empty
+                }).ToListAsync();
+
+            }
+            else if (groupBy == "groupby:assistant")
+            {
+
+                res = await query.GroupBy(x => new { x.AssistantId, x.Assistant.Name }).Select(x => new RevenueReportItem
+                {
+                    Id = x.Key.AssistantId,
+                    Name = x.Key.Name,
+                    PriceSubTotal = Math.Abs(x.Sum(z => z.Credit)),
+                    ToDetailEmployeeId = x.Key.AssistantId ?? Guid.Empty
+                }).ToListAsync();
+
+            }
+            else if (groupBy == "groupby:product")
+            {
+
+                res = await query.GroupBy(x => new { x.ProductId, x.Product.Name }).Select(x => new RevenueReportItem
+                {
+                    Id = x.Key.ProductId.Value,
+                    Name = x.Key.Name,
+                    PriceSubTotal = Math.Abs(x.Sum(z => z.Credit)),
+                }).ToListAsync();
+            }
+
+
+            return res;
+        }
+
         public async Task<IEnumerable<RevenueReportItem>> GetRevenueReport(RevenueReportFilter val)
         {
             var userObj = GetService<IUserService>();
@@ -192,6 +277,28 @@ namespace Infrastructure.Services
             var res = await query.Select(x => new RevenueTimeReportDisplay
             {
                 InvoiceDate = x.Key as DateTime?,
+                PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal)),
+                CompanyId = val.CompanyId,
+                DateFrom = val.DateFrom,
+                DateTo = val.DateTo
+            }).ToListAsync();
+
+            res = res.OrderByDescending(z => z.InvoiceDate.Value).ToList();
+
+            return res;
+        }
+
+        public async Task<IEnumerable<RevenueTimeReportDisplay>> GetRevenueTimeByMonth(RevenueTimeReportPar val)
+        {
+            var query = (GetRevenueReportQuery(new RevenueReportQueryCommon(val.DateFrom, val.DateTo, val.CompanyId)))
+                            .GroupBy(x => new { 
+                                Month = x.InvoiceDate.Value.Month,
+                                Year = x.InvoiceDate.Value.Year
+                            });
+
+            var res = await query.Select(x => new RevenueTimeReportDisplay
+            {
+                InvoiceDate = new DateTime(x.Key.Year, x.Key.Month, 1),
                 PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal)),
                 CompanyId = val.CompanyId,
                 DateFrom = val.DateFrom,

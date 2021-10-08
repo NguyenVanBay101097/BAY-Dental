@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { GenerateReq, PrintTemplateConfigChangeType, PrintTemplateConfigDisplay, PrintTemplateConfigSave, PrintTemplateConfigService, PrintTestReq } from '../print-template-config.service';
+import { GenerateReq, PrintTemplateConfigChangePaperSize, PrintTemplateConfigDisplay, PrintTemplateConfigSave, PrintTemplateConfigService, PrintTestReq } from '../print-template-config.service';
 import { NotifyService } from 'src/app/shared/services/notify.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PrintService } from 'src/app/shared/services/print.service';
@@ -11,32 +11,47 @@ import { PrintPaperSizeCreateUpdateDialogComponent } from 'src/app/config-prints
 import * as _ from 'lodash';
 import * as constantData from '../print-template-config-constant-data';
 import { KeywordListDialogComponent } from '../keyword-list-dialog/keyword-list-dialog.component';
-
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+// import { CKEditor4 } from 'ckeditor4-angular';
+// import * as edit4 from '../../ckCustomBuild/ckeditor.js'
+// var CKEDITOR_BASEPATH = '/ckeditor/';
 @Component({
     selector: 'app-print-template-config-cu',
     templateUrl: './print-template-config-cu.component.html',
     styleUrls: ['./print-template-config-cu.component.css']
 })
 export class PrintTemplateConfigCuComponent implements OnInit {
+    // public editor = Editor;
     types: { text: string, value: string }[] = [];
     // config = new PrintTemplateConfigDisplay();
     configEdit = new PrintTemplateConfigDisplay();
     configEditor = {
-        language: 'vi',
+        // extraPlugins: "easyimage,dialogui,dialog,a11yhelp,about,basicstyles,bidi,blockquote,clipboard," +
+        //     "button,panelbutton,panel,floatpanel,colorbutton,colordialog,menu," +
+        //     "contextmenu,dialogadvtab,div,elementspath,enterkey,entities,popup," +
+        //     "filebrowser,find,fakeobjects,flash,floatingspace,listblock,richcombo," +
+        //     "font,format,forms,horizontalrule,htmlwriter,iframe,image,indent," +
+        //     "indentblock,indentlist,justify,link,list,liststyle,magicline," +
+        //     "maximize,newpage,pagebreak,pastefromword,pastetext,preview,print," +
+        //     "removeformat,resize,save,menubutton,scayt,selectall,showblocks," +
+        //     "showborders,smiley,sourcearea,specialchar,stylescombo,tab,table," +
+        //     "tabletools,templates,toolbar,undo,wsc,wysiwygarea",
         height: 650,
-        contentsCss: '/css/print.css',
         // fullPage: true,//this support html full page
-        allowedContent: true,
-        entities: false,
-        basicEntities: false,
-        forceSimpleAmpersand: true,
-        enterMode: 2,//this support not format string to p tag
+        // allowedContent: true,
+        // basicEntities: false,
+        // forceSimpleAmpersand: true,
+        // enterMode: 2,//this support not format string to p tag
         // protectedSource: [/{{[\s\S]*?}}/g] // this support loop code
         // skin: 'kama'
+        // plugins: ['EasyImage'],
+
     };
     contentPrev = "";
     paperSizes: PrintPaperSizeBasic[] = [];
-    filter = new PrintTemplateConfigChangeType();
+    filter = new PrintTemplateConfigChangePaperSize();
+    formGroup: FormGroup;
 
     @ViewChild("editor", { static: false }) editor;
 
@@ -48,19 +63,19 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         private printTemplateService: PrintTemplateService,
         private paperSizeService: PrintPaperSizeService,
         private modalService: NgbModal,
-
+        private fb: FormBuilder
     ) { }
 
     ngOnInit() {
+        this.formGroup = this.fb.group({
+            type: ['tmp_sale_order', Validators.required],
+            printPaperSizeId: [null, Validators.required],
+            content: ''
+        });
+
         this.types = constantData.types;
-        this.filter.type = "tmp_toathuoc";
-        this.filter.isDefault = true;
-        this.loadCurrentConfig();
+        this.onChangeType();
         this.loadPaperSizeList();
-        // this.activeRoute.paramMap.subscribe(x => {
-        //   this.typeFilter = x.get("type");
-        //   this.loadCurrentConfig();
-        // });
     }
 
     public onReady(editor) {
@@ -68,6 +83,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
             editor.ui.view.toolbar.element,
             editor.ui.getEditableElement()
         );
+
     }
 
     loadPaperSizeList() {
@@ -77,64 +93,69 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         });
     }
 
-    loadCurrentConfig(preType?) {
-        var val = Object.assign({}, this.filter);
-        this.configService.getDisplay(val).subscribe(res => {
-            this.configEdit = res;
-            this.filter.printPaperSizeId = this.configEdit.printPaperSizeId;
-            this.onGenerate(this.configEdit.content);
-        },
-            err => {
-                if (preType) this.filter.type = preType;
-            }
-        );
-
-    }
-
-
     onDefault() {
-        var val = Object.assign({}, this.configEdit) as PrintTemplateDefault;
-        val.type = this.filter.type;
-        this.printTemplateService.getDisplay(val).subscribe(res => {
-            this.configEdit.content = res;
-            this.onGenerate();
-        });
+        var type = this.formGroup.get('type').value;
+        if (type) {
+            let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
+            modalRef.componentInstance.title = 'Sử dụng mẫu mặc định';
+            modalRef.componentInstance.body = 'Nội dung sẽ chuyển về mẫu mặc định, bạn có chắc chắn?';
+            modalRef.result.then(() => {
+                this.printTemplateService.getPrintTemplateDefault({ type }).subscribe((res: any) => {
+                    this.formGroup.get('content').setValue(res.content);
+                    this.onGenerate();
+                });
+            });
+        }
     }
 
     onPrint() {
         var val = new PrintTestReq();
-        val.type = this.filter.type;
-        val.content = this.configEdit.content;
-        val.printPaperSizeId = this.filter.printPaperSizeId || '';
+        val.type = this.formGroup.get('type').value;
+        val.content = this.content;
+        val.printPaperSizeId = this.formGroup.get('printPaperSizeId').value;
         this.configService.printTest(val).subscribe(res => {
             this.printService.printHtml(res);
         });
     }
 
+    get content() {
+        return this.formGroup.get('content').value;
+    }
+
     onSave() {
-        var val = Object.assign({}, this.configEdit) as PrintTemplateConfigSave;
+        if (this.formGroup.invalid) {
+            return false;
+        }
+
+        var val = this.formGroup.value;
         val.companyId = this.authService.userInfo ? this.authService.userInfo.companyId : '';
-        val.type = this.filter.type;
         this.configService.createOrUpdate(val).subscribe(res => {
             this.notifyService.notify('success', 'Lưu thành công');
         });
     }
 
-    onChangeType(e) {
-        var prev = this.filter.type;
-        this.filter.type = e;
-        this.loadCurrentConfig(prev);
+    onChangeType(e?) {
+        var type = this.formGroup.get('type').value;
+        if (type) {
+            this.configService.getDisplay(type).subscribe((res: any) => {
+                this.formGroup.get('printPaperSizeId').setValue(res.printPaperSizeId);
+                this.formGroup.get('content').setValue(res.printTemplateContent);
+                this.onGenerate();
+            });
+        }
     }
 
     onEdit() {
         this.configEdit = Object.assign({}, this.configEdit);
         this.filter.printPaperSizeId = this.configEdit.printPaperSizeId;
-        delete this.filter.isDefault;
     }
 
     onGenerate(content?) {
-        var val = Object.assign({}, this.filter) as GenerateReq;
-        val.content = content || this.configEdit.content;
+        if (this.formGroup.invalid) {
+            return false;
+        }
+
+        var val = this.formGroup.value;
         this.configService.generate(val).subscribe((res: any) => {
             this.contentPrev = res;
         }, () => {
@@ -143,14 +164,17 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     }
 
     onChangePaperSize(e) {
-        this.filter.printPaperSizeId = e;
-        this.loadCurrentConfig();
-    }
-
-    onCancel() {
-        this.filter.isDefault = true;
-        delete this.filter.printPaperSizeId;
-        this.loadCurrentConfig();
+        if (!e)
+            return;
+        var val = {
+            type: this.formGroup.get('type').value,
+            printPaperSizeId: this.formGroup.get('printPaperSizeId').value,
+        };
+        this.configService.changePaperSize(val).subscribe((res: any) => {
+            this.formGroup.get('printPaperSizeId').setValue(res.printPaperSizeId);
+            this.formGroup.get('content').setValue(res.printTemplateContent);
+            this.onGenerate();
+        });
     }
 
     onCreatePaperSize() {
@@ -177,7 +201,8 @@ export class PrintTemplateConfigCuComponent implements OnInit {
 
     onAddKeyWord() {
         const modalRef = this.modalService.open(KeywordListDialogComponent, { size: 'xl', scrollable: true, windowClass: 'o_technical_modal', keyboard: true, backdrop: 'static' });
-        modalRef.componentInstance.boxKeyWordSource = constantData.keyWords[this.filter.type];
+        modalRef.componentInstance.boxKeyWordSource = constantData.keyWords[this.formGroup.get('type').value];
+        modalRef.componentInstance.title = 'Danh sách từ khóa ' + this.types.find(x => x.value == this.formGroup.get('type').value).text.toLowerCase();
         modalRef.result.then((res) => {
             if (res) {
                 this.editor.instance.insertText(res.value);

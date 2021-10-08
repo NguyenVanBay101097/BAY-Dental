@@ -4,10 +4,12 @@ using System.Text;
 
 namespace ApplicationCore.Entities
 {
+    //Làm sao xác định được với button in đơn thuốc thì sẽ dùng mẫu in nào? nếu ko tìm thấy dòng nào thì tìm mẫu in mặc định trong bảng PrintTemplate
     public class PrintTemplateConfig : BaseEntity
     {
         /// <summary>
         /// html
+        /// Không cần xài nữa
         /// </summary>
         public string Content { get; set; }
 
@@ -34,6 +36,7 @@ namespace ApplicationCore.Entities
         /// tmp_toathuoc : đơn thuốc
         /// tmp_medicine_order : hóa đơn thuốc
         /// tmp_labo_order : phiếu labo
+        /// Dùng để xác định cho button in nào?
         /// </summary>
         public string Type { get; set; }
 
@@ -42,6 +45,12 @@ namespace ApplicationCore.Entities
         /// </summary>
         public Guid? PrintPaperSizeId { get; set; }
         public PrintPaperSize PrintPaperSize { get; set; }
+
+        /// <summary>
+        /// Mẫu in custom của khách hàng
+        /// </summary>
+        public Guid? PrintTemplateId { get; set; }
+        public PrintTemplate PrintTemplate { get; set; }
 
         /// <summary>
         /// làm mẫu in mặc định

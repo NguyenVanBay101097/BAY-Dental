@@ -40,6 +40,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public string LaboStatus { get; set; }
         public Guid? EmployeeId { get; set; }
         public Guid? CompanyId { get; set; }
+
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
     }
 
     public class SaleOrderLinesLaboPaged

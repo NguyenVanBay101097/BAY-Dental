@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Entities;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
@@ -27,9 +28,13 @@ namespace TMTDentalAPI.Controllers
         private readonly IViewRenderService _view;
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly IPrintTemplateConfigService _printTemplateConfigService;
+        private readonly IPrintTemplateService _printTemplateService;
+        private readonly IIRModelDataService _modelDataService;
 
         public HrPayslipRunsController(ICompanyService companyService, IHrPayslipRunService payslipRunService, IViewRenderService view, IMapper mapper, IUnitOfWorkAsync unitOfWork, IHrPayslipService payslipService
-            , IPrintTemplateConfigService printTemplateConfigService)
+            , IPrintTemplateConfigService printTemplateConfigService,
+            IPrintTemplateService printTemplateService,
+            IIRModelDataService modelDataService)
         {
             _payslipRunService = payslipRunService;
             _mapper = mapper;
@@ -37,6 +42,8 @@ namespace TMTDentalAPI.Controllers
             _view = view;
             _payslipServie = payslipService;
             _printTemplateConfigService = printTemplateConfigService;
+            _printTemplateService = printTemplateService;
+            _modelDataService = modelDataService;
         }
 
         [HttpGet]
@@ -62,20 +69,26 @@ namespace TMTDentalAPI.Controllers
         {
             var ids = val.Slips.Where(x => x.IsCheck == true).Select(x => x.Id);
             await _payslipRunService.UpdatePayslipRun(id, val);
-            var res = await _payslipRunService.GetHrPayslipRunForPrint(id);
+            //var res = await _payslipRunService.GetHrPayslipRunForPrint(id);
 
-            if (ids != null && ids.Any())
+            //tim trong bảng config xem có dòng nào để lấy ra template
+            var printConfig = await _printTemplateConfigService.SearchQuery(x => x.Type == "tmp_salary" && x.IsDefault)
+                .Include(x => x.PrintPaperSize)
+                .Include(x => x.PrintTemplate)
+                .FirstOrDefaultAsync();
+
+            PrintTemplate template = printConfig != null ? printConfig.PrintTemplate : null;
+            PrintPaperSize paperSize = printConfig != null ? printConfig.PrintPaperSize : null;
+            if (template == null)
             {
-                res.Slips = res.Slips.Where(x => ids.Contains(x.Id));
-
-                var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = res, Type = "tmp_salary" });
-
-                return Ok(new PrintData() { html = html });
+                //tìm template mặc định sử dụng chung cho tất cả chi nhánh, sử dụng bảng IRModelData hoặc bảng IRConfigParameter
+                template = await _modelDataService.GetRef<PrintTemplate>("base.print_template_salary");
+                if (template == null)
+                    throw new Exception("Không tìm thấy mẫu in mặc định");
             }
-            else
-            {
-                return Ok(new PrintData() { html = null });
-            }
+
+            var result = await _printTemplateService.GeneratePrintHtml(template, ids, paperSize);
+            return Ok(new PrintData() { html = result });         
         }
 
         [HttpPost]

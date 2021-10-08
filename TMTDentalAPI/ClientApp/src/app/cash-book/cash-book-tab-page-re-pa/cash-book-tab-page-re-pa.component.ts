@@ -40,13 +40,13 @@ export class CashBookTabPageRePaComponent implements OnInit {
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
 
-  constructor(private route: ActivatedRoute, 
-    private modalService: NgbModal, 
-    private intlService: IntlService, 
-    private authService: AuthService, 
+  constructor(private route: ActivatedRoute,
+    private modalService: NgbModal,
+    private intlService: IntlService,
+    private authService: AuthService,
     private phieuThuChiService: PhieuThuChiService,
     private notificationService: NotificationService,
-    private printService: PrintService, 
+    private printService: PrintService,
     private checkPermissionService: CheckPermissionService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
@@ -142,7 +142,7 @@ export class CashBookTabPageRePaComponent implements OnInit {
 
   printPhieu(id: string) {
     this.phieuThuChiService.getPrint(id).subscribe((data: any) => {
-      this.printService.printHtml(data.html);
+      this.printService.printHtml(data);
     });
   }
 
@@ -160,22 +160,22 @@ export class CashBookTabPageRePaComponent implements OnInit {
 
   deleteItem(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-      modalRef.componentInstance.title = `Xóa ${this.getType(this.type).toLowerCase()}`;
-      modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa ${this.getType(this.type).toLowerCase()}?`;
-      modalRef.result.then((res) => {
-        this.phieuThuChiService.delete(item.id).subscribe(() => {
-          this.notificationService.show({
-            content: "Xóa thành công",
-            hideAfter: 3000,
-            position: { horizontal: "center", vertical: "top" },
-            animation: { type: "fade", duration: 400 },
-            type: { style: "success", icon: true },
-          });
-          this.loadDataFromApi();
-        }, (res) => {
+    modalRef.componentInstance.title = `Xóa ${this.getType(this.type).toLowerCase()}`;
+    modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa ${this.getType(this.type).toLowerCase()}?`;
+    modalRef.result.then((res) => {
+      this.phieuThuChiService.delete(item.id).subscribe(() => {
+        this.notificationService.show({
+          content: "Xóa thành công",
+          hideAfter: 3000,
+          position: { horizontal: "center", vertical: "top" },
+          animation: { type: "fade", duration: 400 },
+          type: { style: "success", icon: true },
         });
-      }, (err) => {
+        this.loadDataFromApi();
+      }, (res) => {
       });
+    }, (err) => {
+    });
   }
 
   exportExcelFile() {

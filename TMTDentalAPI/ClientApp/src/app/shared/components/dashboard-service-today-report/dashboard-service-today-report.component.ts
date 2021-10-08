@@ -3,8 +3,11 @@ import { Router } from '@angular/router';
 import { DataBindingDirective, DataStateChangeEvent, GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { process, State } from '@progress/kendo-data-query';
-import { map } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
+import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
+import { SaleOrderLinePaged } from 'src/app/partners/partner.service';
 import { SaleReportSearch, SaleReportService } from 'src/app/sale-report/sale-report.service';
 
 @Component({
@@ -20,7 +23,8 @@ export class DashboardServiceTodayReportComponent implements OnInit {
   public gridView: any[];
 
   search: string = '';
-  totalService: number;
+  loading = false;
+  searchUpdate = new Subject<string>();
   limit = 20;
   offset = 0;
   state: State = {
@@ -36,22 +40,31 @@ export class DashboardServiceTodayReportComponent implements OnInit {
   constructor(private intlService: IntlService,
     private authService: AuthService,
     private saleReportService: SaleReportService,
+    private saleOrderLineService: SaleOrderLineService,
     private router: Router
   ) { }
 
   ngOnInit() {
     this.gridView = this.gridData;
     this.loadService();
+
+    this.searchUpdate
+    .pipe(debounceTime(400), distinctUntilChanged())
+    .subscribe((value) => {
+      this.loadService();
+    });
   }
 
   loadService() {
-    var val = new SaleReportSearch();
+    var val = new SaleOrderLinePaged();
     val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
     val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-ddT23:59');
     val.companyId = this.authService.userInfo.companyId;
     val.search = this.search;
-    val.state = 'draft';
-    this.saleReportService.getReportService(val).pipe(
+    val.state = 'sale,done,cancel';
+
+    this.loading = true;
+    this.saleOrderLineService.getPaged(val).pipe(
       map((response: any) =>
       (<GridDataResult>{
         data: response.items,
@@ -60,9 +73,10 @@ export class DashboardServiceTodayReportComponent implements OnInit {
     ).subscribe(res => {
       this.gridView = res.data;
       this.gridData = res.data;
-      this.totalService = res.total;
+      this.loading = false;
     }, err => {
       console.log(err);
+      this.loading = false;
     })
   }
 
@@ -142,17 +156,21 @@ export class DashboardServiceTodayReportComponent implements OnInit {
   }
 
   showTeethList(toothType, teeth) {
-    //dựa vào this.line
-    switch (toothType) {
-      case 'whole_jaw':
-        return 'Nguyên hàm';
-      case 'upper_jaw':
-        return 'Hàm trên';
-      case 'lower_jaw':
-        return 'Hàm dưới';
-      default:
-        return teeth.map(x => x.name).join(', ');
+    if(teeth){
+      return teeth.map(x => x.name).join(', ');
     }
+    return '';
+    //dựa vào this.line
+    // switch (toothType) {
+    //   case 'whole_jaw':
+    //     return 'Nguyên hàm';
+    //   case 'upper_jaw':
+    //     return 'Hàm trên';
+    //   case 'lower_jaw':
+    //     return 'Hàm dưới';
+    //   default:
+    //     return teeth.map(x => x.name).join(', ');
+    // }
   }
 
   getStateDisplay(state) {

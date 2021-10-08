@@ -28,9 +28,13 @@ namespace TMTDentalAPI.Controllers
         private readonly IDotKhamService _dotKhamService;
         private readonly IViewRenderService _viewRenderService;
         private readonly IPrintTemplateConfigService _printTemplateConfigService;
+        private readonly IPrintTemplateService _printTemplateService;
+        private readonly IIRModelDataService _modelDataService;
 
         public LaboOrdersController(ILaboOrderService laboOrderService, IMapper mapper,
-            IUnitOfWorkAsync unitOfWork, IDotKhamService dotKhamService, IViewRenderService viewRenderService
+            IUnitOfWorkAsync unitOfWork, IDotKhamService dotKhamService, IViewRenderService viewRenderService,
+            IPrintTemplateService printTemplateService,
+              IIRModelDataService modelDataService
             , IPrintTemplateConfigService printTemplateConfigService)
         {
             _laboOrderService = laboOrderService;
@@ -39,11 +43,13 @@ namespace TMTDentalAPI.Controllers
             _dotKhamService = dotKhamService;
             _viewRenderService = viewRenderService;
             _printTemplateConfigService = printTemplateConfigService;
+            _printTemplateService = printTemplateService;
+            _modelDataService = modelDataService;
         }
 
         [HttpGet]
         [CheckAccess(Actions = "Labo.LaboOrder.Read")]
-        public async Task<IActionResult> Get([FromQuery]LaboOrderPaged val)
+        public async Task<IActionResult> Get([FromQuery] LaboOrderPaged val)
         {
             var result = await _laboOrderService.GetPagedResultAsync(val);
             return Ok(result);
@@ -55,7 +61,7 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _laboOrderService.GetFromSaleOrder_OrderLine(val);
             return Ok(res);
-        }   
+        }
 
         [HttpGet("{id}")]
         [CheckAccess(Actions = "Labo.LaboOrder.Read")]
@@ -83,7 +89,7 @@ namespace TMTDentalAPI.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-        
+
             await _unitOfWork.BeginTransactionAsync();
             await _laboOrderService.UpdateLabo(id, val);
             _unitOfWork.Commit();
@@ -163,32 +169,29 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Labo.LaboOrder.Read")]
         public async Task<IActionResult> GetPrint(Guid id)
         {
-            var order = await _laboOrderService.SearchQuery(x => x.Id == id)
-                .Include(x => x.Company.Partner)
-                .Include(x => x.Product)
-                .Include(x => x.LaboBridge)
-                .Include(x => x.LaboBiteJoint)
-                .Include(x => x.LaboFinishLine)
-                .Include(x => x.SaleOrderLine.Product)
-                .Include(x => x.SaleOrderLine.Order)
-                .Include(x => x.SaleOrderLine.Employee)
-                .Include(x => x.LaboOrderProductRel).ThenInclude(x => x.Product)
-                .Include(x => x.Partner)
-                .Include(x => x.Customer)
-                .Include("LaboOrderToothRel.Tooth")
+            //tim trong bảng config xem có dòng nào để lấy ra template
+            var printConfig = await _printTemplateConfigService.SearchQuery(x => x.Type == "tmp_labo_order" && x.IsDefault)
+                .Include(x => x.PrintPaperSize)
+                .Include(x => x.PrintTemplate)
                 .FirstOrDefaultAsync();
 
-            if (order == null)
-                return NotFound();
+            PrintTemplate template = printConfig != null ? printConfig.PrintTemplate : null;
+            PrintPaperSize paperSize = printConfig != null ? printConfig.PrintPaperSize : null;
+            if (template == null)
+            {
+                //tìm template mặc định sử dụng chung cho tất cả chi nhánh, sử dụng bảng IRModelData hoặc bảng IRConfigParameter
+                template = await _modelDataService.GetRef<PrintTemplate>("base.print_template_labo_orde");
+                if (template == null)
+                    throw new Exception("Không tìm thấy mẫu in mặc định");
+            }
 
-            var obj = _mapper.Map<LaboOrderPrintVM>(order);
-            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = obj, Type = "tmp_labo_order" });
+            var result = await _printTemplateService.GeneratePrintHtml(template, new List<Guid>() { id }, paperSize);
 
-            return Ok(new PrintData() { html = html });
+            return Ok(new PrintData() { html = result });
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Labo.LaboOrder.Read")] 
+        [CheckAccess(Actions = "Labo.LaboOrder.Read")]
         public async Task<IActionResult> Statistics(LaboOrderStatisticsPaged val)
         {
             var result = await _laboOrderService.GetStatisticsPaged(val);
@@ -223,7 +226,7 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("[action]")]
         [CheckAccess(Actions = "Labo.ExportLabo.Read")]
         public async Task<IActionResult> GetExportLabo([FromQuery] ExportLaboPaged val)
-         {
+        {
             var res = await _laboOrderService.GetPagedExportLaboAsync(val);
             return Ok(res);
         }
