@@ -214,13 +214,19 @@ namespace Infrastructure.Services
 
             if (!string.IsNullOrEmpty(val.CityCode))
                 query = query.Where(x => x.Partner.CityCode == val.CityCode);
+            else
+                query = query.Where(x => string.IsNullOrEmpty(x.Partner.CityCode));
+
             if (!string.IsNullOrEmpty(val.DistrictCode))
                 query = query.Where(x => x.Partner.DistrictCode == val.DistrictCode);
+            else
+                query = query.Where(x => string.IsNullOrEmpty(x.Partner.DistrictCode));
+          
             if (val.DateFrom.HasValue)
-                query = query.Where(x => x.DateOrder >= val.DateFrom.Value);
+                query = query.Where(x => x.DateOrder >= val.DateFrom.Value.AbsoluteBeginOfDate());
 
             if (val.DateTo.HasValue)
-                query = query.Where(x => x.DateOrder <= val.DateTo.Value);
+                query = query.Where(x => x.DateOrder <= val.DateTo.Value.AbsoluteEndOfDate());
 
             //group by theo wardcode, wardname, những dòng isNew true là số khách mới, những dòng isnew false là số khách quay lại, count distince
             var result = await query.GroupBy(x => new
@@ -234,7 +240,7 @@ namespace Infrastructure.Services
                 WardCode = x.Key.WardCode,
                 WardName = x.Key.WardName,
                 IsNew = x.Key.IsNew,
-                PartnerCount = x.Sum(s => 1),
+                //PartnerCount = x.Sum(s => 1),
                 PartnerRevenue = x.Sum(s => s.TotalPaid),
             })
             .GroupBy(x => new
@@ -246,9 +252,9 @@ namespace Infrastructure.Services
             {
                 WardCode = x.Key.WardCode,
                 WardName = x.Key.WardName,
-                PartnerNewCount = x.Sum(s => s.IsNew ? s.PartnerCount : 0),
+                PartnerNewCount = x.Sum(s => s.IsNew ? 1 : 0),
                 PartnerNewRevenue = x.Sum(s => s.IsNew ? s.PartnerRevenue : 0),
-                PartnerOldCount = x.Sum(s => !s.IsNew ? s.PartnerCount : 0),
+                PartnerOldCount = x.Sum(s => !s.IsNew ? 1 : 0),
                 PartnerOldRevenue = x.Sum(s => !s.IsNew ? s.PartnerRevenue : 0),
             })
             .ToListAsync();

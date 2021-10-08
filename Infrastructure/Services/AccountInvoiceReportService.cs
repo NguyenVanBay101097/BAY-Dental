@@ -703,7 +703,7 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<RevenueDistrictAreaDisplay>> GetRevenueDistrictArea(RevenueDistrictAreaPar val)
         {
             var saleOrderObj = GetService<ISaleOrderService>();
-            var query = saleOrderObj.SearchQuery(x => x.State != "draft" && x.Partner.Customer);
+            var query = saleOrderObj.SearchQuery(x => x.State != "draft");
             if (val.DateFrom.HasValue)
                 query = query.Where(x => x.DateOrder.Date >= val.DateFrom.Value.AbsoluteBeginOfDate());
             if (val.DateTo.HasValue)
@@ -719,50 +719,56 @@ namespace Infrastructure.Services
                 PartnerId = x.PartnerId,
                 DistrictName = x.Partner.DistrictName,
                 DistrictCode = x.Partner.DistrictCode,
+                CityCode = x.Partner.CityCode,
+                CityName = x.Partner.CityName,
             })
             .Select(x => new
             {
                 PartnerId = x.Key.PartnerId,
                 DistrictName = x.Key.DistrictName,
                 DistrictCode = x.Key.DistrictCode,
+                CityCode = x.Key.CityCode,
+                CityName = x.Key.CityName,
                 Revenue = x.Sum(z => z.TotalPaid)
             });
-            var grList = await saleOrderPartners.GroupBy(x => new RevenuePartnerDistrict(){ DistrictName = x.DistrictName, DistrictCode = x.DistrictCode })
+            var grList = await saleOrderPartners.GroupBy(x => new { DistrictName = x.DistrictName, DistrictCode = x.DistrictCode, CityCode = x.CityCode, CityName = x.CityName })
                                 .Select(x => new RevenueDistrictAreaDisplay()
                                 {
+                                    CityCode = x.Key.CityCode,
+                                    CityName = x.Key.CityName,
                                     DistrictName = x.Key.DistrictName,
                                     DistrictCode = x.Key.DistrictCode,
                                     Revenue = x.Sum(z => z.Revenue),
                                     PartnerCount = x.Count(),
-
                                 }).OrderByDescending(x => x.Revenue).ToListAsync();
-            var dictGrList = grList.ToDictionary(x => x.DistrictCode, x => x);
-            foreach(var item in dictGrList)
-            {
-                dictGrList[item.Key].Percent = (revenueTotal != 0 && dictGrList[item.Key].Revenue.HasValue) ? Math.Round(dictGrList[item.Key].Revenue.Value / revenueTotal * 100, 2) + "%" : "0%";
-            }
+            return grList;
+            //var dictGrList = grList.ToDictionary(x => x.DistrictCode, x => x);
+            //foreach(var item in dictGrList)
+            //{
+            //    dictGrList[item.Key].Percent = (revenueTotal != 0 && dictGrList[item.Key].Revenue.HasValue) ? Math.Round(dictGrList[item.Key].Revenue.Value / revenueTotal * 100, 2) + "%" : "0%";
+            //}
 
-            var list = dictGrList.Values.ToList();
-            if (list.Count() <= 10)
-                return list;
+            //var list = dictGrList.Values.ToList();
+            //if (list.Count() <= 10)
+            //    return list;
 
-            var result = new List<RevenueDistrictAreaDisplay>();
-            var top10 = list.Skip(0).Take(10);
-            var otherList = list.Skip(10);
-            var revenueOther = otherList.Sum(x => x.Revenue ?? 0);
-            var partnerOtherCount = otherList.Sum(x => x.PartnerCount);
+            //var result = new List<RevenueDistrictAreaDisplay>();
+            //var top10 = list.Skip(0).Take(10);
+            //var otherList = list.Skip(10);
+            //var revenueOther = otherList.Sum(x => x.Revenue ?? 0);
+            //var partnerOtherCount = otherList.Sum(x => x.PartnerCount);
 
-            var otherObj = new RevenueDistrictAreaDisplay()
-            {
-                DistrictName = "Khác",
-                Revenue = revenueOther,
-                PartnerCount = partnerOtherCount,
-                Percent = revenueTotal != 0 ? Math.Round(revenueOther / revenueTotal * 100, 2) + "%" : "0%"
-            };
+            //var otherObj = new RevenueDistrictAreaDisplay()
+            //{
+            //    DistrictName = "Khác",
+            //    Revenue = revenueOther,
+            //    PartnerCount = partnerOtherCount,
+            //    Percent = revenueTotal != 0 ? Math.Round(revenueOther / revenueTotal * 100, 2) + "%" : "0%"
+            //};
 
-            result.AddRange(top10);
-            result.Add(otherObj);
-            return result;
+            //result.AddRange(top10);
+            //result.Add(otherObj);
+            //return result;
         }
     }
 }

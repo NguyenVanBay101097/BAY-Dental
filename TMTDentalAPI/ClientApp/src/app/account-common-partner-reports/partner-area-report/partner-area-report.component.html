@@ -1,10 +1,10 @@
 <div class="card">
     <div class="card-body">
-        <div class="form-inline">
+        <div class="form-inline mb-2">
             <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1" valuePrimitive="true" [valueField]="'id'" [textField]="'name'"
                 [filterable]="true" [data]="companies" (valueChange)="onSelectCompany($event)" [value]="currentCompany" #companyCbx>
             </kendo-combobox>
-            <kendo-combobox class="mr-1" [data]="dataResultCities" valuePrimitive="true" [textField]="'name'" [filterable]="true" [value]="currentCity"
+            <kendo-combobox class="mr-1" [data]="dataResultCities" [textField]="'name'" style="width: 250px" [filterable]="true" [(ngModel)]="currentCity"
             [placeholder]="'Tỉnh/Thành'" (valueChange)="onSelectCity($event)" (filterChange)="handleCityFilter($event)" [filterable]="true" #cityCbx [valueField]="'code'">
             </kendo-combobox>
             <app-date-range-picker-filter [opens]="'right'" class="mr-1" [startDate]="dateFrom"
@@ -17,15 +17,16 @@
                     <div class="card" #contPieChart>
                         <h5 class="text-primary card-title card-header mb-0">BIỂU ĐỒ DOANH THU 10 QUẬN/HUYỆN CAO NHẤT</h5>
                         <div class="card-body pie-chart">
-                            <div>
+                            <div style="position:relative;height: 320px;">
                                 <ng-container *ngIf="pieObjData.length !=0 ; else elseTemplate">
-                                    <div style="display: block;">
-                                        <canvas baseChart id="pie-chart"
+                                    <canvas baseChart id="pie-chart"
                                         [chartType]="'pie'"
                                         [options]="pieOptions"
                                         [labels]="pieLabels"
+                                        [plugins]="pieChartPlugins"
                                         [datasets]="pieDatasets">
-                                        </canvas>
+                                    </canvas>
+                                    <div id="pie-chart-legend" class="d-flex">
                                     </div>
                                 </ng-container>
                                 <ng-template #elseTemplate>
@@ -34,17 +35,15 @@
                                     </div>
                                 </ng-template>
                             </div>
-                            <div id="pie-chart-legend" class="d-flex">
-                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="o_group o_group_col_6">
-                    <div class="card h-100" [style.max-height.px]="getMaxHeightPieChart()">
-                        <h5 class="text-primary card-title card-header mb-0">DANH SÁCH QUẬN/HUYỆN {{cityName ? cityName.toUpperCase() : ''}}</h5>
-                        <div class="card-body district-list">
+                    <div class="card h-100">
+                        <h5 class="text-primary card-title card-header mb-0">DANH SÁCH QUẬN/HUYỆN {{currentCity?.name.toUpperCase()}}</h5>
+                        <div class="card-body district-list" style="max-height: 320px;overflow: auto;">
                             <div class="card card-item" *ngFor="let item of pieObjData"
-                                [class.active]="item.districtCode == this.currentDistrictCode"
+                                [class.active]="item == this.currentDistrictCode"
                                 (click)="onSelectDistrict(item)">
                                 <h5 class="card-header border-0 text-center">{{item.districtName ? item.districtName : 'Không xác định'}}</h5>
                                 <div class="card-body">
@@ -63,7 +62,7 @@
                 </div>
             </div>
         </div>
-        <div class="mt-2">
+        <div class="mt-2" *ngIf="currentDistrictCode">
             <div class="card">
                 <h5 class="text-primary card-header">SỐ LƯỢNG VÀ DOANH THU THEO PHƯỜNG/XÃ</h5>
                 <div class="card-body d-flex chart-container">
@@ -73,8 +72,8 @@
                                 <canvas baseChart 
                                 [chartType]="'horizontalBar'"
                                 [options]="barChartOptions_PartnerCount"
-                                [labels]="barChartData_PartnerCount.labels"
-                                [datasets]="barChartData_PartnerCount.datasets">
+                                [labels]="barChartLabels_PartnerCount"
+                                [datasets]="barChartData_PartnerCount">
                                 </canvas>
                             </div>
                         </div>
@@ -85,8 +84,8 @@
                                 <canvas baseChart 
                                 [chartType]="'horizontalBar'"
                                 [options]="barChartOptions_PartnerRevenue"
-                                [labels]="barChartData_PartnerRevenue.labels"
-                                [datasets]="barChartData_PartnerRevenue.datasets">
+                                [labels]="barChartLabels_PartnerRevenue"
+                                [datasets]="barChartData_PartnerRevenue">
                                 </canvas>
                             </div>
                         </div>
