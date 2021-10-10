@@ -12,7 +12,7 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
 {
     public class LaboWarrantyProcessUpdateHandler : INotificationHandler<ProcessUpdateNotification>
     {
-        private const string _version = "1.0.1.8";
+        private const string _version = "1.0.2.0";
         private IServiceScopeFactory _serviceScopeFactory;
 
 
