@@ -18,13 +18,7 @@
                 </kendo-grid-column>
                 <kendo-grid-column field="note" title="Nội dung" width="150">
                 </kendo-grid-column>
-                <kendo-grid-column field="state" title="Trạng thái" width="100">
-                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                        <span>{{stateGet(dataItem.state)}}</span>
-                        <!-- <label *ngIf="dataItem.state == 'confirmed'">Đang hẹn</label>
-                        <label *ngIf="dataItem.state =='done'">Đã tới</label>
-                        <label *ngIf="dataItem.state =='cancel'">Hủy hẹn</label> -->
-                    </ng-template>
+                <kendo-grid-column field="stateDisplay" title="Trạng thái" width="100">
                 </kendo-grid-column>
                 <kendo-grid-column field="id" width="100">
                     <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">

@@ -45,6 +45,28 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string State { get; set; }
 
+        public string StateDisplay 
+        { 
+            get
+            {
+                switch(State)
+                {
+                    case "done":
+                        return "Đã đến";
+                    case "cancel":
+                        return "Hủy hẹn";
+                    case "confirmed":
+                        {
+                            if (Date.Value.Date < DateTime.Today)
+                                return "Quá hẹn";
+                            return "Đang hẹn";
+                        }
+                    default:
+                        return string.Empty;
+                }
+            }
+        }
+
         /// <summary>
         /// Lý do
         /// </summary>

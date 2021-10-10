@@ -296,6 +296,7 @@ export class QuotationLineCuComponent implements OnInit {
     this.formGroup = this.fb.group({
       qty: [this.line.qty, Validators.required],
       subPrice: [this.line.subPrice, Validators.required],
+      amountDiscountTotal: this.line.amountDiscountTotal,
       teeth: this.fb.array(this.line.teeth),
       promotions: this.fb.array(this.line.promotions),
       toothType: this.line.toothType,
