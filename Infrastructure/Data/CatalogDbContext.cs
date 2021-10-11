@@ -322,6 +322,7 @@ namespace Infrastructure.Data
         /// </summary>
         public DbSet<PrintTemplate> PrintTemplates { get; set; }
         public DbSet<PrintTemplateConfig> PrintTemplateConfigs { get; set; }
+        public DbSet<PartnerOldNewInSaleOrder> PartnerOldNewInSaleOrders { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -577,6 +578,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new LaboWarrantyToothRelConfiguration());
             builder.ApplyConfiguration(new PrintTemplateConfiguration());
             builder.ApplyConfiguration(new PrintTemplateConfigConfiguration());
+            builder.ApplyConfiguration(new PartnerOldNewInSaleOrderConfiguration());
             //builder.ApplyConfiguration(new SaleOrderLineProductRequestedConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });

@@ -19,7 +19,7 @@ namespace Infrastructure.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
-        public AccountCommonPartnerReportService(IMapper mapper, IHttpContextAccessor httpContextAccessor, 
+        public AccountCommonPartnerReportService(IMapper mapper, IHttpContextAccessor httpContextAccessor,
             UserManager<ApplicationUser> userManager)
         {
             _mapper = mapper;
@@ -173,7 +173,7 @@ namespace Infrastructure.Services
                     ResultSelection = val.ResultSelection,
                     PartnerRef = value.PartnerRef,
                     Begin = begin,
-                    Debit = debit,  
+                    Debit = debit,
                     Credit = credit,
                     End = end,
                     PartnerName = value.PartnerName,
@@ -521,7 +521,7 @@ namespace Infrastructure.Services
                        PartnerRef = x.Key.PartnerRef,
                        PartnerPhone = x.Key.PartnerPhone,
                        Begin = x.Sum(s => s.Debit - s.Credit),
-                   }).Where(x=> x.Begin != 0).ToListAsync();
+                   }).ToListAsync();
             }
 
             var query2 = amlObj._QueryGet(dateFrom: date_from, dateTo: date_to, companyId: val.CompanyId);
@@ -615,6 +615,181 @@ namespace Infrastructure.Services
             }
 
             return list2;
+
+        }
+
+        public async Task<IEnumerable<ReportPartnerAdvance>> ReportPartnerAdvance(ReportPartnerAdvanceFilter val)
+        {
+            var amlObj = GetService<IAccountMoveLineService>();
+
+            var dateFrom = val.DateFrom;
+            if (dateFrom.HasValue)
+                dateFrom = dateFrom.Value.AbsoluteBeginOfDate();
+
+            var dateTo = val.DateTo;
+            if (dateTo.HasValue)
+                dateTo = dateTo.Value.AbsoluteEndOfDate();
+
+            var dict = new Dictionary<Guid, ReportPartnerAdvance>();
+            if (dateFrom.HasValue)
+            {
+                var query1 = amlObj._QueryGet(dateFrom: dateFrom, state: "posted", companyId: val.CompanyId, initBal: true);
+
+                if (!string.IsNullOrWhiteSpace(val.Search))
+                {
+                    query1 = query1.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search) ||
+                    x.Partner.Phone.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
+                }
+
+                var list1 = await query1.Where(x => x.Account.Code == "KHTU").GroupBy(x => new
+                {
+                    PartnerId = x.Partner.Id,
+                    PartnerName = x.Partner.Name,
+                    PartnerPhone = x.Partner.Phone,
+                })
+                .Select(x => new
+                {
+                    PartnerId = x.Key.PartnerId,
+                    PartnerName = x.Key.PartnerName,
+                    PartnerPhone = x.Key.PartnerPhone,
+                    Balance = x.Sum(s => s.Debit - s.Credit),
+                }).ToListAsync();
+
+                foreach (var item in list1)
+                {
+                    if (!dict.ContainsKey(item.PartnerId))
+                    {
+                        dict.Add(item.PartnerId, new ReportPartnerAdvance()
+                        {
+                            PartnerId = item.PartnerId,
+                            PartnerName = item.PartnerName,
+                            PartnerPhone = item.PartnerPhone,
+                            Begin = -item.Balance
+                        });
+                    }
+                }
+            }
+
+            var query = amlObj._QueryGet(dateFrom: dateFrom, dateTo: dateTo, state: "posted", companyId: val.CompanyId);
+            query = query.Where(x => x.Account.Code == "KHTU");
+
+            if (!string.IsNullOrWhiteSpace(val.Search))
+            {
+                query = query.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search) ||
+                x.Partner.Phone.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
+            }
+
+            var list2 = await query
+                   .GroupBy(x => new
+                   {
+                       PartnerId = x.Partner.Id,
+                       PartnerName = x.Partner.Name,
+                       PartnerPhone = x.Partner.Phone,
+                   })
+                   .Select(x => new
+                   {
+                       PartnerId = x.Key.PartnerId,
+                       PartnerName = x.Key.PartnerName,
+                       PartnerPhone = x.Key.PartnerPhone,
+                       Debit = x.Sum(s => s.Debit),
+                       Credit = x.Sum(s => s.Credit),
+                   }).ToListAsync();
+
+            foreach (var item in list2)
+            {
+                if (!dict.ContainsKey(item.PartnerId))
+                {
+                    dict.Add(item.PartnerId, new ReportPartnerAdvance()
+                    {
+                        PartnerId = item.PartnerId,
+                        PartnerName = item.PartnerName,
+                        PartnerPhone = item.PartnerPhone,
+                        Debit = item.Credit,
+                        Credit = item.Debit,
+                    });
+
+                    continue;
+                }
+
+                dict[item.PartnerId].Debit = item.Credit;
+                dict[item.PartnerId].Credit = item.Debit;
+            }
+
+            var res = new List<ReportPartnerAdvance>();
+            foreach (var item in dict)
+            {
+                var begin = dict[item.Key].Begin;
+                var debit = dict[item.Key].Debit;
+                var credit = dict[item.Key].Credit;
+                if (begin == 0 && debit == 0 && credit == 0)
+                    continue;
+
+                var end = begin + debit - credit;
+                var value = item.Value;
+                res.Add(new ReportPartnerAdvance
+                {
+                    Begin = begin,
+                    Debit = debit,
+                    Credit = credit,
+                    End = end,
+                    PartnerName = value.PartnerName,
+                    PartnerPhone = value.PartnerPhone,
+                    PartnerId = item.Key,
+                    DateFrom = val.DateFrom,
+                    DateTo = val.DateTo,
+                    CompanyId = val.CompanyId
+                });
+            }
+
+            return res;
+        }
+
+        public async Task<IEnumerable<ReportPartnerAdvanceDetail>> ReportPartnerAdvanceDetail(ReportPartnerAdvanceDetailFilter val)
+        {
+            var amlObj = GetService<IAccountMoveLineService>();
+
+            var dateFrom = val.DateFrom;
+            if (dateFrom.HasValue)
+                dateFrom = dateFrom.Value.AbsoluteBeginOfDate();
+
+            var dateTo = val.DateTo;
+            if (dateTo.HasValue)
+                dateTo = dateTo.Value.AbsoluteEndOfDate();
+
+            var query = amlObj._QueryGet(dateFrom: dateFrom, dateTo: dateTo, state: "posted", companyId: val.CompanyId);
+
+            query = query.Where(x => x.Account.Code == "KHTU");
+
+            if (val.PartnerId.HasValue)
+                query = query.Where(x => x.PartnerId == val.PartnerId);
+
+            var res = await query.Select(x => new ReportPartnerAdvanceDetail
+            {
+                Date = x.Date,
+                Debit = x.Credit,
+                Credit = x.Debit,
+                InvoiceOrigin = x.Move.InvoiceOrigin,
+                Name = x.Name,
+            }).ToListAsync();
+
+            decimal begin = 0;
+            if (dateFrom.HasValue)
+            {
+                var query1 = amlObj._QueryGet(dateFrom: dateFrom, state: "posted", companyId: val.CompanyId, initBal: true);
+                query1 = query1.Where(x => x.Account.Code == "KHTU");
+                if (val.PartnerId.HasValue)
+                    query1 = query1.Where(x => x.PartnerId == val.PartnerId);
+                begin = await query1.SumAsync(x => x.Credit - x.Debit);
+            }
+
+            foreach (var item in res)
+            {
+                item.Begin = begin;
+                item.End = item.Begin + item.Debit - item.Credit;
+                begin = item.End;
+            }
+
+            return res;
 
         }
 

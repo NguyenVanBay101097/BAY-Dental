@@ -1,0 +1,45 @@
+.o_form_label {
+    width: 150px;
+}
+
+.button-group {
+    float: right;
+    margin-top: 10px;
+}
+
+.dropdown-toggle::after {
+    border: none;
+    width: 0;
+    height: 0;
+    display: none;
+}
+
+.o_advance_search_dropdown_container {
+    padding: 16px 0;
+}
+
+.dropdown-toggle {
+    height: 33.5px;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    cursor: pointer;
+}
+
+.input-value {
+    padding: 6px;
+}
+
+.input-append {
+    opacity: .8;
+    background-color: #e9ecef;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px 10px;
+    margin-top: -1px;
+}

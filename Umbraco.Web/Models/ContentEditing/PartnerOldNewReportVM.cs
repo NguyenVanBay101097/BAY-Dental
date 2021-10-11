@@ -160,4 +160,41 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Offset { get; set; }
     }
 
+    public class PartnerOldNewReportByWardReq
+    {
+        public Guid? CompanyId { get; set; }
+        public string CityCode { get; set; }
+        public string DistrictCode { get; set; }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+    }
+
+    public class PartnerOldNewReportByWard
+    {
+        /// <summary>
+        /// Mã phường/xã
+        /// </summary>
+        public string WardCode { get; set; }
+        /// <summary>
+        /// Tên phường/xã
+        /// </summary>
+        public string WardName { get; set; }
+        /// <summary>
+        /// Số lượng khách hàng mới của phường/xã
+        /// </summary>
+        public decimal? PartnerNewCount { get; set; }
+        /// <summary>
+        /// Số lượng khách hàng cũ của phường/xã
+        /// </summary>
+        public decimal? PartnerOldCount { get; set; }
+        /// <summary>
+        /// Doanh thu từ khách hàng mới của phường/xã
+        /// </summary>
+        public decimal? PartnerNewRevenue { get; set; }
+
+        /// <summary>
+        /// Doanh thu từ khách hàng cũ của phường/xã
+        /// </summary>
+        public decimal? PartnerOldRevenue { get; set; }
+    }
 }

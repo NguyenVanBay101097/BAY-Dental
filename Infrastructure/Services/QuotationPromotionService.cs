@@ -163,5 +163,20 @@ namespace Infrastructure.Services
             await quotationObj._ComputeAmountPromotionToQuotation(promotions.Select(x => x.QuotationId.Value).ToList());
 
         }
+
+        public async Task ComputeAmount(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.Lines).ThenInclude(x => x.QuotationLine)
+                .ToListAsync();
+
+            foreach (var promotion in self)
+            {
+                var amount = Math.Round(promotion.Lines.Sum(x => (decimal)x.PriceUnit * x.QuotationLine.Qty));
+                promotion.Amount = amount;
+            }
+
+            await UpdateAsync(self);
+        }
     }
 }

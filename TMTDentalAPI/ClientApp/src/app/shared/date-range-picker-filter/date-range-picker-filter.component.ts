@@ -14,9 +14,11 @@ export class DateRangePickerFilterComponent implements OnInit {
   @Output() searchChange = new EventEmitter<any>();
   @Input() opens: string = 'auto';
   @Input() drops: string = 'auto';
-  @Input() title: string = 'Chọn thời gian';
+  @Input() title: string = 'Thời gian';
+  @Input() showClearButton: boolean = true;
 
   @Input() selected: any;
+  @Input() showDropdowns = true;
   @Input() ranges: any = {
     'Hôm nay': [moment(new Date()), moment(new Date())],
     'Hôm qua': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
@@ -60,7 +62,7 @@ export class DateRangePickerFilterComponent implements OnInit {
   //         }
   //     }
   // }
-    
+
   // }
 
   clear() {

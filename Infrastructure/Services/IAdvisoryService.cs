@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Models;
+using ApplicationCore.Models.PrintTemplate;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -22,5 +23,7 @@ namespace Infrastructure.Services
         Task<AdvisoryPrintVM> Print(IEnumerable<Guid> ids);
         Task<SaleOrderSimple> CreateSaleOrder(CreateFromAdvisoryInput val);
         Task<QuotationSimple> CreateQuotation(CreateFromAdvisoryInput val);
+
+        Task<AdvisoryPrintTemplate> PrintTemplate(IEnumerable<Guid> ids);
     }
 }

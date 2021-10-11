@@ -7,6 +7,7 @@ export class CompanyPaged {
     limit: number;
     offset: number;
     active: boolean;
+    cityCode: string;
 }
 
 export class CompanyBasic {

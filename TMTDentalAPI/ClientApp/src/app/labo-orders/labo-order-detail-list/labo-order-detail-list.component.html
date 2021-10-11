@@ -37,12 +37,13 @@
             </kendo-grid-column>
             <kendo-grid-column field="teeth" title="Răng" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    <ng-container *ngIf="dataItem?.toothType == 'manual'; else elseTeethTemplate">
+                    {{getTeeth(dataItem)}}
+                    <!-- <ng-container *ngIf="dataItem?.toothType == 'manual'; else elseTeethTemplate">
                         {{getTeeth(dataItem)}}
                     </ng-container>
                     <ng-template #elseTeethTemplate>
                         {{getToothType(dataItem?.toothType)?.name}}
-                    </ng-template>
+                    </ng-template> -->
                     <!-- {{GetTeeth(dataItem)}} -->
                 </ng-template>
             </kendo-grid-column>

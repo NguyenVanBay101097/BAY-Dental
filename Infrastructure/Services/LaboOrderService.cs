@@ -812,8 +812,10 @@ namespace Infrastructure.Services
                 return _mapper.Map<IEnumerable<ToothDisplay>>(await toothObj.SearchQuery(x => x.CategoryId == toothCateId && x.ViTriHam == "0_up").ToListAsync());
             else if (type == "lower_jaw")
                 return _mapper.Map<IEnumerable<ToothDisplay>>(await toothObj.SearchQuery(x => x.CategoryId == toothCateId && x.ViTriHam == "1_down").ToListAsync());
-            else
+            else if (type == "whole_jaw")
                 return _mapper.Map<IEnumerable<ToothDisplay>>(await toothObj.SearchQuery(x => x.CategoryId == toothCateId).ToListAsync());
+            else
+                return null;
         }
     }
 }

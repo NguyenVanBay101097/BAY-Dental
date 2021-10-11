@@ -607,12 +607,11 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
   }
 
   getTotalDiscount() {
-    return this.quotation.totalAmountDiscount == undefined ? 0 : this.quotation.totalAmountDiscount;
-    // var res = this.quotation.lines.reduce((total, cur) => {
-    //   return total + (cur.amountDiscountTotal || 0) * cur.qty;
-    // }, 0);
+    var res = this.quotation.lines.reduce((total, cur) => {
+      return total + (cur.amountDiscountTotal || 0) * cur.qty;
+    }, 0);
 
-    // return res;
+    return res;
   }
 
   sumPromotionQuotation() {

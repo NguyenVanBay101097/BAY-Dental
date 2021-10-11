@@ -150,6 +150,8 @@ namespace Infrastructure.Services
             var query = GetQueryPaged(val);
             var totalItems = await query.CountAsync();
 
+            query = query.OrderByDescending(x => x.DateCreated);
+
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
 
             if (val.ComputeCreditDebit)
@@ -2081,7 +2083,7 @@ namespace Infrastructure.Services
             {
                 Id = x.Id,
                 Name = x.Name,
-                Age = x.GetAge(),
+                Age = x.GetAge,
                 BirthDay = x.BirthDay,
                 BirthMonth = x.BirthMonth,
                 BirthYear = x.BirthYear,
@@ -2092,7 +2094,7 @@ namespace Infrastructure.Services
                 DateOfBirth = x.GetDateOfBirth(),
                 Phone = x.Phone,
                 Address = x.GetAddress(),
-                Gender = x.GetGender(),
+                Gender = x.GetGender,
                 CountLine = saleReportDict.ContainsKey(x.Id) ? saleReportDict[x.Id].ProductUOMQty : 0,
                 Debit = saleReportDict.ContainsKey(x.Id) ? saleReportDict[x.Id].PriceTotal : 0,
             }).ToListAsync();
@@ -2110,7 +2112,7 @@ namespace Infrastructure.Services
                 {
                     Id = x.Partner.Id,
                     Name = x.Partner.Name,
-                    Age = x.Partner.GetAge(),
+                    Age = x.Partner.GetAge,
                     BirthDay = x.Partner.BirthDay,
                     BirthMonth = x.Partner.BirthMonth,
                     BirthYear = x.Partner.BirthYear,
@@ -2121,7 +2123,7 @@ namespace Infrastructure.Services
                     DateOfBirth = x.Partner.GetDateOfBirth(),
                     Phone = x.Partner.Phone,
                     Address = x.Partner.GetAddress(),
-                    Gender = x.Partner.GetGender(),
+                    Gender = x.Partner.GetGender,
                     AppointmnetId = x.Id,
                     AppointmnetName = x.Name,
                     Time = x.Time,

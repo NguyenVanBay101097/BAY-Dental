@@ -192,6 +192,82 @@ namespace Infrastructure.Services
             };
         }
 
+        public async Task<IEnumerable<CashBookReportItem>> GetCashBookChartReport(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string groupBy)
+        {
+            var amlObj = GetService<IAccountMoveLineService>();
+            var res = new List<CashBookReportItem>();
+
+            var types = new string[] { "cash", "bank" };
+
+            if (dateFrom.HasValue)
+                dateFrom = dateFrom.Value.AbsoluteBeginOfDate();
+
+            if (dateTo.HasValue)
+                dateTo = dateTo.Value.AbsoluteEndOfDate();
+
+            var query = amlObj._QueryGet(dateFrom: dateFrom, dateTo: dateTo, state: "posted", companyId: companyId);
+            query = query.Where(x => types.Contains(x.Journal.Type) && x.AccountInternalType != "liquidity");
+            query = query.OrderBy(x => x.Date);
+
+            if (groupBy == "groupby:day")
+            {
+
+                res = await query.GroupBy(x => x.Date.Value.Date)
+                  .Select(x => new CashBookReportItem
+                  {
+                      Date = x.Key,
+                      TotalThu = x.Sum(s => s.Credit),
+                      TotalChi = x.Sum(s => s.Debit),
+                  }).ToListAsync();
+
+                if (dateFrom.HasValue)
+                {
+                    foreach (var item in res)
+                    {
+                        var query1 = amlObj._QueryGet(dateFrom: item.Date, state: "posted", companyId: companyId, initBal: true);
+                        query1 = query1.Where(x => types.Contains(x.Journal.Type) && x.AccountInternalType != "liquidity");
+                        var begin = await query1.SumAsync(x => x.Credit - x.Debit);
+                        item.Begin = begin;
+                    }
+
+                }
+
+            }
+            else if (groupBy == "groupby:month")
+            {
+                res = await query.GroupBy(x => new
+                {
+                    x.Date.Value.Year,
+                    x.Date.Value.Month,
+                })
+                 .Select(x => new CashBookReportItem
+                 {
+                     Date = new DateTime(x.Key.Year, x.Key.Month, 1),
+                     TotalThu = x.Sum(s => s.Credit),
+                     TotalChi = x.Sum(s => s.Debit),
+                 }).ToListAsync();
+
+
+                if (dateFrom.HasValue)
+                {
+                    foreach (var item in res)
+                    {
+                        var query1 = amlObj._QueryGet(dateFrom: item.Date.Value.AbsoluteBeginOfDate(), dateTo: item.Date.Value.AbsoluteEndOfDate(), state: "posted", companyId: companyId, initBal: true);
+                        query1 = query1.Where(x => types.Contains(x.Journal.Type) && x.AccountInternalType != "liquidity");
+                        var begin = await query1.SumAsync(x => x.Credit - x.Debit);
+                        item.Begin = begin;
+                    }
+
+                }
+
+            }
+
+            foreach (var item in res)
+                item.TotalAmount = item.Begin + (item.TotalThu - item.TotalChi);
+
+            return res;
+        }
+
         public async Task<IEnumerable<CashBookReportItem>> GetChartReport(CashBookReportFilter val)
         {
             var amlObj = GetService<IAccountMoveLineService>();

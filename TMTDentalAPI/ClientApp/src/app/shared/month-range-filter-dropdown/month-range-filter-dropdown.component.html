@@ -1,0 +1,47 @@
+<div ngbDropdown #myDrop="ngbDropdown">
+    <div class="dropdown-toggle" id="sortMenu" ngbDropdownAnchor (click)="myDrop.toggle()">
+        <span class="input-value">{{showMonthRange()}}</span>
+        <span class="input-append">
+            <i class="fas fa-calendar-alt"></i>
+        </span>
+    </div>
+    <div ngbDropdownMenu aria-labelledby="sortMenu" class="o_advance_search_dropdown_container">
+        <div class="px-4 pb-3">
+            <div class="o_group">
+                <table class="o_group o_inner_group">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Thời gian bắt đầu</label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-datepicker [(ngModel)]="monthFrom" [popupSettings]="popupSettings"
+                                    [bottomView]="'year'" [format]="'MM/yyyy'">
+                                </kendo-datepicker>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Thời gian kết thúc</label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-datepicker [(ngModel)]="monthTo" [popupSettings]="popupSettings"
+                                    [bottomView]="'year'" [format]="'MM/yyyy'">
+                                </kendo-datepicker>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="button-group">
+                <button type="button" class="btn btn-primary mr-2" (click)="onApply()">
+                    Áp dụng
+                </button>
+                <button type="button" class="btn btn-secondary" (click)="onClose()">
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

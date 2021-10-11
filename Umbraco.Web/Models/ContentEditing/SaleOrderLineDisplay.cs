@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
@@ -78,6 +79,25 @@ namespace Umbraco.Web.Models.ContentEditing
         /// tổng tiền ưu đãi của dịch vụ
         /// </summary>
         public decimal? AmountDiscountTotal { get; set; }
+
+        public string TeethDisplay
+        {
+            get
+            {
+                switch (ToothType)
+                {
+                    case "whole_jaw":
+                        return "Nguyên hàm";
+                    case "upper_jaw":
+                        return "Hàm trên";
+                    case "lower_jaw":
+                        return "Hàm dưới";
+                    default:
+                        return Teeth != null ? string.Join(", ", Teeth.Select(x => x != null ? x.Name : string.Empty)) : string.Empty;
+                }
+            }
+        }
+
 
         /// <summary>
         /// Số tiền đã thanh toán

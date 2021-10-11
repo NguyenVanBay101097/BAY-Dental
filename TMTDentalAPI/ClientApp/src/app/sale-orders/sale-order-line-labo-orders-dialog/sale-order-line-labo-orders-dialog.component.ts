@@ -81,20 +81,20 @@ export class SaleOrderLineLaboOrdersDialogComponent implements OnInit {
 
   printLabo(item: any) {
     this.laboOrderService.getPrint(item.id).subscribe((result: any) => {
-      this.printService.printHtml(result);
+      this.printService.printHtml(result.html);
     });
   }
 
   deleteLabo(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = 'Xóa phiếu labo';
-    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
+    modalRef.componentInstance.title = 'Xóa phiếu Labo';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa phiếu Labo?';
     modalRef.result.then(() => {
       this.laboOrderService.delete(item.id).subscribe(res => {
         this.loadLaboOrderList();
       }, (err) => {
       });
-    }, () => {});
+    }, () => { });
   }
 }
 

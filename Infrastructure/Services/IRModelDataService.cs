@@ -144,6 +144,10 @@ namespace Infrastructure.Services
                             var group = await service.GetByIdAsync(Guid.Parse(data.ResId));
                             return (T)(object)group;
                         }
+                    case "print.template":
+                        var template = GetService<IPrintTemplateService>();
+                        var printTemplate = await template.GetByIdAsync(data.ResId);
+                        return (T)(object)printTemplate;
                     default:
                         {
                             return null;

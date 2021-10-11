@@ -17,6 +17,7 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
 {
+    //Báo cáo doanh thu controller
     [Route("api/[controller]")]
     [ApiController]
     public class AccountInvoiceReportsController : BaseApiController
@@ -38,7 +39,17 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Report.Revenue")]
         public async Task<IActionResult> GetRevenueTimeReportPaged([FromQuery] RevenueTimeReportPar val)
         {
+            //báo cáo doanh thu theo ngày
             var res = await _invoiceReportService.GetRevenueTimeReport(val);
+            return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Report.Revenue")]
+        public async Task<IActionResult> GetRevenueTimeByMonth([FromQuery] RevenueTimeReportPar val)
+        {
+            //báo cáo doanh thu theo tháng
+            var res = await _invoiceReportService.GetRevenueTimeByMonth(val);
             return Ok(res);
         }
 
@@ -71,6 +82,15 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetRevenueReport(RevenueReportFilter val)
         {
             var res = await _invoiceReportService.GetRevenueReport(val);
+            return Ok(res);
+        }
+
+        // doanh thu khách hàng điều trị theo khu vực
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.Revenue")]
+        public async Task<IActionResult> GetRevenueDistrictArea(RevenueDistrictAreaPar val)
+        {
+            var res = await _invoiceReportService.GetRevenueDistrictArea(val);
             return Ok(res);
         }
 

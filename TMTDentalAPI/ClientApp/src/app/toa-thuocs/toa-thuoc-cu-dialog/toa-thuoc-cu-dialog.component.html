@@ -94,7 +94,7 @@
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <kendo-numerictextbox class="mr-1" style="width: 100px" [min]="0"
-                                                [format]="'n0'" formControlName="amountOfTimes"
+                                                [format]="'n2'" formControlName="amountOfTimes"
                                                 (valueChange)="updateQuantity(item)">
                                             </kendo-numerictextbox>
                                             <span>{{item.get('productUoM').value?.name}}</span>
@@ -106,7 +106,7 @@
                                         </kendo-numerictextbox>
                                     </td>
                                     <td>
-                                        <kendo-numerictextbox style="width: 100px" [min]="0" [format]="'n0'"
+                                        <kendo-numerictextbox style="width: 100px" [min]="0" [format]="'n2'"
                                             formControlName="quantity">
                                         </kendo-numerictextbox>
                                     </td>
