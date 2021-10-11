@@ -131,14 +131,13 @@ namespace TMTDentalAPI.Controllers
 
                 foreach (var item in data.Items)
                 {
-                    string numberTeeth = "";
                     worksheet.Cells[row, 1].Value = item.Product.Name;
                     worksheet.Cells[row, 2].Value = item.Order.Name;
                     worksheet.Cells[row, 3].Value = item.OrderPartner.DisplayName;
                     worksheet.Cells[row, 4].Value = item.ProductUOMQty;
                     worksheet.Cells[row, 4].Style.Numberformat.Format = "0";
                     worksheet.Cells[row, 5].Value = item.Employee != null ? item.Employee.Name : "";
-                    worksheet.Cells[row, 6].Value = string.Join(",", item.Teeth.Select(x => x.Name).ToList());
+                    worksheet.Cells[row, 6].Value = item.TeethDisplay;
                     worksheet.Cells[row, 7].Value = item.Diagnostic;
                     worksheet.Cells[row, 8].Value = item.PriceSubTotal;
                     worksheet.Cells[row, 8].Style.Numberformat.Format = "#,###";
