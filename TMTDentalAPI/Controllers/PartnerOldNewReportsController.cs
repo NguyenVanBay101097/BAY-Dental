@@ -74,6 +74,13 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
+        public async Task<IActionResult> ReportByWard([FromQuery] PartnerOldNewReportByWardReq val)
+        {
+            var res = await _partnerOldNewReportService.ReportByWard(val);
+            return Ok(res);
+        }
+
+        [HttpGet("[action]")]
         public async Task<IActionResult> GetReportPdf([FromQuery] PartnerOldNewReportReq val)
         {
             var data = await _partnerOldNewReportService.GetReportPrint(val);

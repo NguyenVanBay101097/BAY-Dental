@@ -475,7 +475,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
     var line = this.fb.group({
       materialProduct: [null, Validators.required],
       productUOM: null,
-      quantity: [1, Validators.required]
+      quantity: [0, Validators.required]
     });
 
     this.boms.push(line);

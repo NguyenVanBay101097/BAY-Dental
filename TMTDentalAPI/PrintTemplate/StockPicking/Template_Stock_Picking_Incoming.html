@@ -5,33 +5,41 @@
             <td>
                 <strong>{{o.company.name}}</strong><br />
                 Địa chỉ: {{o.company.address}}<br />
-                ĐT: {{o.company.phone}}<br />
+                Điện thoại: {{o.company.phone}}<br />
                 Email: {{o.company.email}}
             </td>
         </tr>
     </tbody>
 </table>
+
 <h3 style="text-align:center">PHIẾU NHẬP KHO</h3>
-<div style="text-align:center">Ngày {{date.now.day}} tháng {{date.now.month}} năm {{date.now.year}}</div>
-<div style="text-align:center"><strong>Số: {{o.name}}</strong></div>
-<br />
+
+<p style="text-align:center">
+    Ngày {{date.now.day}} tháng {{date.now.month}} năm {{date.now.year}}<br />
+    <strong>Số: {{o.name}}</strong>
+</p>
+
+<h6>THÔNG TIN CHI TIẾT</h6>
+
 <table border="0" cellpadding="1" cellspacing="1" style="width:100%">
     <tbody>
         <tr>
-            <td>Đối tác</td>
-            <td>{{o.partner ? o.partner?.name : ""}}</td>
-            <td>Ngày</td>
+            <td><strong>Đối tác</strong></td>
+            <td>{{o.partner?.name}}</td>
+            <td><strong>Ngày</strong></td>
             <td>{{o.date | date.to_string '%d/%m/%Y'}}</td>
         </tr>
         <tr>
-            <td>Ghi chú</td>
+            <td><strong>Ghi chú</strong></td>
             <td>{{o.note ? o.note : ""}}</td>
             <td> </td>
             <td> </td>
         </tr>
     </tbody>
 </table>
-<br />
+
+<h6>DANH SÁCH SẢN PHẨM NHẬP KHO</h6>
+
 <table border="1" cellpadding="5" cellspacing="0" style="width:100%">
     <thead>
         <tr>
@@ -56,9 +64,6 @@
         <!--{{end}}-->
     </tbody>
 </table>
-
-
-<p> </p>
 
 <table border="0" cellpadding="0" cellspacing="1" style="float:right; width:50%">
     <tbody>

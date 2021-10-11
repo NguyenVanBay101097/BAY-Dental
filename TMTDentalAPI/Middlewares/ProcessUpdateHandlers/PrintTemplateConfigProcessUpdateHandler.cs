@@ -23,7 +23,7 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
 {
     public class PrintTemplateConfigProcessUpdateHandler : INotificationHandler<ProcessUpdateNotification>
     {
-        private const string _version = "1.0.1.8";
+        private const string _version = "1.0.2.0";
         private IServiceScopeFactory _serviceScopeFactory;
         private IRazorViewEngine _viewEngine;
         private ITempDataProvider _tempDataProvider;

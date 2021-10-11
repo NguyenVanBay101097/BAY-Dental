@@ -337,7 +337,7 @@ namespace Infrastructure.Services
                 case "tmp_customer_debt":
                     return "phieu.thu.chi";
                 case "tmp_agent_commission":
-                    return "agent.commission";
+                    return "phieu.thu.chi";
                 case "tmp_stock_picking_incoming":
                     return "stock.picking";
                 case "tmp_stock_picking_outgoing":

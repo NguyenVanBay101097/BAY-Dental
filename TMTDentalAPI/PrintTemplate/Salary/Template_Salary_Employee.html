@@ -19,26 +19,26 @@
     <strong>Số: {{o.name}}</strong>
 </p>
 
-<table cellpadding="5" cellspacing="1" style="width:100%">
+<table cellpadding="3" cellspacing="1" style="width:100%">
     <tbody>
         <tr>
-            <td style="width:150px">Người nhận</td>
+            <td style="width:150px"><strong>Người nhận</strong></td>
             <td>{{o.employee ? o.employee?.name : ""}}</td>
         </tr>
         <tr>
-            <td>Số tiền</td>
+            <td style="width:150px"><strong>Số tiền</strong></td>
             <td>{{o.amount ? (o.amount | math.format "N0") : 0 }}</td>
         </tr>
         <tr>
-            <td>Phương thức</td>
+            <td style="width:150px"><strong>Phương thức</strong></td>
             <td>{{o.journal ? o.journal?.name : ""}}</td>
         </tr>
         <tr>
-            <td>Bằng chữ</td>
+            <td style="width:150px"><strong>Bằng chữ</strong></td>
             <td>{{o.amount_text ? o.amount_text : ""}}</td>
         </tr>
         <tr>
-            <td>Nội dung</td>
+            <td style="width:150px"><strong>Nội dung</strong></td>
             <td>{{o.reason}}</td>
         </tr>
     </tbody>
@@ -55,18 +55,18 @@
                     <br />
                     <br />
                     <br />
-                    {{o.created_by ? (o.created_by?.name | string.upcase) : ""}}
+                    {{o.created_by?.name | string.upcase}}
                 </div>
             </td>
             <td>
                 <div style="text-align:center">
-                    {{date.now | date.to_string "%A" "vi-VN"}}, Ngày {{date.now.day}} tháng {{date.now.month}} năm {{date.now.year}}<br />
+                    {{date.now | date.to_string "%A"}}, Ngày {{date.now.day}} tháng {{date.now.month}} năm {{date.now.year}}<br />
                     <strong>Người lao động</strong><br />
                     <em>(Ký, họ tên)</em><br />
                     <br />
                     <br />
                     <br />
-                    {{o.employee ? (o.employee?.name | string.upcase) : ""}}
+                    {{o.employee?.name | string.upcase}}
                 </div>
             </td>
         </tr>

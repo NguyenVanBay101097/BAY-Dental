@@ -14,9 +14,8 @@
 
 <h3 style="text-align:center">PHIẾU THANH TOÁN LƯƠNG NHÂN VIÊN</h3>
 
-<div style="text-align:center">Ngày {{o.payslip_run?.date.day}} tháng {{o.payslip_run?.date?.month}} năm {{o.payslip_run?.date?.year}}</div>
+<p style="text-align:center">Ngày {{o.payslip_run?.date?.day}} tháng {{o.payslip_run?.date?.month}} năm {{o.payslip_run?.date?.year}}</p>
 
-<br />
 <table border="0" cellpadding="1" cellspacing="1" style="width:100%">
     <tbody>
         <tr>
@@ -25,163 +24,170 @@
         </tr>
     </tbody>
 </table>
-<div>
-    <table border="1" cellpadding="5" cellspacing="0" style="float:left; width:49%">
-        <tbody>
-            <tr>
-                <td style="width:150px">Nhân viên</td>
-                <td>{{o.employee?.name}}</td>
-            </tr>
-            <tr>
-                <td>Mã nhân viên</td>
-                <td>{{o.employee?.ref}}</td>
-            </tr>
-            <tr>
-                <td>Lương/tháng</td>
-                <td>{{o.employee ? (o.employee?.wage | math.format "N0") : 0}}</td>
-            </tr>
-            <tr>
-                <td>Số ngày nghỉ/tháng</td>
-                <td>{{o.employee?.leave_per_month ? (o.employee?.leave_per_month | math.format "N0") : 0}}</td>
-            </tr>
-            <tr>
-                <td>Số giờ làm/ngày</td>
-                <td>{{o.employee?.regular_hour ? (o.employee?.regular_hour | math.format "N0") : 0}}</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
 
-<div>
-    <table border="1" cellpadding="5" cellspacing="0" style="float:right; width:49%">
-        <thead>
-            <tr>
-                <th scope="col" style="width:150px">Nội dung</th>
-                <th scope="col">Số ngày</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Số ngày công</td>
-                <td>{{o.worked_day ? (o.worked_day | math.format "N0") : 0}}</td>
-            </tr>
-            <tr>
-                <td>Số ngày nghỉ</td>
-                <td>{{o.actual_leave_per_month ? (o.actual_leave_per_month | math.format "N0") : 0}}</td>
-            </tr>
-            <tr>
-                <td>Ngày nghỉ không lương</td>
-                <td>{{o.leave_per_month_unpaid ? (o.leave_per_month_unpaid | math.format "N0") : 0}}</td>
-            </tr>
-            <tr>
-                <td>Ngày làm thêm</td>
-                <td>{{o.over_time_day ? (o.over_time_day | math.format "N0") : 0}}</td>
-            </tr>
-            <tr>
-                <td>Số giờ tăng ca</td>
-                <td>{{o.over_time_hour ? (o.over_time_hour | math.format "N0") : 0}}</td>
-            </tr>
-        </tbody>
-    </table>
-    <br />
-    <table border="0" cellpadding="1" cellspacing="1" style="width:100%">
-        <tbody>
-            <tr>
-                <td><strong>Chi tiết lương</strong></td>
-                <td style="text-align:right"><strong>ĐVT: VNĐ</strong></td>
-            </tr>
-        </tbody>
-    </table>
+<table border="0" cellpadding="2" cellspacing="1" style="width:100%;">
+    <tbody>
+        <tr>
+            <td style="width: 50%;">
+                <table border="1" cellpadding="2" cellspacing="0" style="width:100%">
+                    <tbody>
+                        <tr>
+                            <td style="width:150px">Nhân viên</td>
+                            <td>{{o.employee?.name}}</td>
+                        </tr>
+                        <tr>
+                            <td>Mã nhân viên</td>
+                            <td>{{o.employee?.ref}}</td>
+                        </tr>
+                        <tr>
+                            <td>Lương/tháng</td>
+                            <td>{{o.employee?.wage ?? 0 | math.format "N0"}}</td>
+                        </tr>
+                        <tr>
+                            <td>Số ngày nghỉ/tháng</td>
+                            <td>{{o.employee?.leave_per_month ?? 0 | math.format "N0"}}</td>
+                        </tr>
+                        <tr>
+                            <td>Số giờ làm/ngày</td>
+                            <td>{{o.employee?.regular_hour ?? 0 | math.format "N0"}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+            <td style="width: 50%;">
+                <table border="1" cellpadding="2" cellspacing="0" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="width:150px">Nội dung</th>
+                            <th scope="col">Số ngày</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Số ngày công</td>
+                            <td>{{o.worked_day ?? 0 | math.format "N0"}}</td>
+                        </tr>
+                        <tr>
+                            <td>Số ngày nghỉ</td>
+                            <td>{{o.actual_leave_per_month ?? 0 | math.format "N0"}}</td>
+                        </tr>
+                        <tr>
+                            <td>Ngày nghỉ không lương</td>
+                            <td>{{o.leave_per_month_unpaid ?? 0 | math.format "N0"}}</td>
+                        </tr>
+                        <tr>
+                            <td>Ngày làm thêm</td>
+                            <td>{{o.over_time_day ?? 0 | math.format "N0"}}</td>
+                        </tr>
+                        <tr>
+                            <td>Số giờ tăng ca</td>
+                            <td>{{o.over_time_hour ?? 0 | math.format "N0"}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </tbody>
+</table>
 
-    <table border="1" cellpadding="4" cellspacing="0" style="width:100%">
-        <thead>
-            <tr>
-                <th scope="col" style="width:50px">STT</th>
-                <th scope="col">Nội dung</th>
-                <th scope="col">Số lượng</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td style="text-align:center">1</td>
-                <td>Lương cơ bản</td>
-                <td style="text-align:right">{{o.total_basic_salary ? (o.total_basic_salary | math.format "N0") : 0}}</td>
-            </tr>
-            <tr>
-                <td style="text-align:center">2</td>
-                <td>Lương tăng ca</td>
-                <td style="text-align:right">{{o.over_time_hour_salary ? (o.over_time_hour_salary | math.format "N0") : 0}}</td>
-            </tr>
-            <tr>
-                <td style="text-align:center">3</td>
-                <td>Lương làm thêm</td>
-                <td style="text-align:right">{{o.over_time_day_salary ? (o.over_time_day_salary | math.format "N0") : 0}}</td>
-            </tr>
-            <tr>
-                <td style="text-align:center">4</td>
-                <td>Phụ cấp xác định</td>
-                <td style="text-align:right">{{o.employee?.allowance ?? 0 | math.format "N0"}}</td>
-            </tr>
-            <tr>
-                <td style="text-align:center">5</td>
-                <td>Phụ cấp khác</td>
-                <td style="text-align:right">{{o.other_allowance ? (o.other_allowance | math.format "N0") : 0}}</td>
-            </tr>
-            <tr>
-                <td style="text-align:center">6</td>
-                <td>Thưởng</td>
-                <td style="text-align:right">{{o.reward_salary ? (o.reward_salary | math.format "N0") : 0}}</td>
-            </tr>
-            <tr>
-                <td style="text-align:center">7</td>
-                <td>Phụ cấp lễ tết</td>
-                <td style="text-align:right">{{o.holiday_allowance ? (o.holiday_allowance | math.format "N0") : 0}}</td>
-            </tr>
-            <tr>
-                <td style="text-align:center">8</td>
-                <td>Hoa hồng</td>
-                <td style="text-align:right">{{o.commission_salary ? (o.commission_salary | math.format "N0") : 0}}</td>
-            </tr>
-            <tr>
-                <td style="text-align:center">9</td>
-                <td>Phạt</td>
-                <td style="text-align:right">{{o.amercement_money ? (o.amercement_money | math.format "N0") : 0}}</td>
-            </tr>
-            <tr>
-                <td style="text-align:center">10</td>
-                <td>Tổng thu nhập</td>
-                <td style="text-align:right">{{o.total_salary ? (o.total_salary | math.format "N0") : 0}}</td>
-            </tr>
-            <tr>
-                <td style="text-align:center">11</td>
-                <td>Thuế</td>
-                <td style="text-align:right">{{o.tax ? (o.tax | math.format "N0") : 0}}</td>
-            </tr>
-            <tr>
-                <td style="text-align:center">12</td>
-                <td>BHXH</td>
-                <td style="text-align:right">{{o.social_insurance ? (o.social_insurance | math.format "N0") : 0}}</td>
-            </tr>
-            <tr>
-                <td style="text-align:center">13</td>
-                <td>Thực lĩnh</td>
-                <td style="text-align:right">{{o.net_salary ? (o.net_salary | math.format "N0") : 0}}</td>
-            </tr>
-            <tr>
-                <td style="text-align:center">14</td>
-                <td>Tạm ứng</td>
-                <td style="text-align:right">{{o.advance_payment ? (o.advance_payment | math.format "N0") : 0}}</td>
-            </tr>
-            <tr>
-                <td style="text-align:center">15</td>
-                <td>Còn lại</td>
-                <td style="text-align:right">{{o.residual_salary | math.format "N0"}}</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+<table border="0" cellpadding="1" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td><strong>Chi tiết lương</strong></td>
+            <td style="text-align:right"><strong>ĐVT: VNĐ</strong></td>
+        </tr>
+    </tbody>
+</table>
 
-<br/>
+<table border="1" cellpadding="4" cellspacing="0" style="width:100%">
+    <thead>
+        <tr>
+            <th scope="col" style="width:50px">STT</th>
+            <th scope="col">Nội dung</th>
+            <th scope="col">Số lượng</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="text-align:center">1</td>
+            <td>Lương cơ bản</td>
+            <td style="text-align:right">{{o.total_basic_salary ?? 0 | math.format "N0"}}</td>
+        </tr>
+        <tr>
+            <td style="text-align:center">2</td>
+            <td>Lương tăng ca</td>
+            <td style="text-align:right">{{o.over_time_hour_salary ?? 0 | math.format "N0"}}</td>
+        </tr>
+        <tr>
+            <td style="text-align:center">3</td>
+            <td>Lương làm thêm</td>
+            <td style="text-align:right">{{o.over_time_day_salary ?? 0 | math.format "N0"}}</td>
+        </tr>
+        <tr>
+            <td style="text-align:center">4</td>
+            <td>Phụ cấp xác định</td>
+            <td style="text-align:right">{{o.employee?.allowance ?? 0 | math.format "N0"}}</td>
+        </tr>
+        <tr>
+            <td style="text-align:center">5</td>
+            <td>Phụ cấp khác</td>
+            <td style="text-align:right">{{o.other_allowance ?? 0 | math.format "N0"}}</td>
+        </tr>
+        <tr>
+            <td style="text-align:center">6</td>
+            <td>Thưởng</td>
+            <td style="text-align:right">{{o.reward_salary ?? 0 | math.format "N0"}}</td>
+        </tr>
+        <tr>
+            <td style="text-align:center">7</td>
+            <td>Phụ cấp lễ tết</td>
+            <td style="text-align:right">{{o.holiday_allowance ?? 0 | math.format "N0"}}</td>
+        </tr>
+        <tr>
+            <td style="text-align:center">8</td>
+            <td>Hoa hồng</td>
+            <td style="text-align:right">{{o.commission_salary ?? 0 | math.format "N0"}}</td>
+        </tr>
+        <tr>
+            <td style="text-align:center">9</td>
+            <td>Phạt</td>
+            <td style="text-align:right">{{o.amercement_money ?? 0 | math.format "N0"}}</td>
+        </tr>
+        <tr>
+            <td style="text-align:center">10</td>
+            <td>Tổng thu nhập</td>
+            <td style="text-align:right">{{o.total_salary ?? 0 | math.format "N0"}}</td>
+        </tr>
+        <tr>
+            <td style="text-align:center">11</td>
+            <td>Thuế</td>
+            <td style="text-align:right">{{o.tax ?? 0 | math.format "N0"}}</td>
+        </tr>
+        <tr>
+            <td style="text-align:center">12</td>
+            <td>BHXH</td>
+            <td style="text-align:right">{{o.social_insurance ?? 0 | math.format "N0"}}</td>
+        </tr>
+        <tr>
+            <td style="text-align:center">13</td>
+            <td>Thực lĩnh</td>
+            <td style="text-align:right">{{o.net_salary ?? 0 | math.format "N0"}}</td>
+        </tr>
+        <tr>
+            <td style="text-align:center">14</td>
+            <td>Tạm ứng</td>
+            <td style="text-align:right">{{o.advance_payment ?? 0 | math.format "N0"}}</td>
+        </tr>
+        <tr>
+            <td style="text-align:center">15</td>
+            <td>Còn lại</td>
+            <td style="text-align:right">{{o.residual_salary | math.format "N0"}}</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>&nbsp;</p>
+
 <table border="0" cellpadding="0" cellspacing="1" style="width:100%">
     <tbody>
         <tr>
@@ -192,7 +198,7 @@
                     <br />
                     <br />
                     <br />
-                    <strong>{{o.created_by ? (o.created_by?.name | string.upcase) : ""}}</strong>
+                    <strong>{{o.created_by?.name | string.upcase}}</strong>
                 </div>
             </td>
             <td>
@@ -202,9 +208,11 @@
                     <br />
                     <br />
                     <br />
-                    <strong>{{o.employee ? (o.employee?.name | string.upcase) : ""}}</strong>
+                    <strong>{{o.employee?.name | string.upcase}}</strong>
                 </div>
             </td>
         </tr>
     </tbody>
 </table>
+
+<p>&nbsp;</p>

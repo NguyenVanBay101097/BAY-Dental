@@ -70,6 +70,7 @@ registerLocaleData(localeVi, "vi");
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [
+    ThemeService,
     JwtInterceptor, // Providing JwtInterceptor allow to inject JwtInterceptor manually into RefreshTokenInterceptor
     {
       provide: HTTP_INTERCEPTORS,

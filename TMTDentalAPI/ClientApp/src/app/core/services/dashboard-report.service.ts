@@ -90,4 +90,15 @@ export class DashboardReportService {
     return this.http.post(this.baseApi + this.apiUrl + "/GetRevenueChartReport", val);
   }
 
+  getRevenueActualReport(val: any) {
+    return this.http.post(this.baseApi + this.apiUrl + "/GetRevenueActualReport", val);
+  }
+
+  getThuChiReport(val: any) {
+    return this.http.post(this.baseApi + this.apiUrl + "/GetThuChiReport", val);
+  }
+
+  getSummaryReport(val: any) {
+    return this.http.post(this.baseApi + this.apiUrl + "/GetSummaryReport", val);
+  }
 }

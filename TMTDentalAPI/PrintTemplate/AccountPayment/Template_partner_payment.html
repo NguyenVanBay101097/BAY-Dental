@@ -16,34 +16,34 @@
 
     <p style="text-align:center">Ngày {{o.date.day}} tháng {{o.date.month}} năm {{o.date.year}}</p>
 
-    <table cellpadding="5" cellspacing="1" style="width:100%">
+    <table cellpadding="3" cellspacing="1" style="width:100%">
         <tbody>
             <tr>
-                <td style="width:150px">Khách hàng</td>
+                <td style="width:150px"><strong>Khách hàng</strong></td>
                 <td>{{o.order?.partner?.display_name}}</td>
             </tr>
             <tr>
-                <td>Điện thoại</td>
+                <td><strong>Điện thoại</strong></td>
                 <td>{{o.order?.partner?.phone}}</td>
             </tr>
             <tr>
-                <td>Địa chỉ</td>
+                <td><strong>Địa chỉ</strong></td>
                 <td>{{o.order?.partner?.address}}</td>
             </tr>
             <tr>
-                <td>Ngày thanh toán</td>
+                <td><strong>Ngày thanh toán</strong></td>
                 <td>{{o.date | date.to_string '%d/%m/%Y'}}</td>
             </tr>
             <tr>
-                <td>Phương thức thanh toán</td>
+                <td><strong>Phương thức thanh toán</strong></td>
                 <td>{{o.journal_lines_display}}</td>
             </tr>
             <tr>
-                <td>Số tiền</td>
+                <td><strong>Số tiền</strong></td>
                 <td>{{o.amount | math.format "N0"}}</td>
             </tr>
             <tr>
-                <td>Nội dung</td>
+                <td><strong>Nội dung</strong></td>
                 <td>{{o.note}}</td>
             </tr>
         </tbody>
@@ -52,27 +52,23 @@
     <table border="0" cellpadding="0" cellspacing="1" style="width:100%">
         <tbody>
             <tr>
-                <td>
-                    <p style="text-align:center">
-                        <strong>Khách hàng</strong><br />
-                        <em>(Ký, họ tên)</em>
-                    </p>
+                <td style="text-align:center">
+                    <strong>Khách hàng</strong><br />
+                    <em>(Ký, họ tên)</em>
                     <br />
                     <br />
                     <br />
-                    &nbsp;
-                    <p style="text-align:center"><strong>{{o.order?.partner?.name | string.upcase}}</strong></p>
+                    <br />
+                    <strong>{{o.order?.partner?.name | string.upcase}}</strong>
                 </td>
-                <td>
-                    <p style="text-align:center">
-                        <strong>Nhân viên</strong><br />
-                        <em>(Ký, họ tên)</em>
-                    </p>
+                <td style="text-align:center">
+                    <strong>Nhân viên</strong><br />
+                    <em>(Ký, họ tên)</em>
                     <br />
                     <br />
                     <br />
-                    &nbsp;
-                    <p style="text-align:center"><strong>{{u.name | string.upcase}}</strong></p>
+                    <br />
+                    <strong>{{u.name | string.upcase}}</strong>
                 </td>
             </tr>
         </tbody>
