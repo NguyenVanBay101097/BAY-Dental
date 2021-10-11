@@ -18,5 +18,6 @@ namespace Infrastructure.Services
 
         QuotationPromotion PreparePromotionToQuotation(Quotation self, SaleCouponProgram program, decimal discountAmount);
         QuotationPromotion PreparePromotionToQuotationLine(QuotationLine self, SaleCouponProgram program, decimal discountAmount);
+        Task ComputeAmount(IEnumerable<Guid> ids);
     }
 }

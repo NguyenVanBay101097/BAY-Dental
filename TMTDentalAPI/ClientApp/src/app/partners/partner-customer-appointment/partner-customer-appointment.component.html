@@ -23,15 +23,7 @@
                         <label>{{ dataItem.isRepeatCustomer ? "Tái khám" : "Khám mới" }}</label>
                     </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column title="Trạng thái" width="150">
-                    <ng-template kendoGridCellTemplate let-dataItem>
-                        <label *ngIf="dataItem.state=='confirmed'" class="color-confirmed">
-                            <span class="color-confirmed" *ngIf="!dataItem.isLate">Đang hẹn</span>
-                            <span class="color-overdue" *ngIf="dataItem.isLate">Quá hẹn</span>
-                        </label>
-                        <label *ngIf="dataItem.state=='done'" class="color-arrived">Đã đến</label>
-                        <label *ngIf="dataItem.state=='cancel'" class="color-cancel">Hủy hẹn</label>
-                    </ng-template>
+                <kendo-grid-column field="stateDisplay" title="Trạng thái" width="100">
                 </kendo-grid-column>
                 <kendo-grid-column field="reason" title="Lý do" width="150">
                 </kendo-grid-column>

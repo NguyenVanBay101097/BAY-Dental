@@ -42,13 +42,6 @@ namespace ApplicationCore.Constants
         public const string PartnerOldNewReport = "PartnerOldNewReport";
         public const string ReportPartnerDebit = "ReportPartnerDebit";
 
-        public static PrintTemplateType[] PrintTemplateType = new PrintTemplateType[] {
-           new PrintTemplateType {Type = "tmp_sale_order" , PathTemplate = "~/TMTDentalAPI/Views/SaleOrder/Print.cshtml" },
-           new PrintTemplateType {Type = "tmp_account_payment" , PathTemplate = "" },
-           new PrintTemplateType {Type = "tmp_advisory" , PathTemplate = "" },
-           new PrintTemplateType {Type = "tmp_partner_advance" , PathTemplate = "" },
-           new PrintTemplateType {Type = "tmp_supplier_payment" , PathTemplate = "" },
-        };
 
         public static PrintTemplateType[] PrintTemplateTypeDemo = new PrintTemplateType[] {
            new PrintTemplateType {Type = "tmp_sale_order" , PathTemplate = "PrintTemplate/SaleOrder/Template.html" , Model = "sale.order", NameIRModel = "print_template_sale_order" },

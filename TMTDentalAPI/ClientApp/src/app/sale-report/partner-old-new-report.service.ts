@@ -80,6 +80,14 @@ export class PartnerOldNewReportSumReq {
   typeReport: string;
 }
 
+export class PartnerOldNewReportByWardReq {
+  companyId: string;
+  cityCode: string;
+  districtCode: string;
+  dateFrom: any;
+  dateTo: any;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -106,6 +114,10 @@ export class PartnerOldNewReportService {
 
   sumReVenue(val: any) {
     return this.http.get(this.baseApi + this.apiUrl + "/SumReVenue", { params: new HttpParams({ fromObject: val }) });
+  }
+
+  reportByWard(val: any) {
+    return this.http.get(this.baseApi + this.apiUrl + "/ReportByWard", { params: new HttpParams({ fromObject: val }) });
   }
 
   getReportPrint(val) {

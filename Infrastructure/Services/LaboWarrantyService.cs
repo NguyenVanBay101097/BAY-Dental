@@ -402,5 +402,17 @@ namespace Infrastructure.Services
 
             return _mapper.Map<IEnumerable<LaboWarrantyBasic>>(result);
         }
+
+        public override ISpecification<LaboWarranty> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "labo.labo_warranty_comp_rule":
+                    return new InitialSpecification<LaboWarranty>(x => x.CompanyId == companyId);
+                default:
+                    return null;
+            }
+        }
     }
 }

@@ -30,6 +30,8 @@ namespace Infrastructure.Services
         Task<RevenueReportExcelVM<RevenueEmployeeReportExcel>> GetRevenueEmployeeReportExcel(RevenueEmployeeReportPar val);
         Task<RevenueReportExcelVM<RevenuePartnerReportExcel>> GetRevenuePartnerReportExcel(RevenuePartnerReportPar val);
 
-        Task<IEnumerable<RevenueReportItem>> GetRevenueChartReport(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string groupBy);
+        Task<IEnumerable<RevenueReportItem>> GetRevenueChartReport(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string groupBy, string[] accountCode = null);
+        Task<IEnumerable<RevenueTimeReportDisplay>> GetRevenueTimeByMonth(RevenueTimeReportPar val);
+        Task<IEnumerable<RevenueDistrictAreaDisplay>> GetRevenueDistrictArea(RevenueDistrictAreaPar val);
     }
 }
