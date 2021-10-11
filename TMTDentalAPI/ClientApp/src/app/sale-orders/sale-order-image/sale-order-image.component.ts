@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import { SaleOrderService } from 'src/app/core/services/sale-order.service';
@@ -17,6 +17,7 @@ export class SaleOrderImageComponent implements OnInit {
   @Input('saleOrderId') saleOrderId: string;
   imagesPreview: any[] = []
   dataFilter: any[] = [];
+  @ViewChild('inputFile', { static: true }) inputFile: ElementRef;
 
   constructor(
     private modalService: NgbModal,
@@ -50,8 +51,9 @@ export class SaleOrderImageComponent implements OnInit {
 
   loadData() {
     this.saleOrderService.getListAttachment(this.saleOrderId).subscribe((res: any) => {
+      console.log(res);
       this.imagesPreview = res
-      this.convertData();
+      // this.convertData();
     }, err => console.log(err))
   }
 
@@ -74,6 +76,7 @@ export class SaleOrderImageComponent implements OnInit {
     }
     this.webService.binaryUploadAttachment(formData).subscribe((res: any) => {
       this.loadData();
+      this.inputFile.nativeElement.value = '';
     }, (err) => { console.log(err) })
   }
 
