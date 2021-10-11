@@ -4,12 +4,15 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { result } from 'lodash';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
+import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
 import { SaleOrderPaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { SaleOrderLinePaged } from '../../partner.service';
 
 @Component({
   selector: 'app-partner-customer-treatment-list',
@@ -26,8 +29,10 @@ export class PartnerCustomerTreatmentListComponent implements OnInit {
   pagerSettings: any;
   search: string;
   saleOrdersData: GridDataResult;
+  saleOrderLinesData: GridDataResult;
   searchUpdate = new Subject<string>();
   loading = false;
+  viewType: string = '';
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
   constructor(
@@ -38,15 +43,20 @@ export class PartnerCustomerTreatmentListComponent implements OnInit {
     private intlService: IntlService,
     private modalService: NgbModal,
     private notificationService: NotificationService,
+    private saleOrderlineService: SaleOrderLineService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loading = true;
+    var viewType = localStorage.getItem('view_type_order');
+    this.viewType = viewType ||'saleOrder';
+    localStorage.setItem('view_type_order',this.viewType);
+
     this.activeRoute.parent.params.subscribe(
       params => {
         this.partnerId = params.id;
-        this.getSaleOrders();
+        this.getData();
       }
     )
     this.searchUpdate.pipe(
@@ -55,7 +65,7 @@ export class PartnerCustomerTreatmentListComponent implements OnInit {
       .subscribe((value) => {
         this.search = value || '';
         this.skip = 0;
-        this.getSaleOrders();
+        this.getData();
       });
   }
 
@@ -94,6 +104,34 @@ export class PartnerCustomerTreatmentListComponent implements OnInit {
     )
   }
 
+  getSaleOrderLines(){
+    var orderLineFilter = new SaleOrderLinePaged();
+    orderLineFilter.search = this.search || '';
+    orderLineFilter.offset = this.skip;
+    orderLineFilter.limit = this.limit;
+    orderLineFilter.orderPartnerId = this.partnerId;
+    this.saleOrderlineService.getPaged(orderLineFilter).pipe(
+      map(result => (<GridDataResult>{
+        data: result.items,
+        total: result.totalItems
+      }))
+    ).subscribe(res => {
+      this.saleOrderLinesData = res;
+      this.loading = false
+      console.log(this.saleOrderLinesData);
+      
+    })
+  }
+
+  getData(){
+    if (this.viewType == 'saleOrder'){
+      this.getSaleOrders();
+    }
+    if (this.viewType == 'saleOrderLine'){
+      this.getSaleOrderLines();
+    }
+  }
+
   viewSaleOrder(id){
     this.router.navigate(['/sale-orders/form'], { queryParams: { id: id } });
   }
@@ -108,7 +146,11 @@ export class PartnerCustomerTreatmentListComponent implements OnInit {
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;
     this.skip = 0;
-    this.getSaleOrders();
+    this.getData();
+  }
+
+  onChangeViewType(){
+    localStorage.setItem('view_type_order',this.viewType);
   }
 
   deleteItem(item) {
