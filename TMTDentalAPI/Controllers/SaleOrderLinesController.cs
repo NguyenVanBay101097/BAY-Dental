@@ -341,7 +341,10 @@ namespace TMTDentalAPI.Controllers
             if (val == null)
                 return BadRequest();
 
+            await _unitOfWork.BeginTransactionAsync();
             await _saleLineService.UpdateDkByOrderLine(val.Id, val);
+            _unitOfWork.Commit();
+
             return NoContent();
         }
 

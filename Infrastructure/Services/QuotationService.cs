@@ -30,11 +30,11 @@ namespace Infrastructure.Services
         {
             var quotationLineObj = GetService<IQuotationLineService>();
             var promotionObj = GetService<IQuotationPromotionService>();
+            var paymentObj = GetService<IPaymentQuotationService>();
 
             var model = await SearchQuery(x => x.Id == id)
                 .Include(x => x.Partner)
                 .Include(x => x.Employee)
-                .Include(x => x.Payments)
                 .Include(x => x.Promotions)
                 .Include(x => x.Orders)
                 .FirstOrDefaultAsync();
@@ -49,7 +49,11 @@ namespace Infrastructure.Services
                 .Include(x => x.Promotions)
                 .ToListAsync();
 
+            var payments = await paymentObj.SearchQuery(x => x.QuotationId == id, orderBy: x => x.OrderBy(s => s.Sequence))
+                .ToListAsync();
+
             model.Lines = lines;
+            model.Payments = payments;
 
             var display = _mapper.Map<QuotationDisplay>(model);
 
@@ -128,9 +132,10 @@ namespace Infrastructure.Services
 
             quotation = _mapper.Map(val, quotation);
             await ComputeQuotationLine(val, quotation);
-            await ComputePaymentQuotation(val, quotation);
-
             ComputeAmountAll(quotation);
+
+            await ComputePaymentQuotation(val, quotation);
+         
             await UpdateAsync(quotation);
         }
 
@@ -190,20 +195,21 @@ namespace Infrastructure.Services
             var quotationLineService = GetService<IQuotationLineService>();
             await quotationLineService.CreateAsync(lines);
 
+            ComputeAmountAll(quotation);
 
             var payments = new List<PaymentQuotation>();
+            var paymentSequence = 0;
             foreach (var payment in val.Payments)
             {
                 var payQuot = _mapper.Map<PaymentQuotation>(payment);
                 payQuot.QuotationId = quotation.Id;
-
+                payQuot.Amount = payQuot.DiscountPercentType == "percent" ? Math.Round((payQuot.Payment ?? 0) * (quotation.TotalAmount ?? 0) / 100) : (payQuot.Payment ?? 0);
+                payQuot.Sequence = paymentSequence++;
                 payments.Add(payQuot);
             }
             var paymentQuotationObj = GetService<IPaymentQuotationService>();
             await paymentQuotationObj.CreateAsync(payments);
-
-
-            ComputeAmountAll(quotation);
+           
             await UpdateAsync(quotation);
             return _mapper.Map<QuotationBasic>(quotation);
         }
@@ -233,18 +239,23 @@ namespace Infrastructure.Services
                 }
             }
 
+            var paymentSequence = 0;
             foreach (var payment in val.Payments)
             {
                 if (payment.Id == Guid.Empty)
                 {
                     var payQuot = _mapper.Map<PaymentQuotation>(payment);
                     payQuot.QuotationId = quotation.Id;
+                    payQuot.Amount = payQuot.DiscountPercentType == "percent" ? Math.Round((payQuot.Payment ?? 0) * (quotation.TotalAmount ?? 0) / 100) : (payQuot.Payment ?? 0);
+                    payQuot.Sequence = paymentSequence++;
                     listAdd.Add(payQuot);
                 }
                 else
                 {
                     var payQuot = await paymentQuotationObj.SearchQuery(x => x.Id == payment.Id).FirstOrDefaultAsync();
                     _mapper.Map(payment, payQuot);
+                    payQuot.Amount = payQuot.DiscountPercentType == "percent" ? Math.Round((payQuot.Payment ?? 0) * (quotation.TotalAmount ?? 0) / 100) : (payQuot.Payment ?? 0);
+                    payQuot.Sequence = paymentSequence++;
                     listUpdate.Add(payQuot);
                 }
             }
