@@ -1,7 +1,9 @@
-.o_searchview {
-    flex: 1;
+
+.o_control_panel {
+    display: block;
 }
 
-.breadcrumb {
-    align-items: center;
+.border_left_product {
+    padding-left: 4px;
+    border-left: 4px solid transparent;
 }

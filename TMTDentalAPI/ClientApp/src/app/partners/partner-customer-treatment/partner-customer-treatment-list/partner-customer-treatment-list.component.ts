@@ -50,8 +50,13 @@ export class PartnerCustomerTreatmentListComponent implements OnInit {
   ngOnInit() {
     this.loading = true;
     var viewType = localStorage.getItem('view_type_order');
-    this.viewType = viewType ||'saleOrder';
-    localStorage.setItem('view_type_order',this.viewType);
+    if (viewType)
+      this.viewType = viewType;
+    else {
+      this.viewType = viewType;
+      localStorage.setItem('view_type_order',this.viewType);
+    }
+    
 
     this.activeRoute.parent.params.subscribe(
       params => {
@@ -110,6 +115,8 @@ export class PartnerCustomerTreatmentListComponent implements OnInit {
     orderLineFilter.offset = this.skip;
     orderLineFilter.limit = this.limit;
     orderLineFilter.orderPartnerId = this.partnerId;
+    orderLineFilter.dateOrderFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd")
+    orderLineFilter.dateOrderTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:59")
     this.saleOrderlineService.getPaged(orderLineFilter).pipe(
       map(result => (<GridDataResult>{
         data: result.items,
@@ -118,8 +125,6 @@ export class PartnerCustomerTreatmentListComponent implements OnInit {
     ).subscribe(res => {
       this.saleOrderLinesData = res;
       this.loading = false
-      console.log(this.saleOrderLinesData);
-      
     })
   }
 
@@ -151,6 +156,7 @@ export class PartnerCustomerTreatmentListComponent implements OnInit {
 
   onChangeViewType(){
     localStorage.setItem('view_type_order',this.viewType);
+    this.getData();
   }
 
   deleteItem(item) {
@@ -173,6 +179,50 @@ export class PartnerCustomerTreatmentListComponent implements OnInit {
       animation: { type: 'fade', duration: 400 },
       type: { style: Style, icon: true }
     });
+  }
+
+  getTeeth(teeth: any[]){
+    var names = teeth.map(x => x.name);
+    return names.join();
+  }
+
+  getState(state){
+    switch(state) {
+      case 'done':
+        return 'Hoàn thành';
+      case 'draft':
+        return 'Nháp';
+      case 'sale':
+        return 'Đang điều trị';
+      case 'cancel':
+        return 'Ngừng điều trị';
+    }
+  }
+
+  getClass(state){
+    switch(state) {
+      case 'done':
+        return 'badge-success';
+      case 'draft':
+        return 'badge-secondary';
+      case 'sale':
+        return 'badge-primary';
+      case 'cancel':
+        return 'badge-danger';
+    }
+  }
+
+  getColor(state){
+    switch(state) {
+      case 'done':
+        return '#28A745';
+      case 'draft':
+        return '#6c757d';
+      case 'sale':
+        return '#2395FF';
+      case 'cancel':
+        return '#EB3B5B';
+    }
   }
 
 }
