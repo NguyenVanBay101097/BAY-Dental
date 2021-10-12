@@ -1,9 +1,9 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { EmployeePaged, EmployeeBasic } from '../employee';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { EmployeeService } from '../employee.service';
-import { map, distinctUntilChanged, debounceTime } from 'rxjs/operators';
+import { map, distinctUntilChanged, debounceTime, tap, switchMap } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { EmployeeCreateUpdateComponent } from '../employee-create-update/employee-create-update.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -12,6 +12,8 @@ import { ActivatedRoute } from '@angular/router';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { HrJobService, HrJobsPaged } from 'src/app/hr-jobs/hr-job.service';
 
 @Component({
   selector: 'app-employee-list',
@@ -27,10 +29,16 @@ export class EmployeeListComponent implements OnInit {
     { name: 'Ngưng làm việc', value: false }
   ];
   defaultFilter: any = this.filterLaboStatus[0];
+  @ViewChild('cbxHrJob', { static: true }) public cbxHrJob: ComboBoxComponent;
+  cbxPopupSettings = {
+    width: 'auto'
+  };
+  hrJobs: any[] = [];
   constructor(private fb: FormBuilder, private service: EmployeeService,
     private notificationService: NotificationService,
     private activeroute: ActivatedRoute, private modalService: NgbModal,
     private authService: AuthService,
+    private hrJobService: HrJobService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -48,12 +56,27 @@ export class EmployeeListComponent implements OnInit {
   isDoctor: boolean;
   isAssistant: boolean;
   isOther: boolean;
-
+  hrJobId: string;
   btnDropdown: any[] = [{ text: 'Bác sĩ' }, { text: 'Phụ tá' }, { text: 'Nhân viên khác' }];
 
   ngOnInit() {
     this.getEmployeesList();
     this.searchChange();
+    this.loadHrJobs();
+    this.cbxHrJob.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.cbxHrJob.loading = true)),
+      switchMap(value => this.searchHrJob(value))
+    ).subscribe((res : any) => {
+      this.hrJobs = res.items;
+      this.cbxHrJob.loading = false;
+    });
+  }
+
+  loadHrJobs() {
+    this.searchHrJob().subscribe((res:any) => {
+      this.hrJobs = res.items;
+    })
   }
 
   getEmployeesList() {
@@ -63,6 +86,7 @@ export class EmployeeListComponent implements OnInit {
     empPaged.offset = this.skip;
     empPaged.companyId = this.authService.userInfo.companyId;
     empPaged.active = (this.active || this.active == false) ? this.active : '';
+    empPaged.hrJobId = this.hrJobId || '';
     if (this.search) {
       empPaged.search = this.search;
     }
@@ -216,6 +240,20 @@ export class EmployeeListComponent implements OnInit {
     this.active = e ? e.value : null;
     this.skip = 0;
     this.getEmployeesList();
+  }
+
+  onHrJobSelect(e){
+    this.skip = 0;
+    this.hrJobId = e?e.id:'';
+    this.getEmployeesList();
+  }
+
+  searchHrJob(s?) {
+    var val = new HrJobsPaged();
+    val.offset = 0;
+    val.limit = 20;
+    val.search = s || '';
+    return this.hrJobService.autoComplete(val);
   }
 
   notify(Style, Content) {

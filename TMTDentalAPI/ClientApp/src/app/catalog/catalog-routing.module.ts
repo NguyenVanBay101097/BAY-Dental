@@ -95,6 +95,10 @@ const routes: Routes = [
     path: 'agents',
     loadChildren: () => import('../agents/agents.module').then(m => m.AgentsModule),
   },
+  {
+    path: 'hr-job',
+    loadChildren: () => import('../hr-jobs/hr-jobs.module').then(m => m.HrJobsModule),
+  },
 ];
 
 @NgModule({

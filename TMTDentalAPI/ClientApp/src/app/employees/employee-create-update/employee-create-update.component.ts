@@ -24,6 +24,7 @@ import { ResGroupBasic, ResGroupService } from 'src/app/res-groups/res-group.ser
 import { AuthService } from 'src/app/auth/auth.service';
 import { PermissionService } from 'src/app/shared/permission.service';
 import { ApplicationRolePaged, RoleService } from 'src/app/roles/role.service';
+import { HrJobService, HrJobsPaged } from 'src/app/hr-jobs/hr-job.service';
 
 @Component({
   selector: 'app-employee-create-update',
@@ -43,7 +44,8 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     private resGroupService: ResGroupService,
     private authService: AuthService,
     private permissionService: PermissionService,
-    private roleService: RoleService
+    private roleService: RoleService,
+    private hrJobService: HrJobService,
   ) { }
   empId: string;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
@@ -51,6 +53,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
   @ViewChild('assistantCommissionCbx', { static: false }) assistantCommissionCbx: ComboBoxComponent;
   @ViewChild('counselorCommissionCbx', { static: false }) counselorCommissionCbx: ComboBoxComponent;
   @ViewChild("name", { static: true }) private nameEL: ElementRef;
+  @ViewChild('cbxHrJob', { static: true }) public cbxHrJob: ComboBoxComponent;
 
 
   isChange: boolean = false;
@@ -72,6 +75,10 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
   listCompanies: CompanyBasic[] = [];
   groupSurvey: any[] = [];
   roles: any[] = [];
+  cbxPopupSettings = {
+    width: 'auto'
+  };
+  hrJobs: any[] = [];
 
   ngOnInit() {
     this.formCreate = this.fb.group({
@@ -114,7 +121,8 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       userAvatar: null,
       groupId: null,
       isAllowSurvey: false,
-      roles: null
+      roles: null,
+      hrJob: null,
     });
 
     setTimeout(() => {
@@ -125,6 +133,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       // this.loadUsers();
       // this.loadstructureTypes();
       this.loadListCompanies();
+      this.loadHrJobs();
 
       // this.userCbx.filterChange.asObservable().pipe(
       //   debounceTime(300),
@@ -137,6 +146,14 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       this.loadGroupSurvey();
 
       this.loadRoles();
+      this.cbxHrJob.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => (this.cbxHrJob.loading = true)),
+        switchMap(value => this.searchHrJob(value))
+      ).subscribe((res : any) => {
+        this.hrJobs = res.items;
+        this.cbxHrJob.loading = false;
+      });
     });
     document.getElementById('name').focus();
   }
@@ -193,6 +210,20 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
 
   getControlForm(key) {
     return this.formCreate.get(key);
+  }
+
+  loadHrJobs() {
+    this.searchHrJob().subscribe((res:any) => {
+      this.hrJobs = res.items;
+    })
+  }
+  
+  searchHrJob(s?) {
+    var val = new HrJobsPaged();
+    val.offset = 0;
+    val.limit = 20;
+    val.search = s || '';
+    return this.hrJobService.autoComplete(val);
   }
 
   loadUsers() {
@@ -340,6 +371,10 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
           if (rs.counselorCommission) {
             this.listCounselorCommissions = _.unionBy(this.listCounselorCommissions, [rs.counselorCommission], 'id');
           }
+          
+          if (rs.hrJob) {
+            this.hrJobs = _.unionBy(this.hrJobs, [rs.hrJob], 'id');
+          }
       
           this.formCreate.get('createChangePassword').setValue(false);
           this.onChangeCreateChangePassword(null);
@@ -379,6 +414,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     value.commissionId = value.commission ? value.commission.id : null;
     value.counselorCommissionId = value.counselorCommission ? value.counselorCommission.id : null;
     value.assistantCommissionId = value.assistantCommission ? value.assistantCommission.id : null;
+    value.hrJobId = value.hrJob ? value.hrJob.id : null;
     this.isChange = true;
 
     this.employeeService.createUpdateEmployee(value, this.empId).subscribe(

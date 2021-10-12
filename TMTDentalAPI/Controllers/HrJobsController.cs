@@ -86,5 +86,12 @@ namespace TMTDentalAPI.Controllers
 
             return NoContent();
         }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> AutoComplete([FromQuery] HrJobPaged val)
+        {
+            var res = await _hrJobService.AutoComplete(val);
+            return Ok(res);
+        }
     }
 }

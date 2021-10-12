@@ -11,5 +11,7 @@ namespace Infrastructure.Services
     public interface IHrJobService : IBaseService<HrJob>
     {
         Task<PagedResult2<HrJobBasic>> GetPagedResultAsync(HrJobPaged val);
+        Task<PagedResult2<HrJobBasic>> AutoComplete(HrJobPaged val);
+
     }
 }

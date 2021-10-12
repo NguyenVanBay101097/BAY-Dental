@@ -134,6 +134,7 @@ export class AppHomeComponent implements OnInit {
       children: [
         { name: 'Thông tin khách hàng', url: '/catalog/customer-management' },
         { name: 'Hạng thành viên', url: '/catalog/member-level/management' },
+        { name: 'Chức vụ nhân viên', url: '/catalog/hr-job' },
         { name: 'Nhà cung cấp', url: '/catalog/suppliers', permissions: ['Basic.Partner.Read'] },
         { name: 'Dịch vụ - Vật tư - Thuốc', url: '/catalog/products', permissions: ['Catalog.Products.Read'] },
         { name: 'Đơn thuốc mẫu', url: '/catalog/sample-prescriptions', permissions: ['Catalog.SamplePrescription.Read'] },
