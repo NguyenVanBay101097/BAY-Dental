@@ -98,8 +98,6 @@ export class HrPayslipRunFormComponent implements OnInit {
     if (this.id) {
       this.hrPaysliprunService.get(this.id).subscribe((result: any) => {
         this.payslipRun = result;
-        console.log(result);
-        
         this.patchValue(result);
       });
     }
@@ -144,8 +142,6 @@ export class HrPayslipRunFormComponent implements OnInit {
         .subscribe((result: any) => {
           this.hrPaysliprunService.CreatePayslipByRunId(result.id).subscribe((res: any) => {
             this.payslipRun = res;
-            console.log(res);
-            
             this.patchValue(res);
           });
         }, err => {

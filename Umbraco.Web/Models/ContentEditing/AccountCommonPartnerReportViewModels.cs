@@ -88,6 +88,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string PartnerRef { get; set; }
 
         public string PartnerPhone { get; set; }
+        public string HrJobName { get; set; }
 
         public decimal Begin { get; set; }
 

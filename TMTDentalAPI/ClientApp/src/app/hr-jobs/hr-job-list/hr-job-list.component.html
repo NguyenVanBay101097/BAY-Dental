@@ -9,16 +9,15 @@
             <div class="o_searchview">
                 <i class="o_searchview_icon fa fa-search"></i>
                 <div class="o_searchview_input_container">
-                    <input class="o_searchview_input" placeholder="Tìm kiếm theo tên" type="text"
-                        [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                    <input class="o_searchview_input" placeholder="Tìm kiếm theo chức vụ" type="text" [(ngModel)]="search"
+                        (ngModelChange)="this.searchUpdate.next($event)">
                 </div>
             </div>
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <button type="button" class="btn btn-primary" (click)="createItem()" accesskey="c">Thêm chức vụ
-                    </button>
+                    <button type="button" title="Thêm chức vụ" class="btn btn-primary" (click)="createItem()" accesskey="c"> Thêm </button>
                 </div>
             </div>
             <div class="o_cp_sidebar">

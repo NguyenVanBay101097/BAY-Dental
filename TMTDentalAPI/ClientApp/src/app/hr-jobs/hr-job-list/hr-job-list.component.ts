@@ -90,8 +90,11 @@ export class HrJobListComponent implements OnInit {
       this.hrJobService.delete(item.id).subscribe(() => {
         this.notifyService.notify('success','Xóa thành công');
         this.loadDataFromApi();
+      },(error) => {
+        console.log(error);
       });
-    }, () => {
+    }, (error) => {
+      console.log(error);
     });
   }
 

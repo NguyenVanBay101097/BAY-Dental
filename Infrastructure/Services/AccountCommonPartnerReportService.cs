@@ -294,6 +294,8 @@ namespace Infrastructure.Services
             var date_to = val.ToDate.HasValue ? val.ToDate.Value.AddDays(1).AddMinutes(-1) : today.AddDays(1).AddMinutes(-1); //23h59
             var dict = new Dictionary<Guid, AccountCommonPartnerReportItem>();
             var amlObj = (IAccountMoveLineService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IAccountMoveLineService));
+            var empObj = GetService<IEmployeeService>();
+            var empl_dict = await empObj.SearchQuery(x => x.HrJobId.HasValue).Include(x => x.HrJob).Include(x => x.User).ThenInclude(x => x.Partner).Distinct().ToDictionaryAsync(x => x.PartnerId, x => x.HrJob.Name);
             var query = amlObj._QueryGet(dateFrom: val.FromDate, dateTo: val.ToDate, initBal: true, state: "posted", companyId: val.CompanyId);
             if (!string.IsNullOrWhiteSpace(val.Search))
             {
@@ -317,6 +319,7 @@ namespace Infrastructure.Services
                    PartnerName = x.Key.PartnerName,
                    PartnerRef = x.Key.PartnerRef,
                    PartnerPhone = x.Key.PartnerPhone,
+                   JobName = empl_dict.ContainsKey(x.Key.PartnerId) ? empl_dict[x.Key.PartnerId] : null,
                    x.Key.Type,
                    InitialBalance = x.Sum(s => s.Debit - s.Credit),
                }).ToListAsync();
@@ -331,6 +334,7 @@ namespace Infrastructure.Services
                         PartnerName = item.PartnerName,
                         PartnerRef = item.PartnerRef,
                         PartnerPhone = item.PartnerPhone,
+                        HrJobName = item.JobName,
                         ResultSelection = val.ResultSelection,
                         DateFrom = date_from,
 
@@ -364,6 +368,7 @@ namespace Infrastructure.Services
                         PartnerName = x.Key.PartnerName,
                         PartnerRef = x.Key.PartnerRef,
                         PartnerPhone = x.Key.PartnerPhone,
+                        JobName = empl_dict.ContainsKey(x.Key.PartnerId) ? empl_dict[x.Key.PartnerId] : null,
                         x.Key.Type,
                         Debit = x.Sum(s => s.Debit),
                         Credit = x.Sum(s => s.Credit),
@@ -379,6 +384,7 @@ namespace Infrastructure.Services
                         PartnerName = item.PartnerName,
                         PartnerRef = item.PartnerRef,
                         PartnerPhone = item.PartnerPhone,
+                        HrJobName = item.JobName,
                         ResultSelection = val.ResultSelection,
                         DateFrom = date_from,
                         DateTo = date_to
@@ -411,6 +417,7 @@ namespace Infrastructure.Services
                     End = end,
                     PartnerName = value.PartnerName,
                     PartnerPhone = value.PartnerPhone,
+                    HrJobName = value.HrJobName
                 });
             }
             return res;

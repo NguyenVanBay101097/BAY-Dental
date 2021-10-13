@@ -81,8 +81,14 @@ namespace TMTDentalAPI.Controllers
             var model = await _hrJobService.GetByIdAsync(id);
             if (model == null)
                 return NotFound();
-
-            await _hrJobService.DeleteAsync(model);
+            try
+            {
+                await _hrJobService.DeleteAsync(model);
+            }
+            catch (Exception)
+            {
+                throw new Exception("Không thể xóa Chức vụ nhân viên do có ràng buộc dữ liệu");
+            }
 
             return NoContent();
         }

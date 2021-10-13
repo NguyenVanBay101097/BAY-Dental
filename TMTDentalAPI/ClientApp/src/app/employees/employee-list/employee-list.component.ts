@@ -200,18 +200,18 @@ export class EmployeeListComponent implements OnInit {
   }
 
   btnDropdownItemClick(e) {
-    console.log(e);
+    // console.log(e);
     switch (e.text.toString()) {
       case "Bác sĩ":
-        console.log(1);
+        // console.log(1);
         this.openModal(null, true, false);
         break;
       case "Phụ tá":
-        console.log(2);
+        // console.log(2);
         this.openModal(null, false, true);
         break;
       case "Nhân viên khác":
-        console.log(3);
+        // console.log(3);
         this.openModal(null, false, false);
         break;
     }
