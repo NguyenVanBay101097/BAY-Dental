@@ -110,32 +110,51 @@ namespace TMTDentalAPI
                .AddEntityFrameworkStores<CatalogDbContext>()
                .AddDefaultTokenProviders();
 
-            // configure jwt authentication
-            services.AddAuthentication(x =>
+            services.AddIdentityServer()
+            .AddInMemoryClients(Config.Clients)
+            .AddInMemoryIdentityResources(Config.IdentityResources)
+            .AddInMemoryApiResources(Config.ApiResources)
+            .AddInMemoryApiScopes(Config.ApiScopes)
+            .AddTestUsers(Config.TestUsers)
+            .AddAspNetIdentity<ApplicationUser>()
+            .AddDeveloperSigningCredential();
+
+            services.AddAuthorization(options =>
             {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-                .AddJwtBearer(x =>
+                options.AddPolicy("ApiScope", policy =>
                 {
-                    x.RequireHttpsMetadata = false;
-                    x.SaveToken = true;
-                    x.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                        IssuerSigningKeyResolver = (string token, SecurityToken securityToken, string kid, TokenValidationParameters validationParameters) =>
-                        {
-                            var tenant = services.BuildServiceProvider().GetService<AppTenant>();
-                            List<SecurityKey> keys = new List<SecurityKey>();
-                            var key = Encoding.ASCII.GetBytes(appSettings.Secret + (tenant != null ? tenant.Hostname : ""));
-                            var signingKey = new SymmetricSecurityKey(key);
-                            keys.Add(signingKey);
-                            return keys;
-                        }
-                    };
+                    policy.RequireAuthenticatedUser();
+                    policy.RequireClaim("scope", "publicApi");
                 });
+            });
+
+            // configure jwt authentication
+            services.AddAuthentication();
+            //services.AddAuthentication(x =>
+            //{
+            //    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            //})
+            //    .AddJwtBearer(x =>
+            //    {
+            //        x.RequireHttpsMetadata = false;
+            //        x.SaveToken = true;
+            //        x.TokenValidationParameters = new TokenValidationParameters
+            //        {
+            //            ValidateIssuerSigningKey = true,
+            //            ValidateIssuer = false,
+            //            ValidateAudience = false,
+            //            IssuerSigningKeyResolver = (string token, SecurityToken securityToken, string kid, TokenValidationParameters validationParameters) =>
+            //            {
+            //                var tenant = services.BuildServiceProvider().GetService<AppTenant>();
+            //                List<SecurityKey> keys = new List<SecurityKey>();
+            //                var key = Encoding.ASCII.GetBytes(appSettings.Secret + (tenant != null ? tenant.Hostname : ""));
+            //                var signingKey = new SymmetricSecurityKey(key);
+            //                keys.Add(signingKey);
+            //                return keys;
+            //            }
+            //        };
+            //    });
 
             #region -- Add Singlton, Scope of the service
             services.AddDbContext<IDbContext, CatalogDbContext>();
@@ -585,7 +604,7 @@ namespace TMTDentalAPI
                 });
             });
             services.AddCors();
-            services.AddMemoryCache();          
+            services.AddMemoryCache();
 
             // Add Hangfire services.
             services.AddHangfire(configuration => configuration
@@ -749,6 +768,8 @@ namespace TMTDentalAPI
             //app.UseHangfireServer();
 
             app.UseHangfireDashboard();
+
+            app.UseIdentityServer();
 
             app.UseEndpoints(endpoints =>
             {
