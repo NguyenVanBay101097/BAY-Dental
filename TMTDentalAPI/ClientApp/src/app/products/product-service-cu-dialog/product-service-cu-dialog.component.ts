@@ -18,7 +18,7 @@ import { ProductCategoryDialogComponent } from 'src/app/shared/product-category-
 import { ProductProductCuDialogComponent } from '../product-product-cu-dialog/product-product-cu-dialog.component';
 import { ProductBomDisplay } from '../product-bom';
 import { result } from 'lodash';
-import { Console } from 'console';
+// import { Console } from 'console';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { AuthService } from 'src/app/auth/auth.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';

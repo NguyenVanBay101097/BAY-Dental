@@ -89,11 +89,11 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   @ViewChild('pricelistCbx', { static: true }) pricelistCbx: ComboBoxComponent;
-  @ViewChild('employeeCbx', { static: false }) employeeCbx: ComboBoxComponent;
-  @ViewChild('assistantCbx', { static: false }) assistantCbx: ComboBoxComponent;
-  @ViewChild('counselorCbx', { static: false }) counselorCbx: ComboBoxComponent;
-  @ViewChild('toathuocComp', { static: false }) toathuocComp: PartnerCustomerToathuocListComponent;
-  @ViewChild('paymentComp', { static: false }) paymentComp: SaleOrderPaymentListComponent;
+  @ViewChild('employeeCbx') employeeCbx: ComboBoxComponent;
+  @ViewChild('assistantCbx') assistantCbx: ComboBoxComponent;
+  @ViewChild('counselorCbx') counselorCbx: ComboBoxComponent;
+  @ViewChild('toathuocComp') toathuocComp: PartnerCustomerToathuocListComponent;
+  @ViewChild('paymentComp') paymentComp: SaleOrderPaymentListComponent;
 
   partner: any;
   partnerDisplay: any;

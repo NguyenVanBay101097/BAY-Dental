@@ -23,7 +23,7 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
 
   @ViewChild("smsTemplateCbx", { static: true }) smsTemplateCbx: ComboBoxComponent
   @ViewChild("smsAccountCbx", { static: true }) smsAccountCbx: ComboBoxComponent
-  @ViewChild('textarea', { static: false }) textarea: ElementRef;
+  @ViewChild('textarea') textarea: ElementRef;
 
   formGroup: FormGroup;
   filteredConfigSMS: any[];

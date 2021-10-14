@@ -172,6 +172,31 @@ const routes: Routes = [
         path: 'customer-statistics',
         loadChildren: () => import('./customer-statistics/customer-statistics.module').then(m => m.CustomerStatisticsModule),
         canActivate: [AuthGuard]
+      },
+      {
+        path: 'users',
+        loadChildren: () => import('./users/users.module').then(m => m.UsersModule),
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'labo-order-lines',
+        loadChildren: () => import('./labo-order-lines/labo-order-lines.module').then(m => m.LaboOrderLinesModule),
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'emp-categories',
+        loadChildren: () => import('./employee-categories/employee-categories.module').then(m => m.EmployeeCategoriesModule),
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'card-cards',
+        loadChildren: () => import('./card-cards/card-cards.module').then(m => m.CardCardsModule),
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'stock-reports',
+        loadChildren: () => import('./stock-reports/stock-reports.module').then(m => m.StockReportsModule),
+        canActivate: [AuthGuard]
       }
     ]
   },
