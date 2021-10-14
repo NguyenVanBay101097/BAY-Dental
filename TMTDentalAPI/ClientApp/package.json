@@ -41,6 +41,7 @@
     "@progress/kendo-angular-notification": "^2.0.0",
     "@progress/kendo-angular-pdf-export": "^2.0.0",
     "@progress/kendo-angular-popup": "^3.0.0",
+    "@progress/kendo-angular-progressbar": "^2.0.1",
     "@progress/kendo-angular-treeview": "^4.0.1",
     "@progress/kendo-angular-upload": "^5.0.0",
     "@progress/kendo-data-query": "^1.0.0",
