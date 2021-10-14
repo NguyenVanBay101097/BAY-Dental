@@ -623,4 +623,184 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public IEnumerable<PartnerCategoryViewModel> Tags { get; set; } = new List<PartnerCategoryViewModel>();
     }
+
+    public class PublicPartnerRequest
+    {
+        public PublicPartnerRequest()
+        {
+            Limit = 20;
+        }
+
+        public int Offset { get; set; }
+
+        public int Limit { get; set; }
+
+        public string Search { get; set; }
+    }
+
+    public class PublicPartnerReponse
+    {
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+        public string Avatar { get; set; }
+
+        public string Phone { get; set; }  
+
+        /// <summary>
+        /// Mã khách hàng
+        /// </summary>
+        public string Ref { get; set; }
+
+        public string Gender { get; set; }
+
+        public string Address
+        {
+            get
+            {
+                var list = new List<string>();
+                if (!string.IsNullOrEmpty(Street))
+                    list.Add(Street);
+                if (!string.IsNullOrEmpty(WardName))
+                    list.Add(WardName);
+                if (!string.IsNullOrEmpty(DistrictName))
+                    list.Add(DistrictName);
+                if (!string.IsNullOrEmpty(CityName))
+                    list.Add(CityName);
+                return string.Join(", ", list);
+            }
+            set { }
+        }
+
+        public string Street { get; set; }
+
+        public string WardName { get; set; }
+
+        public string DistrictName { get; set; }
+
+        public string CityName { get; set; }
+
+        public int? BirthYear { get; set; }
+        public int? BirthMonth { get; set; }
+        public int? BirthDay { get; set; }
+
+        public string Age
+        {
+            get
+            {
+                if (!BirthYear.HasValue)
+                {
+                    return string.Empty;
+                }
+
+                return (DateTime.Now.Year - BirthYear.Value).ToString();
+            }
+            set
+            {
+            }
+        }
+        public DateTime? DateCreated { get; set; }
+        public string JobTitle { get; set; }
+        public string Email { get; set; }
+        public string DateOfBirth
+        {
+            get
+            {
+                return $"{(BirthDay.HasValue ? BirthDay.Value.ToString() : "_")}/" +
+                    $"{(BirthMonth.HasValue ? BirthMonth.Value.ToString() : "_")}/" +
+                    $"{(BirthYear.HasValue ? BirthYear.Value.ToString() : "_")}";
+            }
+            set { }
+        }
+
+    }
+
+    public class PublicPartnerInfo
+    {
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+        public string Avatar { get; set; }
+
+        public string Phone { get; set; }
+
+        /// <summary>
+        /// Mã khách hàng
+        /// </summary>
+        public string Ref { get; set; }
+
+        public string Gender { get; set; }
+
+        public string Address
+        {
+            get
+            {
+                var list = new List<string>();
+                if (!string.IsNullOrEmpty(Street))
+                    list.Add(Street);
+                if (!string.IsNullOrEmpty(WardName))
+                    list.Add(WardName);
+                if (!string.IsNullOrEmpty(DistrictName))
+                    list.Add(DistrictName);
+                if (!string.IsNullOrEmpty(CityName))
+                    list.Add(CityName);
+                return string.Join(", ", list);
+            }
+            set { }
+        }
+
+        public string Street { get; set; }
+
+        public string WardName { get; set; }
+
+        public string DistrictName { get; set; }
+
+        public string CityName { get; set; }
+
+        public int? BirthYear { get; set; }
+        public int? BirthMonth { get; set; }
+        public int? BirthDay { get; set; }
+
+        public string Age
+        {
+            get
+            {
+                if (!BirthYear.HasValue)
+                {
+                    return string.Empty;
+                }
+
+                return (DateTime.Now.Year - BirthYear.Value).ToString();
+            }
+            set
+            {
+            }
+        }
+        public DateTime? DateCreated { get; set; }
+        public string JobTitle { get; set; }
+        public string Email { get; set; }
+        public string DateOfBirth
+        {
+            get
+            {
+                return $"{(BirthDay.HasValue ? BirthDay.Value.ToString() : "_")}/" +
+                    $"{(BirthMonth.HasValue ? BirthMonth.Value.ToString() : "_")}/" +
+                    $"{(BirthYear.HasValue ? BirthYear.Value.ToString() : "_")}";
+            }
+            set { }
+        }
+
+        /// <summary>
+        /// Tiền sử bệnh khác, nên hiển thị nếu là bệnh nhân (khách hàng)
+        /// </summary>
+        public string MedicalHistoryOther { get; set; }
+
+        /// <summary>
+        /// danh sach tieu su benh
+        /// </summary>
+        public IEnumerable<HistorySimple> MedicalHistories { get; set; } = new List<HistorySimple>();
+
+    }
 }

@@ -78,5 +78,7 @@ namespace Infrastructure.Services
         Task<PagedResult2<PartnerInfoDisplay>> GetPartnerInfoPaged(PartnerInfoPaged val);
         Task<PagedResult2<PartnerInfoDisplay>> GetPartnerInfoPaged2(PartnerInfoPaged val);
 
+        Task<IEnumerable<Partner>> GetPublicPartners(int limit, int offset, string search);
+
     }
 }

@@ -2417,6 +2417,24 @@ namespace Infrastructure.Services
             };
 
         }
+
+        public async Task<IEnumerable<Partner>> GetPublicPartners(int limit , int offset , string search)
+        {
+            var query = SearchQuery(x => x.Active && x.Customer);
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(x => x.Name.Contains(search) || x.NameNoSign.Contains(search)
+              || x.Ref.Contains(search) || x.Phone.Contains(search));
+            }
+
+            if (limit > 0)
+                query = query.Skip(offset).Take(limit);
+
+            var items = await query.OrderByDescending(x => x.DateCreated).ToListAsync();
+
+            return items;
+        }
     }
 
     public class PartnerCreditDebitItem

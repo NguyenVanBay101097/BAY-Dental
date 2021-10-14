@@ -168,7 +168,8 @@ export class AppHomeComponent implements OnInit {
         { name: 'Chi nhánh', url: '/setting/companies', permissions: ['System.Company.Read'] },
         { name: 'Nhóm quyền', url: '/setting/roles', permissions: ['System.ApplicationRole.Read'] },
         { name: 'Cấu hình chung', url: '/setting/config-settings' },
-        { name: 'Mẫu in', url: '/setting/print-template-config' }
+        { name: 'Mẫu in', url: '/setting/print-template-config' },
+        { name: 'Thiết lập kết nối API', url: '/setting/setting-public-api' }
       ],
       permissions: ['System.Company.Read', 'System.ApplicationUser.Read', 'System.ApplicationRole.Read']
     },

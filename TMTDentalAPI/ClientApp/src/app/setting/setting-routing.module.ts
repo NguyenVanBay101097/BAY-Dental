@@ -18,6 +18,10 @@ const routes: Routes = [
     path: 'print-template-config',
     loadChildren: () => import('../print-template-configs/print-template-configs.module').then(m => m.PrintTemplateConfigsModule),
   },
+  {
+    path: 'setting-public-api',
+    loadChildren: () => import('../setting-public-api/setting-public-api.module').then(m => m.SettingPublicApiModule),
+  },
 ];
 
 @NgModule({
