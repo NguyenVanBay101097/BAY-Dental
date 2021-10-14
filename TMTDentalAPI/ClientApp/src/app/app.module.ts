@@ -2,7 +2,6 @@ import { NgModule, LOCALE_ID, ErrorHandler } from "@angular/core";
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import { SharedModule } from "./shared/shared.module";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { AuthInterceptor } from "./auth/auth-interceptor";
 
@@ -30,6 +29,8 @@ import { AppSidebarModule } from "./layout/sidebar/app-sidebar.module";
 import { AppHeaderModule } from "./layout/header/app-header.module";
 import { MyCustomNgbModule } from "./shared/my-custom-ngb.module";
 import { ThemeService } from "ng2-charts";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { BrowserModule } from "@angular/platform-browser";
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -45,6 +46,7 @@ registerLocaleData(localeVi, "vi");
     AppHomeComponent
   ],
   imports: [
+    BrowserModule,
     CommonModule,
     BrowserAnimationsModule,
     AppRoutingModule,

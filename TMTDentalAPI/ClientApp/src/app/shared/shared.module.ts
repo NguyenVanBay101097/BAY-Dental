@@ -108,6 +108,8 @@ import { ReceiveAppointmentDialogComponent } from './receive-appointment-dialog/
 import { WarrantyCuDidalogComponent } from './warranty-cu-didalog/warranty-cu-didalog.component';
 import { LaboWarrantyDetailListComponent } from './labo-warranty-detail-list/labo-warranty-detail-list.component';
 import { MonthRangeFilterDropdownComponent } from './month-range-filter-dropdown/month-range-filter-dropdown.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 
 const config: LocaleConfig = {};
 @NgModule({
