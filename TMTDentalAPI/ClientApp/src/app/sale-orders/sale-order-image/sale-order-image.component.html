@@ -17,28 +17,8 @@
         </div>
         <div class="p-2" *ngFor="let item of dataFilter;let i=index">
             <h5 class="ml-1 mb-0">{{getTitleDate(item[0])}}</h5>
-            <!-- <div class="o_attachments_previews">
-                <div class="o_attachment" *ngFor="let img of item[1];let i = index">
-                    <div class="o_attachment_wrap" (click)="viewImage(img)">
-                        <div class="o_image_box">
-                            <div class="o_attachment_image" id="{{img.name}}">
-                                <img width="100%" height="100%" [src]="img.url + '?width=240&height=240'" alt="">
-                            </div>
-                            <div class="o_image_overlay o_attachment_view">
-                                <span class="fa fa-times o_attachment_delete_cross" (click)="deleteImages(img, $event)"
-                                    title="Delete {{img.name}}"></span>
-                                <span class="o_attachment_title text-white">{{img.name}}</span>
-                                <a class="o_attachment_download" (click)="stopPropagation($event)" href="{{img.url}}"
-                                    target="_blank">
-                                    <i aria-label="Download" class="fa fa-download text-white" role="img"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
 
-            <div class="o_attachments_previews">
+            <!-- <div class="o_attachments_previews">
                 <div class="o_attachment" *ngFor="let img of item[1];let i = index">
                     <div class="o_attachment_wrap" (click)="viewImage(img)">
                         <img width="100%" [src]="img.url + '?width=240&height=240'" alt="">
@@ -55,5 +35,31 @@
                         </div>
                     </div>
                 </div>
+            </div> -->
+            <div class="o_AttachmentList_partialList o_AttachmentList_partialListImages">
+                <div title="Screenshot (4).png"
+                    class="o_Attachment o-downloadable o-editable o-viewable o_AttachmentList_attachment o_AttachmentList_imageAttachment">
+                    <div href="https://statics.tdental.vn/images/localhost/211011/984613653_20200608_090530_879119_xquangrang.max-800x800.jpg&download=true"
+                        style="background-image:url(https://statics.tdental.vn/images/localhost/211011/984613653_20200608_090530_879119_xquangrang.max-800x800.jpg?width=100); background-size: auto;"
+                        data-mimetype="image/png"
+                        class="o_Attachment_image o_image o-attachment-viewable o-details-overlay o-small">
+                        <div class="o_Attachment_imageOverlay">
+                            <div class="o_Attachment_details o_Attachment_imageOverlayDetails">
+                                <div class="o_Attachment_filename">Screenshot (4).png</div>
+                                <div class="o_Attachment_extension">png</div>
+                            </div>
+                            <div class="o_Attachment_actions">
+                                <div title="Remove" class="o_Attachment_action o_Attachment_actionUnlink">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                                <div title="Download" class="o_Attachment_action o_Attachment_actionDownload">
+                                    <i class="fa fa-download"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+    </div>
+</div>
