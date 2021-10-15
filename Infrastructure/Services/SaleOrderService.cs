@@ -1261,6 +1261,17 @@ namespace Infrastructure.Services
             return display;
         }
 
+
+        public async Task<IEnumerable<SaleOrder>> GetSaleOrdersByPartnerId(Guid partnerId)
+        {
+            var state = new string[] { "sale", "done" };
+            var saleOrders = await SearchQuery(x => x.PartnerId == partnerId && state.Contains(x.State))
+                .Include(x => x.OrderLines)
+                .Include(x => x.Partner)
+                .ToListAsync();
+
+            return saleOrders;
+        }
         //public async Task<SaleOrderDisplay> GetDisplayAsync(Guid id)
         //{
         //    var res = await _mapper.ProjectTo<SaleOrderDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();

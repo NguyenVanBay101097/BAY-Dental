@@ -13,16 +13,16 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.PublicApiControllers
 {
-    [Route("publicApi/[controller]")]
+    [Route("publicApi/Partners")]
     [ApiController]
     [CheckTokenPublic]
     [AllowAnonymous]
-    public class PartnersController : ControllerBase
+    public class PartnersPublicController : ControllerBase
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IPartnerService _partnerService;
         private readonly IMapper _mapper;
-        public PartnersController(IHttpContextAccessor httpContextAccessor, IPartnerService partnerService, IMapper mapper)
+        public PartnersPublicController(IHttpContextAccessor httpContextAccessor, IPartnerService partnerService, IMapper mapper)
         {
             _httpContextAccessor = httpContextAccessor;
             _partnerService = partnerService;

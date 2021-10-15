@@ -50,6 +50,7 @@ namespace ApplicationCore.Entities
         //public ICollection<AccountMoveLine> MoveLines { get; set; } = new List<AccountMoveLine>();
 
         public ICollection<SaleOrderPaymentAccountPaymentRel> PaymentRels { get; set; } = new List<SaleOrderPaymentAccountPaymentRel>();
+
         [NotMapped]
         public String JournalLinesDisplay
         {

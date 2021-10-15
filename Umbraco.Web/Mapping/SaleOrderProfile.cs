@@ -51,6 +51,9 @@ namespace Umbraco.Web.Mapping
             CreateMap<SaleOrder, SaleOrderPrintTemplate>()
                 .ForMember(x => x.User, x => x.MapFrom(s => s.CreatedBy));
 
+            CreateMap<SaleOrder, SaleOrderPublic>()
+              .ForMember(x => x.DiscountTotal, x => x.MapFrom(s => Math.Round(s.OrderLines.Sum(z => ((decimal)z.AmountDiscountTotal * z.ProductUOMQty)))));
+
         }
     }
 }

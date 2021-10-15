@@ -10,7 +10,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
 
         public string Name { get; set; }
-        public Guid? PartnerId { get; set; }
+        //public Guid? PartnerId { get; set; }
     }
 
     public class EmployeeSimpleContact

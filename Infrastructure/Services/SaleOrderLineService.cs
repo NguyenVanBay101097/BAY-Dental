@@ -638,6 +638,22 @@ namespace Infrastructure.Services
             return _mapper.Map<IEnumerable<SaleOrderLineDisplay>>(lines);
         }
 
+        public async Task<IEnumerable<SaleOrderLine>> GetOrderLinesBySaleOrderId(Guid orderId)
+        {
+            var lines = await SearchQuery(x => (orderId == null || x.OrderId == orderId))
+             .Include(x => x.Advisory)
+             .Include(x => x.Assistant)
+             .Include(x => x.PromotionLines).ThenInclude(x => x.Promotion)
+             .Include(x => x.Product)
+             .Include(x => x.ToothCategory)
+             .Include(x => x.SaleOrderLineToothRels).ThenInclude(x => x.Tooth)
+             .Include(x => x.Employee)
+             .Include(x => x.Counselor)
+             .Include(x => x.OrderPartner).ToListAsync();
+
+            return lines;
+        }
+
         public async Task UpdateDkByOrderLine(Guid key, SaleOrderLineDotKhamSave val)
         {
             var dkStepobj = GetService<IDotKhamStepService>();

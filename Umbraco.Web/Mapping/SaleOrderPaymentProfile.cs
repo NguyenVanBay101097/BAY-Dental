@@ -40,7 +40,9 @@ namespace Umbraco.Web.Mapping
             CreateMap<SaleOrderPayment, SaleOrderPaymentBasicPrintTemplate>()
                 .ForMember(x => x.Payments, x => x.MapFrom(s => s.PaymentRels.Select(m => m.Payment)));
 
-           
+            CreateMap<SaleOrderPayment, SaleOrderPaymentPublic>()
+               .ForMember(x => x.Lines, x => x.MapFrom(s => s.Lines.Select(m => m.SaleOrderLine)));
+
         }
     }
 }

@@ -98,5 +98,7 @@ namespace Infrastructure.Services
         Task<IEnumerable<GetExcelManagementItemRes>> ExportManagementExcel(SaleOrderPaged val);
 
         Task<IEnumerable<SaleOrder>> GetPrintTemplate(IEnumerable<Guid> ids);
+
+        Task<IEnumerable<SaleOrder>> GetSaleOrdersByPartnerId(Guid partnerId);
     }
 }
