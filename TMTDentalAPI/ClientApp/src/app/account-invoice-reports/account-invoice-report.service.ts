@@ -129,7 +129,7 @@ export class RevenueReportItem {
     toDetailEmployeeId: string;
 }
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class AccountInvoiceReportService {
     apiUrl = 'api/AccountInvoiceReports';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }

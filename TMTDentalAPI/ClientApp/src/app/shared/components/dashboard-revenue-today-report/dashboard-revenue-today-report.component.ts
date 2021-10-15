@@ -3,8 +3,8 @@ import { DashboardReportService, ReportTodayRequest, RevenueTodayReponse } from 
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { LegendLabelsContentArgs } from '@progress/kendo-angular-charts';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { ChartOptions, ChartType } from 'chart.js';
-import { Label, SingleDataSet } from 'ng2-charts';
+import { ChartDataset, ChartOptions, ChartType } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
 
 @Component({
   selector: 'app-dashboard-revenue-today-report',
@@ -23,13 +23,20 @@ export class DashboardRevenueTodayReportComponent implements OnInit {
   // Pie
   public pieChartOptions: ChartOptions = {
     responsive: true,
-    tooltips: {
-      enabled: false
-    },
+    plugins: {
+      legend: {
+        display: false
+      }
+    }
   };
 
-  public pieChartLabels: Label[] = ['Tiền mặt',  'Ngân hàng' , 'Khác'];
-  public pieChartData: SingleDataSet = [];
+  public pieChartLabels: string[] = ['Tiền mặt',  'Ngân hàng' , 'Khác'];
+  public pieChartData: ChartDataset[] = [
+    { 
+      data: [],
+      backgroundColor: [ 'rgb(255, 99, 132)', 'rgb(54, 162, 235)', 'rgb(255, 205, 86)']
+    }
+  ];
   public pieChartType: ChartType = 'pie';
   public pieChartLegend = false;
   public pieChartPlugins = [this.pieChartLabels];
@@ -63,7 +70,7 @@ export class DashboardRevenueTodayReportComponent implements OnInit {
       var cash = new Object({ category: "cash", value: this.revenue.totalCash, color: "#0066cc" });
       var bank = new Object({ category: "bank", value: this.revenue.totalBank, color: "#99ccff" });
       var other = new Object({ category: "other", value: this.totalOther, color: "#b3b3b3" });
-      this.pieChartData.push(this.revenue.totalCash, this.revenue.totalBank, this.totalOther);
+      this.pieChartData[0].data = [this.revenue.totalCash, this.revenue.totalBank, this.totalOther];
       this.pieData.push(cash, bank, other);
     }
 

@@ -10,21 +10,13 @@
             </div>
             <div class="mb-2">
                 <ng-container *ngIf="revenue?.totalAmount > 0; else elseTemplate">
-                    <!-- <kendo-chart style="height: 300px;">
-                        <kendo-chart-series >
-                            <kendo-chart-series-item type="pie" [data]="pieData" field="value" categoryField="category" colorField="color">
-                            </kendo-chart-series-item>
-                        </kendo-chart-series>
-                        <kendo-chart-legend [visible]="false"></kendo-chart-legend>
-                    </kendo-chart> -->
                     <div style="display: block;">
                         <canvas baseChart 
-                          [data]="pieChartData"                        
-                          [chartType]="pieChartType"
+                          [labels]="pieChartLabels"
+                          [datasets]="pieChartData"                        
+                          [type]="pieChartType"
                           [options]="pieChartOptions"
-                          [colors]="pieChartColors"
-                          [plugins]="pieChartPlugins"
-                          >
+                          [plugins]="pieChartPlugins">
                         </canvas>
                       </div>
                 </ng-container>

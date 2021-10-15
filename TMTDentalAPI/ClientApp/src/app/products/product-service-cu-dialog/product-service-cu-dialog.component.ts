@@ -10,14 +10,12 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { Observable, Subject } from 'rxjs';
 import * as _ from 'lodash';
 import { ProductStepDisplay } from '../product-step';
-import { or } from '@progress/kendo-angular-grid/dist/es2015/utils';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { ProductCategoryDialogComponent } from 'src/app/shared/product-category-dialog/product-category-dialog.component';
 import { ProductProductCuDialogComponent } from '../product-product-cu-dialog/product-product-cu-dialog.component';
 import { ProductBomDisplay } from '../product-bom';
-import { result } from 'lodash';
 // import { Console } from 'console';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { AuthService } from 'src/app/auth/auth.service';
@@ -60,7 +58,6 @@ export class ProductServiceCuDialogComponent implements OnInit {
   @ViewChild('form', { static: true }) formView: any;
   @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
-  @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
 
   constructor(private fb: FormBuilder, private productService: ProductService,
     private productCategoryService: ProductCategoryService, public activeModal: NgbActiveModal,
@@ -180,14 +177,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
   }
 
   productCbxFilterChange() {
-    this.productCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.productCbx.loading = true)),
-      switchMap(value => this.searchProducts(value))
-    ).subscribe(result => {
-      this.filteredProducts = result;
-      this.productCbx.loading = false;
-    });
+   
   }
 
   categCbxFilterChange2(e: string) {
