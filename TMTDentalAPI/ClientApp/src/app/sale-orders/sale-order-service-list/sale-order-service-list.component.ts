@@ -567,7 +567,6 @@ export class SaleOrderServiceListComponent implements OnInit {
   }
   
   updateLineInfo(value, index) {
-    debugger
     var line = this.orderLines[index];
     Object.assign(line, value);
 
@@ -621,7 +620,6 @@ export class SaleOrderServiceListComponent implements OnInit {
   }
 
   computeAmountTotal() {
-    debugger;
     let total = 0;
     this.orderLines.forEach(line => {
       total += line.priceSubTotal;

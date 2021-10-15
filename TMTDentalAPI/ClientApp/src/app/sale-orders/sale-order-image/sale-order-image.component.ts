@@ -1,4 +1,5 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import { SaleOrderService } from 'src/app/core/services/sale-order.service';
@@ -24,30 +25,35 @@ export class SaleOrderImageComponent implements OnInit {
     public notifyService: NotifyService,
     private saleOrderService: SaleOrderService,
     private webService: WebService,
-    private irAttachmentService: IrAttachmentService
+    private irAttachmentService: IrAttachmentService,
+    public sanitizer: DomSanitizer
   ) { }
 
   ngOnInit() {
     this.loadData();
   }
 
-  convertData() {
-    let data = [];
-    let arr = [...this.imagesPreview];
+//   getBackground(image) {
+//     return this.sanitizer.bypassSecurityTrustStyle(`url(${image})`);
+// }
 
-    arr.sort(function (a, b) {
-      return (new Date(b.dateCreated)).valueOf() - (new Date(a.dateCreated)).valueOf();
-    });
+  // convertData() {
+  //   let data = [];
+  //   let arr = [...this.imagesPreview];
 
-    data = arr.reduce((r, a) => {
-      const dateFormat = moment(a.dateCreated).format('YYYY-MM-DD');
-      r[dateFormat] = r[dateFormat] || [];
-      r[dateFormat].push(a);
-      return r;
-    }, Object.create(null));
+  //   arr.sort(function (a, b) {
+  //     return (new Date(b.dateCreated)).valueOf() - (new Date(a.dateCreated)).valueOf();
+  //   });
 
-    this.dataFilter = Object.keys(data).map((key) => [key, data[key]]);
-  }
+  //   data = arr.reduce((r, a) => {
+  //     const dateFormat = moment(a.dateCreated).format('YYYY-MM-DD');
+  //     r[dateFormat] = r[dateFormat] || [];
+  //     r[dateFormat].push(a);
+  //     return r;
+  //   }, Object.create(null));
+
+  //   this.dataFilter = Object.keys(data).map((key) => [key, data[key]]);
+  // }
 
   loadData() {
     this.saleOrderService.getListAttachment(this.saleOrderId).subscribe((res: any) => {
@@ -96,7 +102,7 @@ export class SaleOrderImageComponent implements OnInit {
         let index = this.imagesPreview.findIndex(x => x.id === item.id);
         if (index != -1) {
           this.imagesPreview.splice(index, 1);
-          this.convertData();
+          // this.convertData();
           this.notifyService.notify('success', 'Xóa thành công');
         }
       })
@@ -120,4 +126,8 @@ export class SaleOrderImageComponent implements OnInit {
     e.stopPropagation();
   }
 
+  // getUrl(urlName: string){
+  //   urlName = urlName.replace(" ", "%20");
+  //   return `url(${urlName}?width=200)`
+  // }
 }

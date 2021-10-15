@@ -359,7 +359,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   getFormDataSave() {
     var val = {
       dateOrder: this.saleOrder.dateOrder,
-      partnerId: this.saleOrder.partner.id,
+      partnerId: this.saleOrder.partnerId,
       companyId: this.saleOrder.companyId,
       // orderLines: this.saleOrder.orderLines.map(x => {
       //   return {
@@ -487,11 +487,11 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onSave() {
-    this.submitted = true;
-    if (!this.formGroup.valid) {
-      return false;
-    }
-
+    // this.submitted = true;
+    // if (!this.formGroup.valid) {
+    //   return false;
+    // }
+    
     this.updateFormGroupDataToSaleOrder();
     const val = this.getFormDataSave();
 
@@ -682,7 +682,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   dialogAppointment() {
     const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'xl', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.defaultVal = { partnerId: (this.saleOrder.partner && this.saleOrder.partner.id), saleOrderId: this.saleOrderId };
+    modalRef.componentInstance.defaultVal = { partnerId: (this.saleOrder.partnerId), saleOrderId: this.saleOrderId };
     modalRef.result.then(() => {
       this.notify('success', 'Tạo lịch hẹn thành công');
     }, () => {
@@ -1073,7 +1073,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     //   });
     // }
   }
-
 
 
 }
