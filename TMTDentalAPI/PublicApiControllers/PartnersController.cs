@@ -16,6 +16,7 @@ namespace TMTDentalAPI.PublicApiControllers
     [Route("publicApi/[controller]")]
     [ApiController]
     [CheckTokenPublic]
+    [AllowAnonymous]
     public class PartnersController : ControllerBase
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -28,7 +29,7 @@ namespace TMTDentalAPI.PublicApiControllers
             _mapper = mapper;
         }
 
-        [AllowAnonymous]
+       
         [HttpGet]
         public async Task<IActionResult> Get([FromBody] PublicPartnerRequest val)
         {
@@ -37,7 +38,6 @@ namespace TMTDentalAPI.PublicApiControllers
             return Ok(res);
         }
 
-        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
