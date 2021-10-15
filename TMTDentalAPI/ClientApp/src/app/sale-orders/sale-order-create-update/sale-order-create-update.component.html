@@ -2,11 +2,11 @@
     <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
             <li>
-                <a [routerLink]="['/partners/customer/' + customerId + '/treatment']">Phiếu điều trị</a>
+                <a [routerLink]="['/partners/customer/' + saleOrder.partnerId + '/treatment']">Phiếu điều trị</a>
             </li>
             <li class="active">
-                <span *ngIf="saleOrderId">{{saleOrder?.name}}</span>
-                <span *ngIf="!saleOrderId">Mới</span>
+                <span *ngIf="saleOrder && saleOrder.id">{{saleOrder?.name}}</span>
+                <span *ngIf="!saleOrder">Mới</span>
             </li>
         </ol>
         <div class="o_cp_left">
@@ -28,7 +28,7 @@
                         class="btn btn-primary" (click)="actionSaleOrderPayment()">
                         Thanh toán
                     </button>
-                    <button *ngIf="saleOrderId" type="button" class="btn btn-secondary" (click)="printSaleOrder()">
+                    <button *ngIf="saleOrder && saleOrder.id" type="button" class="btn btn-secondary" (click)="printSaleOrder()">
                         In phiếu
                     </button>
                     <button *ngIf="saleOrder && ['sale'].indexOf(saleOrder.state) !== -1" type="button"
@@ -62,10 +62,9 @@
             <div class="o_form_sheet">
                 <div class="o_notebook d-flex flex-column">
                     <!-- Nav tabs -->
-                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <!-- <ul class="nav nav-tabs" id="myTab" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
-                                aria-controls="home" aria-selected="true">Dịch vụ</a>
+                            <a class="nav-link active" routerLink="services" routerLinkActive="active">Dịch vụ</a>
                         </li>
                         <li class="nav-item" *ngIf="saleOrder.state != 'draft'">
                             <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
@@ -87,10 +86,14 @@
                             <a class="nav-link" id="image-tab" data-toggle="tab" href="#image" role="tab"
                                 aria-controls="image" aria-selected="false">Hình ảnh</a>
                         </li>
-                    </ul>
+                    </ul> -->
+
+                    <!-- <div>
+                        <router-outlet></router-outlet>
+                    </div> -->
 
                     <!-- Tab panes -->
-                    <div class="tab-content">
+                    <!-- <div class="tab-content">
                         <div class="tab-pane active h-100" id="home" role="tabpanel" aria-labelledby="home-tab">
                             <div class="w-100 h-100 d-flex flex-column">
                                 <div *ngIf="isEditSate()" class="mb-2">
@@ -351,7 +354,53 @@
                             <app-sale-order-image [saleOrderId]="saleOrderId">
                             </app-sale-order-image>
                         </div>
-                    </div>
+                    </div> -->
+
+                    <ul ngbNav #nav="ngbNav" [activeId]="route.fragment | async" class="nav-tabs">
+                        <li [ngbNavItem]="'services'">
+                            <a ngbNavLink routerLink="." [fragment]="'services'">Dịch vụ</a>
+                            <ng-template ngbNavContent>                      
+                            <app-sale-order-service-list [saleOrder]="saleOrder"></app-sale-order-service-list>
+                            </ng-template>
+                        </li>
+                        <li [ngbNavItem]="'process-service'" *ngIf="saleOrder.state != 'draft'">
+                            <a ngbNavLink routerLink="." [fragment]="'process-service'">Đợt khám</a>
+                            <ng-template ngbNavContent>
+                                <app-treatment-process-service-list [saleOrderId]="saleOrder.id">
+                                </app-treatment-process-service-list>
+                            </ng-template>
+                        </li>
+                        <li [ngbNavItem]="'prescription'" *ngIf="saleOrder.state != 'draft'">
+                            <a ngbNavLink routerLink="." [fragment]="'prescription'">Đơn thuốc</a>
+                            <ng-template ngbNavContent>
+                                <app-partner-customer-toathuoc-list #toathuocComp [saleOrderId]="saleOrder.id">
+                                </app-partner-customer-toathuoc-list>
+                            </ng-template>
+                        </li>
+                        <li [ngbNavItem]="'payment'" *ngIf="saleOrder.state != 'draft'">
+                            <a ngbNavLink routerLink="." [fragment]="'payment'">Lịch sử thanh toán</a>
+                            <ng-template ngbNavContent>
+                                <app-sale-order-payment-list *ngIf="saleOrderId" #paymentComp
+                                    [saleOrderId]="saleOrder.id" (hasDeletePayment)="loadCustomerInfo()">
+                                </app-sale-order-payment-list>
+                            </ng-template>
+                        </li>
+                        <li [ngbNavItem]="'product-request'" *ngIf="saleOrder.state != 'draft'">
+                            <a ngbNavLink routerLink="." [fragment]="'product-request'">Yêu cầu vật tư</a>
+                            <ng-template ngbNavContent>
+                                <app-sale-order-product-request-list [saleOrderId]="saleOrder.id">
+                                </app-sale-order-product-request-list>
+                            </ng-template>
+                        </li>
+                        <li [ngbNavItem]="'image'" *ngIf="saleOrder.state != 'draft'">
+                            <a ngbNavLink routerLink="." [fragment]="'image'">Hình ảnh</a>
+                            <ng-template ngbNavContent>
+                                <app-sale-order-image [saleOrderId]="saleOrder.id">
+                                </app-sale-order-image>
+                            </ng-template>
+                        </li>
+                    </ul>
+                    <div [ngbNavOutlet]="nav"></div>
                 </div>
             </div>
 

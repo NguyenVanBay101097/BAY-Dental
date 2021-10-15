@@ -1260,7 +1260,7 @@ namespace Infrastructure.Services
 
             return display;
         }
-
+        
         //public async Task<SaleOrderDisplay> GetDisplayAsync(Guid id)
         //{
         //    var res = await _mapper.ProjectTo<SaleOrderDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();

@@ -47,6 +47,7 @@ import { SaleOrderLineManagementComponent } from './sale-order-line-management/s
 import { SaleOrderPrintPopupComponent } from './sale-order-print-popup/sale-order-print-popup.component';
 import { SaleOrderImagesLibraryPopupComponent } from './sale-order-images-library-popup/sale-order-images-library-popup.component';
 import { SaleOrderImageComponent } from './sale-order-image/sale-order-image.component';
+import { SaleOrderServiceListComponent } from './sale-order-service-list/sale-order-service-list.component';
 
 @NgModule({
   declarations: [
@@ -86,6 +87,7 @@ import { SaleOrderImageComponent } from './sale-order-image/sale-order-image.com
     SaleOrderPrintPopupComponent,
     SaleOrderImagesLibraryPopupComponent,
     SaleOrderImageComponent,
+    SaleOrderServiceListComponent,
   ],
   imports: [
     CommonModule,

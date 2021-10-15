@@ -73,6 +73,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
+        [HttpGet("{id}/[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Read")]
+        public async Task<IActionResult> GetBasic(Guid id)
+        {
+            var order = await _saleOrderService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            return Ok(_mapper.Map<SaleOrderBasic>(order));
+        }
+
         [HttpGet("[action]")]
         [CheckAccess(Actions = "Basic.SaleOrder.Read")]
         public async Task<IActionResult> GetSaleOrderForSms([FromQuery] SaleOrderPaged val)
@@ -88,15 +96,6 @@ namespace TMTDentalAPI.Controllers
             var res = await _saleOrderService.GetSaleOrderForDisplayAsync(id);
             if (res == null)
                 return NotFound();
-
-            //var res = _mapper.Map<SaleOrderDisplay>(res);
-            //res.InvoiceCount = res.OrderLines.SelectMany(x => x.SaleOrderLineInvoice2Rels).Select(x => x.InvoiceLine.Move)
-            //    .Where(x => x.Type == "out_invoice" || x.Type == "out_refund").Distinct().Count();
-            //res.OrderLines = res.OrderLines.OrderBy(x => x.Sequence);
-            //foreach (var inl in res.OrderLines)
-            //{
-            //    inl.Teeth = inl.Teeth.OrderBy(x => x.Name);
-            //}
 
             return Ok(res);
         }

@@ -46,6 +46,8 @@ export class PartnerCustomerTreatmentListComponent implements OnInit {
     this.activeRoute.parent.params.subscribe(
       params => {
         this.partnerId = params.id;
+        console.log(this.partnerId);
+        
         this.getSaleOrders();
       }
     )
@@ -60,7 +62,17 @@ export class PartnerCustomerTreatmentListComponent implements OnInit {
   }
 
   createNewSaleOrder(){
-    this.router.navigate(['sale-orders/form'], { queryParams: { partner_id: this.partnerId } });
+    this.saleOrderService.defaultGet({partnerId: this.partnerId}).subscribe(result => {
+      var dateOrder = new Date(result.dateOrder);
+      var val = {
+        partnerId: this.partnerId,
+        companyId: result.companyId,
+        dateOrder: this.intlService.formatDate(dateOrder, 'yyyy-MM-ddTHH:mm:ss')
+      };
+      this.saleOrderService.create(val).subscribe(result2 => {
+        this.router.navigate(['sale-orders/' + result2.id]);
+      });
+    });
   }
 
   onDeleteSaleOrder(){
@@ -69,6 +81,7 @@ export class PartnerCustomerTreatmentListComponent implements OnInit {
 
   getFormSaleOrder(id){
     this.router.navigate(['/sale-orders/form'], { queryParams: { id: id } });
+    this.router.navigate(['/sale-orders/' + id]);
   }
 
   getSaleOrders() {

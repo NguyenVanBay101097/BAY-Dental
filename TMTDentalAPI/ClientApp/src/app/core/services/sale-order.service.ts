@@ -325,4 +325,8 @@ export class SaleOrderService {
     getListAttachment(id){
         return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetListAttachment');
     }
+
+    getBasic(id: string): Observable<SaleOrderBasic> {
+        return this.http.get<SaleOrderBasic>(this.baseApi + this.apiUrl + "/" + id + '/GetBasic');
+    }
 }

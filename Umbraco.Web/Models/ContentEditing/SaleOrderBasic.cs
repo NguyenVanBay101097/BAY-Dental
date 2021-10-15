@@ -36,6 +36,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? Residual { get; set; }
 
         public decimal? TotalPaid { get; set; }
+        public decimal? AmountDiscountTotal { get; set; }
     }
 
     public class SaleOrderSimple
