@@ -41,13 +41,15 @@ namespace TMTDentalAPI.Controllers
         private readonly IIRModelDataService _modelDataService;
         private readonly IIrAttachmentService _irAttachmentService;
         private IConverter _converter;
+        private readonly ISaleOrderPromotionService _saleOrderPromotionService;
 
         public SaleOrdersController(ISaleOrderService saleOrderService, IMapper mapper,
             IUnitOfWorkAsync unitOfWork, IDotKhamService dotKhamService,
             ICardCardService cardService, IProductPricelistService pricelistService,
             ISaleOrderLineService saleLineService, IViewRenderService viewRenderService, IConverter converter,
             IIrAttachmentService irAttachmentService,
-        IViewToStringRenderService viewToStringRenderService, IPrintTemplateConfigService printTemplateConfigService , IPrintTemplateService printTemplateService, IIRModelDataService modelDataService)
+        IViewToStringRenderService viewToStringRenderService, IPrintTemplateConfigService printTemplateConfigService , IPrintTemplateService printTemplateService, IIRModelDataService modelDataService,
+        ISaleOrderPromotionService saleOrderPromotionService)
         {
             _saleOrderService = saleOrderService;
             _mapper = mapper;
@@ -63,6 +65,7 @@ namespace TMTDentalAPI.Controllers
             _modelDataService = modelDataService;
             _printTemplateService = printTemplateService;
             _irAttachmentService = irAttachmentService;
+            _saleOrderPromotionService = saleOrderPromotionService;
         }
 
         [HttpGet]
@@ -856,6 +859,14 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _saleOrderService.GetListAttachment(id);
             return Ok(_mapper.Map<IEnumerable<IrAttachmentBasic>>(res));
+        }
+
+        [HttpGet("{id}/[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Read")]
+        public async Task<IActionResult> GetPromotions(Guid id)
+        {
+            var res = await _saleOrderPromotionService.SearchQuery(x => x.SaleOrderId == id).ToListAsync();
+            return Ok(_mapper.Map<IEnumerable<SaleOrderPromotionBasic>>(res));
         }
     }
 }

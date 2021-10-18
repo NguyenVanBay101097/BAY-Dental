@@ -329,4 +329,8 @@ export class SaleOrderService {
     getBasic(id: string): Observable<SaleOrderBasic> {
         return this.http.get<SaleOrderBasic>(this.baseApi + this.apiUrl + "/" + id + '/GetBasic');
     }
+
+    getPromotions(id: string) {
+        return this.http.get(this.baseApi + this.apiUrl + "/" + id + '/GetPromotions');
+    }
 }

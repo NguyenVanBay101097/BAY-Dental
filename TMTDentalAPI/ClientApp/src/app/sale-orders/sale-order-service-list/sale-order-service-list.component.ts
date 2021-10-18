@@ -545,6 +545,7 @@ export class SaleOrderServiceListComponent implements OnInit {
           }
           this.orderLines.splice(index, 1);
           this.notify('success', 'Xóa dịch vụ thành công');
+          //load lại list promotions của phiếu điều trị
         })
       });
     } else {
