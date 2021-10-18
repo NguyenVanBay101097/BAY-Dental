@@ -133,7 +133,7 @@ namespace Infrastructure.Services
         {
             //Mapper
             var saleOrderPayment = _mapper.Map<SaleOrderPayment>(val);
-            SaveLines(val, saleOrderPayment);        
+            SaveLines(val, saleOrderPayment);
             await CreateAsync(saleOrderPayment);
 
             return saleOrderPayment;
@@ -306,6 +306,7 @@ namespace Infrastructure.Services
             var lines = await paymentLineObj.SearchQuery(x => x.SaleOrderPaymentId == self.Id)
                 .Include(x => x.SaleOrderPayment).ThenInclude(x => x.Order)
                 .Include(x => x.SaleOrderLine).ThenInclude(x => x.Employee)
+                .Include(x => x.SaleOrderLine).ThenInclude(s => s.OrderPartner).ThenInclude(c => c.Agent)
                 .ToListAsync();
 
             foreach (var line in lines)
@@ -468,7 +469,7 @@ namespace Infrastructure.Services
                 res.CommissionSettlements.Add(new CommissionSettlement
                 {
                     AgentId = saleOrderLine.OrderPartner.AgentId,
-                    CommissionId = saleOrderLine.Counselor.CounselorCommissionId,
+                    CommissionId = saleOrderLine.OrderPartner.Agent.CommissionId,
                     ProductId = saleOrderLine.ProductId,
                     Date = today,
                     SaleOrderLineId = self.SaleOrderLineId,

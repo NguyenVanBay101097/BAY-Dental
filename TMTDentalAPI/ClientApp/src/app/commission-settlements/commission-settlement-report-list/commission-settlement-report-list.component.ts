@@ -71,6 +71,7 @@ export class CommissionSettlementReportListComponent implements OnInit {
     val.search = this.search || '';
     val.employeeId = this.employeeId ? this.employeeId : '';
     val.commissionType = this.commissionType ? this.commissionType : '';
+    val.groupBy = 'employee';
     this.loading = true;
     this.commissionSettlementsService.getReportPaged(val).pipe(
       map((response: any) => (<GridDataResult>{

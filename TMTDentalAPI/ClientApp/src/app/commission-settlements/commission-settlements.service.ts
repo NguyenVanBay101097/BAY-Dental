@@ -11,6 +11,7 @@ export class CommissionSettlementFilterReport {
   limit: number;
   offset: number;
   commissionType: string;
+  groupBy: string;
 }
 
 export class CommissionSettlementReportOutput {
