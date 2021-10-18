@@ -17,7 +17,8 @@ export class CommissionDialogComponent implements OnInit {
   filterTypes : any[] = [
     { name : 'Bác sĩ' , value : 'doctor'},
     { name : 'Phụ tá' , value : 'assistant'},
-    { name : 'Tư vấn' , value : 'counselor'}
+    { name : 'Tư vấn' , value : 'counselor'},
+    { name : 'Giới thiệu' , value : 'agent'}
   ]
 
   constructor(

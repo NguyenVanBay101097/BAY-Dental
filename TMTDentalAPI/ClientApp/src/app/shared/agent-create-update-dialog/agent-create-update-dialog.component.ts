@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import * as _ from 'lodash';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { AgentService } from 'src/app/agents/agent.service';
+import { Commission, CommissionPaged, CommissionService } from 'src/app/commissions/commission.service';
 import { UserService } from 'src/app/users/user.service';
 import { CheckPermissionService } from '../check-permission.service';
 
@@ -12,7 +15,7 @@ import { CheckPermissionService } from '../check-permission.service';
   templateUrl: './agent-create-update-dialog.component.html',
   styleUrls: ['./agent-create-update-dialog.component.css']
 })
-export class AgentCreateUpdateDialogComponent implements OnInit {
+export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
   id: string;
   formGroup: FormGroup;
   submitted = false;
@@ -23,6 +26,8 @@ export class AgentCreateUpdateDialogComponent implements OnInit {
   dayList: number[] = [];
   monthList: number[] = [];
   yearList: number[] = [];
+  listAgentCommissions: Commission[] = [];
+  @ViewChild('agentCommissionCbx', { static: false }) agentCommissionCbx: ComboBoxComponent;
 
   constructor(private fb: FormBuilder,
     public agentService: AgentService,
@@ -30,7 +35,9 @@ export class AgentCreateUpdateDialogComponent implements OnInit {
     private modalService: NgbModal,
     private intlService: IntlService,
     private userService: UserService,
-    private checkPermissionService: CheckPermissionService) { }
+    private checkPermissionService: CheckPermissionService,
+    private commissionService: CommissionService
+    ) { }
 
 
     ngOnInit() {
@@ -43,7 +50,8 @@ export class AgentCreateUpdateDialogComponent implements OnInit {
         email: null,
         phone: null,
         jobTitle: null,
-        address: null
+        address: null,
+        commission: [null, Validators.required],
       });
   
       setTimeout(() => {
@@ -52,14 +60,38 @@ export class AgentCreateUpdateDialogComponent implements OnInit {
         this.dayList = _.range(1, 32);
         this.monthList = _.range(1, 13);
         this.yearList = _.range(new Date().getFullYear(), 1900, -1);
+        this.loadListcommissionAgents();
       })
+    }
+
+    ngAfterViewInit(): void {
+      this.agentCommissionCbx.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => (this.agentCommissionCbx.loading = true)),
+        switchMap(value => this.searchCommissionAgents(value))
+      ).subscribe(result => {
+        this.listAgentCommissions = result.items;
+        this.agentCommissionCbx.loading = false;
+      });
+    }
+
+    loadListcommissionAgents() {
+      this.searchCommissionAgents().subscribe(result => {
+        this.listAgentCommissions = _.unionBy(this.listAgentCommissions, result.items, 'id');
+      });
+    }
+  
+    searchCommissionAgents(q?: string) {
+      var val = new CommissionPaged();
+      val.search = q || '';
+      val.type = 'agent';
+      return this.commissionService.getPaged(val);
     }
 
     reload() {
       if (this.id) {
         this.agentService.get(this.id).subscribe((result) => {
           this.formGroup.patchValue(result);
-  
           if (result.birthYear) {
             this.formGroup.get("birthYearStr").setValue(result.birthYear + '');
           }
@@ -89,7 +121,7 @@ export class AgentCreateUpdateDialogComponent implements OnInit {
       val.birthDay = val.birthDayStr ? parseInt(val.birthDayStr) : null;
       val.birthMonth = val.birthMonthStr ? parseInt(val.birthMonthStr) : null;
       val.birthYear = val.birthYearStr ? parseInt(val.birthYearStr) : null;
-  
+      val.commissionId = val.commission ? val.commission.id : null;
       if (this.id) {
         this.agentService.update(this.id, val).subscribe(
           () => {

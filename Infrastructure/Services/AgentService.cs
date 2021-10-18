@@ -52,6 +52,7 @@ namespace Infrastructure.Services
         {
             var agent = await SearchQuery(x => x.Id == id)
                 .Include(x => x.Partner)
+                .Include(x => x.Commission)
                 .FirstOrDefaultAsync();
 
             var display = _mapper.Map<AgentDisplay>(agent);
