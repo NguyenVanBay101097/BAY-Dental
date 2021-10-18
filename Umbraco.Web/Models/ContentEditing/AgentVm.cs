@@ -56,7 +56,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Address { get; set; }
 
-        public Guid? CommisssionId { get; set; }
+        public Guid? CommissionId { get; set; }
     }
 
     public class AgentDisplay

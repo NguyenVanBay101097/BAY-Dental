@@ -462,6 +462,23 @@ namespace Infrastructure.Services
                 });
             }
 
+            if (saleOrderLine.OrderPartner.AgentId.HasValue && saleOrderLine.OrderPartner.Agent.CommissionId.HasValue)
+            {
+                var commPercent = await commObj.getCommissionPercent(saleOrderLine.ProductId, saleOrderLine.OrderPartner.Agent.CommissionId);
+                res.CommissionSettlements.Add(new CommissionSettlement
+                {
+                    AgentId = saleOrderLine.OrderPartner.AgentId,
+                    CommissionId = saleOrderLine.Counselor.CounselorCommissionId,
+                    ProductId = saleOrderLine.ProductId,
+                    Date = today,
+                    SaleOrderLineId = self.SaleOrderLineId,
+                    BaseAmount = baseAmountCurrent.Value,
+                    Amount = totalPaid > totalStandPrice ? (baseAmountCurrent.Value * commPercent) / 100 : 0,
+                    Percentage = commPercent,
+                    TotalAmount = self.Amount
+                });
+            }
+
             res.SaleLineRels.Add(new SaleOrderLineInvoice2Rel { OrderLineId = self.SaleOrderLineId });
 
 
