@@ -137,6 +137,14 @@ namespace ApplicationCore.Entities
         /// Mức tồn kho tối thiểu
         /// </summary>
         public decimal?  MinInventory { get; set; }
+        /// <summary>
+        /// Xuất xứ
+        /// </summary>
+        public string Origin { get; set; }
+        /// <summary>
+        /// Thời hạn sử dụng (tháng)
+        /// </summary>
+        public decimal? Expiry { get; set; }
 
         public ICollection<ProductStockInventoryCriteriaRel> ProductStockInventoryCriteriaRels { get; set; } = new List<ProductStockInventoryCriteriaRel>();
 

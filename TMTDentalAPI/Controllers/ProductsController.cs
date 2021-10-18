@@ -615,7 +615,9 @@ namespace TMTDentalAPI.Controllers
                                 errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
                                 continue;
                             }
-
+                            var minInventory = worksheet.Cells[row, 6].Value;
+                            var origin = worksheet.Cells[row, 7].Value;
+                            var expiry = worksheet.Cells[row, 8].Value;
                             var item = new ProductMedicineImportExcelRow
                             {
                                 Name = name,
@@ -623,7 +625,9 @@ namespace TMTDentalAPI.Controllers
                                 CategName = categName,
                                 ListPrice = Convert.ToDecimal(worksheet.Cells[row, 4].Value),
                                 UoM = uomName,
-                                MinInventory = Convert.ToDecimal(worksheet.Cells[row, 6].Value),
+                                MinInventory = minInventory != null ? Convert.ToDecimal(minInventory) : (decimal?)minInventory,
+                                Origin = origin !=null ? Convert.ToString(origin) : null,
+                                Expiry = expiry !=null ? Convert.ToDecimal(expiry) : (decimal?)expiry
                             };
                             data.Add(item);
                         }
@@ -691,6 +695,8 @@ namespace TMTDentalAPI.Controllers
                 pd.ListPrice = item.ListPrice;
                 pd.PurchasePrice = 0;
                 pd.MinInventory = item.MinInventory;
+                pd.Origin = item.Origin;
+                pd.Expiry = item.Expiry;
                 vals.Add(pd);
             }
 
@@ -736,10 +742,10 @@ namespace TMTDentalAPI.Controllers
                         for (var row = 2; row <= worksheet.Dimension.Rows; row++)
                         {
                             var errs = new List<string>();
-                            var name = Convert.ToString(worksheet.Cells[row, 1].Value);
-                            var categName = Convert.ToString(worksheet.Cells[row, 2].Value);
-                            var price = Convert.ToString(worksheet.Cells[row, 3].Value);
-                            var defaultCode = Convert.ToString(worksheet.Cells[row, 5].Value);
+                            var name = Convert.ToString(worksheet.Cells[row, 2].Value);
+                            var categName = Convert.ToString(worksheet.Cells[row, 3].Value);
+                            var price = Convert.ToString(worksheet.Cells[row, 4].Value);
+                            var defaultCode = Convert.ToString(worksheet.Cells[row, 1].Value);
 
                             if (string.IsNullOrEmpty(defaultCode))
                                 errs.Add("Mã thuốc là bắt buộc"); ;
@@ -751,7 +757,7 @@ namespace TMTDentalAPI.Controllers
                                 errs.Add("Giá thuốc là bắt buộc");
 
                             //tìm exist đơn vị tính và gán Id uom cho thuốc
-                            var uomName = Convert.ToString(worksheet.Cells[row, 4].Value).Trim();
+                            var uomName = Convert.ToString(worksheet.Cells[row, 5].Value).Trim();
                             if (string.IsNullOrEmpty(uomName))
                                 errs.Add("Đơn vị mặc định là bắt buộc");
 
@@ -760,14 +766,20 @@ namespace TMTDentalAPI.Controllers
                                 errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
                                 continue;
                             }
-
+                            var minInventory = worksheet.Cells[row, 6].Value;
+                            var origin = worksheet.Cells[row, 7].Value;
+                            var expiry = worksheet.Cells[row, 8].Value;
                             var item = new ProductMedicineUpdateExcelRow
                             {
                                 Name = name,
                                 CategName = categName,
-                                ListPrice = Convert.ToDecimal(worksheet.Cells[row, 3].Value),
+                                ListPrice = Convert.ToDecimal(worksheet.Cells[row, 4].Value),
                                 UoM = uomName,
-                                DefaultCode = defaultCode
+                                DefaultCode = defaultCode,
+                                MinInventory = minInventory !=null ? Convert.ToDecimal(minInventory) : (decimal?)minInventory,
+                                Origin = origin != null ? Convert.ToString(origin) : null,
+                                Expiry = expiry != null ? Convert.ToDecimal(expiry) : (decimal?)expiry
+
                             };
                             data.Add(item);
                         }
@@ -833,6 +845,8 @@ namespace TMTDentalAPI.Controllers
                 product.UOMId = uomDict[item.UoM].Id;
                 product.UOMPOId = uomDict[item.UoM].Id;
                 product.ListPrice = item.ListPrice;
+                product.Origin = item.Origin;
+                product.Expiry = item.Expiry;
                 productsUpdate.Add(product);
             }
 
@@ -901,7 +915,9 @@ namespace TMTDentalAPI.Controllers
                                 errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
                                 continue;
                             }
-
+                            var minInventory = worksheet.Cells[row, 8].Value;
+                            var origin = worksheet.Cells[row, 9].Value;
+                            var expiry = worksheet.Cells[row, 10].Value;
                             var item = new ProductProductImportExcelRow
                             {
                                 Name = name,
@@ -911,7 +927,9 @@ namespace TMTDentalAPI.Controllers
                                 PurchasePrice = Convert.ToDecimal(worksheet.Cells[row, 5].Value),
                                 UOM = uomName,
                                 UOMPO = uomPOName,
-                                MinInventory = Convert.ToDecimal(worksheet.Cells[row, 8].Value),
+                                MinInventory = minInventory !=null ? Convert.ToDecimal(minInventory) : (decimal?)minInventory,
+                                Origin = origin !=null ? Convert.ToString(origin) : null,
+                                Expiry = expiry !=null ? Convert.ToDecimal(expiry) : (decimal?)expiry
                             };
                             data.Add(item);
                         }
@@ -967,6 +985,8 @@ namespace TMTDentalAPI.Controllers
                 product.CategId = categDict[item.CategName].Id;
                 product.PurchasePrice = item.PurchasePrice ?? 0;
                 product.MinInventory = item.MinInventory ?? 0;
+                product.Origin = item.Origin;
+                product.Expiry = item.Expiry;
                 product.ProductUoMRels.Add(new ProductUoMRel { UoMId = uom.Id });
                 if (uom.Id != uomPO.Id)
                     product.ProductUoMRels.Add(new ProductUoMRel { UoMId = uomPO.Id });
@@ -1039,7 +1059,9 @@ namespace TMTDentalAPI.Controllers
                                 errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
                                 continue;
                             }
-
+                            var minInventory = worksheet.Cells[row, 8].Value;
+                            var origin = worksheet.Cells[row, 9].Value;
+                            var expiry = worksheet.Cells[row, 10].Value;
                             var item = new ProductProductImportExcelRow
                             {
                                 Name = name,
@@ -1049,7 +1071,9 @@ namespace TMTDentalAPI.Controllers
                                 PurchasePrice = Convert.ToDecimal(worksheet.Cells[row, 5].Value),
                                 UOM = uomName,
                                 UOMPO = uomPOName,
-                                MinInventory = Convert.ToDecimal(worksheet.Cells[row, 8].Value),
+                                MinInventory = minInventory != null ? Convert.ToDecimal(minInventory) : (decimal?)minInventory,
+                                Origin = origin != null ? Convert.ToString(origin) : null,
+                                Expiry = expiry != null ? Convert.ToDecimal(expiry) : (decimal?)expiry
                             };
                             data.Add(item);
                         }
@@ -1110,6 +1134,8 @@ namespace TMTDentalAPI.Controllers
                 product.UOMId = uomDict[item.UOM].Id;
                 product.UOMPOId = uomDict[item.UOMPO].Id;
                 product.MinInventory = item.MinInventory ?? 0;
+                product.Origin = item.Origin;
+                product.Expiry = item.Expiry;
                 product.ProductUoMRels.Clear();
                 product.ProductUoMRels.Add(new ProductUoMRel { UoMId = uomDict[item.UOM].Id });
                 if (uomDict[item.UOM].Id != uomDict[item.UOMPO].Id)
@@ -1409,8 +1435,9 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[1, 6].Value = "Đơn vị mặc định";
                 worksheet.Cells[1, 7].Value = "Đơn vị mua";
                 worksheet.Cells[1, 8].Value = "Mức tồn tối thiểu";
-
-                worksheet.Cells["A1:H1"].Style.Font.Bold = true;
+                worksheet.Cells[1, 9].Value = "Xuất xứ";
+                worksheet.Cells[1, 10].Value = "Thời hạn sử dụng (tháng)";
+                worksheet.Cells["A1:J1"].Style.Font.Bold = true;
 
                 var row = 2;
                 foreach (var item in products)
@@ -1423,7 +1450,8 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 6].Value = item.UomName;
                     worksheet.Cells[row, 7].Value = item.UoMPOName;
                     worksheet.Cells[row, 8].Value = item.MinInventory ?? 0;
-
+                    worksheet.Cells[row, 9].Value = item.Origin;
+                    worksheet.Cells[row, 10].Value = item.Expiry;
                     row++;
                 }
 
@@ -1462,8 +1490,9 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[1, 4].Value = "Giá thuốc";
                 worksheet.Cells[1, 5].Value = "Đơn vị tính mặc định";
                 worksheet.Cells[1, 6].Value = "Mức tồn tối thiểu";
-
-                worksheet.Cells["A1:F1"].Style.Font.Bold = true;
+                worksheet.Cells[1, 7].Value = "Xuất xứ";
+                worksheet.Cells[1, 8].Value = "Thời hạn sử dụng (tháng)";
+                worksheet.Cells["A1:H1"].Style.Font.Bold = true;
 
                 var row = 2;
                 foreach (var item in products)
@@ -1474,6 +1503,8 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 4].Value = item.ListPrice;
                     worksheet.Cells[row, 5].Value = item.UomName;
                     worksheet.Cells[row, 6].Value = item.MinInventory;
+                    worksheet.Cells[row, 7].Value = item.Origin;
+                    worksheet.Cells[row, 8].Value = item.Expiry;
                     row++;
                 }
 

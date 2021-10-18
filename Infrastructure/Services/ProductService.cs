@@ -1163,6 +1163,8 @@ namespace Infrastructure.Services
                 UomName = x.UOM.Name,
                 UoMPOName = x.UOMPO.Name,
                 MinInventory = x.MinInventory,
+                Origin = x.Origin,
+                Expiry = x.Expiry
             }).ToListAsync();
 
             return res;
@@ -1184,7 +1186,9 @@ namespace Infrastructure.Services
                 Type = x.Type,
                 ListPrice = x.ListPrice,
                 UomName = x.UOM.Name,
-                MinInventory = x.MinInventory
+                MinInventory = x.MinInventory,
+                Origin = x.Origin,
+                Expiry = x.Expiry
             }).ToListAsync();
 
             return res;

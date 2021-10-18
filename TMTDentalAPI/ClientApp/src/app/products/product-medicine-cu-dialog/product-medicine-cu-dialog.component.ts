@@ -73,7 +73,9 @@ export class ProductMedicineCuDialogComponent implements OnInit {
       keToaOK: true,
       isLabo: false,
       purchasePrice: 0,
-      minInventory: 0
+      minInventory: 0,
+      origin: null,
+      expiry: null
     });
 
     setTimeout(() => {

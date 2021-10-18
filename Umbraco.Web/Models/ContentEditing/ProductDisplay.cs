@@ -21,6 +21,14 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Giá vốn
         /// </summary>
         public double StandardPrice { get; set; }
+        /// <summary>
+        /// Xuất xứ
+        /// </summary>
+        public string Origin { get; set; }
+        /// <summary>
+        /// Hạn sử dụng (tháng)
+        /// </summary>
+        public decimal? Expiry { get; set; }
 
         public IEnumerable<ProductStepDisplay> StepList { get; set; } = new List<ProductStepDisplay>();
 
