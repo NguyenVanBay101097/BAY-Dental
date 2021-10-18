@@ -44,6 +44,7 @@ namespace ApplicationCore.Entities
 
         public string Address { get; set; }
 
+
         /// <summary>
         /// Chi nhánh
         /// </summary>
@@ -52,6 +53,12 @@ namespace ApplicationCore.Entities
 
         public Guid PartnerId { get; set; }
         public Partner Partner { get; set; }
+
+        /// <summary>
+        /// kết nối bảng hoa hồng
+        /// </summary>
+        public Guid? CommissionId { get; set; }
+        public Commission Commission { get; set; }
 
         /// <summary>
         /// danh sách khách hàng được giơi thiệu

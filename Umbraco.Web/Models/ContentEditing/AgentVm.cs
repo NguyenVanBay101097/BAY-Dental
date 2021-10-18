@@ -55,6 +55,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Email { get; set; }
 
         public string Address { get; set; }
+
+        public Guid? CommisssionId { get; set; }
     }
 
     public class AgentDisplay
@@ -92,6 +94,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Address { get; set; }
 
         public Guid? PartnerId { get; set; }
+
+        public CommissionBasic Commission { get; set; }
     }
 
     public class AgentPrintVM

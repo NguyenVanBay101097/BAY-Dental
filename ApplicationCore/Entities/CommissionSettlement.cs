@@ -13,6 +13,12 @@ namespace ApplicationCore.Entities
         public Employee Employee { get; set; }
 
         /// <summary>
+        /// người giới thiệu
+        /// </summary>
+        public Guid? AgentId { get; set; }
+        public Agent Agent { get; set; }
+
+        /// <summary>
         /// Tiền thanh toán trên 1 line
         /// </summary>
         public decimal? TotalAmount { get; set; }
