@@ -1,4 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
@@ -28,9 +29,12 @@ export class CommissionSettlementAgentReportOverviewComponent implements OnInit 
   loading = false;
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
+  
   constructor(@Inject(PAGER_GRID_CONFIG) config: PageGridConfig, 
   private commissionSettlementService: CommissionSettlementsService,
-  private intlService: IntlService,) { 
+  private intlService: IntlService,
+  private router: Router
+  ) { 
     this.pagerSettings = config.pagerSettings;
   }
 
@@ -72,7 +76,7 @@ export class CommissionSettlementAgentReportOverviewComponent implements OnInit 
   }
 
   getAgentDetail(item){
-
+    // this.router.navigate(['commission-settlements/agent', item.id]);
   }
 
   getAgentType(item){

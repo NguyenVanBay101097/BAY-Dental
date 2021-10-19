@@ -31,16 +31,6 @@ const routes: Routes = [
     children: [
       { path: '', redirectTo: 'overview', pathMatch: 'full' },
       {
-        path: '/:id',
-        component: CommissionSettlementAgentDetailComponent,
-        children: [
-          { path: '', redirectTo: 'overview', pathMatch: 'full' },
-          { path: 'overview', component: CommissionSettlementAgentProfileComponent },
-          { path: 'commission', component: CommissionSettlementAgentCommissionComponent },
-          { path: 'history', component: CommissionSettlementAgentHistoryComponent },
-        ]
-      },
-      {
         path: 'overview',
         component: CommissionSettlementAgentReportOverviewComponent
       },
@@ -48,6 +38,16 @@ const routes: Routes = [
         path: 'detail',
         component: CommissionSettlementAgentReportDetailComponent
       },
+    ]
+  },
+  {
+    path: 'agent/:id',
+    component: CommissionSettlementAgentDetailComponent,
+    children: [
+      { path: '', redirectTo: 'profile', pathMatch: 'full' },
+      { path: 'profile', component: CommissionSettlementAgentProfileComponent },
+      { path: 'commission', component: CommissionSettlementAgentCommissionComponent },
+      { path: 'history', component: CommissionSettlementAgentHistoryComponent },
     ]
   },
   // {
