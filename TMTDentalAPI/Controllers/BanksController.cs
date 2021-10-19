@@ -80,7 +80,8 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("Autocomplete")]
         public async Task<IActionResult> Autocomplete(BankPaged val)
         {
-            var res = await _bankService.GetAutocompleteAsync(limit: val.Limit , offset: val.Offset , search: val.Search);
+            var banks = await _bankService.GetAutocompleteAsync(limit: val.Limit , offset: val.Offset , search: val.Search);
+            var res = _mapper.Map<IEnumerable<BankBasic>>(banks); 
             return Ok(res);
         }
     }

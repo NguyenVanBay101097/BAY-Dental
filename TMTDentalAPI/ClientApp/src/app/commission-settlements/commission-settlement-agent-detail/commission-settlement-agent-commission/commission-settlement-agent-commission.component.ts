@@ -1,8 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { aggregateBy } from '@progress/kendo-data-query';
 import { Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { CommissionSettlementAgentPaymentDialogComponent } from '../../commission-settlement-agent-payment-dialog/commission-settlement-agent-payment-dialog.component';
 import { CommissionSettlementFilterReport, CommissionSettlementsService } from '../../commission-settlements.service';
 
 @Component({
@@ -12,7 +17,7 @@ import { CommissionSettlementFilterReport, CommissionSettlementsService } from '
 })
 export class CommissionSettlementAgentCommissionComponent implements OnInit {
   gridData: GridDataResult;
-  limit = 20;
+  limit = 2;
   skip = 0;
   pagerSettings: any;
   loading = false;
@@ -23,40 +28,60 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
   agentId: string;
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
-  
+  items: any;
+  baseAmount: number = 0;
+  amount: number = 0;
+  commissionPaid: number = 0;
   constructor(
     private intl: IntlService,
-    private commissionSettlementsService: CommissionSettlementsService
-  ) { }
+    private commissionSettlementsService: CommissionSettlementsService,
+    private route: ActivatedRoute,
+    private modalService: NgbModal,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+    ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd;
+    this.agentId = this.route.parent.snapshot.paramMap.get('id');
+    this.loadDataFromApi();
   }
 
   loadDataFromApi() {
     this.loading = true;
     var val = new CommissionSettlementFilterReport();
-    val.offset = this.skip;
-    val.limit = this.limit;
+    // val.offset = this.skip;
+    // val.limit = 0;
     val.search = this.search ? this.search : '';
     val.agentId = this.agentId ? this.agentId : '';
     // val.commissionType = this.commissionType ? this.commissionType : '';
     val.dateFrom = this.dateFrom ? this.intl.formatDate(this.dateFrom, 'yyyy-MM-ddTHH:mm:ss') : null;
     val.dateTo = this.dateFrom ? this.intl.formatDate(this.dateTo, 'yyyy-MM-ddTHH:mm:ss') : null;
-    val.groupBy = 'employee';
-    this.commissionSettlementsService.getReportDetail(val).pipe(
-      map((response: any) => (<GridDataResult>{
-        data: response.items,
-        total: response.totalItems
-      }))
-    ).subscribe((res: any) => {
-      this.gridData = res;
+    val.groupBy = 'agent';
+    this.commissionSettlementsService.getReportDetail(val).subscribe((res: any) => {
+      this.items = res.items;
+      console.log(this.items);
+      this.loadItems(this.items);
       this.loading = false;
     }, err => {
       console.log(err);
       this.loading = false;
     });
+  }
+
+  loadItems(items): void {
+    this.gridData = {
+      data: items.slice(this.skip, this.skip + this.limit),
+      total: items.length
+    };
+
+    const result = aggregateBy(this.items, [
+      { aggregate: "sum", field: "baseAmount" },
+      { aggregate: "sum", field: "amount" },
+    ]);
+
+    this.baseAmount = result.baseAmount ? result.baseAmount.sum : 0;
+    this.amount = result.amount ? result.amount.sum : 0;
   }
 
   onSearchDateChange(data) {
@@ -69,7 +94,16 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
     this.limit = event.take;
-    // this.loadDataFromApi();
+    this.loadItems(this.items);
+  }
+
+  actionPayment(){
+    // const modalRef = this.modalService.open(CommissionSettlementAgentPaymentDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    // modalRef.componentInstance.title = 'Chi hoa hồng';
+    // modalRef.componentInstance.type = 'chi';
+    // modalRef.componentInstance.accountType = 'commission';
+    // modalRef.componentInstance.agentId = this.agentId;
+
   }
 
   exportExcelFile(){
