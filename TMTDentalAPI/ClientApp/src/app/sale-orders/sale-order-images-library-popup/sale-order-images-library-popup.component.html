@@ -1,5 +1,5 @@
 <header class="modal-header">
-    <h5 class="modal-title">Thư viện ảnh<span class="o_subtitle text-muted small"></span></h5>
+    <h5 class="modal-title">Hình ảnh<span class="o_subtitle text-muted small"></span></h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
         tabindex="-1">×</button>
 </header>
@@ -8,46 +8,23 @@
     <div class="o_searchview mb-3">
         <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo tên hình ảnh" [(ngModel)]="search"
             (ngModelChange)="this.searchUpdate.next($event)" />
+        <span class="o_searchview_icon fas fa-search"></span>
     </div>
-    <div class="card">
-        <div class="card-body">
-            <div *ngIf="imagesGroup.length > 0; else no_data" class="card border-0">
-                <div class="card-body img-list">
-                    <ng-container *ngFor="let itemGroup of imagesGroup;let i = index">
-                        <h5 class="card-title">{{getTitleDate(itemGroup[0])}}</h5>
-                        <div class="o_attachments_previews o_attachments_previews">
-                            <div class="o_attachment" *ngFor="let img of itemGroup[1]">
-                                <!-- <div class="o_attachment_wrap" (click)="chooseImage(img)">
-                                    <div class="o_image_box">
-                                        <div class="o_attachment_image" id="{{img.name}}">
-                                            <img width="100%" [src]="img.url + '?width=140&height=140)'" alt="">
-                                            <span class="o_attachment_title text-white">{{img.name}}</span>
-                                        </div>
-                                        <div class="o_image_overlay o_attachment_view">
-                                            <span class="o_attachment_title text-white">{{img.name}}</span>
-                                        </div>
-                                    </div>
-                                </div> -->
-                                <div class="o_attachment_wrap" [ngClass]="{'img-selected' : isSelected(img)}"
-                                    (click)="chooseImage(img)">
-                                    <img width="100%" [src]="img.url + '?width=140&height=140'" alt="">
-                                    <div class="o_attachment_overlay cursor-pointer">
-                                        <div class="o_attachment_filename">{{img.name}}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </ng-container>
-
+    <div class="o_AttachmentList_partialList" *ngIf="items.length">
+        <div [attr.title]="img.name" *ngFor="let img of items;index as i"
+            class="o_Attachment" (click)="chooseImage(img)">
+            <div [ngStyle]="{'background-image':'url('+img.url+')'}"  [ngClass]="{'border border-primary rounded': imagesSelected.indexOf(img) !== -1}" [attr.data-mimetype]="img.mineType"
+                class="o_Attachment_image o_image o-details-overlay o-medium">
+                <div class="o_Attachment_imageOverlay">
+                    <div class="o_Attachment_details o_Attachment_imageOverlayDetails">
+                        <div class="o_Attachment_filename">{{img.name}}</div>
+                    </div>
                 </div>
-
             </div>
-            <ng-template #no_data>
-                <div style="margin: auto; text-align: center;">
-                    <img src="../../../../assets/icons/NoData.svg" class="img-nodata">
-                </div>
-            </ng-template>
         </div>
+    </div>
+    <div style="margin: auto; text-align: center;" *ngIf="!items.length">
+        <img src="../../../../assets/icons/NoData.svg" class="img-nodata">
     </div>
 </div>
 

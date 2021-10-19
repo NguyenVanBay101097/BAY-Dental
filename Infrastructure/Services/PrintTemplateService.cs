@@ -38,7 +38,7 @@ namespace Infrastructure.Services
             return template.Content;
         }
 
-        public async Task<string> GeneratePrintHtml(PrintTemplate self, IEnumerable<Guid> resIds, PrintPaperSize paperSize = null, IEnumerable<object> resObjs = null)
+        public async Task<string> GeneratePrintHtml(PrintTemplate self, IEnumerable<Guid> resIds, PrintPaperSize paperSize = null)
         {
             var modelDataService = GetService<IIRModelDataService>();
             var paper = paperSize != null ? paperSize : await modelDataService.GetRef<PrintPaperSize>("base.paperformat_a4");
@@ -49,7 +49,24 @@ namespace Infrastructure.Services
             var template = Template.Parse(layoutHtml);
             var renderLayout = await template.RenderAsync(new { o = paper });
 
-            var renderContent = await RenderTemplate(self, resIds, resObjs);
+            var renderContent = await RenderTemplate(self, resIds);
+
+            var result = ConnectLayoutForContent(renderLayout, renderContent);
+            return result;
+        }
+
+        public async Task<string> GeneratePrintHtml(PrintTemplate self, IEnumerable<object> data, PrintPaperSize paperSize = null)
+        {
+            var modelDataService = GetService<IIRModelDataService>();
+            var paper = paperSize != null ? paperSize : await modelDataService.GetRef<PrintPaperSize>("base.paperformat_a4");
+            if (paper == null)
+                throw new Exception("Không tìm thấy khổ giấy mặc định");
+
+            var layoutHtml = File.ReadAllText("PrintTemplate/Shared/Layout.html");
+            var template = Template.Parse(layoutHtml);
+            var renderLayout = await template.RenderAsync(new { o = paper });
+
+            var renderContent = await RenderTemplate(self, data);
 
             var result = ConnectLayoutForContent(renderLayout, renderContent);
             return result;
@@ -64,10 +81,16 @@ namespace Infrastructure.Services
             return newHtml;
         }
 
-        public async Task<string> RenderTemplate(PrintTemplate self, IEnumerable<Guid> resIds, IEnumerable<object> resObjs = null)
+        public async Task<string> RenderTemplate(PrintTemplate self, IEnumerable<Guid> resIds)
         {
             //mảng data từ resids
-            var data = resObjs ?? await GetObjectRender(self.Model, resIds);
+            var data = await GetObjectRender(self.Model, resIds);
+            return await RenderTemplate(self, data);
+        }
+
+        public async Task<string> RenderTemplate(PrintTemplate self, IEnumerable<object> data)
+        {
+            //mảng data từ resids
             var userObj = GetService<IUserService>();
             var user = await userObj.GetCurrentUser();
 

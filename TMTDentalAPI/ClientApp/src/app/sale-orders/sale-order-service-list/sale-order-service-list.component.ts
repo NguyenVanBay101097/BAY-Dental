@@ -1,7 +1,7 @@
-import { Component, Input, OnInit, QueryList, ViewChildren } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { catchError, mergeMap } from 'rxjs/operators';
@@ -23,7 +23,7 @@ import { ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
   templateUrl: './sale-order-service-list.component.html',
   styleUrls: ['./sale-order-service-list.component.css']
 })
-export class SaleOrderServiceListComponent implements OnInit {
+export class SaleOrderServiceListComponent implements OnInit, OnChanges {
   @Input() saleOrder: any;
   orderLines: any[] = [];
   promotions: any[] = []; //danh sách promotion của phiếu điều trị
@@ -35,7 +35,8 @@ export class SaleOrderServiceListComponent implements OnInit {
   @ViewChildren('lineTemplate') lineVCR: QueryList<SaleOrderLineCuComponent>;
   linesDirty = false;
   formGroup: FormGroup;
-
+  submitted = false;
+  @Output() updateOrderEvent = new EventEmitter<any>();
 
   constructor(private router: Router,
      private route: ActivatedRoute,
@@ -47,17 +48,47 @@ export class SaleOrderServiceListComponent implements OnInit {
      private saleOrderLineService: SaleOrderLineService,
      private toothCategoryService: ToothCategoryService,
      private employeeService: EmployeeService,
-     private toothService: ToothService) { }
+     private toothService: ToothService,
+     private fb: FormBuilder) { }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (!changes.saleOrder.firstChange) {
+      this.saleOrderService.get(this.saleOrder.id).subscribe(result => {
+        this.orderLines = result.orderLines;
+        this.promotions = result.promotions;
+        
+        var dateOrder = new Date(result.dateOrder);
+        this.formGroup.get('dateOrder').setValue(dateOrder);
+
+        this.lineSelected = null;
+      });
+    }
+  }
 
   ngOnInit() {
+    this.formGroup = this.fb.group({
+      dateOrder: [null, Validators.required]
+    });
+
     this.saleOrderService.get(this.saleOrder.id).subscribe(result => {
       this.orderLines = result.orderLines;
       this.promotions = result.promotions;
+      
+      var dateOrder = new Date(result.dateOrder);
+      this.formGroup.get('dateOrder').setValue(dateOrder);
     });
 
     this.loadToothCategories();
     this.loadEmployees();
     this.loadTeethList();
+  }
+
+  get f() {
+    return this.formGroup.controls;
+  }
+
+  public hasEditingLine() {
+    return this.lineSelected != null || this.lineSelected != undefined;
   }
   
   loadTeethList() {
@@ -65,6 +96,33 @@ export class SaleOrderServiceListComponent implements OnInit {
     this.toothService.getAllBasic(val).subscribe((result: any[]) => {
       this.listTeeths = result;
     });
+  }
+
+  saveSaleOrderInfo(popover) {
+    this.submitted = true;
+    if (!this.formGroup.valid) {
+      return false;
+    }
+
+    var value = this.formGroup.value;
+    var val = {
+      dateOrder: this.intlService.formatDate(value.dateOrder, 'yyyy-MM-ddTHH:mm:ss'),
+    };
+
+    this.saleOrderService.update(this.saleOrder.id, val)
+      .subscribe(() => {
+        this.notify('success', 'Lưu thành công');
+        this.updateOrderEvent.emit(val);
+        popover.close();
+      });
+  }
+
+  openUpdateOrderPopover(popover) {
+    this.formGroup = this.fb.group({
+      dateOrder: [new Date(this.saleOrder.dateOrder), Validators.required]
+    });
+
+    popover.open();
   }
 
   
@@ -339,98 +397,20 @@ export class SaleOrderServiceListComponent implements OnInit {
   }
 
   onUpdateOpenLinePromotion(i) {
-    var getData_OpenDialog = () => {
-      //Nếu có chi tiết đang chỉnh sửa thì cập nhật
-
-      if (this.lineSelected != null) {
-        var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
-        var rs = viewChild.updateLineInfo();
-        if (rs) {
-          viewChild.onUpdateSignSubject.subscribe(value => {
-            this.saleOrderService.get(this.saleOrder.id).subscribe(result => {
-              this.resetData(result);
-              this.onOpenLinePromotionDialog(i);
-            });
-          })
-        }
-      } else {
-        this.saleOrderService.get(this.saleOrder.id).subscribe(result => {
-          this.resetData(result);
-          this.onOpenLinePromotionDialog(i);
-        });
+    if (this.lineSelected != null) {
+      var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
+      var rs = viewChild.updateLineInfo();
+      if (rs) {
+        viewChild.onUpdateSignSubject.subscribe(value => {
+          this.saleOrderService.get(this.saleOrder.id).subscribe(result => {
+            this.resetData(result);
+            this.onOpenLinePromotionDialog(i);
+          });
+        })
       }
-    }
-    //Nếu phiếu điều trị chưa lưu
-    if (!this.saleOrder.id) {
-      if (!this.formGroup.valid) {
-        return false;
-      }
-
-      this.updateFormGroupDataToSaleOrder();
-      const val = this.getFormDataSave();
-
-      this.saleOrderService.create(val).subscribe((r: any) => {
-        this.saleOrder.id = r.id;
-        this.router.navigate(['/sale-orders/form'], { queryParams: { id: r.id } });
-        getData_OpenDialog();
-      });
-    } else if (this.lineSelected != null) { //Nếu dữ liệu cần lưu lại
-      if (!this.formGroup.valid) {
-        return false;
-      }
-
-      this.updateFormGroupDataToSaleOrder();
-      const val = this.getFormDataSave();
-
-      this.saleOrderService.update(this.saleOrder.id, val).subscribe((result: any) => {
-        getData_OpenDialog();
-      });
     } else {
       this.onOpenLinePromotionDialog(i);
     }
-    // //update line trước khi lưu
-    // if (this.lineSelected != null) {
-    //   var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
-    //   var rs = viewChild.updateLineInfo();
-    //   if(!rs) return;
-    // }
-    // //nếu data không change thì mở dialog luôn
-    // if (!this.isChanged) {
-    //   this.onOpenLinePromotionDialog(i);
-    //   return;
-    // }
-    // // this.updateLineInfo(line, lineControl);// lưu ở client
-    // const val = this.getFormDataSave();
-    // if (!this.saleOrder.id) {
-    //   this.submitted = true;
-    //   if (!this.formGroup.valid) {
-    //     return false;
-    //   }
-
-    //   this.saleOrderService.create(val).subscribe(async (result: any) => {
-    //     this.saleOrder.id = result.id;
-    //     const url = this.router.createUrlTree([], { queryParams: {id: result.id}}).toString()
-    //     this.location.go(url);
-    //     // this.saleOrderService.get(this.saleOrder.id).subscribe((result: any) => {
-    //     //   this.patchValueSaleOrder(result);
-    //     //   this.onOpenLinePromotionDialog(i);
-
-    //     // });
-    //     await this.loadRecord();
-    //     this.onOpenLinePromotionDialog(i);
-    //   })
-    // } else {
-
-    //   this.saleOrderService.update(this.saleOrder.id, val).subscribe(async (result: any) => {
-    //     // this.saleOrderService.get(this.saleOrder.id).subscribe((result: any) => {
-    //     //   this.patchValueSaleOrder(result);
-    //     //   this.onOpenLinePromotionDialog(i);
-
-    //     // });
-    //     await this.loadRecord();
-    //     this.onOpenLinePromotionDialog(i);
-    //   });
-    // }
   }
 
   onOpenLinePromotionDialog(i) {

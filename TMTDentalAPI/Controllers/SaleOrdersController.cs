@@ -325,7 +325,7 @@ namespace TMTDentalAPI.Controllers
                 item.IrAttachments = attachments;
             }
 
-            var result = await _printTemplateService.GeneratePrintHtml(template, new List<Guid>() { val.Id }, paperSize, saleOrders);     
+            var result = await _printTemplateService.GeneratePrintHtml(template, saleOrders);     
 
             return Ok(new PrintData() { html = result});
         }

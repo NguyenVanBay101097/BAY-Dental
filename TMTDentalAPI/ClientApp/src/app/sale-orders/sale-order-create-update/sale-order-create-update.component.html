@@ -16,13 +16,17 @@
                         class="btn btn-secondary mr-1">
                         Trở lại
                     </a>
-                    <button type="button" class="btn btn-primary" accesskey="s"
+                    <!-- <button type="button" class="btn btn-primary" accesskey="s"
                         *ngIf="saleOrder && saleOrder.state == 'draft'" (click)="onSave()">
                         Lưu
                     </button>
                     <button type="button" accesskey="1" *ngIf="saleOrder && saleOrder.state == 'draft'"
                         class="btn btn-primary" (click)="onSaveConfirm()">
                         Lưu và xác nhận
+                    </button> -->
+                    <button type="button" accesskey="1" *ngIf="saleOrder && saleOrder.state == 'draft'"
+                        class="btn btn-primary" (click)="onSaveConfirm()">
+                        Xác nhận
                     </button>
                     <button *ngIf="saleOrder && ['sale', 'done'].indexOf(saleOrder.state) !== -1" type="button"
                         class="btn btn-primary" (click)="actionSaleOrderPayment()">
@@ -65,7 +69,7 @@
                         <li [ngbNavItem]="'services'">
                             <a ngbNavLink routerLink="." [fragment]="'services'">Dịch vụ</a>
                             <ng-template ngbNavContent>                      
-                            <app-sale-order-service-list [saleOrder]="saleOrder"></app-sale-order-service-list>
+                            <app-sale-order-service-list #serviceListComp [saleOrder]="saleOrder" (updateOrderEvent)="onUpdateOrder($event)"></app-sale-order-service-list>
                             </ng-template>
                         </li>
                         <li [ngbNavItem]="'process-service'" *ngIf="saleOrder.state != 'draft'">

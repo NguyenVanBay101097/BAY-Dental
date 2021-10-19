@@ -40,7 +40,7 @@
                 </ng-container>
             </div>
         </div>
-        <div class="pl-3" style="flex: 0 0 auto;width: 325px;">
+        <div class="pl-3" style="flex: 0 0 auto;width: 328px;">
             <div class="card mb-3">
                 <div class="card-header bg-primary text-white px-3 py-1">Thanh toán
                 </div>
@@ -166,7 +166,7 @@
             <div class="card mb-3">
                 <div class="card-header bg-primary text-white px-3 py-1">Thông tin phiếu
                 </div>
-                <div class="card-body px-3 py-2">
+                <div class="card-body px-3 py-2" [formGroup]="formGroup">
                     <table class="o_group m-0 o_inner_group o_group_col_12">
                         <tbody>
                             <tr>
@@ -176,11 +176,28 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <!-- <kendo-datetimepicker [class.d-none]="saleOrder.state != 'draft'"
-                                        style="max-height: 36px" formControlName="dateOrderObj">
-                                    </kendo-datetimepicker> -->
-                                    <span>{{saleOrder.dateOrder
-                                        | date: 'short'}}</span>
+                                    <span>{{saleOrder.dateOrder | date: 'short'}}</span>
+                                    <button *ngIf="saleOrder.state == 'draft'" class="text-success" #popover="ngbPopover" triggers="manual" (click)="openUpdateOrderPopover(popover)" title="Sửa" style="outline: none;background: none;border: none;" [ngbPopover]="popContent" placement="bottom-right" [autoClose]="'outside'">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <ng-template #popContent>
+                                        <div [formGroup]="formGroup">
+                                            <div class="mb-2">
+                                                <kendo-datepicker style="width: 100%" format="dd/MM/yyyy HH:mm" formControlName="dateOrder" [popupSettings]="{appendTo: 'component'}">
+                                                </kendo-datepicker>
+                                                 <div *ngIf="f.dateOrder.errors && (f.dateOrder.touched || f.dateOrder.dirty || submitted)"
+                                                    class="text-danger">
+                                                    <div *ngIf="f.dateOrder.errors.required">Chọn ngày lập phiếu</div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <button type="button" class="btn btn-primary" (click)="saveSaleOrderInfo(popover)">
+                                                    Lưu
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </ng-template>
+                                   
                                 </td>
                             </tr>
                             <tr>
@@ -212,7 +229,11 @@
                             </a>
                         </label>
                     </div>
-
+                    <!-- <div class="text-right">
+                        <button type="button" class="btn btn-primary" *ngIf="saleOrder.state == 'draft'" (click)="saveSaleOrderInfo()">
+                            <span class="fa fa-save"></span> Lưu
+                        </button>
+                    </div> -->
                 </div>
             </div>
         </div>

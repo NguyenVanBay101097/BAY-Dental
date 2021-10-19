@@ -1306,7 +1306,8 @@ namespace Infrastructure.Services
                 //.Include(x => x.OrderLines).ThenInclude(x => x.Order).ThenInclude(x => x.OrderLines)
                 .FirstOrDefaultAsync();
 
-            order = _mapper.Map(val, order);
+            //order = _mapper.Map(val, order);
+            order.DateOrder = val.DateOrder;
 
             //await SaveOrderLines(val, order);
             await UpdateAsync(order); //update trước để generate id cho những sale order line

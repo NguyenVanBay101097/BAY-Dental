@@ -30,17 +30,16 @@ export class SaleOrderImagesLibraryPopupComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe((val) => {
-        var items = this.images.filter((img,index)=> {
+        this.items = this.images.filter((img,index)=> {
           return img.name.toUpperCase().search(val.toUpperCase()) != -1
         });
-        this.groupByImages(items);
       });
   }
 
   loadImages(){
     this.saleOrderService.getListAttachment(this.id).subscribe(res => {
       this.images = res;
-      this.groupByImages(res);
+      this.items = this.images.slice();
     })
   }
 
