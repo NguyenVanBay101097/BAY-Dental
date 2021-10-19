@@ -17,6 +17,7 @@ import { ImageViewerComponent } from 'src/app/shared/image-viewer/image-viewer.c
 import { DotKhamLineDisplay, DotkhamOdataService } from 'src/app/shared/services/dotkham-odata.service';
 import { PartnerImageBasic } from 'src/app/shared/services/partners.service';
 import { SaleOrdersOdataService } from 'src/app/shared/services/sale-ordersOdata.service';
+import { IrAttachmentBasic } from 'src/app/shared/shared';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -72,7 +73,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
       reason: [null],
       doctor: [null, Validators.required],
       lines: this.fb.array([]),
-      dotKhamImages: this.fb.array([]),
+      irAttachments: this.fb.array([]),
       sequence: this.sequence,
       assistant: null
     });
@@ -102,10 +103,10 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
   setEditModeActive(val: boolean) {
     this.editModeActive = val;
   }
-  get f() { return this.dotkhamForm.controls;}
+  get f() { return this.dotkhamForm.controls; }
   get Id() { return this.dotkhamForm.get('id').value; }
   get Sequence() { return this.dotkhamForm.get('sequence').value; }
-  get imgsFA() { return this.dotkhamForm.get('dotKhamImages') as FormArray; }
+  get imgsFA() { return this.dotkhamForm.get('irAttachments') as FormArray; }
   get linesFA() { return this.dotkhamForm.get('lines') as FormArray; }
   get dotkhamDate() { return this.dotkhamForm.get('date').value; }
   get employee() { return this.dotkhamForm.get('doctor').value; }
@@ -122,7 +123,7 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
     this.imgsFA.clear();
     this.linesFA.clear();
 
-    this.dotkham.dotKhamImages.forEach(e => {
+    this.dotkham.irAttachments.forEach(e => {
       const imgFG = this.fb.group(e);
       this.imgsFA.push(imgFG);
     });
@@ -187,11 +188,9 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
 
     this.webService.uploadImages(formData).subscribe((res: any) => {
       res.forEach(img => {
-        const imgObj = new PartnerImageBasic();
-        imgObj.dotKhamId = this.dotkham.id;
+        const imgObj = new IrAttachmentBasic();
         imgObj.name = img.fileName;
-        imgObj.uploadId = img.fileUrl;
-        imgObj.partnerId = this.dotkham.partnerId;
+        imgObj.url = img.fileUrl;
         const imgFG = this.fb.group(imgObj);
         this.imgsFA.push(imgFG);
       });
@@ -353,25 +352,10 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
     // });
   }
 
-  onViewImg(imgObj: PartnerImageBasic) {
+  onViewImg(img: PartnerImageBasic) {
     const modalRef = this.modalService.open(ImageViewerComponent, { windowClass: 'o_image_viewer o_modal_fullscreen' });
-    const img = {
-      id: imgObj.id,
-      name: imgObj.name,
-      date: imgObj.date,
-      note: imgObj.note,
-      uploadId: imgObj.uploadId
-    };
-    const imgs = this.imgsFA.value.map(x => {
-      return {
-        id: x.id,
-        name: x.name,
-        date: x.date,
-        note: x.note,
-        uploadId: x.uploadId
-      };
-    });
-    modalRef.componentInstance.partnerImages = imgs;
-    modalRef.componentInstance.partnerImageSelected = img;
+    const imgs = this.imgsFA.value;
+    modalRef.componentInstance.images = imgs;
+    modalRef.componentInstance.selectedImage = img;
   }
 }
