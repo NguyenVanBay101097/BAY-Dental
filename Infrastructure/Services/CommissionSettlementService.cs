@@ -345,7 +345,7 @@ namespace Infrastructure.Services
                     Amount = x.Sum(s => s.Amount ?? 0)
                 }).ToListAsync();
             }
-            else if (groupBy == "employee")
+            else if (groupBy == "agent")
             {
                 res = await query.Where(x => x.AgentId.HasValue).GroupBy(x => new
                 {

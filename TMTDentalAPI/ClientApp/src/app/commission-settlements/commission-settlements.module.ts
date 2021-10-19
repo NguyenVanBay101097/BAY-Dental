@@ -16,6 +16,9 @@ import { AgentCommmissionFormDetailComponent } from '../agents/agent-commmission
 import { AgentCommmissionHistoryComponent } from '../agents/agent-commmission-history/agent-commmission-history.component';
 import { AgentCommmissionFormDetailItemComponent } from '../agents/agent-commmission-form-detail-item/agent-commmission-form-detail-item.component';
 import { AgentCommmissionPaymentDialogComponent } from '../agents/agent-commmission-payment-dialog/agent-commmission-payment-dialog.component';
+import { CommissionSettlementAgentComponent } from './commission-settlement-agent/commission-settlement-agent.component';
+import { CommissionSettlementAgentOverviewComponent } from './commission-settlement-agent-overview/commission-settlement-agent-overview.component';
+import { CommissionSettlementAgentDetailComponent } from './commission-settlement-agent-detail/commission-settlement-agent-detail.component';
 
 @NgModule({
   declarations: [CommissionSettlementReportListComponent, CommissionSettlementReportDetailComponent,
@@ -25,7 +28,10 @@ import { AgentCommmissionPaymentDialogComponent } from '../agents/agent-commmiss
     AgentCommmissionFormDetailComponent,
     AgentCommmissionHistoryComponent,
     AgentCommmissionFormDetailItemComponent,
-    AgentCommmissionPaymentDialogComponent
+    AgentCommmissionPaymentDialogComponent,
+    CommissionSettlementAgentComponent,
+    CommissionSettlementAgentOverviewComponent,
+    CommissionSettlementAgentDetailComponent
   ],
   imports: [
     CommonModule,
