@@ -267,7 +267,7 @@ namespace Infrastructure.Services
             {
                 query = query.Where(x => x.AgentId.HasValue);
 
-                if (string.IsNullOrEmpty(val.Classify))
+                if (!string.IsNullOrEmpty(val.Classify))
                     query = query.Where(x => x.Agent.Classify == val.Classify);
             }
 
@@ -355,7 +355,7 @@ namespace Infrastructure.Services
             }
             else if (groupBy == "agent")
             {
-                if (string.IsNullOrEmpty(classify))
+                if (!string.IsNullOrEmpty(classify))
                     query = query.Where(x => x.Agent.Classify == classify);
 
                 res = await query.Where(x => x.AgentId.HasValue).GroupBy(x => new
