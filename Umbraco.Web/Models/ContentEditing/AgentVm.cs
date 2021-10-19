@@ -32,6 +32,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Gender { get; set; }
 
         /// <summary>
+        /// customer : khách hàng
+        /// employee : nhân viên
+        /// partner : đối tác
+        /// </summary>
+        public string Classify { get; set; }
+
+        /// <summary>
         /// Năm sinh
         /// </summary>
         public int? BirthYear { get; set; }
@@ -62,6 +69,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? EmployeeId { get; set; }
 
+        public Guid? BankId { get; set; }
+
         /// <summary>
         /// Chi nhánh ngân hàng
         /// </summary>
@@ -85,6 +94,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
 
         public string Gender { get; set; }
+
+        /// <summary>
+        /// customer : khách hàng
+        /// employee : nhân viên
+        /// partner : đối tác
+        /// </summary>
+        public string Classify { get; set; }
 
         /// <summary>
         /// Năm sinh
