@@ -37,7 +37,7 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Report.Commission")]
         public async Task<IActionResult> GetCommissionSettlementReport(CommissionSettlementOverviewFilter val)
         {
-            var result = await _commissionSettlementService.GetCommissionSettlements(dateFrom: val.DateFrom, dateTo: val.DateTo, groupBy: val.GroupBy);
+            var result = await _commissionSettlementService.GetCommissionSettlements(dateFrom: val.DateFrom, dateTo: val.DateTo,classify: val.Classify , groupBy: val.GroupBy);
             return Ok(result);
         }
 

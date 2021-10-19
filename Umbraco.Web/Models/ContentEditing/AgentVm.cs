@@ -57,6 +57,25 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Address { get; set; }
 
         public Guid? CommissionId { get; set; }
+
+        public Guid? CustomerId { get; set; }
+
+        public Guid? EmployeeId { get; set; }
+
+        /// <summary>
+        /// Chi nhánh ngân hàng
+        /// </summary>
+        public string BankBranch { get; set; }
+
+        /// <summary>
+        /// Số tài khoản
+        /// </summary>
+        public string AccountNumber { get; set; }
+
+        /// <summary>
+        /// Chủ tài khoản
+        /// </summary>
+        public string AccountHolder { get; set; }
     }
 
     public class AgentDisplay
@@ -82,6 +101,12 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public int? BirthDay { get; set; }
 
+        public Guid? CustomerId { get; set; }
+        public PartnerSimple Customer { get; set; }
+
+        public Guid? EmployeeId { get; set; }
+        public EmployeeSimple Employee { get; set; }
+
         /// <summary>
         /// Nghề nghiệp
         /// </summary>
@@ -94,6 +119,27 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Address { get; set; }
 
         public Guid? PartnerId { get; set; }
+
+        /// <summary>
+        /// ngân hàng
+        /// </summary>
+        public Guid BankId { get; set; }
+        public BankBasic Bank { get; set; }
+
+        /// <summary>
+        /// Chi nhánh ngân hàng
+        /// </summary>
+        public string BankBranch { get; set; }
+
+        /// <summary>
+        /// Số tài khoản
+        /// </summary>
+        public string AccountNumber { get; set; }
+
+        /// <summary>
+        /// Chủ tài khoản
+        /// </summary>
+        public string AccountHolder { get; set; }
 
         public CommissionBasic Commission { get; set; }
     }

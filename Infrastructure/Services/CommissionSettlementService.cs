@@ -207,6 +207,7 @@ namespace Infrastructure.Services
                 PartnerName = x.MoveLine.Partner.Name,
                 InvoiceOrigin = x.MoveLine.Move.InvoiceOrigin,
                 CommissionType = x.Commission.Type,
+                Classify = x.Agent.Classify,
                 Name = val.GroupBy == "employee" ? x.Employee.Name : x.Agent.Name
             }).ToListAsync();
 
@@ -263,7 +264,13 @@ namespace Infrastructure.Services
             if (val.GroupBy == "employee")
                 query = query.Where(x => x.EmployeeId.HasValue);
             else if (val.GroupBy == "agent")
+            {
                 query = query.Where(x => x.AgentId.HasValue);
+
+                if (string.IsNullOrEmpty(val.Classify))
+                    query = query.Where(x => x.Agent.Classify == val.Classify);
+            }
+
 
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
@@ -318,7 +325,7 @@ namespace Infrastructure.Services
             };
         }
 
-        public async Task<IEnumerable<CommissionSettlementOverview>> GetCommissionSettlements(DateTime? dateFrom, DateTime? dateTo, string groupBy)
+        public async Task<IEnumerable<CommissionSettlementOverview>> GetCommissionSettlements(DateTime? dateFrom, DateTime? dateTo, string classify, string groupBy)
         {
 
             var query = SearchQuery();
@@ -328,6 +335,7 @@ namespace Infrastructure.Services
 
             if (dateTo.HasValue)
                 query = query.Where(x => x.Date <= dateTo.Value.AbsoluteEndOfDate());
+
 
             var res = new List<CommissionSettlementOverview>();
 
@@ -347,14 +355,19 @@ namespace Infrastructure.Services
             }
             else if (groupBy == "agent")
             {
+                if (string.IsNullOrEmpty(classify))
+                    query = query.Where(x => x.Agent.Classify == classify);
+
                 res = await query.Where(x => x.AgentId.HasValue).GroupBy(x => new
                 {
                     Id = x.AgentId.Value,
                     Name = x.Agent.Name,
+                    Classify = x.Agent.Classify
                 }).Select(x => new CommissionSettlementOverview()
                 {
                     Id = x.Key.Id,
                     Name = x.Key.Name,
+                    Classify = x.Key.Classify,
                     BaseAmount = x.Sum(s => s.BaseAmount ?? 0),
                     Amount = x.Sum(s => s.Amount ?? 0)
                 }).ToListAsync();

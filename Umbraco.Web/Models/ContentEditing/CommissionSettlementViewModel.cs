@@ -34,6 +34,13 @@ namespace Umbraco.Web.Models.ContentEditing
         /// agent : người giới thiệu
         /// </summary>
         public string GroupBy { get; set; }
+
+        /// <summary>
+        /// customer : khách hàng
+        /// employee : nhân viên
+        /// partner : đối tác
+        /// </summary>
+        public string Classify { get; set; }
     }
 
     public class CommissionSettlementReportRes
@@ -154,6 +161,14 @@ namespace Umbraco.Web.Models.ContentEditing
         public string InvoiceOrigin { get; set; }
         public string Name { get; set; }
         public string CommissionType { get; set; }
+
+        /// <summary>
+        /// chỉ sử dụng cho người giới thiệu
+        /// customer : khách hàng
+        /// employee : nhân viên
+        /// partner : đối tác
+        /// </summary>
+        public string Classify { get; set; }
     }
 
     public class CommissionSettlementReportDetailOutputExcel
@@ -222,6 +237,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public DateTime? DateTo { get; set; }
 
+        public string Classify { get; set; }
+
         public string GroupBy { get; set; }
     }
 
@@ -229,6 +246,8 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
+
+        public string Classify { get; set; }
 
         /// <summary>
         /// tổng tiền lợi nhuận
