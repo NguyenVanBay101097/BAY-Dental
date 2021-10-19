@@ -33,6 +33,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.Commission")]
+        public async Task<IActionResult> GetCommissionSettlementReport(CommissionSettlementOverviewFilter val)
+        {
+            var result = await _commissionSettlementService.GetCommissionSettlements(dateFrom: val.DateFrom, dateTo: val.DateTo, groupBy: val.GroupBy);
+            return Ok(result);
+        }
+
         [HttpGet("[action]")]
         [CheckAccess(Actions = "Report.Commission")]
         public async Task<IActionResult> GetReportPaged([FromQuery] CommissionSettlementFilterReport val)
@@ -112,11 +120,11 @@ namespace TMTDentalAPI.Controllers
 
         }
 
-       
+
 
         [HttpGet("[action]")]
         public async Task<IActionResult> DetailExportExcel([FromQuery] CommissionSettlementFilterReport val)
-        {         
+        {
             var stream = new MemoryStream();
             val.Limit = int.MaxValue;
             var data = await _commissionSettlementService.GetReportDetail(val);
@@ -145,7 +153,7 @@ namespace TMTDentalAPI.Controllers
                 {
                     worksheet.Cells[row, 1].Value = item.Date;
                     worksheet.Cells[row, 1].Style.Numberformat.Format = "d/m/yyyy";
-                    worksheet.Cells[row, 2].Value = item.EmployeeName;
+                    worksheet.Cells[row, 2].Value = item.Name;
                     worksheet.Cells[row, 3].Value = _commissionSettlementService.CommissionType(item.CommissionType);
                     worksheet.Cells[row, 4].Value = item.InvoiceOrigin;
                     worksheet.Cells[row, 5].Value = item.PartnerName;
@@ -159,7 +167,7 @@ namespace TMTDentalAPI.Controllers
 
                     row++;
                 }
-           
+
 
                 worksheet.Cells.AutoFitColumns();
 
