@@ -12,6 +12,7 @@ export class CommissionSettlementFilterReport {
   offset: number;
   commissionType: string;
   groupBy: string;
+  agentId: string;
 }
 
 export class CommissionSettlementReportOutput {
