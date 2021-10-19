@@ -5,7 +5,7 @@ import { tap, delay, catchError, retry, switchMap, map, mergeMap } from 'rxjs/op
 import { AuthResource, LoginTokenResult, LoginUserInfo, LoginViewModel, LoggedInViewModel, ForgotPasswordViewModel, RefreshViewModel, RefreshResponseViewModel, UserViewModel } from './auth.resource';
 import { LoginForm } from './login-form';
 import { HttpErrorResponse, HttpClient } from '@angular/common/http';
-import { debug } from 'util';
+// import { debug } from 'util';
 import { JwtHelperService } from '@auth0/angular-jwt';
 
 export class UserInfo {

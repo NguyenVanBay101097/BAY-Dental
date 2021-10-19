@@ -2,9 +2,10 @@
 
 <div style="position: relative; height:320px;">
     <canvas baseChart
+      [labels]="barChartLabels"
       [datasets]="barChartData"
       [options]="barChartOptions"
-      [chartType]="'bar'">
+      [type]="'bar'">
     </canvas>
   </div>
 

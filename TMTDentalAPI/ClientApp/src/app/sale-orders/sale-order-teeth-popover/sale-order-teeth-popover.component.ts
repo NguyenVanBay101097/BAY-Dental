@@ -31,7 +31,7 @@ export class SaleOrderTeethPopoverComponent implements OnInit {
   @Input() line: any;
   @Output() eventTeeth = new EventEmitter<any>();
   @ViewChild('popOver', { static: true }) public popover: any;
-  @ViewChild('assinstantCbx', { static: false }) assinstantCbx: ComboBoxComponent;
+  @ViewChild('assinstantCbx') assinstantCbx: ComboBoxComponent;
   filteredAssistants: any[] = [];
   initialListAssistants: any = [];
   @Input() lineValue: any;

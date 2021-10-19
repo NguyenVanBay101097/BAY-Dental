@@ -60,7 +60,7 @@
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="Id" title="Xuất khách" width="100" *ngIf="canExport">
-            <ng-template kendoGridCellTemplate let-dataItem let-dataItem>
+            <ng-template kendoGridCellTemplate let-dataItem>
                 <button class="btn btn-success mr-2" title="Xuất khách" (click)="exportPartner(dataItem)">
                     <i class="far fa-edit"></i>
                 </button>

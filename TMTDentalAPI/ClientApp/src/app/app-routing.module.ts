@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 import { AppHomeComponent } from './app-home/app-home.component';
 import { AuthGuard } from './auth/auth.guard';
-import { PartnerGeneralSettingsComponent } from './partner-general-settings/partner-general-settings.component';
+import { PartnerSupplierListComponent } from './catalog/partner-supplier-list/partner-supplier-list.component';
 
 const routes: Routes = [
   {
@@ -44,19 +44,116 @@ const routes: Routes = [
         canActivate: [AuthGuard]
       },
       {
-        path: 'catalog',
-        loadChildren: () => import('./catalog/catalog.module').then(m => m.CatalogModule),
-        canActivate: [AuthGuard]
+        path: 'member-level',
+        loadChildren: () => import('./member-level/member-level.module').then(m => m.MemberLevelModule)
       },
       {
-        path: 'setting',
-        loadChildren: () => import('./setting/setting.module').then(m => m.SettingModule),
-        canActivate: [AuthGuard]
+        path: 'products',
+        loadChildren: () => import('./products/products.module').then(m => m.ProductsModule)
       },
       {
-        path: 'report',
-        loadChildren: () => import('./report/report.module').then(m => m.ReportModule),
-        canActivate: [AuthGuard]
+        path: 'customer-management',
+        loadChildren: () => import('./customer-management/customer-management.module').then(m => m.CustomerManagementModule)
+      },
+      {
+        path: 'labo-management',
+        loadChildren: () => import('./labo-management/labo-management.module').then(m => m.LaboManagementModule)
+      },
+      {
+        path: 'sample-prescriptions',
+        loadChildren: () => import('./sample-prescriptions/sample-prescriptions.module').then(m => m.SamplePrescriptionsModule),
+      },
+      {
+        path: 'uoms',
+        loadChildren: () => import('./uoms/uom.module').then(m => m.UomModule),
+      },
+      {
+        path: 'uom-categories',
+        loadChildren: () => import('./uom-categories/uom-category.module').then(m => m.UomCategoryModule),
+      },
+      {
+        path: 'commissions',
+        loadChildren: () => import('./commissions/commissions.module').then(m => m.CommissionsModule),
+      },
+      {
+        path: 'employees',
+        loadChildren: () => import('./employees/employees.module').then(m => m.EmployeesModule),
+      },
+      {
+        path: 'tooth-diagnosis',
+        loadChildren: () => import('./tooth-diagnosis/tooth-diagnosis.module').then(m => m.ToothDiagnosisModule),
+      },
+      {
+        path: 'loai-thu-chi',
+        loadChildren: () => import('./loai-thu-chi/loai-thu-chi.module').then(m => m.LoaiThuChiModule),
+      },
+      {
+        path: 'stock',
+        loadChildren: () => import('./stock-inventories/stock-inventories.module').then(m => m.StockInventoriesModule),
+      },
+      {
+        path: 'companies',
+        loadChildren: () => import('./companies/companies.module').then(m => m.CompaniesModule),
+      },
+      {
+        path: 'roles',
+        loadChildren: () => import('./roles/roles.module').then(m => m.RolesModule),
+      },
+      {
+        path: 'config-settings',
+        loadChildren: () => import('./res-config-settings/res-config-settings.module').then(m => m.ResConfigSettingsModule),
+      },
+      {
+        path: 'print-template-config',
+        loadChildren: () => import('./print-template-configs/print-template-configs.module').then(m => m.PrintTemplateConfigsModule),
+      },
+      {
+        path: 'sale-dashboard-reports',
+        loadChildren: () => import('./sale-dashboard-reports/sale-dashboard-reports.module').then(m => m.SaleDashboardReportsModule),
+      },
+      {
+        path: 'financial-report',
+        loadChildren: () => import('./account-financial-report/account-financial-report.module').then(m => m.AccountFinancialReportModule),
+      },
+      {
+        path: 'report-general-ledgers',
+        loadChildren: () => import('./account-report-general-ledgers/account-report-general-ledgers.module').then(m => m.AccountReportGeneralLedgersModule),
+      },
+      {
+        path: 'account-invoice-reports',
+        loadChildren: () => import('./account-invoice-reports/account-invoice-reports.module').then(m => m.AccountInvoiceReportsModule),
+      },
+      {
+        path: 'report-account-common',
+        loadChildren: () => import('./account-common-partner-reports/account-common-partner-reports.module').then(m => m.AccountCommonPartnerReportsModule)
+      },
+      {
+        path: 'sale-dashboard-reports',
+        loadChildren: () => import('./sale-dashboard-reports/sale-dashboard-reports.module').then(m => m.SaleDashboardReportsModule),
+      },
+      {
+        path: 'sale-report',
+        loadChildren: () => import('./sale-report/sale-report.module').then(m => m.SaleReportModule)
+      },
+      {
+        path: 'customer-receipt-reports',
+        loadChildren: () => import('./customer-receipt-reports/customer-receipt-reports.module').then(m => m.CustomerReceiptReportsModule),
+      },
+      {
+        path: 'partner-report-location',
+        loadChildren: () => import('./partner-report/partner-report.module').then(m => m.PartnerReportModule),
+      },
+      {
+        path: 'report-partner-sources',
+        loadChildren: () => import('./report-partner-sources/report-partner-sources.module').then(m => m.ReportPartnerSourcesModule),
+      },
+      {
+        path: 'sale-orders',
+        loadChildren: () => import('./sale-orders/sale-orders.module').then(m => m.SaleOrdersModule),
+      },
+      {
+        path: 'commission-settlements',
+        loadChildren: () => import('./commission-settlements/commission-settlements.module').then(m => m.CommissionSettlementsModule),
       },
       {
         path: 'partners',
@@ -172,6 +269,36 @@ const routes: Routes = [
         path: 'customer-statistics',
         loadChildren: () => import('./customer-statistics/customer-statistics.module').then(m => m.CustomerStatisticsModule),
         canActivate: [AuthGuard]
+      },
+      {
+        path: 'users',
+        loadChildren: () => import('./users/users.module').then(m => m.UsersModule),
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'labo-order-lines',
+        loadChildren: () => import('./labo-order-lines/labo-order-lines.module').then(m => m.LaboOrderLinesModule),
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'emp-categories',
+        loadChildren: () => import('./employee-categories/employee-categories.module').then(m => m.EmployeeCategoriesModule),
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'card-cards',
+        loadChildren: () => import('./card-cards/card-cards.module').then(m => m.CardCardsModule),
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'stock-reports',
+        loadChildren: () => import('./stock-reports/stock-reports.module').then(m => m.StockReportsModule),
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'partner-categories',
+        loadChildren: () => import('./partner-categories/partner-categories.module').then(m => m.PartnerCategoriesModule),
+        canActivate: [AuthGuard]
       }
     ]
   },
@@ -182,7 +309,7 @@ const routes: Routes = [
     RouterModule.forRoot(
       routes,
       {
-        preloadingStrategy: PreloadAllModules
+        // preloadingStrategy: PreloadAllModules
       }
     )
   ],

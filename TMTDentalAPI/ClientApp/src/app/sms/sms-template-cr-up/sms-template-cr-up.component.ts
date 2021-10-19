@@ -12,7 +12,7 @@ import { SmsTemplateService } from '../sms-template.service';
   styleUrls: ['./sms-template-cr-up.component.css']
 })
 export class SmsTemplateCrUpComponent implements OnInit {
-  @ViewChild('textarea', { static: false }) textarea: ElementRef;
+  @ViewChild('textarea') textarea: ElementRef;
 
   title: string;
   formGroup: FormGroup;

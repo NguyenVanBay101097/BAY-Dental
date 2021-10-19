@@ -3,7 +3,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpErrorResponse } from '@angular/common/http';
 import { SharedErrorDialogComponent } from './shared-error-dialog/shared-error-dialog.component';
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class AppSharedShowErrorService {
     constructor(private modalService: NgbModal) {
     }

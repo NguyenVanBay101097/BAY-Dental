@@ -1,8 +1,7 @@
 import { NgModule, LOCALE_ID, ErrorHandler } from "@angular/core";
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
-import { SharedModule } from "./shared/shared.module";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+// import { SharedModule } from "./shared/shared.module";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { AuthInterceptor } from "./auth/auth-interceptor";
 
@@ -29,7 +28,14 @@ import { AppHomeComponent } from './app-home/app-home.component';
 import { AppSidebarModule } from "./layout/sidebar/app-sidebar.module";
 import { AppHeaderModule } from "./layout/header/app-header.module";
 import { MyCustomNgbModule } from "./shared/my-custom-ngb.module";
-import { ThemeService } from "ng2-charts";
+// import { ThemeService } from "ng2-charts";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { BrowserModule } from "@angular/platform-browser";
+import { SearchAllComponent } from "./search-all/search-all.component";
+import { NgSelectModule } from "@ng-select/ng-select";
+import { FormsModule } from "@angular/forms";
+import { LoadingComponent } from "./shared/loading/loading.component";
+import { MyCustomKendoModule } from "./shared/my-customer-kendo.module";
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -42,9 +48,12 @@ registerLocaleData(localeVi, "vi");
   declarations: [
     AppComponent,
     PartnerGeneralSettingsComponent,
-    AppHomeComponent
+    AppHomeComponent,
+    SearchAllComponent,
+    LoadingComponent,
   ],
   imports: [
+    BrowserModule,
     CommonModule,
     BrowserAnimationsModule,
     AppRoutingModule,
@@ -58,8 +67,10 @@ registerLocaleData(localeVi, "vi");
     }),
     AppSidebarModule,
     AppHeaderModule,
-    SharedModule,
     MyCustomNgbModule,
+    NgSelectModule,
+    MyCustomKendoModule,
+    FormsModule,
     RoutingsModule,
     MomentModule.forRoot({
       relativeTimeThresholdOptions: {
@@ -67,10 +78,10 @@ registerLocaleData(localeVi, "vi");
       },
     }),
     FacebookModule.forRoot(),
-    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
   ],
   providers: [
-    ThemeService,
+    // ThemeService,
     JwtInterceptor, // Providing JwtInterceptor allow to inject JwtInterceptor manually into RefreshTokenInterceptor
     {
       provide: HTTP_INTERCEPTORS,
@@ -92,7 +103,7 @@ registerLocaleData(localeVi, "vi");
     { provide: LOCALE_ID, useValue: "vi-VN" },
     { provide: NgbDateParserFormatter, useClass: NgbDateCustomParserFormatter },
     { provide: ErrorHandler, useClass: MyErrorHandler },
-    ThemeService
+    // ThemeService
   ],
   bootstrap: [AppComponent],
 })

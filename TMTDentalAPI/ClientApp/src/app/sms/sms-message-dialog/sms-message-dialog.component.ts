@@ -26,7 +26,7 @@ export class SmsMessageDialogComponent implements OnInit {
   @ViewChild("smsCampaignCbx", { static: true }) smsCampaignCbx: ComboBoxComponent;
   @ViewChild("smsAccountCbx", { static: true }) smsAccountCbx: ComboBoxComponent;
   @ViewChild("smsTemplateCbx", { static: true }) smsTemplateCbx: ComboBoxComponent;
-  @ViewChild('textarea', { static: false }) textarea: ElementRef;
+  @ViewChild('textarea') textarea: ElementRef;
 
   formGroup: FormGroup;
   title: string;

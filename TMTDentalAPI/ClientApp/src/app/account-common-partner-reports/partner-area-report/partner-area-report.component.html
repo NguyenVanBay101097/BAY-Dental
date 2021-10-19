@@ -20,7 +20,7 @@
                             <div style="position:relative;height: 320px;">
                                 <ng-container *ngIf="pieObjData.length !=0 ; else elseTemplate">
                                     <canvas baseChart id="pie-chart"
-                                        [chartType]="'pie'"
+                                        [type]="'pie'"
                                         [options]="pieOptions"
                                         [labels]="pieLabels"
                                         [plugins]="pieChartPlugins"
@@ -70,7 +70,7 @@
                         <div class="card-body">
                             <div style="display: block;">
                                 <canvas baseChart 
-                                [chartType]="'horizontalBar'"
+                                [type]="'bar'"
                                 [options]="barChartOptions_PartnerCount"
                                 [labels]="barChartLabels_PartnerCount"
                                 [datasets]="barChartData_PartnerCount">
@@ -82,7 +82,7 @@
                         <div class="card-body">
                             <div style="display: block;">
                                 <canvas baseChart 
-                                [chartType]="'horizontalBar'"
+                                [type]="'bar'"
                                 [options]="barChartOptions_PartnerRevenue"
                                 [labels]="barChartLabels_PartnerRevenue"
                                 [datasets]="barChartData_PartnerRevenue">

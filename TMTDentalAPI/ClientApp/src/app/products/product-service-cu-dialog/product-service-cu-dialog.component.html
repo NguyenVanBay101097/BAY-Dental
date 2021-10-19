@@ -222,8 +222,7 @@
                                                 <td>{{i+1}}</td>
                                                 <td>
                                                     <kendo-combobox [data]="filteredProducts" 
-                                                        [valueField]="'id'" [textField]="'name'" style="width:70%;"
-                                                        #productCbx (valueChange)="onValueChange($event, i)"
+                                                        [valueField]="'id'" [textField]="'name'" style="width:70%;" (valueChange)="onValueChange($event, i)"
                                                         formControlName="materialProduct">
                                                     </kendo-combobox>
                                                     <div *ngIf="item.get('materialProduct').errors && (item.get('materialProduct').touched || item.get('materialProduct').dirty || submitted)" class="text-danger">
