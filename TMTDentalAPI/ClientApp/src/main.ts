@@ -6,6 +6,9 @@ import { environment } from './environments/environment';
 
 import 'hammerjs';
 
+import { Chart, registerables } from 'chart.js';
+Chart.register(...registerables);
+
 export function getBaseUrl() {
   return document.getElementsByTagName('base')[0].href;
 }

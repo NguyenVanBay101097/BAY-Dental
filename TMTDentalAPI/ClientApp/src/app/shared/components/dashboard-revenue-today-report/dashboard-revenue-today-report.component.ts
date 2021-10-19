@@ -1,10 +1,8 @@
 import { AuthService } from 'src/app/auth/auth.service';
 import { DashboardReportService, ReportTodayRequest, RevenueTodayReponse } from './../../../core/services/dashboard-report.service';
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import { LegendLabelsContentArgs } from '@progress/kendo-angular-charts';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { ChartDataset, ChartOptions, ChartType } from 'chart.js';
-import { BaseChartDirective } from 'ng2-charts';
 
 @Component({
   selector: 'app-dashboard-revenue-today-report',
@@ -23,6 +21,7 @@ export class DashboardRevenueTodayReportComponent implements OnInit {
   // Pie
   public pieChartOptions: ChartOptions = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         display: false
