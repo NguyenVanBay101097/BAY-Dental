@@ -95,8 +95,8 @@
         <tr>
             <td>{{item.payment?.name}}</td>
             <!--{{if item.payment?.id == sop.payment_rels[0]?.payment.id}}-->
-            <td rowspan="{{sop.payments | array.size}}">{{item.payment?.payment_date | date.to_string '%d/%m/%Y'}}</td>
-            <td rowspan="{{sop.payments | array.size}}" style="text-align:right">{{sop.amount | math.format "N0" }}</td>
+            <td rowspan="{{sop.payment_rels | array.size}}">{{item.payment?.payment_date | date.to_string '%d/%m/%Y'}}</td>
+            <td rowspan="{{sop.payment_rels | array.size}}" style="text-align:right">{{sop.amount | math.format "N0" }}</td>
             <!--{{end}}-->
             <td>{{item.payment?.journal?.name}}</td>
             <td style="text-align:right">{{item.payment?.amount | math.format "N0"}}</td>
