@@ -54,6 +54,12 @@ export class CommissionSettlementReportRes {
   commissionType: string;
   amount: number;
 }
+
+export class CommissionSettlementOverviewFilter {
+  dateFrom: string;
+  dateTo: string;
+  groupBy: string;
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -75,6 +81,10 @@ export class CommissionSettlementsService {
 
   getSumReport(val: any) {
     return this.http.post(this.baseApi + this.apiUrl + '/GetSumReport', val);
+  }
+
+  getAgentOverview(val: CommissionSettlementOverviewFilter){
+    return this.http.post(this.baseApi + this.apiUrl + '/GetCommissionSettlementReport',val);
   }
 
   excelCommissionExport(val) {
