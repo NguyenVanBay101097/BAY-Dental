@@ -8,6 +8,8 @@ import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { AgentService } from 'src/app/agents/agent.service';
 import { BankPaged, BankService } from 'src/app/bank/bank.service';
 import { Commission, CommissionPaged, CommissionService } from 'src/app/commissions/commission.service';
+import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
+import { EmployeeService } from 'src/app/employees/employee.service';
 import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { UserService } from 'src/app/users/user.service';
@@ -34,7 +36,11 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
   listAgentCommissions: Commission[] = [];
   listBank: any[] = [];
   customerSimpleFilter: PartnerSimple[] = [];
+  employeeSimpleFilter: EmployeeSimple[] = [];
   @ViewChild('agentCommissionCbx', { static: false }) agentCommissionCbx: ComboBoxComponent;
+  @ViewChild('listBankCbx', { static: false }) listBankCbx: ComboBoxComponent;
+  @ViewChild('customerCbx', { static: false }) customerCbx: ComboBoxComponent;
+  @ViewChild('employeeCbx', { static: true }) employeeCbx: ComboBoxComponent;
 
   constructor(private fb: FormBuilder,
     public agentService: AgentService,
@@ -45,7 +51,8 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
     private commissionService: CommissionService,
     private partnerService: PartnerService,
     private notifyService: NotifyService,
-    private bankService: BankService
+    private bankService: BankService,
+    private employeeService: EmployeeService,
   ) { }
 
 
@@ -61,6 +68,13 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
       jobTitle: null,
       address: null,
       commission: [null, Validators.required],
+      customer: null,
+      employees: null,
+      bank: null, // ngân hàng
+      classify: 'partner', // phân loại khách hàng
+      bankBranch: '', // chi nhánh ngân hàng
+      accountNumber: '', // số tài khoản
+      accountHolder: '', // chủ tài khoản
     });
 
     setTimeout(() => {
@@ -70,7 +84,9 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
       this.monthList = _.range(1, 13);
       this.yearList = _.range(new Date().getFullYear(), 1900, -1);
       this.loadListcommissionAgents();
-      this.loadBank();
+      this.loadListBank();
+      this.getCustomerList();
+      this.getEmployeesList();
     })
   }
 
@@ -83,26 +99,90 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
       this.listAgentCommissions = result.items;
       this.agentCommissionCbx.loading = false;
     });
+
+    this.listBankCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.listBankCbx.loading = true)),
+      switchMap(value => this.searchBank(value))
+    ).subscribe((result: any) => {
+      this.listBank = result;
+      this.listBankCbx.loading = false;
+    });
+
+    this.customerCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => this.customerCbx.loading = true),
+      switchMap(val => this.searchCustomers(val.toString().toLowerCase()))
+    ).subscribe(
+      (rs: any) => {
+        this.customerSimpleFilter = rs;
+        this.customerCbx.loading = false;
+      }
+    )
   }
 
-  // searchCustomers(search) {
-  //   var partnerPaged = new PartnerPaged();
-  //   partnerPaged.customer = true;
-  //   if (search) {
-  //     partnerPaged.search = search.toLowerCase();
-  //   }
-  //   return this.partnerService.autocompletePartner(partnerPaged);
-  // }
+  // ngân hàng
+  loadListBank() {
+    this.searchBank().subscribe((result: any) => {
+      this.listBank = _.unionBy(this.listBank, result, 'id');
+    })
+  }
 
-  loadBank() {
+  searchBank(q?: string) {
     let val = new BankPaged();
     val.limit = 20;
     val.offset = 0;
-    val.search = '';
-    this.bankService.getAutocomplete(val).subscribe((res: any) => {
-      console.log(res);
+    val.search = q || '';
+    return this.bankService.getAutocomplete(val);
+  }
 
-    })
+  // loadListCustomer() {
+  //   this.searchBank().subscribe((result: any) => {
+  //     this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, result, 'id');
+  //   })
+  // }
+
+  // searchCustomer(q?: string) {
+  //   let val = new BankPaged();
+  //   val.limit = 20;
+  //   val.offset = 0;
+  //   val.search = q || '';
+  //   return this.bankService.getAutocomplete(val);
+  // }
+
+  getCustomerList() {
+    var partnerPaged = new PartnerPaged();
+    partnerPaged.employee = false;
+    partnerPaged.customer = true;
+    partnerPaged.supplier = false;
+    partnerPaged.limit = 20;
+    partnerPaged.offset = 0;
+    this.partnerService.autocompletePartner(partnerPaged).subscribe(
+      rs => {
+        this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, rs, 'id');
+      }
+    )
+  }
+
+  // khách hàng
+  searchCustomers(search) {
+    var partnerPaged = new PartnerPaged();
+    partnerPaged.customer = true;
+    if (search) {
+      partnerPaged.search = search.toLowerCase();
+    }
+
+    return this.partnerService.autocompletePartner(partnerPaged);
+  }
+
+  // nhân viên
+  getEmployeesList() {
+    var empPn = new EmployeePaged();
+    empPn.limit = 20;
+    empPn.offset = 0;
+    this.employeeService.getEmployeeSimpleList(empPn).subscribe(rs => {
+      this.employeeSimpleFilter = rs;
+    });
   }
 
   loadListcommissionAgents() {
@@ -182,7 +262,11 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
 
     modalRef.result.then(result => {
       this.notifyService.notify('success', 'Lưu thành công');
-
+      this.loadListBank();
     })
+  }
+
+  onChangeType(e) {
+    console.log(e.target.value);
   }
 }
