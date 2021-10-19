@@ -20,9 +20,11 @@ export class CommissionSettlementAgentReportOverviewComponent implements OnInit 
   skip = 0;
   items: any;
   agentTypes : any[] = [
-    {id:'doi_tac',name:'Đối tác'},
-    {id: 'khach_hang', name: 'Khách hàng'}
+    {id:'partner',name:'Đối tác'},
+    {id: 'customer', name: 'Khách hàng'},
+    {id: 'employee', name: 'Nhân viên'}
   ];
+  agentType: string = '';
   gridData: GridDataResult;
   pagerSettings: any;
   loading = false;
@@ -39,7 +41,7 @@ export class CommissionSettlementAgentReportOverviewComponent implements OnInit 
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
-        this.loadDataFromApi();
+        this.getItems();
       });
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd;
@@ -57,9 +59,9 @@ export class CommissionSettlementAgentReportOverviewComponent implements OnInit 
     val.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     val.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
     val.groupBy = 'agent';
+    val.classify = this.agentType;
+    this.loading = true;
     this.commissionSettlementService.getAgentOverview(val).subscribe(result => {
-      console.log(result);
-      
       this.items = result;
       this.getItems();
     })
@@ -68,23 +70,43 @@ export class CommissionSettlementAgentReportOverviewComponent implements OnInit 
   pageChange(event: PageChangeEvent){
     this.skip = event.skip;
     this.limit = event.take;
-    this.items();
+    this.getItems();
+  }
+
+  onSelectAgentType(event){
+    this.agentType = event ? event.id : '';
+    this.getItems();
   }
 
   getAgentDetail(item){
 
   }
 
-  getAgentType(item){
-
+  getAgentType(type){
+    switch(type) {
+      case 'customer':
+        return 'Khách hàng';
+      case 'employee':
+        return 'Nhân viên';
+      case 'partner':
+        return 'Đối tác';
+      default:
+        return '';
+    }
   }
 
   getItems(){
-    var items = this.items.filter(x => x.name.toUpperCase().indexOf(this.search.toUpperCase()) !== -1);
+    this.loading = true;
+    var items = this.items;
+    if (this.search != '')
+      items = items.filter(x => x.name.toUpperCase().indexOf(this.search.toUpperCase()) !== -1)
+    if (this.agentType != '')
+      items = items.filter(x => x.classify == this.agentType);
     this.gridData = {
       data: items.slice(this.skip, this.skip + this.limit),
       total: items.length
     };
+    this.loading = false;
   }
 
   actionPayment(item){

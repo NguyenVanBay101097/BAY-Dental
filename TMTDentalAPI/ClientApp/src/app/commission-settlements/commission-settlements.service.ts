@@ -13,6 +13,7 @@ export class CommissionSettlementFilterReport {
   commissionType: string;
   groupBy: string;
   agentId: string;
+  classify: string;
 }
 
 export class CommissionSettlementReportOutput {
@@ -59,6 +60,7 @@ export class CommissionSettlementOverviewFilter {
   dateFrom: string;
   dateTo: string;
   groupBy: string;
+  classify: string;
 }
 @Injectable({
   providedIn: 'root'

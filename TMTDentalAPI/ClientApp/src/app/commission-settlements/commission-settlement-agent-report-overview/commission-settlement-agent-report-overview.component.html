@@ -6,16 +6,19 @@
                     <app-date-range-picker-filter [opens]="'right'" [startDate]="monthStart" [endDate]="monthEnd" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
                 </div>
             </div>
-            <!-- <kendo-combobox [placeholder]="'Phân loại'" class="mr-1" [valueField]="'id'" [textField]="'name'"
-            [filterable]="true" [data]="agentTypes" (selectionChange)="onSelectCompany($event)" #companyCbx>
-            </kendo-combobox> -->
+            <kendo-combobox [placeholder]="'Phân loại'" class="mr-1" [valueField]="'id'" [textField]="'name'"
+            [filterable]="true" [data]="agentTypes" (selectionChange)="onSelectAgentType($event)" #companyCbx>
+            </kendo-combobox>
         </div>
         <div class="o_cp_sidebar">
 
         </div>
     </div>
-    <div class="o_cp_t_right">
-        <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo họ tên" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+    <div class="o_cp_t_right o_cp_searchview">
+        <div class="o_searchview">
+            <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo họ tên" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+            <span class="o_searchview_icon fas fa-search"></span>
+        </div>
     </div>
 </div>
 <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading" (pageChange)="pageChange($event)">
@@ -24,11 +27,11 @@
             <a class = "text-primary" (click) = "getAgentDetail(dataItem)">{{dataItem.name}}</a>
         </ng-template>
     </kendo-grid-column>
-    <!-- <kendo-grid-column title="Phân loại">
+    <kendo-grid-column title="Phân loại">
         <ng-template kendoGridCellTemplate let-dataItem let-column="column">
-            {{getAgentType(dataItem)}}
+            {{getAgentType(dataItem.classify)}}
         </ng-template>
-    </kendo-grid-column> -->
+    </kendo-grid-column>
     <kendo-grid-column title="Lợi nhuận tính hoa hồng" class="text-right">
         <ng-template kendoGridCellTemplate let-dataItem let-column="column">
             {{dataItem.baseAmount | number}}
@@ -44,10 +47,10 @@
             {{dataItem.amountCommissionTotal | number}}
         </ng-template>
     </kendo-grid-column> -->
-    <kendo-grid-command-column title="Thao tác">
+    <!-- <kendo-grid-command-column title="Thao tác">
         <ng-template kendoGridCellTemplate let-dataItem>
             <button class="btn btn-primary " title="Chi hoa hồng" (click)="actionPayment(dataItem)">
                 <i class="fas fa-money-bill-alt fa-lg"></i>Chi hoa hồng</button>
         </ng-template>
-    </kendo-grid-command-column>
+    </kendo-grid-command-column> -->
 </kendo-grid>
