@@ -1,0 +1,20 @@
+<div class="o_control_panel">
+    <div class="o_cp_t_left">
+        <div class="o_cp_buttons d-flex">
+            <div class="o_form_buttons_view mr-2">
+                <div class="d-flex">
+                    <app-date-range-picker-filter [opens]="'right'" [startDate]="monthStart" [endDate]="monthEnd" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
+                </div>
+            </div>
+            <kendo-combobox [placeholder]="'Phân loại'" class="mr-1" [valueField]="'id'" [textField]="'name'"
+            [filterable]="true" [data]="agentTypes" (selectionChange)="onSelectCompany($event)" #companyCbx>
+            </kendo-combobox>
+        </div>
+        <div class="o_cp_sidebar">
+
+        </div>
+    </div>
+    <div class="o_cp_t_right">
+        <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo số phiếu, khách hàng, dịch vụ" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+    </div>
+</div>

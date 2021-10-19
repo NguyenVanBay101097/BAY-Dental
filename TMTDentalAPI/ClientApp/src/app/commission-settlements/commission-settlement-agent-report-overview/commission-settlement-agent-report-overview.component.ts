@@ -7,11 +7,11 @@ import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-ken
 import { CommissionSettlementOverviewFilter, CommissionSettlementsService } from '../commission-settlements.service';
 
 @Component({
-  selector: 'app-commission-settlement-agent-overview',
-  templateUrl: './commission-settlement-agent-overview.component.html',
-  styleUrls: ['./commission-settlement-agent-overview.component.css']
+  selector: 'app-commission-settlement-agent-report-overview',
+  templateUrl: './commission-settlement-agent-report-overview.component.html',
+  styleUrls: ['./commission-settlement-agent-report-overview.component.css']
 })
-export class CommissionSettlementAgentOverviewComponent implements OnInit {
+export class CommissionSettlementAgentReportOverviewComponent implements OnInit {
   dateFrom: Date;
   dateTo: Date;
   search: string = '';
@@ -90,5 +90,4 @@ export class CommissionSettlementAgentOverviewComponent implements OnInit {
   actionPayment(item){
 
   }
-
 }
