@@ -31,13 +31,23 @@ const routes: Routes = [
     children: [
       { path: '', redirectTo: 'overview', pathMatch: 'full' },
       {
+        path: '/:id',
+        component: CommissionSettlementAgentDetailComponent,
+        children: [
+          { path: '', redirectTo: 'overview', pathMatch: 'full' },
+          { path: 'overview', component: CommissionSettlementAgentProfileComponent },
+          { path: 'commission', component: CommissionSettlementAgentCommissionComponent },
+          { path: 'history', component: CommissionSettlementAgentHistoryComponent },
+        ]
+      },
+      {
         path: 'overview',
         component: CommissionSettlementAgentReportOverviewComponent
       },
       {
         path: 'detail',
         component: CommissionSettlementAgentReportDetailComponent
-      }
+      },
     ]
   },
   // {
@@ -49,16 +59,6 @@ const routes: Routes = [
   //     { path: 'history', component: AgentCommmissionHistoryComponent },
   //   ]
   // }
-  {
-    path: 'agent',
-    component: CommissionSettlementAgentDetailComponent,
-    children: [
-      { path: '', redirectTo: 'overview', pathMatch: 'full' },
-      { path: 'overview', component: CommissionSettlementAgentProfileComponent },
-      { path: 'commission', component: CommissionSettlementAgentCommissionComponent },
-      { path: 'history', component: CommissionSettlementAgentHistoryComponent },
-    ]
-  }
 ];
 
 @NgModule({
