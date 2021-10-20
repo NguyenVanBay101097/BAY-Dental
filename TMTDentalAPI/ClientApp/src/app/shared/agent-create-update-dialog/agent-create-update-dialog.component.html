@@ -24,7 +24,8 @@
                                                     <div class="form-check form-check-inline">
                                                         <input class="form-check-input" name="classify" type="radio"
                                                             formControlName="classify" id="partner_radio"
-                                                            value="partner" [checked]="true" (change)="onChangeType($event)">
+                                                            value="partner" [checked]="true"
+                                                            (change)="onChangeType($event)">
                                                         <label class="form-check-label" for="partner_radio">Đối
                                                             tác</label>
                                                     </div>
@@ -49,42 +50,23 @@
                                                     <label class="o_form_label">Người giới thiệu</label>
                                                 </td>
                                                 <td colspan="1" style="width: 100%; vertical-align: initial;">
-                                                    <input class="form-control" formControlName="name" name="name">
-                                                    <!-- <kendo-combobox formControlName="partner" [filterable]="true"
-                                                        [data]="customerSimpleFilter" #partnerCbx [valueField]="'id'"
-                                                        [textField]="'displayName'">
-                                                    </kendo-combobox> -->
-                                                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
-                                                        class="text-danger mb-1">
-                                                        <div *ngIf="f.name.errors.required">Nhập tên người giới thiệu
-                                                        </div>
+                                                    <input class="form-control" *ngIf="classify=='partner'"
+                                                        formControlName="name" name="name">
+                                                    <div *ngIf="classify=='customer'">
+                                                        <kendo-combobox formControlName="customer" [filterable]="true"
+                                                            [data]="customerSimpleFilter" #customerCbx
+                                                            [valueField]="'id'" [textField]="'displayName'"
+                                                            (valueChange)="onChangeCustomer($event)">
+                                                        </kendo-combobox>
+                                                    </div>
+                                                    <div *ngIf="classify=='employee'">
+                                                        <kendo-combobox formControlName="employee" [filterable]="true"
+                                                            [data]="employeeSimpleFilter" #employeeCbx
+                                                            [valueField]="'id'" [textField]="'name'"
+                                                            (valueChange)="onChangeEmployee($event)">
+                                                        </kendo-combobox>
                                                     </div>
                                                 </td>
-
-                                            </tr>
-                                            <tr>
-                                                <td colspan="1" class="o_td_label">
-                                                    <label class="o_form_label">Khách hàng</label>
-                                                </td>
-                                                <td colspan="1" style="width: 100%; vertical-align: initial;">
-                                                    <kendo-combobox formControlName="customer" [filterable]="true"
-                                                        [data]="customerSimpleFilter" #customerCbx [valueField]="'id'"
-                                                        [textField]="'displayName'">
-                                                    </kendo-combobox>
-                                                </td>
-
-                                            </tr>
-                                            <tr>
-                                                <td colspan="1" class="o_td_label">
-                                                    <label class="o_form_label">nhân viên</label>
-                                                </td>
-                                                <td colspan="1" style="width: 100%; vertical-align: initial;">
-                                                    <kendo-combobox formControlName="employees" [filterable]="true"
-                                                        [data]="employeeSimpleFilter" #employeeCbx [valueField]="'id'"
-                                                        [textField]="'name'">
-                                                    </kendo-combobox>
-                                                </td>
-
                                             </tr>
                                             <tr>
                                                 <td colspan="1" class="o_td_label">

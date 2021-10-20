@@ -66,4 +66,8 @@ export class EmployeeService {
   GetEmployeeSurveyCount(val): Observable<PagedResult2<EmployeeSurveyDisplay>>{
     return this.http.get<PagedResult2<EmployeeSurveyDisplay>>(this.baseApi + 'api/Employees' + '/GetEmployeeSurveyCount' , {params: new HttpParams({fromObject: val})});
   }
+
+  getAutocompleteInfos(val){
+    return this.http.post(this.baseApi + "api/Employees/AutocompleteInfos", val);
+  }
 }

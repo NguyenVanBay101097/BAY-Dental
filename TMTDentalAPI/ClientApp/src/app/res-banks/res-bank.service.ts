@@ -4,6 +4,12 @@ import { Observable } from 'rxjs';
 import { PagedResult2 } from '../employee-categories/emp-category';
 import { ResBankBasic } from './res-bank';
 
+export class ResPartnerBankPaged{
+  limit: number;
+  offset: number;
+  search: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -30,5 +36,9 @@ export class ResBankService {
     } else {
       return this.http.post(this.baseApi + this.apiUrl, val);
     }
+  }
+
+  getAutocomplete(val) {
+    return this.http.get(this.baseApi + this.apiUrl + '/Autocomplete', {params: val});
   }
 }

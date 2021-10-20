@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { BankService } from 'src/app/bank/bank.service';
+import { ResBankService } from 'src/app/res-banks/res-bank.service';
 
 @Component({
   selector: 'app-bank-cu-dialog',
@@ -19,7 +19,7 @@ export class BankCuDialogComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     public activeModal: NgbActiveModal,
-    private bankService: BankService
+    private resBankService: ResBankService
   ) { }
 
   ngOnInit() {
@@ -36,14 +36,9 @@ export class BankCuDialogComponent implements OnInit {
     }
 
     var val = this.formGroup.value;
+    this.resBankService.createUpdate(val, this.id).subscribe(res => {
+      this.activeModal.close();
+    })
 
-    if (this.id) {
-
-    }
-    else {
-      this.bankService.create(val).subscribe(res => {
-        this.activeModal.close();
-      })
-    }
   }
 }
