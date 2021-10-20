@@ -1,5 +1,15 @@
 <div class="o_control_panel">
-    <div class="o_cp_t_left">
+    <div class="w-50">
+        <button class="btn btn-primary" (click)="exportExcel()">Xuất Excel</button>
+    </div>
+    <div class="o_cp_t_right o_cp_searchview">
+        <div class="o_searchview">
+            <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo họ tên" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+            <span class="o_searchview_icon fas fa-search"></span>
+        </div>
+    </div>
+    <div class="w-50"></div>
+    <div class="o_cp_t_left mt-1">
         <div class="o_cp_buttons d-flex">
             <div class="o_form_buttons_view mr-2">
                 <div class="d-flex">
@@ -12,16 +22,9 @@
             <kendo-combobox [placeholder]="'Phân loại'" class="mr-2" [valueField]="'id'" [textField]="'name'"
             [filterable]="true" [data]="agentTypes" (selectionChange)="onSelectAgentType($event)" #companyCbx>
             </kendo-combobox>
-            <button class="btn btn-primary" (click)="exportExcel()">Xuất Excel</button>
         </div>
         <div class="o_cp_sidebar">
 
-        </div>
-    </div>
-    <div class="o_cp_t_right o_cp_searchview">
-        <div class="o_searchview">
-            <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo họ tên" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
-            <span class="o_searchview_icon fas fa-search"></span>
         </div>
     </div>
 </div>
