@@ -6,13 +6,12 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import * as _ from 'lodash';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { AgentService } from 'src/app/agents/agent.service';
-import { BankPaged, BankService } from 'src/app/bank/bank.service';
 import { Commission, CommissionPaged, CommissionService } from 'src/app/commissions/commission.service';
-import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
+import { EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
-import { PartnerService } from 'src/app/partners/partner.service';
-import { UserService } from 'src/app/users/user.service';
+import { PartnerFilter, PartnerService } from 'src/app/partners/partner.service';
+import { ResBankService, ResPartnerBankPaged } from 'src/app/res-banks/res-bank.service';
 import { BankCuDialogComponent } from '../bank-cu-dialog/bank-cu-dialog.component';
 import { CheckPermissionService } from '../check-permission.service';
 import { NotifyService } from '../services/notify.service';
@@ -36,7 +35,8 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
   listAgentCommissions: Commission[] = [];
   listBank: any[] = [];
   customerSimpleFilter: PartnerSimple[] = [];
-  employeeSimpleFilter: EmployeeSimple[] = [];
+  employeeSimpleFilter: any[] = [];
+  classify: string = 'partner';
   @ViewChild('agentCommissionCbx', { static: false }) agentCommissionCbx: ComboBoxComponent;
   @ViewChild('listBankCbx', { static: false }) listBankCbx: ComboBoxComponent;
   @ViewChild('customerCbx', { static: false }) customerCbx: ComboBoxComponent;
@@ -51,8 +51,8 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
     private commissionService: CommissionService,
     private partnerService: PartnerService,
     private notifyService: NotifyService,
-    private bankService: BankService,
     private employeeService: EmployeeService,
+    private resBankService: ResBankService,
   ) { }
 
 
@@ -69,7 +69,7 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
       address: null,
       commission: [null, Validators.required],
       customer: null,
-      employees: null,
+      employee: null,
       bank: null, // ngân hàng
       classify: 'partner', // phân loại khách hàng
       bankBranch: '', // chi nhánh ngân hàng
@@ -87,7 +87,7 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
       this.loadListBank();
       this.getCustomerList();
       this.getEmployeesList();
-    })
+    });
   }
 
   ngAfterViewInit(): void {
@@ -109,31 +109,31 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
       this.listBankCbx.loading = false;
     });
 
-    this.customerCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => this.customerCbx.loading = true),
-      switchMap(val => this.searchCustomers(val.toString().toLowerCase()))
-    ).subscribe(
-      (rs: any) => {
-        this.customerSimpleFilter = rs;
-        this.customerCbx.loading = false;
-      }
-    )
+    // this.customerCbx.filterChange.asObservable().pipe(
+    //   debounceTime(300),
+    //   tap(() => this.customerCbx.loading = true),
+    //   switchMap(val => this.searchCustomers(val.toString().toLowerCase()))
+    // ).subscribe(
+    //   (rs: any) => {
+    //     this.customerSimpleFilter = rs;
+    //     this.customerCbx.loading = false;
+    //   }
+    // )
   }
 
   // ngân hàng
   loadListBank() {
     this.searchBank().subscribe((result: any) => {
       this.listBank = _.unionBy(this.listBank, result, 'id');
-    })
+    });
   }
 
   searchBank(q?: string) {
-    let val = new BankPaged();
+    let val = new ResPartnerBankPaged();
     val.limit = 20;
     val.offset = 0;
     val.search = q || '';
-    return this.bankService.getAutocomplete(val);
+    return this.resBankService.getAutocomplete(val);
   }
 
   // loadListCustomer() {
@@ -157,11 +157,9 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
     partnerPaged.supplier = false;
     partnerPaged.limit = 20;
     partnerPaged.offset = 0;
-    this.partnerService.autocompletePartner(partnerPaged).subscribe(
-      rs => {
-        this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, rs, 'id');
-      }
-    )
+    this.partnerService.autocompletePartnerInfo(partnerPaged).subscribe((rs: any) => {
+      this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, rs, 'id');
+    });
   }
 
   // khách hàng
@@ -172,16 +170,16 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
       partnerPaged.search = search.toLowerCase();
     }
 
-    return this.partnerService.autocompletePartner(partnerPaged);
+    return this.partnerService.autocomplete2(partnerPaged);
   }
 
-  // nhân viên
   getEmployeesList() {
     var empPn = new EmployeePaged();
     empPn.limit = 20;
     empPn.offset = 0;
-    this.employeeService.getEmployeeSimpleList(empPn).subscribe(rs => {
+    this.employeeService.getAutocompleteInfos(empPn).subscribe((rs: any) => {
       this.employeeSimpleFilter = rs;
+      console.log(this.employeeSimpleFilter);
     });
   }
 
@@ -213,7 +211,6 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
         if (result.birthDay) {
           this.formGroup.get("birthDayStr").setValue(result.birthDay + '');
         }
-
       });
     }
   }
@@ -226,12 +223,12 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
     if (!this.formGroup.valid) {
       return false;
     }
-
     var val = this.formGroup.value;
     val.birthDay = val.birthDayStr ? parseInt(val.birthDayStr) : null;
     val.birthMonth = val.birthMonthStr ? parseInt(val.birthMonthStr) : null;
     val.birthYear = val.birthYearStr ? parseInt(val.birthYearStr) : null;
     val.commissionId = val.commission ? val.commission.id : null;
+    val.bankId = val.bank ? val.bank.id : null;
     if (this.id) {
       this.agentService.update(this.id, val).subscribe(
         () => {
@@ -259,7 +256,6 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
   createBank() {
     const modalRef = this.modalService.open(BankCuDialogComponent, { scrollable: true, windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm ngân hàng';
-
     modalRef.result.then(result => {
       this.notifyService.notify('success', 'Lưu thành công');
       this.loadListBank();
@@ -267,6 +263,61 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
   }
 
   onChangeType(e) {
-    console.log(e.target.value);
+    let val = e.target.value;
+    this.classify = val;
+    this.resetFormGroup();
+  }
+
+  onChangeCustomer(e) {
+    if (e) {
+      this.formGroup.patchValue(e);
+      if (e.birthYear) {
+        this.formGroup.get("birthYearStr").setValue(e.birthYear);
+      }
+
+      if (e.birthMonth) {
+        this.formGroup.get("birthMonthStr").setValue(e.birthMonth);
+      }
+
+      if (e.birthDay) {
+        this.formGroup.get("birthDayStr").setValue(e.birthDay);
+      }
+    }
+    else {
+      this.resetFormGroup();
+    }
+  }
+
+  onChangeEmployee(e) {
+    if (e) {
+      this.formGroup.patchValue(e);
+      if (e.birthDay) {
+        let DOB = new Date(e.birthDay);
+        this.formGroup.get("birthYearStr").setValue(DOB.getFullYear());
+        this.formGroup.get("birthMonthStr").setValue(DOB.getMonth());
+        this.formGroup.get("birthDayStr").setValue(DOB.getDay());
+      }
+    }
+    else {
+      this.resetFormGroup();
+    }
+  }
+
+  resetFormGroup(){
+    let defaultFormGroupData = {
+      name: '',
+      gender: "male",
+      birthDayStr: '',
+      birthMonthStr: '',
+      birthYearStr: '',
+      email: null,
+      phone: null,
+      jobTitle: null,
+      address: null,
+      customer: null,
+      employee: null,
+      classify: this.classify
+    }
+    this.formGroup.patchValue(defaultFormGroupData);
   }
 }

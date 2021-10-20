@@ -99,6 +99,7 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
       val.companyId = this.authService.userInfo.companyId;
       this.agentService.getAmountDebitTotalAgent(val).subscribe((res: any) => {
         this.amountTotalDebit = res;
+        console.log(this.amountTotalDebit);
       },
         (error) => {
           console.log(error);
