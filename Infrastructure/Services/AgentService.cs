@@ -316,15 +316,21 @@ namespace Infrastructure.Services
 
         public async Task<decimal> GetAmountDebitTotalAgent(Guid id , Guid? companyId , DateTime? dateFrom , DateTime? dateTo)
         {
-            var movelineObj = GetService<IAccountMoveLineService>();
+            var phieuThuChiObj = GetService<IPhieuThuChiService>();
 
-            var agent = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
-            var query = movelineObj._QueryGet(companyId: companyId, state: "posted", dateFrom: dateFrom,
-               dateTo: dateTo);
+            var query = phieuThuChiObj.SearchQuery(x => x.AgentId == id && x.State == "posted");
 
-            query = query.Where(x => x.Account.Code == "HHNGT" && x.PartnerId == agent.PartnerId);
+            if (companyId.HasValue)
+                query = query.Where(x => x.CompanyId == companyId);
 
-            var amountTotal = await query.SumAsync(s => s.Debit);
+            if (dateFrom.HasValue)
+                query = query.Where(x => x.Date > dateFrom.Value.AbsoluteBeginOfDate());
+
+
+            if (dateTo.HasValue)             
+                query = query.Where(x => x.Date <= dateTo.Value.AbsoluteEndOfDate());
+
+            var amountTotal = await query.SumAsync(s => s.Amount);
             return amountTotal;
         }
 
