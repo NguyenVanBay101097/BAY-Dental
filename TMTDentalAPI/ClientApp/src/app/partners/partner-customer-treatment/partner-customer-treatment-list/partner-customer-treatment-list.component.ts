@@ -80,8 +80,7 @@ export class PartnerCustomerTreatmentListComponent implements OnInit {
   }
 
   getFormSaleOrder(id){
-    this.router.navigate(['/sale-orders/form'], { queryParams: { id: id } });
-    this.router.navigate(['/sale-orders/' + id]);
+    this.router.navigate(['/sale-orders', id]);
   }
 
   getSaleOrders() {
@@ -108,7 +107,7 @@ export class PartnerCustomerTreatmentListComponent implements OnInit {
   }
 
   viewSaleOrder(id){
-    this.router.navigate(['/sale-orders/form'], { queryParams: { id: id } });
+    this.router.navigate(['/sale-orders', id]);
   }
 
   pageChange(event){

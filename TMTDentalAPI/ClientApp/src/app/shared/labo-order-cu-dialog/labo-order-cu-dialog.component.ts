@@ -52,6 +52,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
     'down_right': [],
     'down_left': []
   };
+  submitted = false;
   constructor(private fb: FormBuilder,
     public activeModal: NgbActiveModal,
     private modalService: NgbModal,
@@ -400,6 +401,8 @@ export class LaboOrderCuDialogComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
+    
     if (this.myForm.invalid) {
       return;
     }

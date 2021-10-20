@@ -135,4 +135,8 @@ export class PartnerOldNewReportService {
   getSaleOrderPaged(val: any) {
     return this.http.get<PagedResult2<SaleOrderBasic>>(this.baseApi + this.apiUrl + "/GetSaleOrderPaged", { params: new HttpParams({ fromObject: val }) });
   }
+
+  reportByIsNew(val: any) {
+    return this.http.post(this.baseApi + this.apiUrl + "/ReportByIsNew", val);
+  }
 }

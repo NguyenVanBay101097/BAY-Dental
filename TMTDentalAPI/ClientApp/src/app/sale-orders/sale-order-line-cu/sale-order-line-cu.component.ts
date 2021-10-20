@@ -140,6 +140,7 @@ export class SaleOrderLineCuComponent implements OnInit {
   }
 
   onEditLine() {
+    debugger;
     this.isEditting = true;
     // this.canEdit = true;
     this.formGroupInfo = this.fb.group({

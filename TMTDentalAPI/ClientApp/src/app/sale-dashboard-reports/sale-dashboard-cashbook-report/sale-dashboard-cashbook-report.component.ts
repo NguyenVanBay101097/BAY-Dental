@@ -28,6 +28,9 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
       legend: {
         position: 'bottom'
       },
+      tooltip: {
+        mode: 'index'
+      }
     },
     scales: {
       x: {

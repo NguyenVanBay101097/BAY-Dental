@@ -7,7 +7,11 @@ import { environment } from './environments/environment';
 import 'hammerjs';
 
 import { Chart, registerables } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+
 Chart.register(...registerables);
+Chart.register(ChartDataLabels);
+Chart.defaults.plugins.datalabels.display = false;
 
 export function getBaseUrl() {
   return document.getElementsByTagName('base')[0].href;

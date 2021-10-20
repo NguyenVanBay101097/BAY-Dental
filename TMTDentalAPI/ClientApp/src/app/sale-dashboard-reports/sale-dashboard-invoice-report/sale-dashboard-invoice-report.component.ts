@@ -24,10 +24,16 @@ export class SaleDashboardInvoiceReportComponent implements OnInit, OnChanges {
       title: {
         text: 'BIỂU ĐỒ DOANH THU - THỰC THU',
         display: true,
+        font: {
+          size: 16
+        }
       },
       legend: {
         position: 'bottom'
       },
+      tooltip: {
+        mode: 'index'
+      }
     },
     scales: {
       x: {

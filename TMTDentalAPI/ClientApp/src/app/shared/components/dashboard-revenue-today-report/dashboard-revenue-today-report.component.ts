@@ -24,7 +24,10 @@ export class DashboardRevenueTodayReportComponent implements OnInit {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        display: false
+        position: 'bottom',
+        labels: {
+          usePointStyle: true
+        }
       }
     }
   };

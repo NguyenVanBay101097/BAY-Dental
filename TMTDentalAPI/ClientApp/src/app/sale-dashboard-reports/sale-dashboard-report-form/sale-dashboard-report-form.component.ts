@@ -29,8 +29,8 @@ export class SaleDashboardReportFormComponent implements OnInit {
   groupBy: string = 'groupby:day';
   cashBooks: any[] = [];
   revenues: any[] = [];
-  dataNoTreatment: any[];
-  dataCustomer: any[];
+  dataNoTreatment: any[] = [];
+  dataCustomer: any[] = [];
   partnerTypes = [
     { text: 'Khách mới', value: 'new' },
     { text: 'Khách quay lại', value: 'old' }
@@ -184,16 +184,13 @@ export class SaleDashboardReportFormComponent implements OnInit {
   }
 
   loadDataCustomerApi() {
-    forkJoin(this.partnerTypes.map(x => {
-      var val = new PartnerOldNewReportSumReq();
-      val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
-      val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
-      val.companyId = this.companyId || '';
-      val.typeReport = x.value;
-      return this.partnerOldNewRpService.sumReport(val).pipe(
-        switchMap(count => of({ text: x.value, count: count }))
-      );
-    })).subscribe((result) => {
+    var val = {
+      dateFrom: this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : null,
+      dateTo: this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null,
+      companyId: this.companyId
+    }
+   
+    return this.partnerOldNewRpService.reportByIsNew(val).subscribe((result: any) => {
       this.dataCustomer = result;
     });
   }
@@ -242,16 +239,16 @@ export class SaleDashboardReportFormComponent implements OnInit {
         this.router.navigateByUrl("cash-book/tab-cabo?result_selection=bank");
         break;
       case 'account-invoice-reports':
-        this.router.navigateByUrl("report/account-invoice-reports/revenue-expecting");
+        this.router.navigateByUrl("account-invoice-reports/revenue-expecting");
         break;
       case "ncc-debit-report":
-        this.router.navigateByUrl("report/report-account-common/partner?result_selection=supplier");
+        this.router.navigateByUrl("report-account-common/partner?result_selection=supplier");
         break;
       case "customer-debit-report":
-        this.router.navigateByUrl("report/report-account-common/partner-debit");
+        this.router.navigateByUrl("report-account-common/partner-debit");
         break;
       case "money-report":
-        this.router.navigateByUrl("report/report-general-ledgers/cash-bank");
+        this.router.navigateByUrl("report-general-ledgers/cash-bank");
         break;
       case "new-old-customer-report":
         this.router.navigateByUrl("sale-report/partner");

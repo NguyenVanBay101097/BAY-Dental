@@ -309,7 +309,7 @@ const routes: Routes = [
     RouterModule.forRoot(
       routes,
       {
-        // preloadingStrategy: PreloadAllModules
+        preloadingStrategy: PreloadAllModules
       }
     )
   ],

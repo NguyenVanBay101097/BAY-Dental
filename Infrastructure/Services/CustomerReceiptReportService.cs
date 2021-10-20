@@ -159,13 +159,9 @@ namespace Infrastructure.Services
 
             var items = await query.Where(x => x.State == "done" && !x.IsRepeatCustomer).ToListAsync();
 
-            var totalItems = items.Count();
-
             var res = items.GroupBy(x => x.IsNoTreatment).Select(x => new CustomerReceiptGetCountItem
             {
                 Name = x.Key == true ? "Không điều trị" : "Có điều trị",
-                Color = x.Key == true ? "#1A6DE3" : "#95C8FF",
-                TotalCustomerReceipt = totalItems,
                 CountCustomerReceipt = x.Count()
             }).ToList();
 
