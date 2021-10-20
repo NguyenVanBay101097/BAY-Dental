@@ -295,6 +295,21 @@ namespace Infrastructure.Services
             };
         }
 
+        public string Classify(string val)
+        {
+            switch (val)
+            {
+                case "partner":
+                    return "Đối tác";
+                case "employee":
+                    return "Nhân viên";
+                case "customer":
+                    return "Khách hàng";
+                default:
+                    return "";
+            };
+        }
+
         public async Task<PagedResult2<CommissionSettlementReportRes>> GetReportPaged(CommissionSettlementFilterReport val)
         {
             var query = GetQueryableReportPaged(val);

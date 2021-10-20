@@ -21,5 +21,7 @@ namespace Infrastructure.Services
         Task<IEnumerable<CommissionSettlementOverview>> GetCommissionSettlements(DateTime? dateFrom, DateTime? dateTo, string classify, string groupBy);
         string CommissionType(string commType);
 
+        string Classify(string val);
+
     }
 }

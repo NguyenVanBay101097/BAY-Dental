@@ -139,16 +139,17 @@ export class CommissionSettlementAgentReportDetailComponent implements OnInit {
   }
 
   exportExcel(){
+    debugger;
     var val = new CommissionSettlementFilterReport();
     val.offset = this.skip;
     val.limit = this.limit;
     val.search = this.search ? this.search : '';
     val.agentId = this.agentId ? this.agentId : '';
-    val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-ddTHH:mm:ss') : null;
-    val.dateTo = this.dateFrom ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-ddTHH:mm:ss') : null;
+    val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-ddTHH:mm:ss') : '';
+    val.dateTo = this.dateFrom ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-ddTHH:mm:ss') : '';
     val.groupBy = 'agent';
-    val.classify = this.agentType;
-    this.commissionSettlementService.excelCommissionExport(val).subscribe(result => {
+    val.classify = this.agentType || '';
+    this.commissionSettlementService.excelCommissionDetailExport(val).subscribe((result:any) => {
       let filename = "CTHoaHongNguoiGioiThieu";
       let newBlob = new Blob([result], {
         type:
