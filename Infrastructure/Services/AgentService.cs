@@ -366,7 +366,7 @@ namespace Infrastructure.Services
                 PartnerId = x.PartnerId,
                 BaseAmount = commissiont_dict.ContainsKey(x.Id) ? commissiont_dict[x.Id].BaseAmount : 0,
                 Amount = commissiont_dict.ContainsKey(x.Id) ? commissiont_dict[x.Id].Amount : 0,
-                AmountCommission = phieuthuchi_dict.ContainsKey(x.Id) ? commissiont_dict[x.Id].Amount : 0,
+                AmountCommission = phieuthuchi_dict.ContainsKey(x.Id) ? phieuthuchi_dict[x.Id] : 0,
             }).ToListAsync();
 
             var paged = new PagedResult2<AgentInfo>(totalItems, val.Offset, val.Limit)
