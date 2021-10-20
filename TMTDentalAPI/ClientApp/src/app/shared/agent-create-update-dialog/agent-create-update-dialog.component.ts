@@ -197,8 +197,9 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
 
   reload() {
     if (this.id) {
-      this.agentService.get(this.id).subscribe((result) => {
+      this.agentService.get(this.id).subscribe((result: any) => {
         this.formGroup.patchValue(result);
+        this.classify = result.classify;
         if (result.birthYear) {
           this.formGroup.get("birthYearStr").setValue(result.birthYear + '');
         }
