@@ -9,6 +9,7 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { AgentService, TotalAmountAgentFilter } from 'src/app/agents/agent.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { NotifyService } from 'src/app/shared/services/notify.service';
 import { CommissionSettlementAgentPaymentDialogComponent } from '../../commission-settlement-agent-payment-dialog/commission-settlement-agent-payment-dialog.component';
 import { CommissionSettlementFilterReport, CommissionSettlementsService } from '../../commission-settlements.service';
 
@@ -34,7 +35,7 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
   baseAmount: number = 0;
   amount: number = 0;
   commissionPaid: number = 0;
-  amountTotalIncome = 0;
+  amountTotalDebit = 0;
   constructor(
     private intl: IntlService,
     private commissionSettlementsService: CommissionSettlementsService,
@@ -42,6 +43,7 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
     private modalService: NgbModal,
     private authService: AuthService,
     private agentService: AgentService,
+    private notifyService: NotifyService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
     ) { this.pagerSettings = config.pagerSettings }
 
@@ -50,6 +52,7 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
     this.dateTo = this.monthEnd;
     this.agentId = this.route.parent.snapshot.paramMap.get('id');
     this.loadDataFromApi();
+    this.loadIncomAmountTotalAgent();
   }
 
   loadDataFromApi() {
@@ -94,8 +97,8 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
       var val = new TotalAmountAgentFilter();
       val.agentId = this.agentId;
       val.companyId = this.authService.userInfo.companyId;
-      this.agentService.getIncomeAmountTotalAgent(val).subscribe((res: any) => {
-        this.amountTotalIncome = res;
+      this.agentService.getAmountDebitTotalAgent(val).subscribe((res: any) => {
+        this.amountTotalDebit = res;
       },
         (error) => {
           console.log(error);
@@ -118,12 +121,17 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
   }
 
   actionPayment(){
-    // const modalRef = this.modalService.open(CommissionSettlementAgentPaymentDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    // modalRef.componentInstance.title = 'Chi hoa hồng';
-    // modalRef.componentInstance.type = 'chi';
-    // modalRef.componentInstance.accountType = 'commission';
-    // modalRef.componentInstance.agentId = this.agentId;
-
+    const modalRef = this.modalService.open(CommissionSettlementAgentPaymentDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Chi hoa hồng';
+    modalRef.componentInstance.type = 'chi';
+    modalRef.componentInstance.accountType = 'commission';
+    modalRef.componentInstance.agentId = this.agentId;
+    modalRef.componentInstance.amountBalanceTotal = this.amount - this.amountTotalDebit;
+    modalRef.result.then(() => {
+      this.notifyService.notify('success', 'Thanh toán thành công');
+      this.loadDataFromApi();
+      this.loadIncomAmountTotalAgent();
+    }, er => { })   
   }
 
   exportExcelFile(){

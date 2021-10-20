@@ -314,15 +314,17 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<decimal> GetIncomeAmountTotalAgent(Guid id , Guid? companyId , DateTime? dateFrom , DateTime? dateTo)
+        public async Task<decimal> GetAmountDebitTotalAgent(Guid id , Guid? companyId , DateTime? dateFrom , DateTime? dateTo)
         {
             var movelineObj = GetService<IAccountMoveLineService>();
+
+            var agent = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
             var query = movelineObj._QueryGet(companyId: companyId, state: "posted", dateFrom: dateFrom,
                dateTo: dateTo);
 
-            query = query.Where(x => x.Account.Code == "5111" && x.Partner.AgentId.HasValue && x.Partner.AgentId.Value == id);
+            query = query.Where(x => x.Account.Code == "HHNGT" && x.PartnerId == agent.PartnerId);
 
-            var amountTotal = await query.SumAsync(s => (s.PriceSubtotal ?? 0));
+            var amountTotal = await query.SumAsync(s => s.Debit);
             return amountTotal;
         }
 

@@ -23,7 +23,7 @@ export class CommissionSettlementAgentPaymentDialogComponent implements OnInit {
   accountType: string;
   formGroup: FormGroup;
   submitted: boolean = false;
-  amountTotalIncome = 0;
+  amountBalanceTotal : number;
   filteredJournals: any = [];
 
   @ViewChild("journalCbx", { static: true }) journalCbx: ComboBoxComponent;
@@ -48,7 +48,6 @@ export class CommissionSettlementAgentPaymentDialogComponent implements OnInit {
 
     this.loadDefault();
     this.loadFilteredJournals();
-    this.loadIncomAmountTotalAgent();
   }
 
   loadDefault() {
@@ -78,20 +77,6 @@ export class CommissionSettlementAgentPaymentDialogComponent implements OnInit {
     );
   }
 
-  loadIncomAmountTotalAgent() {
-    if (this.agentId) {
-      var val = new TotalAmountAgentFilter();
-      val.agentId = this.agentId;
-      val.companyId = this.authService.userInfo.companyId;
-      this.agentService.getIncomeAmountTotalAgent(val).subscribe((res: any) => {
-        this.amountTotalIncome = res;
-      },
-        (error) => {
-          console.log(error);
-        }
-      );
-    }
-  }
 
   get f() { return this.formGroup.controls; }
 

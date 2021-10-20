@@ -43,7 +43,6 @@ export class AgentCommmissionPaymentDialogComponent implements OnInit {
 
     this.loadDefault();
     this.loadFilteredJournals();
-    this.loadAmountCommissionAgentBalance();
   }
 
   loadDefault() {
@@ -73,20 +72,6 @@ export class AgentCommmissionPaymentDialogComponent implements OnInit {
     );
   }
 
-  loadAmountCommissionAgentBalance() {
-    if (this.agentId) {
-      var val = new TotalAmountAgentFilter();
-      val.agentId = this.agentId;
-      val.companyId = this.authService.userInfo.companyId;
-      this.agentService.getIncomeAmountTotalAgent(val).subscribe((res: any) => {
-        this.amountTotalBalance = res;
-      },
-        (error) => {
-          console.log(error);
-        }
-      );
-    }
-  }
 
   get f() { return this.formGroup.controls; }
 

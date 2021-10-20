@@ -20,7 +20,7 @@ namespace Infrastructure.Services
 
         Task<TotalAmountAgentResult> GetAmountCommissionAgentTotal(TotalAmountAgentFilter val);
 
-        Task<decimal> GetIncomeAmountTotalAgent(Guid id, Guid? companyId, DateTime? dateFrom, DateTime? dateTo);
+        Task<decimal> GetAmountDebitTotalAgent(Guid id, Guid? companyId, DateTime? dateFrom, DateTime? dateTo);
 
         Task<AgentDisplay> GetDisplayById(Guid id);
 

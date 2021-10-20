@@ -28,26 +28,38 @@
 </div>
 <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"
     (pageChange)="pageChange($event)">
-    <kendo-grid-column title="Ngày chi hoa hồng" width="200">
+    <kendo-grid-column title="Ngày chi hoa hồng" width="150">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.date | date:'shortDate'}}
+        </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column title="Số phiếu" class="text-right" width="100">
+    <kendo-grid-column field="name" title="Số phiếu" class="text-right" width="120">
     </kendo-grid-column>
-    <kendo-grid-column title="Số tiền" class="text-right" width="150">
+    <kendo-grid-column title="Số tiền" class="text-right" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.amount | number}}
+        </ng-template>
     </kendo-grid-column>
-    <kendo-grid-command-column title="Phương thức" width="200">
+    <kendo-grid-command-column title="Phương thức" width="100">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.journalName}}
+        </ng-template>
     </kendo-grid-command-column>
-    <kendo-grid-command-column title="Nội dung" width="250">
+    <kendo-grid-command-column field="reason" title="Nội dung" width="150">
     </kendo-grid-command-column>
-    <kendo-grid-command-column title="Trạng thái" width="150">
+    <kendo-grid-command-column title="Trạng thái" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{ getState(dataItem.state)}}
+        </ng-template>
     </kendo-grid-command-column>
-    <kendo-grid-column field="id" width="150">
+    <kendo-grid-column field="id" width="120">
         <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
             Thao tác
         </ng-template>
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             <button class="btn" title="In phiếu">
                 <i class="fas fa-print text-primary"></i></button>
-            <button class="btn" title="Hủy phiếu chi">
+            <button (click)="deleteItem(dataItem)" class="btn" title="Hủy phiếu chi">
                 <span class="fas fa-trash-alt text-danger"></span></button>
         </ng-template>
     </kendo-grid-column>

@@ -9,6 +9,7 @@ import { TotalAmountAgentFilter } from 'src/app/agents/agent.service';
 import { PhieuThuChiPaged, PhieuThuChiSave, PhieuThuChiService } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { NotifyService } from 'src/app/shared/services/notify.service';
 
 @Component({
   selector: 'app-commission-settlement-agent-history',
@@ -35,6 +36,7 @@ export class CommissionSettlementAgentHistoryComponent implements OnInit {
     private intlService: IntlService,
     private phieuThuChiService: PhieuThuChiService,
     private modalService: NgbModal,
+    private notifyService: NotifyService,
   ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
@@ -45,7 +47,6 @@ export class CommissionSettlementAgentHistoryComponent implements OnInit {
   }
 
   loadDataFromApi() {
-    this.loading = true;
     var val = new PhieuThuChiPaged();
     val.limit = this.limit;
     val.offset = this.skip;
@@ -59,11 +60,9 @@ export class CommissionSettlementAgentHistoryComponent implements OnInit {
         total: response.totalItems
       }))
     ).subscribe(res => {
-      console.log(res)
-      // this.gridData = res;
-      this.loading = false;
+      console.log(res);
+      this.gridData = res;
     }, err => {
-      this.loading = false;
     })
   }
 
@@ -75,7 +74,7 @@ export class CommissionSettlementAgentHistoryComponent implements OnInit {
     modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa phiếu chi hoa hồng ?';
     modalRef.result.then(() => {
       this.phieuThuChiService.actionCancel([item.id]).subscribe(() => {
-        // this.notifyService.notify('success', 'Xóa thành công');
+        this.notifyService.notify('success', 'Xóa thành công');
         this.loadDataFromApi();
 
       })
@@ -97,4 +96,12 @@ export class CommissionSettlementAgentHistoryComponent implements OnInit {
   }
   exportExcelFile() { }
 
+  getState(val){
+    switch (val) {
+      case "cancel":
+        return 'Hủy';         
+      default:
+        return 'Đã thanh toán';
+    }
+  }
 }
