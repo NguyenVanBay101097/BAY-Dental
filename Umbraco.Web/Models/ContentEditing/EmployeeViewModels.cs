@@ -21,7 +21,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Phone { get; set; }
     }
 
-    public class EmployeeInfo
+    public class EmployeeSimpleInfo
     {
         public Guid Id { get; set; }
 

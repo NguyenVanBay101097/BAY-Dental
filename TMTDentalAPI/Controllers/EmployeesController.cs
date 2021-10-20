@@ -457,7 +457,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> AutocompleteInfos(EmployeePaged val)
         {
             var emps = await _employeeService.GetAutocomplete(val);
-            var res = _mapper.Map<IEnumerable<EmployeeInfo>>(emps);
+            var res = _mapper.Map<IEnumerable<EmployeeSimpleInfo>>(emps);
             return Ok(res);
         }
 
