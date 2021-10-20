@@ -179,7 +179,6 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
     empPn.offset = 0;
     this.employeeService.getAutocompleteInfos(empPn).subscribe((rs: any) => {
       this.employeeSimpleFilter = rs;
-      console.log(this.employeeSimpleFilter);
     });
   }
 
@@ -229,6 +228,8 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
     val.birthYear = val.birthYearStr ? parseInt(val.birthYearStr) : null;
     val.commissionId = val.commission ? val.commission.id : null;
     val.bankId = val.bank ? val.bank.id : null;
+    val.customerId = val.customer ? val.customer.id : null;
+    val.employeeId = val.employee ? val.employee.id : null;
     if (this.id) {
       this.agentService.update(this.id, val).subscribe(
         () => {

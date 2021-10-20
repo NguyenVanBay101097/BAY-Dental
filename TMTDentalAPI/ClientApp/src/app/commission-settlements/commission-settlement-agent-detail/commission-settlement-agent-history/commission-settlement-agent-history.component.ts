@@ -10,6 +10,7 @@ import { PhieuThuChiPaged, PhieuThuChiSave, PhieuThuChiService } from 'src/app/p
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { NotifyService } from 'src/app/shared/services/notify.service';
+import { PrintService } from 'src/app/shared/services/print.service';
 
 @Component({
   selector: 'app-commission-settlement-agent-history',
@@ -37,6 +38,7 @@ export class CommissionSettlementAgentHistoryComponent implements OnInit {
     private phieuThuChiService: PhieuThuChiService,
     private modalService: NgbModal,
     private notifyService: NotifyService,
+    private printService: PrintService,
   ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
@@ -60,7 +62,6 @@ export class CommissionSettlementAgentHistoryComponent implements OnInit {
         total: response.totalItems
       }))
     ).subscribe(res => {
-      console.log(res);
       this.gridData = res;
     }, err => {
     })
@@ -70,15 +71,20 @@ export class CommissionSettlementAgentHistoryComponent implements OnInit {
 
   deleteItem(item: any) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Xóa phiếu chi hoa hồng';
-    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa phiếu chi hoa hồng ?';
+    modalRef.componentInstance.title = 'Hủy phiếu chi hoa hồng';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn hủy phiếu chi hoa hồng ?';
     modalRef.result.then(() => {
       this.phieuThuChiService.actionCancel([item.id]).subscribe(() => {
-        this.notifyService.notify('success', 'Xóa thành công');
+        this.notifyService.notify('success', 'Hủy thành công');
         this.loadDataFromApi();
-
       })
     }, () => {
+    });
+  }
+
+  printItem(item: any){
+    this.phieuThuChiService.getPrint2(item.id).subscribe((data: any) => {
+      this.printService.printHtml(data.html);
     });
   }
 
@@ -86,7 +92,7 @@ export class CommissionSettlementAgentHistoryComponent implements OnInit {
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;
     this.skip = 0;
-    // this.loadDataFromApi();
+    this.loadDataFromApi();
   }
 
   pageChange(event: PageChangeEvent): void {

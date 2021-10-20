@@ -3,10 +3,21 @@
 }
 
 .card-header {
-    /* background-color: #F2F7FF;
-    color: #1A6DE3; */
+    background-color: white;
+    /* color: #1A6DE3; */
 }
 
-tr {
-    line-height: 2.4rem;
+.title-header{
+    color: #6b7280;
+    line-height: 28px;
+    font-weight: 600;
+}
+
+.o_form_sheet{
+    padding: 0 !important;
+    border: none !important;
+}
+
+.o_group{
+    margin: 0 !important;
 }

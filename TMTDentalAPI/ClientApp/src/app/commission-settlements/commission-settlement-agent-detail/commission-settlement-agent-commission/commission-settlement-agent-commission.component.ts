@@ -36,6 +36,7 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
   amount: number = 0;
   commissionPaid: number = 0;
   amountTotalDebit = 0;
+  agentObj: any;
   constructor(
     private intl: IntlService,
     private commissionSettlementsService: CommissionSettlementsService,
@@ -53,6 +54,13 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
     this.agentId = this.route.parent.snapshot.paramMap.get('id');
     this.loadDataFromApi();
     this.loadIncomAmountTotalAgent();
+    this.loadAgent();
+  }
+
+  loadAgent(){
+    this.agentService.get(this.agentId).subscribe((res:any)=>{
+      this.agentObj = res;
+    });
   }
 
   loadDataFromApi() {
@@ -68,7 +76,6 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
     val.groupBy = 'agent';
     this.commissionSettlementsService.getReportDetail(val).subscribe((res: any) => {
       this.items = res.items;
-      console.log(this.items);
       this.loadItems(this.items);
       this.loading = false;
     }, err => {
@@ -99,7 +106,6 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
       val.companyId = this.authService.userInfo.companyId;
       this.agentService.getAmountDebitTotalAgent(val).subscribe((res: any) => {
         this.amountTotalDebit = res;
-        console.log(this.amountTotalDebit);
       },
         (error) => {
           console.log(error);
@@ -112,7 +118,7 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;
     this.skip = 0;
-    // this.loadDataFromApi();
+    this.loadDataFromApi();
   }
 
   pageChange(event: PageChangeEvent): void {
@@ -128,6 +134,7 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
     modalRef.componentInstance.accountType = 'commission';
     modalRef.componentInstance.agentId = this.agentId;
     modalRef.componentInstance.amountBalanceTotal = this.amount - this.amountTotalDebit;
+    modalRef.componentInstance.partnerId = this.agentObj ? this.agentObj.partnerId : null;
     modalRef.result.then(() => {
       this.notifyService.notify('success', 'Thanh toán thành công');
       this.loadDataFromApi();
