@@ -9,6 +9,8 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { AgentPaged, AgentService } from '../agent.service';
 import { AgentCreateUpdateDialogComponent } from 'src/app/shared/agent-create-update-dialog/agent-create-update-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { AgentCommmissionPaymentDialogComponent } from '../agent-commmission-payment-dialog/agent-commmission-payment-dialog.component';
+import { CommissionSettlementAgentPaymentDialogComponent } from 'src/app/commission-settlements/commission-settlement-agent-payment-dialog/commission-settlement-agent-payment-dialog.component';
 
 @Component({
   selector: 'app-agent-list',
@@ -98,6 +100,33 @@ export class AgentListComponent implements OnInit {
       });
     }, () => {
     });
+  }
+
+  getAgentType(type){
+    switch(type) {
+      case 'customer':
+        return 'Khách hàng';
+      case 'employee':
+        return 'Nhân viên';
+      case 'partner':
+        return 'Đối tác';
+      default:
+        return '';
+    }
+  }
+
+  actionPayment(item: any){
+    const modalRef = this.modalService.open(CommissionSettlementAgentPaymentDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Chi hoa hồng';
+    modalRef.componentInstance.type = 'chi';
+    modalRef.componentInstance.accountType = 'commission';
+    modalRef.componentInstance.agentId = item.id;
+    modalRef.componentInstance.partnerId = item.partnerId;
+    modalRef.componentInstance.amountBalanceTotal = item.amount;
+    modalRef.result.then(() => {
+      this.notifyService.notify('success', 'Chi hoa hồng thành công');
+      this.loadDataFromApi();
+    }, er => { })
   }
 
 

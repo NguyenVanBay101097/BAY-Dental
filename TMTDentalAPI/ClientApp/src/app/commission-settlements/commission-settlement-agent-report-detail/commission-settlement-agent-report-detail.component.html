@@ -4,27 +4,26 @@
     </div>
     <div class="o_cp_t_right o_cp_searchview">
         <div class="o_searchview">
-            <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo họ tên" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+            <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo số phiếu, khách hàng, dịch vụ" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
             <span class="o_searchview_icon fas fa-search"></span>
         </div>
     </div>
     <div class="w-50"></div>
     <div class="o_cp_t_left mt-1">
-        <div class="o_cp_buttons d-flex">
-            <div class="o_form_buttons_view mr-2">
-                <div class="d-flex">
-                    <app-date-range-picker-filter [opens]="'right'" [startDate]="monthStart" [endDate]="monthEnd" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
+        <div class="w-100">
+            <div class="o_cp_buttons d-flex">
+                <div class="o_form_buttons_view mr-1">
+                    <div class="d-flex date-picker">
+                        <app-date-range-picker-filter [opens]="'right'" [startDate]="monthStart" [endDate]="monthEnd" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
+                    </div>
                 </div>
+                <kendo-combobox [placeholder]="'Người giới thiệu'" class="mr-1" [valueField]="'id'" [textField]="'name'"
+                [filterable]="true" [data]="agentList" (selectionChange)="onSelectAgent($event)" #agentCbx>
+                </kendo-combobox>
+                <kendo-combobox [placeholder]="'Phân loại'" class="mr-1" [valueField]="'id'" [textField]="'name'"
+                [filterable]="true" [data]="agentTypes" (selectionChange)="onSelectAgentType($event)" #companyCbx>
+                </kendo-combobox>
             </div>
-            <kendo-combobox [placeholder]="'Người giới thiệu'" class="mr-2" [valueField]="'id'" [textField]="'name'"
-            [filterable]="true" [data]="agentList" (selectionChange)="onSelectAgent($event)" #agentCbx>
-            </kendo-combobox>
-            <kendo-combobox [placeholder]="'Phân loại'" class="mr-2" [valueField]="'id'" [textField]="'name'"
-            [filterable]="true" [data]="agentTypes" (selectionChange)="onSelectAgentType($event)" #companyCbx>
-            </kendo-combobox>
-        </div>
-        <div class="o_cp_sidebar">
-
         </div>
     </div>
 </div>
