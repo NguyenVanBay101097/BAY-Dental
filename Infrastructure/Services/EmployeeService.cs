@@ -201,6 +201,19 @@ namespace Infrastructure.Services
             return _mapper.Map<IEnumerable<EmployeeSimple>>(items);
         }
 
+        public async Task<IEnumerable<Employee>> GetAutocomplete(EmployeePaged val)
+        {
+            var query = GetQueryPaged(val);        
+
+            if (val.Limit > 0) 
+                query = query.Skip(val.Offset).Take(val.Limit);
+
+            var items = await query.Where(x => x.Active == true)
+                .ToListAsync();
+
+            return items;
+        }
+
         public async Task<IEnumerable<EmployeeSimple>> GetAllowSurveyList()
         {
             var items = await SearchQuery(x => x.Active && x.IsAllowSurvey).Select(x => new EmployeeSimple
