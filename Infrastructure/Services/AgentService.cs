@@ -314,7 +314,7 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<decimal> GetAmountDebitTotalAgent(Guid id , Guid? companyId , DateTime? dateFrom , DateTime? dateTo)
+        public async Task<decimal> GetAmountDebitTotalAgent(Guid id, Guid? companyId, DateTime? dateFrom, DateTime? dateTo)
         {
             var phieuThuChiObj = GetService<IPhieuThuChiService>();
 
@@ -327,11 +327,54 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Date > dateFrom.Value.AbsoluteBeginOfDate());
 
 
-            if (dateTo.HasValue)             
+            if (dateTo.HasValue)
                 query = query.Where(x => x.Date <= dateTo.Value.AbsoluteEndOfDate());
 
             var amountTotal = await query.SumAsync(s => s.Amount);
             return amountTotal;
+        }
+
+        public async Task<PagedResult2<AgentInfo>> GetAgentPagedResult(AgentPaged val)
+        {
+            var settlementObj = GetService<ICommissionSettlementService>();
+            var phieuthuchiObj = GetService<IPhieuThuChiService>();
+
+            var query = SearchQuery();
+
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search));
+
+            var totalItems = await query.CountAsync();
+
+            if (val.Limit > 0)
+                query = query.Skip(val.Offset).Take(val.Limit);
+
+            query = query.OrderByDescending(x => x.DateCreated);
+
+            var commission_agents = await settlementObj.GetCommissionSettlements(null, null, null, groupBy: "agent");
+            var commissiont_dict = commission_agents.ToDictionary(x => x.Id, x => x);
+
+            var phieuthuchis = await phieuthuchiObj.SearchQuery(x => x.AgentId.HasValue && x.State == "posted").ToListAsync();
+            var phieuthuchi_dict = phieuthuchis.GroupBy(x => x.AgentId).ToDictionary(x => x.Key, x => x.Sum(x => x.Amount));
+
+            var items = await query.Select(x => new AgentInfo
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Phone = x.Phone,
+                Classify = x.Classify,
+                PartnerId = x.PartnerId,
+                BaseAmount = commissiont_dict.ContainsKey(x.Id) ? commissiont_dict[x.Id].BaseAmount : 0,
+                Amount = commissiont_dict.ContainsKey(x.Id) ? commissiont_dict[x.Id].Amount : 0,
+                AmountCommission = phieuthuchi_dict.ContainsKey(x.Id) ? commissiont_dict[x.Id].Amount : 0,
+            }).ToListAsync();
+
+            var paged = new PagedResult2<AgentInfo>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items
+            };
+
+            return paged;
         }
 
 

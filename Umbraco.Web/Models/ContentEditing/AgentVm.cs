@@ -256,6 +256,18 @@ namespace Umbraco.Web.Models.ContentEditing
      
     }
 
+    public class AgentInfo
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public string Phone { get; set; }
+        public string Classify { get; set; }
+        public Guid? PartnerId { get; set; }
+        public decimal BaseAmount { get; set; }
+        public decimal Amount { get; set; }
+        public decimal AmountCommission { get; set; }
+    }
+
     public class TotalAmountAgentFilter
     {
         public Guid? AgentId { get; set; }
