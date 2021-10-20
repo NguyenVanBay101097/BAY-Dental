@@ -363,6 +363,7 @@ namespace Infrastructure.Services
                 Name = x.Name,
                 Phone = x.Phone,
                 Classify = x.Classify,
+                PartnerId = x.PartnerId,
                 BaseAmount = commissiont_dict.ContainsKey(x.Id) ? commissiont_dict[x.Id].BaseAmount : 0,
                 Amount = commissiont_dict.ContainsKey(x.Id) ? commissiont_dict[x.Id].Amount : 0,
                 AmountCommission = phieuthuchi_dict.ContainsKey(x.Id) ? commissiont_dict[x.Id].Amount : 0,
