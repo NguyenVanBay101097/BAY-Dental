@@ -324,10 +324,6 @@ namespace Infrastructure.Data
         public DbSet<PrintTemplateConfig> PrintTemplateConfigs { get; set; }
         public DbSet<PartnerOldNewInSaleOrder> PartnerOldNewInSaleOrders { get; set; }
 
-        /// <summary>
-        /// ngân hàng
-        /// </summary>
-        public DbSet<Bank> Banks { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -584,7 +580,6 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new PrintTemplateConfiguration());
             builder.ApplyConfiguration(new PrintTemplateConfigConfiguration());
             builder.ApplyConfiguration(new PartnerOldNewInSaleOrderConfiguration());
-            builder.ApplyConfiguration(new BankConfiguration());
             //builder.ApplyConfiguration(new SaleOrderLineProductRequestedConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });

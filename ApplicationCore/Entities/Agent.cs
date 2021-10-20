@@ -61,7 +61,7 @@ namespace ApplicationCore.Entities
         /// ngân hàng
         /// </summary>
         public Guid? BankId { get; set; }
-        public Bank Bank { get; set; }
+        public ResBank Bank { get; set; }
 
         /// <summary>
         /// Chi nhánh ngân hàng
@@ -85,7 +85,7 @@ namespace ApplicationCore.Entities
         public Guid? CompanyId { get; set; }
         public Company Company { get; set; }
 
-        public Guid PartnerId { get; set; }
+        public Guid? PartnerId { get; set; }
         public Partner Partner { get; set; }
 
         /// <summary>

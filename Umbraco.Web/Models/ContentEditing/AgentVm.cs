@@ -140,7 +140,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// ngân hàng
         /// </summary>
         public Guid BankId { get; set; }
-        public BankBasic Bank { get; set; }
+        public ResBankBasic Bank { get; set; }
 
         /// <summary>
         /// Chi nhánh ngân hàng
