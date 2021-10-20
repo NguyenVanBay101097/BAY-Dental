@@ -5,6 +5,7 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { TotalAmountAgentFilter } from 'src/app/agents/agent.service';
 import { PhieuThuChiPaged, PhieuThuChiSave, PhieuThuChiService } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
@@ -65,6 +66,8 @@ export class CommissionSettlementAgentHistoryComponent implements OnInit {
       this.loading = false;
     })
   }
+
+
 
   deleteItem(item: any) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });

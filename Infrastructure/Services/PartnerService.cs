@@ -497,6 +497,15 @@ namespace Infrastructure.Services
                 Name = x.Name,
                 Phone = x.Phone,
                 BirthYear = x.BirthYear,
+                BirthDay = x.BirthDay,
+                BirthMonth = x.BirthMonth,
+                Email = x.Email,
+                JobTitle = x.JobTitle,
+                CityName = x.CityName,
+                Street = x.Street,
+                Gender = x.Gender,
+                DistrictName = x.DistrictName,
+                WardName = x.WardName
             }).ToListAsync();
 
             var cateList = await cateObj.SearchQuery(x => x.PartnerPartnerCategoryRels.Any(s => partners.Select(i => i.Id).Contains(s.PartnerId)))

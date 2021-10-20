@@ -6,6 +6,8 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { aggregateBy } from '@progress/kendo-data-query';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { AgentService, TotalAmountAgentFilter } from 'src/app/agents/agent.service';
+import { AuthService } from 'src/app/auth/auth.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { CommissionSettlementAgentPaymentDialogComponent } from '../../commission-settlement-agent-payment-dialog/commission-settlement-agent-payment-dialog.component';
 import { CommissionSettlementFilterReport, CommissionSettlementsService } from '../../commission-settlements.service';
@@ -32,11 +34,14 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
   baseAmount: number = 0;
   amount: number = 0;
   commissionPaid: number = 0;
+  amountTotalIncome = 0;
   constructor(
     private intl: IntlService,
     private commissionSettlementsService: CommissionSettlementsService,
     private route: ActivatedRoute,
     private modalService: NgbModal,
+    private authService: AuthService,
+    private agentService: AgentService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
     ) { this.pagerSettings = config.pagerSettings }
 
@@ -82,6 +87,21 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
 
     this.baseAmount = result.baseAmount ? result.baseAmount.sum : 0;
     this.amount = result.amount ? result.amount.sum : 0;
+  }
+
+  loadIncomAmountTotalAgent() {
+    if (this.agentId) {
+      var val = new TotalAmountAgentFilter();
+      val.agentId = this.agentId;
+      val.companyId = this.authService.userInfo.companyId;
+      this.agentService.getIncomeAmountTotalAgent(val).subscribe((res: any) => {
+        this.amountTotalIncome = res;
+      },
+        (error) => {
+          console.log(error);
+        }
+      );
+    }
   }
 
   onSearchDateChange(data) {

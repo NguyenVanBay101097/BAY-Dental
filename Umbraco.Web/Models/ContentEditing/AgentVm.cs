@@ -260,7 +260,8 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid? AgentId { get; set; }
         public Guid? CompanyId { get; set; }
-        public Guid? PartnerId { get; set; }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
     }
 
     public class TotalAmountAgentResult

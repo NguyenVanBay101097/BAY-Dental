@@ -314,14 +314,16 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<decimal> GetAmountBalanceCommissionAgentForPartner(TotalAmountAgentFilter val)
+        public async Task<decimal> GetIncomeAmountTotalAgent(Guid id , Guid? companyId , DateTime? dateFrom , DateTime? dateTo)
         {
             var movelineObj = GetService<IAccountMoveLineService>();
-            var commisionPartner_dict = await ComputeCommissionPartners(new List<Guid> { val.PartnerId.Value }, null, null, val.CompanyId);
+            var query = movelineObj._QueryGet(companyId: companyId, state: "posted", dateFrom: dateFrom,
+               dateTo: dateTo);
 
-            var amountInComeTotal = await movelineObj.SearchQuery(x => x.Partner.AgentId.HasValue && x.Partner.AgentId == val.AgentId && x.PartnerId == val.PartnerId && x.Account.Code == "5111" && x.CompanyId == val.CompanyId).SumAsync(x => (x.PriceSubtotal ?? 0));
-            var commissionTotal = commisionPartner_dict.ContainsKey(val.PartnerId.Value) ? commisionPartner_dict[val.PartnerId.Value] : 0;
-            return amountInComeTotal - commissionTotal;
+            query = query.Where(x => x.Account.Code == "5111" && x.Partner.AgentId.HasValue && x.Partner.AgentId.Value == id);
+
+            var amountTotal = await query.SumAsync(s => (s.PriceSubtotal ?? 0));
+            return amountTotal;
         }
 
 

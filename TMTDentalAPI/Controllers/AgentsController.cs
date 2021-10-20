@@ -56,9 +56,9 @@ namespace TMTDentalAPI.Controllers
 
         [HttpGet("[action]")]
         [CheckAccess(Actions = "Catalog.Agent.Read")]
-        public async Task<IActionResult> GetAmountBalanceCommissionAgentForPartner([FromQuery] TotalAmountAgentFilter val)
+        public async Task<IActionResult> GetIncomeAmountTotalAgent([FromQuery] TotalAmountAgentFilter val)
         {
-            var result = await _agentService.GetAmountBalanceCommissionAgentForPartner(val);
+            var result = await _agentService.GetIncomeAmountTotalAgent(id: val.AgentId.Value , companyId : val.CompanyId , dateFrom: val.DateFrom , dateTo: val.DateTo);
             return Ok(result);
         }
 
