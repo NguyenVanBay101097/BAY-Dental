@@ -24,6 +24,7 @@ import { CommissionSettlementAgentReportComponent } from './commission-settlemen
 import { CommissionSettlementAgentReportOverviewComponent } from './commission-settlement-agent-report-overview/commission-settlement-agent-report-overview.component';
 import { CommissionSettlementAgentReportDetailComponent } from './commission-settlement-agent-report-detail/commission-settlement-agent-report-detail.component';
 import { CommissionSettlementAgentPaymentDialogComponent } from './commission-settlement-agent-payment-dialog/commission-settlement-agent-payment-dialog.component';
+import { AgentCreateUpdateDialogComponent } from '../shared/agent-create-update-dialog/agent-create-update-dialog.component';
 
 @NgModule({
   declarations: [CommissionSettlementReportListComponent, CommissionSettlementReportDetailComponent,
@@ -55,6 +56,6 @@ import { CommissionSettlementAgentPaymentDialogComponent } from './commission-se
     SharedModule
   ],
   providers: [CommissionSettlementsService],
-  entryComponents: [CommissionSettlementAgentPaymentDialogComponent]
+  entryComponents: [CommissionSettlementAgentPaymentDialogComponent, AgentCreateUpdateDialogComponent]
 })
 export class CommissionSettlementsModule { }

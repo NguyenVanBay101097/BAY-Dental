@@ -23,19 +23,22 @@
                                                 <td colspan="1" style="width: 100%;">
                                                     <div class="form-check form-check-inline">
                                                         <input class="form-check-input" name="classify" type="radio"
-                                                            id="partner_radio" value="partner">
+                                                            formControlName="classify" id="partner_radio"
+                                                            value="partner" [checked]="true" (change)="onChangeType($event)">
                                                         <label class="form-check-label" for="partner_radio">Đối
                                                             tác</label>
                                                     </div>
                                                     <div class="form-check form-check-inline">
                                                         <input class="form-check-input" name="classify" type="radio"
-                                                            id="customer_radio" value="customer">
+                                                            formControlName="classify" id="customer_radio"
+                                                            value="customer" (change)="onChangeType($event)">
                                                         <label class="form-check-label" for="customer_radio">Khách
                                                             hàng</label>
                                                     </div>
                                                     <div class="form-check form-check-inline">
                                                         <input class="form-check-input" name="classify" type="radio"
-                                                            id="employee_radio" value="employee">
+                                                            formControlName="classify" id="employee_radio"
+                                                            value="employee" (change)="onChangeType($event)">
                                                         <label class="form-check-label" for="employee_radio">Nhân
                                                             viên</label>
                                                     </div>
@@ -56,6 +59,30 @@
                                                         <div *ngIf="f.name.errors.required">Nhập tên người giới thiệu
                                                         </div>
                                                     </div>
+                                                </td>
+
+                                            </tr>
+                                            <tr>
+                                                <td colspan="1" class="o_td_label">
+                                                    <label class="o_form_label">Khách hàng</label>
+                                                </td>
+                                                <td colspan="1" style="width: 100%; vertical-align: initial;">
+                                                    <kendo-combobox formControlName="customer" [filterable]="true"
+                                                        [data]="customerSimpleFilter" #customerCbx [valueField]="'id'"
+                                                        [textField]="'displayName'">
+                                                    </kendo-combobox>
+                                                </td>
+
+                                            </tr>
+                                            <tr>
+                                                <td colspan="1" class="o_td_label">
+                                                    <label class="o_form_label">nhân viên</label>
+                                                </td>
+                                                <td colspan="1" style="width: 100%; vertical-align: initial;">
+                                                    <kendo-combobox formControlName="employees" [filterable]="true"
+                                                        [data]="employeeSimpleFilter" #employeeCbx [valueField]="'id'"
+                                                        [textField]="'name'">
+                                                    </kendo-combobox>
                                                 </td>
 
                                             </tr>
@@ -163,16 +190,19 @@
                                                     <label class="o_form_label">Tên ngân hàng</label>
                                                 </td>
                                                 <td colspan="1" style="width: 100%;vertical-align: initial;">
-                                                    <div class="flex-grow-1 mr-2">
-                                                        <kendo-combobox [filterable]="true" [data]="listBank"
-                                                            [textField]="'name'" [valueField]="'id'" #listBankCbx>
-                                                        </kendo-combobox>
-                                                    </div>
-                                                    <div>
-                                                        <a title="Thêm khách hàng" class=" btn btn-primary"
-                                                            (click)="createBank()">
-                                                            <i class="fas fa-plus text-white"></i>
-                                                        </a>
+                                                    <div class="d-flex">
+                                                        <div class="flex-grow-1 mr-2">
+                                                            <kendo-combobox [filterable]="true" [data]="listBank"
+                                                                formControlName="bank" [textField]="'name'"
+                                                                [valueField]="'id'" #listBankCbx>
+                                                            </kendo-combobox>
+                                                        </div>
+                                                        <div>
+                                                            <a title="Thêm khách hàng" class=" btn btn-primary"
+                                                                (click)="createBank()">
+                                                                <i class="fas fa-plus text-white"></i>
+                                                            </a>
+                                                        </div>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -181,7 +211,7 @@
                                                     <label class="o_form_label">Chi nhánh</label>
                                                 </td>
                                                 <td colspan="1" style="width: 100%;vertical-align: initial;">
-                                                    <input class="form-control" />
+                                                    <input class="form-control" formControlName="bankBranch" />
                                                 </td>
                                             </tr>
                                             <tr>
@@ -189,7 +219,7 @@
                                                     <label class="o_form_label">Số tài khoản</label>
                                                 </td>
                                                 <td colspan="1" style="width: 100%;vertical-align: initial;">
-                                                    <input class="form-control" />
+                                                    <input class="form-control" formControlName="accountNumber" />
                                                 </td>
                                             </tr>
                                             <tr>
@@ -197,7 +227,7 @@
                                                     <label class="o_form_label">Chủ tài khoản</label>
                                                 </td>
                                                 <td colspan="1" style="width: 100%;vertical-align: initial;">
-                                                    <input class="form-control" />
+                                                    <input class="form-control" formControlName="accountHolder" />
                                                 </td>
                                             </tr>
                                         </tbody>

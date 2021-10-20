@@ -1,1 +1,167 @@
-<p>commission-settlement-agent-profile works!</p>
+<div class="o_content">
+    <div class="o_form_view">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <header class="modal-header">
+                        <h5 class="modal-title">Đặng Thế Tài<span class="o_subtitle text-muted small"></span></h5>
+                        <button type="button" class="btn btn-primary" (click)="editAgent()">Sửa</button>
+                    </header>
+                    <div class="modal-body o_act_window">
+                        <div class="o_group o_inner_group o_group_col_12 m-0">
+                            <div class="o_group o_inner_group o_group_col_6 m-0">
+                                <div class="card border-light mb-3 border-0 mr-2">
+                                    <h5 class="card-header border-0">Thông tin chung</h5>
+                                    <div class="card-body">
+                                        <table>
+                                            <tbody>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Phân loại</label>
+                                                    </td>
+                                                    <td colspan="1" style="width: 100%;">
+                                                        <span>đối tác</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Người giới thiệu</label>
+                                                    </td>
+                                                    <td colspan="1" style="width: 100%; vertical-align: initial;">
+                                                        <span>{{agentObj?.name}}</span>
+                                                    </td>
+
+                                                </tr>
+
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Giới tính</label>
+                                                    </td>
+                                                    <td colspan="1" style="width: 100%;">
+                                                        <span *ngIf="agentObj && agentObj.gender === 'male'">Nam</span>
+                                                        <span *ngIf="agentObj && agentObj.gender === 'female'">Nữ</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Ngày sinh</label>
+                                                    </td>
+                                                    <td colspan="1" style="width:100%">
+                                                        <span>{{agentObj?.birthDay}}/{{agentObj?.birthMonth}}/{{agentObj?.birthYear}}</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Nghề nghiệp</label>
+                                                    </td>
+                                                    <td colspan="1" style="width: 100%;">
+                                                        <span>{{agentObj?.jobTitle}}</span>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
+                                <div class="card border-light mb-3 border-0 mr-2">
+                                    <h5 class="card-header border-0">Thông liên lạc</h5>
+                                    <div class="card-body">
+                                        <table>
+                                            <tbody>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Số điện thoại</label>
+                                                    </td>
+                                                    <td colspan="1" style="width: 100%;">
+                                                        <span>{{agentObj?.phone}}</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Email</label>
+                                                    </td>
+                                                    <td colspan="1" style="width: 100%;">
+                                                        <span>{{agentObj?.email}}</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Địa chỉ</label>
+                                                    </td>
+                                                    <td colspan="1" style="width: 100%;">
+                                                        <span>{{agentObj?.address}}</span>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="o_group o_inner_group o_group_col_6 m-0">
+                                <div class="card border-light mb-3 border-0 mr-2">
+                                    <h5 class="card-header border-0">Tài khoản ngân hàng</h5>
+                                    <div class="card-body">
+                                        <table>
+                                            <tbody>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Tên ngân hàng</label>
+                                                    </td>
+                                                    <td colspan="1" style="width: 100%;vertical-align: initial;">
+                                                        <span>{{agentObj?.bank}}</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Chi nhánh</label>
+                                                    </td>
+                                                    <td colspan="1" style="width: 100%;vertical-align: initial;">
+                                                        <span>{{agentObj?.bankBranch}}</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Số tài khoản</label>
+                                                    </td>
+                                                    <td colspan="1" style="width: 100%;vertical-align: initial;">
+                                                        <span>{{agentObj?.accountNumber}}</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Chủ tài khoản</label>
+                                                    </td>
+                                                    <td colspan="1" style="width: 100%;vertical-align: initial;">
+                                                        <span>{{agentObj?.accountHolder}}</span>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
+                                <div class="card border-light mb-3 border-0 mr-2">
+                                    <h5 class="card-header border-0">Hoa hồng giới thiệu</h5>
+                                    <div class="card-body">
+                                        <table>
+                                            <tbody>
+                                                <tr>
+                                                    <td colspan="1" class="o_td_label">
+                                                        <label class="o_form_label">Bảng hoa hồng</label>
+                                                    </td>
+                                                    <td colspan="1" style="width: 100%;vertical-align: initial;">
+                                                        <span>{{agentObj?.commission?.name}}</span>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
