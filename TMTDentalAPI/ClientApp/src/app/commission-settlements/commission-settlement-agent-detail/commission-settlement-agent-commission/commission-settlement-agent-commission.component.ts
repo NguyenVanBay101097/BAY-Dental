@@ -64,7 +64,6 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
   }
 
   loadDataFromApi() {
-    this.loading = true;
     var val = new CommissionSettlementFilterReport();
     // val.offset = this.skip;
     // val.limit = 0;
@@ -77,10 +76,8 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
     this.commissionSettlementsService.getReportDetail(val).subscribe((res: any) => {
       this.items = res.items;
       this.loadItems(this.items);
-      this.loading = false;
     }, err => {
       console.log(err);
-      this.loading = false;
     });
   }
 
@@ -150,10 +147,9 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
     val.offset = this.skip;
     val.search = this.search || '';
     val.agentId = this.agentId ? this.agentId : '';
-    // val.commissionType = this.commissionType ? this.commissionType : '';
     val.groupBy = 'agent';
-    this.commissionSettlementsService.excelCommissionDetailExport(val).subscribe((res: any) => {
-      let filename = "Hoa hồng người giới thiệu";
+    this.commissionSettlementsService.exportExcelCommissionItemDetail(val).subscribe((res: any) => {
+      let filename = "HoaHongNguoiGioiThieu";
       let newBlob = new Blob([res], {
         type:
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

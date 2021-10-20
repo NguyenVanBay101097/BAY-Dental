@@ -201,6 +201,13 @@ namespace TMTDentalAPI.Controllers
             {
                 var worksheet = package.Workbook.Worksheets.Add(sheetName);
 
+                worksheet.Cells["A1:G1"].Value = data.Items.ToArray()[0].Name;
+                worksheet.Cells["A1:G1"].Style.Font.Size = 14;
+                //worksheet.Cells["A1:G1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
+                worksheet.Cells["A1:G1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells["A1:G1"].Merge = true;
+                worksheet.Cells["A1:G1"].Style.Font.Bold = true;
+
                 worksheet.Cells[3, 1].Value = "Ngày thanh toán";
                 worksheet.Cells[3, 2].Value = "Số phiếu";
                 worksheet.Cells[3, 3].Value = "Khách hàng";
@@ -208,6 +215,13 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[3, 5].Value = "Lợi nhuận tính hoa hồng";
                 worksheet.Cells[3, 6].Value = "% Hoa hồng";
                 worksheet.Cells[3, 7].Value = "Tiền hoa hồng";
+                worksheet.Cells[3, 1].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                worksheet.Cells[3, 2].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                worksheet.Cells[3, 3].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                worksheet.Cells[3, 4].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                worksheet.Cells[3, 5].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                worksheet.Cells[3, 6].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                worksheet.Cells[3, 7].Style.Border.BorderAround(ExcelBorderStyle.Thin);
 
                 worksheet.Cells["A3:G3"].Style.Font.Bold = true;
                 worksheet.Cells["A3:G3"].Style.Fill.PatternType = ExcelFillStyle.Solid;
@@ -228,6 +242,14 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 6].Style.Numberformat.Format = "#0\\%";
                     worksheet.Cells[row, 7].Value = item.Amount;
                     worksheet.Cells[row, 7].Style.Numberformat.Format = "#,###";
+                    worksheet.Cells[row, 1].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 2].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 3].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 4].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 5].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 6].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 7].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+
 
                     row++;
                 }

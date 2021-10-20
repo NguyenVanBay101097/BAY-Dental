@@ -95,4 +95,8 @@ export class CommissionSettlementsService {
   excelCommissionDetailExport(val) {
     return this.http.get(this.baseApi + this.apiUrl + '/DetailExportExcel', { params: new HttpParams({fromObject: val}), responseType: 'blob' });
   }
+
+  exportExcelCommissionItemDetail(val) {
+    return this.http.get(this.baseApi + this.apiUrl + '/ItemDetailExportExcel', { params: new HttpParams({fromObject: val}), responseType: 'blob' });
+  }
 }

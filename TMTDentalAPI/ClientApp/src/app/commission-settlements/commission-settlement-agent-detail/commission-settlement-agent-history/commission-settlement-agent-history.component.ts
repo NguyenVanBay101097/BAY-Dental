@@ -82,7 +82,7 @@ export class CommissionSettlementAgentHistoryComponent implements OnInit {
     });
   }
 
-  printItem(item: any){
+  printItem(item: any) {
     this.phieuThuChiService.getPrint2(item.id).subscribe((data: any) => {
       this.printService.printHtml(data.html);
     });
@@ -100,12 +100,37 @@ export class CommissionSettlementAgentHistoryComponent implements OnInit {
     this.limit = event.take;
     // this.loadDataFromApi();
   }
-  exportExcelFile() { }
 
-  getState(val){
+  exportExcelFile() {
+    var val = new PhieuThuChiPaged();
+    val.limit = this.limit;
+    val.offset = this.skip;
+    val.agentId = this.agentId;
+    val.accountType = 'commission';
+    val.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
+    val.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
+
+    this.phieuThuChiService.exportExcelCommissionAgentFile(val).subscribe((res: any) => {
+      let filename = "LichSuChiHoaHong";
+      let newBlob = new Blob([res], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    })
+  }
+
+  getState(val) {
     switch (val) {
       case "cancel":
-        return 'Hủy';         
+        return 'Hủy';
       default:
         return 'Đã thanh toán';
     }
