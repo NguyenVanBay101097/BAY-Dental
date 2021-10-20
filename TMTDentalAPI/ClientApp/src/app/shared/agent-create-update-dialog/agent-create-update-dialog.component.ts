@@ -119,9 +119,20 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
     //     this.customerCbx.loading = false;
     //   }
     // )
+
+    if (this.employeeCbx) {
+      this.employeeCbx.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => this.employeeCbx.loading = true),
+        switchMap(val => this.searchEmloyee(val))
+      ).subscribe((rs: any) => {
+        this.employeeSimpleFilter = rs;
+        console.log(rs);
+        this.employeeCbx.loading = false;
+      })
+    }
   }
 
-  // ngân hàng
   loadListBank() {
     this.searchBank().subscribe((result: any) => {
       this.listBank = _.unionBy(this.listBank, result, 'id');
@@ -136,50 +147,35 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
     return this.resBankService.getAutocomplete(val);
   }
 
-  // loadListCustomer() {
-  //   this.searchBank().subscribe((result: any) => {
-  //     this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, result, 'id');
-  //   })
-  // }
-
-  // searchCustomer(q?: string) {
-  //   let val = new BankPaged();
-  //   val.limit = 20;
-  //   val.offset = 0;
-  //   val.search = q || '';
-  //   return this.bankService.getAutocomplete(val);
-  // }
-
   getCustomerList() {
-    var partnerPaged = new PartnerPaged();
-    partnerPaged.employee = false;
-    partnerPaged.customer = true;
-    partnerPaged.supplier = false;
-    partnerPaged.limit = 20;
-    partnerPaged.offset = 0;
-    this.partnerService.autocompletePartnerInfo(partnerPaged).subscribe((rs: any) => {
+    this.searchCustomers().subscribe((rs: any) => {
       this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, rs, 'id');
     });
   }
 
-  // khách hàng
-  searchCustomers(search) {
-    var partnerPaged = new PartnerPaged();
-    partnerPaged.customer = true;
-    if (search) {
-      partnerPaged.search = search.toLowerCase();
-    }
-
-    return this.partnerService.autocomplete2(partnerPaged);
+  searchCustomers(q?: string) {
+    var val = new PartnerPaged();
+    val.employee = false;
+    val.customer = true;
+    val.supplier = false;
+    val.limit = 20;
+    val.offset = 0;
+    val.search = q || '';
+    return this.partnerService.autocompletePartnerInfo(val);
   }
 
   getEmployeesList() {
+    this.searchEmloyee().subscribe((rs: any) => {
+      this.employeeSimpleFilter = rs;
+    });
+  }
+
+  searchEmloyee(q?: string) {
     var empPn = new EmployeePaged();
     empPn.limit = 20;
     empPn.offset = 0;
-    this.employeeService.getAutocompleteInfos(empPn).subscribe((rs: any) => {
-      this.employeeSimpleFilter = rs;
-    });
+    empPn.search = q || '';
+    return this.employeeService.getAutocompleteInfos(empPn);
   }
 
   loadListcommissionAgents() {
@@ -305,7 +301,7 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
     }
   }
 
-  resetFormGroup(){
+  resetFormGroup() {
     let defaultFormGroupData = {
       name: '',
       gender: "male",
