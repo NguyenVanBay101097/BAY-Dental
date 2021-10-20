@@ -24,5 +24,7 @@ namespace Infrastructure.Services
 
         Task<AgentDisplay> GetDisplayById(Guid id);
 
+        Task<PagedResult2<AgentInfo>> GetAgentPagedResult(AgentPaged val);
+
     }
 }

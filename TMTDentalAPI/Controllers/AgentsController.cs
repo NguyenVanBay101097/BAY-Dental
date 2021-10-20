@@ -34,7 +34,7 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Catalog.Agent.Read")]
         public async Task<IActionResult> Get([FromQuery] AgentPaged val)
         {
-            var result = await _agentService.GetPagedResultAsync(val);
+            var result = await _agentService.GetAgentPagedResult(val);
             return Ok(result);
         }
 
