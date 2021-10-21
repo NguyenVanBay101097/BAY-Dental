@@ -28,7 +28,7 @@ export class ServiceCardTypeListComponent implements OnInit {
   search: string;
   searchUpdate = new Subject<string>();
   title = 'Loại thẻ tiền mặt';
-
+  cardType = 'preferential_card';
   // permission 
   canServiceCardTypeCreate = this.checkPermissionService.check(["ServiceCard.Type.Create"]);
   canServiceCardTypeUpdate = this.checkPermissionService.check(["ServiceCard.Type.Update"]);
