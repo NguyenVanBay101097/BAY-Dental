@@ -566,6 +566,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new LaboWarrantyProfile());
                 mc.AddProfile(new PrintTemplateConfigProfile());
                 mc.AddProfile(new PrintTemplateProfile());
+                mc.AddProfile(new ProductPricelistItemProfile());
             };
 
             #endregion
@@ -585,7 +586,7 @@ namespace TMTDentalAPI
                 });
             });
             services.AddCors();
-            services.AddMemoryCache();          
+            services.AddMemoryCache();
 
             // Add Hangfire services.
             services.AddHangfire(configuration => configuration

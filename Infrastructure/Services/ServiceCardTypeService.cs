@@ -113,5 +113,33 @@ namespace Infrastructure.Services
             await productObj.CreateAsync(product);
             return product;
         }
+
+        public void SaveProductPricelistItem(ServiceCardType self, IEnumerable<ProductPricelistItem> listItems)
+        {
+            if (self.ProductPricelist == null)
+            {
+                var prList = new ProductPricelist()
+                {
+                    CompanyId = self.CompanyId,
+                    Name = "Bảng giá của ưu đãi " + self.Name
+                };
+                self.ProductPricelist = prList;
+            }
+
+            //var lineToRemoves = new List<ProductPricelistItem>();
+            //lineToRemoves.AddRange(self.ProductPricelist.Items.Where(x => listItems.All(z => z.Id != x.Id)));
+            ////check delete item
+            //foreach (var line in lineToRemoves)
+            //{
+            //    self.ProductPricelist.Items.Remove(line);
+            //}
+
+            self.ProductPricelist.Items.Clear();
+            foreach (var item in listItems)
+            {
+                item.CompanyId = self.ProductPricelist.CompanyId;
+                self.ProductPricelist.Items.Add(item);
+            }
+        }
     }
 }
