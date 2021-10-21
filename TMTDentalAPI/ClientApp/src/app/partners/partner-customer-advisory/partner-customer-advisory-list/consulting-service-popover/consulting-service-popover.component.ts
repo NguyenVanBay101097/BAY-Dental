@@ -17,6 +17,7 @@ export class ConsultingServicePopoverComponent implements OnInit {
   @Output() onSave = new EventEmitter();
   @ViewChild('popOver', { static: true }) public popover: any;
   @ViewChild('multiSelect', { static: true }) multiSelect: MultiSelectComponent;
+  tmpTags = [];
   constructor(
     private productService: ProductService
   ) { }
@@ -36,6 +37,7 @@ export class ConsultingServicePopoverComponent implements OnInit {
     if (popover.isOpen()) {
       popover.close();
     } else {
+      this.tmpTags = this.tags.slice();
       this.loadPopOver();
       popover.open({ mytags });
     }
@@ -55,9 +57,10 @@ export class ConsultingServicePopoverComponent implements OnInit {
   loadPopOver(q?: string) {
     this.getPageProduct(q);
   }
-  update(tags) {
+
+  update() {
     this.popover.close();
-    this.onSave.emit(tags);
+    this.onSave.emit(this.tmpTags);
   }
 
 }
