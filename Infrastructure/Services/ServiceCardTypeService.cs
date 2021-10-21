@@ -141,5 +141,11 @@ namespace Infrastructure.Services
                 self.ProductPricelist.Items.Add(item);
             }
         }
+
+        public async Task<IEnumerable<ServiceCardTypeSimple>> AutoCompleteSearch(string search)
+        {
+            var res = await SearchQuery(x => x.Name.Contains(search)).ToListAsync();
+            return _mapper.Map<IEnumerable<ServiceCardTypeSimple>>(res);
+        }
     }
 }

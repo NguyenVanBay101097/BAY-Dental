@@ -77,10 +77,10 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "ServiceCard.Type.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
-            var type = await _cardTypeService.GetByIdAsync(id);
+            var type = await _cardTypeService.SearchQuery(x => x.Id == id).Include(x => x.ProductPricelist.Items).FirstOrDefaultAsync();
             if (type == null)
                 return NotFound();
-
+            await _productPricelistService.DeleteAsync(type.ProductPricelist);
             await _cardTypeService.DeleteAsync(type);
 
             return NoContent();
@@ -119,6 +119,13 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork.Commit();
 
             return NoContent();
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> AutoComplete(string search)
+        {
+            var res = await _cardTypeService.AutoCompleteSearch(search);
+            return Ok(res);
         }
 
     }

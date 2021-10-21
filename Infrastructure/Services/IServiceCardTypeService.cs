@@ -15,5 +15,6 @@ namespace Infrastructure.Services
         Task UpdateUI(Guid id, ServiceCardTypeSave val);
         DateTime GetPeriodEndDate(ServiceCardType self, DateTime? dStart = null);
         void SaveProductPricelistItem(ServiceCardType self, IEnumerable<ProductPricelistItem> listItems);
+        Task<IEnumerable<ServiceCardTypeSimple>> AutoCompleteSearch(string search);
     }
 }
