@@ -53,31 +53,41 @@
                 </div>
                 <div class="d-flex justify-content-between mb-2">
                     <app-service-list-search-dropdown (onSelectService)="addLine($event)"></app-service-list-search-dropdown>
-                    <div>
+                    <div style="margin-right: 10.5px;">
                         <button class="btn btn-primary">Áp dụng cho toàn bộ</button>
                     </div>
                 </div>
-                <div>
+                <div *ngIf="categories.length > 0">
                     <table class="table">
                         <tr>
                             <th>Tên dịch vụ</th>
                             <th>Giá bán</th>
                             <th class="text-center">Ưu đãi theo thẻ</th>
                         </tr>
-                        <tr>
-                            <td class="w-50">Tên dịch vụ</td>
-                            <td class="w-20">1.000.000</td>
-                            <td class="w-30 text-right">
-                                <kendo-numerictextbox [min]="0" [format]="'n0'" class="mr-2">
-                                </kendo-numerictextbox>
-                                <input type="checkbox" class="btn-check" id="btn-check-1" checked autocomplete="off" name="type">
-                                <label class="btn btn-outline-primary mb-0 mr-2" [ngClass]="{'btn-primary': saleOffType=='percentage'}" 
-                                for="btn-check-1" value="percentage">%</label>
-                                <input type="checkbox" class="btn-check" id="btn-check-2" checked autocomplete="off" name="type">
-                                <label class="btn btn-outline-primary mb-0 mr-2" [ngClass]="{'btn-primary': saleOffType=='fixed_amount'}"
-                                for="btn-check-2" value="fixed_amount">VNĐ</label>
-                            </td>
-                        </tr>
+                        <ng-container *ngFor="let categ of categories">
+                            <tr>
+                                <td colspan="2" class="o_td_label">
+                                    {{categ[0].categName}}
+                                </td>
+                                <td class="text-right">
+                                    <button class="btn btn-primary">Áp dụng cho cả nhóm</button>
+                                </td>
+                            </tr>
+                            <tr *ngFor="let product of categ[0].products">
+                                <td class="w-50">{{product.name}}</td>
+                                <td class="w-20">{{product.listPrice | number}}</td>
+                                <td class="w-30 text-right">
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'" class="mr-2" style="width:70%">
+                                    </kendo-numerictextbox>
+                                    <input type="checkbox" class="btn-check" id="btn-check-1" checked autocomplete="off" name="type">
+                                    <label class="btn btn-outline-primary mb-0 mr-2" [ngClass]="{'btn-primary': saleOffType=='percentage'}" 
+                                    for="btn-check-1" value="percentage">%</label>
+                                    <input type="checkbox" class="btn-check" id="btn-check-2" checked autocomplete="off" name="type">
+                                    <label class="btn btn-outline-primary mb-0 mr-2" [ngClass]="{'btn-primary': saleOffType=='fixed_amount'}"
+                                    for="btn-check-2" value="fixed_amount">VNĐ</label>
+                                </td>
+                            </tr>
+                        </ng-container>
                     </table>
                 </div>
             </div>

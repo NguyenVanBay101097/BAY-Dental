@@ -13,6 +13,8 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
   search: string = '';
   searchUpdate = new Subject<string>();
   saleOffType: string = 'percentage';
+  products: any[] = [];
+  categories: any[] = [];
   constructor() { }
 
   ngOnInit(): void {
@@ -20,7 +22,25 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
 
   addLine(event){
     console.log(event);
+    this.products.push(event);
+    this.groupbyProduct();
+    console.log(this.categories);
     
+  }
+
+  groupbyProduct() {
+    let data = null;
+    data = this.products.reduce((r, a) => {
+      const categId = a.categId;
+      r[categId] = r[categId] || {categName:'',products:[]};
+      // r[categId].push(a);
+      r[categId].categName = a.categName;
+      r[categId].products.push({id: a.id, name: a.name, listPrice: a.listPrice})
+      return r;
+    }, Object.create(null));  
+    // return data;
+    // var result = Object.keys(obj).map((key) => [Number(key), obj[key]]);
+    this.categories = Object.keys(data).map((key)=> [data[key]]);    
   }
 
 }

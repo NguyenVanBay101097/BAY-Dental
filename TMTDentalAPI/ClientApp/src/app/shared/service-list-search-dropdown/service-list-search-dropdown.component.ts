@@ -1,4 +1,5 @@
 import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
+import { categories } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import { identity } from 'lodash';
 import { combineLatest, forkJoin, fromEvent, merge, Observable, of, OperatorFunction, Subject, throwError } from 'rxjs';
 import { catchError, debounceTime, distinctUntilChanged, filter, map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
@@ -100,7 +101,9 @@ export class ServiceListSearchDropdownComponent implements OnInit {
     this.onSelectService.emit({
       id: item.id,
       name: item.name,
-      listPrice: item.listPrice
+      listPrice: item.listPrice,
+      categName: item.categ.name,
+      categId: item.categ.id
     });
 
     this.model = "";
