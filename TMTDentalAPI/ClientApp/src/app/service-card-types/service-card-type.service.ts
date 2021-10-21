@@ -6,6 +6,14 @@ export class ServiceCardTypeService {
     apiUrl = 'api/ServiceCardTypes';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
+    getPreferentialCards(val: any){
+        
+    }
+
+    getMemberCards(val: any){
+        
+    }
+
     getPaged(val: any) {
         return this.http.get(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
     }

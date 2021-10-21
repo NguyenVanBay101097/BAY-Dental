@@ -259,6 +259,11 @@ const routes: Routes = [
         canActivate: [AuthGuard]
       },
       {
+        path: 'card-types',
+        loadChildren: () => import('./service-card-types/service-card-types.module').then(m => m.ServiceCardTypesModule),
+        canActivate: [AuthGuard]
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full',
