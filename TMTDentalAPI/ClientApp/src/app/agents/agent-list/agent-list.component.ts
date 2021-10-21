@@ -122,7 +122,7 @@ export class AgentListComponent implements OnInit {
     modalRef.componentInstance.accountType = 'commission';
     modalRef.componentInstance.agentId = item.id;
     modalRef.componentInstance.partnerId = item.partnerId;
-    modalRef.componentInstance.amountBalanceTotal = item.amount;
+    modalRef.componentInstance.amountBalanceTotal = item.amount - item.amountCommission;
     modalRef.result.then(() => {
       this.notifyService.notify('success', 'Chi hoa hồng thành công');
       this.loadDataFromApi();
