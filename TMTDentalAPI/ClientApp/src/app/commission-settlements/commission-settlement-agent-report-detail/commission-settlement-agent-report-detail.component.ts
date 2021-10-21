@@ -139,7 +139,6 @@ export class CommissionSettlementAgentReportDetailComponent implements OnInit {
   }
 
   exportExcel(){
-    debugger;
     var val = new CommissionSettlementFilterReport();
     val.offset = this.skip;
     val.limit = this.limit;
