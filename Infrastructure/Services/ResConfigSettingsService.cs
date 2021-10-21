@@ -481,10 +481,18 @@ namespace Infrastructure.Services
 
                 if (field == "CompanySharePartner")
                 {
+                    var rules = new List<IRRule>();
                     var value = Convert.ToBoolean(self.GetType().GetProperty(field).GetValue(self, null));
+                    
                     var partnerRule = await modelDataObj.GetRef<IRRule>("base.res_partner_rule");
                     partnerRule.Active = !value;
-                    await ruleObj.UpdateAsync(partnerRule);
+                    rules.Add(partnerRule);
+
+                    var agentRule = await modelDataObj.GetRef<IRRule>("base.agent_comp_rule");
+                    agentRule.Active = !value;
+                    rules.Add(agentRule);
+
+                    await ruleObj.UpdateAsync(rules);
                 }
             }
         }
