@@ -234,7 +234,8 @@ namespace Infrastructure.Services
             var dotkhams = await SearchQuery(x => x.SaleOrderId == saleOrderId)
                 .Include(x => x.Doctor)
                 .Include(x => x.Assistant)
-                .Include(x => x.Lines).ThenInclude(s => s.Product)
+                .Include(x => x.Lines).ThenInclude(s => s.Product).ThenInclude(x=>x.Categ)
+                .Include(x => x.Lines).ThenInclude(s => s.Product).ThenInclude(x => x.UOM)
                 .Include(x => x.Lines).ThenInclude(s => s.ToothRels).ThenInclude(x => x.Tooth)
                 .ToListAsync();
 
