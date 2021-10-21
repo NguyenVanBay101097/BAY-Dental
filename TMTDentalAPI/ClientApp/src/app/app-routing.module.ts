@@ -14,6 +14,11 @@ const routes: Routes = [
     component: AppHomeComponent,
     children: [
       {
+        path: 'service-card',
+        loadChildren: () => import('./service-card-cards/service-card-cards.module').then(m => m.ServiceCardCardsModule),
+        canActivate: [AuthGuard]
+      },
+      {
         path: 'agents',
         loadChildren: () => import('./agents/agents.module').then(m => m.AgentsModule),
         canActivate: [AuthGuard],
@@ -299,7 +304,7 @@ const routes: Routes = [
         path: 'partner-categories',
         loadChildren: () => import('./partner-categories/partner-categories.module').then(m => m.PartnerCategoriesModule),
         canActivate: [AuthGuard]
-      }
+      }      
     ]
   },
 ];
