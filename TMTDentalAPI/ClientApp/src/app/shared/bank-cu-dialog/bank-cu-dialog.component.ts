@@ -37,7 +37,7 @@ export class BankCuDialogComponent implements OnInit {
 
     var val = this.formGroup.value;
     this.resBankService.createUpdate(val, this.id).subscribe(res => {
-      this.activeModal.close();
+      this.activeModal.close(res);
     })
 
   }

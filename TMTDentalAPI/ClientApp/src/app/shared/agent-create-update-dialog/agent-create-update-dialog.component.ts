@@ -255,6 +255,7 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
     const modalRef = this.modalService.open(BankCuDialogComponent, { scrollable: true, windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm ngân hàng';
     modalRef.result.then(result => {
+      this.formGroup.patchValue({ bank: result });
       this.notifyService.notify('success', 'Lưu thành công');
       this.loadListBank();
     })
