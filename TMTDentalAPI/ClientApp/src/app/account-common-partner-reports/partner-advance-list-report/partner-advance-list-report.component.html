@@ -30,20 +30,26 @@
                     </div>
                     <div class="o_aggregate_col o_group_col_3">
                         <div class="o_aggregate">
-                            <label class="font-weight-600">Tiền phát sinh</label>
+                            <label class="font-weight-600">Đã đóng</label>
                             <div class="o_value text-primary">{{sum('debit') | number }}</div>
                         </div>
                     </div>
                     <div class="o_aggregate_col o_group_col_3">
                         <div class="o_aggregate">
-                            <label class="font-weight-600">Tiền thanh toán</label>
+                            <label class="font-weight-600">Đã dùng</label>
                             <div class="o_value text-success">{{sum('credit') | number }}</div>
                         </div>
                     </div>
                     <div class="o_aggregate_col o_group_col_3">
-                        <div class="o_aggregate text-danger">
+                        <div class="o_aggregate">
+                            <label class="font-weight-600">Đã hoàn</label>
+                            <div class="o_value text-warning">{{sum('refund') | number }}</div>
+                        </div>
+                    </div>
+                    <div class="o_aggregate_col o_group_col_3">
+                        <div class="o_aggregate">
                             <label class="font-weight-600">Dư cuối kỳ</label>
-                            <div class="o_value text-dnager">{{sum('end') | number }}</div>
+                            <div class="o_value text-danger">{{sum('end') | number }}</div>
                         </div>
                     </div>
                 </div>
@@ -67,17 +73,23 @@
                             {{dataItem.begin | number}}
                          </ng-template>
                     </kendo-grid-column>
-                    <kendo-grid-column format="{0:n0}" [headerClass]="'text-right'" class="text-right" title="Phát sinh"
+                    <kendo-grid-column format="{0:n0}" [headerClass]="'text-right'" class="text-right" title="Đã đóng"
                         width="150">
                         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                             {{dataItem.debit | number}}
                          </ng-template>
                     </kendo-grid-column>
                     <kendo-grid-column format="{0:n0}" [headerClass]="'text-right'" class="text-right"
-                        title="Thanh toán" width="150">
+                        title="Đã dùng" width="150">
                         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                             {{dataItem.credit | number}}
                          </ng-template>
+                    </kendo-grid-column>
+                    <kendo-grid-column format="{0:n0}" [headerClass]="'text-right'" class="text-right"
+                        title="Đã hoàn" width="150">
+                        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                            {{dataItem.refund | number}}
+                        </ng-template>
                     </kendo-grid-column>
                     <kendo-grid-column format="{0:n0}" [headerClass]="'text-right'" class="text-right"
                         title="Dư cuối kỳ" footerClass="text-right font-weight-600" width="150">

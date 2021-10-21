@@ -80,7 +80,10 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Basic.SaleOrder.Read")]
         public async Task<IActionResult> GetBasic(Guid id)
         {
-            var order = await _saleOrderService.SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            var order = await _saleOrderService.SearchQuery(x => x.Id == id)
+                .Include(x => x.Partner)
+                .FirstOrDefaultAsync();
+                
             return Ok(_mapper.Map<SaleOrderBasic>(order));
         }
 
