@@ -213,7 +213,7 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.Name.Contains(val.Search) ||
                 x.Partner.Name.Contains(val.Search) ||
                 x.Partner.NameNoSign.Contains(val.Search) ||
-                x.Partner.Phone.Contains(val.Search)));
+                x.Partner.Phone.Contains(val.Search) || x.CardType.Name.Contains(val.Search)));
 
             if (val.OrderId.HasValue)
                 spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.SaleLine.OrderId == val.OrderId.Value));
