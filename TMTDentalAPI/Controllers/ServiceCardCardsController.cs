@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Entities;
 using AutoMapper;
 using Infrastructure.Services;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,22 +23,36 @@ namespace TMTDentalAPI.Controllers
         private readonly IServiceCardCardService _cardCardService;
         private readonly ISaleOrderServiceCardCardRelService _orderCardRelService;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWorkAsync _unitOfWork;
 
         public ServiceCardCardsController(IServiceCardCardService cardCardService,
-            ISaleOrderServiceCardCardRelService orderCardRelService,
+            ISaleOrderServiceCardCardRelService orderCardRelService, IUnitOfWorkAsync unitOfWork,
             IMapper mapper)
         {
             _cardCardService = cardCardService;
             _orderCardRelService = orderCardRelService;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
         [CheckAccess(Actions = "ServiceCard.Card.Read")]
-        public async Task<IActionResult> Get([FromQuery]ServiceCardCardPaged val)
+        public async Task<IActionResult> Get([FromQuery] ServiceCardCardPaged val)
         {
             var res = await _cardCardService.GetPagedResultAsync(val);
             return Ok(res);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(ServiceCardCardSave val)
+        {
+            var entity = _mapper.Map<ServiceCardCard>(val);
+            await _unitOfWork.BeginTransactionAsync();
+            await _cardCardService.CreateAsync(entity);
+            _unitOfWork.Commit();
+
+            var basic = _mapper.Map<ServiceCardCardDisplay>(entity);
+            return Ok(basic);
         }
 
         [HttpGet("{id}/[action]")]

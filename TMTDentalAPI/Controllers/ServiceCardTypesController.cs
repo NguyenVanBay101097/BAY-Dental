@@ -74,7 +74,6 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        [CheckAccess(Actions = "ServiceCard.Type.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var type = await _cardTypeService.SearchQuery(x => x.Id == id).Include(x => x.ProductPricelist.Items).FirstOrDefaultAsync();
