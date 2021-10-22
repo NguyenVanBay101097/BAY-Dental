@@ -101,9 +101,9 @@ export class AppHomeComponent implements OnInit {
       groups: 'sale.group_sale_coupon_promotion',
       children: [
         { name: 'Chương trình khuyến mãi', url: '/programs/promotion-programs', permissions: ['SaleCoupon.SaleCouponProgram.Read'] },
-        { name: 'Quản lý thẻ', url: '/service-card/preferential' },
+        { name: 'Quản lý thẻ', url: '/service-card/preferential', permissions: ['ServiceCard.Card.Read'] },
       ],
-      permissions: ['SaleCoupon.SaleCouponProgram.Read']
+      permissions: ['SaleCoupon.SaleCouponProgram.Read', 'ServiceCard.Card.Read']
     },
     {
       name: 'SMS Brandname',

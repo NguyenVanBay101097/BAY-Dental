@@ -128,6 +128,8 @@
     <Compile Remove="Data\Migrations\20210603110234_add_accountfinancialrevenuereport.Designer.cs" />
     <Compile Remove="Data\Migrations\20210624153241_thuong_AddColumnAccessTokenSessionId_SmsAccount.cs" />
     <Compile Remove="Data\Migrations\20210624153241_thuong_AddColumnAccessTokenSessionId_SmsAccount.Designer.cs" />
+    <Compile Remove="Data\Migrations\20211021084308_edit_service_card.cs" />
+    <Compile Remove="Data\Migrations\20211021084308_edit_service_card.Designer.cs" />
     <Compile Remove="TenantData\Migrations\20210128064223_AddAddressTenant.cs" />
     <Compile Remove="TenantData\Migrations\20210128064223_AddAddressTenant.Designer.cs" />
     <Compile Remove="Data\Migrations\20210127070036_bay_add_survey.cs" />

@@ -74,7 +74,6 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        [CheckAccess(Actions = "ServiceCard.Type.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var type = await _cardTypeService.SearchQuery(x => x.Id == id).Include(x => x.ProductPricelist.Items).FirstOrDefaultAsync();
@@ -114,7 +113,7 @@ namespace TMTDentalAPI.Controllers
             var serviceItems = _mapper.Map<IEnumerable<ProductPricelistItem>>(val.ProductPricelistItems);
             //tạo pricelist
             _cardTypeService.SaveProductPricelistItem(entity, serviceItems);
-            //tạo loại thẻ
+            //update loại thẻ
             await _cardTypeService.UpdateAsync(entity);
             _unitOfWork.Commit();
 

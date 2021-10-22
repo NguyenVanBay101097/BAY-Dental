@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    [Migration("20211021084308_edit_service_card")]
-    partial class edit_service_card
+    [Migration("20211022024032_edit_servicecard")]
+    partial class edit_servicecard
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -8751,6 +8751,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("SaleOrderLineId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("ServiceCardCardId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
 
@@ -8766,6 +8769,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("SaleOrderId");
 
                     b.HasIndex("SaleOrderLineId");
+
+                    b.HasIndex("ServiceCardCardId");
 
                     b.HasIndex("WriteById");
 
@@ -15831,6 +15836,10 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.SaleOrderLine", "SaleOrderLine")
                         .WithMany("Promotions")
                         .HasForeignKey("SaleOrderLineId");
+
+                    b.HasOne("ApplicationCore.Entities.ServiceCardCard", "ServiceCardCard")
+                        .WithMany()
+                        .HasForeignKey("ServiceCardCardId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()

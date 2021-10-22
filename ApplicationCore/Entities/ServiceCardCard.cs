@@ -41,7 +41,6 @@ namespace ApplicationCore.Entities
 
         /// <summary>
         /// draft: Nháp
-        /// confirmed: Chờ cấp thẻ
         /// in_use: Đang sử dụng
         /// locked: Đã khóa
         /// cancelled: Đã hủy

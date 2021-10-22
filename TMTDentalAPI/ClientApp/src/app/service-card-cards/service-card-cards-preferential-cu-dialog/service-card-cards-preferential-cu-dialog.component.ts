@@ -1,12 +1,14 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import * as moment from 'moment';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { NotifyService } from 'src/app/shared/services/notify.service';
+import { ServiceCardCardService } from '../service-card-card.service';
 
 @Component({
   selector: 'app-service-card-cards-preferential-cu-dialog',
@@ -15,6 +17,7 @@ import { NotifyService } from 'src/app/shared/services/notify.service';
 })
 export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
   @Input() title: string;
+  @Input() id: string;
   @ViewChild('customerCbx', { static: true }) customerCbx: ComboBoxComponent;
 
   formGroup: FormGroup;
@@ -30,18 +33,33 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
     private modalService: NgbModal,
     private notifyService: NotifyService,
     private partnerService: PartnerService,
+    private serviceCardsService: ServiceCardCardService,
   ) { }
 
   ngOnInit(): void {
     this.formGroup = this.fb.group({
-      name: '',
+      barcode: ['', Validators.required],
       activatedDateObj: null,
       expiredDateObj: null,
       partner: null,
       cardType: null,
       state: 'draft',
-    })
+    });
+    if (this.id) {
+      this.formGroup.disable();
+    }
     this.loadCustomers();
+    this.customerCbx.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.customerCbx.loading = true)),
+        switchMap((value) => this.searchCustomers(value))
+      )
+      .subscribe((result) => {
+        this.customerSimpleFilter = result;
+        this.customerCbx.loading = false;
+      });
   }
 
   setValueFC(key: string, value: any) {
@@ -64,7 +82,6 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
 
   loadCustomers() {
     this.searchCustomers().subscribe((res: any) => {
-      console.log(res);
       this.customerSimpleFilter = res;
     })
   }
@@ -75,18 +92,27 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
     if (this.formGroup.invalid) {
       return false;
     }
-
+    
     let val = this.formGroup.value;
-    val.activatedDate = val.activatedDateObj ? moment(val.activatedDateObj).format('YYYY-MM-DD') : '';
-    val.expiredDate = val.expiredDateObj ? moment(val.expiredDateObj).format('YYYY-MM-DD') : '';
+    // val.activatedDate = val.activatedDateObj ? moment(val.activatedDateObj).format('YYYY-MM-DD') : '';
+    // val.expiredDate = val.expiredDateObj ? moment(val.expiredDateObj).format('YYYY-MM-DD') : '';
     val.partnerId = val.partner ? val.partner.id : '';
     val.cardTypeId = val.cardType ? val.cardType.id : '';
     console.log(val);
 
-    // this.notifyService.notify('success', 'Lưu thành công');
+    if (this.id) {
+      this.serviceCardsService.update(this.id, val).subscribe((res: any) => {
+        this.activeModal.close(res);
+      }, (error) => { console.log(error) });
+    } else {
+      this.serviceCardsService.create(val).subscribe((res: any) => {
+        this.activeModal.close(res);
+      }, (error) => { console.log(error) });
+    }
+
   }
 
-  onConfirm() {
+  actionActivate() {
 
   }
 
