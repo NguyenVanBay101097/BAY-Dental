@@ -131,51 +131,52 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        //[HttpPost("[action]")]
-        //[CheckAccess(Actions = "ServiceCard.Card.Read")]
-        //public async Task<IActionResult> ExportExcel(ServiceCardCardPaged val)
-        //{
-        //    var stream = new MemoryStream();
-        //    var paged = await _cardCardService.GetPagedResultAsync(val);
-        //    var sheetName = "Thẻ dịch vụ";
-        //    byte[] fileContent;
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ExportExcel(ServiceCardCardPaged val)
+        {
+            var stream = new MemoryStream();
+            var paged = await _cardCardService.GetPagedResultAsync(val);
+            var sheetName = "Thẻ ưu đãi dịch vụ";
+            byte[] fileContent;
 
-        //    using (var package = new ExcelPackage(stream))
-        //    {
-        //        var worksheet = package.Workbook.Worksheets.Add(sheetName);
+            using (var package = new ExcelPackage(stream))
+            {
+                var worksheet = package.Workbook.Worksheets.Add(sheetName);
 
-        //        worksheet.Cells[1, 1].Value = "Số thẻ";
-        //        worksheet.Cells[1, 2].Value = "Mã vạch";
-        //        worksheet.Cells[1, 3].Value = "Loại thẻ";
-        //        worksheet.Cells[1, 4].Value = "Ngày cấp";
-        //        worksheet.Cells[1, 5].Value = "Ngày hết hạn";
+                worksheet.Cells[1, 1].Value = "Hạng thẻ";
+                worksheet.Cells[1, 2].Value = "Họ tên";
+                worksheet.Cells[1, 3].Value = "Điện thoại";
+                worksheet.Cells[1, 4].Value = "Ngày áp dụng";
+                worksheet.Cells[1, 5].Value = "Ngày kích hoạt";
+                worksheet.Cells[1, 5].Value = "Trạng thái";
 
-        //        var row = 2;
-        //        foreach (var item in paged.Items)
-        //        {
-        //            worksheet.Cells[row, 1].Value = item.Name;
-        //            worksheet.Cells[row, 2].Value = item.Barcode;
-        //            worksheet.Cells[row, 3].Value = item.CardTypeName;
-        //            worksheet.Cells[row, 4].Value = item.ActivatedDate;
-        //            worksheet.Cells[row, 4].Style.Numberformat.Format = "dd-mm-yyyy";
+                var row = 2;
+                foreach (var item in paged.Items)
+                {
+                    worksheet.Cells[row, 1].Value = item.CardType.Name;
+                    worksheet.Cells[row, 2].Value = item.Partner?.Name;
+                    worksheet.Cells[row, 3].Value = item.Partner?.Phone;
+                    worksheet.Cells[row, 4].Value = item.ActivatedDate.HasValue ? $"{item.ActivatedDate.Value.ToString("dd/MM/yyyy")} - {item.ExpiredDate.Value.ToString("dd/MM/yyyy")}" : "";
 
-        //            worksheet.Cells[row, 5].Value = item.ExpiredDate;
-        //            worksheet.Cells[row, 5].Style.Numberformat.Format = "dd-mm-yyyy";
+                    worksheet.Cells[row, 5].Value = item.ActivatedDate;
+                    worksheet.Cells[row, 5].Style.Numberformat.Format = "dd/mm/yyyy";
 
-        //            row++;
-        //        }
+                    worksheet.Cells[row, 5].Value = item.StateDisplay;
 
-        //        worksheet.Cells.AutoFitColumns();
+                    row++;
+                }
 
-        //        package.Save();
+                worksheet.Cells.AutoFitColumns();
 
-        //        fileContent = stream.ToArray();
-        //    }
+                package.Save();
 
-        //    string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                fileContent = stream.ToArray();
+            }
 
-        //    return new FileContentResult(fileContent, mimeType);
-        //}
+            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+            return new FileContentResult(fileContent, mimeType);
+        }
 
         [HttpGet("[action]")]
         public async Task<IActionResult> CheckCode(string code)
