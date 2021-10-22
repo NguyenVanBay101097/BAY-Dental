@@ -96,10 +96,13 @@ export class AppHomeComponent implements OnInit {
       name: 'Sổ quỹ', icon: 'fas fa-wallet', url: '/cash-book', permissions: ['Account.Read']
     },
     {
-      name: 'Khuyến mãi',
+      name: 'Khuyến mãi & Thẻ ưu đãi',
       icon: 'fas fa-gift',
       groups: 'sale.group_sale_coupon_promotion',
-      url: '/programs/promotion-programs',
+      children: [
+        { name: 'Chương trình khuyến mãi', url: '/programs/promotion-programs', permissions: ['SaleCoupon.SaleCouponProgram.Read'] },
+        { name: 'Quản lý thẻ', url: '/service-card/preferential' },
+      ],
       permissions: ['SaleCoupon.SaleCouponProgram.Read']
     },
     {
