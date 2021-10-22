@@ -8749,6 +8749,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("SaleOrderLineId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("ServiceCardCardId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
 
@@ -8764,6 +8767,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("SaleOrderId");
 
                     b.HasIndex("SaleOrderLineId");
+
+                    b.HasIndex("ServiceCardCardId");
 
                     b.HasIndex("WriteById");
 
@@ -15829,6 +15834,10 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.SaleOrderLine", "SaleOrderLine")
                         .WithMany("Promotions")
                         .HasForeignKey("SaleOrderLineId");
+
+                    b.HasOne("ApplicationCore.Entities.ServiceCardCard", "ServiceCardCard")
+                        .WithMany()
+                        .HasForeignKey("ServiceCardCardId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
