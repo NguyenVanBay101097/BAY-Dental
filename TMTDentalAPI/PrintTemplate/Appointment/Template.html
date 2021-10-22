@@ -15,7 +15,7 @@
 <h3 style="text-align:center">PHIẾU HẸN</h3>
 
 <p style="text-align:center">
-    Ngày {{date.day}} tháng {{date.month}} năm {{date.year}}<br />
+    Ngày {{o.date_created.day}} tháng {{o.date_created.month}} năm {{o.date_created.year}}<br />
     <strong>Số: {{o.name}}</strong>
 </p>
 
@@ -44,11 +44,11 @@
     <tbody>
         <tr>
             <td style="width: 150px;"><strong>Ngày hẹn</strong></td>
-            <td><span style="color:#3498db;"><u><strong>{{o.date | date.to_string '%A, %d/%m/%Y'}}</strong></u></span></td>
+            <td><strong>{{o.date | date.to_string '%A, %d/%m/%Y'}}</strong></td>
         </tr>
         <tr>
             <td style="width: 150px;"><strong>Giờ hẹn</strong></td>
-            <td><span style="color:#3498db;"><u><strong>{{o.date | date.to_string '%R'}}</strong></u></span></td>
+            <td><strong>{{o.date | date.to_string '%R'}}</strong></td>
         </tr>
         <tr>
             <td style="width: 150px;"><strong>Loại khám</strong></td>
