@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -224,6 +225,43 @@ namespace Infrastructure.Services
             await UpdateAsync(self);
 
             return self;
+        }
+
+        public async Task<IEnumerable<ServiceCardCardResponse>> GetServiceCardCards(ServiceCardCardFilter val)
+        {
+            var today = DateTime.Today;
+            var productPriceListObj = GetService<IProductPricelistItemService>();
+            var query = SearchQuery();
+
+            if (val.PartnerId.HasValue)
+                query = query.Where(x => x.PartnerId == val.PartnerId);
+
+            if (val.ProductId.HasValue)
+            {
+                query = query.Where(x => x.CardType.ProductPricelist.Items.Any(s => s.ProductId == val.ProductId));
+
+                query = query.Where(x => x.ExpiredDate.HasValue && x.ActivatedDate.HasValue && x.ActivatedDate.Value.AbsoluteBeginOfDate() <= today && today <= x.ExpiredDate.Value.AbsoluteEndOfDate());
+            }
+
+            if (string.IsNullOrEmpty(val.State))
+                query = query.Where(x => x.State == val.State);
+
+            var items = await query.Include(x => x.CardType).ThenInclude(x => x.ProductPricelist).ThenInclude(x => x.Items).ToListAsync();
+
+            var res = _mapper.Map<IEnumerable<ServiceCardCardResponse>>(items);
+
+            if (val.ProductId.HasValue)
+            {
+                var pricelistItems = await productPriceListObj.SearchQuery(x => res.Select(x => x.CardTypeId).Distinct().Contains(x.CardTypeId.Value)).ToListAsync();
+                foreach (var item in res)
+                {
+                    var pricelistItem = pricelistItems.Where(x => x.CardTypeId == item.CardTypeId && x.ProductId == val.ProductId.Value).FirstOrDefault();
+                    item.ProductPricelistItem = pricelistItem == null ? null : _mapper.Map<ProductPricelistItemDisplay>(pricelistItem);
+                }
+                   
+            }
+
+            return res;
         }
 
         public async Task<ServiceCardCard> CheckCode(string code)

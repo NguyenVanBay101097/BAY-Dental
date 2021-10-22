@@ -17,5 +17,7 @@ namespace Infrastructure.Services
         Task ButtonConfirm(IEnumerable<ServiceCardCard> self);
         Task Unlink(IEnumerable<Guid> ids);
         Task<ServiceCardCard> CheckCode(string code);
+
+        Task<IEnumerable<ServiceCardCardResponse>> GetServiceCardCards(ServiceCardCardFilter val);
     }
 }

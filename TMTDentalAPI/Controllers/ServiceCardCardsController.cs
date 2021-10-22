@@ -88,6 +88,13 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        public async Task<IActionResult> GetServiceCardCards(ServiceCardCardFilter val)
+        {
+            var rels = await _cardCardService.GetServiceCardCards(val);
+            return Ok(rels);
+        }
+
+        [HttpPost("[action]")]
         [CheckAccess(Actions = "ServiceCard.Card.Update")]
         public async Task<IActionResult> ButtonActive(IEnumerable<Guid> ids)
         {
@@ -98,51 +105,51 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpPost("[action]")]
-        [CheckAccess(Actions = "ServiceCard.Card.Read")]
-        public async Task<IActionResult> ExportExcel(ServiceCardCardPaged val)
-        {
-            var stream = new MemoryStream();
-            var paged = await _cardCardService.GetPagedResultAsync(val);
-            var sheetName = "Thẻ dịch vụ";
-            byte[] fileContent;
+        //[HttpPost("[action]")]
+        //[CheckAccess(Actions = "ServiceCard.Card.Read")]
+        //public async Task<IActionResult> ExportExcel(ServiceCardCardPaged val)
+        //{
+        //    var stream = new MemoryStream();
+        //    var paged = await _cardCardService.GetPagedResultAsync(val);
+        //    var sheetName = "Thẻ dịch vụ";
+        //    byte[] fileContent;
 
-            using (var package = new ExcelPackage(stream))
-            {
-                var worksheet = package.Workbook.Worksheets.Add(sheetName);
+        //    using (var package = new ExcelPackage(stream))
+        //    {
+        //        var worksheet = package.Workbook.Worksheets.Add(sheetName);
 
-                worksheet.Cells[1, 1].Value = "Số thẻ";
-                worksheet.Cells[1, 2].Value = "Mã vạch";
-                worksheet.Cells[1, 3].Value = "Loại thẻ";
-                worksheet.Cells[1, 4].Value = "Ngày cấp";
-                worksheet.Cells[1, 5].Value = "Ngày hết hạn";
+        //        worksheet.Cells[1, 1].Value = "Số thẻ";
+        //        worksheet.Cells[1, 2].Value = "Mã vạch";
+        //        worksheet.Cells[1, 3].Value = "Loại thẻ";
+        //        worksheet.Cells[1, 4].Value = "Ngày cấp";
+        //        worksheet.Cells[1, 5].Value = "Ngày hết hạn";
 
-                var row = 2;
-                foreach (var item in paged.Items)
-                {
-                    worksheet.Cells[row, 1].Value = item.Name;
-                    worksheet.Cells[row, 2].Value = item.Barcode;
-                    //worksheet.Cells[row, 3].Value = item.CardTypeName;
-                    //worksheet.Cells[row, 4].Value = item.ActivatedDate;
-                    worksheet.Cells[row, 4].Style.Numberformat.Format = "dd-mm-yyyy";
+        //        var row = 2;
+        //        foreach (var item in paged.Items)
+        //        {
+        //            worksheet.Cells[row, 1].Value = item.Name;
+        //            worksheet.Cells[row, 2].Value = item.Barcode;
+        //            worksheet.Cells[row, 3].Value = item.CardTypeName;
+        //            worksheet.Cells[row, 4].Value = item.ActivatedDate;
+        //            worksheet.Cells[row, 4].Style.Numberformat.Format = "dd-mm-yyyy";
 
-                    //worksheet.Cells[row, 5].Value = item.ExpiredDate;
-                    worksheet.Cells[row, 5].Style.Numberformat.Format = "dd-mm-yyyy";
+        //            worksheet.Cells[row, 5].Value = item.ExpiredDate;
+        //            worksheet.Cells[row, 5].Style.Numberformat.Format = "dd-mm-yyyy";
 
-                    row++;
-                }
+        //            row++;
+        //        }
 
-                worksheet.Cells.AutoFitColumns();
+        //        worksheet.Cells.AutoFitColumns();
 
-                package.Save();
+        //        package.Save();
 
-                fileContent = stream.ToArray();
-            }
+        //        fileContent = stream.ToArray();
+        //    }
 
-            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+        //    string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
-            return new FileContentResult(fileContent, mimeType);
-        }
+        //    return new FileContentResult(fileContent, mimeType);
+        //}
 
         [HttpGet("[action]")]
         public async Task<IActionResult> CheckCode(string code)
