@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
@@ -13,6 +13,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { PhieuThuChiPaged, PhieuThuChiService } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-cash-book-tab-page-re-pa',
@@ -24,6 +25,7 @@ export class CashBookTabPageRePaComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   type: string;
   search: string;
   searchUpdate = new Subject<string>();
@@ -38,15 +40,16 @@ export class CashBookTabPageRePaComponent implements OnInit {
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
 
-  constructor(private route: ActivatedRoute, 
-    private modalService: NgbModal, 
-    private intlService: IntlService, 
-    private authService: AuthService, 
+  constructor(private route: ActivatedRoute,
+    private modalService: NgbModal,
+    private intlService: IntlService,
+    private authService: AuthService,
     private phieuThuChiService: PhieuThuChiService,
     private notificationService: NotificationService,
-    private printService: PrintService, 
-    private checkPermissionService: CheckPermissionService
-  ) { }
+    private printService: PrintService,
+    private checkPermissionService: CheckPermissionService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.dateFrom = this.monthStart;
@@ -89,6 +92,7 @@ export class CashBookTabPageRePaComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 
@@ -138,7 +142,7 @@ export class CashBookTabPageRePaComponent implements OnInit {
 
   printPhieu(id: string) {
     this.phieuThuChiService.getPrint(id).subscribe((data: any) => {
-      this.printService.printHtml(data.html);
+      this.printService.printHtml(data);
     });
   }
 
@@ -156,22 +160,22 @@ export class CashBookTabPageRePaComponent implements OnInit {
 
   deleteItem(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-      modalRef.componentInstance.title = `Xóa ${this.getType(this.type).toLowerCase()}`;
-      modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa ${this.getType(this.type).toLowerCase()}?`;
-      modalRef.result.then((res) => {
-        this.phieuThuChiService.delete(item.id).subscribe(() => {
-          this.notificationService.show({
-            content: "Xóa thành công",
-            hideAfter: 3000,
-            position: { horizontal: "center", vertical: "top" },
-            animation: { type: "fade", duration: 400 },
-            type: { style: "success", icon: true },
-          });
-          this.loadDataFromApi();
-        }, (res) => {
+    modalRef.componentInstance.title = `Xóa ${this.getType(this.type).toLowerCase()}`;
+    modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa ${this.getType(this.type).toLowerCase()}?`;
+    modalRef.result.then((res) => {
+      this.phieuThuChiService.delete(item.id).subscribe(() => {
+        this.notificationService.show({
+          content: "Xóa thành công",
+          hideAfter: 3000,
+          position: { horizontal: "center", vertical: "top" },
+          animation: { type: "fade", duration: 400 },
+          type: { style: "success", icon: true },
         });
-      }, (err) => {
+        this.loadDataFromApi();
+      }, (res) => {
       });
+    }, (err) => {
+    });
   }
 
   exportExcelFile() {

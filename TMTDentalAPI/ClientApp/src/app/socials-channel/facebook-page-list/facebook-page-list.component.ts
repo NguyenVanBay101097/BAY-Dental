@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Inject, OnInit } from "@angular/core";
 import { GridDataResult, PageChangeEvent } from "@progress/kendo-angular-grid";
 import { map, debounceTime, distinctUntilChanged } from "rxjs/operators";
 import { Subject } from "rxjs";
@@ -11,6 +11,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { FacebookService, LoginOptions, LoginResponse } from 'ngx-facebook';
 import { FacebookConnectService } from '../facebook-connect.service';
 import { ZaloOAConfigSave, ZaloOAConfigService } from 'src/app/zalo-oa-config/zalo-oa-config.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from "src/app/shared/pager-grid-kendo.config";
 
 @Component({
   selector: "app-facebook-page-list",
@@ -24,6 +25,7 @@ export class FacebookPageListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   search: string;
   searchUpdate = new Subject<string>();
@@ -35,8 +37,9 @@ export class FacebookPageListComponent implements OnInit {
     private modalService: NgbModal,
     private router: Router,
     private notificationService: NotificationService,
-  ) {
-
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { 
+    this.pagerSettings = config.pagerSettings 
     fb.init({
       appId: '327268081110321',
       status: true,
@@ -88,6 +91,7 @@ export class FacebookPageListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

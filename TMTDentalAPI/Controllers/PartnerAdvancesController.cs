@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Entities;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -21,13 +23,21 @@ namespace TMTDentalAPI.Controllers
         private readonly IPartnerAdvanceService _partnerAdvanceService;
         private readonly IViewRenderService _view;
         private readonly IUnitOfWorkAsync _unitOfWork;
-
-        public PartnerAdvancesController(IMapper mapper, IPartnerAdvanceService partnerAdvanceService, IViewRenderService view, IUnitOfWorkAsync unitOfWork)
+        private readonly IPrintTemplateConfigService _printTemplateConfigService;
+        private readonly IPrintTemplateService _printTemplateService;
+        private readonly IIRModelDataService _modelDataService;
+        public PartnerAdvancesController(IMapper mapper, IPartnerAdvanceService partnerAdvanceService, IViewRenderService view, IUnitOfWorkAsync unitOfWork,
+             IPrintTemplateService printTemplateService,
+            IIRModelDataService modelDataService
+            , IPrintTemplateConfigService printTemplateConfigService)
         {
             _mapper = mapper;
             _partnerAdvanceService = partnerAdvanceService;
             _view = view;
             _unitOfWork = unitOfWork;
+            _printTemplateConfigService = printTemplateConfigService;
+            _printTemplateService = printTemplateService;
+            _modelDataService = modelDataService;
         }
 
         [HttpGet]
@@ -108,11 +118,26 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Basic.PartnerAdvance.Read")]
         public async Task<IActionResult> GetPrint(Guid id)
         {
-            var res = await _partnerAdvanceService.GetPartnerAdvancePrint(id);
+            var res = await _partnerAdvanceService.GetByIdAsync(id);
+            //tim trong bảng config xem có dòng nào để lấy ra template
+            var printConfig = await _printTemplateConfigService.SearchQuery(x => x.Type == (res.Type == "advance" ? "tmp_partner_advance" : "tmp_partner_refund") && x.IsDefault)
+                .Include(x => x.PrintPaperSize)
+                .Include(x => x.PrintTemplate)
+                .FirstOrDefaultAsync();
 
-            var html = _view.Render("PartnerAdvance/Print", res);
+            PrintTemplate template = printConfig != null ? printConfig.PrintTemplate : null;
+            PrintPaperSize paperSize = printConfig != null ? printConfig.PrintPaperSize : null;
+            if (template == null)
+            {
+                //tìm template mặc định sử dụng chung cho tất cả chi nhánh, sử dụng bảng IRModelData hoặc bảng IRConfigParameter
+                template = await _modelDataService.GetRef<PrintTemplate>(res.Type == "advance" ? "base.print_template_partner_advance" : "base.print_template_partner_refund");
+                if (template == null)
+                    throw new Exception("Không tìm thấy mẫu in mặc định");
+            }
 
-            return Ok(new PrintData() { html = html });
+            var result = await _printTemplateService.GeneratePrintHtml(template, new List<Guid>() { id }, paperSize);
+
+            return Ok(new PrintData() { html = result });
         }
 
         [HttpDelete("{id}")]

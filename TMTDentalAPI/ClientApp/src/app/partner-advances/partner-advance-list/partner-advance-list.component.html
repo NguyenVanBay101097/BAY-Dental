@@ -30,7 +30,7 @@
             <div class="o_form_buttons_view">
                 <div class="d-flex">
                     <app-date-range-picker-filter [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
-                    <button class="btn btn-primary mr-2 " title="Đóng tạm ứng" (click)="createAdvanceModal()">Đóng tạm ứng</button>
+                    <button class="btn btn-primary ml-2 mr-2 " title="Đóng tạm ứng" (click)="createAdvanceModal()">Đóng tạm ứng</button>
                     <button class="btn btn-primary mr-2" *ngIf="amountBalance != 0" title="Hoàn tạm ứng" (click)="createRefundModal()">Hoàn tạm
                         ứng</button>
                 </div>
@@ -48,7 +48,7 @@
     </div>
 </div>
 
-<kendo-grid [resizable]="true" [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)" [navigable]="true">
+<kendo-grid [resizable]="true" [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="pagerSettings" [loading]="loading" (pageChange)="pageChange($event)" [navigable]="true">
     <kendo-grid-column field="name" title="Số phiếu tạm ứng" width="120">
     </kendo-grid-column>
     <kendo-grid-column field="date" title="Ngày tạm ứng" width="135">

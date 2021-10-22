@@ -133,6 +133,8 @@ export class QuotationsPaged {
 })
 export class QuotationService {
   apiUrl = 'api/Quotations';
+  apiPrintUrl = "Quotation";
+
   constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
   getPaged(val: any): Observable<PagedResult2<QuotationsBasic>> {
@@ -217,8 +219,12 @@ export class QuotationService {
       );
   }
 
+  // printQuotation(id: string) {
+  //   return this.http.get(this.baseApi + 'Quotation' + '/Print' + `?id=${id}`, { responseType: 'text' });
+  // }
+
   printQuotation(id: string) {
-    return this.http.get(this.baseApi + 'Quotation' + '/Print' + `?id=${id}`, { responseType: 'text' });
+    return this.http.get(this.baseApi + this.apiUrl + `/${id}/Print`);
   }
 
   defaultGet(partnerId: string): Observable<QuotationsDisplay> {

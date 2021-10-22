@@ -46,13 +46,13 @@ export class AppHomeComponent implements OnInit {
     {
       name: 'Labo',
       icon: 'fas fa-tooth',
-      url: '/labo-orders',
       children: [
         { name: 'Quản lý phiếu Labo', url: '/labo-orders/service', permissions: ['Labo.LaboOrder.Read', '.LaboOrder.Create', 'Labo.LaboOrder.Update', 'Labo.LaboOrder.Delete'] },
         { name: 'Đơn hàng Labo', url: '/labo-orders/order', permissions: ['Labo.OrderLabo.Read', 'Labo.OrderLabo.Update'] },
         { name: 'Xuất Labo cho khách', url: '/labo-orders/export', permissions: ['Labo.ExportLabo.Read', 'Labo.ExportLabo.Update'] },
+        { name: 'Quản lý bảo hành', url: '/labo-orders/warranty', permissions: ['Labo.LaboWarranty.Read', '.LaboWarranty.Create', 'Labo.LaboWarranty.Update', 'Labo.LaboWarranty.Delete'] },
       ],
-      permissions: ['Labo.LaboOrder.Read', 'Labo.OrderLabo.Read', 'Labo.ExportLabo.Read']
+      permissions: ['Labo.LaboOrder.Read', 'Labo.OrderLabo.Read', 'Labo.ExportLabo.Read', 'Labo.LaboWarranty.Read']
     },
     {
       name: 'Khảo sát đánh giá',
@@ -62,7 +62,6 @@ export class AppHomeComponent implements OnInit {
         { name: 'Danh sách khảo sát', url: '/surveys/list', permissions: ['Survey.UserInput.Read'], groups: 'survey.group_user,survey.group_manager' },
         { name: 'Quản lý phân việc', url: '/surveys/manage', permissions: ['Survey.Assignment.Read'], groups: 'survey.group_manager' },
         { name: 'Câu hỏi khảo sát', url: '/surveys/config', permissions: ['Survey.Question.Read', 'Survey.Question.Create', 'Survey.Question.Update', 'Survey.Question.Delete'], groups: 'survey.group_manager' },
-        { name: 'Nhãn khảo sát', url: '/surveys/survey-tag', groups: 'survey.group_survey' },
       ],
       groups: 'survey.group_survey',
       permissions: ['Survey.UserInput.Read', 'Survey.Assignment.Read', 'Survey.Question.Read']
@@ -70,7 +69,6 @@ export class AppHomeComponent implements OnInit {
     {
       name: 'Mua hàng',
       icon: 'fas fa-shopping-cart',
-      url: '/purchase',
       children: [
         { name: 'Mua hàng', url: '/purchase/order', permissions: ['Purchase.Order.Read', 'Purchase.Order.Create', 'Purchase.Order.Update', 'Purchase.Order.Delete'] },
         { name: 'Trả hàng', url: '/purchase/refund', permissions: ['Purchase.Order.Read'] },
@@ -86,7 +84,6 @@ export class AppHomeComponent implements OnInit {
     {
       name: 'Lương',
       icon: 'fas fa-money-bill-alt',
-      url: '/hr',
       children: [
         { name: 'Bảng lương', url: '/hr/payslip-run/form', permissions: ['Salary.HrPayslipRun.Read', 'Salary.HrPayslipRun.Create', 'Salary.HrPayslipRun.Update'] },
         { name: 'Chấm công', url: '/hr/time-keepings', permissions: ['Salary.ChamCong.Read'] },
@@ -108,7 +105,6 @@ export class AppHomeComponent implements OnInit {
     {
       name: 'SMS Brandname',
       icon: 'fas fa-sms',
-      url: '/sms',
       children: [
         { name: 'Chúc mừng sinh nhật', url: '/sms/birthday-partners', permissions: ['SMS.Message.Read'] },
         { name: 'Nhắc lịch hẹn', url: '/sms/appointment-reminder', permissions: ['SMS.Message.Read'] },
@@ -124,33 +120,33 @@ export class AppHomeComponent implements OnInit {
       permissions: ['SMS.Account.Read', 'SMS.Campaign.Read', 'SMS.Message.Read', 'SMS.Template.Read', 'SMS.Config.Read', 'SMS.Report.AllMessage', 'SMS.Report.AllSMS']
     },
     {
-      name: 'Người giới thiệu',
+      name: 'Hoa hồng',
       icon: 'fas fa-poll',
-      url: '/agents',
       children: [
-        { name: 'Danh sách', url: '/agents/list' },
-        { name: 'Thống kê hoa hồng', url: '/agents/commission' },
+        { name: 'Người giới thiệu', url: '/commission-settlements/agent' },
+        { name: 'Nhân viên', url: '/commission-settlements/employee', permissions: ['Report.Commission'] },
       ],
-      permissions: ['Catalog.Agent.Read', 'Report.Commission']
+      permissions: ['Report.Commission']
     },
     {
       name: 'Danh mục',
       icon: 'fas fa-list',
-      url: '/catalog',
       children: [
-        { name: 'Thông tin khách hàng', url: '/catalog/customer-management' },
-        { name: 'Hạng thành viên', url: '/catalog/member-level/management' },
-        { name: 'Nhà cung cấp', url: '/catalog/suppliers', permissions: ['Basic.Partner.Read'] },
-        { name: 'Dịch vụ - Vật tư - Thuốc', url: '/catalog/products', permissions: ['Catalog.Products.Read'] },
-        { name: 'Đơn thuốc mẫu', url: '/catalog/sample-prescriptions', permissions: ['Catalog.SamplePrescription.Read'] },
-        { name: 'Đơn vị tính', url: '/catalog/uoms', groups: 'product.group_uom', permissions: ['UoM.UoMs.Read'] },
-        { name: 'Nhóm Đơn vị tính', url: '/catalog/uom-categories', groups: 'product.group_uom', permissions: ["UoM.UoMCategory.Read"] },
-        { name: 'Bảng hoa hồng', url: '/catalog/commissions/v2', permissions: ['Catalog.Commission.Read'] },
-        { name: 'Nhân viên', url: '/catalog/employees', permissions: ['Catalog.Employee.Read'] },
-        { name: 'Thông số Labo', url: '/catalog/labo-managerment', permissions: ['Catalog.LaboFinishLine.Read', 'Catalog.LaboBridge.Read', 'Catalog.LaboBiteJoint.Read'] },
-        { name: 'Loại thu chi', url: '/catalog/loai-thu-chi', permissions: ['Account.LoaiThuChi.Read'] },
-        { name: 'Tiêu chí kiểm kho', url: '/catalog/stock/criterias', permissions: ['Stock.StockInventoryCriteria.Read'] },
-        { name: 'Chẩn đoán răng', url: '/catalog/tooth-diagnosis', permissions: ['Catalog.ToothDiagnosis.Read'] },
+        { name: 'Thông tin khách hàng', url: '/customer-management' },
+        { name: 'Hạng thành viên', url: '/member-level/management' },
+        { name: 'Nhà cung cấp', url: '/partners/suppliers', permissions: ['Basic.Partner.Read'] },
+        { name: 'Dịch vụ - Vật tư - Thuốc', url: '/products', permissions: ['Catalog.Products.Read'] },
+        { name: 'Đơn thuốc mẫu', url: '/sample-prescriptions', permissions: ['Catalog.SamplePrescription.Read'] },
+        { name: 'Đơn vị tính', url: '/uoms', groups: 'product.group_uom', permissions: ['UoM.UoMs.Read'] },
+        { name: 'Nhóm Đơn vị tính', url: '/uom-categories', groups: 'product.group_uom', permissions: ["UoM.UoMCategory.Read"] },
+        { name: 'Bảng hoa hồng', url: '/commissions', permissions: ['Catalog.Commission.Read'] },
+        { name: 'Nhân viên', url: '/employees', permissions: ['Catalog.Employee.Read'] },
+        { name: 'Thông số Labo', url: '/labo-management', permissions: ['Catalog.LaboFinishLine.Read', 'Catalog.LaboBridge.Read', 'Catalog.LaboBiteJoint.Read'] },
+        { name: 'Loại thu chi', url: '/loai-thu-chi', permissions: ['Account.LoaiThuChi.Read'] },
+        { name: 'Tiêu chí kiểm kho', url: '/stock/criterias', permissions: ['Stock.StockInventoryCriteria.Read'] },
+        { name: 'Chẩn đoán răng', url: '/tooth-diagnosis', permissions: ['Catalog.ToothDiagnosis.Read'] },
+        { name: 'Nhãn khảo sát', url: '/surveys/survey-tag', groups: 'survey.group_survey' },
+        { name: 'Người giới thiệu', url: '/agents/list', Permissions: ['Catalog.Agent.Read'] },
       ],
       permissions: [
         'Catalog.PartnerCategory.Read',
@@ -167,37 +163,37 @@ export class AppHomeComponent implements OnInit {
     {
       name: 'Cấu hình',
       icon: 'fas fa-cogs',
-      url: '/setting',
+      id: 'settingMenu',
       children: [
-        { name: 'Chi nhánh', url: '/setting/companies', permissions: ['System.Company.Read'] },
-        { name: 'Nhóm quyền', url: '/setting/roles', permissions: ['System.ApplicationRole.Read'] },
-        { name: 'Cấu hình chung', url: '/setting/config-settings' }
+        { name: 'Chi nhánh', url: '/companies', permissions: ['System.Company.Read'] },
+        { name: 'Nhóm quyền', url: '/roles', permissions: ['System.ApplicationRole.Read'] },
+        { name: 'Cấu hình chung', url: '/config-settings' },
+        { name: 'Mẫu in', url: '/print-template-config' }
       ],
       permissions: ['System.Company.Read', 'System.ApplicationUser.Read', 'System.ApplicationRole.Read']
     },
     {
       name: 'Báo cáo',
       icon: 'far fa-chart-bar',
-      url: '/report',
+      id: 'reportMenu',
       children: [
-        { name: 'Báo cáo tổng quan', url: '/report/sale-dashboard-reports' },
-        { name: 'Kết quả kinh doanh', url: '/report/financial-report', permissions: ['Report.Financial'] },
-        { name: 'Báo cáo doanh thu', url: '/report/account-invoice-reports/revenue-time', permissions: ['Report.Revenue'] },
-        { name: 'Báo cáo dịch vụ', url: '/report/sale-report/service-report', permissions: ['Report.Sale'] },
-        { name: 'Báo cáo khách hàng', url: '/report/report-account-common/partner-report-overview', permissions: ['Report.AccountPartner'] },
-        { name: 'Báo cáo tiếp nhận', url: '/report/customer-receipt-reports' },
-        { name: 'Công nợ nhà cung cấp', url: '/report/report-account-common/partner', linkProps: { queryParams: { result_selection: 'supplier' } }, permissions: ['Report.AccountPartner'] },
-        { name: 'Khách hàng lân cận phòng khám', url: '/report/partner-report-location', permissions: ['Report.PartnerLocation'] },
-        { name: 'Thống kê nguồn khách hàng', url: '/report/report-partner-sources', permissions: ['Report.PartnerSource'] },
-        { name: 'Quản lý điều trị', url: '/report/sale-orders/management', permissions: ['Basic.SaleOrder.Read'] },
-        { name: 'Hoa hồng nhân viên', url: '/report/commission-settlements/report', permissions: ['Report.Commission'] },
+        { name: 'Báo cáo tổng quan', url: '/sale-dashboard-reports' },
+        { name: 'Kết quả kinh doanh', url: '/financial-report', permissions: ['Report.Financial'] },
+        { name: 'Báo cáo doanh thu', url: '/account-invoice-reports/revenue-time', permissions: ['Report.Revenue'] },
+        { name: 'Báo cáo dịch vụ', url: '/sale-report/service-report', permissions: ['Report.Sale'] },
+        { name: 'Báo cáo khách hàng', url: '/report-account-common/partner-report-overview', permissions: ['Report.PartnerOldNew'] },
+        { name: 'Báo cáo tiếp nhận', url: '/customer-receipt-reports' },
+        { name: 'Công nợ nhà cung cấp', url: '/report-account-common/partner', linkProps: { queryParams: { result_selection: 'supplier' } }, permissions: ['Report.AccountPartner'] },
+        { name: 'Khách hàng lân cận phòng khám', url: '/partner-report-location', permissions: ['Report.PartnerLocation'] },
+        { name: 'Thống kê nguồn khách hàng', url: '/report-partner-sources', permissions: ['Report.PartnerSource'] },
+        { name: 'Quản lý điều trị', url: '/sale-orders/management', permissions: ['Basic.SaleOrder.Read'] },
       ],
       permissions: [
         'Report.Financial',
-        'Report.CashBankAccount',
+        // 'Report.CashBankAccount',
         'Report.Revenue',
         'Report.Sale',
-        'Report.AccountPartner',
+        // 'Report.AccountPartner',
         'Report.AccountPartner',
         'Report.Stock',
         'Report.RealRevenue',

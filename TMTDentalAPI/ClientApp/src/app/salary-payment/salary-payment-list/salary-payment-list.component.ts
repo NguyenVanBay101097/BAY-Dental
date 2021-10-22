@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -14,6 +14,7 @@ import { PrintService } from 'src/app/shared/services/print.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { NotifyService } from 'src/app/shared/services/notify.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-salary-payment-list',
@@ -27,6 +28,7 @@ export class SalaryPaymentListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
 
   // permission
@@ -36,11 +38,12 @@ export class SalaryPaymentListComponent implements OnInit {
   constructor(
     private modalService: NgbModal,
     private salaryPaymentService: SalaryPaymentService,
-    private printService: PrintService, 
+    private printService: PrintService,
     private checkPermissionService: CheckPermissionService,
     private notifyService: NotifyService,
-    private authService: AuthService
-  ) { }
+    private authService: AuthService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.searchUpdate.pipe(
@@ -77,6 +80,7 @@ export class SalaryPaymentListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadData();
   }
 
@@ -107,7 +111,7 @@ export class SalaryPaymentListComponent implements OnInit {
 
   printItem(id) {
     this.salaryPaymentService.getPrint([id]).subscribe((data: any) => {
-      this.printService.printHtml(data);
+      this.printService.printHtml(data.html);
     });
   }
 
@@ -117,7 +121,7 @@ export class SalaryPaymentListComponent implements OnInit {
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(
       (result: any) => {
-        this.notifyService.notify('success','Lưu thành công')
+        this.notifyService.notify('success', 'Lưu thành công')
         this.loadData();
         if (result && result.print) {
           this.printItem(item.id);

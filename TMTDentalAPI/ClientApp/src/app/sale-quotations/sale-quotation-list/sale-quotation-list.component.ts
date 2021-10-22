@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -12,6 +12,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
 import { SaleOrderService, SaleOrderPaged } from 'src/app/core/services/sale-order.service';
 import { SaleOrderBasic } from 'src/app/sale-orders/sale-order-basic';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-sale-quotation-list',
@@ -25,6 +26,7 @@ export class SaleQuotationListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   opened = false;
   search: string;
@@ -44,7 +46,8 @@ export class SaleQuotationListComponent implements OnInit {
   selectedIds: string[] = [];
 
   constructor(private saleOrderService: SaleOrderService, private intlService: IntlService, private router: Router,
-    private modalService: NgbModal) { }
+    private modalService: NgbModal, @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -129,6 +132,7 @@ export class SaleQuotationListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

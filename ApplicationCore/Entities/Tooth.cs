@@ -28,5 +28,7 @@ namespace ApplicationCore.Entities
         public ICollection<QuotationLineToothRel> QuotationLineToothRels { get; set; } = new List<QuotationLineToothRel>();
 
         public ICollection<AdvisoryToothRel> AdvisoryToothRels { get; set; } = new List<AdvisoryToothRel>();
+
+        public ICollection<LaboWarrantyToothRel> LaboWarrantyToothRels { get; set; } = new List<LaboWarrantyToothRel>();
     }
 }

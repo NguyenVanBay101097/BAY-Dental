@@ -92,7 +92,8 @@ import { PartnerCustomerDebtPaymentHistoryListComponent } from './partner-custom
 import { PartnerCustomerDebtManagementComponent } from './partner-customer-debt-management/partner-customer-debt-management.component';
 import { PartnerOverviewTreatmentHistoryComponent } from './partner-overview/partner-overview-treatment-history/partner-overview-treatment-history.component';
 import { AccountInvoiceReportService } from '../account-invoice-reports/account-invoice-report.service';
-import { CatalogModule } from '../catalog/catalog.module';
+import { PartnerSupplierListComponent } from '../catalog/partner-supplier-list/partner-supplier-list.component';
+// import { CatalogModule } from '../catalog/catalog.module';
 
 
 
@@ -106,7 +107,7 @@ import { CatalogModule } from '../catalog/catalog.module';
     PartnerCustomerInvoicesComponent,
     PartnerDetailListComponent,
     PartnerInvoiceLinesComponent,
-    // PartnerImportComponent,
+    PartnerImportComponent,
     PartnerPaymentsComponent,
     PurchaseOrderRefundComponent,
     PartnerCardsTabPaneComponent,
@@ -175,7 +176,8 @@ import { CatalogModule } from '../catalog/catalog.module';
     PartnerCustomerDebtPaymentDialogComponent,
     PartnerCustomerDebtPaymentHistoryListComponent,
     PartnerCustomerDebtManagementComponent,
-    PartnerOverviewTreatmentHistoryComponent
+    PartnerOverviewTreatmentHistoryComponent,
+    PartnerSupplierListComponent,
   ],
   imports: [
     CommonModule,
@@ -191,7 +193,7 @@ import { CatalogModule } from '../catalog/catalog.module';
     PartnerSourcesModule,
     PartnerAdvancesModule,
     HistoryModule,
-    CatalogModule
+    // CatalogModule
   ],
   entryComponents: [
     PartnerCreateUpdateComponent,

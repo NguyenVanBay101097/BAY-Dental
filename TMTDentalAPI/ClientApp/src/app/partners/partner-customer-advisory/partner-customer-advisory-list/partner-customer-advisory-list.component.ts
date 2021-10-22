@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -9,6 +9,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AdvisoryPaged, AdvisoryService, AdvisoryToothAdvise, CreateFromAdvisoryInput } from 'src/app/advisories/advisory.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
 import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
@@ -34,12 +35,13 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
   filteredToothCategories: any[] = [];
   cateId: string;
   gridData: GridDataResult;
-  limit: number = 10;
+  limit: number = 20;
   skip: number = 0;
+  pagerSettings: any;
   loading = false;
   customerId: string;
   mySelection = [];
-  
+
   constructor(
     private modalService: NgbModal,
     private toothService: ToothService,
@@ -50,7 +52,8 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     private notificationService: NotificationService,
     private printService: PrintService,
     private router: Router,
-  ) { }
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadToothCategories();
@@ -76,7 +79,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
         this.loadDataFromApi();
       });
     this.loadDataFromApi();
-    
+
   }
 
   createAdvisory() {
@@ -89,8 +92,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
   }
 
   createQuotations() {
-    if (!this.mySelection || this.mySelection.length == 0) 
-    {
+    if (!this.mySelection || this.mySelection.length == 0) {
       this.notify('error', 'Bạn chưa chọn thông tin tiểu sử răng');
       return;
     }
@@ -109,8 +111,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
   }
 
   createSaleOrder() {
-    if (!this.mySelection || this.mySelection.length == 0) 
-    {
+    if (!this.mySelection || this.mySelection.length == 0) {
       this.notify('error', 'Bạn chưa chọn thông tin tiểu sử răng');
       return;
     }
@@ -183,7 +184,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  reSelected(){
+  reSelected() {
     this.teethSelected = [];
     this.loadDataFromApi();
   }
@@ -208,7 +209,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
 
   onChangeToothCategory(value: any) {
     if (value.id) {
-     // this.teethSelected = [];
+      // this.teethSelected = [];
       this.loadTeethMap(value);
       this.cateId = value.id;
     }
@@ -217,25 +218,25 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
   loadTeethConsulted() {
     var val = new AdvisoryToothAdvise();
     val.customerId = this.customerId;
-    this.advisoryService.getToothAdvise(val).subscribe((result:any) => {
+    this.advisoryService.getToothAdvise(val).subscribe((result: any) => {
       this.teethConsulted = result.toothIds;
     })
   }
 
-  loadDataFromApi(){
+  loadDataFromApi() {
     var val = new AdvisoryPaged();
     this.loading = true;
     val.limit = this.limit;
     val.search = this.search ? this.search : "";
     val.offset = this.skip;
-    val.dateFrom = this.dateFrom? this.intlService.formatDate(this.dateFrom,"yyyy-MM-dd") : "";
-    val.dateTo = this.dateTo? this.intlService.formatDate(this.dateTo,"yyyy-MM-dd") : "";
+    val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : "";
+    val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : "";
     val.customerId = this.customerId;
     val.toothIds = this.teethSelected.map(x => x.id);
     this.advisoryService.getPaged(val).subscribe(res => {
       console.log(res);
-      this.gridData =  <GridDataResult> {
-        data: res.items,       
+      this.gridData = <GridDataResult>{
+        data: res.items,
         total: res.totalItems
       };
       this.loading = false;
@@ -243,37 +244,38 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     this.loadTeethConsulted();
   }
 
-  searchChangeDate(data){
+  searchChangeDate(data) {
     this.dateTo = data.dateTo;
     this.dateFrom = data.dateFrom;
     this.skip = 0;
     this.loadDataFromApi();
   }
 
-  pageChange(event:PageChangeEvent){
+  pageChange(event: PageChangeEvent) {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 
-  getTeeth(teeth){
-    if(teeth)
+  getTeeth(teeth) {
+    if (teeth)
       return teeth.map(x => x.name).join(',');
     return null;
   }
 
-  getToothDiagnosis(toothDiagnosis){
-    if(toothDiagnosis)
+  getToothDiagnosis(toothDiagnosis) {
+    if (toothDiagnosis)
       return toothDiagnosis.map(x => x.name).join(',');
     return null;
   }
 
-  getProducts(products){
-    if(products)
+  getProducts(products) {
+    if (products)
       return products.map(x => x.name).join(',');
     return null;
   }
 
-  editItem(data){
+  editItem(data) {
     const modalRef = this.modalService.open(PartnerCustomerAdvisoryCuDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Sửa thông tin tiểu sử răng';
     modalRef.componentInstance.customerId = this.customerId;
@@ -283,7 +285,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     }, er => { })
   }
 
-  deleteItem(data){
+  deleteItem(data) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, {
       windowClass: "o_technical_modal",
       keyboard: false,
@@ -317,10 +319,9 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     });
   }
 
-    onPrint() {
-    if(!this.customerId) return;
-    if (!this.mySelection || this.mySelection.length == 0) 
-    {
+  onPrint() {
+    if (!this.customerId) return;
+    if (!this.mySelection || this.mySelection.length == 0) {
       this.notify('error', 'Bạn chưa chọn thông tin tiểu sử răng');
       return;
     }

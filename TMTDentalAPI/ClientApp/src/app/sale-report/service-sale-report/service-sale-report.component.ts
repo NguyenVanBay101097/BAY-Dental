@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { DateRangeComponent } from '@progress/kendo-angular-dateinputs';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridComponent, GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -13,6 +13,7 @@ import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { SaleOrderLinePaged } from 'src/app/partners/partner.service';
 import { DateRangePickerFilterComponent } from 'src/app/shared/date-range-picker-filter/date-range-picker-filter.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { ToothBasic } from 'src/app/teeth/tooth.service';
 import { SaleReportService, ServiceReportReq } from '../sale-report.service';
@@ -29,6 +30,9 @@ export class ServiceSaleReportComponent implements OnInit {
   employees: EmployeeSimple[] = [];
   gridData: GridDataResult;
   loading = false;
+  skip = 0;
+  limit = 20;
+  pagerSettings: any;
   searchUpdate = new Subject<string>();
   filterMonth: any = "";
   search: string;
@@ -59,8 +63,9 @@ export class ServiceSaleReportComponent implements OnInit {
     private companyService: CompanyService,
     private employeeService: EmployeeService,
     private intlService: IntlService,
-    private printService:PrintService
-  ) { }
+    private printService:PrintService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.initFilter();
@@ -192,7 +197,8 @@ export class ServiceSaleReportComponent implements OnInit {
     this.loadAllData();
   }
 
-  pageChange(event: PageChangeEvent): void {
+    pageChange(event: PageChangeEvent): void {
+    this.filter.limit = event.take;
     this.filter.offset = event.skip;
     this.loadAllData();
   }

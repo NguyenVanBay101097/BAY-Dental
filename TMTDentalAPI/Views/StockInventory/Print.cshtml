@@ -33,7 +33,7 @@
     }
     <div class="text-center mb-3">
         <div class="text-3xl font-semibold">PHIẾU KIỂM KHO</div>
-        <div>Ngày @Model.Date.Day tháng @Model.Date.Month năm @Model.Date.Year </div>
+        <div>Ngày @Model.DateCreated.Day tháng @Model.DateCreated.Month năm @Model.DateCreated.Year </div>
         <div class="font-semibold">Số: @Model.Name</div>
     </div>
     <div class="o_form_view mb-4">
@@ -46,7 +46,7 @@
                                 Ngày kiểm
                             </label>
                         </td>
-                        <td colspan="1" style="width: 100%;">@(string.Format(culture, "{0:dd/MM/yyyy}", Model.Date))</td>
+                        <td colspan="1" style="width: 100%;">@(string.Format(culture, "{0:dd/MM/yyyy}", Model.DateCreated))</td>
                     </tr>
 
                 </tbody>
@@ -87,9 +87,9 @@
             {
                 <tr>
                     <td>@(i++)</td>
-                    <td>@(item.ProductDefaultCode)</td>
-                    <td>@(item.ProductName)</td>
-                    <td>@(item.ProductUOMName)</td>
+                    <td>@(item.Product.DefaultCode)</td>
+                    <td>@(item.Product.Name)</td>
+                    <td>@(item.ProductUOM.Name)</td>
                     <td class="text-right">@(item.TheoreticalQty.HasValue ? string.Format(culture, "{0:0}", item.TheoreticalQty.Value) : "0")</td>
                     <td class="text-right">@(item.ProductQty.HasValue ? string.Format(culture, "{0:0}", item.ProductQty.Value) : "0")</td>
                 </tr>

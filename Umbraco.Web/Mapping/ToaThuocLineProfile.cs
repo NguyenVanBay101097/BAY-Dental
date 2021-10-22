@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,8 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.ToInvoiceQuantity, x => x.Ignore());
 
             CreateMap<ToaThuocLine, ToaThuocLinePrintViewModel>();
+
+            CreateMap<ToaThuocLine, ToaThuocLinePrintTemplate>();
 
             CreateMap<ToaThuocLineSave, ToaThuocLine>()
                 .ForMember(x => x.Id, x => x.Ignore());

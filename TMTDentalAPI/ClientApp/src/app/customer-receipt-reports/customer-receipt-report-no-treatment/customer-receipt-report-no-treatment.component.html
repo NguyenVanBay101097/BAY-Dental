@@ -1,84 +1,72 @@
-<div class="card">
-    <div class="card-body flex-1-1-100 right p-2 ml-2 d-flex flex-column">
-        <h5 class="flex-0-0-auto">Báo cáo tiếp nhận không điều trị</h5>
-        <div class="flex-0-0-auto mb-3">
-            <div class="filter d-flex flex-wrap">
-                <app-date-range-picker-filter [opens]="'right'" class="mr-1" [startDate]="dateFrom" [endDate]="dateTo"
-                    (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
-                <kendo-combobox class="mr-1" [placeholder]="'Bác sĩ'" [valueField]="'id'" [textField]="'name'"
-                    [filterable]="true" #employeeCbx [data]="listEmployee" (selectionChange)="onSelectEmployee($event)">
-                </kendo-combobox>
-                <kendo-combobox width="auto" [placeholder]="'Tất cả chi nhánh'" class="mr-1" [valueField]="'id'"
-                    [textField]="'name'" [filterable]="true" [data]="listCompany"
-                    (selectionChange)="onSelectCompany($event)" #companyCbx>
-                </kendo-combobox>
-
-                 <div class="dropdown mr-auto">
-      <button
-        class="btn btn-primary dropdown-toggle"
-        type="button"
-        id="dropdownMenuButton"
-        data-toggle="dropdown"
-        aria-haspopup="true"
-        aria-expanded="false"
-      >
-        <i class="fas fa-download"></i> Xuất File
-      </button>
-      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-        <a class="dropdown-item" (click)="onExcelExport()">Xuất Excel</a>
-        <a class="dropdown-item" (click)="onExportPDF()">Xuất PDF</a>
-      </div>
-    </div>
-                <input class="form-control filter-search" placeholder="Tìm kiếm theo mã, tên, số điện thoại khách hàng"
-                    type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+<div class="container py-3">
+    <div class="flex-0-0-auto mb-3">
+        <div class="filter d-flex flex-wrap">
+            <app-date-range-picker-filter [opens]="'right'" class="mr-1" [startDate]="dateFrom" [endDate]="dateTo"
+                (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
+            <kendo-combobox class="mr-1" [placeholder]="'Bác sĩ'" [valueField]="'id'" [textField]="'name'"
+                [filterable]="true" #employeeCbx [data]="listEmployee" (selectionChange)="onSelectEmployee($event)">
+            </kendo-combobox>
+            <kendo-combobox width="auto" [placeholder]="'Tất cả chi nhánh'" class="mr-1" [valueField]="'id'"
+                [textField]="'name'" [filterable]="true" [data]="listCompany"
+                (selectionChange)="onSelectCompany($event)" #companyCbx>
+            </kendo-combobox>
+            <input class="form-control filter-search mr-1" placeholder="Tìm kiếm theo mã, tên, số điện thoại khách hàng"
+                type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+            <div class="dropdown mr-auto">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-download"></i> Xuất File
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" (click)="onExcelExport()">Xuất Excel</a>
+                    <a class="dropdown-item" (click)="onExportPDF()">Xuất PDF</a>
+                </div>
             </div>
-
         </div>
 
-        <kendo-grid #grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
-            (pageChange)="pageChange($event)">
-            <kendo-grid-column title="Ngày tiếp nhận" width="120">
-                <ng-template kendoGridCellTemplate let-dataItem>
-                    {{dataItem.dateWaiting | date:'shortDate'}}
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column title="Khách hàng" width="200">
-                <ng-template kendoGridCellTemplate let-dataItem>
-                    <a class="text-primary" title="Xem hồ sơ khách hàng"
-                        [routerLink]="['/partners/customer/' + dataItem.partner.id]">
-                        {{dataItem.partner?.name}}
-                    </a>
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column title="Dịch vụ" width="150">
-                <ng-template kendoGridCellTemplate let-dataItem>
-                    <span isEllipsisActive class="cus-text-truncate">
-                        {{dataItem.products}}
-                    </span>
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column title="Bác sĩ" width="120">
-                <ng-template kendoGridCellTemplate let-dataItem>
-                    {{dataItem.doctorName}}
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column title="Giờ tiếp nhận" width="150">
-                <ng-template kendoGridCellTemplate let-dataItem>
-                    {{dataItem.dateWaiting | date: 'HH:mm'}}
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column title="Thời gian phục vụ" width="150">
-                <ng-template kendoGridCellTemplate let-dataItem>
-                    {{dataItem.minuteTotal ? getMinute(dataItem.minuteTotal) : '' }}
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column title="Lý do không điều trị" width="150">
-                <ng-template kendoGridCellTemplate let-dataItem>
-                    {{dataItem.reason}}
-                </ng-template>
-            </kendo-grid-column>
-        </kendo-grid>
     </div>
+
+    <kendo-grid #grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"
+        (pageChange)="pageChange($event)">
+        <kendo-grid-column title="Ngày tiếp nhận" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.dateWaiting | date:'shortDate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Khách hàng" width="150">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                <a class="text-primary" title="Xem hồ sơ khách hàng"
+                    [routerLink]="['/partners/customer/' + dataItem.partner.id]">
+                    {{dataItem.partner?.name}}
+                </a>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Dịch vụ" width="150">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                <span isEllipsisActive class="cus-text-truncate">
+                    {{dataItem.products}}
+                </span>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Bác sĩ" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.doctorName}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Giờ tiếp nhận" width="150">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.dateWaiting | date: 'HH:mm'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Thời gian phục vụ" width="150">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.minuteTotal ? getMinute(dataItem.minuteTotal) : '' }}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Lý do không điều trị" width="150">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.reason}}
+            </ng-template>
+        </kendo-grid-column>
+    </kendo-grid>
 </div>
-
-

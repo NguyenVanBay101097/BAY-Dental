@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { aggregateBy } from '@progress/kendo-data-query';
 import { SaleReportItem, SaleReportService, SaleReportSearch } from '../sale-report.service';
@@ -7,6 +7,7 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/company.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-sale-report-overview',
@@ -24,6 +25,7 @@ export class SaleReportOverviewComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   dateFrom: Date;
   dateTo: Date;
   groupBy = "date";
@@ -62,8 +64,9 @@ export class SaleReportOverviewComponent implements OnInit {
   listCompanies: CompanyBasic[] = [];
   companyFilter: CompanyBasic;
 
-  constructor(private intlService: IntlService, private saleReportService: SaleReportService, private companyService: CompanyService) {
-  }
+  constructor(private intlService: IntlService, private saleReportService: SaleReportService, private companyService: CompanyService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.dateFrom = new Date(this.monthStart);
@@ -139,6 +142,7 @@ export class SaleReportOverviewComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadItems();
   }
 

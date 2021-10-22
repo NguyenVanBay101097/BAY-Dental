@@ -40,7 +40,7 @@
     </div>
 </div>
 
-<kendo-grid [data]="gridView" [pageSize]="pageSize" [skip]="skip" [pageable]="true" [loading]="loading"
+<kendo-grid [data]="gridView" [pageSize]="pageSize" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"
     (pageChange)="pageChange($event)">
     <kendo-grid-column field="name" title="Tên tiểu sử bệnh">
     </kendo-grid-column>

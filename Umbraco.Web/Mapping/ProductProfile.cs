@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -40,6 +41,8 @@ namespace Umbraco.Web.Mapping
             CreateMap<Product, ProductBasic2>();
 
             CreateMap<Product, ProductDotKhamLineSimple>();
+
+            CreateMap<Product, ProductSimplePrintTemplate>();
         }
     }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -9,6 +9,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { loaiThuChiBasic } from 'src/app/loai-thu-chi/loai-thu-chi.service';
 import { PhieuThuChiService, PhieuThuChiPaged } from '../phieu-thu-chi.service';
 import { PrintService } from 'src/app/shared/services/print.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-phieu-thu-chi-list',
@@ -21,14 +22,17 @@ export class PhieuThuChiListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   type: string;
 
   search: string;
   searchUpdate = new Subject<string>();
-  
-  constructor(private route: ActivatedRoute, private modalService: NgbModal, 
+
+  constructor(private route: ActivatedRoute, private modalService: NgbModal,
     private phieuThuChiService: PhieuThuChiService, private router: Router,
-    private printService: PrintService) { }
+    private printService: PrintService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.route.queryParamMap.subscribe(params => {
@@ -68,6 +72,7 @@ export class PhieuThuChiListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 
@@ -121,7 +126,7 @@ export class PhieuThuChiListComponent implements OnInit {
 
   printItem(id) {
     this.phieuThuChiService.getPrint(id).subscribe((data: any) => {
-      this.printService.printHtml(data.html);
+      this.printService.printHtml(data);
     });
   }
 }

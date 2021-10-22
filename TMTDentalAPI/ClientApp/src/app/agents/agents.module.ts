@@ -7,15 +7,9 @@ import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from '../shared/shared.module';
 import { AgentService } from './agent.service';
-import { AgentCommissionListComponent } from './agent-commission-list/agent-commission-list.component';
-import { AgentCommissionFormComponent } from './agent-commission-form/agent-commission-form.component';
-import { AgentCommmissionFormDetailComponent } from './agent-commmission-form-detail/agent-commmission-form-detail.component';
-import { AgentCommmissionHistoryComponent } from './agent-commmission-history/agent-commmission-history.component';
-import { AgentCommmissionPaymentDialogComponent } from './agent-commmission-payment-dialog/agent-commmission-payment-dialog.component';
-import { AgentCommmissionFormDetailItemComponent } from './agent-commmission-form-detail-item/agent-commmission-form-detail-item.component';
 
 @NgModule({
-  declarations: [AgentListComponent, AgentCommissionListComponent, AgentCommissionFormComponent, AgentCommmissionFormDetailComponent, AgentCommmissionHistoryComponent, AgentCommmissionPaymentDialogComponent, AgentCommmissionFormDetailItemComponent],
+  declarations: [AgentListComponent],
   imports: [
     CommonModule,
     AgentRoutingModule,
@@ -27,7 +21,6 @@ import { AgentCommmissionFormDetailItemComponent } from './agent-commmission-for
   ], providers: [
     AgentService
   ], entryComponents: [
-    AgentCommmissionPaymentDialogComponent
   ]
 })
 export class AgentsModule { }

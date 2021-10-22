@@ -1,133 +1,148 @@
-import { KeyValue } from '@angular/common';
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { AccountInvoiceReportService, RevenueReportFilter, RevenueReportItem } from 'src/app/account-invoice-reports/account-invoice-report.service';
-import { CashBookReportItem } from 'src/app/cash-book/cash-book.service';
-import { RevenueReportService } from 'src/app/revenue-report/revenue-report.service';
+import { ChartDataset, ChartOptions, ChartType } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
+import 'chartjs-adapter-date-fns';
+import {vi} from 'date-fns/locale';
 
 @Component({
   selector: 'app-sale-dashboard-invoice-report',
   templateUrl: './sale-dashboard-invoice-report.component.html',
   styleUrls: ['./sale-dashboard-invoice-report.component.css']
 })
-export class SaleDashboardInvoiceReportComponent implements OnInit {
-  @Input() groupby: string;
-  @Input() revenues: RevenueReportItem[] = [];
+export class SaleDashboardInvoiceReportComponent implements OnInit, OnChanges {
+  @Input() revenues: any[];
+  @Input() timeUnit: any;
   @Input() cashBooks: any;
-  @Input() dataRevenues: any[] = [];
-  @Input() dataCashBooks: any;
-  @Input() totalDataCashBook: any;
-  cashBookData: CashBookReportItem[] = [];
-  revenuCateg: any[] = [];
-  public revenueCashBank: any;
-  public revenueDebt: any;
-  public revenueAdvance: any;
-  public revenueCusDebt: any;
-  public revenueCusAdvance: any;
-  public cashbookCashBank: any;
-  public cashbookCusDebt: any;
-  public cashbookCusAdvance: any;
-  revenueSeries: any[] = [];
-  revenue: any;
-  realIncome: any;
+  @Input() revenueActualReportData: any;
+  barChartLabels: string[] = [];
 
+  public barChartOptions: ChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      title: {
+        text: 'BIỂU ĐỒ DOANH THU - THỰC THU',
+        display: true,
+        font: {
+          size: 16
+        }
+      },
+      legend: {
+        position: 'bottom'
+      },
+      tooltip: {
+        mode: 'index'
+      }
+    },
+    scales: {
+      x: {
+        adapters: {
+          date: {
+            locale: vi
+          }
+        },
+        offset: true,
+        type: 'time',
+        time: {
+          tooltipFormat: 'dd/MM/yyyy',
+          displayFormats: {
+            'day': 'dd/MM',
+            'month': 'MM/yyyy',
+          },
+          unit: 'day'
+        }
+      },
+      y: {
+        beginAtZero: true,
+      },
+    },
+  };
 
-  constructor(private revenueReportService: AccountInvoiceReportService,
-    private intlService: IntlService) { }
+  public barChartData: ChartDataset[] = [
+    {
+      label: 'Doanh thu',
+      data: [],
+      backgroundColor: 'rgba(35, 149, 255, 1)',
+      hoverBackgroundColor: 'rgba(35, 149, 255, 0.8)',
+      hoverBorderColor: 'rgba(35, 149, 255, 1)'
+    },
+    {
+      label: 'Thực thu',
+      data: [],
+      backgroundColor: 'rgba(40, 167, 69, 1)',
+      hoverBackgroundColor: 'rgba(40, 167, 69, 0.8)',
+      hoverBorderColor: 'rgba(40, 167, 69, 1)'
+    }
+  ];
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.loadRevenueSeries();
-    this.loadDataCashbookSeries();
-  }
+  constructor(private intlService: IntlService) { }
 
   ngOnInit() {
   }
 
-  loadRevenueSeries() {
-    if (this.dataRevenues) {
-      this.revenueCashBank = this.dataRevenues[0];
-      this.revenueCusDebt = this.dataRevenues[1];
-      this.revenueCusAdvance = this.dataRevenues[2];
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.revenues && !changes.revenues.firstChange && changes.cashBooks && !changes.cashBooks.firstChange) {
+      //sort asc
+      var revenueData = this.revenues.sort(function (a, b) { return new Date(a.invoiceDate).getTime() - new Date(b.invoiceDate).getTime() })
+        .map(item => {
+          return {
+            x: new Date(item.invoiceDate),
+            y: item.priceSubTotal
+          }
+        });
+
+      this.cashBooks.forEach(item => {
+        var d = new Date(item.date);
+        if (revenueData.filter(r => r.x.getTime() == d.getTime()).length == 0) {
+          var index = revenueData.findIndex(r => r.x.getTime() > d.getTime());
+          if (index != -1) {
+            revenueData.splice(index, 0, {
+              x: d,
+              y: 0
+            });
+          } else {
+            revenueData.push({
+              x: d,
+              y: 0
+            });
+          }
+        }
+      });
+
+      this.barChartData[0].data = revenueData.map(x => x.y);
+
+      var cashBookData = this.cashBooks.sort(function (a, b) { return new Date(a.date).getTime() - new Date(b.date).getTime() })
+        .map(item => {
+          return {
+            x: new Date(item.date),
+            y: item.totalThu
+          }
+        });
+
+      this.revenues.forEach(item => {
+        var d = new Date(item.invoiceDate);
+        if (cashBookData.filter(r => r.x.getTime() == d.getTime()).length == 0) {
+          var index = cashBookData.findIndex(r => r.x.getTime() > d.getTime());
+          if (index != -1) {
+            cashBookData.splice(index, 0, {
+              x: d,
+              y: 0
+            });
+          } else {
+            cashBookData.push({
+              x: d,
+              y: 0
+            });
+          }
+        }
+      });
+
+      this.barChartData[1].data = cashBookData.map(x => x.y);
+      this.barChartLabels = cashBookData.map(x => x.x);
+
+      this.barChartOptions.scales.x['time'].unit = this.timeUnit;
+      this.barChartOptions.scales.x['time'].tooltipFormat = this.timeUnit == 'day' ? 'dd/MM/yyyy' : 'MM/yyyy';
     }
   }
-
-  loadDataCashbookSeries() {
-    console.log(this.revenues);
-    this.revenueSeries = [];
-    if (this.cashBooks && this.revenues && this.dataCashBooks) {
-      this.cashBookData = this.cashBooks;
-      this.loadCashbookGroupby();
-      this.realIncome = this.loadDataColCashBook();
-      this.revenue = this.loadDataColRevenue();
-      this.cashbookCashBank = this.dataCashBooks[0];
-      this.cashbookCusDebt = this.dataCashBooks[1];
-      this.cashbookCusAdvance = this.dataCashBooks[2];
-    }
-
-  }
-
-  loadDataColRevenue() {
-    let res = [];
-    this.revenuCateg.forEach(x => {     
-      var total = this.revenues.find(s => (this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(s.invoiceDate), 'dd/MM/yyyy') : this.intlService.formatDate(new Date(s.invoiceDate), 'MM/yyyy')) == x);
-      var item = {date: total ? total.invoiceDate : this.intlService.formatDate(new Date(x), 'yyyy-MM-ddT00:00:00') , total: total ? total.priceSubTotal : 0};
-      res.push(item);
-    })
-    return res;
-  }
-
-  loadDataColCashBook() {
-    let res = [];
-    this.revenuCateg.forEach(x => {     
-      var total = this.cashBookData.find(s => (this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(s.date), 'dd/MM/yyyy') : this.intlService.formatDate(new Date(s.date), 'MM/yyyy')) == x);
-      var item = {date: total ? total.date : this.intlService.formatDate(new Date(x), 'yyyy-MM-ddT00:00:00') , total: total ? total.totalThu : 0};
-      res.push(item);
-    })
-    return res;
-  }
-
-  get totalDebit() {
-    if (this.dataCashBooks) {
-      return (this.revenueCashBank.balance ? this.revenueCashBank.balance : 0) + (this.revenueCusDebt.debit || 0) + (this.revenueCusAdvance.debit || 0);
-    }
-
-    return 0;
-  }
-
-  get ortherThu() {
-    if (this.totalDataCashBook && this.cashbookCashBank) {
-      return (this.totalDataCashBook.totalThu || 0) - ((this.cashbookCashBank.credit ? this.cashbookCashBank.credit : 0) + (this.cashbookCusDebt.credit || 0) + (this.cashbookCusAdvance.credit || 0));
-    }
-
-    return 0;
-  }
-
-  loadCashbookGroupby() {
-
-    if (this.revenues && this.cashBookData) {
-      var dateRevenues = this.revenues.map(s => this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(s.invoiceDate), 'dd/MM/yyyy') : this.intlService.formatDate(new Date(s.invoiceDate), 'MM/yyyy'));
-      var dateCashbooks = this.cashBookData.map(s => this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(s.date), 'dd/MM/yyyy') : this.intlService.formatDate(new Date(s.date), 'MM/yyyy'));
-      this.revenuCateg = this.arrayUnique(dateRevenues.concat(dateCashbooks).sort());
-    }
-  }
-
-  arrayUnique(array) {
-    var a = array.concat();
-    for (var i = 0; i < a.length; ++i) {
-      for (var j = i + 1; j < a.length; ++j) {
-        if (a[i] === a[j])
-          a.splice(j--, 1);
-      }
-    }
-    return a;
-  }
-
-
-
-  public labelContent = (e: any) => {
-    var res = e.value;
-    return res;
-  };
-
-
 }

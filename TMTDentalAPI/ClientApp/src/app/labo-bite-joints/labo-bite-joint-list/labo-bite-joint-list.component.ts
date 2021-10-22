@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { NotificationService } from '@progress/kendo-angular-notification';
@@ -6,6 +6,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { LaboFinnishLineImportComponent } from 'src/app/labo-finish-lines/labo-finnish-line-import/labo-finnish-line-import.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { LaboBiteJointCuDialogComponent } from '../labo-bite-joint-cu-dialog/labo-bite-joint-cu-dialog.component';
 import { LaboBiteJointBasic, LaboBiteJointPaged, LaboBiteJointService } from '../labo-bite-joint.service';
 
@@ -16,13 +17,16 @@ import { LaboBiteJointBasic, LaboBiteJointPaged, LaboBiteJointService } from '..
 })
 export class LaboBiteJointListComponent implements OnInit {
   constructor(
-    private laboBiteJointService: LaboBiteJointService, private notificationService: NotificationService,
-    private modalService: NgbModal
-  ) { }
+    private laboBiteJointService: LaboBiteJointService,
+    private notificationService: NotificationService,
+    private modalService: NgbModal,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
 
   search: string;
@@ -68,6 +72,7 @@ export class LaboBiteJointListComponent implements OnInit {
 
   onPageChange(event: PageChangeEvent) {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

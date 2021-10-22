@@ -35,7 +35,10 @@ namespace Infrastructure.Services
 
             query = query.OrderByDescending(x => x.DateCreated);
 
-            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
+            if (val.Limit > 0)
+                query = query.Skip(val.Offset).Take(val.Limit);
+
+            var items = await query.ToListAsync();
 
             var paged = new PagedResult2<PrintPaperSizeBasic>(totalItems, val.Offset, val.Limit)
             {

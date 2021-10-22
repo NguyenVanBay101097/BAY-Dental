@@ -1,0 +1,86 @@
+﻿<table border="0" cellpadding="5" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="width:100px"><img alt="{{o.company.name}}" class="img-fluid" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
+            <td>
+                <strong>{{o.company.name}}</strong><br />
+                Địa chỉ: {{o.company.address}}<br />
+                ĐT: {{o.company.phone}}<br />
+                Email: {{o.company.email}}
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h3 style="text-align:center">PHIẾU KIỂM KHO</h3>
+
+<p style="text-align:center">
+    Ngày {{o.date.day}} tháng {{o.date.month}} năm {{o.date.year}}<br />
+    <strong>Số: {{o.name}}</strong>
+</p>
+
+<table border="0" cellpadding="1" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="width:150px"><strong>Ngày kiểm</strong></td>
+            <td>{{o.date | date.to_string '%d/%m/%Y'}}</td>
+            <td style="width:150px"><strong>Ghi Chú</strong></td>
+            <td>{{o.note}}</td>
+        </tr>
+    </tbody>
+</table>
+
+<p><strong>&nbsp;DANH SÁCH SẢN PHẨM KIỂM KHO</strong></p>
+
+<table border="1" cellpadding="4" cellspacing="1" style="width:100%">
+    <thead>
+        <tr>
+            <th scope="col" style="width:50px">STT</th>
+            <th scope="col" style="width:80px">Mã sản phẩm</th>
+            <th scope="col" style="width:150px">Sản phẩm</th>
+            <th scope="col" style="width:80px">Đơn vị tính</th>
+            <th scope="col">Tồn kho</th>
+            <th scope="col" style="width:100px">Thực tế</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!--{{for line in o.lines}}-->
+        <tr>
+            <td>{{for.index + 1}}</td>
+            <td>{{line.product?.default_code}}</td>
+            <td>{{line.product?.name}}</td>
+            <td>{{line.product_uom?.name}}</td>
+            <td style="text-align:right; width:100px">{{line.theoretical_qty ?? 0 | math.format "N0"}}</td>
+            <td style="text-align:right">{{line.product_qty ?? 0 | math.format "N0"}}</td>
+        </tr>
+        <!--{{end}}-->
+    </tbody>
+</table>
+
+<table border="0" cellpadding="0" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="width:50%">
+                <div style="text-align:center">
+                    <strong>Nhân viên kiểm kho</strong><br />
+                    <em>(Ký, họ tên)</em><br />
+                    <br />
+                    <br />
+                    <br />
+                    <strong>{{o.created_by?.name | string.upcase}}</strong>
+                </div>
+            </td>
+            <td style="width:50%">
+                <div style="text-align:center">
+                    <strong>Quản lý</strong><br />
+                    <em>(Ký, họ tên)</em><br />
+                    <br />
+                    <br />
+                    &nbsp;
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<p>&nbsp;</p>

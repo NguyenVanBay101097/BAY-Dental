@@ -10,7 +10,8 @@
             <div class="o_cp_left">
                 <div class="o_cp_buttons">
                     <div class="o_form_buttons_view">
-                        <button *ngIf="canAppointmentCreate" class="btn btn-primary" (click)="createUpdateAppointment()">
+                        <button *ngIf="canAppointmentCreate" class="btn btn-primary"
+                            (click)="createUpdateAppointment()">
                             <i class="fas fa-calendar-plus"></i>&nbsp;Thêm</button>
                         <button class="btn btn-primary" (click)="refreshData()">
                             <i class="fas fa-sync"></i>&nbsp;Làm mới</button>
@@ -26,13 +27,13 @@
                         </kendo-combobox>
                     </div> -->
                     <div class="btn-check-calendar">
-                        <input type="radio" class="btn-check" name="view" id="calendar" autocomplete="off" [value]="'calendar'"
-                            [(ngModel)]="viewKanban" (ngModelChange)="changeViewKanban($event)">
+                        <input type="radio" class="btn-check" name="view" id="calendar" autocomplete="off"
+                            [value]="'calendar'" [(ngModel)]="viewKanban" (ngModelChange)="changeViewKanban($event)">
                         <label class="btn btn-white" for="calendar">
                             <i class="fas fa-th-large"></i>
                         </label>
-                        <input type="radio" class="btn-check" name="view" id="list" autocomplete="off" [value]="'list'" [(ngModel)]="viewKanban"
-                            (ngModelChange)="changeViewKanban($event)">
+                        <input type="radio" class="btn-check" name="view" id="list" autocomplete="off" [value]="'list'"
+                            [(ngModel)]="viewKanban" (ngModelChange)="changeViewKanban($event)">
                         <label class="btn btn-white" for="list">
                             <i class="fas fa-list-ul"></i>
                         </label>
@@ -50,7 +51,9 @@
                     </app-appointment-date-filter>
                 </div> -->
                 <div class="o_searchview">
-                    <input type="text" class="o_searchview_input"  placeholder="Tìm kiếm theo họ tên, số điện thoại khách hàng" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
+                    <input type="text" class="o_searchview_input"
+                        placeholder="Tìm kiếm theo họ tên, số điện thoại khách hàng" [(ngModel)]="search"
+                        (ngModelChange)="this.searchUpdate.next($event)" />
                     <span class="o_searchview_icon fas fa-search"></span>
                 </div>
             </div>
@@ -137,14 +140,16 @@
                                 </button>
                             </div>
                             <div class="toolbar-time-period btn-check-calendar">
-                                <input type="radio" class="btn-check" name="time-period" id="day" autocomplete="off" [value]="'day'"
-                                    [(ngModel)]="timePeriod" (ngModelChange)="changeTimePeriod($event)">
+                                <input type="radio" class="btn-check" name="time-period" id="day" autocomplete="off"
+                                    [value]="'day'" [(ngModel)]="timePeriod" (ngModelChange)="changeTimePeriod($event)">
                                 <label class="btn" for="day">Ngày</label>
-                                <input type="radio" class="btn-check" name="time-period" id="week" autocomplete="off" [value]="'week'"
-                                    [(ngModel)]="timePeriod" (ngModelChange)="changeTimePeriod($event)">
+                                <input type="radio" class="btn-check" name="time-period" id="week" autocomplete="off"
+                                    [value]="'week'" [(ngModel)]="timePeriod"
+                                    (ngModelChange)="changeTimePeriod($event)">
                                 <label class="btn" for="week">Tuần</label>
-                                <input type="radio" class="btn-check" name="time-period" id="month" autocomplete="off" [value]="'month'"
-                                    [(ngModel)]="timePeriod" (ngModelChange)="changeTimePeriod($event)">
+                                <input type="radio" class="btn-check" name="time-period" id="month" autocomplete="off"
+                                    [value]="'month'" [(ngModel)]="timePeriod"
+                                    (ngModelChange)="changeTimePeriod($event)">
                                 <label class="btn" for="month">Tháng</label>
                             </div>
                         </div>
@@ -157,7 +162,7 @@
                             </table>
                         </div>
                         <div class="main-list h-100 overflow-auto" *ngIf="viewKanban === 'list'">
-                            <kendo-grid [data]="gridData" [pageSize]="limit" [resizable]="true" [skip]="offset" 
+                            <kendo-grid [data]="gridData" [pageSize]="limit" [resizable]="true" [skip]="offset"
                                 [loading]="loading" (pageChange)="pageChange($event)" style="height: 100%;">
                                 <kendo-grid-column field="partnerDisplayName" title="Khách hàng" width="250">
                                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
@@ -203,15 +208,18 @@
                                 </kendo-grid-column>
                                 <kendo-grid-column field="reason" title="Lý do" width="150">
                                 </kendo-grid-column>
-                                <kendo-grid-column field="id" width="120" *ngIf="canAppointmentEdit">
+                                <kendo-grid-column field="id" width="150" *ngIf="canAppointmentEdit">
                                     <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                                         Thao tác
                                     </ng-template>
                                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                                        <button *ngIf="canAppointmentEdit" class="btn btn-success mr-2" (click)="createUpdateAppointment(dataItem.id)">
+                                        <button *ngIf="canAppointmentEdit" class="btn btn-success mr-1"
+                                            (click)="createUpdateAppointment(dataItem.id)">
                                             <i class="far fa-edit"></i></button>
                                         <button class="btn btn-info" (click)="receiveAppointment(dataItem.id)">
                                             <i class="fas fa-sign-out-alt"></i></button>
+                                        <button class="btn btn-secondary ml-1" (click)="onPrint(dataItem.id)">
+                                            <i class="fas fa-print"></i></button>
                                     </ng-template>
                                 </kendo-grid-column>
                             </kendo-grid>
@@ -219,7 +227,7 @@
                     </div>
                 </div>
                 <div class="cont-right">
-                    <div class="filter h-100 overflow-hidden" >
+                    <div class="filter h-100 overflow-hidden">
                         <div class="filter-title">Lựa chọn lọc</div>
                         <div class="filter-group">
                             <!-- <div class="filter-label">Thời gian</div>
@@ -230,23 +238,38 @@
                             <div class="filter-label">Trạng thái</div>
                             <div class="filter-content">
                                 <div class="form-check t-form-check mb-1" *ngFor="let state of states; index as i">
-                                    <input class="form-check-input" type="radio" (change)="onChangeState(state.value)" name="state" [id]="'state-' + i" [value]="state.value" [(ngModel)]="stateSelected">
+                                    <input class="form-check-input" type="radio" (change)="onChangeState(state.value)"
+                                        name="state" [id]="'state-' + i" [value]="state.value"
+                                        [(ngModel)]="stateSelected">
                                     <label class="form-check-label" [for]="'state-' + i">
                                         {{state.text}}
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="filter-label">Loại khám</div>
+                            <div class="filter-content">
+                                <div class="form-check t-form-check mb-1" *ngFor="let type of types; index as i">
+                                    <input class="form-check-input" type="radio" (change)="onChangeType(type.value)"
+                                        name="type" [id]="'type-' + i" [value]="type.value" [(ngModel)]="typeSelected">
+                                    <label class="form-check-label" [for]="'type-' + i">
+                                        {{type.text}}
                                     </label>
                                 </div>
                             </div>
                             <div class="filter-label">Bác sĩ</div>
                             <div class="filter-content">
                                 <div class="form-check t-form-check mb-1">
-                                    <input checked class="form-check-input" type="radio" name="employee" [id]="'employee-default'" [value]="''" (change)="onChangeEmployee('')">
+                                    <input checked class="form-check-input" type="radio" name="employee"
+                                        [id]="'employee-default'" [value]="''" (change)="onChangeEmployee('')">
                                     <label class="form-check-label" [for]="'employee-default'">
                                         Tất cả
                                     </label>
                                 </div>
 
-                                <div class="form-check t-form-check mb-1" *ngFor="let employee of listEmployees; index as i">
-                                    <input class="form-check-input" type="radio" name="employee" [id]="'employee-' + i" [value]="employee.id" (change)="onChangeEmployee(employee.id)">
+                                <div class="form-check t-form-check mb-1"
+                                    *ngFor="let employee of listEmployees; index as i">
+                                    <input class="form-check-input" type="radio" name="employee" [id]="'employee-' + i"
+                                        [value]="employee.id" (change)="onChangeEmployee(employee.id)">
                                     <label class="form-check-label" [for]="'employee-' + i">
                                         {{employee.name}}
                                     </label>

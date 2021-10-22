@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit, Inject } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
@@ -7,6 +7,7 @@ import { PartnerCategoryCuDialogComponent } from '../partner-category-cu-dialog/
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PartnerCategoryImportComponent } from '../partner-category-import/partner-category-import.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-partner-category-list',
@@ -21,6 +22,7 @@ export class PartnerCategoryListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   opened = false;
 
@@ -29,9 +31,11 @@ export class PartnerCategoryListComponent implements OnInit {
 
   title = 'Nhãn khách hàng';
 
-  constructor(private partnerCategoryService: PartnerCategoryService,
-    private modalService: NgbModal) {
-  }
+  constructor(
+    private partnerCategoryService: PartnerCategoryService,
+    private modalService: NgbModal,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -77,6 +81,7 @@ export class PartnerCategoryListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

@@ -58,7 +58,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
   canCreate = false;
   hasDefined = false;
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
-  @ViewChild(TaiProductListSelectableComponent, { static: false }) productListSelectable: TaiProductListSelectableComponent;
+  @ViewChild(TaiProductListSelectableComponent) productListSelectable: TaiProductListSelectableComponent;
 
   get f() { return this.pickingForm.controls; }
 
@@ -115,7 +115,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
     this.authService.getGroups().subscribe((result: any) => {
       this.permissionService.define(result);
       this.hasDefined = this.permissionService.hasOneDefined(['product.group_uom']);
-      
+
     });
   }
 
@@ -427,7 +427,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
 
   onPrint() {
     this.stockPickingService.Print(this.id).subscribe((res: any) => {
-      this.printServie.printHtml(res);
+      this.printServie.printHtml(res.html);
     });
   }
 
@@ -443,7 +443,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
     this.loadProductList();
   }
 
-  selectProduct(product){
+  selectProduct(product) {
     var index = _.findIndex(this.moveLines.controls, o => {
       return o.get('product').value.id == product.id && o.get('productUOMId').value == product.uomId;
     });

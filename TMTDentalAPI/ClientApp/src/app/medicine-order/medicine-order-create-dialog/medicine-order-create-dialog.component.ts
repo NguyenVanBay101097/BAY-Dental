@@ -222,7 +222,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
       return false;
     }
 
-    if(this.medicineOrderLines.length <= 0) {
+    if (this.medicineOrderLines.length <= 0) {
       this.notificationService.show({
         content: 'Đơn thuốc không có thuốc để thanh toán',
         hideAfter: 3000,
@@ -231,7 +231,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
         type: { style: 'error', icon: true }
       });
       return false;
-    
+
     }
 
     var val = this.formGroup.value;
@@ -257,7 +257,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
       return false;
     }
 
-    if(this.medicineOrderLines.length <= 0) {
+    if (this.medicineOrderLines.length <= 0) {
       this.notificationService.show({
         content: 'Đơn thuốc không có thuốc để thanh toán',
         hideAfter: 3000,
@@ -281,7 +281,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
         });
         this.activeModal.close();
         this.medicineOrderService.getPrint(res.id).subscribe((result: any) => {
-          this.printService.printHtml(result);
+          this.printService.printHtml(result.html);
         });
       }
     )
@@ -318,7 +318,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
       return;
     }
     this.medicineOrderService.getPrint(this.id).subscribe((result: any) => {
-      this.printService.printHtml(result);
+      this.printService.printHtml(result.html);
     });
   }
 

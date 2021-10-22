@@ -12,6 +12,9 @@ import { mergeMap, groupBy, reduce } from 'rxjs/operators';
 import { of } from 'rxjs';
 import * as _ from 'lodash';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { IrAttachmentBasic } from 'src/app/shared/shared';
+import { IrAttachmentService } from 'src/app/shared/ir-attachment.service';
+import { WebService } from 'src/app/core/services/web.service';
 
 @Component({
   selector: 'app-partner-customer-upload-image',
@@ -21,7 +24,7 @@ import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.serv
 export class PartnerCustomerUploadImageComponent implements OnInit {
   webImageApi: string;
   webContentApi: string;
-  imagesPreview: PartnerImageBasic[] = [];
+  imagesPreview: any[] = [];
   imageViewModels: PartnerImageViewModel[] = [];
   id: string;
   formGroup: FormGroup;
@@ -32,7 +35,9 @@ export class PartnerCustomerUploadImageComponent implements OnInit {
     private fb: FormBuilder,
     private intlService: IntlService,
     private activeRoute: ActivatedRoute,
-    private showErrorService: AppSharedShowErrorService
+    private showErrorService: AppSharedShowErrorService,
+    private irAttachmentService: IrAttachmentService,
+    private webService: WebService,
   ) { }
 
   ngOnInit() {
@@ -53,14 +58,15 @@ export class PartnerCustomerUploadImageComponent implements OnInit {
     var file_node = e.target;
     var count = file_node.files.length;
     var formData = new FormData();
-    formData.append('partnerId', this.id);
+    formData.append('id', this.id);
+    formData.append('model', "partner");
     for (let i = 0; i < count; i++) {
       var file = file_node.files[i];
       formData.append('files', file);
       var filereader = new FileReader();
       filereader.readAsDataURL(file);
     }
-    this.partnerService.uploadPartnerImage(formData).subscribe(() => {
+    this.webService.binaryUploadAttachment(formData).subscribe(() => {
       this.getImageIds();
     }, (err) => {
     });
@@ -74,7 +80,7 @@ export class PartnerCustomerUploadImageComponent implements OnInit {
     modalRef.componentInstance.title = 'Xóa hình ảnh ' + item.name;
 
     modalRef.result.then(() => {
-      this.partnerService.deleteParnerImage(item.id).subscribe(
+      this.irAttachmentService.deleteImage(item.id).subscribe(
         () => {
           this.imagesPreview.splice(index, 1);
           this.processGroupImages();
@@ -88,7 +94,7 @@ export class PartnerCustomerUploadImageComponent implements OnInit {
       partnerId: this.id
     }
 
-    this.partnerService.getPartnerImageIds(value).subscribe(
+    this.partnerService.getListAttachment(this.id).subscribe(
       result => {
         if (result) {
           this.imagesPreview = result;
@@ -101,7 +107,7 @@ export class PartnerCustomerUploadImageComponent implements OnInit {
   processGroupImages() {
     var self = this;
     var groups = _.groupBy(this.imagesPreview, function (obj) {
-      var date = new Date(obj.date);
+      var date = new Date(obj.dateCreated);
       return self.intlService.formatDate(date, 'dd/MM/yyyy');
     });
 
@@ -115,8 +121,11 @@ export class PartnerCustomerUploadImageComponent implements OnInit {
 
   viewImage(partnerImage: PartnerImageBasic) {
     var modalRef = this.modalService.open(ImageViewerComponent, { windowClass: 'o_image_viewer o_modal_fullscreen' });
-    modalRef.componentInstance.partnerImages = this.imageViewModels;
-    modalRef.componentInstance.partnerImageSelected = partnerImage;
+    modalRef.componentInstance.images = this.imagesPreview;
+    modalRef.componentInstance.selectedImage = partnerImage;
   }
 
+  stopPropagation(e) {
+    e.stopPropagation();
+  }
 }

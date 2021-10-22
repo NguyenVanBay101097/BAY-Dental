@@ -23,7 +23,7 @@
 </div>
 
 <div>
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" #grid="kendoGrid" (pageChange)="pageChange($event)" (dblclick)="onDblClick()" (cellClick)="onCellClick($event)">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading" #grid (pageChange)="pageChange($event)" (dblclick)="onDblClick()" (cellClick)="onCellClick($event)">
         <kendo-grid-column field="productCode" title="Mã sản phẩm" width="150">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <span [class.text-danger]="dataItem.end<dataItem.minInventory">
@@ -84,6 +84,6 @@
                 </span>
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-excel fileName="NhapXuatTon.xlsx"></kendo-grid-excel>
+        <kendo-grid-excel fileName="NhapXuatTon.xlsx" [fetchData]="allData"></kendo-grid-excel>
     </kendo-grid>
 </div>

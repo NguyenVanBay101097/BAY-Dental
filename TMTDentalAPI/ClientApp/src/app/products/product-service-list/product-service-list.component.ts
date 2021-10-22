@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, Inject, OnInit, ViewChild } from "@angular/core";
 import { GridDataResult, PageChangeEvent } from "@progress/kendo-angular-grid";
 import { ProductService, ProductPaged } from "../product.service";
 import { ProductDialogComponent } from "../product-dialog/product-dialog.component";
@@ -24,6 +24,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
 import { ProductServiceCuDialogComponent } from "../product-service-cu-dialog/product-service-cu-dialog.component";
 import { ProductServiceImportDialogComponent } from "../product-service-import-dialog/product-service-import-dialog.component";
+import { PageGridConfig, PAGER_GRID_CONFIG } from "src/app/shared/pager-grid-kendo.config";
 
 @Component({
   selector: "app-product-service-list",
@@ -37,6 +38,7 @@ export class ProductServiceListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   opened = false;
   title = "Dịch vụ";
@@ -52,8 +54,9 @@ export class ProductServiceListComponent implements OnInit {
     public intl: IntlService,
     private productCategoryService: ProductCategoryService,
     private route: ActivatedRoute,
-    private modalService: NgbModal
-  ) {}
+    private modalService: NgbModal,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.searchUpdate
@@ -80,6 +83,7 @@ export class ProductServiceListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

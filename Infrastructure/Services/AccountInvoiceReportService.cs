@@ -80,6 +80,91 @@ namespace Infrastructure.Services
             return query;
         }
 
+        public async Task<IEnumerable<RevenueReportItem>> GetRevenueChartReport(DateTime? dateFrom, DateTime? dateTo , Guid? companyId , string groupBy , string[] accountCode = null)
+        {
+            var amlObj = GetService<IAccountMoveLineService>();
+            var res = new List<RevenueReportItem>();
+
+            var query = amlObj._QueryGet(dateFrom: dateFrom, dateTo: dateTo, state: "posted", companyId: companyId);
+        
+            if (dateFrom.HasValue)
+                query = query.Where(x => x.Date >= dateFrom.Value.AbsoluteBeginOfDate());
+
+
+            if (dateTo.HasValue)
+                query = query.Where(x => x.Date <= dateTo.Value.AbsoluteEndOfDate());
+
+
+            if (companyId.HasValue)
+                query = query.Where(x => x.CompanyId == companyId);
+
+            var types = new string[] { "cash", "bank" };
+            query = query.Where(x => types.Contains(x.Journal.Type));
+
+            if (accountCode.Any())
+                query = query.Where(x => accountCode.Contains(x.Account.Code));
+
+            if (groupBy == "groupby:day")
+            {
+
+                res = await query.GroupBy(x => x.Date.Value.Date)
+                  .Select(x => new RevenueReportItem
+                  {
+                      InvoiceDate = x.Key,
+                      PriceSubTotal = Math.Abs(x.Sum(z => z.Credit)),
+                  }).ToListAsync();
+            }
+            else if (groupBy == "groupby:month")
+            {
+                res = await query.GroupBy(x => new
+                {
+                    x.Date.Value.Year,
+                    x.Date.Value.Month,
+                })
+                 .Select(x => new RevenueReportItem
+                 {
+                     InvoiceDate = new DateTime(x.Key.Year, x.Key.Month, 1),
+                     PriceSubTotal = Math.Abs(x.Sum(z => z.Credit)),
+                 }).ToListAsync();
+            }
+            else if (groupBy == "groupby:employee")
+            {
+                res = await query.GroupBy(x => new { x.EmployeeId, x.Employee.Name }).Select(x => new RevenueReportItem
+                {
+                    Id = x.Key.EmployeeId,
+                    Name = x.Key.Name,
+                    PriceSubTotal = Math.Abs(x.Sum(z => z.Credit)),
+                    ToDetailEmployeeId = x.Key.EmployeeId ?? Guid.Empty
+                }).ToListAsync();
+
+            }
+            else if (groupBy == "groupby:assistant")
+            {
+
+                res = await query.GroupBy(x => new { x.AssistantId, x.Assistant.Name }).Select(x => new RevenueReportItem
+                {
+                    Id = x.Key.AssistantId,
+                    Name = x.Key.Name,
+                    PriceSubTotal = Math.Abs(x.Sum(z => z.Credit)),
+                    ToDetailEmployeeId = x.Key.AssistantId ?? Guid.Empty
+                }).ToListAsync();
+
+            }
+            else if (groupBy == "groupby:product")
+            {
+
+                res = await query.GroupBy(x => new { x.ProductId, x.Product.Name }).Select(x => new RevenueReportItem
+                {
+                    Id = x.Key.ProductId.Value,
+                    Name = x.Key.Name,
+                    PriceSubTotal = Math.Abs(x.Sum(z => z.Credit)),
+                }).ToListAsync();
+            }
+
+
+            return res;
+        }
+
         public async Task<IEnumerable<RevenueReportItem>> GetRevenueReport(RevenueReportFilter val)
         {
             var userObj = GetService<IUserService>();
@@ -192,6 +277,28 @@ namespace Infrastructure.Services
             var res = await query.Select(x => new RevenueTimeReportDisplay
             {
                 InvoiceDate = x.Key as DateTime?,
+                PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal)),
+                CompanyId = val.CompanyId,
+                DateFrom = val.DateFrom,
+                DateTo = val.DateTo
+            }).ToListAsync();
+
+            res = res.OrderByDescending(z => z.InvoiceDate.Value).ToList();
+
+            return res;
+        }
+
+        public async Task<IEnumerable<RevenueTimeReportDisplay>> GetRevenueTimeByMonth(RevenueTimeReportPar val)
+        {
+            var query = (GetRevenueReportQuery(new RevenueReportQueryCommon(val.DateFrom, val.DateTo, val.CompanyId)))
+                            .GroupBy(x => new { 
+                                Month = x.InvoiceDate.Value.Month,
+                                Year = x.InvoiceDate.Value.Year
+                            });
+
+            var res = await query.Select(x => new RevenueTimeReportDisplay
+            {
+                InvoiceDate = new DateTime(x.Key.Year, x.Key.Month, 1),
                 PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal)),
                 CompanyId = val.CompanyId,
                 DateFrom = val.DateFrom,
@@ -592,19 +699,76 @@ namespace Infrastructure.Services
             };
             return res;
         }
+        // doanh thu khách hàng điều trị theo khu vực
+        public async Task<IEnumerable<RevenueDistrictAreaDisplay>> GetRevenueDistrictArea(RevenueDistrictAreaPar val)
+        {
+            var saleOrderObj = GetService<ISaleOrderService>();
+            var query = saleOrderObj.SearchQuery(x => x.State != "draft");
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.DateOrder.Date >= val.DateFrom.Value.AbsoluteBeginOfDate());
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.DateOrder.Date <= val.DateTo.Value.AbsoluteEndOfDate());
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+            if (!string.IsNullOrEmpty(val.CityCode))
+                query = query.Where(x => x.Partner.CityCode == val.CityCode);
 
+            var revenueTotal = query.Sum(x => x.TotalPaid ?? 0);
+            var saleOrderPartners = query.GroupBy(x => new
+            {
+                PartnerId = x.PartnerId,
+                DistrictName = x.Partner.DistrictName,
+                DistrictCode = x.Partner.DistrictCode,
+                CityCode = x.Partner.CityCode,
+                CityName = x.Partner.CityName,
+            })
+            .Select(x => new
+            {
+                PartnerId = x.Key.PartnerId,
+                DistrictName = x.Key.DistrictName,
+                DistrictCode = x.Key.DistrictCode,
+                CityCode = x.Key.CityCode,
+                CityName = x.Key.CityName,
+                Revenue = x.Sum(z => z.TotalPaid)
+            });
+            var grList = await saleOrderPartners.GroupBy(x => new { DistrictName = x.DistrictName, DistrictCode = x.DistrictCode, CityCode = x.CityCode, CityName = x.CityName })
+                                .Select(x => new RevenueDistrictAreaDisplay()
+                                {
+                                    CityCode = x.Key.CityCode,
+                                    CityName = x.Key.CityName,
+                                    DistrictName = x.Key.DistrictName,
+                                    DistrictCode = x.Key.DistrictCode,
+                                    Revenue = x.Sum(z => z.Revenue),
+                                    PartnerCount = x.Count(),
+                                }).OrderByDescending(x => x.Revenue).ToListAsync();
+            return grList;
+            //var dictGrList = grList.ToDictionary(x => x.DistrictCode, x => x);
+            //foreach(var item in dictGrList)
+            //{
+            //    dictGrList[item.Key].Percent = (revenueTotal != 0 && dictGrList[item.Key].Revenue.HasValue) ? Math.Round(dictGrList[item.Key].Revenue.Value / revenueTotal * 100, 2) + "%" : "0%";
+            //}
 
+            //var list = dictGrList.Values.ToList();
+            //if (list.Count() <= 10)
+            //    return list;
 
-        //public override ISpecification<AccountInvoiceReport> RuleDomainGet(IRRule rule)
-        //{
-        //    var companyId = CompanyId;
-        //    switch (rule.Code)
-        //    {
-        //        case "account.invoice_comp_rule":
-        //            return new InitialSpecification<AccountInvoiceReport>(x => x.company_id == companyId);
-        //        default:
-        //            return null;
-        //    }
-        //}
+            //var result = new List<RevenueDistrictAreaDisplay>();
+            //var top10 = list.Skip(0).Take(10);
+            //var otherList = list.Skip(10);
+            //var revenueOther = otherList.Sum(x => x.Revenue ?? 0);
+            //var partnerOtherCount = otherList.Sum(x => x.PartnerCount);
+
+            //var otherObj = new RevenueDistrictAreaDisplay()
+            //{
+            //    DistrictName = "Khác",
+            //    Revenue = revenueOther,
+            //    PartnerCount = partnerOtherCount,
+            //    Percent = revenueTotal != 0 ? Math.Round(revenueOther / revenueTotal * 100, 2) + "%" : "0%"
+            //};
+
+            //result.AddRange(top10);
+            //result.Add(otherObj);
+            //return result;
+        }
     }
 }

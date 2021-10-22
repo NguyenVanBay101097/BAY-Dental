@@ -1,4 +1,4 @@
-import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Component, Inject, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { GridDataResult, PageChangeEvent, RowClassArgs } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { PartnerPaged, PartnerBasic } from '../partner-simple';
@@ -20,6 +20,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { MemberLevelAutoCompleteReq, MemberLevelService } from 'src/app/member-level/member-level.service';
 import { values } from 'lodash';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-partner-customer-list',
@@ -72,13 +73,14 @@ export class PartnerCustomerListComponent implements OnInit {
   color='red';
 
   showInfo = false;
+  pagerSettings: any;
 
   constructor(private partnerService: PartnerService, private modalService: NgbModal,
     private partnerCategoryService: PartnerCategoryService, private notificationService: NotificationService, 
     private checkPermissionService: CheckPermissionService,
-    private memberLevelService: MemberLevelService
-    
-    ) { }
+    private memberLevelService: MemberLevelService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.initFilter();
@@ -136,6 +138,7 @@ export class PartnerCustomerListComponent implements OnInit {
       data : res.items,
       total : res.totalItems
      };
+     console.log(this.gridData);
    },()=> {},
    ()=>{
      this.loading = false;
@@ -311,7 +314,8 @@ export class PartnerCustomerListComponent implements OnInit {
   }
 
   public onPageChange(event: PageChangeEvent): void {
-    this.filter.offset = event.skip;;
+    this.filter.offset = event.skip;
+    this.filter.limit = event.take;
     this.refreshData();
   }
 }

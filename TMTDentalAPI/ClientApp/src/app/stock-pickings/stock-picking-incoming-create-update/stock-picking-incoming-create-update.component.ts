@@ -57,7 +57,7 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
   filteredPartners: PartnerSimple[] = [];
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
 
-  @ViewChild(TaiProductListSelectableComponent, { static: false }) productListSelectable: TaiProductListSelectableComponent;
+  @ViewChild(TaiProductListSelectableComponent) productListSelectable: TaiProductListSelectableComponent;
 
   get f() { return this.pickingForm.controls; }
 
@@ -400,7 +400,7 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
 
   onPrint() {
     this.stockPickingService.Print(this.id).subscribe((res: any) => {
-      this.printServie.printHtml(res);
+      this.printServie.printHtml(res.html);
     });
   }
 

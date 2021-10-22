@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { RoleService, ApplicationRolePaged, ApplicationRoleBasic } from '../role.service';
@@ -12,6 +12,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { UserService, UserPaged } from 'src/app/users/user.service';
 import { AuthResource } from 'src/app/auth/auth.resource';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 const indexChecked = (keys, index) => keys.filter(k => k === index).length > 0;
 
@@ -25,6 +26,7 @@ export class RoleListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
 
   search: string;
@@ -35,7 +37,9 @@ export class RoleListComponent implements OnInit {
     private authResource: AuthResource,
     private modalService: NgbModal,
     private router: Router,
-    private route: ActivatedRoute) { }
+    private route: ActivatedRoute,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -70,6 +74,7 @@ export class RoleListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

@@ -23,3 +23,19 @@
 .o_view_controller {
     position: initial !important;
 }
+
+.color-confirmed {
+    color: #2395FF; /* đang hẹn */
+}
+
+.color-arrived {
+    color: #28A745; /* đã đến */
+}
+
+.color-cancel {
+    color: #EB3B5B; /* hủy hẹn */
+}
+
+.color-overdue {
+    color: #FFC107; /* quá hạn */
+}

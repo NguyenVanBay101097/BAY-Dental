@@ -46,7 +46,7 @@
     </div>
     
     <div class="o_content">
-        <kendo-grid [data]="gridView" [pageable]="true" [pageSize]="pageSize" [skip]="skip" [loading]="loading" [selectable]="true"
+        <kendo-grid [data]="gridView" [pageable]="pagerSettings" [pageSize]="pageSize" [skip]="skip" [loading]="loading" [selectable]="true"
             (pageChange)="pageChange($event)" [kendoGridSelectBy]="'id'"
             (selectedKeysChange)="selectedKeysChange($event)">
             <kendo-grid-checkbox-column showSelectAll="true">              

@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit, Output, EventEmitter, ElementRef } from "@angular/core";
+import { Component, ViewChild, OnInit, Output, EventEmitter, ElementRef, Inject } from "@angular/core";
 import { GridDataResult, PageChangeEvent } from "@progress/kendo-angular-grid";
 import {
   map,
@@ -22,6 +22,7 @@ import { ProductService, ProductPaged } from "src/app/products/product.service";
 import * as _ from "lodash";
 import { LaboOrderLineService } from "../labo-order-line.service";
 import { LaboOrderStatisticUpdateDialogComponent } from './labo-order-statistic-update-dialog/labo-order-statistic-update-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from "src/app/shared/pager-grid-kendo.config";
 
 @Component({
   selector: "app-labo-order-statistics",
@@ -35,6 +36,7 @@ export class LaboOrderStatisticsComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   opened = false;
   search: string;
@@ -62,8 +64,9 @@ export class LaboOrderStatisticsComponent implements OnInit {
     private laboOrderLineService: LaboOrderLineService,
     private productService: ProductService,
     private intlService: IntlService,
-    private modalService: NgbModal
-  ) {}
+    private modalService: NgbModal,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.paged = new LaboOrderStatisticsPaged();
@@ -212,6 +215,7 @@ export class LaboOrderStatisticsComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

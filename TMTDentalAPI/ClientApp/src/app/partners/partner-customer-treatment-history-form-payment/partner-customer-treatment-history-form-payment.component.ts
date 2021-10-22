@@ -72,7 +72,7 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
     private pricelistService: PriceListService, private errorService: AppSharedShowErrorService,
     private registerPaymentService: AccountRegisterPaymentService, private paymentService: AccountPaymentService,
     private laboOrderService: LaboOrderService) { }
-    
+
   ngOnChanges(changes: SimpleChanges): void {
     if (this.saleOrderLine) {
       this.addLine(this.saleOrderLine);
@@ -583,7 +583,7 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
     if (this.id) {
       let modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       if (item && item.id) {
-        modalRef.componentInstance.title = 'Cập nhật phiếu labo';
+        modalRef.componentInstance.title = 'Cập nhật phiếu Labo';
         modalRef.componentInstance.id = item.id;
       }
       else {
@@ -1150,7 +1150,7 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
   }
 
   printPayment(payment) {
-    this.paymentService.getPrint(payment.accountPaymentId).subscribe(result => {
+    this.paymentService.getPrint(payment.accountPaymentId).subscribe((result: any) => {
       this.accountPaymentPrintComponent.print(result);
     });
   }

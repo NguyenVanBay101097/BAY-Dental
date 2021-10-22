@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -8,6 +8,7 @@ import { ServiceCardOrderPaged } from '../service-card-order-paged';
 import { ServiceCardOrderService } from '../service-card-order.service';
 import { Router } from '@angular/router';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-service-card-order-list',
@@ -23,6 +24,7 @@ export class ServiceCardOrderListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   search: string;
   searchUpdate = new Subject<string>();
@@ -34,7 +36,9 @@ export class ServiceCardOrderListComponent implements OnInit {
 
   constructor(private cardOrderService: ServiceCardOrderService,
     private modalService: NgbModal, private router: Router, 
-    private checkPermissionService: CheckPermissionService) { }
+    private checkPermissionService: CheckPermissionService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     
@@ -72,6 +76,7 @@ export class ServiceCardOrderListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

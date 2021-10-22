@@ -2,10 +2,10 @@
     <div class="card-body">
         <!-- <h5>Báo cáo công nợ khách hàng</h5> -->
         <div class="filter d-flex flex-0-0-auto justify-content-between">
-            <div class="d-flex w-50">
+            <div class="d-flex w-70">
                 <app-date-range-picker-filter [opens]="'right'" class="mr-1 date-picker" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="searchChangeDate($event)" opens="right">
                 </app-date-range-picker-filter>
-                <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1 kendo-combobox" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
+                <kendo-combobox [placeholder]="'Tất cả chi nhánh'" width="auto" class="mr-1 kendo-combobox" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
                 </kendo-combobox>
                 <div class="dropdown mr-1">
                     <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -52,7 +52,7 @@
                 </div>
             </div>
             <div class="overflow-auto">
-                <kendo-grid #grid (excelExport)="onExcelExport($event)" [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
+                <kendo-grid #grid (excelExport)="onExcelExport($event)" [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading" (pageChange)="pageChange($event)">
                     <kendo-grid-column field="partnerName" title="Khách hàng" width="200">
                         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                             <a class="text-primary" [routerLink]="['/partners/customer/' + dataItem.partnerId]">{{dataItem.partnerName}}</a>

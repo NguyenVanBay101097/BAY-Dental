@@ -24,7 +24,7 @@
             </div>
         </div>
         <div class="flex-1-1-100 h-100 overflow-hidden">
-            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"
                 (pageChange)="pageChange($event)">
                 <kendo-grid-column field="name" title="Tên vật tư" width="250">
                 </kendo-grid-column>

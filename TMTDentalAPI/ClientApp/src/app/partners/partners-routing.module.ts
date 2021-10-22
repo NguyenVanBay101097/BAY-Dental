@@ -30,6 +30,7 @@ import { PartnerCustomerDebtPaymentHistoryListComponent } from './partner-custom
 import { PartnerCustomerDebtManagementComponent } from './partner-customer-debt-management/partner-customer-debt-management.component';
 import { PartnerAdvanceManagementComponent } from '../partner-advances/partner-advance-management/partner-advance-management.component';
 import { PartnerAdvanceHistoryListComponent } from '../partner-advances/partner-advance-history-list/partner-advance-history-list.component';
+import { PartnerSupplierListComponent } from '../catalog/partner-supplier-list/partner-supplier-list.component';
 
 const routes: Routes = [
   {
@@ -90,6 +91,10 @@ const routes: Routes = [
       { path: 'debit', component: PartnerSupplierFormDebitComponent },
       { path: 'payment', component: PartnerSupplierFormPaymentComponent },
     ]
+  },
+  {
+    path: 'suppliers',
+    component: PartnerSupplierListComponent,
   }
 ];
 

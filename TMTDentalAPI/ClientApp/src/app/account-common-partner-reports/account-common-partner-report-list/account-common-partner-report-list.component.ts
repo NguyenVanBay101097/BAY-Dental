@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { AccountCommonPartnerReportService, AccountCommonPartnerReportSearch, AccountCommonPartnerReportItem } from '../account-common-partner-report.service';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
@@ -9,6 +9,7 @@ import { debounceTime, tap, switchMap, distinctUntilChanged } from 'rxjs/operato
 import { Subject } from 'rxjs';
 import { aggregateBy } from '@progress/kendo-data-query';
 import { ActivatedRoute } from '@angular/router';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-account-common-partner-report-list',
@@ -25,6 +26,7 @@ export class AccountCommonPartnerReportListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   dateFrom: Date;
   dateTo: Date;
   searchPartner: PartnerSimple;
@@ -42,7 +44,9 @@ export class AccountCommonPartnerReportListComponent implements OnInit {
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
 
   constructor(private reportService: AccountCommonPartnerReportService, private intlService: IntlService,
-    private partnerService: PartnerService, private route: ActivatedRoute) { }
+    private partnerService: PartnerService, private route: ActivatedRoute,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     var date = new Date();
@@ -112,6 +116,7 @@ export class AccountCommonPartnerReportListComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadItems();
   }
 

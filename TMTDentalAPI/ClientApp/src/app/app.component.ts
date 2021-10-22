@@ -50,7 +50,6 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     if (this.swUpdate.isEnabled) {
       this.swUpdate.available.subscribe(() => {
         if (confirm("Có phiên bản mới, tải ngay?")) {

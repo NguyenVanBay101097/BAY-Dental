@@ -85,6 +85,7 @@ namespace Infrastructure.Services
                 .Include(x => x.User)
                 .Include(x => x.Employee)
                 .Include(x => x.Picking)
+                .Include(x => x.SaleOrder)
                 .FirstOrDefaultAsync();
 
             res.Lines = await requestLineObj.SearchQuery(x => x.RequestId == res.Id)

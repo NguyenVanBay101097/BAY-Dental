@@ -1,5 +1,5 @@
 import { NotifyService } from 'src/app/shared/services/notify.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
@@ -8,6 +8,7 @@ import { LoaiThuChiService, loaiThuChiPaged, loaiThuChiBasic, loaiThuChi } from 
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { LoaiThuChiFormComponent } from 'src/app/shared/loai-thu-chi-form/loai-thu-chi-form.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-loai-thu-chi-list',
@@ -20,6 +21,7 @@ export class LoaiThuChiListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   type: string;
 
   search: string;
@@ -27,7 +29,9 @@ export class LoaiThuChiListComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private modalService: NgbModal,
     private notifyService: NotifyService,
-    private loaiThuChiService: LoaiThuChiService) { }
+    private loaiThuChiService: LoaiThuChiService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.route.data.subscribe(data => {
@@ -70,6 +74,7 @@ export class LoaiThuChiListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { LegendItemVisualArgs } from '@progress/kendo-angular-charts';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -8,6 +8,7 @@ import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/op
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { CustomerReceiptReportFilter, CustomerReceiptReportService } from '../customer-receipt-report.service';
 
 @Component({
@@ -19,6 +20,7 @@ export class CustomerReceiptReportOverviewComponent implements OnInit {
   loading = false;
   limit = 10;
   skip = 0;
+  pagerSettings: any;
   total: number;
   gridData: GridDataResult;
   listCompany: CompanySimple[] = [];
@@ -65,7 +67,8 @@ export class CustomerReceiptReportOverviewComponent implements OnInit {
     private intlService: IntlService,
     private companyService: CompanyService,
     private employeeService: EmployeeService,
-  ) { }
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.dateFrom = this.today;
@@ -214,6 +217,7 @@ export class CustomerReceiptReportOverviewComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataApi();
   }
 

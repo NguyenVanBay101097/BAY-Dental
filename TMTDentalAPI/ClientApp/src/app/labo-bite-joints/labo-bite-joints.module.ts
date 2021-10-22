@@ -22,6 +22,9 @@ import { LaboBiteJointService } from './labo-bite-joint.service';
     LaboBiteJointsRoutingModule,
     MyCustomKendoModule
   ],
+  exports: [
+    LaboBiteJointListComponent
+  ],
   providers: [LaboBiteJointService],
   entryComponents: [LaboBiteJointCuDialogComponent]
 })

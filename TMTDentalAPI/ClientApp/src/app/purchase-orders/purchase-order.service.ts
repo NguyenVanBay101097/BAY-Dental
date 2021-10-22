@@ -37,7 +37,7 @@ export class PurchaseOrderDisplay {
     dateOrder: string;
     amountTotal: number;
     datePlanned: string;
-    pickingTypeId:string;
+    pickingTypeId: string;
     orderLines: PurchaseOrderLineDisplay[];
     type: string;
     amountResidual: number;
@@ -90,7 +90,7 @@ export class PurchaseOrderLineDisplay {
 export class PurchaseOrderService {
     apiUrl = 'api/PurchaseOrders';
     apiPrintUrl = 'PurchaseOrder';
-    
+
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
     getPaged(val: any): Observable<PagedResult2<PurchaseOrderBasic>> {
@@ -121,8 +121,11 @@ export class PurchaseOrderService {
         return this.http.get(this.baseApi + this.apiUrl + "/" + id + '/GetRefundByOrder');
     }
 
+    // getPrint(id: string) {
+    //     return this.http.get(this.baseApi + this.apiPrintUrl+ '/Print' + `?id=${id}`, { responseType: 'text' });
+    // }
     getPrint(id: string) {
-        return this.http.get(this.baseApi + this.apiPrintUrl+ '/Print' + `?id=${id}`, { responseType: 'text' });
+        return this.http.get(this.baseApi + this.apiUrl + `/${id}/Print`);
     }
 
     buttonConfirm(ids: string[]) {
@@ -139,8 +142,8 @@ export class PurchaseOrderService {
 
     exportExcelFile(val: any) {
         return this.http.get(this.baseApi + this.apiUrl + "/ExportExcelFile", {
-          responseType: "blob",
-          params: val,
+            responseType: "blob",
+            params: val,
         });
-      }
+    }
 }

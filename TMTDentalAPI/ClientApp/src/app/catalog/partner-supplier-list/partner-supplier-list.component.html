@@ -26,7 +26,7 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageable]="true" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)"
+    <kendo-grid [data]="gridData" [pageable]="pagerSettings" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)"
         [loading]="loading">
         <kendo-grid-column field="ref" title="Mã NCC" width="100"></kendo-grid-column>
         <kendo-grid-column field="name" title="Tên NCC" width="200">

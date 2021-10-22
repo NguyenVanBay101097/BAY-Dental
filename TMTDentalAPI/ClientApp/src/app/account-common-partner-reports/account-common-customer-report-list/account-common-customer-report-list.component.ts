@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { AccountCommonPartnerReportService, AccountCommonPartnerReportSearch, AccountCommonPartnerReportItem } from '../account-common-partner-report.service';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
@@ -11,6 +11,7 @@ import { aggregateBy } from '@progress/kendo-data-query';
 import { ActivatedRoute } from '@angular/router';
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
 import { PrintService } from 'src/app/shared/services/print.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-account-common-customer-report-list',
@@ -27,6 +28,7 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0; 
+  pagerSettings: any;
   dateFrom: Date;
   dateTo: Date;
   resultSelection: string;
@@ -36,7 +38,6 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
 
   search: string;
   searchUpdate = new Subject<string>();
-
   public aggregates: any[] = [
     { field: 'end', aggregate: 'sum' },
   ];
@@ -45,7 +46,9 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
     private route: ActivatedRoute,
     private companyService: CompanyService,
     private partnerService: PartnerService,
-    private printService: PrintService) { }
+    private printService: PrintService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
@@ -144,6 +147,7 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadItems(); 
   }
 

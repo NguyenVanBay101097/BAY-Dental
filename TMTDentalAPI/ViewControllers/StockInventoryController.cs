@@ -29,7 +29,7 @@ namespace TMTDentalAPI.ViewControllers
         [PrinterNameFilterAttribute(Name = AppConstants.StockInventoryPaperCode)]
         public async Task<IActionResult> Print(Guid id)
         {
-            var res = await _stockInventoryService.GetStockInventoryPrint(id);
+            var res = await _stockInventoryService.GetPrint(id);
             if (res == null)
                 return NotFound();      
 

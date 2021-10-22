@@ -1,6 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { AccountCommonPartnerReportService, ReportPartnerDebitDetailReq, ReportPartnerDebitDetailRes, ReportPartnerDebitRes } from '../account-common-partner-report.service';
 
 @Component({
@@ -12,14 +13,17 @@ export class PartnerDebitDetailListReportComponent implements OnInit {
 
   @Input() public parent: ReportPartnerDebitRes;
   skip = 0;
-  limit = 10;
+  limit = 20;
+  pagerSettings: any;
   gridData: GridDataResult;
   details: ReportPartnerDebitDetailRes[];
   loading = false;
 
-  constructor(private reportService: AccountCommonPartnerReportService,
-    private intlService: IntlService
-    ) { }
+  constructor(
+    private reportService: AccountCommonPartnerReportService,
+    private intlService: IntlService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -45,6 +49,7 @@ export class PartnerDebitDetailListReportComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadItems();
   }
 

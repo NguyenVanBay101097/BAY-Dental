@@ -76,6 +76,11 @@ export class GetRevenueSumTotalReq {
     companyId: string;
 }
 
+export class SaleOrderPrint {
+    id: string;
+    attachmentIds: string[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class SaleOrderService {
     apiUrl = 'api/SaleOrders';
@@ -204,8 +209,11 @@ export class SaleOrderService {
         return this.http.post(this.baseApi + this.apiUrl + '/CreateFastSaleOrder', val)
     }
 
-    printSaleOrder(id: string) {
-        return this.http.get(this.baseApi + this.apiUrlPrint + '/Print' + `?id=${id}`, { responseType: 'text' });
+    // printSaleOrder(id: string) {
+    //     return this.http.get(this.baseApi + this.apiUrlPrint + '/Print' + `?id=${id}`, { responseType: 'text' });
+    // }
+    printSaleOrder(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/Print',val);
     }
 
     getPaymentBasicList(val): Observable<AccountPaymentBasic[]> {
@@ -312,5 +320,17 @@ export class SaleOrderService {
 
     getDotKhamListIds(id) {
         return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetDotKhamListIds');
+    }
+
+    getListAttachment(id){
+        return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetListAttachment');
+    }
+
+    getBasic(id: string): Observable<SaleOrderBasic> {
+        return this.http.get<SaleOrderBasic>(this.baseApi + this.apiUrl + "/" + id + '/GetBasic');
+    }
+
+    getPromotions(id: string) {
+        return this.http.get(this.baseApi + this.apiUrl + "/" + id + '/GetPromotions');
     }
 }

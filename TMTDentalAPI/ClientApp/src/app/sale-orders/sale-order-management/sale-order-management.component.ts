@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Workbook } from '@progress/kendo-angular-excel-export';
 import { GridComponent, GridDataResult } from '@progress/kendo-angular-grid';
@@ -10,6 +10,7 @@ import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/co
 import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
 import { SaleOrderPaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { SaleOrderLinePaged } from 'src/app/partners/partner.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { PrintService } from 'src/app/shared/services/print.service';
 
 @Component({
@@ -37,6 +38,7 @@ export class SaleOrderManagementComponent implements OnInit {
   loading = false;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
 
   saleOrdersAllData: GridDataResult;
 
@@ -45,8 +47,9 @@ export class SaleOrderManagementComponent implements OnInit {
     private saleOrderService: SaleOrderService,
     private router: Router,
     private saleOrderLineService: SaleOrderLineService,
-    private printService: PrintService
-  ) { }
+    private printService: PrintService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadCompanies();
@@ -115,6 +118,7 @@ export class SaleOrderManagementComponent implements OnInit {
 
   pageChange(event) {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

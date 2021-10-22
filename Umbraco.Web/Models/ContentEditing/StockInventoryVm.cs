@@ -151,7 +151,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Ngày kiểm kho
         /// </summary>
-        public DateTime Date { get; set; }
+        public DateTime DateCreated { get; set; }
 
         /// <summary>
         /// Ghi Chú
@@ -204,6 +204,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Bao gồm những sản phẩm mà tồn <= 0
         /// </summary>
         //public bool? Exhausted { get; set; }
+
+        public string CreatedByName { get; set; }
     }
 
 

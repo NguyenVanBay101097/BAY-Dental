@@ -132,7 +132,11 @@ namespace Infrastructure.Services
             var toathuocDisplay = _mapper.Map<ToaThuocDisplay>(toathuoc);
 
             var toaThuocLineObj = GetService<IToaThuocLineService>();
-            toathuocDisplay.Lines = await _mapper.ProjectTo<ToaThuocLineDisplay>(toaThuocLineObj.SearchQuery(x => x.ToaThuocId == id, orderBy: x => x.OrderBy(s => s.Sequence))).ToListAsync();
+            var lines = await toaThuocLineObj.SearchQuery(x => x.ToaThuocId == id, orderBy: x => x.OrderBy(s => s.Sequence))
+                .Include(x => x.Product)
+                .Include(x => x.ProductUoM)
+                .ToListAsync();
+            toathuocDisplay.Lines = _mapper.Map<IEnumerable<ToaThuocLineDisplay>>(lines);
 
             return toathuocDisplay;
         }

@@ -258,4 +258,77 @@ namespace Umbraco.Web.Models.ContentEditing
         public ApplicationUserSimple User { get; set; }
         public IEnumerable<ReportPartnerDebitPrint> ReportPartnerDebitLines { get; set; } = new List<ReportPartnerDebitPrint>();
     }
+
+    public class ReportPartnerAdvanceFilter
+    {
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
+
+        public string Search { get; set; }
+
+        public Guid? CompanyId { get; set; }
+    }
+
+    public class ReportPartnerAdvance
+    {
+        public Guid PartnerId { get; set; }
+
+        public string PartnerName { get; set; }
+
+        public string PartnerPhone { get; set; }
+
+        public decimal Begin { get; set; }
+
+        public decimal Debit { get; set; }
+
+        public decimal Credit { get; set; }
+
+        public decimal Refund { get; set; }
+
+        public decimal End { get; set; }
+
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
+
+        public Guid? CompanyId { get; set; }
+    }
+
+    public class ReportPartnerAdvanceDetailFilter
+    {
+
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
+
+        public Guid? PartnerId { get; set; }
+
+        public Guid? CompanyId { get; set; }
+    }
+
+    public class ReportPartnerAdvanceDetail
+    {
+        public DateTime? Date { get; set; }
+        public string InvoiceOrigin { get; set; }
+        public decimal Begin { get; set; }
+
+        public decimal Debit { get; set; }
+
+        public decimal Credit { get; set; }
+
+        public decimal End { get; set; }
+        public string Name { get; set; }
+
+        public Guid? PartnerId { get; set; }
+    }
+
+    public class ReportPartnerAdvancePrintVM
+    {
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public CompanyPrintVM Company { get; set; }
+        public ApplicationUserSimple User { get; set; }
+        public IEnumerable<ReportPartnerAdvance> ReportPartnerAdvances { get; set; } = new List<ReportPartnerAdvance>();
+    }
 }

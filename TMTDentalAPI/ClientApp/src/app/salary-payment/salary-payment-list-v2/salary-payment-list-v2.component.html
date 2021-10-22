@@ -27,7 +27,7 @@
 
 <div class="o_content">
     <kendo-grid [data]="gridData" [loading]="loading" [resizable]="true" [skip]="skip"
-        [pageable]="true" [pageSize]="limit">
+        [pageable]="pagerSettings" [pageSize]="limit">
         <kendo-grid-column field="name" title="Mã phiếu" width="120">
         </kendo-grid-column>
         <kendo-grid-column field="paymentDate" title="Ngày" width="80">
@@ -68,6 +68,5 @@
                 </button>
             </ng-template>
         </kendo-grid-column>
-
     </kendo-grid>
 </div>

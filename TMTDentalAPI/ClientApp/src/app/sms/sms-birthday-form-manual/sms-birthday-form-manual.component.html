@@ -35,7 +35,7 @@
 </div>
 
 
-<kendo-grid [data]="gridData" [selectable]="true" (pageChange)="pageChange($event)" [skip]="skip" [pageable]="true"
+<kendo-grid [data]="gridData" [selectable]="true" (pageChange)="pageChange($event)" [skip]="skip" [pageable]="pagerSettings"
     [pageSize]="limit" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
     <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
     <kendo-grid-column field="name" title="Khách hàng" width="200"></kendo-grid-column>

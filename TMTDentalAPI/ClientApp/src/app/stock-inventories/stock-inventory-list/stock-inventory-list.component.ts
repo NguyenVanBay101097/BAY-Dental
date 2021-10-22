@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { PrecscriptionPaymentPaged, StockInventoryService } from '../stock-inventory.service';
 
 @Component({
@@ -24,6 +25,7 @@ export class StockInventoryListComponent implements OnInit {
   dateFrom: Date;
   dateTo: Date;
   offset = 0;
+  pagerSettings: any;
   state: string;
   filterInventoryState = [
     { name: 'Nháp', value: 'draft' },
@@ -40,8 +42,9 @@ export class StockInventoryListComponent implements OnInit {
     private intlService: IntlService,
     private router: Router,
     private modalService: NgbModal,
-    private checkPermissionService: CheckPermissionService
-  ) { }
+    private checkPermissionService: CheckPermissionService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.dateFrom = this.monthStart;
@@ -83,6 +86,7 @@ export class StockInventoryListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.offset = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

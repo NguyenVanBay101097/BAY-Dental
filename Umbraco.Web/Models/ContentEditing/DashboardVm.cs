@@ -119,4 +119,140 @@ namespace Umbraco.Web.Models.ContentEditing
         public string AccountCode { get; set; }
     }
 
+    public class ReportRevenueChart
+    {
+        public DateTime Date { get; set; }
+
+        public decimal AmountRevenue { get; set; }
+
+        public decimal AmountCashBook { get; set; }
+    }
+
+    public class ReportRevenueChartFilter
+    {
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }      
+
+        public Guid? CompanyId { get; set; }
+
+        /// <summary>
+        /// groupby:day  group theo ngày
+        /// groupby:month: group theo tháng
+        /// groupby:product: group theo dịch vụ
+        /// groupby:employee: group theo nhân viên
+        /// groupby:assistant: group theo phụ tá
+        /// </summary>
+        public string GroupBy { get; set; }
+    }
+
+    public class GetRevenueActualReportRequest
+    {
+        public DateTime? DateTo { get; set; }
+
+        public DateTime? DateFrom { get; set; }
+
+        public Guid? CompanyId { get; set; }
+    }
+
+    public class GetRevenueActualReportResponse
+    {
+        public decimal RevenuePaymentTotal
+        {
+            get
+            {
+                return CashBankPaymentTotal + AdvancePaymentTotal + DebtPaymentTotal;
+            }
+        }
+
+        public decimal CashBankPaymentTotal { get; set; }
+
+        public decimal AdvancePaymentTotal { get; set; }
+
+        public decimal DebtPaymentTotal { get; set; }
+
+        public decimal CashBankDebitTotal { get; set; }
+
+        public decimal AdvanceIncomeTotal { get; set; }
+
+        public decimal DebtIncomeTotal { get; set; }
+
+        public decimal OtherIncomeTotal 
+        {
+            get
+            {
+                return CashBankDebitTotal - CashBankPaymentTotal - AdvanceIncomeTotal - DebtIncomeTotal;
+            }
+        }
+    }
+
+    public class GetThuChiReportRequest
+    {
+        public DateTime? DateTo { get; set; }
+
+        public DateTime? DateFrom { get; set; }
+
+        public Guid? CompanyId { get; set; }
+    }
+
+    public class GetThuChiReportResponse
+    {
+        public decimal CustomerIncomeTotal { get; set; }
+
+        public decimal AdvanceIncomeTotal { get; set; }
+
+        public decimal DebtIncomeTotal { get; set; }
+
+        public decimal SupplierIncomeTotal { get; set; }
+
+        public decimal CashBankIncomeTotal { get; set; }
+
+        public decimal OtherIncomeTotal
+        {
+            get
+            {
+                return CashBankIncomeTotal - CustomerIncomeTotal - AdvanceIncomeTotal - DebtIncomeTotal - SupplierIncomeTotal;
+            }
+        }
+
+        public decimal SupplierExpenseTotal { get; set; }
+
+        public decimal AdvanceExpenseTotal { get; set; }
+
+        public decimal SalaryExpenseTotal { get; set; }
+
+        public decimal CommissionExpenseTotal { get; set; }
+
+        public decimal CashBankExpenseTotal { get; set; }
+
+        public decimal OtherExpenseTotal
+        {
+            get
+            {
+                return CashBankExpenseTotal - SupplierExpenseTotal - AdvanceExpenseTotal - SalaryExpenseTotal - CommissionExpenseTotal;
+            }
+        }
+    }
+
+    public class GetSummaryReportRequest
+    {
+        public DateTime? DateTo { get; set; }
+
+        public DateTime? DateFrom { get; set; }
+
+        public Guid? CompanyId { get; set; }
+    }
+
+    public class GetSummaryReportResponse
+    {
+        public decimal CashTotal { get; set; }
+
+        public decimal BankTotal { get; set; }
+
+        public decimal PayableTotal { get; set; }
+
+        public decimal DebtTotal { get; set; }
+
+        public decimal ExpectTotal { get; set; }
+    }
 }

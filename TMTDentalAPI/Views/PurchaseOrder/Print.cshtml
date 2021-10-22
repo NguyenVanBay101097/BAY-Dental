@@ -35,7 +35,7 @@
         {
             <div class="text-3xl font-semibold">Phiếu trả hàng</div>
         }
-        <div>Ngày @Model.Date.Day tháng @Model.Date.Month năm @Model.Date.Year </div>
+        <div>Ngày @Model.DateOrder.Day tháng @Model.DateOrder.Month năm @Model.DateOrder.Year </div>
         <div class="font-semibold">Số: @Model.Name</div>
     </div>
     <div class="o_form_view mb-2">
@@ -97,7 +97,7 @@
                 <th>Thành tiền</th>
             </tr>
             @{
-                foreach (var line in Model.Lines)
+                foreach (var line in Model.OrderLines)
                 {
                         <tr>
                             <td> @line.Sequence</td>

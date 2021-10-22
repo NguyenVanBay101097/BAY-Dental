@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ApplicationCore.Constants;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -21,7 +22,7 @@ namespace TMTDentalAPI.ViewControllers
             _viewToStringRenderService = viewToStringRenderService;
         }
 
-        [HttpPut]
+        [HttpPost]
         [PrinterNameFilterAttribute(Name = AppConstants.SalaryPaymentPaperCode)]
         public async Task<IActionResult> Print(Guid id, [FromBody] HrPayslipRunSave val)
         {
@@ -31,7 +32,7 @@ namespace TMTDentalAPI.ViewControllers
 
             if (ids != null && ids.Any())
             {
-                res.Slips = res.Slips.Where(x => ids.Contains(x.Id));            
+                res.Slips = res.Slips.Where(x => ids.Contains(x.Id));             
                 return View(res);
             }
             else

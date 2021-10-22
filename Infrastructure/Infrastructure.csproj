@@ -149,7 +149,8 @@
     <PackageReference Include="Dapper.SqlBuilder" Version="2.0.4" />
     <PackageReference Include="EPPlus" Version="4.5.3.2" />
     <PackageReference Include="HangFire" Version="1.7.11" />
-    <PackageReference Include="Hangfire.Pro" Version="2.2.3" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.18" />
+    <!--<PackageReference Include="Hangfire.Pro" Version="2.2.3" />-->
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OAuth" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.1" />
@@ -161,6 +162,7 @@
     </PackageReference>
     <PackageReference Include="NPOI" Version="2.4.1" />
     <PackageReference Include="SaasKit.Multitenancy" Version="1.1.4" />
+    <PackageReference Include="Scriban" Version="4.0.1" />
     <PackageReference Include="Sendgrid" Version="9.11.0" />
     <PackageReference Include="StringTemplate4" Version="4.0.8" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.0" />

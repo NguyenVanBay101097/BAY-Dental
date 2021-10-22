@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { Workbook, WorkbookSheet, WorkbookSheetColumn, WorkbookSheetRow, WorkbookSheetRowCell } from '@progress/kendo-angular-excel-export';
 import { GridComponent, GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -10,6 +10,7 @@ import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { CustomerReceiptReportBasic, CustomerReceiptReportFilter, CustomerReceiptReportService } from '../customer-receipt-report.service';
 import { saveAs } from '@progress/kendo-file-saver';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-customer-receipt-report-no-treatment',
@@ -20,6 +21,7 @@ export class CustomerReceiptReportNoTreatmentComponent implements OnInit {
   loading = false;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   total: number;
   gridData: GridDataResult;
   listCompany: CompanySimple[] = [];
@@ -46,7 +48,8 @@ export class CustomerReceiptReportNoTreatmentComponent implements OnInit {
     private intlService: IntlService,
     private companyService: CompanyService,
     private employeeService: EmployeeService,
-  ) { }
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.dateFrom = this.today;
@@ -128,6 +131,7 @@ export class CustomerReceiptReportNoTreatmentComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataApi();
   }
 

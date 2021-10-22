@@ -311,6 +311,19 @@ namespace Infrastructure.Data
         public DbSet<CustomerReceiptProductRel> CustomerReceiptProductRels { get; set; }
         public DbSet<CustomerReceiptReport> CustomerReceiptReports { get; set; }
 
+        /// <summary>
+        /// Bảo hành Labo
+        /// </summary>
+        public DbSet<LaboWarranty> LaboWarranty { get; set; }
+        public DbSet<LaboWarrantyToothRel> LaboWarrantyToothRels { get; set; }
+
+        /// <summary>
+        /// cấu hình mẫu in
+        /// </summary>
+        public DbSet<PrintTemplate> PrintTemplates { get; set; }
+        public DbSet<PrintTemplateConfig> PrintTemplateConfigs { get; set; }
+        public DbSet<PartnerOldNewInSaleOrder> PartnerOldNewInSaleOrders { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -560,6 +573,12 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new CustomerReceiptConfiguration());
             builder.ApplyConfiguration(new CustomerReceiptProductRelConfiguration());
             builder.ApplyConfiguration(new CustomerReceiptReportConfiguration());
+
+            builder.ApplyConfiguration(new LaboWarrantyConfiguration());
+            builder.ApplyConfiguration(new LaboWarrantyToothRelConfiguration());
+            builder.ApplyConfiguration(new PrintTemplateConfiguration());
+            builder.ApplyConfiguration(new PrintTemplateConfigConfiguration());
+            builder.ApplyConfiguration(new PartnerOldNewInSaleOrderConfiguration());
             //builder.ApplyConfiguration(new SaleOrderLineProductRequestedConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });

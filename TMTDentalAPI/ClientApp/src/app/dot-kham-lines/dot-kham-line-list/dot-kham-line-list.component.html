@@ -20,7 +20,7 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageable]="true" [pageSize]="pageSize" [skip]="skip" [loading]="loading" (pageChange)="pageChange($event)">
+    <kendo-grid [data]="gridData" [pageable]="pagerSettings" [pageSize]="limit" [skip]="skip" [loading]="loading" (pageChange)="pageChange($event)">
         <kendo-grid-column [width]="110" title="Ngày khám">
             <ng-template kendoGridCellTemplate let-dataItem>
                 {{dataItem.dotKhamDate | date: 'shortDate'}}

@@ -4,7 +4,7 @@
             <div class="o_form_buttons_view">
                 <div class="d-flex">
                     <app-date-range-picker-filter [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
-                    <kendo-combobox [data]="filteredEmployees" [textField]="'name'" #empCbx [filterable]="true" [placeholder]="'Tất cả nhân viên'" (valueChange)="onChaneEmp($event)" [valueField]="'id'">
+                    <kendo-combobox [data]="filteredEmployees" [textField]="'name'" #empCbx [filterable]="true" [placeholder]="'Tất cả nhân viên'" (valueChange)="onChaneEmp($event)" [valueField]="'id'" class="ml-2">
                     </kendo-combobox>
                 </div>
             </div>
@@ -43,7 +43,7 @@
     </div>
 </div>
 <div class="o_content">
-    <kendo-grid class="pointer" [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true" [loading]="loading" (cellClick)="clickItem($event)" (pageChange)="pageChange($event)" (edit)="editHandler($event);" [resizable]="true" [navigable]="true"
+    <kendo-grid class="pointer" [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="pagerSettings" [loading]="loading" (cellClick)="clickItem($event)" (pageChange)="pageChange($event)" (edit)="editHandler($event);" [resizable]="true" [navigable]="true"
         (save)="saveHandler($event);" (cancel)="cancelHandler($event);">
         <kendo-grid-column field="employee" title="Nhân viên" width="130">
             <ng-template kendoGridCellTemplate let-dataItem let-column="column">

@@ -117,5 +117,29 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
 
         public string Name { get; set; }
+
+        /// <summary>
+        /// Creation Date
+        /// </summary>
+        public DateTime? Date { get; set; }
+    }
+
+    public class StockPickingPrintVm
+    {
+        public CompanyPrintVM Company { get; set; }
+
+        public PartnerSimpleInfo Partner { get; set; }
+
+        public string Name { get; set; }
+
+        public DateTime? DateCreated { get; set; }
+
+        public IEnumerable<StockMoveDisplay> MoveLines { get; set; } = new List<StockMoveDisplay>();
+
+        public string Note { get; set; }
+
+        public string State { get; set; }
+
+        public string CreatedByName { get; set; }
     }
 }

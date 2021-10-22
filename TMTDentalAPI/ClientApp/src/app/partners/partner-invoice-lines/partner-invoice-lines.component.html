@@ -1,4 +1,4 @@
-<kendo-grid [data]="gridView" [pageable]="true" [pageSize]="pageSize" [skip]="skip" (pageChange)="pageChange($event)"
+<kendo-grid [data]="gridView" [pageable]="pagerSettings" [pageSize]="pageSize" [skip]="skip" (pageChange)="pageChange($event)"
     [loading]="gridLoading">
     <!--[selectable]="{mode : 'single'}" (selectionChange)="rowSelectionChange($event)"-->
     <kendo-grid-column field="name" title="Tên dịch vụ">

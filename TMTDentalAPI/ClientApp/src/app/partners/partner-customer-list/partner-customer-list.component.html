@@ -68,7 +68,7 @@
         <label class="btn btn-outline-primary mr-2 mb-0" for="draft">Chưa phát sinh</label>
 
     </div>
-    <kendo-grid [data]="gridData" [pageable]="true" (pageChange)="onPageChange($event)" [loading]="loading" [skip]="this.filter.offset" [pageSize]="this.filter.limit" #grid>
+    <kendo-grid [data]="gridData" [pageable]="pagerSettings" (pageChange)="onPageChange($event)" [loading]="loading" [skip]="this.filter.offset" [pageSize]="this.filter.limit" #grid>
         <kendo-grid-column class="" field="name" title="Họ tên" width="250">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <div [ngClass]="'pl-1 d-flex o_tag_bordercolor_' + dataItem.memberLevel?.color" [ngStyle]="{'border-left': '4px solid white'}" class="">
@@ -120,7 +120,7 @@
         </kendo-grid-column>
 
         <kendo-grid-column field="Id" title="Thao tác" width="100">
-            <ng-template kendoGridCellTemplate let-dataItem let-dataItem>
+            <ng-template kendoGridCellTemplate let-dataItem>
                 <!-- <button class="btn btn-info mr-2" title="In Hồ sơ khách hàng" (click)="printItem(dataItem)">
                     <span class="fas fa-print"></span></button> -->
                 <button class="btn btn-success mr-2" title="Sửa" (click)="editItem(dataItem)">

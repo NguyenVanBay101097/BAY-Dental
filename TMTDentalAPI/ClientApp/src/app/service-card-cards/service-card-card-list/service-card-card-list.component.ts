@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -7,6 +7,7 @@ import { ServiceCardCardService } from '../service-card-card.service';
 import { ServiceCardCardPaged } from '../service-card-card-paged';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-service-card-card-list',
@@ -21,6 +22,7 @@ export class ServiceCardCardListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   search: string;
   searchUpdate = new Subject<string>();
@@ -32,8 +34,9 @@ export class ServiceCardCardListComponent implements OnInit {
 
   constructor(private cardCardService: ServiceCardCardService,
     private modalService: NgbModal, private route: ActivatedRoute, 
-    private checkPermissionService: CheckPermissionService
-  ) { }
+    private checkPermissionService: CheckPermissionService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.route.queryParamMap.subscribe((param: ParamMap) => {
@@ -111,6 +114,7 @@ export class ServiceCardCardListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

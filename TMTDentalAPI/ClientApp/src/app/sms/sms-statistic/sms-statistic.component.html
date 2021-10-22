@@ -29,7 +29,7 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" (pageChange)="pageChange($event)" [skip]="skip" [pageable]="true" [pageSize]="limit">
+    <kendo-grid [data]="gridData" (pageChange)="pageChange($event)" [skip]="skip" [pageable]="pagerSettings" [pageSize]="limit">
         <kendo-grid-column field="partnerName" title="Khách hàng" width="200"></kendo-grid-column>
         <kendo-grid-column field="number" title="Số điện thoại" width="150"></kendo-grid-column>
         <kendo-grid-column title="Thời gian gửi" width="150">
@@ -54,6 +54,5 @@
                 <span *ngIf="dataItem.state=='sent'">Thành công</span>
             </ng-template>
         </kendo-grid-column>
-
     </kendo-grid>
 </div>
