@@ -57,7 +57,7 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
   filteredPartners: PartnerSimple[] = [];
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
 
-  @ViewChild(TaiProductListSelectableComponent, { static: false }) productListSelectable: TaiProductListSelectableComponent;
+  @ViewChild(TaiProductListSelectableComponent) productListSelectable: TaiProductListSelectableComponent;
 
   get f() { return this.pickingForm.controls; }
 

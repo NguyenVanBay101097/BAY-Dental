@@ -1260,7 +1260,7 @@ namespace Infrastructure.Services
 
             return display;
         }
-
+        
         //public async Task<SaleOrderDisplay> GetDisplayAsync(Guid id)
         //{
         //    var res = await _mapper.ProjectTo<SaleOrderDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
@@ -1306,7 +1306,8 @@ namespace Infrastructure.Services
                 //.Include(x => x.OrderLines).ThenInclude(x => x.Order).ThenInclude(x => x.OrderLines)
                 .FirstOrDefaultAsync();
 
-            order = _mapper.Map(val, order);
+            //order = _mapper.Map(val, order);
+            order.DateOrder = val.DateOrder;
 
             //await SaveOrderLines(val, order);
             await UpdateAsync(order); //update trước để generate id cho những sale order line
@@ -3171,6 +3172,22 @@ namespace Infrastructure.Services
 
 
             return allData;
+        }
+
+        public async Task<IEnumerable<IrAttachment>> GetListAttachment(Guid id)
+        {
+            var attObj = GetService<IIrAttachmentService>();
+            var dotkhamObj = GetService<IDotKhamService>();
+
+            var attQr = attObj.SearchQuery();
+            var dotkhamQr = dotkhamObj.SearchQuery();
+
+            var resQr = from att in attQr
+                        from dk in dotkhamQr.Where(x => x.Id == att.ResId).DefaultIfEmpty()
+                        where att.ResId == id || dk.SaleOrderId == id
+                        select att;
+            var res = await resQr.OrderByDescending(x => x.DateCreated).ToListAsync();
+            return res;
         }
     }
 }

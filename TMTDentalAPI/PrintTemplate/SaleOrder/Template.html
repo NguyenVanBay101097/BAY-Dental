@@ -95,8 +95,8 @@
         <tr>
             <td>{{item.payment?.name}}</td>
             <!--{{if item.payment?.id == sop.payment_rels[0]?.payment.id}}-->
-            <td rowspan="{{sop.payments | array.size}}">{{item.payment?.payment_date | date.to_string '%d/%m/%Y'}}</td>
-            <td rowspan="{{sop.payments | array.size}}" style="text-align:right">{{sop.amount | math.format "N0" }}</td>
+            <td rowspan="{{sop.payment_rels | array.size}}">{{item.payment?.payment_date | date.to_string '%d/%m/%Y'}}</td>
+            <td rowspan="{{sop.payment_rels | array.size}}" style="text-align:right">{{sop.amount | math.format "N0" }}</td>
             <!--{{end}}-->
             <td>{{item.payment?.journal?.name}}</td>
             <td style="text-align:right">{{item.payment?.amount | math.format "N0"}}</td>
@@ -141,6 +141,11 @@
         <!--{{end}}--><!--{{end}}-->
     </tbody>
 </table>
+<!--{{end}}-->
+<!--{{if (o.ir_attachments.size > 0)}}-->
+<h6>PHIM XQKTS</h6>
+
+<p><!--{{for ir in o.ir_attachments}}--><img alt="{{ir.name}}" class="img-fluid" src="{{ir.url}}?width=240&height=240)" style="width:150px" /> <!--{{end}}--></p>
 <!--{{end}}-->
 <table border="0" cellpadding="0" cellspacing="1" style="width:100%">
     <tbody>

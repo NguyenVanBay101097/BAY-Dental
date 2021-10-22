@@ -8,7 +8,7 @@
 </kendo-grid-column>
 <kendo-grid-column field="name" title="Phiếu điều trị" width="120">
     <ng-template kendoGridCellTemplate let-dataItem>
-        <a class="text-primary" [routerLink]="[ '/sale-orders/form', {id: dataItem.id} ]">{{dataItem.name}}</a>
+        <a class="text-primary" [routerLink]="[ '/sale-orders', dataItem.id ]">{{dataItem.name}}</a>
     </ng-template>
 </kendo-grid-column>
 <kendo-grid-column class="text-right" [headerClass]="'text-right'" field="amountTotal" title="Tổng tiền" width="120">

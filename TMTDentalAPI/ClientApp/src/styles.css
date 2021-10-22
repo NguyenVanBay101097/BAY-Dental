@@ -2083,3 +2083,200 @@ kendo-pager-page-sizes select{
     border: 1px solid #ced4da;
     border-radius: .25rem;
 }
+
+
+.o_AttachmentList_partialList {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	flex: 1;
+	flex-flow: wrap;
+}
+
+.o_Attachment {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+}
+
+.o_Attachment_image {
+	flex-shrink: 0;
+	margin: 3px;
+	background-size: auto;
+}
+
+.o_Attachment_image.o-details-overlay {
+	position: relative;
+}
+
+.o_Attachment_image.o-details-overlay.o-small {
+	min-width: 100px;
+	min-height: 100px;
+}
+
+.o_Attachment_image.o-details-overlay.o-medium {
+	min-width: 200px;
+	min-height: 200px;
+}
+
+.o_Attachment_image.o-details-overlay.o-large {
+	min-width: 400px;
+	min-height: 400px;
+}
+
+.o_Attachment_image.o-details-overlay:hover .o_Attachment_imageOverlay {
+	opacity: 1;
+}
+
+.o_Attachment_image.o-attachment-viewable {
+	cursor: zoom-in;
+}
+
+.o_Attachment_image.o-attachment-viewable:not(.o-details-overlay):hover {
+	opacity: 0.7;
+}
+
+.o_image {
+    display: inline-block;
+    width: 38px;
+    height: 38px;
+    background-image: url(/web/static/src/img/mimetypes/unknown.svg);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.o_Attachment_imageOverlay {
+	bottom: 0;
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	flex-direction: row;
+	-webkit-box-pack: end;
+	justify-content: flex-end;
+	left: 0;
+	padding: 10px;
+	position: absolute;
+	right: 0;
+	top: 0;
+
+	transition: all .3s ease 0s;
+	background-image: linear-gradient(180deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.9));
+    border-radius: 5px;
+    color: white;
+    opacity: 0;
+}
+
+.o_Attachment_details {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	flex-flow: column;
+	justify-content: center;
+	min-width: 0;
+	padding-left: 0.25rem;
+	padding-right: 0.25rem;
+}
+
+.o_Attachment_imageOverlayDetails {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: normal;
+	-webkit-flex-direction: column;
+	flex-direction: column;
+	-webkit-box-pack: end;
+	justify-content: flex-end;
+	margin: 3px;
+	width: 200px;
+}
+
+.o_Attachment_actions {
+	justify-content: space-between;
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: normal;
+	-webkit-flex-direction: column;
+	flex-direction: column;
+}
+
+.o_Attachment_action {
+	min-width: 20px;
+}
+
+.o_Attachment_filename {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.o_Attachment_action {
+	border-radius: 10px;
+	cursor: pointer;
+	text-align: center;
+}
+
+.o_Attachment_action:hover {
+	background: rgba(255, 255, 255, 0.2);
+}
+
+.o_Attachment_extension {
+	text-transform: uppercase;
+	font-size: 80%;
+	font-weight: 400;
+}
+
+.o_AttachmentBox {
+	position: relative;
+}
+
+.o_AttachmentBox_buttonAdd {
+	align-self: center;
+}
+
+.o_AttachmentBox_content {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: normal;
+	-webkit-flex-direction: column;
+	flex-direction: column;
+}
+
+.o_AttachmentBox_dashedLine {
+	flex-grow: 1;
+}
+
+.o_AttachmentBox_fileInput {
+	display: none;
+}
+
+.o_AttachmentBox_title {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	align-items: center;
+}
+
+.o_AttachmentBox_titleText {
+	padding: 1rem;
+}
+
+.o_AttachmentBox_dashedLine {
+	border-style: dashed;
+	border-color: #dee2e6;
+}
+
+.o_AttachmentBox_title {
+	font-weight: bold;
+}
+
+.text-title-1 {
+    color: #0B92F3;
+}
+
+

@@ -262,6 +262,42 @@ namespace Infrastructure.Services
             return result;
         }
 
+        public async Task<IEnumerable<PartnerOldNewReportByIsNewItem>> ReportByIsNew(PartnerOldNewReportByIsNewReq val)
+        {
+
+            var userObj = GetService<IUserService>();
+            var company_ids = userObj.GetListCompanyIdsAllowCurrentUser();
+            var query = _context.PartnerOldNewInSaleOrders.Where(x => company_ids.Contains(x.CompanyId));
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.DateOrder >= val.DateFrom.Value.AbsoluteBeginOfDate());
+
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.DateOrder <= val.DateTo.Value.AbsoluteEndOfDate());
+
+            var result = await query.GroupBy(x => new
+            {
+                PartnerId = x.PartnerId,
+                IsNew = x.IsNew,
+            }).Select(x => new
+            {
+                IsNew = x.Key.IsNew,
+                PartnerId = x.Key.PartnerId,
+                TotalOrder = x.Sum(s => 1)
+            })
+            .GroupBy(x => x.IsNew)
+            .Select(x => new PartnerOldNewReportByIsNewItem()
+            {
+                IsNew = x.Key ? 1 : 0,
+                PartnerTotal = x.Sum(s => 1),
+            })
+            .ToListAsync();
+
+            return result;
+        }
+
         public IQueryable<PartnerInfoTemplate> GetReportQuery(PartnerOldNewReportReq val)
         {
             var saleOrderObj = GetService<ISaleOrderService>();

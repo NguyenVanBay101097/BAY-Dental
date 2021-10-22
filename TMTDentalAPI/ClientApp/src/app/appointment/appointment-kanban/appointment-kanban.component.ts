@@ -38,7 +38,7 @@ import { PrintService } from 'src/app/shared/services/print.service';
   host: { 'class': 'h-100' }
 })
 export class AppointmentKanbanComponent implements OnInit {
-  @ViewChild('dropdownMenuBtn', { static: false }) dropdownMenuBtn: NgbDropdownToggle;
+  @ViewChild('dropdownMenuBtn') dropdownMenuBtn: NgbDropdownToggle;
   dateFrom: Date;
   dateTo: Date;
   state: string;

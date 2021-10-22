@@ -57,13 +57,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public ICollection<DotKhamLineDisplay> Lines { get; set; } = new List<DotKhamLineDisplay>();
 
 
-       
+
 
         /// <summary>
         /// hình ảnh
         /// </summary>
         public ICollection<PartnerImageBasic> DotKhamImages { get; set; } = new List<PartnerImageBasic>();
-     
+
     }
 
     /// <summary>
@@ -94,7 +94,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// hình ảnh
         /// </summary>
         public IEnumerable<PartnerImageDisplay> DotKhamImages { get; set; } = new List<PartnerImageDisplay>();
-
+        public IEnumerable<IrAttachmentBasic> IrAttachments { get; set; } = new List<IrAttachmentBasic>();
         public string Name { get; set; }
 
     }
@@ -131,6 +131,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// hình ảnh
         /// </summary>
         public IEnumerable<PartnerImageSave> DotKhamImages { get; set; } = new List<PartnerImageSave>();
+        public IEnumerable<IrAttachmentSave> IrAttachments { get; set; } = new List<IrAttachmentSave>();
+
     }
 
     public class GetAllDotKhamVm

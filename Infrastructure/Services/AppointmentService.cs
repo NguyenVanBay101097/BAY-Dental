@@ -94,7 +94,7 @@ namespace Infrastructure.Services
                 .Include(x => x.Partner)
                 .Include(x => x.Doctor)
                 .Include(x => x.AppointmentServices).ThenInclude(x => x.Product)
-                .OrderByDescending(x => x.Date).ThenBy(x => x.Time)
+                .OrderBy(x => x.Date).ThenBy(x => x.Time)
                 .Skip(val.Offset)
                 .Take(limit)
                 .ToListAsync();

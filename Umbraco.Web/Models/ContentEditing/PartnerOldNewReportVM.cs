@@ -197,4 +197,28 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public decimal? PartnerOldRevenue { get; set; }
     }
+
+    public class PartnerOldNewReportByIsNewReq
+    {
+        public Guid? CompanyId { get; set; }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+    }
+
+    public class PartnerOldNewReportByIsNewItem
+    {
+        public int IsNew { get; set; }
+
+        public int PartnerTotal { get; set; }
+
+        public string DisplayIsNew
+        {
+            get
+            {
+                if (IsNew == 1)
+                    return "Khách mới";
+                return "Khách quay lại";
+            }
+        }
+    }
 }

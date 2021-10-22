@@ -1,10 +1,7 @@
 import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { IntlService, load } from '@progress/kendo-angular-intl';
-import { CashBookReportFilter, CashBookReportItem, CashBookService } from 'src/app/cash-book/cash-book.service';
-import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
-import { BaseChartDirective, Label, SingleDataSet } from 'ng2-charts';
-import { Subject } from 'rxjs';
+import { ChartDataset, ChartOptions, ChartType } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
 
 @Component({
   selector: 'app-sale-dashboard-cashbook-report',
@@ -15,53 +12,45 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
   @Input() cashBooks: any;
   @Input() timeUnit: any;
   @Input() thuChiReportData: any;
+  barChartLabels: string[] = [];
 
   public barChartOptions: ChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
-    title: {
-      text: 'BIỂU ĐỒ THU CHI',
-      display: true,
-      fontSize: 16,
-    },
-    legend: {
-      position: 'bottom'
-    },
-    tooltips: {
-      mode: 'index',
-      callbacks: {
-        label: function (tooltipItems, data) {
-          return data.datasets[tooltipItems.datasetIndex].label + ': ' + tooltipItems.yLabel.toLocaleString();
+    plugins: {
+      title: {
+        text: 'BIỂU ĐỒ THU CHI',
+        display: true,
+        font: {
+          size: 16
         }
+      },
+      legend: {
+        position: 'bottom'
+      },
+      tooltip: {
+        mode: 'index'
       }
     },
-    // We use these empty structures as placeholders for dynamic theming.
     scales: {
-      xAxes: [{
-        offset: true,
-        distribution: 'linear',
+      x: {
         type: 'time',
         time: {
-          tooltipFormat: 'DD/MM/YYYY',
+          tooltipFormat: 'dd/MM/yyyy',
           displayFormats: {
-            'day': 'DD/MM',
-            'month': 'MM/YYYY',
+            'day': 'dd/MM',
+            'month': 'MM/yyyy',
           },
           unit: 'day'
         },
-        // ticks: {
-        //   maxTicksLimit: this.maxTicks
-        // }
-      }],
-      yAxes: [{
-        ticks: {
-          beginAtZero: true,
-        }
-      }],
+      },
+      y: {
+        beginAtZero: true,
+      },
     },
   };
 
-  public barChartData: ChartDataSets[] = [
+  public barChartData: ChartDataset[] = [
     {
       label: 'Thu',
       data: [],
@@ -78,33 +67,24 @@ export class SaleDashboardCashbookReportComponent implements OnInit {
     }
   ];
 
-  @ViewChild(BaseChartDirective, { static: true }) private chart;
-
-
   constructor(private router: Router) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.cashBooks && !changes.cashBooks.firstChange) {
-      
+      this.barChartLabels = this.cashBooks.map(item => {
+        return new Date(item.date)
+      });
+
       this.barChartData[0].data = this.cashBooks.map(item => {
-        return {
-          x: new Date(item.date),
-          y: item.totalThu
-        }
+        return item.totalThu;
       });
 
       this.barChartData[1].data = this.cashBooks.map(item => {
-        return {
-          x: new Date(item.date),
-          y: item.totalChi
-        }
+        return item.totalChi
       });
 
-      this.barChartOptions.scales.xAxes[0].time.unit = this.timeUnit;
-      this.barChartOptions.scales.xAxes[0].time.tooltipFormat = this.timeUnit == 'day' ? 'DD/MM/YYYY' : 'MM/YYYY';
-      setTimeout(() => {
-        this.chart.refresh();
-      }, 10);
+      this.barChartOptions.scales.x['time'].unit = this.timeUnit;
+      this.barChartOptions.scales.x['time'].tooltipFormat = this.timeUnit == 'day' ? 'dd/MM/yyyy' : 'MM/yyyy';
     }
   }
 

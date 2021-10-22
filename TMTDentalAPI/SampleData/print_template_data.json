@@ -125,7 +125,27 @@
       ],
       "AmountTotal": 5350000.00,
       "TotalPaid": 5350000.00,
-      "Residual": 0.00
+      "Residual": 0.00,
+      "IrAttachments": [
+        {
+          "Id": "892ea719-afd3-4514-e7f3-08d982fda2ab",
+          "Name": "xquang.jpg",
+          "Url": "https://statics.tdental.vn/images/test3/210930/1901540163_fd.jpg",
+          "DateCreated": "2021-09-03T17:43:43.8056985"
+        },
+        {
+          "Id": "b77f39ee-1821-4980-e7f1-08d982fda2ab",
+          "Name": "xquang",
+          "Url": "https://statics.tdental.vn/images/test3/210930/1901540163_fd.jpg",
+          "DateCreated": "2021-09-29T11:28:39"
+        },
+        {
+          "Id": "fa255c20-aefa-48a6-e7ef-08d982fda2ab",
+          "Name": "xquang",
+          "Url": "https://statics.tdental.vn/images/test3/210930/1901540163_fd.jpg",
+          "DateCreated": "2021-09-29T11:00:36"
+        }
+      ]
     }
   },
   {

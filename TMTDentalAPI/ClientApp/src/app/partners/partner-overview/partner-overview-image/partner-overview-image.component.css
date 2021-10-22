@@ -10,8 +10,8 @@
     border-bottom: 1px solid #ced4da;
 }
 
-.o_attachments_previews>.o_attachment {
-    width: 33.33333333%;
+.o_attachment {
+    width: 33.33333333% !important;
 }
 
 .oe_chatter .o_mail_chatter_attachments .o_chatter_attachment {
