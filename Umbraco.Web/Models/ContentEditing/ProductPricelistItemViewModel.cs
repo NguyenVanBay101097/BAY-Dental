@@ -6,7 +6,7 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class ProductPricelistItemCreate
     {
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
 
         public Guid? ProductId { get; set; }
 

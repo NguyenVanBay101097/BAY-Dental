@@ -11,10 +11,11 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MemberCardListComponent } from './service-card-type-list/member-card-list/member-card-list.component';
 import { PreferentialCardListComponent } from './service-card-type-list/preferential-card-list/preferential-card-list.component';
 import { PreferentialCardCreateUpdateComponent } from './service-card-type-list/preferential-card-create-update/preferential-card-create-update.component';
+import { ServiceCardTypeApplyDialogComponent } from './service-card-type-list/service-card-type-apply-dialog/service-card-type-apply-dialog.component';
 
 
 @NgModule({
-  declarations: [ServiceCardTypeListComponent, ServiceCardTypeCuDialogComponent, MemberCardListComponent, PreferentialCardListComponent, PreferentialCardCreateUpdateComponent],
+  declarations: [ServiceCardTypeListComponent, ServiceCardTypeCuDialogComponent, MemberCardListComponent, PreferentialCardListComponent, PreferentialCardCreateUpdateComponent, ServiceCardTypeApplyDialogComponent],
   imports: [
     ServiceCardTypesRoutingModule,
     ReactiveFormsModule,
@@ -28,6 +29,7 @@ import { PreferentialCardCreateUpdateComponent } from './service-card-type-list/
   ],
   entryComponents: [
     ServiceCardTypeCuDialogComponent,
+    ServiceCardTypeApplyDialogComponent
   ]
 })
 export class ServiceCardTypesModule { }
