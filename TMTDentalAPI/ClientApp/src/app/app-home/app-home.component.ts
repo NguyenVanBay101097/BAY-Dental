@@ -178,6 +178,7 @@ export class AppHomeComponent implements OnInit {
       id: 'reportMenu',
       children: [
         { name: 'Báo cáo tổng quan', url: '/sale-dashboard-reports' },
+        { name: 'Báo cáo tổng quan ngày', url: '/day-dashboard-report' },
         { name: 'Kết quả kinh doanh', url: '/financial-report', permissions: ['Report.Financial'] },
         { name: 'Báo cáo doanh thu', url: '/account-invoice-reports/revenue-time', permissions: ['Report.Revenue'] },
         { name: 'Báo cáo dịch vụ', url: '/sale-report/service-report', permissions: ['Report.Sale'] },

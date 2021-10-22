@@ -254,6 +254,11 @@ const routes: Routes = [
         canActivate: [AuthGuard]
       },
       {
+        path: 'day-dashboard-report',
+        loadChildren: () => import('./day-dashboard-report/day-dashboard-report.module').then(m => m.DayDashboardReportModule),
+        canActivate: [AuthGuard]
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full',
@@ -299,7 +304,7 @@ const routes: Routes = [
         path: 'partner-categories',
         loadChildren: () => import('./partner-categories/partner-categories.module').then(m => m.PartnerCategoriesModule),
         canActivate: [AuthGuard]
-      }
+      },
     ]
   },
 ];

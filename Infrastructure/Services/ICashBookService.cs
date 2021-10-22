@@ -17,8 +17,6 @@ namespace Infrastructure.Services
 
         Task<IEnumerable<CashBookReportItem>> GetChartReport(CashBookReportFilter val);
 
-        Task<SumaryCashBook> GetSumaryCashBookReport(SumaryCashBookFilter val);
-
         Task<IEnumerable<CashBookReportItem>> GetCashBookChartReport(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string groupBy);
         Task<SumaryCashBook> GetSumaryCashBookReport(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string partnerType, string accountCode, string resultSelection);
 
