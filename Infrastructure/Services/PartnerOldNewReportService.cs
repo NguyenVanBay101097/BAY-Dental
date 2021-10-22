@@ -208,7 +208,7 @@ namespace Infrastructure.Services
 
             var userObj = GetService<IUserService>();
             var company_ids = userObj.GetListCompanyIdsAllowCurrentUser();
-            var query = _context.PartnerOldNewInSaleOrders.Where(x => company_ids.Contains(x.CompanyId));
+            var query = _context.PartnerOldNewInSaleOrders.Where(x => company_ids.Contains(x.CompanyId) && x.SaleOrder.State != "draft");
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId.Value);
 
@@ -267,7 +267,7 @@ namespace Infrastructure.Services
 
             var userObj = GetService<IUserService>();
             var company_ids = userObj.GetListCompanyIdsAllowCurrentUser();
-            var query = _context.PartnerOldNewInSaleOrders.Where(x => company_ids.Contains(x.CompanyId));
+            var query = _context.PartnerOldNewInSaleOrders.Where(x => company_ids.Contains(x.CompanyId) && x.SaleOrder.State != "draft");
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId.Value);
 
