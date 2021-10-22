@@ -1917,7 +1917,10 @@ namespace Infrastructure.Services
             {
                 //Lược bỏ những dòng số lượng bằng 0
                 order.OrderLines = await saleOrderLineObj.SearchQuery(x => x.OrderId == order.Id).OrderBy(x => x.Sequence).Where(x => x.ProductUOMQty != 0).Include(x => x.Product).ToListAsync();
-                order.SaleOrderPayments = await saleOrderPaymentObj.SearchQuery(x => x.OrderId == order.Id).Include(x => x.PaymentRels).ThenInclude(x => x.Payment).ThenInclude(x => x.Journal).ToListAsync();
+                order.SaleOrderPayments = await saleOrderPaymentObj.SearchQuery(x => x.OrderId == order.Id)
+                    .Include(x => x.Lines).ThenInclude(x => x.SaleOrderLine)
+                    .Include(x => x.PaymentRels).ThenInclude(x => x.Payment).ThenInclude(x => x.Journal)
+                    .ToListAsync();
             }
 
             return orders;

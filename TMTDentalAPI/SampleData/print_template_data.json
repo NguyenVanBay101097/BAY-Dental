@@ -64,6 +64,18 @@
           "Amount": 5350000.00,
           "Date": "2021-09-14T00:00:00",
           "Note": "SO00006 - Khách hàng thanh toán",
+          "Lines": [
+            {
+              "SaleOrderLine": {
+                "Name": "Điều trị tủy răng vĩnh viễn"
+              }
+            },
+            {
+              "SaleOrderLine": {
+                "Name": "Lấy cao răng và đánh bóng"
+              }
+            }
+          ],
           "PaymentRels": [
             {
               "Payment": {
@@ -2271,7 +2283,18 @@
           "Amount": 2350000.00
         }
       ],
-      "Lines": [],
+      "Lines": [
+        {
+          "SaleOrderLine": {
+            "Name": "Điều trị tủy răng vĩnh viễn"
+          }
+        },
+        {
+          "SaleOrderLine": {
+            "Name": "Lấy cao răng và đánh bóng"
+          }
+        }
+      ],
       "Note": "SO00006 - Khách hàng thanh toán",
       "State": "posted"
     }

@@ -258,6 +258,7 @@ namespace Infrastructure.Services
                                 .Include(x => x.Order.Partner)
                                 .Include(x => x.CreatedBy)
                                 .Include(x => x.JournalLines).ThenInclude(x => x.Journal)
+                                .Include(x => x.Lines).ThenInclude(x => x.SaleOrderLine)
                                 .ToListAsync();
                         return payments;
                     }

@@ -85,17 +85,19 @@
 <table border="1" cellpadding="3" cellspacing="1" style="width:100%">
     <tbody>
         <tr>
-            <td><strong>Mã thanh toán</strong></td>
-            <td><strong>Ngày thanh toán</strong></td>
-            <td style="text-align:right"><strong>Số tiền</strong></td>
-            <td><strong>Phương thức</strong></td>
-            <td style="text-align:right"><strong>Thanh toán</strong></td>
+            <td style="width:120px"><strong>Mã thanh toán</strong></td>
+            <td style="width:120px"><strong>Ngày thanh toán</strong></td>
+            <td style="width:200px"><strong>Dịch vụ</strong></td>
+            <td style="text-align:right;width:120px;"><strong>Số tiền</strong></td>
+            <td style="width:120px"><strong>Phương thức</strong></td>
+            <td style="text-align:right;width:120px"><strong>Thanh toán</strong></td>
         </tr>
         <!--{{for sop in o.sale_order_payments}}--><!--{{for item in sop.payment_rels}}-->
         <tr>
             <td>{{item.payment?.name}}</td>
             <!--{{if item.payment?.id == sop.payment_rels[0]?.payment.id}}-->
             <td rowspan="{{sop.payment_rels | array.size}}">{{item.payment?.payment_date | date.to_string '%d/%m/%Y'}}</td>
+            <td rowspan="{{sop.payment_rels | array.size}}">{{sop.lines_display}}</td>
             <td rowspan="{{sop.payment_rels | array.size}}" style="text-align:right">{{sop.amount | math.format "N0" }}</td>
             <!--{{end}}-->
             <td>{{item.payment?.journal?.name}}</td>

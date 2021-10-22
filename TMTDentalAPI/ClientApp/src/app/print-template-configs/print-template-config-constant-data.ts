@@ -586,6 +586,7 @@ const keyWorDatas =
                 { text: 'Danh sách hóa đơn thanh toán', value: '{{sop.payment_rels}}' },
                 { text: 'Mã thanh toán', value: '{{item.payment?.name}}' },
                 { text: 'Ngày thanh toán', value: '{{item.payment?.payment_date}}' },
+                { text: 'Dịch vụ', value: '{{sop.lines_display}}' },
                 { text: 'Số tiền cần thanh toán', value: '{{sop.amount}}' },
                 { text: 'Phương thức thanh toán', value: '{{item.payment?.journal?.name}}' },
                 { text: 'Số tiền thanh toán', value: '{{item.payment?.amount}}' },
@@ -715,8 +716,9 @@ const keyWorDatas =
                 { text: 'SĐT khách hàng', value: '{{o.order?.partner?.phone}}' },
                 { text: 'Địa chỉ khách hàng', value: '{{o.order?.partner?.address}}' },
                 { text: 'Ngày thanh toán', value: '{{o.date}}' },
-                { text: 'danh sách Phương thức thanh toán', value: '{{o.journal_lines_display}}' },
+                { text: 'Phương thức thanh toán', value: '{{o.journal_lines_display}}' },
                 { text: 'Số tiền', value: '{{o.amount}}' },
+                { text: 'Dịch vụ thực hiện', value: '{{o.lines_display}}' },
                 { text: 'Nội dung', value: '{{o.note}}' },
                 { text: 'Họ tên nhân viên', value: '{{u.name}}' },
             ]
