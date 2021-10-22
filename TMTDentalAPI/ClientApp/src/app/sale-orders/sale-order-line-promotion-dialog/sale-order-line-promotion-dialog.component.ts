@@ -54,6 +54,7 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit, OnDestroy 
   ngOnInit() {
     setTimeout(() => {
       this.loadDefaultPromotion();
+      this.loadServiceCards();
     }, 0);
     this.isDiscountLine = this.checkPermissionService.check(["Basic.SaleOrder.DiscountLine"]);
   }
@@ -138,12 +139,23 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit, OnDestroy 
 
   loadServiceCards() {
     let val = new ServiceCardCardFilter();
-    val.PartnerId = '';
-    val.ProductId = '';
-    val.State = 'in_use';
+    val.partnerId = this.saleOrderLine.orderPartnerId;
+    val.productId = this.saleOrderLine.productId;
+    val.state = 'in_use';
     this.serviceCardsService.getServiceCardCards(val).subscribe((res: any) => {
+      console.log(res);
       this.servicePreferenceCards = res;
     }, (error) => { console.log(error) });
+  }
+
+  getNameCard(item){
+    var discount = "";
+    if(item.productPricelistItem)
+    {
+      discount = item.productPricelistItem.computePrice = "percentage" ? (item.productPricelistItem.percentPrice + "%") : ((item.productPricelistItem.fixedAmountPrice ?? 0) + "VNĐ");
+    }
+
+    return "Giảm " +  discount + "";
   }
 
   applyServiceCard(item) {

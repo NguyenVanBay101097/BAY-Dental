@@ -1,6 +1,12 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, Inject } from '@angular/core';
 
+export class ServiceCardCardFilter {
+    partnerId : string;
+    productId : string;
+    state : string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ServiceCardCardService {
     apiUrl = 'api/ServiceCardCards';
@@ -12,6 +18,10 @@ export class ServiceCardCardService {
 
     getHistories(id: string) {
         return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetHistories');
+    }
+
+    getServiceCardCards(val) {
+        return this.http.post(this.baseApi + this.apiUrl + '/GetServiceCardCards', val);
     }
 
     buttonActive(ids: string[]) {
