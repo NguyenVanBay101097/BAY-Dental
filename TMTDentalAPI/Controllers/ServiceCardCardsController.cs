@@ -105,6 +105,28 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "ServiceCard.Card.Update")]
+        public async Task<IActionResult> ButtonLock(IEnumerable<Guid> ids)
+        {
+            if (ids == null)
+                return BadRequest();
+
+            await _cardCardService.ActionLock(ids);
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "ServiceCard.Card.Update")]
+        public async Task<IActionResult> ButtonCancel(IEnumerable<Guid> ids)
+        {
+            if (ids == null)
+                return BadRequest();
+
+            await _cardCardService.ActionCancel(ids);
+            return NoContent();
+        }
+
         //[HttpPost("[action]")]
         //[CheckAccess(Actions = "ServiceCard.Card.Read")]
         //public async Task<IActionResult> ExportExcel(ServiceCardCardPaged val)

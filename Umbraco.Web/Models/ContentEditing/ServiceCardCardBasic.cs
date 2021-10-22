@@ -16,8 +16,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid CardTypeId { get; set; }
         public ServiceCardTypeSimple CardType { get; set; }
         public Guid? PartnerId { get; set; }
-        public PartnerSimple Partner { get; set; }
+        public PartnerBasic Partner { get; set; }
         public string Barcode { get; set; }
+        public DateTime? ActivatedDate { get; set; }
+        public DateTime? ExpiredDate { get; set; }
     }
 
     public class ServiceCardCardResponse

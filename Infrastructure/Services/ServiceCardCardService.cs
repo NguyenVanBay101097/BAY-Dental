@@ -33,13 +33,15 @@ namespace Infrastructure.Services
             var cardTypeObj = GetService<IServiceCardTypeService>();
             foreach (var card in self)
             {
+                if (card.State != "draft")
+                {
+                    throw new Exception($"Thẻ {card.Barcode} không thể kích hoạt,chỉ kích hoạt các thẻ chưa kích hoạt");
+                }
+
                 if (!card.PartnerId.HasValue)
                 {
                     throw new Exception("Khách hàng đang trống, cần bổ sung khách hàng");
                 }
-
-                if (card.State == "in_use")
-                    continue;
 
                 if (!card.ActivatedDate.HasValue)
                     card.ActivatedDate = DateTime.Today;
@@ -60,11 +62,32 @@ namespace Infrastructure.Services
             {
                 if (card.State != "in_use")
                 {
-                    throw new Exception($"Thẻ  Chỉ tạm dừng các thẻ ưu đãi dịch vụ đã kích hoạt");
+                    throw new Exception($"Thẻ {card.Barcode} không thể tạm dừng, chỉ tạm dừng các thẻ ưu đãi dịch vụ đã kích hoạt");
                 }
 
+                if (DateTime.Now > card.ExpiredDate)
+                {
+                    throw new Exception($"Thẻ {card.Barcode} đã hết hạn, không thể tạm dừng");
+                }
+
+                card.State = "locked";
             }
 
+            await UpdateAsync(self);
+        }
+
+        public async Task ActionCancel(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            foreach (var card in self)
+            {
+
+                if (DateTime.Now > card.ExpiredDate)
+                {
+                    throw new Exception($"Thẻ {card.Barcode} đã hết hạn, không thể hủy");
+                }
+                card.State = "cancelled";
+            }
             await UpdateAsync(self);
         }
 
@@ -140,7 +163,7 @@ namespace Infrastructure.Services
             foreach (var card in self)
             {
                 if (card.State == "in_use")
-                    throw new Exception("Không thể xóa thẻ tiền mặt đang sử dụng");
+                    throw new Exception("Ưu đãi dịch vụ đã kích hoạt không thể xóa");
             }
 
             await DeleteAsync(self);
@@ -258,7 +281,7 @@ namespace Infrastructure.Services
                     var pricelistItem = pricelistItems.Where(x => x.CardTypeId == item.CardTypeId && x.ProductId == val.ProductId.Value).FirstOrDefault();
                     item.ProductPricelistItem = pricelistItem == null ? null : _mapper.Map<ProductPricelistItemDisplay>(pricelistItem);
                 }
-                   
+
             }
 
             return res;
