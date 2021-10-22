@@ -42,7 +42,15 @@ namespace TMTDentalAPI.Controllers
             var res = await _cardCardService.GetPagedResultAsync(val);
             return Ok(res);
         }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(Guid id)
+        {
+            var type = await _cardCardService.SearchQuery(x => x.Id == id).Include(x => x.Partner).Include(x => x.CardType).FirstOrDefaultAsync();
+            if (type == null)
+                return NotFound();
 
+            return Ok(_mapper.Map<ServiceCardCardDisplay>(type));
+        }
         [HttpPost]
         public async Task<IActionResult> Create(ServiceCardCardSave val)
         {
@@ -55,7 +63,6 @@ namespace TMTDentalAPI.Controllers
             return Ok(basic);
         }
         [HttpPut("{id}")]
-        [CheckAccess(Actions = "ServiceCard.Type.Update")]
         public async Task<IActionResult> Update(Guid id, ServiceCardCardSave val)
         {
             var entity = await _cardCardService.GetByIdAsync(id);
@@ -95,7 +102,6 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "ServiceCard.Card.Update")]
         public async Task<IActionResult> ButtonActive(IEnumerable<Guid> ids)
         {
             if (ids == null)
@@ -106,7 +112,6 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "ServiceCard.Card.Update")]
         public async Task<IActionResult> ButtonLock(IEnumerable<Guid> ids)
         {
             if (ids == null)
@@ -117,7 +122,6 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "ServiceCard.Card.Update")]
         public async Task<IActionResult> ButtonCancel(IEnumerable<Guid> ids)
         {
             if (ids == null)
