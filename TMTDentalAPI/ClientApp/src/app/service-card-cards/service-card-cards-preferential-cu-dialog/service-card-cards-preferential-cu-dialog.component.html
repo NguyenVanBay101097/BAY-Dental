@@ -14,7 +14,10 @@
                                 <label class="o_form_label">Số ID thẻ</label>
                             </td>
                             <td colspan="1">
-                                <input class="form-control" placeholder="Để trống sẽ tự động phát sinh" />
+                                <input class="form-control" formControlName="barcode" />
+                                <div *ngIf="f.barcode.errors && (f.barcode.touched || f.barcode.dirty || submitted)" class="text-danger mb-1">
+                                    <div *ngIf="f.barcode.errors.required">Nhập ID thẻ</div>
+                                </div>
                             </td>
                         </tr>
                         <tr>
@@ -80,7 +83,7 @@
 <div class="modal-footer">
     <button type="button" class="btn btn-primary mr-2" (click)="onSave()">
         Lưu</button>
-    <button type="button" class="btn btn-primary mr-2" (click)="onConfirm()">
+    <button type="button" class="btn btn-primary mr-2" (click)="actionActivate()">
         Kích hoạt</button>
     <button type="button" class="btn btn-secondary ml-0" (click)="activeModal.dismiss()">
         Đóng</button>

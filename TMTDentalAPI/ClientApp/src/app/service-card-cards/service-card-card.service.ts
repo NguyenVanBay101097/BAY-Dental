@@ -2,9 +2,15 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, Inject } from '@angular/core';
 
 export class ServiceCardCardFilter {
-    partnerId : string;
-    productId : string;
-    state : string;
+    partnerId: string;
+    productId: string;
+    state: string;
+}
+
+export class ServiceCardCardSave{
+    cardTypeId: string;
+    partnerId: string;
+    barcode: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -20,12 +26,32 @@ export class ServiceCardCardService {
         return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetHistories');
     }
 
+    create(val: ServiceCardCardSave){
+        return this.http.post(this.baseApi + this.apiUrl, val);
+    }
+    
+    update(id: string, val){
+        return this.http.put(this.baseApi + this.apiUrl + '/' + id, val);
+    }
+
+    delete(id: string){
+        return this.http.delete(this.baseApi + this.apiUrl + '/' + id);
+    }
+
     getServiceCardCards(val) {
         return this.http.post(this.baseApi + this.apiUrl + '/GetServiceCardCards', val);
     }
 
     buttonActive(ids: string[]) {
         return this.http.post(this.baseApi + this.apiUrl + '/ButtonActive', ids);
+    }
+    
+    buttonLock(ids: string[]) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ButtonLock', ids);
+    }
+    
+    buttonCancel(ids: string[]) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ButtonCancel', ids);
     }
 
     exportExcel(data: any) {
@@ -35,4 +61,5 @@ export class ServiceCardCardService {
     checkCode(val: any) {
         return this.http.get(this.baseApi + this.apiUrl + '/CheckCode', { params: new HttpParams({ fromObject: val }) });
     }
+        
 }
