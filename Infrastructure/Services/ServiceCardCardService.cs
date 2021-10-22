@@ -222,8 +222,8 @@ namespace Infrastructure.Services
 
             if (val.Limit <= 0)
                 val.Limit = int.MaxValue;
-
-            var items = await _mapper.ProjectTo<ServiceCardCardBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
+            var res = await query.Include(x => x.CardType).Include(x => x.Partner).Skip(val.Offset).Take(val.Limit).ToListAsync();
+            var items = _mapper.Map<IEnumerable<ServiceCardCardBasic>>(res);
             var totalItems = await query.CountAsync();
 
             return new PagedResult2<ServiceCardCardBasic>(totalItems, val.Offset, val.Limit)
