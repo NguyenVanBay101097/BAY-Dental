@@ -30,8 +30,13 @@ namespace Infrastructure.Services
         {
             var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.CardType).ToListAsync();
             var cardTypeObj = GetService<IServiceCardTypeService>();
-            foreach(var card in self)
+            foreach (var card in self)
             {
+                if (!card.PartnerId.HasValue)
+                {
+                    throw new Exception("Khách hàng đang trống, cần bổ sung khách hàng");
+                }
+
                 if (card.State == "in_use")
                     continue;
 
@@ -47,6 +52,21 @@ namespace Infrastructure.Services
             await UpdateAsync(self);
         }
 
+        public async Task ActionLock(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            foreach (var card in self)
+            {
+                if (card.State != "in_use")
+                {
+                    throw new Exception($"Thẻ  Chỉ tạm dừng các thẻ ưu đãi dịch vụ đã kích hoạt");
+                }
+
+            }
+
+            await UpdateAsync(self);
+        }
+
         public async Task ButtonConfirm(IEnumerable<ServiceCardCard> self)
         {
             foreach (var card in self)
@@ -54,6 +74,15 @@ namespace Infrastructure.Services
             await UpdateAsync(self);
         }
 
+        public override async Task UpdateAsync(IEnumerable<ServiceCardCard> entities)
+        {
+            await base.UpdateAsync(entities);
+            foreach (var card in entities)
+            {
+                await _CheckBarcodeUnique(card.Barcode);
+                await _CheckPartnerUnique(card);
+            }
+        }
 
         public override async Task<IEnumerable<ServiceCardCard>> CreateAsync(IEnumerable<ServiceCardCard> self)
         {
@@ -77,8 +106,10 @@ namespace Infrastructure.Services
             await base.CreateAsync(self);
 
             foreach (var card in self)
+            {
                 await _CheckBarcodeUnique(card.Barcode);
-
+                await _CheckPartnerUnique(card);
+            }
             return self;
         }
 
@@ -90,6 +121,16 @@ namespace Infrastructure.Services
             var count = await SearchQuery(x => x.Barcode == barcode).CountAsync();
             if (count >= 2)
                 throw new Exception($"Đã có thẻ dịch vụ với mã vạch {barcode}");
+        }
+
+        private async Task _CheckPartnerUnique(ServiceCardCard self)
+        {
+            if (!self.PartnerId.HasValue)
+                return;
+
+            var count = await SearchQuery(x => x.PartnerId == self.PartnerId).CountAsync();
+            if (count >= 2)
+                throw new Exception($"Khách hàng{(self.Partner != null ? $" {self.Partner.Name}" : "")} đã có thẻ thành viên");
         }
 
         public async Task Unlink(IEnumerable<Guid> ids)
@@ -169,7 +210,7 @@ namespace Infrastructure.Services
 
         public void _ComputeResidual(IEnumerable<ServiceCardCard> self)
         {
-            foreach(var card in self)
+            foreach (var card in self)
             {
                 var total_apply_sale = card.SaleOrderCardRels.Sum(x => x.Amount);
                 card.Residual = card.Amount - total_apply_sale;

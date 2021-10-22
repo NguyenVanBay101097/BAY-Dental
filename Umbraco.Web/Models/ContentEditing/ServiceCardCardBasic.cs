@@ -17,5 +17,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public ServiceCardTypeSimple CardType { get; set; }
         public Guid? PartnerId { get; set; }
         public PartnerSimple Partner { get; set; }
+        public string Barcode { get; set; }
     }
 }

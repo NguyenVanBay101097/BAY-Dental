@@ -6,9 +6,9 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class ServiceCardCardSave
     {
-        public string Name { get; set; }
         public Guid CardTypeId { get; set; }
         public Guid? PartnerId { get; set; }
+        public string Barcode { get; set; }
     }
 
     public class ServiceCardCardDisplay
@@ -20,5 +20,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public ServiceCardTypeSimple CardType { get; set; }
         public Guid? PartnerId { get; set; }
         public PartnerSimple Partner { get; set; }
+        public string Barcode { get; set; }
     }
 }

@@ -54,6 +54,29 @@ namespace TMTDentalAPI.Controllers
             var basic = _mapper.Map<ServiceCardCardDisplay>(entity);
             return Ok(basic);
         }
+        [HttpPut("{id}")]
+        [CheckAccess(Actions = "ServiceCard.Type.Update")]
+        public async Task<IActionResult> Update(Guid id, ServiceCardCardSave val)
+        {
+            var entity = await _cardCardService.GetByIdAsync(id);
+            if (entity == null)
+                return NotFound();
+
+            await _unitOfWork.BeginTransactionAsync();
+            entity = _mapper.Map(val, entity);
+            await _cardCardService.UpdateAsync(entity);
+            _unitOfWork.Commit();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Remove(Guid id)
+        {
+            await _cardCardService.Unlink(new List<Guid>() { id });
+
+            return NoContent();
+        }
 
         [HttpGet("{id}/[action]")]
         public async Task<IActionResult> GetHistories(Guid id)
@@ -99,11 +122,11 @@ namespace TMTDentalAPI.Controllers
                 {
                     worksheet.Cells[row, 1].Value = item.Name;
                     worksheet.Cells[row, 2].Value = item.Barcode;
-                    worksheet.Cells[row, 3].Value = item.CardTypeName;
-                    worksheet.Cells[row, 4].Value = item.ActivatedDate;
+                    //worksheet.Cells[row, 3].Value = item.CardTypeName;
+                    //worksheet.Cells[row, 4].Value = item.ActivatedDate;
                     worksheet.Cells[row, 4].Style.Numberformat.Format = "dd-mm-yyyy";
 
-                    worksheet.Cells[row, 5].Value = item.ExpiredDate;
+                    //worksheet.Cells[row, 5].Value = item.ExpiredDate;
                     worksheet.Cells[row, 5].Style.Numberformat.Format = "dd-mm-yyyy";
 
                     row++;

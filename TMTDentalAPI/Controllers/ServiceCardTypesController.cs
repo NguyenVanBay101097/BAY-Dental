@@ -113,7 +113,7 @@ namespace TMTDentalAPI.Controllers
             var serviceItems = _mapper.Map<IEnumerable<ProductPricelistItem>>(val.ProductPricelistItems);
             //tạo pricelist
             _cardTypeService.SaveProductPricelistItem(entity, serviceItems);
-            //tạo loại thẻ
+            //update loại thẻ
             await _cardTypeService.UpdateAsync(entity);
             _unitOfWork.Commit();
 
