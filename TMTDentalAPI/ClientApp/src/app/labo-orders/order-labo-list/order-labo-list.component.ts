@@ -133,7 +133,7 @@ export class OrderLaboListComponent implements OnInit {
     modalRef.componentInstance.labo = item;
     modalRef.result.then(() => {
       this.notificationService.show({
-        content: 'Cập nhật thành công',
+        content: 'Lưu thành công',
         hideAfter: 3000,
         position: { horizontal: 'center', vertical: 'top' },
         animation: { type: 'fade', duration: 400 },
@@ -146,7 +146,7 @@ export class OrderLaboListComponent implements OnInit {
   editLabo(item){
     console.log(item);
     const modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Cập nhật phiếu labo';
+    modalRef.componentInstance.title = 'Cập nhật phiếu Labo';
     modalRef.componentInstance.id = item.id;
     modalRef.componentInstance.saleOrderLineId = item.saleOrderLine.id;
     modalRef.componentInstance.saleOrderLineLabo = item;

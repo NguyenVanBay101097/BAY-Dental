@@ -66,7 +66,7 @@ export class SaleOrderLineLaboOrdersDialogComponent implements OnInit {
   actionLabo(item?) {
     const modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     if (item && item.id) {
-      modalRef.componentInstance.title = 'Cập nhật phiếu labo';
+      modalRef.componentInstance.title = 'Cập nhật phiếu Labo';
       modalRef.componentInstance.id = item.id;
     } else {
       modalRef.componentInstance.title = 'Tạo phiếu Labo';
@@ -81,20 +81,20 @@ export class SaleOrderLineLaboOrdersDialogComponent implements OnInit {
 
   printLabo(item: any) {
     this.laboOrderService.getPrint(item.id).subscribe((result: any) => {
-      this.printService.printHtml(result);
+      this.printService.printHtml(result.html);
     });
   }
 
   deleteLabo(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = 'Xóa phiếu labo';
-    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
+    modalRef.componentInstance.title = 'Xóa phiếu Labo';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa phiếu Labo?';
     modalRef.result.then(() => {
       this.laboOrderService.delete(item.id).subscribe(res => {
         this.loadLaboOrderList();
       }, (err) => {
       });
-    }, () => {});
+    }, () => { });
   }
 }
 

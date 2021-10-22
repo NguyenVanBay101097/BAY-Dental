@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ namespace Umbraco.Web.Mapping
             CreateMap<UoM, UoMDisplay>();
             CreateMap<UoMDisplay, UoM>();
             CreateMap<UoM, UoMSimple>();
+            CreateMap<UoM, UoMBasicPrintTemplate>();
         }
     }
 }

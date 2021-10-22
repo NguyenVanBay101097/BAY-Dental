@@ -50,7 +50,7 @@
                         <img src="../../../assets/icons/promotion.svg" alt="">
                         {{item.name}}</label>
                     <ng-container *ngIf="!getApplied(item); else elseTemplateBtnApply">
-                        <button type="button" class="btn btn-sm btn-primary" (click)="applyPromotion(item)">
+                        <button type="button" class="btn btn-primary" (click)="applyPromotion(item)">
                         Chọn
                         </button>
                     </ng-container>
@@ -72,7 +72,7 @@
                         <span style="color: #929DAA">Số tiền giảm: {{item.amount | number}}</span>
                         </span>
                     </div>
-                    <button type="button" class="btn btn-danger btn-sm" (click)="onDeletePromotion(item)" title="Xóa khuyến mãi">
+                    <button type="button" class="btn btn-danger" (click)="onDeletePromotion(item)" title="Xóa khuyến mãi">
                         <i class="far fa-trash-alt"></i>
                     </button>
                 </div>

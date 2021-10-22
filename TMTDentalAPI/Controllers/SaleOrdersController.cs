@@ -37,13 +37,19 @@ namespace TMTDentalAPI.Controllers
         private readonly IViewRenderService _viewRenderService;
         private readonly IViewToStringRenderService _viewToStringRenderService;
         private readonly IPrintTemplateConfigService _printTemplateConfigService;
+        private readonly IPrintTemplateService _printTemplateService;
+        private readonly IIRModelDataService _modelDataService;
+        private readonly IIrAttachmentService _irAttachmentService;
         private IConverter _converter;
+        private readonly ISaleOrderPromotionService _saleOrderPromotionService;
 
         public SaleOrdersController(ISaleOrderService saleOrderService, IMapper mapper,
             IUnitOfWorkAsync unitOfWork, IDotKhamService dotKhamService,
             ICardCardService cardService, IProductPricelistService pricelistService,
             ISaleOrderLineService saleLineService, IViewRenderService viewRenderService, IConverter converter,
-        IViewToStringRenderService viewToStringRenderService, IPrintTemplateConfigService printTemplateConfigService)
+            IIrAttachmentService irAttachmentService,
+        IViewToStringRenderService viewToStringRenderService, IPrintTemplateConfigService printTemplateConfigService , IPrintTemplateService printTemplateService, IIRModelDataService modelDataService,
+        ISaleOrderPromotionService saleOrderPromotionService)
         {
             _saleOrderService = saleOrderService;
             _mapper = mapper;
@@ -56,6 +62,10 @@ namespace TMTDentalAPI.Controllers
             _viewToStringRenderService = viewToStringRenderService;
             _converter = converter;
             _printTemplateConfigService = printTemplateConfigService;
+            _modelDataService = modelDataService;
+            _printTemplateService = printTemplateService;
+            _irAttachmentService = irAttachmentService;
+            _saleOrderPromotionService = saleOrderPromotionService;
         }
 
         [HttpGet]
@@ -64,6 +74,17 @@ namespace TMTDentalAPI.Controllers
         {
             var result = await _saleOrderService.GetPagedResultAsync(val);
             return Ok(result);
+        }
+
+        [HttpGet("{id}/[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Read")]
+        public async Task<IActionResult> GetBasic(Guid id)
+        {
+            var order = await _saleOrderService.SearchQuery(x => x.Id == id)
+                .Include(x => x.Partner)
+                .FirstOrDefaultAsync();
+                
+            return Ok(_mapper.Map<SaleOrderBasic>(order));
         }
 
         [HttpGet("[action]")]
@@ -81,15 +102,6 @@ namespace TMTDentalAPI.Controllers
             var res = await _saleOrderService.GetSaleOrderForDisplayAsync(id);
             if (res == null)
                 return NotFound();
-
-            //var res = _mapper.Map<SaleOrderDisplay>(res);
-            //res.InvoiceCount = res.OrderLines.SelectMany(x => x.SaleOrderLineInvoice2Rels).Select(x => x.InvoiceLine.Move)
-            //    .Where(x => x.Type == "out_invoice" || x.Type == "out_refund").Distinct().Count();
-            //res.OrderLines = res.OrderLines.OrderBy(x => x.Sequence);
-            //foreach (var inl in res.OrderLines)
-            //{
-            //    inl.Teeth = inl.Teeth.OrderBy(x => x.Name);
-            //}
 
             return Ok(res);
         }
@@ -287,17 +299,38 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpGet("{id}/Print")]
+        [HttpPost("Print")]
         [CheckAccess(Actions = "Basic.SaleOrder.Read")]
-        public async Task<IActionResult> GetPrint(Guid id)
+        public async Task<IActionResult> GetPrint(SaleOrderPrint val)
         {
-            var res = await _saleOrderService.GetPrint(id);
-            if (res == null)
-                return NotFound();
-            //res.OrderLines = res.OrderLines.OrderBy(x => x.Sequence);
-            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = res, Type = "tmp_sale_order" });
 
-            return Ok(new PrintData() { html = html });
+            //tim trong bảng config xem có dòng nào để lấy ra template
+            var printConfig = await _printTemplateConfigService.SearchQuery(x => x.Type == "tmp_sale_order" && x.IsDefault)
+                .Include(x => x.PrintPaperSize)
+                .Include(x => x.PrintTemplate)
+                .FirstOrDefaultAsync();
+
+            PrintTemplate template = printConfig != null ? printConfig.PrintTemplate : null;
+            PrintPaperSize paperSize = printConfig != null ? printConfig.PrintPaperSize : null;
+            if (template == null)
+            {
+                //tìm template mặc định sử dụng chung cho tất cả chi nhánh, sử dụng bảng IRModelData hoặc bảng IRConfigParameter
+                template = await _modelDataService.GetRef<PrintTemplate>("base.print_template_sale_order");
+                if (template == null)
+                    throw new Exception("Không tìm thấy mẫu in mặc định");
+            }
+
+            //lấy object đầy đủ
+            var saleOrders = await _saleOrderService.GetPrintTemplate(new List<Guid>() { val.Id });
+            var attachments = await _irAttachmentService.SearchQuery(x => val.AttachmentIds.Contains(x.Id)).ToListAsync();
+            foreach (var item in saleOrders)
+            {
+                item.IrAttachments = attachments;
+            }
+
+            var result = await _printTemplateService.GeneratePrintHtml(template, saleOrders);     
+
+            return Ok(new PrintData() { html = result});
         }
 
         private async Task SaveOrderLines(SaleOrderSave val, SaleOrder order)
@@ -823,5 +856,20 @@ namespace TMTDentalAPI.Controllers
             return Ok(dotKhamIds);
         }
 
+        [HttpGet("{id}/[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Read")]
+        public async Task<IActionResult> GetListAttachment(Guid id)
+        {
+            var res = await _saleOrderService.GetListAttachment(id);
+            return Ok(_mapper.Map<IEnumerable<IrAttachmentBasic>>(res));
+        }
+
+        [HttpGet("{id}/[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Read")]
+        public async Task<IActionResult> GetPromotions(Guid id)
+        {
+            var res = await _saleOrderPromotionService.SearchQuery(x => x.SaleOrderId == id).ToListAsync();
+            return Ok(_mapper.Map<IEnumerable<SaleOrderPromotionBasic>>(res));
+        }
     }
 }

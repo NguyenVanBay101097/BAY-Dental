@@ -17,6 +17,7 @@ import { ToothDisplay } from '../teeth/tooth.service';
 import { ProductBasic2 } from '../products/product.service';
 import { Product } from '../products/product';
 import { StringFilterComponent } from '@progress/kendo-angular-grid';
+import { IrAttachmentBasic } from '../shared/shared';
 
 export class PartnerFilter {
     search: string;
@@ -56,6 +57,8 @@ export class SaleOrderLinePaged {
     dateOrderTo: any;
     employeeId: string;
     companyId: string;
+    dateFrom: string;
+    dateTo: string;
 }
 
 export class PartnerReportLocationCitySearch {
@@ -101,6 +104,7 @@ export class PartnerImageBasic {
     date: string;
     note: string;
     uploadId: string;
+    url: string;
 }
 
 
@@ -592,6 +596,10 @@ export class PartnerService {
 
     getPartnerInfoPaged2(val) {
         return this.http.get<PagedResult2<PartnerInfoDisplay>>(this.baseApi + this.apiUrl + '/GetPartnerInfoPaged2', { params: new HttpParams({ fromObject: val }) });
+    }
+
+    getListAttachment(id) {
+        return this.http.get<IrAttachmentBasic[]>(this.baseApi + this.apiUrl + '/' + id + '/GetListAttachment');
     }
 }
 

@@ -87,7 +87,7 @@ namespace Infrastructure.Services
                     customerReceipt.CustomerReceiptProductRels.Add(new CustomerReceiptProductRel()
                     {
                         ProductId = product.Id
-                        
+
                     });
                 }
             }
@@ -119,7 +119,7 @@ namespace Infrastructure.Services
         public async Task<GetCountMedicalXamination> GetCountMedicalXaminationToday(ReportTodayRequest val)
         {
             var customerReceiptObj = GetService<ICustomerReceiptService>();
-         
+
 
             var query2 = customerReceiptObj.SearchQuery();
 
@@ -203,6 +203,37 @@ namespace Infrastructure.Services
             RevenueReport.Debit = await query.SumAsync(x => x.Debit);
             RevenueReport.Balance = await query.SumAsync(x => x.Balance * sign);
             return RevenueReport;
+        }
+
+        public async Task<IEnumerable<ReportRevenueChart>> GetRevenueChartReport(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string groupBy)
+        {
+            var invoiceObj = GetService<IAccountInvoiceReportService>();
+            var cashbookObj = GetService<ICashBookService>();
+
+            var accCodes = new string[] { "131", "CNKH" , "KHTU" };
+            var revenues = await invoiceObj.GetRevenueChartReport(dateFrom: dateFrom, dateTo: dateTo, companyId: companyId, groupBy: groupBy ,accountCode: accCodes);
+            var revenue_dict = revenues.ToDictionary(x => x.InvoiceDate, x => x);
+
+            var cashbooks = await cashbookObj.GetCashBookChartReport(dateFrom: dateFrom, dateTo: dateTo, companyId: companyId, groupBy: groupBy);
+            var cashbook_dict = cashbooks.ToDictionary(x => x.Date, x => x);
+
+            var dates = revenues.Select(x => x.InvoiceDate).Union(cashbooks.Select(s => s.Date.Value));
+
+            var res = new List<ReportRevenueChart>();
+            foreach (var date in dates)
+            {
+                var item = new ReportRevenueChart();
+                item.Date = date;
+                item.AmountRevenue = revenue_dict.ContainsKey(date) ? revenue_dict[date].PriceSubTotal : 0;
+                item.AmountCashBook = cashbook_dict.ContainsKey(date) ? cashbook_dict[date].TotalThu : 0;
+
+                res.Add(item);
+            }
+
+            res = res.OrderBy(x => x.Date).ToList();
+
+            return res;
+
         }
 
 

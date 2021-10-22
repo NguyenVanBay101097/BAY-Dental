@@ -27,7 +27,7 @@
   -webkit-transition: 0.2s;
   transition: 0.2s;
   padding-bottom: 15px;
-  padding-right: 25px;
+  padding-right: 7px;
 }
 
 .report-box:last-child {
@@ -43,6 +43,7 @@
   box-sizing: border-box;
   border-radius: 6px;
   padding: 10px;
+  height: 100%;
 }
 
 .box-item-content {
@@ -65,4 +66,10 @@
   line-height: 28px;
   text-transform: uppercase;
   color: #1A6DE3;
+}
+
+.item-header{
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 20px;
 }

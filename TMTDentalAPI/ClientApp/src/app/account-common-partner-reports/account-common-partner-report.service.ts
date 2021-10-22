@@ -101,8 +101,43 @@ export class ReportPartnerDebitDetailReq {
     companyId: string;
 }
 
+export class ReportPartnerAdvanceFilter {
+    dateFrom: string;
+    dateTo: string;
+    search: string;
+    companyId: string;
+}
+
+export class ReportPartnerAdvanceDetailFilter {
+    dateFrom: string;
+    dateTo: string;
+    partnerId: string;
+    companyId: string;
+}
+
 export class ReportPartnerDebitDetailRes {
     date: any;
+    invoiceOrigin: string;
+    begin: number;
+    debit: number;
+    credit: number;
+    end: number;
+    ref: string;
+}
+
+export class ReportPartnerAdvance
+{
+    partnerId : string;
+    partnerName : string;
+    partnerPhone: string;
+    begin: number;
+    debit :number;
+    credit: number;
+    end : number;
+}
+
+export class ReportPartnerAdvanceDetail {
+    date: string;
     invoiceOrigin: string;
     begin: number;
     debit: number;
@@ -152,6 +187,14 @@ export class AccountCommonPartnerReportService {
         return this.http.post<ReportPartnerDebitDetailRes[]>(this.baseApi + this.apiUrl + "/ReportPartnerDebitDetail", val);
     }
 
+    reportPartnerAdvance(val) {
+        return this.http.post<ReportPartnerAdvance[]>(this.baseApi + this.apiUrl + "/ReportPartnerAdvance", val);
+    }
+
+    reportPartnerAdvanceDetail(val) {
+        return this.http.post<ReportPartnerAdvanceDetail[]>(this.baseApi + this.apiUrl + "/ReportPartnerAdvanceDetail", val);
+    }
+
     reportPartnerDebitSummary(val: ReportPartnerDebitReq) {
         return this.http.post(this.baseApi + this.apiUrl + "/ReportPartnerDebitSummary", val);
     }
@@ -162,6 +205,10 @@ export class AccountCommonPartnerReportService {
 
     getReportPartnerDebitPdf(val:any ) {
         return this.http.get(this.baseApi + this.apiUrl + "/GetReportPartnerDebitPdf", {params: new HttpParams({fromObject: val}),  responseType: 'blob'  });
+    }
+
+    getReportPartnerAdvancePdf(val:any ) {
+        return this.http.post(this.baseApi + this.apiUrl + "/GetReportPartnerAdvancePdf", val,  { responseType: "blob" });
     }
 
     printGetSummary(val) {
@@ -175,6 +222,13 @@ export class AccountCommonPartnerReportService {
     exportReportPartnerDebitExcel(paged) {
         return this.http.post(
             this.baseApi + this.apiUrl + "/ExportReportPartnerDebitExcel", paged,
+            { responseType: "blob" }
+        );
+    }
+
+    exportReportPartnerAdvanceExcel(paged) {
+        return this.http.post(
+            this.baseApi + this.apiUrl + "/ExportReportPartnerAdvanceExcel", paged,
             { responseType: "blob" }
         );
     }

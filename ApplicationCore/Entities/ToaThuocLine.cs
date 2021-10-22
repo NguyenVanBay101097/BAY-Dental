@@ -69,6 +69,24 @@ namespace ApplicationCore.Entities
             }
         }
 
+        public string UseAtDisplay
+        {
+            get
+            {
+                switch (UseAt)
+                {
+                    case "after_meal": return "Sau khi ăn";
+                    case "before_meal": return "Trước khi ăn";
+                    case "in_meal": return "Trong khi ăn";
+                    case "after_wakeup": return "Sau khi dậy";
+                    case "before_sleep": return "Trước khi đi ngủ";
+                    case "other": return (string.IsNullOrEmpty(Note) ? "Khác" : Note);
+                    default:
+                        return "";
+                }
+            }
+        }
+
         /// <summary>
         /// số lượng còn lại để tạo hóa đơn thuốc
         /// </summary>

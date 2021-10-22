@@ -48,11 +48,11 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Phần trăm giảm giá
         /// </summary>
         public string DiscountPercentType { get; set; }
-        public string Payment { get; set; }
+        public decimal? Payment { get; set; }
         /// <summary>
         /// Tổng số tiền trên 1 lần thanh toán
         /// </summary>
-        public int Amount { get; set; }
+        public decimal? Amount { get; set; }
 
         /// <summary>
         /// Ngày thanh toán

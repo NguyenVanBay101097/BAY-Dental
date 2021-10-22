@@ -14,7 +14,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Ngày lập phiếu
         /// </summary>
-        public DateTime Date { get; set; }
+        public DateTime DateCreated { get; set; }
 
         public string JournalName { get; set; }
 

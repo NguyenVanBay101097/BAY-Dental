@@ -22,8 +22,8 @@ import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-ken
   providers: [NgbDropdown]
 })
 export class DotKhamStepReportComponent implements OnInit {
-  @ViewChild('ngbUser', { static: false }) ngbUser: NgbDropdown;
-  @ViewChild('ngbPartner', { static: false }) ngbPartner: NgbDropdown;
+  @ViewChild('ngbUser') ngbUser: NgbDropdown;
+  @ViewChild('ngbPartner') ngbPartner: NgbDropdown;
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   loading = false;

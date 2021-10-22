@@ -15,7 +15,8 @@
                         </label>
                     </td>
                     <td colspan="1" style="width: 100%;">
-                        <app-binary-file-input [(value)]="fileBase64" (valueChange)="onFileChange($event)">
+                        <app-binary-file-input [accept]="'.xlsm,.xls,.xlsx,.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel'"
+                         (valueChange)="onFileChange($event)" (checkFormat)="correctFormat = $event">
                         </app-binary-file-input>
                     </td>
                 </tr>
@@ -28,9 +29,9 @@
 </div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onSave()" accesskey="s">Import</button>
-    <a download href="/assets/files/MauFileTieuSuBenh.xlsx" class="btn btn-sm btn-light">
+    <button type="button" class="btn btn-primary mr-2" (click)="onSave()" accesskey="s">Import</button>
+    <a download href="/assets/files/MauFileTieuSuBenh.xlsx" class="btn btn-light">
         Tải file mẫu
     </a>
-    <button type="button" class="btn btn-light btn-sm mr-2" (click)="onCancel()" accesskey="q">Đóng</button>
+    <button type="button" class="btn btn-light mr-2" (click)="onCancel()" accesskey="q">Đóng</button>
 </footer>

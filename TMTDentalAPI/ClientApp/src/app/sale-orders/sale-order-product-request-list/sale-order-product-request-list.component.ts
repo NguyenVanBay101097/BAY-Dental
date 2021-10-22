@@ -47,9 +47,9 @@ export class SaleOrderProductRequestListComponent implements OnInit {
     val.limit = 0;
     
     this.productRequestService.getPaged(val).subscribe(res => {
-      console.log(res);
+      // console.log(res);
       this.productRequests = res.items;
-      console.log(this.productRequests);
+      // console.log(this.productRequests);
     }, err => {
       console.log(err);
     })

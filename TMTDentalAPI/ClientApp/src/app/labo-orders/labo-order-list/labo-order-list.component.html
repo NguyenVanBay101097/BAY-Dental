@@ -4,12 +4,6 @@
             <li class="active">Quản lý phiếu Labo</li>
         </ol>
         <div class="o_cp_searchview">
-            <div class="o_cp_searchview_group">
-                <div class="o_searchview">
-                    <input class="o_searchview_input" placeholder="Tìm kiếm theo khách hàng, phiếu điều trị" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
-                    <span class="o_searchview_icon fas fa-search"></span>
-                </div>
-            </div>
         </div>
         <div class="o_cp_left">
             <div class="o_cp_buttons">
@@ -40,8 +34,9 @@
             </div>
         </div>
         <div class="o_cp_right">
-            <div class="o_search_options">
-
+            <div class="o_searchview">
+                <input class="o_searchview_input" placeholder="Tìm kiếm theo mã, tên khách hàng, phiếu điều trị" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                <span class="o_searchview_icon fas fa-search"></span>
             </div>
         </div>
     </div>
@@ -59,7 +54,7 @@
         </kendo-grid-column>
         <kendo-grid-column *ngIf="canUpdateSaleOrder" field="orderName" title="Phiếu điều trị" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <a class="text-primary" [routerLink]="['/sale-orders/form']" [queryParams]="{id: dataItem.order.id}"> {{dataItem.order.name}}</a>
+                <a class="text-primary" [routerLink]="['/sale-orders', dataItem.order.id]"> {{dataItem.order.name}}</a>
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="name" title="Dịch vụ" width="150">
@@ -100,4 +95,4 @@
             </ng-template>
         </kendo-grid-column> -->
     </kendo-grid>
-</div> 
+</div>

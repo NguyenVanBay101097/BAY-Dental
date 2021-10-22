@@ -22,5 +22,6 @@ namespace Infrastructure.Services
 
         Task<DotKham> CreateDotKham(Guid saleOrderId, DotKhamSaveVm val);
         Task UpdateDotKham(Guid id, DotKhamSaveVm val);
+        Task<IEnumerable<IrAttachment>> GetListAttachment(Guid id);
     }
 }

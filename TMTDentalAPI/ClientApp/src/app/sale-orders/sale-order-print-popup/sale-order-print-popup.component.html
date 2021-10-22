@@ -1,0 +1,41 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title || 'In phiếu điều trị'}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body">
+    <div class="mb-2">
+        <button class="btn btn-light" (click)="attachImg()">
+            <i class="far fa-image"></i> Đính kèm hình ảnh
+        </button>
+    </div>
+
+    <div class="o_AttachmentList_partialList">
+        <div [attr.title]="img.name" *ngFor="let img of imagesPreview;index as i"
+            class="o_Attachment">
+            <div [ngStyle]="{'background-image':'url('+img.url+')'}" (click)="viewImage(img)" [attr.data-mimetype]="img.mineType"
+                class="o_Attachment_image o_image o-attachment-viewable o-details-overlay o-small">
+                <div class="o_Attachment_imageOverlay">
+                    <div class="o_Attachment_details o_Attachment_imageOverlayDetails">
+                        <div class="o_Attachment_filename">{{img.name}}</div>
+                        <!-- <div class="o_Attachment_extension">png</div> -->
+                    </div>
+                    <div class="o_Attachment_actions">
+                        <div title="Remove" class="o_Attachment_action o_Attachment_actionUnlink"
+                            (click)="deleteImage(i)">
+                            <i class="fa fa-times"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onPrint()" accesskey="s">In phiếu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()"
+        accesskey="q"><span>Đóng</span></button>
+</footer>

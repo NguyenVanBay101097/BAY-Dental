@@ -19,7 +19,7 @@ import { SharedModule } from '../shared/shared.module';
     MyCustomKendoModule,
     ReactiveFormsModule,
     FormsModule,
-    SharedModule
+    SharedModule,
   ],
   providers: [HomeService]
 })

@@ -1,7 +1,8 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { CustomerReceiptReportFilter } from 'src/app/customer-receipt-reports/customer-receipt-report.service';
+import { ChartDataset, ChartOptions } from 'chart.js';
+import * as pluginDataLabels from 'chartjs-plugin-datalabels';
 
 @Component({
   selector: 'app-sale-dashboard-ap-cr-chart',
@@ -20,6 +21,49 @@ export class SaleDashboardApCrChartComponent implements OnInit {
   state: string;
   pieDataCustomer: any[] = [];
   pieDataNoTreatment: any[] = [];
+  pieCustomerLabels: string[] = [];
+
+  pieCustomerOptions: ChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      datalabels: {
+        display: true,
+        anchor: 'end',
+        align: 'start',
+        color: '#fff'
+      },
+      legend: {
+        position: 'right',
+      }
+    }
+  }
+
+  pieCustomerDatasets: ChartDataset[] = [];
+
+  pieCustomerPlugins = [pluginDataLabels];
+
+  pieReceiptLabels: string[] = [];
+
+  pieReceiptOptions: ChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      datalabels: {
+        display: true,
+        anchor: 'end',
+        align: 'start',
+        color: '#fff'
+      },
+      legend: {
+        position: 'right',
+      }
+    }
+  }
+
+  pieReceiptDatasets: ChartDataset[] = [];
+
+  pieReceiptPlugins = [pluginDataLabels];
 
   constructor(
     private intlService: IntlService,
@@ -36,46 +80,34 @@ export class SaleDashboardApCrChartComponent implements OnInit {
 
 
   loadPieDataCustomer() {
-    if(this.dataCustomer){
-      this.pieDataCustomer = [];
-      for (let i = 0; i < this.dataCustomer.length; i++) {
-        this.pieDataCustomer.push({ category: this.dataCustomer[i].text, value: this.dataCustomer[i].count, color: this.dataCustomer[i].text == 'old' ? '#1A6DE3' : '#95C8FF' })
-      };
-    }
-  }
+    this.pieCustomerLabels = this.dataCustomer.map(x => x.displayIsNew);
+    this.pieCustomerDatasets = [
+      { 
+        backgroundColor: ['#0066cc', '#99ccff'],
+        data: this.dataCustomer.map(x => x.partnerTotal),
+        hoverBackgroundColor: ['#0066cc', '#99ccff'],
+        hoverBorderColor: ['#0066cc', '#99ccff'],
+      }
+    ];
 
-  get countdataCustomer() {
-    var count = 0;
-    this.dataCustomer.forEach(x =>
-      count += x.count
-    );
-    return count;
-  }
-
-  get countdataNoTreatment() {
-    var count = 0;
-    this.dataNoTreatment.forEach(x =>
-      count += x.countCustomerReceipt
-    );
-    return count;
-  }
-
-  getCusType(val) {
-    switch (val) {
-      case 'old':
-        return 'Khách quay lại';
-      case 'new':
-        return 'Khách mới';
-    }
+    this.pieReceiptLabels = this.dataNoTreatment.map(x => x.name);
+    this.pieReceiptDatasets = [
+      { 
+        backgroundColor: ['#0066cc', '#99ccff'],
+        data: this.dataNoTreatment.map(x => x.countCustomerReceipt),
+        hoverBackgroundColor: ['#0066cc', '#99ccff'],
+        hoverBorderColor: ['#0066cc', '#99ccff'],
+      }
+    ];
   }
 
   redirectTo(value) {
     switch (value) {
       case 'partner-report-overview':
-        this.router.navigateByUrl("report/report-account-common/partner-report-overview");
+        this.router.navigateByUrl("report-account-common/partner-report-overview");
         break;
       case 'customer-receipt-overview':
-        this.router.navigateByUrl("report/customer-receipt-reports/customer-receipt-overview");
+        this.router.navigateByUrl("customer-receipt-reports/customer-receipt-overview");
         break;
       default:
         break;

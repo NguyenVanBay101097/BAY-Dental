@@ -26,7 +26,7 @@
     </div>
 </div>
 <div>
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading" (pageChange)="pageChange($event)">
         <div>
             <div *kendoGridDetailTemplate="let dataItem">
                 <app-labo-warranty-detail-list [item]="dataItem" [dateReceiptFrom]="dateReceiptFrom" [dateReceiptTo]="dateReceiptTo"></app-labo-warranty-detail-list>
@@ -39,7 +39,7 @@
         </kendo-grid-column>
         <kendo-grid-column field="saleOrderName" title="Phiếu điều trị" width="100">
             <ng-template *ngIf="canUpdateSaleOrder else notRead" kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <a class="text-primary" [routerLink]="['/sale-orders/form']" [queryParams]="{id: dataItem.saleOrderId}"> {{dataItem.saleOrderName}}</a>
+                <a class="text-primary" [routerLink]="['/sale-orders', dataItem.saleOrderId]"> {{dataItem.saleOrderName}}</a>
             </ng-template>
             <ng-template #notRead kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.saleOrderName}}

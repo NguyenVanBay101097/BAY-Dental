@@ -82,9 +82,9 @@ namespace TMTDentalAPI.Controllers
             }
             var res = _mapper.Map<CompanyDisplay>(company);
             res.Street = company.Partner.Street;
-            res.City = new CitySimple { Name = company.Partner.CityName, Code = company.Partner.CityCode };
-            res.District = new DistrictSimple { Name = company.Partner.DistrictName, Code = company.Partner.DistrictCode };
-            res.Ward = new WardSimple { Name = company.Partner.WardName, Code = company.Partner.WardCode };
+            res.City = !string.IsNullOrEmpty(company.Partner.CityCode) && !string.IsNullOrEmpty(company.Partner.CityName) ? new CitySimple { Name = company.Partner.CityName, Code = company.Partner.CityCode } : null;
+            res.District = !string.IsNullOrEmpty(company.Partner.DistrictCode) && !string.IsNullOrEmpty(company.Partner.DistrictName) ? new DistrictSimple { Name = company.Partner.DistrictName, Code = company.Partner.DistrictCode } : null;
+            res.Ward = !string.IsNullOrEmpty(company.Partner.WardCode) && !string.IsNullOrEmpty(company.Partner.WardName) ? new WardSimple { Name = company.Partner.WardName, Code = company.Partner.WardCode } : null;
             return Ok(res);
         }
 

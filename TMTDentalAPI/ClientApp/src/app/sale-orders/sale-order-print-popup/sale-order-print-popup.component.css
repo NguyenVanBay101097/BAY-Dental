@@ -1,0 +1,8 @@
+.modal-footer {
+    justify-content: flex-start;
+}
+
+.input-file {
+    pointer-events: none;
+    opacity: 0;
+}

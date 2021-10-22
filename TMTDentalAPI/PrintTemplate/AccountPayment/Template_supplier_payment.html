@@ -2,27 +2,27 @@
 
 <div>
     <div class="d-flex mb-2">
-        {{ if company_logo != "" && company_logo != null}}
-        <img class="img-fluid me-3 w-20" src="{{company_logo}}" alt="{{company_name}}">
+        {{ if company.logo != "" && company.logo != null}}
+        <img class="img-fluid me-3 w-20" src="{{company.logo}}" alt="{{company.name}}">
         {{ end }}
 
         <div>
-            <div class="text-xl font-semibold">{{company_name}}</div>
-            {{if company_address != ""}}
+            <div class="text-xl font-semibold">{{company.name}}</div>
+            {{if company.address != ""}}
 
-            <div>Địa chỉ: {{company_address}}</div>
-
-            {{ end }}
-
-            {{ if company_phone}}
-
-            <div>ĐT: {{company_phone}}</div>
+            <div>Địa chỉ: {{company.address}}</div>
 
             {{ end }}
 
-            {{if company_email }}
+            {{ if company.phone}}
 
-            <div>Email: {{company_email}}</div>
+            <div>ĐT: {{company.phone}}</div>
+
+            {{ end }}
+
+            {{if company.email }}
+
+            <div>Email: {{company.email}}</div>
 
             {{ end }}
 
@@ -32,7 +32,7 @@
     <div class="text-center mb-2">
         <div class="text-3xl font-semibold">BIÊN LAI THANH TOÁN</div>
         <div>Ngày {{payment_date.day}} tháng {{payment_date.month}} năm {{payment_date.year}} </div>
-        <div class="font-semibold">Số: {{payment_name}}</div>
+        <div class="font-semibold">Số: {{name}}</div>
     </div>
     <div class="o_form_view mb-2">
         <div class="o_group">
@@ -70,7 +70,7 @@
                                 Số tiền
                             </label>
                         </td>
-                        <td colspan="1" style="width: 100%;">{{amount | math.format "N0" "vi-VN"}}</td>
+                        <td colspan="1" style="width: 100%;">{{amount | math.format "N0"}}</td>
                     </tr>
                     <tr>
                         <td colspan="1" class="o_td_label">
@@ -98,7 +98,7 @@
                                 Nhà cung cấp:
                             </label>
                         </td>
-                        <td colspan="1" style="width: 100%;">{{partner_name ? partner_name : ""}}</td>
+                        <td colspan="1" style="width: 100%;">{{partner.name ? partner.name : ""}}</td>
                     </tr>
                     <tr>
                         <td colspan="1" class="o_td_label">
@@ -106,7 +106,7 @@
                                 Địa chỉ:
                             </label>
                         </td>
-                        <td colspan="1" style="width: 100%;">{{partner_address ? partner_address : ""}}</td>
+                        <td colspan="1" style="width: 100%;">{{partner.address ? partner.address : ""}}</td>
                     </tr>
                     <tr>
                         <td colspan="1" class="o_td_label">
@@ -114,7 +114,7 @@
                                 Số điện thoại:
                             </label>
                         </td>
-                        <td colspan="1" style="width: 100%;">{{partner_phone ? partner_phone : ""}}</td>
+                        <td colspan="1" style="width: 100%;">{{partner.phone ? partner.phone : ""}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -143,7 +143,7 @@
                 <span></span> <br />
                 <span></span> <br />
                 <span class="font-semibold">
-                    {{partner_name ? (partner_name | string.upcase) : ""}}
+                    {{partner.name ? (partner.name | string.upcase) : ""}}
                 </span>
             </div>
         </div>

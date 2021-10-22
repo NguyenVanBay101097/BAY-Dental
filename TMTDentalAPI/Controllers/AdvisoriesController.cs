@@ -9,6 +9,7 @@ using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -23,15 +24,21 @@ namespace TMTDentalAPI.Controllers
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly IViewRenderService _viewRenderService;
         private readonly IPrintTemplateConfigService _printTemplateConfigService;
+        private readonly IPrintTemplateService _printTemplateService;
+        private readonly IIRModelDataService _modelDataService;
 
         public AdvisoriesController(IAdvisoryService advisoryService, IViewRenderService viewRenderService,
-            IMapper mapper, IUnitOfWorkAsync unitOfWork, IPrintTemplateConfigService printTemplateConfigService)
+            IMapper mapper, IUnitOfWorkAsync unitOfWork, IPrintTemplateConfigService printTemplateConfigService,
+             IPrintTemplateService printTemplateService,
+            IIRModelDataService modelDataService)
         {
             _advisoryService = advisoryService;
             _mapper = mapper;
             _viewRenderService = viewRenderService;
             _unitOfWork = unitOfWork;
             _printTemplateConfigService = printTemplateConfigService;
+            _printTemplateService = printTemplateService;
+            _modelDataService = modelDataService;
         }
 
         [HttpGet]
@@ -117,14 +124,25 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetPrint([FromQuery] IEnumerable<Guid> ids)
         {
 
-            var res = await _advisoryService.Print(ids);
+            //tim trong bảng config xem có dòng nào để lấy ra template
+            var printConfig = await _printTemplateConfigService.SearchQuery(x => x.Type == "tmp_advisory" && x.IsDefault)
+                .Include(x => x.PrintPaperSize)
+                .Include(x => x.PrintTemplate)
+                .FirstOrDefaultAsync();
 
-            if (res == null)
-                return NotFound();
+            PrintTemplate template = printConfig != null ? printConfig.PrintTemplate : null;
+            PrintPaperSize paperSize = printConfig != null ? printConfig.PrintPaperSize : null;
+            if (template == null)
+            {
+                //tìm template mặc định sử dụng chung cho tất cả chi nhánh, sử dụng bảng IRModelData hoặc bảng IRConfigParameter
+                template = await _modelDataService.GetRef<PrintTemplate>("base.print_template_advisory");
+                if (template == null)
+                    throw new Exception("Không tìm thấy mẫu in mặc định");
+            }
 
-            var html = await _printTemplateConfigService.PrintOfType(new PrintOfTypeReq() { Obj = res, Type = "tmp_advisory" });
+            var result = await _printTemplateService.GeneratePrintHtml(template, ids, paperSize);
 
-            return Ok(new PrintData() { html = html });
+            return Ok(new PrintData() { html = result });
         }
 
         [HttpPost("[action]")]

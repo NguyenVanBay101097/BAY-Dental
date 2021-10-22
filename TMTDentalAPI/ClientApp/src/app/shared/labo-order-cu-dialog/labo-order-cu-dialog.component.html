@@ -44,7 +44,7 @@
                                             </label>
                                         </td>
                                         <td colspan="1" style="width: 100%;">
-                                            <a class="text-primary" (click)="activeModal.dismiss()" [routerLink]="['/sale-orders/form']" [queryParams]="{id: saleOrderLine?.orderId}">
+                                            <a class="text-primary" (click)="activeModal.dismiss()" [routerLink]="['/sale-orders', saleOrderLine?.orderId]">
                                                 {{saleOrderLine?.order?.name}}
                                             </a>
                                         </td>
@@ -70,16 +70,19 @@
                                                 <div class="d-flex">
                                                     <kendo-combobox #partnerCbx [data]="partners" [textField]="'name'" [filterable]="true" #NCCLaboCbx formControlName="partner" [valueField]="'id'">
                                                     </kendo-combobox>
-                                                    <a [class.d-none]="state != 'draft'" title="Cập nhật labo" class="ml-1 btn btn-sm btn-light" type="button" *ngIf="partnerFC.value" (click)="onQuickUpdatePartner()">
+                                                    <!-- <a [class.d-none]="state != 'draft'" title="Cập nhật labo" class="ml-1 btn btn-sm btn-light" type="button" *ngIf="partnerFC.value" (click)="onQuickUpdatePartner()">
                                                         <i class="fas fa-external-link-alt"></i>
-                                                    </a>
-                                                    <a class="ml-1 btn btn-sm btn-light" (click)="onQuickCreatePartner()">
-                                                        <span class="k-icon k-i-plus"></span>
+                                                    </a> -->
+                                                    <a class="ml-1 btn btn-primary" (click)="onQuickCreatePartner()">
+                                                        <i class="fas fa-plus text-white"></i>
                                                     </a>
                                                 </div>
                                             </div>
                                             <span *ngIf="state == 'confirmed'">{{partnerFC.value.name}}</span>
-                                            <label *ngIf="partnerFC.errors?.required" class="text-danger" for="">Chọn nhà cung cấp Labo</label>
+                                            <div *ngIf="partnerFC.errors && (partnerFC.touched || partnerFC.dirty || submitted)"
+                                                class="text-danger">
+                                                <div *ngIf="partnerFC.errors.required">Chọn nhà cung cấp Labo</div>
+                                            </div>
                                         </td>
                                     </tr>
                                     
@@ -154,33 +157,47 @@
                                                 Răng
                                             </label>
                                         </td>
-                                        <td *ngIf="saleOrderLine?.toothType == 'manual'" colspan="1" style="width: 100%;">
-                                            <button [disabled]="state == 'confirmed'" *ngFor="let tooth of saleOrderLine?.teeth"
-                                            (click)="onToothSelected(tooth)" [ngClass]="isToothSelected(tooth)? 'btn-primary':'btn-light'" 
-                                            type="button" class="btn btn-sm mr-1 mb-1">{{tooth.name}}</button>
+                                        
+                                        <td *ngIf="state == 'draft'; else other_content">
+                                            <ng-container *ngIf="saleOrderLine?.toothType == 'manual'" colspan="1" style="width: 100%;">
+                                                <button [disabled]="state == 'confirmed'" *ngFor="let tooth of saleOrderLine?.teeth"
+                                                (click)="onToothSelected(tooth)" [ngClass]="isToothSelected(tooth)? 'btn-primary':'btn-light'" 
+                                                type="button" class="btn btn-sm mr-1 mb-1">{{tooth.name}}</button>
+                                            </ng-container>
+                                            <ng-container *ngIf="saleOrderLine?.toothType != 'manual'" colspan="1" style="width: 100%;">
+                                                <div *ngIf="listType['up_right'].length != 0">
+                                                    <button [disabled]="state == 'confirmed'" *ngFor="let tooth of listType['up_right']"
+                                                    (click)="onToothSelected(tooth)" [ngClass]="isToothSelected(tooth)? 'btn-primary':'btn-light'" 
+                                                    type="button" class="btn btn-sm mr-1 mb-1">{{tooth.name}}</button>
+                                                </div>
+                                                <div *ngIf="listType['up_left'].length != 0">
+                                                    <button [disabled]="state == 'confirmed'" *ngFor="let tooth of listType['up_left']"
+                                                    (click)="onToothSelected(tooth)" [ngClass]="isToothSelected(tooth)? 'btn-primary':'btn-light'" 
+                                                    type="button" class="btn btn-sm mr-1 mb-1">{{tooth.name}}</button>
+                                                </div>
+                                                <div *ngIf="listType['down_right'].length != 0">
+                                                    <button [disabled]="state == 'confirmed'" *ngFor="let tooth of listType['down_right']"
+                                                    (click)="onToothSelected(tooth)" [ngClass]="isToothSelected(tooth)? 'btn-primary':'btn-light'" 
+                                                    type="button" class="btn btn-sm mr-1 mb-1">{{tooth.name}}</button>
+                                                </div>
+                                                <div *ngIf="listType['down_left'].length != 0">
+                                                    <button [disabled]="state == 'confirmed'" *ngFor="let tooth of listType['down_left']"
+                                                    (click)="onToothSelected(tooth)" [ngClass]="isToothSelected(tooth)? 'btn-primary':'btn-light'" 
+                                                    type="button" class="btn btn-sm mr-1 mb-1">{{tooth.name}}</button>
+                                                </div>
+                                            </ng-container>
                                         </td>
-                                        <td *ngIf="saleOrderLine?.toothType != 'manual'" colspan="1" style="width: 100%;">
-                                            <div *ngIf="listType['up_right'].length != 0">
-                                                <button [disabled]="state == 'confirmed'" *ngFor="let tooth of listType['up_right']"
-                                                (click)="onToothSelected(tooth)" [ngClass]="isToothSelected(tooth)? 'btn-primary':'btn-light'" 
-                                                type="button" class="btn btn-sm mr-1 mb-1">{{tooth.name}}</button>
-                                            </div>
-                                            <div *ngIf="listType['up_left'].length != 0">
-                                                <button [disabled]="state == 'confirmed'" *ngFor="let tooth of listType['up_left']"
-                                                (click)="onToothSelected(tooth)" [ngClass]="isToothSelected(tooth)? 'btn-primary':'btn-light'" 
-                                                type="button" class="btn btn-sm mr-1 mb-1">{{tooth.name}}</button>
-                                            </div>
-                                            <div *ngIf="listType['down_right'].length != 0">
-                                                <button [disabled]="state == 'confirmed'" *ngFor="let tooth of listType['down_right']"
-                                                (click)="onToothSelected(tooth)" [ngClass]="isToothSelected(tooth)? 'btn-primary':'btn-light'" 
-                                                type="button" class="btn btn-sm mr-1 mb-1">{{tooth.name}}</button>
-                                            </div>
-                                            <div *ngIf="listType['down_left'].length != 0">
-                                                <button [disabled]="state == 'confirmed'" *ngFor="let tooth of listType['down_left']"
-                                                (click)="onToothSelected(tooth)" [ngClass]="isToothSelected(tooth)? 'btn-primary':'btn-light'" 
-                                                type="button" class="btn btn-sm mr-1 mb-1">{{tooth.name}}</button>
-                                            </div>
-                                        </td>
+                                        <ng-template #other_content>
+                                            <td>
+                                                <div>
+                                                    <button [disabled]="state == 'confirmed'" *ngFor="let tooth of teeth"
+                                                    (click)="onToothSelected(tooth)" [ngClass]="isToothSelected(tooth)? 'btn-primary':'btn-light'" 
+                                                    type="button" class="btn btn-sm mr-1 mb-1">{{tooth.name}}</button>
+                                                </div>
+                                            </td>
+                                        </ng-template>
+                                        
+                                        
                                     </tr>
                                     <tr>
                                         <td colspan="1" class="o_td_label">
@@ -277,11 +294,6 @@
                                 <div class="card-body">
                                   <table>
                                     <tr>
-                                        <td colspan="2">
-                                            <h5 class="mt-2">Thông tin bảo hành</h5>
-                                        </td>
-                                    </tr>
-                                    <tr>
                                         <td colspan="1" class="o_td_label">
                                             <label class="o_form_label">
                                                 Mã bảo hành
@@ -318,123 +330,206 @@
                                 <h5 class="card-header border-0">Thông số Labo</h5>
                                 <div class="card-body">
                                   <table>
-                                    <tr>
-                                        <td colspan="2" class="o_td_label">
-                                            <label class="o_form_label">
-                                                Vật liệu
-                                            </label>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2">
-                                            <div class="row">
-                                                <div *ngFor="let labo of labos;let i = index" class="col-6">
-                                                    <div class="radio">
-                                                        <input [attr.disabled]="state == 'confirmed' ? true: null" formControlName="productId" [value]="labo.id" type="radio" [id]="'labo'+i">
-                                                        <label class="ml-1" [for]="'labo'+i">
-                                                            {{labo.name}}
-                                                        </label>
+                                    <ng-container *ngIf="state == 'draft' else labo_block">
+                                        <tr>
+                                            <td colspan="2" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Vật liệu
+                                                </label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                <div class="row">
+                                                    <div *ngFor="let labo of labos;let i = index" class="col-6">
+                                                        <div class="radio">
+                                                            <input [attr.disabled]="state == 'confirmed' ? true: null" formControlName="productId" [value]="labo.id" type="radio" [id]="'labo'+i">
+                                                            <label class="ml-1" [for]="'labo'+i">
+                                                                {{labo.name}}
+                                                            </label>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2" class="o_td_label">
-                                            <label class="o_form_label">
-                                                Đường hoàn tất
-                                            </label>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2">
-                                            <div class="row">
-                                                <div *ngFor="let finish of finishlines;let i = index" class="col-6">
-                                                    <div class="radio">
-                                                        <input [attr.disabled]="state == 'confirmed' ? true: null" formControlName="laboFinishLineId" [value]="finish.id" type="radio" [id]="'finish'+i">
-                                                        <label class="ml-1" [for]="'finish'+i">
-                                                            {{finish.name}}
-                                                        </label>
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+                                    <ng-template #labo_block>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Vật liệu
+                                                </label>
+                                            </td>
+                                            <td colspan="1">
+                                                {{getItem(labos,productId)}}
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-container *ngIf="state == 'draft' else finishline_block">
+                                        <tr>
+                                            <td colspan="2" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Đường hoàn tất
+                                                </label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                <div class="row">
+                                                    <div *ngFor="let finish of finishlines;let i = index" class="col-6">
+                                                        <div class="radio">
+                                                            <input [attr.disabled]="state == 'confirmed' ? true: null" formControlName="laboFinishLineId" [value]="finish.id" type="radio" [id]="'finish'+i">
+                                                            <label class="ml-1" [for]="'finish'+i">
+                                                                {{finish.name}}
+                                                            </label>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2" class="o_td_label">
-                                            <label class="o_form_label">
-                                                Khớp cắn
-                                            </label>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2">
-                                            <div class="row">
-                                                <div *ngFor="let bite of biteJoints;let i = index" class="col-6">
-                                                    <div class="radio">
-                                                        <input [attr.disabled]="state == 'confirmed' ? true: null" formControlName="laboBiteJointId" [value]="bite.id" type="radio" [id]="'bite'+i">
-                                                        <label class="ml-1" [for]="'bite'+i">
-                                                            {{bite.name}}
-                                                        </label>
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+                                    <ng-template #finishline_block>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Đường hoàn tất
+                                                </label>
+                                            </td>
+                                            <td colspan="1">
+                                                {{getItem(finishlines,laboFinishLineId)}}
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-container *ngIf="state == 'draft' else bite_block">
+                                        <tr>
+                                            <td colspan="2" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Khớp cắn
+                                                </label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                <div class="row">
+                                                    <div *ngFor="let bite of biteJoints;let i = index" class="col-6">
+                                                        <div class="radio">
+                                                            <input [attr.disabled]="state == 'confirmed' ? true: null" formControlName="laboBiteJointId" [value]="bite.id" type="radio" [id]="'bite'+i">
+                                                            <label class="ml-1" [for]="'bite'+i">
+                                                                {{bite.name}}
+                                                            </label>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2" class="o_td_label">
-                                            <label class="o_form_label">
-                                                Kiểu nhịp
-                                            </label>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2">
-                                            <div class="row">
-                                                <div *ngFor="let bridge of bridges;let i = index" class="col-6">
-                                                    <div class="radio">
-                                                        <input [attr.disabled]="state == 'confirmed' ? true: null" formControlName="laboBridgeId" [value]="bridge.id" type="radio" [id]="'bridge'+i">
-                                                        <label class="ml-1" [for]="'bridge'+i">
-                                                            {{bridge.name}}
-                                                        </label>
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+                                    <ng-template #bite_block>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Khớp cắn
+                                                </label>
+                                            </td>
+                                            <td colspan="1">
+                                                {{getItem(biteJoints,laboBiteJointId)}}
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+
+                                    <ng-container *ngIf="state == 'draft' else bridge_block">
+                                        <tr>
+                                            <td colspan="2" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Kiểu nhịp
+                                                </label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                <div class="row">
+                                                    <div *ngFor="let bridge of bridges;let i = index" class="col-6">
+                                                        <div class="radio">
+                                                            <input [attr.disabled]="state == 'confirmed' ? true: null" formControlName="laboBridgeId" [value]="bridge.id" type="radio" [id]="'bridge'+i">
+                                                            <label class="ml-1" [for]="'bridge'+i">
+                                                                {{bridge.name}}
+                                                            </label>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2" class="o_td_label">
-                                            <label class="o_form_label">
-                                                Gửi kèm
-                                            </label>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2">
-                                            <button [disabled]="state == 'confirmed'" *ngFor="let attach of attachs" (click)="onAttachSelected(attach)" [ngClass]="isAttachSelected(attach)? 'btn-primary':'btn-light'" type="button" class="btn btn-sm mr-1 mt-1 border-primary">
-                                                {{attach.name}}
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2" class="o_td_label">
-                                            <label class="o_form_label">
-                                                Ghi chú kĩ thuật
-                                            </label>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2">
-                                            <ng-container *ngIf="state=='draft'; else technicalNote">
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+                                    <ng-template #bridge_block>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Kiểu nhịp
+                                                </label>
+                                            </td>
+                                            <td colspan="1">
+                                                {{getItem(bridges,laboBridgeId)}}
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-container *ngIf="state == 'draft' else attach_block">
+                                        <tr>
+                                            <td colspan="2" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Gửi kèm
+                                                </label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                <button [disabled]="state == 'confirmed'" *ngFor="let attach of attachs" (click)="onAttachSelected(attach)" [ngClass]="isAttachSelected(attach)? 'btn-primary':'btn-light'" type="button" class="btn btn-sm mr-1 mt-1 border-primary">
+                                                    {{attach.name}}
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+                                    <ng-template #attach_block>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Gửi kèm
+                                                </label>
+                                            </td>
+                                            <td colspan="1">
+                                                <button [disabled]="state == 'confirmed'" *ngFor="let attach of laboOrderProducts" 
+                                                [ngClass]="isAttachSelected(attach)? 'btn-primary':'btn-light'" type="button" class="btn btn-sm mr-1 mt-1 border-primary">
+                                                    {{attach.name}}
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-container *ngIf="state=='draft'; else technicalNote">
+                                        <tr>
+                                            <td colspan="2" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Ghi chú kĩ thuật
+                                                </label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" style="width: 100%">
                                                 <textarea formControlName='technicalNote' type="text" class="form-control"></textarea>
-                                            </ng-container>
-                                            <ng-template #technicalNote>
-                                                <label style="white-space: pre-line;">
-                                                        {{technicalNoteFC.value}}
-                                                    </label>
-                                            </ng-template>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+                                    <ng-template #technicalNote>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Ghi chú kĩ thuật
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%">
+                                                <span style="white-space: pre-line;">
+                                                    {{technicalNoteFC.value}}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
                                   </table>
                                 </div>
                             </div>

@@ -30,8 +30,6 @@ namespace TMTDentalAPI.ViewControllers
             if (res == null)
                 NotFound();
 
-            string json = JsonConvert.SerializeObject(res);
-
             return View(res);
         }
 

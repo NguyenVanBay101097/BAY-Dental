@@ -106,18 +106,15 @@ namespace Infrastructure.Services
                 dotKham.Lines.Add(line);
             }
 
-            ///tạo dot kham images
-            foreach (var img in val.DotKhamImages)
-            {
-                var image = _mapper.Map<PartnerImage>(img);
-                image.PartnerId = dotKham.PartnerId;
-                dotKham.DotKhamImages.Add(image);
-            }
-
             await CreateAsync(dotKham);
+
+            ///cập nhật irattachment
+            var attObj = GetService<IIrAttachmentService>();
+            await attObj.UpdateListAttachmentRes(dotKham.Id, "dot.kham", _mapper.Map<IEnumerable<IrAttachment>>(val.IrAttachments));
             return dotKham;
 
         }
+
 
         public async Task UpdateDotKham(Guid id, DotKhamSaveVm val)
         {
@@ -132,7 +129,12 @@ namespace Infrastructure.Services
 
             SaveLines(val, dotKham);
 
-            SaveDotKhamImages(val, dotKham);
+            //SaveDotKhamImages(val, dotKham);
+
+              ///cập nhật irattachment
+            var attObj = GetService<IIrAttachmentService>();
+            await attObj.UpdateListAttachmentRes(dotKham.Id, "dot.kham", _mapper.Map<IEnumerable<IrAttachment>>(val.IrAttachments));
+          
 
             await UpdateAsync(dotKham);
 
@@ -306,6 +308,18 @@ namespace Infrastructure.Services
                 Prefix = "DK",
                 Padding = 6,
             });
+        }
+
+        public async Task<IEnumerable<IrAttachment>> GetListAttachment(Guid id)
+        {
+            var attObj = GetService<IIrAttachmentService>();
+            var attQr = attObj.SearchQuery();
+            
+            var resQr = from att in attQr
+                        where att.ResId == id
+                        select att;
+            var res = await resQr.OrderByDescending(x=> x.DateCreated).ToListAsync();
+            return res;
         }
 
         public override ISpecification<DotKham> RuleDomainGet(IRRule rule)

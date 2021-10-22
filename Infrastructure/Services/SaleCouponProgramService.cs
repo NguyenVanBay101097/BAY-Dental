@@ -795,7 +795,7 @@ namespace Infrastructure.Services
                 message.Error = "CTKM đã hết hạn";
             else if (self.RuleDateFrom.HasValue && self.RuleDateFrom.Value.AbsoluteBeginOfDate() > line.Quotation.DateQuotation)
                 message.Error = "Mã khuyến mãi không được áp dụng trong hôm nay";
-            else if (!self.DiscountSpecificProducts.Any(x => x.ProductId == line.ProductId))
+            else if (self.DiscountSpecificProducts.Any() && !self.DiscountSpecificProducts.Any(x => x.ProductId == line.ProductId))
                 message.Error = "Khuyến mãi không áp dụng cho dịch vụ này";
             else if (line.Quotation.Promotions.Where(x => x.QuotationId.HasValue && !x.QuotationLineId.HasValue).Any(x => x.SaleCouponProgramId == self.Id))
                 message.Error = "Chương trình khuyến mãi đã được áp dụng cho báo giá này này";
