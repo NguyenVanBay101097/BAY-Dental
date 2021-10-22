@@ -1,0 +1,98 @@
+<div class="o_control_panel">
+    <ol class="breadcrumb">
+        <div class="o_cp_buttons">
+            <div class="o_form_buttons_view">
+                <button type="button" class="btn btn-primary" (click)="createItem()">
+                    <i class="fas fa-plus text-white"></i>
+                    Thêm</button>
+                <button type="button" class="btn btn-primary" (click)="exportExcelFile()">
+                    <i class="fas fa-download"></i>
+                    Xuất excel</button>
+                <button type="button" class="btn btn-primary" (click)="importExcelFile()">
+                    <i class="fas fa-upload"></i>
+                    Import</button>
+            </div>
+        </div>
+    </ol>
+
+    <div class="o_cp_searchview">
+        <div class="o_search_options d-flex w-100">
+            <div class="mr-2">
+                <app-date-range-picker-filter [opens]="'left'" [startDate]="dateFrom" [endDate]="dateTo"
+                    (searchChange)="onSearchChange($event)"></app-date-range-picker-filter>
+            </div>
+            <div class="mr-2">
+                <app-date-range-picker-filter [opens]="'left'" [startDate]="dateFrom" [endDate]="dateTo"
+                    (searchChange)="onSearchChange($event)"></app-date-range-picker-filter>
+            </div>
+            <kendo-combobox (selectionChange)="onChangeState($event)" placeholder="Tất cả trạng thái"
+                [data]="filterState" [textField]="'name'" [valueField]="'value'">
+            </kendo-combobox>
+        </div>
+    </div>
+
+    <div class="o_cp_left">
+        <div class="o_cp_sidebar">
+        </div>
+    </div>
+
+    <div class="o_cp_right">
+        <div class="w-100 d-flex">
+            <div ngbDropdown class="mr-2">
+                <button type="button" id="dropdownBasic" ngbDropdownToggle class="btn btn-secondary">
+                    Thao tác
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownBasic">
+                    <button type="button" ngbDropdownItem>
+                        Tạm dừng
+                    </button>
+                    <button type="button" ngbDropdownItem>
+                        Kích hoạt
+                    </button>
+                    <button type="button" ngbDropdownItem>
+                        Hủy thẻ
+                    </button>
+                </div>
+            </div>
+            <div class="o_searchview">
+                <input class="o_searchview_input"
+                    placeholder="Tìm kiếm theo số ID thẻ, hạng thẻ, tên khách hàng, điện thoại" type="text"
+                    [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                <span class="o_searchview_icon fas fa-search"></span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="o_content">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"
+        (pageChange)="onPageChange($event)" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
+        <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
+        <kendo-grid-column title="Số ID thẻ">
+        </kendo-grid-column>
+        <kendo-grid-column title="Hạng thẻ">
+        </kendo-grid-column>
+        <kendo-grid-column title="Họ tên">
+        </kendo-grid-column>
+        <kendo-grid-column title="Điện thoại">
+        </kendo-grid-column>
+        <kendo-grid-column title="Thời gian áp dụng">
+        </kendo-grid-column>
+        <kendo-grid-column title="Ngày kích hoạt">
+        </kendo-grid-column>
+        <kendo-grid-column title="Trạng thái">
+        </kendo-grid-column>
+        <kendo-grid-column field="id">
+            <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                Thao tác
+            </ng-template>
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <button class="btn btn-success mr-2" (click)="editItem(dataItem)">
+                    <i class="far fa-edit"></i></button>
+                <button class="btn btn-danger" (click)="deleteItem(dataItem)">
+                    <i class="far fa-trash-alt"></i></button>
+            </ng-template>
+        </kendo-grid-column>
+    </kendo-grid>
+</div>
