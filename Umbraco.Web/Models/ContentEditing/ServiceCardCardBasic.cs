@@ -12,27 +12,10 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Số thẻ
         /// </summary>
         public string Name { get; set; }
-
-        public string CardTypeName { get; set; }
-
-        public string PartnerName { get; set; }
-
-        public DateTime? ActivatedDate { get; set; }
-
-        public DateTime? ExpiredDate { get; set; }
-
-        public string Barcode { get; set; }
-
-        /// <summary>
-        /// Số tiền trong thẻ
-        /// </summary>
-        public decimal? Amount { get; set; }
-
-        /// <summary>
-        /// Số tiền còn lại
-        /// </summary>
-        public decimal? Residual { get; set; }
-
         public string State { get; set; }
+        public Guid CardTypeId { get; set; }
+        public ServiceCardTypeSimple CardType { get; set; }
+        public Guid? PartnerId { get; set; }
+        public PartnerSimple Partner { get; set; }
     }
 }
