@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
@@ -12,8 +13,8 @@ import { ServiceCardTypeApplyDialogComponent } from '../service-card-type-apply-
   styleUrls: ['./preferential-card-create-update.component.css']
 })
 export class PreferentialCardCreateUpdateComponent implements OnInit {
-  cardId: string;
-  cardName: string = '';
+  cardTypeId: string;
+  cardTypeName: string = '';
   periodList = [1,2,3,4,5,6,7,8,9,11,12];
   products: any[] = []; // danh sách dịch vụ
   categories: any[] = []; // nhóm dịch vụ
@@ -24,7 +25,8 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
   constructor(
     private modalService: NgbModal,
     private cardService: ServiceCardTypeService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
@@ -34,6 +36,14 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
       nbrPeriod: 1,
       productPricelistItems: []
     };
+    this.cardTypeId = this.route.snapshot.queryParamMap.get('id');
+    
+  }
+
+  getCardTypeById(){
+    if (this.cardTypeId){
+
+    }
   }
 
   addLine(event){
@@ -49,6 +59,7 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
     event.computePrice = 'percentage';
     event.price = null;
     event.productId = event.id;
+    event.defaultCode = event.defaultCode;
     event.id = '';
     this.objCategories[event.categId].products.push(event);
     this.categories = Object.keys(this.objCategories).map((key)=> [this.objCategories[key]]); 
@@ -69,47 +80,54 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
         animation: { type: 'fade', duration: 400 },
         type: { style: 'success', icon: true }
       });
+      this.resetForm();
     })
   }
   onApplyAll(){
-    let result: any;
-    let productItems = this.categories.reduce((r,a) => {
-      return r.concat(a[0].products);
-    },[]);
+    let productItems = this.getAllServices();
     let modalRef = this.modalService.open(ServiceCardTypeApplyDialogComponent, 
       { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = 'Áp dụng ưu đãi cho tất cả dịch vụ';
       modalRef.result.then(res => {
         productItems.map(x => {
           x.computePrice = res.computePrice;
-          x.computePrice == 'percentage' ? x.percentPrice = res.price : x.fixedAmountPrice = res.price;
+          x.computePrice == 'percentage' ? (x.percentPrice = res.price, x.fixedAmountPrice = null) :
+          (x.fixedAmountPrice = res.price, x.percentPrice = null);
         })
       }, () => {
     });
   }
 
   onApplyCateg(categId){
+    let productItems = this.getAllServices();
     let modalRef = this.modalService.open(ServiceCardTypeApplyDialogComponent, 
       { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = 'Áp dụng ưu đãi cho nhóm dịch vụ';
       modalRef.result.then(res => {
-        this.cardTypeObj.productPricelistItems.filter(x => x.categId == categId).map(x => {
+        productItems.filter(x => x.categId == categId).map(x => {
           x.computePrice = res.computePrice;
-          x.computePrice == 'percentage' ? x.percentPrice = res.price : x.fixedAmountPrice = res.price;
+          x.computePrice == 'percentage' ? (x.percentPrice = res.price, x.fixedAmountPrice = null) :
+          (x.fixedAmountPrice = res.price, x.percentPrice = null);
         })
       }, () => {
       });
-
-      
   }
 
-  applyAll(res){
-    this.cardTypeObj.productPricelistItems.forEach(x => {
-      console.log(x);
-      
-      x.computePrice = res.computePrice;
-      x.computePrice == 'percentage' ? x.percentPrice = res.price : x.fixedAmountPrice = res.price;
-    })
+  getAllServices(){
+    let productItems = this.categories.reduce((r,a) => {
+      return r.concat(a[0].products);
+    },[]);
+    return productItems;
+  }
+
+  resetForm(){
+    this.cardTypeObj  = {
+      name: '',
+      period: 'year',
+      nbrPeriod: 1,
+      productPricelistItems: []
+    };
+    this.categories = [];
   }
 
 }
