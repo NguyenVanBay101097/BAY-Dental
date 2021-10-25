@@ -37,7 +37,7 @@
                                 [valueField]="'id'" [textField]="'name'" formControlName="cardType"></kendo-combobox>
                             </td>
                         </tr>
-                        <!-- <tr>
+                        <tr *ngIf="this.id && this.state !== 'draft'">
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label">Ngày bắt đầu</label>
                             </td>
@@ -54,7 +54,7 @@
                                     </div>
                                 </div>
                             </td>
-                        </tr> -->
+                        </tr>
                         <tr *ngIf="!partnerId">
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label">Khách hàng</label>

@@ -52,11 +52,6 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
       state: 'draft',
     });
 
-    // console.log(this.state);
-    // if (this.id && this.getValueFC('state') == 'draft') {
-    //   this.formGroup.disable();
-    // }
-
     if (this.id) {
       this.loadDataFromApi();
     }
@@ -87,6 +82,8 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
   loadDataFromApi() {
     this.serviceCardsService.get(this.id).subscribe((res: any) => {
       this.formGroup.patchValue(res);
+      this.formGroup.get('activatedDateObj').patchValue(new Date(res.activatedDate));
+      this.formGroup.get('expiredDateObj').patchValue(new Date(res.expiredDate));
       this.state = res.state;
       if (this.id && this.state !== 'draft') {
         this.formGroup.disable();
@@ -118,7 +115,6 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
   loadCardTypes() {
     this.searchCardTypes().subscribe((res: any) => {
       this.cardTypeSimpleFilter = res;
-      console.log(res);
     })
   }
 
@@ -132,7 +128,6 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
     let val = this.formGroup.value;
     val.partnerId = this.partnerId ? this.partnerId : (val.partner ? val.partner.id : '');
     val.cardTypeId = val.cardType ? val.cardType.id : '';
-    console.log(val);
 
     if (this.id) {
       this.serviceCardsService.update(this.id, val).subscribe((res: any) => {
