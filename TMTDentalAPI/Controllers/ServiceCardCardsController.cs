@@ -191,5 +191,12 @@ namespace TMTDentalAPI.Controllers
             var res = _mapper.Map<ServiceCardCardBasic>(card);
             return Ok(res);
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ImportExcel(IFormFile file)
+        {
+            var res = await _cardCardService.ActionImport(file);
+            return Ok(res);
+        }
     }
 }

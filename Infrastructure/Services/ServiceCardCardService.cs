@@ -6,8 +6,10 @@ using ApplicationCore.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -157,9 +159,9 @@ namespace Infrastructure.Services
             if (!self.PartnerId.HasValue)
                 return;
 
-            var count = await SearchQuery(x => x.PartnerId == self.PartnerId).CountAsync();
+            var count = await SearchQuery(x => x.PartnerId == self.PartnerId && x.CardTypeId == self.CardTypeId).CountAsync();
             if (count >= 2)
-                throw new Exception($"Khách hàng{(self.Partner != null ? $" {self.Partner.Name}" : "")} đã có thẻ thành viên");
+                throw new Exception($"Khách hàng{(self.Partner != null ? $" {self.Partner.Name}" : "")} đã có thẻ");
         }
 
         public async Task Unlink(IEnumerable<Guid> ids)
@@ -331,10 +333,10 @@ namespace Infrastructure.Services
 
             if (line.Promotions.Any(x => x.ServiceCardCardId == self.Id))
                 message.Error = "Trùng thẻ ưu đãi đang áp dụng";
-            else if (line.Promotions.Any(x=> x.ServiceCardCardId.HasValue))
+            else if (line.Promotions.Any(x => x.ServiceCardCardId.HasValue))
                 message.Error = "Không thể dùng chung với thẻ ưu đãi dịch vụ khác";
             else if ((self.ActivatedDate.HasValue && today < self.ActivatedDate.Value) || today > self.ExpiredDate.Value)
-                message.Error = $"Thẻ ưu đãi đã hết hạn";         
+                message.Error = $"Thẻ ưu đãi đã hết hạn";
 
             return message;
         }
@@ -352,6 +354,55 @@ namespace Infrastructure.Services
                 throw new Exception($"Số dư của thẻ bằng 0");
 
             return card;
+        }
+
+        public async Task<ImportExcelResponse> ActionImport(IFormFile formFile)
+        {
+
+            if (formFile == null || formFile.Length <= 0)
+            {
+                throw new Exception("File không được trống");
+            }
+
+            var list = new List<ServiceCardCard>();
+            var cardTypeObj = GetService<IServiceCardTypeService>();
+
+            using (var stream = new MemoryStream())
+            {
+                await formFile.CopyToAsync(stream);
+                try
+                {
+                    using (var package = new ExcelPackage(stream))
+                    {
+                        ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                        var rowCount = worksheet.Dimension.Rows;
+
+                        for (int row = 2; row <= rowCount; row++)
+                        {
+                            var typeName = worksheet.Cells[row, 2].Value.ToString().Trim();
+                            var type = await cardTypeObj.SearchQuery(x => x.Name == typeName).FirstOrDefaultAsync();
+                            if (type == null)
+                                return new ImportExcelResponse { Success = false, Errors = new List<string>() { $@"dòng {row} không tìm thấy hạng thẻ" } };
+
+                            list.Add(new ServiceCardCard
+                            {
+                                Barcode = worksheet.Cells[row, 1].Value.ToString().Trim(),
+                                CardTypeId = type.Id
+                            });
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                    throw new Exception("File import sai định dạng. Vui lòng tải file mẫu và nhập dữ liệu đúng");
+                }
+
+            }
+
+            await CreateAsync(list);
+
+            return new ImportExcelResponse { Success = true };
         }
     }
 }
