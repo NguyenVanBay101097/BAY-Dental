@@ -18,14 +18,14 @@
     <div class="o_cp_searchview">
         <div class="o_search_options d-flex w-100">
             <div class="mr-2">
-                <app-date-range-picker-filter [opens]="'left'" [startDate]="dateFrom" [endDate]="dateTo"
+                <app-date-range-picker-filter [opens]="'left'" [startDate]="activationDateFrom" [endDate]="activationDateTo"
                     (searchChange)="onSearchChange($event)"></app-date-range-picker-filter>
             </div>
             <div class="mr-2">
-                <app-date-range-picker-filter [opens]="'left'" [startDate]="dateFrom" [endDate]="dateTo"
+                <app-date-range-picker-filter [opens]="'left'" [startDate]="appliesDateFrom" [endDate]="appliesDateTo"
                     (searchChange)="onSearchChange($event)"></app-date-range-picker-filter>
             </div>
-            <kendo-combobox (selectionChange)="onChangeState($event)" placeholder="Tất cả trạng thái"
+            <kendo-combobox style="width: 126px;" (selectionChange)="onChangeState($event)" placeholder="Tất cả trạng thái"
                 [data]="filterState" [textField]="'name'" [valueField]="'value'">
             </kendo-combobox>
         </div>
@@ -43,13 +43,13 @@
                     Thao tác
                 </button>
                 <div ngbDropdownMenu aria-labelledby="dropdownBasic">
-                    <button type="button" ngbDropdownItem>
+                    <button type="button" (click)="actionLock()" ngbDropdownItem>
                         Tạm dừng
                     </button>
-                    <button type="button" ngbDropdownItem>
+                    <button type="button" (click)="actionActive()" ngbDropdownItem>
                         Kích hoạt
                     </button>
-                    <button type="button" ngbDropdownItem>
+                    <button type="button" (click)="actionCancel()" ngbDropdownItem>
                         Hủy thẻ
                     </button>
                 </div>
@@ -69,7 +69,7 @@
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"
         (pageChange)="onPageChange($event)" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
         <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
-        <kendo-grid-column title="Số ID thẻ">
+        <kendo-grid-column field="barcode" title="Số ID thẻ">
         </kendo-grid-column>
         <kendo-grid-column title="Hạng thẻ">
         </kendo-grid-column>
@@ -78,10 +78,19 @@
         <kendo-grid-column title="Điện thoại">
         </kendo-grid-column>
         <kendo-grid-column title="Thời gian áp dụng">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.expiredDate | date : 'shortDate'}}
+            </ng-template>
         </kendo-grid-column>
         <kendo-grid-column title="Ngày kích hoạt">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.activatedDate | date : 'shortDate'}}
+            </ng-template>
         </kendo-grid-column>
         <kendo-grid-column title="Trạng thái">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{getState(dataItem.state)}}
+            </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="id">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">

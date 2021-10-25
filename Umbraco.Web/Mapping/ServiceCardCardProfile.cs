@@ -14,6 +14,8 @@ namespace Umbraco.Web.Mapping
             CreateMap<ServiceCardCard, ServiceCardCardBasic>();
             CreateMap<ServiceCardCard, ServiceCardCardDisplay>();
             CreateMap<ServiceCardCardSave, ServiceCardCard>();
+
+            CreateMap<ServiceCardCard, ServiceCardCardResponse>();
         }
     }
 }
