@@ -18,8 +18,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Search { get; set; }
 
         public Guid? OrderId { get; set; }
-        public DateTime? DateFrom { get; set; }
-        public DateTime? DateTo { get; set; }
+        public DateTime? ActivatedDateFrom { get; set; }
+        public DateTime? ActivatedDateTo { get; set; }
+        public DateTime? ExpiredDateFrom { get; set; }
+        public DateTime? ExpiredDateTo { get; set; }
         public string state { get; set; }
     }
 }

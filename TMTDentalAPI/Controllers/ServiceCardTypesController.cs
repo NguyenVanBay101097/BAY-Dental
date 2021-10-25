@@ -44,7 +44,7 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "ServiceCard.Type.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var type = await _cardTypeService.SearchQuery(x => x.Id == id).Include(x => x.ProductPricelist.Items).FirstOrDefaultAsync();
+            var type = await _cardTypeService.SearchQuery(x => x.Id == id).Include(x => x.ProductPricelist.Items).ThenInclude(x => x.Product.Categ).FirstOrDefaultAsync();
             if (type == null)
                 return NotFound();
 

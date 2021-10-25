@@ -224,6 +224,24 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.State == val.state));
             }
 
+            if (val.ActivatedDateFrom.HasValue)
+            {
+                spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.ActivatedDate >= val.ActivatedDateFrom));
+            }
+            if (val.ActivatedDateTo.HasValue)
+            {
+                spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.ActivatedDate <= val.ActivatedDateTo));
+            }
+            if (val.ExpiredDateFrom.HasValue)
+            {
+                spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.ExpiredDate >= val.ExpiredDateFrom));
+            }
+            if (val.ExpiredDateTo.HasValue)
+            {
+                spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.ExpiredDate <= val.ExpiredDateTo));
+            }
+
+
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 
             if (val.Limit <= 0)
