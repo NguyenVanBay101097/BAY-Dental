@@ -2,7 +2,7 @@
     <div class="card-body">
         <div class="filter d-flex flex-0-0-auto justify-content-between">
             <div class="d-flex w-50">
-                <app-date-range-picker-filter [opens]="'right'" class="date-picker" [startDate]="dateFrom"
+                <app-date-range-picker-filter [showClearButton]="false" [opens]="'right'" class="date-picker" [startDate]="dateFrom"
                     [endDate]="dateTo" (searchChange)="searchChangeDate($event)" opens="right">
                 </app-date-range-picker-filter>
                 <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="ml-1 kendo-combobox" [valueField]="'id'"

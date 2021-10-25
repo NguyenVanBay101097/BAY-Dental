@@ -7,7 +7,7 @@
             <kendo-combobox class="mr-1" [data]="dataResultCities" [textField]="'name'" style="width: 250px" [filterable]="true" [(ngModel)]="currentCity"
             [placeholder]="'Tỉnh/Thành'" (valueChange)="onSelectCity($event)" (filterChange)="handleCityFilter($event)" [filterable]="true" #cityCbx [valueField]="'code'">
             </kendo-combobox>
-            <app-date-range-picker-filter [opens]="'right'" class="mr-1" [startDate]="dateFrom"
+            <app-date-range-picker-filter [showClearButton]="false" [opens]="'right'" class="mr-1" [startDate]="dateFrom"
                 [endDate]="dateTo" (searchChange)="onSearchDateChange($event)" opens="right">
             </app-date-range-picker-filter>
         </div>
