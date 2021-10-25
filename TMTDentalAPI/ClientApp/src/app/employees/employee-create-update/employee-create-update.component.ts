@@ -223,7 +223,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     val.offset = 0;
     val.limit = 20;
     val.search = s || '';
-    return this.hrJobService.autoComplete(val);
+    return this.hrJobService.getPaged(val);
   }
 
   loadUsers() {

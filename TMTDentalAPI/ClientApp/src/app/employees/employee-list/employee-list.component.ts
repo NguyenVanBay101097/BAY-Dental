@@ -253,7 +253,7 @@ export class EmployeeListComponent implements OnInit {
     val.offset = 0;
     val.limit = 20;
     val.search = s || '';
-    return this.hrJobService.autoComplete(val);
+    return this.hrJobService.getPaged(val);
   }
 
   notify(Style, Content) {

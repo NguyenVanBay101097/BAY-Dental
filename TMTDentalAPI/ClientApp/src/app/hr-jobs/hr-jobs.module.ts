@@ -21,6 +21,9 @@ import { HrJobService } from './hr-job.service';
     SharedModule,
     NgbModule,
   ],
+  exports: [
+    HrJobListComponent
+  ],
   providers: [HrJobService],
   entryComponents: [HrJobCuDialogComponent]
 })

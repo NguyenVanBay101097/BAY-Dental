@@ -15,7 +15,6 @@ export class HrJobCuDialogComponent implements OnInit {
   @Input() id: string;
   formGroup: FormGroup;
   submitted: boolean = false;
-  invalid: boolean = false;
 
   get f() { return this.formGroup.controls; }
 
@@ -31,17 +30,12 @@ export class HrJobCuDialogComponent implements OnInit {
     this.formGroup = this.fb.group({
       name: ['', Validators.required],
     });
+
     if (this.id) {
       this.hrJobService.get(this.id).subscribe((result: any) => {
         this.formGroup.patchValue(result);
       });
     }
-
-    this.formGroup.controls['name'].valueChanges.subscribe(
-      (selectedValue) => {
-        this.invalid = selectedValue ? false : true;
-      }
-    );
   }
 
   getValueFC(key: string) {
@@ -50,7 +44,6 @@ export class HrJobCuDialogComponent implements OnInit {
 
   onSave() {
     this.submitted = true;
-    this.invalid = this.getValueFC('name') ? false : true;
 
     if (!this.formGroup.valid) {
       return;
@@ -71,5 +64,4 @@ export class HrJobCuDialogComponent implements OnInit {
       });
     }
   }
-
 }

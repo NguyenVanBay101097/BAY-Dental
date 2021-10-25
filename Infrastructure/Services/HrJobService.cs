@@ -40,20 +40,5 @@ namespace Infrastructure.Services
                 Items = _mapper.Map<IEnumerable<HrJobBasic>>(items)
             };
         }
-
-        public async Task<PagedResult2<HrJobBasic>> AutoComplete(HrJobPaged val)
-        {
-            var query = SearchQuery(x => x.CompanyId == CompanyId);
-            if (!string.IsNullOrWhiteSpace(val.Search))
-                query = query.Where(x => x.Name.Contains(val.Search));
-            var count = await query.CountAsync();
-            if (val.Limit > 0)
-                query = query.Skip(val.Offset).Take(val.Limit);
-            var res = await query.ToListAsync();
-            return new PagedResult2<HrJobBasic>(count, val.Offset, val.Limit)
-            {
-                Items = _mapper.Map<IEnumerable<HrJobBasic>>(res)
-            };
-        }
     }
 }

@@ -6,7 +6,6 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { NotifyService } from 'src/app/shared/services/notify.service';
-import { ToothDiagnosisSave } from 'src/app/tooth-diagnosis/tooth-diagnosis.service';
 import { HrJobCuDialogComponent } from '../hr-job-cu-dialog/hr-job-cu-dialog.component';
 import { HrJobService, HrJobsPaged } from '../hr-job.service';
 
@@ -56,7 +55,6 @@ export class HrJobListComponent implements OnInit {
       }))
     ).subscribe((res: any) => {
       this.gridData = res;
-      // console.log(this.gridData);
 
       this.loading = false;
     }, error => {

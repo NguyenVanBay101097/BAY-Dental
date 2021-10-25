@@ -45,8 +45,4 @@ export class HrJobService {
   delete(id: string) {
     return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
   }
-
-  autoComplete(val){
-    return this.http.get<PagedResult2<HrJobsBasic>>(this.baseApi + this.apiUrl + '/AutoComplete', {params: new HttpParams({fromObject: val})});
-  }
 }

@@ -64,7 +64,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Update(Guid id, HrJobSave val)
         {
             var model = await _hrJobService.GetByIdAsync(id);
-            if (model == null || !ModelState.IsValid)
+            if (model == null)
                 return NotFound();
 
             model = _mapper.Map(val, model);
@@ -81,23 +81,10 @@ namespace TMTDentalAPI.Controllers
             var model = await _hrJobService.GetByIdAsync(id);
             if (model == null)
                 return NotFound();
-            try
-            {
-                await _hrJobService.DeleteAsync(model);
-            }
-            catch (Exception)
-            {
-                throw new Exception("Không thể xóa Chức vụ nhân viên do có ràng buộc dữ liệu");
-            }
+
+            await _hrJobService.DeleteAsync(model);
 
             return NoContent();
-        }
-
-        [HttpGet("[action]")]
-        public async Task<IActionResult> AutoComplete([FromQuery] HrJobPaged val)
-        {
-            var res = await _hrJobService.AutoComplete(val);
-            return Ok(res);
         }
     }
 }

@@ -20,7 +20,7 @@
             </div>
         </div>
         <div class="o_cp_right">
-            <kendo-combobox [(ngModel)]="defaultFilter" (selectionChange)="onStateSelectChange($event)" placeholder="Tất cả" class="mr-1" [data]="filterLaboStatus" [textField]="'name'" [valueField]="'value'">
+            <kendo-combobox [(ngModel)]="defaultFilter" (selectionChange)="onStateSelectChange($event)" placeholder="Tất cả" class="mr-2" [data]="filterLaboStatus" [textField]="'name'" [valueField]="'value'">
             </kendo-combobox>
             <kendo-combobox [filterable]="true" #cbxHrJob [popupSettings]="cbxPopupSettings" placeholder="Chức vụ" [data]="hrJobs" [valueField]="'id'" [textField]="'name'" (valueChange)="onHrJobSelect($event)">
             </kendo-combobox>

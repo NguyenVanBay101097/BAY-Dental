@@ -64,11 +64,6 @@
   overflow-x: scroll;
 }
 
-.table td {
-  padding: 2px !important;
-  vertical-align: middle;
-}
-
 .title_month {
   padding-right: 3px;
   padding-left: 3px;
@@ -82,11 +77,6 @@
   border-bottom: 2px solid #dee2e6;
   text-align: center;
   min-width: 64px;
-  padding: 7px !important;
-}
-
-.table tbody th {
-  padding: 7px !important;
 }
 
 .o_content {
