@@ -102,6 +102,7 @@ export class AppHomeComponent implements OnInit {
       children: [
         { name: 'Chương trình khuyến mãi', url: '/programs/promotion-programs', permissions: ['SaleCoupon.SaleCouponProgram.Read'] },
         { name: 'Quản lý thẻ', url: '/service-card/preferential', permissions: ['ServiceCard.Card.Read'] },
+        { name: 'Loại thẻ', url: '/card-types', permissions: ['ServiceCard.Type.Read'] },
       ],
       permissions: ['SaleCoupon.SaleCouponProgram.Read', 'ServiceCard.Card.Read']
     },
