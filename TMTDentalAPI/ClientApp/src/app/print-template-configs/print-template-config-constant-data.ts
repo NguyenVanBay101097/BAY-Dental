@@ -164,7 +164,7 @@ const keyWorDatas =
                 { text: 'Số phiếu điều trị', value: '{{o.sale_order_line?.order?.name }}' },
                 { text: 'Họ tên khách hàng', value: '{{o.customer?.name}}' },
                 { text: 'Họ tên nhà cung cấp', value: '{{o.partner?.name}}' },
-                { text: 'Ngày gửu', value: '{{o.date_order}}' },
+                { text: 'Ngày gửi', value: '{{o.date_order}}' },
                 { text: 'Ngày nhận dự kiến', value: '{{o.date_planned}}' },
 
             ]
@@ -188,7 +188,7 @@ const keyWorDatas =
                 { text: 'Đường hoàn tất', value: '{{o.labo_finish_line?.name}}' },
                 { text: 'Khớp cắn', value: '{{o.labo_bite_joint?.name}}' },
                 { text: 'Kiểu nhịp', value: '{{o.labo_bridge?.name}}' },
-                { text: 'Gửu kèm', value: '{{o.labo_order_products_display}}' },
+                { text: 'Gửi kèm', value: '{{o.labo_order_products_display}}' },
                 { text: 'Ghi chú kỹ thuật', value: '{{o.technical_note}}' },
                 { text: 'Mã bảo hành', value: '{{o.warranty_code}}' },
                 { text: 'Hạn bảo hành', value: '{{o.warranty_period}}' },
@@ -210,7 +210,7 @@ const keyWorDatas =
         {
             text: 'Thông tin chung',
             value: [
-                { text: 'Họ tên nhà cung cấp', value: '{{o.partner?.name}}' },
+                { text: 'Tên nhà cung cấp', value: '{{o.partner?.name}}' },
                 { text: 'Mã tham chiếu kho', value: '{{o.picking?.name }}' },
                 { text: 'Ghi chú', value: '{{o.note}}' },
                 { text: 'Người lập phiếu', value: '{{o.user?.name}}' },
