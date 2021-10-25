@@ -288,6 +288,23 @@ namespace Infrastructure.Services
             return res;
         }
 
+
+        public CheckPromoCodeMessage _CheckServiceCardCardApplySaleLine(ServiceCardCard self, SaleOrderLine line)
+        {
+            var message = new CheckPromoCodeMessage();
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var today = DateTime.Today;
+
+            if (line.Promotions.Any(x => x.ServiceCardCardId == self.Id))
+                message.Error = "Trùng thẻ ưu đãi đang áp dụng";
+            else if (line.Promotions.Any(x=> x.ServiceCardCardId.HasValue))
+                message.Error = "Không thể dùng chung với thẻ ưu đãi dịch vụ khác";
+            else if ((self.ActivatedDate.HasValue && today < self.ActivatedDate.Value) || today > self.ExpiredDate.Value)
+                message.Error = $"Thẻ ưu đãi đã hết hạn";         
+
+            return message;
+        }
+
         public async Task<ServiceCardCard> CheckCode(string code)
         {
             var card = await SearchQuery(x => x.Barcode == code).FirstOrDefaultAsync();

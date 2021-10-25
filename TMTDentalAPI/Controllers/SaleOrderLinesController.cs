@@ -153,6 +153,17 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ApplyServiceCardCard(ApplyServiceCardCardRequest val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleLineService.ApplyServiceCardCard(val);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
         [HttpPatch("{id}/[action]")]
         public async Task<IActionResult> PatchIsActive(Guid id, SaleOrderLineIsActivePatch result)
         {

@@ -21,5 +21,7 @@ namespace Infrastructure.Services
         Task<IEnumerable<ServiceCardCardResponse>> GetServiceCardCards(ServiceCardCardFilter val);
         Task ActionLock(IEnumerable<Guid> ids);
         Task ActionCancel(IEnumerable<Guid> ids);
+
+        CheckPromoCodeMessage _CheckServiceCardCardApplySaleLine(ServiceCardCard self, SaleOrderLine line);
     }
 }
