@@ -21,5 +21,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? PartnerId { get; set; }
         public PartnerSimple Partner { get; set; }
         public string Barcode { get; set; }
+        public DateTime? ActivatedDate { get; set; }
+        public DateTime? ExpiredDate { get; set; }
     }
 }

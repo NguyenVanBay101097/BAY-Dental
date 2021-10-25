@@ -14,9 +14,9 @@
                                 <label class="o_form_label">Số ID thẻ</label>
                             </td>
                             <td colspan="1">
-                                <input class="form-control" formControlName="barcode" />
+                                <input class="form-control" formControlName="barcode" placeholder="Nhập số ID thẻ" />
                                 <div *ngIf="f.barcode.errors && (f.barcode.touched || f.barcode.dirty || submitted)" class="text-danger mb-1">
-                                    <div *ngIf="f.barcode.errors.required">Nhập ID thẻ</div>
+                                    <div *ngIf="f.barcode.errors.required">Số ID thẻ không được bỏ trống</div>
                                 </div>
                             </td>
                         </tr>
@@ -26,6 +26,7 @@
                             </td>
                             <td colspan="1">
                                 <span *ngIf="getValueFC('state') === 'draft'">Chưa kích hoạt</span>
+                                <span *ngIf="getValueFC('state') === 'is_use'">Đã kích hoạt</span>
                             </td>
                         </tr>
                         <tr>
@@ -33,10 +34,11 @@
                                 <label class="o_form_label">Hạng thẻ</label>
                             </td>
                             <td colspan="1">
-                                <kendo-combobox formControlName="cardType"></kendo-combobox>
+                                <kendo-combobox [filterable]="true" [data]="cardTypeSimpleFilter"
+                                [valueField]="'id'" [textField]="'name'" formControlName="cardType"></kendo-combobox>
                             </td>
                         </tr>
-                        <tr>
+                        <!-- <tr>
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label">Ngày bắt đầu</label>
                             </td>
@@ -53,7 +55,7 @@
                                     </div>
                                 </div>
                             </td>
-                        </tr>
+                        </tr> -->
                         <tr>
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label">Khách hàng</label>
@@ -83,7 +85,7 @@
 <div class="modal-footer">
     <button type="button" class="btn btn-primary mr-2" (click)="onSave()">
         Lưu</button>
-    <button type="button" class="btn btn-primary mr-2" (click)="actionActivate()">
+    <button type="button" *ngIf="getValueFC('state') === 'draft'" class="btn btn-primary mr-2" (click)="actionActivate()">
         Kích hoạt</button>
     <button type="button" class="btn btn-secondary ml-0" (click)="activeModal.dismiss()">
         Đóng</button>

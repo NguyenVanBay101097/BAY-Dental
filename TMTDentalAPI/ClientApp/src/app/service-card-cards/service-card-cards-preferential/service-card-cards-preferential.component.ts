@@ -29,10 +29,12 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
   dateFrom: Date;
   dateTo: Date;
   today: Date = new Date();
+  activatedDate: any;
   activationDateFrom: any;
   activationDateTo: any;
-  appliesDateFrom: any;
-  appliesDateTo: any;
+  expiredDateFrom: any;
+  expiredDateTo: any;
+  state: string = 'draft';
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
   filterState = [
@@ -51,8 +53,9 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
   ngOnInit(): void {
     this.activationDateFrom = this.monthStart;
     this.activationDateTo = this.dateTo;
-    this.appliesDateFrom = new Date();
-    this.appliesDateTo = new Date();
+    this.expiredDateFrom = this.monthStart;
+    this.expiredDateTo = this.monthEnd;
+    // this.activatedDate = new Date();
     this.loadDataFromApi();
     this.searchUpdate.pipe(
       debounceTime(400),
@@ -68,6 +71,13 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search ? this.search : '';
+    val.state = this.state ? this.state : '';
+    // val.activatedDate = this.activatedDate ? moment(this.activatedDate).format('YYYY-MM-DD') : '';
+    // val.expiredDateFrom = this.expiredDateFrom ? moment(this.expiredDateFrom).format('YYYY-MM-DD') : '';
+    // val.expiredDateTo = this.expiredDateTo ? moment(this.expiredDateTo).format('YYYY-MM-DD') : '';
+    val.activatedDate = '';
+    val.expiredDateFrom = '';
+    val.expiredDateTo = '';
 
     this.serviceCardsService.getPaged(val).pipe(
       map((response: any) => (<GridDataResult>{
@@ -92,6 +102,7 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
     modalRef.componentInstance.title = "Tạo thẻ ưu đãi dịch vụ";
     modalRef.result.then(result => {
       this.notifyService.notify('success', 'Lưu thành công');
+      this.loadDataFromApi();
     }, () => { });
   }
 
@@ -101,6 +112,7 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(result => {
       this.notifyService.notify('success', 'Lưu thành công');
+      this.loadDataFromApi();
     }, () => { });
   }
 
@@ -159,7 +171,7 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
   }
 
   onChangeState(e) {
-    
+
   }
 
   actionLock() {
@@ -214,5 +226,9 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
       default:
         return "Chưa kích hoạt";
     }
+  }
+
+  onActivatedDateChange(e) {
+    console.log(e);
   }
 }

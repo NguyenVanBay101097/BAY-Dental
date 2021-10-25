@@ -828,6 +828,43 @@ namespace Infrastructure.Services
             }
         }
 
+        public async Task ApplyServiceCardCard(ApplyServiceCardCardRequest val)
+        {
+            var serviceCardObj = GetService<IServiceCardCardService>();
+            var orderLine = await SearchQuery(x => x.Id == val.Id)
+                    .Include(x => x.Product)
+                    .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
+                    .Include(x => x.Order).ThenInclude(x => x.Promotions)
+                    .Include(x => x.Order).ThenInclude(x => x.OrderLines)
+                    .Include(x => x.Order).ThenInclude(x => x.Partner)
+                    .Include(x => x.PromotionLines)
+                    .Include(x => x.SaleOrderLineInvoice2Rels)
+                    .FirstOrDefaultAsync();
+
+            var serviceCard = await serviceCardObj.SearchQuery(x => x.Id == val.ServiceCardId)
+                .Include(x => x.CardType).ThenInclude(x => x.ProductPricelist).ThenInclude(x => x.Items)
+                .Include(x => x.Partner)
+                .FirstOrDefaultAsync();
+
+
+            if (serviceCard != null)
+            {
+                var error_status = serviceCardObj._CheckServiceCardCardApplySaleLine(serviceCard, orderLine);
+                if (string.IsNullOrEmpty(error_status.Error))
+                {
+                    await _CreateServiceCardCardRewardLine(orderLine, serviceCard);
+
+                }
+                else
+                    throw new Exception(error_status.Error);
+            }
+            else
+            {
+                throw new Exception("Không tìm thấy thẻ ưu đãi");
+            }
+
+        }
+
         public async Task<SaleCouponProgramResponse> ApplyPromotionUsageCodeOnOrderLine(ApplyPromotionUsageCode val)
         {
             var couponCode = val.CouponCode;
@@ -889,6 +926,65 @@ namespace Infrastructure.Services
             await orderObj.UpdateAsync(self.Order);
         }
 
+        private async Task _CreateServiceCardCardRewardLine(SaleOrderLine self, ServiceCardCard serviceCard)
+        {
+            var orderObj = GetService<ISaleOrderService>();
+            var orderPromotionObj = GetService<ISaleOrderPromotionService>();
+            var promotion = _GetServiceCardValuesDiscount(self, serviceCard);
+            //foreach (var line in lines)
+            //    line.Order = self;
+
+            await orderPromotionObj.CreateAsync(promotion);
+
+            //tính lại tổng tiền ưu đãi saleorderlines
+            _ComputeAmountDiscountTotal(new List<SaleOrderLine>() { self });
+            ComputeAmount(new List<SaleOrderLine>() { self });
+
+            orderObj._AmountAll(self.Order);
+            await orderObj.UpdateAsync(self.Order);
+        }
+
+        public SaleOrderPromotion _GetServiceCardValuesDiscount(SaleOrderLine self, ServiceCardCard serviceCard)
+        {
+            var promotionObj = GetService<ISaleOrderPromotionService>();
+            var programObj = GetService<ISaleCouponProgramService>();
+            var productObj = GetService<IProductService>();
+
+            var pricelistItem = serviceCard.CardType.ProductPricelist.Items.Where(x => x.ProductId == self.ProductId).FirstOrDefault();
+
+            if (pricelistItem.ComputePrice == "fixed_amount")
+            {
+
+                var discountAmount = _GetServiceCardValuesDiscountFixedAmountLine(self, pricelistItem);
+                var promotionLineFixed = promotionObj.PrepareServiceCardToOrderLine(self, serviceCard, discountAmount);
+
+                return promotionLineFixed;
+            }
+
+            var discount_amount = _GetServiceCardValuesDiscountPercentageOrderLine(serviceCard, self);
+            var promotionLine = promotionObj.PrepareServiceCardToOrderLine(self, serviceCard, discount_amount);
+
+            return promotionLine;
+
+        }
+
+        public decimal _GetServiceCardValuesDiscountPercentageOrderLine(ServiceCardCard serviceCard, SaleOrderLine line)
+        {
+            var pricelistItem = serviceCard.CardType.ProductPricelist.Items.Where(x => x.ProductId == line.ProductId).FirstOrDefault();
+            //discount_amount = so luong * don gia da giam * phan tram
+            var price_reduce = (line.PriceUnit * (1 - line.Discount / 100)) *
+                (1 - (pricelistItem.PercentPrice ?? 0) / 100);
+            var discount_amount = (line.PriceUnit - price_reduce) * line.ProductUOMQty;
+
+            //if ()
+            //{
+            //    if (discount_amount >= program.DiscountMaxAmount)
+            //        discount_amount = program.DiscountMaxAmount.Value;
+            //}
+
+            return discount_amount;
+        }
+
         public decimal _GetRewardValuesDiscountPercentagePerOrderLine(SaleCouponProgram program, SaleOrderLine line)
         {
             //discount_amount = so luong * don gia da giam * phan tram
@@ -918,6 +1014,13 @@ namespace Infrastructure.Services
         private decimal _GetRewardValuesDiscountFixedAmountLine(SaleOrderLine self, SaleCouponProgram program)
         {
             var price_reduce = self.PriceUnit - (program.DiscountFixedAmount ?? 0);
+            var fixed_amount = (self.PriceUnit - price_reduce) * self.ProductUOMQty;
+            return fixed_amount;
+        }
+
+        private decimal _GetServiceCardValuesDiscountFixedAmountLine(SaleOrderLine self, ProductPricelistItem item)
+        {
+            var price_reduce = self.PriceUnit - (item.FixedAmountPrice ?? 0);
             var fixed_amount = (self.PriceUnit - price_reduce) * self.ProductUOMQty;
             return fixed_amount;
         }

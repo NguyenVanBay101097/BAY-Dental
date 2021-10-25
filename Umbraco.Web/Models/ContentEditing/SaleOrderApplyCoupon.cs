@@ -15,4 +15,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
         public Guid SaleProgramId { get; set; }
     }
+
+    public class ApplyServiceCardCardRequest
+    {
+        public Guid Id { get; set; }
+        public Guid ServiceCardId { get; set; }
+    }
 }

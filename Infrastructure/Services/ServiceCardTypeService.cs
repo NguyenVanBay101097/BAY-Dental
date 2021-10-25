@@ -154,5 +154,29 @@ namespace Infrastructure.Services
             var res = await query.ToListAsync();
             return _mapper.Map<IEnumerable<ServiceCardTypeSimple>>(res);
         }
+
+        public override async Task UpdateAsync(IEnumerable<ServiceCardType> entities)
+        {
+            await base.UpdateAsync(entities);
+            foreach (var entity in entities)
+            {
+                await _CheckNameUnique(entity.Name);
+            }
+        }
+        private async Task _CheckNameUnique(string name)
+        {
+            var count = await SearchQuery(x => x.Name == name).CountAsync();
+            if (count >= 2)
+                throw new Exception($"Đã tồn tại tên hạng thẻ {name}");
+        }
+        public override async Task<IEnumerable<ServiceCardType>> CreateAsync(IEnumerable<ServiceCardType> entities)
+        {
+            await base.CreateAsync(entities);
+            foreach (var entity in entities)
+            {
+                await _CheckNameUnique(entity.Name);
+            }
+            return entities;
+        }
     }
 }

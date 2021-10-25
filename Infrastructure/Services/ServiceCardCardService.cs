@@ -33,9 +33,14 @@ namespace Infrastructure.Services
             var cardTypeObj = GetService<IServiceCardTypeService>();
             foreach (var card in self)
             {
-                if (card.State != "draft")
+                if (DateTime.Now > card.ExpiredDate)
                 {
-                    throw new Exception($"Thẻ {card.Barcode} không thể kích hoạt,chỉ kích hoạt các thẻ chưa kích hoạt");
+                    throw new Exception($"Thẻ {card.Barcode} đã hết hạn, không thể tạm dừng");
+                }
+
+                if (card.State != "draft" && card.State != "locked")
+                {
+                    throw new Exception($"Thẻ {card.Barcode} không thể kích hoạt, chỉ kích hoạt các thẻ chưa kích hoạt hoặc tạm dừng");
                 }
 
                 if (!card.PartnerId.HasValue)
@@ -62,7 +67,7 @@ namespace Infrastructure.Services
             {
                 if (card.State != "in_use")
                 {
-                    throw new Exception($"Thẻ {card.Barcode} không thể tạm dừng, chỉ tạm dừng các thẻ ưu đãi dịch vụ đã kích hoạt");
+                    throw new Exception($"Thẻ {card.Barcode} không thể tạm dừng, chỉ tạm dừng các thẻ đã kích hoạt");
                 }
 
                 if (DateTime.Now > card.ExpiredDate)
@@ -224,6 +229,11 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.State == val.state));
             }
 
+            if (val.ActivatedDate.HasValue)
+            {
+                spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.ActivatedDate == val.ActivatedDateFrom));
+            }
+
             if (val.ActivatedDateFrom.HasValue)
             {
                 spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.ActivatedDate >= val.ActivatedDateFrom));
@@ -310,6 +320,23 @@ namespace Infrastructure.Services
             }
 
             return res;
+        }
+
+
+        public CheckPromoCodeMessage _CheckServiceCardCardApplySaleLine(ServiceCardCard self, SaleOrderLine line)
+        {
+            var message = new CheckPromoCodeMessage();
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var today = DateTime.Today;
+
+            if (line.Promotions.Any(x => x.ServiceCardCardId == self.Id))
+                message.Error = "Trùng thẻ ưu đãi đang áp dụng";
+            else if (line.Promotions.Any(x=> x.ServiceCardCardId.HasValue))
+                message.Error = "Không thể dùng chung với thẻ ưu đãi dịch vụ khác";
+            else if ((self.ActivatedDate.HasValue && today < self.ActivatedDate.Value) || today > self.ExpiredDate.Value)
+                message.Error = $"Thẻ ưu đãi đã hết hạn";         
+
+            return message;
         }
 
         public async Task<ServiceCardCard> CheckCode(string code)

@@ -18,15 +18,18 @@
     <div class="o_cp_searchview">
         <div class="o_search_options d-flex w-100">
             <div class="mr-2">
-                <app-date-range-picker-filter [opens]="'left'" [startDate]="activationDateFrom" [endDate]="activationDateTo"
-                    (searchChange)="onSearchChange($event)"></app-date-range-picker-filter>
+                <!-- <app-date-range-picker-filter [opens]="'left'" [startDate]="activationDateFrom" [endDate]="activationDateTo"
+                    (searchChange)="onSearchChange($event)"></app-date-range-picker-filter> -->
+
+                <kendo-datepicker [format]="'dd/MM/yyyy'" [(value)]="activatedDate" (searchChange)="onActivatedDateChange($event)">
+                </kendo-datepicker>
             </div>
             <div class="mr-2">
-                <app-date-range-picker-filter [opens]="'left'" [startDate]="appliesDateFrom" [endDate]="appliesDateTo"
+                <app-date-range-picker-filter [opens]="'left'" [startDate]="expiredDateFrom" [endDate]="expiredDateTo"
                     (searchChange)="onSearchChange($event)"></app-date-range-picker-filter>
             </div>
-            <kendo-combobox style="width: 126px;" (selectionChange)="onChangeState($event)" placeholder="Tất cả trạng thái"
-                [data]="filterState" [textField]="'name'" [valueField]="'value'">
+            <kendo-combobox style="width: 126px;" (selectionChange)="onChangeState($event)"
+                placeholder="Tất cả trạng thái" [data]="filterState" [textField]="'name'" [valueField]="'value'">
             </kendo-combobox>
         </div>
     </div>

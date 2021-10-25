@@ -150,6 +150,32 @@ namespace Infrastructure.Services
             return promotionLine;
         }
 
+        public SaleOrderPromotion PrepareServiceCardToOrderLine(SaleOrderLine self, ServiceCardCard serviceCard, decimal discountAmount)
+        {
+            var total = self.PriceUnit * self.ProductUOMQty;
+            var pricelistItem = serviceCard.CardType.ProductPricelist.Items.Where(x => x.ProductId == self.ProductId).FirstOrDefault();
+            var discount = pricelistItem.ComputePrice == "percentage" ? ((pricelistItem.PercentPrice ?? 0) + "%") : ((pricelistItem.FixedAmountPrice ?? 0) + "VNĐ");
+            var name = $"Giảm {discount} cho thẻ ưu đãi {serviceCard.CardType.Name}";
+            var promotionLine = new SaleOrderPromotion
+            {
+                Name = name,
+                Amount = Math.Round(discountAmount),
+                ServiceCardCardId = serviceCard.Id,
+                SaleOrderLineId = self.Id,
+                SaleOrderId = self.OrderId,
+                Type = "service_card_card"
+            };          
+
+            promotionLine.Lines.Add(new SaleOrderPromotionLine
+            {
+                Amount = promotionLine.Amount,
+                PriceUnit = (double)(promotionLine.Amount / self.ProductUOMQty),
+                SaleOrderLineId = self.Id,
+            });
+
+            return promotionLine;
+        }
+
         public void _ComputePromotionType(SaleOrderPromotion self, SaleCouponProgram program)
         {
             if (program.ProgramType == "coupon_program" || (program.ProgramType == "promotion_program" && program.PromoCodeUsage == "code_needed" && !string.IsNullOrEmpty(program.PromoCode)))

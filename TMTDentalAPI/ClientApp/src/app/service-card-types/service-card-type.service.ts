@@ -61,4 +61,8 @@ export class ServiceCardTypeService {
     delete(id: string) {
         return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
     }
+
+    autoComplete(search: string) {
+        return this.http.get(this.baseApi + this.apiUrl + "/AutoComplete", { params: {search} });
+    }
 }
