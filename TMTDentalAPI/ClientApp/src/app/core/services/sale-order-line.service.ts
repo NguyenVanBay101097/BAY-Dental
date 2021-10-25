@@ -190,4 +190,8 @@ export class SaleOrderLineService {
     getTeethList(id) {
         return this.http.get(this.baseApi + this.apiUrl + '/'+ id + '/GetTeethList');
     }
+
+    applyServiceCardCard(val) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ApplyServiceCardCard', val);
+    }
 }

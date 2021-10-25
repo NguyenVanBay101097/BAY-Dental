@@ -18,11 +18,11 @@
     <div class="o_cp_searchview">
         <div class="o_search_options d-flex w-100">
             <div class="mr-2">
-                <!-- <app-date-range-picker-filter [opens]="'left'" [startDate]="activationDateFrom" [endDate]="activationDateTo"
-                    (searchChange)="onSearchChange($event)"></app-date-range-picker-filter> -->
+                <app-date-range-picker-filter [opens]="'left'" [startDate]="activationDateFrom" [endDate]="activationDateTo"
+                    (searchChange)="onSearchChange($event)"></app-date-range-picker-filter>
 
-                <kendo-datepicker [format]="'dd/MM/yyyy'" [(value)]="activatedDate" (searchChange)="onActivatedDateChange($event)">
-                </kendo-datepicker>
+                <!-- <kendo-datepicker [format]="'dd/MM/yyyy'" placeholder="Ngày kích hoạt" [(value)]="activatedDate" (valueChange)="onChangeActivatedDate($event)">
+                </kendo-datepicker> -->
             </div>
             <div class="mr-2">
                 <app-date-range-picker-filter [opens]="'left'" [startDate]="expiredDateFrom" [endDate]="expiredDateTo"
@@ -41,7 +41,7 @@
 
     <div class="o_cp_right">
         <div class="w-100 d-flex">
-            <div ngbDropdown class="mr-2">
+            <div ngbDropdown class="mr-2" *ngIf="selectedIds.length">
                 <button type="button" id="dropdownBasic" ngbDropdownToggle class="btn btn-secondary">
                     Thao tác
                 </button>
@@ -74,11 +74,11 @@
         <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
         <kendo-grid-column field="barcode" title="Số ID thẻ">
         </kendo-grid-column>
-        <kendo-grid-column title="Hạng thẻ">
+        <kendo-grid-column field="cardType.name" title="Hạng thẻ">
         </kendo-grid-column>
-        <kendo-grid-column title="Họ tên">
+        <kendo-grid-column field="partner.name" title="Họ tên">
         </kendo-grid-column>
-        <kendo-grid-column title="Điện thoại">
+        <kendo-grid-column field="partner.phone" title="Điện thoại">
         </kendo-grid-column>
         <kendo-grid-column title="Thời gian áp dụng">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
@@ -92,7 +92,10 @@
         </kendo-grid-column>
         <kendo-grid-column title="Trạng thái">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{getState(dataItem.state)}}
+                <label *ngIf="dataItem.state=='draft'">Chưa kích hoạt</label>
+                <label *ngIf="dataItem.state=='in_use'" class="text-success">Đã kích hoạt</label>
+                <label *ngIf="dataItem.state=='locked'" class="text-warning">Tạm dừng</label>
+                <label *ngIf="dataItem.state=='cancelled'" class="text-danger">Hủy thẻ</label>
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="id">

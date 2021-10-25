@@ -25,6 +25,8 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
   customerSimpleFilter: any[] = [];
   cardTypeSimpleFilter: any[] = [];
   submitted: boolean = false;
+  state: string;
+
   get f() {
     return this.formGroup.controls;
   }
@@ -48,6 +50,8 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
       cardType: null,
       state: 'draft',
     });
+
+    // console.log(this.state);
     // if (this.id && this.getValueFC('state') == 'draft') {
     //   this.formGroup.disable();
     // }
@@ -82,7 +86,11 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
   loadDataFromApi() {
     this.serviceCardsService.get(this.id).subscribe((res: any) => {
       this.formGroup.patchValue(res);
-      console.log(res);
+      this.state = res.state;
+      if (this.id && this.state !== 'draft') {
+        this.formGroup.disable();
+      }
+      // console.log(res);
     })
   }
 
@@ -114,8 +122,6 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
     })
   }
 
-
-
   onSave() {
     this.submitted = true;
 
@@ -124,8 +130,6 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
     }
 
     let val = this.formGroup.value;
-    // val.activatedDate = val.activatedDateObj ? moment(val.activatedDateObj).format('YYYY-MM-DD') : '';
-    // val.expiredDate = val.expiredDateObj ? moment(val.expiredDateObj).format('YYYY-MM-DD') : '';
     val.partnerId = val.partner ? val.partner.id : '';
     val.cardTypeId = val.cardType ? val.cardType.id : '';
     console.log(val);
@@ -159,5 +163,18 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
     modalRef.result.then((res) => {
       this.setValueFC('partner', res);
     });
+  }
+
+  getState(state) {
+    switch (state) {
+      case "in_use":
+        return "Đã kích hoạt";
+      case "cancelled":
+        return "Hủy thẻ";
+      case "locked":
+        return "Tạm dừng";
+      default:
+        return "Chưa kích hoạt";
+    }
   }
 }
