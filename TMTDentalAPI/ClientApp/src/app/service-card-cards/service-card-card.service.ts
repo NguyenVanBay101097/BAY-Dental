@@ -61,6 +61,10 @@ export class ServiceCardCardService {
     exportExcel(data: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/ExportExcel', data, { responseType: 'blob' });
     }
+    
+    actionImport(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ImportExcel', val);
+    }
 
     checkCode(val: any) {
         return this.http.get(this.baseApi + this.apiUrl + '/CheckCode', { params: new HttpParams({ fromObject: val }) });
