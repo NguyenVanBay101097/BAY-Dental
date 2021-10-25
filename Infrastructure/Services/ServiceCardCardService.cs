@@ -358,14 +358,10 @@ namespace Infrastructure.Services
 
         public async Task<ImportExcelResponse> ActionImport(IFormFile formFile)
         {
+
             if (formFile == null || formFile.Length <= 0)
             {
-                return new ImportExcelResponse { Success = false, Errors = new List<string>() { "File không được trống" } };
-            }
-
-            if (!System.IO.Path.GetExtension(formFile.FileName).Equals(".xlsx", StringComparison.OrdinalIgnoreCase))
-            {
-                return new ImportExcelResponse { Success = false, Errors = new List<string>() { "Chỉ import file excel" } };
+                throw new Exception("File không được trống");
             }
 
             var list = new List<ServiceCardCard>();
@@ -374,26 +370,34 @@ namespace Infrastructure.Services
             using (var stream = new MemoryStream())
             {
                 await formFile.CopyToAsync(stream);
-
-                using (var package = new ExcelPackage(stream))
+                try
                 {
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-                    var rowCount = worksheet.Dimension.Rows;
-
-                    for (int row = 2; row <= rowCount; row++)
+                    using (var package = new ExcelPackage(stream))
                     {
-                        var typeName = worksheet.Cells[row, 2].Value.ToString().Trim();
-                        var type = await cardTypeObj.SearchQuery(x => x.Name == typeName).FirstOrDefaultAsync();
-                        if (type == null)
-                            return new ImportExcelResponse { Success = false, Errors = new List<string>() { $@"dòng {row} không tìm thấy hạng thẻ" } };
+                        ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                        var rowCount = worksheet.Dimension.Rows;
 
-                        list.Add(new ServiceCardCard
+                        for (int row = 2; row <= rowCount; row++)
                         {
-                            Barcode = worksheet.Cells[row, 1].Value.ToString().Trim(),
-                            CardTypeId = type.Id
-                        });
+                            var typeName = worksheet.Cells[row, 2].Value.ToString().Trim();
+                            var type = await cardTypeObj.SearchQuery(x => x.Name == typeName).FirstOrDefaultAsync();
+                            if (type == null)
+                                return new ImportExcelResponse { Success = false, Errors = new List<string>() { $@"dòng {row} không tìm thấy hạng thẻ" } };
+
+                            list.Add(new ServiceCardCard
+                            {
+                                Barcode = worksheet.Cells[row, 1].Value.ToString().Trim(),
+                                CardTypeId = type.Id
+                            });
+                        }
                     }
                 }
+                catch (Exception ex)
+                {
+
+                    throw new Exception("File import sai định dạng. Vui lòng tải file mẫu và nhập dữ liệu đúng");
+                }
+
             }
 
             await CreateAsync(list);
