@@ -94,7 +94,7 @@
                                     [(ngModel)]="product.fixedAmountPrice"
                                     [name] = "'percentPrice' + categIndex + productIndex">
                                     </kendo-numerictextbox>
-                                    <kendo-numerictextbox required="true" *ngIf="product.computePrice == 'percentage'" [min]="0" max = "100" [format]="'n0'" autoCorrect = 'true' class="mr-2" style="width:70%" 
+                                    <kendo-numerictextbox *ngIf="product.computePrice == 'percentage'" [min]="0" max = "100" [format]="'n0'" autoCorrect = 'true' class="mr-2" style="width:70%" 
                                     [name] = "'percentPrice' + categIndex + productIndex" [(ngModel)]="product.percentPrice">
                                     </kendo-numerictextbox>
 
