@@ -21,6 +21,10 @@ export class ServiceCardCardService {
     getPaged(val: any) {
         return this.http.get(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
     }
+    
+    get(id: string) {
+        return this.http.get(this.baseApi + this.apiUrl + '/' + id);
+    }
 
     getHistories(id: string) {
         return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetHistories');

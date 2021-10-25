@@ -6,6 +6,7 @@ import * as moment from 'moment';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
+import { ServiceCardTypeService } from 'src/app/service-card-types/service-card-type.service';
 import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { NotifyService } from 'src/app/shared/services/notify.service';
 import { ServiceCardCardService } from '../service-card-card.service';
@@ -22,6 +23,7 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
 
   formGroup: FormGroup;
   customerSimpleFilter: any[] = [];
+  cardTypeSimpleFilter: any[] = [];
   submitted: boolean = false;
   get f() {
     return this.formGroup.controls;
@@ -34,6 +36,7 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
     private notifyService: NotifyService,
     private partnerService: PartnerService,
     private serviceCardsService: ServiceCardCardService,
+    private serviceCardTypeService: ServiceCardTypeService
   ) { }
 
   ngOnInit(): void {
@@ -45,10 +48,16 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
       cardType: null,
       state: 'draft',
     });
+    // if (this.id && this.getValueFC('state') == 'draft') {
+    //   this.formGroup.disable();
+    // }
+
     if (this.id) {
-      this.formGroup.disable();
+      this.loadDataFromApi();
     }
+
     this.loadCustomers();
+    this.loadCardTypes();
     this.customerCbx.filterChange
       .asObservable()
       .pipe(
@@ -70,6 +79,13 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
     return this.formGroup.controls[key].value;
   }
 
+  loadDataFromApi() {
+    this.serviceCardsService.get(this.id).subscribe((res: any) => {
+      this.formGroup.patchValue(res);
+      console.log(res);
+    })
+  }
+
   searchCustomers(q?: string) {
     let val = new PartnerPaged();
     val.limit = 20;
@@ -86,13 +102,27 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
     })
   }
 
+  searchCardTypes(q?: string) {
+    let search = q ? q : '';
+    return this.serviceCardTypeService.autoComplete(search);
+  }
+
+  loadCardTypes() {
+    this.searchCardTypes().subscribe((res: any) => {
+      this.cardTypeSimpleFilter = res;
+      console.log(res);
+    })
+  }
+
+
+
   onSave() {
     this.submitted = true;
 
     if (this.formGroup.invalid) {
       return false;
     }
-    
+
     let val = this.formGroup.value;
     // val.activatedDate = val.activatedDateObj ? moment(val.activatedDateObj).format('YYYY-MM-DD') : '';
     // val.expiredDate = val.expiredDateObj ? moment(val.expiredDateObj).format('YYYY-MM-DD') : '';
@@ -113,6 +143,13 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
   }
 
   actionActivate() {
+    if (this.id) {
+      this.serviceCardsService.buttonActive([this.id]).subscribe((res: any) => {
+        console.log(res);
+        this.notifyService.notify('success', 'Kích hoạt thành công');
+
+      })
+    }
 
   }
 
