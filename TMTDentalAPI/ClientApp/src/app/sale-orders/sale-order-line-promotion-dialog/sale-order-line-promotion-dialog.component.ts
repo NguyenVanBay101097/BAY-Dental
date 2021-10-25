@@ -108,9 +108,10 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit, OnDestroy 
   }
 
   onDeletePromotion(item) {
+    var name = item.saleCouponProgramId ? 'khuyến mãi' : 'ưu đãi';
     let modalRef = this.modelService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = 'Xóa khuyến mãi';
-    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa khuyến mãi?';
+    modalRef.componentInstance.title = 'Xóa ' + name;
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa ' + name + ' ?';
     modalRef.result.then(() => {
       this.btnDeletePromoSubject.next(item);
 
