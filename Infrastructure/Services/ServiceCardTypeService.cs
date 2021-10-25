@@ -146,7 +146,12 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<ServiceCardTypeSimple>> AutoCompleteSearch(string search)
         {
-            var res = await SearchQuery(x => x.Name.Contains(search)).ToListAsync();
+            var query = SearchQuery();
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(x => x.Name.Contains(search));
+            }
+            var res = await query.ToListAsync();
             return _mapper.Map<IEnumerable<ServiceCardTypeSimple>>(res);
         }
     }

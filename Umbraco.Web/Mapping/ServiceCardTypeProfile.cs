@@ -12,7 +12,8 @@ namespace Umbraco.Web.Mapping
         public ServiceCardTypeProfile()
         {
             CreateMap<ServiceCardType, ServiceCardTypeBasic>();
-            CreateMap<ServiceCardType, ServiceCardTypeDisplay>();
+            CreateMap<ServiceCardType, ServiceCardTypeDisplay>()
+                .ForMember(x => x.productPricelistItems, x => x.MapFrom(z => z.ProductPricelist.Items));
             CreateMap<ServiceCardTypeSave, ServiceCardType>();
             CreateMap<CreateServiceCardTypeReq, ServiceCardType>();
             CreateMap<ServiceCardType, CreateServiceCardTypeRes>();

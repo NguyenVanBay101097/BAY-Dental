@@ -210,13 +210,19 @@ namespace Infrastructure.Services
         {
             ISpecification<ServiceCardCard> spec = new InitialSpecification<ServiceCardCard>(x => true);
             if (!string.IsNullOrEmpty(val.Search))
-                spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.Name.Contains(val.Search) ||
+                spec = spec.And(new InitialSpecification<ServiceCardCard>(x =>
+                x.Name.Contains(val.Search) ||
+                x.Barcode.Contains(val.Search) ||
                 x.Partner.Name.Contains(val.Search) ||
                 x.Partner.NameNoSign.Contains(val.Search) ||
                 x.Partner.Phone.Contains(val.Search) || x.CardType.Name.Contains(val.Search)));
 
             if (val.OrderId.HasValue)
                 spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.SaleLine.OrderId == val.OrderId.Value));
+            if (!string.IsNullOrEmpty(val.state))
+            {
+                spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.State == val.state));
+            }
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 

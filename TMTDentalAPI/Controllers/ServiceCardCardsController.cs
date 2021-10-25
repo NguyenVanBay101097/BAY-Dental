@@ -148,8 +148,8 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[1, 3].Value = "Điện thoại";
                 worksheet.Cells[1, 4].Value = "Ngày áp dụng";
                 worksheet.Cells[1, 5].Value = "Ngày kích hoạt";
-                worksheet.Cells[1, 5].Value = "Trạng thái";
-
+                worksheet.Cells[1, 6].Value = "Trạng thái";
+                worksheet.Row(1).Style.Font.Bold = true;
                 var row = 2;
                 foreach (var item in paged.Items)
                 {
@@ -161,7 +161,7 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 5].Value = item.ActivatedDate;
                     worksheet.Cells[row, 5].Style.Numberformat.Format = "dd/mm/yyyy";
 
-                    worksheet.Cells[row, 5].Value = item.StateDisplay;
+                    worksheet.Cells[row, 6].Value = item.StateDisplay;
 
                     row++;
                 }
@@ -175,7 +175,10 @@ namespace TMTDentalAPI.Controllers
 
             string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
-            return new FileContentResult(fileContent, mimeType);
+            return new FileContentResult(fileContent, mimeType)
+            {
+                FileDownloadName = $"the_uu_dai_dich_vu_{DateTime.Now.ToString("yyyyMMdd")}"
+            };
         }
 
         [HttpGet("[action]")]
