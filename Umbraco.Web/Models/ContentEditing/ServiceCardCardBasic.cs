@@ -80,4 +80,15 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string State { get; set; }
     }
+
+    public class ImportExcelResponse
+    {
+        public bool Success { get; set; }
+        public IEnumerable<string> Errors { get; set; }
+    }
+
+    public class ServiceCardCardImportExcel
+    {
+        public string FileBase64 { get; set; }
+    }
 }
