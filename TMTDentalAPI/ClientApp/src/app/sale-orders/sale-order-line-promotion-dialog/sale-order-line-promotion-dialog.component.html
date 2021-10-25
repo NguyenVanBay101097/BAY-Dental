@@ -100,7 +100,7 @@
                 <div>
                     <p *ngFor="let item of servicePreferenceCards" class="d-flex justify-content-between my-0 mt-1">
                         <label class="my-0" for="">
-                            <img src="../../../assets/icons/promotion.svg" alt="">{{item.name}}</label>
+                            <img src="../../../assets/icons/promotion.svg" alt="">{{getNameCard(item)}}</label>
                         <ng-container *ngIf="!getAppliedCard(item); else elseTemplateCardsApply">
                             <button type="button" class="btn btn-primary" (click)="applyServiceCard(item)">
                                 Chọn

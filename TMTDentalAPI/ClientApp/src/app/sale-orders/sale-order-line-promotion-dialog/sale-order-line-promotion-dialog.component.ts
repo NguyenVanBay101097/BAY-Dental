@@ -21,11 +21,7 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit, OnDestroy 
 
   title = "Ưu đãi Dịch vụ";
   autoPromotions = [];
-  servicePreferenceCards = [
-    { id: 1, name: 'Chỉnh nha giảm 20%', amount: 200000 },
-    { id: 1, name: 'Cạo vôi răng 30%', amount: 300000 },
-    { id: 1, name: 'Điều trị tủy răng vĩnh viễn 15%', amount: 400000 },
-  ];
+  servicePreferenceCards : any[] = [];
   @Input() saleOrderLine: SaleOrderLineDisplay = null;
 
   private updateSubject = new Subject<any>();
@@ -143,7 +139,6 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit, OnDestroy 
     val.productId = this.saleOrderLine.productId;
     val.state = 'in_use';
     this.serviceCardsService.getServiceCardCards(val).subscribe((res: any) => {
-      console.log(res);
       this.servicePreferenceCards = res;
     }, (error) => { console.log(error) });
   }
@@ -155,7 +150,7 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit, OnDestroy 
       discount = item.productPricelistItem.computePrice = "percentage" ? (item.productPricelistItem.percentPrice + "%") : ((item.productPricelistItem.fixedAmountPrice ?? 0) + "VNĐ");
     }
 
-    return "Giảm " +  discount + "";
+    return "Giảm " + " " + discount + " " + "theo thẻ ưu đãi" + " " + item.cardType.name;
   }
 
   applyServiceCard(item) {
