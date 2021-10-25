@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Models;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -23,5 +24,6 @@ namespace Infrastructure.Services
         Task ActionCancel(IEnumerable<Guid> ids);
 
         CheckPromoCodeMessage _CheckServiceCardCardApplySaleLine(ServiceCardCard self, SaleOrderLine line);
+        Task<ImportExcelResponse> ActionImport(IFormFile formFile);
     }
 }
