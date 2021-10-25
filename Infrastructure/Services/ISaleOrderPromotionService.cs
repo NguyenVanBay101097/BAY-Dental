@@ -16,6 +16,7 @@ namespace Infrastructure.Services
         Task RemovePromotion(IEnumerable<Guid> ids);
         SaleOrderPromotion PreparePromotionToOrder(SaleOrder self, SaleCouponProgram program, decimal discountAmount);
         SaleOrderPromotion PreparePromotionToOrderLine(SaleOrderLine self, SaleCouponProgram program, decimal discountAmount);
+        SaleOrderPromotion PrepareServiceCardToOrderLine(SaleOrderLine self, ServiceCardCard serviceCard, decimal discountAmount);
         void _ComputePromotionType(SaleOrderPromotion self, SaleCouponProgram program);
         Task ComputeAmount(IEnumerable<Guid> ids);
     }
