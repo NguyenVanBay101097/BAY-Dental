@@ -55,7 +55,7 @@
                                 </div>
                             </td>
                         </tr> -->
-                        <tr>
+                        <tr *ngIf="!partnerId">
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label">Khách hàng</label>
                             </td>
@@ -84,7 +84,7 @@
 <div class="modal-footer">
     <button type="button" *ngIf="!state ||state === 'draft'" class="btn btn-primary mr-2" (click)="onSave()">
         Lưu</button>
-    <button type="button" *ngIf="state === 'draft' || state === 'locked'" class="btn btn-primary mr-2" (click)="actionActivate()">
+    <button type="button" *ngIf="!state || state === 'draft' || state === 'locked'" class="btn btn-primary mr-2" (click)="actionActivate()">
         Kích hoạt</button>
     <button type="button" class="btn btn-secondary ml-0" (click)="activeModal.dismiss()">
         Đóng</button>

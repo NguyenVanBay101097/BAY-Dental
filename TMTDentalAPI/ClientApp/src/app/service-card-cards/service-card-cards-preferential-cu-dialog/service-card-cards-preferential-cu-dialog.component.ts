@@ -19,6 +19,7 @@ import { ServiceCardCardService } from '../service-card-card.service';
 export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
   @Input() title: string;
   @Input() id: string;
+  partnerId: string;
   @ViewChild('customerCbx', { static: true }) customerCbx: ComboBoxComponent;
 
   formGroup: FormGroup;
@@ -130,7 +131,7 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
     }
 
     let val = this.formGroup.value;
-    val.partnerId = val.partner ? val.partner.id : '';
+    val.partnerId = this.partnerId ? this.partnerId : (val.partner ? val.partner.id : '');
     val.cardTypeId = val.cardType ? val.cardType.id : '';
     console.log(val);
 

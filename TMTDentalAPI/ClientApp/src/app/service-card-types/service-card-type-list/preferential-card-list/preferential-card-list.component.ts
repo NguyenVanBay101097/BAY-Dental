@@ -92,6 +92,6 @@ export class PreferentialCardListComponent implements OnInit {
   getCardLevel(item){
     let period = item.period ? (item.period == 'year' ? 'Năm' : 'Tháng') : '';
     let nbrPeriod = item.nbrPeriod || '';
-    return period + ' ' + nbrPeriod;
+    return nbrPeriod + ' ' + period;
   }
 }

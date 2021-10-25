@@ -16,6 +16,7 @@ import { SaleCouponProgramBasic, SaleCouponProgramPaged, SaleCouponProgramServic
 import { SaleOrderBasic } from "src/app/sale-orders/sale-order-basic";
 import { SaleOrderLineDisplay } from "src/app/sale-orders/sale-order-line-display";
 import { GetSummarySaleReportRequest, SaleReportService, } from "src/app/sale-report/sale-report.service";
+import { ServiceCardCardSave, ServiceCardCardService } from "src/app/service-card-cards/service-card-card.service";
 import { PartnersService } from "src/app/shared/services/partners.service";
 import { PartnerDisplay } from "../../partner-simple";
 import { PartnerService } from "../../partner.service";
@@ -39,7 +40,7 @@ export class PartnerOverviewComponent implements OnInit {
   skip = 0;
   search: string;
   dotkhams: DotKhamBasic[] = [];
-
+  preferentialCards: any;
   //for report
   saleSummary: any;
   debtStatistics: number = 0;
@@ -58,7 +59,8 @@ export class PartnerOverviewComponent implements OnInit {
     private dotkhamService: DotKhamService,
     private saleReportService: SaleReportService,
     private customerDebtReportService: CustomerDebtReportService,
-    private accountInvoiceReportService: AccountInvoiceReportService
+    private accountInvoiceReportService: AccountInvoiceReportService,
+    private cardCardService: ServiceCardCardService
   ) { }
 
   ngOnInit() {
@@ -68,6 +70,7 @@ export class PartnerOverviewComponent implements OnInit {
       this.loadCustomerAppointment();
       this.getDotkhams();
       this.loadReport();
+      this.loadPreferentialCards();
     });
     this.loadAmountDebtTotal();
     this.loadAmountAdvanceBalance();
@@ -185,6 +188,13 @@ export class PartnerOverviewComponent implements OnInit {
     val.companyId = this.authService.userInfo.companyId;
     this.accountInvoiceReportService.getSumRevenueReport(val).subscribe((res: any) => {
       this.sumRevenue = res;
+    })
+  }
+
+  loadPreferentialCards(){
+    let val = {partnerId: this.partnerId};
+    this.cardCardService.getServiceCardCards(val).subscribe(result => {
+      this.preferentialCards = result;
     })
   }
 

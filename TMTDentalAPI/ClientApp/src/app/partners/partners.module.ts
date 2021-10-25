@@ -93,6 +93,7 @@ import { PartnerCustomerDebtManagementComponent } from './partner-customer-debt-
 import { PartnerOverviewTreatmentHistoryComponent } from './partner-overview/partner-overview-treatment-history/partner-overview-treatment-history.component';
 import { AccountInvoiceReportService } from '../account-invoice-reports/account-invoice-report.service';
 import { PartnerSupplierListComponent } from '../catalog/partner-supplier-list/partner-supplier-list.component';
+import { PartnerOverviewPreferentialCardsComponent } from './partner-overview/partner-overview-preferential-cards/partner-overview-preferential-cards.component';
 // import { CatalogModule } from '../catalog/catalog.module';
 
 
@@ -178,6 +179,7 @@ import { PartnerSupplierListComponent } from '../catalog/partner-supplier-list/p
     PartnerCustomerDebtManagementComponent,
     PartnerOverviewTreatmentHistoryComponent,
     PartnerSupplierListComponent,
+    PartnerOverviewPreferentialCardsComponent,
   ],
   imports: [
     CommonModule,
