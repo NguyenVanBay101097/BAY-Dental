@@ -157,7 +157,7 @@ namespace Infrastructure.Services
             if (!self.PartnerId.HasValue)
                 return;
 
-            var count = await SearchQuery(x => x.PartnerId == self.PartnerId).CountAsync();
+            var count = await SearchQuery(x => x.PartnerId == self.PartnerId && x.CardTypeId == self.CardTypeId).CountAsync();
             if (count >= 2)
                 throw new Exception($"Khách hàng{(self.Partner != null ? $" {self.Partner.Name}" : "")} đã có thẻ thành viên");
         }
@@ -331,10 +331,10 @@ namespace Infrastructure.Services
 
             if (line.Promotions.Any(x => x.ServiceCardCardId == self.Id))
                 message.Error = "Trùng thẻ ưu đãi đang áp dụng";
-            else if (line.Promotions.Any(x=> x.ServiceCardCardId.HasValue))
+            else if (line.Promotions.Any(x => x.ServiceCardCardId.HasValue))
                 message.Error = "Không thể dùng chung với thẻ ưu đãi dịch vụ khác";
             else if ((self.ActivatedDate.HasValue && today < self.ActivatedDate.Value) || today > self.ExpiredDate.Value)
-                message.Error = $"Thẻ ưu đãi đã hết hạn";         
+                message.Error = $"Thẻ ưu đãi đã hết hạn";
 
             return message;
         }
