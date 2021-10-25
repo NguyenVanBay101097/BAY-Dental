@@ -30,8 +30,6 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
   dateTo: Date;
   today: Date = new Date();
   activatedDate: any;
-  activationDateFrom: any;
-  activationDateTo: any;
   expiredDateFrom: any;
   expiredDateTo: any;
   state: string;
@@ -51,11 +49,8 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
   ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit(): void {
-    this.activationDateFrom = this.monthStart;
-    this.activationDateTo = this.monthEnd;
     this.expiredDateFrom = this.monthStart;
     this.expiredDateTo = this.monthEnd;
-    // this.activatedDate = new Date();
     this.loadDataFromApi();
     this.searchUpdate.pipe(
       debounceTime(400),
@@ -75,10 +70,7 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
     // val.activatedDate = this.activatedDate ? moment(this.activatedDate).format('YYYY-MM-DD') : '';
     // val.expiredDateFrom = this.expiredDateFrom ? moment(this.expiredDateFrom).format('YYYY-MM-DD') : '';
     // val.expiredDateTo = this.expiredDateTo ? moment(this.expiredDateTo).format('YYYY-MM-DD') : '';
-    val.activatedDate = '';
-    val.expiredDateFrom = '';
-    val.expiredDateTo = '';
-
+    
     this.serviceCardsService.getPaged(val).pipe(
       map((response: any) => (<GridDataResult>{
         data: response.items,
@@ -133,8 +125,11 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
     });
   }
 
-  onSearchChange(e) {
-
+  onSearchChange(data) {
+    this.expiredDateFrom = data.dateFrom;
+    this.expiredDateTo = data.dateTo;
+    this.skip = 0;
+    this.loadDataFromApi();
   }
 
   exportExcelFile() {
@@ -223,9 +218,8 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
   }
 
   onChangeActivatedDate(e) {
-    console.log(e);
-    // this.activatedDate = e;
-    // console.log(this.activatedDate);
-    // this.loadDataFromApi();
+    this.activatedDate = e;
+    this.skip = 0;
+    this.loadDataFromApi();
   }
 }

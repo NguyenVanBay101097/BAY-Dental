@@ -18,11 +18,8 @@
     <div class="o_cp_searchview">
         <div class="o_search_options d-flex w-100">
             <div class="mr-2">
-                <app-date-range-picker-filter [opens]="'left'" [startDate]="activationDateFrom" [endDate]="activationDateTo"
-                    (searchChange)="onSearchChange($event)"></app-date-range-picker-filter>
-
-                <!-- <kendo-datepicker [format]="'dd/MM/yyyy'" placeholder="Ngày kích hoạt" [(value)]="activatedDate" (valueChange)="onChangeActivatedDate($event)">
-                </kendo-datepicker> -->
+                <kendo-datepicker [format]="'dd/MM/yyyy'" placeholder="Ngày kích hoạt" [(value)]="activatedDate" (valueChange)="onChangeActivatedDate($event)">
+                </kendo-datepicker>
             </div>
             <div class="mr-2">
                 <app-date-range-picker-filter [opens]="'left'" [startDate]="expiredDateFrom" [endDate]="expiredDateTo"
