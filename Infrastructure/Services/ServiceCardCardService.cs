@@ -33,9 +33,14 @@ namespace Infrastructure.Services
             var cardTypeObj = GetService<IServiceCardTypeService>();
             foreach (var card in self)
             {
-                if (card.State != "draft")
+                if (DateTime.Now > card.ExpiredDate)
                 {
-                    throw new Exception($"Thẻ {card.Barcode} không thể kích hoạt,chỉ kích hoạt các thẻ chưa kích hoạt");
+                    throw new Exception($"Thẻ {card.Barcode} đã hết hạn, không thể tạm dừng");
+                }
+
+                if (card.State != "draft" && card.State != "locked")
+                {
+                    throw new Exception($"Thẻ {card.Barcode} không thể kích hoạt, chỉ kích hoạt các thẻ chưa kích hoạt hoặc tạm dừng");
                 }
 
                 if (!card.PartnerId.HasValue)
@@ -62,7 +67,7 @@ namespace Infrastructure.Services
             {
                 if (card.State != "in_use")
                 {
-                    throw new Exception($"Thẻ {card.Barcode} không thể tạm dừng, chỉ tạm dừng các thẻ ưu đãi dịch vụ đã kích hoạt");
+                    throw new Exception($"Thẻ {card.Barcode} không thể tạm dừng, chỉ tạm dừng các thẻ đã kích hoạt");
                 }
 
                 if (DateTime.Now > card.ExpiredDate)
