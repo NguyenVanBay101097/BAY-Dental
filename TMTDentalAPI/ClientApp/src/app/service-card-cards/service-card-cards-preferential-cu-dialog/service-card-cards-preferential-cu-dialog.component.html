@@ -25,8 +25,7 @@
                                 <label class="o_form_label">Trạng thái thẻ</label>
                             </td>
                             <td colspan="1">
-                                <span *ngIf="getValueFC('state') === 'draft'">Chưa kích hoạt</span>
-                                <span *ngIf="getValueFC('state') === 'is_use'">Đã kích hoạt</span>
+                                <span>{{getState(state)}}</span>
                             </td>
                         </tr>
                         <tr>
@@ -62,12 +61,12 @@
                             </td>
                             <td colspan="1">
                                 <div class="d-flex">
-                                    <div class="flex-grow-1 mr-2">
+                                    <div class="flex-grow-1">
                                         <kendo-combobox [filterable]="true" [data]="customerSimpleFilter" #customerCbx
                                             [valueField]="'id'" [textField]="'name'" formControlName="partner">
                                         </kendo-combobox>
                                     </div>
-                                    <div>
+                                    <div class="ml-2" *ngIf="!state ||state === 'draft'">
                                         <a title="Thêm khách hàng" class=" btn btn-primary"
                                             (click)="quickCreateCustomerModal()">
                                             <i class="fas fa-plus text-white"></i>
@@ -83,9 +82,9 @@
     </form>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-primary mr-2" (click)="onSave()">
+    <button type="button" *ngIf="!state ||state === 'draft'" class="btn btn-primary mr-2" (click)="onSave()">
         Lưu</button>
-    <button type="button" *ngIf="getValueFC('state') === 'draft'" class="btn btn-primary mr-2" (click)="actionActivate()">
+    <button type="button" *ngIf="state === 'draft' || state === 'locked'" class="btn btn-primary mr-2" (click)="actionActivate()">
         Kích hoạt</button>
     <button type="button" class="btn btn-secondary ml-0" (click)="activeModal.dismiss()">
         Đóng</button>

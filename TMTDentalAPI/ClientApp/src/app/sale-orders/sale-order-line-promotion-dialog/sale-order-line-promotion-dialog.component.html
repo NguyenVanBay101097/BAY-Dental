@@ -116,7 +116,7 @@
             <div>
                 <label class="font-weight-600 mb-0">Khuyến mãi đã chọn</label>
                 <div>
-                    <div *ngFor="let item of servicePreferenceCards" class="d-flex justify-content-between align-items-start mb-2">
+                    <div *ngFor="let item of getListPromotion('service_card_card')" class="d-flex justify-content-between align-items-start mb-2">
                         <div class="d-flex align-items-start">
                             <img src="../../../assets/icons/promotion.svg" alt="">
                             <span class="ml-1 d-flex flex-column">
@@ -124,7 +124,7 @@
                                 <span style="color: #929DAA">Số tiền giảm: {{item.amount | number}}</span>
                             </span>
                         </div>
-                        <button type="button" class="btn btn-danger" (click)="onDeleteServiceCard(item)"
+                        <button type="button" class="btn btn-danger" (click)="onDeletePromotion(item)"
                             title="Xóa khuyến mãi">
                             <i class="far fa-trash-alt"></i>
                         </button>

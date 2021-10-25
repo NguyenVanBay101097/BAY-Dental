@@ -33,6 +33,7 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit, OnDestroy 
   private btnDiscountSubject = new Subject<any>();
   private btnPromoCodeSubject = new Subject<any>();
   private btnPromoNoCodeSubject = new Subject<any>();
+  private btnPromoServiceCardSubject = new Subject<any>();
   private btnDeletePromoSubject = new Subject<any>();
 
   constructor(
@@ -74,6 +75,10 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit, OnDestroy 
 
   getBtnPromoNoCodeObs() {
     return this.btnPromoNoCodeSubject.asObservable();
+  }
+  
+  getBtnPromoServiceCardObs() {
+    return this.btnPromoServiceCardSubject.asObservable();
   }
 
   getBtnDeletePromoObs() {
@@ -140,6 +145,8 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit, OnDestroy 
     val.state = 'in_use';
     this.serviceCardsService.getServiceCardCards(val).subscribe((res: any) => {
       this.servicePreferenceCards = res;
+      console.log(res);
+      
     }, (error) => { console.log(error) });
   }
 
@@ -154,15 +161,12 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit, OnDestroy 
   }
 
   applyServiceCard(item) {
-
+    this.btnPromoServiceCardSubject.next(item);
   }
 
   getAppliedCard(item) {
-    return false;
-  }
-
-  onDeleteServiceCard(item) {
-
+    var index = this.saleOrderLine.promotions.findIndex(x => x.serviceCardCardId == item.id);
+    return this.saleOrderLine.promotions[index];
   }
 
 }

@@ -34,14 +34,14 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
   activationDateTo: any;
   expiredDateFrom: any;
   expiredDateTo: any;
-  state: string = 'draft';
+  state: string;
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
   filterState = [
     { name: 'Chưa kích hoạt', value: 'draft' },
     { name: 'Đã kích hoạt', value: 'in_use' },
     { name: 'Tạm dừng', value: 'locked' },
-    { name: 'Hết hạn', value: '' },
+    { name: 'Hết hạn', value: 'cancelled' },
   ]
   constructor(
     private modalService: NgbModal,
@@ -52,7 +52,7 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
 
   ngOnInit(): void {
     this.activationDateFrom = this.monthStart;
-    this.activationDateTo = this.dateTo;
+    this.activationDateTo = this.monthEnd;
     this.expiredDateFrom = this.monthStart;
     this.expiredDateTo = this.monthEnd;
     // this.activatedDate = new Date();
@@ -85,7 +85,6 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
         total: response.totalItems
       }))
     ).subscribe((res) => {
-      console.log(res);
       this.gridData = res;
 
     });
@@ -108,7 +107,7 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
 
   editItem(item) {
     const modalRef = this.modalService.open(ServiceCardCardsPreferentialCuDialogComponent, { scrollable: true, windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = "Chỉnh sửa thẻ " + item.name;
+    modalRef.componentInstance.title = "Chỉnh sửa thẻ " + item.barcode;
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(result => {
       this.notifyService.notify('success', 'Lưu thành công');
@@ -124,6 +123,7 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
     modalRef.result.then(() => {
       this.serviceCardsService.delete(item.id).subscribe((res: any) => {
         this.notifyService.notify('success', 'Xóa thành công');
+        this.loadDataFromApi();
       });
     }, (error) => {
       console.log(error);
@@ -171,7 +171,9 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
   }
 
   onChangeState(e) {
-
+    this.state = e ? e.value : '';
+    this.skip = 0;
+    this.loadDataFromApi();
   }
 
   actionLock() {
@@ -182,7 +184,8 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
       modalRef.componentInstance.body2 = 'Lưu ý: Chỉ tạm dừng các thẻ ưu đãi dịch vụ đã kích hoạt';
       modalRef.result.then(() => {
         this.serviceCardsService.buttonLock(this.selectedIds).subscribe((res: any) => {
-
+          this.notifyService.notify('success', 'Tạm dừng thành công');
+          this.loadDataFromApi();
         });
       }, (error) => { console.log(error) });
     }
@@ -195,7 +198,8 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
       modalRef.componentInstance.body = 'Bạn có chắc chắn muốn kích hoạt thẻ ưu đãi dịch vụ này?';
       modalRef.result.then(() => {
         this.serviceCardsService.buttonActive(this.selectedIds).subscribe((res: any) => {
-
+          this.notifyService.notify('success', 'Kích hoạt thành công');
+          this.loadDataFromApi();
         });
       }, (error) => { console.log(error) });
     }
@@ -209,26 +213,17 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
       modalRef.componentInstance.body2 = 'Lưu ý: Các thẻ sau khi hủy sẽ không thể kích hoạt để sử dụng lại';
       modalRef.result.then(() => {
         this.serviceCardsService.buttonCancel(this.selectedIds).subscribe((res: any) => {
-
+          this.notifyService.notify('success', 'Hủy thành công');
+          this.loadDataFromApi();
         });
       }, (error) => { console.log(error) });
     }
   }
 
-  getState(state) {
-    switch (state) {
-      case "in_use":
-        return "Đã kích hoạt";
-      case "cancelled":
-        return "Hủy thẻ";
-      case "locked":
-        return "Tạm dừng";
-      default:
-        return "Chưa kích hoạt";
-    }
-  }
-
-  onActivatedDateChange(e) {
+  onChangeActivatedDate(e) {
     console.log(e);
+    // this.activatedDate = e;
+    // console.log(this.activatedDate);
+    // this.loadDataFromApi();
   }
 }
