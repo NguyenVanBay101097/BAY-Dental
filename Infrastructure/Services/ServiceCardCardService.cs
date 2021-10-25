@@ -224,6 +224,11 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.State == val.state));
             }
 
+            if (val.ActivatedDate.HasValue)
+            {
+                spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.ActivatedDate == val.ActivatedDateFrom));
+            }
+
             if (val.ActivatedDateFrom.HasValue)
             {
                 spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.ActivatedDate >= val.ActivatedDateFrom));
