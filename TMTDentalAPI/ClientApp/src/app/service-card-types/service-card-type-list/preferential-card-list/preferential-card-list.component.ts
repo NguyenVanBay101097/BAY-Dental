@@ -1,9 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { debounce } from 'lodash';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { ServiceCardTypeService } from '../../service-card-type.service';
 
@@ -24,6 +27,8 @@ export class PreferentialCardListComponent implements OnInit {
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig,
     private router: Router,
     private cardService: ServiceCardTypeService,
+    private notificationService: NotificationService,
+    private modalService: NgbModal
   ) {this.pagerSettings = config.pagerSettings; }
 
   ngOnInit(): void {
@@ -53,7 +58,29 @@ export class PreferentialCardListComponent implements OnInit {
   }
 
   deleteItem(item){
-
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xóa hạng thẻ';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa hạng thẻ này?';
+    modalRef.result.then(() => {
+      this.cardService.delete(item.id).subscribe(()=> {
+        this.notificationService.show({
+          content: 'Xóa thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+        this.loadDataFromApi();
+      }, error => {
+        this.notificationService.show({
+          content: 'Hạng thẻ này đã tạo thẻ nên không thể xóa',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'error', icon: true }
+        });
+      })
+    });
   }
 
   pageChange(event: PageChangeEvent){
