@@ -91,7 +91,6 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
       if (this.id && this.state !== 'draft') {
         this.formGroup.disable();
       }
-      // console.log(res);
     })
   }
 
