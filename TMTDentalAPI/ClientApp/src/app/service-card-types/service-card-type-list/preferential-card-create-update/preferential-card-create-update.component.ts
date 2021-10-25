@@ -35,15 +35,36 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
       period: 'year',
       nbrPeriod: 1,
       productPricelistItems: []
-    };
+    };  
     this.cardTypeId = this.route.snapshot.queryParamMap.get('id');
-    
+    if (this.cardTypeId){
+      this.getCardTypeById();
+    }
   }
 
   getCardTypeById(){
-    if (this.cardTypeId){
-
-    }
+    this.cardService.get(this.cardTypeId).subscribe(result => {
+      this.cardTypeName = result.name;
+      this.cardTypeObj.name = result.name;
+      this.cardTypeObj.period = result.period;
+      this.cardTypeObj.nbrPeriod = result.nbrPeriod;
+      result.productPricelistItems.forEach(item => {
+        this.productExists.push(item.productId);
+        this.objCategories[item.product?.categId] = this.objCategories[item.product?.categId] || {categName:'',categId:'',products:[]};
+        this.objCategories[item.product?.categId].categName = item.product?.categ.name;
+        this.objCategories[item.product?.categId].categId = item.product?.categId;
+        this.objCategories[item.product?.categId].products.push({
+          name: item.product?.name,
+          defaultCode: item.product?.defaultCode,
+          listPrice: item.product?.listPrice,
+          computePrice: item.computePrice,
+          percentPrice: item.percentPrice,
+          fixedAmountPrice: item.fixedAmountPrice,
+          categId: item.product?.categId
+        });
+      });
+      this.categories = Object.keys(this.objCategories).map((key)=> [this.objCategories[key]]); 
+    })
   }
 
   addLine(event){
@@ -72,43 +93,66 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
       return r.concat(a[0].products);
     },[]);
     this.cardTypeObj.productPricelistItems = productItems;
-    this.cardService.create(this.cardTypeObj).subscribe(()=>{
-      this.notificationService.show({
-        content: 'Lưu thành công',
-        hideAfter: 3000,
-        position: { horizontal: 'center', vertical: 'top' },
-        animation: { type: 'fade', duration: 400 },
-        type: { style: 'success', icon: true }
-      });
-      this.resetForm();
-    })
+
+    if (this.cardTypeId){
+      this.cardService.update(this.cardTypeId,this.cardTypeObj).subscribe(() => {
+        this.notify('Lưu thành công','success');
+      })
+    }
+    else {
+      this.cardService.create(this.cardTypeObj).subscribe(()=>{
+        this.notify('Lưu thành công','success');
+      })
+    }
   }
+
+  notify(content: string, style){
+    this.notificationService.show({
+      content: content,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: style, icon: true }
+    });
+  }
+
   onApplyAll(){
     let productItems = this.getAllServices();
+    let totalPrice = productItems.reduce((total,item) => {
+      return total + item.listPrice;
+    },0)
     let modalRef = this.modalService.open(ServiceCardTypeApplyDialogComponent, 
       { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = 'Áp dụng ưu đãi cho tất cả dịch vụ';
+      modalRef.componentInstance.totalPrice = totalPrice;
       modalRef.result.then(res => {
         productItems.map(x => {
           x.computePrice = res.computePrice;
           x.computePrice == 'percentage' ? (x.percentPrice = res.price, x.fixedAmountPrice = null) :
           (x.fixedAmountPrice = res.price, x.percentPrice = null);
-        })
+        });
+        this.notify('Áp dụng thành công','success');
       }, () => {
     });
   }
 
   onApplyCateg(categId){
     let productItems = this.getAllServices();
+    productItems = productItems.filter(x => x.categId == categId);
+    let totalPrice = productItems.reduce((total,item) => {
+      return total + item.listPrice;
+    },0)
     let modalRef = this.modalService.open(ServiceCardTypeApplyDialogComponent, 
       { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = 'Áp dụng ưu đãi cho nhóm dịch vụ';
+      modalRef.componentInstance.totalPrice = totalPrice;
       modalRef.result.then(res => {
-        productItems.filter(x => x.categId == categId).map(x => {
+        productItems.map(x => {
           x.computePrice = res.computePrice;
           x.computePrice == 'percentage' ? (x.percentPrice = res.price, x.fixedAmountPrice = null) :
           (x.fixedAmountPrice = res.price, x.percentPrice = null);
-        })
+        });
+        this.notify('Áp dụng thành công','success');
       }, () => {
       });
   }
@@ -128,6 +172,11 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
       productPricelistItems: []
     };
     this.categories = [];
+  }
+
+  changePeriod(product){
+    product.percentPrice = null;
+    product.fixedAmountPrice = null;
   }
 
 }

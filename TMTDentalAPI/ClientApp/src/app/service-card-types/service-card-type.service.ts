@@ -47,7 +47,7 @@ export class ServiceCardTypeService {
     }
 
     get(id) {
-        return this.http.get(this.baseApi + this.apiUrl + "/" + id);
+        return this.http.get<any>(this.baseApi + this.apiUrl + "/" + id);
     }
 
     create(val: any) {

@@ -7,7 +7,7 @@
                 </a>
             </li>
             <li class="active">
-                <span *ngIf="cardTypeId">{{cardTypeName}}</span>
+                <span *ngIf="cardTypeId">{{cardTypeObj.name}}</span>
                 <span *ngIf="!cardTypeId">Tạo mới</span>
             </li>
         </ol>
@@ -90,21 +90,22 @@
                                 <td class="w-20">{{product.listPrice | number}}</td>
                                 <td class="w-30 text-right">
 
-                                    <kendo-numerictextbox *ngIf="product.computePrice == 'fixed_amount'" [min]="0" [format]="'n0'" class="mr-2" style="width:70%" 
-                                    [(ngModel)]="product.fixedAmountPrice" [ngModelOptions]="{standalone: true}">
+                                    <kendo-numerictextbox *ngIf="product.computePrice == 'fixed_amount'" [min]="0" max="{{product.listPrice}}" autoCorrect = 'true'  [format]="'n0'" class="mr-2" style="width:70%" 
+                                    [(ngModel)]="product.fixedAmountPrice"
+                                    [name] = "'percentPrice' + categIndex + productIndex">
                                     </kendo-numerictextbox>
-                                    <kendo-numerictextbox *ngIf="product.computePrice == 'percentage'" [min]="0" [format]="'n0'" class="mr-2" style="width:70%" 
-                                    name = 'percentPrice' [(ngModel)]="product.percentPrice" [ngModelOptions]="{standalone: true}">
+                                    <kendo-numerictextbox required="true" *ngIf="product.computePrice == 'percentage'" [min]="0" max = "100" [format]="'n0'" autoCorrect = 'true' class="mr-2" style="width:70%" 
+                                    [name] = "'percentPrice' + categIndex + productIndex" [(ngModel)]="product.percentPrice">
                                     </kendo-numerictextbox>
 
 
                                     <input type="radio" class="btn-check" [id]="'btn-check-1'+categIndex + productIndex" 
-                                    [name]="'type'+categIndex + productIndex"
+                                    [name]="'type'+categIndex + productIndex" (ngModelChange)="changePeriod(product)"
                                     value = "percentage" [(ngModel)]="product.computePrice">
                                     <label class="btn btn-outline-primary mb-0 mr-2" [ngClass]="{'btn-primary': product.computePrice=='percentage'}" 
                                     [for]="'btn-check-1'+categIndex + productIndex">%</label>
                                     <input type="radio" class="btn-check" [id]="'btn-check-2'+categIndex + productIndex" 
-                                    [name]="'type'+categIndex + productIndex"
+                                    [name]="'type'+categIndex + productIndex" (ngModelChange)="changePeriod(product)"
                                     value = "fixed_amount" [(ngModel)]="product.computePrice">
                                     <label class="btn btn-outline-primary mb-0 mr-2" [ngClass]="{'btn-primary': product.computePrice=='fixed_amount'}"
                                     [for]="'btn-check-2'+categIndex + productIndex">VNĐ</label>
