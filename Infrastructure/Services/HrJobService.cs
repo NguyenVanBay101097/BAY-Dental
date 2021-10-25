@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
+using ApplicationCore.Specifications;
 using AutoMapper;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
@@ -39,6 +40,19 @@ namespace Infrastructure.Services
             {
                 Items = _mapper.Map<IEnumerable<HrJobBasic>>(items)
             };
+        }
+
+        public override ISpecification<HrJob> RuleDomainGet(IRRule rule)
+        {
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            switch (rule.Code)
+            {
+                case "hr.hr_job_comp_rule":
+                    return new InitialSpecification<HrJob>(x => !x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value));
+                default:
+                    return null;
+            }
         }
     }
 }
