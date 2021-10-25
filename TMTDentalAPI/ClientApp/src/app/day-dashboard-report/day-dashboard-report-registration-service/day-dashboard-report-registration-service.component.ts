@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { aggregateBy } from '@progress/kendo-data-query';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-day-dashboard-report-registration-service',
@@ -35,15 +36,23 @@ export class DayDashboardReportRegistrationServiceComponent implements OnInit {
   }
 
   loadData(): void {
+    console.log(this.services);
     this.gridData = {
       data: this.services.slice(this.skip, this.skip + this.limit),
       total: this.services.length
     };
   }
 
+  getPartnerCount() {
+    var group = _.groupBy(this.services, (item) => {
+      return item.orderPartnerId;
+    });
+    return Object.keys(group).length;
+  }
+
   redirectSaleOrder(item) {
     if (item) {
-      this.router.navigateByUrl(`sale-orders/form?id=${item.id}`)
+      this.router.navigate(['sale-order', item.id]);
     }
   }
 
