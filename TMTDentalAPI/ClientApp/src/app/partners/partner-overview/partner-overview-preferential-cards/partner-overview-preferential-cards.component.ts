@@ -3,6 +3,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ServiceCardCardsPreferentialCuDialogComponent } from 'src/app/service-card-cards/service-card-cards-preferential-cu-dialog/service-card-cards-preferential-cu-dialog.component';
 import { NotifyService } from 'src/app/shared/services/notify.service';
 import * as moment from 'moment';
+import { ServiceCardCardService } from 'src/app/service-card-cards/service-card-card.service';
 
 @Component({
   selector: 'app-partner-overview-preferential-cards',
@@ -15,6 +16,7 @@ export class PartnerOverviewPreferentialCardsComponent implements OnInit {
   constructor(
     private modalService: NgbModal,
     private notifyService: NotifyService,
+    private cardCardService: ServiceCardCardService
   ) { }
 
   ngOnInit(): void {
@@ -26,6 +28,7 @@ export class PartnerOverviewPreferentialCardsComponent implements OnInit {
     modalRef.componentInstance.partnerId = this.partnerId;
     modalRef.result.then(result => {
       this.notifyService.notify('success', 'Lưu thành công');
+      this.getNextCard();
     }, () => { });
   }
 
@@ -35,6 +38,7 @@ export class PartnerOverviewPreferentialCardsComponent implements OnInit {
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(result => {
       this.notifyService.notify('success', 'Lưu thành công');
+      this.getNextCard();
     }, () => { });
   }
 
@@ -53,11 +57,33 @@ export class PartnerOverviewPreferentialCardsComponent implements OnInit {
     }
   }
 
+  getStateClass(state){
+    switch (state){
+      case 'draft':
+        return 'badge badge-secondary';
+      case 'in_use':
+        return 'badge badge-primary';
+      case 'locked':
+        return 'badge badge-warning';
+      case 'cancelled':
+        return 'badge badge-danger'; 
+      default:
+        return '';   
+    }
+  }
+
   getExpiry(item){
     let period = item?.cardType.period ? (item.cardType.period == 'year' ? 'Năm' : 'Tháng') : '';
     let nbrPeriod = item?.cardType.nbrPeriod || '';
     let activatedDate = item.activatedDate ? moment(item.activatedDate).format('DD/MM/YYYY') : '';
     let expiredDate = item.expiredDate ? moment(item.expiredDate).format('DD/MM/YYYY') : '';
     return nbrPeriod + ' ' + period + ' ('+ activatedDate + ' - ' + expiredDate + ') '; 
+  }
+
+  getNextCard(){
+    let val = {partnerId: this.partnerId};
+    this.cardCardService.getServiceCardCards(val).subscribe(result => {
+      this.preferentialCards = result;
+    })
   }
 }

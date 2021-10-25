@@ -34,9 +34,9 @@
                             <a (click)="editCard(item)"><i class="far fa-edit"></i></a>
                         </div>
                     </div>
-                    <div class="badge badge-primary">{{getState(item.state)}}</div>
-                    <p class="card-text mb-0">Hạng thẻ: {{item?.cardType?.name}}</p>
-                    <p class="card-text mb-0">Hạn sử dụng: {{getExpiry(item)}}</p>
+                    <div [class]="getStateClass(item.state)" style="min-width: 76px;">{{getState(item.state)}}</div>
+                    <p class="card-text opacity-8 mb-0">Hạng thẻ: {{item?.cardType?.name}}</p>
+                    <p class="card-text opacity-8 mb-0">Hạn sử dụng: {{item.activatedDate ? getExpiry(item) : ''}}</p>
                 </div>
             </div>
         </ng-container>

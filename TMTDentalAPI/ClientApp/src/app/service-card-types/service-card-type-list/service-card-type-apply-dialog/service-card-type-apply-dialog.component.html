@@ -20,9 +20,7 @@
                                 <td colspan="1" style="width: 100%;">
                                     <div class="d-flex">
                                         <div class="w-100 mr-2">
-                                            <kendo-numerictextbox *ngIf="computePrice == 'percentage'" max = '100' class="form-control" [format]="'n0'" [min]="0" [autoCorrect]="true" [(ngModel)] = 'price' name = 'percentage'>
-                                            </kendo-numerictextbox>
-                                            <kendo-numerictextbox *ngIf="computePrice != 'percentage'" [max] = 'totalPrice' class="form-control" [format]="'n0'" [min]="0" [autoCorrect]="true" [(ngModel)] = 'price' name = 'fixedAmountPrice'>
+                                            <kendo-numerictextbox class="form-control" [format]="'n0'" [min]="0" [autoCorrect]="true" [(ngModel)] = 'price' name = 'percentage'>
                                             </kendo-numerictextbox>
                                         </div>
                                         <div>

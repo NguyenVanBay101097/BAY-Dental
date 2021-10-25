@@ -118,14 +118,20 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
 
   onApplyAll(){
     let productItems = this.getAllServices();
-    let totalPrice = productItems.reduce((total,item) => {
-      return total + item.listPrice;
-    },0)
+    let prices = productItems.map(x => x.listPrice);
+    let min = Math.min(...prices);
     let modalRef = this.modalService.open(ServiceCardTypeApplyDialogComponent, 
       { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = 'Áp dụng ưu đãi cho tất cả dịch vụ';
-      modalRef.componentInstance.totalPrice = totalPrice;
       modalRef.result.then(res => {
+        if (res.computePrice == 'percentage' && res.price > 100){
+          this.notify('Ưu đãi vượt quá giá bán','error');
+          return;
+        }
+        if (res.computePrice == 'fixed_amount' && res.price > min){
+          this.notify('Ưu đãi vượt quá giá bán','error');
+          return;
+        }
         productItems.map(x => {
           x.computePrice = res.computePrice;
           x.computePrice == 'percentage' ? (x.percentPrice = res.price, x.fixedAmountPrice = null) :
@@ -139,14 +145,20 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
   onApplyCateg(categId){
     let productItems = this.getAllServices();
     productItems = productItems.filter(x => x.categId == categId);
-    let totalPrice = productItems.reduce((total,item) => {
-      return total + item.listPrice;
-    },0)
+    let prices = productItems.map(x => x.listPrice);
+    let min = Math.min(...prices);
     let modalRef = this.modalService.open(ServiceCardTypeApplyDialogComponent, 
       { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = 'Áp dụng ưu đãi cho nhóm dịch vụ';
-      modalRef.componentInstance.totalPrice = totalPrice;
       modalRef.result.then(res => {
+        if (res.computePrice == 'percentage' && res.price > 100){
+          this.notify('Ưu đãi vượt quá giá bán','error');
+          return;
+        }
+        if (res.computePrice == 'fixed_amount' && res.price > min){
+          this.notify('Ưu đãi vượt quá giá bán','error');
+          return;
+        }
         productItems.map(x => {
           x.computePrice = res.computePrice;
           x.computePrice == 'percentage' ? (x.percentPrice = res.price, x.fixedAmountPrice = null) :
