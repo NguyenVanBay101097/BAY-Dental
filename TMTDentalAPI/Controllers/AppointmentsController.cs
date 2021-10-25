@@ -32,13 +32,20 @@ namespace TMTDentalAPI.Controllers
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly INotificationHubService _notificationHubService;
         private readonly IDotKhamService _dotKhamService;
+        private readonly IPrintTemplateConfigService _printTemplateConfigService;
+        private readonly IPrintTemplateService _printTemplateService;
+        private readonly IIRModelDataService _modelDataService;
 
         public AppointmentsController(IAppointmentService appointmentService,
             IMapper mapper, UserManager<ApplicationUser> userManager,
             IMailMessageService mailMessageService,
             IUnitOfWorkAsync unitOfWork,
             INotificationHubService notificationHubService,
-            IDotKhamService dotKhamService)
+            IDotKhamService dotKhamService,
+            IPrintTemplateConfigService printTemplateConfigService,
+            IPrintTemplateService printTemplateService,
+            IIRModelDataService modelDataService
+            )
         {
             _appointmentService = appointmentService;
             _mapper = mapper;
@@ -47,6 +54,9 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork = unitOfWork;
             _notificationHubService = notificationHubService;
             _dotKhamService = dotKhamService;
+            _printTemplateConfigService = printTemplateConfigService;
+            _printTemplateService = printTemplateService;
+            _modelDataService = modelDataService;
         }
 
         [HttpGet]
@@ -380,6 +390,29 @@ namespace TMTDentalAPI.Controllers
         {
             var result = await _appointmentService.GetListDoctor(val);
             return Ok(result);
+        }
+        [HttpGet("{id}/Print")]
+        [CheckAccess(Actions = "Basic.Appointment.Read")]
+        public async Task<IActionResult> GetPrint(Guid id)
+        {
+            //tim trong bảng config xem có dòng nào để lấy ra template
+            var printConfig = await _printTemplateConfigService.SearchQuery(x => x.Type == "tmp_appointment" && x.IsDefault)
+                .Include(x => x.PrintPaperSize)
+                .Include(x => x.PrintTemplate)
+                .FirstOrDefaultAsync();
+
+            PrintTemplate template = printConfig != null ? printConfig.PrintTemplate : null;
+            PrintPaperSize paperSize = printConfig != null ? printConfig.PrintPaperSize : null;
+            if (template == null)
+            {
+                //tìm template mặc định sử dụng chung cho tất cả chi nhánh, sử dụng bảng IRModelData hoặc bảng IRConfigParameter
+                template = await _modelDataService.GetRef<PrintTemplate>("base.print_template_appointment");
+                if (template == null)
+                    throw new Exception("Không tìm thấy mẫu in mặc định");
+            }
+
+            var result = await _printTemplateService.GeneratePrintHtml(template, new List<Guid>() { id }, paperSize);
+            return Ok(new PrintData() { html = result });
         }
     }
 }

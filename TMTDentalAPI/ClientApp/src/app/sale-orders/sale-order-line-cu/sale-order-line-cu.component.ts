@@ -90,7 +90,7 @@ export class SaleOrderLineCuComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log(this.line);
+    // console.log(this.line);
     this.formGroupInfo = this.fb.group({});
     // this.formGroupInfo.setControl('teeth', this.fb.array(this.line.teeth));
     // this.formGroupInfo.setControl('promotions', this.fb.array(this.line.promotions));
@@ -140,6 +140,7 @@ export class SaleOrderLineCuComponent implements OnInit {
   }
 
   onEditLine() {
+    debugger;
     this.isEditting = true;
     // this.canEdit = true;
     this.formGroupInfo = this.fb.group({

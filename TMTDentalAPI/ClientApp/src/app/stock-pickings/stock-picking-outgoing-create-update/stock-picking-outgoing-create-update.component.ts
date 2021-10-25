@@ -58,7 +58,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
   canCreate = false;
   hasDefined = false;
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
-  @ViewChild(TaiProductListSelectableComponent, { static: false }) productListSelectable: TaiProductListSelectableComponent;
+  @ViewChild(TaiProductListSelectableComponent) productListSelectable: TaiProductListSelectableComponent;
 
   get f() { return this.pickingForm.controls; }
 

@@ -5,12 +5,12 @@ import { ProductCategoryService, ProductCategoryFilter, ProductCategoryPaged, Pr
 import { WindowRef, WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import * as _ from 'lodash';
-import { debug } from 'util';
+// import { debug } from 'util';
 import { CompanyService } from '../company.service';
 import { HttpClient } from '@angular/common/http';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
-import { validator } from 'fast-json-patch';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-company-cu-dialog',
@@ -91,7 +91,7 @@ export class CompanyCuDialogComponent implements OnInit {
   }
 
   loadSourceCities() {
-    this.http.post('https://aship.skyit.vn/api/ApiShippingCity/GetCities', {
+    this.http.post(environment.ashipApi + "api/ApiShippingCity/GetCities", {
       provider: 'Undefined'
     }).subscribe((result: any) => {
       this.dataSourceCities = result;
@@ -100,7 +100,7 @@ export class CompanyCuDialogComponent implements OnInit {
   }
 
   loadSourceDistricts(cityCode: string) {
-    this.http.post('https://aship.skyit.vn/api/ApiShippingDistrict/GetDistricts', {
+    this.http.post(environment.ashipApi + "api/ApiShippingDistrict/GetDistricts", {
       data: {
         code: cityCode
       },
@@ -112,7 +112,7 @@ export class CompanyCuDialogComponent implements OnInit {
   }
 
   loadSourceWards(districtCode: string) {
-    this.http.post('https://aship.skyit.vn/api/ApiShippingWard/GetWards', {
+    this.http.post(environment.ashipApi + "api/ApiShippingWard/GetWards", {
       data: {
         code: districtCode
       },

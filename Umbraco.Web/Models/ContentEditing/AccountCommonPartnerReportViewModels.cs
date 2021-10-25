@@ -285,6 +285,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public decimal Credit { get; set; }
 
+        public decimal Refund { get; set; }
+
         public decimal End { get; set; }
 
         public DateTime? DateFrom { get; set; }
@@ -319,6 +321,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal End { get; set; }
         public string Name { get; set; }
 
+        public Guid? PartnerId { get; set; }
     }
 
     public class ReportPartnerAdvancePrintVM

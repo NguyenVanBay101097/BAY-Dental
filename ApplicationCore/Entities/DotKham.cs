@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace ApplicationCore.Entities
@@ -73,5 +74,7 @@ namespace ApplicationCore.Entities
         /// </summary>
         public Guid? AssistantId { get; set; }
         public Employee Assistant { get; set; }
+        [NotMapped]
+        public ICollection<IrAttachment> IrAttachments { get; set; } = new List<IrAttachment>();
     }
 }

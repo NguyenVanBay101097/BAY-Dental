@@ -49,9 +49,9 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
   ) { }
   empId: string;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
-  @ViewChild('commissionCbx', { static: false }) commissionCbx: ComboBoxComponent;
-  @ViewChild('assistantCommissionCbx', { static: false }) assistantCommissionCbx: ComboBoxComponent;
-  @ViewChild('counselorCommissionCbx', { static: false }) counselorCommissionCbx: ComboBoxComponent;
+  @ViewChild('commissionCbx') commissionCbx: ComboBoxComponent;
+  @ViewChild('assistantCommissionCbx') assistantCommissionCbx: ComboBoxComponent;
+  @ViewChild('counselorCommissionCbx') counselorCommissionCbx: ComboBoxComponent;
   @ViewChild("name", { static: true }) private nameEL: ElementRef;
   @ViewChild('cbxHrJob', { static: true }) public cbxHrJob: ComboBoxComponent;
 

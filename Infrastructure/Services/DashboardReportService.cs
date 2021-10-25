@@ -179,28 +179,26 @@ namespace Infrastructure.Services
             return revenue;
         }
 
-        public async Task<SumaryRevenueReport> GetSumaryRevenueReport(SumaryRevenueReportFilter val)
+        public async Task<SumaryRevenueReport> GetSumaryRevenueReport(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string accountCode, string resultSelection)
         {
             var amlObj = GetService<IAccountMoveLineService>();
             var RevenueReport = new SumaryRevenueReport();
             var sign = -1;
 
-            var dateFrom = val.DateFrom;
             if (dateFrom.HasValue)
                 dateFrom = dateFrom.Value.AbsoluteBeginOfDate();
 
-            var dateTo = val.DateTo;
             if (dateTo.HasValue)
                 dateTo = dateTo.Value.AbsoluteEndOfDate();
 
-            var query = amlObj._QueryGet(dateFrom: dateFrom, dateTo: dateTo, state: "posted", companyId: val.CompanyId);
+            var query = amlObj._QueryGet(dateFrom: dateFrom, dateTo: dateTo, state: "posted", companyId: companyId);
 
             var types = new string[] { "cash", "bank" };
             query = query.Where(x => types.Contains(x.Journal.Type));
 
-            query = query.Where(x => x.Account.Code == val.AccountCode);
+            query = query.Where(x => x.Account.Code == accountCode);
 
-            RevenueReport.Type = val.ResultSelection;
+            RevenueReport.Type = resultSelection;
             RevenueReport.Credit = await query.SumAsync(x => x.Credit);
             RevenueReport.Debit = await query.SumAsync(x => x.Debit);
             RevenueReport.Balance = await query.SumAsync(x => x.Balance * sign);
@@ -236,6 +234,48 @@ namespace Infrastructure.Services
 
             return res;
 
+        }
+
+
+        public async Task<CashBookReportDay> GetDataCashBookReportDay(DateTime? dateFrom, DateTime? dateTo, Guid? companyId)
+        {
+            var cashbookObj = GetService<ICashBookService>();
+
+            var res = new CashBookReportDay();
+            /// load dữ liệu tổng tiền 
+            var types = new string[] { "", "cash", "bank" };
+            var dataTotalAmount = new List<CashBookReport>();
+            foreach (var item in types)
+            {
+                var i = await cashbookObj.GetSumary(dateFrom, dateTo, companyId, item);
+                dataTotalAmount.Add(i);
+            }
+
+            res.DataAmountTotals = dataTotalAmount;
+
+            /// load dữ liệu báo cáo thu chi
+            var dataReport = new List<SumaryRevenueReport>();
+            FilterSumaryCashbookReport[] objlist = new FilterSumaryCashbookReport[] {
+                new FilterSumaryCashbookReport("cash_bank" , "131") ,
+                new FilterSumaryCashbookReport("debt" , "CNKH"),
+                new FilterSumaryCashbookReport("advance" , "KHTU"),
+                new FilterSumaryCashbookReport("cash_bank" , "331"),
+                new FilterSumaryCashbookReport("payroll" , "334"),
+                new FilterSumaryCashbookReport("commission" , "HHNGT")
+            };
+
+            foreach (var item in objlist)
+            {
+                var i = await GetSumaryRevenueReport(dateFrom, dateTo, companyId, item.Code, item.Value);
+                dataReport.Add(i);
+            }
+
+            res.DataReports = dataReport;
+
+            /// load dữ liệu chi tiết
+            res.DataDetails = await cashbookObj.GetDataInvoices(dateFrom, dateTo, companyId, "");
+
+            return res;
         }
 
         protected T GetService<T>()

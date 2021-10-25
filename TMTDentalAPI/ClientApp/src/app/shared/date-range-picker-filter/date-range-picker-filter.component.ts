@@ -33,7 +33,7 @@ export class DateRangePickerFilterComponent implements OnInit {
     alwaysShowCalendars: false,
   }
 
-  @ViewChild(DaterangepickerDirective, { static: false }) inputDr: DaterangepickerDirective;
+  @ViewChild(DaterangepickerDirective) inputDr: DaterangepickerDirective;
   constructor() {
 
   }

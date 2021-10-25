@@ -30,11 +30,11 @@ namespace Infrastructure.Services
         {
             var quotationLineObj = GetService<IQuotationLineService>();
             var promotionObj = GetService<IQuotationPromotionService>();
+            var paymentObj = GetService<IPaymentQuotationService>();
 
             var model = await SearchQuery(x => x.Id == id)
                 .Include(x => x.Partner)
                 .Include(x => x.Employee)
-                .Include(x => x.Payments)
                 .Include(x => x.Promotions)
                 .Include(x => x.Orders)
                 .FirstOrDefaultAsync();
@@ -49,7 +49,11 @@ namespace Infrastructure.Services
                 .Include(x => x.Promotions)
                 .ToListAsync();
 
+            var payments = await paymentObj.SearchQuery(x => x.QuotationId == id, orderBy: x => x.OrderBy(s => s.Sequence))
+                .ToListAsync();
+
             model.Lines = lines;
+            model.Payments = payments;
 
             var display = _mapper.Map<QuotationDisplay>(model);
 
@@ -121,27 +125,17 @@ namespace Infrastructure.Services
         public async Task UpdateAsync(Guid id, QuotationSave val)
         {
             var quotationLineObj = GetService<IQuotationLineService>();
-            var quotation = await SearchQuery(x => x.Id == id).Include(x => x.Payments)
-                .Include(x => x.Promotions).ThenInclude(x => x.Lines)
-                .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
-                .Include(x => x.Lines).ThenInclude(x => x.Promotions).ThenInclude(x => x.Lines)
-                .Include(x => x.Lines).ThenInclude(x => x.Quotation).ThenInclude(x => x.Lines)
+            var quotation = await SearchQuery(x => x.Id == id)
+                .Include(x => x.Payments)
+                .Include(x => x.Lines)
                 .FirstOrDefaultAsync();
 
             quotation = _mapper.Map(val, quotation);
             await ComputeQuotationLine(val, quotation);
-            await ComputePaymentQuotation(val, quotation);
-            await UpdateAsync(quotation);
-
-            quotationLineObj.RecomputePromotionLine(quotation.Lines);
-
-            ReComputePromotionOrder(quotation);
-            await UpdateAsync(quotation);
-
-            quotationLineObj._ComputeAmountDiscountTotal(quotation.Lines);
-            quotationLineObj.ComputeAmount(quotation.Lines);
-
             ComputeAmountAll(quotation);
+
+            await ComputePaymentQuotation(val, quotation);
+         
             await UpdateAsync(quotation);
         }
 
@@ -201,20 +195,21 @@ namespace Infrastructure.Services
             var quotationLineService = GetService<IQuotationLineService>();
             await quotationLineService.CreateAsync(lines);
 
+            ComputeAmountAll(quotation);
 
             var payments = new List<PaymentQuotation>();
+            var paymentSequence = 0;
             foreach (var payment in val.Payments)
             {
                 var payQuot = _mapper.Map<PaymentQuotation>(payment);
                 payQuot.QuotationId = quotation.Id;
-
+                payQuot.Amount = payQuot.DiscountPercentType == "percent" ? Math.Round((payQuot.Payment ?? 0) * (quotation.TotalAmount ?? 0) / 100) : (payQuot.Payment ?? 0);
+                payQuot.Sequence = paymentSequence++;
                 payments.Add(payQuot);
             }
             var paymentQuotationObj = GetService<IPaymentQuotationService>();
             await paymentQuotationObj.CreateAsync(payments);
-
-
-            ComputeAmountAll(quotation);
+           
             await UpdateAsync(quotation);
             return _mapper.Map<QuotationBasic>(quotation);
         }
@@ -244,18 +239,23 @@ namespace Infrastructure.Services
                 }
             }
 
+            var paymentSequence = 0;
             foreach (var payment in val.Payments)
             {
                 if (payment.Id == Guid.Empty)
                 {
                     var payQuot = _mapper.Map<PaymentQuotation>(payment);
                     payQuot.QuotationId = quotation.Id;
+                    payQuot.Amount = payQuot.DiscountPercentType == "percent" ? Math.Round((payQuot.Payment ?? 0) * (quotation.TotalAmount ?? 0) / 100) : (payQuot.Payment ?? 0);
+                    payQuot.Sequence = paymentSequence++;
                     listAdd.Add(payQuot);
                 }
                 else
                 {
                     var payQuot = await paymentQuotationObj.SearchQuery(x => x.Id == payment.Id).FirstOrDefaultAsync();
                     _mapper.Map(payment, payQuot);
+                    payQuot.Amount = payQuot.DiscountPercentType == "percent" ? Math.Round((payQuot.Payment ?? 0) * (quotation.TotalAmount ?? 0) / 100) : (payQuot.Payment ?? 0);
+                    payQuot.Sequence = paymentSequence++;
                     listUpdate.Add(payQuot);
                 }
             }
@@ -281,12 +281,23 @@ namespace Infrastructure.Services
 
             if (listRemove.Any())
             {
+                //Xóa ưu đãi dịch vụ
                 var promotionObj = GetService<IQuotationPromotionService>();
-                var lineIds = listRemove.Select(x => x.Id).ToList();
-                ///remove promotions in saleorderline
-                var promotion_ids = await promotionObj.SearchQuery(x => x.QuotationId.HasValue && lineIds.Contains(x.QuotationLineId.Value)).Select(x => x.Id).ToListAsync();
-                if (promotion_ids.Any())
-                    await promotionObj.RemovePromotion(promotion_ids);
+                var listRemoveIds = listRemove.Select(x => x.Id).ToList();
+                var promotions = await promotionObj.SearchQuery(x => x.QuotationLineId.HasValue && listRemoveIds.Contains(x.QuotationLineId.Value)).ToListAsync();
+                await promotionObj.DeleteAsync(promotions);
+
+                //Xóa các dòng phân bổ từ ưu đãi báo giá
+                var promotionLineObj = GetService<IQuotationPromotionLineService>();
+                var promotionLines = await promotionLineObj.SearchQuery(x => listRemoveIds.Contains(x.QuotationLineId)).ToListAsync();
+                if (promotionLines.Any())
+                {
+                    var recomputePromotionIds = promotionLines.Select(x => x.PromotionId).Distinct().ToList();
+                    await promotionLineObj.DeleteAsync(promotionLines);
+
+                    //Tính lại tổng tiền của ưu đãi phiếu điều trị
+                    await promotionObj.ComputeAmount(recomputePromotionIds);
+                }
 
                 await quotationLineObj.DeleteAsync(listRemove);
             }
@@ -297,12 +308,6 @@ namespace Infrastructure.Services
                 {
                     var quoLine = _mapper.Map<QuotationLine>(line);
                     quoLine.QuotationId = quotation.Id;
-                    //if (line.DiscountType == "fixed")
-                    //    quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0) - line.Discount;
-
-                    //else if (line.DiscountType == "percentage")
-                    //    quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0) * (1 - (line.Discount.HasValue ? line.Discount.Value : 0) / 100);
-
                     foreach (var toothId in line.ToothIds)
                     {
                         quoLine.QuotationLineToothRels.Add(new QuotationLineToothRel
@@ -316,11 +321,6 @@ namespace Infrastructure.Services
                 {
                     var quoLine = await quotationLineObj.SearchQuery(x => x.Id == line.Id).Include(x => x.QuotationLineToothRels).FirstOrDefaultAsync();
                     _mapper.Map(line, quoLine);
-
-                    //if (line.DiscountType == "fixed")
-                    //    quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0) - line.Discount;
-                    //else if (line.DiscountType == "percentage")
-                    //    quoLine.Amount = line.Qty * (line.SubPrice.HasValue ? line.SubPrice.Value : 0) * (1 - (line.Discount.HasValue ? line.Discount.Value : 0) / 100);
 
                     quoLine.QuotationLineToothRels.Clear();
                     if (quoLine.ToothType == "manual")
@@ -337,8 +337,6 @@ namespace Infrastructure.Services
                     listUpdate.Add(quoLine);
                 }
             }
-
-
 
             await quotationLineObj.CreateAsync(listAdd);
             await quotationLineObj.UpdateAsync(listUpdate);

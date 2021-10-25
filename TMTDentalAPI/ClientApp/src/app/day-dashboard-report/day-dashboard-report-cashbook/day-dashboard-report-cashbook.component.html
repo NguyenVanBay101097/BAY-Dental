@@ -1,0 +1,127 @@
+<div>
+    <div class="mt-2 d-flex flex-row summary flex-wrap">
+        <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
+            <label style="font-weight: 600;"> Tổng sổ quỹ </label>
+            <h5 class="text-success">{{totalCashBook[0]?.totalAmount || 0 | number}}</h5>
+        </div>
+        <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
+            <label style="font-weight: 600;"> Quỹ tiền mặt </label>
+            <h5 class="text-success">{{totalCashBook[1]?.totalAmount || 0 | number}}</h5>
+        </div>
+        <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
+            <label style="font-weight: 600;"> Quỹ ngân hàng </label>
+            <h5 class="text-success">{{totalCashBook[2]?.totalAmount || 0 | number}}</h5>
+        </div>
+    </div>
+
+
+
+    <div class="mb-2">
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title text-primary">Thu</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="my-2 d-flex justify-content-between">
+                            <span class="title-detail">
+                                Khách hàng thanh toán dịch vụ và thuốc
+                                <span class="text-primary t-tooltip ml-1" placement="top"
+                                    ngbTooltip="Không bao gồm tiền khách hàng thanh toán bằng phương thức Ghi công nợ và Tạm ứng">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                </span>
+                            </span>
+                            <span>{{cashbookCashBank?.credit || 0 | number}}</span>
+                        </div>
+                        <div class="my-2 d-flex justify-content-between">
+                            <span class="title-detail">Khách hàng đóng tạm ứng</span>
+                            <span>{{cashbookCusAdvance?.credit || 0 | number}}</span>
+                        </div>
+                        <div class="my-2 d-flex justify-content-between">
+                            <span class="title-detail">Thu công nợ khách hàng</span>
+                            <span>{{cashbookCusDebt?.credit || 0 | number}}</span>
+                        </div>
+                        <div class="my-2 d-flex justify-content-between">
+                            <span class="title-detail">Nhà cung cấp hoàn tiền</span>
+                            <span>{{cashbookSupp?.credit || 0 | number}}</span>
+                        </div>
+                        <div class="my-2 d-flex justify-content-between">
+                            <span class="title-detail">Thu ngoài</span>
+                            <span>{{(ortherThu ? ortherThu : 0 ) | number}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title text-primary">Chi</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="my-2 d-flex justify-content-between">
+                            <span class="title-detail">Thanh toán cho nhà cung cấp</span>
+                            <span>{{cashbookSupp?.debit || 0 | number}}</span>
+                        </div>
+                        <div class="my-2 d-flex justify-content-between">
+                            <span class="title-detail">Hoàn tạm ứng cho khách hàng</span>
+                            <span>{{cashbookCusAdvance?.debit || 0 | number}}</span>
+                        </div>
+                        <div class="my-2 d-flex justify-content-between">
+                            <span class="title-detail">Chi lương nhân viên</span>
+                            <span>{{cashbookCusSalary?.debit || 0 | number}}</span>
+                        </div>
+                        <div class="my-2 d-flex justify-content-between">
+                            <span class="title-detail">Hoa hồng người giới thiệu</span>
+                            <span>{{cashbookAgentCommission?.debit || 0 | number}}</span>
+                        </div>
+                        <div class="my-2 d-flex justify-content-between">
+                            <span class="title-detail">Chi ngoài</span>
+                            <span>{{(ortherChi ? ortherChi : 0) | number}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <kendo-combobox [data]="stateOptions" class="mb-2" [textField]="'text'" [valueField]="'value'" [filterable]="true"
+        (selectionChange)="onSelectChange($event)" [placeholder]="'Phương thức'">
+    </kendo-combobox>
+    <div class="mt-2 d-flex flex-row summary flex-wrap">
+        <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
+            <label style="font-weight: 600;"> Quỹ đầu kỳ </label>
+            <h5 class="text-primary">{{(summaryResult ? summaryResult.begin : 0) | number}}</h5>
+        </div>
+        <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
+            <label style="font-weight: 600;"> Tổng thu </label>
+            <h5 class="text-info">{{(summaryResult ? summaryResult.totalThu : 0) | number}}</h5>
+        </div>
+        <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
+            <label style="font-weight: 600;"> Tổng chi </label>
+            <h5 class="text-danger">{{(summaryResult ? summaryResult.totalChi : 0) | number}}</h5>
+        </div>
+        <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
+            <label style="font-weight: 600;"> Tổng sổ quỹ </label>
+            <h5 class="text-success">{{(summaryResult ? summaryResult.totalAmount : 0) | number}}</h5>
+        </div>
+    </div>
+
+    <kendo-grid #grid [data]="gridData" [pageable]="pagerSettings" [skip]="skip" [pageSize]="limit" [resizable]="true"
+        [loading]="loading" (pageChange)="pageChange($event)">
+        <kendo-grid-column field="invoiceOrigin" title="Số phiếu" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column field="name" title="Nội dung" width="250">
+        </kendo-grid-column>
+        <kendo-grid-column field="journalName" title="Phương thức" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column field="accountName" title="Loại thu chi" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column field="amount" title="Số tiền" class="text-right" width="150">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.amount | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="partnerName" title="Đối tác" width="180">
+        </kendo-grid-column>
+    </kendo-grid>
+</div>

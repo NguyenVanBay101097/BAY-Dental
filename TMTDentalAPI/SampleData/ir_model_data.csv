@@ -41,7 +41,8 @@ sale.model_toa_thuoc,ToaThuoc,Toa thuốc,0
 sale.model_sale_order,SaleOrder,Phiếu điều trị,0
 sale.model_sale_order_line,SaleOrderLine,Sale Order Line,1
 labo.model_labo_order,LaboOrder,Phiếu Labo,0
-labo.model_labo_order_line,LaboOrderLine,Labo Order Line,1
+labo.model_labo_order_line,LaboOrderLine,Labo Order Line,1,
+labo.model_labo_warranty,LaboWarranty,Phiếu bảo hành Labo,0
 purchase.model_purchase_order,PurchaseOrder,Mua hàng,0
 purchase.model_purchase_order_line,PurchaseOrderLine,Purchase Order Line,1
 mail.model_mail_message,MailMessage,Mail Message,1

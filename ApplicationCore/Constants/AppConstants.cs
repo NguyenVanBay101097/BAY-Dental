@@ -42,13 +42,6 @@ namespace ApplicationCore.Constants
         public const string PartnerOldNewReport = "PartnerOldNewReport";
         public const string ReportPartnerDebit = "ReportPartnerDebit";
 
-        public static PrintTemplateType[] PrintTemplateType = new PrintTemplateType[] {
-           new PrintTemplateType {Type = "tmp_sale_order" , PathTemplate = "~/TMTDentalAPI/Views/SaleOrder/Print.cshtml" },
-           new PrintTemplateType {Type = "tmp_account_payment" , PathTemplate = "" },
-           new PrintTemplateType {Type = "tmp_advisory" , PathTemplate = "" },
-           new PrintTemplateType {Type = "tmp_partner_advance" , PathTemplate = "" },
-           new PrintTemplateType {Type = "tmp_supplier_payment" , PathTemplate = "" },
-        };
 
         public static PrintTemplateType[] PrintTemplateTypeDemo = new PrintTemplateType[] {
            new PrintTemplateType {Type = "tmp_sale_order" , PathTemplate = "PrintTemplate/SaleOrder/Template.html" , Model = "sale.order", NameIRModel = "print_template_sale_order" },
@@ -74,6 +67,7 @@ namespace ApplicationCore.Constants
            new PrintTemplateType {Type = "tmp_supplier_payment" , PathTemplate = "PrintTemplate/AccountPayment/Template_supplier_payment.html", Model = "supplier.payment" , NameIRModel = "print_template_supplier_payment" },
            new PrintTemplateType {Type = "tmp_supplier_payment_inbound" , PathTemplate = "PrintTemplate/AccountPayment/Template_supplier_payment_inbound.html", Model = "supplier.payment" , NameIRModel = "print_template_supplier_payment_inbound" },
            new PrintTemplateType {Type = "tmp_advisory" , PathTemplate = "PrintTemplate/Advisory/Template.html", Model = "advisory" , NameIRModel = "print_template_advisory" },
+           new PrintTemplateType {Type = "tmp_appointment" , PathTemplate = "PrintTemplate/Appointment/Template.html", Model = "appointment" , NameIRModel = "print_template_appointment" },
         };
     }
 

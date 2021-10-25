@@ -136,7 +136,7 @@ export class PartnerCustomerDebtListComponent implements OnInit {
 
   getForm(item) {
     if(item.type == "debit"){
-      this.router.navigate(['/sale-orders/form'], { queryParams: { id: item.id } });
+      this.router.navigate(['/sale-orders', item.id]);
     }else{
       this.router.navigate(['/phieu-thu-chi/form'], { queryParams: { id: item.id } });
     }

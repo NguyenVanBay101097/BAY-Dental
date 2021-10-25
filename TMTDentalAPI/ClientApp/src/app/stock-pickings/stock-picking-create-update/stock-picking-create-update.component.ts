@@ -15,7 +15,7 @@ import { StockPickingTypeService, StockPickingTypeBasic } from 'src/app/stock-pi
 import { StockMoveService, StockMoveOnChangeProduct } from 'src/app/stock-moves/stock-move.service';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductPaged } from 'src/app/products/product.service';
-import { debug } from 'util';
+// import { debug } from 'util';
 declare var jquery: any;
 declare var $: any;
 

@@ -208,7 +208,7 @@ namespace Infrastructure.Services
 
             var userObj = GetService<IUserService>();
             var company_ids = userObj.GetListCompanyIdsAllowCurrentUser();
-            var query = _context.PartnerOldNewInSaleOrders.Where(x => company_ids.Contains(x.CompanyId));
+            var query = _context.PartnerOldNewInSaleOrders.Where(x => company_ids.Contains(x.CompanyId) && x.SaleOrder.State != "draft");
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId.Value);
 
@@ -256,6 +256,42 @@ namespace Infrastructure.Services
                 PartnerNewRevenue = x.Sum(s => s.IsNew ? s.PartnerRevenue : 0),
                 PartnerOldCount = x.Sum(s => !s.IsNew ? 1 : 0),
                 PartnerOldRevenue = x.Sum(s => !s.IsNew ? s.PartnerRevenue : 0),
+            })
+            .ToListAsync();
+
+            return result;
+        }
+
+        public async Task<IEnumerable<PartnerOldNewReportByIsNewItem>> ReportByIsNew(PartnerOldNewReportByIsNewReq val)
+        {
+
+            var userObj = GetService<IUserService>();
+            var company_ids = userObj.GetListCompanyIdsAllowCurrentUser();
+            var query = _context.PartnerOldNewInSaleOrders.Where(x => company_ids.Contains(x.CompanyId) && x.SaleOrder.State != "draft");
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.DateOrder >= val.DateFrom.Value.AbsoluteBeginOfDate());
+
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.DateOrder <= val.DateTo.Value.AbsoluteEndOfDate());
+
+            var result = await query.GroupBy(x => new
+            {
+                PartnerId = x.PartnerId,
+                IsNew = x.IsNew,
+            }).Select(x => new
+            {
+                IsNew = x.Key.IsNew,
+                PartnerId = x.Key.PartnerId,
+                TotalOrder = x.Sum(s => 1)
+            })
+            .GroupBy(x => x.IsNew)
+            .Select(x => new PartnerOldNewReportByIsNewItem()
+            {
+                IsNew = x.Key ? 1 : 0,
+                PartnerTotal = x.Sum(s => 1),
             })
             .ToListAsync();
 

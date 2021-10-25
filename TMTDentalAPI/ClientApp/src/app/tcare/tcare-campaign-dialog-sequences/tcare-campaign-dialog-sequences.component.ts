@@ -27,7 +27,7 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
   @ViewChild('channelSocialCbx', { static: true }) channelSocialCbx: ComboBoxComponent;
   @ViewChild('cbxMess', { static: true }) cbxMess: ComboBoxComponent;
   @ViewChild('couponCbx', { static: true }) couponCbx: ComboBoxComponent;
-  @ViewChild('content', { static: false }) content: ElementRef;
+  @ViewChild('content') content: ElementRef;
 
   model: any;
   formGroup: FormGroup;

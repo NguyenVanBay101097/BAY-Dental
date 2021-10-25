@@ -10,7 +10,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { LaboOrderLineAdvanceSearchComponent } from './labo-order-line-advance-search/labo-order-line-advance-search.component';
 
 @NgModule({
-  declarations: [LaboOrderLineCuDialogComponent, LaboOrderLineListComponent, LaboOrderLineAdvanceSearchComponent],
+  declarations: [LaboOrderLineListComponent, LaboOrderLineAdvanceSearchComponent, LaboOrderLineCuDialogComponent],
   imports: [
     CommonModule,
     LaboOrderLinesRoutingModule,

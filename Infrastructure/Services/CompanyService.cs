@@ -287,6 +287,7 @@ namespace Infrastructure.Services
                 UserTypeId = currentLiabilities.Id,
                 CompanyId = company.Id,
             };
+
             #endregion
 
             #region For payableAccType
@@ -884,6 +885,7 @@ namespace Infrastructure.Services
             var partner_title_dict = new Dictionary<string, PartnerTitle>();
             var paper_size_dict = new Dictionary<string, PrintPaperSize>();
             var sms_campaign_dict = new Dictionary<string, SmsCampaign>();
+            var print_template_dict = new Dictionary<string, PrintTemplate>();
 
             var file_path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\dental_data.xml");
             XmlDocument doc = new XmlDocument();
@@ -1053,6 +1055,31 @@ namespace Infrastructure.Services
                     }
                     sms_campaign_dict.Add(id, smsCampaign);
                 }
+                else if (model == "print.template")
+                {
+                    var printTemplate = new PrintTemplate();
+                    var fields = record.GetElementsByTagName("field");
+                    for (var j = 0; j < fields.Count; j++)
+                    {
+                        XmlElement field = (XmlElement)fields[j];
+                        var field_name = field.GetAttribute("name");
+                        if (field_name == "pathPrintTemplate")
+                        {
+                            var html = File.ReadAllText(field.InnerText);
+                            printTemplate.Content = html;
+                        }
+                        else if (field_name == "type")
+                        {
+                            printTemplate.Type = field.InnerText;
+                        }
+                        else if (field_name == "model")
+                        {
+                            printTemplate.Model = field.InnerText;
+                        }                      
+
+                    }
+                    print_template_dict.Add(id, printTemplate);
+                }
             }
 
             var toothCategoryObj = GetService<IToothCategoryService>();
@@ -1074,6 +1101,11 @@ namespace Infrastructure.Services
             await paperSizeObj.CreateAsync(paper_size_dict.Values);
 
             await modelDataObj.CreateAsync(PrepareModelData(paper_size_dict, "print.paper.size"));
+
+            var printTemplateObj = GetService<IPrintTemplateService>();
+            await printTemplateObj.CreateAsync(print_template_dict.Values);
+
+            await modelDataObj.CreateAsync(PrepareModelData(print_template_dict, "print.template"));
 
         }
 
