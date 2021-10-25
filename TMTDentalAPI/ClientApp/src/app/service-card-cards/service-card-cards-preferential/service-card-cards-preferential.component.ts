@@ -100,6 +100,7 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
     const modalRef = this.modalService.open(ServiceCardCardsPreferentialCuDialogComponent, { scrollable: true, windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = "Tạo thẻ ưu đãi dịch vụ";
     modalRef.result.then(result => {
+      
       this.notifyService.notify('success', 'Lưu thành công');
       this.loadDataFromApi();
     }, () => { });
@@ -110,6 +111,8 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
     modalRef.componentInstance.title = "Chỉnh sửa thẻ " + item.barcode;
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(result => {
+      console.log(result);
+
       this.notifyService.notify('success', 'Lưu thành công');
       this.loadDataFromApi();
     }, () => { });
@@ -163,8 +166,7 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
   importExcelFile() {
     const modalRef = this.modalService.open(ServiceCardCardsPreferentialImportDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
     modalRef.componentInstance.title = 'Import excel';
-    modalRef.result.then(() => {
-
+    modalRef.result.then((result) => {
       this.loadDataFromApi();
     }, () => {
     });

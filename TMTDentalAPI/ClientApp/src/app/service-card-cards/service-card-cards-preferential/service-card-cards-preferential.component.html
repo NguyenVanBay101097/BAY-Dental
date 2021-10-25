@@ -28,7 +28,7 @@
                 <app-date-range-picker-filter [opens]="'left'" [startDate]="expiredDateFrom" [endDate]="expiredDateTo"
                     (searchChange)="onSearchChange($event)"></app-date-range-picker-filter>
             </div>
-            <kendo-combobox style="width: 126px;" (selectionChange)="onChangeState($event)"
+            <kendo-combobox style="width: 120px;" (selectionChange)="onChangeState($event)"
                 placeholder="Tất cả trạng thái" [data]="filterState" [textField]="'name'" [valueField]="'value'">
             </kendo-combobox>
         </div>

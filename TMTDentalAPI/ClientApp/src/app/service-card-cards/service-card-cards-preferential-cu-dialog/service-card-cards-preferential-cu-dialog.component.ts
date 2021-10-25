@@ -150,9 +150,8 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
   actionActivate() {
     if (this.id) {
       this.serviceCardsService.buttonActive([this.id]).subscribe((res: any) => {
-        console.log(res);
         this.notifyService.notify('success', 'Kích hoạt thành công');
-
+        this.activeModal.close();
       })
     }
 
