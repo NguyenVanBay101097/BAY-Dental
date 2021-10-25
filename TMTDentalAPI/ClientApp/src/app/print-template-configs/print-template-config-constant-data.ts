@@ -163,7 +163,7 @@ const keyWorDatas =
                 { text: 'Họ tên bác sĩ', value: '{{o.sale_order_line?.employee?.name}}' },
                 { text: 'Số phiếu điều trị', value: '{{o.sale_order_line?.order?.name }}' },
                 { text: 'Họ tên khách hàng', value: '{{o.customer?.name}}' },
-                { text: 'Họ tên nhà cung cấp', value: '{{o.partner?.name}}' },
+                { text: 'Tên nhà cung cấp', value: '{{o.partner?.name}}' },
                 { text: 'Ngày gửi', value: '{{o.date_order}}' },
                 { text: 'Ngày nhận dự kiến', value: '{{o.date_planned}}' },
 
@@ -290,7 +290,7 @@ const keyWorDatas =
                 { text: 'Ngày tạo', value: '{{o.date_created.day}}' },
                 { text: 'Tháng tạo', value: '{{o.date_created.month}}' },
                 { text: 'Năm tạo', value: '{{o.date_created.year}}' },
-                { text: 'Mã phiếu', value: '{{name}}' },
+                { text: 'Mã phiếu', value: '{{o.name}}' },
             ]
         },
         {

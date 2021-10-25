@@ -687,7 +687,8 @@ namespace Infrastructure.Services
             }
 
             var list2 = await query
-                .Select(x => new { 
+                .Select(x => new
+                {
                     PartnerId = x.Partner.Id,
                     PartnerName = x.Partner.Name,
                     PartnerPhone = x.Partner.Phone,
@@ -700,7 +701,8 @@ namespace Infrastructure.Services
                        PartnerId = x.PartnerId,
                        PartnerName = x.PartnerName,
                        PartnerPhone = x.PartnerPhone,
-                   }, (k, g) => new {
+                   }, (k, g) => new
+                   {
                        PartnerId = k.PartnerId,
                        PartnerName = k.PartnerName,
                        PartnerPhone = k.PartnerPhone,
@@ -904,6 +906,20 @@ namespace Infrastructure.Services
 
                 return _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             }
+        }
+
+        public async Task<ReportPartnerAdvancePrintVM> ReportPartnerAdvancePrint(ReportPartnerAdvanceFilter val)
+        {
+            var data = await ReportPartnerAdvance(val);
+            var res = new ReportPartnerAdvancePrintVM();
+            var companyObj = GetService<ICompanyService>();
+            res.DateFrom = val.DateFrom;
+            res.DateTo = val.DateTo;
+            res.Company = val.CompanyId.HasValue ? _mapper.Map<CompanyPrintVM>(await companyObj.SearchQuery(x => x.Id == val.CompanyId).Include(x => x.Partner).FirstOrDefaultAsync()) : null;
+            res.User = _mapper.Map<ApplicationUserSimple>(await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId));
+            res.ReportPartnerAdvances = data;
+
+            return res;
         }
     }
 

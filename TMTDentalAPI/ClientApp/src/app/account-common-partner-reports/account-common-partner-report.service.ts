@@ -232,4 +232,8 @@ export class AccountCommonPartnerReportService {
             { responseType: "blob" }
         );
     }
+
+    printReportPartnerAdvance(val) {
+        return this.http.post(this.baseApi + "AccountCommonPartnerReport/ReportPartnerAdvance", val,{ responseType: "text" });
+    }
 }
