@@ -52,7 +52,7 @@ export class DayDashboardReportRegistrationServiceComponent implements OnInit {
 
   redirectSaleOrder(item) {
     if (item) {
-      this.router.navigate(['sale-order', item.id]);
+      this.router.navigate(['sale-orders', item.id]);
     }
   }
 
