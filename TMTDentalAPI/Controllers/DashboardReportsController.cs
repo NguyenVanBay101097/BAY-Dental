@@ -24,12 +24,14 @@ namespace TMTDentalAPI.Controllers
         private readonly IDashboardReportService _dashboardService;
         private readonly IAccountMoveLineService _amlService;
         private readonly ISaleOrderService _saleOrderService;
+        private readonly ISaleOrderLineService _saleOrderLineService;
         private readonly ISaleReportService _saleReportService;
         private readonly ICashBookService _cashBookService;
 
         public DashboardReportsController(IMapper mapper, IDashboardReportService dashboardService,
             IAccountMoveLineService amlService,
             ISaleOrderService saleOrderService,
+            ISaleOrderLineService saleOrderLineService,
             ISaleReportService saleReportService,
             ICashBookService cashBookService)
         {
@@ -37,6 +39,7 @@ namespace TMTDentalAPI.Controllers
             _dashboardService = dashboardService;
             _amlService = amlService;
             _saleOrderService = saleOrderService;
+            _saleOrderLineService = saleOrderLineService;
             _saleReportService = saleReportService;
             _cashBookService = cashBookService;
         }
@@ -114,36 +117,8 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetThuChiReport(GetRevenueActualReportRequest val)
         {
             //báo cáo doanh thu thực thu
-            var dateFrom = val.DateFrom.HasValue ? val.DateFrom.Value.AbsoluteBeginOfDate() : (DateTime?)null;
-            var dateTo = val.DateTo.HasValue ? val.DateTo.Value.AbsoluteEndOfDate() : (DateTime?)null;
-            var query = _amlService._QueryGet(dateTo: dateTo, dateFrom: dateFrom, state: "posted", companyId: val.CompanyId);
-            query = query.Where(x => (x.Journal.Type == "cash" || x.Journal.Type == "bank") && x.AccountInternalType != "liquidity");
-
-            var customerIncomeTotal = await query.Where(x => x.AccountInternalType == "receivable").SumAsync(x => x.Credit);
-            var advanceIncomeTotal = await query.Where(x => x.Account.Code == "KHTU").SumAsync(x => x.Credit);
-            var debtIncomeTotal = await query.Where(x => x.Account.Code == "CNKH").SumAsync(x => x.Credit);
-            var supplierIncomeTotal = await query.Where(x => x.AccountInternalType == "payable").SumAsync(x => x.Credit);
-            var cashBankIncomeTotal = await query.SumAsync(x => x.Credit);
-
-            var supplierExpenseTotal = await query.Where(x => x.AccountInternalType == "payable").SumAsync(x => x.Debit);
-            var advanceExpenseTotal = await query.Where(x => x.Account.Code == "KHTU").SumAsync(x => x.Debit);
-            var salaryExpenseTotal = await query.Where(x => x.Account.Code == "334").SumAsync(x => x.Debit);
-            var commissionExpenseTotal = await query.Where(x => x.Account.Code == "HHNGT").SumAsync(x => x.Debit);
-            var cashBankExpenseTotal = await query.SumAsync(x => x.Debit);
-
-            return Ok(new GetThuChiReportResponse
-            {
-                CustomerIncomeTotal = customerIncomeTotal,
-                AdvanceIncomeTotal = advanceIncomeTotal,
-                DebtIncomeTotal = debtIncomeTotal,
-                SupplierIncomeTotal = supplierIncomeTotal,
-                CashBankIncomeTotal = cashBankIncomeTotal,
-                SupplierExpenseTotal = supplierExpenseTotal,
-                AdvanceExpenseTotal = advanceExpenseTotal,
-                SalaryExpenseTotal = salaryExpenseTotal,
-                CommissionExpenseTotal = commissionExpenseTotal,
-                CashBankExpenseTotal = cashBankExpenseTotal
-            });
+            var res = await _dashboardService.GetThuChiReport(val.DateFrom, val.DateTo, val.CompanyId);         
+            return Ok(res);
         }
 
         [HttpPost("[action]")]
@@ -181,7 +156,7 @@ namespace TMTDentalAPI.Controllers
 
                 ///tab dịch vụ trong ngày
                 var worksheet1 = package.Workbook.Worksheets.Add("DichVuDangKiMoi");
-                var data = await _saleReportService.GetReportService(val.DateFrom, val.DateTo, val.CompanyId, null, "draft");
+                var data = await _saleOrderLineService.GetPagedResultAsync(new SaleOrderLinesPaged {CompanyId = val.CompanyId, DateFrom = val.DateFrom , DateTo = val.DateTo , State = "sale,done,cancel" });
 
                 worksheet1.Cells["A1:I1"].Value = "DỊCH VỤ ĐĂNG KÝ MỚI";
                 worksheet1.Cells["A1:I1"].Style.Font.Color.SetColor(Color.Blue);
@@ -264,7 +239,7 @@ namespace TMTDentalAPI.Controllers
                     worksheet1.Cells[row, 4].Value = item.ProductUOMQty;
                     worksheet1.Cells[row, 5].Value = item.Employee != null ? item.Employee.Name : null;
                     worksheet1.Cells[row, 6].Value = item.PriceSubTotal;
-                    worksheet1.Cells[row, 7].Value = item.PriceSubTotal - (item.AmountResidual ?? 0);
+                    worksheet1.Cells[row, 7].Value = (item.AmountInvoiced ?? 0);
                     worksheet1.Cells[row, 8].Value = (item.AmountResidual ?? 0);
                     worksheet1.Cells[row, 9].Value = item.State == "sale" ? "Đang điều trị" : (item.State == "done" ? "Hoàn thành" : "Ngừng điều trị");
 
@@ -422,52 +397,52 @@ namespace TMTDentalAPI.Controllers
 
                 worksheet3.Cells["A8:B8"].Value = "Khách hàng thanh toán dịch vụ và thuốc";
                 worksheet3.Cells["A8:B8"].Merge = true;
-                worksheet3.Cells["C8"].Value = dataCashBook.DataReports.ToArray()[0].Credit;
+                worksheet3.Cells["C8"].Value = dataCashBook.DataThuChiReport.CustomerIncomeTotal;
                 worksheet3.Cells["C8"].Style.Numberformat.Format = "#,##0";
 
                 worksheet3.Cells["A9:B9"].Value = "Khách hàng đóng tạm ứng";
                 worksheet3.Cells["A9:B9"].Merge = true;
-                worksheet3.Cells["C9"].Value = dataCashBook.DataReports.ToArray()[2].Credit;
+                worksheet3.Cells["C9"].Value = dataCashBook.DataThuChiReport.AdvanceIncomeTotal;
                 worksheet3.Cells["C9"].Style.Numberformat.Format = "#,##0";
 
                 worksheet3.Cells["A10:B10"].Value = "Thu công nợ khách hàng";
                 worksheet3.Cells["A10:B10"].Merge = true;
-                worksheet3.Cells["C10"].Value = dataCashBook.DataReports.ToArray()[1].Credit;
+                worksheet3.Cells["C10"].Value = dataCashBook.DataThuChiReport.DebtIncomeTotal;
                 worksheet3.Cells["C10"].Style.Numberformat.Format = "#,##0";
 
                 worksheet3.Cells["A11:B11"].Value = "Nhà cung cấp hoàn tiền";
                 worksheet3.Cells["A11:B11"].Merge = true;
-                worksheet3.Cells["C11"].Value = dataCashBook.DataReports.ToArray()[3].Credit;
+                worksheet3.Cells["C11"].Value = dataCashBook.DataThuChiReport.SupplierIncomeTotal;
                 worksheet3.Cells["C11"].Style.Numberformat.Format = "#,##0";
 
                 worksheet3.Cells["A12:B12"].Value = "Thu ngoài";
                 worksheet3.Cells["A12:B12"].Merge = true;
-                worksheet3.Cells["C12"].Value = (dataCashBook.DataAmountTotals.ToArray()[0].TotalThu - (dataCashBook.DataReports.ToArray()[3].Credit + dataCashBook.DataReports.ToArray()[1].Credit + dataCashBook.DataReports.ToArray()[2].Credit + dataCashBook.DataReports.ToArray()[0].Credit));
+                worksheet3.Cells["C12"].Value = dataCashBook.DataThuChiReport.OtherIncomeTotal;
                 worksheet3.Cells["C12"].Style.Numberformat.Format = "#,##0";
 
                 worksheet3.Cells["D8:E8"].Value = "Thanh toán cho nhà cung cấp";
                 worksheet3.Cells["D8:E8"].Merge = true;
-                worksheet3.Cells["F8"].Value = dataCashBook.DataReports.ToArray()[3].Debit;
+                worksheet3.Cells["F8"].Value = dataCashBook.DataThuChiReport.SupplierExpenseTotal;
                 worksheet3.Cells["F8"].Style.Numberformat.Format = "#,##0";
 
                 worksheet3.Cells["D9:E9"].Value = "Hoàn tạm ứng cho khách hàng";
                 worksheet3.Cells["D9:E9"].Merge = true;
-                worksheet3.Cells["F9"].Value = dataCashBook.DataReports.ToArray()[2].Debit;
+                worksheet3.Cells["F9"].Value = dataCashBook.DataThuChiReport.AdvanceExpenseTotal;
                 worksheet3.Cells["F9"].Style.Numberformat.Format = "#,##0";
 
                 worksheet3.Cells["D10:E10"].Value = "Chi lương nhân viên";
                 worksheet3.Cells["D10:E10"].Merge = true;
-                worksheet3.Cells["F10"].Value = dataCashBook.DataReports.ToArray()[4].Debit;
+                worksheet3.Cells["F10"].Value = dataCashBook.DataThuChiReport.SalaryExpenseTotal;
                 worksheet3.Cells["F10"].Style.Numberformat.Format = "#,##0";
 
                 worksheet3.Cells["D11:E11"].Value = "Hoa hồng người giới thiệu";
                 worksheet3.Cells["D11:E11"].Merge = true;
-                worksheet3.Cells["F11"].Value = dataCashBook.DataReports.ToArray()[5].Debit;
+                worksheet3.Cells["F11"].Value = dataCashBook.DataThuChiReport.CommissionExpenseTotal;
                 worksheet3.Cells["F11"].Style.Numberformat.Format = "#,##0";
 
                 worksheet3.Cells["D12:E12"].Value = "Chi ngoài";
                 worksheet3.Cells["D12:E12"].Merge = true;
-                worksheet3.Cells["F12"].Value = (dataCashBook.DataAmountTotals.ToArray()[0].TotalChi - (dataCashBook.DataReports.ToArray()[5].Debit + dataCashBook.DataReports.ToArray()[4].Debit + dataCashBook.DataReports.ToArray()[2].Debit + dataCashBook.DataReports.ToArray()[3].Debit));
+                worksheet3.Cells["F12"].Value = dataCashBook.DataThuChiReport.OtherExpenseTotal;
                 worksheet3.Cells["F12"].Style.Numberformat.Format = "#,##0";
 
                 worksheet3.Cells[7, 1, 12, 6].Style.Border.Top.Style = ExcelBorderStyle.Thin;

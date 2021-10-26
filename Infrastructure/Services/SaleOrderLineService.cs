@@ -1192,6 +1192,11 @@ namespace Infrastructure.Services
                .FirstOrDefaultAsync();
 
             UpdateOrderInfo(new List<SaleOrderLine>() { saleLine }, order);
+            _GetInvoiceQty(new List<SaleOrderLine>() { saleLine });
+            _GetToInvoiceQty(new List<SaleOrderLine>() { saleLine });
+            _GetInvoiceAmount(new List<SaleOrderLine>() { saleLine });
+            _GetToInvoiceAmount(new List<SaleOrderLine>() { saleLine });
+            _ComputeInvoiceStatus(new List<SaleOrderLine>() { saleLine });
             ComputeAmount(new List<SaleOrderLine>() { saleLine });
 
             await CreateAsync(saleLine);

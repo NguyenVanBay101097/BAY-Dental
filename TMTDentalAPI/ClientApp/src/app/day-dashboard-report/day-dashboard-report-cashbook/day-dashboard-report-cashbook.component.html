@@ -32,23 +32,23 @@
                                     <i class="fas fa-exclamation-circle"></i>
                                 </span>
                             </span>
-                            <span>{{cashbookCashBank?.credit || 0 | number}}</span>
+                            <span>{{cashBookDataReport?.customerIncomeTotal || 0 | number}}</span>
                         </div>
                         <div class="my-2 d-flex justify-content-between">
                             <span class="title-detail">Khách hàng đóng tạm ứng</span>
-                            <span>{{cashbookCusAdvance?.credit || 0 | number}}</span>
+                            <span>{{cashBookDataReport?.advanceIncomeTotal || 0 | number}}</span>
                         </div>
                         <div class="my-2 d-flex justify-content-between">
                             <span class="title-detail">Thu công nợ khách hàng</span>
-                            <span>{{cashbookCusDebt?.credit || 0 | number}}</span>
+                            <span>{{cashBookDataReport?.debtIncomeTotal || 0 | number}}</span>
                         </div>
                         <div class="my-2 d-flex justify-content-between">
                             <span class="title-detail">Nhà cung cấp hoàn tiền</span>
-                            <span>{{cashbookSupp?.credit || 0 | number}}</span>
+                            <span>{{cashBookDataReport?.supplierIncomeTotal || 0 | number}}</span>
                         </div>
                         <div class="my-2 d-flex justify-content-between">
                             <span class="title-detail">Thu ngoài</span>
-                            <span>{{(ortherThu ? ortherThu : 0 ) | number}}</span>
+                            <span>{{cashBookDataReport?.otherIncomeTotal || 0 | number}}</span>
                         </div>
                     </div>
                 </div>
@@ -61,23 +61,23 @@
                     <div class="card-body">
                         <div class="my-2 d-flex justify-content-between">
                             <span class="title-detail">Thanh toán cho nhà cung cấp</span>
-                            <span>{{cashbookSupp?.debit || 0 | number}}</span>
+                            <span>{{cashBookDataReport?.supplierExpenseTotal || 0 | number}}</span>
                         </div>
                         <div class="my-2 d-flex justify-content-between">
                             <span class="title-detail">Hoàn tạm ứng cho khách hàng</span>
-                            <span>{{cashbookCusAdvance?.debit || 0 | number}}</span>
+                            <span>{{cashBookDataReport?.advanceExpenseTotal || 0 | number}}</span>
                         </div>
                         <div class="my-2 d-flex justify-content-between">
                             <span class="title-detail">Chi lương nhân viên</span>
-                            <span>{{cashbookCusSalary?.debit || 0 | number}}</span>
+                            <span>{{cashBookDataReport?.salaryExpenseTotal || 0 | number}}</span>
                         </div>
                         <div class="my-2 d-flex justify-content-between">
                             <span class="title-detail">Hoa hồng người giới thiệu</span>
-                            <span>{{cashbookAgentCommission?.debit || 0 | number}}</span>
+                            <span>{{cashBookDataReport?.commissionExpenseTotal || 0 | number}}</span>
                         </div>
                         <div class="my-2 d-flex justify-content-between">
                             <span class="title-detail">Chi ngoài</span>
-                            <span>{{(ortherChi ? ortherChi : 0) | number}}</span>
+                            <span>{{cashBookDataReport?.otherExpenseTotal || 0 | number}}</span>
                         </div>
                     </div>
                 </div>

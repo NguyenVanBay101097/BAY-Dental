@@ -13,7 +13,7 @@ import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-ken
   styleUrls: ['./day-dashboard-report-cashbook.component.css']
 })
 export class DayDashboardReportCashbookComponent implements OnInit {
-  @Input() cashBookDataReport: any[] = [];
+  @Input() cashBookDataReport: any;
   @Input() totalCashBook: any[] = [];
   @Input() gridDataCashBook: any[] = [];
   gridData: GridDataResult;

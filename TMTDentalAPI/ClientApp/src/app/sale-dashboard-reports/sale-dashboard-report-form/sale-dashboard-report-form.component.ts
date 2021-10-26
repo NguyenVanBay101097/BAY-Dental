@@ -81,7 +81,6 @@ export class SaleDashboardReportFormComponent implements OnInit {
   }
 
   changeCompany(e) {
-    console.log(this.companyId);
     this.loadReportAmountTotal();
     this.loadDataRevenueChartApi();
     this.loadDataRevenueApi();
