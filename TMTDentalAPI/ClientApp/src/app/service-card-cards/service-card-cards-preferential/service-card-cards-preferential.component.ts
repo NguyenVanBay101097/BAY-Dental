@@ -67,9 +67,9 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
     val.offset = this.skip;
     val.search = this.search ? this.search : '';
     val.state = this.state ? this.state : '';
-    // val.activatedDate = this.activatedDate ? moment(this.activatedDate).format('YYYY-MM-DD') : '';
-    // val.expiredDateFrom = this.expiredDateFrom ? moment(this.expiredDateFrom).format('YYYY-MM-DD') : '';
-    // val.expiredDateTo = this.expiredDateTo ? moment(this.expiredDateTo).format('YYYY-MM-DD') : '';
+    val.activatedDate = this.activatedDate ? moment(this.activatedDate).format('YYYY-MM-DD') : '';
+    val.expiredDateFrom = this.expiredDateFrom ? moment(this.expiredDateFrom).format('YYYY-MM-DD') : '';
+    val.expiredDateTo = this.expiredDateTo ? moment(this.expiredDateTo).format('YYYY-MM-DD') : '';
     
     this.serviceCardsService.getPaged(val).pipe(
       map((response: any) => (<GridDataResult>{
