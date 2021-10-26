@@ -296,14 +296,14 @@ const keyWorDatas =
         {
             text: 'Thông tin chung',
             value: [
-                { text: 'Người nhận', value: '{{partner_name}}' },
-                { text: 'Địa chỉ người nhận', value: '{{address}}' },
-                { text: 'Loại chi', value: '{{loai_thu_chi_name}}' },
-                { text: 'Số tiền', value: '{{amount}}' },
-                { text: 'Số tiền bằng chữ', value: '{{amount_text}}' },
-                { text: 'Phương thức', value: '{{journal_name}}' },
-                { text: 'Nội dung', value: '{{reason}}' },
-                { text: 'Người lập phiếu', value: '{{created_by_name}}' },
+                { text: 'Người nhận', value: '{{o.partner?.name}}' },
+                { text: 'Địa chỉ người nhận', value: '{{o.partner?.address}}' },
+                { text: 'Loại chi', value: '{{o.loai_thu_chi?.name}}' },
+                { text: 'Số tiền', value: '{{o.amount}}' },
+                { text: 'Số tiền bằng chữ', value: '{{o.amount_text}}' },
+                { text: 'Phương thức', value: '{{o.journal?.name}}' },
+                { text: 'Nội dung', value: '{{o.reason}}' },
+                { text: 'Người lập phiếu', value: '{{o.created_by?.name }}' },
             ]
         }
     ],
