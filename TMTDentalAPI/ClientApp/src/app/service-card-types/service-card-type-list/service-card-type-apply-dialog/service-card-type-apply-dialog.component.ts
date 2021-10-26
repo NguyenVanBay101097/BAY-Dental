@@ -9,7 +9,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 export class ServiceCardTypeApplyDialogComponent implements OnInit {
   price: number = 0;
   computePrice = 'percentage';
-  totalPrice: number = 0;
+  priceMin: number;
   categId: string;
   title: string;
   constructor(public activeModal: NgbActiveModal,) { }

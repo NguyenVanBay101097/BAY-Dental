@@ -123,6 +123,7 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
     let modalRef = this.modalService.open(ServiceCardTypeApplyDialogComponent, 
       { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = 'Áp dụng ưu đãi cho tất cả dịch vụ';
+      modalRef.componentInstance.priceMin = min;
       modalRef.result.then(res => {
         if (res.computePrice == 'percentage' && res.price > 100){
           this.notify('Ưu đãi vượt quá giá bán','error');
@@ -150,6 +151,7 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
     let modalRef = this.modalService.open(ServiceCardTypeApplyDialogComponent, 
       { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = 'Áp dụng ưu đãi cho nhóm dịch vụ';
+      modalRef.componentInstance.priceMin = min;
       modalRef.result.then(res => {
         if (res.computePrice == 'percentage' && res.price > 100){
           this.notify('Ưu đãi vượt quá giá bán','error');
