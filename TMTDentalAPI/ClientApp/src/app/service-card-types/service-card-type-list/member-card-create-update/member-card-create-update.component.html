@@ -1,0 +1,119 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb w-100">
+            <li>
+                <a [routerLink]="['/card-types/member-cards']">
+                    Danh sách loại thẻ
+                </a>
+            </li>
+            <li class="active">
+                <span *ngIf="cardTypeId">{{cardTypeName}}</span>
+                <span *ngIf="!cardTypeId">Tạo mới</span>
+            </li>
+        </ol>
+        <div class="o_cp_left">
+            <button class="btn btn-primary" (click)="onSave()">Lưu</button>
+        </div>
+    </div>
+</div>
+<div class="o_content">
+    <form class="o_form_view" [formGroup]="cardForm">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet_new flex-1-1-100 h-100">
+                <div class="o_group">
+                    <div class="o_group o_inner_group o_group_col_6">
+                        <div class="d-flex align-items-center w-100">
+                            <div class="o_td_label mr-2">Tên hạng thẻ</div>
+                            <div class="flex-grow-1">
+                                <input class="form-control" formControlName="name">
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center w-100 mb-3">
+                            <div class="o_td_label mr-2"></div>
+                            <div class="flex-grow-1" style="height: 22px;">
+                                <div class="text-danger">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center w-100">
+                            <div class="o_td_label mr-2">Điểm tích lũy tối thiểu
+                                <span class="text-primary" placement="top" ngbTooltip="Số điểm tích lũy tối thiểu để đạt hạng thành viên này. Với tỷ lệ quy đổi là 10.000đ thực thu tương ứng với 1 điểm tích lũy.">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                </span>
+                            </div>
+                            <div class="flex-grow-1">
+                                <kendo-numerictextbox  [min]="0" autoCorrect = 'true'  [format]="'n0'" class="mr-2" formControlName="basicPoint">
+                                </kendo-numerictextbox>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center w-100 mb-3">
+                            <div class="o_td_label mr-2"></div>
+                            <div class="flex-grow-1" style="height: 22px;">
+                                <div class="text-danger">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center w-100">
+                            <div class="o_td_label mr-2">Màu sắc</div>
+                            <div class="flex-grow-1">
+                                <button *ngFor="let item of [].constructor(12); index as i" type="button"
+                                        class="btn btn-square mr-2 mb-2" [ngClass]="'o_tag_color_' + i"
+                                        (click)="clickColor(i)">
+                                        <i *ngIf="i == colorSelected" class="fas fa-check"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="o_td_label mb-2">
+                    Cấu hình ưu đãi
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <app-service-list-search-dropdown (onSelectService)="addLine($event)" [placeHolder] = "'Tìm kiếm theo mã hoặc tên dịch vụ...'" ></app-service-list-search-dropdown>
+                    <div style="margin-right: 10.5px;">
+                        <button class="btn btn-primary" (click) = onApplyAll()>Áp dụng cho toàn bộ</button>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="categories.length > 0">
+                <table class="table">
+                    <tr>
+                        <th>Tên dịch vụ</th>
+                        <th>Giá bán</th>
+                        <th class="text-center">Ưu đãi theo thẻ</th>
+                    </tr>
+                    <ng-container *ngFor="let categ of categories; let categIndex = index">
+                        <tr>
+                            <td colspan="2" class="o_td_label">
+                                {{categ[0].categName}}
+                            </td>
+                            <td class="text-right">
+                                <button class="btn btn-primary" (click) = "onApplyCateg(categ[0].categId)">Áp dụng cho cả nhóm</button>
+                            </td>
+                        </tr>
+                        <tr *ngFor="let product of categ[0].products ; let productIndex = index">
+                            <td class="w-50">
+                                <div>{{product.name}}</div>
+                                <div>{{product.defaultCode}}</div>
+                            </td>
+                            <td class="w-20">{{product.listPrice | number}}</td>
+                            <td class="w-30 text-right">
+                                <kendo-numerictextbox [min]="0" autoCorrect = 'true'  [format]="'n0'" class="mr-2" style="width:70%">
+                                </kendo-numerictextbox>
+                                <input type="radio" class="btn-check" [id]="'btn-check-1'+categIndex + productIndex"
+                                value = "percentage">
+                                <label class="btn btn-outline-primary mb-0 mr-2"
+                                [for]="'btn-check-1'+categIndex + productIndex">%</label>
+                                <input type="radio" class="btn-check" [id]="'btn-check-2'+categIndex + productIndex"
+                                value = "fixed_amount">
+                                <label class="btn btn-outline-primary mb-0 mr-2"
+                                [for]="'btn-check-2'+categIndex + productIndex">VNĐ</label>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </table>
+            </div>
+        </div>
+    </form>
+</div>

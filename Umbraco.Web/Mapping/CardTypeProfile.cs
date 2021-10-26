@@ -13,7 +13,7 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<CardType, CardTypeBasic>();
             CreateMap<CardType, CardTypeDisplay>()
-               .ForMember(x => x.productPricelistItems, x => x.MapFrom(z => z.Pricelist.Items));
+               .ForMember(x => x.ProductPricelistItems, x => x.MapFrom(z => z.Pricelist.Items));
 
             CreateMap<CardTypeDisplay, CardType>()
                 .ForMember(x => x.Id, x => x.Ignore())

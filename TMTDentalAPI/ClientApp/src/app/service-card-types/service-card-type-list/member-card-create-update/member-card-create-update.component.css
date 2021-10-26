@@ -12,3 +12,15 @@
 .select-control {
     min-width: 100px;
 }
+
+.btn-square {
+    width: 25px;
+    height: 25px;
+    position: relative;
+}
+
+.fa-check:before {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+}
