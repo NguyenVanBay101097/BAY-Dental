@@ -67,4 +67,11 @@ export class MemberCardCreateUpdateComponent implements OnInit {
 
   }
 
+  changeComputePrice(event,product){
+    console.log(event);
+    console.log(product);
+    
+    
+  }
+
 }

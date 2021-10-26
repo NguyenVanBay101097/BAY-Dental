@@ -19,7 +19,7 @@
 <div class="o_content">
     <form class="o_form_view" [formGroup]="cardForm">
         <div class="o_form_sheet_bg">
-            <div class="o_form_sheet_new flex-1-1-100 h-100">
+            <div class="o_form_sheet">
                 <div class="o_group">
                     <div class="o_group o_inner_group o_group_col_6">
                         <div class="d-flex align-items-center w-100">
@@ -99,16 +99,20 @@
                             </td>
                             <td class="w-20">{{product.listPrice | number}}</td>
                             <td class="w-30 text-right">
-                                <kendo-numerictextbox [min]="0" autoCorrect = 'true'  [format]="'n0'" class="mr-2" style="width:70%">
-                                </kendo-numerictextbox>
-                                <input type="radio" class="btn-check" [id]="'btn-check-1'+categIndex + productIndex"
-                                value = "percentage">
-                                <label class="btn btn-outline-primary mb-0 mr-2"
-                                [for]="'btn-check-1'+categIndex + productIndex">%</label>
-                                <input type="radio" class="btn-check" [id]="'btn-check-2'+categIndex + productIndex"
-                                value = "fixed_amount">
-                                <label class="btn btn-outline-primary mb-0 mr-2"
-                                [for]="'btn-check-2'+categIndex + productIndex">VNĐ</label>
+                                <div>
+                                    <kendo-numerictextbox [min]="0" autoCorrect = 'true'  [format]="'n0'" class="mr-2" style="width:100%">
+                                    </kendo-numerictextbox>
+                                    <div>
+                                        <input type="radio" class="btn-check" [id]="'btn-check-1'+categIndex + productIndex"
+                                        value = "percentage" (change)="changeComputePrice($event,product)">
+                                        <label class="btn btn-outline-primary mb-0 mr-2"
+                                        [for]="'btn-check-1'+categIndex + productIndex" [ngClass]="{'btn-primary':product.computePrice == 'percentage'}">%</label>
+                                        <input type="radio" class="btn-check" [id]="'btn-check-2'+categIndex + productIndex"
+                                        value = "fixed_amount" (change)="changeComputePrice($event,product)">
+                                        <label class="btn btn-outline-primary mb-0 mr-2"
+                                        [for]="'btn-check-2'+categIndex + productIndex" [ngClass]="{'btn-primary':product.computePrice != 'percentage'}">VNĐ</label>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                     </ng-container>
