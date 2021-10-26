@@ -30,8 +30,6 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
   dateTo: Date;
   today: Date = new Date();
   activatedDate: any;
-  expiredDateFrom: any;
-  expiredDateTo: any;
   state: string;
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
@@ -49,8 +47,8 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
   ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit(): void {
-    this.expiredDateFrom = this.monthStart;
-    this.expiredDateTo = this.monthEnd;
+    this.dateFrom = this.monthStart;
+    this.dateTo = this.monthEnd;
     this.loadDataFromApi();
     this.searchUpdate.pipe(
       debounceTime(400),
@@ -68,8 +66,8 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
     val.search = this.search ? this.search : '';
     val.state = this.state ? this.state : '';
     val.activatedDate = this.activatedDate ? moment(this.activatedDate).format('YYYY-MM-DD') : '';
-    val.expiredDateFrom = this.expiredDateFrom ? moment(this.expiredDateFrom).format('YYYY-MM-DD') : '';
-    val.expiredDateTo = this.expiredDateTo ? moment(this.expiredDateTo).format('YYYY-MM-DD') : '';
+    val.dateFrom = this.dateFrom ? moment(this.dateFrom).format('YYYY-MM-DD') : '';
+    val.dateTo = this.dateTo ? moment(this.dateTo).format('YYYY-MM-DD') : '';
     
     this.serviceCardsService.getPaged(val).pipe(
       map((response: any) => (<GridDataResult>{
@@ -126,8 +124,8 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
   }
 
   onSearchChange(data) {
-    this.expiredDateFrom = data.dateFrom;
-    this.expiredDateTo = data.dateTo;
+    this.dateFrom = data.dateFrom;
+    this.dateTo = data.dateTo;
     this.skip = 0;
     this.loadDataFromApi();
   }

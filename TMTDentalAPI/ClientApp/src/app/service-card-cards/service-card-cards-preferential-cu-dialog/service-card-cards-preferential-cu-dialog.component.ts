@@ -48,7 +48,7 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
       activatedDateObj: null,
       expiredDateObj: null,
       partner: null,
-      cardType: null,
+      cardType: [null, Validators.required],
       state: 'draft',
     });
 
@@ -58,17 +58,6 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
 
     this.loadCustomers();
     this.loadCardTypes();
-    this.customerCbx.filterChange
-      .asObservable()
-      .pipe(
-        debounceTime(300),
-        tap(() => (this.customerCbx.loading = true)),
-        switchMap((value) => this.searchCustomers(value))
-      )
-      .subscribe((result) => {
-        this.customerSimpleFilter = result;
-        this.customerCbx.loading = false;
-      });
   }
 
   setValueFC(key: string, value: any) {
@@ -135,6 +124,7 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
       }, (error) => { console.log(error) });
     } else {
       this.serviceCardsService.create(val).subscribe((res: any) => {
+        console.log(res);
         this.activeModal.close(res);
       }, (error) => { console.log(error) });
     }
@@ -142,11 +132,27 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
   }
 
   actionActivate() {
+    this.submitted = true;
+    if (this.formGroup.invalid) {
+      return false;
+    }
+    let val = this.formGroup.value;
+    val.partnerId = this.partnerId ? this.partnerId : (val.partner ? val.partner.id : '');
+    val.cardTypeId = val.cardType ? val.cardType.id : '';
+    
     if (this.id) {
       this.serviceCardsService.buttonActive([this.id]).subscribe((res: any) => {
         this.notifyService.notify('success', 'Kích hoạt thành công');
         this.activeModal.close();
       })
+    }
+    else {
+      this.serviceCardsService.create(val).subscribe((res: any) => {
+        this.serviceCardsService.buttonActive([res.id]).subscribe((res: any) => {
+          this.notifyService.notify('success', 'Kích hoạt thành công');
+          this.activeModal.close();
+        })
+      }, (error) => { console.log(error) });
     }
 
   }

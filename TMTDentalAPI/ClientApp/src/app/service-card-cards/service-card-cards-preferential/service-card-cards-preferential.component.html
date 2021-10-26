@@ -18,14 +18,15 @@
     <div class="o_cp_searchview">
         <div class="o_search_options d-flex w-100">
             <div class="mr-2">
-                <kendo-datepicker [format]="'dd/MM/yyyy'" placeholder="Ngày kích hoạt" [(value)]="activatedDate" (valueChange)="onChangeActivatedDate($event)">
+                <kendo-datepicker [format]="'dd/MM/yyyy'" placeholder="Ngày kích hoạt" [(value)]="activatedDate"
+                    (valueChange)="onChangeActivatedDate($event)">
                 </kendo-datepicker>
             </div>
             <div class="mr-2">
-                <app-date-range-picker-filter [opens]="'left'" [startDate]="expiredDateFrom" [endDate]="expiredDateTo"
+                <app-date-range-picker-filter [opens]="'left'" [startDate]="dateFrom" [endDate]="dateTo"
                     (searchChange)="onSearchChange($event)"></app-date-range-picker-filter>
             </div>
-            <kendo-combobox style="width: 120px;" (selectionChange)="onChangeState($event)"
+            <kendo-combobox style="width: 160px;" (selectionChange)="onChangeState($event)"
                 placeholder="Tất cả trạng thái" [data]="filterState" [textField]="'name'" [valueField]="'value'">
             </kendo-combobox>
         </div>
@@ -73,13 +74,15 @@
         </kendo-grid-column>
         <kendo-grid-column field="cardType.name" title="Hạng thẻ">
         </kendo-grid-column>
-        <kendo-grid-column field="partner.name" title="Họ tên">
+        <kendo-grid-column field="partner.name" title="Họ tên" width="200">
         </kendo-grid-column>
         <kendo-grid-column field="partner.phone" title="Điện thoại">
         </kendo-grid-column>
-        <kendo-grid-column title="Thời gian áp dụng">
+        <kendo-grid-column title="Thời gian áp dụng" width="180">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.expiredDate | date : 'shortDate'}}
+                <span *ngIf="dataItem.activatedDate">
+                    {{dataItem.activatedDate | date : 'shortDate'}} - {{(dataItem.expiredDate | date : 'shortDate')}}
+                </span>
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column title="Ngày kích hoạt">

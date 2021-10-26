@@ -5,6 +5,6 @@ export class ServiceCardCardPaged {
     orderId: string;
     state: string;
     activatedDate: string;
-    expiredDateFrom: string;
-    expiredDateTo: string;
+    dateFrom: string;
+    dateTo: string;
 }
