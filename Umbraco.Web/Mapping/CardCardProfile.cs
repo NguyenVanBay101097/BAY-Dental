@@ -11,6 +11,7 @@ namespace Umbraco.Web.Mapping
     {
         public CardCardProfile()
         {
+            CreateMap<CardCardSave, CardCard>();
             CreateMap<CardCard, CardCardBasic>();
             CreateMap<CardCard, CardCardDisplay>();
             CreateMap<CardCardDisplay, CardCard>()

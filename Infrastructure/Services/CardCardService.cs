@@ -50,8 +50,10 @@ namespace Infrastructure.Services
         {
             ISpecification<CardCard> spec = new InitialSpecification<CardCard>(x => true);
             if (!string.IsNullOrEmpty(val.Search))
-                spec = spec.And(new InitialSpecification<CardCard>(x => x.Name.Contains(val.Search) ||
-                x.Barcode.Contains(val.Search) || x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search)));
+                spec = spec.And(new InitialSpecification<CardCard>(x => x.Name.Contains(val.Search) || x.Barcode.Contains(val.Search)
+                || x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search) || x.Partner.Phone.Contains(val.Search)
+                || x.Type.Name.Contains(val.Search)));
+
             if (val.PartnerId.HasValue)
                 spec = spec.And(new InitialSpecification<CardCard>(x => x.PartnerId == val.PartnerId));
             if (!string.IsNullOrEmpty(val.Barcode))
@@ -88,10 +90,30 @@ namespace Infrastructure.Services
             };
         }
 
+        public override async Task UpdateAsync(IEnumerable<CardCard> entities)
+        {
+            await base.UpdateAsync(entities);
+            foreach (var card in entities)
+            {
+                await _CheckBarcodeUnique(card.Barcode);
+                await _CheckPartnerUnique(card);
+            }
+        }
+
+        private async Task _CheckPartnerUnique(CardCard self)
+        {
+            if (!self.PartnerId.HasValue)
+                return;
+
+            var count = await SearchQuery(x => x.PartnerId == self.PartnerId && x.TypeId == self.TypeId).CountAsync();
+            if (count >= 2)
+                throw new Exception($"Khách hàng{(self.Partner != null ? $" {self.Partner.Name}" : "")} đã có thẻ thành viên");
+        }
+
         public override async Task<IEnumerable<CardCard>> CreateAsync(IEnumerable<CardCard> self)
         {
             var seqObj = GetService<IIRSequenceService>();
-            foreach(var card in self)
+            foreach (var card in self)
             {
                 if (string.IsNullOrEmpty(card.Name) || card.Name == "/")
                 {
@@ -102,14 +124,17 @@ namespace Infrastructure.Services
                         card.Name = await seqObj.NextByCode("sequence_seq_card_nb");
                     }
                 }
-                    
+
                 if (string.IsNullOrEmpty(card.Barcode))
                     card.Barcode = RandomBarcode();
             }
             await base.CreateAsync(self);
 
             foreach (var card in self)
+            {
                 await _CheckBarcodeUnique(card.Barcode);
+                await _CheckPartnerUnique(card);
+            }
 
             return self;
         }
@@ -174,7 +199,7 @@ namespace Infrastructure.Services
                     active_date = DateTime.Today;
 
                 var expiry_date = cardTypeObj.GetPeriodEndDate(card.Type);
-            
+
                 card.State = "in_use";
                 card.PointInPeriod = 0;
                 card.ActivatedDate = active_date;
@@ -197,11 +222,11 @@ namespace Infrastructure.Services
         public async Task Unlink(IEnumerable<Guid> ids)
         {
             var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
-            var states = new string[] { "draft", "cancelled" };
-            foreach(var card in self)
+            var states = new string[] { "draft" };
+            foreach (var card in self)
             {
                 if (!states.Contains(card.State))
-                    throw new Exception("Chỉ có thể xóa thẻ thành viên ở trạng thái nháp hoặc hủy bỏ");
+                    throw new Exception("Chỉ có thể xóa thẻ thành viên ở trạng thái chưa kích hoạt");
             }
             await DeleteAsync(self);
         }
@@ -277,7 +302,7 @@ namespace Infrastructure.Services
         {
             var cardTypeObj = GetService<ICardTypeService>();
             var cards_check_upgrade = new List<CardCard>();
-            foreach(var card in self)
+            foreach (var card in self)
             {
                 if (!card.UpgradeTypeId.HasValue)
                     continue;
@@ -300,7 +325,7 @@ namespace Infrastructure.Services
             var cardTypeObj = GetService<ICardTypeService>();
             var ids = self.Select(x => x.Id).ToList();
             self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Type).ToListAsync();
-            foreach(var r in self)
+            foreach (var r in self)
             {
                 if (!points.HasValue)
                     points = r.PointInPeriod ?? 0;

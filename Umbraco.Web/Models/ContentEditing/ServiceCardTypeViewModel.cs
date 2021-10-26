@@ -11,6 +11,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public int? NbrPeriod { get; set; }
         public IEnumerable<ProductPricelistItemCreate> ProductPricelistItems { get; set; } = new List<ProductPricelistItemCreate>();
+        public Guid? CompanyId { get; set; }
     }
 
     public class CreateServiceCardTypeRes
@@ -21,6 +22,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public int? NbrPeriod { get; set; }
         public IEnumerable<ProductPricelistItemDisplay> ProductPricelistItems { get; set; } = new List<ProductPricelistItemDisplay>();
+        public Guid? CompanyId { get; set; }
     }
 
     public class ServiceCardTypeSimple

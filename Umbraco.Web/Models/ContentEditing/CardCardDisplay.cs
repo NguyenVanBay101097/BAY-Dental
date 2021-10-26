@@ -43,5 +43,30 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool IsExpired { get; set; }
 
         public Guid? UpgradeTypeId { get; set; }
+
+        public string StateDisplay
+        {
+            get
+            {
+                switch (State)
+                {
+                    case "in_use":
+                        return "Đã kích hoạt";
+                    case "cancelled":
+                        return "Hủy thẻ";
+                    case "locked":
+                        return "Tạm dừng";
+                    default:
+                        return "Chưa kích hoạt";
+                }
+            }
+        }
+    }
+
+    public class CardCardSave
+    {
+        public Guid TypeId { get; set; }
+        public Guid? PartnerId { get; set; }
+        public string Barcode { get; set; }
     }
 }

@@ -29,7 +29,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class CardTypeSave
     {
-        public Guid Id { get; set; }
 
         [Required]
         public string Name { get; set; }

@@ -151,7 +151,7 @@ namespace Infrastructure.Services
 
             var count = await SearchQuery(x => x.Barcode == barcode).CountAsync();
             if (count >= 2)
-                throw new Exception($"Đã có thẻ dịch vụ với mã vạch {barcode}");
+                throw new Exception($"Đã có thẻ ưu đãi dịch vụ với mã vạch {barcode}");
         }
 
         private async Task _CheckPartnerUnique(ServiceCardCard self)
@@ -167,10 +167,11 @@ namespace Infrastructure.Services
         public async Task Unlink(IEnumerable<Guid> ids)
         {
             var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            var states = new string[] { "draft" };
             foreach (var card in self)
             {
-                if (card.State == "in_use")
-                    throw new Exception("Ưu đãi dịch vụ đã kích hoạt không thể xóa");
+                if (!states.Contains(card.State))
+                    throw new Exception("Chỉ có thể xóa thẻ ưu đãi dịch vụ ở trạng thái chưa kích hoạt");
             }
 
             await DeleteAsync(self);

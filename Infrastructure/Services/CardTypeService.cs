@@ -113,5 +113,29 @@ namespace Infrastructure.Services
                 self.Pricelist.Items.Add(item);
             }
         }
+
+        public override async Task UpdateAsync(IEnumerable<CardType> entities)
+        {
+            await base.UpdateAsync(entities);
+            foreach (var entity in entities)
+            {
+                await _CheckNameUnique(entity.Name);
+            }
+        }
+        private async Task _CheckNameUnique(string name)
+        {
+            var count = await SearchQuery(x => x.Name == name).CountAsync();
+            if (count >= 2)
+                throw new Exception($"Đã tồn tại tên hạng thẻ {name}");
+        }
+        public override async Task<IEnumerable<CardType>> CreateAsync(IEnumerable<CardType> entities)
+        {
+            await base.CreateAsync(entities);
+            foreach (var entity in entities)
+            {
+                await _CheckNameUnique(entity.Name);
+            }
+            return entities;
+        }
     }
 }

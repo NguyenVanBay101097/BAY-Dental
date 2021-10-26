@@ -56,28 +56,33 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost]
         [CheckAccess(Actions = "LoyaltyCard.CardCard.Create")]
-        public async Task<IActionResult> Create(CardCardDisplay val)
+        public async Task<IActionResult> Create(CardCardSave val)
         {
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
-            var type = _mapper.Map<CardCard>(val);
-            await _cardCardService.CreateAsync(type);
-            val.Id = type.Id;
-            return Ok(val);
+            var entity = _mapper.Map<CardCard>(val);
+            await _unitOfWork.BeginTransactionAsync();
+            await _cardCardService.CreateAsync(entity);
+            _unitOfWork.Commit();
+
+            var basic = _mapper.Map<CardCardDisplay>(entity);
+            return Ok(basic);
         }
 
         [HttpPut("{id}")]
         [CheckAccess(Actions = "LoyaltyCard.CardCard.Update")]
-        public async Task<IActionResult> Update(Guid id, CardCardDisplay val)
+        public async Task<IActionResult> Update(Guid id, CardCardSave val)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            var type = await _cardCardService.GetByIdAsync(id);
-            if (type == null)
+            var entity = await _cardCardService.GetByIdAsync(id);
+            if (entity == null)
                 return NotFound();
 
-            type = _mapper.Map(val, type);
-            await _cardCardService.UpdateAsync(type);
+            await _unitOfWork.BeginTransactionAsync();
+            entity = _mapper.Map(val, entity);
+            await _cardCardService.UpdateAsync(entity);
+            _unitOfWork.Commit();
 
             return NoContent();
         }
@@ -182,7 +187,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpGet("[action]")]
         [CheckAccess(Actions = "LoyaltyCard.CardCard.Read")]
-        public async Task<IActionResult> ExportExcelFile([FromQuery]CardCardPaged val)
+        public async Task<IActionResult> ExportExcelFile([FromQuery] CardCardPaged val)
         {
             var stream = new MemoryStream();
             val.Limit = int.MaxValue;
@@ -215,7 +220,7 @@ namespace TMTDentalAPI.Controllers
                     var item = items[row - 2];
                     var self = await _cardCardService.GetByIdAsync(item.Id);
                     var selfDisplay = _mapper.Map<CardCardDisplay>(self);
-                    
+
                     worksheet.Cells[row, 1].Value = item.Name;
                     worksheet.Cells[row, 2].Value = item.Barcode;
                     worksheet.Cells[row, 3].Value = item.TypeName;
