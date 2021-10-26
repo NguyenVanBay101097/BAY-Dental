@@ -56,5 +56,8 @@ namespace ApplicationCore.Entities
         public Guid? ServiceCardCardId { get; set; }
         public ServiceCardCard ServiceCardCard { get; set; }
 
+        public Guid? CardCardId { get; set; }
+        public CardCard CardCard { get; set; }
+
     }
 }

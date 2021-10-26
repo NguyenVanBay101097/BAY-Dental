@@ -29,8 +29,12 @@ namespace Infrastructure.Services
             ISpecification<CardType> spec = new InitialSpecification<CardType>(x => true);
             if (!string.IsNullOrEmpty(val.Search))
                 spec = spec.And(new InitialSpecification<CardType>(x => x.Name.Contains(val.Search)));
-            
+
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderBy(s => s.Name));
+            var totalItems = await query.CountAsync();
+
+            if (val.Limit > 0)
+                query = query.Skip(val.Offset).Take(val.Limit);
 
             var items = await query.Select(x => new CardTypeBasic
             {
@@ -38,7 +42,6 @@ namespace Infrastructure.Services
                 Name = x.Name,
             }).ToListAsync();
 
-            var totalItems = await query.CountAsync();
             return new PagedResult2<CardTypeBasic>(totalItems, val.Offset, val.Limit)
             {
                 Items = items
@@ -90,6 +93,25 @@ namespace Infrastructure.Services
             if (self.Period == "year")
                 nb = nb * 12;
             return dStart.Value.AddMonths(nb);
+        }
+
+        public void SaveProductPricelistItem(CardType self, IEnumerable<ProductPricelistItem> listItems)
+        {
+            if (self.Pricelist == null)
+            {
+                var prList = new ProductPricelist()
+                {
+                    Name = "Bảng giá của ưu đãi " + self.Name
+                };
+                self.Pricelist = prList;
+            }
+
+            self.Pricelist.Items.Clear();
+            foreach (var item in listItems)
+            {
+                item.CompanyId = self.Pricelist.CompanyId;
+                self.Pricelist.Items.Add(item);
+            }
         }
     }
 }
