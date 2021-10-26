@@ -44,23 +44,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? UpgradeTypeId { get; set; }
 
-        public string StateDisplay
-        {
-            get
-            {
-                switch (State)
-                {
-                    case "in_use":
-                        return "Đã kích hoạt";
-                    case "cancelled":
-                        return "Hủy thẻ";
-                    case "locked":
-                        return "Tạm dừng";
-                    default:
-                        return "Chưa kích hoạt";
-                }
-            }
-        }
     }
 
     public class CardCardSave
