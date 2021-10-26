@@ -10,7 +10,7 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <kendo-datepicker (valueChange)="onChangeDate($event)" class="mr-2" [value]="date">
+                    <kendo-datepicker (valueChange)="onChangeDate($event)" class="mr-2" [value]="date" [disabledDates]="disabledDates">
                     </kendo-datepicker>
                     <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-2" [valueField]="'id'"
                         [textField]="'name'" [filterable]="true" [data]="listCompany"

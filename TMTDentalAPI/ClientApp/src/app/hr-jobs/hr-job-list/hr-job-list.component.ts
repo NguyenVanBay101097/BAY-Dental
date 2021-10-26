@@ -83,7 +83,7 @@ export class HrJobListComponent implements OnInit {
   deleteItem(item: any) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa chức vụ nhân viên';
-    modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa?`;
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa chức vụ nhân viên?';
     modalRef.result.then(() => {
       this.hrJobService.delete(item.id).subscribe(() => {
         this.notifyService.notify('success','Xóa thành công');

@@ -46,6 +46,7 @@ export class DayDashboardReportManagementComponent implements OnInit {
     { value: 'all', text: 'Total' },
   ];
 
+  maxDate = new Date();
   constructor(
     private authService: AuthService,
     private intlService: IntlService,
@@ -238,5 +239,9 @@ export class DayDashboardReportManagementComponent implements OnInit {
         window.URL.revokeObjectURL(data);
       }, 100);
     })
+  }
+
+  public disabledDates = (date: Date): boolean => {
+    return date >= this.maxDate;
   }
 }

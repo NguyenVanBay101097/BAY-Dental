@@ -125,7 +125,7 @@
                     (valueChange)="onDateChange()">
                   </kendo-numerictextbox>
                   <div *ngIf="dateAppliesControl?.errors?.required" class="text-danger">
-                    Nhập số ngày áp dụng
+                    Nhập số ngày
                   </div>
                 </td>
               </tr>
@@ -175,7 +175,7 @@
                       [filteredToothCategories]="filteredToothCategories" [initialListTeeths]="listTeeths"
                       (onUpdateOpenPromotionEvent)="
                         onUpdateOpenLinePromotion($event, line, i)
-                      " [line]="line" (onCancelEvent)="onCancelEditLine($event)" (onEditEvent)="onEditLine($event)"
+                      " [line]="line" (onCancelEvent)="onCancelEditLine($event, i)" (onEditEvent)="onEditLine($event)"
                       (onUpdateEvent)="updateLineInfo($event, i)" (onDeleteEvent)="onDeleteLine(i)">
                     </app-quotation-line-cu>
                   </ng-container>
