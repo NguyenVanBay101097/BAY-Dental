@@ -210,8 +210,8 @@ namespace Infrastructure.Services
             var invoiceObj = GetService<IAccountInvoiceReportService>();
             var cashbookObj = GetService<ICashBookService>();
 
-            var accCodes = new string[] { "131", "CNKH" , "KHTU" };
-            var revenues = await invoiceObj.GetRevenueChartReport(dateFrom: dateFrom, dateTo: dateTo, companyId: companyId, groupBy: groupBy ,accountCode: accCodes);
+            var accCodes = new string[] { "131", "CNKH", "KHTU" };
+            var revenues = await invoiceObj.GetRevenueChartReport(dateFrom: dateFrom, dateTo: dateTo, companyId: companyId, groupBy: groupBy, accountCode: accCodes);
             var revenue_dict = revenues.ToDictionary(x => x.InvoiceDate, x => x);
 
             var cashbooks = await cashbookObj.GetCashBookChartReport(dateFrom: dateFrom, dateTo: dateTo, companyId: companyId, groupBy: groupBy);
@@ -235,6 +235,41 @@ namespace Infrastructure.Services
             return res;
 
         }
+        public async Task<GetThuChiReportResponse> GetThuChiReport(DateTime? dateFrom, DateTime? dateTo, Guid? companyId)
+        {
+            var amlObj = GetService<IAccountMoveLineService>();
+            //báo cáo doanh thu thực thu
+            var resdateFrom = dateFrom.HasValue ? dateFrom.Value.AbsoluteBeginOfDate() : (DateTime?)null;
+            var resdateTo = dateTo.HasValue ? dateTo.Value.AbsoluteEndOfDate() : (DateTime?)null;
+            var query = amlObj._QueryGet(dateTo: resdateTo, dateFrom: resdateFrom, state: "posted", companyId: companyId);
+            query = query.Where(x => (x.Journal.Type == "cash" || x.Journal.Type == "bank") && x.AccountInternalType != "liquidity");
+
+            var customerIncomeTotal = await query.Where(x => x.AccountInternalType == "receivable").SumAsync(x => x.Credit);
+            var advanceIncomeTotal = await query.Where(x => x.Account.Code == "KHTU").SumAsync(x => x.Credit);
+            var debtIncomeTotal = await query.Where(x => x.Account.Code == "CNKH").SumAsync(x => x.Credit);
+            var supplierIncomeTotal = await query.Where(x => x.AccountInternalType == "payable").SumAsync(x => x.Credit);
+            var cashBankIncomeTotal = await query.SumAsync(x => x.Credit);
+
+            var supplierExpenseTotal = await query.Where(x => x.AccountInternalType == "payable").SumAsync(x => x.Debit);
+            var advanceExpenseTotal = await query.Where(x => x.Account.Code == "HTU").SumAsync(x => x.Debit);
+            var salaryExpenseTotal = await query.Where(x => x.Account.Code == "334").SumAsync(x => x.Debit);
+            var commissionExpenseTotal = await query.Where(x => x.Account.Code == "HHNGT").SumAsync(x => x.Debit);
+            var cashBankExpenseTotal = await query.SumAsync(x => x.Debit);
+
+            return new GetThuChiReportResponse
+            {
+                CustomerIncomeTotal = customerIncomeTotal,
+                AdvanceIncomeTotal = advanceIncomeTotal,
+                DebtIncomeTotal = debtIncomeTotal,
+                SupplierIncomeTotal = supplierIncomeTotal,
+                CashBankIncomeTotal = cashBankIncomeTotal,
+                SupplierExpenseTotal = supplierExpenseTotal,
+                AdvanceExpenseTotal = advanceExpenseTotal,
+                SalaryExpenseTotal = salaryExpenseTotal,
+                CommissionExpenseTotal = commissionExpenseTotal,
+                CashBankExpenseTotal = cashBankExpenseTotal
+            };
+        }
 
 
         public async Task<CashBookReportDay> GetDataCashBookReportDay(DateTime? dateFrom, DateTime? dateTo, Guid? companyId)
@@ -254,26 +289,12 @@ namespace Infrastructure.Services
             res.DataAmountTotals = dataTotalAmount;
 
             /// load dữ liệu báo cáo thu chi
-            var dataReport = new List<SumaryRevenueReport>();
-            FilterSumaryCashbookReport[] objlist = new FilterSumaryCashbookReport[] {
-                new FilterSumaryCashbookReport("cash_bank" , "131") ,
-                new FilterSumaryCashbookReport("debt" , "CNKH"),
-                new FilterSumaryCashbookReport("advance" , "KHTU"),
-                new FilterSumaryCashbookReport("cash_bank" , "331"),
-                new FilterSumaryCashbookReport("payroll" , "334"),
-                new FilterSumaryCashbookReport("commission" , "HHNGT")
-            };
+            var reportThuChi = await GetThuChiReport(dateFrom, dateTo, companyId);
 
-            foreach (var item in objlist)
-            {
-                var i = await GetSumaryRevenueReport(dateFrom, dateTo, companyId, item.Code, item.Value);
-                dataReport.Add(i);
-            }
-
-            res.DataReports = dataReport;
-
+            res.DataThuChiReport = reportThuChi;
             /// load dữ liệu chi tiết
-            res.DataDetails = await cashbookObj.GetDataInvoices(dateFrom, dateTo, companyId, "");
+            var cashbooks = await cashbookObj.GetDetails(dateFrom, dateTo, 0, 0, companyId, null, null);
+            res.DataDetails = cashbooks.Items;
 
             return res;
         }

@@ -318,7 +318,7 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<PagedResult2<SaleOrderLineDisplay>> GetReportService(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string search , string state)
+        public async Task<PagedResult2<SaleOrderLineDisplay>> GetReportService(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string search, string state)
         {
             var lineObj = GetService<ISaleOrderLineService>();
             var query = lineObj.SearchQuery(x => (!x.Order.IsQuotation.HasValue || x.Order.IsQuotation == false))
@@ -326,6 +326,7 @@ namespace Infrastructure.Services
                 .Include(x => x.Employee)
                 .Include(x => x.OrderPartner)
                 .Include(x => x.Product)
+                .Include(x => x.SaleOrderLinePaymentRels)
                 .Include("SaleOrderLineToothRels.Tooth")
                 .AsQueryable();
 

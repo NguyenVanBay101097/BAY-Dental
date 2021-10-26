@@ -50,9 +50,9 @@ namespace Umbraco.Web.Models.ContentEditing
     public class CashBookReportDay
     {
         public IEnumerable<CashBookReport> DataAmountTotals { get; set; } 
-        public IEnumerable<SumaryRevenueReport> DataReports { get; set; }
+        public GetThuChiReportResponse DataThuChiReport { get; set; }
 
-        public IEnumerable<DataInvoiceItem> DataDetails { get; set; }
+        public IEnumerable<CashBookReportDetail> DataDetails { get; set; }
     }
 
     public class FilterSumaryCashbookReport

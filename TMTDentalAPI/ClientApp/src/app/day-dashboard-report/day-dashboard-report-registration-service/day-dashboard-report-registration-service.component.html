@@ -44,7 +44,7 @@
     </kendo-grid-column>
     <kendo-grid-column title="Thanh toán" width="120">
         <ng-template kendoGridCellTemplate let-dataItem>
-            {{(dataItem.priceSubTotal - dataItem.amountResidual) | number}}
+            {{dataItem.amountInvoiced | number}}
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column title="Còn lại" width="120">

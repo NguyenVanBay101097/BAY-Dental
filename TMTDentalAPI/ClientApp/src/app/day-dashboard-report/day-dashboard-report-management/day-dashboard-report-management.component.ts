@@ -9,6 +9,8 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { CashBookDetailFilter, CashBookService, CashBookSummarySearch, DataInvoiceFilter, SumaryCashBookFilter } from 'src/app/cash-book/cash-book.service';
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
 import { DashboardReportService } from 'src/app/core/services/dashboard-report.service';
+import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
+import { SaleOrderLinePaged } from 'src/app/partners/partner.service';
 import { SaleReportSearch, SaleReportService } from 'src/app/sale-report/sale-report.service';
 import { DayDashboardReportService, ExportExcelDashBoardDayFilter } from '../day-dashboard-report.service';
 
@@ -28,7 +30,7 @@ export class DayDashboardReportManagementComponent implements OnInit {
   companyId: string;
   totalCashBook: any[] = [];
   gridDataCashBook: any[] = [];
-  cashBookDataReport: any[] = [];
+  cashBookDataReport: any;
   keyTab = 'registration_service';
   filterResultSelection: any[] = [
     { value: '', text: 'TM/CK' },
@@ -54,6 +56,7 @@ export class DayDashboardReportManagementComponent implements OnInit {
     private dayDashboardReportService: DayDashboardReportService,
     private saleReportService: SaleReportService,
     private dashboardReportService: DashboardReportService,
+    private saleOrderLineService: SaleOrderLineService,
     private router: Router
   ) { }
 
@@ -98,12 +101,12 @@ export class DayDashboardReportManagementComponent implements OnInit {
   }
 
   loadDataServiceApi() {
-    var val = new SaleReportSearch();
-    val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : null;
-    val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : null;
+    var val = new SaleOrderLinePaged();
+    val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
+    val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
     val.companyId = this.companyId || '';
-    val.state = 'draft';
-    this.saleReportService.getReportService(val).pipe(
+    val.state = 'sale,done,cancel';
+    this.saleOrderLineService.getPaged(val).pipe(
       map((response: any) =>
       (<GridDataResult>{
         data: response.items,
@@ -148,19 +151,14 @@ export class DayDashboardReportManagementComponent implements OnInit {
   }
 
   loadCashbookReportApi() {
-    forkJoin(this.filterSumaryCashbookReport.map(x => {
-      var filter = new SumaryCashBookFilter();
-      filter.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
-      filter.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
-      filter.companyId = this.companyId ? this.companyId : '';
-      filter.resultSelection = x.value;
-      filter.accountCode = x.code || '';
-      filter.partnerType = x.type || '';
-      return this.dashboardReportService.getSumaryRevenueReport(filter).pipe(
-        switchMap(total => of({ text: x.value, total: total }))
-      );
-    })).subscribe((result) => {
-      this.cashBookDataReport = result.map(x => x.total);
+    var val = {
+      dateFrom: this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : null,
+      dateTo: this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null,
+      companyId: this.companyId ? this.companyId : null
+    };
+
+    this.dashboardReportService.getThuChiReport(val).subscribe(result => {
+      this.cashBookDataReport = result;
     });
   }
 
