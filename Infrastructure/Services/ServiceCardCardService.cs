@@ -233,24 +233,16 @@ namespace Infrastructure.Services
 
             if (val.ActivatedDate.HasValue)
             {
-                spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.ActivatedDate == val.ActivatedDateFrom));
+                spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.ActivatedDate.Value.Date == val.ActivatedDate.Value.Date));
             }
 
-            if (val.ActivatedDateFrom.HasValue)
+            if (val.DateFrom.HasValue)
             {
-                spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.ActivatedDate >= val.ActivatedDateFrom));
+                spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.ExpiredDate.Value.Date >= val.DateFrom.Value.Date));
             }
-            if (val.ActivatedDateTo.HasValue)
+            if (val.DateTo.HasValue)
             {
-                spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.ActivatedDate <= val.ActivatedDateTo));
-            }
-            if (val.ExpiredDateFrom.HasValue)
-            {
-                spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.ExpiredDate >= val.ExpiredDateFrom));
-            }
-            if (val.ExpiredDateTo.HasValue)
-            {
-                spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.ExpiredDate <= val.ExpiredDateTo));
+                spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.ActivatedDate.Value.Date <= val.DateTo.Value.Date));
             }
 
 

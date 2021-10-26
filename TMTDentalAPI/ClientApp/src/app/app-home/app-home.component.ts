@@ -96,7 +96,7 @@ export class AppHomeComponent implements OnInit {
       name: 'Sổ quỹ', icon: 'fas fa-wallet', url: '/cash-book', permissions: ['Account.Read']
     },
     {
-      name: 'Khuyến mãi & Thẻ ưu đãi',
+      name: 'Marketing',
       icon: 'fas fa-gift',
       groups: 'sale.group_sale_coupon_promotion',
       children: [

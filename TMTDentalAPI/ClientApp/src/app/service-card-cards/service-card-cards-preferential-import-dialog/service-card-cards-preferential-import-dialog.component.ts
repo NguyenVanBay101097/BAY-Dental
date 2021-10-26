@@ -40,11 +40,8 @@ export class ServiceCardCardsPreferentialImportDialogComponent implements OnInit
     });
   }
 
-  fileChange(e) {
-    var file_node = e.target;
-    var file = file_node.files[0];
+  onFileChange(file) {
     this.formData.append('file', file);
-
   }
 
   notifyError(value) {
