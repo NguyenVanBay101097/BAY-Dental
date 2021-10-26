@@ -192,7 +192,7 @@ namespace TMTDentalAPI.Controllers
             var stream = new MemoryStream();
             val.Limit = int.MaxValue;
             val.Offset = 0;
-            var cards = await _cardCardService.GetPagedResultAsync(val);
+            var paged = await _cardCardService.GetPagedResultAsync(val);
             var sheetName = "Thông tin thẻ thành viên";
             byte[] fileContent;
 
@@ -208,24 +208,18 @@ namespace TMTDentalAPI.Controllers
             {
                 var worksheet = package.Workbook.Worksheets.Add(sheetName);
 
-                worksheet.Cells[1, 1].Value = "Số thẻ";
-                worksheet.Cells[1, 2].Value = "Mã vạch";
-                worksheet.Cells[1, 3].Value = "Loại thẻ";
-                worksheet.Cells[1, 4].Value = "Khách hàng";
-                worksheet.Cells[1, 5].Value = "Điểm tích lũy";
-                worksheet.Cells[1, 6].Value = "Trạng thái";
-                var items = cards.Items.ToList();
-                for (int row = 2; row < items.Count + 2; row++)
+                worksheet.Cells[1, 1].Value = "Số ID thẻ";
+                worksheet.Cells[1, 2].Value = "Hạng thẻ";
+                worksheet.Cells[1, 3].Value = "Họ tên";
+                worksheet.Cells[1, 4].Value = "Điện thoại";
+                worksheet.Cells[1, 5].Value = "Trạng thái";
+                var row = 2;
+                foreach (var item in paged.Items)
                 {
-                    var item = items[row - 2];
-                    var self = await _cardCardService.GetByIdAsync(item.Id);
-                    var selfDisplay = _mapper.Map<CardCardDisplay>(self);
-
-                    worksheet.Cells[row, 1].Value = item.Name;
-                    worksheet.Cells[row, 2].Value = item.Barcode;
-                    worksheet.Cells[row, 3].Value = item.TypeName;
-                    worksheet.Cells[row, 4].Value = item.PartnerName;
-                    worksheet.Cells[row, 5].Value = item.TotalPoint;
+                    worksheet.Cells[row, 1].Value = item.Barcode;
+                    worksheet.Cells[row, 2].Value = item.TypeName;
+                    worksheet.Cells[row, 3].Value = item.PartnerName;
+                    worksheet.Cells[row, 4].Value = item.PartnerPhone;
                     worksheet.Cells[row, 6].Value = stateDict.ContainsKey(item.State) ? stateDict[item.State] : "";
                 }
 

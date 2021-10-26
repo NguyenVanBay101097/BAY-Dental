@@ -80,7 +80,8 @@ namespace Infrastructure.Services
                 TotalPoint = x.TotalPoint ?? 0,
                 PointInPeriod = x.PointInPeriod ?? 0,
                 Barcode = x.Barcode,
-                State = x.State
+                State = x.State,
+                PartnerPhone = x.Partner.Phone
             }).ToListAsync();
 
             var totalItems = await query.CountAsync();
@@ -190,7 +191,7 @@ namespace Infrastructure.Services
             foreach (var card in self)
             {
                 if (!card.PartnerId.HasValue)
-                    throw new Exception("Thẻ thành viên không được để trống khách hàng");
+                    throw new Exception("Khách hàng đang trống, cần bổ sung khách hàng");
 
                 await CheckExisted(card);
 
@@ -206,7 +207,7 @@ namespace Infrastructure.Services
                 card.ExpiredDate = expiry_date;
             }
 
-            await _CheckUpgrade(self);
+            //await _CheckUpgrade(self);  mở lại sau khi BA đã chốt
             await UpdateAsync(self);
         }
 
