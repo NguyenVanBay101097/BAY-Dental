@@ -49,14 +49,7 @@ export class PartnerCustomerTreatmentListComponent implements OnInit {
 
   ngOnInit() {
     this.loading = true;
-    var viewType = localStorage.getItem('view_type_order');
-    if (viewType)
-      this.viewType = viewType;
-    else {
-      this.viewType = viewType;
-      localStorage.setItem('view_type_order',this.viewType);
-    }
-    
+    this.viewType = localStorage.getItem('view_type_order') || 'saleOrder';
 
     this.activeRoute.parent.params.subscribe(
       params => {
