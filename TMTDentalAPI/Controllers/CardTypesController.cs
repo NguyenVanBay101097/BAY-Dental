@@ -71,7 +71,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPut("{id}")]
         [CheckAccess(Actions = "LoyaltyCard.CardType.Update")]
-        public async Task<IActionResult> Update(Guid id, CardTypeDisplay val)
+        public async Task<IActionResult> Update(Guid id, CardTypeSave val)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
