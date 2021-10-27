@@ -21,7 +21,7 @@ import { SmsTemplateService, SmsTemplateFilter } from '../sms-template.service';
 export class SmsManualDialogComponent implements OnInit {
   @ViewChild("smsTemplateCbx", { static: true }) smsTemplateCbx: ComboBoxComponent;
   @ViewChild("smsAccountCbx", { static: true }) smsAccountCbx: ComboBoxComponent;
-  @ViewChild('textarea', { static: false }) textarea: ElementRef;
+  @ViewChild('textarea') textarea: ElementRef;
 
   listContentTabs: string[] = [];
   title: string;

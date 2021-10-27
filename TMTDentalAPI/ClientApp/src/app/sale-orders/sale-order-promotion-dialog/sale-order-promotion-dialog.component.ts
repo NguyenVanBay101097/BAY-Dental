@@ -31,6 +31,7 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
 
   title = "Ưu đãi phiếu điều trị";
   saleOrder: SaleOrderDisplay;//input
+  promotions: any[] = [];
   // input
   autoPromotions = [];
   private updateSubject = new Subject<any>();
@@ -90,47 +91,6 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
     }
   }
 
-
-  getAmountToApply() {
-    if (this.saleOrder) {
-      return this.saleOrder.orderLines.reduce((total, cur) => {
-        return total + cur.priceUnit * cur.productUOMQty;
-      }, 0);
-    }
-    return 0;
-  }
-
-  // pushAppliedPromotion(type, program = null) { // val: code or programId
-  //   var amount = 0;
-
-  //   switch (type) {
-  //     case 'discount':
-  //       amount = this.form.discountType == this.discountTypeDict["%"] ? this.form.discountPercent * this.getAmountToApply() / 100 : this.form.discountFixed;
-  //       break;
-  //   case 'code_usage_program':
-  //     this.promotionService.getByCode(this.form.code).subscribe((res) => {
-  //       amount = res.discountType == this.discountTypeDict["%"] ? res.discountPercentage * this.getAmountToApply() / 100 : res.discountFixedAmount;
-  //     });
-  //     break;
-  //     case 'promotion_program':
-  //       this.promotionService.get(program.id).subscribe((res: SaleCouponProgramDisplay) => {
-  //       amount = res.discountType == this.discountTypeDict["%"] ? res.discountPercentage * this.getAmountToApply() / 100 : res.discountFixedAmount;
-  //       });
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  //   this.saleOrder.promotions.push({
-  //     amount: amount,
-  //     type: type,
-  //     discountType: this.form.discountType,
-  //     discountPercent: this.form.discountPercent,
-  //     discountFixed: this.form.discountFixed,
-  //   } as SaleOrderPromotionSave);
-  //   this.notificationService.notify('success', 'Thành công!');
-  //   this.isChange = true;
-  // }
-
   onApplyCouponSuccess(data) {
     this.btnPromoCodeSubject.next(data);
   }
@@ -158,16 +118,16 @@ export class SaleOrderPromotionDialogComponent implements OnInit {
   }
 
   sumPromotion() {
-    return this.saleOrder.promotions.reduce((total, cur) => { return total + cur.amount }, 0);
+    return this.promotions.reduce((total, cur) => { return total + cur.amount }, 0);
   }
 
   getListPromotion(type): any[] {
-    return this.saleOrder.promotions.filter(x => x.type == type);
+    return this.promotions.filter(x => x.type == type);
   }
 
   getApplied(item) {// item is salecouponprogram
-    var index = this.saleOrder.promotions.findIndex(x => x.saleCouponProgramId == item.id);
-    return this.saleOrder.promotions[index];
+    var index = this.promotions.findIndex(x => x.saleCouponProgramId == item.id);
+    return this.promotions[index];
   }
 
 }

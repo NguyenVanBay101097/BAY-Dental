@@ -261,6 +261,12 @@
       <field name="user_type_id" ref="account.data_account_type_current_liabilities" />
     </record>
 
+    <record model="account.account" id="data_account_HTU">
+      <field name="name">Hoàn tạm ứng</field>
+      <field name="code">HTU</field>
+      <field name="user_type_id" ref="account.data_account_type_current_liabilities" />
+    </record>
+
     <record model="account.account" id="data_account_CNKH">
       <field name="name">Công nợ khách hàng</field>
       <field name="code">CNKH</field>

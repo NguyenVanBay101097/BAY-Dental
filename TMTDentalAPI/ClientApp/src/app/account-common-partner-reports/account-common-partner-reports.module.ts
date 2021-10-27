@@ -18,7 +18,6 @@ import { PartnerReportSaleOrderComponent } from './partner-report-sale-order/par
 import { PartnerAdvanceListReportComponent } from './partner-advance-list-report/partner-advance-list-report.component';
 import { PartnerAdvanceDetailListReportComponent } from './partner-advance-detail-list-report/partner-advance-detail-list-report.component';
 import { PartnerAreaReportComponent } from './partner-area-report/partner-area-report.component';
-import { ChartsModule, ThemeService } from 'ng2-charts';
 import { AccountInvoiceReportService } from '../account-invoice-reports/account-invoice-report.service';
 
 @NgModule({
@@ -30,11 +29,10 @@ import { AccountInvoiceReportService } from '../account-invoice-reports/account-
     FormsModule,
     SharedModule,
     NgbModule,
-    ChartsModule
   ],
   providers: [
     AccountCommonPartnerReportService,
-    ThemeService,
+    // ThemeService,
     AccountInvoiceReportService
   ]
 })

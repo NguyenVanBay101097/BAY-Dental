@@ -6,7 +6,7 @@
     <span>Chuyển trạng thái</span>
 </ng-template>
 
-<ng-template #popContent let-mytags="mytags">
+<ng-template #popContent>
     <div>
         <div class="form-check" *ngFor="let item of listState; let i = index">
             <input [(ngModel)]="line.state" class="form-check-input" [value]="item.value" type="radio" name="state" [id]="'stateradio'+i">

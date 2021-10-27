@@ -11,7 +11,9 @@ namespace Infrastructure.Services
     {
         Task<string> GetPrintTemplate(PrintTemplateDefault val);
         Task<string> RenderTemplate(PrintTemplate self, IEnumerable<Guid> resIds);
+        Task<string> RenderTemplate(PrintTemplate self, IEnumerable<object> data);
         Task<string> GeneratePrintHtml(PrintTemplate self, IEnumerable<Guid> resIds, PrintPaperSize paperSize = null);
+        Task<string> GeneratePrintHtml(PrintTemplate self, IEnumerable<object> data, PrintPaperSize paperSize = null);
         Task<PrintTemplate> GetDefaultTemplate(string type);
         string GetModelTemplate(string type);
     }

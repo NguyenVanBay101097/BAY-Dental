@@ -367,7 +367,10 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     this.quotation.lines.splice(index, 1);
   }
 
-  onCancelEditLine(line) {
+  onCancelEditLine(line, index) {
+    if(!line.id){
+      this.quotation.lines.splice(index, 1);
+    }
     this.lineSelected = null;
   }
 

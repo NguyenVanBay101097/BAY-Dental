@@ -60,6 +60,13 @@ export class CashBookDetailFilter {
   offset: number;
 }
 
+export class DataInvoiceFilter {
+  dateFrom: string;
+  dateTo: string;
+  companyId: string;
+  resultSelection: string;
+}
+
 export class CashBookReportFilter {
   dateFrom: string;
   dateTo: string;
@@ -125,6 +132,10 @@ export class CashBookService {
       this.baseApi + this.apiUrl + "/GetDetails",
       val
     );
+  }
+
+  getDataInvoices(val: any) {
+    return this.http.post( this.baseApi + this.apiUrl + "/GetDataInvoices", val);
   }
 
   getTotal(val: any): Observable<number> {

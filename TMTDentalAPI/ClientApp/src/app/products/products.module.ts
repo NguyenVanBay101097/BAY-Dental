@@ -33,9 +33,11 @@ import { ProductManagementMedicinesComponent } from './product-management-medici
 import { ProductManagementComponent } from './product-management/product-management.component';
 import { ProductCategoryListComponent } from './product-category-list/product-category-list.component';
 import { ResConfigSettingsModule } from '../res-config-settings/res-config-settings.module';
+import { ProductImportExcelDialogComponent } from './product-import-excel-dialog/product-import-excel-dialog.component';
 
 @NgModule({
   declarations: [
+    ProductImportExcelDialogComponent,
     ProductListComponent,
     ProductDialogComponent,
     ProductSearchListComponent,

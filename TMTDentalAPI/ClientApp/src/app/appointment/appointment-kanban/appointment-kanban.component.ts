@@ -28,6 +28,7 @@ import { CustomerReceipCreateUpdateComponent } from 'src/app/shared/customer-rec
 import { AppointmentFilterExportExcelDialogComponent } from '../appointment-filter-export-excel-dialog/appointment-filter-export-excel-dialog.component';
 import { ReceiveAppointmentService } from 'src/app/customer-receipt/receive-appointment.service';
 import { ReceiveAppointmentDialogComponent } from 'src/app/shared/receive-appointment-dialog/receive-appointment-dialog.component';
+import { PrintService } from 'src/app/shared/services/print.service';
 @Component({
   encapsulation: ViewEncapsulation.None, //<<<<< this one! 
   // To css active with innerHTML
@@ -37,7 +38,7 @@ import { ReceiveAppointmentDialogComponent } from 'src/app/shared/receive-appoin
   host: { 'class': 'h-100' }
 })
 export class AppointmentKanbanComponent implements OnInit {
-  @ViewChild('dropdownMenuBtn', { static: false }) dropdownMenuBtn: NgbDropdownToggle;
+  @ViewChild('dropdownMenuBtn') dropdownMenuBtn: NgbDropdownToggle;
   dateFrom: Date;
   dateTo: Date;
   state: string;
@@ -60,15 +61,23 @@ export class AppointmentKanbanComponent implements OnInit {
 
   // appointmentByDate: { [id: string]: AppointmentBasic[]; } = {};
 
-  states: { text: string, value: string, color?: string }[] = [
-    { text: 'Tất cả', value: '', color: '' },
-    { text: 'Đang hẹn', value: 'confirmed', color: '#2395FF' },
-    { text: 'Đã đến', value: 'done', color: '#28A745' },
-    { text: 'Hủy hẹn', value: 'cancel', color: '#EB3B5B' },
-    { text: 'Quá hẹn', value: 'overdue', color: '#FFC107' }
+  states: { text: string, value: string }[] = [
+    { text: 'Tất cả', value: '' },
+    { text: 'Đang hẹn', value: 'confirmed' },
+    { text: 'Đã đến', value: 'done' },
+    { text: 'Hủy hẹn', value: 'cancel' },
+    { text: 'Quá hẹn', value: 'overdue' }
   ];
-
   stateSelected: string = this.states[0].value;
+
+  types: { text: string, value: string }[] = [
+    { text: 'Tất cả', value: '' },
+    { text: 'Tái khám', value: 'repeat' },
+    { text: 'Khám mới', value: 'new' }
+  ];
+  typeSelected: string = this.states[0].value;
+  isRepeatCustomer: boolean;
+
   listEmployees: EmployeeBasic[] = [];
   employeeSelected: string = '';
 
@@ -118,7 +127,8 @@ export class AppointmentKanbanComponent implements OnInit {
     private employeeService: EmployeeService,
     private checkPermissionService: CheckPermissionService,
     private elementRef: ElementRef,
-    private receiveAppointmentService: ReceiveAppointmentService
+    private receiveAppointmentService: ReceiveAppointmentService,
+    private printService: PrintService
   ) { }
 
   ngOnInit() {
@@ -180,6 +190,18 @@ export class AppointmentKanbanComponent implements OnInit {
     this.renderCalendar(); // Render Calendar
   }
 
+  onChangeType(type) {
+    if (type === 'repeat') {
+      this.isRepeatCustomer = true;
+    } else if (type === 'new') {
+      this.isRepeatCustomer = false;
+    } else {
+      this.isRepeatCustomer = undefined;
+    }
+
+    this.renderCalendar(); // Render Calendar
+  }
+
   // createAppointment() {
   //   const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
   //   modalRef.componentInstance.title = "Đặt lịch hẹn";
@@ -206,6 +228,9 @@ export class AppointmentKanbanComponent implements OnInit {
     val.doctorId = this.employeeSelected || '';
     val.dateTimeFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
     val.dateTimeTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
+    if (this.isRepeatCustomer != undefined) {
+      val.isRepeatCustomer = this.isRepeatCustomer;
+    }
 
     this.appointmentService.getPaged(val).pipe(
       map((response: any) =>
@@ -360,10 +385,16 @@ export class AppointmentKanbanComponent implements OnInit {
     var val = new AppointmentPaged();
     val.limit = 1000;
     val.state = this.state || '';
+    if (this.isLateFilter) {
+      val.isLate = this.isLateFilter;
+    }
     val.search = this.search || '';
     val.doctorId = this.employeeSelected || '';
     val.dateTimeFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
     val.dateTimeTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
+    if (this.isRepeatCustomer != undefined) {
+      val.isRepeatCustomer = this.isRepeatCustomer;
+    }
 
     const modalRef = this.modalService.open(AppointmentFilterExportExcelDialogComponent, { size: 'md', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xuất dữ liệu lịch hẹn';
@@ -1074,4 +1105,11 @@ export class AppointmentKanbanComponent implements OnInit {
       })
     }
   }
+
+  onPrint(id) {
+    this.appointmentService.print(id).subscribe((res: any) => {
+      this.printService.printHtml(res.html);
+    });
+  }
+
 }

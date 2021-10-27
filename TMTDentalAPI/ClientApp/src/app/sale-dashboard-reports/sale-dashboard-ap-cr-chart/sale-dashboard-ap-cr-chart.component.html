@@ -6,35 +6,16 @@
                     <div class=" mr-2 px-2 py-1">
                         <h5 class="mb-0 title-box">Khách hàng phát sinh PĐT mới</h5>
                         <div>
-                            <ng-container *ngIf="pieDataCustomer?.length; else elseTemplate">
+                            <ng-container *ngIf="dataCustomer?.length; else elseTemplate">
                                 <div class="d-flex justify-content-center align-items-center">
-                                    <div>
-                                        <kendo-chart class="size-chart" [transitions]="true">
-                                            <kendo-chart-series>
-                                                <kendo-chart-series-item type="pie" [data]="pieDataCustomer" field="value"
-                                                    [name]="'category'" categoryField="category">
-                                                </kendo-chart-series-item>
-                                            </kendo-chart-series>
-                                            <kendo-chart-legend [visible]="false" pói></kendo-chart-legend>
-                                        </kendo-chart>
-                                    </div>
-                                    <div class="ml-1 note-chart">
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <div>
-                                               <span class="item-header">Tổng lượng khách:</span>
-                                            </div>
-                                            <div class="ml-2">
-                                                <span class="numeric-revenue item-header">{{countdataCustomer | number}}</span>
-                                            </div>
-                                        </div>
-                                        <div *ngFor="let item of pieDataCustomer" class="d-flex">
-                                            <div>
-                                                <i class="fas fa-square mr-2" [style.color]="item.color"></i><span style="font-size: 1rem;">{{getCusType(item.category)}}:</span>
-                                            </div>
-                                            <div class="ml-2">
-                                                <span class="numeric-revenue">{{item.value | number}}</span>
-                                            </div>
-                                        </div>
+                                    <div style="position: relative;height: 200px;">
+                                        <canvas baseChart
+                                            [type]="'pie'"
+                                            [options]="pieCustomerOptions"
+                                            [plugins]="pieCustomerPlugins"
+                                            [labels]="pieCustomerLabels"
+                                            [datasets]="pieCustomerDatasets">
+                                        </canvas>
                                     </div>
                                 </div>
                                 <div class="link-details">
@@ -60,32 +41,15 @@
                             <ng-container *ngIf="dataNoTreatment?.length; else elseTemplate">
                                 <div class="d-flex justify-content-center align-items-center">
                                     <div>
-                                        <kendo-chart class="size-chart" [transitions]="true">
-                                            <kendo-chart-series>
-                                                <kendo-chart-series-item type="pie" [data]="dataNoTreatment"
-                                                    field="countCustomerReceipt" [name]="'name'" categoryField="name">
-                                                </kendo-chart-series-item>
-                                            </kendo-chart-series>
-                                            <kendo-chart-legend [visible]="false" pói></kendo-chart-legend>
-                                        </kendo-chart>
-                                    </div>
-                                    <div class="ml-1 note-chart">
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <div>
-                                               <span class="item-header">Lượng tiếp nhận:</span>
-                                            </div>
-                                            <div class="ml-2">
-                                                <span class="numeric-revenue item-header">{{countdataNoTreatment | number}}</span>
-                                            </div>
+                                        <div style="position: relative;height: 200px;">
+                                            <canvas baseChart
+                                                [type]="'pie'"
+                                                [options]="pieReceiptOptions"
+                                                [plugins]="pieReceiptPlugins"
+                                                [labels]="pieReceiptLabels"
+                                                [datasets]="pieReceiptDatasets">
+                                            </canvas>
                                         </div>
-                                        <div *ngFor="let item of dataNoTreatment" class="d-flex">
-                                            <div>
-                                                <i class="fas fa-square mr-2" [style.color]="item.color"></i><span style="font-size: 1rem;">{{item.name}}:</span>
-                                            </div>
-                                            <div class="ml-2">
-                                                <span class="numeric-revenue">{{item.countCustomerReceipt | number}}</span>
-                                            </div>
-                                        </div>                          
                                     </div>
                                 </div>
                                 <div class="link-details">

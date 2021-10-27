@@ -47,10 +47,10 @@
                     <th scope="col" class="" style="width:100px">Khách hàng</th>
                     <th scope="col" class="" style="width:100px">Số điện thoại</th>
                     <th scope="col" class="text-right" style="width:100px">Dư đầu kỳ</th>
-                    <th scope="col" class="text-right" style="width:100px">Phát sinh</th>
-                    <th scope="col" class="text-right" style="width:100px">Thanh toán</th>
+                    <th scope="col" class="text-right" style="width:100px">Đã đóng</th>
+                    <th scope="col" class="text-right" style="width:100px">Đã dùng</th>
+                    <th scope="col" class="text-right" style="width:100px">Đã hoàn</th>
                     <th scope="col" class="text-right" style="width:100px">Dư cuối kỳ</th>
-
                 </tr>
             </thead>
 
@@ -63,16 +63,18 @@
                         <td class="text-right" style="width:100px">@(string.Format(culture,"{0:n0}",item.Begin))</td>
                         <td class="text-right" style="width:100px">@(string.Format(culture,"{0:n0}",item.Debit))</td>
                         <td class="text-right" style="width:100px">@(string.Format(culture,"{0:n0}",item.Credit))</td>
+                        <td class="text-right" style="width:100px">@(string.Format(culture,"{0:n0}",item.Refund))</td>
                         <td class="text-right" style="width:100px">@(string.Format(culture,"{0:n0}",item.End))</td>
                     </tr>
 
                 }
 
                 <tr>
-                    <td colspan="2" class="text-center font-semibold" style="width:100px">Tổng</td>                
+                    <td colspan="2" class="text-center font-semibold" style="width:100px">Tổng</td>
                     <td class="text-right font-semibold" style="width:100px">@(string.Format(culture,"{0:n0}", Model.ReportPartnerAdvances.Sum(x=>x.Begin)))</td>
                     <td class="text-right font-semibold" style="width:100px">@(string.Format(culture,"{0:n0}", Model.ReportPartnerAdvances.Sum(x => x.Debit)))</td>
                     <td class="text-right font-semibold" style="width:100px">@(string.Format(culture,"{0:n0}", Model.ReportPartnerAdvances.Sum(x => x.Credit)))</td>
+                    <td class="text-right font-semibold" style="width:100px">@(string.Format(culture,"{0:n0}", Model.ReportPartnerAdvances.Sum(x => x.Refund)))</td>
                     <td class="text-right font-semibold" style="width:100px">@(string.Format(culture,"{0:n0}", Model.ReportPartnerAdvances.Sum(x => x.End)))</td>
                 </tr>
 

@@ -234,7 +234,6 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     val.customerId = this.customerId;
     val.toothIds = this.teethSelected.map(x => x.id);
     this.advisoryService.getPaged(val).subscribe(res => {
-      console.log(res);
       this.gridData = <GridDataResult>{
         data: res.items,
         total: res.totalItems
@@ -326,6 +325,8 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
       return;
     }
     this.advisoryService.getPrint(this.mySelection).subscribe((res: any) => {
+      // console.log(res);
+      // return
       this.printService.printHtml(res);
     });
   }
