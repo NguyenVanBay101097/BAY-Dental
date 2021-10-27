@@ -106,7 +106,7 @@ namespace Infrastructure.Services
             if (!self.PartnerId.HasValue)
                 return;
 
-            var count = await SearchQuery(x => x.PartnerId == self.PartnerId && x.TypeId == self.TypeId).CountAsync();
+            var count = await SearchQuery(x => x.PartnerId == self.PartnerId).CountAsync();
             if (count >= 2)
                 throw new Exception($"Khách hàng{(self.Partner != null ? $" {self.Partner.Name}" : "")} đã có thẻ thành viên");
         }
