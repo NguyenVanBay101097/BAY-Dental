@@ -153,6 +153,11 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Áp dụng thẻ ưu đãi
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns></returns>
         [HttpPost("[action]")]
         public async Task<IActionResult> ApplyServiceCardCard(ApplyServiceCardCardRequest val)
         {
@@ -160,6 +165,22 @@ namespace TMTDentalAPI.Controllers
                 return BadRequest();
             await _unitOfWork.BeginTransactionAsync();
             await _saleLineService.ApplyServiceCardCard(val);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Áp dụng thẻ thành viên
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ApplyCardCard(ApplyCardCardRequest val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleLineService.ApplyCardCard(val);
             _unitOfWork.Commit();
             return NoContent();
         }

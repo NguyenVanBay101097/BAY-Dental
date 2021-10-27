@@ -25,6 +25,8 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Partner, x => x.Ignore())
                 .ForMember(x => x.Type, x => x.Ignore())
                 .ForMember(x => x.State, x => x.Ignore());
+
+            CreateMap<CardCard, CardCardResponse>();
         }
     }
 }

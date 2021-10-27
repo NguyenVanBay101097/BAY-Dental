@@ -48,6 +48,7 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<CardCardBasic>> GetPagedResultAsync(CardCardPaged val)
         {
+
             ISpecification<CardCard> spec = new InitialSpecification<CardCard>(x => true);
             if (!string.IsNullOrEmpty(val.Search))
                 spec = spec.And(new InitialSpecification<CardCard>(x => x.Name.Contains(val.Search) || x.Barcode.Contains(val.Search)
@@ -99,6 +100,41 @@ namespace Infrastructure.Services
                 await _CheckBarcodeUnique(card.Barcode);
                 await _CheckPartnerUnique(card);
             }
+        }
+
+        public async Task<IEnumerable<CardCardResponse>> GetCardCards(GetCardCardFilter val)
+        {
+            var productPriceListItemObj = GetService<IProductPricelistItemService>();
+            var query = SearchQuery();
+
+            if (val.PartnerId.HasValue)
+                query = query.Where(x => x.PartnerId == val.PartnerId);
+
+            if (val.ProductId.HasValue)
+                query = query.Where(x => x.Type.Pricelist.Items.Any(s => s.ProductId == val.ProductId));
+
+
+
+            if (!string.IsNullOrEmpty(val.State))
+                query = query.Where(x => x.State == val.State);
+
+            var items = await query.Include(x => x.Type).ThenInclude(x => x.Pricelist).ThenInclude(x => x.Items).ToListAsync();
+
+            var res = _mapper.Map<IEnumerable<CardCardResponse>>(items);
+
+            if (val.ProductId.HasValue)
+            {
+                var productPricelist = res.Select(x => x.Type.PricelistId.Value).Distinct().ToList();
+                var pricelistItems = await productPriceListItemObj.SearchQuery(x => productPricelist.Contains(x.PriceListId.Value)).ToListAsync();
+                foreach (var item in res)
+                {
+                    var pricelistItem = pricelistItems.Where(x => x.PriceListId == item.Type.PricelistId && x.ProductId == val.ProductId.Value).FirstOrDefault();
+                    item.ProductPricelistItem = pricelistItem == null ? null : _mapper.Map<ProductPricelistItemDisplay>(pricelistItem);
+                }
+
+            }
+
+            return res;
         }
 
         private async Task _CheckPartnerUnique(CardCard self)

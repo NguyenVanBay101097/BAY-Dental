@@ -54,6 +54,13 @@ namespace TMTDentalAPI.Controllers
             return Ok(display);
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetCardCards(GetCardCardFilter val)
+        {
+            var rels = await _cardCardService.GetCardCards(val);
+            return Ok(rels);
+        }
+
         [HttpPost]
         [CheckAccess(Actions = "LoyaltyCard.CardCard.Create")]
         public async Task<IActionResult> Create(CardCardSave val)

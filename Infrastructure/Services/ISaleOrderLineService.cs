@@ -66,6 +66,8 @@ namespace Infrastructure.Services
 
         Task ApplyServiceCardCard(ApplyServiceCardCardRequest val);
 
+        Task ApplyCardCard(ApplyCardCardRequest val);
+
         decimal _GetRewardValuesDiscountPercentagePerLine(SaleCouponProgram program, SaleOrderLine line);
 
         Task<PagedResult2<SmsCareAfterOrder>> GetPagedSmsCareAfterOrderAsync(SmsCareAfterOrderPaged val);
