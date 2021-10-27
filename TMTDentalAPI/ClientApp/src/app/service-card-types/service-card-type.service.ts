@@ -11,15 +11,12 @@ export class ServiceCardTypeObj {
     productPricelistItems: ProductPricelistItems[] = [];
 }
 export class ProductPricelistItems {
+    id: string;
     categId: string;
     productId: string;
     computePrice: string;
     percentPrice: number;
     fixedAmountPrice: number;
-}
-
-export class ProductPricelistItemDisplay {
-    
 }
 
 export class ServiceCardTypeBasic {

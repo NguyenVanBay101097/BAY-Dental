@@ -1,5 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NotificationService } from '@progress/kendo-angular-notification';
+import { result } from 'lodash';
+import { CardTypeService } from 'src/app/card-types/card-type.service';
+import { ServiceCardTypeService } from '../../service-card-type.service';
+import { ServiceCardTypeApplyDialogComponent } from '../service-card-type-apply-dialog/service-card-type-apply-dialog.component';
 
 @Component({
   selector: 'app-member-card-create-update',
@@ -14,9 +21,14 @@ export class MemberCardCreateUpdateComponent implements OnInit {
   productExists: any[] = [];
   objCategories = Object.create(null);
   categories: any[] = []; // nhóm dịch vụ
-
+  submitted = false;
+  categIndex = 0;
   constructor(
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private modalService: NgbModal,
+    private cardTypeService: CardTypeService,
+    private notificationService: NotificationService,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
@@ -24,15 +36,31 @@ export class MemberCardCreateUpdateComponent implements OnInit {
       name: ['',Validators.required],
       basicPoint: ['',Validators.required],
       color: null,
-      productPricelistItems: null
+      productPricelistItems: this.fb.array([])
     });
+    this.cardTypeId = this.route.snapshot.queryParamMap.get('id');
+    if (this.cardTypeId){
+      this.getCardTypeById();
+    }
   }
 
   onSave(){
-    let productItems = this.categories.reduce((r,a) => {
-      return r.concat(a[0].products);
-    },[]);
-    console.log(productItems);
+    this.submitted = true;
+    var val = this.cardForm.value;
+    val.color = this.colorSelected;
+    if (this.cardTypeId){
+      this.cardTypeService.update(this.cardTypeId,val).subscribe(() => {
+        this.notify('Lưu thành công', 'success');
+      })
+    }
+    else {
+      this.cardTypeService.createCardType(val).subscribe(() => {
+        this.notify('Lưu thành công', 'success');
+      })
+    }
+    console.log(val);
+    console.log(this.f);
+    
     
   }
 
@@ -45,7 +73,12 @@ export class MemberCardCreateUpdateComponent implements OnInit {
     if (find)
       return;
     this.productExists.push(event.id);
-    this.objCategories[event.categId] = this.objCategories[event.categId] || {categName:'',categId:'',products:[]};
+    if (this.objCategories[event.categId]){
+      this.objCategories[event.categId] = this.objCategories[event.categId]
+    }
+    else {
+      this.objCategories[event.categId] = {categName:'',categId:'',products:[], index: this.categIndex};
+    }
     this.objCategories[event.categId].categName = event.categName;
     this.objCategories[event.categId].categId = event.categId;
     event.fixedAmountPrice = null;
@@ -55,16 +88,114 @@ export class MemberCardCreateUpdateComponent implements OnInit {
     event.productId = event.id;
     event.defaultCode = event.defaultCode;
     event.id = '';
+    event.productIndex = this.productExists.length == 0 ? 0 : this.productExists.length - 1 ;
     this.objCategories[event.categId].products.push(event);
+    this.productPricelistItems.push(this.fb.group({
+      productId:event.productId,
+      percentPrice: null,
+      fixedAmountPrice: null,
+      computePrice: 'percentage',
+      listPrice: event.listPrice,
+      categId: event.categId
+    }));
     this.categories = Object.keys(this.objCategories).map((key)=> [this.objCategories[key]]); 
   }
 
-  onApplyAll(){
+  getCardTypeById(){
+    this.cardTypeService.get(this.cardTypeId).subscribe(result => {
+      console.log(result);
+      
+      this.cardForm.patchValue(result);
+      this.colorSelected = result.color;
+      this.cardTypeName = result.name;
+      console.log(this.cardForm);
+      result.productPricelistItems.forEach(item => {
+        this.productExists.push(item.productId);
+        this.objCategories[item.product?.categId] = this.objCategories[item.product?.categId] || {categName:'',categId:'',products:[]};
+        this.objCategories[item.product?.categId].categName = item.product?.categ.name;
+        this.objCategories[item.product?.categId].categId = item.product?.categId;
+        this.objCategories[item.product?.categId].products.push({
+          name: item.product?.name,
+          defaultCode: item.product?.defaultCode,
+          listPrice: item.product?.listPrice,
+          computePrice: item.computePrice,
+          percentPrice: item.percentPrice,
+          fixedAmountPrice: item.fixedAmountPrice,
+          categId: item.product?.categId,
+          productIndex: this.productExists.length == 0 ? 0 : this.productExists.length - 1
+        });
+        this.productPricelistItems.push(this.fb.group({
+          productId:item.product?.id,
+          computePrice: item.computePrice,
+          percentPrice: item.percentPrice,
+          fixedAmountPrice: item.fixedAmountPrice,
+          listPrice: item.product?.listPrice,
+          categId: item.product?.categId
+        }));
+      });
+      this.categories = Object.keys(this.objCategories).map((key)=> [this.objCategories[key]]); 
+    })
+  }
 
+  onApplyAll(){
+    let productItems = this.getAllServices();
+    let prices = productItems.map(x => x.listPrice);
+    let min = Math.min(...prices);
+    let modalRef = this.modalService.open(ServiceCardTypeApplyDialogComponent, 
+      { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = 'Áp dụng ưu đãi cho tất cả dịch vụ';
+      modalRef.componentInstance.priceMin = min;
+      modalRef.result.then(res => {
+        if (res.computePrice == 'percentage' && res.price > 100){
+          this.notify('Ưu đãi vượt quá giá bán','error');
+          return;
+        }
+        if (res.computePrice == 'fixed_amount' && res.price > min){
+          this.notify('Ưu đãi vượt quá giá bán','error');
+          return;
+        }
+        productItems.map(x => {
+          x.computePrice = res.computePrice;
+          x.computePrice == 'percentage' ? (x.percentPrice = res.price, x.fixedAmountPrice = null) :
+          (x.fixedAmountPrice = res.price, x.percentPrice = null);
+        });
+        this.f.productPricelistItems.patchValue(productItems);
+        this.notify('Áp dụng thành công','success');
+      }, () => {
+    });
   }
 
   onApplyCateg(categId){
-
+    let productItems = this.getAllServices();
+    let productItemsFiltered = productItems.filter(x => x.categId == categId);
+    console.log(productItemsFiltered);
+    
+    let prices = productItemsFiltered.map(x => x.listPrice);
+    let min = Math.min(...prices);
+    let modalRef = this.modalService.open(ServiceCardTypeApplyDialogComponent, 
+      { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = 'Áp dụng ưu đãi cho nhóm dịch vụ';
+      modalRef.componentInstance.priceMin = min;
+      modalRef.result.then(res => {
+        if (res.computePrice == 'percentage' && res.price > 100){
+          this.notify('Ưu đãi vượt quá giá bán','error');
+          return;
+        }
+        if (res.computePrice == 'fixed_amount' && res.price > min){
+          this.notify('Ưu đãi vượt quá giá bán','error');
+          return;
+        }
+        productItemsFiltered.map(x => {
+          x.computePrice = res.computePrice;
+          x.computePrice == 'percentage' ? (x.percentPrice = res.price, x.fixedAmountPrice = null) :
+          (x.fixedAmountPrice = res.price, x.percentPrice = null);
+        });
+        this.f.productPricelistItems.patchValue(productItemsFiltered);
+        console.log(productItems);
+        
+        this.notify('Áp dụng thành công','success');
+      }, () => {
+      });
   }
 
   changeComputePrice(event,product){
@@ -72,6 +203,38 @@ export class MemberCardCreateUpdateComponent implements OnInit {
     console.log(product);
     
     
+  }
+
+  onChange(event,product){
+    console.log(event);
+    console.log(product);
+  }
+
+  getAllServices(){
+    let productItems =this.cardForm.value.productPricelistItems;
+    return productItems;
+  }
+
+  notify(content: string, style){
+    this.notificationService.show({
+      content: content,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: style, icon: true }
+    });
+  }
+
+  getComputePrice(index){
+    return this.productPricelistItems.controls[index].value.computePrice;
+  }
+
+  get f(){
+    return this.cardForm.controls;
+  }
+
+  get productPricelistItems() {
+    return this.cardForm.get('productPricelistItems') as FormArray;
   }
 
 }

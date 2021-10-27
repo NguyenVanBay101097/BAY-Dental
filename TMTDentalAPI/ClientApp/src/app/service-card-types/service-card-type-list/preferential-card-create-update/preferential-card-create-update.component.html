@@ -69,7 +69,7 @@
                     <table class="table">
                         <tr>
                             <th>Tên dịch vụ</th>
-                            <th>Giá bán</th>
+                            <th class="text-right">Giá bán</th>
                             <th class="text-center">Ưu đãi theo thẻ</th>
                         </tr>
                         <ng-container *ngFor="let categ of categories; let categIndex = index">
@@ -87,7 +87,7 @@
                                     <div>{{product.defaultCode}}</div>
 
                                 </td>
-                                <td class="w-20">{{product.listPrice | number}}</td>
+                                <td class="w-20 text-right">{{product.listPrice | number}}</td>
                                 <td class="w-30 text-right">
 
                                     <kendo-numerictextbox *ngIf="product.computePrice == 'fixed_amount'" [min]="0" max="{{product.listPrice}}" autoCorrect = 'true'  [format]="'n0'" class="mr-2" style="width:70%" 

@@ -13,6 +13,7 @@ import { PreferentialCardListComponent } from './service-card-type-list/preferen
 import { PreferentialCardCreateUpdateComponent } from './service-card-type-list/preferential-card-create-update/preferential-card-create-update.component';
 import { ServiceCardTypeApplyDialogComponent } from './service-card-type-list/service-card-type-apply-dialog/service-card-type-apply-dialog.component';
 import { MemberCardCreateUpdateComponent } from './service-card-type-list/member-card-create-update/member-card-create-update.component';
+import { CardCardsModule } from '../card-cards/card-cards.module';
 
 
 @NgModule({
@@ -25,7 +26,8 @@ import { MemberCardCreateUpdateComponent } from './service-card-type-list/member
     CommonModule,
     SharedModule,
     MyCustomKendoModule,
-    NgbModule
+    NgbModule,
+    CardCardsModule
   
   ],
   entryComponents: [
