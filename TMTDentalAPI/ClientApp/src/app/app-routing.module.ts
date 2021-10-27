@@ -259,6 +259,11 @@ const routes: Routes = [
         canActivate: [AuthGuard]
       },
       {
+        path: 'setting-public-api',
+        loadChildren: () => import('./setting-public-api/setting-public-api.module').then(m => m.SettingPublicApiModule),
+        canActivate: [AuthGuard]
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full',

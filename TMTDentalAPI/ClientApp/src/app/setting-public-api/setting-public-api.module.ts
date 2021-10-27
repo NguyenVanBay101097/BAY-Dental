@@ -5,6 +5,7 @@ import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SettingPublicApiRoutingModule } from './setting-public-api-routing.module';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [GenerateTokenComponent],
@@ -14,7 +15,8 @@ import { SettingPublicApiRoutingModule } from './setting-public-api-routing.modu
     MyCustomKendoModule,
     ReactiveFormsModule,
     FormsModule,
-    NgbModule
+    NgbModule,
+    SharedModule
   ],
 })
 export class SettingPublicApiModule { }
