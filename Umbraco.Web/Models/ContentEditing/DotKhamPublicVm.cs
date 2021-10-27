@@ -12,20 +12,17 @@ namespace Umbraco.Web.Models.ContentEditing
     public class DotKhamPublic
     {
         public Guid Id { get; set; }
+
         /// <summary>
         /// Số đợt khám
         /// </summary>
         public string Name { get; set; }
 
-        /// <summary>
-        /// Bác sĩ
-        /// </summary>
-        public EmployeeSimple Doctor { get; set; }
+        public DateTime Date { get; set; }
 
-        /// <summary>
-        /// phụ tá
-        /// </summary>
-        public EmployeeSimple Assistant { get; set; }
+        public string DoctorName { get; set; }
+
+        public string AssistantName { get; set; }
 
         public IEnumerable<DotKhamLinePublic> Lines = new List<DotKhamLinePublic>();
 
@@ -33,5 +30,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Mô tả
         /// </summary>
         public string Reason { get; set; }
+
+        public IEnumerable<string> Images = new List<string>();
     }
 }

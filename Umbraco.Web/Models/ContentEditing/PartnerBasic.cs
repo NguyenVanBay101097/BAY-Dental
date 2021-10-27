@@ -670,7 +670,6 @@ namespace Umbraco.Web.Models.ContentEditing
                     list.Add(CityName);
                 return string.Join(", ", list);
             }
-            set { }
         }
 
         public string Street { get; set; }
@@ -696,9 +695,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
                 return (DateTime.Now.Year - BirthYear.Value).ToString();
             }
-            set
-            {
-            }
         }
         public DateTime? Date { get; set; }
         public string JobTitle { get; set; }
@@ -711,7 +707,6 @@ namespace Umbraco.Web.Models.ContentEditing
                     $"{(BirthMonth.HasValue ? BirthMonth.Value.ToString() : "_")}/" +
                     $"{(BirthYear.HasValue ? BirthYear.Value.ToString() : "_")}";
             }
-            set { }
         }
 
     }
@@ -748,7 +743,6 @@ namespace Umbraco.Web.Models.ContentEditing
                     list.Add(CityName);
                 return string.Join(", ", list);
             }
-            set { }
         }
 
         public string Street { get; set; }
@@ -774,22 +768,19 @@ namespace Umbraco.Web.Models.ContentEditing
 
                 return (DateTime.Now.Year - BirthYear.Value).ToString();
             }
-            set
-            {
-            }
         }
-        public DateTime? DateCreated { get; set; }
+        public DateTime? Date { get; set; }
         public string JobTitle { get; set; }
         public string Email { get; set; }
         public string DateOfBirth
         {
             get
             {
-                return $"{(BirthDay.HasValue ? BirthDay.Value.ToString() : "_")}/" +
-                    $"{(BirthMonth.HasValue ? BirthMonth.Value.ToString() : "_")}/" +
-                    $"{(BirthYear.HasValue ? BirthYear.Value.ToString() : "_")}";
+                if (!BirthDay.HasValue && !BirthMonth.HasValue && !BirthYear.HasValue) return "";
+                return $"{(BirthDay.HasValue ? BirthDay.Value.ToString() : "--")}/" +
+                    $"{(BirthMonth.HasValue ? BirthMonth.Value.ToString() : "--")}/" +
+                    $"{(BirthYear.HasValue ? BirthYear.Value.ToString() : "----")}";
             }
-            set { }
         }
 
         /// <summary>
@@ -800,7 +791,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// danh sach tieu su benh
         /// </summary>
-        public IEnumerable<HistorySimple> MedicalHistories { get; set; } = new List<HistorySimple>();
-
+        public IEnumerable<string> MedicalHistories { get; set; } = new List<string>();
     }
 }

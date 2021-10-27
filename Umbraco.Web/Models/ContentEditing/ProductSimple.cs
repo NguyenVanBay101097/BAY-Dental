@@ -39,16 +39,5 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
 
         public string Name { get; set; }
-
-        public Guid? CategId { get; set; }
-        public ProductCategorySimple Categ { get; set; }    
-
-        /// <summary>
-        /// hãng:  nếu là labo thì hãng nào ?
-        /// </summary>
-        public string Firm { get; set; }
-
-        public Guid UOMId { get; set; }
-        public UoMSimple UOM { get; set; }
     }
 }

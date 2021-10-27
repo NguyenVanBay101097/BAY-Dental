@@ -81,9 +81,7 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<SaleOrderLine, SaleOrderLinePublic>()
               .ForMember(x => x.Teeth, x => x.MapFrom(s => s.SaleOrderLineToothRels.Select(m => m.Tooth)))
-              .ForMember(x => x.Doctor, x => x.MapFrom(s => s.Employee))
-              .ForMember(x => x.AmountResidual, x => x.MapFrom(s => s.PriceSubTotal - s.AmountInvoiced))
-              .ForMember(x => x.Quantity, x => x.MapFrom(s => s.ProductUOMQty));
+              .ForMember(x => x.AmountResidual, x => x.MapFrom(s => s.PriceSubTotal - s.AmountInvoiced));
         }
     }
 }

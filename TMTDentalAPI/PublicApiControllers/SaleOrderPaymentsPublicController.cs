@@ -7,6 +7,7 @@ using Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -28,11 +29,23 @@ namespace TMTDentalAPI.PublicApiControllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromBody] SaleOrderPaymentPublicFilter val)
+        public async Task<IActionResult> Get(Guid? orderId = null)
         {
-            var orderPayments = await _orderPaymentService.GetPaymentsByOrderId(val.SaleOrderId);
-            var res = _mapper.Map<IEnumerable<SaleOrderPaymentPublic>>(orderPayments);
-            return Ok(res);
+            var orderPayments = await _orderPaymentService.SearchQuery(x => (!orderId.HasValue || x.OrderId == orderId))
+                .Select(x => new SaleOrderPaymentPublic { 
+                    Amount = x.Amount,
+                    Date = x.Date,
+                    Journals = x.JournalLines.Select(s => new SaleOrderPaymentPublicJournals { 
+                        Amount = s.Amount,
+                        JournalName = s.Journal.Name
+                    }),
+                    Lines = x.Lines.Select(s => new SaleOrderPaymentPublicLines { 
+                        Amount = s.Amount,
+                        ProductName = s.SaleOrderLine.Name
+                    }),
+                    Note = x.Note
+                }).ToListAsync();
+            return Ok(orderPayments);
         }
     }
 }

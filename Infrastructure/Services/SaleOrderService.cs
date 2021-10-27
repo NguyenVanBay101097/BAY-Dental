@@ -1264,11 +1264,7 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<SaleOrder>> GetSaleOrdersByPartnerId(Guid partnerId)
         {
-            var state = new string[] { "sale", "done" };
-            var saleOrders = await SearchQuery(x => x.PartnerId == partnerId && state.Contains(x.State))
-                .Include(x => x.OrderLines)
-                .Include(x => x.Partner)
-                .ToListAsync();
+            var saleOrders = await SearchQuery(x => x.PartnerId == partnerId).ToListAsync();
 
             return saleOrders;
         }

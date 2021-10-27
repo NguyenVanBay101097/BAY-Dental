@@ -7,6 +7,7 @@ using Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TMTDentalAPI.Controllers;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
@@ -31,18 +32,29 @@ namespace TMTDentalAPI.PublicApiControllers
 
        
         [HttpGet]
-        public async Task<IActionResult> Get([FromBody] PublicPartnerRequest val)
+        public async Task<IActionResult> Get([FromQuery] PublicPartnerRequest val)
         {
-            var partners = await _partnerService.GetPublicPartners(val.Limit, val.Offset, val.Search);
-            var res = _mapper.Map<IEnumerable<PublicPartnerReponse>>(partners);
-            return Ok(res);
+            var query = _partnerService.SearchQuery(x => x.Active && x.Customer);
+
+            if (!string.IsNullOrEmpty(val.Search))
+            {
+                query = query.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search)
+              || x.Ref.Contains(val.Search) || x.Phone.Contains(val.Search));
+            }
+
+            if (val.Limit > 0)
+                query = query.Skip(val.Offset).Take(val.Limit);
+
+            var items = await _mapper.ProjectTo<PublicPartnerReponse>(query.OrderByDescending(x => x.DateCreated)).ToListAsync();
+
+            return Ok(items);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var partner = await _partnerService.GetPartnerForDisplayAsync(id);
-            var res = _mapper.Map<PublicPartnerInfo>(partner);
+            var query = _partnerService.SearchQuery(x => x.Id == id);
+            var res = await _mapper.ProjectTo<PublicPartnerInfo>(query).FirstOrDefaultAsync();
             return Ok(res);
         }
     }

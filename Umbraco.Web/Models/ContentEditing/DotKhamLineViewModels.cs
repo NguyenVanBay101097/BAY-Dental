@@ -86,15 +86,13 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class DotKhamLinePublic
     {
-        public Guid Id { get; set; }
-
         public string NameStep { get; set; }
 
-        public ProductSimplePublic Product { get; set; }
+        public string ProductName { get; set; }
 
 
         public string Note { get; set; }
 
-        public IEnumerable<ToothSimple> Teeth { get; set; } = new List<ToothSimple>();
+        public IEnumerable<string> Teeth { get; set; } = new List<string>();
     }
 }

@@ -11,8 +11,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class SaleOrderPaymentPublic
     {
-        public Guid Id { get; set; }
-
         public DateTime Date { get; set; }
 
         /// <summary>
@@ -23,17 +21,24 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// phuong thuc thanh toan
         /// </summary>
-        public IEnumerable<SaleOrderPaymentJournalLineSimple> JournalLines { get; set; } = new List<SaleOrderPaymentJournalLineSimple>();
+        public IEnumerable<SaleOrderPaymentPublicJournals> Journals { get; set; } = new List<SaleOrderPaymentPublicJournals>();
 
-        public IEnumerable<SaleOrderLineSimple> Lines { get; set; } = new List<SaleOrderLineSimple>();
+        public IEnumerable<SaleOrderPaymentPublicLines> Lines { get; set; } = new List<SaleOrderPaymentPublicLines>();
 
         public string Note { get; set; }
+    }
 
-        /// <summary>
-        /// draft : nháp
-        /// posted : đã thanh toán
-        /// cancel : hủy
-        /// </summary>
-        public string State { get; set; }
+    public class SaleOrderPaymentPublicJournals
+    {
+        public string JournalName { get; set; }
+
+        public decimal Amount { get; set; }
+    }
+
+    public class SaleOrderPaymentPublicLines
+    {
+        public string ProductName { get; set; }
+
+        public decimal Amount { get; set; }
     }
 }

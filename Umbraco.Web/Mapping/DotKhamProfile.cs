@@ -61,8 +61,6 @@ namespace Umbraco.Web.Mapping
             CreateMap<DotKhamSave, DotKham>();
 
             CreateMap<DotKham, DotKhamPrintTemplate>();
-
-            CreateMap<DotKham, DotKhamPublic>();
         }
     }
 }

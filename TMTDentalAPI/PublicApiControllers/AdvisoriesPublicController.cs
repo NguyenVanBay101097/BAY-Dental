@@ -7,6 +7,7 @@ using Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -27,11 +28,22 @@ namespace TMTDentalAPI.PublicApiControllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromBody] AdvisoryPublicFilter val)
+        public async Task<IActionResult> Get(Guid? partnerId = null)
         {
-            var advisories = await _advisoryService.GetAdvisoriesByPartnerId(val.PartnerId);
-            var res = _mapper.Map<IEnumerable<AdvisoryPublicReponse>>(advisories);
-            return Ok(res);
+            var advisories = await _advisoryService.SearchQuery(x => (!partnerId.HasValue || x.CustomerId == partnerId))
+                .Select(x => new AdvisoryPublicReponse
+                {
+                    Id = x.Id,
+                    Date = x.Date,
+                    EmployeeName = x.Employee.Name,
+                    Note = x.Note,
+                    Products = x.AdvisoryProductRels.Select(s => s.Product.Name),
+                    ToothDiagnosis = x.AdvisoryToothDiagnosisRels.Select(s => s.ToothDiagnosis.Name),
+                    Teeth = x.AdvisoryToothRels.Select(s => s.Tooth.Name),
+                    ToothType = x.ToothType
+                }).ToListAsync();
+
+            return Ok(advisories);
         }
     }
 }

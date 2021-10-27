@@ -11,7 +11,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class SaleOrderPublic
     {
-
         public Guid Id { get; set; }
 
         public string Name { get; set; }
@@ -35,11 +34,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Thanh toan
         /// </summary>
         public decimal? TotalPaid { get; set; }
-
-        /// <summary>
-        /// Tong giam
-        /// </summary>
-        public decimal DiscountTotal { get; set; }
 
         /// <summary>
         /// Trạng thái

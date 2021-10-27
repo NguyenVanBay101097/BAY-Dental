@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
@@ -11,19 +12,11 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class SaleOrderLinePublic
     {
-        public Guid Id { get; set; }
+        public string ProductName { get; set; }
 
-        public string Name { get; set; }
-
-        /// <summary>
-        /// don gia
-        /// </summary>
         public decimal PriceUnit { get; set; }
 
-        /// <summary>
-        /// so luong
-        /// </summary>
-        public decimal Quantity { get; set; }
+        public decimal ProductUOMQty { get; set; }
 
         public DateTime? Date { get; set; }
 
@@ -38,50 +31,54 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// rang
         /// </summary>
-        public IEnumerable<ToothSimple> Teeth { get; set; } = new List<ToothSimple>();
+        public IEnumerable<string> Teeth { get; set; } = new List<string>();
+
+        public string TeethDisplay
+        {
+            get
+            {
+                switch (ToothType)
+                {
+                    case "whole_jaw":
+                        return "Nguyên hàm";
+                    case "upper_jaw":
+                        return "Hàm trên";
+                    case "lower_jaw":
+                        return "Hàm dưới";
+                    default:
+                        return string.Join(", ", Teeth);
+                }
+            }
+        }
 
         /// <summary>
         /// Chẩn đoán
         /// </summary>
         public string Diagnostic { get; set; }
 
+        public string DoctorName { get; set; }
 
-        /// <summary>
-        /// Bác sĩ
-        /// </summary>
-        public EmployeeSimple Doctor { get; set; }
+        public string AssistantName { get; set; }
 
-        /// <summary>
-        /// Phụ tá
-        /// </summary>
-        public EmployeeSimple Assistant { get; set; }
+        public string CounselorName { get; set; }
 
-        /// <summary>
-        /// người tư vấn
-        /// </summary>
-        public EmployeeSimple Counselor { get; set; }    
+        public decimal PriceTotal { get; set; }
 
-        /// <summary>
-        /// Tong tien
-        /// </summary>
-        public decimal PriceSubTotal { get; set; }
+        public decimal? AmountInvoiced { get; set; }
 
-        /// <summary>
-        /// Số tiền đã thanh toán
-        /// </summary>
-        public decimal? AmountPaid { get; set; }
-
-        /// <summary>
-        /// Số tiền con lai
-        /// </summary>
-        public decimal? AmountResidual { get; set; }
+        public decimal? AmountResidual
+        {
+            get
+            {
+                return PriceTotal - AmountInvoiced;
+            }
+        }
 
         /// <summary>
         /// Tổng đơn giá giảm của dịch vụ
         /// </summary>
-        public double? AmountDiscountTotal { get; set; }
+        public double? PriceDiscountTotal { get; set; }
 
         public string State { get; set; }
-
     }
 }

@@ -7,6 +7,7 @@ using Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -28,10 +29,10 @@ namespace TMTDentalAPI.PublicApiControllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromBody] SaleOrderPublicFilter val)
+        public async Task<IActionResult> Get(Guid? partnerId = null)
         {
-            var orders = await _saleOrderService.GetSaleOrdersByPartnerId(val.PartnerId);
-            var res = _mapper.Map<IEnumerable<SaleOrderPublic>>(orders);
+            var query = _saleOrderService.SearchQuery(x => (!partnerId.HasValue || x.PartnerId == partnerId));
+            var res = await _mapper.ProjectTo<SaleOrderPublic>(query).ToListAsync();
             return Ok(res);
         }
     }

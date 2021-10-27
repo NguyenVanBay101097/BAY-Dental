@@ -13,11 +13,30 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid Id { get; set; }
         public DateTime Date { get; set; }
-        public EmployeeSimple Employee { get; set; }
+        public string EmployeeName { get; set; }
         public string ToothType { get; set; }
-        public IEnumerable<ToothBasic> Teeth { get; set; } = new List<ToothBasic>();
-        public IEnumerable<ToothDiagnosisBasic> ToothDiagnosis { get; set; } = new List<ToothDiagnosisBasic>();
-        public IEnumerable<ProductSimplePublic> Product { get; set; } = new List<ProductSimplePublic>();
+        public IEnumerable<string> Teeth { get; set; } = new List<string>();
+        public string TeethDisplay
+        {
+            get
+            {
+                switch (ToothType)
+                {
+                    case "whole_jaw":
+                        return "Nguyên hàm";
+                    case "upper_jaw":
+                        return "Hàm trên";
+                    case "lower_jaw":
+                        return "Hàm dưới";
+                    default:
+                        return string.Join(", ", Teeth);
+                }
+            }
+        }
+
+        public IEnumerable<string> ToothDiagnosis { get; set; } = new List<string>();
+
+        public IEnumerable<string> Products { get; set; } = new List<string>();
 
         public string Note { get; set; }
     }
