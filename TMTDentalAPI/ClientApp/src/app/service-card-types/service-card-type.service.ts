@@ -7,6 +7,7 @@ export class ServiceCardTypeObj {
     name: string;
     period: string;
     nbrPeriod: number;
+    companyId: string;
     productPricelistItems: ProductPricelistItems[] = [];
 }
 export class ProductPricelistItems {

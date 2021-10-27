@@ -22,6 +22,7 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
   cardTypeObj: ServiceCardTypeObj;
   objCategories = Object.create(null);
   submitted = false;
+  companyId: string;
   constructor(
     private modalService: NgbModal,
     private cardService: ServiceCardTypeService,
@@ -30,10 +31,16 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    var user_info = localStorage.getItem('user_info');
+    if (user_info) {
+      var userInfo = JSON.parse(user_info);
+      this.companyId = userInfo.companyId;
+    }
     this.cardTypeObj  = {
       name: '',
       period: 'year',
       nbrPeriod: 1,
+      companyId: this.companyId,
       productPricelistItems: []
     };  
     this.cardTypeId = this.route.snapshot.queryParamMap.get('id');
@@ -183,7 +190,8 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
       name: '',
       period: 'year',
       nbrPeriod: 1,
-      productPricelistItems: []
+      productPricelistItems: [],
+      companyId: this.companyId
     };
     this.categories = [];
   }
