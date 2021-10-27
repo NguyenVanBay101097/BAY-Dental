@@ -85,8 +85,8 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
     this.objCategories[event.categId].products.push(event);
     this.categories = Object.keys(this.objCategories).map((key)=> [this.objCategories[key]]); 
   }
-  onSave(){
-    if (this.cardTypeObj.name == '')
+  onSave(value){
+    if (value.form.status == 'INVALID')
       return;
   
     let productItems = this.categories.reduce((r,a) => {

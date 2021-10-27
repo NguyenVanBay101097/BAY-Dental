@@ -12,48 +12,57 @@
             </li>
         </ol>
         <div class="o_cp_left">
-            <button class="btn btn-primary" (click)="onSave()">Lưu</button>
+            <button class="btn btn-primary" (click)="onSave(templateForm)">Lưu</button>
         </div>
     </div>
 </div>
 
-<div class="o_content">
+<div class="py-3 container">
     <form class="o_form_view" #templateForm="ngForm">
         <div class="o_form_sheet_bg">
-            <div class="o_form_sheet_new flex-1-1-100 h-100">
+            <div class="o_form_sheet">
                 <div class="o_group">
-                    <div class="o_group o_inner_group o_group_col_6">
-                        <div class="d-flex align-items-center w-100">
-                            <div class="o_td_label mr-2">Tên hạng thẻ</div>
-                            <div class="flex-grow-1">
-                                <input class="form-control" name="name" [(ngModel)]="cardTypeObj.name" required #name ="ngModel">
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center w-100 mb-3">
-                            <div class="o_td_label mr-2"></div>
-                            <div class="flex-grow-1" style="height: 22px;">
-                                <div class="text-danger" *ngIf="name?.errors?.required && name.dirty">
-                                    Nhập tên hạng thẻ
-                                </div>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center w-100 mb-3">
-                            <div class="o_td_label mr-2">Hạn mức thẻ</div>
-                            <div class="mr-2">
-                                <select class="form-control select-control" [(ngModel)]="cardTypeObj.nbrPeriod" name="nbrPeriod">
-                                    <option *ngFor="let i of periodList" value="{{i}}">
-                                        {{i}}
-                                    </option>
-                                </select>
-                            </div>
-                            <div>
-                                <select class="form-control select-control" [(ngModel)]="cardTypeObj.period" name="period">
-                                    <option value="year">Năm</option>
-                                    <option value="month">Tháng</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
+                    <table class="o_group o_inner_group">
+                        <tbody>
+                            <tr>
+                                <td class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Tên hạng thẻ
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%">
+                                    <input class="form-control" name="name" [(ngModel)]="cardTypeObj.name" required #name ="ngModel">
+                                    <div class="text-danger" *ngIf="name?.errors?.required && name.dirty">
+                                        Nhập tên hạng thẻ
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Hạn mức thẻ
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%">
+                                    <div class="d-flex align-items-center w-100 mb-3">
+                                        <div class="mr-2">
+                                            <select class="form-control select-control" [(ngModel)]="cardTypeObj.nbrPeriod" name="nbrPeriod">
+                                                <option *ngFor="let i of periodList" value="{{i}}">
+                                                    {{i}}
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <select class="form-control select-control" [(ngModel)]="cardTypeObj.period" name="period">
+                                                <option value="year">Năm</option>
+                                                <option value="month">Tháng</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
                 <hr>
                 <div class="o_td_label mb-2">
@@ -70,7 +79,7 @@
                         <tr>
                             <th>Tên dịch vụ</th>
                             <th>Giá bán</th>
-                            <th class="text-center">Ưu đãi theo thẻ</th>
+                            <th class="text-right">Ưu đãi theo thẻ</th>
                         </tr>
                         <ng-container *ngFor="let categ of categories; let categIndex = index">
                             <tr>
@@ -85,30 +94,33 @@
                                 <td class="w-50">
                                     <div>{{product.name}}</div>
                                     <div>{{product.defaultCode}}</div>
-
                                 </td>
                                 <td class="w-20">{{product.listPrice | number}}</td>
                                 <td class="w-30 text-right">
-
-                                    <kendo-numerictextbox *ngIf="product.computePrice == 'fixed_amount'" [min]="0" max="{{product.listPrice}}" autoCorrect = 'true'  [format]="'n0'" class="mr-2" style="width:70%" 
-                                    [(ngModel)]="product.fixedAmountPrice"
-                                    [name] = "'percentPrice' + categIndex + productIndex">
-                                    </kendo-numerictextbox>
-                                    <kendo-numerictextbox *ngIf="product.computePrice == 'percentage'" [min]="0" max = "100" [format]="'n0'" autoCorrect = 'true' class="mr-2" style="width:70%" 
-                                    [name] = "'percentPrice' + categIndex + productIndex" [(ngModel)]="product.percentPrice">
-                                    </kendo-numerictextbox>
-
-
-                                    <input type="radio" class="btn-check" [id]="'btn-check-1'+categIndex + productIndex" 
-                                    [name]="'type'+categIndex + productIndex" (ngModelChange)="changePeriod(product)"
-                                    value = "percentage" [(ngModel)]="product.computePrice">
-                                    <label class="btn btn-outline-primary mb-0 mr-2" [ngClass]="{'btn-primary': product.computePrice=='percentage'}" 
-                                    [for]="'btn-check-1'+categIndex + productIndex">%</label>
-                                    <input type="radio" class="btn-check" [id]="'btn-check-2'+categIndex + productIndex" 
-                                    [name]="'type'+categIndex + productIndex" (ngModelChange)="changePeriod(product)"
-                                    value = "fixed_amount" [(ngModel)]="product.computePrice">
-                                    <label class="btn btn-outline-primary mb-0 mr-2" [ngClass]="{'btn-primary': product.computePrice=='fixed_amount'}"
-                                    [for]="'btn-check-2'+categIndex + productIndex">VNĐ</label>
+                                    <div class="d-flex justify-content-end">
+                                        <div>
+                                            <kendo-numerictextbox *ngIf="product.computePrice == 'fixed_amount'" [min]="0" max="{{product.listPrice}}" autoCorrect = 'true'  [format]="'n0'" class="mr-2" 
+                                            [(ngModel)]="product.fixedAmountPrice"
+                                            [name] = "'percentPrice' + categIndex + productIndex">
+                                            </kendo-numerictextbox>
+                                            <kendo-numerictextbox *ngIf="product.computePrice == 'percentage'" [min]="0" max = "100" [format]="'n0'" autoCorrect = 'true' class="mr-2"
+                                            [name] = "'percentPrice' + categIndex + productIndex" [(ngModel)]="product.percentPrice">
+                                            </kendo-numerictextbox>
+                                        </div>
+                                        <div>
+                                            <input type="radio" class="btn-check" [id]="'btn-check-1'+categIndex + productIndex" 
+                                            [name]="'type'+categIndex + productIndex" (ngModelChange)="changePeriod(product)"
+                                            value = "percentage" [(ngModel)]="product.computePrice">
+                                            <label class="btn btn-outline-primary mb-0 mr-2" [ngClass]="{'btn-primary': product.computePrice=='percentage'}" 
+                                            [for]="'btn-check-1'+categIndex + productIndex">%</label>
+                                            <input type="radio" class="btn-check" [id]="'btn-check-2'+categIndex + productIndex" 
+                                            [name]="'type'+categIndex + productIndex" (ngModelChange)="changePeriod(product)"
+                                            value = "fixed_amount" [(ngModel)]="product.computePrice">
+                                            <label class="btn btn-outline-primary mb-0 mr-2" [ngClass]="{'btn-primary': product.computePrice=='fixed_amount'}"
+                                            [for]="'btn-check-2'+categIndex + productIndex">VNĐ</label>
+                                        </div>
+                                    </div>
+                    
                                 </td>
                             </tr>
                         </ng-container>
