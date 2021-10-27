@@ -14,18 +14,16 @@
         </div> -->
         <div class="o_cp_left">
             <div class="o_cp_buttons">
-                <button type="button" class="btn btn-primary" accesskey="c"
-                (click)="createItem()">Thêm</button>
+                <button type="button" class="btn btn-primary" accesskey="c" (click)="createItem()">Thêm</button>
             </div>
             <div class="o_cp_sidebar">
             </div>
         </div>
-        <div class="o_cp_t_right">
+        <div class="o_cp_right">
             <div class="o_searchview">
-                <input class="o_searchview_input" 
-            placeholder="Tìm kiếm theo tên ..." type="text" [(ngModel)]="search" 
-            (ngModelChange)="this.searchUpdate.next($event)">
-            <span class="o_searchview_icon fas fa-search"></span>
+                <input class="o_searchview_input" [placeholder]="'Tìm kiếm loại ' + type" type="text" [(ngModel)]="search"
+                    (ngModelChange)="this.searchUpdate.next($event)">
+                <span class="o_searchview_icon fas fa-search"></span>
             </div>
         </div>
     </div>

@@ -76,10 +76,8 @@ export class HrSalaryPaymentComponent implements OnInit {
 
   onChangeJournal(e) {
     const val = e.target;
-    console.log(val);
-
-
   }
+
   onSave() {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Chi lương';
@@ -148,8 +146,6 @@ export class HrSalaryPaymentComponent implements OnInit {
 
   onRemovePayment(i) {
     this.paymentFA.removeAt(i);
-    console.log(this.paymentFA);
-
   }
 
 }

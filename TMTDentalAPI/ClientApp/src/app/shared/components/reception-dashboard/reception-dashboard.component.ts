@@ -43,8 +43,8 @@ export class ReceptionDashboardComponent implements OnInit {
   revenueReportToDay: RevenueTodayReponse;
   initialListEmployees: any[] = [];
 
-  @ViewChild('employeeCbx', { static: false }) employeeCbx: ComboBoxComponent;
-  @ViewChild('customerReceiptComp', { static: false }) customerReceiptComp: DashboardCustomerReceiptListTodayComponent;
+  @ViewChild('employeeCbx') employeeCbx: ComboBoxComponent;
+  @ViewChild('customerReceiptComp') customerReceiptComp: DashboardCustomerReceiptListTodayComponent;
 
 
   constructor(private checkPermissionService: CheckPermissionService, private dashboardReportService: DashboardReportService,

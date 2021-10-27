@@ -19,7 +19,8 @@
                                     <input class="form-control" formControlName="name" />
                                     <div class="error-message">
                                         <span class="text-danger "
-                                            *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)">Nhập tên câu hỏi</span>
+                                            *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)">Nhập
+                                            tên câu hỏi</span>
                                     </div>
                                 </td>
                             </tr>
@@ -64,7 +65,7 @@
                                             </div>
                                         </td>
                                         <td class="col-md" style="vertical-align: middle;">
-                                            <input type="text" class="form-control" formControlName="name" required>
+                                            <input type="text" class="form-control" formControlName="name" [class.border-danger]="answers.controls[i].get('name').errors?.required && submitted" >
                                         </td>
                                         <td class="col-xs" style="vertical-align: middle;">
                                             <span>

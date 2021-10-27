@@ -1317,7 +1317,8 @@ namespace Infrastructure.Services
                 //.Include(x => x.OrderLines).ThenInclude(x => x.Order).ThenInclude(x => x.OrderLines)
                 .FirstOrDefaultAsync();
 
-            order = _mapper.Map(val, order);
+            //order = _mapper.Map(val, order);
+            order.DateOrder = val.DateOrder;
 
             //await SaveOrderLines(val, order);
             await UpdateAsync(order); //update trước để generate id cho những sale order line
@@ -1927,7 +1928,10 @@ namespace Infrastructure.Services
             {
                 //Lược bỏ những dòng số lượng bằng 0
                 order.OrderLines = await saleOrderLineObj.SearchQuery(x => x.OrderId == order.Id).OrderBy(x => x.Sequence).Where(x => x.ProductUOMQty != 0).Include(x => x.Product).ToListAsync();
-                order.SaleOrderPayments = await saleOrderPaymentObj.SearchQuery(x => x.OrderId == order.Id).Include(x => x.PaymentRels).ThenInclude(x => x.Payment).ThenInclude(x => x.Journal).ToListAsync();
+                order.SaleOrderPayments = await saleOrderPaymentObj.SearchQuery(x => x.OrderId == order.Id)
+                    .Include(x => x.Lines).ThenInclude(x => x.SaleOrderLine)
+                    .Include(x => x.PaymentRels).ThenInclude(x => x.Payment).ThenInclude(x => x.Journal)
+                    .ToListAsync();
             }
 
             return orders;
@@ -1981,7 +1985,9 @@ namespace Infrastructure.Services
             //order.OrderLines = res.OrderLines.Where(x => x.ProductUOMQty != 0);        
             order.DotKhams = await _GetListDotkhamInfo(order.Id);
             var saleOrderPaymentObj = GetService<ISaleOrderPaymentService>();
-            order.HistoryPayments = _mapper.Map<IEnumerable<SaleOrderPaymentBasic>>(await saleOrderPaymentObj.SearchQuery(x => x.OrderId == id).Include(x => x.PaymentRels).ThenInclude(x => x.Payment).ThenInclude(x => x.Journal).ToListAsync());
+            order.HistoryPayments = _mapper.Map<IEnumerable<SaleOrderPaymentBasic>>(await saleOrderPaymentObj.SearchQuery(x => x.OrderId == id)
+                .Include(x => x.PaymentRels).ThenInclude(x => x.Payment).ThenInclude(x => x.Journal)
+                .Include(x => x.Lines).ThenInclude(x => x.SaleOrderLine).ToListAsync());
             //get currentuser
             order.User = _mapper.Map<ApplicationUserSimple>(await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId));
             return order;
@@ -3182,6 +3188,22 @@ namespace Infrastructure.Services
 
 
             return allData;
+        }
+
+        public async Task<IEnumerable<IrAttachment>> GetListAttachment(Guid id)
+        {
+            var attObj = GetService<IIrAttachmentService>();
+            var dotkhamObj = GetService<IDotKhamService>();
+
+            var attQr = attObj.SearchQuery();
+            var dotkhamQr = dotkhamObj.SearchQuery();
+
+            var resQr = from att in attQr
+                        from dk in dotkhamQr.Where(x => x.Id == att.ResId).DefaultIfEmpty()
+                        where att.ResId == id || dk.SaleOrderId == id
+                        select att;
+            var res = await resQr.OrderByDescending(x => x.DateCreated).ToListAsync();
+            return res;
         }
     }
 }

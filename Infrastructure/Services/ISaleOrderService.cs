@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Models;
 using ApplicationCore.Models.PrintTemplate;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -98,6 +99,7 @@ namespace Infrastructure.Services
         Task<IEnumerable<GetExcelManagementItemRes>> ExportManagementExcel(SaleOrderPaged val);
 
         Task<IEnumerable<SaleOrder>> GetPrintTemplate(IEnumerable<Guid> ids);
+        Task<IEnumerable<IrAttachment>> GetListAttachment(Guid id);
 
         Task<IEnumerable<SaleOrder>> GetSaleOrdersByPartnerId(Guid partnerId);
     }

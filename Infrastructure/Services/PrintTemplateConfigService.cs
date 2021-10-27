@@ -288,6 +288,12 @@ namespace Infrastructure.Services
                             res.Company = company;
                             return res;
                         }
+                    case "tmp_appointment":
+                        {
+                            var res = JsonConvert.DeserializeObject<Appointment>(item.Data.ToString());
+                            res.Company = company;
+                            return res;
+                        }
                     default:
                         return null;
                 }

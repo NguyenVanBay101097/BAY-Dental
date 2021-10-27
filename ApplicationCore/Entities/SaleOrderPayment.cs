@@ -52,7 +52,7 @@ namespace ApplicationCore.Entities
         public ICollection<SaleOrderPaymentAccountPaymentRel> PaymentRels { get; set; } = new List<SaleOrderPaymentAccountPaymentRel>();
 
         [NotMapped]
-        public String JournalLinesDisplay
+        public string JournalLinesDisplay
         {
             get
             {
@@ -60,6 +60,13 @@ namespace ApplicationCore.Entities
             }
         }
 
-
+        [NotMapped]
+        public string LinesDisplay
+        {
+            get
+            {
+                return string.Join(", ", Lines.Select(x => x.SaleOrderLine.Name));
+            }
+        }
     }
 }

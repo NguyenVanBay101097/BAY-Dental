@@ -336,7 +336,8 @@ namespace Infrastructure.Services
                 ToothType = x.ToothType,
                 Tooths = String.Join(",", x.AdvisoryToothRels.Select(x => x.Tooth.Name)),
                 Diagnosis = x.AdvisoryToothDiagnosisRels.Any() ? String.Join(",", x.AdvisoryToothDiagnosisRels.Select(x => x.ToothDiagnosis.Name)) : null,
-                Services = x.AdvisoryProductRels.Any() ? String.Join(",", x.AdvisoryProductRels.Select(x => x.Product.Name)) : null
+                Services = x.AdvisoryProductRels.Any() ? String.Join(",", x.AdvisoryProductRels.Select(x => x.Product.Name)) : null,
+                Note = x.Note
             }).ToListAsync();
 
             res.Advisories = advisories;

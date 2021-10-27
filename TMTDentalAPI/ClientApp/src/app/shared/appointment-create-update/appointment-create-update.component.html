@@ -1,7 +1,6 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ngbAutofocus
-        (click)="activeModal.dismiss()" tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ngbAutofocus (click)="activeModal.dismiss()" tabindex="-1">×</button>
 </header>
 <div class="modal-body o_act_window">
     <form class="o_form_view" [formGroup]="formGroup">
@@ -22,20 +21,16 @@
                             <td colspan="1">
                                 <div class="d-flex">
                                     <div class="flex-grow-1 mr-2">
-                                        <kendo-combobox formControlName="partner" [filterable]="true"
-                                            [data]="customerSimpleFilter" (valueChange)="onChangePartner()" #partnerCbx
-                                            [valueField]="'id'" [textField]="'displayName'">
+                                        <kendo-combobox formControlName="partner" [filterable]="true" [data]="customerSimpleFilter" (valueChange)="onChangePartner()" #partnerCbx [valueField]="'id'" [textField]="'displayName'">
                                         </kendo-combobox>
                                     </div>
                                     <div>
-                                        <a title="Thêm khách hàng" class=" btn btn-primary"
-                                            (click)="quickCreateCustomerModal()">
+                                        <a title="Thêm khách hàng" class=" btn btn-primary" (click)="quickCreateCustomerModal()">
                                             <i class="fas fa-plus text-white"></i>
                                         </a>
                                     </div>
                                 </div>
-                                <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)"
-                                    class="text-danger">
+                                <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)" class="text-danger">
                                     <div *ngIf="f.partner.errors.required">Chọn khách hàng</div>
                                 </div>
                             </td>
@@ -53,11 +48,9 @@
                                 <label class="o_form_label">Bác sĩ</label>
                             </td>
                             <td colspan="1">
-                                <kendo-combobox formControlName="doctor" [filterable]="true" [data]="filteredEmployees"
-                                    #doctorCbx [valueField]="'id'" [textField]="'name'">
+                                <kendo-combobox formControlName="doctor" [filterable]="true" [data]="filteredEmployees" #doctorCbx [valueField]="'id'" [textField]="'name'">
                                 </kendo-combobox>
-                                <div *ngIf="f.doctor.errors && (f.doctor.touched || f.doctor.dirty || submitted)"
-                                    class="text-danger">
+                                <div *ngIf="f.doctor.errors && (f.doctor.touched || f.doctor.dirty || submitted)" class="text-danger">
                                     <div *ngIf="f.doctor.errors.required">Chọn bác sĩ</div>
                                 </div>
                             </td>
@@ -69,8 +62,7 @@
                             <td colspan="1">
                                 <kendo-datepicker [format]="'dd/MM/yyyy'" formControlName="dateObj">
                                 </kendo-datepicker>
-                                <div *ngIf="f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)"
-                                    class="text-danger">
+                                <div *ngIf="f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)" class="text-danger">
                                     <div *ngIf="f.dateObj.errors.required">Chọn ngày hẹn</div>
                                 </div>
                             </td>
@@ -87,10 +79,8 @@
                                             <option [value]="i" *ngFor="let i of timeList">
                                                 {{i}}</option>
                                         </select> -->
-                                        <kendo-timepicker formControlName="timeObj" format="HH:mm"
-                                            [class.border-invalid]="f.timeObj.errors"></kendo-timepicker>
-                                        <div *ngIf="f.timeObj.errors && (f.timeObj.touched || f.timeObj.dirty || submitted)"
-                                            class="text-danger">
+                                        <kendo-timepicker formControlName="timeObj" format="HH:mm" [class.border-invalid]="f.timeObj.errors"></kendo-timepicker>
+                                        <div *ngIf="f.timeObj.errors && (f.timeObj.touched || f.timeObj.dirty || submitted)" class="text-danger">
                                             <div *ngIf="f.timeObj.errors.required">Chọn giờ hẹn</div>
                                         </div>
                                     </div>
@@ -98,8 +88,7 @@
                                         <span class="mr-1 text-time p-1">Dự kiến</span>
                                         <!-- <input type="number" class="form-control" formControlName="timeExpected"
                                             [min]="0"> -->
-                                        <kendo-numerictextbox [min]="0" [format]="'n0'" [spinners]="false"
-                                            [autoCorrect]="true" formControlName="timeExpected">
+                                        <kendo-numerictextbox [min]="0" [format]="'n0'" [spinners]="false" [autoCorrect]="true" formControlName="timeExpected">
                                         </kendo-numerictextbox>
                                         <span class="mr-1 text-time p-1">Phút</span>
                                     </div>
@@ -116,8 +105,7 @@
                             <td colspan="1"></td>
                             <td colspan="1">
                                 <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="exampleCheck1"
-                                        formControlName="isRepeatCustomer">
+                                    <input type="checkbox" class="form-check-input" id="exampleCheck1" formControlName="isRepeatCustomer">
                                     <label class="form-check-label" for="exampleCheck1">Khách tái khám</label>
                                 </div>
                             </td>
@@ -127,9 +115,7 @@
                                 <label class="o_form_label">Dịch vụ</label>
                             </td>
                             <td colspan="1">
-                                <kendo-multiselect [data]="filteredServices" [valueField]="'id'"
-                                    [textField]="'name'" [placeholder]="'Chọn dịch vụ'" formControlName="services"
-                                    [filterable]="true" #serviceMultiSelect>
+                                <kendo-multiselect [data]="filteredServices" [valueField]="'id'" [textField]="'name'" [placeholder]="'Chọn dịch vụ'" formControlName="services" [filterable]="true" #serviceMultiSelect>
                                     <!-- <ng-template kendoMultiSelectTagTemplate let-dataItem>
                                         <div class="template">
                                             <span [title]="dataItem.name">{{dataItem.name}}</span>
@@ -143,8 +129,7 @@
                                 <label class="o_form_label">Nội dung</label>
                             </td>
                             <td colspan="1">
-                                <textarea class="form-control" rows="5" formControlName="note"
-                                    [placeholder]="'Nhập nội dung'"></textarea>
+                                <textarea class="form-control" rows="5" formControlName="note" [placeholder]="'Nhập nội dung'"></textarea>
                             </td>
                         </tr>
                         <tr *ngIf="appointId">
@@ -152,8 +137,7 @@
                                 <label class="o_form_label">Trạng thái</label>
                             </td>
                             <td colspan="1">
-                                <select class="form-control mr-1" formControlName="state"
-                                    (change)="onChange($event.target.value)">
+                                <select class="form-control mr-1" formControlName="state" (change)="onChange($event.target.value)">
                                     <option value="confirmed">Đang hẹn</option>
                                     <option value="done">Đã đến</option>
                                     <option value="cancel">Hủy hẹn</option>
@@ -165,10 +149,8 @@
                                 <label class="o_form_label">Lý do</label>
                             </td>
                             <td colspan="1">
-                                <textarea class="form-control" rows="3" formControlName="reason"
-                                    [class.border-danger]="f.reason.errors && (f.reason.touched || f.reason.dirty || submitted)"></textarea>
-                                <div *ngIf="f.reason.errors && (f.reason.touched || f.reason.dirty || submitted)"
-                                    class="text-danger">
+                                <textarea class="form-control" rows="3" formControlName="reason" [class.border-danger]="f.reason.errors && (f.reason.touched || f.reason.dirty || submitted)"></textarea>
+                                <div *ngIf="f.reason.errors && (f.reason.touched || f.reason.dirty || submitted)" class="text-danger">
                                     <div *ngIf="f.reason.errors.required">Nhập lý do</div>
                                 </div>
                             </td>
@@ -182,12 +164,16 @@
 <div class="modal-footer">
     <button type="button" class="btn btn-primary mr-2" (click)="onSave()">
         Lưu</button>
+    <button *ngIf="!appointId" type="button" class="btn btn-primary mr-2" (click)="onSavePrint()">
+            Lưu và in</button>
     <button *ngIf="appointId" type="button" class="btn btn-danger mr-2 ml-0" (click)="onDelete()">
         Xóa</button>
     <!-- <button *ngIf="appointId" type="button" class="btn btn-secondary mr-2 ml-0" (click)="onDuplicate()">
         Sao chép</button> -->
     <button *ngIf="appointId" type="button" class="btn btn-secondary mr-2 ml-0" (click)="onCreateNewAppointment()">
         Tạo mới</button>
+    <button *ngIf="appointId" type="button" class="btn btn-secondary mr-2 ml-0" (click)="onPrint()">
+            In phiếu</button>
     <button type="button" class="btn btn-light mr-2 ml-0" (click)="activeModal.dismiss()">
         Đóng</button>
 </div>

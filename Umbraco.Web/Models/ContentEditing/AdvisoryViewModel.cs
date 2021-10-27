@@ -158,6 +158,11 @@ namespace Umbraco.Web.Models.ContentEditing
         /// list name services
         /// </summary>
         public string Services { get; set; }
+        
+        /// <summary>
+        /// ghi chú
+        /// </summary>
+        public string Note { get; set; }
 
     }
 

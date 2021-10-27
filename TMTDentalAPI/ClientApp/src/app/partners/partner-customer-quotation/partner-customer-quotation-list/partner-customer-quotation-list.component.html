@@ -57,7 +57,7 @@
             </kendo-grid-column>
             <kendo-grid-column title="Phiếu điều trị" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    <a *ngFor="let order of dataItem.orders; let i = index" class="text-primary" [routerLink]="['/sale-orders/form']" [queryParams]="{id: order.id}">
+                    <a *ngFor="let order of dataItem.orders; let i = index" class="text-primary" [routerLink]="['/sale-orders', order.id]">
                             {{order.name}}<span *ngIf="i < dataItem.orders.length -1">, </span>
                         </a>
                 </ng-template>

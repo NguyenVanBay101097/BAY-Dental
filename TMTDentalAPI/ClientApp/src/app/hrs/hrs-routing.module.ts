@@ -12,6 +12,7 @@ import { HrSalaryReportListComponent } from './hr-salary-report-list/hr-salary-r
 import { TimeKeepingViewCalendarComponent } from '../time-keeping/time-keeping-view-calendar/time-keeping-view-calendar.component';
 import { SalaryPaymentListComponent } from '../salary-payment/salary-payment-list/salary-payment-list.component';
 import { SalaryPaymentFormComponent } from '../salary-payment/salary-payment-form/salary-payment-form.component';
+import { HrJobListComponent } from '../hr-jobs/hr-job-list/hr-job-list.component';
 
 const routes: Routes = [
   {
@@ -61,6 +62,10 @@ const routes: Routes = [
   {
     path: 'salary-payment/form',
     component: SalaryPaymentFormComponent
+  },
+  {
+    path: 'jobs',
+    component: HrJobListComponent
   },
 ];
 

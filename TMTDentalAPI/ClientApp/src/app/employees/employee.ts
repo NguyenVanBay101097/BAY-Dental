@@ -13,6 +13,7 @@ export class EmployeePaged {
     ids: string[];
     active: any = true;
     companyId: string;
+    hrJobId: string;
 }
 
 export class EmployeeBasic {
@@ -49,6 +50,7 @@ export class PagedResult2<T>{
 export class EmployeeSimple {
     id: string;
     name: string;
+    hrJobName?: string;
 }
 
 export class EmployeeSimpleContact {

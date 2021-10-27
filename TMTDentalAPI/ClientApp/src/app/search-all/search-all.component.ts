@@ -1,8 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { NgSelectComponent } from '@ng-select/ng-select';
 import { Observable, of, Subject } from 'rxjs';
 import { catchError, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
-import { SearchAllService } from '../search-all.service';
+import { SearchAllService } from '../shared/search-all.service';
 
 @Component({
   selector: 'app-search-all',

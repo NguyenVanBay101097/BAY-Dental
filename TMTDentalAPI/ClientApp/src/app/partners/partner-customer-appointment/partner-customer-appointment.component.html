@@ -18,7 +18,14 @@
                 </kendo-grid-column>
                 <kendo-grid-column field="note" title="Nội dung" width="150">
                 </kendo-grid-column>
+                <kendo-grid-column title="Loại khám" width="150">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        <label>{{ dataItem.isRepeatCustomer ? "Tái khám" : "Khám mới" }}</label>
+                    </ng-template>
+                </kendo-grid-column>
                 <kendo-grid-column field="stateDisplay" title="Trạng thái" width="100">
+                </kendo-grid-column>
+                <kendo-grid-column field="reason" title="Lý do" width="150">
                 </kendo-grid-column>
                 <kendo-grid-column field="id" width="100">
                     <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">

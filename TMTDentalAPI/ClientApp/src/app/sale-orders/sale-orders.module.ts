@@ -44,6 +44,10 @@ import { SaleOrderApplyCouponComponent } from './sale-order-apply-coupon/sale-or
 import { SaleOrderLineApplyCouponComponent } from './sale-order-line-apply-coupon/sale-order-line-apply-coupon.component';
 import { SaleOrderManagementComponent } from './sale-order-management/sale-order-management.component';
 import { SaleOrderLineManagementComponent } from './sale-order-line-management/sale-order-line-management.component';
+import { SaleOrderPrintPopupComponent } from './sale-order-print-popup/sale-order-print-popup.component';
+import { SaleOrderImagesLibraryPopupComponent } from './sale-order-images-library-popup/sale-order-images-library-popup.component';
+import { SaleOrderImageComponent } from './sale-order-image/sale-order-image.component';
+import { SaleOrderServiceListComponent } from './sale-order-service-list/sale-order-service-list.component';
 
 @NgModule({
   declarations: [
@@ -80,6 +84,10 @@ import { SaleOrderLineManagementComponent } from './sale-order-line-management/s
     SaleOrderLineApplyCouponComponent,
     SaleOrderManagementComponent,
     SaleOrderLineManagementComponent,
+    SaleOrderPrintPopupComponent,
+    SaleOrderImagesLibraryPopupComponent,
+    SaleOrderImageComponent,
+    SaleOrderServiceListComponent,
   ],
   imports: [
     CommonModule,
@@ -111,7 +119,9 @@ import { SaleOrderLineManagementComponent } from './sale-order-line-management/s
     SaleOrdersDotkhamCuComponent,
     SaleOrderProductRequestDialogComponent,
     SaleOrderPromotionDialogComponent,
-    SaleOrderLinePromotionDialogComponent
+    SaleOrderLinePromotionDialogComponent,
+    SaleOrderPrintPopupComponent,
+    SaleOrderImagesLibraryPopupComponent
   ]
 })
 export class SaleOrdersModule { }

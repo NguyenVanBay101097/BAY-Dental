@@ -374,7 +374,8 @@ namespace Infrastructure.Services
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) || x.OrderPartner.Name.Contains(val.Search)
-                                        || x.Product.NameNoSign.Contains(val.Search) || x.OrderPartner.NameNoSign.Contains(val.Search));
+                                        || x.Product.NameNoSign.Contains(val.Search) || x.OrderPartner.NameNoSign.Contains(val.Search)
+                                        || x.Order.Name.Contains(val.Search));
             if (val.OrderPartnerId.HasValue)
                 query = query.Where(x => x.OrderPartnerId == val.OrderPartnerId);
             if (val.ProductId.HasValue)
@@ -1208,6 +1209,11 @@ namespace Infrastructure.Services
                .FirstOrDefaultAsync();
 
             UpdateOrderInfo(new List<SaleOrderLine>() { saleLine }, order);
+            _GetInvoiceQty(new List<SaleOrderLine>() { saleLine });
+            _GetToInvoiceQty(new List<SaleOrderLine>() { saleLine });
+            _GetInvoiceAmount(new List<SaleOrderLine>() { saleLine });
+            _GetToInvoiceAmount(new List<SaleOrderLine>() { saleLine });
+            _ComputeInvoiceStatus(new List<SaleOrderLine>() { saleLine });
             ComputeAmount(new List<SaleOrderLine>() { saleLine });
 
             await CreateAsync(saleLine);

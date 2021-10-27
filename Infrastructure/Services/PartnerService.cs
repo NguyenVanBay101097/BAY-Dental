@@ -2417,6 +2417,24 @@ namespace Infrastructure.Services
             };
 
         }
+        public async Task<IEnumerable<IrAttachment>> GetListAttachment(Guid id)
+        {
+            var attObj = GetService<IIrAttachmentService>();
+            var dotkhamObj = GetService<IDotKhamService>();
+            var saleObj = GetService<ISaleOrderService>();
+            //check company
+            var attQr = attObj.SearchQuery();
+            var saleQr = saleObj.SearchQuery(x=> x.CompanyId == CompanyId);
+            var dotkhamQr = dotkhamObj.SearchQuery();
+
+            var resQr = from att in attQr
+                        from so in saleQr.Where(x => x.Id == att.ResId).DefaultIfEmpty()
+                        from dk in dotkhamQr.Where(x => x.Id == att.ResId).DefaultIfEmpty()
+                        where att.ResId == id || so.PartnerId == id || dk.PartnerId == id
+                        select att;
+            var res = await resQr.OrderByDescending(x => x.DateCreated).ToListAsync();
+            return res;
+        }
 
         public async Task<IEnumerable<Partner>> GetPublicPartners(int limit , int offset , string search)
         {

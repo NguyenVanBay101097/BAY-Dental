@@ -8,6 +8,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PartnerCategoryImportComponent } from '../partner-category-import/partner-category-import.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { NotifyService } from 'src/app/shared/services/notify.service';
 
 @Component({
   selector: 'app-partner-category-list',
@@ -34,6 +35,7 @@ export class PartnerCategoryListComponent implements OnInit {
   constructor(
     private partnerCategoryService: PartnerCategoryService,
     private modalService: NgbModal,
+    private notifyService: NotifyService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -87,9 +89,10 @@ export class PartnerCategoryListComponent implements OnInit {
 
   createItem() {
     let modalRef = this.modalService.open(PartnerCategoryCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm: ' + this.title;
+    modalRef.componentInstance.title = 'Thêm nhãn khách hàng';
 
     modalRef.result.then(() => {
+      this.notifyService.notify("success","Lưu thành công");
       this.loadDataFromApi();
     }, () => {
     });
@@ -97,9 +100,10 @@ export class PartnerCategoryListComponent implements OnInit {
 
   editItem(item: PartnerCategoryBasic) {
     let modalRef = this.modalService.open(PartnerCategoryCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Sửa: ' + this.title;
+    modalRef.componentInstance.title = 'Sửa nhãn khách hàng';
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {
+      this.notifyService.notify("success","Lưu thành công");
       this.loadDataFromApi();
     }, () => {
     });
@@ -107,9 +111,11 @@ export class PartnerCategoryListComponent implements OnInit {
 
   deleteItem(item: PartnerCategoryBasic) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Xóa: ' + this.title;
+    modalRef.componentInstance.title = 'Xóa nhãn khách hàng';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn xóa nhãn khách hàng';
     modalRef.result.then(() => {
       this.partnerCategoryService.delete(item.id).subscribe(() => {
+      this.notifyService.notify("success","Xóa thành công");
         this.loadDataFromApi();
       }, err => {
         console.log(err);

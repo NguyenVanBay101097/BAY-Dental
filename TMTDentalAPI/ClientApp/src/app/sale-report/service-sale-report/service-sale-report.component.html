@@ -1,6 +1,6 @@
 <div class="container py-3">
     <div class="form-inline">
-        <app-date-range-picker-filter #dateRange [ranges]="ranges" [opens]="'right'" class="mr-2 mb-2" [startDate]="filter.dateOrderFrom" [endDate]="filter.dateOrderTo" (searchChange)="onSearchDateChange($event)" opens="right"></app-date-range-picker-filter>
+        <app-date-range-picker-filter [showClearButton]="false" #dateRange [ranges]="ranges" [opens]="'right'" class="mr-2 mb-2" [startDate]="filter.dateOrderFrom" [endDate]="filter.dateOrderTo" (searchChange)="onSearchDateChange($event)" opens="right"></app-date-range-picker-filter>
         <kendo-combobox [placeholder]="'Tất cả bác sĩ'" class="mr-2 mb-2" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="employees" (selectionChange)="onSelectEmployee($event)" #empCbx>
         </kendo-combobox>
         <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-2 mb-2" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>

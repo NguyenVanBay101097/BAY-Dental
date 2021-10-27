@@ -58,7 +58,7 @@ export class DashboardServiceTodayReportComponent implements OnInit {
   loadService() {
     var val = new SaleOrderLinePaged();
     val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
-    val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-ddT23:59');
+    val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
     val.companyId = this.authService.userInfo.companyId;
     val.search = this.search;
     val.state = 'sale,done,cancel';

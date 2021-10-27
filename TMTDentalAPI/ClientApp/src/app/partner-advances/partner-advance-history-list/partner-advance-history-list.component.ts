@@ -98,7 +98,7 @@ export class PartnerAdvanceHistoryListComponent implements OnInit {
   }
 
   getFormSaleOrder(id){
-    this.router.navigate(['/sale-orders/form'], { queryParams: { id: id } });
+    this.router.navigate(['/sale-orders', id]);
   }
 
 }

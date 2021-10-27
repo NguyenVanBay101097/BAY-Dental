@@ -429,7 +429,12 @@
 			<field name="model_id" ref="base.model_print_template_config"/>
 			<field name="global" eval="True"/>
 		</record>
-		
+
+    <record model="ir.rule" id="hr.hr_job_comp_rule">
+      <field name="name">Job multi company rule</field>
+      <field name="model_id" ref="hr.model_hr_job"/>
+      <field name="global" eval="True"/>
+    </record>
 	</data>
 </odoo>
 

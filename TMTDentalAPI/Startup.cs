@@ -379,6 +379,7 @@ namespace TMTDentalAPI
             services.AddScoped<IPrintTemplateConfigService, PrintTemplateConfigService>();
 
             services.AddScoped<ILaboWarrantyService, LaboWarrantyService>();
+            services.AddScoped<IHrJobService, HrJobService>();
 
             services.AddMemoryCache();
 
@@ -575,6 +576,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new LaboWarrantyProfile());
                 mc.AddProfile(new PrintTemplateConfigProfile());
                 mc.AddProfile(new PrintTemplateProfile());
+                mc.AddProfile(new HrJobProfile());
             };
 
             #endregion
