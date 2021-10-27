@@ -185,12 +185,20 @@ export class MemberCardCreateUpdateComponent implements OnInit {
           this.notify('Ưu đãi vượt quá giá bán','error');
           return;
         }
-        productItemsFiltered.map(x => {
-          x.computePrice = res.computePrice;
-          x.computePrice == 'percentage' ? (x.percentPrice = res.price, x.fixedAmountPrice = null) :
-          (x.fixedAmountPrice = res.price, x.percentPrice = null);
+             
+
+        this.productPricelistItems.controls.filter(x => x.value.categId === categId ).map(x => {
+          x.get('computePrice').patchValue(res.computePrice);
+
+          if(res.computePrice == 'percentage'){
+            x.get('percentPrice').patchValue(res.price);
+            x.get('fixedAmountPrice').patchValue(null);
+          }else{
+            x.get('percentPrice').patchValue(null);
+            x.get('fixedAmountPrice').patchValue(res.price);
+          }       
         });
-        this.f.productPricelistItems.patchValue(productItemsFiltered);
+
         console.log(productItems);
         
         this.notify('Áp dụng thành công','success');
@@ -211,7 +219,7 @@ export class MemberCardCreateUpdateComponent implements OnInit {
   }
 
   getAllServices(){
-    let productItems =this.cardForm.value.productPricelistItems;
+    let productItems = this.productPricelistItems.value;
     return productItems;
   }
 
