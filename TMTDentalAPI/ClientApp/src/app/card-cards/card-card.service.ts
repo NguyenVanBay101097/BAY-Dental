@@ -32,6 +32,12 @@ export class CardCardDisplay {
     upgradeTypeId: string;
 }
 
+export class CardCardFilter {
+    partnerId: string;
+    productId: string;
+    state: string;
+}
+
 @Injectable({providedIn: 'root'})
 export class CardCardService {
     apiUrl = 'api/CardCards';
