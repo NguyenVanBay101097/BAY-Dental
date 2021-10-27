@@ -21,4 +21,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
         public Guid ServiceCardId { get; set; }
     }
+
+    public class ApplyCardCardRequest
+    {
+        public Guid Id { get; set; }
+        public Guid CardId { get; set; }
+    }
 }

@@ -152,7 +152,6 @@ namespace Infrastructure.Services
 
         public SaleOrderPromotion PrepareServiceCardToOrderLine(SaleOrderLine self, ServiceCardCard serviceCard, decimal discountAmount)
         {
-            var total = self.PriceUnit * self.ProductUOMQty;
             var pricelistItem = serviceCard.CardType.ProductPricelist.Items.Where(x => x.ProductId == self.ProductId).FirstOrDefault();
             var discount = pricelistItem.ComputePrice == "percentage" ? ((pricelistItem.PercentPrice ?? 0) + "%") : ((pricelistItem.FixedAmountPrice ?? 0) + "VNĐ");
             var name = $"Giảm {discount} cho thẻ ưu đãi {serviceCard.CardType.Name}";
@@ -165,6 +164,31 @@ namespace Infrastructure.Services
                 SaleOrderId = self.OrderId,
                 Type = "service_card_card"
             };          
+
+            promotionLine.Lines.Add(new SaleOrderPromotionLine
+            {
+                Amount = promotionLine.Amount,
+                PriceUnit = (double)(promotionLine.Amount / self.ProductUOMQty),
+                SaleOrderLineId = self.Id,
+            });
+
+            return promotionLine;
+        }
+
+        public SaleOrderPromotion PrepareCardCardToOrderLine(SaleOrderLine self, CardCard card, decimal discountAmount)
+        {
+            var pricelistItem = card.Type.Pricelist.Items.Where(x => x.ProductId == self.ProductId).FirstOrDefault();
+            var discount = pricelistItem.ComputePrice == "percentage" ? ((pricelistItem.PercentPrice ?? 0) + "%") : ((pricelistItem.FixedAmountPrice ?? 0) + "VNĐ");
+            var name = $"Giảm {discount} cho thẻ thành viên {card.Type.Name}";
+            var promotionLine = new SaleOrderPromotion
+            {
+                Name = name,
+                Amount = Math.Round(discountAmount),
+                CardCardId = card.Id,
+                SaleOrderLineId = self.Id,
+                SaleOrderId = self.OrderId,
+                Type = "card_card"
+            };
 
             promotionLine.Lines.Add(new SaleOrderPromotionLine
             {

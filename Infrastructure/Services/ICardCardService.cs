@@ -25,5 +25,7 @@ namespace Infrastructure.Services
         Task ButtonUpgradeCard(IEnumerable<Guid> ids);
         Task<CardCard> GetValidCard(Guid partnerId);
         Task _CheckUpgrade(IEnumerable<CardCard> self, decimal? points = null);
+
+        Task<IEnumerable<CardCardResponse>> GetCardCards(GetCardCardFilter val);
     }
 }
