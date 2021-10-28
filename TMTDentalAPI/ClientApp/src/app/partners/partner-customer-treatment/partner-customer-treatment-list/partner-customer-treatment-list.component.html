@@ -11,7 +11,7 @@
                             <option value="saleOrder">Theo phiếu điều trị</option>
                             <option value="saleOrderLine">Theo dịch vụ</option>
                         </select>
-                        <app-date-range-picker-filter class="mb-2 mr-2" [opens]="'left'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
+                        <app-date-range-picker-filter class="mb-2 mr-2" [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
                         <button type="button" (click)="createNewSaleOrder()" class="mb-2 mr-2 btn btn-primary"><i class="fas fa-plus-circle mr-1"></i> Thêm phiếu điều trị</button>
                     </div>
                     <div class="w-50">
