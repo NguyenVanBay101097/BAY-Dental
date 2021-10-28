@@ -221,7 +221,8 @@ namespace Infrastructure.Services
                 if(card != null)
                 {
                     card.TotalPoint += loyaltyPoints;
-                    card.TypeId = await UpGradeCardCard((card.TotalPoint ?? 0));
+                    var typeId = await UpGradeCardCard((card.TotalPoint ?? 0));
+                    card.TypeId = typeId == Guid.Empty ? card.TypeId : typeId;
                     await cardObj.UpdateAsync(card);
                 }
 
@@ -543,7 +544,8 @@ namespace Infrastructure.Services
                 if (card != null)
                 {
                     card.TotalPoint -= loyaltyPoints;
-                    card.TypeId = await UpGradeCardCard((card.TotalPoint ?? 0));
+                    var typeId = await UpGradeCardCard((card.TotalPoint ?? 0));
+                    card.TypeId = typeId == Guid.Empty ? card.TypeId : typeId;
                     await cardObj.UpdateAsync(card);
                 }
 
