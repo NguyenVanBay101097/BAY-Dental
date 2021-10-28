@@ -34,8 +34,10 @@
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                         <button class="btn btn-success mr-2" title="Sửa" (click)="dialogAppointment(dataItem)">
                             <span class="far fa-edit"></span></button>
-                        <button class="btn btn-danger" title="Xóa" (click)="deleteAppointment(dataItem)">
+                        <button class="btn btn-danger mr-2" title="Xóa" (click)="deleteAppointment(dataItem)">
                             <span class="far fa-trash-alt"></span></button>
+                        <button class="btn btn-secondary" (click)="onPrint(dataItem.id)">
+                            <i class="fas fa-print"></i></button>
                     </ng-template>
                 </kendo-grid-column>
             </kendo-grid>
