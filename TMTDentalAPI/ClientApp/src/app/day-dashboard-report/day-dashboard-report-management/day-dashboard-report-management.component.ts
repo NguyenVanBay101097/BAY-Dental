@@ -103,8 +103,8 @@ export class DayDashboardReportManagementComponent implements OnInit {
 
   loadDataServiceApi() {
     var val = new SaleOrderLinePaged();
-    val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
-    val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
+    val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : null;
+    val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : null;
     val.companyId = this.companyId || '';
     val.state = 'sale,done,cancel';
     this.saleOrderLineService.getPaged(val).pipe(

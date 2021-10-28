@@ -54,7 +54,6 @@ export class DayDashboardReportCashbookComponent implements OnInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.loadData();
-    this.loadDataCashbookReport();
     this.loadSumaryResult();
   }
 
