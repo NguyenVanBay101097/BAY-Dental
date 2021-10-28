@@ -49,7 +49,7 @@ export class ServiceCardTypeService {
     }
 
     create(val: any) {
-        return this.http.post(this.baseApi + this.apiUrl + '/Create', val);
+        return this.http.post<any>(this.baseApi + this.apiUrl + '/Create', val);
     }
 
     update(id: string, val: any) {

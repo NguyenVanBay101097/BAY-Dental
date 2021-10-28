@@ -30,15 +30,19 @@
 <div class="o_content">
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"
         (pageChange)="onPageChange($event)">
-        <kendo-grid-column title="Số ID thẻ">
+        <kendo-grid-column title="Số ID thẻ" field="barcode">
         </kendo-grid-column>
-        <kendo-grid-column title="Hạng thẻ" width="200">
+        <kendo-grid-column title="Hạng thẻ" field="typeName" width="200">
         </kendo-grid-column>
-        <kendo-grid-column title="Họ tên">
+        <kendo-grid-column title="Họ tên" field="partnerName">
         </kendo-grid-column>
-        <kendo-grid-column title="Điện thoại" width="180">
+        <kendo-grid-column title="Điện thoại" field="partnerPhone" width="180">
         </kendo-grid-column>
         <kendo-grid-column title="Trạng thái">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <label *ngIf="dataItem.state=='draft'">Chưa kích hoạt</label>
+                <label *ngIf="dataItem.state=='in_use'" class="text-success">Đã kích hoạt</label>
+            </ng-template>
         </kendo-grid-column>
         <kendo-grid-column>
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">

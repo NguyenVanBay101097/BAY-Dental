@@ -64,7 +64,7 @@ export class MemberCardListComponent implements OnInit {
   }
 
   deleteItem(item){
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Xóa hạng thẻ';
     modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa hạng thẻ này?';
     modalRef.result.then(() => {
@@ -78,13 +78,6 @@ export class MemberCardListComponent implements OnInit {
         });
         this.loadDataFromApi();
       }, error => {
-        this.notificationService.show({
-          content: 'Hạng thẻ này đã tạo thẻ nên không thể xóa',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'error', icon: true }
-        });
       })
     });
   }

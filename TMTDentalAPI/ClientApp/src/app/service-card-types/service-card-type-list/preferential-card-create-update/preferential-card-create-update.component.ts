@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { result } from 'lodash';
 import { Subject } from 'rxjs';
 import {ProductPricelistItems, ServiceCardTypeObj, ServiceCardTypeService } from '../../service-card-type.service';
 import { ServiceCardTypeApplyDialogComponent } from '../service-card-type-apply-dialog/service-card-type-apply-dialog.component';
@@ -27,7 +28,9 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
     private modalService: NgbModal,
     private cardService: ServiceCardTypeService,
     private notificationService: NotificationService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router,
+
   ) { }
 
   ngOnInit(): void {
@@ -107,8 +110,15 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
       })
     }
     else {
-      this.cardService.create(this.cardTypeObj).subscribe(()=>{
+      this.cardService.create(this.cardTypeObj).subscribe(result=>{
+        this.router.navigate(['card-types/preferential-cards/form'], { queryParams: { id: result.id } });
+
         this.notify('Lưu thành công','success');
+        // this.router.navigateByUrl('/card-types/preferential-cards/form?id='+result.id);
+        // this.router.navigate(['/card-types/preferential-cards/form'], { queryParams: { id: result.id } });
+
+
+
       })
     }
   }
