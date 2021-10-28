@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationCore.Models;
 using AutoMapper;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -45,9 +46,15 @@ namespace TMTDentalAPI.PublicApiControllers
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
+            var totalItems = await query.CountAsync();
             var items = await _mapper.ProjectTo<PublicPartnerReponse>(query.OrderByDescending(x => x.DateCreated)).ToListAsync();
 
-            return Ok(items);
+            var paged = new PagedResult2<PublicPartnerReponse>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items
+            };
+
+            return Ok(paged);
         }
 
         [HttpGet("{id}")]
