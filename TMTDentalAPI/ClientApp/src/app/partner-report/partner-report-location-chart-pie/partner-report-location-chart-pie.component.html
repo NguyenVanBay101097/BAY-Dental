@@ -22,23 +22,39 @@
     <div class="container">
         <div class="row">
             <div class="col-6 text-center">
-                <kendo-chart *ngIf="pieDataDistrict.length" title="Theo quận/huyện lân cận phòng khám">
+                <!-- <kendo-chart *ngIf="pieDataDistrict.length" title="Theo quận/huyện lân cận phòng khám">
                     <kendo-chart-legend position="bottom"></kendo-chart-legend>
                     <kendo-chart-series>
                         <kendo-chart-series-item [autoFit]="true" type="pie" [data]="pieDataDistrict" field="total" categoryField="name" [labels]="{ visible: true, content: labelContent }">
                         </kendo-chart-series-item>
                     </kendo-chart-series>
-                </kendo-chart>
+                </kendo-chart> -->
+                <div *ngIf="pieDataDistrict.length" class="py-3 bg-white">
+                    <canvas baseChart
+                        [type]="'pie'"
+                        [labels]="pieChartLabelsDistrict"
+                        [options]="pieChartDistrictOptions"
+                        [datasets]="pieChartDataDistrict">
+                    </canvas>
+                </div>
                 <p *ngIf="!pieDataDistrict.length">Không có dữ liệu</p>
             </div>
             <div class="col-6 text-center">
-                <kendo-chart *ngIf="pieDataWard.length" title="Theo phường/xã lân cận phòng khám">
+                <!-- <kendo-chart *ngIf="pieDataWard.length" title="Theo phường/xã lân cận phòng khám">
                     <kendo-chart-legend position="bottom"></kendo-chart-legend>
                     <kendo-chart-series>
                         <kendo-chart-series-item [autoFit]="true" type="pie" [data]="pieDataWard" field="total" categoryField="name" [labels]="{ visible: true, content: labelContent }">
                         </kendo-chart-series-item>
                     </kendo-chart-series>
-                </kendo-chart>
+                </kendo-chart> -->
+                <div *ngIf="pieDataWard.length" class="py-3 bg-white">
+                    <canvas baseChart
+                        [type]="'pie'"
+                        [labels]="pieChartLabelsWard"
+                        [options]="pieChartWardOptions"
+                        [datasets]="pieChartDataWard">
+                    </canvas>
+                </div>
                 <p *ngIf="!pieDataWard.length">Không có dữ liệu</p>
             </div>
         </div>

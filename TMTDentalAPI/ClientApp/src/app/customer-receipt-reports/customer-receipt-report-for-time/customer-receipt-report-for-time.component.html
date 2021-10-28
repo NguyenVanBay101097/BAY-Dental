@@ -19,7 +19,7 @@
             </div>
         </div>
         <div class="mb-3">
-            <kendo-chart class="mh-chart-year">
+            <!-- <kendo-chart class="mh-chart-year">
                 <kendo-chart-title text="BÁO CÁO THEO GIỜ TIẾP NHẬN">
                 </kendo-chart-title>
                 <kendo-chart-legend position='bottom' orientation='horizontal'></kendo-chart-legend>
@@ -36,7 +36,14 @@
                         </kendo-chart-series-item>
                     </ng-container>
                 </kendo-chart-series>
-            </kendo-chart>
+            </kendo-chart> -->
+
+            <canvas baseChart
+                [type]="'bar'"
+                [labels]="barChartLabels"
+                [datasets]="barChartData"
+                [options]="barChartOptions">
+            </canvas>
         </div>
     </div>
     <kendo-grid #grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"

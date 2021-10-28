@@ -54,17 +54,23 @@
                 <div class="box-overview-content">
                     <ng-container *ngIf="pieDataExamination.length; else elseTemplate">
                         <div class="d-flex justify-content-center align-items-center">
-                            <div>
-                                <kendo-chart class="size-chart" [transitions]="true">
+                            <div style="position: relative; width: 150px; height: 200px;">
+                                <!-- <kendo-chart class="size-chart" [transitions]="true">
                                     <kendo-chart-series>
                                         <kendo-chart-series-item type="pie" [data]="pieDataExamination"
                                             field="countCustomerReceipt" [name]="'name'" categoryField="name">
                                         </kendo-chart-series-item>
                                     </kendo-chart-series>
                                     <kendo-chart-legend [visible]="false" pói></kendo-chart-legend>
-                                </kendo-chart>
+                                </kendo-chart> -->
+                                <canvas baseChart
+                                    [type]="'pie'"
+                                    [labels]="pieChartLabels"
+                                    [options]="pieChartOptions"
+                                    [datasets]="pieChartData">
+                                </canvas>
                             </div>
-                            <div>
+                            <div class="ml-2">
                                 <div *ngFor="let item of pieDataExamination">
                                     <div>
                                         <i class="fas fa-circle mr-2" [style.color]="item.color"></i>

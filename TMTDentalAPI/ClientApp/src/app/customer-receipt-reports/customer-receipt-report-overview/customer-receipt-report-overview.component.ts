@@ -3,6 +3,7 @@ import { LegendItemVisualArgs } from '@progress/kendo-angular-charts';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { ChartDataset, ChartOptions } from 'chart.js';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
@@ -43,6 +44,24 @@ export class CustomerReceiptReportOverviewComponent implements OnInit {
   public pieDataExamination: any[] = [];
   public pieDataNoTreatment: any[] = [];
 
+  public pieChartLabels: string[] = ['Tái khám',  'Khám mới'];
+  public pieChartOptions: ChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false
+      }
+    }
+  };
+  public pieChartData: ChartDataset[] = [
+    { 
+      data: [],
+      backgroundColor: [ 'rgb(26,109,227)', 'rgb(149,200,255)' ],
+      hoverBackgroundColor: [ 'rgb(26,109,227)', 'rgb(149,200,255)' ],
+      hoverBorderColor: [ 'rgb(26,109,227)', 'rgb(149,200,255)' ],
+    }
+  ];
   @ViewChild("companyCbx", { static: true }) companyCbx: ComboBoxComponent;
   @ViewChild("employeeCbx", { static: true }) employeeCbx: ComboBoxComponent;
 
@@ -165,6 +184,7 @@ export class CustomerReceiptReportOverviewComponent implements OnInit {
     this.customerReceiptReportService.getCountCustomerReceipt(val).subscribe(
       (res: any[]) => {
         this.pieDataExamination = res;
+        this.pieChartData[0].data = res.map(x => x.countCustomerReceipt);
         this.loading = false;
       },
       (err) => {
