@@ -98,7 +98,9 @@ namespace TMTDentalAPI.Controllers
             var type = await _cardTypeService.SearchQuery(x => x.Id == id).Include(x => x.Pricelist.Items).FirstOrDefaultAsync();
             if (type == null)
                 return NotFound();
+            if(type.Pricelist != null)
             await _productPricelistService.DeleteAsync(type.Pricelist);
+
             await _cardTypeService.DeleteAsync(type);
 
             return NoContent();

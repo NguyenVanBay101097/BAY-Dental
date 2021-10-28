@@ -227,7 +227,8 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 2].Value = item.TypeName;
                     worksheet.Cells[row, 3].Value = item.PartnerName;
                     worksheet.Cells[row, 4].Value = item.PartnerPhone;
-                    worksheet.Cells[row, 6].Value = stateDict.ContainsKey(item.State) ? stateDict[item.State] : "";
+                    worksheet.Cells[row, 5].Value = stateDict.ContainsKey(item.State) ? stateDict[item.State] : "";
+                    row++;
                 }
 
                 package.Save();

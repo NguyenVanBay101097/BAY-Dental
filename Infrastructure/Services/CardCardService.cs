@@ -229,7 +229,7 @@ namespace Infrastructure.Services
                 if (!card.PartnerId.HasValue)
                     throw new Exception("Khách hàng đang trống, cần bổ sung khách hàng");
 
-                await CheckExisted(card);
+                //await CheckExisted(card);
 
                 var active_date = card.State != "in_use" ? card.ActivatedDate : null;
                 if (!active_date.HasValue)
