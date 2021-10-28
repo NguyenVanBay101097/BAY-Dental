@@ -161,5 +161,7 @@ namespace TMTDentalAPI.Endpoints.PartnerEndpoints.GetCustomerInfo
         public decimal? Point { get; set; }
 
         public MemberLevelBasic MemberLevel { get; set; }
+
+        public string CardTypeName { get; set; }
     }
 }
