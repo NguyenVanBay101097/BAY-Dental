@@ -43,11 +43,12 @@ namespace TMTDentalAPI.PublicApiControllers
               || x.Ref.Contains(val.Search) || x.Phone.Contains(val.Search));
             }
 
+            query = query.OrderByDescending(x => x.DateCreated);
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
             var totalItems = await query.CountAsync();
-            var items = await _mapper.ProjectTo<PublicPartnerReponse>(query.OrderByDescending(x => x.DateCreated)).ToListAsync();
+            var items = await _mapper.ProjectTo<PublicPartnerReponse>(query).ToListAsync();
 
             var paged = new PagedResult2<PublicPartnerReponse>(totalItems, val.Offset, val.Limit)
             {
