@@ -11,7 +11,7 @@ const routes: Routes = [
     path: '',
     component: ServiceCardTypeListComponent,
     children: [
-      { path: '', redirectTo: 'preferential-cards', pathMatch: 'full' },
+      { path: '', redirectTo: 'member-cards', pathMatch: 'full' },
       {path: 'member-cards', component: MemberCardListComponent},
       {path: 'preferential-cards', component: PreferentialCardListComponent},
     ]

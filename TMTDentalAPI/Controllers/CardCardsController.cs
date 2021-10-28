@@ -241,5 +241,13 @@ namespace TMTDentalAPI.Controllers
 
             return new FileContentResult(fileContent, mimeType);
         }
+
+        [HttpPost("ImportExcel")]
+        [CheckAccess(Actions = "LoyaltyCard.CardCard.Read")]
+        public async Task<IActionResult> ImportExcel(IFormFile file)
+        {
+            var res = await _cardCardService.ActionImport(file);
+            return Ok(res);
+        }
     }
 }

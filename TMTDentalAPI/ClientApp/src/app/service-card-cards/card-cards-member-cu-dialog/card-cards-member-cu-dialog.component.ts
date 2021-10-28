@@ -26,7 +26,7 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
   submitted = false;
   customerSimpleFilter: PartnerSimpleContact[] = [];
   cardTypeSimpleFilter: any[] = [];
-  state: string;
+  state: string = 'draft';
 
   constructor(
     private fb: FormBuilder,
@@ -76,16 +76,11 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
   }
 
   getState(state) {
-    switch (state) {
-      case "in_use":
-        return "Đã kích hoạt";
-      case "cancelled":
-        return "Hủy thẻ";
-      case "locked":
-        return "Tạm dừng";
-      default:
-        return "Chưa kích hoạt";
-    }
+    if (state=="in_use")
+      return "Đã kích hoạt";
+    else if (state=="draft")
+      return "Chưa kích hoạt";
+    return "";
   }
 
   quickCreateCustomerModal(){
@@ -102,7 +97,6 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
 
   onSave(){
     this.submitted = true;
-
     if (this.formGroup.invalid) {
       return false;
     }
@@ -126,17 +120,22 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
   }
 
   actionActivate(){
+    let val = this.formGroup.value;
+    val.typeId = val.cardType ? val.cardType.id : '';
+    val.partnerId = val.partner ? val.partner.id: '';
+    if (val.partner == null){
+      this.notifyService.notify('error','Khách hàng đang trống, cần bổ sung khách hàng');
+      return;
+    }
     if (this.id){
-      this.cardCardsService.buttonActive([this.id]).subscribe(()=>{
-        this.notifyService.notify('success','Kích hoạt thành công');
-        this.activeModal.close();
+      this.cardCardsService.update(this.id,val).subscribe(res => {
+        this.cardCardsService.buttonActive([this.id]).subscribe(()=> {
+          this.notifyService.notify('success','Kích hoạt thành công');
+          this.activeModal.close();
+        })
       })
     }
     else {
-      let val = this.formGroup.value;
-    // val.partnerId = this.partnerId ? this.partnerId : (val.partner ? val.partner.id : '');
-      val.typeId = val.cardType ? val.cardType.id : '';
-      val.partnerId = val.partner ? val.partner.id: '';
       this.cardCardsService.create(val).subscribe(res => {
         this.cardCardsService.buttonActive([res.id]).subscribe(()=> {
           this.notifyService.notify('success','Kích hoạt thành công');
@@ -145,6 +144,7 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
         })
       })
     }
+      
   }
 
   loadDataFromApi(){
@@ -153,6 +153,8 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
       this.formGroup.patchValue(res);
       this.setValueFC('cardType',res.type);
       this.state = res.state;
+      if (res.state == 'in_use')
+        this.formGroup.disable();
       })
     }
   }

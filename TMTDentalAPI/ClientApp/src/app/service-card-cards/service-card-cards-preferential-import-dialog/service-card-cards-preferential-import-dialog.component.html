@@ -33,7 +33,10 @@
     <button type="button" class="btn btn-primary" (click)="import()">
         Import
     </button>
-    <a href="assets/files/File_mau_the_uu_dai_dich_vu.xlsx" class="btn btn-info">
+    <a *ngIf="!isMemberCard" href="assets/files/File_mau_the_uu_dai_dich_vu.xlsx" class="btn btn-info">
+        Tải file mẫu
+    </a>
+    <a *ngIf="isMemberCard" href="assets/files/File_mau_the_thanh_vien.xlsx" class="btn btn-info">
         Tải file mẫu
     </a>
     <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">

@@ -6,8 +6,10 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using MyERP.Utilities;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -396,6 +398,55 @@ namespace Infrastructure.Services
                 TotalPoint = self.TotalPoint,
                 TypeId = self.TypeId
             });
+        }
+
+        public async Task<ImportExcelResponse> ActionImport(IFormFile formFile)
+        {
+
+            if (formFile == null || formFile.Length <= 0)
+            {
+                throw new Exception("File không được trống");
+            }
+
+            var list = new List<CardCard>();
+            var cardTypeObj = GetService<ICardTypeService>();
+
+            using (var stream = new MemoryStream())
+            {
+                await formFile.CopyToAsync(stream);
+                try
+                {
+                    using (var package = new ExcelPackage(stream))
+                    {
+                        ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                        var rowCount = worksheet.Dimension.Rows;
+
+                        for (int row = 2; row <= rowCount; row++)
+                        {
+                            var typeName = worksheet.Cells[row, 2].Value.ToString().Trim();
+                            var type = await cardTypeObj.SearchQuery(x => x.Name == typeName).FirstOrDefaultAsync();
+                            if (type == null)
+                                return new ImportExcelResponse { Success = false, Errors = new List<string>() { $@"dòng {row} không tìm thấy hạng thẻ" } };
+
+                            list.Add(new CardCard
+                            {
+                                Barcode = worksheet.Cells[row, 1].Value.ToString().Trim(),
+                                TypeId = type.Id
+                            });
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                    throw new Exception("File import sai định dạng. Vui lòng tải file mẫu và nhập dữ liệu đúng");
+                }
+
+            }
+
+            await CreateAsync(list);
+
+            return new ImportExcelResponse { Success = true };
         }
     }
 }

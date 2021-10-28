@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { result } from 'lodash';
+import * as moment from 'moment';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { CardCardFilter, CardCardPaged, CardCardResponse, CardCardService } from 'src/app/card-cards/card-card.service';
@@ -68,8 +69,9 @@ export class CardCardsMemberComponent implements OnInit {
   exportExcelFile(){
     var val = new CardCardPaged();
     val.search = this.search;
+    let todayStr = moment(new Date()).format("YYYYMMDD");
     this.cardCardsService.excelServerExport(val).subscribe((rs) => {
-      let filename = "the_thanh_vien";
+      let filename = "The_thanh_vien"+todayStr;
       let newBlob = new Blob([rs], {
         type:
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -90,7 +92,7 @@ export class CardCardsMemberComponent implements OnInit {
   importExcelFile(){
     const modalRef = this.modalService.open(ServiceCardCardsPreferentialImportDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
     modalRef.componentInstance.title = 'Import excel';
-    modalRef.componentInstance.type = 'card_cards_member';
+    modalRef.componentInstance.isMemberCard = true;
 
     modalRef.result.then((result) => {
       this.loadDataFromApi();

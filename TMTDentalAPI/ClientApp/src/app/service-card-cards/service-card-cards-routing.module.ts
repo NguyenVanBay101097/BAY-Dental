@@ -10,7 +10,7 @@ const routes: Routes = [
     path: '',
     component: ServiceCardCardsManagementComponent,
     children: [
-      { path: '', redirectTo: 'preferential', pathMatch: 'full' },
+      { path: '', redirectTo: 'member', pathMatch: 'full' },
       { path: 'preferential', component: ServiceCardCardsPreferentialComponent },
       { path: 'member', component: CardCardsMemberComponent },
 

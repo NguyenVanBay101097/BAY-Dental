@@ -126,5 +126,9 @@ export class CardCardService {
         return this.http.post(this.baseApi + this.apiUrl + '/GetCardCards', val);
     }
 
+    actionImport(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ImportExcel', val);
+    }
+
 
 }
