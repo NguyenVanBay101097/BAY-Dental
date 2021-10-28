@@ -13,7 +13,8 @@ namespace Infrastructure.Services
     public interface IAdvisoryService : IBaseService<Advisory>
     {
         Task<PagedResult2<AdvisoryBasic>> GetPagedResultAsync(AdvisoryPaged val);
-        Task<AdvisoryDisplay> GetAdvisoryDisplay(Guid id);
+        Task<Advisory> GetAdvisoryDisplay(Guid id);
+        Task<IEnumerable<Advisory>> GetAdvisoriesByPartnerId(Guid partnerId);
         Task<PagedResult2<AdvisoryLine>> GetAdvisoryLines(AdvisoryLinePaged val);
         Task<Advisory> CreateAdvisory(AdvisorySave val);
         Task UpdateAdvisory(Guid id, AdvisorySave val);

@@ -13,9 +13,9 @@ import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-ken
   styleUrls: ['./day-dashboard-report-cashbook.component.css']
 })
 export class DayDashboardReportCashbookComponent implements OnInit {
-  @Input() cashBookDataReport: any;
-  @Input() totalCashBook: any[] = [];
-  @Input() gridDataCashBook: any[] = [];
+  cashBookDataReport: any;
+  totalCashBook: any[] = [];
+  gridDataCashBook: any[] = [];
   gridData: GridDataResult;
   loading = false;
   skip = 0;
@@ -40,6 +40,25 @@ export class DayDashboardReportCashbookComponent implements OnInit {
   cashbookAgentCommission: any;
   totalCashbook: any;
   totalDataCashBook: any;
+  @Input() dateFrom: Date;
+  @Input() dateTo: Date;
+  @Input() companyId: string;
+
+  filterResultSelection: any[] = [
+    { value: '', text: 'TM/CK' },
+    { value: 'cash', text: 'Tiền mặt' },
+    { value: 'bank', text: 'Ngân hàng' }
+  ];
+
+  filterSumaryCashbookReport: any[] = [
+    { value: 'cash_bank', text: 'TM/CK', code: '131', type: 'customer' },
+    { value: 'debt', text: 'công nợ khách hàng', code: 'CNKH', type: 'customer' },
+    { value: 'advance', text: 'khách hàng tạm ứng', code: 'KHTU', type: 'customer' },
+    { value: 'cash_bank', text: 'Nhà cung cấp ', code: '331', type: 'supplier' },
+    { value: 'payroll', text: 'Chi lương và tạm ứng lương nhân viên', code: '334', type: 'customer' },
+    { value: 'commission', text: 'Hoa hồng', code: 'HHNGT', type: 'agent' },
+    { value: 'all', text: 'Total' },
+  ];
 
   constructor(
     private intlService: IntlService,
@@ -49,13 +68,66 @@ export class DayDashboardReportCashbookComponent implements OnInit {
   ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
-    this.loadSumaryResult();
+    this.loadDataFromApi();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.loadData();
-    this.loadDataCashbookReport();
-    this.loadSumaryResult();
+  loadDataFromApi() {
+    this.loadCashBankTotal();
+    this.loadCashbookReportApi();
+    this.loadCashBookGridData();
+  }
+
+  loadCashBankTotal() {
+    forkJoin(this.filterResultSelection.map(x => {
+      var summaryFilter = new CashBookSummarySearch();
+      summaryFilter.companyId = this.companyId || '';
+      summaryFilter.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : null;
+      summaryFilter.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : null;
+      summaryFilter.resultSelection = x.value;
+      return this.cashBookService.getSumary(summaryFilter).pipe(
+        switchMap(total => of({ text: x.value, total: total }))
+      );
+    })).subscribe((result) => {
+      this.totalCashBook = result.map(x => x.total);
+    });
+  }
+
+  loadCashbookReportApi() {
+    var val = {
+      dateFrom: this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : null,
+      dateTo: this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null,
+      companyId: this.companyId ? this.companyId : null
+    };
+
+    this.dashboardReportService.getThuChiReport(val).subscribe(result => {
+      this.cashBookDataReport = result;
+      this.loadSumaryResult();
+    });
+  }
+
+  loadCashBookGridData() {
+    var gridPaged = new CashBookDetailFilter();
+    gridPaged.companyId = this.companyId || '';
+    gridPaged.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : null;
+    gridPaged.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : null;
+    gridPaged.offset = 0;
+    gridPaged.limit = 0;
+
+    this.cashBookService.getDetails(gridPaged)
+      .pipe(
+        map((response: any) =>
+          <GridDataResult>{
+            data: response.items,
+            total: response.totalItems,
+          })
+      ).subscribe(
+        (res) => {
+          this.gridDataCashBook = res.data;
+          this.loadData();
+        },
+        (err) => {
+        }
+      );
   }
 
 
@@ -93,7 +165,7 @@ export class DayDashboardReportCashbookComponent implements OnInit {
         this.summaryResult = this.totalCashBook[0];
       }
     }
-   
+  
   }
 
   get ortherThu() {

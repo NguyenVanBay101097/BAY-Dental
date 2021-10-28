@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -12,6 +12,9 @@ import { DashboardReportService } from 'src/app/core/services/dashboard-report.s
 import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
 import { SaleOrderLinePaged } from 'src/app/partners/partner.service';
 import { SaleReportSearch, SaleReportService } from 'src/app/sale-report/sale-report.service';
+import { DayDashboardReportCashbookComponent } from '../day-dashboard-report-cashbook/day-dashboard-report-cashbook.component';
+import { DayDashboardReportRegistrationServiceComponent } from '../day-dashboard-report-registration-service/day-dashboard-report-registration-service.component';
+import { DayDashboardReportRevenueServiceComponent } from '../day-dashboard-report-revenue-service/day-dashboard-report-revenue-service.component';
 import { DayDashboardReportService, ExportExcelDashBoardDayFilter } from '../day-dashboard-report.service';
 
 @Component({
@@ -23,8 +26,8 @@ export class DayDashboardReportManagementComponent implements OnInit {
   @ViewChild("companyCbx", { static: true }) companyCbx: ComboBoxComponent;
   listCompany: CompanySimple[] = [];
   date = new Date();
-  dateFrom: Date;
-  dateTo: Date;
+  dateFrom: Date = new Date();
+  dateTo: Date = new Date();
   services: any[] = [];
   dataInvoices: any[] = [];
   companyId: string;
@@ -32,23 +35,13 @@ export class DayDashboardReportManagementComponent implements OnInit {
   gridDataCashBook: any[] = [];
   cashBookDataReport: any;
   keyTab = 'registration_service';
-  filterResultSelection: any[] = [
-    { value: '', text: 'TM/CK' },
-    { value: 'cash', text: 'Tiền mặt' },
-    { value: 'bank', text: 'Ngân hàng' }
-  ];
-
-  filterSumaryCashbookReport: any[] = [
-    { value: 'cash_bank', text: 'TM/CK', code: '131', type: 'customer' },
-    { value: 'debt', text: 'công nợ khách hàng', code: 'CNKH', type: 'customer' },
-    { value: 'advance', text: 'khách hàng tạm ứng', code: 'KHTU', type: 'customer' },
-    { value: 'cash_bank', text: 'Nhà cung cấp ', code: '331', type: 'supplier' },
-    { value: 'payroll', text: 'Chi lương và tạm ứng lương nhân viên', code: '334', type: 'customer' },
-    { value: 'commission', text: 'Hoa hồng', code: 'HHNGT', type: 'agent' },
-    { value: 'all', text: 'Total' },
-  ];
-
+  
   maxDate = new Date();
+
+  active = 'services';
+  @ViewChild('servicesComp', { static: false }) servicesComp: DayDashboardReportRegistrationServiceComponent;
+  @ViewChild('revenueComp', { static: false }) revenueComp: DayDashboardReportRevenueServiceComponent;
+  @ViewChild('cashbookComp', { static: false }) cashbookComp: DayDashboardReportCashbookComponent;
   constructor(
     private authService: AuthService,
     private intlService: IntlService,
@@ -58,7 +51,8 @@ export class DayDashboardReportManagementComponent implements OnInit {
     private saleReportService: SaleReportService,
     private dashboardReportService: DashboardReportService,
     private saleOrderLineService: SaleOrderLineService,
-    private router: Router
+    private router: Router,
+    public route: ActivatedRoute
   ) { }
 
   ngOnInit() {
@@ -75,9 +69,6 @@ export class DayDashboardReportManagementComponent implements OnInit {
         this.listCompany = x.items;
         this.companyCbx.loading = false;
       });
-
-    // this.loadAllData();
-    this.onLoadTabData(this.keyTab)
   }
 
   searchCompany$(search?) {
@@ -93,127 +84,22 @@ export class DayDashboardReportManagementComponent implements OnInit {
     });
   }
 
-  loadAllData() {
-    this.loadDataServiceApi();
-    this.loadDataInvoiceApi();
-    this.loadCashBankTotal();
-    this.loadCashbookReportApi();
-    this.loadCashBookGridData();
-  }
-
-  loadDataServiceApi() {
-    var val = new SaleOrderLinePaged();
-    val.dateFrom = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
-    val.dateTo = this.intlService.formatDate(new Date(), 'yyyy-MM-dd');
-    val.companyId = this.companyId || '';
-    val.state = 'sale,done,cancel';
-    this.saleOrderLineService.getPaged(val).pipe(
-      map((response: any) =>
-      (<GridDataResult>{
-        data: response.items,
-        total: response.totalItems
-      }))
-    ).subscribe(res => {
-      this.services = res.data;
-    }, err => {
-      console.log(err);
-    })
-  }
-
-  loadDataInvoiceApi() {
-    var gridPaged = new DataInvoiceFilter();
-    gridPaged.companyId = this.companyId || '';
-    gridPaged.resultSelection = 'all';
-    gridPaged.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : null;
-    gridPaged.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : null;
-
-    this.cashBookService.getDataInvoices(gridPaged).subscribe(
-      (res: any) => {
-        this.dataInvoices = res;
-      },
-      (err) => {
-      }
-    );
-  }
-
-  loadCashBankTotal() {
-    forkJoin(this.filterResultSelection.map(x => {
-      var summaryFilter = new CashBookSummarySearch();
-      summaryFilter.companyId = this.companyId || '';
-      summaryFilter.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : null;
-      summaryFilter.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : null;
-      summaryFilter.resultSelection = x.value;
-      return this.cashBookService.getSumary(summaryFilter).pipe(
-        switchMap(total => of({ text: x.value, total: total }))
-      );
-    })).subscribe((result) => {
-      this.totalCashBook = result.map(x => x.total);
-    });
-  }
-
-  loadCashbookReportApi() {
-    var val = {
-      dateFrom: this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : null,
-      dateTo: this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null,
-      companyId: this.companyId ? this.companyId : null
-    };
-
-    this.dashboardReportService.getThuChiReport(val).subscribe(result => {
-      this.cashBookDataReport = result;
-    });
-  }
-
-  loadCashBookGridData() {
-    var gridPaged = new CashBookDetailFilter();
-    gridPaged.companyId = this.companyId || '';
-    gridPaged.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : null;
-    gridPaged.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : null;
-    gridPaged.offset = 0;
-    gridPaged.limit = 0;
-
-    this.cashBookService.getDetails(gridPaged)
-      .pipe(
-        map((response: any) =>
-          <GridDataResult>{
-            data: response.items,
-            total: response.totalItems,
-          })
-      ).subscribe(
-        (res) => {
-          console.log(res);
-          this.gridDataCashBook = res.data;
-        },
-        (err) => {
-        }
-      );
-  }
-
   onSelectCompany(e) {
-    this.companyId = e ? e.id : null;
-    // this.loadAllData();
-    this.onLoadTabData(this.keyTab)
+    this.onLoadTabData();
   }
 
   onChangeDate(value: any) {
-    this.dateFrom = value;
-    this.dateTo = value;
-    // this.loadAllData();
-    this.onLoadTabData(this.keyTab)
+    this.dateFrom = this.date;
+    this.dateTo = this.date;
+    this.onLoadTabData();
   }
 
-  onLoadTabData(value) {
-    this.keyTab = value;
-    if (this.keyTab == 'registration_service') {
-      this.loadDataServiceApi();
-    }
-    if (this.keyTab == 'revenue') {
-      this.loadDataInvoiceApi();
-    }
-    if (this.keyTab == 'cashbook') {
-      this.loadCashBankTotal();
-      this.loadCashbookReportApi();
-      this.loadCashBookGridData();
-    }
+  onLoadTabData() {
+    setTimeout(() => {
+      this.servicesComp?.loadDataServiceApi();
+      this.revenueComp?.loadDataInvoiceApi();
+      this.cashbookComp?.loadDataFromApi();
+    });
   }
 
   exportExcelFile() {

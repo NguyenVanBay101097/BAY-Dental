@@ -10,11 +10,11 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div class="o_form_buttons_view">
-                    <kendo-datepicker (valueChange)="onChangeDate($event)" class="mr-2" [value]="date" [disabledDates]="disabledDates">
+                    <kendo-datepicker (valueChange)="onChangeDate($event)" class="mr-2" [(ngModel)]="date" [disabledDates]="disabledDates">
                     </kendo-datepicker>
                     <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-2" [valueField]="'id'"
-                        [textField]="'name'" [filterable]="true" [data]="listCompany"
-                        (selectionChange)="onSelectCompany($event)" #companyCbx>
+                        [textField]="'name'" [filterable]="true" [data]="listCompany" [(ngModel)]="companyId" [valuePrimitive]="true"
+                        (valueChange)="onSelectCompany($event)" #companyCbx>
                     </kendo-combobox>
                     <button type="button" class="btn btn-primary" (click)="exportExcelFile()">
                         <i class="fas fa-download mr-2"></i>Xuất Excel
@@ -32,38 +32,32 @@
 
 <div class="o_content">
     <div class="py-3 container">
-        <ul class="nav nav-pills" id="myTab" role="tablist">
-            <li class="">
-                <a class="mr-1 btn btn-outline-primary active" id="home-tab" data-toggle="tab" href="#home" role="tab"
-                    aria-controls="home" aria-selected="true" (click)="onLoadTabData('registration_service')">
-                    Dịch vụ đăng kí mới
-                </a>
-            </li>
-            <li class="">
-                <a class="mr-1 btn btn-outline-primary" id="service-tab" data-toggle="tab" href="#service" role="tab"
-                    aria-controls="service" aria-selected="false" (click)="onLoadTabData('revenue')">Doanh thu</a>
-            </li>
-            <li class="">
-                <a class="mr-1 btn btn-outline-primary" id="cashbook-tab" data-toggle="tab" href="#cashbook" role="tab"
-                    aria-controls="cashbook" aria-selected="false" (click)="onLoadTabData('cashbook')">
-                    Tình hình thu chi
-                </a>
-            </li>
-        </ul>
-        <div class="tab-content" id="myTabContent">
-            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                <app-day-dashboard-report-registration-service [services]="services">
-                </app-day-dashboard-report-registration-service>
-            </div>
-            <div class="tab-pane fade" id="service" role="tabpanel" aria-labelledby="service-tab">
-                <app-day-dashboard-report-revenue-service [dataInvoices]="dataInvoices">
-                </app-day-dashboard-report-revenue-service>
-            </div>
-            <div class="tab-pane fade" id="cashbook" role="tabpanel" aria-labelledby="cashbook-tab">
-                <app-day-dashboard-report-cashbook [totalCashBook]="totalCashBook"
-                    [cashBookDataReport]="cashBookDataReport" [gridDataCashBook]="gridDataCashBook">
-                </app-day-dashboard-report-cashbook>
-            </div>
+        <div>
+            <ul ngbNav #nav="ngbNav" [activeId]="route.fragment | async" class="nav-pills">
+                <li [ngbNavItem]="'services'">
+                  <a ngbNavLink routerLink="." [fragment]="'services'">Dịch vụ đăng kí mới</a>
+                  <ng-template ngbNavContent>
+                    <app-day-dashboard-report-registration-service #servicesComp [dateFrom]="dateFrom" [dateTo]="dateTo" [companyId]="companyId">
+                    </app-day-dashboard-report-registration-service>
+                  </ng-template>
+                </li>
+                <li [ngbNavItem]="'revenue'">
+                  <a ngbNavLink routerLink="." [fragment]="'revenue'">Doanh thu</a>
+                  <ng-template ngbNavContent>
+                    <app-day-dashboard-report-revenue-service #revenueComp [dateFrom]="dateFrom" [dateTo]="dateTo" [companyId]="companyId">
+                    </app-day-dashboard-report-revenue-service>
+                  </ng-template>
+                </li>
+                <li [ngbNavItem]="'cashbook'">
+                  <a ngbNavLink routerLink="." [fragment]="'cashbook'">Tình hình thu chi</a>
+                  <ng-template ngbNavContent>
+                    <app-day-dashboard-report-cashbook #cashbookComp [dateFrom]="dateFrom" [dateTo]="dateTo" [companyId]="companyId">
+                    </app-day-dashboard-report-cashbook>
+                  </ng-template>
+                </li>
+              </ul>
+              
+              <div [ngbNavOutlet]="nav" class="mt-2"></div>
         </div>
     </div>
 </div>

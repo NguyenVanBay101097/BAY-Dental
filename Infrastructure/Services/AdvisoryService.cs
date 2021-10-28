@@ -111,7 +111,7 @@ namespace Infrastructure.Services
             return paged;
         }
 
-        public async Task<AdvisoryDisplay> GetAdvisoryDisplay(Guid id)
+        public async Task<Advisory> GetAdvisoryDisplay(Guid id)
         {
             var advisory = await SearchQuery(x => x.Id == id)
                 .Include(x => x.Employee)
@@ -122,8 +122,22 @@ namespace Infrastructure.Services
                 .Include(x => x.AdvisoryProductRels).ThenInclude(x => x.Product)
                 .FirstOrDefaultAsync();
 
-            var res = _mapper.Map<AdvisoryDisplay>(advisory);
-            return res;
+            return advisory;
+        }
+
+        public async Task<IEnumerable<Advisory>> GetAdvisoriesByPartnerId(Guid partnerId)
+        {
+            var advisories = await SearchQuery(x => x.CustomerId == partnerId)
+                .Include(x => x.Employee)
+                .Include(x => x.Customer)
+                .Include(x => x.ToothCategory)
+                .Include(x => x.AdvisoryToothRels).ThenInclude(x => x.Tooth)
+                .Include(x => x.AdvisoryToothDiagnosisRels).ThenInclude(x => x.ToothDiagnosis)
+                .Include(x => x.AdvisoryProductRels).ThenInclude(x => x.Product).ThenInclude(x => x.Categ)
+                .Include(x => x.AdvisoryProductRels).ThenInclude(x => x.Product).ThenInclude(x => x.UOM)
+                .ToListAsync();
+
+            return advisories;
         }
 
         public async Task<Advisory> CreateAdvisory(AdvisorySave val)
@@ -326,7 +340,7 @@ namespace Infrastructure.Services
                 Note = x.Note
             }).ToListAsync();
 
-            res.Advisories = advisories;        
+            res.Advisories = advisories;
 
             return res;
         }
@@ -447,7 +461,7 @@ namespace Infrastructure.Services
                             });
                         }
                     }
-                
+
                     saleOrderLine.Diagnostic = string.Join(", ", toothDiagnosisName);
                     saleOrderLine.AdvisoryId = advisory.Id;
                     saleOrderLines.Add(saleOrderLine);

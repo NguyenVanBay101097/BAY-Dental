@@ -110,6 +110,15 @@ namespace TMTDentalAPI
                .AddEntityFrameworkStores<CatalogDbContext>()
                .AddDefaultTokenProviders();
 
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("publicApi", policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.RequireClaim("scope", "publicApi");
+                });
+            });
+
             // configure jwt authentication
             services.AddAuthentication(x =>
             {
@@ -587,7 +596,7 @@ namespace TMTDentalAPI
                 });
             });
             services.AddCors();
-            services.AddMemoryCache();          
+            services.AddMemoryCache();
 
             // Add Hangfire services.
             services.AddHangfire(configuration => configuration
@@ -751,6 +760,8 @@ namespace TMTDentalAPI
             //app.UseHangfireServer();
 
             app.UseHangfireDashboard();
+
+            //app.UseIdentityServer();
 
             app.UseEndpoints(endpoints =>
             {

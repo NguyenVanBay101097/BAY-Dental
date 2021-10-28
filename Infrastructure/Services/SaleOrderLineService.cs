@@ -374,7 +374,8 @@ namespace Infrastructure.Services
             var query = SearchQuery();
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) || x.OrderPartner.Name.Contains(val.Search)
-                                        || x.Product.NameNoSign.Contains(val.Search) || x.OrderPartner.NameNoSign.Contains(val.Search));
+                                        || x.Product.NameNoSign.Contains(val.Search) || x.OrderPartner.NameNoSign.Contains(val.Search)
+                                        || x.Order.Name.Contains(val.Search));
             if (val.OrderPartnerId.HasValue)
                 query = query.Where(x => x.OrderPartnerId == val.OrderPartnerId);
             if (val.ProductId.HasValue)
@@ -636,6 +637,22 @@ namespace Infrastructure.Services
                 .Include("SaleOrderLineToothRels.Tooth")
                 .ToListAsync();
             return _mapper.Map<IEnumerable<SaleOrderLineDisplay>>(lines);
+        }
+
+        public async Task<IEnumerable<SaleOrderLine>> GetOrderLinesBySaleOrderId(Guid orderId)
+        {
+            var lines = await SearchQuery(x => (orderId == null || x.OrderId == orderId))
+             .Include(x => x.Advisory)
+             .Include(x => x.Assistant)
+             .Include(x => x.PromotionLines).ThenInclude(x => x.Promotion)
+             .Include(x => x.Product)
+             .Include(x => x.ToothCategory)
+             .Include(x => x.SaleOrderLineToothRels).ThenInclude(x => x.Tooth)
+             .Include(x => x.Employee)
+             .Include(x => x.Counselor)
+             .Include(x => x.OrderPartner).ToListAsync();
+
+            return lines;
         }
 
         public async Task UpdateDkByOrderLine(Guid key, SaleOrderLineDotKhamSave val)

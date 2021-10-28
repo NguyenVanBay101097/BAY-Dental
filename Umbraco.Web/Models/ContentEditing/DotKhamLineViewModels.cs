@@ -83,4 +83,16 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid RoutingId { get; set; }
     }
+
+    public class DotKhamLinePublic
+    {
+        public string NameStep { get; set; }
+
+        public string ProductName { get; set; }
+
+
+        public string Note { get; set; }
+
+        public IEnumerable<string> Teeth { get; set; } = new List<string>();
+    }
 }

@@ -130,11 +130,22 @@ namespace Infrastructure.Services
             return saleOrderPaymentDisplay;
         }
 
+        public async Task<IEnumerable<SaleOrderPayment>> GetPaymentsByOrderId(Guid orderId)
+        {
+            var orderPayments = await SearchQuery(x => x.OrderId == orderId && x.Lines.Any(s => s.Amount > 0))
+                .Include(x => x.PaymentRels).ThenInclude(s => s.Payment)
+                .Include(x => x.Lines).ThenInclude(x => x.SaleOrderLine)
+                .Include(x => x.JournalLines).ThenInclude(x => x.Journal)
+                .ToListAsync();
+
+            return orderPayments;
+        }
+
         public async Task<SaleOrderPayment> CreateSaleOrderPayment(SaleOrderPaymentSave val)
         {
             //Mapper
             var saleOrderPayment = _mapper.Map<SaleOrderPayment>(val);
-            SaveLines(val, saleOrderPayment);        
+            SaveLines(val, saleOrderPayment);
             await CreateAsync(saleOrderPayment);
 
             return saleOrderPayment;
