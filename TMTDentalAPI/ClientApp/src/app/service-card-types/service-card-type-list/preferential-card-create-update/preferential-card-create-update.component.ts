@@ -111,14 +111,10 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
     }
     else {
       this.cardService.create(this.cardTypeObj).subscribe(result=>{
-        this.router.navigate(['card-types/preferential-cards/form'], { queryParams: { id: result.id } });
-
+        this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
+          this.router.navigate(['card-types/preferential-cards/form'], { queryParams: { id: result.id } });
+      });
         this.notify('Lưu thành công','success');
-        // this.router.navigateByUrl('/card-types/preferential-cards/form?id='+result.id);
-        // this.router.navigate(['/card-types/preferential-cards/form'], { queryParams: { id: result.id } });
-
-
-
       })
     }
   }

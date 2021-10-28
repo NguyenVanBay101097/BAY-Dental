@@ -31,9 +31,15 @@
                                 </td>
                                 <td colspan="1" style="width:100%">
                                     <input class="form-control" formControlName="name">
-                                    <div *ngIf="submitted && f.name.errors?.required" class="text-danger">
-                                        Nhập tên hạng thẻ
-                                    </div>
+                                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
+                                            class="text-danger">
+                                            <div *ngIf="f.name.errors?.required" class="text-danger">
+                                                Nhập tên hạng thẻ
+                                            </div>
+                                            <div *ngIf="f.name.errors?.lengthError" class="text-danger">
+                                                Tối thiểu 10 và tối đa 15 ký tự
+                                            </div>
+                                        </div>
                                 </td>
                             </tr>
                             <tr>

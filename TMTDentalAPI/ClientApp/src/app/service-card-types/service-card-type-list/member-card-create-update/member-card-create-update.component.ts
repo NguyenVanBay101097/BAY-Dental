@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { result } from 'lodash';
@@ -28,12 +28,13 @@ export class MemberCardCreateUpdateComponent implements OnInit {
     private modalService: NgbModal,
     private cardTypeService: CardTypeService,
     private notificationService: NotificationService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
     this.cardForm = this.fb.group({
-      name: ['',Validators.required],
+      name: ['',[Validators.required,createLengthValidator()]],
       basicPoint: ['',Validators.required],
       color: null,
       productPricelistItems: this.fb.array([])
@@ -46,6 +47,8 @@ export class MemberCardCreateUpdateComponent implements OnInit {
 
   onSave(){
     this.submitted = true;
+    if (this.cardForm.invalid)
+      return;
     var val = this.cardForm.value;
     val.color = this.colorSelected;
     if (this.cardTypeId){
@@ -54,14 +57,13 @@ export class MemberCardCreateUpdateComponent implements OnInit {
       })
     }
     else {
-      this.cardTypeService.createCardType(val).subscribe(() => {
+      this.cardTypeService.createCardType(val).subscribe(result => {
         this.notify('Lưu thành công', 'success');
+        this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
+          this.router.navigate(['card-types/member-cards/form'], { queryParams: { id: result.id } });
+      });
       })
     }
-    console.log(val);
-    console.log(this.f);
-    
-    
   }
 
   clickColor(i){
@@ -103,12 +105,9 @@ export class MemberCardCreateUpdateComponent implements OnInit {
 
   getCardTypeById(){
     this.cardTypeService.get(this.cardTypeId).subscribe(result => {
-      console.log(result);
-      
       this.cardForm.patchValue(result);
       this.colorSelected = result.color;
       this.cardTypeName = result.name;
-      console.log(this.cardForm);
       result.productPricelistItems.forEach(item => {
         this.productExists.push(item.productId);
         this.objCategories[item.product?.categId] = this.objCategories[item.product?.categId] || {categName:'',categId:'',products:[]};
@@ -168,8 +167,6 @@ export class MemberCardCreateUpdateComponent implements OnInit {
   onApplyCateg(categId){
     let productItems = this.getAllServices();
     let productItemsFiltered = productItems.filter(x => x.categId == categId);
-    console.log(productItemsFiltered);
-    
     let prices = productItemsFiltered.map(x => x.listPrice);
     let min = Math.min(...prices);
     let modalRef = this.modalService.open(ServiceCardTypeApplyDialogComponent, 
@@ -198,24 +195,9 @@ export class MemberCardCreateUpdateComponent implements OnInit {
             x.get('fixedAmountPrice').patchValue(res.price);
           }       
         });
-
-        console.log(productItems);
-        
         this.notify('Áp dụng thành công','success');
       }, () => {
       });
-  }
-
-  changeComputePrice(event,product){
-    console.log(event);
-    console.log(product);
-    
-    
-  }
-
-  onChange(event,product){
-    console.log(event);
-    console.log(product);
   }
 
   getAllServices(){
@@ -245,4 +227,14 @@ export class MemberCardCreateUpdateComponent implements OnInit {
     return this.cardForm.get('productPricelistItems') as FormArray;
   }
 
+}
+
+export function createLengthValidator(): ValidatorFn {
+  return (control:AbstractControl) : ValidationErrors | null => {
+      const valueLength = control.value.toString().length;
+      var lengthValid = true;
+      if (valueLength < 10 || valueLength > 15)
+        lengthValid = false;
+      return !lengthValid ? {lengthError:true}: null;
+  }
 }
