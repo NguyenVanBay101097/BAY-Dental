@@ -97,6 +97,13 @@ namespace Infrastructure.Services
 
         public void SaveProductPricelistItem(CardType self, IEnumerable<ProductPricelistItem> listItems)
         {
+            if(!listItems.Any())
+            {
+                self.Pricelist = null;
+                self.PricelistId = null;
+                return;
+            }
+
             if (self.Pricelist == null)
             {
                 var prList = new ProductPricelist()

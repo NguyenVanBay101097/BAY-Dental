@@ -12,9 +12,12 @@ import { ServiceCardCardsPreferentialComponent } from './service-card-cards-pref
 import { ServiceCardCardsPreferentialCuDialogComponent } from './service-card-cards-preferential-cu-dialog/service-card-cards-preferential-cu-dialog.component';
 import { SharedModule } from '../shared/shared.module';
 import { ServiceCardCardsPreferentialImportDialogComponent } from './service-card-cards-preferential-import-dialog/service-card-cards-preferential-import-dialog.component';
+import { CardCardsMemberComponent } from './card-cards-member/card-cards-member.component';
+import { CardCardsMemberCuDialogComponent } from './card-cards-member-cu-dialog/card-cards-member-cu-dialog.component';
+import { ServiceCardTypesModule } from '../service-card-types/service-card-types.module';
 
 @NgModule({
-  declarations: [ServiceCardCardListComponent, ServiceCardCardHistoriesComponent, ServiceCardCardsManagementComponent, ServiceCardCardsPreferentialComponent, ServiceCardCardsPreferentialCuDialogComponent, ServiceCardCardsPreferentialImportDialogComponent],
+  declarations: [ServiceCardCardListComponent, ServiceCardCardHistoriesComponent, ServiceCardCardsManagementComponent, ServiceCardCardsPreferentialComponent, ServiceCardCardsPreferentialCuDialogComponent, ServiceCardCardsPreferentialImportDialogComponent, CardCardsMemberComponent, CardCardsMemberCuDialogComponent,],
   imports: [
     CommonModule,
     ServiceCardCardsRoutingModule,
@@ -22,7 +25,8 @@ import { ServiceCardCardsPreferentialImportDialogComponent } from './service-car
     MyCustomKendoModule,
     FormsModule,
     SharedModule,
-    NgbModule
+    NgbModule,
+    ServiceCardTypesModule
   ],
   entryComponents: [
     ServiceCardCardsPreferentialCuDialogComponent,

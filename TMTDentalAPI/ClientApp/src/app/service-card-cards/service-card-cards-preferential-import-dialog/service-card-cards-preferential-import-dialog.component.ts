@@ -15,6 +15,7 @@ export class ServiceCardCardsPreferentialImportDialogComponent implements OnInit
   errors: any = [];
   formData = new FormData();
   formGroup: FormGroup;
+  type: string;
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -30,14 +31,18 @@ export class ServiceCardCardsPreferentialImportDialogComponent implements OnInit
   }
 
   import() {
-    this.serviceCardsService.actionImport(this.formData).subscribe((result: any) => {
-      if (result.success) {
-        this.activeModal.close(true);
-      } else {
-        this.errors = result.errors;
-      }
-    }, (err) => {
-    });
+    if (this.type && this.type == 'card_cards_member'){
+
+    }else {
+      this.serviceCardsService.actionImport(this.formData).subscribe((result: any) => {
+        if (result.success) {
+          this.activeModal.close(true);
+        } else {
+          this.errors = result.errors;
+        }
+      }, (err) => {
+      });
+    }
   }
 
   onFileChange(file) {
