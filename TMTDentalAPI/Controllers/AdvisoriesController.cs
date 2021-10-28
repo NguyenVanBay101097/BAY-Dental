@@ -53,9 +53,11 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Basic.Advisory.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var res = await _advisoryService.GetAdvisoryDisplay(id);
-            if (res == null)
+            var advisory = await _advisoryService.GetAdvisoryDisplay(id);
+            if (advisory == null)
                 return NotFound();
+
+            var res = _mapper.Map<AdvisoryDisplay>(advisory);
 
             return Ok(res);
         }

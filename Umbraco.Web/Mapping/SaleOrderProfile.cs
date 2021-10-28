@@ -51,6 +51,8 @@ namespace Umbraco.Web.Mapping
             CreateMap<SaleOrder, SaleOrderPrintTemplate>()
                 .ForMember(x => x.User, x => x.MapFrom(s => s.CreatedBy));
 
+            CreateMap<SaleOrder, SaleOrderPublic>();
+
         }
     }
 }
