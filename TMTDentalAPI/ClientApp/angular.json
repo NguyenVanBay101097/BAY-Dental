@@ -44,6 +44,7 @@
             "styles": [
               "node_modules/@progress/kendo-theme-bootstrap/dist/all.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/@fortawesome/fontawesome-free/css/all.css",
               "src/styles.css",
               "src/tai-styles.css",
               "src/quan-styles.css",
