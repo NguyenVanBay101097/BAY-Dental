@@ -32,6 +32,12 @@ export class CardCardDisplay {
     upgradeTypeId: string;
 }
 
+export class CardCardFilter {
+    partnerId: string;
+    productId: string;
+    state: string;
+}
+
 @Injectable({providedIn: 'root'})
 export class CardCardService {
     apiUrl = 'api/CardCards';
@@ -92,5 +98,10 @@ export class CardCardService {
     excelServerExport(paged) {
         return this.http.get(this.baseApi + this.apiUrl + '/ExportExcelFile', { responseType: 'blob', params: paged });
     }
+
+    getCardCards(val) {
+        return this.http.post(this.baseApi + this.apiUrl + '/GetCardCards', val);
+    }
+
 
 }

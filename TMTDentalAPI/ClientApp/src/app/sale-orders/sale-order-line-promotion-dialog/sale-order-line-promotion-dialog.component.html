@@ -75,7 +75,7 @@
                 </div>
             </div>
             <!-- khuyến mãi đã chọn -->
-            <div *ngIf="getListPromotion('promotion_program').length">
+            <!-- <div *ngIf="getListPromotion('promotion_program').length">
                 <label class="font-weight-600 mb-0">Khuyến mãi đã chọn</label>
                 <div>
                     <div *ngFor="let item of getListPromotion('promotion_program')"
@@ -93,10 +93,28 @@
                         </button>
                     </div>
                 </div>
+            </div> -->
+             <!-- thẻ thành viên -->
+             <div class="mt-2">
+                <label class="font-weight-600 mb-0">Danh sách thẻ thành viên</label>
+                <div>
+                    <p *ngFor="let item of cardCards" class="d-flex justify-content-between my-0 mt-1">
+                        <label class="my-0" for="">
+                            <img src="../../../assets/icons/promotion.svg" alt="">{{getNameCardCard(item)}}</label>
+                        <ng-container *ngIf="!getAppliedCardCard(item); else elseTemplateCardsApply">
+                            <button type="button" class="btn btn-primary" (click)="applyCardCard(item)">
+                                Chọn
+                            </button>
+                        </ng-container>
+                        <ng-template #elseTemplateCardsApply>
+                            <label>Đã áp dụng</label>
+                        </ng-template>
+                    </p>
+                </div>
             </div>
             <!-- thẻ ưu đãi dịch vụ -->
             <div class="mt-2">
-                <label class="font-weight-600 mb-0">Danh sách thẻ ưu đãi</label>
+                <label class="font-weight-600 mb-0">Danh sách thẻ ưu đãi dịch vụ</label>
                 <div>
                     <p *ngFor="let item of servicePreferenceCards" class="d-flex justify-content-between my-0 mt-1">
                         <label class="my-0" for="">
@@ -112,11 +130,11 @@
                     </p>
                 </div>
             </div>
-            <!-- thẻ ưu đãi dịch vụ đã chọn -->
+            <!-- Những ưu đãi đã chọn -->
             <div>
                 <label class="font-weight-600 mb-0">Khuyến mãi đã chọn</label>
                 <div>
-                    <div *ngFor="let item of getListPromotion('service_card_card')" class="d-flex justify-content-between align-items-start mb-2">
+                    <div *ngFor="let item of getListPromotionApplied()" class="d-flex justify-content-between align-items-start mb-2">
                         <div class="d-flex align-items-start">
                             <img src="../../../assets/icons/promotion.svg" alt="">
                             <span class="ml-1 d-flex flex-column">

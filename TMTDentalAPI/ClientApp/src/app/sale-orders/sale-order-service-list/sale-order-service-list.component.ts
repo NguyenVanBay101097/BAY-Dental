@@ -505,6 +505,28 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
         });
     });
 
+    modalRef.componentInstance.getBtnPromoCardCardObs().subscribe(data => {
+      var val = {
+        id: line.id,
+        cardId: data.id
+      };
+
+      this.saleOrderLineService.applyCardCard(val).pipe(
+        catchError((err) => { throw err; }),
+        mergeMap((result: any) => {
+          return this.saleOrderService.get(this.saleOrder.id);
+        })
+      )
+        .subscribe(res => {
+          this.resetData(res);
+          var newLine = this.orderLines[i];
+          modalRef.componentInstance.saleOrderLine = newLine;
+        }, err => {
+          console.log(err);
+          this.notify('error', err.error.error);
+        });
+    });
+
     modalRef.componentInstance.getBtnDeletePromoObs().subscribe(data => {
       this.saleOrderPromotionService.removePromotion([data.id]).pipe(
         catchError((err) => { throw err; }),

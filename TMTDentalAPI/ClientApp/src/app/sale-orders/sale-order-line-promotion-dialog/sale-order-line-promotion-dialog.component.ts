@@ -1,6 +1,7 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject } from 'rxjs';
+import { CardCardFilter, CardCardService } from 'src/app/card-cards/card-card.service';
 import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
 import { SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { SaleCouponProgramPaged, SaleCouponProgramService } from 'src/app/sale-coupon-promotion/sale-coupon-program.service';
@@ -22,6 +23,7 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit, OnDestroy 
   title = "Ưu đãi Dịch vụ";
   autoPromotions = [];
   servicePreferenceCards : any[] = [];
+  cardCards : any[] = [];
   @Input() saleOrderLine: SaleOrderLineDisplay = null;
 
   private updateSubject = new Subject<any>();
@@ -34,6 +36,7 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit, OnDestroy 
   private btnPromoCodeSubject = new Subject<any>();
   private btnPromoNoCodeSubject = new Subject<any>();
   private btnPromoServiceCardSubject = new Subject<any>();
+  private btnPromoCardCardSubject = new Subject<any>();
   private btnDeletePromoSubject = new Subject<any>();
 
   constructor(
@@ -45,13 +48,15 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit, OnDestroy 
     private notificationService: NotifyService,
     private modelService: NgbModal,
     private checkPermissionService: CheckPermissionService,
-    private serviceCardsService: ServiceCardCardService
+    private serviceCardsService: ServiceCardCardService,
+    private cardCardService: CardCardService,
   ) { }
 
   ngOnInit() {
     setTimeout(() => {
       this.loadDefaultPromotion();
       this.loadServiceCards();
+      this.loadCardCards();
     }, 0);
     this.isDiscountLine = this.checkPermissionService.check(["Basic.SaleOrder.DiscountLine"]);
   }
@@ -79,6 +84,10 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit, OnDestroy 
   
   getBtnPromoServiceCardObs() {
     return this.btnPromoServiceCardSubject.asObservable();
+  }
+
+  getBtnPromoCardCardObs() {
+    return this.btnPromoCardCardSubject.asObservable();
   }
 
   getBtnDeletePromoObs() {
@@ -130,6 +139,11 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit, OnDestroy 
     return this.saleOrderLine.promotions.filter(x => x.type == type);
   }
 
+  getListPromotionApplied(): any[] {
+    var types = ['promotion_program','service_card_card' , 'card_card'] ;
+    return this.saleOrderLine.promotions.filter(x => types.includes(x.type));
+  }
+
   getApplied(item) {// item is salecouponprogram
     var index = this.saleOrderLine.promotions.findIndex(x => x.saleCouponProgramId == item.id);
     return this.saleOrderLine.promotions[index];
@@ -146,10 +160,20 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit, OnDestroy 
     val.state = 'in_use';
     this.serviceCardsService.getServiceCardCards(val).subscribe((res: any) => {
       this.servicePreferenceCards = res;
-      console.log(res);
+    }, (error) => { console.log(error) });
+  }
+
+  loadCardCards() {
+    let val = new CardCardFilter();
+    val.partnerId = this.saleOrderLine.orderPartnerId;
+    val.productId = this.saleOrderLine.productId;
+    val.state = 'in_use';
+    this.cardCardService.getCardCards(val).subscribe((res: any) => {
+      this.cardCards = res;
       
     }, (error) => { console.log(error) });
   }
+
 
   getNameCard(item){
     var discount = "";
@@ -161,12 +185,31 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit, OnDestroy 
     return "Giảm " + " " + discount + " " + "theo thẻ ưu đãi" + " " + item.cardType.name;
   }
 
+  getNameCardCard(item){
+    var discount = "";
+    if(item.productPricelistItem)
+    {
+      discount = item.productPricelistItem.computePrice = "percentage" ? (item.productPricelistItem.percentPrice + "%") : ((item.productPricelistItem.fixedAmountPrice ?? 0) + "VNĐ");
+    }
+
+    return "Giảm " + " " + discount + " " + "theo thẻ thành viên" + " " + item.type.name;
+  }
+
   applyServiceCard(item) {
     this.btnPromoServiceCardSubject.next(item);
   }
 
+  applyCardCard(item) {
+    this.btnPromoCardCardSubject.next(item);
+  }
+
   getAppliedCard(item) {
     var index = this.saleOrderLine.promotions.findIndex(x => x.serviceCardCardId == item.id);
+    return this.saleOrderLine.promotions[index];
+  }
+
+  getAppliedCardCard(item) {
+    var index = this.saleOrderLine.promotions.findIndex(x => x.cardCardId == item.id);
     return this.saleOrderLine.promotions[index];
   }
 
