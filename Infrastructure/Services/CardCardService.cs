@@ -146,7 +146,7 @@ namespace Infrastructure.Services
 
             var count = await SearchQuery(x => x.PartnerId == self.PartnerId).CountAsync();
             if (count >= 2)
-                throw new Exception($"Khách hàng{(self.Partner != null ? $" {self.Partner.Name}" : "")} đã có thẻ thành viên");
+                throw new Exception($"Khách hàng đã có thẻ thành viên");
         }
 
         public override async Task<IEnumerable<CardCard>> CreateAsync(IEnumerable<CardCard> self)
@@ -210,7 +210,7 @@ namespace Infrastructure.Services
 
             var count = await SearchQuery(x => x.Barcode == barcode).CountAsync();
             if (count >= 2)
-                throw new Exception($"Đã có thẻ thành viên với mã vạch {barcode}");
+                throw new Exception($"Số ID thẻ không được trùng");
         }
 
         public async Task ButtonConfirm(IEnumerable<Guid> ids)
@@ -265,7 +265,7 @@ namespace Infrastructure.Services
             foreach (var card in self)
             {
                 if (!states.Contains(card.State))
-                    throw new Exception("Chỉ có thể xóa thẻ thành viên ở trạng thái chưa kích hoạt");
+                    throw new Exception("Thẻ thành viên đã kích hoạt không thể xoá");
             }
             await DeleteAsync(self);
         }
@@ -416,6 +416,7 @@ namespace Infrastructure.Services
                 await formFile.CopyToAsync(stream);
                 try
                 {
+                    var errors = new List<string>();
                     using (var package = new ExcelPackage(stream))
                     {
                         ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
@@ -426,15 +427,29 @@ namespace Infrastructure.Services
                             var typeName = worksheet.Cells[row, 2].Value.ToString().Trim();
                             var type = await cardTypeObj.SearchQuery(x => x.Name == typeName).FirstOrDefaultAsync();
                             if (type == null)
-                                return new ImportExcelResponse { Success = false, Errors = new List<string>() { $@"dòng {row} không tìm thấy hạng thẻ" } };
+                                errors.Add($"dòng {row}: không tìm thấy hạng thẻ");
 
+                            var barcode = worksheet.Cells[row, 1].Value.ToString().Trim();
+                            if (barcode.Length < 10 || barcode.Length >15 )
+                            {
+                                errors.Add($"dòng {row}: Số ID tối thiểu 10 và tối đa 15 ký tự");
+                            }
+                            var exist = await SearchQuery(x => x.Barcode == barcode).AnyAsync();
+                            if (exist)
+                            {
+                                errors.Add($"dòng {row}: Số ID thẻ bị trùng");
+                            }
+
+                            if(!errors.Any())
                             list.Add(new CardCard
                             {
-                                Barcode = worksheet.Cells[row, 1].Value.ToString().Trim(),
+                                Barcode = barcode,
                                 TypeId = type.Id
                             });
                         }
                     }
+                    if(errors.Any())
+                        return new ImportExcelResponse { Success = false, Errors = errors };
                 }
                 catch (Exception ex)
                 {

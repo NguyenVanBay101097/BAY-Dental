@@ -2,10 +2,12 @@ import { HttpParams } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { CompositeFilterDescriptor } from "@progress/kendo-data-query";
+import { result } from "lodash";
 import { AccountCommonPartnerReport, AccountCommonPartnerReportSearchV2, AccountCommonPartnerReportService, } from "src/app/account-common-partner-reports/account-common-partner-report.service";
 import { AccountInvoiceReportService, SumRevenueReportPar } from "src/app/account-invoice-reports/account-invoice-report.service";
 import { AppointmentDisplay } from "src/app/appointment/appointment";
 import { AuthService } from "src/app/auth/auth.service";
+import { CardCardService } from "src/app/card-cards/card-card.service";
 import { AmountCustomerDebtFilter, CustomerDebtReportService, } from "src/app/core/services/customer-debt-report.service";
 import { SaleOrderLineService, SaleOrderLinesPaged, } from "src/app/core/services/sale-order-line.service";
 import { SaleOrderPaged, SaleOrderService, } from "src/app/core/services/sale-order.service";
@@ -41,6 +43,7 @@ export class PartnerOverviewComponent implements OnInit {
   search: string;
   dotkhams: DotKhamBasic[] = [];
   preferentialCards: any;
+  memberCard: any;
   //for report
   saleSummary: any;
   debtStatistics: number = 0;
@@ -60,7 +63,8 @@ export class PartnerOverviewComponent implements OnInit {
     private saleReportService: SaleReportService,
     private customerDebtReportService: CustomerDebtReportService,
     private accountInvoiceReportService: AccountInvoiceReportService,
-    private cardCardService: ServiceCardCardService
+    private cardCardService: ServiceCardCardService,
+    private cardService: CardCardService
   ) { }
 
   ngOnInit() {
@@ -71,6 +75,7 @@ export class PartnerOverviewComponent implements OnInit {
       this.getDotkhams();
       this.loadReport();
       this.loadPreferentialCards();
+      this.loadMemberCard();
     });
     this.loadAmountDebtTotal();
     this.loadAmountAdvanceBalance();
@@ -194,8 +199,21 @@ export class PartnerOverviewComponent implements OnInit {
   loadPreferentialCards(){
     let val = {partnerId: this.partnerId};
     this.cardCardService.getServiceCardCards(val).subscribe(result => {
+      console.log(result);
+      
       this.preferentialCards = result;
     })
+  }
+
+  loadMemberCard(){
+    let val = {partnerId: this.partnerId};
+    this.cardService.getCardCards(val).subscribe((res: any[]) => {
+      this.memberCard = res[0];
+      console.log(res[0]);
+      
+    })
+    console.log(this.memberCard);
+    
   }
 
 }

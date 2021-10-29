@@ -1,5 +1,5 @@
 <div class="card border-0 mt-3">
-    <div *ngIf="!preferentialCards" class="card-body mt-3 pt-0">
+    <div *ngIf="preferentialCards?.length == 0" class="card-body mt-3 pt-0">
         <div class="card-body border border-primary rounded">
             <div class="d-flex justify-content-between">
                 <h5 class="card-header-title text-primary">
@@ -14,7 +14,7 @@
             </div>
         </div>
     </div>
-    <div *ngIf="preferentialCards" class="card-body">
+    <div *ngIf="preferentialCards?.length > 0" class="card-body">
         <div class="d-flex justify-content-between">
             <h5 class="card-header-title text-primary">
                 Thẻ ưu đãi dịch vụ
