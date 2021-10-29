@@ -15,9 +15,10 @@ import { ServiceCardCardsPreferentialImportDialogComponent } from './service-car
 import { CardCardsMemberComponent } from './card-cards-member/card-cards-member.component';
 import { CardCardsMemberCuDialogComponent } from './card-cards-member-cu-dialog/card-cards-member-cu-dialog.component';
 import { ServiceCardTypesModule } from '../service-card-types/service-card-types.module';
+import { CardCardsMemberCreateDialogComponent } from './card-cards-member-create-dialog/card-cards-member-create-dialog.component';
 
 @NgModule({
-  declarations: [ServiceCardCardListComponent, ServiceCardCardHistoriesComponent, ServiceCardCardsManagementComponent, ServiceCardCardsPreferentialComponent, ServiceCardCardsPreferentialCuDialogComponent, ServiceCardCardsPreferentialImportDialogComponent, CardCardsMemberComponent, CardCardsMemberCuDialogComponent,],
+  declarations: [ServiceCardCardListComponent, ServiceCardCardHistoriesComponent, ServiceCardCardsManagementComponent, ServiceCardCardsPreferentialComponent, ServiceCardCardsPreferentialCuDialogComponent, ServiceCardCardsPreferentialImportDialogComponent, CardCardsMemberComponent, CardCardsMemberCuDialogComponent, CardCardsMemberCreateDialogComponent,],
   imports: [
     CommonModule,
     ServiceCardCardsRoutingModule,

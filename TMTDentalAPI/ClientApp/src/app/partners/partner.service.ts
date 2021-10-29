@@ -201,6 +201,7 @@ export class PartnerInfoPaged {
     hasOrderResidual?: number;
     hasTotalDebit?: number;
     memberLevelId: string;
+    cardTypeId: string;
     orderState: string;
 }
 

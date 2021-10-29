@@ -49,7 +49,10 @@
                 </kendo-combobox>
                 <kendo-combobox style="width: 230px;" [popupSettings]="cbxPopupSettings" class="mr-1" [placeholder]="'Tất cả công nợ'" [data]="totalDebits" [valueField]="'value'" [textField]="'text'" (valueChange)="onDebitSelect($event)">
                 </kendo-combobox>
-                <kendo-combobox style="width: 250px;" [filterable]="true" #cbxLevel [popupSettings]="cbxPopupSettings" [placeholder]="'Tất cả hạng thành viên'" [data]="memberLevels" [valueField]="'id'" [textField]="'name'" (valueChange)="onMemberLevelSelect($event)">
+                <!-- <kendo-combobox style="width: 250px;" [filterable]="true" #cbxLevel [popupSettings]="cbxPopupSettings" [placeholder]="'Tất cả hạng thành viên'" [data]="memberLevels" [valueField]="'id'" [textField]="'name'" (valueChange)="onMemberLevelSelect($event)">
+                </kendo-combobox> -->
+                <kendo-combobox style="width: 250px;" [filterable]="true" #cbxMember [popupSettings]="cbxPopupSettings" [placeholder]="'Tất cả hạng thành viên'" [data]="memberCards" 
+                [valueField]="'id'" [textField]="'name'" (valueChange)="onMemberSelect($event)">
                 </kendo-combobox>
             </div>
         </div>

@@ -21,6 +21,8 @@ import { CheckPermissionService } from 'src/app/shared/check-permission.service'
 import { MemberLevelAutoCompleteReq, MemberLevelService } from 'src/app/member-level/member-level.service';
 import { values } from 'lodash';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { CardCardService } from 'src/app/card-cards/card-card.service';
+import { CardTypeService } from 'src/app/card-types/card-type.service';
 
 @Component({
   selector: 'app-partner-customer-list',
@@ -43,6 +45,8 @@ export class PartnerCustomerListComponent implements OnInit {
   @ViewChild("categMst", { static: true }) categMst: MultiSelectComponent;
   @ViewChild('popOver', { static: true }) public popover: NgbPopover;
   @ViewChild('cbxLevel', { static: true }) public cbxLevel: ComboBoxComponent;
+  @ViewChild('cbxMember', { static: true }) public cbxMember: ComboBoxComponent;
+
 
   canExport = false;
   canAdd = false;
@@ -66,6 +70,8 @@ export class PartnerCustomerListComponent implements OnInit {
     'draft':'Chưa phát sinh'
   };
 
+  memberCards = [];
+
   cbxPopupSettings = {
     width: 'auto'
   };
@@ -79,6 +85,7 @@ export class PartnerCustomerListComponent implements OnInit {
     private partnerCategoryService: PartnerCategoryService, private notificationService: NotificationService, 
     private checkPermissionService: CheckPermissionService,
     private memberLevelService: MemberLevelService,
+    private cardService: CardTypeService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -86,14 +93,18 @@ export class PartnerCustomerListComponent implements OnInit {
     this.initFilter();
     this.refreshData();
     this.checkRole();
-    this.loadMemberLevel();
-    this.cbxLevel.filterChange.asObservable().pipe(
+    this.loadCardTypes();
+    this.cbxMember.filterChange
+    .asObservable()
+    .pipe(
       debounceTime(300),
-      tap(() => (this.cbxLevel.loading = true)),
-      switchMap(value => this.searchMemberLevel(value))
-    ).subscribe(result => {
-      this.memberLevels = result.items;
-      this.cbxLevel.loading = false;
+      tap(() => (this.cbxMember.loading = true)),
+      switchMap((value) => this.searchCardTypes(value)
+      )
+    )
+    .subscribe((x) => {
+      this.memberCards = x.items;
+      this.cbxMember.loading = false;
     });
     this.searchUpdate.pipe(
       debounceTime(400),
@@ -153,20 +164,30 @@ export class PartnerCustomerListComponent implements OnInit {
     }
   }
 
-  searchMemberLevel(s?) {
-    var val = new MemberLevelAutoCompleteReq();
-    val.offset = 0;
-    val.limit = 20;
-    val.search = s || '';
-    return this.memberLevelService.autoComplete(val);
+  // searchMemberLevel(s?) {
+  //   var val = new MemberLevelAutoCompleteReq();
+  //   val.offset = 0;
+  //   val.limit = 20;
+  //   val.search = s || '';
+  //   return this.memberLevelService.autoComplete(val);
+  // }
+
+  // loadMemberLevel(){
+  //   this.searchMemberLevel().subscribe(res => {
+  //     this.memberLevels = res.items;
+  //   });
+  // }
+  loadCardTypes(){
+    this.searchCardTypes().subscribe(result => {
+      this.memberCards = result.items;
+      
+    })
   }
 
-  loadMemberLevel(){
-    this.searchMemberLevel().subscribe(res => {
-      this.memberLevels = res.items;
-    });
+  searchCardTypes(q?: string) {
+    var val = {search: q || '', offset: 0, limit: 10};
+    return this.cardService.getPaged(val);
   }
-
   importFromExcel() {
     const modalRef = this.modalService.open(PartnerImportComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
     modalRef.componentInstance.type = 'customer';
@@ -305,9 +326,15 @@ export class PartnerCustomerListComponent implements OnInit {
     this.refreshData();
   }
 
-  onMemberLevelSelect(e)
-  {
-    this.filter.memberLevelId = e? e.id : '';
+  // onMemberLevelSelect(e)
+  // {
+  //   this.filter.memberLevelId = e? e.id : '';
+  //   this.filter.offset = 0;
+  //   this.refreshData();
+  // }
+
+  onMemberSelect(e){
+    this.filter.cardTypeId = e? e.id : '';
     this.filter.offset = 0;
     this.refreshData();
   }

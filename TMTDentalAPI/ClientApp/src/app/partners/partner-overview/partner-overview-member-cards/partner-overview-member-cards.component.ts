@@ -1,4 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { CardCardService } from 'src/app/card-cards/card-card.service';
+import { CardCardsMemberCreateDialogComponent } from 'src/app/service-card-cards/card-cards-member-create-dialog/card-cards-member-create-dialog.component';
 
 @Component({
   selector: 'app-partner-overview-member-cards',
@@ -8,15 +11,30 @@ import { Component, Input, OnInit } from '@angular/core';
 export class PartnerOverviewMemberCardsComponent implements OnInit {
   @Input() memberCard: any;
   @Input() partnerId: string;
-  constructor() { }
+  constructor(
+    private modalService: NgbModal,
+    private cardService: CardCardService
+
+  ) { }
 
   ngOnInit(): void {
-    console.log(this.memberCard);
-    
   }
 
   createCard(){
+    const modalRef = this.modalService.open(CardCardsMemberCreateDialogComponent, { scrollable: true, windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = "Tạo thẻ thành viên ";
+    modalRef.componentInstance.partnerId = this.partnerId;
 
+    modalRef.result.then(result => {
+      this.getNextMemberCard();
+    }, () => { });
+  }
+
+  getNextMemberCard(){
+    let val = {partnerId: this.partnerId};
+    this.cardService.getCardCards(val).subscribe((res: any[]) => {
+      this.memberCard = res[0];
+    })
   }
 
   getState(state){

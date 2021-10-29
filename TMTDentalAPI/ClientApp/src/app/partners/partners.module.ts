@@ -95,6 +95,8 @@ import { AccountInvoiceReportService } from '../account-invoice-reports/account-
 import { PartnerSupplierListComponent } from '../catalog/partner-supplier-list/partner-supplier-list.component';
 import { PartnerOverviewPreferentialCardsComponent } from './partner-overview/partner-overview-preferential-cards/partner-overview-preferential-cards.component';
 import { PartnerOverviewMemberCardsComponent } from './partner-overview/partner-overview-member-cards/partner-overview-member-cards.component';
+import { CardCardsModule } from '../card-cards/card-cards.module';
+import { CardCardsMemberCreateDialogComponent } from '../service-card-cards/card-cards-member-create-dialog/card-cards-member-create-dialog.component';
 // import { CatalogModule } from '../catalog/catalog.module';
 
 
@@ -197,6 +199,7 @@ import { PartnerOverviewMemberCardsComponent } from './partner-overview/partner-
     PartnerSourcesModule,
     PartnerAdvancesModule,
     HistoryModule,
+    CardCardsModule,
     // CatalogModule
   ],
   entryComponents: [
@@ -214,7 +217,8 @@ import { PartnerOverviewMemberCardsComponent } from './partner-overview/partner-
     PartnerCustomerAdvisoryCuDialogComponent,
     PartnerCustomerTreatmentFastPromotionComponent,
     PartnerCustomerTreatmentLineFastPromotionComponent,
-    PartnerCustomerDebtPaymentDialogComponent
+    PartnerCustomerDebtPaymentDialogComponent,
+    CardCardsMemberCreateDialogComponent
   ],
   providers: [SaleCouponProgramService, AccountInvoiceReportService],
   exports: [

@@ -20,6 +20,7 @@ export class PartnerOverviewPreferentialCardsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    
   }
 
   createCard(){
@@ -83,7 +84,7 @@ export class PartnerOverviewPreferentialCardsComponent implements OnInit {
   getNextCard(){
     let val = {partnerId: this.partnerId};
     this.cardCardService.getServiceCardCards(val).subscribe(result => {
-      this.preferentialCards = result;
+      this.preferentialCards = result;      
     })
   }
 }
