@@ -1083,10 +1083,52 @@
     ]
   },
   {
-    "Name": "Khuyến mãi",
+    "Name": "Marketing",
     "Functions": [
       {
         "Name": "Chương trình khuyến mãi",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "SaleCoupon.SaleCouponProgram.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "SaleCoupon.SaleCouponProgram.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "SaleCoupon.SaleCouponProgram.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "SaleCoupon.SaleCouponProgram.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Loại thẻ thành viên",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "SaleCoupon.SaleCouponProgram.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "SaleCoupon.SaleCouponProgram.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "SaleCoupon.SaleCouponProgram.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "SaleCoupon.SaleCouponProgram.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Loại thẻ ưu đãi dịch vụ",
         "Ops": [
           {
             "Name": "Xem",
