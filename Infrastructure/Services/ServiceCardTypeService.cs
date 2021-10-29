@@ -174,7 +174,7 @@ namespace Infrastructure.Services
         {
             var count = await SearchQuery(x => x.Name == name).CountAsync();
             if (count >= 2)
-                throw new Exception($"Đã tồn tại tên hạng thẻ {name}");
+                throw new Exception($"Trùng tên hạng thẻ khác");
         }
         public override async Task<IEnumerable<ServiceCardType>> CreateAsync(IEnumerable<ServiceCardType> entities)
         {

@@ -36,9 +36,6 @@
                                             <div *ngIf="f.name.errors?.required" class="text-danger">
                                                 Nhập tên hạng thẻ
                                             </div>
-                                            <div *ngIf="f.name.errors?.lengthError" class="text-danger">
-                                                Tối thiểu 10 và tối đa 15 ký tự
-                                            </div>
                                         </div>
                                 </td>
                             </tr>
@@ -116,7 +113,7 @@
                                                 <kendo-numerictextbox *ngIf="getComputePrice(product.productIndex) == 'percentage'" [min]="0" max = '100' autoCorrect = 'true'  [format]="'n0'" class="mr-2"
                                                 formControlName = 'percentPrice'>
                                                 </kendo-numerictextbox>
-                                                <kendo-numerictextbox *ngIf="getComputePrice(product.productIndex) != 'percentage'" [min]="0" [max]='product.listPrice' autoCorrect = 'true'  [format]="'n0'" class="mr-2"
+                                                <kendo-numerictextbox *ngIf="getComputePrice(product.productIndex) != 'percentage'" [min]="0" [max]='product.listPrice' [format]="'n0'" class="mr-2"
                                                 formControlName = 'fixedAmountPrice'>
                                                 </kendo-numerictextbox>
                                             </div>

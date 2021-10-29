@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import * as moment from 'moment';
@@ -44,7 +44,7 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.formGroup = this.fb.group({
-      barcode: ['', Validators.required],
+      barcode: ['', [Validators.required,createLengthValidator()]],
       activatedDateObj: null,
       expiredDateObj: null,
       partner: null,
@@ -176,5 +176,16 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
       default:
         return "Chưa kích hoạt";
     }
+  }
+}
+
+
+export function createLengthValidator(): ValidatorFn {
+  return (control:AbstractControl) : ValidationErrors | null => {
+      const valueLength = control.value.toString().length;
+      var lengthValid = true;
+      if (valueLength < 10 || valueLength > 15)
+        lengthValid = false;
+      return !lengthValid ? {lengthError:true}: null;
   }
 }

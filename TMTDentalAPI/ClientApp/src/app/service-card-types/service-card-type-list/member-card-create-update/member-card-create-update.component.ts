@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
@@ -34,7 +34,7 @@ export class MemberCardCreateUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.cardForm = this.fb.group({
-      name: ['',[Validators.required,createLengthValidator()]],
+      name: ['',Validators.required],
       basicPoint: ['',Validators.required],
       color: null,
       productPricelistItems: this.fb.array([])
@@ -54,6 +54,7 @@ export class MemberCardCreateUpdateComponent implements OnInit {
     if (this.cardTypeId){
       this.cardTypeService.update(this.cardTypeId,val).subscribe(() => {
         this.notify('Lưu thành công', 'success');
+        this.cardTypeName = val.name;
       })
     }
     else {
@@ -145,13 +146,8 @@ export class MemberCardCreateUpdateComponent implements OnInit {
       modalRef.componentInstance.title = 'Áp dụng ưu đãi cho tất cả dịch vụ';
       modalRef.componentInstance.priceMin = min;
       modalRef.result.then(res => {
-        if (res.computePrice == 'percentage' && res.price > 100){
-          this.notify('Ưu đãi vượt quá giá bán','error');
-          return;
-        }
-        if (res.computePrice == 'fixed_amount' && res.price > min){
-          this.notify('Ưu đãi vượt quá giá bán','error');
-          return;
+        if (res.computePrice == 'percentage' && res.price <= 100 || res.computePrice == 'fixed_amount' && res.price <= min){
+          this.notify('Áp dụng thành công','success');
         }
         productItems.map(x => {
           x.computePrice = res.computePrice;
@@ -159,7 +155,7 @@ export class MemberCardCreateUpdateComponent implements OnInit {
           (x.fixedAmountPrice = res.price, x.percentPrice = null);
         });
         this.f.productPricelistItems.patchValue(productItems);
-        this.notify('Áp dụng thành công','success');
+        this.touchedFixedAmount();
       }, () => {
     });
   }
@@ -174,19 +170,11 @@ export class MemberCardCreateUpdateComponent implements OnInit {
       modalRef.componentInstance.title = 'Áp dụng ưu đãi cho nhóm dịch vụ';
       modalRef.componentInstance.priceMin = min;
       modalRef.result.then(res => {
-        if (res.computePrice == 'percentage' && res.price > 100){
-          this.notify('Ưu đãi vượt quá giá bán','error');
-          return;
+        if (res.computePrice == 'percentage' && res.price <= 100 || res.computePrice == 'fixed_amount' && res.price <= min){
+          this.notify('Áp dụng thành công','success');
         }
-        if (res.computePrice == 'fixed_amount' && res.price > min){
-          this.notify('Ưu đãi vượt quá giá bán','error');
-          return;
-        }
-             
-
         this.productPricelistItems.controls.filter(x => x.value.categId === categId ).map(x => {
           x.get('computePrice').patchValue(res.computePrice);
-
           if(res.computePrice == 'percentage'){
             x.get('percentPrice').patchValue(res.price);
             x.get('fixedAmountPrice').patchValue(null);
@@ -195,7 +183,7 @@ export class MemberCardCreateUpdateComponent implements OnInit {
             x.get('fixedAmountPrice').patchValue(res.price);
           }       
         });
-        this.notify('Áp dụng thành công','success');
+        this.touchedFixedAmount();
       }, () => {
       });
   }
@@ -219,6 +207,15 @@ export class MemberCardCreateUpdateComponent implements OnInit {
     return this.productPricelistItems.controls[index].value.computePrice;
   }
 
+  touchedFixedAmount() {
+    (<FormArray>this.cardForm.get('productPricelistItems')).controls.forEach((group: FormGroup) => {
+      (<any>Object).values(group.controls).forEach((control: FormControl) => { 
+          control.markAsTouched();
+      }) 
+    });
+    return;
+  }
+
   get f(){
     return this.cardForm.controls;
   }
@@ -227,14 +224,4 @@ export class MemberCardCreateUpdateComponent implements OnInit {
     return this.cardForm.get('productPricelistItems') as FormArray;
   }
 
-}
-
-export function createLengthValidator(): ValidatorFn {
-  return (control:AbstractControl) : ValidationErrors | null => {
-      const valueLength = control.value.toString().length;
-      var lengthValid = true;
-      if (valueLength < 10 || valueLength > 15)
-        lengthValid = false;
-      return !lengthValid ? {lengthError:true}: null;
-  }
 }

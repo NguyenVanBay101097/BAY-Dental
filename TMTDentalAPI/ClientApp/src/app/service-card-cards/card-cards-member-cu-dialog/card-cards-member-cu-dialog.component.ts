@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { result } from 'lodash';
@@ -42,8 +42,8 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.formGroup = this.fb.group({
-      barcode: ['', Validators.required],
-      cardType: null,
+      barcode: ['', [Validators.required,createLengthValidator()]],
+      cardType: [null,[Validators.required]],
       partner: null,
     });
     this.customerCbx.filterChange
@@ -168,7 +168,6 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
   loadCardTypes(){
     this.searchCardTypes().subscribe(result => {
       this.cardTypeSimpleFilter = result.items;
-      this.formGroup.get('cardType').patchValue(result.items[0]);
     })
   }
 
@@ -190,9 +189,15 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
   get f(){
     return this.formGroup.controls;
   }
-
-  notify(){
-
-  }
   
+}
+
+export function createLengthValidator(): ValidatorFn {
+  return (control:AbstractControl) : ValidationErrors | null => {
+      const valueLength = control.value.toString().length;
+      var lengthValid = true;
+      if (valueLength < 10 || valueLength > 15)
+        lengthValid = false;
+      return !lengthValid ? {lengthError:true}: null;
+  }
 }
