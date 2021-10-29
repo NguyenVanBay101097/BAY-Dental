@@ -32,7 +32,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
-        [CheckAccess(Actions = "LoyaltyCard.CardCard.Read")]
+        [CheckAccess(Actions = "Card.Card.Read")]
         public async Task<IActionResult> Get([FromQuery] CardCardPaged val)
         {
             var res = await _cardCardService.GetPagedResultAsync(val);
@@ -40,7 +40,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        [CheckAccess(Actions = "LoyaltyCard.CardCard.Read")]
+        [CheckAccess(Actions = "Card.Card.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var card = await _cardCardService.SearchQuery(x => x.Id == id).Include(x => x.Type)
@@ -55,6 +55,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Card.Card.Read")]
         public async Task<IActionResult> GetCardCards(GetCardCardFilter val)
         {
             var rels = await _cardCardService.GetCardCards(val);
@@ -62,7 +63,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
-        [CheckAccess(Actions = "LoyaltyCard.CardCard.Create")]
+        [CheckAccess(Actions = "Card.Card.Create")]
         public async Task<IActionResult> Create(CardCardSave val)
         {
             if (null == val || !ModelState.IsValid)
@@ -77,7 +78,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        [CheckAccess(Actions = "LoyaltyCard.CardCard.Update")]
+        [CheckAccess(Actions = "Card.Card.Update")]
         public async Task<IActionResult> Update(Guid id, CardCardSave val)
         {
             if (!ModelState.IsValid)
@@ -95,7 +96,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        [CheckAccess(Actions = "LoyaltyCard.CardCard.Delete")]
+        [CheckAccess(Actions = "Card.Card.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             await _cardCardService.Unlink(new List<Guid>() { id });
@@ -103,7 +104,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "LoyaltyCard.CardCard.Update")]
+        [CheckAccess(Actions = "Card.Card.Update")]
         public async Task<IActionResult> ButtonConfirm(IEnumerable<Guid> ids)
         {
             if (ids == null)
@@ -114,7 +115,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "LoyaltyCard.CardCard.Update")]
+        [CheckAccess(Actions = "Card.Card.Update")]
         public async Task<IActionResult> ButtonActive(IEnumerable<Guid> ids)
         {
             if (ids == null)
@@ -125,7 +126,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "LoyaltyCard.CardCard.Update")]
+        [CheckAccess(Actions = "Card.Card.Update")]
         public async Task<IActionResult> ButtonCancel(IEnumerable<Guid> ids)
         {
             if (ids == null)
@@ -136,7 +137,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "LoyaltyCard.CardCard.Update")]
+        [CheckAccess(Actions = "Card.Card.Update")]
         public async Task<IActionResult> ButtonReset(IEnumerable<Guid> ids)
         {
             if (ids == null)
@@ -147,7 +148,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "LoyaltyCard.CardCard.Update")]
+        [CheckAccess(Actions = "Card.Card.Update")]
         public async Task<IActionResult> ButtonLock(IEnumerable<Guid> ids)
         {
             if (ids == null)
@@ -158,7 +159,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "LoyaltyCard.CardCard.Update")]
+        [CheckAccess(Actions = "Card.Card.Update")]
         public async Task<IActionResult> ButtonRenew(IEnumerable<Guid> ids)
         {
             if (ids == null)
@@ -169,7 +170,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "LoyaltyCard.CardCard.Update")]
+        [CheckAccess(Actions = "Card.Card.Update")]
         public async Task<IActionResult> ButtonUnlock(IEnumerable<Guid> ids)
         {
             if (ids == null)
@@ -180,7 +181,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "LoyaltyCard.CardCard.Update")]
+        [CheckAccess(Actions = "Card.Card.Update")]
         public async Task<IActionResult> ButtonUpgradeCard(IEnumerable<Guid> ids)
         {
             if (ids == null)
@@ -193,7 +194,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        [CheckAccess(Actions = "LoyaltyCard.CardCard.Read")]
+        [CheckAccess(Actions = "Card.Card.Read")]
         public async Task<IActionResult> ExportExcelFile([FromQuery] CardCardPaged val)
         {
             var stream = new MemoryStream();
@@ -243,7 +244,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("ImportExcel")]
-        [CheckAccess(Actions = "LoyaltyCard.CardCard.Read")]
+        [CheckAccess(Actions = "Card.Card.Read")]
         public async Task<IActionResult> ImportExcel(IFormFile file)
         {
             var res = await _cardCardService.ActionImport(file);

@@ -33,7 +33,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
-        [CheckAccess(Actions = "LoyaltyCard.CardType.Read")]
+        [CheckAccess(Actions = "Card.Type.Read")]
         public async Task<IActionResult> Get([FromQuery] CardTypePaged val)
         {
             var res = await _cardTypeService.GetPagedResultAsync(val);
@@ -41,7 +41,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        [CheckAccess(Actions = "LoyaltyCard.CardType.Read")]
+        [CheckAccess(Actions = "Card.Type.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
             var type = await _cardTypeService.SearchQuery(x => x.Id == id).Include(x => x.Pricelist).Include(x => x.Pricelist.Items).ThenInclude(x => x.Product.Categ).FirstOrDefaultAsync();
@@ -53,7 +53,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
-        [CheckAccess(Actions = "LoyaltyCard.CardType.Create")]
+        [CheckAccess(Actions = "Card.Type.Create")]
         public async Task<IActionResult> Create(CardTypeSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -70,7 +70,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        [CheckAccess(Actions = "LoyaltyCard.CardType.Update")]
+        [CheckAccess(Actions = "Card.Type.Update")]
         public async Task<IActionResult> Update(Guid id, CardTypeSave val)
         {
             if (!ModelState.IsValid)
@@ -92,7 +92,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        [CheckAccess(Actions = "LoyaltyCard.CardType.Delete")]
+        [CheckAccess(Actions = "Card.Type.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var type = await _cardTypeService.SearchQuery(x => x.Id == id).Include(x => x.Pricelist.Items).FirstOrDefaultAsync();

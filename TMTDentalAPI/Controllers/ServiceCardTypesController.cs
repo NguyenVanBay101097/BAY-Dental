@@ -74,6 +74,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "ServiceCard.Type.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
             var type = await _cardTypeService.SearchQuery(x => x.Id == id).Include(x => x.ProductPricelist.Items).FirstOrDefaultAsync();
@@ -89,6 +90,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "ServiceCard.Type.Create")]
         public async Task<IActionResult> Create(CreateServiceCardTypeReq val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -105,6 +107,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}/[action]")]
+        [CheckAccess(Actions = "ServiceCard.Type.Update")]
         public async Task<IActionResult> Update(Guid id, CreateServiceCardTypeReq val)
         {
             var entity = await _cardTypeService.SearchQuery(x => x.Id == id).Include(x => x.ProductPricelist.Items).FirstOrDefaultAsync();
