@@ -2267,7 +2267,8 @@ namespace Infrastructure.Services
                                  SourceName = p.Source.Name,
                                  TitleName = p.Title.Name,
                                  CardCardId = card.Id,
-                                 CardBarCode = card == null ? null : card.Barcode
+                                 CardBarCode = card == null ? null : card.Barcode,
+                                 CardTypeId = card == null ? null : (Guid?)card.TypeId,
                              };
 
             if (!string.IsNullOrEmpty(val.Search))
@@ -2317,7 +2318,7 @@ namespace Infrastructure.Services
 
             if (val.CardTypeId.HasValue)
             {
-                ResponseQr = ResponseQr.Where(x => x.CardCard.TypeId == val.CardTypeId);
+                ResponseQr = ResponseQr.Where(x => x.CardTypeId == val.CardTypeId);
             }
 
             if (!string.IsNullOrEmpty(val.OrderState))

@@ -15,6 +15,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string CardBarCode { get; set; }
 
+        public Guid? CardTypeId { get; set; }
+
         public DateTime? Date { get; set; }
         public string Gender { get; set; }
         public string CityName { get; set; }
