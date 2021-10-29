@@ -36,7 +36,7 @@ namespace Infrastructure.Services
             var totalItems = await query.CountAsync();
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
-            var items = await _mapper.ProjectTo<ServiceCardTypeBasic>(query).ToListAsync();
+            var items = await _mapper.ProjectTo<ServiceCardTypeBasic>(query.OrderByDescending(x => x.DateCreated)).ToListAsync();
 
             return new PagedResult2<ServiceCardTypeBasic>(totalItems, val.Offset, val.Limit)
             {

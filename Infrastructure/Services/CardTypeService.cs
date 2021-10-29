@@ -36,7 +36,7 @@ namespace Infrastructure.Services
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
-            var items = await query.Select(x => new CardTypeBasic
+            var items = await query.OrderByDescending(x=> x.DateCreated).Select(x => new CardTypeBasic
             {
                 Id = x.Id,
                 Name = x.Name,
