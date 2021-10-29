@@ -2345,7 +2345,7 @@ namespace Infrastructure.Services
             {
                 if (item.CardCardId.HasValue)
                 {
-                    var card = await cardCardObj.SearchQuery(x => x.State == "in_use").Include(x => x.Type).FirstOrDefaultAsync();
+                    var card = await cardCardObj.SearchQuery(x => x.State == "in_use" && x.PartnerId.HasValue && x.PartnerId == item.Id).Include(x => x.Type).FirstOrDefaultAsync();
                     item.CardCard = _mapper.Map<CardCardBasic>(card);
                 }
                 item.Categories = _mapper.Map<List<PartnerCategoryBasic>>(categDict.ContainsKey(item.Id) ? categDict[item.Id] : new List<PartnerCategory>());

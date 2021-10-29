@@ -71,7 +71,7 @@
                 <div class="d-flex justify-content-between mb-2">
                     <app-service-list-search-dropdown (onSelectService)="addLine($event)" [placeHolder] = "'Tìm kiếm theo mã hoặc tên dịch vụ...'" ></app-service-list-search-dropdown>
                     <div style="margin-right: 10.5px;" *ngIf="categories.length > 0">
-                        <button class="btn btn-primary" (click) = onApplyAll()>Áp dụng cho toàn bộ</button>
+                        <button class="btn btn-primary" (click) = onApplyAll(templateForm)>Áp dụng cho toàn bộ</button>
                     </div>
                 </div>
                 <div *ngIf="categories.length > 0">
@@ -99,11 +99,11 @@
                                 <td class="w-30 text-right">
                                     <div class="d-flex justify-content-end">
                                         <div>
-                                            <kendo-numerictextbox *ngIf="product.computePrice == 'fixed_amount'" [min]="0" max="{{product.listPrice}}" autoCorrect = 'true'  [format]="'n0'" class="mr-2" 
+                                            <kendo-numerictextbox *ngIf="product.computePrice == 'fixed_amount'" [min]="0" [max]="product.listPrice" [format]="'n0'" class="mr-2" 
                                             [(ngModel)]="product.fixedAmountPrice"
                                             [name] = "'percentPrice' + categIndex + productIndex">
                                             </kendo-numerictextbox>
-                                            <kendo-numerictextbox *ngIf="product.computePrice == 'percentage'" [min]="0" max = "100" [format]="'n0'" autoCorrect = 'true' class="mr-2"
+                                            <kendo-numerictextbox *ngIf="product.computePrice == 'percentage'" [min]="0" max = "100" [format]="'n0'" class="mr-2"
                                             [name] = "'percentPrice' + categIndex + productIndex" [(ngModel)]="product.percentPrice">
                                             </kendo-numerictextbox>
                                         </div>
