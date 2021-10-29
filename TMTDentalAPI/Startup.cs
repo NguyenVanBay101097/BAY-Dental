@@ -56,6 +56,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using DinkToPdf;
 using DinkToPdf.Contracts;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace TMTDentalAPI
 {
@@ -718,13 +719,22 @@ namespace TMTDentalAPI
             app.UseRequestLocalization(localizationOptions);
 
             //app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            var provider = new FileExtensionContentTypeProvider();
+            // Add new mappings
+            provider.Mappings[".webmanifest"] = "application/manifest+json";
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                ContentTypeProvider = provider
+            });
 
             app.UseSerilogRequestLogging();
 
             if (!env.IsDevelopment())
             {
-                app.UseSpaStaticFiles();
+                app.UseSpaStaticFiles(new StaticFileOptions
+                {
+                    ContentTypeProvider = provider
+                });
             }
 
             app.UseRouting();
