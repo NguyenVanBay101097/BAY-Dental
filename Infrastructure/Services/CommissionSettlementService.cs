@@ -195,20 +195,20 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<CommissionSettlementReportDetailOutput>> GetReportDetail(CommissionSettlementFilterReport val)
         {
             var query = GetQueryableReportPaged(val);
-            var totalItems = await query.CountAsync();   
+            var totalItems = await query.CountAsync();
 
-            var items = await query.Select(x => new CommissionSettlementReportDetailOutput
-                {
-                    Amount = x.Amount,
-                    BaseAmount = x.BaseAmount,
-                    Date = x.Date,
-                    Percentage = x.Percentage,
-                    ProductName = x.Product.Name,
-                    PartnerName = x.MoveLine.Partner.Name,
-                    InvoiceOrigin = x.MoveLine.Move.InvoiceOrigin,
-                    CommissionType = x.Commission.Type,
-                    EmployeeName = x.Employee.Name
-                }).ToListAsync();
+            var items = await query.Where(x => x.EmployeeId.HasValue).Select(x => new CommissionSettlementReportDetailOutput
+            {
+                Amount = x.Amount,
+                BaseAmount = x.BaseAmount,
+                Date = x.Date,
+                Percentage = x.Percentage,
+                ProductName = x.Product.Name,
+                PartnerName = x.MoveLine.Partner.Name,
+                InvoiceOrigin = x.MoveLine.Move.InvoiceOrigin,
+                CommissionType = x.Commission.Type,
+                EmployeeName = x.Employee.Name
+            }).ToListAsync();
 
             return new PagedResult2<CommissionSettlementReportDetailOutput>(totalItems, val.Offset, val.Limit)
             {
@@ -285,10 +285,11 @@ namespace Infrastructure.Services
             var query = GetQueryableReportPaged(val);
 
             //var items = query.GroupBy(x => new { EmployeeId = x.EmployeeId.Value, EmployeeName = x.Employee.Name, Date = x.Date.Value.Date, CommissionType = x.Commission.Type });
-            var items = await query.Include(x => x.Employee).Include(x => x.Commission).ToListAsync();
-           
-          
-            var res = items.GroupBy(x=> new {
+            var items = await query.Where(x => x.EmployeeId.HasValue).Include(x => x.Employee).Include(x => x.Commission).ToListAsync();
+
+
+            var res = items.GroupBy(x => new
+            {
                 EmployeeId = x.EmployeeId.Value,
                 EmployeeName = x.Employee.Name,
                 Date = x.Date.Value.Date,
