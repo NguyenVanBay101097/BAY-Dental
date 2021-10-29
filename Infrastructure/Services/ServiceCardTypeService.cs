@@ -36,7 +36,7 @@ namespace Infrastructure.Services
             var totalItems = await query.CountAsync();
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
-            var items = await _mapper.ProjectTo<ServiceCardTypeBasic>(query).ToListAsync();
+            var items = await _mapper.ProjectTo<ServiceCardTypeBasic>(query.OrderByDescending(x => x.DateCreated)).ToListAsync();
 
             return new PagedResult2<ServiceCardTypeBasic>(totalItems, val.Offset, val.Limit)
             {
@@ -118,6 +118,13 @@ namespace Infrastructure.Services
 
         public void SaveProductPricelistItem(ServiceCardType self, IEnumerable<ProductPricelistItem> listItems)
         {
+            if (!listItems.Any())
+            {
+                self.ProductPricelistId = null;
+                self.ProductPricelist = null;
+                return;
+            }    
+
             if (self.ProductPricelist == null)
             {
                 var prList = new ProductPricelist()
@@ -167,7 +174,7 @@ namespace Infrastructure.Services
         {
             var count = await SearchQuery(x => x.Name == name).CountAsync();
             if (count >= 2)
-                throw new Exception($"Đã tồn tại tên hạng thẻ {name}");
+                throw new Exception($"Trùng tên hạng thẻ khác");
         }
         public override async Task<IEnumerable<ServiceCardType>> CreateAsync(IEnumerable<ServiceCardType> entities)
         {

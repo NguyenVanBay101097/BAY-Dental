@@ -4,11 +4,12 @@ using System.Text;
 
 namespace ApplicationCore.Entities
 {
-    public class CardCard: BaseEntity
+    public class CardCard : BaseEntity
     {
         public CardCard()
         {
             State = "draft";
+            TotalPoint = 0;
         }
         /// <summary>
         /// Số thẻ

@@ -21,12 +21,15 @@ namespace TMTDentalAPI.Controllers
         private readonly ICardTypeService _cardTypeService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
+        private readonly IProductPricelistService _productPricelistService;
         public CardTypesController(ICardTypeService cardTypeService,
+            IProductPricelistService productPricelistService,
             IMapper mapper, IUnitOfWorkAsync unitOfWork)
         {
             _cardTypeService = cardTypeService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _productPricelistService = productPricelistService;
         }
 
         [HttpGet]
@@ -41,7 +44,7 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "LoyaltyCard.CardType.Read")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var type = await _cardTypeService.SearchQuery(x => x.Id == id).Include(x => x.Pricelist).FirstOrDefaultAsync();
+            var type = await _cardTypeService.SearchQuery(x => x.Id == id).Include(x => x.Pricelist).Include(x => x.Pricelist.Items).ThenInclude(x => x.Product.Categ).FirstOrDefaultAsync();
             if (type == null)
             {
                 return NotFound();
@@ -51,25 +54,40 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost]
         [CheckAccess(Actions = "LoyaltyCard.CardType.Create")]
-        public async Task<IActionResult> Create(CardTypeDisplay val)
+        public async Task<IActionResult> Create(CardTypeSave val)
         {
-            if (null == val || !ModelState.IsValid)
-                return BadRequest();
             await _unitOfWork.BeginTransactionAsync();
-            var type = await _cardTypeService.CreateCardType(val);
+            var entity = _mapper.Map<CardType>(val);
+            var serviceItems = _mapper.Map<IEnumerable<ProductPricelistItem>>(val.ProductPricelistItems);
+            //tạo pricelist
+            _cardTypeService.SaveProductPricelistItem(entity, serviceItems);
+            //tạo loại thẻ
+            await _cardTypeService.CreateAsync(entity);
             _unitOfWork.Commit();
 
-            val.Id = type.Id;
-            return Ok(val);
+            var basic = _mapper.Map<CardTypeDisplay>(entity);
+            return Ok(basic);
         }
 
         [HttpPut("{id}")]
         [CheckAccess(Actions = "LoyaltyCard.CardType.Update")]
-        public async Task<IActionResult> Update(Guid id, CardTypeDisplay val)
+        public async Task<IActionResult> Update(Guid id, CardTypeSave val)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            await _cardTypeService.UpdateCardType(id, val);
+            var entity = await _cardTypeService.SearchQuery(x => x.Id == id).Include(x => x.Pricelist.Items).FirstOrDefaultAsync();
+            if (entity == null)
+                return NotFound();
+
+            await _unitOfWork.BeginTransactionAsync();
+            entity = _mapper.Map(val, entity);
+            var serviceItems = _mapper.Map<IEnumerable<ProductPricelistItem>>(val.ProductPricelistItems);
+            //tạo pricelist
+            _cardTypeService.SaveProductPricelistItem(entity, serviceItems);
+            //update loại thẻ
+            await _cardTypeService.UpdateAsync(entity);
+            _unitOfWork.Commit();
+
             return NoContent();
         }
 
@@ -77,9 +95,12 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "LoyaltyCard.CardType.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
-            var type = await _cardTypeService.GetByIdAsync(id);
+            var type = await _cardTypeService.SearchQuery(x => x.Id == id).Include(x => x.Pricelist.Items).FirstOrDefaultAsync();
             if (type == null)
                 return NotFound();
+            if(type.Pricelist != null)
+            await _productPricelistService.DeleteAsync(type.Pricelist);
+
             await _cardTypeService.DeleteAsync(type);
 
             return NoContent();

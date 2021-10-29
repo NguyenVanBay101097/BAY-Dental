@@ -35,6 +35,10 @@ namespace Infrastructure.EntityConfigurations
             builder.HasOne(x => x.ServiceCardCard)
                 .WithMany()
                 .HasForeignKey(x => x.ServiceCardCardId);
+
+            builder.HasOne(x => x.CardCard)
+                .WithMany()
+                .HasForeignKey(x => x.CardCardId);
         }
     }
 }

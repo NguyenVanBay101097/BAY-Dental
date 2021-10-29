@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { result } from 'lodash';
 import { Subject } from 'rxjs';
 import {ProductPricelistItems, ServiceCardTypeObj, ServiceCardTypeService } from '../../service-card-type.service';
 import { ServiceCardTypeApplyDialogComponent } from '../service-card-type-apply-dialog/service-card-type-apply-dialog.component';
@@ -22,18 +23,27 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
   cardTypeObj: ServiceCardTypeObj;
   objCategories = Object.create(null);
   submitted = false;
+  companyId: string;
   constructor(
     private modalService: NgbModal,
     private cardService: ServiceCardTypeService,
     private notificationService: NotificationService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router,
+
   ) { }
 
   ngOnInit(): void {
+    var user_info = localStorage.getItem('user_info');
+    if (user_info) {
+      var userInfo = JSON.parse(user_info);
+      this.companyId = userInfo.companyId;
+    }
     this.cardTypeObj  = {
       name: '',
       period: 'year',
       nbrPeriod: 1,
+      companyId: this.companyId,
       productPricelistItems: []
     };  
     this.cardTypeId = this.route.snapshot.queryParamMap.get('id');
@@ -100,7 +110,10 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
       })
     }
     else {
-      this.cardService.create(this.cardTypeObj).subscribe(()=>{
+      this.cardService.create(this.cardTypeObj).subscribe(result=>{
+        this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
+          this.router.navigate(['card-types/preferential-cards/form'], { queryParams: { id: result.id } });
+      });
         this.notify('Lưu thành công','success');
       })
     }
@@ -183,7 +196,8 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
       name: '',
       period: 'year',
       nbrPeriod: 1,
-      productPricelistItems: []
+      productPricelistItems: [],
+      companyId: this.companyId
     };
     this.categories = [];
   }

@@ -181,6 +181,7 @@ namespace Infrastructure.Services
             var saleLineObj = GetService<ISaleOrderLineService>();
             var paymentObj = GetService<IAccountPaymentService>();
             var partnerObj = GetService<IPartnerService>();
+            var cardObj = GetService<ICardCardService>();
             /// truy vấn đủ dữ liệu của saleorder payment`
             var saleOrderPayments = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.Move)
@@ -215,49 +216,23 @@ namespace Infrastructure.Services
 
                 //Tich diem va cap nhat hang
                 //await ComputePointAndUpdateLevel(saleOrderPayment, saleOrderPayment.Order.PartnerId, "payment");
-                var loyaltyPoints = await ConvertAmountToPoint(saleOrderPayment.Amount);
-                var propertyObj = GetService<IIRPropertyService>();
-                var partnerPointsProp = propertyObj.get("loyalty_points", "res.partner", res_id: $"res.partner,{saleOrderPayment.Order.PartnerId}", force_company: saleOrderPayment.CompanyId);
-                var partnerPoints = Convert.ToDecimal(partnerPointsProp == null ? 0 : partnerPointsProp);
-
-                partnerPoints += loyaltyPoints;
-                var pointValuesDict = new Dictionary<string, object>()
+                var loyaltyPoints = ConvertAmountToPoint(saleOrderPayment.Amount);
+                var card = await cardObj.SearchQuery(x => x.PartnerId == saleOrderPayment.Order.PartnerId && x.State == "in_use").FirstOrDefaultAsync();
+                if(card != null)
                 {
-                    { $"res.partner,{saleOrderPayment.Order.PartnerId}", partnerPoints }
-                };
-
-                propertyObj.set_multi("loyalty_points", "res.partner", pointValuesDict, force_company: saleOrderPayment.CompanyId);
-
-                //lấy hạng thành viên hiện tại của partner
-                var partnerLevelProp = propertyObj.get("member_level", "res.partner", res_id: $"res.partner,{saleOrderPayment.Order.PartnerId}", force_company: saleOrderPayment.CompanyId);
-                var partnerLevelValue = partnerLevelProp == null ? string.Empty : partnerLevelProp.ToString();
-                var partnerLevelId = !string.IsNullOrEmpty(partnerLevelValue) ? Guid.Parse(partnerLevelValue.Split(",")[1]) : (Guid?)null;
-
-                //cập nhật hạng
-                var mbObj = GetService<IMemberLevelService>();
-                var partnerLevel = partnerLevelId.HasValue ? await mbObj.GetByIdAsync(partnerLevelId) : null;
-                MemberLevel type = null;
-                if (partnerLevel != null)
-                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.Point >= partnerLevel.Point && x.Id != partnerLevel.Id && x.CompanyId == CompanyId, orderBy: x => x.OrderByDescending(s => s.Point))
-                        .FirstOrDefaultAsync();
-                else
-                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.CompanyId == CompanyId, orderBy: x => x.OrderByDescending(s => s.Point))
-                          .FirstOrDefaultAsync();
-
-                if (type != null)
-                {
-                    var levelValuesDict = new Dictionary<string, object>()
-                    {
-                        { $"res.partner,{saleOrderPayment.Order.PartnerId}", type.Id }
-                    };
-                    propertyObj.set_multi("member_level", "res.partner", levelValuesDict, force_company: saleOrderPayment.CompanyId);
+                    card.TotalPoint += loyaltyPoints;
+                    var typeId = await UpGradeCardCard((card.TotalPoint ?? 0));
+                    card.TypeId = typeId == Guid.Empty ? card.TypeId : typeId;
+                    await cardObj.UpdateAsync(card);
                 }
+
+             
             }
             //await partnerObj.UpdateMemberLevelForPartner(partnerIds);
             await UpdateAsync(saleOrderPayments);
         }
 
-        public async Task<decimal> ConvertAmountToPoint(decimal amount)
+        public decimal ConvertAmountToPoint(decimal amount)
         {
             //var prate = await GetLoyaltyPointExchangeRate();
             var prate = 10000;
@@ -294,6 +269,24 @@ namespace Infrastructure.Services
             }
             return null;
 
+        }
+
+        public async Task<Guid> UpGradeCardCard(decimal? point)
+        {
+            var cardTypeObj = GetService<ICardTypeService>();
+            var cardTypes = await cardTypeObj.SearchQuery().OrderByDescending(x => x.BasicPoint).ToListAsync();
+            if (cardTypes == null)
+                throw new Exception("Không có danh sách loại thẻ thành viên");
+            for (int i = 0; i < cardTypes.Count(); i++)
+            {
+                var pointValue = cardTypes.ElementAt(i).BasicPoint;
+                if (point >= pointValue)
+                    return cardTypes.ElementAt(i).Id;
+                else
+                    continue;
+
+            }
+            return Guid.Empty;
         }
 
         public async Task<AccountMove> _CreateInvoices(SaleOrderPayment self, bool final = false)
@@ -502,6 +495,7 @@ namespace Infrastructure.Services
             var saleOrderObj = GetService<ISaleOrderService>();
             var saleLineObj = GetService<ISaleOrderLineService>();
             var paymentObj = GetService<IAccountPaymentService>();
+            var cardObj = GetService<ICardCardService>();
             var now = DateTime.Now;
             var firstDayOfMonth = new DateTime(now.Year, now.Month, 1);
             var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
@@ -545,42 +539,15 @@ namespace Infrastructure.Services
 
                 //Trừ điểm tích lũy và cập nhật lại hạng thành viên
                 //await ComputePointAndUpdateLevel(saleOrderPayment, saleOrderPayment.Order.PartnerId, "payment");
-                var loyaltyPoints = await ConvertAmountToPoint(saleOrderPayment.Amount);
-                var propertyObj = GetService<IIRPropertyService>();
-                var partnerPointsProp = propertyObj.get("loyalty_points", "res.partner", res_id: $"res.partner,{saleOrderPayment.Order.PartnerId}", force_company: saleOrderPayment.CompanyId);
-                var partnerPoints = Convert.ToDecimal(partnerPointsProp == null ? 0 : partnerPointsProp);
-
-                partnerPoints -= loyaltyPoints;
-                var pointValuesDict = new Dictionary<string, object>()
+                var loyaltyPoints = ConvertAmountToPoint(saleOrderPayment.Amount);
+                var card = await cardObj.SearchQuery(x => x.PartnerId == saleOrderPayment.Order.PartnerId && x.State == "in_use").FirstOrDefaultAsync();
+                if (card != null)
                 {
-                    { $"res.partner,{saleOrderPayment.Order.PartnerId}", partnerPoints }
-                };
-
-                propertyObj.set_multi("loyalty_points", "res.partner", pointValuesDict, force_company: saleOrderPayment.CompanyId);
-
-                //lấy hạng thành viên hiện tại của partner
-                var partnerLevelProp = propertyObj.get("member_level", "res.partner", res_id: $"res.partner,{saleOrderPayment.Order.PartnerId}", force_company: saleOrderPayment.CompanyId);
-                var partnerLevelValue = partnerLevelProp == null ? string.Empty : partnerLevelProp.ToString();
-                var partnerLevelId = !string.IsNullOrEmpty(partnerLevelValue) ? Guid.Parse(partnerLevelValue.Split(",")[1]) : (Guid?)null;
-
-                //cập nhật hạng
-                var mbObj = GetService<IMemberLevelService>();
-                var partnerLevel = partnerLevelId.HasValue ? await mbObj.GetByIdAsync(partnerLevelId) : null;
-                MemberLevel type = null;
-                if (partnerLevel != null)
-                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.Id != partnerLevel.Id && x.CompanyId == CompanyId, orderBy: x => x.OrderByDescending(s => s.Point))
-                        .FirstOrDefaultAsync();
-                else
-                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.CompanyId == CompanyId, orderBy: x => x.OrderByDescending(s => s.Point))
-                          .FirstOrDefaultAsync();
-
-                var typeId = type != null ? type.Id : Guid.Empty;
-
-                var levelValuesDict = new Dictionary<string, object>()
-                    {
-                        { $"res.partner,{saleOrderPayment.Order.PartnerId}", typeId }
-                    };
-                propertyObj.set_multi("member_level", "res.partner", levelValuesDict, force_company: saleOrderPayment.CompanyId);
+                    card.TotalPoint -= loyaltyPoints;
+                    var typeId = await UpGradeCardCard((card.TotalPoint ?? 0));
+                    card.TypeId = typeId == Guid.Empty ? card.TypeId : typeId;
+                    await cardObj.UpdateAsync(card);
+                }
 
                 saleOrderPayment.State = "cancel";
             }

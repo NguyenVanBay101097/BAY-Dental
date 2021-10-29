@@ -54,30 +54,42 @@ namespace TMTDentalAPI.Controllers
             return Ok(display);
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetCardCards(GetCardCardFilter val)
+        {
+            var rels = await _cardCardService.GetCardCards(val);
+            return Ok(rels);
+        }
+
         [HttpPost]
         [CheckAccess(Actions = "LoyaltyCard.CardCard.Create")]
-        public async Task<IActionResult> Create(CardCardDisplay val)
+        public async Task<IActionResult> Create(CardCardSave val)
         {
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
-            var type = _mapper.Map<CardCard>(val);
-            await _cardCardService.CreateAsync(type);
-            val.Id = type.Id;
-            return Ok(val);
+            var entity = _mapper.Map<CardCard>(val);
+            await _unitOfWork.BeginTransactionAsync();
+            await _cardCardService.CreateAsync(entity);
+            _unitOfWork.Commit();
+
+            var basic = _mapper.Map<CardCardDisplay>(entity);
+            return Ok(basic);
         }
 
         [HttpPut("{id}")]
         [CheckAccess(Actions = "LoyaltyCard.CardCard.Update")]
-        public async Task<IActionResult> Update(Guid id, CardCardDisplay val)
+        public async Task<IActionResult> Update(Guid id, CardCardSave val)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            var type = await _cardCardService.GetByIdAsync(id);
-            if (type == null)
+            var entity = await _cardCardService.GetByIdAsync(id);
+            if (entity == null)
                 return NotFound();
 
-            type = _mapper.Map(val, type);
-            await _cardCardService.UpdateAsync(type);
+            await _unitOfWork.BeginTransactionAsync();
+            entity = _mapper.Map(val, entity);
+            await _cardCardService.UpdateAsync(entity);
+            _unitOfWork.Commit();
 
             return NoContent();
         }
@@ -182,12 +194,12 @@ namespace TMTDentalAPI.Controllers
 
         [HttpGet("[action]")]
         [CheckAccess(Actions = "LoyaltyCard.CardCard.Read")]
-        public async Task<IActionResult> ExportExcelFile([FromQuery]CardCardPaged val)
+        public async Task<IActionResult> ExportExcelFile([FromQuery] CardCardPaged val)
         {
             var stream = new MemoryStream();
             val.Limit = int.MaxValue;
             val.Offset = 0;
-            var cards = await _cardCardService.GetPagedResultAsync(val);
+            var paged = await _cardCardService.GetPagedResultAsync(val);
             var sheetName = "Thông tin thẻ thành viên";
             byte[] fileContent;
 
@@ -203,25 +215,20 @@ namespace TMTDentalAPI.Controllers
             {
                 var worksheet = package.Workbook.Worksheets.Add(sheetName);
 
-                worksheet.Cells[1, 1].Value = "Số thẻ";
-                worksheet.Cells[1, 2].Value = "Mã vạch";
-                worksheet.Cells[1, 3].Value = "Loại thẻ";
-                worksheet.Cells[1, 4].Value = "Khách hàng";
-                worksheet.Cells[1, 5].Value = "Điểm tích lũy";
-                worksheet.Cells[1, 6].Value = "Trạng thái";
-                var items = cards.Items.ToList();
-                for (int row = 2; row < items.Count + 2; row++)
+                worksheet.Cells[1, 1].Value = "Số ID thẻ";
+                worksheet.Cells[1, 2].Value = "Hạng thẻ";
+                worksheet.Cells[1, 3].Value = "Họ tên";
+                worksheet.Cells[1, 4].Value = "Điện thoại";
+                worksheet.Cells[1, 5].Value = "Trạng thái";
+                var row = 2;
+                foreach (var item in paged.Items)
                 {
-                    var item = items[row - 2];
-                    var self = await _cardCardService.GetByIdAsync(item.Id);
-                    var selfDisplay = _mapper.Map<CardCardDisplay>(self);
-                    
-                    worksheet.Cells[row, 1].Value = item.Name;
-                    worksheet.Cells[row, 2].Value = item.Barcode;
-                    worksheet.Cells[row, 3].Value = item.TypeName;
-                    worksheet.Cells[row, 4].Value = item.PartnerName;
-                    worksheet.Cells[row, 5].Value = item.TotalPoint;
-                    worksheet.Cells[row, 6].Value = stateDict.ContainsKey(item.State) ? stateDict[item.State] : "";
+                    worksheet.Cells[row, 1].Value = item.Barcode;
+                    worksheet.Cells[row, 2].Value = item.TypeName;
+                    worksheet.Cells[row, 3].Value = item.PartnerName;
+                    worksheet.Cells[row, 4].Value = item.PartnerPhone;
+                    worksheet.Cells[row, 5].Value = stateDict.ContainsKey(item.State) ? stateDict[item.State] : "";
+                    row++;
                 }
 
                 package.Save();
@@ -233,6 +240,14 @@ namespace TMTDentalAPI.Controllers
             stream.Position = 0;
 
             return new FileContentResult(fileContent, mimeType);
+        }
+
+        [HttpPost("ImportExcel")]
+        [CheckAccess(Actions = "LoyaltyCard.CardCard.Read")]
+        public async Task<IActionResult> ImportExcel(IFormFile file)
+        {
+            var res = await _cardCardService.ActionImport(file);
+            return Ok(res);
         }
     }
 }

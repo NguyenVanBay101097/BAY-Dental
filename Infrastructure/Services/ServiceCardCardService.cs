@@ -35,20 +35,20 @@ namespace Infrastructure.Services
             var cardTypeObj = GetService<IServiceCardTypeService>();
             foreach (var card in self)
             {
-                if (DateTime.Now > card.ExpiredDate)
-                {
-                    throw new Exception($"Thẻ {card.Barcode} đã hết hạn, không thể tạm dừng");
-                }
+                    if (DateTime.Now > card.ExpiredDate)
+                    {
+                        throw new Exception($"Thẻ đã hết hạn, không thể kích hoạt");
+                    }
 
-                if (card.State != "draft" && card.State != "locked")
-                {
-                    throw new Exception($"Thẻ {card.Barcode} không thể kích hoạt, chỉ kích hoạt các thẻ chưa kích hoạt hoặc tạm dừng");
-                }
+                    if (card.State != "draft" && card.State != "locked")
+                    {
+                        throw new Exception($"Thẻ không thể kích hoạt, chỉ kích hoạt các thẻ chưa kích hoạt hoặc tạm dừng");
+                    }
 
-                if (!card.PartnerId.HasValue)
-                {
-                    throw new Exception("Khách hàng đang trống, cần bổ sung khách hàng");
-                }
+                    if (!card.PartnerId.HasValue)
+                    {
+                        throw new Exception("Khách hàng đang trống, cần bổ sung khách hàng");
+                    }
 
                 if (!card.ActivatedDate.HasValue)
                     card.ActivatedDate = DateTime.Today;
@@ -69,12 +69,12 @@ namespace Infrastructure.Services
             {
                 if (card.State != "in_use")
                 {
-                    throw new Exception($"Thẻ {card.Barcode} không thể tạm dừng, chỉ tạm dừng các thẻ đã kích hoạt");
+                    throw new Exception($"Thẻ không thể tạm dừng, chỉ tạm dừng các thẻ đã kích hoạt");
                 }
 
                 if (DateTime.Now > card.ExpiredDate)
                 {
-                    throw new Exception($"Thẻ {card.Barcode} đã hết hạn, không thể tạm dừng");
+                    throw new Exception($"Thẻ đã hết hạn, không thể tạm dừng");
                 }
 
                 card.State = "locked";
@@ -91,7 +91,7 @@ namespace Infrastructure.Services
 
                 if (DateTime.Now > card.ExpiredDate)
                 {
-                    throw new Exception($"Thẻ {card.Barcode} đã hết hạn, không thể hủy");
+                    throw new Exception($"Thẻ đã hết hạn, không thể hủy");
                 }
                 card.State = "cancelled";
             }
@@ -151,7 +151,7 @@ namespace Infrastructure.Services
 
             var count = await SearchQuery(x => x.Barcode == barcode).CountAsync();
             if (count >= 2)
-                throw new Exception($"Đã có thẻ dịch vụ với mã vạch {barcode}");
+                throw new Exception($"Số ID thẻ không được trùng");
         }
 
         private async Task _CheckPartnerUnique(ServiceCardCard self)
@@ -167,10 +167,11 @@ namespace Infrastructure.Services
         public async Task Unlink(IEnumerable<Guid> ids)
         {
             var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            var states = new string[] { "draft" };
             foreach (var card in self)
             {
-                if (card.State == "in_use")
-                    throw new Exception("Ưu đãi dịch vụ đã kích hoạt không thể xóa");
+                if (!states.Contains(card.State))
+                    throw new Exception("Chỉ có thể xóa thẻ ưu đãi dịch vụ ở trạng thái chưa kích hoạt");
             }
 
             await DeleteAsync(self);
@@ -364,6 +365,7 @@ namespace Infrastructure.Services
                 await formFile.CopyToAsync(stream);
                 try
                 {
+                    var errors = new List<string>();
                     using (var package = new ExcelPackage(stream))
                     {
                         ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
@@ -374,15 +376,30 @@ namespace Infrastructure.Services
                             var typeName = worksheet.Cells[row, 2].Value.ToString().Trim();
                             var type = await cardTypeObj.SearchQuery(x => x.Name == typeName).FirstOrDefaultAsync();
                             if (type == null)
-                                return new ImportExcelResponse { Success = false, Errors = new List<string>() { $@"dòng {row} không tìm thấy hạng thẻ" } };
+                                errors.Add($"dòng {row}: không tìm thấy hạng thẻ");
 
+                            var barcode = worksheet.Cells[row, 1].Value.ToString().Trim();
+                            if (barcode.Length < 10 || barcode.Length > 15)
+                            {
+                                errors.Add($"dòng {row}: Số ID tối thiểu 10 và tối đa 15 ký tự");
+                            }
+                            var exist = await SearchQuery(x => x.Barcode == barcode).AnyAsync();
+                            if (exist)
+                            {
+                                errors.Add($"dòng {row}: Số ID thẻ bị trùng");
+                            }
+
+                            if (!errors.Any())
                             list.Add(new ServiceCardCard
                             {
-                                Barcode = worksheet.Cells[row, 1].Value.ToString().Trim(),
+                                Barcode = barcode,
                                 CardTypeId = type.Id
                             });
                         }
                     }
+
+                    if (errors.Any())
+                        return new ImportExcelResponse { Success = false, Errors = errors };
                 }
                 catch (Exception ex)
                 {

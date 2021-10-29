@@ -7,18 +7,16 @@ export class ServiceCardTypeObj {
     name: string;
     period: string;
     nbrPeriod: number;
+    companyId: string;
     productPricelistItems: ProductPricelistItems[] = [];
 }
 export class ProductPricelistItems {
+    id: string;
     categId: string;
     productId: string;
     computePrice: string;
     percentPrice: number;
     fixedAmountPrice: number;
-}
-
-export class ProductPricelistItemDisplay {
-    
 }
 
 export class ServiceCardTypeBasic {
@@ -51,7 +49,7 @@ export class ServiceCardTypeService {
     }
 
     create(val: any) {
-        return this.http.post(this.baseApi + this.apiUrl + '/Create', val);
+        return this.http.post<any>(this.baseApi + this.apiUrl + '/Create', val);
     }
 
     update(id: string, val: any) {

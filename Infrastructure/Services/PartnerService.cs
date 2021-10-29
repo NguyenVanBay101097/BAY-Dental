@@ -2194,6 +2194,7 @@ namespace Infrastructure.Services
             var amlObj = GetService<IAccountMoveLineService>();
             var accObj = GetService<IAccountAccountService>();
             var irProperyObj = GetService<IIRPropertyService>();
+            var cardCardObj = GetService<ICardCardService>();
 
             var companyId = CompanyId;
             var partnerOrderStateQr = from v in saleOrderObj.SearchQuery(x => x.CompanyId == companyId)
@@ -2228,11 +2229,15 @@ namespace Infrastructure.Services
             var irPropertyQr = from ir in irProperyObj.SearchQuery(x => x.Name == "member_level" && x.Field.Model == "res.partner" && x.CompanyId == companyId)
                                select ir;
 
+            var cardCardQr = from card in cardCardObj.SearchQuery(x => x.State == "in_use")
+                             select card;
+
             var ResponseQr = from p in SearchQuery(x => x.Customer)
                              from pr in PartnerResidualQr.Where(x => x.PartnerId == p.Id).DefaultIfEmpty()
                              from pd in partnerDebQr.Where(x => x.PartnerId == p.Id).DefaultIfEmpty()
                              from pos in partnerOrderStateQr.Where(x => x.PartnerId == p.Id).DefaultIfEmpty()
                              from ir in irPropertyQr.Where(x => !string.IsNullOrEmpty(x.ResId) && x.ResId.Contains(p.Id.ToString().ToLower())).DefaultIfEmpty()
+                             from card in cardCardQr.Where(x=> x.PartnerId == p.Id).DefaultIfEmpty()
                              select new PartnerInfoTemplate
                              {
                                  Id = p.Id,
@@ -2260,13 +2265,15 @@ namespace Infrastructure.Services
                                  MemberLevelId = ir.ValueReference,
                                  DateCreated = p.DateCreated,
                                  SourceName = p.Source.Name,
-                                 TitleName = p.Title.Name
+                                 TitleName = p.Title.Name,
+                                 CardCardId = card.Id,
+                                 CardBarCode = card == null ? null : card.Barcode
                              };
 
             if (!string.IsNullOrEmpty(val.Search))
             {
                 ResponseQr = ResponseQr.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search)
-                || x.Ref.Contains(val.Search) || x.Phone.Contains(val.Search));
+                || x.Ref.Contains(val.Search) || x.Phone.Contains(val.Search) || x.CardBarCode.Contains(val.Search));
             }
 
             if (val.CategIds.Any())
@@ -2308,6 +2315,11 @@ namespace Infrastructure.Services
                 ResponseQr = ResponseQr.Where(x => x.MemberLevelId.Contains(val.MemberLevelId.Value.ToString()));
             }
 
+            if (val.CardTypeId.HasValue)
+            {
+                ResponseQr = ResponseQr.Where(x => x.CardCard.TypeId == val.CardTypeId);
+            }
+
             if (!string.IsNullOrEmpty(val.OrderState))
             {
                 ResponseQr = ResponseQr.Where(x => x.OrderState == val.OrderState);
@@ -2320,6 +2332,7 @@ namespace Infrastructure.Services
             var memberLevelObj = GetService<IMemberLevelService>();
             var cateObj = GetService<IPartnerCategoryService>();
             var partnerCategoryRelObj = GetService<IPartnerPartnerCategoryRelService>();
+            var cardCardObj = GetService<ICardCardService>();
 
             var ResponseQr = await GetQueryPartnerInfoPaged2(val);
             var count = await ResponseQr.CountAsync();
@@ -2327,19 +2340,12 @@ namespace Infrastructure.Services
 
             var cateList = await partnerCategoryRelObj.SearchQuery(x => res.Select(i => i.Id).Contains(x.PartnerId)).Include(x => x.Category).ToListAsync();
             var categDict = cateList.GroupBy(x => x.PartnerId).ToDictionary(x => x.Key, x => x.Select(s => s.Category));
-            var memberLevelIds = res.Where(x => !string.IsNullOrEmpty(x.MemberLevelId)).Select(x => new Guid(x.MemberLevelId.Substring(x.MemberLevelId.IndexOf(",") + 1))).Distinct().ToList();
-            var memberLevels = await memberLevelObj.SearchQuery(x => memberLevelIds.Contains(x.Id)).ToListAsync();
-            var memberLevelDict = memberLevels.ToDictionary(x => x.Id, x => x);
             foreach (var item in res)
             {
-                if (!string.IsNullOrEmpty(item.MemberLevelId))
+                if (item.CardCardId.HasValue)
                 {
-                    var pnMemberLevelId = new Guid(item.MemberLevelId.Substring(item.MemberLevelId.IndexOf(",") + 1));
-                    if (memberLevelDict.ContainsKey(pnMemberLevelId))
-                    {
-                        var level = memberLevelDict[pnMemberLevelId];
-                        item.MemberLevel = _mapper.Map<MemberLevelBasic>(level);
-                    }
+                    var card = await cardCardObj.SearchQuery(x => x.State == "in_use").Include(x => x.Type).FirstOrDefaultAsync();
+                    item.CardCard = _mapper.Map<CardCardBasic>(card);
                 }
                 item.Categories = _mapper.Map<List<PartnerCategoryBasic>>(categDict.ContainsKey(item.Id) ? categDict[item.Id] : new List<PartnerCategory>());
             }

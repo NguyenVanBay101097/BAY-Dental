@@ -33,6 +33,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string MedicalHistory { get; set; }
         public IEnumerable<PartnerCategoryBasic> Categories { get; set; } = new List<PartnerCategoryBasic>();
         public MemberLevelBasic MemberLevel { get; set; }
+        public string Phone { get; set; }
+
 
     }
 

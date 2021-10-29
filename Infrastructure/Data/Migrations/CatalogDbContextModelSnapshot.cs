@@ -1733,6 +1733,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<decimal?>("BasicPoint")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("Color")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
 
@@ -8719,6 +8722,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<Guid?>("CardCardId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
 
@@ -8759,6 +8765,8 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CardCardId");
 
                     b.HasIndex("CreatedById");
 
@@ -15819,6 +15827,10 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ApplicationCore.Entities.SaleOrderPromotion", b =>
                 {
+                    b.HasOne("ApplicationCore.Entities.CardCard", "CardCard")
+                        .WithMany()
+                        .HasForeignKey("CardCardId");
+
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
