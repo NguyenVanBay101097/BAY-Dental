@@ -1111,19 +1111,40 @@
         "Ops": [
           {
             "Name": "Xem",
-            "Permission": "SaleCoupon.SaleCouponProgram.Read"
+            "Permission": "Card.Type.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "SaleCoupon.SaleCouponProgram.Create"
+            "Permission": "Card.Type.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "SaleCoupon.SaleCouponProgram.Update"
+            "Permission": "Card.Type.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "SaleCoupon.SaleCouponProgram.Delete"
+            "Permission": "Card.Type.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Quản lý thẻ thành viên",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Card.Card.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Card.Card..Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Card.Card.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Card.Card.Delete"
           }
         ]
       },
@@ -1132,22 +1153,44 @@
         "Ops": [
           {
             "Name": "Xem",
-            "Permission": "SaleCoupon.SaleCouponProgram.Read"
+            "Permission": "ServiceCard.Type.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "SaleCoupon.SaleCouponProgram.Create"
+            "Permission": "ServiceCard.Type.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "SaleCoupon.SaleCouponProgram.Update"
+            "Permission": "ServiceCard.Type.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "SaleCoupon.SaleCouponProgram.Delete"
+            "Permission": "ServiceCard.Type.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Quản lý thẻ ưu đãi dịch vụ",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "ServiceCard.Card.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "ServiceCard.Card.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "ServiceCard.Card.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "ServiceCard.Card.Delete"
           }
         ]
       }
+
       //{
       //  "Name": "Coupon",
       //  "Ops": [
