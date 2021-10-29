@@ -370,11 +370,12 @@ namespace Infrastructure.Services
 
         public async Task<decimal> GetAmountAdvanceBalance(Guid id)
         {
-            ///lay tu moveline account
             var moveLineObj = GetService<IAccountMoveLineService>();
-            var accountObj = GetService<IAccountAccountService>();
-            var accountAdvance = await accountObj.GetAccountAdvanceCurrentCompany();
-            var amounBalance = await moveLineObj.SearchQuery(x => x.PartnerId == id && x.AccountId == accountAdvance.Id).SumAsync(x => x.Debit - x.Credit);
+
+            var query = moveLineObj._QueryGet(state: "posted", companyId: CompanyId);
+            query = query.Where(x => x.PartnerId == id && (x.Account.Code == "KHTU" || x.Account.Code == "HTU"));
+
+            var amounBalance = await query.SumAsync(x => x.Debit - x.Credit);
             var sign = -1;
             return amounBalance * sign;
         }

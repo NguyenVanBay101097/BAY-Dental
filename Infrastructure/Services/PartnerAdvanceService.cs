@@ -116,8 +116,6 @@ namespace Infrastructure.Services
             return await query.SumAsync(x => x.Amount);
         }
 
-
-
         public async Task<PartnerAdvanceDisplay> GetDisplayById(Guid id)
         {
             var res = await SearchQuery(x => x.Id == id).Select(x => new PartnerAdvanceDisplay
