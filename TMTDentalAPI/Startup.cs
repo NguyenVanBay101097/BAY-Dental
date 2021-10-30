@@ -718,7 +718,7 @@ namespace TMTDentalAPI
 
             app.UseRequestLocalization(localizationOptions);
 
-            //app.UseHttpsRedirection();
+            ////app.UseHttpsRedirection();
             var provider = new FileExtensionContentTypeProvider();
             // Add new mappings
             provider.Mappings[".webmanifest"] = "application/manifest+json";
@@ -792,18 +792,19 @@ namespace TMTDentalAPI
                 endpoints.EnableDependencyInjection();
             });
 
-            //app.UseSpa(spa =>
-            //{
-            //    // To learn more about options for serving an Angular SPA from ASP.NET Core,
-            //    // see https://go.microsoft.com/fwlink/?linkid=864501
+            //bỏ đoạn này sẽ lỗi khi chạy production
+            app.UseSpa(spa =>
+            {
+                // To learn more about options for serving an Angular SPA from ASP.NET Core,
+                // see https://go.microsoft.com/fwlink/?linkid=864501
 
-            //    spa.Options.SourcePath = "ClientApp";
+                spa.Options.SourcePath = "ClientApp";
 
-            //    if (env.IsDevelopment())
-            //    {
-            //        spa.UseAngularCliServer(npmScript: "start");
-            //    }
-            //});
+                if (env.IsDevelopment())
+                {
+                    spa.UseAngularCliServer(npmScript: "start");
+                }
+            });
         }
 
         private static NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter()
