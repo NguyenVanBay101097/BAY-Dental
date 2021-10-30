@@ -76,7 +76,7 @@ export class PartnerCustomerTreatmentListComponent implements OnInit {
         dateOrder: this.intlService.formatDate(dateOrder, 'yyyy-MM-ddTHH:mm:ss')
       };
       this.saleOrderService.create(val).subscribe(result2 => {
-        this.router.navigate(['sale-orders/' + result2.id]);
+        this.router.navigate(['/sale-orders', result2.id]);
       });
     });
   }

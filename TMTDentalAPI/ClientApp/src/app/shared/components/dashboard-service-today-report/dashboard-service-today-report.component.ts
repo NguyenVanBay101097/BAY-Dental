@@ -151,7 +151,7 @@ export class DashboardServiceTodayReportComponent implements OnInit {
 
   redirectSaleOrder(item) {
     if (item) {
-      this.router.navigate(['sale-orders', item.id]);
+      this.router.navigate(['/sale-orders', item.id]);
     }
   }
 

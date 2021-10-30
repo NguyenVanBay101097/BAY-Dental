@@ -54,7 +54,7 @@
                                     <label class="o_form_label">Phiếu điều trị</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <a routerLink="/sale-orders/form" [queryParams]="{id: productRequest.saleOrder.id}" 
+                                    <a [routerLink]="['/sale-orders', productRequest.saleOrder.id]" 
                                         class="text-primary" (click)="activateModal.dismiss()">
                                         {{productRequest.saleOrder.name}}
                                     </a>

@@ -167,7 +167,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     }
     this.quotationService.createSaleOrderByQuotation(this.quotationId).subscribe(
       (result: any) => {
-        this.router.navigate(['sale-orders/form'], { queryParams: { id: result.id } });
+        this.router.navigate(['/sale-orders', result.id]);
       }
     )
   }

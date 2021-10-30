@@ -120,12 +120,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     val.ids = this.mySelection;
     this.advisoryService.createSaleOrder(val).subscribe(
       result => {
-        this.router.navigate(['sale-orders/form'], { queryParams: { id: result.id } });
-        // this.router.navigate(['/sale-orders/form'], {
-        //   queryParams: {
-        //     partner_id: this.customerId
-        //   },
-        // });
+        this.router.navigate(['/sale-orders', result.id]);
       }
     )
   }
