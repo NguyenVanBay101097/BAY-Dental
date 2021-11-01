@@ -26,6 +26,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<SaleOrderPaymentPublicLines> Lines { get; set; } = new List<SaleOrderPaymentPublicLines>();
 
         public string Note { get; set; }
+
+        public string State { get; set; }
     }
 
     public class SaleOrderPaymentPublicJournals

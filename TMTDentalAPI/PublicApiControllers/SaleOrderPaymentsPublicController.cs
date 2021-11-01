@@ -43,7 +43,8 @@ namespace TMTDentalAPI.PublicApiControllers
                         Amount = s.Amount,
                         ProductName = s.SaleOrderLine.Name
                     }),
-                    Note = x.Note
+                    Note = x.Note,
+                    State = x.State
                 }).ToListAsync();
             return Ok(orderPayments);
         }
