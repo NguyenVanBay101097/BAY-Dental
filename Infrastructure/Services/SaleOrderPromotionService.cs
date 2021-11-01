@@ -157,7 +157,7 @@ namespace Infrastructure.Services
             var name = $"Giảm {discount} cho thẻ ưu đãi {serviceCard.CardType.Name}";
             var promotionLine = new SaleOrderPromotion
             {
-                Name = name,
+                Name = serviceCard.CardType.Name,
                 Amount = Math.Round(discountAmount),
                 ServiceCardCardId = serviceCard.Id,
                 SaleOrderLineId = self.Id,
@@ -182,7 +182,7 @@ namespace Infrastructure.Services
             var name = $"Giảm {discount} cho thẻ thành viên {card.Type.Name}";
             var promotionLine = new SaleOrderPromotion
             {
-                Name = name,
+                Name = card.Type.Name,
                 Amount = Math.Round(discountAmount),
                 CardCardId = card.Id,
                 SaleOrderLineId = self.Id,
