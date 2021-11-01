@@ -105,7 +105,7 @@ namespace Infrastructure.Services
                         ResModel = "dot.kham",
                         ResId = resId,
                         Name = att.Name,
-                        Type = "upload",
+                        Type = "url",
                         Url = att.Url,
                         CompanyId = CompanyId
                     };

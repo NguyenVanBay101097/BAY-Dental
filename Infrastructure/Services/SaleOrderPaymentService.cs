@@ -41,7 +41,8 @@ namespace Infrastructure.Services
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
-            var items = await query.Include(x => x.PaymentRels).ThenInclude(x => x.Payment).ThenInclude(x => x.Journal).ToListAsync();
+            var items = await query.Include(x => x.PaymentRels).ThenInclude(x => x.Payment).ThenInclude(x => x.Journal)
+                .Include(x => x.Lines).ThenInclude(x => x.SaleOrderLine).ToListAsync();
 
             var paged = new PagedResult2<SaleOrderPaymentBasic>(totalItems, val.Offset, val.Limit)
             {
@@ -129,11 +130,22 @@ namespace Infrastructure.Services
             return saleOrderPaymentDisplay;
         }
 
+        public async Task<IEnumerable<SaleOrderPayment>> GetPaymentsByOrderId(Guid orderId)
+        {
+            var orderPayments = await SearchQuery(x => x.OrderId == orderId && x.Lines.Any(s => s.Amount > 0))
+                .Include(x => x.PaymentRels).ThenInclude(s => s.Payment)
+                .Include(x => x.Lines).ThenInclude(x => x.SaleOrderLine)
+                .Include(x => x.JournalLines).ThenInclude(x => x.Journal)
+                .ToListAsync();
+
+            return orderPayments;
+        }
+
         public async Task<SaleOrderPayment> CreateSaleOrderPayment(SaleOrderPaymentSave val)
         {
             //Mapper
             var saleOrderPayment = _mapper.Map<SaleOrderPayment>(val);
-            SaveLines(val, saleOrderPayment);        
+            SaveLines(val, saleOrderPayment);
             await CreateAsync(saleOrderPayment);
 
             return saleOrderPayment;
@@ -601,6 +613,7 @@ namespace Infrastructure.Services
                 .Include(x => x.Order.Partner)
                 .Include(x => x.CreatedBy)
                 .Include(x => x.JournalLines).ThenInclude(x => x.Journal)
+                .Include(x => x.Lines).ThenInclude(x => x.SaleOrderLine)
                 ).FirstOrDefaultAsync();
 
             var result = _mapper.Map<SaleOrderPaymentPrintVM>(payment);

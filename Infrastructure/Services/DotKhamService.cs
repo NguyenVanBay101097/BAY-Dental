@@ -231,6 +231,19 @@ namespace Infrastructure.Services
             return await _mapper.ProjectTo<DotKhamBasic>(SearchQuery(x => x.SaleOrderId == saleOrderId, orderBy: x => x.OrderByDescending(s => s.DateCreated))).ToListAsync();
         }
 
+        public async Task<IEnumerable<DotKham>> GetDotKhamsBySaleOrderId(Guid saleOrderId)
+        {
+            var dotkhams = await SearchQuery(x => x.SaleOrderId == saleOrderId)
+                .Include(x => x.Doctor)
+                .Include(x => x.Assistant)
+                .Include(x => x.Lines).ThenInclude(s => s.Product).ThenInclude(x=>x.Categ)
+                .Include(x => x.Lines).ThenInclude(s => s.Product).ThenInclude(x => x.UOM)
+                .Include(x => x.Lines).ThenInclude(s => s.ToothRels).ThenInclude(x => x.Tooth)
+                .ToListAsync();
+
+            return dotkhams;
+        }
+
 
         public async override Task<DotKham> CreateAsync(DotKham entity)
         {

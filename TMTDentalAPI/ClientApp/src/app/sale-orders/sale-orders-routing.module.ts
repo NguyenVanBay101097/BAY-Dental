@@ -20,6 +20,11 @@ const routes: Routes = [
     //   saleOrder: SaleOrderResolver 
     // }
   },
+  
+  {
+    path: 'management',
+    component: SaleOrderManagementComponent
+  },
   {
     path: ':id',
     component: SaleOrderCreateUpdateComponent,
@@ -27,10 +32,6 @@ const routes: Routes = [
       saleOrder: SaleOrderResolver 
     }
   },
-  {
-    path: 'management',
-    component: SaleOrderManagementComponent
-  }
 ];
 
 @NgModule({

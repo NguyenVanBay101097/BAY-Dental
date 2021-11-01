@@ -100,5 +100,7 @@ namespace Infrastructure.Services
 
         Task<IEnumerable<SaleOrder>> GetPrintTemplate(IEnumerable<Guid> ids);
         Task<IEnumerable<IrAttachment>> GetListAttachment(Guid id);
+
+        Task<IEnumerable<SaleOrder>> GetSaleOrdersByPartnerId(Guid partnerId);
     }
 }

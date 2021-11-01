@@ -59,6 +59,46 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Offset { get; set; }
     }
 
+    public class DataInvoiceFilter
+    {
+        public DateTime? DateTo { get; set; }
+
+        public DateTime? DateFrom { get; set; }
+
+        /// <summary>
+        /// bank: ngan hang
+        /// cash: tien mat
+        /// debt : công nợ
+        /// advance : tạm ứng
+        /// cash_bank: tong quy
+        /// </summary>
+        public string ResultSelection { get; set; }
+
+        public Guid? CompanyId { get; set; }
+    }
+
+    public class DataInvoiceItem
+    {
+        public DateTime? Date { get; set; }
+
+        public Guid PartnerId { get; set; }
+        public string PartnerName { get; set; }
+
+        public decimal Amount { get; set; }
+
+        public string AccountName { get; set; }
+
+        public string JournalName { get; set; }
+
+        public string JournalType { get; set; }
+
+        public string Name { get; set; }
+
+        public string InvoiceOrigin { get; set; }
+    }
+
+
+
     public class CashBookReportFilter
     {
         public DateTime? DateTo { get; set; }

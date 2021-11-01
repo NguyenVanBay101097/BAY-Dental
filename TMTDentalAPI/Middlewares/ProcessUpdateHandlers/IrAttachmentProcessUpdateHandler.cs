@@ -4,6 +4,7 @@ using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -42,13 +43,15 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                 var scopedServices = scope.ServiceProvider;
                 var context = scope.ServiceProvider.GetService<CatalogDbContext>();
                 //chuyển dữ liệu bảng partnerimage => irattachment
-                var pnImgs = context.PartnerImages.ToList();
+                var pnImgs = context.PartnerImages
+                    .Include(x => x.DotKham)
+                    .Include(x => x.Partner)
+                    .ToList();
+
                 if(pnImgs.Any())
                 {
                     var atts = new List<IrAttachment>();
-                    var modelDataObj = scopedServices.GetService<IIRModelDataService>();
                     var attObj = scopedServices.GetService<IIrAttachmentService>();
-                    var partnerRule = await modelDataObj.GetRef<IRRule>("base.res_partner_rule");
                     var pnIds = pnImgs.Select(x => x.PartnerId);
                     var dotkhamIds = pnImgs.Select(x => x.DotkhamId);
 
@@ -59,20 +62,16 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                     {
                         var partner = partners.FirstOrDefault(x=> x.Id == img.PartnerId);
                         var dotkham = dotkhams.FirstOrDefault(x=> x.Id == img.DotkhamId);
-                        var companyId = img.PartnerId.HasValue ? (partnerRule.Active ? null : partner.CompanyId ) :
-                            (img.DotkhamId.HasValue ? dotkham.CompanyId : (Guid?)null) ;
+                        var companyId = img.DotKham != null ? img.DotKham.CompanyId : img.Partner.CompanyId;
                        
                         atts.Add(new IrAttachment()
                         {
                             ResModel = img.PartnerId.HasValue ? "partner" : (img.DotkhamId.HasValue ? "dot.kham" : null),
                             ResId = img.PartnerId ?? img.DotkhamId,
                             Name = img.Name,
-                            Type = "upload",
+                            Type = "url",
                             Url = img.UploadId,
                             CompanyId = companyId,
-                            DateCreated = img.Date,
-                            CreatedById = img.CreatedById,
-                            WriteById = img.WriteById
                         });
                     }
                     await attObj.CreateAsync(atts);

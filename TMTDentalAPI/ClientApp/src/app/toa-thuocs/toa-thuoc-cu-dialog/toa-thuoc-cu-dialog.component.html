@@ -15,7 +15,7 @@
                     </div>
                     <div class="mr-5">
                         <label class="font-weight-600 mr-4">Giới tính</label>
-                        <span>{{ getFBValueItem('partner') ? (getFBValueItem('partner').gender == 'male' ? 'Nam' : 'Nữ') : null }}</span>
+                        <span>{{ getFBValueItem('partner') && getFBValueItem('partner').gender ? getGender() : null }}</span>
                     </div>
                     <div class="mr-5">
                         <label class="font-weight-600 mr-4">Tuổi</label>

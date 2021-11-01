@@ -11,6 +11,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Name { get; set; }
         public Guid? PartnerId { get; set; }
+        public string HrJobName { get; set; }
     }
 
     public class EmployeeSimpleContact
@@ -74,6 +75,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid CompanyId { get; set; }
         public CompanyBasic Company { get; set; }
+        public string HrJobName { get; set; }
+
     }
 
     public class EmployeeDisplay
@@ -160,6 +163,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? GroupId { get; set; }
         public ResGroupBasic Group { get; set; }
         public IEnumerable<ApplicationRoleBasic> Roles { get; set; } = new List<ApplicationRoleBasic>();
+        public Guid? HrJobId { get; set; }
+        public HrJobBasic HrJob { get; set; }
+
 
     }
 
@@ -186,6 +192,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
         public Guid? CompanyId { get; set; }
+        public Guid? HrJobId { get; set; }
     }
 
     public class EmployeeSave
@@ -269,6 +276,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? GroupId { get; set; }
 
         public IEnumerable<Guid> RoleIds { get; set; } = new List<Guid>();
+        public Guid? HrJobId { get; set; }
+
     }
 
     public class EmployeeActive

@@ -34,6 +34,9 @@ namespace Umbraco.Web.Mapping
             CreateMap<IGrouping<Guid?, DotKhamLine>, DotKhamLineBasic>();
 
             CreateMap<DotKhamLine, DotKhamLinePrintTemplate>();
+
+            CreateMap<DotKhamLine, DotKhamLinePublic>()
+               .ForMember(x => x.Teeth, x => x.MapFrom(z => z.ToothRels.Select(i => i.Tooth)));
         }
     }
 }

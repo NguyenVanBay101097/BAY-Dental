@@ -60,6 +60,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? CompanyId { get; set; }
     }
 
+    public class PartnerAdvanceSummaryFilter2
+    {
+        public Guid? PartnerId { get; set; }
+
+        public Guid? CompanyId { get; set; }
+    }
+
     public class PartnerAdvanceGetSummary
     {
         public string Type { get; set; }

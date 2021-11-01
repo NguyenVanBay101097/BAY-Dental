@@ -25,8 +25,7 @@
                       {{item?.name}}
                     </span>
                     <span style="min-width: 60px;">
-                      <a class="text-primary" [routerLink]="['/sale-orders/form']"
-                        [queryParams]="{id: item?.orderId}">Chi tiết</a>
+                      <a class="text-primary" [routerLink]="['/sale-orders', item?.orderId]">Chi tiết</a>
                     </span>
                   </p>
                   <p class="opacity-8">Răng: {{viewTeeth(item)}} </p>

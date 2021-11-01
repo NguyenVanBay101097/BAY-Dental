@@ -8,6 +8,7 @@ import { ProductCategoryPaged, ProductCategoryService } from 'src/app/product-ca
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { ProductCategoryDialogComponent } from 'src/app/shared/product-category-dialog/product-category-dialog.component';
+import { NotifyService } from 'src/app/shared/services/notify.service';
 
 @Component({
   selector: 'app-product-category-list',
@@ -30,7 +31,8 @@ export class ProductCategoryListComponent implements OnInit, DoCheck {
   constructor(private productCategoryService: ProductCategoryService,
     private modalService: NgbModal,
     private checkPermissionService: CheckPermissionService,
-    private iterableDiffers: IterableDiffers
+    private iterableDiffers: IterableDiffers,
+    private notifyService: NotifyService
   ) {
     this.iterableDiffer = this.iterableDiffers.find([]).create(null);
    }
@@ -81,6 +83,7 @@ export class ProductCategoryListComponent implements OnInit, DoCheck {
     modalRef.componentInstance.title = 'Thêm: ' + this.getTitle();
     modalRef.componentInstance.type = this.type;
     modalRef.result.then(result => {
+      this.notifyService.notify('success', 'Lưu thành công');
       this.createBtnEvent.emit(result);
     }, () => {
     });
@@ -92,6 +95,7 @@ export class ProductCategoryListComponent implements OnInit, DoCheck {
     modalRef.componentInstance.id = item.id;
     modalRef.componentInstance.type = this.type;
     modalRef.result.then(() => {
+      this.notifyService.notify('success', 'Lưu thành công');
       this.updateBtnEvent.emit(item.id);
     }, () => {
     });
@@ -102,6 +106,7 @@ export class ProductCategoryListComponent implements OnInit, DoCheck {
     modalRef.componentInstance.title = 'Xóa: ' + this.getTitle();
     modalRef.result.then(() => {
       this.productCategoryService.delete(item.id).subscribe(() => {
+        this.notifyService.notify('success', 'Xóa thành công');
         //emit về cha để cha remove categ
         this.onDelete.emit(index);
       }, err => {

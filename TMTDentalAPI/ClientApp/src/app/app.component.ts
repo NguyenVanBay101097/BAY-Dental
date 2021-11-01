@@ -11,6 +11,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { IrConfigParameterService } from './core/services/ir-config-parameter.service';
 import { SwUpdate } from '@angular/service-worker';
+import { interval } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -47,9 +48,8 @@ export class AppComponent implements OnInit {
         this.permissionService.define(result);
       });
     }
-  }
 
-  ngOnInit(): void {
+    console.log('swUpdate ' + this.swUpdate.isEnabled);
     if (this.swUpdate.isEnabled) {
       this.swUpdate.available.subscribe(() => {
         if (confirm("Có phiên bản mới, tải ngay?")) {
@@ -57,6 +57,9 @@ export class AppComponent implements OnInit {
         }
       });
     }
+  }
+
+  ngOnInit(): void {
   }
 
   @HostListener('document:keydown', ['$event']) onKeydownHandler(keyDownEvent: KeyboardEvent) {

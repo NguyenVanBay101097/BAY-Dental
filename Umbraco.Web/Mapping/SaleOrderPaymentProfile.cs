@@ -14,6 +14,7 @@ namespace Umbraco.Web.Mapping
         public SaleOrderPaymentProfile()
         {
             CreateMap<SaleOrderPayment, SaleOrderPaymentBasic>()
+                .ForMember(x => x.SaleOrderLines, x => x.MapFrom(s => s.Lines.Select(m => m.SaleOrderLine)))
                 .ForMember(x => x.Payments, x => x.MapFrom(s => s.PaymentRels.Select(m => m.Payment)));
 
             CreateMap<SaleOrderPayment, SaleOrderPaymentSave>();
@@ -40,7 +41,9 @@ namespace Umbraco.Web.Mapping
             CreateMap<SaleOrderPayment, SaleOrderPaymentBasicPrintTemplate>()
                 .ForMember(x => x.Payments, x => x.MapFrom(s => s.PaymentRels.Select(m => m.Payment)));
 
-           
+            CreateMap<SaleOrderPayment, SaleOrderPaymentPublic>()
+               .ForMember(x => x.Lines, x => x.MapFrom(s => s.Lines.Select(m => m.SaleOrderLine)));
+
         }
     }
 }

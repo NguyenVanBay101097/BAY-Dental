@@ -149,7 +149,7 @@ namespace TMTDentalAPI.Controllers
                     ResModel = val.model,
                     ResId = val.id,
                     Name = item.FileName,
-                    Type = "upload",
+                    Type = "url",
                     Url = item.FileUrl,
                     CompanyId = CompanyId
                 };

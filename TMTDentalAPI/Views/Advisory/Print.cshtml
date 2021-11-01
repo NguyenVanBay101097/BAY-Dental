@@ -101,7 +101,13 @@
                     }
 
                     <td>@item.Diagnosis</td>
-                    <td>@item.Services</td>
+                    <td>
+                        @item.Services<br />
+                        @if (!string.IsNullOrEmpty(item.Note))
+                        {
+                            <span><i>Ghi chú: @item.Note</i></span>
+                        }
+                    </td>
                 </tr>
                 }
             </tbody>

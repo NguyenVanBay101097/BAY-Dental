@@ -705,7 +705,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
   }
 
   getAmountTotal() {
-    return this.getAmountSubTotal() - this.saleOrder.amountDiscountTotal;
+    return this.getAmountSubTotal() - this.getAmountDiscountTotal();
   }
 
   getStateDisplay() {

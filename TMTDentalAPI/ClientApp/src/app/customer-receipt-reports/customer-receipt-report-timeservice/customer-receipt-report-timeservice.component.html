@@ -1,7 +1,7 @@
 <div class="container py-3">
     <div class="flex-0-0-auto">
         <div class="filter d-flex flex-wrap">
-            <app-date-range-picker-filter [opens]="'right'" class="mr-1" [startDate]="dateFrom" [endDate]="dateTo"
+            <app-date-range-picker-filter [showClearButton]="false" [opens]="'right'" class="mr-1" [startDate]="dateFrom" [endDate]="dateTo"
                 (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
             <kendo-combobox class="mr-1" [placeholder]="'Bác sĩ'" [valueField]="'id'" [textField]="'name'"
                 [filterable]="true" #employeeCbx [data]="listEmployee" (selectionChange)="onSelectEmployee($event)">

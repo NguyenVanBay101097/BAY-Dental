@@ -145,6 +145,7 @@ export class AppHomeComponent implements OnInit {
         { name: 'Nhóm Đơn vị tính', url: '/uom-categories', groups: 'product.group_uom', permissions: ["UoM.UoMCategory.Read"] },
         { name: 'Bảng hoa hồng', url: '/commissions', permissions: ['Catalog.Commission.Read'] },
         { name: 'Nhân viên', url: '/employees', permissions: ['Catalog.Employee.Read'] },
+        { name: 'Chức vụ nhân viên', url: '/hr/jobs' },
         { name: 'Thông số Labo', url: '/labo-management', permissions: ['Catalog.LaboFinishLine.Read', 'Catalog.LaboBridge.Read', 'Catalog.LaboBiteJoint.Read'] },
         { name: 'Loại thu chi', url: '/loai-thu-chi', permissions: ['Account.LoaiThuChi.Read'] },
         { name: 'Tiêu chí kiểm kho', url: '/stock/criterias', permissions: ['Stock.StockInventoryCriteria.Read'] },
@@ -172,7 +173,8 @@ export class AppHomeComponent implements OnInit {
         { name: 'Chi nhánh', url: '/companies', permissions: ['System.Company.Read'] },
         { name: 'Nhóm quyền', url: '/roles', permissions: ['System.ApplicationRole.Read'] },
         { name: 'Cấu hình chung', url: '/config-settings' },
-        { name: 'Mẫu in', url: '/print-template-config' }
+        // { name: 'Mẫu in', url: '/print-template-config' },
+        // { name: 'Thiết lập kết nối API', url: '/setting-public-api' }
       ],
       permissions: ['System.Company.Read', 'System.ApplicationUser.Read', 'System.ApplicationRole.Read']
     },
@@ -182,13 +184,13 @@ export class AppHomeComponent implements OnInit {
       id: 'reportMenu',
       children: [
         { name: 'Báo cáo tổng quan', url: '/sale-dashboard-reports' },
+        { name: 'Báo cáo tổng quan ngày', url: '/day-dashboard-report' },
         { name: 'Kết quả kinh doanh', url: '/financial-report', permissions: ['Report.Financial'] },
         { name: 'Báo cáo doanh thu', url: '/account-invoice-reports/revenue-time', permissions: ['Report.Revenue'] },
         { name: 'Báo cáo dịch vụ', url: '/sale-report/service-report', permissions: ['Report.Sale'] },
         { name: 'Báo cáo khách hàng', url: '/report-account-common/partner-report-overview', permissions: ['Report.PartnerOldNew'] },
         { name: 'Báo cáo tiếp nhận', url: '/customer-receipt-reports' },
         { name: 'Công nợ nhà cung cấp', url: '/report-account-common/partner', linkProps: { queryParams: { result_selection: 'supplier' } }, permissions: ['Report.AccountPartner'] },
-        { name: 'Khách hàng lân cận phòng khám', url: '/partner-report-location', permissions: ['Report.PartnerLocation'] },
         { name: 'Thống kê nguồn khách hàng', url: '/report-partner-sources', permissions: ['Report.PartnerSource'] },
         { name: 'Quản lý điều trị', url: '/sale-orders/management', permissions: ['Basic.SaleOrder.Read'] },
       ],

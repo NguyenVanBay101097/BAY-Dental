@@ -53,6 +53,7 @@ export class PartnerCategoryPopoverComponent implements OnInit {
       popover.close();
     } else {
       this.loadPartnerCategoryPopOver();
+      this.tags_temp = this.tags.slice();
       popover.open({ mytags });
     }
   }
@@ -79,14 +80,13 @@ export class PartnerCategoryPopoverComponent implements OnInit {
   //   });
   // }
 
-  SavePartnerCategories(tags) {
-    tags = tags || [];
+  SavePartnerCategories() {
     const val = new PartnerAddRemoveTags();
     val.id = this.rowPartnerId;
-    val.tagIds = tags.map(x => x.id);
+    val.tagIds = this.tags_temp.map(x => x.id);
     this.partnerService.updateTags(val).subscribe(() => {
       this.popover.close();
-      this.onSave.emit(tags);
+      this.onSave.emit(this.tags_temp);
     });
   }
 

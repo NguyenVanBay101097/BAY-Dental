@@ -202,7 +202,7 @@ namespace TMTDentalAPI.Controllers
                     ResModel = "dotkham",
                     ResId = id,
                     Name = item.FileName,
-                    Type = "upload",
+                    Type = "url",
                     Url = item.FileUrl,
                 };
 
