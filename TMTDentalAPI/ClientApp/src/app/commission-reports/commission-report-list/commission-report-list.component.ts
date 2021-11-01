@@ -9,7 +9,7 @@ import { CommissionReportsService, CommissionReport, ReportFilterCommission } fr
 import { map, debounceTime, tap, switchMap } from 'rxjs/operators';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import * as _ from 'lodash';
-import { CompanyBasic, CompanyService, CompanyPaged } from 'src/app/companies/company.service';
+// import { CompanyBasic, CompanyService, CompanyPaged } from 'src/app/companies/company.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ViewContainerRef, AfterViewInit, ComponentFactoryResolver, Input, Output, EventEmitter, SimpleChanges, OnChanges } from '@angular/core';
-import { AudienceFilterItem } from '../facebook-mass-messaging.service';
+// import { AudienceFilterItem } from '../facebook-mass-messaging.service';
 
 @Component({
   selector: 'app-facebook-audience-filter-dropdown',

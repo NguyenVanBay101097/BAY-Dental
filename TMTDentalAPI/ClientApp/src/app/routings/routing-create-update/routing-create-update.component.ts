@@ -4,10 +4,10 @@ import { ProductSimple } from 'src/app/products/product-simple';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { ProductService, ProductFilter } from 'src/app/products/product.service';
 import { RoutingService, RoutingLineDisplay } from '../routing.service';
-import { WindowRef, WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
+import { WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import { RoutingLineCuDialogComponent } from '../routing-line-cu-dialog/routing-line-cu-dialog.component';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import * as _ from 'lodash';
 import { NotificationService } from '@progress/kendo-angular-notification';
 

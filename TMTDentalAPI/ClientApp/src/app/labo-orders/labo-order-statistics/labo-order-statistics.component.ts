@@ -13,7 +13,7 @@ import { NgbModal, NgbPopover } from "@ng-bootstrap/ng-bootstrap";
 import {
   LaboOrderService,
   LaboOrderStatisticsPaged,
-  LaboOrderBasic,
+  // LaboOrderBasic,
 } from "../labo-order.service";
 import { ComboBoxComponent, PopupSettings } from "@progress/kendo-angular-dropdowns";
 import { PartnerService } from "src/app/partners/partner.service";

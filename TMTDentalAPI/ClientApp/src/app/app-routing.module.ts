@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 import { AppHomeComponent } from './app-home/app-home.component';
 import { AuthGuard } from './auth/auth.guard';
-import { PartnerSupplierListComponent } from './catalog/partner-supplier-list/partner-supplier-list.component';
+// import { PartnerSupplierListComponent } from './catalog/partner-supplier-list/partner-supplier-list.component';
 
 const routes: Routes = [
   {

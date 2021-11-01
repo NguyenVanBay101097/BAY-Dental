@@ -3,11 +3,14 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { SaleOrderLineOnChangeProduct, SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
+// import { SaleOrderLineOnChangeProduct, SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
 import { ProductBasic2, ProductPaged, ProductService } from 'src/app/products/product.service';
-import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
-import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
-import { PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent } from '../partner-customer-treatment-history-form-add-service-dialog/partner-customer-treatment-history-form-add-service-dialog.component';
+import {
+  ToothDisplay,
+  // ToothFilter, ToothService
+} from 'src/app/teeth/tooth.service';
+// import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
+// import { PartnerCustomerTreatmentHistoryFormAddServiceDialogComponent } from '../partner-customer-treatment-history-form-add-service-dialog/partner-customer-treatment-history-form-add-service-dialog.component';
 
 @Component({
   selector: 'app-partner-customer-treatment-history-form-service-list',

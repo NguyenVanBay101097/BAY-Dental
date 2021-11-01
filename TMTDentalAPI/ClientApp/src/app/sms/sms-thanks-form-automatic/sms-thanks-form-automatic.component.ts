@@ -7,7 +7,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { SmsAccountPaged, SmsAccountService } from '../sms-account.service';
 import { SmsCampaignService } from '../sms-campaign.service';
-import { SmsConfigService } from '../sms-config.service';
+// import { SmsConfigService } from '../sms-config.service';
 import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
 import { SmsTemplateService, SmsTemplateFilter } from '../sms-template.service';
 import { SmsThanksCustomerAutomationConfigService } from '../sms-thanks-customer-automation-config.service';

@@ -14,7 +14,7 @@ import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
 import {
   ProductService,
-  ProductFilter,
+  // ProductFilter,
 } from "src/app/products/product.service";
 import { IntlService } from "@progress/kendo-angular-intl";
 import * as _ from "lodash";

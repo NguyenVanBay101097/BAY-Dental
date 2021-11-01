@@ -1,8 +1,8 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AppointmentPaged, PagedResult2, AppointmentBasic } from '../appointment/appointment';
-import { formatDate } from '@angular/common';
+// import { AppointmentPaged, PagedResult2, AppointmentBasic } from '../appointment/appointment';
+// import { formatDate } from '@angular/common';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { ProductSimple } from '../products/product-simple';
 import { SaleReportTopServicesCs } from './sale-report';

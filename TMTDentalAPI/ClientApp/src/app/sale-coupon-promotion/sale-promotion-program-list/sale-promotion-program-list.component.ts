@@ -7,7 +7,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SaleCouponProgramService, SaleCouponProgramBasic, SaleCouponProgramGetListPagedRequest } from '../sale-coupon-program.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+// import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { LaboOrderPaged, LaboOrderService, LaboOrderBasic } from '../labo-order.service';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SaleOrderLineDisplay } from '../../sale-orders/sale-order-line-display';
-import { NotificationService } from '@progress/kendo-angular-notification';
+// import { NotificationService } from '@progress/kendo-angular-notification';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 

@@ -1,8 +1,14 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { PartnerService, SaleOrderLineBasic } from '../partner.service';
+// import { PartnerService, SaleOrderLineBasic } from '../partner.service';
 import { SaleOrderService } from 'src/app/core/services/sale-order.service';
-import { DotKhamBasic, DotKhamDisplay } from 'src/app/dot-khams/dot-khams';
-import { LaboOrderBasic, LaboOrderDisplay, LaboOrderService } from 'src/app/labo-orders/labo-order.service';
+import {
+  DotKhamBasic,
+  DotKhamDisplay
+} from 'src/app/dot-khams/dot-khams';
+import {
+  // LaboOrderBasic,
+  LaboOrderDisplay, LaboOrderService
+} from 'src/app/labo-orders/labo-order.service';
 import { SaleOrderLineDisplay } from 'src/app/sale-orders/sale-order-line-display';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SaleOrderCreateDotKhamDialogComponent } from 'src/app/sale-orders/sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';

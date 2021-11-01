@@ -1,17 +1,17 @@
 import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
-import { TcareService, TCareMessageDisplay } from '../tcare.service';
+// import { TcareService, TCareMessageDisplay } from '../tcare.service';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
+// import { Subject } from 'rxjs';
+import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import { FacebookPagePaged } from 'src/app/socials-channel/facebook-page-paged';
 import { FacebookPageService, ChannelSocial } from 'src/app/socials-channel/facebook-page.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { DatePipe } from '@angular/common';
+// import { DatePipe } from '@angular/common';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { TCareMessageTemplatePaged, TCareMessageTemplateService } from '../tcare-message-template.service';
 import { SaleCouponProgramPaged, SaleCouponProgramService } from 'src/app/sale-coupon-promotion/sale-coupon-program.service';
-import { validate } from 'fast-json-patch';
+// import { validate } from 'fast-json-patch';
 import { TcareMessageTemplateCuDialogComponent } from '../tcare-message-template-cu-dialog/tcare-message-template-cu-dialog.component';
 
 @Component({

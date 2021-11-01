@@ -1,6 +1,6 @@
-import { Component, OnInit, Inject, ViewChild, ElementRef } from '@angular/core';
-import { debounceTime, switchMap, tap, map, distinctUntilChanged } from 'rxjs/operators';
-import { WindowRef, WindowService, WindowCloseResult, DialogService, DialogRef, DialogCloseResult } from '@progress/kendo-angular-dialog';
+import { Component, OnInit} from '@angular/core';
+import { debounceTime, map, distinctUntilChanged } from 'rxjs/operators';
+import { WindowService, DialogService, DialogRef, DialogCloseResult } from '@progress/kendo-angular-dialog';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { RoutingPaged, RoutingService, RoutingBasic } from '../routing.service';

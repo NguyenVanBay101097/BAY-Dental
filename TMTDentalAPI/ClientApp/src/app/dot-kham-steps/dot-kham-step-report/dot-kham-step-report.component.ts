@@ -6,7 +6,7 @@ import { DotKhamStepService, DotKhamStepPaged } from 'src/app/dot-khams/dot-kham
 import { IntlService, load } from '@progress/kendo-angular-intl';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
-import { UserSimple } from 'src/app/users/user-simple';
+// import { UserSimple } from 'src/app/users/user-simple';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';

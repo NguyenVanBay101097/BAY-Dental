@@ -1,8 +1,8 @@
 import { HttpParams } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+// import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
-import { SaleOrderDisplay } from 'src/app/sale-orders/sale-order-display';
+// import { SaleOrderDisplay } from 'src/app/sale-orders/sale-order-display';
 import { SaleOrderLineDisplay } from 'src/app/sale-orders/sale-order-line-display';
 import { SaleOrdersOdataService } from 'src/app/shared/services/sale-ordersOdata.service';
 

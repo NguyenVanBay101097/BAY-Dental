@@ -1,7 +1,7 @@
-import { ProductSimple } from './../../products/product-simple';
+// import { ProductSimple } from './../../products/product-simple';
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+// import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ProductPaged, ProductService } from 'src/app/products/product.service';
 
 @Component({

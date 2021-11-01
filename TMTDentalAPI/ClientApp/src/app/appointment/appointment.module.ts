@@ -9,7 +9,7 @@ import { AppointmentCuDialogComponent } from './appointment-cu-dialog/appointmen
 // import { AppointmentAdvanceSearchComponent } from './appointment-advance-search/appointment-advance-search.component';
 import { SharedModule } from '../shared/shared.module';
 // import { AppointmentDateFilterComponent } from './appointment-date-filter/appointment-date-filter.component';
-import { AppointmentStateFilterComponent } from './appointment-state-filter/appointment-state-filter.component';
+// import { AppointmentStateFilterComponent } from './appointment-state-filter/appointment-state-filter.component';
 import { AppointmentKanbanComponent } from './appointment-kanban/appointment-kanban.component';
 import { AppointmentDetailDialogComponent } from './appointment-detail-dialog/appointment-detail-dialog.component';
 import { MyCustomNgbModule } from '../shared/my-custom-ngb.module';

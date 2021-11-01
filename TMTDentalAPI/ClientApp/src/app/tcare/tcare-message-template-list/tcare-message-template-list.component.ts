@@ -5,7 +5,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { HrPayslipPaged } from 'src/app/hrs/hr-payslip.service';
+// import { HrPayslipPaged } from 'src/app/hrs/hr-payslip.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { TcareMessageTemplateCuDialogComponent } from '../tcare-message-template-cu-dialog/tcare-message-template-cu-dialog.component';
 import { TCareMessageTemplatePaged, TCareMessageTemplateService } from '../tcare-message-template.service';

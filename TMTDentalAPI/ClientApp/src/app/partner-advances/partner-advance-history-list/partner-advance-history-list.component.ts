@@ -1,4 +1,4 @@
-import { AccountPaymentPaged } from './../../account-payments/account-payment.service';
+// import { AccountPaymentPaged } from './../../account-payments/account-payment.service';
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -7,7 +7,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
+// import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { HistoryPartnerAdvanceFilter, SaleOrderPaymentPaged, SaleOrderPaymentService } from 'src/app/core/services/sale-order-payment.service';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';

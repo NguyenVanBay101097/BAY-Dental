@@ -1,8 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, AbstractControl, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { StockPickingMlDialogComponent } from '../stock-picking-ml-dialog/stock-picking-ml-dialog.component';
-import { StockMoveDisplay, StockPickingService, StockPickingDefaultGet, StockPickingDisplay } from '../stock-picking.service';
+// import { StockPickingMlDialogComponent } from '../stock-picking-ml-dialog/stock-picking-ml-dialog.component';
+import {
+  // StockMoveDisplay, StockPickingDefaultGet,
+  StockPickingService, StockPickingDisplay
+} from '../stock-picking.service';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { PartnerFilter, PartnerService } from 'src/app/partners/partner.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
@@ -19,8 +22,8 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
 import { forkJoin } from 'rxjs';
-import { unionBy } from 'lodash';
-import { observe } from 'fast-json-patch';
+// import { unionBy } from 'lodash';
+// import { observe } from 'fast-json-patch';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PermissionService } from 'src/app/shared/permission.service';

@@ -3,8 +3,14 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { forkJoin, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { CashBookDetailFilter, CashBookReportFilter, CashBookService, CashBookSummarySearch, SumaryCashBookFilter } from 'src/app/cash-book/cash-book.service';
-import { DashboardReportService, SumaryRevenueReportFilter } from 'src/app/core/services/dashboard-report.service';
+import {
+  CashBookDetailFilter, CashBookService, CashBookSummarySearch,
+  // CashBookReportFilter, SumaryCashBookFilter
+} from 'src/app/cash-book/cash-book.service';
+import {
+  DashboardReportService,
+  // SumaryRevenueReportFilter
+} from 'src/app/core/services/dashboard-report.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
@@ -155,17 +161,17 @@ export class DayDashboardReportCashbookComponent implements OnInit {
   }
 
   loadSumaryResult() {
-    if(this.totalCashBook.length > 0){
+    if (this.totalCashBook.length > 0) {
       if (this.resultSelection == 'cash') {
         this.summaryResult = this.totalCashBook[1];
       }
       else if (this.resultSelection == 'bank') {
         this.summaryResult = this.totalCashBook[2];
-      } else {        
+      } else {
         this.summaryResult = this.totalCashBook[0];
       }
     }
-  
+
   }
 
   get ortherThu() {

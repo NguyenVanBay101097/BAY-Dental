@@ -7,10 +7,13 @@ import { fromEvent, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { SaleOrderLineService, SmsCareAfterOrderPaged } from 'src/app/core/services/sale-order-line.service';
-import { ProductSimple } from 'src/app/products/product-simple';
-import { ProductPaged, ProductService } from 'src/app/products/product.service';
+// import { ProductSimple } from 'src/app/products/product-simple';
+import {
+  // ProductPaged,
+  ProductService
+} from 'src/app/products/product.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
-import { ProductsOdataService } from 'src/app/shared/services/ProductsOdata.service';
+// import { ProductsOdataService } from 'src/app/shared/services/ProductsOdata.service';
 import { SmsCampaignService } from '../sms-campaign.service';
 import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
 
@@ -64,7 +67,7 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
     setTimeout(() => {
       this.loadDefaultCampaignCareAfterOrder();
     }, 1000);
-  
+
 
     this.searchProductUpdate.pipe(
       debounceTime(400),
@@ -94,7 +97,7 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
 
   filterProducts(val: string) {
     this.filteredProducts = this.listProducts.filter(x => x.name.toLowerCase().includes(val.toLowerCase()) ||
-     x.nameNoSign.toLowerCase().includes(val.toLowerCase()));
+      x.nameNoSign.toLowerCase().includes(val.toLowerCase()));
   }
 
   onSearchProduct() {

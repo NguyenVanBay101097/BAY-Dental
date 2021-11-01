@@ -2,10 +2,10 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { Router, ActivatedRoute } from '@angular/router';
+// import { Router, ActivatedRoute } from '@angular/router';
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { SaleCouponService, SaleCouponPaged, SaleCouponBasic } from '../sale-coupon.service';
-import { SaleCouponProgramBasic, SaleCouponProgramService, SaleCouponProgramPaged } from '../sale-coupon-program.service';
+// import { SaleCouponProgramBasic, SaleCouponProgramService, SaleCouponProgramPaged } from '../sale-coupon-program.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { TCareRuleCondition } from 'src/app/tcare/tcare.service';
+// import { TCareRuleCondition } from 'src/app/tcare/tcare.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({

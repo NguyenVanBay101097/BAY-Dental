@@ -9,7 +9,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { SmsAccountService, SmsAccountPaged } from '../sms-account.service';
 import { SmsAppointmentAutomationConfigService } from '../sms-appointment-automation-config.service';
 import { SmsCampaignService } from '../sms-campaign.service';
-import { SmsConfigService } from '../sms-config.service';
+// import { SmsConfigService } from '../sms-config.service';
 import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
 import { SmsTemplateService, SmsTemplateFilter } from '../sms-template.service';
 

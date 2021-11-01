@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import {
     HttpHandler,
-    HttpProgressEvent,
+    // HttpProgressEvent,
     HttpInterceptor,
-    HttpSentEvent,
-    HttpHeaderResponse,
-    HttpUserEvent,
+    // HttpSentEvent,
+    // HttpHeaderResponse,
+    // HttpUserEvent,
     HttpRequest,
-    HttpResponse,
+    // HttpResponse,
     HttpHeaders
 } from '@angular/common/http';
-import { Observable } from 'rxjs';
+// import { Observable } from 'rxjs';
 export const CACHE_KEY = 'X-No-Cache';
 
 @Injectable()

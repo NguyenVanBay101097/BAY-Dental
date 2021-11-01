@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
-import { SaleOrderPaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
+// import { SaleOrderPaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { SaleOrderBasic } from 'src/app/sale-orders/sale-order-basic';
 
 @Component({

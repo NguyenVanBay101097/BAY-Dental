@@ -1,6 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { validator } from 'fast-json-patch';
+// import { validator } from 'fast-json-patch';
 
 @Component({
   selector: 'app-tcare-message-template-content',

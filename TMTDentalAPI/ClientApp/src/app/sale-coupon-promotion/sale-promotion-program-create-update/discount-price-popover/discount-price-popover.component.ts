@@ -2,12 +2,12 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { result } from 'lodash';
+// import { result } from 'lodash';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { HistoryPromotionRequest, SaleOrderPromotionService } from 'src/app/sale-orders/sale-order-promotion.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
-import { SaleCouponProgramService } from '../../sale-coupon-program.service';
+// import { SaleCouponProgramService } from '../../sale-coupon-program.service';
 
 @Component({
   selector: 'app-discount-price-popover',

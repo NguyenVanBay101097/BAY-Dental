@@ -1,17 +1,23 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { GridDataResult } from '@progress/kendo-angular-grid';
+// import { GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { forkJoin, of } from 'rxjs';
-import { debounceTime, map, switchMap, tap } from 'rxjs/operators';
+// import { forkJoin, of } from 'rxjs';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
-import { CashBookDetailFilter, CashBookService, CashBookSummarySearch, DataInvoiceFilter, SumaryCashBookFilter } from 'src/app/cash-book/cash-book.service';
+import {
+  CashBookService,
+  // CashBookDetailFilter, CashBookSummarySearch, DataInvoiceFilter, SumaryCashBookFilter
+} from 'src/app/cash-book/cash-book.service';
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
 import { DashboardReportService } from 'src/app/core/services/dashboard-report.service';
 import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
-import { SaleOrderLinePaged } from 'src/app/partners/partner.service';
-import { SaleReportSearch, SaleReportService } from 'src/app/sale-report/sale-report.service';
+// import { SaleOrderLinePaged } from 'src/app/partners/partner.service';
+import {
+  // SaleReportSearch,
+  SaleReportService
+} from 'src/app/sale-report/sale-report.service';
 import { DayDashboardReportCashbookComponent } from '../day-dashboard-report-cashbook/day-dashboard-report-cashbook.component';
 import { DayDashboardReportRegistrationServiceComponent } from '../day-dashboard-report-registration-service/day-dashboard-report-registration-service.component';
 import { DayDashboardReportRevenueServiceComponent } from '../day-dashboard-report-revenue-service/day-dashboard-report-revenue-service.component';
@@ -35,7 +41,7 @@ export class DayDashboardReportManagementComponent implements OnInit {
   gridDataCashBook: any[] = [];
   cashBookDataReport: any;
   keyTab = 'registration_service';
-  
+
   maxDate = new Date();
 
   active = 'services';
