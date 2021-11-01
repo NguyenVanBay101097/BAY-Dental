@@ -29,4 +29,12 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public decimal Amount { get; set; }
     }
+
+    public class SaleOrderPaymentJournalLineSimple
+    {
+        public AccountJournalSimple Journal { get; set; }
+
+        public decimal Amount { get; set; }
+    }
+
 }

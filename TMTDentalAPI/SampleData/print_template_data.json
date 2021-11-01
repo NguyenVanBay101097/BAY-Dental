@@ -64,6 +64,18 @@
           "Amount": 5350000.00,
           "Date": "2021-09-14T00:00:00",
           "Note": "SO00006 - Khách hàng thanh toán",
+          "Lines": [
+            {
+              "SaleOrderLine": {
+                "Name": "Điều trị tủy răng vĩnh viễn"
+              }
+            },
+            {
+              "SaleOrderLine": {
+                "Name": "Lấy cao răng và đánh bóng"
+              }
+            }
+          ],
           "PaymentRels": [
             {
               "Payment": {
@@ -2271,7 +2283,18 @@
           "Amount": 2350000.00
         }
       ],
-      "Lines": [],
+      "Lines": [
+        {
+          "SaleOrderLine": {
+            "Name": "Điều trị tủy răng vĩnh viễn"
+          }
+        },
+        {
+          "SaleOrderLine": {
+            "Name": "Lấy cao răng và đánh bóng"
+          }
+        }
+      ],
       "Note": "SO00006 - Khách hàng thanh toán",
       "State": "posted"
     }
@@ -2391,6 +2414,51 @@
       "Communication": null,
       "LoaiThuChiId": "00000000-0000-0000-0000-000000000000",
       "LoaiThuChi": null
+    }
+  },
+  {
+    "Type": "tmp_appointment",
+    "Data": {
+      "Company": {
+        "Name": "TPP",
+        "Partner": {
+          "CityName": "Thành phố Hồ Chí Minh",
+          "DistrictName": "Quận Tân Phú",
+          "WardName": "Phường Tân Thành",
+          "Street": "54/35 Diệp Minh Châu"
+        },
+        "Phone": "0938551226",
+        "Email": null,
+        "Logo": "http://statics.tdental.vn/images/localhost/210920/1345070036_logo.jpg"
+      },
+      "Date": "2021-10-04T10:07:00",
+      "Name": "AP00002",
+      "Partner": {
+        "DisplayName": "[KH0007] Khách hàng A",
+        "Name": "Khách hàng A",
+        "Gender": "male",
+        "Email": "khachhanga@gmail.com",
+        "Phone": "0369835014",
+        "BirthYear": 1995,
+        "Age": "26",
+        "Street": "246/16 Độc Lập",
+        "WardName": "Phường Tân Thành",
+        "DistrictName": "Quận Tân Phú",
+        "CityName": "Thành phố Hồ Chí Minh"
+      },
+      "isRepeatCustomer": "False",
+      "Doctor": {
+        "Id": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+        "Name": "Bác sĩ A"
+      },
+      "AppointmentServices": [
+        {
+          "Product": {
+            "Name": "Tẩy trắng răng bằng đèn Laser Zoom II"
+          }
+        }
+      ],
+      "Note": "Nội dung cuộc hẹn"
     }
   }
 ]

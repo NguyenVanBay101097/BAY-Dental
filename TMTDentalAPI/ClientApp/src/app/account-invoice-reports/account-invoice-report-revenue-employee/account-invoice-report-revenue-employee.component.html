@@ -1,6 +1,6 @@
 <div class="py-3 container">
     <div class="form-inline">
-        <app-date-range-picker-filter class="mr-1" [startDate]="filter.dateFrom" [endDate]="filter.dateTo"
+        <app-date-range-picker-filter [showClearButton]="false" class="mr-1" [startDate]="filter.dateFrom" [endDate]="filter.dateTo"
             (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
         <select [(ngModel)]="empFilter" (change)="onChangeEmployeeFilter()" class="form-control w-auto mr-1"
             aria-label="Default select example">

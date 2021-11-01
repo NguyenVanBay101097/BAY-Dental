@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Text;
 
 namespace ApplicationCore.Entities
@@ -85,6 +87,23 @@ namespace ApplicationCore.Entities
         /// Khách hàng tái khám
         /// </summary>
         public bool IsRepeatCustomer { get; set; }
+        [NotMapped]
+        public string IsRepeatCustomerDisplay
+        {
+            get
+            {
+                return IsRepeatCustomer ? "Tái khám" : "Khám mới";
+            }
+        }
+
+        [NotMapped]
+        public string ServicesDisplay
+        {
+            get
+            {
+                return string.Join(", ", AppointmentServices.Select(x => x.Product.Name));
+            }
+        }
 
     }
 }

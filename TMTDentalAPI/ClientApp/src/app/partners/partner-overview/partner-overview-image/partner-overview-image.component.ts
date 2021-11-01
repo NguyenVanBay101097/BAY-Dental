@@ -80,6 +80,7 @@ export class PartnerOverviewImageComponent implements OnInit {
     event.stopPropagation();
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa hình ảnh ' + item.name;
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa hình ảnh?';
 
     modalRef.result.then(() => {
       this.irAttachmentService.deleteImage(item.id).subscribe(

@@ -11,6 +11,7 @@ import { HistoryPaged } from '../history';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { HistoryImportExcelDialogComponent } from '../history-import-excel-dialog/history-import-excel-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { NotifyService } from 'src/app/shared/services/notify.service';
 
 @Component({
   selector: 'app-histories-list',
@@ -23,6 +24,7 @@ export class HistoriesListComponent implements OnInit {
     private fb: FormBuilder,
     private service: HistoryService,
     private modalService: NgbModal,
+    private notifyService: NotifyService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -86,6 +88,7 @@ export class HistoriesListComponent implements OnInit {
     }
     modalRef.result.then(
       rs => {
+        this.notifyService.notify("success","Lưu thành công");
         this.getList();
       },
       er => { }
@@ -105,6 +108,7 @@ export class HistoriesListComponent implements OnInit {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa tiểu sử bệnh';
     modalRef.result.then(() => {
+      this.notifyService.notify("success","Xóa thành công");
       this.service.delete(id).subscribe(
         () => { this.getList(); }
       );

@@ -21,7 +21,7 @@ namespace TMTDentalAPI.ViewControllers
         }
         [PrinterNameFilterAttribute(Name = AppConstants.ReportPartnerDebit)]
         [CheckAccess(Actions = "Report.AccountPartner")]
-        public async Task<IActionResult> PrintReportPartnerDebit([FromBody]ReportPartnerDebitReq val)
+        public async Task<IActionResult> PrintReportPartnerDebit([FromBody] ReportPartnerDebitReq val)
         {
             var result = await _service.PrintReportPartnerDebit(val);
             return View(result);
@@ -33,6 +33,14 @@ namespace TMTDentalAPI.ViewControllers
         {
             var result = await _service.ReportSummaryPrint(val);
             return View(result);
+        }
+
+        [PrinterNameFilterAttribute(Name = AppConstants.ReportPartnerDebit)]
+        [CheckAccess(Actions = "Report.AccountPartner")]
+        public async Task<IActionResult> ReportPartnerAdvance([FromBody] ReportPartnerAdvanceFilter val)
+        {
+            var data = await _service.ReportPartnerAdvancePrint(val);
+            return View(data);
         }
     }
 }

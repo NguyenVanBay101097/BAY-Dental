@@ -49,7 +49,7 @@ export class ToothDiagnosisPopoverComponent implements OnInit {
       popover.close();
     } else {
       this.loadPopOver();
-      this.mytags = mytags;
+      this.mytags = this.tags.slice();
       popover.open({ mytags });
     }
   }
@@ -68,9 +68,9 @@ export class ToothDiagnosisPopoverComponent implements OnInit {
   loadPopOver(q?: string) {
     this.getPageDiagnosis(q);
   }
-  update(tags) {
+  update() {
     this.popover.close();
-    this.onSave.emit(tags);
+    this.onSave.emit(this.mytags);
   }
 
   public valueNormalizer = (text$: Observable<string>): any => text$.pipe(

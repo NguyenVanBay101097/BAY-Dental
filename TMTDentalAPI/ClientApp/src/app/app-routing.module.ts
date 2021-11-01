@@ -259,6 +259,16 @@ const routes: Routes = [
         canActivate: [AuthGuard]
       },
       {
+        path: 'day-dashboard-report',
+        loadChildren: () => import('./day-dashboard-report/day-dashboard-report.module').then(m => m.DayDashboardReportModule),
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'setting-public-api',
+        loadChildren: () => import('./setting-public-api/setting-public-api.module').then(m => m.SettingPublicApiModule),
+        canActivate: [AuthGuard]
+      },
+      {
         path: 'card-types',
         loadChildren: () => import('./service-card-types/service-card-types.module').then(m => m.ServiceCardTypesModule),
         canActivate: [AuthGuard]
@@ -309,7 +319,7 @@ const routes: Routes = [
         path: 'partner-categories',
         loadChildren: () => import('./partner-categories/partner-categories.module').then(m => m.PartnerCategoriesModule),
         canActivate: [AuthGuard]
-      }      
+      },
     ]
   },
 ];

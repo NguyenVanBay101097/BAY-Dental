@@ -23,6 +23,7 @@ export const types: { text: string, value: string }[] = [
     { text: 'Phiếu nhập kho', value: 'tmp_stock_picking_incoming' },
     { text: 'Phiếu xuất kho', value: 'tmp_stock_picking_outgoing' },
     { text: 'Phiếu kiểm kho', value: 'tmp_stock_inventory' },
+    { text: 'Phiếu hẹn', value: 'tmp_appointment' },
 
 ];
 
@@ -45,6 +46,8 @@ let pipes =
         { text: 'Ngày hôm nay', value: '{{date.now}}' },
         { text: 'Định dạng số', value: '| math.format "N0"' },
         { text: 'Định dạng ngày/tháng/năm', value: `| date.to_string '%d/%m/%Y'` },
+        { text: 'Định dạng lấy giờ', value: `| date.to_string '%R'` },
+        { text: 'Định dạng lấy thứ', value: `| date.to_string '%A'` },
         { text: 'Định dạng lấy ngày', value: `| date.to_string '%d'` },
         { text: 'Định dạng lấy tháng', value: `| date.to_string '%m'` },
         { text: 'Định dạng lấy năm', value: `| date.to_string '%Y'` },
@@ -160,8 +163,8 @@ const keyWorDatas =
                 { text: 'Họ tên bác sĩ', value: '{{o.sale_order_line?.employee?.name}}' },
                 { text: 'Số phiếu điều trị', value: '{{o.sale_order_line?.order?.name }}' },
                 { text: 'Họ tên khách hàng', value: '{{o.customer?.name}}' },
-                { text: 'Họ tên nhà cung cấp', value: '{{o.partner?.name}}' },
-                { text: 'Ngày gửu', value: '{{o.date_order}}' },
+                { text: 'Tên nhà cung cấp', value: '{{o.partner?.name}}' },
+                { text: 'Ngày gửi', value: '{{o.date_order}}' },
                 { text: 'Ngày nhận dự kiến', value: '{{o.date_planned}}' },
 
             ]
@@ -185,7 +188,7 @@ const keyWorDatas =
                 { text: 'Đường hoàn tất', value: '{{o.labo_finish_line?.name}}' },
                 { text: 'Khớp cắn', value: '{{o.labo_bite_joint?.name}}' },
                 { text: 'Kiểu nhịp', value: '{{o.labo_bridge?.name}}' },
-                { text: 'Gửu kèm', value: '{{o.labo_order_products_display}}' },
+                { text: 'Gửi kèm', value: '{{o.labo_order_products_display}}' },
                 { text: 'Ghi chú kỹ thuật', value: '{{o.technical_note}}' },
                 { text: 'Mã bảo hành', value: '{{o.warranty_code}}' },
                 { text: 'Hạn bảo hành', value: '{{o.warranty_period}}' },
@@ -207,7 +210,7 @@ const keyWorDatas =
         {
             text: 'Thông tin chung',
             value: [
-                { text: 'Họ tên nhà cung cấp', value: '{{o.partner?.name}}' },
+                { text: 'Tên nhà cung cấp', value: '{{o.partner?.name}}' },
                 { text: 'Mã tham chiếu kho', value: '{{o.picking?.name }}' },
                 { text: 'Ghi chú', value: '{{o.note}}' },
                 { text: 'Người lập phiếu', value: '{{o.user?.name}}' },
@@ -287,20 +290,20 @@ const keyWorDatas =
                 { text: 'Ngày tạo', value: '{{o.date_created.day}}' },
                 { text: 'Tháng tạo', value: '{{o.date_created.month}}' },
                 { text: 'Năm tạo', value: '{{o.date_created.year}}' },
-                { text: 'Mã phiếu', value: '{{name}}' },
+                { text: 'Mã phiếu', value: '{{o.name}}' },
             ]
         },
         {
             text: 'Thông tin chung',
             value: [
-                { text: 'Người nhận', value: '{{partner_name}}' },
-                { text: 'Địa chỉ người nhận', value: '{{address}}' },
-                { text: 'Loại chi', value: '{{loai_thu_chi_name}}' },
-                { text: 'Số tiền', value: '{{amount}}' },
-                { text: 'Số tiền bằng chữ', value: '{{amount_text}}' },
-                { text: 'Phương thức', value: '{{journal_name}}' },
-                { text: 'Nội dung', value: '{{reason}}' },
-                { text: 'Người lập phiếu', value: '{{created_by_name}}' },
+                { text: 'Người nhận', value: '{{o.partner?.name}}' },
+                { text: 'Địa chỉ người nhận', value: '{{o.partner?.address}}' },
+                { text: 'Loại chi', value: '{{o.loai_thu_chi?.name}}' },
+                { text: 'Số tiền', value: '{{o.amount}}' },
+                { text: 'Số tiền bằng chữ', value: '{{o.amount_text}}' },
+                { text: 'Phương thức', value: '{{o.journal?.name}}' },
+                { text: 'Nội dung', value: '{{o.reason}}' },
+                { text: 'Người lập phiếu', value: '{{o.created_by?.name }}' },
             ]
         }
     ],
@@ -583,6 +586,7 @@ const keyWorDatas =
                 { text: 'Danh sách hóa đơn thanh toán', value: '{{sop.payment_rels}}' },
                 { text: 'Mã thanh toán', value: '{{item.payment?.name}}' },
                 { text: 'Ngày thanh toán', value: '{{item.payment?.payment_date}}' },
+                { text: 'Dịch vụ', value: '{{sop.lines_display}}' },
                 { text: 'Số tiền cần thanh toán', value: '{{sop.amount}}' },
                 { text: 'Phương thức thanh toán', value: '{{item.payment?.journal?.name}}' },
                 { text: 'Số tiền thanh toán', value: '{{item.payment?.amount}}' },
@@ -712,8 +716,9 @@ const keyWorDatas =
                 { text: 'SĐT khách hàng', value: '{{o.order?.partner?.phone}}' },
                 { text: 'Địa chỉ khách hàng', value: '{{o.order?.partner?.address}}' },
                 { text: 'Ngày thanh toán', value: '{{o.date}}' },
-                { text: 'danh sách Phương thức thanh toán', value: '{{o.journal_lines_display}}' },
+                { text: 'Phương thức thanh toán', value: '{{o.journal_lines_display}}' },
                 { text: 'Số tiền', value: '{{o.amount}}' },
+                { text: 'Dịch vụ thực hiện', value: '{{o.lines_display}}' },
                 { text: 'Nội dung', value: '{{o.note}}' },
                 { text: 'Họ tên nhân viên', value: '{{u.name}}' },
             ]
@@ -770,6 +775,33 @@ const keyWorDatas =
                 { text: 'SĐT nhà cung cấp', value: '{{partner_phone}}' },
                 { text: 'Người lập phiếu', value: '{{partner_name}}' },
                 { text: 'Người nhận tiền', value: '{{user_name}}' },
+            ]
+        }
+    ],
+    'tmp_appointment': [
+        companyInfo,
+        {
+            text: 'Thông tin phiếu',
+            value: [
+                { text: 'Ngày tạo', value: '{{o.date_order.day}}' },
+                { text: 'Tháng tạo', value: '{{o.date_order.month}}' },
+                { text: 'Năm tạo', value: '{{o.date_order.year}}' },
+                { text: 'Mã phiếu', value: '{{o.name}}' },
+                { text: 'Người lập phiếu', value: '{{u.name}}' },
+            ]
+        },
+        {
+            text: 'Thông tin chung',
+            value: [
+                { text: 'Tên khách hàng', value: '{{o.partner?.name}}' },
+                { text: 'SĐT khách hàng', value: '{{o.partner?.phone}}' },
+                { text: 'Địa chỉ khách hàng', value: '{{o.partner?.address}}' },
+                { text: 'Ngày hẹn', value: '{{o.date}}' },
+                { text: 'Giờ hẹn', value: '{{o.date}}' },
+                { text: 'Loại khám', value: '{{o.is_repeat_customer_display}}' },
+                { text: 'Tên bác sĩ', value: '{{o.doctor?.name}}' },
+                { text: 'Tên dịch vụ', value: '{{o.services_display}}' },
+                { text: 'Nội dung', value: '{{o.note}}' },
             ]
         }
     ]

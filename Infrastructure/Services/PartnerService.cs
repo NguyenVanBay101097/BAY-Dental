@@ -370,11 +370,12 @@ namespace Infrastructure.Services
 
         public async Task<decimal> GetAmountAdvanceBalance(Guid id)
         {
-            ///lay tu moveline account
             var moveLineObj = GetService<IAccountMoveLineService>();
-            var accountObj = GetService<IAccountAccountService>();
-            var accountAdvance = await accountObj.GetAccountAdvanceCurrentCompany();
-            var amounBalance = await moveLineObj.SearchQuery(x => x.PartnerId == id && x.AccountId == accountAdvance.Id).SumAsync(x => x.Debit - x.Credit);
+
+            var query = moveLineObj._QueryGet(state: "posted", companyId: CompanyId);
+            query = query.Where(x => x.PartnerId == id && (x.Account.Code == "KHTU" || x.Account.Code == "HTU"));
+
+            var amounBalance = await query.SumAsync(x => x.Debit - x.Credit);
             var sign = -1;
             return amounBalance * sign;
         }
@@ -2441,6 +2442,24 @@ namespace Infrastructure.Services
                         select att;
             var res = await resQr.OrderByDescending(x => x.DateCreated).ToListAsync();
             return res;
+        }
+
+        public async Task<IEnumerable<Partner>> GetPublicPartners(int limit , int offset , string search)
+        {
+            var query = SearchQuery(x => x.Active && x.Customer);
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(x => x.Name.Contains(search) || x.NameNoSign.Contains(search)
+              || x.Ref.Contains(search) || x.Phone.Contains(search));
+            }
+
+            if (limit > 0)
+                query = query.Skip(offset).Take(limit);
+
+            var items = await query.OrderByDescending(x => x.DateCreated).ToListAsync();
+
+            return items;
         }
     }
 

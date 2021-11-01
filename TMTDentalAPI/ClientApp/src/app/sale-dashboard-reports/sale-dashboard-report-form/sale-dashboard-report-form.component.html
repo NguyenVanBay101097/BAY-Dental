@@ -92,7 +92,7 @@
                     Tháng
                 </label>
                 <app-date-range-picker-filter *ngIf="groupBy=='groupby:day';else elseTemplate" [opens]="'right'"
-                    class="mr-1" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)">
+                    class="mr-1" [startDate]="dateFrom" [showClearButton] = "false" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)">
                 </app-date-range-picker-filter>
                 <ng-template #elseTemplate>
                     <app-month-range-filter-dropdown [dateFrom]="monthFrom" [dateTo]="monthTo" (searchChange)="onSearchDateChange($event)"></app-month-range-filter-dropdown>

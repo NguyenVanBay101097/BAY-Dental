@@ -116,8 +116,6 @@ namespace Infrastructure.Services
             return await query.SumAsync(x => x.Amount);
         }
 
-
-
         public async Task<PartnerAdvanceDisplay> GetDisplayById(Guid id)
         {
             var res = await SearchQuery(x => x.Id == id).Select(x => new PartnerAdvanceDisplay
@@ -220,7 +218,7 @@ namespace Infrastructure.Services
 
         private async Task<IList<AccountMove>> _PreparePartnerAdvanceMovesAsync(IList<PartnerAdvance> vals)
         {
-            var accKHTU = await GetAccountKHTU();
+            AccountAccount acc = null;
             var all_move_vals = new List<AccountMove>();
             foreach (var partnerAdvance in vals)
             {
@@ -228,11 +226,13 @@ namespace Infrastructure.Services
                 decimal counterpart_amount;
                 if (partnerAdvance.Type == "advance")
                 {
+                    acc = await GetAccountKHTU();
                     counterpart_amount = -partnerAdvance.Amount;
                     liquidity_line_account = partnerAdvance.Journal.DefaultCreditAccount;
                 }
                 else
                 {
+                    acc = await GetAccountRefundAdvance();
                     counterpart_amount = partnerAdvance.Amount;
                     liquidity_line_account = partnerAdvance.Journal.DefaultDebitAccount;
                 }
@@ -264,8 +264,8 @@ namespace Infrastructure.Services
                         Debit = balance > 0 ? balance : 0,
                         Credit = balance < 0 ? -balance : 0,
                         DateMaturity = partnerAdvance.Date,
-                        AccountId = accKHTU.Id,
-                        Account = accKHTU,
+                        AccountId = acc.Id,
+                        Account = acc,
                         Move = move_vals,
                         PartnerId = partnerAdvance.PartnerId,
                     },
@@ -294,12 +294,12 @@ namespace Infrastructure.Services
             var irModelDataObj = GetService<IIRModelDataService>();
             var accountObj = GetService<IAccountAccountService>();
             var accountJournalObj = GetService<IAccountJournalService>();
-
-            var currentLiabilities = await irModelDataObj.GetRef<AccountAccountType>("account.data_account_type_current_liabilities");
+           
             var accKHTU = new AccountAccount();
             accKHTU = await accountObj.SearchQuery(x => x.Code == "KHTU" && x.CompanyId == CompanyId).FirstOrDefaultAsync();
             if (accKHTU == null)
             {
+                var currentLiabilities = await irModelDataObj.GetRef<AccountAccountType>("account.data_account_type_current_liabilities");
                 accKHTU = new AccountAccount
                 {
                     Name = "Khách hàng tạm ứng",
@@ -314,6 +314,31 @@ namespace Infrastructure.Services
 
             return accKHTU;
 
+        }
+
+        public async Task<AccountAccount> GetAccountRefundAdvance()
+        {
+            var irModelDataObj = GetService<IIRModelDataService>();
+            var accountObj = GetService<IAccountAccountService>();
+            var accountJournalObj = GetService<IAccountJournalService>();
+
+            var acc = await accountObj.SearchQuery(x => x.Code == "HTU" && x.CompanyId == CompanyId).FirstOrDefaultAsync();
+            if (acc == null)
+            {
+                var currentLiabilities = await irModelDataObj.GetRef<AccountAccountType>("account.data_account_type_current_liabilities");
+                acc = new AccountAccount
+                {
+                    Name = "Hoàn tạm ứng",
+                    Code = "HTU",
+                    InternalType = currentLiabilities.Type,
+                    UserTypeId = currentLiabilities.Id,
+                    CompanyId = CompanyId,
+                };
+
+                await accountObj.CreateAsync(acc);
+            }
+
+            return acc;
         }
 
         public async Task<PartnerAdvancePrint> GetPartnerAdvancePrint(Guid id)

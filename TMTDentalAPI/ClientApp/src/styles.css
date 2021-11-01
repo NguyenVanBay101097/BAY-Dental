@@ -334,6 +334,7 @@ select {
     width: 100px;
     -webkit-box-flex: 1;
     flex: 1 0 auto;
+    border: none;
 }
 
 .o_searchview {
@@ -388,6 +389,7 @@ select {
     -webkit-flex: 1 0 auto;
     flex: 1 0 auto;
     width: 75px;
+    border: none;
 }
 
 .o_control_panel.o_breadcrumb_full>.breadcrumb {

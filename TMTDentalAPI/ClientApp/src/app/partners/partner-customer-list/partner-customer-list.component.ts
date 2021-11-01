@@ -149,6 +149,7 @@ export class PartnerCustomerListComponent implements OnInit {
       data : res.items,
       total : res.totalItems
      };
+     console.log(this.gridData);
    },()=> {},
    ()=>{
      this.loading = false;

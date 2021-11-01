@@ -74,7 +74,6 @@ export class AppointmentListTodayComponent implements OnInit, DoCheck {
   ngDoCheck() {
     var changes = this.iterableDiffer.diff(this.appointments);
     if (changes) {
-      console.log('detect changes');
       this.loadData();
     }
   }

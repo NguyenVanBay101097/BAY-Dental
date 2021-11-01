@@ -11,7 +11,7 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons">
                 <div>
-                    <app-date-range-picker-filter [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
+                    <app-date-range-picker-filter [showClearButton]="false" [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
                 </div>
             </div>
         </div>
@@ -19,7 +19,7 @@
 </div>
 
 <div class="o_content">
-    <kendo-chart *ngIf="pieData.length">
+    <!-- <kendo-chart *ngIf="pieData.length">
         <kendo-chart-legend position="bottom">
 
         </kendo-chart-legend>
@@ -27,7 +27,16 @@
             <kendo-chart-series-item type="pie" [data]="pieData" field="value" categoryField="category" [labels]="{ visible: true, content: labelContent }">
             </kendo-chart-series-item>
         </kendo-chart-series>
-    </kendo-chart>
+    </kendo-chart> -->
+
+    <div *ngIf="pieData.length" class="py-3 bg-white">
+        <canvas baseChart
+            [type]="'pie'"
+            [labels]="pieChartLabels"
+            [options]="pieChartOptions"
+            [datasets]="pieChartData">
+        </canvas>
+    </div>
     <div *ngIf="!pieData.length" class="px-4 py-3 bg-white text-center">
         Không có dữ liệu
     </div>

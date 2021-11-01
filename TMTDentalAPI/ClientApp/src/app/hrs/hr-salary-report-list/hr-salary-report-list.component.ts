@@ -106,7 +106,6 @@ export class HrSalaryReportListComponent implements OnInit {
       val.search = this.search;
     }
     this.reportService.getReportSalaryEmployee(val).subscribe(res => {
-      console.log(res);
       this.items = res;
       this.total = aggregateBy(this.items, this.aggregates);
       this.loadItems();

@@ -36,6 +36,8 @@ export class PartnerAdvanceListComponent implements OnInit {
   amountBalance: number;
   amountAdvanceUsed: number;
 
+  summary2: any;
+
   typeAmount: any = {};
   types: any[] = [
     { value: 'advance', text: 'Tạm ứng đã đóng' },
@@ -110,21 +112,11 @@ export class PartnerAdvanceListComponent implements OnInit {
   }
 
   loadTypeAmountTotal() {
-    forkJoin(this.types.map(x => {
-      var val = new PartnerAdvanceSummaryFilter();
-      val.type = x.value;
-      val.partnerId = this.partnerId;
-      val.companyId = this.authService.userInfo.companyId;
-      return this.partnerAdvanceService.getSumary(val).pipe(
-        switchMap(amount => of({ type: x.value, amount: amount }))
-      );
-    })).subscribe((result) => {
-      result.forEach(item => {
-        if(item.type == ''){
-          this.amountBalanceFilter = item.amount as number;
-        }       
-        this.typeAmount[item.type] = item.amount;
-      });
+    var val = new PartnerAdvanceSummaryFilter();
+    val.partnerId = this.partnerId;
+    val.companyId = this.authService.userInfo.companyId;
+    return this.partnerAdvanceService.getSumary2(val).subscribe((result: any) => {
+      this.summary2 = result;
     });
   }
 

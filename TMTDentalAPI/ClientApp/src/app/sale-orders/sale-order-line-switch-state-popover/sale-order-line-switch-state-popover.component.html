@@ -1,12 +1,12 @@
-<!-- <a [ngbPopover]="popContent" popoverClass="" [autoClose]="'outside'" [popoverTitle]="popTitle" #popOver="ngbPopover" [placement]="popOverPlace" triggers="manual" (click)="toggleWithTags(popOver)">
+<a [ngbPopover]="popContent" popoverClass="" [autoClose]="'outside'" [popoverTitle]="popTitle" #popOver="ngbPopover" [placement]="popOverPlace" triggers="manual" (click)="toggleWithTags(popOver)">
     <img src="../../../assets/icons/icon-state-swich.svg" alt="">
 </a>
 
 <ng-template #popTitle>
     <span>Chuyển trạng thái</span>
-</ng-template> -->
+</ng-template>
 
-<!-- <ng-template #popContent let-mytags="mytags">
+<ng-template #popContent>
     <div>
         <div class="form-check" *ngFor="let item of listState; let i = index">
             <input [(ngModel)]="line.state" class="form-check-input" [value]="item.value" type="radio" name="state" [id]="'stateradio'+i">
@@ -23,4 +23,4 @@
                 đóng
             </button>
     </div>
-</ng-template> -->
+</ng-template>

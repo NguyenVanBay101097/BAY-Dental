@@ -5,6 +5,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import * as _ from 'lodash';
 import { AuthService } from 'src/app/auth/auth.service';
 import { SaleOrderLineHistoryReq, SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
+import { SaleOrderService } from 'src/app/core/services/sale-order.service';
 
 @Component({
   selector: 'app-partner-overview-treatment-history',
@@ -26,7 +27,8 @@ export class PartnerOverviewTreatmentHistoryComponent implements OnInit {
     private authService: AuthService,
     private saleOrderLineService: SaleOrderLineService,
     private intl: IntlService,
-    private router: Router
+    private router: Router,
+    private saleOrderService: SaleOrderService
   ) { }
 
   ngOnInit() {
@@ -44,7 +46,18 @@ export class PartnerOverviewTreatmentHistoryComponent implements OnInit {
   }
 
   createNewSaleOrder() {
-    this.router.navigate(['sale-orders/form'], { queryParams: { partner_id: this.partnerId } });
+    this.saleOrderService.defaultGet({partnerId: this.partnerId}).subscribe(result => {
+      var dateOrder = new Date(result.dateOrder);
+      var val = {
+        partnerId: this.partnerId,
+        companyId: result.companyId,
+        dateOrder: this.intl.formatDate(dateOrder, 'yyyy-MM-ddTHH:mm:ss')
+      };
+
+      this.saleOrderService.create(val).subscribe(result2 => {
+        this.router.navigate(['/sale-orders', result2.id]);
+      });
+    });
   }
 
   viewTeeth(treatment: any) {

@@ -287,6 +287,7 @@ namespace Infrastructure.Services
                 UserTypeId = currentLiabilities.Id,
                 CompanyId = company.Id,
             };
+
             #endregion
 
             #region For payableAccType
