@@ -6,11 +6,14 @@ import { RealRevenueReportOverviewComponent } from './real-revenue-report-overvi
 import { RealRevenueReportService } from './real-revenue-report.service';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { SharedModule } from '../shared/shared.module';
-import { RealRevenueReportItemDetailComponent } from './real-revenue-report-item-detail/real-revenue-report-item-detail.component';
+// import { RealRevenueReportItemDetailComponent } from './real-revenue-report-item-detail/real-revenue-report-item-detail.component';
 import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
-  declarations: [RealRevenueReportOverviewComponent, RealRevenueReportItemDetailComponent],
+  declarations: [
+    RealRevenueReportOverviewComponent,
+    // RealRevenueReportItemDetailComponent
+  ],
   imports: [
     CommonModule,
     RealRevenueReportRoutingModule,

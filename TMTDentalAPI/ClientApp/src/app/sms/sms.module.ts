@@ -8,7 +8,7 @@ import { MyCustomKendoModule } from "../shared/my-customer-kendo.module";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { SharedModule } from "../shared/shared.module";
 import { NgbModalModule, NgbModule } from "@ng-bootstrap/ng-bootstrap";
-import { SmsTemplateContentComponent } from "./sms-template-content/sms-template-content.component";
+// import { SmsTemplateContentComponent } from "./sms-template-content/sms-template-content.component";
 import { SmsAccountSettingComponent } from "./sms-account-setting/sms-account-setting.component";
 import { SmsBirthdayFormComponent } from "./sms-birthday-form/sms-birthday-form.component";
 import { SmsBirthdayFormManualComponent } from "./sms-birthday-form-manual/sms-birthday-form-manual.component";
@@ -46,7 +46,7 @@ import { SmsPersonalizedTabsComponent } from './sms-personalized-tabs/sms-person
   declarations: [
     SmsTemplateListComponent,
     SmsTemplateCrUpComponent,
-    SmsTemplateContentComponent,
+    // SmsTemplateContentComponent,
     SmsAccountSettingComponent,
     SmsBirthdayFormComponent,
     SmsBirthdayFormManualComponent,

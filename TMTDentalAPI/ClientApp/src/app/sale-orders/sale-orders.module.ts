@@ -10,24 +10,24 @@ import { SaleOrderCreateDotKhamDialogComponent } from './sale-order-create-dot-k
 import { SharedModule } from '../shared/shared.module';
 import { SaleOrderApplyCouponDialogComponent } from './sale-order-apply-coupon-dialog/sale-order-apply-coupon-dialog.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { SaleOrderCreateLaboOrderDialogComponent } from './sale-order-create-labo-order-dialog/sale-order-create-labo-order-dialog.component';
-import { SaleOrderInvoiceListComponent } from './sale-order-invoice-list/sale-order-invoice-list.component';
+// import { SaleOrderCreateLaboOrderDialogComponent } from './sale-order-create-labo-order-dialog/sale-order-create-labo-order-dialog.component';
+// import { SaleOrderInvoiceListComponent } from './sale-order-invoice-list/sale-order-invoice-list.component';
 import { SaleOrderApplyServiceCardsDialogComponent } from './sale-order-apply-service-cards-dialog/sale-order-apply-service-cards-dialog.component';
-import { SaleOrderCuDialogComponent } from './sale-order-cu-dialog/sale-order-cu-dialog.component';
+// import { SaleOrderCuDialogComponent } from './sale-order-cu-dialog/sale-order-cu-dialog.component';
 import { SaleOrderCuFormComponent } from './sale-order-cu-form/sale-order-cu-form.component';
 import { SaleOrderApplyDiscountDefaultDialogComponent } from './sale-order-apply-discount-default-dialog/sale-order-apply-discount-default-dialog.component';
 import { SaleOrderLineLaboOrdersDialogComponent } from './sale-order-line-labo-orders-dialog/sale-order-line-labo-orders-dialog.component';
 import { LaboOrderCuDialogComponent } from './labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { LaboOrderCuLineDialogComponent } from './labo-order-cu-line-dialog/labo-order-cu-line-dialog.component';
 import { SaleOrderPaymentDialogComponent } from './sale-order-payment-dialog/sale-order-payment-dialog.component';
-import { PartnersModule } from '../partners/partners.module';
-import { SaleOrderLineDiscountPopoverComponent } from './sale-order-line-discount-popover/sale-order-line-discount-popover.component';
-import { SaleOrderLineInfoPopoverComponent } from './sale-order-line-info-popover/sale-order-line-info-popover.component';
+// import { PartnersModule } from '../partners/partners.module';
+// import { SaleOrderLineDiscountPopoverComponent } from './sale-order-line-discount-popover/sale-order-line-discount-popover.component';
+// import { SaleOrderLineInfoPopoverComponent } from './sale-order-line-info-popover/sale-order-line-info-popover.component';
 import { PartnerCustomerToathuocListComponent } from './partner-customer-toathuoc-list/partner-customer-toathuoc-list.component';
-import { SaleOrderDotkhamListComponent } from './sale-order-dotkham-list/sale-order-dotkham-list.component';
+// import { SaleOrderDotkhamListComponent } from './sale-order-dotkham-list/sale-order-dotkham-list.component';
 import { SaleOrderPaymentListComponent } from './sale-order-payment-list/sale-order-payment-list.component';
-import { AccountPaymentPrintComponent } from '../shared/account-payment-print/account-payment-print.component';
-import { SaleOrderFastListServiceComponent } from './sale-order-fast-list-service/sale-order-fast-list-service.component';
+// import { AccountPaymentPrintComponent } from '../shared/account-payment-print/account-payment-print.component';
+// import { SaleOrderFastListServiceComponent } from './sale-order-fast-list-service/sale-order-fast-list-service.component';
 import { TreatmentProcessServiceListComponent } from './treatment-process-service-list/treatment-process-service-list.component';
 import { TreatmentProcessServiceDialogComponent } from './treatment-process-service-dialog/treatment-process-service-dialog.component';
 import { SaleOrdersDotkhamCuComponent } from './sale-orders-dotkham-cu/sale-orders-dotkham-cu.component';
@@ -41,7 +41,7 @@ import { SaleCouponProgramService } from '../sale-coupon-promotion/sale-coupon-p
 import { SaleOrderLinePromotionDialogComponent } from './sale-order-line-promotion-dialog/sale-order-line-promotion-dialog.component';
 import { PromotionDiscountComponent } from './promotion-discount/promotion-discount.component';
 import { SaleOrderApplyCouponComponent } from './sale-order-apply-coupon/sale-order-apply-coupon.component';
-import { SaleOrderLineApplyCouponComponent } from './sale-order-line-apply-coupon/sale-order-line-apply-coupon.component';
+// import { SaleOrderLineApplyCouponComponent } from './sale-order-line-apply-coupon/sale-order-line-apply-coupon.component';
 import { SaleOrderManagementComponent } from './sale-order-management/sale-order-management.component';
 import { SaleOrderLineManagementComponent } from './sale-order-line-management/sale-order-line-management.component';
 import { SaleOrderPrintPopupComponent } from './sale-order-print-popup/sale-order-print-popup.component';
@@ -55,10 +55,10 @@ import { SaleOrderServiceListComponent } from './sale-order-service-list/sale-or
     SaleOrderListComponent,
     SaleOrderCreateDotKhamDialogComponent,
     SaleOrderApplyCouponDialogComponent,
-    SaleOrderCreateLaboOrderDialogComponent,
-    SaleOrderInvoiceListComponent,
+    // SaleOrderCreateLaboOrderDialogComponent,
+    // SaleOrderInvoiceListComponent,
     SaleOrderApplyServiceCardsDialogComponent,
-    SaleOrderCuDialogComponent,
+    // SaleOrderCuDialogComponent,
     SaleOrderCuFormComponent,
     SaleOrderApplyDiscountDefaultDialogComponent,
     SaleOrderLineLaboOrdersDialogComponent,
@@ -66,11 +66,11 @@ import { SaleOrderServiceListComponent } from './sale-order-service-list/sale-or
     LaboOrderCuDialogComponent,
     SaleOrderPaymentDialogComponent,
     PartnerCustomerToathuocListComponent,
-    SaleOrderDotkhamListComponent,
+    // SaleOrderDotkhamListComponent,
     SaleOrderPaymentListComponent,
-    SaleOrderLineDiscountPopoverComponent,
-    SaleOrderLineInfoPopoverComponent,
-    SaleOrderFastListServiceComponent,
+    // SaleOrderLineDiscountPopoverComponent,
+    // SaleOrderLineInfoPopoverComponent,
+    // SaleOrderFastListServiceComponent,
     TreatmentProcessServiceListComponent,
     TreatmentProcessServiceDialogComponent,
     SaleOrdersDotkhamCuComponent,
@@ -81,7 +81,7 @@ import { SaleOrderServiceListComponent } from './sale-order-service-list/sale-or
     SaleOrderLinePromotionDialogComponent,
     PromotionDiscountComponent,
     SaleOrderApplyCouponComponent,
-    SaleOrderLineApplyCouponComponent,
+    // SaleOrderLineApplyCouponComponent,
     SaleOrderManagementComponent,
     SaleOrderLineManagementComponent,
     SaleOrderPrintPopupComponent,
@@ -101,16 +101,16 @@ import { SaleOrderServiceListComponent } from './sale-order-service-list/sale-or
   ],
   providers: [SaleOrderPromotionService, SaleCouponProgramService],
   exports: [
-    SaleOrderLineDiscountPopoverComponent,
-    SaleOrderLineInfoPopoverComponent,
-    SaleOrderFastListServiceComponent
+    // SaleOrderLineDiscountPopoverComponent,
+    // SaleOrderLineInfoPopoverComponent,
+    // SaleOrderFastListServiceComponent
   ],
   entryComponents: [
     SaleOrderCreateDotKhamDialogComponent,
     SaleOrderApplyCouponDialogComponent,
     SaleOrderApplyServiceCardsDialogComponent,
     SaleOrderApplyDiscountDefaultDialogComponent,
-    SaleOrderCuDialogComponent,
+    // SaleOrderCuDialogComponent,
     SaleOrderLineLaboOrdersDialogComponent,
     LaboOrderCuLineDialogComponent,
     LaboOrderCuDialogComponent,
