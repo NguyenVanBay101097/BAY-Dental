@@ -49,11 +49,8 @@
                                 <td colspan="1" style="width: 100%">
                                     <div class="d-flex align-items-center w-100 mb-3">
                                         <div class="mr-2">
-                                            <select class="form-control select-control" formControlName="nbrPeriod">
-                                                <option *ngFor="let i of periodList" value="{{i}}">
-                                                    {{i}}
-                                                </option>
-                                            </select>
+                                            <kendo-numerictextbox formControlName="nbrPeriod" [min]="0" format="n0">
+                                            </kendo-numerictextbox>
                                         </div>
                                         <div>
                                             <select class="form-control select-control" formControlName="period">
@@ -74,7 +71,7 @@
                 <div class="d-flex justify-content-between mb-2">
                     <app-service-list-search-dropdown (onSelectService)="addLine($event)"
                         [placeHolder]="'Tìm kiếm theo mã hoặc tên dịch vụ...'"></app-service-list-search-dropdown>
-                    <div style="margin-right: 10.5px;" *ngIf="categories.length > 0">
+                    <div class="mr-3" *ngIf="categories.length > 0">
                         <button class="btn btn-primary" (click)=onApplyAll()>Áp dụng cho toàn bộ</button>
                     </div>
                 </div>
@@ -121,13 +118,13 @@
                                             <div>
                                                 <input type="radio" class="btn-check"
                                                     [id]="'btn-check-1'+categIndex + productIndex" value="percentage"
-                                                    formControlName='computePrice'>
+                                                    formControlName='computePrice' (change)="changePeriod(product)">
                                                 <label class="btn btn-outline-primary mb-0 mr-2"
                                                     [for]="'btn-check-1'+categIndex + productIndex"
                                                     [ngClass]="{'btn-primary':getComputePrice(product.productIndex) == 'percentage'}">%</label>
                                                 <input type="radio" class="btn-check"
                                                     [id]="'btn-check-2'+categIndex + productIndex" value="fixed_amount"
-                                                    formControlName='computePrice'>
+                                                    formControlName='computePrice' (change)="changePeriod(product)">
                                                 <label class="btn btn-outline-primary mb-0 mr-2"
                                                     [for]="'btn-check-2'+categIndex + productIndex"
                                                     [ngClass]="{'btn-primary':getComputePrice(product.productIndex) != 'percentage'}">VNĐ</label>

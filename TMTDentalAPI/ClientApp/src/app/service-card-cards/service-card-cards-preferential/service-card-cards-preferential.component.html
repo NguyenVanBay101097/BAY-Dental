@@ -26,7 +26,7 @@
                 <app-date-range-picker-filter [opens]="'left'" [startDate]="dateFrom" [endDate]="dateTo"
                     (searchChange)="onSearchChange($event)"></app-date-range-picker-filter>
             </div>
-            <kendo-combobox style="width: 160px;" (selectionChange)="onChangeState($event)"
+            <kendo-combobox (selectionChange)="onChangeState($event)"
                 placeholder="Tất cả trạng thái" [data]="filterState" [textField]="'name'" [valueField]="'value'">
             </kendo-combobox>
         </div>

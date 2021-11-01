@@ -124,17 +124,17 @@ namespace Infrastructure.Services
 
             var res = _mapper.Map<IEnumerable<CardCardResponse>>(items);
 
-            if (val.ProductId.HasValue)
-            {
-                var productPricelist = res.Select(x => x.Type.PricelistId.Value).Distinct().ToList();
-                var pricelistItems = await productPriceListItemObj.SearchQuery(x => productPricelist.Contains(x.PriceListId.Value)).ToListAsync();
-                foreach (var item in res)
-                {
-                    var pricelistItem = pricelistItems.Where(x => x.PriceListId == item.Type.PricelistId && x.ProductId == val.ProductId.Value).FirstOrDefault();
-                    item.ProductPricelistItem = pricelistItem == null ? null : _mapper.Map<ProductPricelistItemDisplay>(pricelistItem);
-                }
+            //if (val.ProductId.HasValue)
+            //{
+            //    var productPricelist = res.Select(x => x.Type.PricelistId.Value).Distinct().ToList();
+            //    var pricelistItems = await productPriceListItemObj.SearchQuery(x => productPricelist.Contains(x.PriceListId.Value)).ToListAsync();
+            //    foreach (var item in res)
+            //    {
+            //        var pricelistItem = pricelistItems.Where(x => x.PriceListId == item.Type.PricelistId && x.ProductId == val.ProductId.Value).FirstOrDefault();
+            //        item.ProductPricelistItem = pricelistItem == null ? null : _mapper.Map<ProductPricelistItemDisplay>(pricelistItem);
+            //    }
 
-            }
+            //}
 
             return res;
         }

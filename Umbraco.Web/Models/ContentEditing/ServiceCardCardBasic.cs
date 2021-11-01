@@ -69,7 +69,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? PartnerId { get; set; }
         public PartnerSimple Partner { get; set; }
         public string Barcode { get; set; }
-        public ProductPricelistItemDisplay ProductPricelistItem { get; set; }
+        //public ProductPricelistItemDisplay ProductPricelistItem { get; set; }
     }
 
     public class ServiceCardCardFilter

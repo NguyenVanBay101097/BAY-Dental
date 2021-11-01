@@ -95,8 +95,8 @@ export class MemberCardCreateUpdateComponent implements OnInit {
     this.objCategories[event.categId].products.push(event);
     this.productPricelistItems.push(this.fb.group({
       productId:event.productId,
-      percentPrice: null,
-      fixedAmountPrice: null,
+      percentPrice: 0,
+      fixedAmountPrice: 0,
       computePrice: 'percentage',
       listPrice: event.listPrice,
       categId: event.categId
@@ -216,6 +216,10 @@ export class MemberCardCreateUpdateComponent implements OnInit {
       }) 
     });
     return;
+  }
+
+  changePeriod(product){
+    this.productPricelistItems.controls[product.productIndex].patchValue({fixedAmountPrice:0,percentPrice:0});
   }
 
   get f(){

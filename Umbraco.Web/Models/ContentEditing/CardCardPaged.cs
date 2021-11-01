@@ -50,6 +50,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Barcode { get; set; }
 
-        public ProductPricelistItemDisplay ProductPricelistItem { get; set; }
+        //public ProductPricelistItemDisplay ProductPricelistItem { get; set; }
     }
 }

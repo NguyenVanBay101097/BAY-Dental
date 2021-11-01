@@ -221,6 +221,8 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[1, 3].Value = "Họ tên";
                 worksheet.Cells[1, 4].Value = "Điện thoại";
                 worksheet.Cells[1, 5].Value = "Trạng thái";
+                worksheet.Cells["A1:E1"].Style.Font.Bold = true;
+
                 var row = 2;
                 foreach (var item in paged.Items)
                 {

@@ -21,6 +21,8 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
   @Input() id: string;
   partnerId: string;
   @ViewChild('customerCbx', { static: true }) customerCbx: ComboBoxComponent;
+  @ViewChild('cardTypeCbx', { static: true }) cardTypeCbx: ComboBoxComponent;
+
 
   formGroup: FormGroup;
   customerSimpleFilter: any[] = [];
@@ -50,6 +52,19 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
       partner: null,
       cardType: [null, Validators.required],
       state: 'draft',
+    });
+
+    this.cardTypeCbx.filterChange
+    .asObservable()
+    .pipe(
+      debounceTime(300),
+      tap(() => (this.cardTypeCbx.loading = true)),
+      switchMap((value) => this.searchCardTypes(value)
+      )
+    )
+    .subscribe((x: any) => {
+      this.cardTypeSimpleFilter = x;
+      this.cardTypeCbx.loading = false;
     });
 
     if (this.id) {

@@ -161,7 +161,7 @@ namespace Infrastructure.Services
 
             var count = await SearchQuery(x => x.PartnerId == self.PartnerId && x.CardTypeId == self.CardTypeId).CountAsync();
             if (count >= 2)
-                throw new Exception($"Khách hàng{(self.Partner != null ? $" {self.Partner.Name}" : "")} đã có thẻ");
+                throw new Exception($"Khách hàng đã tồn tại hạng thẻ này trên hệ thống");
         }
 
         public async Task Unlink(IEnumerable<Guid> ids)
@@ -302,17 +302,17 @@ namespace Infrastructure.Services
 
             var res = _mapper.Map<IEnumerable<ServiceCardCardResponse>>(items);
 
-            if (val.ProductId.HasValue)
-            {
-                var productPricelist = res.Select(x => x.CardType.ProductPricelistId.Value).Distinct().ToList();
-                var pricelistItems = await productPriceListItemObj.SearchQuery(x => productPricelist.Contains(x.PriceListId.Value)).ToListAsync();
-                foreach (var item in res)
-                {
-                    var pricelistItem = pricelistItems.Where(x => x.PriceListId == item.CardType.ProductPricelistId && x.ProductId == val.ProductId.Value).FirstOrDefault();
-                    item.ProductPricelistItem = pricelistItem == null ? null : _mapper.Map<ProductPricelistItemDisplay>(pricelistItem);
-                }
+            //if (val.ProductId.HasValue)
+            //{
+            //    var productPricelist = res.Select(x => x.CardType.ProductPricelistId.Value).Distinct().ToList();
+            //    var pricelistItems = await productPriceListItemObj.SearchQuery(x => productPricelist.Contains(x.PriceListId.Value)).ToListAsync();
+            //    foreach (var item in res)
+            //    {
+            //        var pricelistItem = pricelistItems.Where(x => x.PriceListId == item.CardType.ProductPricelistId && x.ProductId == val.ProductId.Value).FirstOrDefault();
+            //        item.ProductPricelistItem = pricelistItem == null ? null : _mapper.Map<ProductPricelistItemDisplay>(pricelistItem);
+            //    }
 
-            }
+            //}
 
             return res;
         }
