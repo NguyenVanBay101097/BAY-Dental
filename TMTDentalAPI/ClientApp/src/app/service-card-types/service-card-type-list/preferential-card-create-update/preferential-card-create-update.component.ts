@@ -29,7 +29,7 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
 
   constructor(
     private modalService: NgbModal,
-    private cardService: ServiceCardTypeService,
+    private cardTypeService: ServiceCardTypeService,
     private notificationService: NotificationService,
     private route: ActivatedRoute,
     private router: Router,
@@ -57,7 +57,7 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
   }
 
   getCardTypeById(){
-    this.cardService.get(this.cardTypeId).subscribe(result => {
+    this.cardTypeService.get(this.cardTypeId).subscribe(result => {
       this.cardForm.patchValue(result);
       this.cardTypeName = result.name;
       result.productPricelistItems.forEach(item => {
@@ -126,13 +126,13 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
       return;
     var val = this.cardForm.value;
     if (this.cardTypeId){
-      this.cardService.update(this.cardTypeId,val).subscribe(() => {
+      this.cardTypeService.updateCardType(this.cardTypeId,val).subscribe(() => {
         this.notify('Lưu thành công','success');
         this.cardTypeName = val.name;
       })
     }
     else {
-      this.cardService.create(val).subscribe(result=>{
+      this.cardTypeService.create(val).subscribe(result=>{
         this.notify('Lưu thành công','success');
         this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
           this.router.navigate(['card-types/preferential-cards/form'], { queryParams: { id: result.id } });
@@ -215,8 +215,7 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
   }
 
   changePeriod(product){
-    product.percentPrice = null;
-    product.fixedAmountPrice = null;
+    this.productPricelistItems.controls[product.productIndex].patchValue({fixedAmountPrice:0,percentPrice:0});
   }
 
   touchedFixedAmount() {

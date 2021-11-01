@@ -218,6 +218,10 @@ export class MemberCardCreateUpdateComponent implements OnInit {
     return;
   }
 
+  changePeriod(product){
+    this.productPricelistItems.controls[product.productIndex].patchValue({fixedAmountPrice:0,percentPrice:0});
+  }
+
   get f(){
     return this.cardForm.controls;
   }

@@ -47,8 +47,8 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
   ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit(): void {
-    this.dateFrom = this.monthStart;
-    this.dateTo = this.monthEnd;
+    // this.dateFrom = this.monthStart;
+    // this.dateTo = this.monthEnd;
     this.loadDataFromApi();
     this.searchUpdate.pipe(
       debounceTime(400),

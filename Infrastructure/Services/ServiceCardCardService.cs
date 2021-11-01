@@ -161,7 +161,7 @@ namespace Infrastructure.Services
 
             var count = await SearchQuery(x => x.PartnerId == self.PartnerId && x.CardTypeId == self.CardTypeId).CountAsync();
             if (count >= 2)
-                throw new Exception($"Khách hàng{(self.Partner != null ? $" {self.Partner.Name}" : "")} đã có thẻ");
+                throw new Exception($"Khách hàng đã tồn tại hạng thẻ này trên hệ thống");
         }
 
         public async Task Unlink(IEnumerable<Guid> ids)
