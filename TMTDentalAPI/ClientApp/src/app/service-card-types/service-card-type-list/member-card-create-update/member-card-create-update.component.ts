@@ -101,6 +101,8 @@ export class MemberCardCreateUpdateComponent implements OnInit {
       listPrice: event.listPrice,
       categId: event.categId
     }));
+    console.log(this.cardForm);
+    
     this.categories = Object.keys(this.objCategories).map((key)=> [this.objCategories[key]]); 
   }
 

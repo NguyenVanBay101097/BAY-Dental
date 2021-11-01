@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
@@ -19,17 +19,21 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
   periodList = [1,2,3,4,5,6,7,8,9,11,12];
   products: any[] = []; // danh sách dịch vụ
   categories: any[] = []; // nhóm dịch vụ
-  productExists: string[] = [];
+  productExists: any[] = [];
   cardTypeObj: ServiceCardTypeObj;
   objCategories = Object.create(null);
   submitted = false;
   companyId: string;
+  cardForm: FormGroup;
+  categIndex = 0;
+
   constructor(
     private modalService: NgbModal,
     private cardService: ServiceCardTypeService,
     private notificationService: NotificationService,
     private route: ActivatedRoute,
     private router: Router,
+    private fb: FormBuilder
 
   ) { }
 
@@ -39,13 +43,13 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
       var userInfo = JSON.parse(user_info);
       this.companyId = userInfo.companyId;
     }
-    this.cardTypeObj  = {
-      name: '',
+    this.cardForm = this.fb.group({
+      name: ['',Validators.required],
       period: 'year',
       nbrPeriod: 1,
       companyId: this.companyId,
-      productPricelistItems: []
-    };  
+      productPricelistItems: this.fb.array([])
+    }); 
     this.cardTypeId = this.route.snapshot.queryParamMap.get('id');
     if (this.cardTypeId){
       this.getCardTypeById();
@@ -54,10 +58,8 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
 
   getCardTypeById(){
     this.cardService.get(this.cardTypeId).subscribe(result => {
+      this.cardForm.patchValue(result);
       this.cardTypeName = result.name;
-      this.cardTypeObj.name = result.name;
-      this.cardTypeObj.period = result.period;
-      this.cardTypeObj.nbrPeriod = result.nbrPeriod;
       result.productPricelistItems.forEach(item => {
         this.productExists.push(item.productId);
         this.objCategories[item.product?.categId] = this.objCategories[item.product?.categId] || {categName:'',categId:'',products:[]};
@@ -70,8 +72,17 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
           computePrice: item.computePrice,
           percentPrice: item.percentPrice,
           fixedAmountPrice: item.fixedAmountPrice,
-          categId: item.product?.categId
+          categId: item.product?.categId,
+          productIndex: this.productExists.length == 0 ? 0 : this.productExists.length - 1
         });
+        this.productPricelistItems.push(this.fb.group({
+          productId:item.product?.id,
+          computePrice: item.computePrice,
+          percentPrice: item.percentPrice,
+          fixedAmountPrice: item.fixedAmountPrice,
+          listPrice: item.product?.listPrice,
+          categId: item.product?.categId
+        }));
       });
       this.categories = Object.keys(this.objCategories).map((key)=> [this.objCategories[key]]); 
     })
@@ -82,7 +93,12 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
     if (find)
       return;
     this.productExists.push(event.id);
-    this.objCategories[event.categId] = this.objCategories[event.categId] || {categName:'',categId:'',products:[]};
+    if (this.objCategories[event.categId]){
+      this.objCategories[event.categId] = this.objCategories[event.categId];
+    }
+    else {
+      this.objCategories[event.categId] = {categName:'',categId:'',products:[], index: this.categIndex};
+    }
     this.objCategories[event.categId].categName = event.categName;
     this.objCategories[event.categId].categId = event.categId;
     event.fixedAmountPrice = null;
@@ -92,29 +108,35 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
     event.productId = event.id;
     event.defaultCode = event.defaultCode;
     event.id = '';
+    event.productIndex = this.productExists.length == 0 ? 0 : this.productExists.length - 1 ;
     this.objCategories[event.categId].products.push(event);
+    this.productPricelistItems.push(this.fb.group({
+      productId:event.productId,
+      percentPrice: null,
+      fixedAmountPrice: null,
+      computePrice: 'percentage',
+      listPrice: event.listPrice,
+      categId: event.categId
+    }));
     this.categories = Object.keys(this.objCategories).map((key)=> [this.objCategories[key]]); 
   }
-  onSave(value){
-    if (value.form.status == 'INVALID')
+  onSave(){
+    this.submitted = true;
+    if (this.cardForm.invalid)
       return;
-  
-    let productItems = this.categories.reduce((r,a) => {
-      return r.concat(a[0].products);
-    },[]);
-    this.cardTypeObj.productPricelistItems = productItems;
-
+    var val = this.cardForm.value;
     if (this.cardTypeId){
-      this.cardService.update(this.cardTypeId,this.cardTypeObj).subscribe(() => {
+      this.cardService.update(this.cardTypeId,val).subscribe(() => {
         this.notify('Lưu thành công','success');
+        this.cardTypeName = val.name;
       })
     }
     else {
-      this.cardService.create(this.cardTypeObj).subscribe(result=>{
+      this.cardService.create(val).subscribe(result=>{
+        this.notify('Lưu thành công','success');
         this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
           this.router.navigate(['card-types/preferential-cards/form'], { queryParams: { id: result.id } });
-      });
-        this.notify('Lưu thành công','success');
+        });
       })
     }
   }
@@ -129,7 +151,7 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
     });
   }
 
-  onApplyAll(templateForm){
+  onApplyAll(){
     let productItems = this.getAllServices();
     let prices = productItems.map(x => x.listPrice);
     let min = Math.min(...prices);
@@ -146,14 +168,16 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
           x.computePrice == 'percentage' ? (x.percentPrice = res.price, x.fixedAmountPrice = null) :
           (x.fixedAmountPrice = res.price, x.percentPrice = null);
         });
+        this.f.productPricelistItems.patchValue(productItems);
+        this.touchedFixedAmount();
       }, () => {
     });
   }
 
   onApplyCateg(categId){
     let productItems = this.getAllServices();
-    productItems = productItems.filter(x => x.categId == categId);
-    let prices = productItems.map(x => x.listPrice);
+    let productItemsFiltered = productItems.filter(x => x.categId == categId);
+    let prices = productItemsFiltered.map(x => x.listPrice);
     let min = Math.min(...prices);
     let modalRef = this.modalService.open(ServiceCardTypeApplyDialogComponent, 
       { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
@@ -163,22 +187,21 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
         if (res.computePrice == 'percentage' && res.price <= 100 || res.computePrice == 'fixed_amount' && res.price <= min){
           this.notify('Áp dụng thành công','success');
         }
-        productItems.map(x => {
-          x.computePrice = res.computePrice;
-          x.computePrice == 'percentage' ? (x.percentPrice = res.price, x.fixedAmountPrice = null) :
-          (x.fixedAmountPrice = res.price, x.percentPrice = null);
+        this.productPricelistItems.controls.filter(x => x.value.categId === categId ).map(x => {
+          x.get('computePrice').patchValue(res.computePrice);
+          if(res.computePrice == 'percentage'){
+            x.get('percentPrice').patchValue(res.price);
+            x.get('fixedAmountPrice').patchValue(null);
+          }else{
+            x.get('percentPrice').patchValue(null);
+            x.get('fixedAmountPrice').patchValue(res.price);
+          }       
         });
-        
+        this.touchedFixedAmount();
       }, () => {
       });
   }
 
-  getAllServices(){
-    let productItems = this.categories.reduce((r,a) => {
-      return r.concat(a[0].products);
-    },[]);
-    return productItems;
-  }
 
   resetForm(){
     this.cardTypeObj  = {
@@ -194,6 +217,32 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
   changePeriod(product){
     product.percentPrice = null;
     product.fixedAmountPrice = null;
+  }
+
+  touchedFixedAmount() {
+    (<FormArray>this.cardForm.get('productPricelistItems')).controls.forEach((group: FormGroup) => {
+      (<any>Object).values(group.controls).forEach((control: FormControl) => { 
+          control.markAsTouched();
+      }) 
+    });
+    return;
+  }
+
+  getAllServices(){
+    let productItems = this.productPricelistItems.value;
+    return productItems;
+  }
+
+  getComputePrice(index){
+    return this.productPricelistItems.controls[index].value.computePrice;
+  }
+
+  get f(){
+    return this.cardForm.controls;
+  }
+
+  get productPricelistItems() {
+    return this.cardForm.get('productPricelistItems') as FormArray;
   }
 
 }
