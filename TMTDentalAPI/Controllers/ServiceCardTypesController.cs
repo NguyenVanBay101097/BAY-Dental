@@ -77,14 +77,23 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "ServiceCard.Type.Delete")]
         public async Task<IActionResult> Remove(Guid id)
         {
-            var type = await _cardTypeService.SearchQuery(x => x.Id == id).Include(x => x.ProductPricelist.Items).FirstOrDefaultAsync();
+            var type = await _cardTypeService.SearchQuery(x => x.Id == id)
+                .Include(x => x.ProductPricelist)
+                .FirstOrDefaultAsync();
+
             if (type == null)
                 return NotFound();
+
+            await _unitOfWork.BeginTransactionAsync();
+
             if (type.ProductPricelist != null)
             {
                 await _productPricelistService.DeleteAsync(type.ProductPricelist);
             }
+
             await _cardTypeService.DeleteAsync(type);
+
+            _unitOfWork.Commit();
 
             return NoContent();
         }
@@ -93,16 +102,38 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "ServiceCard.Type.Create")]
         public async Task<IActionResult> Create(CreateServiceCardTypeReq val)
         {
-            await _unitOfWork.BeginTransactionAsync();
-            var entity = _mapper.Map<ServiceCardType>(val);
-            var serviceItems = _mapper.Map<IEnumerable<ProductPricelistItem>>(val.ProductPricelistItems);
-            //tạo pricelist
-            _cardTypeService.SaveProductPricelistItem(entity, serviceItems);
-            //tạo loại thẻ
-            await _cardTypeService.CreateAsync(entity);
-            _unitOfWork.Commit();
+            var cardType = new ServiceCardType
+            { 
+                Name = val.Name,
+                Period = val.Period,
+                NbrPeriod = val.NbrPeriod,
+                CompanyId = val.CompanyId,
+            };
 
-            var basic = _mapper.Map<ServiceCardTypeDisplay>(entity);
+            var priceList = new ProductPricelist 
+            { 
+                Name = val.Name,
+                CompanyId = val.CompanyId,
+            };
+
+            foreach(var item in val.ProductPricelistItems)
+            {
+                priceList.Items.Add(new ProductPricelistItem
+                {
+                    AppliedOn = "0_product_variant",
+                    ComputePrice = item.ComputePrice,
+                    PercentPrice = item.PercentPrice,
+                    FixedAmountPrice = item.FixedAmountPrice,
+                    ProductId = item.ProductId
+                });
+            }
+
+            await _productPricelistService.CreateAsync(priceList);
+
+            cardType.ProductPricelistId = priceList.Id;
+            await _cardTypeService.CreateAsync(cardType);
+
+            var basic = _mapper.Map<ServiceCardTypeBasic>(cardType);
             return Ok(basic);
         }
 
@@ -110,19 +141,48 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "ServiceCard.Type.Update")]
         public async Task<IActionResult> Update(Guid id, CreateServiceCardTypeReq val)
         {
-            var entity = await _cardTypeService.SearchQuery(x => x.Id == id).Include(x => x.ProductPricelist.Items).FirstOrDefaultAsync();
-            if (entity == null)
-                return NotFound();
+            var cardType = await _cardTypeService.SearchQuery(x => x.Id == id)
+                .Include(x => x.ProductPricelist).ThenInclude(x => x.Items)
+                .FirstOrDefaultAsync();
 
-            await _unitOfWork.BeginTransactionAsync();
-            entity = _mapper.Map(val, entity);
-            var serviceItems = _mapper.Map<IEnumerable<ProductPricelistItem>>(val.ProductPricelistItems);
-            //tạo pricelist
-            _cardTypeService.SaveProductPricelistItem(entity, serviceItems);
-            //update loại thẻ
-            await _cardTypeService.UpdateAsync(entity);
-            _unitOfWork.Commit();
+            var priceList = cardType.ProductPricelist;
+            priceList.Name = val.Name;
 
+            var itemsRemove = new List<ProductPricelistItem>();
+            foreach(var item in priceList.Items)
+            {
+                if (!val.ProductPricelistItems.Any(x => x.Id == item.Id))
+                    itemsRemove.Add(item);
+            }
+
+            foreach (var item in itemsRemove)
+                priceList.Items.Remove(item);
+
+            foreach (var item in val.ProductPricelistItems)
+            {
+                if (!item.Id.HasValue || item.Id == Guid.Empty)
+                {
+                    priceList.Items.Add(new ProductPricelistItem
+                    {
+                        AppliedOn = "0_product_variant",
+                        ComputePrice = item.ComputePrice,
+                        PercentPrice = item.PercentPrice,
+                        FixedAmountPrice = item.FixedAmountPrice,
+                        ProductId = item.ProductId
+                    });
+                }
+                else
+                {
+                    var plItem = priceList.Items.Where(x => x.Id == item.Id).FirstOrDefault();
+                    plItem.ComputePrice = item.ComputePrice;
+                    plItem.PercentPrice = item.PercentPrice;
+                    plItem.FixedAmountPrice = item.FixedAmountPrice;
+                }
+            }
+
+            await _productPricelistService.UpdateAsync(priceList);
+
+            await _cardTypeService.UpdateAsync(cardType);
             return NoContent();
         }
 
