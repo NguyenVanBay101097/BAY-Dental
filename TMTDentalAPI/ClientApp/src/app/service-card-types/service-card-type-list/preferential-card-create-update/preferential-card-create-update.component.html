@@ -49,11 +49,8 @@
                                 <td colspan="1" style="width: 100%">
                                     <div class="d-flex align-items-center w-100 mb-3">
                                         <div class="mr-2">
-                                            <select class="form-control select-control" formControlName="nbrPeriod">
-                                                <option *ngFor="let i of periodList" value="{{i}}">
-                                                    {{i}}
-                                                </option>
-                                            </select>
+                                            <kendo-numerictextbox formControlName="nbrPeriod" [min]="0">
+                                            </kendo-numerictextbox>
                                         </div>
                                         <div>
                                             <select class="form-control select-control" formControlName="period">

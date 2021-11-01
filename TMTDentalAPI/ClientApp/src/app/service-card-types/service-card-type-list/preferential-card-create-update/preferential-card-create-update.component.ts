@@ -112,8 +112,8 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
     this.objCategories[event.categId].products.push(event);
     this.productPricelistItems.push(this.fb.group({
       productId:event.productId,
-      percentPrice: null,
-      fixedAmountPrice: null,
+      percentPrice: 0,
+      fixedAmountPrice: 0,
       computePrice: 'percentage',
       listPrice: event.listPrice,
       categId: event.categId
