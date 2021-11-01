@@ -107,8 +107,8 @@ export class LaboBiteJointListComponent implements OnInit {
 
   deleteItem(item: LaboBiteJointBasic) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Xóa kiểu nhịp Labo';
-    modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa kiểu nhịp Labo ${item.name}?`;
+    modalRef.componentInstance.title = 'Xóa khớp cắn Labo';
+    modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa khớp cắn Labo ${item.name}?`;
     modalRef.result.then(() => {
       this.laboBiteJointService.delete(item.id).subscribe(() => {
         this.notify('success','Xóa thành công');
