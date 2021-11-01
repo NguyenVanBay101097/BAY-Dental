@@ -7,6 +7,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { AgentService } from 'src/app/agents/agent.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { ToothDiagnosisSave } from 'src/app/tooth-diagnosis/tooth-diagnosis.service';
 import { CommissionSettlementFilterReport, CommissionSettlementsService } from '../commission-settlements.service';
 
 @Component({
@@ -59,6 +60,8 @@ export class CommissionSettlementAgentReportDetailComponent implements OnInit {
       this.agentList = result.items;
       this.agentCbx.loading = false;
     })
+    this.dateFrom = this.monthStart;
+    this.dateTo = this.monthEnd;
     this.loadAgentList();
     this.loadDataFromApi();
   }
