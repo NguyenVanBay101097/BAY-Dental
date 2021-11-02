@@ -55,6 +55,7 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
     this.loadDataFromApi();
     this.loadIncomAmountTotalAgent();
     this.loadAgent();
+    this.loadSumAmountTotal();
   }
 
   loadAgent(){
@@ -85,15 +86,20 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
     this.gridData = {
       data: items.slice(this.skip, this.skip + this.limit),
       total: items.length
-    };
+    };   
+  }
 
-    const result = aggregateBy(this.items, [
-      { aggregate: "sum", field: "baseAmount" },
-      { aggregate: "sum", field: "amount" },
-    ]);
-
-    this.baseAmount = result.baseAmount ? result.baseAmount.sum : 0;
-    this.amount = result.amount ? result.amount.sum : 0;
+  loadSumAmountTotal()
+  {
+    var val = new CommissionSettlementFilterReport();
+    val.agentId = this.agentId ? this.agentId : '';
+    val.groupBy = 'agent';
+    this.commissionSettlementsService.getSumAmountTotalReport(val).subscribe((res: any) => {
+      this.baseAmount = res.totalBaseAmount;
+      this.amount = res.totalComissionAmount;
+    }, err => {
+      console.log(err);
+    });
   }
 
   loadIncomAmountTotalAgent() {
@@ -136,6 +142,7 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
       this.notifyService.notify('success', 'Thanh toán thành công');
       this.loadDataFromApi();
       this.loadIncomAmountTotalAgent();
+      this.loadSumAmountTotal();
     }, er => { })   
   }
 

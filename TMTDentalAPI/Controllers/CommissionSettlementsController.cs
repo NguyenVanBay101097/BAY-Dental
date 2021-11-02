@@ -68,6 +68,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.Commission")]
+        public async Task<IActionResult> GetSumAmountTotalReport(CommissionSettlementFilterReport val)
+        {
+            var result = await _commissionSettlementService.GetSumAmountTotalReport(val);
+            return Ok(result);
+        }
+
         [HttpGet("[action]")]
         public async Task<IActionResult> ExportExcel([FromQuery] CommissionSettlementFilterReport val)
         {

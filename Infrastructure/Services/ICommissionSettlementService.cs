@@ -19,6 +19,9 @@ namespace Infrastructure.Services
         Task<PagedResult2<CommissionSettlementReportDetailOutput>> GetReportDetail(CommissionSettlementFilterReport val);
         Task<decimal> GetSumReport(CommissionSettlementFilterReport val);
         Task<IEnumerable<CommissionSettlementOverview>> GetCommissionSettlements(DateTime? dateFrom, DateTime? dateTo, string classify, string groupBy);
+
+        Task<SumAmountTotalReponse> GetSumAmountTotalReport(CommissionSettlementFilterReport val);
+
         string CommissionType(string commType);
 
         string Classify(string val);

@@ -226,6 +226,18 @@ namespace Infrastructure.Services
             return await query.GroupBy(x => new { x.EmployeeId.Value, Amount = x.Amount.Value }).SumAsync(x => x.Key.Amount);
         }
 
+        public async Task<SumAmountTotalReponse> GetSumAmountTotalReport(CommissionSettlementFilterReport val)
+        {
+            var query = GetQueryableReportPaged(val);
+
+            var res = new SumAmountTotalReponse();
+            res.TotalAmount = await query.SumAsync(x => x.TotalAmount ?? 0);
+            res.TotalBaseAmount = await query.SumAsync(x => x.BaseAmount ?? 0);
+            res.TotalComissionAmount = await query.SumAsync(x => x.Amount ?? 0);
+
+            return res;
+        }
+
         public IQueryable<CommissionSettlement> GetQueryableReportPaged(CommissionSettlementFilterReport val)
         {
             var query = SearchQuery();

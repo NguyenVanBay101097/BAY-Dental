@@ -85,6 +85,10 @@ export class CommissionSettlementsService {
     return this.http.post(this.baseApi + this.apiUrl + '/GetSumReport', val);
   }
 
+  getSumAmountTotalReport(val: any) {
+    return this.http.post(this.baseApi + this.apiUrl + '/GetSumAmountTotalReport', val);
+  }
+
   getAgentOverview(val: CommissionSettlementOverviewFilter){
     return this.http.post(this.baseApi + this.apiUrl + '/GetCommissionSettlementReport',val);
   }

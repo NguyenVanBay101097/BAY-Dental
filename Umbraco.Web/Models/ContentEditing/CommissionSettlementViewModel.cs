@@ -262,4 +262,18 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public decimal Amount { get; set; }
     }
+
+    public class SumAmountTotalReponse {
+
+        /// <summary>
+        /// Tổng tiên thanh toán
+        /// </summary>
+        public decimal TotalAmount { get; set; }
+
+        //Tong tiền lợi nhuận
+        public decimal TotalBaseAmount { get; set; }
+
+        //Tong tiền hoa hồng
+        public decimal TotalComissionAmount { get; set; }
+    }
 }
