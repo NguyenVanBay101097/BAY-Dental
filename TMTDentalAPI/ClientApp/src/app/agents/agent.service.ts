@@ -152,7 +152,7 @@ export class AgentService {
   }
 
   getAmountDebitTotalAgent(val) {
-    return this.http.get<number>(this.base_api + this.apiUrl + '/GetAmountDebitTotalAgent', { params: new HttpParams({ fromObject: val }) });
+    return this.http.get(this.base_api + this.apiUrl + '/GetAmountDebitTotalAgent', { params: new HttpParams({ fromObject: val }) });
   }
 
   get(id): Observable<AgentDisplay> {

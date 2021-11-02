@@ -314,24 +314,19 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<decimal> GetAmountDebitTotalAgent(Guid id, Guid? companyId, DateTime? dateFrom, DateTime? dateTo)
+        public async Task<AmountDebitTotalAgentReponse> GetAmountDebitTotalAgent(Guid id, Guid? companyId, DateTime? dateFrom, DateTime? dateTo)
         {
-            var phieuThuChiObj = GetService<IPhieuThuChiService>();
+            var moveLineObj = GetService<IAccountMoveLineService>();
 
-            var query = phieuThuChiObj.SearchQuery(x => x.AgentId == id && x.State == "posted");
+            var agent = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+            var query = moveLineObj._QueryGet(dateTo: dateTo, dateFrom: dateFrom, companyId: companyId, state: "posted");
 
-            if (companyId.HasValue)
-                query = query.Where(x => x.CompanyId == companyId);
+            query = query.Where(x => x.PartnerId == agent.PartnerId && x.Account.Code == "HHNGT");
 
-            if (dateFrom.HasValue)
-                query = query.Where(x => x.Date > dateFrom.Value.AbsoluteBeginOfDate());
+            var res = new AmountDebitTotalAgentReponse();
+            res.AmountDebitTotal = await query.SumAsync(s => s.Debit);
 
-
-            if (dateTo.HasValue)
-                query = query.Where(x => x.Date <= dateTo.Value.AbsoluteEndOfDate());
-
-            var amountTotal = await query.SumAsync(s => s.Amount);
-            return amountTotal;
+            return res;
         }
 
         public async Task<PagedResult2<AgentInfo>> GetAgentPagedResult(AgentPaged val)

@@ -35,7 +35,8 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
   baseAmount: number = 0;
   amount: number = 0;
   commissionPaid: number = 0;
-  amountTotalDebit = 0;
+  amountDebit: any;
+  totalAmountAgent: any;
   agentObj: any;
   constructor(
     private intl: IntlService,
@@ -46,20 +47,20 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
     private agentService: AgentService,
     private notifyService: NotifyService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
-    ) { this.pagerSettings = config.pagerSettings }
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd;
     this.agentId = this.route.parent.snapshot.paramMap.get('id');
     this.loadDataFromApi();
-    this.loadIncomAmountTotalAgent();
+    this.loadAmountDebitTotalAgent();
     this.loadAgent();
     this.loadSumAmountTotal();
   }
 
-  loadAgent(){
-    this.agentService.get(this.agentId).subscribe((res:any)=>{
+  loadAgent() {
+    this.agentService.get(this.agentId).subscribe((res: any) => {
       this.agentObj = res;
     });
   }
@@ -86,29 +87,27 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
     this.gridData = {
       data: items.slice(this.skip, this.skip + this.limit),
       total: items.length
-    };   
+    };
   }
 
-  loadSumAmountTotal()
-  {
+  loadSumAmountTotal() {
     var val = new CommissionSettlementFilterReport();
     val.agentId = this.agentId ? this.agentId : '';
     val.groupBy = 'agent';
     this.commissionSettlementsService.getSumAmountTotalReport(val).subscribe((res: any) => {
-      this.baseAmount = res.totalBaseAmount;
-      this.amount = res.totalComissionAmount;
+      this.totalAmountAgent = res;
     }, err => {
       console.log(err);
     });
   }
 
-  loadIncomAmountTotalAgent() {
+  loadAmountDebitTotalAgent() {
     if (this.agentId) {
       var val = new TotalAmountAgentFilter();
       val.agentId = this.agentId;
       val.companyId = this.authService.userInfo.companyId;
       this.agentService.getAmountDebitTotalAgent(val).subscribe((res: any) => {
-        this.amountTotalDebit = res;
+        this.amountDebit = res;
       },
         (error) => {
           console.log(error);
@@ -130,23 +129,23 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
     this.loadItems(this.items);
   }
 
-  actionPayment(){
+  actionPayment() {
     const modalRef = this.modalService.open(CommissionSettlementAgentPaymentDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Chi hoa hồng';
     modalRef.componentInstance.type = 'chi';
     modalRef.componentInstance.accountType = 'commission';
     modalRef.componentInstance.agentId = this.agentId;
-    modalRef.componentInstance.amountBalanceTotal = this.amount - this.amountTotalDebit;
+    modalRef.componentInstance.amountBalanceTotal = this.totalAmountAgent.totalComissionAmount - this.amountDebit.amountDebitTotal;
     modalRef.componentInstance.partnerId = this.agentObj ? this.agentObj.partnerId : null;
     modalRef.result.then(() => {
       this.notifyService.notify('success', 'Thanh toán thành công');
       this.loadDataFromApi();
-      this.loadIncomAmountTotalAgent();
+      this.loadAmountDebitTotalAgent();
       this.loadSumAmountTotal();
-    }, er => { })   
+    }, er => { })
   }
 
-  exportExcelFile(){
+  exportExcelFile() {
     var val = new CommissionSettlementFilterReport();
     val.dateFrom = this.dateFrom ? this.intl.formatDate(this.dateFrom, 'yyyy-MM-ddTHH:mm:ss') : '';
     val.dateTo = this.dateTo ? this.intl.formatDate(this.dateTo, 'yyyy-MM-ddTHH:mm:ss') : '';

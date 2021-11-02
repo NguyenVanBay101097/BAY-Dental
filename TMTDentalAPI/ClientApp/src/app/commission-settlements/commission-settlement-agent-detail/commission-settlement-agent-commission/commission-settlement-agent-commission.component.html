@@ -4,7 +4,7 @@
             <h6>Lợi nhuận tính hoa hồng</h6>
         </div>
         <h4 class="text-primary">
-            {{baseAmount || 0 | number }}
+            {{totalAmountAgent.totalBaseAmount || 0 | number }}
         </h4>
     </div>
     <div class="revenue">
@@ -12,7 +12,7 @@
             <h6>Tiền hoa hồng</h6>
         </div>
         <h4 class="text-primary">
-            {{amount || 0 | number }}
+            {{totalAmountAgent.totalComissionAmount || 0 | number }}
         </h4>
     </div>
     <div class="revenue">
@@ -20,7 +20,7 @@
             <h6>Hoa hồng đã chi</h6>
         </div>
         <h4 class="text-primary">
-            {{ amountTotalDebit || 0 | number}}
+            {{amountDebit.amountDebitTotal || 0 | number}}
         </h4>
     </div>
     <div class="revenue">
@@ -28,7 +28,7 @@
             <h6>Còn lại</h6>
         </div>
         <h4 class="text-primary">
-            {{ (amount - amountTotalDebit) || 0 | number}}
+            {{(totalAmountAgent.totalComissionAmount - amountDebit.amountDebitTotal) || 0 | number}}
         </h4>
     </div>
 </div>

@@ -299,4 +299,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal AmountBalanceTotal { get; set; }
     }
 
+    public class AmountDebitTotalAgentReponse
+    {
+        public decimal AmountDebitTotal { get; set; }
+    }
+
 }
