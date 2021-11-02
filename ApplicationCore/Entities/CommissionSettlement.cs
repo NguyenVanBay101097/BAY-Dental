@@ -6,6 +6,11 @@ namespace ApplicationCore.Entities
 {
     public class CommissionSettlement : BaseEntity
     {
+        public CommissionSettlement()
+        {
+            Date = DateTime.Now;
+        }
+
         public Guid? PartnerId { get; set; }
         public Partner Partner { get; set; }
 
@@ -58,5 +63,7 @@ namespace ApplicationCore.Entities
         public Guid? SaleOrderLineId { get; set; }
         public SaleOrderLine SaleOrderLine { get; set; }
 
+        public Guid? HistoryLineId { get; set; }
+        public SaleOrderPaymentHistoryLine HistoryLine { get; set; }
     }
 }

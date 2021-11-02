@@ -36,6 +36,9 @@ namespace Infrastructure.EntityConfigurations
             .WithMany()
             .HasForeignKey(x => x.ProductId);
 
+            builder.HasOne(x => x.HistoryLine)
+               .WithMany()
+               .HasForeignKey(x => x.HistoryLineId);
 
             builder.HasOne(x => x.CreatedBy)
             .WithMany()

@@ -12,7 +12,7 @@ import { CommissionSettlementAgentPaymentDialogComponent } from '../commission-s
 import { CommissionSettlementsModule } from '../commission-settlements/commission-settlements.module';
 
 @NgModule({
-  declarations: [AgentListComponent],
+  declarations: [AgentListComponent, AgentCommmissionPaymentDialogComponent],
   imports: [
     CommonModule,
     AgentRoutingModule,

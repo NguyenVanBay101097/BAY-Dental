@@ -159,6 +159,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Nguồn
         /// </summary>
         public string InvoiceOrigin { get; set; }
+        public Guid? SaleOrderId { get; set; }
         public string Name { get; set; }
         public string CommissionType { get; set; }
 
@@ -169,6 +170,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// partner : đối tác
         /// </summary>
         public string Classify { get; set; }
+
+        public decimal? TotalAmount { get; set; }
     }
 
     public class CommissionSettlementReportDetailOutputExcel

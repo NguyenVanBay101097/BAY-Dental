@@ -73,12 +73,20 @@
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="invoiceOrigin" title="Số phiếu" width="100">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            <a *ngIf="dataItem.saleOrderId" [routerLink]="['/sale-orders/', dataItem.saleOrderId]" class="text-primary">{{dataItem.invoiceOrigin}}</a>
+        </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="partnerName" title="Khách hàng" width="150">
     </kendo-grid-column>
     <kendo-grid-column field="productName" title="Dịch vụ" width="200">
     </kendo-grid-column>
-    <kendo-grid-column field="baseAmount" title="Lợi nhuận tính hoa hồng" class="text-right" width="250">
+    <kendo-grid-column field="totalAmount" title="Số tiền thanh toán" width="150" class="text-right">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.totalAmount | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="baseAmount" title="Lợi nhuận tính hoa hồng" class="text-right" width="200">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{ dataItem.baseAmount || 0 | number }}
         </ng-template>

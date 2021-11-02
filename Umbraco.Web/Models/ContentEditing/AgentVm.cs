@@ -158,6 +158,22 @@ namespace Umbraco.Web.Models.ContentEditing
         public string AccountHolder { get; set; }
 
         public CommissionBasic Commission { get; set; }
+
+        public string ClassifyDisplay
+        {
+            get
+            {
+                switch(Classify)
+                {
+                    case "customer":
+                        return "Khách hàng";
+                    case "employee":
+                        return "Nhân viên";
+                    default:
+                        return "Đối tác";
+                }
+            }
+        }
     }
 
     public class AgentPrintVM

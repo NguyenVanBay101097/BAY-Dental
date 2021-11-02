@@ -20,7 +20,7 @@ import { CommissionSettlementFilterReport, CommissionSettlementsService } from '
 })
 export class CommissionSettlementAgentCommissionComponent implements OnInit {
   gridData: GridDataResult;
-  limit = 2;
+  limit = 20;
   skip = 0;
   pagerSettings: any;
   loading = false;

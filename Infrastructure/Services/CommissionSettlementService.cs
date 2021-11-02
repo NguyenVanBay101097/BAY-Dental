@@ -204,11 +204,13 @@ namespace Infrastructure.Services
                 Date = x.Date,
                 Percentage = x.Percentage,
                 ProductName = x.Product.Name,
-                PartnerName = x.MoveLine.Partner.Name,
-                InvoiceOrigin = x.MoveLine.Move.InvoiceOrigin,
+                PartnerName = x.SaleOrderLine.OrderPartner.Name,
+                InvoiceOrigin = x.SaleOrderLine.Order.Name,
                 CommissionType = x.Commission.Type,
                 Classify = x.Agent.Classify,
-                Name = val.GroupBy == "employee" ? x.Employee.Name : x.Agent.Name
+                Name = x.Partner.Name,
+                TotalAmount = x.TotalAmount,
+                SaleOrderId = x.SaleOrderLine.OrderId
             }).ToListAsync();
 
             return new PagedResult2<CommissionSettlementReportDetailOutput>(totalItems, val.Offset, val.Limit)
