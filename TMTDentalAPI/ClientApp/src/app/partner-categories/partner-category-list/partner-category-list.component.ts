@@ -1,14 +1,14 @@
-import { Component, ViewChild, OnInit, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { PartnerCategoryService, PartnerCategoryPaged, PartnerCategoryBasic } from '../partner-category.service';
-import { PartnerCategoryCuDialogComponent } from '../partner-category-cu-dialog/partner-category-cu-dialog.component';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { PartnerCategoryImportComponent } from '../partner-category-import/partner-category-import.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { NotifyService } from 'src/app/shared/services/notify.service';
+import { PartnerCategoryCuDialogComponent } from '../partner-category-cu-dialog/partner-category-cu-dialog.component';
+import { PartnerCategoryImportComponent } from '../partner-category-import/partner-category-import.component';
+import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } from '../partner-category.service';
 
 @Component({
   selector: 'app-partner-category-list',

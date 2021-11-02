@@ -1,15 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ResConfigSettingsService } from '../res-config-settings.service';
-import { AuthService } from 'src/app/auth/auth.service';
-import { NotificationService } from '@progress/kendo-angular-notification';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { PrintPaperSizeBasic, PrintPaperSizePaged, PrintPaperSizeService } from 'src/app/config-prints/print-paper-size.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { IntlService } from '@progress/kendo-angular-intl';
 import * as _ from 'lodash';
-import { SmsMessageService } from 'src/app/sms/sms-message.service';
-import { SmsCampaignService } from 'src/app/sms/sms-campaign.service';
-import { forkJoin } from 'rxjs';
+import { AuthService } from 'src/app/auth/auth.service';
+import { PrintPaperSizeBasic, PrintPaperSizePaged, PrintPaperSizeService } from 'src/app/config-prints/print-paper-size.service';
+import { ResConfigSettingsService } from '../res-config-settings.service';
 
 @Component({
   selector: 'app-res-config-settings-form',

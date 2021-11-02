@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
-import { ToothDiagnosisSave } from 'src/app/tooth-diagnosis/tooth-diagnosis.service';
 
 @Component({
   selector: 'app-discount-popover-share',

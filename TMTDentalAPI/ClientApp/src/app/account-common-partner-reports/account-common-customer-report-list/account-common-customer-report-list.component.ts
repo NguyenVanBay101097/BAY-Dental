@@ -1,17 +1,15 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { AccountCommonPartnerReportService, AccountCommonPartnerReportSearch, AccountCommonPartnerReportItem } from '../account-common-partner-report.service';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { PartnerService } from 'src/app/partners/partner.service';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { debounceTime, tap, switchMap, distinctUntilChanged } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import { aggregateBy } from '@progress/kendo-data-query';
 import { ActivatedRoute } from '@angular/router';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { IntlService } from '@progress/kendo-angular-intl';
+import { aggregateBy } from '@progress/kendo-data-query';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
-import { PrintService } from 'src/app/shared/services/print.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { PrintService } from 'src/app/shared/services/print.service';
+import { AccountCommonPartnerReportItem, AccountCommonPartnerReportSearch, AccountCommonPartnerReportService } from '../account-common-partner-report.service';
 
 @Component({
   selector: 'app-account-common-customer-report-list',
@@ -45,7 +43,6 @@ export class AccountCommonCustomerReportListComponent implements OnInit {
   constructor(private reportService: AccountCommonPartnerReportService, private intlService: IntlService,
     private route: ActivatedRoute,
     private companyService: CompanyService,
-    private partnerService: PartnerService,
     private printService: PrintService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }

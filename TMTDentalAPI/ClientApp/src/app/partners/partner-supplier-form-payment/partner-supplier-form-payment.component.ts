@@ -7,7 +7,6 @@ import { map } from 'rxjs/operators';
 import { AccountPaymentPaged, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
-import { AccountPaymentsOdataService } from 'src/app/shared/services/account-payments-odata.service';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { PartnerService } from '../partner.service';
 
@@ -28,7 +27,6 @@ export class PartnerSupplierFormPaymentComponent implements OnInit {
     private modalService: NgbModal,
     private paymentService: AccountPaymentService,
     private activeRoute: ActivatedRoute,
-    private accountPaymentOdataService: AccountPaymentsOdataService,
     private printService: PrintService,
     private notificationService: NotificationService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig

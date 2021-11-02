@@ -1,7 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
@@ -45,7 +44,6 @@ export class OrderLaboListComponent implements OnInit {
   constructor(
     private laboOrderService: LaboOrderService,
     private modalService: NgbModal,
-    private intlService: IntlService,
     private notificationService: NotificationService, 
     private checkPermissionService: CheckPermissionService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig

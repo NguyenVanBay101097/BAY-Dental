@@ -1,15 +1,14 @@
-import { SamplePrescriptionBasic, SamplePrescriptionsSave, SamplePrescriptionsDisplay } from './../sample-prescriptions.service';
 import { Component, Inject, OnInit } from '@angular/core';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { SamplePrescriptionsService, SamplePrescriptionsPaged } from '../sample-prescriptions.service';
-import { Subject } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ActivatedRoute } from '@angular/router';
-import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { SamplePrescriptionCreateUpdateDialogComponent } from '../sample-prescription-create-update-dialog/sample-prescription-create-update-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { NotifyService } from 'src/app/shared/services/notify.service';
+import { SamplePrescriptionCreateUpdateDialogComponent } from '../sample-prescription-create-update-dialog/sample-prescription-create-update-dialog.component';
+import { SamplePrescriptionsPaged, SamplePrescriptionsService } from '../sample-prescriptions.service';
+import { SamplePrescriptionBasic, SamplePrescriptionsDisplay } from './../sample-prescriptions.service';
 
 @Component({
   selector: 'app-sample-prescription-list',
@@ -30,7 +29,7 @@ export class SamplePrescriptionListComponent implements OnInit {
 
   constructor(
     private samplePrescriptionsService: SamplePrescriptionsService,
-    private modalService: NgbModal, private route: ActivatedRoute,
+    private modalService: NgbModal,
     private notifyService: NotifyService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }

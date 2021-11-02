@@ -1,10 +1,8 @@
 import { AppointmentBasic } from 'src/app/appointment/appointment';
-import { AppComponent } from './../app.component';
 import { PartnerSimple } from '../partners/partner-simple';
-
-import { UserSimple } from '../users/user-simple';
 import { SaleOrderBasic } from '../sale-orders/sale-order-basic';
-import { PartnerImageBasic } from '../partners/partner.service';
+import { UserSimple } from '../users/user-simple';
+
 
 export class DotKhamDefaultGet {
     invoiceId: string;

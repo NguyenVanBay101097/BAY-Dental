@@ -4,7 +4,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { result } from 'lodash';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AdvisoryPaged, AdvisoryService, AdvisoryToothAdvise, CreateFromAdvisoryInput } from 'src/app/advisories/advisory.service';
@@ -13,7 +12,6 @@ import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-ken
 import { PrintService } from 'src/app/shared/services/print.service';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
 import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
-import { ToothDiagnosisService } from 'src/app/tooth-diagnosis/tooth-diagnosis.service';
 import { PartnerCustomerAdvisoryCuDialogComponent } from '../partner-customer-advisory-cu-dialog/partner-customer-advisory-cu-dialog.component';
 
 @Component({

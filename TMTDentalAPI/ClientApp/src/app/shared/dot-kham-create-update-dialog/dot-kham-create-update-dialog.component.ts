@@ -1,45 +1,37 @@
-import { Component, OnInit, ViewChild, Injector, ElementRef, AfterViewInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { PartnerService, PartnerFilter, PartnerImageBasic, PartnerImageViewModel } from 'src/app/partners/partner.service';
-import { debounceTime, tap, switchMap, map, mergeMap } from 'rxjs/operators';
-import { Observable, pipe } from 'rxjs';
-import { ActivatedRoute, Router, ParamMap } from '@angular/router';
-import { UserSimple } from 'src/app/users/user-simple';
-import { UserService, UserPaged } from 'src/app/users/user.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { ToaThuocCuDialogComponent } from 'src/app/toa-thuocs/toa-thuoc-cu-dialog/toa-thuoc-cu-dialog.component';
-import { ToaThuocBasic, ToaThuocService, ToaThuocPrint } from 'src/app/toa-thuocs/toa-thuoc.service';
+import { Operation } from 'fast-json-patch';
 import * as _ from 'lodash';
-import { DotKhamLineCuDialogComponent } from 'src/app/dot-kham-lines/dot-kham-line-cu-dialog/dot-kham-line-cu-dialog.component';
+import { Observable } from 'rxjs';
+import { debounceTime, map, switchMap, tap } from 'rxjs/operators';
+import { AppointmentBasic } from 'src/app/appointment/appointment';
+import { DotKhamStepAssignDotKhamVM, DotKhamStepService, DotKhamStepSetDone } from 'src/app/dot-khams/dot-kham-step.service';
+import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
+import { DotKhamDefaultGet, DotKhamDisplay, DotKhamPatch, DotKhamStepDisplay, DotKhamStepSave } from 'src/app/dot-khams/dot-khams';
+import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
+import { EmployeeService } from 'src/app/employees/employee.service';
 import { LaboOrderLineCuDialogComponent } from 'src/app/labo-order-lines/labo-order-line-cu-dialog/labo-order-line-cu-dialog.component';
 import { LaboOrderLineBasic } from 'src/app/labo-order-lines/labo-order-line.service';
-import { AppointmentCuDialogComponent } from 'src/app/appointment/appointment-cu-dialog/appointment-cu-dialog.component';
-import { AppointmentBasic, AppointmentPaged } from 'src/app/appointment/appointment';
-import { AppointmentService } from 'src/app/appointment/appointment.service';
-import { ProductService } from 'src/app/products/product.service';
-import { ProductStepDisplay } from 'src/app/products/product-step';
-import { EmployeeSimple, EmployeePaged } from 'src/app/employees/employee';
-import { EmployeeService } from 'src/app/employees/employee.service';
-import { ProductSimple } from 'src/app/products/product-simple';
-import { moveItemInArray, CdkDragDrop, transferArrayItem } from '@angular/cdk/drag-drop';
-import { timeInRange } from '@progress/kendo-angular-dateinputs/dist/es2015/util';
-import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { IrAttachmentSearchRead, IrAttachmentBasic } from 'src/app/shared/shared';
-import { ImageViewerComponent } from 'src/app/shared/image-viewer/image-viewer.component';
 import { LaboOrderBasic } from 'src/app/labo-orders/labo-order.service';
-import { environment } from 'src/environments/environment';
-import { Operation } from 'fast-json-patch';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
+import { PartnerFilter, PartnerImageBasic, PartnerImageViewModel, PartnerService } from 'src/app/partners/partner.service';
+import { ProductSimple } from 'src/app/products/product-simple';
 import { SaleOrderCreateDotKhamDialogComponent } from 'src/app/sale-orders/sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
-import { ToaThuocPrintComponent } from 'src/app/shared/toa-thuoc-print/toa-thuoc-print.component';
 import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { ImageViewerComponent } from 'src/app/shared/image-viewer/image-viewer.component';
 import { ToaThuocCuDialogSaveComponent } from 'src/app/shared/toa-thuoc-cu-dialog-save/toa-thuoc-cu-dialog-save.component';
-import { DotKhamStepDisplay, DotKhamDisplay, DotKhamDefaultGet, DotKhamStepSave, DotKhamPatch } from 'src/app/dot-khams/dot-khams';
-import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
-import { DotKhamStepService, DotKhamStepAssignDotKhamVM, DotKhamStepSetDone } from 'src/app/dot-khams/dot-kham-step.service';
+import { ToaThuocPrintComponent } from 'src/app/shared/toa-thuoc-print/toa-thuoc-print.component';
+import { ToaThuocBasic, ToaThuocPrint, ToaThuocService } from 'src/app/toa-thuocs/toa-thuoc.service';
+import { UserSimple } from 'src/app/users/user-simple';
+import { UserPaged, UserService } from 'src/app/users/user.service';
+import { environment } from 'src/environments/environment';
 declare var $: any;
 
 @Component({
@@ -120,7 +112,6 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
     private router: Router,
     private toaThuocService: ToaThuocService,
     private employeeService: EmployeeService,
-    private injector: Injector,
     private modalService: NgbModal,
     private dotKhamStepService: DotKhamStepService,
     public activeModal: NgbActiveModal,
@@ -945,5 +936,5 @@ export class DotKhamCreateUpdateDialogComponent implements OnInit {
     modalRef.componentInstance.partnerImages = this.imageViewModels;
     modalRef.componentInstance.partnerImageSelected = partnerImage;
   }
-  private propagateChange = (_: any) => { };
+  // private propagateChange = (_: any) => { };
 }

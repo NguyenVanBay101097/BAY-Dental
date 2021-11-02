@@ -1,12 +1,9 @@
-import { Component, OnInit, Inject, ViewChild, ElementRef, Input } from '@angular/core';
-import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
-import { WindowRef } from '@progress/kendo-angular-dialog';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { Observable } from 'rxjs';
-import { debounceTime, tap, switchMap } from 'rxjs/operators';
-import { PartnerCategoryService, PartnerCategoryBasic, PartnerCategoryPaged } from '../partner-category.service';
-import * as _ from 'lodash';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } from '../partner-category.service';
 
 @Component({
   selector: 'app-partner-category-cu-dialog',

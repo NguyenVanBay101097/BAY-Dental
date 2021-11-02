@@ -1,40 +1,31 @@
-import { EmployeePaged, EmployeeSimple } from './../../employees/employee';
-import { Component, ElementRef, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { FormGroup, FormBuilder, FormArray, FormControl, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, ParamMap } from '@angular/router';
+import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
-import { debounceTime, tap, switchMap } from 'rxjs/operators';
-import { PaymentInfoContent } from 'src/app/account-invoices/account-invoice.service';
-import { AccountJournalFilter, AccountJournalService, AccountJournalSimple } from 'src/app/account-journals/account-journal.service';
-import { AccountPaymentBasic } from 'src/app/account-payments/account-payment.service';
-import { AuthService } from 'src/app/auth/auth.service';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { SaleOrderService } from 'src/app/core/services/sale-order.service';
-import { DotKhamBasic } from 'src/app/dot-khams/dot-khams';
-import { LaboOrderBasic } from 'src/app/labo-orders/labo-order.service';
-import { AccountPaymentPrintComponent } from 'src/app/shared/account-payment-print/account-payment-print.component';
+import { EmployeeService } from 'src/app/employees/employee.service';
+import { SaleCouponProgramService } from 'src/app/sale-coupon-promotion/sale-coupon-program.service';
+import { SaleOrderLineCuComponent } from 'src/app/sale-orders/sale-order-line-cu/sale-order-line-cu.component';
+import { SaleOrderPromotionSave } from 'src/app/sale-orders/sale-order-promotion.service';
 import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
 import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
-import { ToaThuocCuDialogSaveComponent } from 'src/app/shared/toa-thuoc-cu-dialog-save/toa-thuoc-cu-dialog-save.component';
-import { ToaThuocPrintComponent } from 'src/app/shared/toa-thuoc-print/toa-thuoc-print.component';
-import { ToaThuocService } from 'src/app/toa-thuocs/toa-thuoc.service';
-import { PartnerSimple, PartnerPaged, PartnerBasic } from '../partner-simple';
-import { PartnerService } from '../partner.service';
 import { PrintSaleOrderComponent } from 'src/app/shared/print-sale-order/print-sale-order.component';
-import { PrintService } from 'src/app/shared/services/print.service';
-import { SaleOrderLineCuComponent } from 'src/app/sale-orders/sale-order-line-cu/sale-order-line-cu.component';
 import { NotifyService } from 'src/app/shared/services/notify.service';
-import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
-import { SaleOrderPromotionSave } from 'src/app/sale-orders/sale-order-promotion.service';
+import { PrintService } from 'src/app/shared/services/print.service';
+import { ToaThuocCuDialogSaveComponent } from 'src/app/shared/toa-thuoc-cu-dialog-save/toa-thuoc-cu-dialog-save.component';
+import { ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
+import { ToaThuocService } from 'src/app/toa-thuocs/toa-thuoc.service';
+import { ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
 import { PartnerCustomerTreatmentFastPromotionComponent } from '../partner-customer-treatment-fast-promotion/partner-customer-treatment-fast-promotion.component';
 import { PartnerCustomerTreatmentLineFastPromotionComponent } from '../partner-customer-treatment-line-fast-promotion/partner-customer-treatment-line-fast-promotion.component';
-import { EmployeeService } from 'src/app/employees/employee.service';
-import { ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
-import { formatDate } from '@angular/common';
-import { SaleCouponProgramService } from 'src/app/sale-coupon-promotion/sale-coupon-program.service';
+import { PartnerBasic, PartnerPaged } from '../partner-simple';
+import { PartnerService } from '../partner.service';
+import { EmployeePaged } from './../../employees/employee';
 
 @Component({
   selector: 'app-partner-customer-treatment-payment-fast',
@@ -61,10 +52,9 @@ export class PartnerCustomerTreatmentPaymentFastComponent implements OnInit {
   submitted = false;
 
   constructor(private fb: FormBuilder, private partnerService: PartnerService, private toaThuocService: ToaThuocService,
-    private route: ActivatedRoute, private saleOrderService: SaleOrderService, private accountJournalService: AccountJournalService,
+    private route: ActivatedRoute, private saleOrderService: SaleOrderService,
     private intlService: IntlService, private modalService: NgbModal,
     private router: Router, private notificationService: NotificationService,
-    private authService: AuthService,
     private printService: PrintService,
     private notifyService: NotifyService,
     private toothCategoryService: ToothCategoryService,

@@ -1,14 +1,14 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
+import { Inject, Injectable } from "@angular/core";
+import { GridDataResult } from "@progress/kendo-angular-grid";
 import { Observable } from "rxjs";
-import { Injectable, Inject } from "@angular/core";
+import { map } from "rxjs/operators";
+import { PagedResult2 } from "../core/paged-result-2";
+import { UoMBasic } from "../uoms/uom.service";
 import { Product, ProductSave } from "./product";
 import { ProductPaging } from "./product-paging";
-import { GridDataResult } from "@progress/kendo-angular-grid";
-import { map } from "rxjs/operators";
 import { ProductSimple } from "./product-simple";
-import { ProductStepDisplay, ProductDisplayAndStep } from "./product-step";
-import { PagedResult2 } from "../core/paged-result-2";
-import { UoMDisplay, UoMBasic } from "../uoms/uom.service";
+import { ProductStepDisplay } from "./product-step";
 
 export class ProductFilter {
   search: string;

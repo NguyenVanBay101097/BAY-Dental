@@ -1,13 +1,9 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ProductService } from '../product.service';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { debounceTime, switchMap, tap } from 'rxjs/operators';
-import { ProductCategoryBasic, ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
-import * as _ from 'lodash';
-import { UomService } from 'src/app/uoms/uom.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { ProductCategoryBasic } from 'src/app/product-categories/product-category.service';
+import { ProductService } from '../product.service';
 
 @Component({
   selector: 'app-product-labo-cu-dialog',

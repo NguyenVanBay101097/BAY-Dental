@@ -1,12 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
-import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { SmsMessagePaged, SmsMessageService } from '../sms-message.service';
-// import { SmsTemplateService } from '../sms-template.service';
 
 @Component({
   selector: 'app-sms-message-statistic',

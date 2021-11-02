@@ -1,12 +1,7 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { Injectable, Inject } from "@angular/core";
-import { GridDataResult } from "@progress/kendo-angular-grid";
-import { map } from "rxjs/operators";
-import { PagedResult2 } from "../core/paged-result-2";
-import { UoMDisplay, UoMBasic } from "../uoms/uom.service";
-import { EmployeeSimple } from "../employees/employee";
+import { Inject, Injectable } from "@angular/core";
 import { AccountJournalSimple } from "../account-journals/account-journal.service";
+import { EmployeeSimple } from "../employees/employee";
 
 
 export class SalaryPaymentPaged {

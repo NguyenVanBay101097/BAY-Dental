@@ -1,7 +1,6 @@
-import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
-import { ChartDataset, ChartOptions, ChartType } from 'chart.js';
-import { BaseChartDirective } from 'ng2-charts';
+import { ChartDataset, ChartOptions } from 'chart.js';
 
 @Component({
   selector: 'app-sale-dashboard-cashbook-report',

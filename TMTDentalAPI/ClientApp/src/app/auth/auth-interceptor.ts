@@ -2,8 +2,6 @@ import {
     HttpEvent, HttpHandler, HttpInterceptor, HttpRequest
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-// import { map, catchError } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
 

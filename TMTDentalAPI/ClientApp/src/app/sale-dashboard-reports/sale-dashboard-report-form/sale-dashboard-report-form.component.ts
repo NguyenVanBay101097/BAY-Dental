@@ -1,16 +1,15 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { forkJoin, observable, Observable, of, Subject } from 'rxjs';
-import { debounceTime, map, switchMap, tap, groupBy } from 'rxjs/operators';
-import { AccountInvoiceReportService, RevenueReportFilter, RevenueTimeReportPar } from 'src/app/account-invoice-reports/account-invoice-report.service';
-import { CashBookReportFilter, CashBookService, CashBookSummarySearch, SumaryCashBookFilter } from 'src/app/cash-book/cash-book.service';
+import { forkJoin } from 'rxjs';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { AccountInvoiceReportService, RevenueTimeReportPar } from 'src/app/account-invoice-reports/account-invoice-report.service';
+import { CashBookReportFilter, CashBookService } from 'src/app/cash-book/cash-book.service';
 import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/company.service';
-import { DashboardReportService, SumaryRevenueReportFilter } from 'src/app/core/services/dashboard-report.service';
+import { DashboardReportService } from 'src/app/core/services/dashboard-report.service';
 import { CustomerReceiptReportFilter, CustomerReceiptReportService } from 'src/app/customer-receipt-reports/customer-receipt-report.service';
-import { PartnerOldNewReport, PartnerOldNewReportSearch, PartnerOldNewReportService, PartnerOldNewReportSumReq } from 'src/app/sale-report/partner-old-new-report.service';
+import { PartnerOldNewReportService } from 'src/app/sale-report/partner-old-new-report.service';
 
 @Component({
   selector: 'app-sale-dashboard-report-form',
@@ -46,7 +45,6 @@ export class SaleDashboardReportFormComponent implements OnInit {
   summaryReport: any;
 
   constructor(
-    private fb: FormBuilder,
     private revenueReportService: AccountInvoiceReportService,
     private companyService: CompanyService,
     private intlService: IntlService,

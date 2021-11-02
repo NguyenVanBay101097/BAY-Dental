@@ -1,9 +1,9 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { Injectable, Inject } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { PartnerSimple } from '../partners/partner-simple';
 import { ProductSimple } from '../products/product-simple';
-import { ToothBasic, ToothDisplay } from '../teeth/tooth.service';
+import { ToothDisplay } from '../teeth/tooth.service';
 import { ToothCategoryBasic } from '../tooth-categories/tooth-category.service';
 
 export class LaboOrderLineBasic {

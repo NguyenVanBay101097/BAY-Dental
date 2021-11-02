@@ -1,9 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
-import * as _ from 'lodash';
+import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from 'src/environments/environment';
 import { IrAttachmentBasic } from '../shared';
-import { PartnerImageViewModel, PartnerImageBasic } from 'src/app/partners/partner.service';
 
 @Component({
   selector: 'app-image-viewer',

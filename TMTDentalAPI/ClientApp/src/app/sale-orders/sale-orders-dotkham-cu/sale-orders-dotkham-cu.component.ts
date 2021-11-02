@@ -1,5 +1,4 @@
-import { IterableDiffer, IterableDiffers, KeyValueDiffer, KeyValueDiffers } from '@angular/core';
-import { Component, DoCheck, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, IterableDiffer, IterableDiffers, KeyValueDiffer, KeyValueDiffers, OnInit, Output, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
@@ -7,16 +6,13 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
-import { AuthService } from 'src/app/auth/auth.service';
 import { WebService } from 'src/app/core/services/web.service';
 import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
 import { EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { ImageViewerComponent } from 'src/app/shared/image-viewer/image-viewer.component';
-import { DotKhamLineDisplay, DotkhamOdataService } from 'src/app/shared/services/dotkham-odata.service';
 import { PartnerImageBasic } from 'src/app/shared/services/partners.service';
-import { SaleOrdersOdataService } from 'src/app/shared/services/sale-ordersOdata.service';
 import { IrAttachmentBasic } from 'src/app/shared/shared';
 import { environment } from 'src/environments/environment';
 

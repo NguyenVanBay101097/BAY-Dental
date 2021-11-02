@@ -13,8 +13,8 @@ import { EmployeeService } from 'src/app/employees/employee.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { ProductRequestLineService } from 'src/app/shared/product-request-line.service';
 import { ProductRequestService } from 'src/app/shared/product-request.service';
-import { SaleOrderLineProductRequestedBasic, SaleOrderLineProductRequestedBasicCus, SaleOrderLineProductRequestedPaged, SaleOrderLineProductRequestedService } from 'src/app/shared/sale-order-line-product-requested.service';
-import { ProductRequestGetLinePar, ProductRequestDefaultGet, ProductRequestDisplay } from '../product-request';
+import { SaleOrderLineProductRequestedBasicCus, SaleOrderLineProductRequestedPaged, SaleOrderLineProductRequestedService } from 'src/app/shared/sale-order-line-product-requested.service';
+import { ProductRequestDefaultGet, ProductRequestDisplay, ProductRequestGetLinePar } from '../product-request';
 
 @Component({
   selector: 'app-sale-order-product-request-dialog',

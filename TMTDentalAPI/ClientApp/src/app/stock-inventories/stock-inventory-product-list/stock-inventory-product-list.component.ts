@@ -1,10 +1,7 @@
-import { ProductPaged, ProductService } from './../../products/product.service';
-import { StockInventoryService } from './../stock-inventory.service';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChange } from '@angular/core';
 import { Subject } from 'rxjs';
-import { FormBuilder } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { SimpleChange } from '@angular/core';
+import { ProductPaged, ProductService } from './../../products/product.service';
 
 @Component({
   selector: 'app-stock-inventory-product-list',
@@ -21,8 +18,7 @@ export class StockInventoryProductListComponent implements OnInit {
   listFilter: any[] = [];
   listProduct: any[] = [];
   searchUpdate = new Subject<string>();
-  constructor(private stockInventoryService: StockInventoryService, private productService: ProductService,
-    private fb: FormBuilder,) { }
+  constructor(private productService: ProductService,) { }
 
   ngOnInit() {
     this.searchUpdate

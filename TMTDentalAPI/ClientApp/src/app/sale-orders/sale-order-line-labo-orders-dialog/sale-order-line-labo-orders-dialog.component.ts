@@ -1,13 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { SaleOrderLineDisplay } from '../../sale-orders/sale-order-line-display';
-import { NotificationService } from '@progress/kendo-angular-notification';
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { LaboOrderBasic, LaboOrderPaged, LaboOrderService } from 'src/app/labo-orders/labo-order.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { LaboOrderService, LaboOrderBasic, LaboOrderPaged } from 'src/app/labo-orders/labo-order.service';
-import { SaleOrderLineService } from '../../core/services/sale-order-line.service';
 import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/labo-order-cu-dialog.component';
-import { GridDataResult } from '@progress/kendo-angular-grid';
 import { PrintService } from 'src/app/shared/services/print.service';
 
 @Component({
@@ -21,9 +16,6 @@ export class SaleOrderLineLaboOrdersDialogComponent implements OnInit {
     private laboOrderService: LaboOrderService,
     public activeModal: NgbActiveModal,
     public modalService: NgbModal,
-    private showErrorService: AppSharedShowErrorService,
-    private saleLineService: SaleOrderLineService,
-    private laboOrderServie: LaboOrderService,
     private printService: PrintService
   ) { }
 

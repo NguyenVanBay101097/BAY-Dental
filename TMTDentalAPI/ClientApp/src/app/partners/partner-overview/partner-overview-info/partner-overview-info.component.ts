@@ -1,11 +1,8 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
-import { PartnersService } from 'src/app/shared/services/partners.service';
-// import { PartnerDisplay } from '../../partner-simple';
-// import { Pipe, PipeTransform } from '@angular/core';
-import { PartnerService } from '../../partner.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
+import { PartnerService } from '../../partner.service';
 
 @Component({
   selector: 'app-partner-overview-info',
@@ -20,7 +17,6 @@ export class PartnerOverviewInfoComponent implements OnInit {
 
   constructor(
     private modalService: NgbModal,
-    private PartnerOdataService: PartnersService,
     private partnerService: PartnerService,
     private checkPermissionService: CheckPermissionService
   ) { }

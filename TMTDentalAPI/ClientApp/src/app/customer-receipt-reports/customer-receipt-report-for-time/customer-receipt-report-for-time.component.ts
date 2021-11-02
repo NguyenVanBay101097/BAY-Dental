@@ -3,7 +3,6 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { ChartDataset, ChartOptions } from 'chart.js';
-import { vi } from 'date-fns/locale';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';

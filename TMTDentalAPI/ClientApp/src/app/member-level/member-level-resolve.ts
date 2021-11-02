@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
-import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
-import { MemberLevelService } from "./member-level.service";
-import { delay, catchError } from 'rxjs/operators';
+import { ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot } from '@angular/router';
 import { of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { MemberLevelService } from "./member-level.service";
 @Injectable({
     providedIn: 'root'
 })

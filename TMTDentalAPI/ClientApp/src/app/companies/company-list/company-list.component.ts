@@ -1,14 +1,13 @@
 import { Component, Inject, OnInit } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { map } from 'rxjs/operators';
-import { CompanyService, CompanyPaged, CompanyBasic } from '../company.service';
-import { CompanyCuDialogComponent } from '../company-cu-dialog/company-cu-dialog.component';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { map } from 'rxjs/operators';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { CompanyCuDialogComponent } from '../company-cu-dialog/company-cu-dialog.component';
+import { CompanyBasic, CompanyPaged, CompanyService } from '../company.service';
 
 @Component({
   selector: 'app-company-list',
@@ -28,7 +27,7 @@ export class CompanyListComponent implements OnInit {
   loading = false;
 
   constructor(private companyService: CompanyService, private modalService: NgbModal, public intl: IntlService, 
-    private notificationService: NotificationService, private showErrorService: AppSharedShowErrorService,
+    private notificationService: NotificationService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 

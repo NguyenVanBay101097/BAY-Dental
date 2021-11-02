@@ -1,12 +1,9 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { PartnerResolver } from '../partners/partner.resolver';
+import { RouterModule, Routes } from '@angular/router';
 import { SaleOrderCreateUpdateComponent } from './sale-order-create-update/sale-order-create-update.component';
 import { SaleOrderListComponent } from './sale-order-list/sale-order-list.component';
 import { SaleOrderManagementComponent } from './sale-order-management/sale-order-management.component';
-import { SaleOrderServiceListComponent } from './sale-order-service-list/sale-order-service-list.component';
 import { SaleOrderResolver } from './sale-order.resolver';
-import { TreatmentProcessServiceListComponent } from './treatment-process-service-list/treatment-process-service-list.component';
 
 const routes: Routes = [
   {

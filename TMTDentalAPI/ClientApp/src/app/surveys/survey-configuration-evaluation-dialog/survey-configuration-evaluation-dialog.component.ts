@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { SurveyAnswerDisplay, SurveyQuestionDisplay, SurveyQuestionService } from '../survey-question.service';
+import { SurveyQuestionDisplay, SurveyQuestionService } from '../survey-question.service';
 
 @Component({
   selector: 'app-survey-configuration-evaluation-dialog',

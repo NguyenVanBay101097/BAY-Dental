@@ -16,7 +16,6 @@ import {
     Output,
     EventEmitter,
     Renderer2,
-    HostBinding
 } from '@angular/core';
 import { DateRangePickerDropdownComponent  } from '../date-range-picker-dropdown/date-range-picker-dropdown.component'
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -45,7 +44,6 @@ export class DaterangepickerDirective implements OnInit, OnChanges, DoCheck {
     public picker: DateRangePickerDropdownComponent ;
     private _onChange = Function.prototype;
     private _onTouched = Function.prototype;
-    private _validatorChange = Function.prototype;
     private _disabled: boolean;
     private _value: any;
     private localeDiffer: KeyValueDiffer<string, any>;

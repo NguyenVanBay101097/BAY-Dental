@@ -809,7 +809,7 @@ const keyWorDatas =
 
 function getKeyWords() {
     var res = keyWorDatas;
-    for (const [key, value] of Object.entries(res)) {
+    for (const [value] of Object.entries(res)) {
         (value as any).push(pipes as any);
     }
     res['tmp_purchase_refund'] = res['tmp_purchase_order'];

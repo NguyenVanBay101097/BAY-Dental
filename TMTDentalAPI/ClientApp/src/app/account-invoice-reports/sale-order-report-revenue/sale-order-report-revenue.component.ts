@@ -1,15 +1,15 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { Workbook } from '@progress/kendo-angular-excel-export';
-import { GridComponent, GridDataResult } from '@progress/kendo-angular-grid';
+import { GridDataResult } from '@progress/kendo-angular-grid';
 import { DataResult } from '@progress/kendo-data-query';
+import { saveAs } from '@progress/kendo-file-saver';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
 import { GetRevenueSumTotalReq, SaleOrderReportRevenuePaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
-import { saveAs } from '@progress/kendo-file-saver';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { PrintService } from 'src/app/shared/services/print.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { PrintService } from 'src/app/shared/services/print.service';
 
 @Component({
   selector: 'app-sale-order-report-revenue',

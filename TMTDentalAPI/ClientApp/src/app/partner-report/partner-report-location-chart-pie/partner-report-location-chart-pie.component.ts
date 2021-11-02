@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { IntlService } from '@progress/kendo-angular-intl';
 import { LegendLabelsContentArgs } from '@progress/kendo-angular-charts';
-import { PartnerService, PartnerReportLocationDistrict, PartnerReportLocationWard } from 'src/app/partners/partner.service';
+import { IntlService } from '@progress/kendo-angular-intl';
 import { ChartDataset, ChartOptions } from 'chart.js';
+import { PartnerService } from 'src/app/partners/partner.service';
 
 @Component({
   selector: 'app-partner-report-location-chart-pie',

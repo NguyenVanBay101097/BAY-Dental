@@ -1,16 +1,14 @@
-import { NotifyService } from 'src/app/shared/services/notify.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AccountRegisterPaymentService, AccountRegisterPaymentDefaultGet, AccountRegisterPaymentCreatePayment, AccountRegisterPaymentDisplay } from 'src/app/account-payments/account-register-payment.service';
-import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { NotificationService } from '@progress/kendo-angular-notification';
-import { AccountJournalService, AccountJournalSimple, AccountJournalFilter } from 'src/app/account-journals/account-journal.service';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { debounceTime, tap, switchMap } from 'rxjs/operators';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { IntlService } from '@progress/kendo-angular-intl';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { AccountJournalFilter, AccountJournalService, AccountJournalSimple } from 'src/app/account-journals/account-journal.service';
 import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
+import { AccountRegisterPaymentDisplay } from 'src/app/account-payments/account-register-payment.service';
 import { AuthService } from 'src/app/auth/auth.service';
+import { NotifyService } from 'src/app/shared/services/notify.service';
 @Component({
   selector: 'app-account-invoice-register-payment-dialog-v2',
   templateUrl: './account-invoice-register-payment-dialog-v2.component.html',
@@ -29,9 +27,12 @@ export class AccountInvoiceRegisterPaymentDialogV2Component implements OnInit {
 
   get f() { return this.paymentForm.controls; }
 
-  constructor(private paymentService: AccountPaymentService, private fb: FormBuilder, private intlService: IntlService,
-    public activeModal: NgbActiveModal, private notificationService: NotificationService, private accountJournalService: AccountJournalService,
-    private errorService: AppSharedShowErrorService, private authService: AuthService,
+  constructor(private paymentService: AccountPaymentService, 
+    private fb: FormBuilder, 
+    private intlService: IntlService,
+    public activeModal: NgbActiveModal,
+    private accountJournalService: AccountJournalService, 
+    private authService: AuthService,
     private notifyService: NotifyService
     ) { }
 

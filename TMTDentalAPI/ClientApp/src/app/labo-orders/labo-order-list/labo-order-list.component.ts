@@ -1,16 +1,14 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { LaboOrderPaged, LaboOrderService, LaboOrderBasic } from '../labo-order.service';
-// import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { SaleOrderLineService, SaleOrderLinesLaboPaged, SaleOrderLinesPaged } from 'src/app/core/services/sale-order-line.service';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { SaleOrderLineService, SaleOrderLinesLaboPaged } from 'src/app/core/services/sale-order-line.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { LaboOrderBasic, LaboOrderService } from '../labo-order.service';
 
 @Component({
   selector: 'app-labo-order-list',
@@ -60,7 +58,7 @@ export class LaboOrderListComponent implements OnInit {
   constructor(private laboOrderService: LaboOrderService,
     private router: Router,
     private saleOrderLineService: SaleOrderLineService,
-    private modalService: NgbModal, private intlService: IntlService,
+    private modalService: NgbModal,
     private checkPermissionService: CheckPermissionService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }

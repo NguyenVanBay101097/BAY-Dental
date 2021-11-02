@@ -1,14 +1,14 @@
-import { Component, OnInit, Input, ViewChild, Inject } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { CommissionSettlementReportDetailOutput, CommissionSettlementsService, CommissionSettlementReportOutput, CommissionSettlementDetailReportPar, CommissionSettlementFilterReport } from '../commission-settlements.service';
+import { IntlService } from '@progress/kendo-angular-intl';
+import * as _ from 'lodash';
+import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
-import * as _ from 'lodash';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { Subject } from 'rxjs';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { CommissionSettlementDetailReportPar, CommissionSettlementFilterReport, CommissionSettlementsService } from '../commission-settlements.service';
 
 @Component({
   selector: 'app-commission-settlement-report-detail',

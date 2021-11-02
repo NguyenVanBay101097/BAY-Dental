@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { IntlService } from '@progress/kendo-angular-intl';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import * as _ from 'lodash';
 import { AgentService } from 'src/app/agents/agent.service';
-import { UserService } from 'src/app/users/user.service';
 import { CheckPermissionService } from '../check-permission.service';
 
 @Component({
@@ -27,9 +25,6 @@ export class AgentCreateUpdateDialogComponent implements OnInit {
   constructor(private fb: FormBuilder,
     public agentService: AgentService,
     public activeModal: NgbActiveModal,
-    private modalService: NgbModal,
-    private intlService: IntlService,
-    private userService: UserService,
     private checkPermissionService: CheckPermissionService) { }
 
 

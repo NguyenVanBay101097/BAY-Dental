@@ -1,12 +1,10 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PagedResult2 } from '../core/paged-result-2';
 import { EmployeeSimple } from '../employees/employee';
 import { PartnerSimple } from '../partners/partner-simple';
-import { SaleOrderBasic } from '../sale-orders/sale-order-basic';
-import { ToothBasic } from '../teeth/tooth.service';
 import { UserSimple } from '../users/user-simple';
 
 // import { PagedResult2 } from '../paged-result-2';

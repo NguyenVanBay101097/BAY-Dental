@@ -1,15 +1,14 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Component, NgZone, OnInit, Renderer2 } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { closest } from '@ng-bootstrap/ng-bootstrap/util/util';
-import { GridDataResult, PageChangeEvent, RowClassArgs } from '@progress/kendo-angular-grid';
+import { GridDataResult } from '@progress/kendo-angular-grid';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { fromEvent, Subject, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, tap } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { SurveyConfigurationEvaluationDialogComponent } from '../survey-configuration-evaluation-dialog/survey-configuration-evaluation-dialog.component';
-import { SurveyQuestionBasic, SurveyQuestionDisplay, SurveyQuestionPaged, SurveyQuestionService } from '../survey-question.service';
+import { SurveyQuestionBasic, SurveyQuestionPaged, SurveyQuestionService } from '../survey-question.service';
 
 @Component({
   selector: 'app-survey-configuration-evaluation',

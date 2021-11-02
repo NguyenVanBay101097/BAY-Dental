@@ -6,7 +6,6 @@ import * as _ from 'lodash';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { BirthdayCustomerService, ListPagedBirthdayCustomerRequest } from 'src/app/core/services/birthday-customer.service';
-import { PartnerService } from 'src/app/partners/partner.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { SmsCampaignService } from '../sms-campaign.service';
 import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';

@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { FormBuilder, Validators, FormGroup } from '@angular/forms';
-import { PartnerService, ImportExcelDirect } from '../partner.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { ActivatedRoute, RouterModule, Router } from '@angular/router';
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { PartnerPaged } from '../partner-simple';
+import { PartnerService } from '../partner.service';
 
 @Component({
   selector: 'app-partner-import',
@@ -14,8 +12,10 @@ import { PartnerPaged } from '../partner-simple';
 })
 export class PartnerImportComponent implements OnInit {
 
-  constructor(public activeModal: NgbActiveModal, private fb: FormBuilder,
-    private partnerService: PartnerService, private showErrorService: AppSharedShowErrorService,
+  constructor(
+    public activeModal: NgbActiveModal, 
+    private fb: FormBuilder,
+    private partnerService: PartnerService,
     private notificationService: NotificationService) { }
 
   formGroup: FormGroup;

@@ -1,20 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { PartnerImageBasic, PartnerService, PartnerImageSave, PartnerImageViewModel } from '../partner.service';
-import { ImageViewerComponent } from 'src/app/shared/image-viewer/image-viewer.component';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { FormGroup, FormBuilder } from '@angular/forms';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { environment } from 'src/environments/environment';
-import { DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { mergeMap, groupBy, reduce } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { IntlService } from '@progress/kendo-angular-intl';
 import * as _ from 'lodash';
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
-import { IrAttachmentBasic } from 'src/app/shared/shared';
-import { IrAttachmentService } from 'src/app/shared/ir-attachment.service';
 import { WebService } from 'src/app/core/services/web.service';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { ImageViewerComponent } from 'src/app/shared/image-viewer/image-viewer.component';
+import { IrAttachmentService } from 'src/app/shared/ir-attachment.service';
+import { environment } from 'src/environments/environment';
+import { PartnerImageBasic, PartnerImageViewModel, PartnerService } from '../partner.service';
 
 @Component({
   selector: 'app-partner-customer-upload-image',
@@ -35,7 +30,6 @@ export class PartnerCustomerUploadImageComponent implements OnInit {
     private fb: FormBuilder,
     private intlService: IntlService,
     private activeRoute: ActivatedRoute,
-    private showErrorService: AppSharedShowErrorService,
     private irAttachmentService: IrAttachmentService,
     private webService: WebService,
   ) { }
@@ -90,9 +84,9 @@ export class PartnerCustomerUploadImageComponent implements OnInit {
 
   getImageIds() {
     this.imagesPreview = [];
-    var value = {
-      partnerId: this.id
-    }
+    // var value = {
+    //   partnerId: this.id
+    // }
 
     this.partnerService.getListAttachment(this.id).subscribe(
       result => {

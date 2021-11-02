@@ -3,14 +3,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
-// import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
 import { mergeMap } from 'rxjs/operators';
 import { AccountJournalFilter, AccountJournalService } from 'src/app/account-journals/account-journal.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { AmountCustomerDebtFilter, CustomerDebtReportService } from 'src/app/core/services/customer-debt-report.service';
 import { PhieuThuChiService } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
-import { PartnerService } from '../partner.service';
 
 @Component({
   selector: 'app-partner-customer-debt-payment-dialog',
@@ -30,8 +28,12 @@ export class PartnerCustomerDebtPaymentDialogComponent implements OnInit {
 
   @ViewChild("journalCbx", { static: true }) journalCbx: ComboBoxComponent;
 
-  constructor(private phieuthuchiService: PhieuThuChiService, private fb: FormBuilder, private intlService: IntlService,  private customerDebtReportService: CustomerDebtReportService,
-    public activeModal: NgbActiveModal, private accountJournalService: AccountJournalService, private partnerService: PartnerService,
+  constructor(
+    private phieuthuchiService: PhieuThuChiService, 
+    private fb: FormBuilder, private intlService: IntlService,  
+    private customerDebtReportService: CustomerDebtReportService,
+    public activeModal: NgbActiveModal, 
+    private accountJournalService: AccountJournalService, 
     private authService: AuthService) { }
 
   ngOnInit() {

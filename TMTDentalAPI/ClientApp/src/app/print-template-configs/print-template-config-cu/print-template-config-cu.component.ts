@@ -1,18 +1,17 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { GenerateReq, PrintTemplateConfigChangePaperSize, PrintTemplateConfigDisplay, PrintTemplateConfigSave, PrintTemplateConfigService, PrintTestReq } from '../print-template-config.service';
-import { NotifyService } from 'src/app/shared/services/notify.service';
-import { AuthService } from 'src/app/auth/auth.service';
-import { PrintService } from 'src/app/shared/services/print.service';
-import { PrintTemplateDefault, PrintTemplateService } from '../print-template.service';
-import { PrintPaperSizeBasic, PrintPaperSizeDisplay, PrintPaperSizePaged, PrintPaperSizeService } from 'src/app/config-prints/print-paper-size.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { PrintPaperSizeCreateUpdateDialogComponent } from 'src/app/config-prints/print-paper-size-create-update-dialog/print-paper-size-create-update-dialog.component';
-import * as _ from 'lodash';
-import * as constantData from '../print-template-config-constant-data';
-import { KeywordListDialogComponent } from '../keyword-list-dialog/keyword-list-dialog.component';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import * as _ from 'lodash';
+import { AuthService } from 'src/app/auth/auth.service';
+import { PrintPaperSizeCreateUpdateDialogComponent } from 'src/app/config-prints/print-paper-size-create-update-dialog/print-paper-size-create-update-dialog.component';
+import { PrintPaperSizeBasic, PrintPaperSizePaged, PrintPaperSizeService } from 'src/app/config-prints/print-paper-size.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { NotifyService } from 'src/app/shared/services/notify.service';
+import { PrintService } from 'src/app/shared/services/print.service';
+import { KeywordListDialogComponent } from '../keyword-list-dialog/keyword-list-dialog.component';
+import * as constantData from '../print-template-config-constant-data';
+import { PrintTemplateConfigChangePaperSize, PrintTemplateConfigDisplay, PrintTemplateConfigService, PrintTestReq } from '../print-template-config.service';
+import { PrintTemplateService } from '../print-template.service';
 // import { CKEditor4 } from 'ckeditor4-angular';
 // import * as edit4 from '../../ckCustomBuild/ckeditor.js'
 // var CKEDITOR_BASEPATH = '/ckeditor/';
@@ -56,7 +55,6 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     @ViewChild("editor") editor;
 
     constructor(private configService: PrintTemplateConfigService,
-        private activeRoute: ActivatedRoute,
         private notifyService: NotifyService,
         private authService: AuthService,
         private printService: PrintService,

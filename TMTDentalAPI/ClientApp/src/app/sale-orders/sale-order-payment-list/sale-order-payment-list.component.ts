@@ -1,12 +1,8 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { AccountPaymentBasic, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { SaleOrderPaymentPaged, SaleOrderPaymentService } from 'src/app/core/services/sale-order-payment.service';
-import { SaleOrderService } from 'src/app/core/services/sale-order.service';
-import { AccountPaymentPrintComponent } from 'src/app/shared/account-payment-print/account-payment-print.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { AccountPaymentsOdataService } from 'src/app/shared/services/account-payments-odata.service';
 import { PrintService } from 'src/app/shared/services/print.service';
 
 @Component({
@@ -21,12 +17,9 @@ export class SaleOrderPaymentListComponent implements OnInit {
   paymentHistories: any = [];
   canCancel = false;
   constructor(
-    private saleOrderService: SaleOrderService,
-    private paymentService: AccountPaymentService,
     private notificationService: NotificationService,
     private modalService: NgbModal,
     private printService: PrintService,
-    private accountPaymentOdataService: AccountPaymentsOdataService,
     private saleOrderPaymentService: SaleOrderPaymentService
   ) { }
 

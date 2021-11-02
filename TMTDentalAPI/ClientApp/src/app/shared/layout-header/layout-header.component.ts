@@ -1,22 +1,16 @@
-import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
-import { NavSidebarService } from '../nav-sidebar.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ChangePasswordDialogComponent } from '../change-password-dialog/change-password-dialog.component';
-import { AuthService } from 'src/app/auth/auth.service';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { CompanyBasic } from 'src/app/companies/company.service';
-import { UserChangeCurrentCompanyVM, UserService } from 'src/app/users/user.service';
-import { environment } from 'src/environments/environment';
-import { UserProfileEditComponent } from '../user-profile-edit/user-profile-edit.component';
-import { WebService } from 'src/app/core/services/web.service';
-import { IrConfigParameterService } from 'src/app/core/services/ir-config-parameter.service';
-import { NotificationService } from '@progress/kendo-angular-notification';
-import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
-import { Observable, of, Subject } from 'rxjs';
-import { catchError, concat, count, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
-import { SearchAllService } from '../search-all.service';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectComponent } from '@ng-select/ng-select';
+import { NotificationService } from '@progress/kendo-angular-notification';
+import { Subject } from 'rxjs';
+import { AuthService } from 'src/app/auth/auth.service';
+import { WebService } from 'src/app/core/services/web.service';
+import { UserChangeCurrentCompanyVM, UserService } from 'src/app/users/user.service';
+import { ChangePasswordDialogComponent } from '../change-password-dialog/change-password-dialog.component';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { NavSidebarService } from '../nav-sidebar.service';
+import { UserProfileEditComponent } from '../user-profile-edit/user-profile-edit.component';
 
 @Component({
   selector: 'app-layout-header',
@@ -36,8 +30,6 @@ export class LayoutHeaderComponent implements OnInit {
     private router: Router,
     private userService: UserService,
     private webService: WebService,
-    private fb: FormBuilder,
-    private searchAllService: SearchAllService,
     private notificationService: NotificationService
   ) { }
 

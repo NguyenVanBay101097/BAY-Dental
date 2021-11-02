@@ -1,19 +1,19 @@
-import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ExcelExportData, Workbook } from '@progress/kendo-angular-excel-export';
-import { saveAs } from '@progress/kendo-file-saver';
-import { aggregateBy, process } from '@progress/kendo-data-query';
 import { GridComponent, GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { aggregateBy } from '@progress/kendo-data-query';
+import { saveAs } from '@progress/kendo-file-saver';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/internal/operators/debounceTime';
 import { distinctUntilChanged } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { ProductCategoryBasic } from 'src/app/product-categories/product-category.service';
 import { ProductSimple } from 'src/app/products/product-simple';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { StockReportService, StockReportXuatNhapTonItem, StockReportXuatNhapTonSearch } from 'src/app/stock-reports/stock-report.service';
 import { StockXuatNhapTonDetailDialogComponent } from '../stock-xuat-nhap-ton-detail-dialog/stock-xuat-nhap-ton-detail-dialog.component';
-import { AuthService } from 'src/app/auth/auth.service';
-import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 @Component({
   selector: 'app-stock-xuat-nhap-ton',
   templateUrl: './stock-xuat-nhap-ton.component.html',

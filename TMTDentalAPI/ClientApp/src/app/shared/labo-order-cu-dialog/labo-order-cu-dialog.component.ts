@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AsyncValidatorFn } from '@angular/forms';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
@@ -12,14 +11,12 @@ import { WebService } from 'src/app/core/services/web.service';
 import { LaboBiteJointBasic, LaboBiteJointService } from 'src/app/labo-bite-joints/labo-bite-joint.service';
 import { LaboBridgeBasic, LaboBridgePageSimple, LaboBridgeService } from 'src/app/labo-bridges/labo-bridge.service';
 import { LaboFinishLineBasic, LaboFinishLinePageSimple, LaboFinishLineService } from 'src/app/labo-finish-lines/labo-finish-line.service';
-import { LaboImageBasic, LaboOrderDefaultGet, LaboOrderDisplay, LaboOrderService } from 'src/app/labo-orders/labo-order.service';
+import { LaboOrderDefaultGet, LaboOrderDisplay, LaboOrderService } from 'src/app/labo-orders/labo-order.service';
 import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
-import { PartnerImageBasic, PartnerService } from 'src/app/partners/partner.service';
+import { PartnerService } from 'src/app/partners/partner.service';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductFilter, ProductService } from 'src/app/products/product.service';
-import { ToothBasic, ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
-import { ToothCategoryBasic } from 'src/app/tooth-categories/tooth-category.service';
-import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { ToothDisplay } from 'src/app/teeth/tooth.service';
 import { ImageViewerComponent } from '../image-viewer/image-viewer.component';
 import { PartnerSupplierCuDialogComponent } from '../partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
 import { PrintService } from '../services/print.service';
@@ -66,7 +63,6 @@ export class LaboOrderCuDialogComponent implements OnInit {
     private bridgeService: LaboBridgeService,
     private webService: WebService,
     private printService: PrintService,
-    private toothService: ToothService
   ) { }
 
   ngOnInit() {

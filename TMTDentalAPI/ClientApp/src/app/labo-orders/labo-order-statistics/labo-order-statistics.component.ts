@@ -1,28 +1,23 @@
-import { Component, ViewChild, OnInit, Output, EventEmitter, ElementRef, Inject } from "@angular/core";
-import { GridDataResult, PageChangeEvent } from "@progress/kendo-angular-grid";
-import {
-  map,
-  debounceTime,
-  distinctUntilChanged,
-  tap,
-  switchMap,
-} from "rxjs/operators";
-import { Subject } from "rxjs";
-import { IntlService } from "@progress/kendo-angular-intl";
+import { Component, Inject, OnInit, ViewChild } from "@angular/core";
 import { NgbModal, NgbPopover } from "@ng-bootstrap/ng-bootstrap";
+import { ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
+import { GridDataResult, PageChangeEvent } from "@progress/kendo-angular-grid";
+import { IntlService } from "@progress/kendo-angular-intl";
+import * as _ from "lodash";
+import { Subject } from "rxjs";
+import {
+  debounceTime,
+  distinctUntilChanged, map, switchMap, tap
+} from "rxjs/operators";
+import { PartnerPaged } from "src/app/partners/partner-simple";
+import { PartnerService } from "src/app/partners/partner.service";
+import { ProductPaged, ProductService } from "src/app/products/product.service";
+import { PageGridConfig, PAGER_GRID_CONFIG } from "src/app/shared/pager-grid-kendo.config";
 import {
   LaboOrderService,
-  LaboOrderStatisticsPaged,
-  // LaboOrderBasic,
+  LaboOrderStatisticsPaged
 } from "../labo-order.service";
-import { ComboBoxComponent, PopupSettings } from "@progress/kendo-angular-dropdowns";
-import { PartnerService } from "src/app/partners/partner.service";
-import { PartnerPaged } from "src/app/partners/partner-simple";
-import { ProductService, ProductPaged } from "src/app/products/product.service";
-import * as _ from "lodash";
-import { LaboOrderLineService } from "../labo-order-line.service";
 import { LaboOrderStatisticUpdateDialogComponent } from './labo-order-statistic-update-dialog/labo-order-statistic-update-dialog.component';
-import { PageGridConfig, PAGER_GRID_CONFIG } from "src/app/shared/pager-grid-kendo.config";
 
 @Component({
   selector: "app-labo-order-statistics",
@@ -61,7 +56,6 @@ export class LaboOrderStatisticsComponent implements OnInit {
   constructor(
     private laboOrderService: LaboOrderService,
     private partnerService: PartnerService,
-    private laboOrderLineService: LaboOrderLineService,
     private productService: ProductService,
     private intlService: IntlService,
     private modalService: NgbModal,

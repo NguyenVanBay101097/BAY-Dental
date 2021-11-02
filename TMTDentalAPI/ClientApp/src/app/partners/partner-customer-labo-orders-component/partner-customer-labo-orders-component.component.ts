@@ -2,17 +2,16 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { SaleOrderLinesLaboPaged } from 'src/app/core/services/sale-order-line.service';
 import { LaboOrderPaged, LaboOrderService } from 'src/app/labo-orders/labo-order.service';
-import { PrintService } from 'src/app/shared/services/print.service';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
-import { CheckPermissionService } from 'src/app/shared/check-permission.service';
-import { IntlService } from '@progress/kendo-angular-intl';
 import { NotifyService } from 'src/app/shared/services/notify.service';
+import { PrintService } from 'src/app/shared/services/print.service';
 
 @Component({
   selector: 'app-partner-customer-labo-orders-component',

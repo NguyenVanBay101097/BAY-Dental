@@ -1,5 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { element } from 'protractor';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-role-form-v2',

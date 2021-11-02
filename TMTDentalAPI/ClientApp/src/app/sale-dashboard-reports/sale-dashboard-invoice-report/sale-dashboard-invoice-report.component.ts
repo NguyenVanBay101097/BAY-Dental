@@ -1,9 +1,7 @@
-import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { ChartDataset, ChartOptions, ChartType } from 'chart.js';
-import { BaseChartDirective } from 'ng2-charts';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { ChartDataset, ChartOptions } from 'chart.js';
 import 'chartjs-adapter-date-fns';
-import {vi} from 'date-fns/locale';
+import { vi } from 'date-fns/locale';
 
 @Component({
   selector: 'app-sale-dashboard-invoice-report',
@@ -76,7 +74,7 @@ export class SaleDashboardInvoiceReportComponent implements OnInit, OnChanges {
     }
   ];
 
-  constructor(private intlService: IntlService) { }
+  constructor() { }
 
   ngOnInit() {
   }

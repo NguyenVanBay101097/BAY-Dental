@@ -1,9 +1,7 @@
+import { HttpParams } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/auth/auth.service';
-import { NotificationService } from '@progress/kendo-angular-notification';
 import { WebService } from 'src/app/core/services/web.service';
 
 @Component({
@@ -16,7 +14,6 @@ export class ImportSampleDataComponent implements OnInit {
   title = "Tạo dữ liệu mẫu"
   constructor(
     public activeModal: NgbActiveModal,
-    private http: HttpClient,
     public authService: AuthService,
     private webService: WebService
   ) { }

@@ -1,19 +1,18 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { HrPayslipService, HrPayslipPaged } from '../hr-payslip.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { map } from 'rxjs/internal/operators/map';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
+import { map } from 'rxjs/internal/operators/map';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { ValueAxisLabelsComponent } from '@progress/kendo-angular-charts';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { HrPayslipPaged, HrPayslipService } from '../hr-payslip.service';
 
 @Component({
   selector: 'app-hr-payslip-to-pay-list',

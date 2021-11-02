@@ -9,7 +9,6 @@ import { WebService } from '../core/services/web.service';
 import { ChangePasswordDialogComponent } from '../shared/change-password-dialog/change-password-dialog.component';
 import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog.component';
 import { PermissionService } from '../shared/permission.service';
-import { SearchAllService } from '../shared/search-all.service';
 import { UserProfileEditComponent } from '../shared/user-profile-edit/user-profile-edit.component';
 import { UserChangeCurrentCompanyVM, UserService } from '../users/user.service';
 

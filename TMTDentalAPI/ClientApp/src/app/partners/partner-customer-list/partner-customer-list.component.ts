@@ -1,26 +1,19 @@
-import { Component, Inject, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { GridDataResult, PageChangeEvent, RowClassArgs } from '@progress/kendo-angular-grid';
-import { Subject } from 'rxjs';
-import { PartnerPaged, PartnerBasic } from '../partner-simple';
-import { map, debounceTime, distinctUntilChanged, tap, switchMap, subscribeOn } from 'rxjs/operators';
-import { HttpParams } from '@angular/common/http';
-import { WindowService, WindowCloseResult, DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { PartnerImportComponent } from '../partner-import/partner-import.component';
-import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
-import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
-import { PartnerInfoPaged, PartnerService } from '../partner.service';
-import { CompositeFilterDescriptor } from '@progress/kendo-data-query';
-import { PartnerCategoryPopoverComponent } from './partner-category-popover/partner-category-popover.component';
-import { PartnersBindingDirective } from 'src/app/shared/directives/partners-binding.directive';
-import { PartnerCustomerAutoGenerateCodeDialogComponent } from '../partner-customer-auto-generate-code-dialog/partner-customer-auto-generate-code-dialog.component';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { MemberLevelAutoCompleteReq, MemberLevelService } from 'src/app/member-level/member-level.service';
-import { values } from 'lodash';
+import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
+import { PartnerCustomerAutoGenerateCodeDialogComponent } from '../partner-customer-auto-generate-code-dialog/partner-customer-auto-generate-code-dialog.component';
+import { PartnerImportComponent } from '../partner-import/partner-import.component';
+import { PartnerInfoPaged, PartnerService } from '../partner.service';
 
 @Component({
   selector: 'app-partner-customer-list',

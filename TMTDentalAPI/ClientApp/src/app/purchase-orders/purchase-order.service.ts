@@ -1,11 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Injectable, Inject } from '@angular/core';
 import { PagedResult2 } from '../core/paged-result-2';
 import { PartnerSimple } from '../partners/partner-simple';
-import { UoMDisplay } from '../uoms/uom.service';
-import { ProductUoMBasic } from '../products/product.service';
 import { ProductSimple } from '../products/product-simple';
+import { UoMDisplay } from '../uoms/uom.service';
 
 export class PurchaseOrderPaged {
     limit: number;

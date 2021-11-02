@@ -1,12 +1,11 @@
-import { Injectable, Inject } from '@angular/core';
-
-import { Observable, of, ReplaySubject, BehaviorSubject } from 'rxjs';
-import { tap, delay, catchError, retry, switchMap, map, mergeMap } from 'rxjs/operators';
-import { AuthResource, LoginTokenResult, LoginUserInfo, LoginViewModel, LoggedInViewModel, ForgotPasswordViewModel, RefreshViewModel, RefreshResponseViewModel, UserViewModel } from './auth.resource';
-import { LoginForm } from './login-form';
-import { HttpErrorResponse, HttpClient } from '@angular/common/http';
-// import { debug } from 'util';
+import { HttpClient } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { BehaviorSubject, Observable, of, ReplaySubject } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
+import { AuthResource, LoggedInViewModel, LoginViewModel, RefreshResponseViewModel, RefreshViewModel, UserViewModel } from './auth.resource';
+import { LoginForm } from './login-form';
+
 
 export class UserInfo {
     avatar: string;

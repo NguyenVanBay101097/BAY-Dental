@@ -2,7 +2,6 @@ import { Component, Inject, Input, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { PartnerOldNewReportDetail } from '../partner-old-new-report.service';
-import { SaleReportPartnerItemV3Detail } from '../sale-report.service';
 
 @Component({
   selector: 'app-sale-report-partner-detail',

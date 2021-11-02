@@ -1,20 +1,14 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { RoleService, ApplicationRolePaged, ApplicationRoleBasic } from '../role.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Observable, of, Subject } from 'rxjs';
-import { CheckableSettings, TreeItemLookup, CheckedState } from '@progress/kendo-angular-treeview';
-import { WebService } from 'src/app/core/services/web.service';
-import { NotificationService } from '@progress/kendo-angular-notification';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { UserService, UserPaged } from 'src/app/users/user.service';
-import { AuthResource } from 'src/app/auth/auth.resource';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { ApplicationRolePaged, RoleService } from '../role.service';
 
-const indexChecked = (keys, index) => keys.filter(k => k === index).length > 0;
+// const indexChecked = (keys, index) => keys.filter(k => k === index).length > 0;
 
 @Component({
   selector: 'app-role-list',
@@ -33,8 +27,6 @@ export class RoleListComponent implements OnInit {
   searchUpdate = new Subject<string>();
 
   constructor(private roleService: RoleService,
-    private notificationService: NotificationService,
-    private authResource: AuthResource,
     private modalService: NgbModal,
     private router: Router,
     private route: ActivatedRoute,

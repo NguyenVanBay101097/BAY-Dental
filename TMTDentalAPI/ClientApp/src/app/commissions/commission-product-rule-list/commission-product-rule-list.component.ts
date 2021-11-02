@@ -2,7 +2,7 @@ import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/cor
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { CommissionProductRuleDialogComponent } from '../commission-product-rule-dialog/commission-product-rule-dialog.component';
-import { CommissionProductRule, CommissionProductRuleService } from '../commission-product-rule.service';
+import { CommissionProductRuleService } from '../commission-product-rule.service';
 
 @Component({
   selector: 'app-commission-product-rule-list',

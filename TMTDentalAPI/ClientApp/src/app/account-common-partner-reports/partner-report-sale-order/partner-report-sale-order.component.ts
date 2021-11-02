@@ -1,7 +1,7 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import * as moment from 'moment';
-import { GetSaleOrderPagedReq, PartnerOldNewReportReq, PartnerOldNewReportService } from 'src/app/sale-report/partner-old-new-report.service';
+import { GetSaleOrderPagedReq, PartnerOldNewReportService } from 'src/app/sale-report/partner-old-new-report.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({

@@ -32,10 +32,10 @@ export class AccountInvoiceReportRevenueManageComponent implements OnInit {
     var data = e.data;
     var args = e.args;
     var filter = e.filter;
-    var employeeFilter = e.employeeFilter || 'none';
+    // var employeeFilter = e.employeeFilter || 'none';
     var title = e.title || 'doanhthu';
-    var showPartner = typeof e.showPartner == 'undefined' ? true: false;
-    var showInvoiceDate = typeof e.showInvoiceDate == 'undefined' ? true: false;
+    // var showPartner = typeof e.showPartner == 'undefined' ? true: false;
+    // var showInvoiceDate = typeof e.showInvoiceDate == 'undefined' ? true: false;
     
     
     

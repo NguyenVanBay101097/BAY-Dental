@@ -1,7 +1,6 @@
 import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
-import { identity } from 'lodash';
-import { combineLatest, forkJoin, fromEvent, merge, Observable, of, OperatorFunction, Subject, throwError } from 'rxjs';
-import { catchError, debounceTime, distinctUntilChanged, filter, map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { fromEvent, merge, Observable, of, OperatorFunction, Subject, throwError } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, filter, map, switchMap, tap } from 'rxjs/operators';
 import { ProductPaged, ProductService } from 'src/app/products/product.service';
 
 @Component({

@@ -1,23 +1,16 @@
-import { HrPayslipService, HrPayslipPaged, HrPayslipSave, HrPayslipDisplay, HrPayslipSaveDefaultValue } from './../hr-payslip.service';
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
-import { HrPaysliprunService, HrPayslipRunDefaultGet, HrPayslipRunDisplay } from '../hr-paysliprun.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { NotificationService } from '@progress/kendo-angular-notification';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { HrPayslipRunConfirmDialogComponent } from '../hr-payslip-run-confirm-dialog/hr-payslip-run-confirm-dialog.component';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { map, mergeMap } from 'rxjs/operators';
-import { validate, validator } from 'fast-json-patch';
-import { error } from 'protractor';
-import { SalaryPaymentModule } from 'src/app/salary-payment/salary-payment.module';
-import { HrSalaryPaymentComponent } from '../hr-salary-payment/hr-salary-payment.component';
-import { SalaryPaymentSave } from 'src/app/shared/services/salary-payment.service';
-import { PrintService } from "src/app/shared/services/print.service";
+import { NotificationService } from '@progress/kendo-angular-notification';
+import { mergeMap } from 'rxjs/operators';
 import { SalaryPaymentService } from 'src/app/salary-payment/salary-payment.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PrintService } from "src/app/shared/services/print.service";
+import { HrPayslipRunDefaultGet, HrPaysliprunService } from '../hr-paysliprun.service';
+import { HrSalaryPaymentComponent } from '../hr-salary-payment/hr-salary-payment.component';
+import { HrPayslipSaveDefaultValue } from './../hr-payslip.service';
 
 @Component({
   selector: 'app-hr-payslip-run-form',
@@ -35,12 +28,10 @@ export class HrPayslipRunFormComponent implements OnInit {
   canUpdate = false;
   constructor(private fb: FormBuilder,
     private hrPaysliprunService: HrPaysliprunService,
-    private route: ActivatedRoute, private modalService: NgbModal,
+    private modalService: NgbModal,
     private notificationService: NotificationService,
-    private hrPayslipService: HrPayslipService,
     private printService: PrintService,
-    private paymentService: SalaryPaymentService,
-    private router: Router, private intlService: IntlService,
+    private paymentService: SalaryPaymentService,private intlService: IntlService,
     private checkPermissionService: CheckPermissionService
   ) { }
 

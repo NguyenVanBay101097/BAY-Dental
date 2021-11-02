@@ -1,7 +1,5 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, Inject, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
@@ -39,8 +37,7 @@ export class ProductManagementMedicinesComponent implements OnInit {
   canDelete = false;
 
 
-  constructor(private route: ActivatedRoute,
-    private router: Router,
+  constructor(
     private productCategoryService: ProductCategoryService,
     private configSettingsService: ResConfigSettingsService,
     private productService: ProductService,

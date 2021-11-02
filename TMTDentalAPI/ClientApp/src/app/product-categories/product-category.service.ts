@@ -1,8 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { Injectable, Inject } from '@angular/core';
-import { GridDataResult } from '@progress/kendo-angular-grid';
-import { map } from 'rxjs/operators';
+import { Inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 export class ProductCategoryFilter {
     sort: string;

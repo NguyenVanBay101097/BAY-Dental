@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -10,28 +10,21 @@ import { of } from 'rxjs';
 import { debounceTime, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { PaymentInfoContent } from 'src/app/account-invoices/account-invoice.service';
 import { AccountPaymentBasic, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
-import { AccountRegisterPaymentService } from 'src/app/account-payments/account-register-payment.service';
 import { CardCardPaged, CardCardService } from 'src/app/card-cards/card-card.service';
 import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
 import { DiscountDefault, SaleOrderPaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
-import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
-import { DotKhamBasic } from 'src/app/dot-khams/dot-khams';
 import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
-import { LaboOrderBasic, LaboOrderPaged, LaboOrderService } from 'src/app/labo-orders/labo-order.service';
 import { ProductPriceListBasic, ProductPricelistPaged } from 'src/app/price-list/price-list';
 import { PriceListService } from 'src/app/price-list/price-list.service';
-import { LaboOrderCuDialogComponent } from 'src/app/sale-orders/labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { SaleOrderApplyCouponDialogComponent } from 'src/app/sale-orders/sale-order-apply-coupon-dialog/sale-order-apply-coupon-dialog.component';
 import { SaleOrderApplyServiceCardsDialogComponent } from 'src/app/sale-orders/sale-order-apply-service-cards-dialog/sale-order-apply-service-cards-dialog.component';
 import { SaleOrderBasic } from 'src/app/sale-orders/sale-order-basic';
-import { SaleOrderCreateDotKhamDialogComponent } from 'src/app/sale-orders/sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
 import { SaleOrderDisplay } from 'src/app/sale-orders/sale-order-display';
 import { SaleOrderLineLaboOrdersDialogComponent } from 'src/app/sale-orders/sale-order-line-labo-orders-dialog/sale-order-line-labo-orders-dialog.component';
 import { SaleOrderPaymentDialogComponent } from 'src/app/sale-orders/sale-order-payment-dialog/sale-order-payment-dialog.component';
 import { AccountPaymentPrintComponent } from 'src/app/shared/account-payment-print/account-payment-print.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { DotKhamCreateUpdateDialogComponent } from 'src/app/shared/dot-kham-create-update-dialog/dot-kham-create-update-dialog.component';
 import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { SaleOrderLineDialogComponent } from 'src/app/shared/sale-order-line-dialog/sale-order-line-dialog.component';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
@@ -83,9 +76,8 @@ export class PartnerCustomerTreatmentHistoryComponent implements OnInit {
     private userService: UserService, private route: ActivatedRoute, private saleOrderService: SaleOrderService,
     private saleOrderLineService: SaleOrderLineService, private intlService: IntlService, private modalService: NgbModal,
     private router: Router, private notificationService: NotificationService, private cardCardService: CardCardService,
-    private pricelistService: PriceListService, private errorService: AppSharedShowErrorService,
-    private registerPaymentService: AccountRegisterPaymentService, private paymentService: AccountPaymentService,
-    private laboOrderService: LaboOrderService, private dotKhamService: DotKhamService, private employeeService: EmployeeService
+    private pricelistService: PriceListService, private errorService: AppSharedShowErrorService, private paymentService: AccountPaymentService,
+    private employeeService: EmployeeService
   ) { }
 
   ngOnInit() {

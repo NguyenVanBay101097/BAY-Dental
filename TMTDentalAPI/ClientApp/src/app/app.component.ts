@@ -1,17 +1,13 @@
-import { Component, AfterViewInit, HostListener, ElementRef, OnInit } from '@angular/core';
-import { AuthService } from './auth/auth.service';
-import { Router } from '@angular/router';
-declare var $: any;
-import * as _ from 'lodash';
-import { PermissionService } from './shared/permission.service';
-import { ImportSampleDataComponent } from './shared/import-sample-data/import-sample-data.component';
-import { environment } from 'src/environments/environment';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import * as _ from 'lodash';
+import { AuthService } from './auth/auth.service';
 import { IrConfigParameterService } from './core/services/ir-config-parameter.service';
-import { SwUpdate } from '@angular/service-worker';
-import { interval } from 'rxjs';
+import { ImportSampleDataComponent } from './shared/import-sample-data/import-sample-data.component';
+import { PermissionService } from './shared/permission.service';
+declare var $: any;
 
 @Component({
   selector: 'app-root',
@@ -24,11 +20,8 @@ export class AppComponent implements OnInit {
   value: string;
   constructor(
     public authService: AuthService,
-    private router: Router,
     private notificationService: NotificationService,
-    private el: ElementRef,
     private permissionService: PermissionService,
-    private http: HttpClient,
     private modalService: NgbModal,
     private irConfigParamService: IrConfigParameterService,
     private swUpdate: SwUpdate) {

@@ -1,4 +1,4 @@
-import { AfterContentInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { WebService } from 'src/app/core/services/web.service';
 declare var Webcam: any;

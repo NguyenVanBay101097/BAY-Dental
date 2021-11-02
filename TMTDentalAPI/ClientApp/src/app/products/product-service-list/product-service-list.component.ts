@@ -1,30 +1,22 @@
 import { Component, Inject, OnInit, ViewChild } from "@angular/core";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
 import { GridDataResult, PageChangeEvent } from "@progress/kendo-angular-grid";
-import { ProductService, ProductPaged } from "../product.service";
-import { ProductDialogComponent } from "../product-dialog/product-dialog.component";
-import { Product } from "../product";
 import { IntlService } from "@progress/kendo-angular-intl";
-import {
-  map,
-  debounceTime,
-  distinctUntilChanged,
-  tap,
-  switchMap,
-} from "rxjs/operators";
 import { Subject } from "rxjs";
 import {
-  ProductCategoryBasic,
-  ProductCategoryService,
-  ProductCategoryPaged,
+  debounceTime,
+  distinctUntilChanged, map, switchMap, tap
+} from "rxjs/operators";
+import {
+  ProductCategoryBasic, ProductCategoryPaged, ProductCategoryService
 } from "src/app/product-categories/product-category.service";
-import { ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
-import { ProductImportExcelDialogComponent } from "../product-import-excel-dialog/product-import-excel-dialog.component";
-import { ActivatedRoute } from "@angular/router";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
-import { ProductServiceCuDialogComponent } from "../product-service-cu-dialog/product-service-cu-dialog.component";
-import { ProductServiceImportDialogComponent } from "../product-service-import-dialog/product-service-import-dialog.component";
 import { PageGridConfig, PAGER_GRID_CONFIG } from "src/app/shared/pager-grid-kendo.config";
+import { Product } from "../product";
+import { ProductImportExcelDialogComponent } from "../product-import-excel-dialog/product-import-excel-dialog.component";
+import { ProductServiceCuDialogComponent } from "../product-service-cu-dialog/product-service-cu-dialog.component";
+import { ProductPaged, ProductService } from "../product.service";
 
 @Component({
   selector: "app-product-service-list",
@@ -53,7 +45,6 @@ export class ProductServiceListComponent implements OnInit {
     private productService: ProductService,
     public intl: IntlService,
     private productCategoryService: ProductCategoryService,
-    private route: ActivatedRoute,
     private modalService: NgbModal,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }

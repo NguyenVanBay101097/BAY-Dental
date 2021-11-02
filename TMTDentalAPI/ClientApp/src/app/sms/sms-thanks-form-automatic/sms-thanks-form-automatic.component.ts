@@ -2,14 +2,12 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { SmsAccountPaged, SmsAccountService } from '../sms-account.service';
 import { SmsCampaignService } from '../sms-campaign.service';
-// import { SmsConfigService } from '../sms-config.service';
 import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
-import { SmsTemplateService, SmsTemplateFilter } from '../sms-template.service';
+import { SmsTemplateFilter, SmsTemplateService } from '../sms-template.service';
 import { SmsThanksCustomerAutomationConfigService } from '../sms-thanks-customer-automation-config.service';
 
 @Component({

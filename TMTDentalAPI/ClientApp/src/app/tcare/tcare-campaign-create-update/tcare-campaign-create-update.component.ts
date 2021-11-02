@@ -2,7 +2,6 @@ import { Component, EventEmitter, Inject, Input, OnChanges, OnInit, Output, Rend
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { IntlService } from "@progress/kendo-angular-intl";
 import { NotificationService } from "@progress/kendo-angular-notification";
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { PartnerCategoryCuDialogComponent } from 'src/app/partner-categories/partner-category-cu-dialog/partner-category-cu-dialog.component';
@@ -65,7 +64,6 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
     private tcareService: TcareService,
     private renderer2: Renderer2,
     private notificationService: NotificationService,
-    private intlService: IntlService,
     private tagService: PartnerCategoryService
   ) {
     this.editor = new mxEditor();

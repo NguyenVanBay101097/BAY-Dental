@@ -1,15 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { AccountJournalFilter, AccountJournalService } from 'src/app/account-journals/account-journal.service';
-import { AccountPaymentSave, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { SalaryPaymentService } from 'src/app/salary-payment/salary-payment.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PrintService } from 'src/app/shared/services/print.service';
-import { SalaryPaymentSaveDefault } from 'src/app/shared/services/salary-payment.service';
 
 @Component({
   selector: 'app-hr-salary-payment',
@@ -36,7 +33,6 @@ export class HrSalaryPaymentComponent implements OnInit {
     private notificationService: NotificationService,
     private printService: PrintService,
     private modalService: NgbModal,
-    private intlService: IntlService
   ) { }
 
   ngOnInit() {
@@ -75,7 +71,7 @@ export class HrSalaryPaymentComponent implements OnInit {
   }
 
   onChangeJournal(e) {
-    const val = e.target;
+    // const val = e.target;
   }
 
   onSave() {

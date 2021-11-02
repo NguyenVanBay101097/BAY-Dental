@@ -1,11 +1,11 @@
-import { Component, OnInit} from '@angular/core';
-import { debounceTime, map, distinctUntilChanged } from 'rxjs/operators';
-import { WindowService, DialogService, DialogRef, DialogCloseResult } from '@progress/kendo-angular-dialog';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { DialogCloseResult, DialogRef, DialogService } from '@progress/kendo-angular-dialog';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { RoutingPaged, RoutingService, RoutingBasic } from '../routing.service';
-import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { RoutingBasic, RoutingPaged, RoutingService } from '../routing.service';
 
 @Component({
   selector: 'app-routing-list',
@@ -21,7 +21,7 @@ export class RoutingListComponent implements OnInit {
   search: string;
   searchUpdate = new Subject<string>();
 
-  constructor(private routingService: RoutingService, private windowService: WindowService,
+  constructor(private routingService: RoutingService, 
     private dialogService: DialogService, public intl: IntlService, private router: Router) { }
 
   ngOnInit() {

@@ -1,6 +1,5 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { Subject } from 'rxjs';
 import { SaleOrderBasic } from 'src/app/sale-orders/sale-order-basic';
 
 @Component({

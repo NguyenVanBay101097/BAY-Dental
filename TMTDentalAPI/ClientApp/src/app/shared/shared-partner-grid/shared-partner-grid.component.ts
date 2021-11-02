@@ -1,6 +1,5 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { GridDataResult, PageChangeEvent, SelectionEvent } from '@progress/kendo-angular-grid';
-import { PartnerBasic } from 'src/app/partners/partner-simple';
 
 
 @Component({
