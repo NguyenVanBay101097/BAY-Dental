@@ -1,11 +1,9 @@
 import { Component, Inject, OnInit } from "@angular/core";
 import { GridDataResult, PageChangeEvent } from "@progress/kendo-angular-grid";
 import { IntlService } from "@progress/kendo-angular-intl";
-// import { take } from "lodash";
 import { Subject } from "rxjs";
 import { debounceTime, distinctUntilChanged, map } from "rxjs/operators";
 import {
-  // DotKhamLinePagedResult,
   DotKhamLinePaging,
   DotKhamLineService,
 } from "src/app/dot-kham-lines/dot-kham-line.service";

@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { SmsAccountListComponent } from './sms-account-list/sms-account-list.component';
-// import { SmsAccountSettingComponent } from './sms-account-setting/sms-account-setting.component';
 import { SmsAppointmentFormAutomaticComponent } from './sms-appointment-form-automatic/sms-appointment-form-automatic.component';
 import { SmsAppointmentFormManualComponent } from './sms-appointment-form-manual/sms-appointment-form-manual.component';
 import { SmsAppointmentFormComponent } from './sms-appointment-form/sms-appointment-form.component';
@@ -14,7 +13,6 @@ import { SmsCareAfterOrderFormAutomaticComponent } from './sms-care-after-order-
 import { SmsCareAfterOrderFormManualComponent } from './sms-care-after-order-form-manual/sms-care-after-order-form-manual.component';
 import { SmsCareAfterOrderFormComponent } from './sms-care-after-order-form/sms-care-after-order-form.component';
 import { SmsMessageDetailStatisticComponent } from './sms-message-detail-statistic/sms-message-detail-statistic.component';
-// import { SmsMessageStatisticComponent } from './sms-message-statistic/sms-message-statistic.component';
 import { SmsReportComponent } from './sms-report/sms-report.component';
 import { SmsStatisticComponent } from './sms-statistic/sms-statistic.component';
 import { SmsTemplateListComponent } from './sms-template-list/sms-template-list.component';

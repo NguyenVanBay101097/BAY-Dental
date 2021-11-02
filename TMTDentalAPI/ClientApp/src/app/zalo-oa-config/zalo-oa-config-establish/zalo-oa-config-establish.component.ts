@@ -2,9 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import {
   ZaloOAConfigService,
   ZaloOAConfigSave,
-  // ZaloOAConfigBasic,
 } from "../zalo-oa-config.service";
-// import { FormGroup, FormBuilder } from "@angular/forms";
 import { NotificationService } from "@progress/kendo-angular-notification";
 import { FacebookPageService } from 'src/app/socials-channel/facebook-page.service';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';

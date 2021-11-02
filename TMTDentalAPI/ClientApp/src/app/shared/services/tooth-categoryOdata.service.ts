@@ -1,7 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-// import { GridDataResult } from '@progress/kendo-angular-grid';
-// import { map } from 'rxjs/operators';
 import { ODataService } from './odata.service';
 
 @Injectable({ providedIn: 'root' })

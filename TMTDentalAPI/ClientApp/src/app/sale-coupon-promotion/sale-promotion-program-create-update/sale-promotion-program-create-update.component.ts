@@ -3,9 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
-// import { ProductPriceListBasic, ProductPricelistPaged } from 'src/app/price-list/price-list';
 import { debounceTime, tap, switchMap, distinctUntilChanged } from 'rxjs/operators';
-// import { PriceListService } from 'src/app/price-list/price-list.service';
 import * as _ from 'lodash';
 import { SaleCouponProgramDisplay, SaleCouponProgramService } from '../sale-coupon-program.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -15,11 +13,8 @@ import { ProductFilter, ProductService } from 'src/app/products/product.service'
 import { IntlService } from '@progress/kendo-angular-intl';
 import { ProductCategory } from 'src/app/product-categories/product-category';
 import {
-  // ProductCategoryBasic, ProductCategoryFilter,
   ProductCategoryPaged, ProductCategoryService
 } from 'src/app/product-categories/product-category.service';
-// import { element } from 'protractor';
-// import { result } from 'lodash';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { DiscountPricePopoverComponent } from './discount-price-popover/discount-price-popover.component';
 import { PartnerFilter, PartnerService } from 'src/app/partners/partner.service';

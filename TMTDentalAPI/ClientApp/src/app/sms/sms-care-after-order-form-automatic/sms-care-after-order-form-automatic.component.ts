@@ -10,8 +10,6 @@ import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-ken
 import { SmsCampaignService } from '../sms-campaign.service';
 import { SmsCareAfterOrderAutomationConfigService } from '../sms-care-after-order-automation-config.service';
 import { SmsCareAfterOrderFormAutomaticDialogComponent } from '../sms-care-after-order-form-automatic-dialog/sms-care-after-order-form-automatic-dialog.component';
-// import { SmsConfigService } from '../sms-config.service';
-// import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
 
 @Component({
   selector: 'app-sms-care-after-order-form-automatic',

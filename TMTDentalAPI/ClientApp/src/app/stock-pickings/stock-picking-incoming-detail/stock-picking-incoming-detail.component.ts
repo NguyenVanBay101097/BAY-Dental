@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-// import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { StockPickingBasic, StockPickingService } from '../stock-picking.service';
 
 @Component({

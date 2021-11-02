@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { CommissionsRoutingModule } from './commissions-routing.module';
-// import { CommissionListComponent } from './commission-list/commission-list.component';
 import { CommissionService } from './commission.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';

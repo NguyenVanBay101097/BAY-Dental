@@ -9,7 +9,6 @@ import { SharedModule } from '../shared/shared.module';
 import { SaleReportItemDetailComponent } from './sale-report-item-detail/sale-report-item-detail.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SaleReportPartnerComponent } from './sale-report-partner/sale-report-partner.component';
-// import { SaleReportPartnerDaysFilterComponent } from './sale-report-partner-days-filter/sale-report-partner-days-filter.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SaleReportOldNewPartnerComponent } from './sale-report-old-new-partner/sale-report-old-new-partner.component';
 import { SaleReportPartnerDetailComponent } from './sale-report-partner-detail/sale-report-partner-detail.component';
@@ -25,7 +24,6 @@ import { ServiceSaleReportComponent } from './service-sale-report/service-sale-r
     SaleReportOverviewComponent,
     SaleReportItemDetailComponent,
     SaleReportPartnerComponent,
-    // SaleReportPartnerDaysFilterComponent,
     SaleReportOldNewPartnerComponent,
     SaleReportPartnerDetailComponent,
     ServiceReportManagementComponent,

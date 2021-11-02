@@ -1,5 +1,4 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-// import { FormGroup, FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-appointment-state-filter',

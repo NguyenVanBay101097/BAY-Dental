@@ -1,20 +1,16 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import {
   FormGroup, FormBuilder, Validators,
-  // FormArray
 } from '@angular/forms';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { ProductService, ProductFilter } from 'src/app/products/product.service';
 import {
-  // RoutingService,
   RoutingLineDisplay
 } from '../routing.service';
 import { WindowRef, WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
 import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import * as _ from 'lodash';
-// import { ProductDialogComponent } from 'src/app/products/product-dialog/product-dialog.component';
-// import { Product } from 'src/app/products/product';
 import { ProductStepCuDialogComponent } from 'src/app/products/product-step-cu-dialog/product-step-cu-dialog.component';
 
 @Component({

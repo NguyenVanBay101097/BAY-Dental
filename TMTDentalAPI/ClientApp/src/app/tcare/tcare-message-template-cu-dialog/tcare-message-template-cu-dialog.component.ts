@@ -1,14 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-// import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { NotificationService } from '@progress/kendo-angular-notification';
-// import { validate } from 'fast-json-patch';
-// import { stringify } from 'querystring';
-// import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { SaleCouponProgramPaged, SaleCouponProgramService } from 'src/app/sale-coupon-promotion/sale-coupon-program.service';
 import {
-  // TCareMessageTemplatePaged,
   TCareMessageTemplateService
 } from '../tcare-message-template.service';
 import { TcareMessageTemplateContentComponent } from './tcare-message-template-content/tcare-message-template-content.component';

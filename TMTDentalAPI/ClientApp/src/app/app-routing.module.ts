@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 import { AppHomeComponent } from './app-home/app-home.component';
 import { AuthGuard } from './auth/auth.guard';
-// import { PartnerSupplierListComponent } from './catalog/partner-supplier-list/partner-supplier-list.component';
 
 const routes: Routes = [
   {
@@ -165,11 +164,11 @@ const routes: Routes = [
         loadChildren: () => import('./sale-orders/sale-orders.module').then(m => m.SaleOrdersModule),
         canActivate: [AuthGuard]
       },
-      {
-        path: 'sale-quotations',
-        loadChildren: () => import('./sale-quotations/sale-quotations.module').then(m => m.SaleQuotationsModule),
-        canActivate: [AuthGuard]
-      },
+      // {
+      //   path: 'sale-quotations',
+      //   loadChildren: () => import('./sale-quotations/sale-quotations.module').then(m => m.SaleQuotationsModule),
+      //   canActivate: [AuthGuard]
+      // },
       {
         path: 'appointments',
         loadChildren: () => import('./appointment/appointment.module').then(m => m.AppointmentModule),
@@ -195,14 +194,14 @@ const routes: Routes = [
         loadChildren: () => import('./phieu-thu-chi/phieu-thu-chi.module').then(m => m.PhieuThuChiModule),
         canActivate: [AuthGuard]
       },
-      {
-        path: 'real-revenue-report',
-        loadChildren: () => import('./real-revenue-report/real-revenue-report.module').then(m => m.RealRevenueReportModule)
-      },
-      {
-        path: 'dot-kham-report',
-        loadChildren: () => import('./dot-kham-steps/dot-kham-steps.module').then(m => m.DotKhamStepsModule)
-      },
+      // {
+      //   path: 'real-revenue-report',
+      //   loadChildren: () => import('./real-revenue-report/real-revenue-report.module').then(m => m.RealRevenueReportModule)
+      // },
+      // {
+      //   path: 'dot-kham-report',
+      //   loadChildren: () => import('./dot-kham-steps/dot-kham-steps.module').then(m => m.DotKhamStepsModule)
+      // },
       {
         path: 'programs',
         loadChildren: () => import('./sale-coupon-promotion/sale-coupon-promotion.module').then(m => m.SaleCouponPromotionModule),
@@ -238,11 +237,11 @@ const routes: Routes = [
         loadChildren: () => import('./cash-book/cash-book.module').then(m => m.CashBookModule),
         canActivate: [AuthGuard]
       },
-      {
-        path: 'treatment-lines',
-        loadChildren: () => import('./dot-kham-lines/dot-kham-lines.module').then(m => m.DotKhamLinesModule),
-        canActivate: [AuthGuard]
-      },
+      // {
+      //   path: 'treatment-lines',
+      //   loadChildren: () => import('./dot-kham-lines/dot-kham-lines.module').then(m => m.DotKhamLinesModule),
+      //   canActivate: [AuthGuard]
+      // },
       {
         path: 'sms',
         loadChildren: () => import('./sms/sms.module').then(m => m.SmsModule),

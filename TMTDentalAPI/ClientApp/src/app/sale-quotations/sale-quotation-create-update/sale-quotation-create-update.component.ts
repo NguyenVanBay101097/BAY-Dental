@@ -1,17 +1,14 @@
 import { Component, OnInit } from "@angular/core";
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-// import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
-// import { from } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { EmployeesOdataService } from 'src/app/shared/services/employeeOdata.service';
 import { SaleOrdersOdataService } from 'src/app/shared/services/sale-ordersOdata.service';
 import { ToothCategoryOdataService } from 'src/app/shared/services/tooth-categoryOdata.service';
 import { TeethOdataService } from 'src/app/shared/services/toothOdata.service';
-// import { UserOdataService, UserSimple } from 'src/app/shared/services/user-odata.service';
 
 @Component({
   selector: "app-sale-quotation-create-update",

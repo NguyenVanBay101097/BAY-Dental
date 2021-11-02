@@ -93,7 +93,6 @@ import { PartnerCustomerDebtManagementComponent } from './partner-customer-debt-
 import { PartnerOverviewTreatmentHistoryComponent } from './partner-overview/partner-overview-treatment-history/partner-overview-treatment-history.component';
 import { AccountInvoiceReportService } from '../account-invoice-reports/account-invoice-report.service';
 import { PartnerSupplierListComponent } from '../catalog/partner-supplier-list/partner-supplier-list.component';
-// import { CatalogModule } from '../catalog/catalog.module';
 
 
 

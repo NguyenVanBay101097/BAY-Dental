@@ -1,16 +1,11 @@
 import {
   Component, OnInit, ViewChild,
-  // ElementRef, Output, EventEmitter
 } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
 import { PartnerService } from '../partner.service';
-// import { WindowRef, WindowService } from '@progress/kendo-angular-dialog';
 import { PartnerDisplay, PartnerCategorySimple, District, AshipRequest, City, Ward, AshipData } from '../partner-simple';
 import { ActivatedRoute } from '@angular/router';
-// import { FileRestrictions, SelectEvent, RemoveEvent, UploadEvent, SuccessEvent, FileInfo } from '@progress/kendo-angular-upload';
 import { EmployeeSimple, EmployeePaged } from 'src/app/employees/employee';
-// import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-// import { switchMap, tap, debounceTime } from 'rxjs/operators';
 import * as _ from 'lodash';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { HistorySimple } from 'src/app/history/history';

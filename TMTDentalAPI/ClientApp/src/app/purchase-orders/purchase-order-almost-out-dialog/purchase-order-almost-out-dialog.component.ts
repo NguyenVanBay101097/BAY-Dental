@@ -1,7 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-// import { GridDataResult } from '@progress/kendo-angular-grid';
-// import { Subject } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
 import { ProductService } from 'src/app/products/product.service';
 
