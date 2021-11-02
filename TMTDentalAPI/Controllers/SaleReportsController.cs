@@ -58,7 +58,7 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Report.Sale")]
         public async Task<IActionResult> GetReportService(SaleReportSearch val)
         {
-            var res = await _saleReportService.GetReportService(val);
+            var res = await _saleReportService.GetReportService(val.DateFrom, val.DateTo, val.CompanyId, val.Search, val.State);
             return Ok(res);
         }
 
@@ -95,7 +95,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> ExportServiceReportExcelFile(SaleReportSearch val)
         {
             var stream = new MemoryStream();
-            var data = await _saleReportService.GetReportService(val);
+            var data = await _saleReportService.GetReportService(val.DateFrom, val.DateTo, val.CompanyId, val.Search, val.State);
             byte[] fileContent;
 
             using (var package = new ExcelPackage(stream))

@@ -202,8 +202,8 @@ namespace TMTDentalAPI.Controllers
                     ResModel = "dotkham",
                     ResId = id,
                     Name = item.FileName,
-                    Type = "upload",
-                    UploadId = item.FileUrl,
+                    Type = "url",
+                    Url = item.FileUrl,
                 };
 
                 list.Add(attachment);
@@ -278,14 +278,7 @@ namespace TMTDentalAPI.Controllers
                 },
                 SaleOrderLineId = x.SaleOrderLineId
             }).ToListAsync();
-
-            dotkham.DotKhamImages = await _partnerImageService.SearchQuery(x => x.DotkhamId.Value == id).Select(x => new PartnerImageDisplay
-            {
-                Id = x.Id,
-                Date = x.Date.Value,
-                Name = x.Name,
-                UploadId = x.UploadId
-            }).ToListAsync();
+            dotkham.IrAttachments = _mapper.Map<IEnumerable<IrAttachmentBasic>>(await _dotKhamService.GetListAttachment(id));
 
             return Ok(dotkham);
         }

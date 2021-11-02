@@ -48,7 +48,7 @@
         </kendo-grid-column>
         <kendo-grid-column *ngIf="canUpdateSaleOrder" title="Phiếu điều trị" width="150">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <a class="text-primary" [routerLink]="['/sale-orders/form']" [queryParams]="{id: dataItem.saleOrderLine.order.id}">{{dataItem.saleOrderLine.order.name}}</a>
+                <a class="text-primary" *ngIf="dataItem.saleOrderLine" [routerLink]="['/sale-orders', dataItem.saleOrderLine.order.id]">{{dataItem.saleOrderLine.order.name}}</a>
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="name" title="Phiếu Labo" width="150">
@@ -58,7 +58,7 @@
         </kendo-grid-column>
         <kendo-grid-column title="Loại phục hình" width="200">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.saleOrderLine.name}}
+                {{dataItem.saleOrderLine?.name}}
             </ng-template>
         </kendo-grid-column>
         <!-- <kendo-grid-column field="teeth" title="Răng" width="120">

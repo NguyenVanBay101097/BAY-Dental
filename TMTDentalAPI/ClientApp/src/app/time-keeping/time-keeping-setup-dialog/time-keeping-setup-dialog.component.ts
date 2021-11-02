@@ -21,7 +21,7 @@ import * as _ from 'lodash';
 export class TimeKeepingSetupDialogComponent implements OnInit {
 
   @ViewChild('workCbx', { static: true }) workCbx: ComboBoxComponent;
-  @ViewChild('timeOutRef', { static: false }) timeOutRef: ElementRef;
+  @ViewChild('timeOutRef') timeOutRef: ElementRef;
   formGroup: FormGroup;
   id: string;
   dateTime: Date;

@@ -12,27 +12,83 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Số thẻ
         /// </summary>
         public string Name { get; set; }
-
-        public string CardTypeName { get; set; }
-
-        public string PartnerName { get; set; }
-
+        public string State { get; set; }
+        public Guid CardTypeId { get; set; }
+        public ServiceCardTypeSimple CardType { get; set; }
+        public Guid? PartnerId { get; set; }
+        public PartnerBasic Partner { get; set; }
+        public string Barcode { get; set; }
         public DateTime? ActivatedDate { get; set; }
-
         public DateTime? ExpiredDate { get; set; }
 
+        public string StateDisplay
+        {
+            get
+            {
+                switch (State)
+                {
+                    case "in_use":
+                        return "Đã kích hoạt";
+                    case "cancelled":
+                        return "Hủy thẻ";
+                    case "locked":
+                        return "Tạm dừng";
+                    default:
+                        return "Chưa kích hoạt";
+                }
+            }
+        }
+    }
+
+    public class ServiceCardCardResponse
+    {
+        public Guid Id { get; set; }
+
+        /// <summary>
+        /// Số thẻ
+        /// </summary>
+        public string Name { get; set; }
+        /// <summary>
+        /// ngày bắt đầu
+        /// </summary>
+        public DateTime? ActivatedDate { get; set; }
+        /// <summary>
+        /// ngày kết thúc
+        /// </summary>
+        public DateTime? ExpiredDate { get; set; }
+
+        /// <summary>
+        /// draft: Nháp
+        /// confirmed: Chờ cấp thẻ
+        /// in_use: Đang sử dụng
+        /// locked: Đã khóa
+        /// cancelled: Đã hủy
+        public string State { get; set; }
+        public Guid CardTypeId { get; set; }
+        public ServiceCardTypeBasic CardType { get; set; }
+        public Guid? PartnerId { get; set; }
+        public PartnerSimple Partner { get; set; }
         public string Barcode { get; set; }
+        //public ProductPricelistItemDisplay ProductPricelistItem { get; set; }
+    }
 
-        /// <summary>
-        /// Số tiền trong thẻ
-        /// </summary>
-        public decimal? Amount { get; set; }
+    public class ServiceCardCardFilter
+    {
+        public Guid? PartnerId { get; set; }
 
-        /// <summary>
-        /// Số tiền còn lại
-        /// </summary>
-        public decimal? Residual { get; set; }
+        public Guid? ProductId { get; set; }
 
         public string State { get; set; }
+    }
+
+    public class ImportExcelResponse
+    {
+        public bool Success { get; set; }
+        public IEnumerable<string> Errors { get; set; }
+    }
+
+    public class ServiceCardCardImportExcel
+    {
+        public string FileBase64 { get; set; }
     }
 }

@@ -318,7 +318,7 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<PagedResult2<SaleOrderLineDisplay>> GetReportService(SaleReportSearch val)
+        public async Task<PagedResult2<SaleOrderLineDisplay>> GetReportService(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string search, string state)
         {
             var lineObj = GetService<ISaleOrderLineService>();
             var query = lineObj.SearchQuery(x => (!x.Order.IsQuotation.HasValue || x.Order.IsQuotation == false))
@@ -326,28 +326,29 @@ namespace Infrastructure.Services
                 .Include(x => x.Employee)
                 .Include(x => x.OrderPartner)
                 .Include(x => x.Product)
+                .Include(x => x.SaleOrderLinePaymentRels)
                 .Include("SaleOrderLineToothRels.Tooth")
                 .AsQueryable();
 
-            if (!string.IsNullOrEmpty(val.Search))
+            if (!string.IsNullOrEmpty(search))
             {
-                query = query.Where(x => x.Name.Contains(val.Search) ||
-                x.OrderPartner.Name.Contains(val.Search) ||
-                x.Order.Name.Contains(val.Search) ||
-                x.Employee.Name.Contains(val.Search));
+                query = query.Where(x => x.Name.Contains(search) ||
+                x.OrderPartner.Name.Contains(search) ||
+                x.Order.Name.Contains(search) ||
+                x.Employee.Name.Contains(search));
             }
 
-            if (val.DateFrom.HasValue)
-                query = query.Where(x => x.Date >= val.DateFrom.Value);
+            if (dateFrom.HasValue)
+                query = query.Where(x => x.Date >= dateFrom.Value.AbsoluteBeginOfDate());
 
-            if (val.DateTo.HasValue)
-                query = query.Where(x => x.Date <= val.DateTo.Value);
+            if (dateTo.HasValue)
+                query = query.Where(x => x.Date <= dateTo.Value.AbsoluteEndOfDate());
 
-            if (val.CompanyId.HasValue)
-                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+            if (companyId.HasValue)
+                query = query.Where(x => x.CompanyId == companyId.Value);
 
-            if (!string.IsNullOrEmpty(val.State))
-                query = query.Where(x => !x.Order.State.Equals(val.State));
+            if (!string.IsNullOrEmpty(state))
+                query = query.Where(x => !x.Order.State.Equals(state));
 
 
 

@@ -141,5 +141,11 @@ namespace ApplicationCore.Entities
         /// </summary>
         public ResGroup Group { get; set; }
         public Guid? GroupId { get; set; }
+
+        /// <summary>
+        /// Chức vụ nhân viên
+        /// </summary>
+        public Guid? HrJobId { get; set; }
+        public HrJob HrJob { get; set; }
     }
 }

@@ -3,6 +3,7 @@ import { LegendItemVisualArgs } from '@progress/kendo-angular-charts';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { ChartDataset, ChartOptions } from 'chart.js';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
@@ -10,6 +11,7 @@ import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { CustomerReceiptReportFilter, CustomerReceiptReportService } from '../customer-receipt-report.service';
+import * as pluginDataLabels from 'chartjs-plugin-datalabels';
 
 @Component({
   selector: 'app-customer-receipt-report-overview',
@@ -42,6 +44,45 @@ export class CustomerReceiptReportOverviewComponent implements OnInit {
   // Pie
   public pieDataExamination: any[] = [];
   public pieDataNoTreatment: any[] = [];
+
+  public pieChartLabels: string[] = [];
+  public pieChartOptions: ChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'right'
+      },
+      datalabels: {
+        display: true,
+        anchor: 'end',
+        align: 'start',
+        color: '#fff'
+      },
+    }
+  };
+
+  pieChartPlugins = [pluginDataLabels];
+
+  public pieChartData: ChartDataset[] = [
+    { 
+      data: [],
+      backgroundColor: [ 'rgb(26,109,227)', 'rgb(149,200,255)' ],
+      hoverBackgroundColor: [ 'rgb(26,109,227)', 'rgb(149,200,255)' ],
+      hoverBorderColor: [ 'rgb(26,109,227)', 'rgb(149,200,255)' ],
+    }
+  ];
+
+  noTreatmentChartLabels: string[] = [];
+  noTreatmentChartData: ChartDataset[] = [
+    { 
+      data: [],
+      backgroundColor: [ 'rgb(26,109,227)', 'rgb(149,200,255)' ],
+      hoverBackgroundColor: [ 'rgb(26,109,227)', 'rgb(149,200,255)' ],
+      hoverBorderColor: [ 'rgb(26,109,227)', 'rgb(149,200,255)' ],
+    }
+  ];
 
   @ViewChild("companyCbx", { static: true }) companyCbx: ComboBoxComponent;
   @ViewChild("employeeCbx", { static: true }) employeeCbx: ComboBoxComponent;
@@ -165,6 +206,8 @@ export class CustomerReceiptReportOverviewComponent implements OnInit {
     this.customerReceiptReportService.getCountCustomerReceipt(val).subscribe(
       (res: any[]) => {
         this.pieDataExamination = res;
+        this.pieChartData[0].data = res.map(x => x.countCustomerReceipt);
+        this.pieChartLabels = res.map(x => x.name);
         this.loading = false;
       },
       (err) => {
@@ -190,6 +233,8 @@ export class CustomerReceiptReportOverviewComponent implements OnInit {
     this.customerReceiptReportService.getCountCustomerReceiptNoTreatment(val).subscribe(
       (res: any[]) => {
         this.pieDataNoTreatment = res;
+        this.noTreatmentChartData[0].data = res.map(x => x.countCustomerReceipt);
+        this.noTreatmentChartLabels = res.map(x => x.name);
         this.loading = false;
       },
       (err) => {

@@ -74,6 +74,9 @@ namespace Infrastructure.Services
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId);
 
+            if (val.HrJobId.HasValue)
+                query = query.Where(x => x.HrJobId == val.HrJobId);
+
             query = query.OrderBy(s => s.Name);
             return query;
         }
@@ -167,7 +170,7 @@ namespace Infrastructure.Services
             var query = GetQueryPaged(val).Include(x => x.Company).AsQueryable();
             var totalItems = await query.CountAsync();
 
-            query = query.Include(x => x.User).OrderByDescending(x => x.DateCreated);
+            query = query.Include(x => x.User).Include(x => x.HrJob).OrderByDescending(x => x.DateCreated);
             if (val.Limit > 0)
             {
                 query = query.Skip(val.Offset).Take(val.Limit);
@@ -192,7 +195,7 @@ namespace Infrastructure.Services
             {
                 query = query.Where(x => x.IsDoctor == false && x.IsAssistant == true);
             }
-
+            query = query.Include(x => x.HrJob);
             if (val.Limit > 0) query = query.Skip(val.Offset).Take(val.Limit);
 
             var items = await query.Where(x => x.Active == true)

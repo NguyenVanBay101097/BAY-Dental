@@ -1,0 +1,54 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ngbAutofocus
+        (click)="activeModal.dismiss()" tabindex="-1">×</button>
+</header>
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <table class="o_group o_inner_group o_group_col_12">
+                    <tbody class="w-100">
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Số ID thẻ</label>
+                            </td>
+                            <td colspan="1">
+                                <input class="form-control" formControlName="barcode" placeholder="Nhập số ID thẻ" />
+                                <div *ngIf="f.barcode.errors && (f.barcode.touched || f.barcode.dirty || submitted)" class="text-danger mb-1">
+                                    <div *ngIf="f.barcode.errors?.required">Số ID thẻ không được bỏ trống</div>
+                                    <div *ngIf="f.barcode.errors?.lengthError" class="text-danger">
+                                        Tối thiểu 10 và tối đa 15 ký tự
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Hạng thẻ</label>
+                            </td>
+                            <td colspan="1">
+                                <div class="d-flex">
+                                    <div class="flex-grow-1">
+                                        <kendo-combobox [filterable]="true" [data]="cardTypeSimpleFilter" #cardTypeCbx
+                                            [valueField]="'id'" [textField]="'name'" formControlName="cardType">
+                                        </kendo-combobox>
+                                    </div>
+                                </div>
+                                <div *ngIf="f.cardType.errors && (f.cardType.touched || f.cardType.dirty || submitted)" class="text-danger mb-1">
+                                    <div *ngIf="f.cardType.errors?.required">Chọn hạng thẻ</div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary mr-2" (click)="onSave()">
+        Lưu & kích hoạt</button>
+    <button type="button" class="btn btn-secondary mr-2" (click)="activeModal.dismiss()">
+        Đóng</button>
+</div>

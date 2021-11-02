@@ -179,28 +179,26 @@ namespace Infrastructure.Services
             return revenue;
         }
 
-        public async Task<SumaryRevenueReport> GetSumaryRevenueReport(SumaryRevenueReportFilter val)
+        public async Task<SumaryRevenueReport> GetSumaryRevenueReport(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string accountCode, string resultSelection)
         {
             var amlObj = GetService<IAccountMoveLineService>();
             var RevenueReport = new SumaryRevenueReport();
             var sign = -1;
 
-            var dateFrom = val.DateFrom;
             if (dateFrom.HasValue)
                 dateFrom = dateFrom.Value.AbsoluteBeginOfDate();
 
-            var dateTo = val.DateTo;
             if (dateTo.HasValue)
                 dateTo = dateTo.Value.AbsoluteEndOfDate();
 
-            var query = amlObj._QueryGet(dateFrom: dateFrom, dateTo: dateTo, state: "posted", companyId: val.CompanyId);
+            var query = amlObj._QueryGet(dateFrom: dateFrom, dateTo: dateTo, state: "posted", companyId: companyId);
 
             var types = new string[] { "cash", "bank" };
             query = query.Where(x => types.Contains(x.Journal.Type));
 
-            query = query.Where(x => x.Account.Code == val.AccountCode);
+            query = query.Where(x => x.Account.Code == accountCode);
 
-            RevenueReport.Type = val.ResultSelection;
+            RevenueReport.Type = resultSelection;
             RevenueReport.Credit = await query.SumAsync(x => x.Credit);
             RevenueReport.Debit = await query.SumAsync(x => x.Debit);
             RevenueReport.Balance = await query.SumAsync(x => x.Balance * sign);
@@ -212,8 +210,8 @@ namespace Infrastructure.Services
             var invoiceObj = GetService<IAccountInvoiceReportService>();
             var cashbookObj = GetService<ICashBookService>();
 
-            var accCodes = new string[] { "131", "CNKH" , "KHTU" };
-            var revenues = await invoiceObj.GetRevenueChartReport(dateFrom: dateFrom, dateTo: dateTo, companyId: companyId, groupBy: groupBy ,accountCode: accCodes);
+            var accCodes = new string[] { "131", "CNKH", "KHTU" };
+            var revenues = await invoiceObj.GetRevenueChartReport(dateFrom: dateFrom, dateTo: dateTo, companyId: companyId, groupBy: groupBy, accountCode: accCodes);
             var revenue_dict = revenues.ToDictionary(x => x.InvoiceDate, x => x);
 
             var cashbooks = await cashbookObj.GetCashBookChartReport(dateFrom: dateFrom, dateTo: dateTo, companyId: companyId, groupBy: groupBy);
@@ -236,6 +234,69 @@ namespace Infrastructure.Services
 
             return res;
 
+        }
+        public async Task<GetThuChiReportResponse> GetThuChiReport(DateTime? dateFrom, DateTime? dateTo, Guid? companyId)
+        {
+            var amlObj = GetService<IAccountMoveLineService>();
+            //báo cáo doanh thu thực thu
+            var resdateFrom = dateFrom.HasValue ? dateFrom.Value.AbsoluteBeginOfDate() : (DateTime?)null;
+            var resdateTo = dateTo.HasValue ? dateTo.Value.AbsoluteEndOfDate() : (DateTime?)null;
+            var query = amlObj._QueryGet(dateTo: resdateTo, dateFrom: resdateFrom, state: "posted", companyId: companyId);
+            query = query.Where(x => (x.Journal.Type == "cash" || x.Journal.Type == "bank") && x.AccountInternalType != "liquidity");
+
+            var customerIncomeTotal = await query.Where(x => x.AccountInternalType == "receivable").SumAsync(x => x.Credit);
+            var advanceIncomeTotal = await query.Where(x => x.Account.Code == "KHTU").SumAsync(x => x.Credit);
+            var debtIncomeTotal = await query.Where(x => x.Account.Code == "CNKH").SumAsync(x => x.Credit);
+            var supplierIncomeTotal = await query.Where(x => x.AccountInternalType == "payable").SumAsync(x => x.Credit);
+            var cashBankIncomeTotal = await query.SumAsync(x => x.Credit);
+
+            var supplierExpenseTotal = await query.Where(x => x.AccountInternalType == "payable").SumAsync(x => x.Debit);
+            var advanceExpenseTotal = await query.Where(x => x.Account.Code == "HTU").SumAsync(x => x.Debit);
+            var salaryExpenseTotal = await query.Where(x => x.Account.Code == "334").SumAsync(x => x.Debit);
+            var commissionExpenseTotal = await query.Where(x => x.Account.Code == "HHNGT").SumAsync(x => x.Debit);
+            var cashBankExpenseTotal = await query.SumAsync(x => x.Debit);
+
+            return new GetThuChiReportResponse
+            {
+                CustomerIncomeTotal = customerIncomeTotal,
+                AdvanceIncomeTotal = advanceIncomeTotal,
+                DebtIncomeTotal = debtIncomeTotal,
+                SupplierIncomeTotal = supplierIncomeTotal,
+                CashBankIncomeTotal = cashBankIncomeTotal,
+                SupplierExpenseTotal = supplierExpenseTotal,
+                AdvanceExpenseTotal = advanceExpenseTotal,
+                SalaryExpenseTotal = salaryExpenseTotal,
+                CommissionExpenseTotal = commissionExpenseTotal,
+                CashBankExpenseTotal = cashBankExpenseTotal
+            };
+        }
+
+
+        public async Task<CashBookReportDay> GetDataCashBookReportDay(DateTime? dateFrom, DateTime? dateTo, Guid? companyId)
+        {
+            var cashbookObj = GetService<ICashBookService>();
+
+            var res = new CashBookReportDay();
+            /// load dữ liệu tổng tiền 
+            var types = new string[] { "", "cash", "bank" };
+            var dataTotalAmount = new List<CashBookReport>();
+            foreach (var item in types)
+            {
+                var i = await cashbookObj.GetSumary(dateFrom, dateTo, companyId, item);
+                dataTotalAmount.Add(i);
+            }
+
+            res.DataAmountTotals = dataTotalAmount;
+
+            /// load dữ liệu báo cáo thu chi
+            var reportThuChi = await GetThuChiReport(dateFrom, dateTo, companyId);
+
+            res.DataThuChiReport = reportThuChi;
+            /// load dữ liệu chi tiết
+            var cashbooks = await cashbookObj.GetDetails(dateFrom, dateTo, 0, 0, companyId, null, null);
+            res.DataDetails = cashbooks.Items;
+
+            return res;
         }
 
         protected T GetService<T>()

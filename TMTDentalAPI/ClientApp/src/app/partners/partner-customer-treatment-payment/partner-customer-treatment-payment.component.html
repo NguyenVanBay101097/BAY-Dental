@@ -11,7 +11,7 @@
                 <kendo-grid-column field="name" title="Số phiếu" width="100">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                         <div>
-                            <a class="text-primary" [routerLink]="['/sale-orders/form']" [queryParams]="{ id: dataItem.id}">
+                            <a class="text-primary" [routerLink]="['/sale-orders', dataItem.id]">
                                 {{dataItem.name}}
                             </a>
                         </div>

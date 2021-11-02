@@ -1,7 +1,9 @@
 import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
+import { ChartDataset, ChartOptions, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
+import 'chartjs-adapter-date-fns';
+import {vi} from 'date-fns/locale';
 
 @Component({
   selector: 'app-sale-dashboard-invoice-report',
@@ -13,50 +15,51 @@ export class SaleDashboardInvoiceReportComponent implements OnInit, OnChanges {
   @Input() timeUnit: any;
   @Input() cashBooks: any;
   @Input() revenueActualReportData: any;
+  barChartLabels: string[] = [];
 
   public barChartOptions: ChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
-    title: {
-      text: 'BIỂU ĐỒ DOANH THU - THỰC THU',
-      display: true,
-      fontSize: 16,
-    },
-    legend: {
-      position: 'bottom'
-    },
-    tooltips: {
-      mode: 'index',
-      callbacks: {
-        label: function (tooltipItems, data) {
-          return data.datasets[tooltipItems.datasetIndex].label + ': ' + tooltipItems.yLabel.toLocaleString();
+    plugins: {
+      title: {
+        text: 'BIỂU ĐỒ DOANH THU - THỰC THU',
+        display: true,
+        font: {
+          size: 16
         }
+      },
+      legend: {
+        position: 'bottom'
+      },
+      tooltip: {
+        mode: 'index'
       }
     },
-    // We use these empty structures as placeholders for dynamic theming.
     scales: {
-      xAxes: [{
+      x: {
+        adapters: {
+          date: {
+            locale: vi
+          }
+        },
         offset: true,
-        distribution: 'linear',
         type: 'time',
         time: {
-          tooltipFormat: 'DD/MM/YYYY',
+          tooltipFormat: 'dd/MM/yyyy',
           displayFormats: {
-            'day': 'DD/MM',
-            'month': 'MM/YYYY',
+            'day': 'dd/MM',
+            'month': 'MM/yyyy',
           },
           unit: 'day'
         }
-      }],
-      yAxes: [{
-        ticks: {
-          beginAtZero: true,
-        },
-      }],
+      },
+      y: {
+        beginAtZero: true,
+      },
     },
   };
 
-  public barChartData: ChartDataSets[] = [
+  public barChartData: ChartDataset[] = [
     {
       label: 'Doanh thu',
       data: [],
@@ -73,8 +76,6 @@ export class SaleDashboardInvoiceReportComponent implements OnInit, OnChanges {
     }
   ];
 
-  @ViewChild(BaseChartDirective, { static: true }) private chart;
-
   constructor(private intlService: IntlService) { }
 
   ngOnInit() {
@@ -83,13 +84,13 @@ export class SaleDashboardInvoiceReportComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.revenues && !changes.revenues.firstChange && changes.cashBooks && !changes.cashBooks.firstChange) {
       //sort asc
-      var revenueData = this.revenues.sort(function(a, b) { return new Date(a.invoiceDate).getTime() - new Date(b.invoiceDate).getTime() })
-      .map(item => {
-        return {
-          x: new Date(item.invoiceDate),
-          y: item.priceSubTotal
-        }
-      });
+      var revenueData = this.revenues.sort(function (a, b) { return new Date(a.invoiceDate).getTime() - new Date(b.invoiceDate).getTime() })
+        .map(item => {
+          return {
+            x: new Date(item.invoiceDate),
+            y: item.priceSubTotal
+          }
+        });
 
       this.cashBooks.forEach(item => {
         var d = new Date(item.date);
@@ -109,15 +110,15 @@ export class SaleDashboardInvoiceReportComponent implements OnInit, OnChanges {
         }
       });
 
-      this.barChartData[0].data = revenueData;
+      this.barChartData[0].data = revenueData.map(x => x.y);
 
-      var cashBookData = this.cashBooks.sort(function(a, b) { return new Date(a.date).getTime() - new Date(b.date).getTime() })
-      .map(item => {
-        return {
-          x: new Date(item.date),
-          y: item.totalThu
-        }
-      });
+      var cashBookData = this.cashBooks.sort(function (a, b) { return new Date(a.date).getTime() - new Date(b.date).getTime() })
+        .map(item => {
+          return {
+            x: new Date(item.date),
+            y: item.totalThu
+          }
+        });
 
       this.revenues.forEach(item => {
         var d = new Date(item.invoiceDate);
@@ -137,13 +138,11 @@ export class SaleDashboardInvoiceReportComponent implements OnInit, OnChanges {
         }
       });
 
-      this.barChartData[1].data = cashBookData;
+      this.barChartData[1].data = cashBookData.map(x => x.y);
+      this.barChartLabels = cashBookData.map(x => x.x);
 
-      this.barChartOptions.scales.xAxes[0].time.unit = this.timeUnit;
-      this.barChartOptions.scales.xAxes[0].time.tooltipFormat = this.timeUnit == 'day' ? 'DD/MM/YYYY' : 'MM/YYYY';
-      setTimeout(() => {
-        this.chart.refresh();
-      }, 10);
+      this.barChartOptions.scales.x['time'].unit = this.timeUnit;
+      this.barChartOptions.scales.x['time'].tooltipFormat = this.timeUnit == 'day' ? 'dd/MM/yyyy' : 'MM/yyyy';
     }
   }
 }

@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { ChartData, ChartDataSets, ChartOptions, ChartTooltipItem, ChartType } from 'chart.js';
-import { Label, SingleDataSet } from 'ng2-charts';
+import { ChartData, ChartDataset, ChartOptions, ChartType, TooltipItem } from 'chart.js';
+// import {  } from 'ng2-charts';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { AccountInvoiceReportService, RevenueDistrictAreaPar } from 'src/app/account-invoice-reports/account-invoice-report.service';
 import { CompanyPaged, CompanyService } from 'src/app/companies/company.service';
@@ -31,7 +31,15 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
   dataSourceCities: Array<{ code: string; name: string }>;
   dataResultCities: Array<{ code: string; name: string }>;
   pieLabels: any[] = []
-  pieOptions: ChartOptions = {};
+  pieOptions: ChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'right',
+      }
+    }
+  }
   pieChartPlugins = [pluginDataLabels];
   pieDatasets: any[] = [];
   pieObjData: any[] = []
@@ -41,27 +49,33 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
 
   barChartOptions_PartnerCount: ChartOptions = {
     responsive: true,
-    title: {
-      position: 'top',
-      display: true,
-      text: 'Số lượng khách mới - quay lại'
-    },
-    legend: {
-      position: 'bottom',
-      display: true
+    indexAxis: 'y',
+    plugins: {
+      title: {
+        position: 'top',
+        display: true,
+        text: 'Số lượng khách mới - quay lại'
+      },
+      legend: {
+        position: 'bottom',
+        display: true
+      },
+      tooltip: {
+        mode: 'index'
+      }
     },
     scales: {
-      xAxes: [{
+      x: {
         ticks: {
-          beginAtZero: true,
           stepSize: 1
         },
-      }],
+        beginAtZero: true
+      },
     }
   }
 
-  barChartLabels_PartnerCount: Label[] = [];
-  barChartData_PartnerCount: ChartDataSets[] = [
+  barChartLabels_PartnerCount: string[] = [];
+  barChartData_PartnerCount: ChartDataset[] = [
     {
       label: 'Khách mới',
       data: [],
@@ -78,38 +92,43 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
 
   barChartOptions_PartnerRevenue: ChartOptions = {
     responsive: true,
-    title: {
-      position: 'top',
-      display: true,
-      text: 'Doanh thu khách mới - quay lại'
-    },
-    legend: {
-      position: 'bottom',
-      display: true
+    indexAxis: 'y',
+    plugins: {
+      title: {
+        position: 'top',
+        display: true,
+        text: 'Doanh thu điều trị khách mới - quay lại'
+      },
+      legend: {
+        position: 'bottom',
+        display: true
+      },
+      tooltip: {
+        mode: 'index'
+      }
+      // tooltip: {
+      //   enabled: true,
+      //   callbacks: {
+      //     label: function (tooltipItem: any, data: ChartData) {
+      //       return data.datasets[tooltipItem.datasetIndex].label + ': ' + tooltipItem.xLabel.toLocaleString();
+      //     },
+      //   }
+      // }
     },
     scales: {
-      xAxes: [{
+      x: {
         ticks: {
-          min: 0,
           callback: function (value: number, index, values) {
             return Intl.NumberFormat().format(value);
           }
         }
-      }]
-    }, 
-    tooltips: {
-      enabled: true,
-      callbacks: {
-        label: function (tooltipItem: ChartTooltipItem, data: ChartData) {
-          return data.datasets[tooltipItem.datasetIndex].label + ': ' + tooltipItem.xLabel.toLocaleString();
-        },
       }
+    },
 
-    }
   }
 
-  barChartLabels_PartnerRevenue: Label[] = [];
-  barChartData_PartnerRevenue: ChartDataSets[] = [
+  barChartLabels_PartnerRevenue: string[] = [];
+  barChartData_PartnerRevenue: ChartDataset[] = [
     {
       label: 'Khách mới',
       data: [],
@@ -150,18 +169,28 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
     val.cityCode = this.currentCity ? this.currentCity.code : null;
     val.companyId = this.currentCompany || null;
     this.accountInvoiceReportService.getRevenueDistrictArea(val).subscribe(result => {
-      console.log(result);
       var top10Data = result.slice(0, 10);
+      var otherData = result.slice(10);
+      
       this.pieLabels = top10Data.map(x => {
         if (x.districtName) {
           return x.districtName;
         }
-        return 'Không xác định';
+        return 'Chưa xác định';
       });
+
+      var revenueData = top10Data.map(x => x.revenue);
+      if (otherData.length) {
+        this.pieLabels.push('Khác');
+        var otherTotalRevenue = otherData.map(x => x.revenue).reduce((a, b) => a + b);
+        revenueData.push(otherTotalRevenue);
+      }
+
       this.pieDatasets = [{
-        backgroundColor: this.pieChartColors.slice(0, result.length),
-        data: result.map(x => x.revenue)
+        // backgroundColor: this.pieChartColors.slice(0, result.length),
+        data: revenueData
       }];
+
       this.pieObjData = result;
       this.pieObjData.forEach(function (item, index) {
         item.color = colors[index];
@@ -188,66 +217,7 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
   }
 
   loadPieChart() {
-    this.pieOptions = {
-      responsive: true,
-      maintainAspectRatio: false,
-      legend: {
-        display: true,
-        position: 'bottom'
-      },
-      plugins: {
-        datalabels: {
-          formatter: function(value, ctx) {
-            var sum = 0;
-            var dataArr = ctx.chart.data.datasets[0].data;
-            dataArr.forEach(data => {
-                sum += data;
-            });
-            var percentage = (value*100 / sum).toFixed(2)+"%";
-            return percentage;
-          },
-          color: '#fff',
-          anchor: 'end',
-          align: 'start'
-        },
-      },
-      tooltips: {
-        enabled: true,
-        
-        callbacks: {
-          label: function (tooltipItems, data) {
-            return data.labels[tooltipItems.index] + ': ' + data.datasets[tooltipItems.datasetIndex].data[tooltipItems.index].toLocaleString();
-          }
-          // title: function (tooltipItem, data) {
-          //   let id = tooltipItem[0] ? tooltipItem[0].index : 1;
-          //   itemId = id
-          //   return data.labels[id].toString();
-          // },
-          // label: function (tooltipItem, data) {
-          //   let labels = data.datasets[tooltipItem.datasetIndex].label + ": " + Intl.NumberFormat().format(pieData[itemId].revenue);
-          //   return labels;
-          // },
-          // afterLabel: function (tooltipItem, data) {
-          //   let sum = 0;
-          //   let dataArr = data.datasets[0].data;
-          //   dataArr.map(data => {
-          //       sum += data;
-          //   });
-          //   var value = tooltipItem.yLabel as number;
-          //   console.log(tooltipItem);
-          //   let percentage = (value*100 / sum).toFixed(2)+"%";
-          //   let percent = "Chiếm tỷ lệ: " + percentage;
-          //   return percent;
-          // }
-        },
-        // backgroundColor: '#FFF',
-        // titleFontSize: 16,
-        // titleFontColor: '#0066ff',
-        // bodyFontColor: '#000',
-        // bodyFontSize: 14,
-        // displayColors: false
-      }
-    }
+    
     // var ulHtml = '';
     // var leftLegendHtml = [];
     // var rightLegendHtml = [];
@@ -384,14 +354,14 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
       this.barChartLabels_PartnerCount = res.map(x => {
         if (x.wardName)
           return x.wardName;
-        return 'Không xác định';
+        return 'Chưa xác định';
       });
       this.barChartData_PartnerCount[0].data = res.map(x => x.partnerNewCount);
       this.barChartData_PartnerCount[1].data = res.map(x => x.partnerOldCount);
       this.barChartLabels_PartnerRevenue = res.map(x => {
         if (x.wardName)
           return x.wardName;
-        return 'Không xác định';
+        return 'Chưa xác định';
       });
       this.barChartData_PartnerRevenue[0].data = res.map(x => x.partnerNewRevenue);
       this.barChartData_PartnerRevenue[1].data = res.map(x => x.partnerOldRevenue);

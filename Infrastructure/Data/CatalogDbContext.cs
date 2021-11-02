@@ -324,6 +324,10 @@ namespace Infrastructure.Data
         public DbSet<PrintTemplateConfig> PrintTemplateConfigs { get; set; }
         public DbSet<PartnerOldNewInSaleOrder> PartnerOldNewInSaleOrders { get; set; }
 
+        /// <summary>
+        /// Chức vụ nhân viên
+        /// </summary>
+        public DbSet<HrJob> HrJobs { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)

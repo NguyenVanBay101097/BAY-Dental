@@ -38,7 +38,7 @@ namespace TMTDentalAPI.Controllers
             if (val.ResultSelection == "all" || val.ResultSelection == "customer")
             {
                 var customers = await _partnerService.SearchQuery(x => x.Customer == true && (x.Name.Contains(val.Search) ||
-                x.NameNoSign.Contains(val.Search) || x.Ref.Contains(val.Search) || x.Phone.Contains(val.Search)))
+                x.NameNoSign.Contains(val.Search) || x.Ref.Contains(val.Search) || x.Phone.Contains(val.Search) || x.CardCards.Any(s=> s.Barcode.Contains(val.Search))))
                     .Select(x => new SearchAllViewModel { 
                         Id = x.Id,
                         Name = "KH: " + x.Name,

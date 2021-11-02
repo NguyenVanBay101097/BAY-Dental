@@ -55,6 +55,23 @@ namespace Infrastructure.Services
             return result;
         }
 
+        public async Task<string> GeneratePrintHtml(PrintTemplate self, IEnumerable<object> data, PrintPaperSize paperSize = null)
+        {
+            var modelDataService = GetService<IIRModelDataService>();
+            var paper = paperSize != null ? paperSize : await modelDataService.GetRef<PrintPaperSize>("base.paperformat_a4");
+            if (paper == null)
+                throw new Exception("Không tìm thấy khổ giấy mặc định");
+
+            var layoutHtml = File.ReadAllText("PrintTemplate/Shared/Layout.html");
+            var template = Template.Parse(layoutHtml);
+            var renderLayout = await template.RenderAsync(new { o = paper });
+
+            var renderContent = await RenderTemplate(self, data);
+
+            var result = ConnectLayoutForContent(renderLayout, renderContent);
+            return result;
+        }
+
         public string ConnectLayoutForContent(string layout, string content)
         {
             var doc = new HtmlDocument();
@@ -68,6 +85,12 @@ namespace Infrastructure.Services
         {
             //mảng data từ resids
             var data = await GetObjectRender(self.Model, resIds);
+            return await RenderTemplate(self, data);
+        }
+
+        public async Task<string> RenderTemplate(PrintTemplate self, IEnumerable<object> data)
+        {
+            //mảng data từ resids
             var userObj = GetService<IUserService>();
             var user = await userObj.GetCurrentUser();
 
@@ -125,9 +148,9 @@ namespace Infrastructure.Services
                           .Include(x => x.Product)
                           .Include(x => x.LaboOrderToothRel).ThenInclude(s => s.Tooth)
                           .Include(x => x.LaboOrderProductRel).ThenInclude(s => s.Product)
-                          .Include(x=> x.SaleOrderLine).ThenInclude(x=> x.Employee)
-                          .Include(x=> x.SaleOrderLine).ThenInclude(x=> x.Order)
-                          .Include(x=> x.SaleOrderLine).ThenInclude(x => x.Product)
+                          .Include(x => x.SaleOrderLine).ThenInclude(x => x.Employee)
+                          .Include(x => x.SaleOrderLine).ThenInclude(x => x.Order)
+                          .Include(x => x.SaleOrderLine).ThenInclude(x => x.Product)
                           .ToListAsync();
 
                         return res;
@@ -235,7 +258,8 @@ namespace Infrastructure.Services
                                 .Include(x => x.Order.Partner)
                                 .Include(x => x.CreatedBy)
                                 .Include(x => x.JournalLines).ThenInclude(x => x.Journal)
-                                .ToListAsync();                     
+                                .Include(x => x.Lines).ThenInclude(x => x.SaleOrderLine)
+                                .ToListAsync();
                         return payments;
                     }
                 case "supplier.payment":
@@ -261,6 +285,17 @@ namespace Infrastructure.Services
                             .ToListAsync();
 
                         return salaryPayments;
+                    }
+                case "appointment":
+                    {
+                        var appObj = GetService<IAppointmentService>();
+                        var app = await appObj.SearchQuery(x => resIds.Contains(x.Id))
+                                 .Include(x => x.Company).ThenInclude(x => x.Partner)
+                                 .Include(x => x.Partner)
+                                 .Include(x => x.Doctor)
+                                 .Include(x => x.AppointmentServices).ThenInclude(x => x.Product)
+                                 .ToListAsync();
+                        return app;
                     }
                 //case "advisory":
                 //    {
@@ -364,6 +399,8 @@ namespace Infrastructure.Services
                     return "supplier.payment";
                 case "tmp_advisory":
                     return "advisory";
+                case "tmp_appointment":
+                    return "appointment";
                 default:
                     return null;
 
@@ -421,6 +458,8 @@ namespace Infrastructure.Services
                     return await modelDataService.GetRef<PrintTemplate>("base.print_template_supplier_payment_inbound");
                 case "tmp_advisory":
                     return await modelDataService.GetRef<PrintTemplate>("base.print_template_advisory");
+                case "tmp_appointment":
+                    return await modelDataService.GetRef<PrintTemplate>("base.print_template_appointment");
                 default:
                     return null;
             }

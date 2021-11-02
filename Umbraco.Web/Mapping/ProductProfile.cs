@@ -29,6 +29,8 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<Product, ProductSimple>();
 
+            CreateMap<Product, ProductSimplePublic>();
+
             CreateMap<Product, ProductLaboBasic>();
             CreateMap<Product, ProductUoMBasic>().ForMember(x => x.UoMs, x => x.MapFrom(m => m.ProductUoMRels.Select(s => s.UoM)));
             CreateMap<Product, ProductLaboDisplay>();

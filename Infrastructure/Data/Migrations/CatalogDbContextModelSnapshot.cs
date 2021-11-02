@@ -1765,6 +1765,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<decimal?>("BasicPoint")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("Color")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
 
@@ -2539,6 +2542,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<decimal?>("HourlyWage")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<Guid?>("HrJobId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("IdentityCard")
                         .HasColumnType("nvarchar(max)");
 
@@ -2609,6 +2615,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("GroupId");
+
+                    b.HasIndex("HrJobId");
 
                     b.HasIndex("PartnerId");
 
@@ -3078,6 +3086,41 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("WriteById");
 
                     b.ToTable("Histories");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.HrJob", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("HrJobs");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.HrPayrollStructure", b =>
@@ -8756,6 +8799,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<Guid?>("CardCardId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
 
@@ -8786,6 +8832,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("SaleOrderLineId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("ServiceCardCardId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
 
@@ -8794,6 +8843,8 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CardCardId");
+
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("SaleCouponProgramId");
@@ -8801,6 +8852,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("SaleOrderId");
 
                     b.HasIndex("SaleOrderLineId");
+
+                    b.HasIndex("ServiceCardCardId");
 
                     b.HasIndex("WriteById");
 
@@ -9335,6 +9388,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("ProductPricelistId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
 
@@ -9348,6 +9404,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("ProductPricelistId");
 
                     b.HasIndex("WriteById");
 
@@ -13226,6 +13284,10 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("GroupId");
 
+                    b.HasOne("ApplicationCore.Entities.HrJob", "HrJob")
+                        .WithMany()
+                        .HasForeignKey("HrJobId");
+
                     b.HasOne("ApplicationCore.Entities.Partner", "Partner")
                         .WithMany()
                         .HasForeignKey("PartnerId");
@@ -13394,6 +13456,21 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ApplicationCore.Entities.History", b =>
                 {
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.HrJob", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
@@ -15866,6 +15943,10 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("ApplicationCore.Entities.SaleOrderPromotion", b =>
                 {
+                    b.HasOne("ApplicationCore.Entities.CardCard", "CardCard")
+                        .WithMany()
+                        .HasForeignKey("CardCardId");
+
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
@@ -15881,6 +15962,10 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.SaleOrderLine", "SaleOrderLine")
                         .WithMany("Promotions")
                         .HasForeignKey("SaleOrderLineId");
+
+                    b.HasOne("ApplicationCore.Entities.ServiceCardCard", "ServiceCardCard")
+                        .WithMany()
+                        .HasForeignKey("ServiceCardCardId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
@@ -16139,6 +16224,10 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId");
+
+                    b.HasOne("ApplicationCore.Entities.ProductPricelist", "ProductPricelist")
+                        .WithMany()
+                        .HasForeignKey("ProductPricelistId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()

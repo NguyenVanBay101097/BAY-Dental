@@ -88,7 +88,7 @@
         </kendo-grid-column> -->
         <kendo-grid-column title="Phiếu điều trị" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <a routerLink="/sale-orders/form" [queryParams]="{id: dataItem.saleOrderId}" class="text-primary">
+                <a [routerLink]="['/sale-orders', dataItem.saleOrderId]" class="text-primary">
                     {{dataItem.saleOrder.name}}
                 </a>
             </ng-template>

@@ -9,6 +9,7 @@ import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-di
 import { PartnerSourceCreateUpdateDialogComponent } from "../partner-source-create-update-dialog/partner-source-create-update-dialog.component";
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from "src/app/shared/pager-grid-kendo.config";
+import { NotifyService } from "src/app/shared/services/notify.service";
 
 @Component({
   selector: "app-partner-source-list",
@@ -28,6 +29,7 @@ export class PartnerSourceListComponent implements OnInit {
     private partnerSourceService: PartnerSourceService,
     private modalService: NgbModal,
     private showErrorService: AppSharedShowErrorService,
+    private notifyService: NotifyService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -75,6 +77,7 @@ export class PartnerSourceListComponent implements OnInit {
     let modalRef = this.modalService.open(PartnerSourceCreateUpdateDialogComponent, { size: 'xl', windowClass: "o_technical_modal", keyboard: false, backdrop: "static", });
     modalRef.componentInstance.title = "Thêm nguồn khách hàng";
     modalRef.result.then(() => {
+      this.notifyService.notify("success","Lưu thành công");
       this.loadDataFromApi();
     }, () => { }
     );
@@ -85,6 +88,7 @@ export class PartnerSourceListComponent implements OnInit {
     modalRef.componentInstance.title = "Sửa nguồn khách hàng";
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {
+      this.notifyService.notify("success","Lưu thành công");
       this.loadDataFromApi();
     }, () => { }
     );
@@ -92,9 +96,10 @@ export class PartnerSourceListComponent implements OnInit {
 
   deleteItem(item: PartnerSourceBasic) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static", });
-    modalRef.componentInstance.title = "Xóa: Nguồn khách hàng";
+    modalRef.componentInstance.title = "Xóa nguồn khách hàng";
     modalRef.result.then(() => {
       this.partnerSourceService.delete(item.id).subscribe(() => {
+      this.notifyService.notify("success","Xóa thành công");
         this.loadDataFromApi();
       }
       );

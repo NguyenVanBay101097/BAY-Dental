@@ -43,5 +43,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool IsExpired { get; set; }
 
         public Guid? UpgradeTypeId { get; set; }
+
+    }
+
+    public class CardCardSave
+    {
+        public Guid TypeId { get; set; }
+        public Guid? PartnerId { get; set; }
+        public string Barcode { get; set; }
     }
 }

@@ -49,12 +49,14 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime OrderDate { get; set; }
 
         public string EmployeeName { get; set; }
-
+        public Guid PartnerId { get; set; }
         public string PartnerName { get; set; }
         public string PartnerDisplayName { get; set; }
 
         public Guid ToaThuocId { get; set; }
         public ToaThuocBasic ToaThuoc { get; set; }
+        public Guid JournalId { get; set; }
+        public AccountJournal Journal { get; set; }
 
         public decimal Amount { get; set; }
         public string State { get; set; }

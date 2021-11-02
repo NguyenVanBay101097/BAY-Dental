@@ -35,4 +35,7 @@ export class WebService {
         return this.http.get(this.baseApi + this.apiUrl + '/GetExpire');
     }
 
+    binaryUploadAttachment(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/BinaryUploadAttachment", val);
+    }
 }

@@ -13,11 +13,14 @@ namespace Umbraco.Web.Mapping
     {
         public EmployeeProfile()
         {
-            CreateMap<Employee, EmployeeSimple>();
+            CreateMap<Employee, EmployeeSimple>()
+                .ForMember(x => x.HrJobName, x => x.MapFrom(s => s.HrJob.Name));
+
             CreateMap<Employee, EmployeeSimpleContact>();
             CreateMap<Employee, EmployeeSimpleInfo>();
             CreateMap<Employee, EmployeeBasic>()
-                .ForMember(x => x.UserName, x => x.MapFrom(s => s.User.UserName));
+                .ForMember(x => x.UserName, x => x.MapFrom(s => s.User.UserName))
+                .ForMember(x => x.HrJobName, x => x.MapFrom(s => s.HrJob.Name));
 
             CreateMap<EmployeeDisplay, Employee>()
                 .ForMember(x => x.Id, x => x.Ignore())

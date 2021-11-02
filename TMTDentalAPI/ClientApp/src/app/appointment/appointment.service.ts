@@ -130,6 +130,10 @@ export class AppointmentService {
     return this.http.get<any[]>(this.baseApi + 'api/Appointments/GetListDoctor', { params: new HttpParams({ fromObject: val }) });
   }
 
+  print(id) {
+    return this.http.get(this.baseApi + 'api/Appointments/' + id + '/Print');
+  }
+
   //cập nhật các cuộc hẹn quá hạn
   // patchMulti(val) {
   //   return this.http.patch(this.baseApi + "api/Appointments/patchMulti", val);

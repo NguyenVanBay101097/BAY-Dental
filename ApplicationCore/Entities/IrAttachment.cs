@@ -38,6 +38,10 @@ namespace ApplicationCore.Entities
         public Guid? CompanyId { get; set; }
         public Company Company { get; set; }
 
+        /// <summary>
+        /// 'url', 'URL'
+        /// 'binary', 'File'
+        /// </summary>
         public string Type { get; set; }
 
         public string Url { get; set; }

@@ -78,6 +78,7 @@ namespace TMTDentalAPI.Controllers
                 .Include(x => x.User).ThenInclude(x => x.Company)
                 .Include(x => x.User).ThenInclude(x => x.ResCompanyUsersRels).ThenInclude(x => x.Company)
                 .Include(x => x.Group)
+                .Include(x => x.HrJob)
                 .FirstOrDefaultAsync();
             if (employee == null)
                 return NotFound();

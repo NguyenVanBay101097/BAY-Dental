@@ -120,8 +120,7 @@
                   </label>
                 </td>
                 <td colspan="1" style="width: 100%;">
-                  <a *ngIf="laboOrder.saleOrder" [routerLink]="['/sale-orders/form']"
-                    [queryParams]="{id: laboOrder.saleOrder.id}">{{laboOrder.saleOrder ? laboOrder.saleOrder.name : ''}}</a>
+                  <a *ngIf="laboOrder.saleOrder" [routerLink]="['/sale-orders', laboOrder.saleOrder.id]">{{laboOrder.saleOrder ? laboOrder.saleOrder.name : ''}}</a>
                 </td>
               </tr>
               <tr *ngIf="laboOrder.dotKham">

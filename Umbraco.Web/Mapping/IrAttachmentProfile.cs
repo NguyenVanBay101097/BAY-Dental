@@ -12,6 +12,7 @@ namespace Umbraco.Web.Mapping
         public IrAttachmentProfile()
         {
             CreateMap<IrAttachment, IrAttachmentBasic>();
+            CreateMap<IrAttachmentSave, IrAttachment>();
         }
     }
 }
