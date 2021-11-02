@@ -143,7 +143,7 @@ export class RoutingCreateUpdateComponent implements OnInit {
       autoFocusedElement: '[name="name"]',
     });
 
-    const instance = windowRef.content.instance;
+    // const instance = windowRef.content.instance;
 
     this.opened = true;
 

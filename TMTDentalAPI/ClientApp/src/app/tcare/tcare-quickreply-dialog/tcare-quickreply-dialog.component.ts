@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { IntlService } from '@progress/kendo-angular-intl';
 
 @Component({
   selector: 'app-tcare-quickreply-dialog',
@@ -21,7 +20,6 @@ export class TcareQuickreplyDialogComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     public activeModal: NgbActiveModal,
-    private intlService: IntlService,
   ) { }
 
   ngOnInit() {

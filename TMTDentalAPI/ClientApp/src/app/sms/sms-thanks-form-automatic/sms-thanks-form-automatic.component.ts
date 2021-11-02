@@ -49,7 +49,6 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
     private modalService: NgbModal,
     private smsTemplateService: SmsTemplateService,
     private smsConfigService: SmsThanksCustomerAutomationConfigService,
-    private intlService: IntlService,
     private smsAccountService: SmsAccountService,
     private notificationService: NotificationService,
     private smsCampaignService: SmsCampaignService

@@ -1,9 +1,6 @@
-import { Injectable, Inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-// import { AppointmentPaged, PagedResult2, AppointmentBasic } from '../appointment/appointment';
-// import { formatDate } from '@angular/common';
-import { IntlService } from '@progress/kendo-angular-intl';
 import { ProductSimple } from '../products/product-simple';
 import { SaleReportTopServicesCs } from './sale-report';
 
@@ -28,7 +25,7 @@ export class AppointStateCount {
 })
 export class HomeService {
 
-  constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string, private intlService: IntlService) { }
+  constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
   getAppointCount(dateFrom, dateTo): Observable<AppointStateCount[]> {
     return this.http.post<AppointStateCount[]>(this.baseApi + "api/Appointments/CountAppointment", { dateFrom: dateFrom, dateTo: dateTo });

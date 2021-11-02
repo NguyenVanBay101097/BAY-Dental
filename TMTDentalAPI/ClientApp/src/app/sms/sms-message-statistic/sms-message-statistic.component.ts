@@ -23,8 +23,6 @@ export class SmsMessageStatisticComponent implements OnInit {
   searchUpdate = new Subject<string>();
   search: string;
   constructor(
-    private modalService: NgbModal,
-    private notificationService: NotificationService,
     private smsMessageService: SmsMessageService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }

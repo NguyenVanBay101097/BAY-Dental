@@ -1,21 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { FacebookService, LoginResponse, LoginOptions } from 'ngx-facebook';
-import { NotificationService } from '@progress/kendo-angular-notification';
-import * as $ from 'jquery';
-import * as _ from 'lodash';
-import { FacebookDialogComponent } from '../facebook-dialog/facebook-dialog.component';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { SocialsChannelDisplay, SocialsChannelService, SocialsChannelPaged, CheckPartner, MapPartner, PartnerMap } from '../socials-channel.service';
-import { map } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
-import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
+import { Component, OnInit } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import * as $ from 'jquery';
+import { FacebookService, LoginOptions, LoginResponse } from 'ngx-facebook';
+import { map } from 'rxjs/operators';
+import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
-// import { HttpParams } from '@angular/common/http';
-// import { FormGroup } from '@angular/forms';
-// import { FacebookPageService } from '../facebook-page.service';
-import { FacebookConnectService } from '../facebook-connect.service';
-import { FacebookConnectPageService } from '../facebook-connect-page.service';
 import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
+import { FacebookConnectPageService } from '../facebook-connect-page.service';
+import { FacebookConnectService } from '../facebook-connect.service';
+import { FacebookDialogComponent } from '../facebook-dialog/facebook-dialog.component';
+import { CheckPartner, MapPartner, PartnerMap, SocialsChannelDisplay, SocialsChannelPaged, SocialsChannelService } from '../socials-channel.service';
 
 @Component({
   selector: 'app-facebook',
@@ -58,7 +53,6 @@ export class FacebookComponent implements OnInit {
 
   constructor(private fb: FacebookService,
     private socialsChannelService: SocialsChannelService,
-    private notificationService: NotificationService,
     private modalService: NgbModal,
     private partnerService: PartnerService,
     private facebookConnectService: FacebookConnectService,

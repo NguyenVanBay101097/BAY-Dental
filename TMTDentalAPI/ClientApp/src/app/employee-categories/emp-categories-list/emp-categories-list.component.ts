@@ -22,7 +22,6 @@ import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-ken
 export class EmpCategoriesListComponent implements OnInit {
 
   constructor(
-    private fb: FormBuilder,
     private service: EmpCategoryService,
     private modalService: NgbModal,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig

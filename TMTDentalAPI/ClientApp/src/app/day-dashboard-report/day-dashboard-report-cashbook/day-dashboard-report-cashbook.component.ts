@@ -1,15 +1,13 @@
-import { Component, Inject, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { forkJoin, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import {
-  CashBookDetailFilter, CashBookService, CashBookSummarySearch,
-  // CashBookReportFilter, SumaryCashBookFilter
+  CashBookDetailFilter, CashBookService, CashBookSummarySearch
 } from 'src/app/cash-book/cash-book.service';
 import {
-  DashboardReportService,
-  // SumaryRevenueReportFilter
+  DashboardReportService
 } from 'src/app/core/services/dashboard-report.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 

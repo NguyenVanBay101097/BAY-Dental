@@ -5,14 +5,12 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { AuthService } from 'src/app/auth/auth.service';
 import { BirthdayCustomerService, ListPagedBirthdayCustomerRequest } from 'src/app/core/services/birthday-customer.service';
-// import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { SmsCampaignService } from '../sms-campaign.service';
 import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
-import { SmsTemplateService, SmsTemplateFilter } from '../sms-template.service';
+import { SmsTemplateFilter, SmsTemplateService } from '../sms-template.service';
 
 @Component({
   selector: 'app-sms-birthday-form-manual',
@@ -39,13 +37,11 @@ export class SmsBirthdayFormManualComponent implements OnInit {
   monthList: number[] = [];
 
   constructor(
-    private partnerService: PartnerService,
     private smsTemplateService: SmsTemplateService,
     private modalService: NgbModal,
     private notificationService: NotificationService,
     private smsCampaignService: SmsCampaignService,
     private birthCustomerService: BirthdayCustomerService,
-    private authService: AuthService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
