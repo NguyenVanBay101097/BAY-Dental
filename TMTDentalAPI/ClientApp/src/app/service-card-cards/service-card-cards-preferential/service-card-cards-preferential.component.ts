@@ -37,7 +37,7 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
     { name: 'Chưa kích hoạt', value: 'draft' },
     { name: 'Đã kích hoạt', value: 'in_use' },
     { name: 'Tạm dừng', value: 'locked' },
-    { name: 'Hết hạn', value: 'cancelled' },
+    { name: 'Đã hủy', value: 'cancelled' },
   ]
   constructor(
     private modalService: NgbModal,
@@ -68,7 +68,7 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
     val.activatedDate = this.activatedDate ? moment(this.activatedDate).format('YYYY-MM-DD') : '';
     val.dateFrom = this.dateFrom ? moment(this.dateFrom).format('YYYY-MM-DD') : '';
     val.dateTo = this.dateTo ? moment(this.dateTo).format('YYYY-MM-DD') : '';
-    
+
     this.serviceCardsService.getPaged(val).pipe(
       map((response: any) => (<GridDataResult>{
         data: response.items,
@@ -90,7 +90,6 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
     const modalRef = this.modalService.open(ServiceCardCardsPreferentialCuDialogComponent, { scrollable: true, windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = "Tạo thẻ ưu đãi dịch vụ";
     modalRef.result.then(result => {
-      
       this.notifyService.notify('success', 'Lưu thành công');
       this.loadDataFromApi();
     }, () => { });
@@ -102,8 +101,12 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(result => {
       console.log(result);
-
-      this.notifyService.notify('success', 'Lưu thành công');
+      if (result === 'activate') {
+        this.notifyService.notify('success', 'Kích hoạt thành công');
+      }
+      else {
+        this.notifyService.notify('success', 'Lưu thành công');
+      }
       this.loadDataFromApi();
     }, () => { });
   }
