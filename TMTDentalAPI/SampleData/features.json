@@ -963,17 +963,8 @@
           }
         ]
       },
-      //{
-      //  "Name": "Tiền mặt ngân hàng",
-      //  "Ops": [
-      //    {
-      //      "Name": "Xem",
-      //      "Permission": "Report.CashBankAccount"
-      //    }
-      //  ]
-      //},
       {
-        "Name": "Thống kê doanh thu",
+        "Name": "Báo cáo doanh thu",
         "Ops": [
           {
             "Name": "Xem",
@@ -1000,7 +991,7 @@
         ]
       },
       {
-        "Name": "Công nợ KH/NCC",
+        "Name": "Công nợ nhà cung cấp",
         "Ops": [
           {
             "Name": "Xem",
@@ -1018,33 +1009,6 @@
         ]
       },
       {
-        "Name": "Tình hình thu nợ khách hàng",
-        "Ops": [
-          {
-            "Name": "Xem",
-            "Permission": "Report.RealRevenue"
-          }
-        ]
-      },
-      {
-        "Name": "Thống kê hoa hồng",
-        "Ops": [
-          {
-            "Name": "Xem",
-            "Permission": "Report.Commission"
-          }
-        ]
-      },
-      {
-        "Name": "Khách hàng lân cận phòng khám",
-        "Ops": [
-          {
-            "Name": "Xem",
-            "Permission": "Report.PartnerLocation"
-          }
-        ]
-      },
-      {
         "Name": "Thống kê nguồn khách hàng",
         "Ops": [
           {
@@ -1052,38 +1016,11 @@
             "Permission": "Report.PartnerSource"
           }
         ]
-      },
-      //{
-      //  "Name": "Thống kê khách hàng cũ mới",
-      //  "Ops": [
-      //    {
-      //      "Name": "Xem",
-      //      "Permission": "Report.PartnerOldNew"
-      //    }
-      //  ]
-      //},
-      {
-        "Name": "Thống kê labo",
-        "Ops": [
-          {
-            "Name": "Xem",
-            "Permission": "Report.LaboOrder"
-          }
-        ]
-      },
-      {
-        "Name": "Thống kê lịch hẹn",
-        "Ops": [
-          {
-            "Name": "Xem",
-            "Permission": "Report.Appointment"
-          }
-        ]
       }
     ]
   },
   {
-    "Name": "Khuyến mãi",
+    "Name": "Marketing",
     "Functions": [
       {
         "Name": "Chương trình khuyến mãi",
@@ -1105,7 +1042,92 @@
             "Permission": "SaleCoupon.SaleCouponProgram.Delete"
           }
         ]
+      },
+      {
+        "Name": "Loại thẻ thành viên",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Card.Type.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Card.Type.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Card.Type.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Card.Type.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Quản lý thẻ thành viên",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Card.Card.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Card.Card..Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Card.Card.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Card.Card.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Loại thẻ ưu đãi dịch vụ",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "ServiceCard.Type.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "ServiceCard.Type.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "ServiceCard.Type.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "ServiceCard.Type.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Quản lý thẻ ưu đãi dịch vụ",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "ServiceCard.Card.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "ServiceCard.Card.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "ServiceCard.Card.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "ServiceCard.Card.Delete"
+          }
+        ]
       }
+
       //{
       //  "Name": "Coupon",
       //  "Ops": [
@@ -1283,92 +1305,7 @@
       }
     ]
   },
-  {
-    "Name": "Chăm sóc tự động",
-    "Functions": [
-      {
-        "Name": "Kênh chăm sóc",
-        "Ops": [
-          {
-            "Name": "Xem",
-            "Permission": "TCare.Channel.Read"
-          },
-          {
-            "Name": "Thêm",
-            "Permission": "TCare.Channel.Create"
-          },
-          {
-            "Name": "Cập nhật",
-            "Permission": "TCare.Channel.Update"
-          },
-          {
-            "Name": "Xóa",
-            "Permission": "TCare.Channel.Delete"
-          }
-        ]
-      },
-      {
-        "Name": "Kịch bản",
-        "Ops": [
-          {
-            "Name": "Xem",
-            "Permission": "TCare.Scenario.Read"
-          },
-          {
-            "Name": "Thêm",
-            "Permission": "TCare.Scenario.Create"
-          },
-          {
-            "Name": "Cập nhật",
-            "Permission": "TCare.Scenario.Update"
-          },
-          {
-            "Name": "Xóa",
-            "Permission": "TCare.Scenario.Delete"
-          }
-        ]
-      },
-      {
-        "Name": "Thống kê gửi tin",
-        "Ops": [
-          {
-            "Name": "Xem",
-            "Permission": "TCare.Messaging.Read"
-          }
-        ]
-      },
-      {
-        "Name": "Mẫu tin nhắn",
-        "Ops": [
-          {
-            "Name": "Xem",
-            "Permission": "TCare.MessTemplate.Read"
-          },
-          {
-            "Name": "Thêm",
-            "Permission": "TCare.MessTemplate.Create"
-          },
-          {
-            "Name": "Cập nhật",
-            "Permission": "TCare.MessTemplate.Update"
-          },
-          {
-            "Name": "Xóa",
-            "Permission": "TCare.MessTemplate.Delete"
-          }
-        ]
-      },
-      {
-        "Name": "Thiết lập tự động",
-        "Ops": [
-          {
-            "Name": "Xem",
-            "Permission": "TCare.Config.Create"
-          }
-        ]
-      }
-    ]
-  },
+  
   {
     "Name": "SMS Brandname",
     "Functions": [

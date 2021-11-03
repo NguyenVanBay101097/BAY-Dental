@@ -22,6 +22,24 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Phone { get; set; }
     }
 
+    public class EmployeeSimpleInfo
+    {
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+        public DateTime? BirthDay { get; set; }
+
+        public string Email { get; set; }
+
+        public string Phone { get; set; }
+
+        /// <summary>
+        /// Địa chỉ
+        /// </summary>
+        public string Address { get; set; }
+    }
+
 
     public class EmployeeBasic
     {

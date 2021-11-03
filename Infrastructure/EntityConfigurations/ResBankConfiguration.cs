@@ -12,6 +12,14 @@ namespace Infrastructure.EntityConfigurations
         public void Configure(EntityTypeBuilder<ResBank> builder)
         {
             builder.Property(x => x.Name).IsRequired();
+
+            builder.HasOne(x => x.CreatedBy)
+         .WithMany()
+         .HasForeignKey(x => x.CreatedById);
+
+            builder.HasOne(x => x.WriteBy)
+                .WithMany()
+                .HasForeignKey(x => x.WriteById);
         }
     }
 }

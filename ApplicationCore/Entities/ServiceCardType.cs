@@ -7,7 +7,7 @@ namespace ApplicationCore.Entities
     /// <summary>
     /// Loại thẻ dịch vụ
     /// </summary>
-    public class ServiceCardType: BaseEntity
+    public class ServiceCardType : BaseEntity
     {
         public ServiceCardType()
         {
@@ -36,10 +36,12 @@ namespace ApplicationCore.Entities
 
         /// <summary>
         /// Thời hạn
-        /// month: Tháng
+        /// month: Tháng, year: năm
         /// </summary>
         public string Period { get; set; }
-
+        /// <summary>
+        /// số hạn mức của period
+        /// </summary>
         public int? NbrPeriod { get; set; }
 
         /// <summary>
@@ -52,5 +54,8 @@ namespace ApplicationCore.Entities
         public Company Company { get; set; }
 
         public bool Active { get; set; }
+
+        public Guid? ProductPricelistId { get; set; }
+        public ProductPricelist ProductPricelist { get; set; }
     }
 }

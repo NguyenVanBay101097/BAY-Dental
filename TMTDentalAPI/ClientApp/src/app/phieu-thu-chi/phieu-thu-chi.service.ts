@@ -172,4 +172,8 @@ export class PhieuThuChiService {
       params: val,
     });
   }
+
+  exportExcelCommissionAgentFile(val) {
+    return this.http.get(this.baseApi + this.apiUrl + '/ExportExcelCommissionAgentFile', { params: new HttpParams({fromObject: val}), responseType: 'blob' });
+  }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -293,6 +295,79 @@ namespace TMTDentalAPI.Controllers
             xmlService.WriteXMLFile(path, data);
             await irModelObj.CreateAsync(irModelCreate);
             return Ok();
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> ExportExcelCommissionAgentFile([FromQuery] PhieuThuChiPaged val)
+        {
+            var stream = new MemoryStream();
+            val.Limit = int.MaxValue;
+            val.Offset = 0;
+            var data = await _phieuThuChiService.GetPhieuThuChiPagedResultAsync(val);
+            var sheetName = "LichSuChiHoaHong";
+
+            byte[] fileContent;
+
+            using (var package = new ExcelPackage(stream))
+            {
+                var worksheet = package.Workbook.Worksheets.Add(sheetName);
+                worksheet.Cells["A1:F1"].Value = $"Người giới thiệu: {data.Items.ToArray()[0].PartnerName}";
+                worksheet.Cells["A1:F1"].Style.Font.Size = 14;
+                //worksheet.Cells["A1:F1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
+                worksheet.Cells["A1:F1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells["A1:F1"].Merge = true;
+                worksheet.Cells["A1:F1"].Style.Font.Bold = true;
+
+                worksheet.Cells[3, 1].Value = "Ngày";
+                worksheet.Cells[3, 2].Value = "Số phiếu";
+                worksheet.Cells[3, 3].Value = "Số tiền";
+                worksheet.Cells[3, 4].Value = "Phương thức";
+                worksheet.Cells[3, 5].Value = "Nội dung";
+                worksheet.Cells[3, 6].Value = "Trạng thái";
+                worksheet.Cells[3, 1].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                worksheet.Cells[3, 2].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                worksheet.Cells[3, 3].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                worksheet.Cells[3, 4].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                worksheet.Cells[3, 5].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                worksheet.Cells[3, 6].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+
+                worksheet.Cells["A3:F3"].Style.Font.Bold = true;
+                worksheet.Cells["A3:F3"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["A3:F3"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
+                worksheet.Cells["A3:F3"].Style.Font.Color.SetColor(Color.White);
+         
+
+                var row = 4;
+                foreach (var item in data.Items)
+                {                
+                    worksheet.Cells[row, 1].Value = item.Date;
+                    worksheet.Cells[row, 1].Style.Numberformat.Format = "d/m/yyyy";
+                    worksheet.Cells[row, 2].Value = item.Name;
+                    worksheet.Cells[row, 3].Value = item.Amount;
+                    worksheet.Cells[row, 3].Style.Numberformat.Format = "#,###";
+                    worksheet.Cells[row, 4].Value = item.JournalName;                  
+                    worksheet.Cells[row, 5].Value = item.Reason;
+                    worksheet.Cells[row, 6].Value = item.State == "posted" ? "Đã thanh toán" : "Hủy";
+                    worksheet.Cells[row, 1].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 2].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 3].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 4].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 5].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 6].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    row++;
+                }
+
+                worksheet.Cells.AutoFitColumns();
+
+                package.Save();
+
+                fileContent = stream.ToArray();
+            }
+
+            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            stream.Position = 0;
+
+            return new FileContentResult(fileContent, mimeType);
         }
 
         [HttpPost("[action]")]

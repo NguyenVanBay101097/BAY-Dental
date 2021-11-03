@@ -33,6 +33,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string MedicalHistory { get; set; }
         public IEnumerable<PartnerCategoryBasic> Categories { get; set; } = new List<PartnerCategoryBasic>();
         public MemberLevelBasic MemberLevel { get; set; }
+        public string Phone { get; set; }
+
 
     }
 
@@ -49,7 +51,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string DisplayName { get; set; }
+        public string Email { get; set; }
         public string Phone { get; set; }
+
+        public string JobTitle { get; set; }
 
         /// <summary>
         /// Mã khách hàng
@@ -83,6 +88,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public string DistrictName { get; set; }
 
         public string CityName { get; set; }
+
+        public int? BirthMonth { get; set; }
+        public int? BirthDay { get; set; }
 
         public int? BirthYear { get; set; }
 

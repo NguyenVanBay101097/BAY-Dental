@@ -107,6 +107,7 @@ import { WarrantyCuDidalogComponent } from './warranty-cu-didalog/warranty-cu-di
 import { LaboWarrantyDetailListComponent } from './labo-warranty-detail-list/labo-warranty-detail-list.component';
 import { MonthRangeFilterDropdownComponent } from './month-range-filter-dropdown/month-range-filter-dropdown.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BankCuDialogComponent } from './bank-cu-dialog/bank-cu-dialog.component';
 
 
 const config: LocaleConfig = {};
@@ -208,7 +209,8 @@ const config: LocaleConfig = {};
         ReceiveAppointmentDialogComponent,
         WarrantyCuDidalogComponent,
         LaboWarrantyDetailListComponent,
-        MonthRangeFilterDropdownComponent
+        MonthRangeFilterDropdownComponent,
+        BankCuDialogComponent
     ],
     exports: [
         ConfirmDialogComponent,
@@ -299,7 +301,8 @@ const config: LocaleConfig = {};
         WarrantyCuDidalogComponent,
         LaboWarrantyDetailListComponent,
         MonthRangeFilterDropdownComponent,
-        NgChartsModule
+        NgChartsModule,
+        BankCuDialogComponent
     ],
     imports: [
         NgbModule,
@@ -354,7 +357,8 @@ const config: LocaleConfig = {};
         CustomerReceipCreateUpdateComponent,
         AddressDialogComponent,
         ReceiveAppointmentDialogComponent,
-        WarrantyCuDidalogComponent
+        WarrantyCuDidalogComponent,
+        BankCuDialogComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

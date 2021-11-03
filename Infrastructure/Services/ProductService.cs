@@ -513,7 +513,7 @@ namespace Infrastructure.Services
             query = query.OrderBy(x => x.Name);
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
-            var items = await query.Include(x => x.UOM).ToListAsync();
+            var items = await query.Include(x => x.UOM).Include(x => x.Categ).ToListAsync();
 
             var res = _mapper.Map<IEnumerable<ProductSimple>>(items);
 

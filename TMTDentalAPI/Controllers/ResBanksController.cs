@@ -42,7 +42,8 @@ namespace TMTDentalAPI.Controllers
                 return BadRequest();
             var resBank = _mapper.Map<ResBank>(self);
             var res = await _resBankService.CreateAsync(resBank);
-            return CreatedAtAction(nameof(Get), new { id = res.Id }, self);
+            var basic = _mapper.Map<ResBankBasic>(res);
+            return Ok(basic);
         }
 
         [HttpPut("{id}")]

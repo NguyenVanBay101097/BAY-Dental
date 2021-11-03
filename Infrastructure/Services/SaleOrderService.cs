@@ -1264,6 +1264,13 @@ namespace Infrastructure.Services
             return display;
         }
 
+
+        public async Task<IEnumerable<SaleOrder>> GetSaleOrdersByPartnerId(Guid partnerId)
+        {
+            var saleOrders = await SearchQuery(x => x.PartnerId == partnerId).ToListAsync();
+
+            return saleOrders;
+        }
         //public async Task<SaleOrderDisplay> GetDisplayAsync(Guid id)
         //{
         //    var res = await _mapper.ProjectTo<SaleOrderDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();

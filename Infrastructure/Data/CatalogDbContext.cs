@@ -329,6 +329,7 @@ namespace Infrastructure.Data
         /// </summary>
         public DbSet<HrJob> HrJobs { get; set; }
 
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new ProductConfiguration());

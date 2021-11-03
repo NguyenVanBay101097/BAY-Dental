@@ -1,0 +1,143 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb w-100">
+            <li>
+                <a [routerLink]="['/card-types/preferential-cards']">
+                    Danh sách loại thẻ
+                </a>
+            </li>
+            <li class="active">
+                <span *ngIf="cardTypeId">{{cardTypeName}}</span>
+                <span *ngIf="!cardTypeId">Tạo mới</span>
+            </li>
+        </ol>
+        <div class="o_cp_left">
+            <button class="btn btn-primary" (click)="onSave()">Lưu</button>
+        </div>
+    </div>
+</div>
+
+<div class="py-3 container">
+    <form class="o_form_view" [formGroup]="cardForm">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group">
+                        <tbody>
+                            <tr>
+                                <td class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Tên hạng thẻ
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%">
+                                    <input class="form-control" formControlName="name">
+                                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
+                                        class="text-danger">
+                                        <div *ngIf="f.name.errors?.required" class="text-danger">
+                                            Nhập tên hạng thẻ
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Hạn mức thẻ
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%">
+                                    <div class="d-flex align-items-center w-100 mb-3">
+                                        <div class="mr-2">
+                                            <kendo-numerictextbox formControlName="nbrPeriod" [min]="0" format="n0">
+                                            </kendo-numerictextbox>
+                                        </div>
+                                        <div>
+                                            <select class="form-control select-control" formControlName="period">
+                                                <option value="year">Năm</option>
+                                                <option value="month">Tháng</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <hr>
+                <div class="o_td_label mb-2">
+                    Cấu hình ưu đãi
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <app-service-list-search-dropdown (onSelectService)="addLine($event)"
+                        [placeHolder]="'Tìm kiếm theo mã hoặc tên dịch vụ...'"></app-service-list-search-dropdown>
+                    <div class="mr-3" *ngIf="categories.length > 0">
+                        <button class="btn btn-primary" (click)=onApplyAll()>Áp dụng cho toàn bộ</button>
+                    </div>
+                </div>
+                <div *ngIf="categories.length > 0">
+                    <table class="table">
+                        <tr>
+                            <th>Tên dịch vụ</th>
+                            <th>Giá bán</th>
+                            <th class="text-right">Ưu đãi theo thẻ</th>
+                        </tr>
+                        <tbody formArrayName="productPricelistItems">
+                            <ng-container *ngFor="let categ of categories; let categIndex = index">
+                                <tr>
+                                    <td colspan="2" class="o_td_label">
+                                        {{categ[0].categName}}
+                                    </td>
+                                    <td class="text-right">
+                                        <button class="btn btn-primary" (click)="onApplyCateg(categ[0].categId)">Áp dụng
+                                            cho cả nhóm</button>
+                                    </td>
+                                </tr>
+                                <tr *ngFor="let product of categ[0].products ; let productIndex = index"
+                                    [formGroupName]="product.productIndex">
+                                    <td class="w-50">
+                                        <!-- <input type="hidden" formControlName = 'productId' [value] = 'product.id'> -->
+                                        <div>{{product.name}}</div>
+                                        <div>{{product.defaultCode}}</div>
+                                    </td>
+                                    <td class="w-20 text-right">{{product.listPrice | number}}</td>
+                                    <td class="w-30 text-right">
+                                        <div class="d-flex justify-content-end">
+                                            <div>
+                                                <kendo-numerictextbox
+                                                    *ngIf="getComputePrice(product.productIndex) == 'percentage'"
+                                                    [min]="0" max='100' autoCorrect='true' [format]="'n0'" class="mr-2"
+                                                    formControlName='percentPrice'>
+                                                </kendo-numerictextbox>
+                                                <kendo-numerictextbox
+                                                    *ngIf="getComputePrice(product.productIndex) != 'percentage'"
+                                                    [min]="0" [max]='product.listPrice' [format]="'n0'" class="mr-2"
+                                                    formControlName='fixedAmountPrice'>
+                                                </kendo-numerictextbox>
+                                            </div>
+                                            <div>
+                                                <input type="radio" class="btn-check"
+                                                    [id]="'btn-check-1'+categIndex + productIndex" value="percentage"
+                                                    formControlName='computePrice' (change)="changePeriod(product)">
+                                                <label class="btn btn-outline-primary mb-0 mr-2"
+                                                    [for]="'btn-check-1'+categIndex + productIndex"
+                                                    [ngClass]="{'btn-primary':getComputePrice(product.productIndex) == 'percentage'}">%</label>
+                                                <input type="radio" class="btn-check"
+                                                    [id]="'btn-check-2'+categIndex + productIndex" value="fixed_amount"
+                                                    formControlName='computePrice' (change)="changePeriod(product)">
+                                                <label class="btn btn-outline-primary mb-0 mr-2"
+                                                    [for]="'btn-check-2'+categIndex + productIndex"
+                                                    [ngClass]="{'btn-primary':getComputePrice(product.productIndex) != 'percentage'}">VNĐ</label>
+                                            </div>
+                                        </div>
+
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

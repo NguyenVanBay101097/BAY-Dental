@@ -121,4 +121,8 @@ export class PartnerAdvanceService {
   getPrint(id: string) {
     return this.http.get(this.base_api + this.apiUrl + "/" + id + '/GetPrint');
   }
+
+  getSumary2(val) {
+    return this.http.post(this.base_api + this.apiUrl + '/GetSummary2', val);
+  }
 }

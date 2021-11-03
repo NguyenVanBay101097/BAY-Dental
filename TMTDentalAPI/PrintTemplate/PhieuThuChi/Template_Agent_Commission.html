@@ -22,35 +22,37 @@
 <table border="0" cellpadding="2" cellspacing="1" style="width:100%">
     <tbody>
         <tr>
-            <td style="width:150px"><strong>Ngày thanh toán</strong></td>
-            <td>{{o.date_created | date.to_string '%d/%m/%Y'}}</td>
-            <td style="width:150px"><strong>Người giới thiệu</strong></td>
+            <td style="width:150px"><strong>Người nhận tiền</strong></td>
             <td>{{o.agent?.name}}</td>
         </tr>
         <tr>
-            <td style="width:150px"><strong>Phương thức</strong></td>
-            <td>{{o.journal?.name}}</td>
-            <td style="width:150px"><strong>Địa chỉ</strong></td>
-            <td>{{o.agent?.address}}</td>
-        </tr>
-        <tr>
-            <td style="width:150px"><strong>Số tiền</strong></td>
-            <td>{{o.amount | math.format "N0" "vi-VN"}}</td>
             <td style="width:150px"><strong>Điện thoại</strong></td>
             <td>{{o.agent?.phone}}</td>
         </tr>
         <tr>
-            <td style="width:150px"><strong>Bằng chữ</strong></td>
-            <td>{{o.amount_text}}</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
+            <td style="width:150px"><strong>Địa chỉ</strong></td>
+            <td>{{o.agent?.address}}</td>
         </tr>
         <tr>
             <td style="width:150px"><strong>Nội dung</strong></td>
             <td>{{o.reason}}</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
+
         </tr>
+        <tr>
+            <td style="width:150px"><strong>Phương thức</strong></td>
+            <td>{{o.journal?.name}}</td>
+        </tr>
+        <tr>
+            <td style="width:150px"><strong>Số tiền</strong></td>
+            <td>{{o.amount | math.format "N0" "vi-VN"}}</td>
+
+        </tr>
+        <tr>
+            <td style="width:150px"><strong>Bằng chữ</strong></td>
+            <td>{{o.amount_text}}</td>
+
+        </tr>
+
     </tbody>
 </table>
 
@@ -66,7 +68,7 @@
                 <strong>{{u.name | string.upcase}}</strong>
             </td>
             <td style="text-align:center">
-                <strong>Người nộp tiền</strong><br />
+                <strong>Người nhận tiền</strong><br />
                 <em>(Ký, họ tên)</em><br />
                 <br />
                 <br />

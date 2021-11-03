@@ -153,7 +153,7 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<CommissionSettlementReportOutput>> GetReport(CommissionSettlementFilterReport val)
         {
-            var query = SearchQuery();
+            var query = SearchQuery(x => x.EmployeeId.HasValue);
 
             if (val.DateFrom.HasValue)
             {
@@ -195,20 +195,23 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<CommissionSettlementReportDetailOutput>> GetReportDetail(CommissionSettlementFilterReport val)
         {
             var query = GetQueryableReportPaged(val);
-            var totalItems = await query.CountAsync();   
+            var totalItems = await query.CountAsync();
 
             var items = await query.Select(x => new CommissionSettlementReportDetailOutput
-                {
-                    Amount = x.Amount,
-                    BaseAmount = x.BaseAmount,
-                    Date = x.Date,
-                    Percentage = x.Percentage,
-                    ProductName = x.Product.Name,
-                    PartnerName = x.MoveLine.Partner.Name,
-                    InvoiceOrigin = x.MoveLine.Move.InvoiceOrigin,
-                    CommissionType = x.Commission.Type,
-                    EmployeeName = x.Employee.Name
-                }).ToListAsync();
+            {
+                Amount = x.Amount,
+                BaseAmount = x.BaseAmount,
+                Date = x.Date,
+                Percentage = x.Percentage,
+                ProductName = x.Product.Name,
+                PartnerName = x.SaleOrderLine.OrderPartner.Name,
+                InvoiceOrigin = x.SaleOrderLine.Order.Name,
+                CommissionType = x.Commission.Type,
+                Classify = x.Agent.Classify,
+                Name = x.Partner.Name,
+                TotalAmount = x.TotalAmount,
+                SaleOrderId = x.SaleOrderLine.OrderId
+            }).ToListAsync();
 
             return new PagedResult2<CommissionSettlementReportDetailOutput>(totalItems, val.Offset, val.Limit)
             {
@@ -221,6 +224,18 @@ namespace Infrastructure.Services
             var query = GetQueryableReportPaged(val);
 
             return await query.GroupBy(x => new { x.EmployeeId.Value, Amount = x.Amount.Value }).SumAsync(x => x.Key.Amount);
+        }
+
+        public async Task<SumAmountTotalReponse> GetSumAmountTotalReport(CommissionSettlementFilterReport val)
+        {
+            var query = GetQueryableReportPaged(val);
+
+            var res = new SumAmountTotalReponse();
+            res.TotalAmount = await query.SumAsync(x => x.TotalAmount ?? 0);
+            res.TotalBaseAmount = await query.SumAsync(x => x.BaseAmount ?? 0);
+            res.TotalComissionAmount = await query.SumAsync(x => x.Amount ?? 0);
+
+            return res;
         }
 
         public IQueryable<CommissionSettlement> GetQueryableReportPaged(CommissionSettlementFilterReport val)
@@ -251,11 +266,25 @@ namespace Infrastructure.Services
             if (val.EmployeeId.HasValue)
                 query = query.Where(x => x.EmployeeId == val.EmployeeId);
 
+            if (val.AgentId.HasValue)
+                query = query.Where(x => x.AgentId == val.AgentId);
+
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.Employee.CompanyId == val.CompanyId);
 
             if (!string.IsNullOrEmpty(val.CommissionType))
                 query = query.Where(x => x.Commission.Type == val.CommissionType);
+
+            if (val.GroupBy == "employee")
+                query = query.Where(x => x.EmployeeId.HasValue);
+            else if (val.GroupBy == "agent")
+            {
+                query = query.Where(x => x.AgentId.HasValue);
+
+                if (!string.IsNullOrEmpty(val.Classify))
+                    query = query.Where(x => x.Agent.Classify == val.Classify);
+            }
+
 
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
@@ -280,15 +309,31 @@ namespace Infrastructure.Services
             };
         }
 
+        public string Classify(string val)
+        {
+            switch (val)
+            {
+                case "partner":
+                    return "Đối tác";
+                case "employee":
+                    return "Nhân viên";
+                case "customer":
+                    return "Khách hàng";
+                default:
+                    return "";
+            };
+        }
+
         public async Task<PagedResult2<CommissionSettlementReportRes>> GetReportPaged(CommissionSettlementFilterReport val)
         {
             var query = GetQueryableReportPaged(val);
 
             //var items = query.GroupBy(x => new { EmployeeId = x.EmployeeId.Value, EmployeeName = x.Employee.Name, Date = x.Date.Value.Date, CommissionType = x.Commission.Type });
             var items = await query.Include(x => x.Employee).Include(x => x.Commission).ToListAsync();
-           
-          
-            var res = items.GroupBy(x=> new {
+
+
+            var res = items.GroupBy(x => new
+            {
                 EmployeeId = x.EmployeeId.Value,
                 EmployeeName = x.Employee.Name,
                 Date = x.Date.Value.Date,
@@ -307,6 +352,57 @@ namespace Infrastructure.Services
             {
                 Items = res
             };
+        }
+
+        public async Task<IEnumerable<CommissionSettlementOverview>> GetCommissionSettlements(DateTime? dateFrom, DateTime? dateTo, string classify, string groupBy)
+        {
+
+            var query = SearchQuery();
+
+            if (dateFrom.HasValue)
+                query = query.Where(x => x.Date >= dateFrom.Value.AbsoluteBeginOfDate());
+
+            if (dateTo.HasValue)
+                query = query.Where(x => x.Date <= dateTo.Value.AbsoluteEndOfDate());
+
+
+            var res = new List<CommissionSettlementOverview>();
+
+            if (groupBy == "employee")
+            {
+                res = await query.Where(x => x.EmployeeId.HasValue).GroupBy(x => new
+                {
+                    Id = x.EmployeeId.Value,
+                    Name = x.Employee.Name,
+                }).Select(x => new CommissionSettlementOverview()
+                {
+                    Id = x.Key.Id,
+                    Name = x.Key.Name,
+                    BaseAmount = x.Sum(s => s.BaseAmount ?? 0),
+                    Amount = x.Sum(s => s.Amount ?? 0)
+                }).ToListAsync();
+            }
+            else if (groupBy == "agent")
+            {
+                if (!string.IsNullOrEmpty(classify))
+                    query = query.Where(x => x.Agent.Classify == classify);
+
+                res = await query.Where(x => x.AgentId.HasValue).GroupBy(x => new
+                {
+                    Id = x.AgentId.Value,
+                    Name = x.Agent.Name,
+                    Classify = x.Agent.Classify
+                }).Select(x => new CommissionSettlementOverview()
+                {
+                    Id = x.Key.Id,
+                    Name = x.Key.Name,
+                    Classify = x.Key.Classify,
+                    BaseAmount = x.Sum(s => s.BaseAmount ?? 0),
+                    Amount = x.Sum(s => s.Amount ?? 0)
+                }).ToListAsync();
+            }
+
+            return res;
         }
     }
 }

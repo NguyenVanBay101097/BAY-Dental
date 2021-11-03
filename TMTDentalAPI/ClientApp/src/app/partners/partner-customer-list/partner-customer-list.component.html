@@ -4,7 +4,7 @@
     </ol>
     <div class="o_cp_searchview">
         <div class="o_searchview">
-            <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo mã, họ tên, SĐT" [(ngModel)]="this.filter.search" (ngModelChange)="this.searchUpdate.next($event)" />
+            <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo mã, họ tên, SĐT ,số ID thẻ" [(ngModel)]="this.filter.search" (ngModelChange)="this.searchUpdate.next($event)" />
             <span class="o_searchview_icon fas fa-search"></span>
         </div>
     </div>
@@ -49,7 +49,10 @@
                 </kendo-combobox>
                 <kendo-combobox style="width: 230px;" [popupSettings]="cbxPopupSettings" class="mr-1" [placeholder]="'Tất cả công nợ'" [data]="totalDebits" [valueField]="'value'" [textField]="'text'" (valueChange)="onDebitSelect($event)">
                 </kendo-combobox>
-                <kendo-combobox style="width: 250px;" [filterable]="true" #cbxLevel [popupSettings]="cbxPopupSettings" [placeholder]="'Tất cả hạng thành viên'" [data]="memberLevels" [valueField]="'id'" [textField]="'name'" (valueChange)="onMemberLevelSelect($event)">
+                <!-- <kendo-combobox style="width: 250px;" [filterable]="true" #cbxLevel [popupSettings]="cbxPopupSettings" [placeholder]="'Tất cả hạng thành viên'" [data]="memberLevels" [valueField]="'id'" [textField]="'name'" (valueChange)="onMemberLevelSelect($event)">
+                </kendo-combobox> -->
+                <kendo-combobox style="width: 250px;" [filterable]="true" #cbxMember [popupSettings]="cbxPopupSettings" [placeholder]="'Tất cả hạng thành viên'" [data]="memberCards" 
+                [valueField]="'id'" [textField]="'name'" (valueChange)="onMemberSelect($event)">
                 </kendo-combobox>
             </div>
         </div>
@@ -105,9 +108,9 @@
                 {{(dataItem.totalDebit || 0) | number}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="memberLevel" title="Hạng thành viên" width="150">
+        <kendo-grid-column field="memberLevel" title="Thẻ thành viên" width="150">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.memberLevel?.name}}
+                {{dataItem.cardCard?.typeName}}
             </ng-template>
         </kendo-grid-column>
         <!-- <kendo-grid-column field="GenderDisplay" title="Giới tính" width="90"></kendo-grid-column>

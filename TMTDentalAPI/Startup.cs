@@ -56,6 +56,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using DinkToPdf;
 using DinkToPdf.Contracts;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace TMTDentalAPI
 {
@@ -109,6 +110,15 @@ namespace TMTDentalAPI
             })
                .AddEntityFrameworkStores<CatalogDbContext>()
                .AddDefaultTokenProviders();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("publicApi", policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.RequireClaim("scope", "publicApi");
+                });
+            });
 
             // configure jwt authentication
             services.AddAuthentication(x =>
@@ -569,6 +579,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new PrintTemplateConfigProfile());
                 mc.AddProfile(new PrintTemplateProfile());
                 mc.AddProfile(new HrJobProfile());
+                mc.AddProfile(new ProductPricelistItemProfile());
                 mc.AddProfile(new SampleDataProfile());
             };
 
@@ -710,14 +721,23 @@ namespace TMTDentalAPI
 
             app.UseRequestLocalization(localizationOptions);
 
-            //app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            ////app.UseHttpsRedirection();
+            var provider = new FileExtensionContentTypeProvider();
+            // Add new mappings
+            provider.Mappings[".webmanifest"] = "application/manifest+json";
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                ContentTypeProvider = provider
+            });
 
             app.UseSerilogRequestLogging();
 
             if (!env.IsDevelopment())
             {
-                app.UseSpaStaticFiles();
+                app.UseSpaStaticFiles(new StaticFileOptions
+                {
+                    ContentTypeProvider = provider
+                });
             }
 
             app.UseRouting();
@@ -754,6 +774,8 @@ namespace TMTDentalAPI
 
             app.UseHangfireDashboard();
 
+            //app.UseIdentityServer();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -773,6 +795,7 @@ namespace TMTDentalAPI
                 endpoints.EnableDependencyInjection();
             });
 
+            //bỏ đoạn này sẽ lỗi khi chạy production
             app.UseSpa(spa =>
             {
                 // To learn more about options for serving an Angular SPA from ASP.NET Core,
@@ -780,10 +803,10 @@ namespace TMTDentalAPI
 
                 spa.Options.SourcePath = "ClientApp";
 
-                if (env.IsDevelopment())
-                {
-                    spa.UseAngularCliServer(npmScript: "start");
-                }
+                //if (env.IsDevelopment())
+                //{
+                //    spa.UseAngularCliServer(npmScript: "start");
+                //}
             });
         }
 

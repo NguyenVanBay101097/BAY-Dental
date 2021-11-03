@@ -18,18 +18,47 @@ export class CardCardPaged {
 export class CardCardBasic {
     id: string;
     name: string;
+    partnerName: string;
+    partnerPhone: string;
+    typeName: string;
+    totalPoint?: number;
+    pointInPeriod?: number;
+    barcode: string;
+    state: string;
 }
 
 export class CardCardDisplay {
     id: string;
     name: string;
     state: string;
+    barcode: string;
     partner: PartnerSimple;
     type: CardTypeBasic;
     activatedDate: string;
     expiredDate: string;
     isExpired: boolean;
     upgradeTypeId: string;
+}
+
+export class CardCardFilter {
+    partnerId: string;
+    productId: string;
+    state: string;
+}
+
+export class CardCardResponse {
+    id: string;
+    name: string;
+    state: string;
+    typeId: string;
+    barcode: string;
+    type: any;
+}
+
+export class CardCardSave {
+    typeId: string;
+    partnerId?: string;
+    barcode: string;
 }
 
 @Injectable({providedIn: 'root'})
@@ -45,11 +74,11 @@ export class CardCardService {
         return this.http.get<CardCardDisplay>(this.baseApi + this.apiUrl + "/" + id);
     }
 
-    create(val: CardCardDisplay): Observable<CardCardDisplay> {
+    create(val: CardCardSave): Observable<CardCardDisplay> {
         return this.http.post<CardCardDisplay>(this.baseApi + this.apiUrl, val);
     }
 
-    update(id: string, val: CardCardDisplay) {
+    update(id: string, val: CardCardSave) {
         return this.http.put(this.baseApi + this.apiUrl + "/" + id, val);
     }
 
@@ -92,5 +121,14 @@ export class CardCardService {
     excelServerExport(paged) {
         return this.http.get(this.baseApi + this.apiUrl + '/ExportExcelFile', { responseType: 'blob', params: paged });
     }
+
+    getCardCards(val) {
+        return this.http.post(this.baseApi + this.apiUrl + '/GetCardCards', val);
+    }
+
+    actionImport(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ImportExcel', val);
+    }
+
 
 }

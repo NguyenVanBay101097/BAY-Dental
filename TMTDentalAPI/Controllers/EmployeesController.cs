@@ -455,6 +455,15 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Catalog.Employee.Read")]
+        public async Task<IActionResult> AutocompleteInfos(EmployeePaged val)
+        {
+            var emps = await _employeeService.GetAutocomplete(val);
+            var res = _mapper.Map<IEnumerable<EmployeeSimpleInfo>>(emps);
+            return Ok(res);
+        }
+
         //Lấy danh sách nhân viên có thể thực hiện khảo sát
         [HttpGet("[action]")]
         [CheckAccess(Actions = "Catalog.Employee.Read")]

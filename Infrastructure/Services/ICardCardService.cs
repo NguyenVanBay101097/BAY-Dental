@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Models;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -25,5 +26,8 @@ namespace Infrastructure.Services
         Task ButtonUpgradeCard(IEnumerable<Guid> ids);
         Task<CardCard> GetValidCard(Guid partnerId);
         Task _CheckUpgrade(IEnumerable<CardCard> self, decimal? points = null);
+
+        Task<IEnumerable<CardCardResponse>> GetCardCards(GetCardCardFilter val);
+        Task<ImportExcelResponse> ActionImport(IFormFile formFile);
     }
 }

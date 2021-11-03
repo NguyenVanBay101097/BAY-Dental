@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { Injectable, Inject } from '@angular/core';
 import { PagedResult2 } from '../core/paged-result-2';
 import { ProductPriceListBasic } from '../price-list/price-list';
+import { ProductPricelistItems } from '../service-card-types/service-card-type.service';
 
 export class CardTypePaged {
     limit: number;
@@ -18,7 +19,17 @@ export class CardTypeBasic {
 export class CardTypeDisplay {
     id: string;
     name: string;
-    pricelist: ProductPriceListBasic;
+    basicPoint: number;
+    pricelistId: string;
+    color: string;
+    productPricelistItems: ProductPricelistItems[] = [];
+}
+
+export class CardTypeSave {
+    name: string;
+    basicPoint: number;
+    productPricelistItems: any;
+    color: string;
 }
 
 @Injectable()
@@ -30,11 +41,15 @@ export class CardTypeService {
         return this.http.get<PagedResult2<CardTypeBasic>>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
     }
 
-    get(id): Observable<CardTypeDisplay> {
-        return this.http.get<CardTypeDisplay>(this.baseApi + this.apiUrl + "/" + id);
+    get(id): Observable<any> {
+        return this.http.get<any>(this.baseApi + this.apiUrl + "/" + id);
     }
 
     create(val: CardTypeDisplay): Observable<CardTypeDisplay> {
+        return this.http.post<CardTypeDisplay>(this.baseApi + this.apiUrl, val);
+    }
+
+    createCardType(val: CardTypeSave): Observable<any> {
         return this.http.post<CardTypeDisplay>(this.baseApi + this.apiUrl, val);
     }
 

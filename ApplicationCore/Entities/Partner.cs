@@ -208,6 +208,11 @@ namespace ApplicationCore.Entities
         /// </summary>
         public ICollection<PartnerAdvance> PartnerAdvances { get; set; } = new List<PartnerAdvance>();
 
+        /// <summary>
+        /// Thẻ thành viên
+        /// </summary>
+        public ICollection<CardCard> CardCards { get; set; } = new List<CardCard>();
+
         public string GetAddress()
         {
             var list = new List<string>();

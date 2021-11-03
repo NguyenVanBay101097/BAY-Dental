@@ -17,6 +17,7 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.HrJobName, x => x.MapFrom(s => s.HrJob.Name));
 
             CreateMap<Employee, EmployeeSimpleContact>();
+            CreateMap<Employee, EmployeeSimpleInfo>();
             CreateMap<Employee, EmployeeBasic>()
                 .ForMember(x => x.UserName, x => x.MapFrom(s => s.User.UserName))
                 .ForMember(x => x.HrJobName, x => x.MapFrom(s => s.HrJob.Name));

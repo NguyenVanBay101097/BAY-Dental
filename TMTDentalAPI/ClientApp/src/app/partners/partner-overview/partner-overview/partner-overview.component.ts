@@ -2,10 +2,12 @@ import { HttpParams } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { CompositeFilterDescriptor } from "@progress/kendo-data-query";
+import { result } from "lodash";
 import { AccountCommonPartnerReport, AccountCommonPartnerReportSearchV2, AccountCommonPartnerReportService, } from "src/app/account-common-partner-reports/account-common-partner-report.service";
 import { AccountInvoiceReportService, SumRevenueReportPar } from "src/app/account-invoice-reports/account-invoice-report.service";
 import { AppointmentDisplay } from "src/app/appointment/appointment";
 import { AuthService } from "src/app/auth/auth.service";
+import { CardCardService } from "src/app/card-cards/card-card.service";
 import { AmountCustomerDebtFilter, CustomerDebtReportService, } from "src/app/core/services/customer-debt-report.service";
 import { SaleOrderLineService, SaleOrderLinesPaged, } from "src/app/core/services/sale-order-line.service";
 import { SaleOrderPaged, SaleOrderService, } from "src/app/core/services/sale-order.service";
@@ -16,6 +18,7 @@ import { SaleCouponProgramBasic, SaleCouponProgramPaged, SaleCouponProgramServic
 import { SaleOrderBasic } from "src/app/sale-orders/sale-order-basic";
 import { SaleOrderLineDisplay } from "src/app/sale-orders/sale-order-line-display";
 import { GetSummarySaleReportRequest, SaleReportService, } from "src/app/sale-report/sale-report.service";
+import { ServiceCardCardSave, ServiceCardCardService } from "src/app/service-card-cards/service-card-card.service";
 import { PartnersService } from "src/app/shared/services/partners.service";
 import { PartnerDisplay } from "../../partner-simple";
 import { PartnerService } from "../../partner.service";
@@ -39,7 +42,8 @@ export class PartnerOverviewComponent implements OnInit {
   skip = 0;
   search: string;
   dotkhams: DotKhamBasic[] = [];
-
+  preferentialCards: any;
+  memberCard: any;
   //for report
   saleSummary: any;
   debtStatistics: number = 0;
@@ -58,7 +62,9 @@ export class PartnerOverviewComponent implements OnInit {
     private dotkhamService: DotKhamService,
     private saleReportService: SaleReportService,
     private customerDebtReportService: CustomerDebtReportService,
-    private accountInvoiceReportService: AccountInvoiceReportService
+    private accountInvoiceReportService: AccountInvoiceReportService,
+    private cardCardService: ServiceCardCardService,
+    private cardService: CardCardService
   ) { }
 
   ngOnInit() {
@@ -68,6 +74,8 @@ export class PartnerOverviewComponent implements OnInit {
       this.loadCustomerAppointment();
       this.getDotkhams();
       this.loadReport();
+      this.loadPreferentialCards();
+      this.loadMemberCard();
     });
     this.loadAmountDebtTotal();
     this.loadAmountAdvanceBalance();
@@ -186,6 +194,26 @@ export class PartnerOverviewComponent implements OnInit {
     this.accountInvoiceReportService.getSumRevenueReport(val).subscribe((res: any) => {
       this.sumRevenue = res;
     })
+  }
+
+  loadPreferentialCards(){
+    let val = {partnerId: this.partnerId};
+    this.cardCardService.getServiceCardCards(val).subscribe(result => {
+      console.log(result);
+      
+      this.preferentialCards = result;
+    })
+  }
+
+  loadMemberCard(){
+    let val = {partnerId: this.partnerId};
+    this.cardService.getCardCards(val).subscribe((res: any[]) => {
+      this.memberCard = res[0];
+      console.log(res[0]);
+      
+    })
+    console.log(this.memberCard);
+    
   }
 
 }

@@ -22,6 +22,8 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<SaleOrderPaymentJournalLineDisplay, SaleOrderPaymentJournalLine>()
                 .ForMember(x => x.Id, x => x.Ignore());
+
+            CreateMap<SaleOrderPaymentJournalLine, SaleOrderPaymentJournalLineSimple>();
         }
     }
 }

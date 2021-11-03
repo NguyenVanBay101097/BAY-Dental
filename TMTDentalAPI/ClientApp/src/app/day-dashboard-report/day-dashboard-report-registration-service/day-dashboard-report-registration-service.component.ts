@@ -4,6 +4,10 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { aggregateBy } from '@progress/kendo-data-query';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import * as _ from 'lodash';
+import { SaleOrderLinePaged } from 'src/app/partners/partner.service';
+import { IntlService } from '@progress/kendo-angular-intl';
+import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-day-dashboard-report-registration-service',
@@ -16,17 +20,21 @@ export class DayDashboardReportRegistrationServiceComponent implements OnInit {
   skip = 0;
   limit = 20;
   pagerSettings: any;
-  @Input() services: any[] = [];
+  services: any[] = [];
+  @Input() dateFrom: Date;
+  @Input() dateTo: Date;
+  @Input() companyId: string;
   
   constructor(@Inject(PAGER_GRID_CONFIG) config: PageGridConfig,
-  private router: Router
-  ) { this.pagerSettings = config.pagerSettings }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    this.loadData();
+  private router: Router,
+  private intlService: IntlService,
+  private saleOrderLineService: SaleOrderLineService
+  ) { 
+    this.pagerSettings = config.pagerSettings 
   }
 
   ngOnInit() {
+    this.loadDataServiceApi();
   }
 
   public pageChange(event: PageChangeEvent): void {
@@ -35,8 +43,34 @@ export class DayDashboardReportRegistrationServiceComponent implements OnInit {
     this.loadData();
   }
 
+  loadData2(data) {
+    this.dateFrom = data.dateFrom;
+    this.dateTo = data.dateTo;
+    this.companyId = data.company;
+    this.loadDataServiceApi();
+  }
+
+  loadDataServiceApi() {
+    var val = new SaleOrderLinePaged();
+    val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : '';
+    val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : '';
+    val.companyId = this.companyId || '';
+    val.state = 'sale,done,cancel';
+    this.saleOrderLineService.getPaged(val).pipe(
+      map((response: any) =>
+      (<GridDataResult>{
+        data: response.items,
+        total: response.totalItems
+      }))
+    ).subscribe(res => {
+      this.services = res.data;
+      this.loadData();
+    }, err => {
+      console.log(err);
+    })
+  }
+
   loadData(): void {
-    console.log(this.services);
     this.gridData = {
       data: this.services.slice(this.skip, this.skip + this.limit),
       total: this.services.length
@@ -52,7 +86,7 @@ export class DayDashboardReportRegistrationServiceComponent implements OnInit {
 
   redirectSaleOrder(item) {
     if (item) {
-      this.router.navigate(['sale-orders', item.id]);
+      this.router.navigate(['/sale-orders', item.id]);
     }
   }
 

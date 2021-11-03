@@ -2,11 +2,14 @@
 using ApplicationCore.Interfaces;
 using ApplicationCore.Models;
 using ApplicationCore.Specifications;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,10 +33,22 @@ namespace Infrastructure.Services
         {
             var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.CardType).ToListAsync();
             var cardTypeObj = GetService<IServiceCardTypeService>();
-            foreach(var card in self)
+            foreach (var card in self)
             {
-                if (card.State == "in_use")
-                    continue;
+                    if (DateTime.Now > card.ExpiredDate)
+                    {
+                        throw new Exception($"Thẻ đã hết hạn, không thể kích hoạt");
+                    }
+
+                    if (card.State != "draft" && card.State != "locked")
+                    {
+                        throw new Exception($"Thẻ không thể kích hoạt, chỉ kích hoạt các thẻ chưa kích hoạt hoặc tạm dừng");
+                    }
+
+                    if (!card.PartnerId.HasValue)
+                    {
+                        throw new Exception("Khách hàng đang trống, cần bổ sung khách hàng");
+                    }
 
                 if (!card.ActivatedDate.HasValue)
                     card.ActivatedDate = DateTime.Today;
@@ -47,6 +62,42 @@ namespace Infrastructure.Services
             await UpdateAsync(self);
         }
 
+        public async Task ActionLock(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            foreach (var card in self)
+            {
+                if (card.State != "in_use")
+                {
+                    throw new Exception($"Thẻ không thể tạm dừng, chỉ tạm dừng các thẻ đã kích hoạt");
+                }
+
+                if (DateTime.Now > card.ExpiredDate)
+                {
+                    throw new Exception($"Thẻ đã hết hạn, không thể tạm dừng");
+                }
+
+                card.State = "locked";
+            }
+
+            await UpdateAsync(self);
+        }
+
+        public async Task ActionCancel(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            foreach (var card in self)
+            {
+
+                if (DateTime.Now > card.ExpiredDate)
+                {
+                    throw new Exception($"Thẻ đã hết hạn, không thể hủy");
+                }
+                card.State = "cancelled";
+            }
+            await UpdateAsync(self);
+        }
+
         public async Task ButtonConfirm(IEnumerable<ServiceCardCard> self)
         {
             foreach (var card in self)
@@ -54,6 +105,15 @@ namespace Infrastructure.Services
             await UpdateAsync(self);
         }
 
+        public override async Task UpdateAsync(IEnumerable<ServiceCardCard> entities)
+        {
+            await base.UpdateAsync(entities);
+            foreach (var card in entities)
+            {
+                await _CheckBarcodeUnique(card.Barcode);
+                await _CheckPartnerUnique(card);
+            }
+        }
 
         public override async Task<IEnumerable<ServiceCardCard>> CreateAsync(IEnumerable<ServiceCardCard> self)
         {
@@ -77,8 +137,10 @@ namespace Infrastructure.Services
             await base.CreateAsync(self);
 
             foreach (var card in self)
+            {
                 await _CheckBarcodeUnique(card.Barcode);
-
+                await _CheckPartnerUnique(card);
+            }
             return self;
         }
 
@@ -89,16 +151,27 @@ namespace Infrastructure.Services
 
             var count = await SearchQuery(x => x.Barcode == barcode).CountAsync();
             if (count >= 2)
-                throw new Exception($"Đã có thẻ dịch vụ với mã vạch {barcode}");
+                throw new Exception($"Số ID thẻ không được trùng");
+        }
+
+        private async Task _CheckPartnerUnique(ServiceCardCard self)
+        {
+            if (!self.PartnerId.HasValue)
+                return;
+
+            var count = await SearchQuery(x => x.PartnerId == self.PartnerId && x.CardTypeId == self.CardTypeId).CountAsync();
+            if (count >= 2)
+                throw new Exception($"Khách hàng đã tồn tại hạng thẻ này trên hệ thống");
         }
 
         public async Task Unlink(IEnumerable<Guid> ids)
         {
             var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            var states = new string[] { "draft" };
             foreach (var card in self)
             {
-                if (card.State == "in_use")
-                    throw new Exception("Không thể xóa thẻ tiền mặt đang sử dụng");
+                if (!states.Contains(card.State))
+                    throw new Exception("Chỉ có thể xóa thẻ ưu đãi dịch vụ ở trạng thái chưa kích hoạt");
             }
 
             await DeleteAsync(self);
@@ -145,20 +218,41 @@ namespace Infrastructure.Services
         {
             ISpecification<ServiceCardCard> spec = new InitialSpecification<ServiceCardCard>(x => true);
             if (!string.IsNullOrEmpty(val.Search))
-                spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.Name.Contains(val.Search) ||
+                spec = spec.And(new InitialSpecification<ServiceCardCard>(x =>
+                x.Name.Contains(val.Search) ||
+                x.Barcode.Contains(val.Search) ||
                 x.Partner.Name.Contains(val.Search) ||
                 x.Partner.NameNoSign.Contains(val.Search) ||
-                x.Partner.Phone.Contains(val.Search)));
+                x.Partner.Phone.Contains(val.Search) || x.CardType.Name.Contains(val.Search)));
 
             if (val.OrderId.HasValue)
                 spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.SaleLine.OrderId == val.OrderId.Value));
+            if (!string.IsNullOrEmpty(val.state))
+            {
+                spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.State == val.state));
+            }
+
+            if (val.ActivatedDate.HasValue)
+            {
+                spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.ActivatedDate.Value.Date == val.ActivatedDate.Value.Date));
+            }
+
+            if (val.DateFrom.HasValue)
+            {
+                spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.ExpiredDate.Value.Date >= val.DateFrom.Value.Date));
+            }
+            if (val.DateTo.HasValue)
+            {
+                spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.ActivatedDate.Value.Date <= val.DateTo.Value.Date));
+            }
+
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 
             if (val.Limit <= 0)
                 val.Limit = int.MaxValue;
-
-            var items = await _mapper.ProjectTo<ServiceCardCardBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
+            var res = await query.Include(x => x.CardType).Include(x => x.Partner).Skip(val.Offset).Take(val.Limit).ToListAsync();
+            var items = _mapper.Map<IEnumerable<ServiceCardCardBasic>>(res);
             var totalItems = await query.CountAsync();
 
             return new PagedResult2<ServiceCardCardBasic>(totalItems, val.Offset, val.Limit)
@@ -169,7 +263,7 @@ namespace Infrastructure.Services
 
         public void _ComputeResidual(IEnumerable<ServiceCardCard> self)
         {
-            foreach(var card in self)
+            foreach (var card in self)
             {
                 var total_apply_sale = card.SaleOrderCardRels.Sum(x => x.Amount);
                 card.Residual = card.Amount - total_apply_sale;
@@ -185,6 +279,61 @@ namespace Infrastructure.Services
             return self;
         }
 
+        public async Task<IEnumerable<ServiceCardCardResponse>> GetServiceCardCards(ServiceCardCardFilter val)
+        {
+            var today = DateTime.Today;
+            var productPriceListItemObj = GetService<IProductPricelistItemService>();
+            var query = SearchQuery();
+
+            if (val.PartnerId.HasValue)
+                query = query.Where(x => x.PartnerId == val.PartnerId);
+
+            if (val.ProductId.HasValue)
+            {
+                query = query.Where(x => x.CardType.ProductPricelist.Items.Any(s => s.ProductId == val.ProductId));
+
+                query = query.Where(x => (!x.ActivatedDate.HasValue || today >= x.ActivatedDate.Value) && (!x.ExpiredDate.HasValue || today <= x.ExpiredDate.Value));
+            }
+
+            if (!string.IsNullOrEmpty(val.State))
+                query = query.Where(x => x.State == val.State);
+
+            var items = await query.Include(x => x.CardType).ThenInclude(x => x.ProductPricelist).ThenInclude(x => x.Items).ToListAsync();
+
+            var res = _mapper.Map<IEnumerable<ServiceCardCardResponse>>(items);
+
+            //if (val.ProductId.HasValue)
+            //{
+            //    var productPricelist = res.Select(x => x.CardType.ProductPricelistId.Value).Distinct().ToList();
+            //    var pricelistItems = await productPriceListItemObj.SearchQuery(x => productPricelist.Contains(x.PriceListId.Value)).ToListAsync();
+            //    foreach (var item in res)
+            //    {
+            //        var pricelistItem = pricelistItems.Where(x => x.PriceListId == item.CardType.ProductPricelistId && x.ProductId == val.ProductId.Value).FirstOrDefault();
+            //        item.ProductPricelistItem = pricelistItem == null ? null : _mapper.Map<ProductPricelistItemDisplay>(pricelistItem);
+            //    }
+
+            //}
+
+            return res;
+        }
+
+
+        public CheckPromoCodeMessage _CheckServiceCardCardApplySaleLine(ServiceCardCard self, SaleOrderLine line)
+        {
+            var message = new CheckPromoCodeMessage();
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var today = DateTime.Today;
+
+            if (line.Promotions.Any(x => x.ServiceCardCardId == self.Id))
+                message.Error = "Trùng thẻ ưu đãi đang áp dụng";
+            else if (line.Promotions.Any(x => x.ServiceCardCardId.HasValue))
+                message.Error = "Không thể dùng chung với thẻ ưu đãi dịch vụ khác";
+            else if ((self.ActivatedDate.HasValue && today < self.ActivatedDate.Value) || today > self.ExpiredDate.Value)
+                message.Error = $"Thẻ ưu đãi đã hết hạn";
+
+            return message;
+        }
+
         public async Task<ServiceCardCard> CheckCode(string code)
         {
             var card = await SearchQuery(x => x.Barcode == code).FirstOrDefaultAsync();
@@ -198,6 +347,71 @@ namespace Infrastructure.Services
                 throw new Exception($"Số dư của thẻ bằng 0");
 
             return card;
+        }
+
+        public async Task<ImportExcelResponse> ActionImport(IFormFile formFile)
+        {
+
+            if (formFile == null || formFile.Length <= 0)
+            {
+                throw new Exception("File không được trống");
+            }
+
+            var list = new List<ServiceCardCard>();
+            var cardTypeObj = GetService<IServiceCardTypeService>();
+
+            using (var stream = new MemoryStream())
+            {
+                await formFile.CopyToAsync(stream);
+                try
+                {
+                    var errors = new List<string>();
+                    using (var package = new ExcelPackage(stream))
+                    {
+                        ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                        var rowCount = worksheet.Dimension.Rows;
+
+                        for (int row = 2; row <= rowCount; row++)
+                        {
+                            var typeName = worksheet.Cells[row, 2].Value.ToString().Trim();
+                            var type = await cardTypeObj.SearchQuery(x => x.Name == typeName).FirstOrDefaultAsync();
+                            if (type == null)
+                                errors.Add($"dòng {row}: không tìm thấy hạng thẻ");
+
+                            var barcode = worksheet.Cells[row, 1].Value.ToString().Trim();
+                            if (barcode.Length < 10 || barcode.Length > 15)
+                            {
+                                errors.Add($"dòng {row}: Số ID tối thiểu 10 và tối đa 15 ký tự");
+                            }
+                            var exist = await SearchQuery(x => x.Barcode == barcode).AnyAsync();
+                            if (exist)
+                            {
+                                errors.Add($"dòng {row}: Số ID thẻ bị trùng");
+                            }
+
+                            if (!errors.Any())
+                            list.Add(new ServiceCardCard
+                            {
+                                Barcode = barcode,
+                                CardTypeId = type.Id
+                            });
+                        }
+                    }
+
+                    if (errors.Any())
+                        return new ImportExcelResponse { Success = false, Errors = errors };
+                }
+                catch (Exception ex)
+                {
+
+                    throw new Exception("File import sai định dạng. Vui lòng tải file mẫu và nhập dữ liệu đúng");
+                }
+
+            }
+
+            await CreateAsync(list);
+
+            return new ImportExcelResponse { Success = true };
         }
     }
 }

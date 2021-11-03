@@ -783,9 +783,9 @@ const keyWorDatas =
         {
             text: 'Thông tin phiếu',
             value: [
-                { text: 'Ngày tạo', value: '{{date.day}}' },
-                { text: 'Tháng tạo', value: '{{date.month}}' },
-                { text: 'Năm tạo', value: '{{date.year}}' },
+                { text: 'Ngày tạo', value: '{{o.date_order.day}}' },
+                { text: 'Tháng tạo', value: '{{o.date_order.month}}' },
+                { text: 'Năm tạo', value: '{{o.date_order.year}}' },
                 { text: 'Mã phiếu', value: '{{o.name}}' },
                 { text: 'Người lập phiếu', value: '{{u.name}}' },
             ]

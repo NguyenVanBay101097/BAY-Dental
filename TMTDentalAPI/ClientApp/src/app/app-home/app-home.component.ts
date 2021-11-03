@@ -98,11 +98,15 @@ export class AppHomeComponent implements OnInit {
       name: 'Sổ quỹ', icon: 'fas fa-wallet', url: '/cash-book', permissions: ['Account.Read']
     },
     {
-      name: 'Khuyến mãi',
+      name: 'Marketing',
       icon: 'fas fa-gift',
       groups: 'sale.group_sale_coupon_promotion',
-      url: '/programs/promotion-programs',
-      permissions: ['SaleCoupon.SaleCouponProgram.Read']
+      children: [
+        { name: 'Chương trình khuyến mãi', url: '/programs/promotion-programs', permissions: ['SaleCoupon.SaleCouponProgram.Read'] },
+        { name: 'Quản lý thẻ', url: '/service-card', permissions: ['ServiceCard.Card.Read'] },
+        { name: 'Loại thẻ', url: '/card-types', permissions: ['ServiceCard.Type.Read'] },
+      ],
+      permissions: ['SaleCoupon.SaleCouponProgram.Read', 'ServiceCard.Card.Read']
     },
     {
       name: 'SMS Brandname',
@@ -171,7 +175,8 @@ export class AppHomeComponent implements OnInit {
         { name: 'Chi nhánh', url: '/companies', permissions: ['System.Company.Read'] },
         { name: 'Nhóm quyền', url: '/roles', permissions: ['System.ApplicationRole.Read'] },
         { name: 'Cấu hình chung', url: '/config-settings' },
-        { name: 'Mẫu in', url: '/print-template-config' }
+        // { name: 'Mẫu in', url: '/print-template-config' },
+        // { name: 'Thiết lập kết nối API', url: '/setting-public-api' }
       ],
       permissions: ['System.Company.Read', 'System.ApplicationUser.Read', 'System.ApplicationRole.Read']
     },
@@ -188,7 +193,6 @@ export class AppHomeComponent implements OnInit {
         { name: 'Báo cáo khách hàng', url: '/report-account-common/partner-report-overview', permissions: ['Report.PartnerOldNew'] },
         { name: 'Báo cáo tiếp nhận', url: '/customer-receipt-reports' },
         { name: 'Công nợ nhà cung cấp', url: '/report-account-common/partner', linkProps: { queryParams: { result_selection: 'supplier' } }, permissions: ['Report.AccountPartner'] },
-        { name: 'Khách hàng lân cận phòng khám', url: '/partner-report-location', permissions: ['Report.PartnerLocation'] },
         { name: 'Thống kê nguồn khách hàng', url: '/report-partner-sources', permissions: ['Report.PartnerSource'] },
         { name: 'Quản lý điều trị', url: '/sale-orders/management', permissions: ['Basic.SaleOrder.Read'] },
       ],

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ApplicationCore.Entities
 {
-    public class ProductPricelist: BaseEntity
+    public class ProductPricelist : BaseEntity
     {
         public ProductPricelist()
         {

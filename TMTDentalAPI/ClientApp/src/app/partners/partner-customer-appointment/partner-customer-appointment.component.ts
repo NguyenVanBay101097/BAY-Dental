@@ -19,6 +19,7 @@ import { PartnerService } from '../partner.service';
 import { PartnerDisplay } from '../partner-simple';
 import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { PrintService } from 'src/app/shared/services/print.service';
 
 @Component({
   selector: 'app-partner-customer-appointment',
@@ -40,7 +41,8 @@ export class PartnerCustomerAppointmentComponent implements OnInit {
     private partnerService: PartnerService,
     private notificationService: NotificationService,
     private activeRoute: ActivatedRoute,
-    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig,
+    private printService: PrintService
   ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
@@ -130,4 +132,9 @@ export class PartnerCustomerAppointmentComponent implements OnInit {
     }
   }
 
+  onPrint(id) {
+    this.appointmentService.print(id).subscribe((res: any) => {
+      this.printService.printHtml(res.html);
+    });
+  }
 }

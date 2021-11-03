@@ -482,6 +482,50 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
           this.notify('error', err.error.error);
         });
     });
+    
+    modalRef.componentInstance.getBtnPromoServiceCardObs().subscribe(data => {
+      var val = {
+        id: line.id,
+        serviceCardId: data.id
+      };
+
+      this.saleOrderLineService.applyServiceCardCard(val).pipe(
+        catchError((err) => { throw err; }),
+        mergeMap((result: any) => {
+          return this.saleOrderService.get(this.saleOrder.id);
+        })
+      )
+        .subscribe(res => {
+          this.resetData(res);
+          var newLine = this.orderLines[i];
+          modalRef.componentInstance.saleOrderLine = newLine;
+        }, err => {
+          console.log(err);
+          this.notify('error', err.error.error);
+        });
+    });
+
+    modalRef.componentInstance.getBtnPromoCardCardObs().subscribe(data => {
+      var val = {
+        id: line.id,
+        cardId: data.id
+      };
+
+      this.saleOrderLineService.applyCardCard(val).pipe(
+        catchError((err) => { throw err; }),
+        mergeMap((result: any) => {
+          return this.saleOrderService.get(this.saleOrder.id);
+        })
+      )
+        .subscribe(res => {
+          this.resetData(res);
+          var newLine = this.orderLines[i];
+          modalRef.componentInstance.saleOrderLine = newLine;
+        }, err => {
+          console.log(err);
+          this.notify('error', err.error.error);
+        });
+    });
 
     modalRef.componentInstance.getBtnDeletePromoObs().subscribe(data => {
       this.saleOrderPromotionService.removePromotion([data.id]).pipe(
@@ -661,7 +705,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
   }
 
   getAmountTotal() {
-    return this.getAmountSubTotal() - this.saleOrder.amountDiscountTotal;
+    return this.getAmountSubTotal() - this.getAmountDiscountTotal();
   }
 
   getStateDisplay() {
