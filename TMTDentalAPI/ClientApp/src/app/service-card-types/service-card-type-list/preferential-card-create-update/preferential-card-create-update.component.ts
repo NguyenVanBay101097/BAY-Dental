@@ -11,7 +11,10 @@ import { ServiceCardTypeApplyDialogComponent } from '../service-card-type-apply-
 @Component({
   selector: 'app-preferential-card-create-update',
   templateUrl: './preferential-card-create-update.component.html',
-  styleUrls: ['./preferential-card-create-update.component.css']
+  styleUrls: ['./preferential-card-create-update.component.css'],
+  host: {
+    class: 'o_action o_view_controller'
+  }
 })
 export class PreferentialCardCreateUpdateComponent implements OnInit {
   cardTypeId: string;
@@ -122,13 +125,21 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
   }
   onSave(){
     this.submitted = true;
+    // var categs = this.categories.reduce((array,categ) => {
+    //   return array.concat(categ[0].products);
+    // },[]);
+    // console.log(categs);
+    
     if (this.cardForm.invalid)
       return;
     var val = this.cardForm.value;
+    // val.productPricelistItems = categs;
+
     if (this.cardTypeId){
       this.cardTypeService.updateCardType(this.cardTypeId,val).subscribe(() => {
         this.notify('Lưu thành công','success');
         this.cardTypeName = val.name;
+        this.getCardTypeById();
       })
     }
     else {
@@ -139,6 +150,14 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
         });
       })
     }
+  }
+
+  deleteItem(productPosition,productIndex,categIndex){
+    this.categories[categIndex][0].products.splice(productIndex,1);
+    if (this.categories[categIndex][0].products.length == 0) {
+      this.categories.splice(categIndex,1);
+    }
+    // this.productPricelistItems.removeAt(productPosition);
   }
 
   notify(content: string, style){
@@ -233,7 +252,7 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
   }
 
   getComputePrice(index){
-    return this.productPricelistItems.controls[index].value.computePrice;
+    return this.productPricelistItems.controls[index]?.value.computePrice;
   }
 
   get f(){
