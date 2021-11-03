@@ -29,7 +29,6 @@ export class CommissionSettlementAgentProfileComponent implements OnInit {
     if (this.agentId) {
       this.agentService.get(this.agentId).subscribe((result) => {
         this.agentObj = result
-        console.log(result);
       })
     }
   }
