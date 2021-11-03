@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
@@ -8,6 +9,7 @@ using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -367,7 +369,7 @@ namespace TMTDentalAPI.Controllers
                 emp.CommissionId = val.CommissionId.HasValue ? val.CommissionId : null;
                 emp.CounselorCommissionId = val.CounselorCommissionId.HasValue ? val.CounselorCommissionId : null;
                 emp.AssistantCommissionId = val.AssistantCommissionId.HasValue ? val.AssistantCommissionId : null;
-              
+
             }
         }
 
@@ -485,6 +487,50 @@ namespace TMTDentalAPI.Controllers
         {
             var result = await _employeeService.GetEmployeeSurveyCount(val);
             return Ok(result);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GenerateXML()
+        {
+            var irModelObj = (IIRModelDataService)HttpContext.RequestServices.GetService(typeof(IIRModelDataService));
+            var _hostingEnvironment = (IWebHostEnvironment)HttpContext.RequestServices.GetService(typeof(IWebHostEnvironment));
+            var xmlService = (IXmlService)HttpContext.RequestServices.GetService(typeof(IXmlService));
+            string path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\ImportXML\employee.xml");
+
+            var irModelCreate = new List<IRModelData>();
+            var dateToData = new DateTime(2021, 08, 25);
+            var entities = await _employeeService.SearchQuery(x => x.DateCreated <= dateToData).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var data = new List<EmployeeXmlSampleDataRecord>();
+            foreach (var entity in entities)
+            {
+                var item = _mapper.Map<EmployeeXmlSampleDataRecord>(entity);
+                item.Id = $@"sample.employee_{entities.IndexOf(entity) + 1}";
+                data.Add(item);
+                // add IRModelData
+                irModelCreate.Add(new IRModelData()
+                {
+                    Module = "sample",
+                    Model = "employee",
+                    ResId = entity.Id.ToString(),
+                    Name = $"employee_{ entities.IndexOf(entity) + 1}"
+                });
+                if (entity.PartnerId.HasValue)
+                {
+                    // add IRModelData
+                    irModelCreate.Add(new IRModelData()
+                    {
+                        Module = "sample",
+                        Model = "partner",
+                        ResId = entity.PartnerId.ToString(),
+                        Name = $"employee_{ entities.IndexOf(entity) + 1}_partner"
+                    });
+                }
+
+            }
+            //writeFile
+            xmlService.WriteXMLFile(path, data);
+            await irModelObj.CreateAsync(irModelCreate);
+            return Ok();
         }
     }
 }

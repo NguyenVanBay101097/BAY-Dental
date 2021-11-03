@@ -1,0 +1,723 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Record>
+    <Id>sample.product_product_1</Id>
+    <Name>Đèn trám quang trùng hợp LED</Name>
+    <CategId>sample.product_category_12</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>4800000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_2</Id>
+    <Name>Đèn và kính lúp phẫu thuật</Name>
+    <CategId>sample.product_category_12</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>19500000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_3</Id>
+    <Name>Ghế nha khoa HK-620A</Name>
+    <CategId>sample.product_category_12</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>45000000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_4</Id>
+    <Name>Ghế nha khoa ST-D302</Name>
+    <CategId>sample.product_category_12</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>40000000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_5</Id>
+    <Name>Ghế nha sỹ - phụ tá</Name>
+    <CategId>sample.product_category_12</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>1300000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_6</Id>
+    <Name>Lò hấp Autolave</Name>
+    <CategId>sample.product_category_12</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>9600000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_7</Id>
+    <Name>Máy cạo vôi răng siêu âm</Name>
+    <CategId>sample.product_category_12</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>6950000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_8</Id>
+    <Name>Máy điều trị nội nha + định vị chóp</Name>
+    <CategId>sample.product_category_12</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>11500000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_9</Id>
+    <Name>Máy mài muội</Name>
+    <CategId>sample.product_category_12</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>4700000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_10</Id>
+    <Name>Máy tăm nước</Name>
+    <CategId>sample.product_category_12</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>2250000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_11</Id>
+    <Name>Máy tẩy trắng răng</Name>
+    <CategId>sample.product_category_12</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>6800000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_12</Id>
+    <Name>Tay khoan chậm Nakamuara Dental MFG</Name>
+    <CategId>sample.product_category_12</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>7900000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_13</Id>
+    <Name>Tay khoan siêu tốc Nakamuara Dental MFG</Name>
+    <CategId>sample.product_category_12</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>3400000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_14</Id>
+    <Name>Tủ tiệt trùng</Name>
+    <CategId>sample.product_category_12</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>3100000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_15</Id>
+    <Name>Cây đục men</Name>
+    <CategId>sample.product_category_13</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>0.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_16</Id>
+    <Name>Cây nạo ngà</Name>
+    <CategId>sample.product_category_13</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>29000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_17</Id>
+    <Name>Thám trâm + gương + kẹp gắp</Name>
+    <CategId>sample.product_category_13</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>69000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_18</Id>
+    <Name>Banh miệng cố định</Name>
+    <CategId>sample.product_category_13</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>275000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_19</Id>
+    <Name>Banh môi</Name>
+    <CategId>sample.product_category_13</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>32000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_20</Id>
+    <Name>Bình hủy kim tiêm</Name>
+    <CategId>sample.product_category_13</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>20000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_21</Id>
+    <Name>Bộ cây cạo vôi tay </Name>
+    <CategId>sample.product_category_13</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>70000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_22</Id>
+    <Name>Bộ dụng cụ khám nha khoa cơ bản</Name>
+    <CategId>sample.product_category_13</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>85000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_23</Id>
+    <Name>Bộ khay lấy dấu nhựa đủ kích cỡ</Name>
+    <CategId>sample.product_category_13</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>85000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_24</Id>
+    <Name>Cây banh má</Name>
+    <CategId>sample.product_category_14</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>125000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_25</Id>
+    <Name>Cây đo túi nướu</Name>
+    <CategId>sample.product_category_14</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>55000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_26</Id>
+    <Name>Cây lèn nhiệt </Name>
+    <CategId>sample.product_category_13</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>642000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_27</Id>
+    <Name>Cây nạo ổ</Name>
+    <CategId>sample.product_category_14</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>55000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_28</Id>
+    <Name>Cây nhét chỉ co nướu </Name>
+    <CategId>sample.product_category_13</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>53000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_29</Id>
+    <Name>Cây tháo mão </Name>
+    <CategId>sample.product_category_13</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>115000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_30</Id>
+    <Name>Chén inox</Name>
+    <CategId>sample.product_category_13</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>16000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_31</Id>
+    <Name>Chén trộn thạch cao</Name>
+    <CategId>sample.product_category_15</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>30000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_32</Id>
+    <Name>Cục cắn</Name>
+    <CategId>sample.product_category_13</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>33000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_33</Id>
+    <Name>Đầu thổi cát lâm sàng</Name>
+    <CategId>sample.product_category_13</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>6350000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_34</Id>
+    <Name>Hộp inox tròn y tế</Name>
+    <CategId>sample.product_category_13</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>28000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_35</Id>
+    <Name>Kéo y tế</Name>
+    <CategId>sample.product_category_14</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>25000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_36</Id>
+    <Name>Kẹp gắp</Name>
+    <CategId>sample.product_category_13</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>27000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_37</Id>
+    <Name>Khay đựng đồ khám nha khoa</Name>
+    <CategId>sample.product_category_13</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>41000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_38</Id>
+    <Name>Khay Inox chữ nhật</Name>
+    <CategId>sample.product_category_14</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>29000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_39</Id>
+    <Name>Khóa vặn chốt</Name>
+    <CategId>sample.product_category_13</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>245000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_40</Id>
+    <Name>Lưỡi dao mổ số 11</Name>
+    <CategId>sample.product_category_14</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>95000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_41</Id>
+    <Name>Lưỡi dao mổ số 12</Name>
+    <CategId>sample.product_category_14</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>95000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_42</Id>
+    <Name>Lưỡi dao mổ số 15</Name>
+    <CategId>sample.product_category_14</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>95000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_43</Id>
+    <Name>Lưỡi dao mổ số 15C</Name>
+    <CategId>sample.product_category_14</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>450000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_44</Id>
+    <Name>Ly thủy tinh lục giác trộn nhựa</Name>
+    <CategId>sample.product_category_13</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>23000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_45</Id>
+    <Name>Máy thổi cát lâm sàng</Name>
+    <CategId>sample.product_category_13</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>12500000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_46</Id>
+    <Name>Mũi phẩu thuật cắt xương</Name>
+    <CategId>sample.product_category_14</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>186000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_47</Id>
+    <Name>Ống chích rút ngược</Name>
+    <CategId>sample.product_category_14</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>680000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_48</Id>
+    <Name>Ống hút phẫu thuật</Name>
+    <CategId>sample.product_category_14</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>442000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_49</Id>
+    <Name>Pen cong </Name>
+    <CategId>sample.product_category_13</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>35000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_50</Id>
+    <Name>Pen kẹp kim </Name>
+    <CategId>sample.product_category_14</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>35000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_51</Id>
+    <Name>Pen thẳng</Name>
+    <CategId>sample.product_category_13</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>35000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_52</Id>
+    <Name>Phẫu tích có mấu cán vàng</Name>
+    <CategId>sample.product_category_14</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>180000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_53</Id>
+    <Name>Phẫu tích không mấu </Name>
+    <CategId>sample.product_category_14</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>30000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_54</Id>
+    <Name>Súng bơm cao su </Name>
+    <CategId>sample.product_category_15</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>1320000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_55</Id>
+    <Name>Thước nội nha </Name>
+    <CategId>sample.product_category_13</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>458000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_56</Id>
+    <Name>Áo phẫu thuật</Name>
+    <CategId>sample.product_category_16</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>35000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_57</Id>
+    <Name>Băng keo chỉ thị nhiệt </Name>
+    <CategId>sample.product_category_16</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>98000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_58</Id>
+    <Name>Bao bọc sensor</Name>
+    <CategId>sample.product_category_16</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>145000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_59</Id>
+    <Name>Bao dây đốt </Name>
+    <CategId>sample.product_category_16</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>8000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_60</Id>
+    <Name>Bộ đồ phòng dịch</Name>
+    <CategId>sample.product_category_16</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>90000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_61</Id>
+    <Name>Bơm tiêm y tế</Name>
+    <CategId>sample.product_category_16</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>69000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_62</Id>
+    <Name>Bông cầm máu</Name>
+    <CategId>sample.product_category_16</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>123000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_63</Id>
+    <Name>Chỉ khâu không tiêu</Name>
+    <CategId>sample.product_category_16</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>21000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_64</Id>
+    <Name>Chỉ khâu tự tiêu</Name>
+    <CategId>sample.product_category_16</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>33000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_65</Id>
+    <Name>Cọ bond</Name>
+    <CategId>sample.product_category_16</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>84000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_66</Id>
+    <Name>Collagen khối cầm máu</Name>
+    <CategId>sample.product_category_16</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>3000000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_67</Id>
+    <Name>Đê cao su</Name>
+    <CategId>sample.product_category_16</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>290000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_68</Id>
+    <Name>Gạc y tế tiệt trùng</Name>
+    <CategId>sample.product_category_16</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>8000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_69</Id>
+    <Name>Găng tay phẫu thuật</Name>
+    <CategId>sample.product_category_16</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>7000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_70</Id>
+    <Name>Giấy ký</Name>
+    <CategId>sample.product_category_16</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>40000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_71</Id>
+    <Name>Gòn miếng</Name>
+    <CategId>sample.product_category_16</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>120000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_72</Id>
+    <Name>Khăn phẫu thuật 50x50cm</Name>
+    <CategId>sample.product_category_16</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>80000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_73</Id>
+    <Name>Khẩu trang kháng khuẩn</Name>
+    <CategId>sample.product_category_16</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>39000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_74</Id>
+    <Name>Khẩu trang y tế Face Mask 4U</Name>
+    <CategId>sample.product_category_16</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>45000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_75</Id>
+    <Name>Kim tiêm</Name>
+    <CategId>sample.product_category_16</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>200000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_76</Id>
+    <Name>Ly giấy</Name>
+    <CategId>sample.product_category_16</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>9000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_77</Id>
+    <Name>Nón giấy y tế</Name>
+    <CategId>sample.product_category_16</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>7000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_78</Id>
+    <Name>Nước cất</Name>
+    <CategId>sample.product_category_16</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>17000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_79</Id>
+    <Name>Ống hút nước bọt</Name>
+    <CategId>sample.product_category_16</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>55000.00</PurchasePrice>
+  </Record>
+  <Record>
+    <Id>sample.product_product_80</Id>
+    <Name>Que đè lưỡi gỗ</Name>
+    <CategId>sample.product_category_16</CategId>
+    <MinInventory xsi:nil="true" />
+    <UOMPOId>product.product_uom_unit</UOMPOId>
+    <UOMId>product.product_uom_unit</UOMId>
+    <PurchasePrice>30000.00</PurchasePrice>
+  </Record>
+</Data>

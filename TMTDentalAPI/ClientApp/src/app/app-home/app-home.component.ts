@@ -5,9 +5,11 @@ import { NgSelectComponent } from '@ng-select/ng-select';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
+import { IrConfigParameterService } from '../core/services/ir-config-parameter.service';
 import { WebService } from '../core/services/web.service';
 import { ChangePasswordDialogComponent } from '../shared/change-password-dialog/change-password-dialog.component';
 import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog.component';
+import { ImportSampleDataComponent } from '../shared/import-sample-data/import-sample-data.component';
 import { PermissionService } from '../shared/permission.service';
 import { SearchAllService } from '../shared/search-all.service';
 import { UserProfileEditComponent } from '../shared/user-profile-edit/user-profile-edit.component';
@@ -216,6 +218,7 @@ export class AppHomeComponent implements OnInit {
   @ViewChild('searchAllSelect', { static: true }) searchAllSelect: NgSelectComponent;
 
   minimized = false;
+  irImportSampleData = null;
 
   constructor(
     private modalService: NgbModal,
@@ -224,7 +227,8 @@ export class AppHomeComponent implements OnInit {
     private userService: UserService,
     private webService: WebService,
     private notificationService: NotificationService,
-    private permissionService: PermissionService
+    private permissionService: PermissionService,
+    private irConfigParamService: IrConfigParameterService,
   ) { }
 
   ngOnInit() {
@@ -242,6 +246,8 @@ export class AppHomeComponent implements OnInit {
     this.permissionService.permissionStoreChangeEmitter.subscribe(() => {
       this.menus = this.filterMenus();
     });
+
+    this.loadIrConfigParam();
   }
 
   filterMenus() {
@@ -393,6 +399,37 @@ export class AppHomeComponent implements OnInit {
         }
       )
     }, () => {
+    });
+  }
+
+  loadIrConfigParam() {
+    var key = "import_sample_data";
+    this.irConfigParamService.getParam(key).subscribe(
+      (result: any) => {
+        this.irImportSampleData = result.value;
+        if (!this.irImportSampleData) {
+          this.openPopupImportSimpleData();
+        }
+      }
+    )
+  }
+
+  openPopupImportSimpleData() {
+    const modalRef = this.modalService.open(ImportSampleDataComponent, { scrollable: true, size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.value = this.irImportSampleData;
+    modalRef.result.then(result => {
+      if (result) {
+        this.notificationService.show({
+          content: 'Khởi tạo dữ liệu mẫu thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+        window.location.reload();
+      }
+    }, err => {
+      console.log(err);
     });
   }
 }

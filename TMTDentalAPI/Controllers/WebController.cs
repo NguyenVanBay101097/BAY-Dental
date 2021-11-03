@@ -71,7 +71,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> ImportSampleData([FromQuery]string action)
+        public async Task<IActionResult> ImportSampleData([FromQuery] string action)
         {
             //Cancel / bo qua
             //Installed / import
@@ -108,7 +108,7 @@ namespace TMTDentalAPI.Controllers
                 await _importSampleDataService.OldSaleOrderPaymentProcessUpdate();
                 _unitOfWork.Commit();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _unitOfWork.Rollback();
                 throw e;
@@ -120,7 +120,7 @@ namespace TMTDentalAPI.Controllers
 
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> BinaryUploadAttachment([FromForm]UploadAttachmentViewModel val)
+        public async Task<IActionResult> BinaryUploadAttachment([FromForm] UploadAttachmentViewModel val)
         {
             if (val == null || !ModelState.IsValid)
             {

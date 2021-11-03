@@ -214,38 +214,37 @@ namespace Infrastructure.Services
 
             return items;
         }
-
-        public override async Task<Employee> CreateAsync(Employee entity)
+        public override async Task<IEnumerable<Employee>> CreateAsync(IEnumerable<Employee> entities)
         {
-            if (string.IsNullOrEmpty(entity.Ref) || entity.Ref == "/")
+            var sequenceService = (IIRSequenceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IIRSequenceService));
+            foreach (var entity in entities)
             {
-                var sequenceService = (IIRSequenceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IIRSequenceService));
-                entity.Ref = await sequenceService.NextByCode("employee");
-                if (string.IsNullOrEmpty(entity.Ref))
+                if (string.IsNullOrEmpty(entity.Ref) || entity.Ref == "/")
                 {
-                    await InsertEmployeeSequence();
                     entity.Ref = await sequenceService.NextByCode("employee");
+                    if (string.IsNullOrEmpty(entity.Ref))
+                    {
+                        await InsertEmployeeSequence();
+                        entity.Ref = await sequenceService.NextByCode("employee");
+                    }
                 }
+
+                var partner = new Partner()
+                {
+                    Name = entity.Name,
+                    Employee = true,
+                    Ref = entity.Ref,
+                    Phone = entity.Phone,
+                    Email = entity.Email,
+                    CompanyId = entity.CompanyId,
+                    Customer = false
+                };
+
+                partner.ComputeNameNoSign();
+                partner.ComputeDisplayName();
+                entity.Partner = partner;
             }
-
-            var partnerObj = GetService<IPartnerService>();
-            var partner = new Partner()
-            {
-                Name = entity.Name,
-                Employee = true,
-                Ref = entity.Ref,
-                Phone = entity.Phone,
-                Email = entity.Email,
-                CompanyId = entity.CompanyId,
-                Customer = false
-            };
-
-            await partnerObj.CreateAsync(partner);
-            entity.PartnerId = partner.Id;
-
-            var emp = await base.CreateAsync(entity);
-            //CheckConstraints(entity);
-            return emp;
+            return await base.CreateAsync(entities);
         }
 
         public async Task<Employee> GetByUserIdAsync(string userId)

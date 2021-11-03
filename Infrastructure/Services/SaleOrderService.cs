@@ -65,24 +65,27 @@ namespace Infrastructure.Services
             return await CreateAsync(order);
         }
 
-        public async override Task<SaleOrder> CreateAsync(SaleOrder entity)
+        public override async Task<IEnumerable<SaleOrder>> CreateAsync(IEnumerable<SaleOrder> entities)
         {
-            if (string.IsNullOrEmpty(entity.Name) || entity.Name == "/")
+            foreach (var entity in entities)
             {
-                var sequenceService = GetService<IIRSequenceService>();
-                if (entity.IsQuotation == true)
+                if (string.IsNullOrEmpty(entity.Name) || entity.Name == "/")
                 {
-                    entity.Name = await sequenceService.NextByCode("sale.quotation");
-                    if (string.IsNullOrEmpty(entity.Name))
+                    var sequenceService = GetService<IIRSequenceService>();
+                    if (entity.IsQuotation == true)
                     {
-                        await InsertSaleQuotationSequence();
                         entity.Name = await sequenceService.NextByCode("sale.quotation");
+                        if (string.IsNullOrEmpty(entity.Name))
+                        {
+                            await InsertSaleQuotationSequence();
+                            entity.Name = await sequenceService.NextByCode("sale.quotation");
+                        }
                     }
+                    else
+                        entity.Name = await sequenceService.NextByCode("sale.order");
                 }
-                else
-                    entity.Name = await sequenceService.NextByCode("sale.order");
             }
-            return await base.CreateAsync(entity);
+            return await base.CreateAsync(entities);
         }
 
         public async Task<SaleOrder> CreateOrderAsync(SaleOrderSave val)
@@ -1260,7 +1263,7 @@ namespace Infrastructure.Services
 
             return display;
         }
-        
+
         //public async Task<SaleOrderDisplay> GetDisplayAsync(Guid id)
         //{
         //    var res = await _mapper.ProjectTo<SaleOrderDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();

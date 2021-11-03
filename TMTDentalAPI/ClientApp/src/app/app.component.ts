@@ -20,7 +20,6 @@ import { SwUpdate } from '@angular/service-worker';
 export class AppComponent implements OnInit {
   title = 'TDental';
   _areAccessKeyVisible = false;
-  value: string;
   constructor(
     public authService: AuthService,
     private router: Router,
@@ -29,20 +28,17 @@ export class AppComponent implements OnInit {
     private permissionService: PermissionService,
     private http: HttpClient,
     private modalService: NgbModal,
-    private irConfigParamService: IrConfigParameterService,
     private swUpdate: SwUpdate) {
     this.loadGroups();
 
     this.authService.currentUser.subscribe((user) => {
       if (user) {
-        this.loadIrConfigParam();
         this.authService.getGroups().subscribe((result: any) => {
           this.permissionService.define(result);
         });
       }
     });
     if (this.authService.isAuthenticated()) {
-      this.loadIrConfigParam();
       this.authService.getGroups().subscribe((result: any) => {
         this.permissionService.define(result);
       });
@@ -123,37 +119,6 @@ export class AppComponent implements OnInit {
       //   }
       // });
     }
-  }
-
-  loadIrConfigParam() {
-    var key = "import_sample_data";
-    this.irConfigParamService.getParam(key).subscribe(
-      (result: any) => {
-        this.value = result.value;
-        if (!this.value) {
-          this.openPopupImportSimpleData();
-        }
-      }
-    )
-  }
-
-  openPopupImportSimpleData() {
-    const modalRef = this.modalService.open(ImportSampleDataComponent, { scrollable: true, size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.value = this.value;
-    modalRef.result.then(result => {
-      if (result) {
-        this.notificationService.show({
-          content: 'Khởi tạo dữ liệu mẫu thành công',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
-        window.location.reload();
-      }
-    }, err => {
-      console.log(err);
-    });
   }
 
 }

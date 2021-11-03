@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml;
 using ApplicationCore.Entities;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -123,6 +125,64 @@ namespace TMTDentalAPI.Controllers
             var result = await _printTemplateService.GeneratePrintHtml(template, new List<Guid>() { id }, paperSize);
 
             return Ok(new PrintData() { html = result });
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GenerateXML()
+        {
+            var irModelObj = (IIRModelDataService)HttpContext.RequestServices.GetService(typeof(IIRModelDataService));
+            var _hostingEnvironment = (IWebHostEnvironment)HttpContext.RequestServices.GetService(typeof(IWebHostEnvironment));
+            var xmlService = (IXmlService)HttpContext.RequestServices.GetService(typeof(IXmlService));
+            string path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\ImportXML\sale_order_payment.xml");
+
+            var irModelCreate = new List<IRModelData>();
+            var dateToData = new DateTime(2021, 08, 25);
+            var listIrModelData = await irModelObj.SearchQuery(x => (x.Module == "sample" || x.Module == "account")).ToListAsync();// các irmodel cần thiết
+            var entities = await _saleOrderPaymentService.SearchQuery(x => x.Date.Date <= dateToData.Date).Include(x => x.JournalLines).Include(x => x.Order.OrderLines).Include(x => x.Lines).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var data = new List<SaleOrderPaymentXmlSampleDataRecord>();
+            foreach (var entity in entities)
+            {
+                var item = _mapper.Map<SaleOrderPaymentXmlSampleDataRecord>(entity);
+                item.Id = $@"sample.sale_order_payment_{entities.IndexOf(entity) + 1}";
+                var irmodelDataOrder = listIrModelData.FirstOrDefault(x => x.ResId == entity.OrderId.ToString());
+                item.OrderId = irmodelDataOrder?.Module + "." + irmodelDataOrder?.Name;
+                item.DateRound = (int)(dateToData - entity.Date).TotalDays;
+                //add lines
+                foreach (var lineEntity in entity.Lines)
+                {
+                    var irmodelDataOrderLine = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.SaleOrderLineId.ToString());
+                    var itemLine = new SaleOrderPaymentHistoryLineXmlSampleDataRecord()
+                    {
+                        Amount = lineEntity.Amount,
+                        SaleOrderLineId = irmodelDataOrderLine?.Module + "." + irmodelDataOrderLine?.Name
+                    };
+                    item.Lines.Add(itemLine);
+                }
+                //add lines
+                foreach (var lineEntity in entity.JournalLines)
+                {
+                    var irmodelDataJournal = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.JournalId.ToString());
+                    var itemLine = new SaleOrderPaymentJournalLineXmlSampleDataRecord()
+                    {
+                        Amount = lineEntity.Amount,
+                        JournalId = irmodelDataJournal?.Module + "." + irmodelDataJournal?.Name
+                    };
+                    item.JournalLines.Add(itemLine);
+                }
+                data.Add(item);
+                // add IRModelData
+                irModelCreate.Add(new IRModelData()
+                {
+                    Module = "sample",
+                    Model = "sale.order.payment",
+                    ResId = entity.Id.ToString(),
+                    Name = $"sale_order_payment_{entities.IndexOf(entity) + 1}"
+                });
+            }
+            //writeFile
+            xmlService.WriteXMLFile(path, data);
+            await irModelObj.CreateAsync(irModelCreate);
+            return Ok();
         }
     }
 }

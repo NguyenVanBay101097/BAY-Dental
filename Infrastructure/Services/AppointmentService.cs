@@ -30,17 +30,19 @@ namespace Infrastructure.Services
             _productAppointmentRelService = productAppointmentRelService;
         }
 
-        public override async Task<Appointment> CreateAsync(Appointment entity)
+        public override async Task<IEnumerable<Appointment>> CreateAsync(IEnumerable<Appointment> entities)
         {
             var sequenceService = (IIRSequenceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IIRSequenceService));
-            entity.Name = await sequenceService.NextByCode("appointment");
-            if (string.IsNullOrEmpty(entity.Name) || entity.Name == "/")
+            foreach (var entity in entities)
             {
-                await InsertAppointmentSequence();
                 entity.Name = await sequenceService.NextByCode("appointment");
+                if (string.IsNullOrEmpty(entity.Name) || entity.Name == "/")
+                {
+                    await InsertAppointmentSequence();
+                    entity.Name = await sequenceService.NextByCode("appointment");
+                }
             }
-          
-            return await base.CreateAsync(entity);
+            return await base.CreateAsync(entities);
         }
 
         public async Task<PagedResult2<Appointment>> GetPagedResultAsync(int offset = 0, int limit = 20, string search = "")
@@ -166,7 +168,7 @@ namespace Infrastructure.Services
 
         public async Task<long> GetCount(AppointmentGetCountVM val)
         {
-            var query = GetSearchQuery(state: val.State, dateFrom: val.DateFrom, dateTo: val.DateTo, isLate: val.IsLate, doctorId: val.DoctorId, search: val.Search, companyId: val.CompanyId );
+            var query = GetSearchQuery(state: val.State, dateFrom: val.DateFrom, dateTo: val.DateTo, isLate: val.IsLate, doctorId: val.DoctorId, search: val.Search, companyId: val.CompanyId);
             return await query.LongCountAsync();
         }
 

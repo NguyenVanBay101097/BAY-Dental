@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml;
 using ApplicationCore.Entities;
 using ApplicationCore.Models;
 using ApplicationCore.Utilities;
@@ -10,6 +12,7 @@ using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +32,7 @@ namespace TMTDentalAPI.Controllers
         private readonly IProductCategoryService _productCategoryService;
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly IIRModelAccessService _modelAccessService;
+        private readonly IIRModelDataService _modelDataService;
         private readonly IProductStepService _productStepService;
         private readonly IUoMService _uomService;
         private readonly IUoMCategoryService _uomCategService;
@@ -37,6 +41,7 @@ namespace TMTDentalAPI.Controllers
             IApplicationRoleFunctionService roleFunctionService,
             IProductCategoryService productCategoryService,
             IUnitOfWorkAsync unitOfWork, IIRModelAccessService modelAccessService,
+            IIRModelDataService modelDataService,
             IProductStepService productStepService, IUoMService uomService,
             IUoMCategoryService uomCategService)
         {
@@ -46,6 +51,7 @@ namespace TMTDentalAPI.Controllers
             _productCategoryService = productCategoryService;
             _unitOfWork = unitOfWork;
             _modelAccessService = modelAccessService;
+            _modelDataService = modelDataService;
             _productStepService = productStepService;
             _uomService = uomService;
             _uomCategService = uomCategService;
@@ -1489,5 +1495,184 @@ namespace TMTDentalAPI.Controllers
 
             return new FileContentResult(fileContent, mimeType);
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GenerateServiceXML()
+        {
+            var irModelObj = (IIRModelDataService)HttpContext.RequestServices.GetService(typeof(IIRModelDataService));
+            var _hostingEnvironment = (IWebHostEnvironment)HttpContext.RequestServices.GetService(typeof(IWebHostEnvironment));
+            var xmlService = (IXmlService)HttpContext.RequestServices.GetService(typeof(IXmlService));
+            string path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\ImportXML\product_service.xml");
+
+            var irModelCreate = new List<IRModelData>();
+            var dateToData = new DateTime(2021, 08, 25);
+            var listIrModelData = await irModelObj.SearchQuery(x => (x.Module == "sample" || x.Module == "product") && (x.Model == "product.category" || (x.Model == "uom"))).ToListAsync();// các irmodel cần thiết
+            var entities = await _productService.SearchQuery(x => x.Type2 == "service" && x.DateCreated <= dateToData).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var data = new List<ProductServiceXmlSampleDataRecord>();
+            foreach (var entity in entities)
+            {
+                var item = _mapper.Map<ProductServiceXmlSampleDataRecord>(entity);
+                item.Id = $@"sample.product_service_{entities.IndexOf(entity) + 1}";
+                var irmodelData = listIrModelData.FirstOrDefault(x => x.ResId == item.CategId.ToString());
+                item.CategId = irmodelData?.Module + "." + irmodelData?.Name;
+                data.Add(item);
+                // add IRModelData
+                irModelCreate.Add(new IRModelData()
+                {
+                    Module = "sample",
+                    Model = "product",
+                    ResId = entity.Id.ToString(),
+                    Name = $"product_service_{entities.IndexOf(entity) + 1}"
+                });
+            }
+            //writeFile
+            xmlService.WriteXMLFile(path, data);
+            await irModelObj.CreateAsync(irModelCreate);
+            return Ok();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GenerateProductXML()
+        {
+            var irModelObj = (IIRModelDataService)HttpContext.RequestServices.GetService(typeof(IIRModelDataService));
+            var _hostingEnvironment = (IWebHostEnvironment)HttpContext.RequestServices.GetService(typeof(IWebHostEnvironment));
+            var xmlService = (IXmlService)HttpContext.RequestServices.GetService(typeof(IXmlService));
+            string path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\ImportXML\product_product.xml");
+
+            var irModelCreate = new List<IRModelData>();
+            var dateToData = new DateTime(2021, 08, 25);
+            var listIrModelData = await irModelObj.SearchQuery(x => (x.Module == "sample" || x.Module == "product") && (x.Model == "product.category" || (x.Model == "uom"))).ToListAsync();// các irmodel cần thiết
+            var entities = await _productService.SearchQuery(x => x.Type2 == "product" && x.DateCreated <= dateToData).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var data = new List<ProductProductXmlSampleDataRecord>();
+            foreach (var entity in entities)
+            {
+                var item = _mapper.Map<ProductProductXmlSampleDataRecord>(entity);
+                item.Id = $@"sample.product_product_{entities.IndexOf(entity) + 1}";
+                var irmodelData = listIrModelData.FirstOrDefault(x => x.ResId == item.CategId.ToString());
+                item.CategId = irmodelData?.Module + "." + irmodelData?.Name;
+                var irmodelDataUom = listIrModelData.FirstOrDefault(x => x.ResId == item.UOMId.ToString());
+                item.UOMId = irmodelDataUom?.Module + "." + irmodelDataUom?.Name;
+                var irmodelDataUomPo = listIrModelData.FirstOrDefault(x => x.ResId == item.UOMPOId.ToString());
+                item.UOMPOId = irmodelDataUomPo?.Module + "." + irmodelDataUomPo?.Name;
+                data.Add(item);
+                // add IRModelData
+                irModelCreate.Add(new IRModelData()
+                {
+                    Module = "sample",
+                    Model = "product",
+                    ResId = entity.Id.ToString(),
+                    Name = $"product_product_{entities.IndexOf(entity) + 1}"
+                });
+            }
+            //writeFile
+            xmlService.WriteXMLFile(path, data);
+            await irModelObj.CreateAsync(irModelCreate);
+            return Ok();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GenerateMedicineXML()
+        {
+            var irModelObj = (IIRModelDataService)HttpContext.RequestServices.GetService(typeof(IIRModelDataService));
+            var _hostingEnvironment = (IWebHostEnvironment)HttpContext.RequestServices.GetService(typeof(IWebHostEnvironment));
+            var xmlService = (IXmlService)HttpContext.RequestServices.GetService(typeof(IXmlService));
+            string path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\ImportXML\product_medicine.xml");
+
+            var irModelCreate = new List<IRModelData>();
+            var dateToData = new DateTime(2021, 08, 25);
+            var listIrModelData = await irModelObj.SearchQuery(x => (x.Module == "sample" || x.Module == "product") && (x.Model == "product.category" || (x.Model == "uom"))).ToListAsync();// các irmodel cần thiết
+            var entities = await _productService.SearchQuery(x => x.Type2 == "medicine" && x.DateCreated <= dateToData).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var data = new List<ProductMedicineXmlSampleDataRecord>();
+            foreach (var entity in entities)
+            {
+                var item = _mapper.Map<ProductMedicineXmlSampleDataRecord>(entity);
+                item.Id = $@"sample.product_medicine_{entities.IndexOf(entity) + 1}";
+                var irmodelData = listIrModelData.FirstOrDefault(x => x.ResId == item.CategId.ToString());
+                item.CategId = irmodelData?.Module + "." + irmodelData?.Name;
+                var irmodelDataUom = listIrModelData.FirstOrDefault(x => x.ResId == item.UOMId.ToString());
+                item.UOMId = irmodelDataUom?.Module + "." + irmodelDataUom?.Name;
+                data.Add(item);
+                // add IRModelData
+                irModelCreate.Add(new IRModelData()
+                {
+                    Module = "sample",
+                    Model = "product",
+                    ResId = entity.Id.ToString(),
+                    Name = $"product_medicine_{entities.IndexOf(entity) + 1}"
+                });
+            }
+            //writeFile
+            xmlService.WriteXMLFile(path, data);
+            await irModelObj.CreateAsync(irModelCreate);
+            return Ok();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GenerateLaboXML()
+        {
+            var irModelObj = (IIRModelDataService)HttpContext.RequestServices.GetService(typeof(IIRModelDataService));
+            var _hostingEnvironment = (IWebHostEnvironment)HttpContext.RequestServices.GetService(typeof(IWebHostEnvironment));
+            var xmlService = (IXmlService)HttpContext.RequestServices.GetService(typeof(IXmlService));
+            string path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\ImportXML\product_labo.xml");
+
+            var irModelCreate = new List<IRModelData>();
+            var dateToData = new DateTime(2021, 08, 25);
+            var entities = await _productService.SearchQuery(x => x.Type2 == "labo" && x.DateCreated <= dateToData).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var data = new List<ProductLaboXmlSampleDataRecord>();
+            foreach (var entity in entities)
+            {
+                var item = _mapper.Map<ProductLaboXmlSampleDataRecord>(entity);
+                item.Id = $@"sample.product_labo_{entities.IndexOf(entity) + 1}";
+                data.Add(item);
+                // add IRModelData
+                irModelCreate.Add(new IRModelData()
+                {
+                    Module = "sample",
+                    Model = "product",
+                    ResId = entity.Id.ToString(),
+                    Name = $"product_labo_{entities.IndexOf(entity) + 1}"
+                });
+            }
+            //writeFile
+            xmlService.WriteXMLFile(path, data);
+            await irModelObj.CreateAsync(irModelCreate);
+            return Ok();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GenerateLaboAttachXML()
+        {
+            var irModelObj = (IIRModelDataService)HttpContext.RequestServices.GetService(typeof(IIRModelDataService));
+            var _hostingEnvironment = (IWebHostEnvironment)HttpContext.RequestServices.GetService(typeof(IWebHostEnvironment));
+            var xmlService = (IXmlService)HttpContext.RequestServices.GetService(typeof(IXmlService));
+            string path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\ImportXML\product_labo_attach.xml");
+
+            var irModelCreate = new List<IRModelData>();
+            var dateToData = new DateTime(2021, 08, 25);
+            var entities = await _productService.SearchQuery(x => x.Type2 == "labo_attach" && x.DateCreated <= dateToData).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var data = new List<ProductLaboXmlSampleDataRecord>();
+            foreach (var entity in entities)
+            {
+                var item = _mapper.Map<ProductLaboXmlSampleDataRecord>(entity);
+                item.Id = $@"sample.product_labo_attach_{entities.IndexOf(entity) + 1}";
+                data.Add(item);
+                // add IRModelData
+                irModelCreate.Add(new IRModelData()
+                {
+                    Module = "sample",
+                    Model = "product",
+                    ResId = entity.Id.ToString(),
+                    Name = $"product_labo_attach_{entities.IndexOf(entity) + 1}"
+                });
+            }
+            //writeFile
+            xmlService.WriteXMLFile(path, data);
+            await irModelObj.CreateAsync(irModelCreate);
+            return Ok();
+            //string[] listProInfoStr = { "Name","Type","Type2","ListPrice","PurchasePrice","SaleOk","PurchaseOk","KetoanOk","IsLabo","MinInventory",
+            //"Firm","CategId", "UOMPOId", "UOMId"};
+        }
     }
+
+
 }

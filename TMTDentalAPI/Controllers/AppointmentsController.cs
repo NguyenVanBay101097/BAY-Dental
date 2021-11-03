@@ -4,11 +4,13 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml;
 using ApplicationCore.Entities;
 using ApplicationCore.Models;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.JsonPatch;
@@ -413,6 +415,60 @@ namespace TMTDentalAPI.Controllers
 
             var result = await _printTemplateService.GeneratePrintHtml(template, new List<Guid>() { id }, paperSize);
             return Ok(new PrintData() { html = result });
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GenerateXML()
+        {
+            var irModelObj = (IIRModelDataService)HttpContext.RequestServices.GetService(typeof(IIRModelDataService));
+            var _hostingEnvironment = (IWebHostEnvironment)HttpContext.RequestServices.GetService(typeof(IWebHostEnvironment));
+            var xmlService = (IXmlService)HttpContext.RequestServices.GetService(typeof(IXmlService));
+            string path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\ImportXML\appointment.xml");
+
+            var irModelCreate = new List<IRModelData>();
+            var dateToData = new DateTime(2021, 08, 25);
+            var listIrModelData = await irModelObj.SearchQuery(x => (x.Module == "sample") && (x.Model == "employee" || x.Model == "partner" || x.Model == "sale.order" || x.Model == "product")).ToListAsync();// các irmodel cần thiết
+            var entities = await _appointmentService.SearchQuery(x => x.Date.Date <= dateToData.Date).Include(x => x.AppointmentServices).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var data = new List<AppointmentXmlSampleDataRecord>();
+            foreach (var entity in entities)
+            {
+                var item = _mapper.Map<AppointmentXmlSampleDataRecord>(entity);
+
+                var partnerModelData = listIrModelData.FirstOrDefault(x => x.ResId == entity.PartnerId.ToString());
+                var doctorModelData = listIrModelData.FirstOrDefault(x => x.ResId == entity.DoctorId.ToString());
+                var orderModelData = listIrModelData.FirstOrDefault(x => x.ResId == entity.SaleOrderId.ToString());
+
+                item.Id = $@"sample.appointment_{entities.IndexOf(entity) + 1}";
+                item.DateRound = (int)(dateToData - entity.Date).TotalDays;
+                item.PartnerId = partnerModelData == null ? "" : partnerModelData?.Module + "." + partnerModelData?.Name;
+                item.DoctorId = doctorModelData == null ? "" : doctorModelData?.Module + "." + doctorModelData?.Name;
+                item.SaleOrderId = orderModelData == null ? "" : orderModelData?.Module + "." + orderModelData?.Name;
+
+                //add lines
+                foreach (var lineEntity in entity.AppointmentServices)
+                {
+                    var irmodelDataProduct = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.ProductId.ToString());
+                    var itemLine = new ProductAppointmentRelXmlSampleDataRecord()
+                    {
+                        ProductId = irmodelDataProduct == null ? "" : irmodelDataProduct?.Module + "." + irmodelDataProduct?.Name
+                    };
+                    item.AppointmentServices.Add(itemLine);
+                }
+
+                data.Add(item);
+                // add IRModelData
+                irModelCreate.Add(new IRModelData()
+                {
+                    Module = "sample",
+                    Model = "appointment",
+                    ResId = entity.Id.ToString(),
+                    Name = $"appointment_{entities.IndexOf(entity) + 1}"
+                });
+            }
+            //writeFile
+            xmlService.WriteXMLFile(path, data);
+            await irModelObj.CreateAsync(irModelCreate);
+            return Ok();
         }
     }
 }

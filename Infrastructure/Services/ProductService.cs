@@ -44,6 +44,8 @@ namespace Infrastructure.Services
 
             await _GenerateCodeIfEmpty(entities);
 
+            _ComputeUoMRels(entities);
+
             await base.CreateAsync(entities);
 
             await _CheckProductExistCode(entities);
@@ -51,6 +53,29 @@ namespace Infrastructure.Services
             await _SetListPrice(entities);
 
             return entities;
+        }
+
+        private void _ComputeUoMRels(IEnumerable<Product> self)
+        {
+            foreach(var product in self)
+            {
+                var rels_remove = new List<ProductUoMRel>();
+                var uom_ids = new List<Guid>() { product.UOMId, product.UOMPOId };
+                foreach (var rel in product.ProductUoMRels)
+                {
+                    if (!uom_ids.Contains(rel.UoMId))
+                        rels_remove.Add(rel);
+                }
+
+                foreach (var rel in rels_remove)
+                    product.ProductUoMRels.Remove(rel);
+
+                foreach (var uom_id in uom_ids)
+                {
+                    if (!product.ProductUoMRels.Any(x => x.UoMId == uom_id))
+                        product.ProductUoMRels.Add(new ProductUoMRel() { UoMId = uom_id });
+                }
+            }
         }
 
         private void _SetNameNoSign(IEnumerable<Product> self)
@@ -64,6 +89,8 @@ namespace Infrastructure.Services
             _SetNameNoSign(entities);
 
             await _GenerateCodeIfEmpty(entities);
+
+            _ComputeUoMRels(entities);
 
             await base.UpdateAsync(entities);
 

@@ -376,6 +376,7 @@ namespace TMTDentalAPI
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
             services.AddSingleton<IMailSender, SendGridSender>();
+            services.AddSingleton<IXmlService, XmlService>();
 
 
             services.AddScoped<IUnitOfWorkAsync, UnitOfWork>();
@@ -568,6 +569,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new PrintTemplateConfigProfile());
                 mc.AddProfile(new PrintTemplateProfile());
                 mc.AddProfile(new HrJobProfile());
+                mc.AddProfile(new SampleDataProfile());
             };
 
             #endregion
@@ -587,7 +589,7 @@ namespace TMTDentalAPI
                 });
             });
             services.AddCors();
-            services.AddMemoryCache();          
+            services.AddMemoryCache();
 
             // Add Hangfire services.
             services.AddHangfire(configuration => configuration

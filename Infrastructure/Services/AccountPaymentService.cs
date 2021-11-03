@@ -122,7 +122,7 @@ namespace Infrastructure.Services
 
                         ///update purchase order          
                         var purchase_Ids = await moveLineObj.SearchQuery(x => x.PurchaseLineId.HasValue && move_ids.Contains(x.MoveId))
-                            .Include(x => x.PurchaseLine).Select(s=>s.PurchaseLine.OrderId).Distinct().ToListAsync();
+                            .Include(x => x.PurchaseLine).Select(s => s.PurchaseLine.OrderId).Distinct().ToListAsync();
                         if (purchase_Ids.Any())
                         {
                             var purchaseObj = GetService<IPurchaseOrderService>();
@@ -834,21 +834,22 @@ namespace Infrastructure.Services
         /// </summary>
         /// <param name="payment"></param>
         /// <returns></returns>
-        public override async Task<AccountPayment> CreateAsync(AccountPayment payment)
+        public override async Task<IEnumerable<AccountPayment>> CreateAsync(IEnumerable<AccountPayment> entities)
         {
-            if (payment.SaleOrderLinePaymentRels.Any())
+            foreach (var payment in entities)
             {
-                if (payment.Amount != payment.SaleOrderLinePaymentRels.Sum(x => x.AmountPrepaid))
-                    throw new Exception("Số tiền thanh toán phải bằng với tổng tiền thanh toán trên từng dịch vụ");
+                if (payment.SaleOrderLinePaymentRels.Any())
+                {
+                    if (payment.Amount != payment.SaleOrderLinePaymentRels.Sum(x => x.AmountPrepaid))
+                        throw new Exception("Số tiền thanh toán phải bằng với tổng tiền thanh toán trên từng dịch vụ");
 
-                //remove những line amount prepaid = 0
-                var remove_lines = payment.SaleOrderLinePaymentRels.Where(x => x.AmountPrepaid == 0).ToList();
-                foreach (var line in remove_lines)
-                    payment.SaleOrderLinePaymentRels.Remove(line);
+                    //remove những line amount prepaid = 0
+                    var remove_lines = payment.SaleOrderLinePaymentRels.Where(x => x.AmountPrepaid == 0).ToList();
+                    foreach (var line in remove_lines)
+                        payment.SaleOrderLinePaymentRels.Remove(line);
+                }
             }
-
-            await base.CreateAsync(payment);
-            return payment;
+            return await base.CreateAsync(entities);
         }
 
         public async Task _ComputeSaleOrderLines(Guid saleOrderId)

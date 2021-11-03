@@ -326,8 +326,11 @@ namespace Infrastructure.Services
             }
             else
             {
-                var teeth = await GetTeeth(type, res.SaleOrderLine.ToothCategoryId.Value);
-                res.SaleOrderLine.Teeth = _mapper.Map<IEnumerable<ToothDisplay>>(teeth);
+                if (res.SaleOrderLine.ToothCategoryId.HasValue)
+                {
+                    var teeth = await GetTeeth(type, res.SaleOrderLine.ToothCategoryId.Value);
+                    res.SaleOrderLine.Teeth = _mapper.Map<IEnumerable<ToothDisplay>>(teeth);
+                }
             }
             var teethOrderLine = labo.LaboOrderToothRel.Select(x => x.Tooth);
             res.TeethOrderLine = _mapper.Map<IEnumerable<ToothDisplay>>(teethOrderLine);

@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml;
 using ApplicationCore.Entities;
 using ApplicationCore.Models;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -238,6 +241,79 @@ namespace TMTDentalAPI.Controllers
             var result = await _printTemplateService.GeneratePrintHtml(template, new List<Guid>() { id }, paperSize);
 
             return Ok(new PrintData() { html = result });
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GenerateXML()
+        {
+            //chonj partner cuar m=employee vafo 
+            var empObj = (IEmployeeService)HttpContext.RequestServices.GetService(typeof(IEmployeeService));
+            var irModelObj = (IIRModelDataService)HttpContext.RequestServices.GetService(typeof(IIRModelDataService));
+            var _hostingEnvironment = (IWebHostEnvironment)HttpContext.RequestServices.GetService(typeof(IWebHostEnvironment));
+            var xmlService = (IXmlService)HttpContext.RequestServices.GetService(typeof(IXmlService));
+            string path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\ImportXML\stock_picking.xml");
+
+            var irModelCreate = new List<IRModelData>();
+            var dateToData = new DateTime(2021, 08, 25);
+            var listIrModelData = await irModelObj.SearchQuery(x => (x.Module == "sample" || x.Module == "stock" || x.Module == "account" || x.Module == "product")).ToListAsync();// các irmodel cần thiết
+            var entities = await _stockPickingService.SearchQuery(x => x.MoveLines.All(z => z.PurchaseLineId == null) && x.Date.Value.Date <= dateToData.Date).Include(x => x.MoveLines).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var data = new List<StockPickingXmlSampleDataRecord>();
+            foreach (var entity in entities)
+            {
+                var empPartner = await empObj.SearchQuery(x => x.PartnerId == entity.PartnerId).FirstOrDefaultAsync();
+
+                var item = _mapper.Map<StockPickingXmlSampleDataRecord>(entity);
+
+                item.Id = $@"sample.stock_picking_{entities.IndexOf(entity) + 1}";
+                item.DateRound = (int)(dateToData - entity.Date.Value).TotalDays;
+                var irmodelDataPartner = listIrModelData.FirstOrDefault(x => x.ResId == empPartner.Id.ToString());
+                item.PartnerId = irmodelDataPartner == null ? "" : irmodelDataPartner?.Module + "." + irmodelDataPartner?.Name;
+                var irmodelDataPickingType = listIrModelData.FirstOrDefault(x => x.ResId == entity.PickingTypeId.ToString());
+                item.PickingTypeId = irmodelDataPickingType == null ? "" : irmodelDataPickingType.Module + "." + irmodelDataPickingType?.Name;
+                var irmodelDataLocation = listIrModelData.FirstOrDefault(x => x.ResId == entity.LocationId.ToString());
+                item.LocationId = irmodelDataLocation == null ? "" : irmodelDataLocation.Module + "." + irmodelDataLocation?.Name;
+                var irmodelDataLocationDes = listIrModelData.FirstOrDefault(x => x.ResId == entity.LocationDestId.ToString());
+                item.LocationDestId = irmodelDataLocationDes == null ? "" : irmodelDataLocationDes.Module + "." + irmodelDataLocationDes?.Name;
+                //add lines
+                foreach (var lineEntity in entity.MoveLines)
+                {
+                    var irmodelDataLocationLine = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.LocationId.ToString());
+                    var irmodelDataLocationDesLine = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.LocationDestId.ToString());
+                    //var irmodelDataPartnerLine = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.PartnerId.ToString());
+                    var irmodelDataPickingTypeLine = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.PickingTypeId.ToString());
+                    var irmodelDataProductLine = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.ProductId.ToString());
+                    var irmodelDataProductUomLine = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.ProductUOMId.ToString());
+
+                    var itemLine = new StockMoveXmlSampleDataRecord()
+                    {
+                        DateRound = (int)(dateToData - lineEntity.Date).TotalDays,
+                        LocationId = irmodelDataLocationLine == null ? "" : irmodelDataLocationLine.Module + "." + irmodelDataLocationLine?.Name,
+                        LocationDestId = irmodelDataLocationDesLine == null ? "" : irmodelDataLocationDesLine.Module + "." + irmodelDataLocationDesLine?.Name,
+                        Name = lineEntity.Name,
+                        PartnerId = irmodelDataPartner == null ? "" : irmodelDataPartner.Module + "." + irmodelDataPartner?.Name,
+                        PickingTypeId = irmodelDataPickingTypeLine == null ? "" : irmodelDataPickingTypeLine.Module + "." + irmodelDataPickingTypeLine?.Name,
+                        PriceUnit = lineEntity.PriceUnit,
+                        ProductId = irmodelDataProductLine == null ? "" : irmodelDataProductLine.Module + "." + irmodelDataProductLine?.Name,
+                        ProductQty = lineEntity.ProductQty,
+                        ProductUOMId = irmodelDataProductUomLine == null ? "" : irmodelDataProductUomLine.Module + "." + irmodelDataProductUomLine?.Name,
+                        ProductUOMQty = lineEntity.ProductUOMQty
+                    };
+                    item.MoveLines.Add(itemLine);
+                }
+                data.Add(item);
+                // add IRModelData
+                irModelCreate.Add(new IRModelData()
+                {
+                    Module = "sample",
+                    Model = "stock.picking",
+                    ResId = entity.Id.ToString(),
+                    Name = $"stock_picking_{entities.IndexOf(entity) + 1}"
+                });
+            }
+            //writeFile
+            xmlService.WriteXMLFile(path, data);
+            await irModelObj.CreateAsync(irModelCreate);
+            return Ok();
         }
     }
 }

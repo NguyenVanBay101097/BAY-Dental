@@ -14,7 +14,7 @@ namespace Infrastructure.Services
         Task<PhieuThuChiDisplay> GetByIdPhieuThuChi(Guid id);
         Task<PhieuThuChi> CreatePhieuThuChi(PhieuThuChiSave val);
         Task UpdatePhieuThuChi(Guid id, PhieuThuChiSave val);
-       
+
         Task Unlink(Guid id);
         Task ActionConfirm(IEnumerable<Guid> ids);
         Task ActionCancel(IEnumerable<Guid> id);
@@ -27,5 +27,8 @@ namespace Infrastructure.Services
         Task<PrintVM> GetPrint(Guid id);
 
         Task<IEnumerable<PhieuThuChi>> GetPrintTemplate(IEnumerable<Guid> resIds);
+        Task ComputeProps(PhieuThuChi self);
+        Task ComputeProps(IEnumerable<PhieuThuChi> selfs);
+        Task GenerateNamePhieuThuChi(PhieuThuChi self);
     }
 }

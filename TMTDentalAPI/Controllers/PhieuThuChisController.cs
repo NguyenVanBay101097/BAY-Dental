@@ -8,7 +8,7 @@ using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -255,6 +255,84 @@ namespace TMTDentalAPI.Controllers
             return new FileContentResult(fileContent, mimeType);
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GeneratePhieuThuXML()
+        {
+            var irModelObj = (IIRModelDataService)HttpContext.RequestServices.GetService(typeof(IIRModelDataService));
+            var _hostingEnvironment = (IWebHostEnvironment)HttpContext.RequestServices.GetService(typeof(IWebHostEnvironment));
+            var xmlService = (IXmlService)HttpContext.RequestServices.GetService(typeof(IXmlService));
+            string path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\ImportXML\phieu_thu.xml");
 
+            var irModelCreate = new List<IRModelData>();
+            var dateToData = new DateTime(2021, 08, 26);
+            var listIrModelData = await irModelObj.SearchQuery(x => (x.Module == "sample" || x.Module == "account")).ToListAsync();// các irmodel cần thiết
+            var entities = await _phieuThuChiService.SearchQuery(x => x.Type == "thu" && x.Date.Date <= dateToData.Date).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var data = new List<PhieuThuChiXmlSampleDataRecord>();
+            foreach (var entity in entities)
+            {
+                var item = _mapper.Map<PhieuThuChiXmlSampleDataRecord>(entity);
+
+                item.Id = $@"sample.phieu_thu_chi_thu_{entities.IndexOf(entity) + 1}";
+                item.DateRound = (int)(dateToData - entity.Date).TotalDays;
+                var irmodelDataJournal = listIrModelData.FirstOrDefault(x => x.ResId == entity.JournalId.ToString());
+                item.JournalId = irmodelDataJournal == null ? "" : irmodelDataJournal?.Module + "." + irmodelDataJournal?.Name;
+                var irmodelDataLoaiThuChi = listIrModelData.FirstOrDefault(x => x.ResId == entity.LoaiThuChiId.ToString());
+                item.LoaiThuChiId = irmodelDataLoaiThuChi == null ? "" : irmodelDataLoaiThuChi?.Module + "." + irmodelDataLoaiThuChi?.Name;
+
+                data.Add(item);
+                // add IRModelData
+                irModelCreate.Add(new IRModelData()
+                {
+                    Module = "sample",
+                    Model = "phieu.thu.chi",
+                    ResId = entity.Id.ToString(),
+                    Name = $"phieu_thu_chi_thu_{entities.IndexOf(entity) + 1}"
+                });
+            }
+            //writeFile
+            xmlService.WriteXMLFile(path, data);
+            await irModelObj.CreateAsync(irModelCreate);
+            return Ok();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GeneratePhieuChiXML()
+        {
+            var irModelObj = (IIRModelDataService)HttpContext.RequestServices.GetService(typeof(IIRModelDataService));
+            var _hostingEnvironment = (IWebHostEnvironment)HttpContext.RequestServices.GetService(typeof(IWebHostEnvironment));
+            var xmlService = (IXmlService)HttpContext.RequestServices.GetService(typeof(IXmlService));
+            string path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\ImportXML\phieu_chi.xml");
+
+            var irModelCreate = new List<IRModelData>();
+            var dateToData = new DateTime(2021, 08, 26);
+            var listIrModelData = await irModelObj.SearchQuery(x => (x.Module == "sample" || x.Module == "account")).ToListAsync();// các irmodel cần thiết
+            var entities = await _phieuThuChiService.SearchQuery(x => x.Type == "chi" && x.Date.Date <= dateToData.Date).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var data = new List<PhieuThuChiXmlSampleDataRecord>();
+            foreach (var entity in entities)
+            {
+                var item = _mapper.Map<PhieuThuChiXmlSampleDataRecord>(entity);
+
+                item.Id = $@"sample.phieu_thu_chi_chi_{entities.IndexOf(entity) + 1}";
+                item.DateRound = (int)(dateToData - entity.Date).TotalDays;
+                var irmodelDataJournal = listIrModelData.FirstOrDefault(x => x.ResId == entity.JournalId.ToString());
+                item.JournalId = irmodelDataJournal == null ? "" : irmodelDataJournal?.Module + "." + irmodelDataJournal?.Name;
+                var irmodelDataLoaiThuChi = listIrModelData.FirstOrDefault(x => x.ResId == entity.LoaiThuChiId.ToString());
+                item.LoaiThuChiId = irmodelDataLoaiThuChi == null ? "" : irmodelDataLoaiThuChi?.Module + "." + irmodelDataLoaiThuChi?.Name;
+
+                data.Add(item);
+                // add IRModelData
+                irModelCreate.Add(new IRModelData()
+                {
+                    Module = "sample",
+                    Model = "phieu.thu.chi",
+                    ResId = entity.Id.ToString(),
+                    Name = $"phieu_thu_chi_chi_{entities.IndexOf(entity) + 1}"
+                });
+            }
+            //writeFile
+            xmlService.WriteXMLFile(path, data);
+            await irModelObj.CreateAsync(irModelCreate);
+            return Ok();
+        }
     }
 }
