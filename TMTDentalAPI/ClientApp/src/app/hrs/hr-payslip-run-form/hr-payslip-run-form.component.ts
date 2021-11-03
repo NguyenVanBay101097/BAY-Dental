@@ -22,7 +22,10 @@ import { CheckPermissionService } from 'src/app/shared/check-permission.service'
 @Component({
   selector: 'app-hr-payslip-run-form',
   templateUrl: './hr-payslip-run-form.component.html',
-  styleUrls: ['./hr-payslip-run-form.component.css']
+  styleUrls: ['./hr-payslip-run-form.component.css'],
+   host: {
+    class: "o_action o_view_controller",
+  },
 })
 export class HrPayslipRunFormComponent implements OnInit {
   FormGroup: FormGroup;
@@ -33,6 +36,7 @@ export class HrPayslipRunFormComponent implements OnInit {
   checkAll = false;
   canAdd = false;
   canUpdate = false;
+  filterDate = new Date();
   constructor(private fb: FormBuilder,
     private hrPaysliprunService: HrPaysliprunService,
     private route: ActivatedRoute, private modalService: NgbModal,
