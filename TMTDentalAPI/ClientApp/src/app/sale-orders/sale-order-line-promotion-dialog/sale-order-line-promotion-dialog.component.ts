@@ -154,23 +154,14 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit, OnDestroy 
   }
 
   loadServiceCards() {
-    let val = new ServiceCardCardFilter();
-    val.partnerId = this.saleOrderLine.orderPartnerId;
-    val.productId = this.saleOrderLine.productId;
-    val.state = 'in_use';
-    this.serviceCardsService.getServiceCardCards(val).subscribe((res: any) => {
+    this.saleOrderLineService.getListServiceCardCardApplyable(this.saleOrderLine.id).subscribe((res: any) => {
       this.servicePreferenceCards = res;
     }, (error) => { console.log(error) });
   }
 
-  loadCardCards() {
-    let val = new CardCardFilter();
-    val.partnerId = this.saleOrderLine.orderPartnerId;
-    val.productId = this.saleOrderLine.productId;
-    val.state = 'in_use';
-    this.cardCardService.getCardCards(val).subscribe((res: any) => {
-      this.cardCards = res;
-      
+  loadCardCards() {  
+    this.saleOrderLineService.getListCardCardApplyable(this.saleOrderLine.id).subscribe((res: any) => {
+      this.cardCards = res;     
     }, (error) => { console.log(error) });
   }
 

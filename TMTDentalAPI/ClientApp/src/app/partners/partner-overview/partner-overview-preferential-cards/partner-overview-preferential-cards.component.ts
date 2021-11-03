@@ -4,6 +4,9 @@ import { ServiceCardCardsPreferentialCuDialogComponent } from 'src/app/service-c
 import { NotifyService } from 'src/app/shared/services/notify.service';
 import * as moment from 'moment';
 import { ServiceCardCardService } from 'src/app/service-card-cards/service-card-card.service';
+import { map } from 'rxjs/operators';
+import { ServiceCardCardPaged } from 'src/app/service-card-cards/service-card-card-paged';
+import { GridDataResult } from '@progress/kendo-angular-grid';
 
 @Component({
   selector: 'app-partner-overview-preferential-cards',
@@ -82,9 +85,15 @@ export class PartnerOverviewPreferentialCardsComponent implements OnInit {
   }
 
   getNextCard(){
-    let val = {partnerId: this.partnerId};
-    this.cardCardService.getServiceCardCards(val).subscribe(result => {
-      this.preferentialCards = result;      
-    })
+    let val = new ServiceCardCardPaged();
+    val.partnerId = this.partnerId;
+    this.cardCardService.getPaged(val).pipe(
+      map((response: any) => (<GridDataResult>{
+        data: response.items,
+        total: response.totalItems
+      }))
+    ).subscribe((res) => {
+      this.preferentialCards = res;
+    });
   }
 }

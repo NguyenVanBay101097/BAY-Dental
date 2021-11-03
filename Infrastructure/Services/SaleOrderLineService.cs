@@ -160,6 +160,36 @@ namespace Infrastructure.Services
             }
         }
 
+        public async Task<IEnumerable<ServiceCardCardBasic>> GetListServiceCardCardApplyable(Guid id)
+        {
+            var serviceCardCardObj = GetService<IServiceCardCardService>();
+            var orderLine = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+
+            var serviceCardCards = await serviceCardCardObj.SearchQuery(x => x.PartnerId == orderLine.OrderPartnerId
+            && x.CardType.ProductPricelist.Items.Any(s => s.ProductId == orderLine.ProductId) && x.State == "in_use"
+            && (!x.ActivatedDate.HasValue || orderLine.Date >= x.ActivatedDate.Value) && (!x.ExpiredDate.HasValue || orderLine.Date <= x.ExpiredDate.Value))
+            .Include(x => x.CardType).ToListAsync();
+
+            var res = _mapper.Map<IEnumerable<ServiceCardCardBasic>>(serviceCardCards);
+
+            return res;
+        }
+
+        public async Task<IEnumerable<CardCardBasic>> GetListCardCardApplyable(Guid id)
+        {
+            var cardCardObj = GetService<ICardCardService>();
+            var orderLine = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+
+            var cardCards = await cardCardObj.SearchQuery(x => x.PartnerId == orderLine.OrderPartnerId
+            && x.Type.Pricelist.Items.Any(s => s.ProductId == orderLine.ProductId) && x.State == "in_use")
+            .Include(x => x.Type)
+            .ToListAsync();
+
+            var res = _mapper.Map<IEnumerable<CardCardBasic>>(cardCards);
+
+            return res;
+        }
+
         public void _GetToInvoiceQty(IEnumerable<SaleOrderLine> lines)
         {
             foreach (var line in lines)
@@ -1066,8 +1096,8 @@ namespace Infrastructure.Services
             return fixed_amount;
         }
 
-        public decimal _GetValuesDiscountPercentageOrderLine(SaleOrderLine line , decimal percentNumber )
-        {          
+        public decimal _GetValuesDiscountPercentageOrderLine(SaleOrderLine line, decimal percentNumber)
+        {
             //discount_amount = so luong * don gia da giam * phan tram
             var price_reduce = (line.PriceUnit * (1 - line.Discount / 100)) *
                 (1 - percentNumber / 100);

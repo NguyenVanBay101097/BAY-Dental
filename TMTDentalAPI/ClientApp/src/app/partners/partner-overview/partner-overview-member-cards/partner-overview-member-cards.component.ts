@@ -1,6 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { CardCardService } from 'src/app/card-cards/card-card.service';
+import { GridDataResult } from '@progress/kendo-angular-grid';
+import { map } from 'rxjs/operators';
+import { CardCardPaged, CardCardService } from 'src/app/card-cards/card-card.service';
 import { CardCardsMemberCreateDialogComponent } from 'src/app/service-card-cards/card-cards-member-create-dialog/card-cards-member-create-dialog.component';
 
 @Component({
@@ -31,10 +33,19 @@ export class PartnerOverviewMemberCardsComponent implements OnInit {
   }
 
   getNextMemberCard(){
-    let val = {partnerId: this.partnerId};
-    this.cardService.getCardCards(val).subscribe((res: any[]) => {
-      this.memberCard = res[0];
-    })
+    let val = new CardCardPaged();
+    val.partnerId = this.partnerId;
+    this.cardService.getPaged(val).pipe(
+      map(response => (<GridDataResult>{
+        data: response.items,
+        total: response.totalItems
+      }))
+    ).subscribe(res => {
+      this.memberCard = res.data[0];
+    }, err => {
+      console.log(err);
+    });
+   
   }
 
   getState(state){

@@ -191,6 +191,14 @@ export class SaleOrderLineService {
         return this.http.get(this.baseApi + this.apiUrl + '/'+ id + '/GetTeethList');
     }
 
+    getListServiceCardCardApplyable(id){
+        return this.http.get(this.baseApi + this.apiUrl + '/'+ id + '/GetListServiceCardCardApplyable');
+    }
+
+    getListCardCardApplyable(id){
+        return this.http.get(this.baseApi + this.apiUrl + '/'+ id + '/GetListCardCardApplyable');
+    }
+
     applyServiceCardCard(val) {
         return this.http.post(this.baseApi + this.apiUrl + '/ApplyServiceCardCard', val);
     }

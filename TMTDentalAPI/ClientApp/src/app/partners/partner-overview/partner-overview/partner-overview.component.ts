@@ -1,13 +1,15 @@
 import { HttpParams } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
+import { GridDataResult } from "@progress/kendo-angular-grid";
 import { CompositeFilterDescriptor } from "@progress/kendo-data-query";
 import { result } from "lodash";
+import { map } from "rxjs/operators";
 import { AccountCommonPartnerReport, AccountCommonPartnerReportSearchV2, AccountCommonPartnerReportService, } from "src/app/account-common-partner-reports/account-common-partner-report.service";
 import { AccountInvoiceReportService, SumRevenueReportPar } from "src/app/account-invoice-reports/account-invoice-report.service";
 import { AppointmentDisplay } from "src/app/appointment/appointment";
 import { AuthService } from "src/app/auth/auth.service";
-import { CardCardService } from "src/app/card-cards/card-card.service";
+import { CardCardPaged, CardCardService } from "src/app/card-cards/card-card.service";
 import { AmountCustomerDebtFilter, CustomerDebtReportService, } from "src/app/core/services/customer-debt-report.service";
 import { SaleOrderLineService, SaleOrderLinesPaged, } from "src/app/core/services/sale-order-line.service";
 import { SaleOrderPaged, SaleOrderService, } from "src/app/core/services/sale-order.service";
@@ -18,6 +20,7 @@ import { SaleCouponProgramBasic, SaleCouponProgramPaged, SaleCouponProgramServic
 import { SaleOrderBasic } from "src/app/sale-orders/sale-order-basic";
 import { SaleOrderLineDisplay } from "src/app/sale-orders/sale-order-line-display";
 import { GetSummarySaleReportRequest, SaleReportService, } from "src/app/sale-report/sale-report.service";
+import { ServiceCardCardPaged } from "src/app/service-card-cards/service-card-card-paged";
 import { ServiceCardCardSave, ServiceCardCardService } from "src/app/service-card-cards/service-card-card.service";
 import { PartnersService } from "src/app/shared/services/partners.service";
 import { PartnerDisplay } from "../../partner-simple";
@@ -196,24 +199,33 @@ export class PartnerOverviewComponent implements OnInit {
     })
   }
 
-  loadPreferentialCards(){
-    let val = {partnerId: this.partnerId};
-    this.cardCardService.getServiceCardCards(val).subscribe(result => {
-      console.log(result);
-      
-      this.preferentialCards = result;
-    })
+  loadPreferentialCards() {
+    let val = new ServiceCardCardPaged();
+    val.partnerId = this.partnerId;
+    this.cardCardService.getPaged(val).pipe(
+      map((response: any) => (<GridDataResult>{
+        data: response.items,
+        total: response.totalItems
+      }))
+    ).subscribe((res) => {
+      this.preferentialCards = res.data;
+    });
   }
 
-  loadMemberCard(){
-    let val = {partnerId: this.partnerId};
-    this.cardService.getCardCards(val).subscribe((res: any[]) => {
-      this.memberCard = res[0];
-      console.log(res[0]);
-      
-    })
-    console.log(this.memberCard);
-    
+  loadMemberCard() {
+    let val = new CardCardPaged();
+    val.partnerId = this.partnerId;
+    this.cardService.getPaged(val).pipe(
+      map(response => (<GridDataResult>{
+        data: response.items,
+        total: response.totalItems
+      }))
+    ).subscribe(res => {
+      this.memberCard = res.data[0];
+    }, err => {
+      console.log(err);
+    });
+
   }
 
 }

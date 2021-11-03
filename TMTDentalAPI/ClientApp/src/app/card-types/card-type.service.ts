@@ -16,6 +16,11 @@ export class CardTypeBasic {
     name: string;
 }
 
+export class CardTypeSimple {
+    id: string;
+    name: string;
+}
+
 export class CardTypeDisplay {
     id: string;
     name: string;

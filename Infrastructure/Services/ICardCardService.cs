@@ -27,7 +27,6 @@ namespace Infrastructure.Services
         Task<CardCard> GetValidCard(Guid partnerId);
         Task _CheckUpgrade(IEnumerable<CardCard> self, decimal? points = null);
 
-        Task<IEnumerable<CardCardResponse>> GetCardCards(GetCardCardFilter val);
         Task<ImportExcelResponse> ActionImport(IFormFile formFile);
     }
 }
