@@ -70,13 +70,13 @@
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"
         (pageChange)="onPageChange($event)" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
         <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
-        <kendo-grid-column field="barcode" title="Số ID thẻ">
+        <kendo-grid-column field="barcode" title="Số ID thẻ" width="120">
         </kendo-grid-column>
-        <kendo-grid-column field="cardType.name" title="Hạng thẻ">
+        <kendo-grid-column field="cardType.name" title="Hạng thẻ" width="120">
         </kendo-grid-column>
         <kendo-grid-column field="partner.name" title="Họ tên" width="200">
         </kendo-grid-column>
-        <kendo-grid-column field="partner.phone" title="Điện thoại">
+        <kendo-grid-column field="partner.phone" title="Điện thoại" width="120">
         </kendo-grid-column>
         <kendo-grid-column title="Thời gian áp dụng" width="180">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
@@ -85,12 +85,12 @@
                 </span>
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column title="Ngày kích hoạt">
+        <kendo-grid-column title="Ngày kích hoạt" width="150">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.activatedDate | date : 'shortDate'}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column title="Trạng thái">
+        <kendo-grid-column title="Trạng thái" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <label *ngIf="dataItem.state=='draft'">Chưa kích hoạt</label>
                 <label *ngIf="dataItem.state=='in_use'" class="text-success">Đã kích hoạt</label>
@@ -98,7 +98,7 @@
                 <label *ngIf="dataItem.state=='cancelled'" class="text-danger">Đã hủy</label>
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="id">
+        <kendo-grid-column field="id" width="120">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 Thao tác
             </ng-template>
