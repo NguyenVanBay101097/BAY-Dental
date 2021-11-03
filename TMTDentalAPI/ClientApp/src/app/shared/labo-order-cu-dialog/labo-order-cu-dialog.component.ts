@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AsyncValidatorFn } from '@angular/forms';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -66,6 +67,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
     private bridgeService: LaboBridgeService,
     private webService: WebService,
     private printService: PrintService,
+    private router: Router,
     private toothService: ToothService
   ) { }
 
@@ -497,5 +499,11 @@ export class LaboOrderCuDialogComponent implements OnInit {
         this.printService.printHtml(result.html);
       })
     }
+  }
+
+  actionRedirect(saleOrderLine){
+    this.activeModal.dismiss();
+    this.router.navigate(['/customer-invoices/edit', saleOrderLine?.id]);
+
   }
 }

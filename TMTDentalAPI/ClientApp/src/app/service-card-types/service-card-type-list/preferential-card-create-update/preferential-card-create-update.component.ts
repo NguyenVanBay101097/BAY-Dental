@@ -46,7 +46,7 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
     this.cardForm = this.fb.group({
       name: ['',Validators.required],
       period: 'year',
-      nbrPeriod: 1,
+      nbrPeriod: [1,Validators.required],
       companyId: this.companyId,
       productPricelistItems: this.fb.array([])
     }); 
