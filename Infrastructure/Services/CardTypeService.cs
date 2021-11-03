@@ -36,7 +36,7 @@ namespace Infrastructure.Services
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
-            var items = await query.OrderByDescending(x=> x.DateCreated).Select(x => new CardTypeBasic
+            var items = await query.OrderByDescending(x => x.DateCreated).Select(x => new CardTypeBasic
             {
                 Id = x.Id,
                 Name = x.Name,
@@ -93,32 +93,6 @@ namespace Infrastructure.Services
             if (self.Period == "year")
                 nb = nb * 12;
             return dStart.Value.AddMonths(nb);
-        }
-
-        public void SaveProductPricelistItem(CardType self, IEnumerable<ProductPricelistItem> listItems)
-        {
-            if(!listItems.Any())
-            {
-                self.Pricelist = null;
-                self.PricelistId = null;
-                return;
-            }
-
-            if (self.Pricelist == null)
-            {
-                var prList = new ProductPricelist()
-                {
-                    Name = "Bảng giá của ưu đãi " + self.Name
-                };
-                self.Pricelist = prList;
-            }
-
-            self.Pricelist.Items.Clear();
-            foreach (var item in listItems)
-            {
-                item.CompanyId = self.Pricelist.CompanyId;
-                self.Pricelist.Items.Add(item);
-            }
         }
 
         public override async Task UpdateAsync(IEnumerable<CardType> entities)
