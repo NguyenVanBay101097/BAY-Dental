@@ -424,20 +424,20 @@ namespace Infrastructure.Services
 
                         for (int row = 2; row <= rowCount; row++)
                         {
-                            var typeName = worksheet.Cells[row, 2].Value.ToString().Trim();
+                            var typeName = worksheet.Cells[row, 2].Text.Trim();
                             var type = await cardTypeObj.SearchQuery(x => x.Name == typeName).FirstOrDefaultAsync();
                             if (type == null)
-                                errors.Add($"dòng {row}: không tìm thấy hạng thẻ");
+                                errors.Add($"Dòng {row}: không tìm thấy hạng thẻ");
 
-                            var barcode = worksheet.Cells[row, 1].Value.ToString().Trim();
+                            var barcode = worksheet.Cells[row, 1].Text.Trim();
                             if (barcode.Length < 10 || barcode.Length > 15)
                             {
-                                errors.Add($"dòng {row}: Số ID tối thiểu 10 và tối đa 15 ký tự");
+                                errors.Add($"Dòng {row}: Số ID tối thiểu 10 và tối đa 15 ký tự");
                             }
                             var exist = await SearchQuery(x => x.Barcode == barcode).AnyAsync();
                             if (exist)
                             {
-                                errors.Add($"dòng {row}: Số ID thẻ bị trùng");
+                                errors.Add($"Dòng {row}: Số ID thẻ bị trùng");
                             }
 
                             if (!errors.Any())

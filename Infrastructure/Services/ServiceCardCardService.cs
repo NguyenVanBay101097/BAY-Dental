@@ -354,7 +354,7 @@ namespace Infrastructure.Services
 
             if (formFile == null || formFile.Length <= 0)
             {
-                throw new Exception("File không được trống");
+                throw new Exception("Vui lòng chọn file để import");
             }
 
             var list = new List<ServiceCardCard>();
@@ -373,12 +373,12 @@ namespace Infrastructure.Services
 
                         for (int row = 2; row <= rowCount; row++)
                         {
-                            var typeName = worksheet.Cells[row, 2].Value.ToString().Trim();
+                            var typeName = worksheet.Cells[row, 2].Text.Trim();
                             var type = await cardTypeObj.SearchQuery(x => x.Name == typeName).FirstOrDefaultAsync();
                             if (type == null)
                                 errors.Add($"Dòng {row}: không tìm thấy hạng thẻ");
 
-                            var barcode = worksheet.Cells[row, 1].Value.ToString().Trim();
+                            var barcode = worksheet.Cells[row, 1].Text.Trim();
                             if (barcode.Length < 10 || barcode.Length > 15)
                             {
                                 errors.Add($"Dòng {row}: Số ID tối thiểu 10 và tối đa 15 ký tự");
