@@ -102,21 +102,22 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "ServiceCard.Type.Create")]
         public async Task<IActionResult> Create(CreateServiceCardTypeReq val)
         {
+            await _unitOfWork.BeginTransactionAsync();
             var cardType = new ServiceCardType
-            { 
+            {
                 Name = val.Name,
                 Period = val.Period,
                 NbrPeriod = val.NbrPeriod,
                 CompanyId = val.CompanyId,
             };
 
-            var priceList = new ProductPricelist 
-            { 
-                Name = val.Name,
+            var priceList = new ProductPricelist
+            {
+                Name = "Bảng giá " + cardType.Name,
                 CompanyId = val.CompanyId,
             };
 
-            foreach(var item in val.ProductPricelistItems)
+            foreach (var item in val.ProductPricelistItems)
             {
                 priceList.Items.Add(new ProductPricelistItem
                 {
@@ -132,7 +133,7 @@ namespace TMTDentalAPI.Controllers
 
             cardType.ProductPricelistId = priceList.Id;
             await _cardTypeService.CreateAsync(cardType);
-
+            _unitOfWork.Commit();
             var basic = _mapper.Map<ServiceCardTypeBasic>(cardType);
             return Ok(basic);
         }
@@ -141,15 +142,16 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "ServiceCard.Type.Update")]
         public async Task<IActionResult> Update(Guid id, CreateServiceCardTypeReq val)
         {
+            await _unitOfWork.BeginTransactionAsync();
             var cardType = await _cardTypeService.SearchQuery(x => x.Id == id)
                 .Include(x => x.ProductPricelist).ThenInclude(x => x.Items)
                 .FirstOrDefaultAsync();
-
+            _mapper.Map(val, cardType);
             var priceList = cardType.ProductPricelist;
-            priceList.Name = val.Name;
+            priceList.Name = "Bảng giá " + cardType.Name;
 
             var itemsRemove = new List<ProductPricelistItem>();
-            foreach(var item in priceList.Items)
+            foreach (var item in priceList.Items)
             {
                 if (!val.ProductPricelistItems.Any(x => x.Id == item.Id))
                     itemsRemove.Add(item);
@@ -183,6 +185,7 @@ namespace TMTDentalAPI.Controllers
             await _productPricelistService.UpdateAsync(priceList);
 
             await _cardTypeService.UpdateAsync(cardType);
+            _unitOfWork.Commit();
             return NoContent();
         }
 

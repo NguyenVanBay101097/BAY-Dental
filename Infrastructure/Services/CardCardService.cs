@@ -405,7 +405,7 @@ namespace Infrastructure.Services
 
             if (formFile == null || formFile.Length <= 0)
             {
-                throw new Exception("File không được trống");
+                throw new Exception("Vui lòng chọn file để import");
             }
 
             var list = new List<CardCard>();
@@ -430,7 +430,7 @@ namespace Infrastructure.Services
                                 errors.Add($"dòng {row}: không tìm thấy hạng thẻ");
 
                             var barcode = worksheet.Cells[row, 1].Value.ToString().Trim();
-                            if (barcode.Length < 10 || barcode.Length >15 )
+                            if (barcode.Length < 10 || barcode.Length > 15)
                             {
                                 errors.Add($"dòng {row}: Số ID tối thiểu 10 và tối đa 15 ký tự");
                             }
@@ -440,15 +440,15 @@ namespace Infrastructure.Services
                                 errors.Add($"dòng {row}: Số ID thẻ bị trùng");
                             }
 
-                            if(!errors.Any())
-                            list.Add(new CardCard
-                            {
-                                Barcode = barcode,
-                                TypeId = type.Id
-                            });
+                            if (!errors.Any())
+                                list.Add(new CardCard
+                                {
+                                    Barcode = barcode,
+                                    TypeId = type.Id
+                                });
                         }
                     }
-                    if(errors.Any())
+                    if (errors.Any())
                         return new ImportExcelResponse { Success = false, Errors = errors };
                 }
                 catch (Exception ex)

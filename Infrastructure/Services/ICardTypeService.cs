@@ -14,6 +14,5 @@ namespace Infrastructure.Services
         Task<CardType> CreateCardType(CardTypeDisplay val);
         Task UpdateCardType(Guid id, CardTypeDisplay val);
         DateTime GetPeriodEndDate(CardType self, DateTime? dStart = null);
-        void SaveProductPricelistItem(CardType self, IEnumerable<ProductPricelistItem> listItems);
     }
 }

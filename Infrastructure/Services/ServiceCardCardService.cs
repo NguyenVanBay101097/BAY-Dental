@@ -35,20 +35,20 @@ namespace Infrastructure.Services
             var cardTypeObj = GetService<IServiceCardTypeService>();
             foreach (var card in self)
             {
-                    if (DateTime.Now > card.ExpiredDate)
-                    {
-                        throw new Exception($"Thẻ đã hết hạn, không thể kích hoạt");
-                    }
+                if (DateTime.Now > card.ExpiredDate)
+                {
+                    throw new Exception($"Thẻ đã hết hạn, không thể kích hoạt");
+                }
 
-                    if (card.State != "draft" && card.State != "locked")
-                    {
-                        throw new Exception($"Thẻ không thể kích hoạt, chỉ kích hoạt các thẻ chưa kích hoạt hoặc tạm dừng");
-                    }
+                if (card.State != "draft" && card.State != "locked")
+                {
+                    throw new Exception($"Thẻ không thể kích hoạt, chỉ kích hoạt các thẻ chưa kích hoạt hoặc tạm dừng");
+                }
 
-                    if (!card.PartnerId.HasValue)
-                    {
-                        throw new Exception("Khách hàng đang trống, cần bổ sung khách hàng");
-                    }
+                if (!card.PartnerId.HasValue)
+                {
+                    throw new Exception("Khách hàng đang trống, cần bổ sung khách hàng");
+                }
 
                 if (!card.ActivatedDate.HasValue)
                     card.ActivatedDate = DateTime.Today;
@@ -376,25 +376,25 @@ namespace Infrastructure.Services
                             var typeName = worksheet.Cells[row, 2].Value.ToString().Trim();
                             var type = await cardTypeObj.SearchQuery(x => x.Name == typeName).FirstOrDefaultAsync();
                             if (type == null)
-                                errors.Add($"dòng {row}: không tìm thấy hạng thẻ");
+                                errors.Add($"Dòng {row}: không tìm thấy hạng thẻ");
 
                             var barcode = worksheet.Cells[row, 1].Value.ToString().Trim();
                             if (barcode.Length < 10 || barcode.Length > 15)
                             {
-                                errors.Add($"dòng {row}: Số ID tối thiểu 10 và tối đa 15 ký tự");
+                                errors.Add($"Dòng {row}: Số ID tối thiểu 10 và tối đa 15 ký tự");
                             }
                             var exist = await SearchQuery(x => x.Barcode == barcode).AnyAsync();
                             if (exist)
                             {
-                                errors.Add($"dòng {row}: Số ID thẻ bị trùng");
+                                errors.Add($"Dòng {row}: Số ID thẻ bị trùng");
                             }
 
                             if (!errors.Any())
-                            list.Add(new ServiceCardCard
-                            {
-                                Barcode = barcode,
-                                CardTypeId = type.Id
-                            });
+                                list.Add(new ServiceCardCard
+                                {
+                                    Barcode = barcode,
+                                    CardTypeId = type.Id
+                                });
                         }
                     }
 

@@ -58,9 +58,22 @@ namespace TMTDentalAPI.Controllers
         {
             await _unitOfWork.BeginTransactionAsync();
             var entity = _mapper.Map<CardType>(val);
-            var serviceItems = _mapper.Map<IEnumerable<ProductPricelistItem>>(val.ProductPricelistItems);
             //tạo pricelist
-            _cardTypeService.SaveProductPricelistItem(entity, serviceItems);
+            var priceList = new ProductPricelist
+            {
+                Name = "Bảng giá " + entity.Name,
+                CompanyId = CompanyId,
+            };
+
+            foreach (var item in val.ProductPricelistItems)
+            {
+                var prItem = _mapper.Map<ProductPricelistItem>(item);
+                prItem.AppliedOn = "0_product_variant";
+                priceList.Items.Add(prItem);
+            }
+            await _productPricelistService.CreateAsync(priceList);
+
+            entity.PricelistId = priceList.Id;
             //tạo loại thẻ
             await _cardTypeService.CreateAsync(entity);
             _unitOfWork.Commit();
@@ -83,7 +96,36 @@ namespace TMTDentalAPI.Controllers
             entity = _mapper.Map(val, entity);
             var serviceItems = _mapper.Map<IEnumerable<ProductPricelistItem>>(val.ProductPricelistItems);
             //tạo pricelist
-            _cardTypeService.SaveProductPricelistItem(entity, serviceItems);
+            var priceList = entity.Pricelist;
+            if (priceList != null)
+                priceList.Name = "Bảng giá " + entity.Name;
+
+            var itemsRemove = new List<ProductPricelistItem>();
+            foreach (var item in priceList.Items)
+            {
+                if (!val.ProductPricelistItems.Any(x => x.Id == item.Id))
+                    itemsRemove.Add(item);
+            }
+
+            foreach (var item in itemsRemove)
+                priceList.Items.Remove(item);
+
+            foreach (var item in val.ProductPricelistItems)
+            {
+                if (!item.Id.HasValue || item.Id == Guid.Empty)
+                {
+                    var prItem = _mapper.Map<ProductPricelistItem>(item);
+                    prItem.AppliedOn = "0_product_variant";
+                    priceList.Items.Add(prItem);
+                }
+                else
+                {
+                    var plItem = priceList.Items.Where(x => x.Id == item.Id).FirstOrDefault();
+                    _mapper.Map(item, plItem);
+                }
+            }
+
+            await _productPricelistService.UpdateAsync(priceList);
             //update loại thẻ
             await _cardTypeService.UpdateAsync(entity);
             _unitOfWork.Commit();
@@ -98,8 +140,8 @@ namespace TMTDentalAPI.Controllers
             var type = await _cardTypeService.SearchQuery(x => x.Id == id).Include(x => x.Pricelist.Items).FirstOrDefaultAsync();
             if (type == null)
                 return NotFound();
-            if(type.Pricelist != null)
-            await _productPricelistService.DeleteAsync(type.Pricelist);
+            if (type.Pricelist != null)
+                await _productPricelistService.DeleteAsync(type.Pricelist);
 
             await _cardTypeService.DeleteAsync(type);
 
