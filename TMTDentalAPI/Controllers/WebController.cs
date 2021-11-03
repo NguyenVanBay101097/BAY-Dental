@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SaasKit.Multitenancy;
@@ -148,7 +149,7 @@ namespace TMTDentalAPI.Controllers
                 {
                     ResModel = val.model,
                     ResId = val.id,
-                    Name = item.FileName,
+                    Name = item.Name,
                     Type = "url",
                     Url = item.FileUrl,
                     CompanyId = CompanyId
@@ -209,8 +210,9 @@ namespace TMTDentalAPI.Controllers
             var fileName = System.Web.HttpUtility.UrlEncode(attachment.DatasFname);
             Response.Headers.Add("Content-Disposition", String.Format("attachment;filename*=UTF-8\"{0}\"", fileName));
             return File(content, attachment.MineType, attachment.DatasFname);
-        }
+        }       
 
+     
         [HttpPost("[action]")]
         public async Task<IActionResult> UploadImage(IFormFile file)
         {
