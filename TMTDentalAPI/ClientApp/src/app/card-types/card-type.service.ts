@@ -49,11 +49,11 @@ export class CardTypeService {
         return this.http.post<CardTypeDisplay>(this.baseApi + this.apiUrl, val);
     }
 
-    createCardType(val: CardTypeSave): Observable<any> {
+    createCardType(val: any): Observable<any> {
         return this.http.post<CardTypeDisplay>(this.baseApi + this.apiUrl, val);
     }
 
-    update(id: string, val: CardTypeDisplay) {
+    update(id: string, val: any) {
         return this.http.put(this.baseApi + this.apiUrl + "/" + id, val);
     }
 
