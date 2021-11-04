@@ -286,6 +286,7 @@ namespace TMTDentalAPI.Controllers
                 vals.Add(pd);
             }
 
+            _productService._ComputeUoMRels(vals);
             await _productService.CreateAsync(vals);
 
             _unitOfWork.Commit();
@@ -423,7 +424,7 @@ namespace TMTDentalAPI.Controllers
             try
             {
                 await _unitOfWork.BeginTransactionAsync();
-
+                _productService._ComputeUoMRels(productsCreate);
                 var products = await _productService.CreateAsync(productsCreate);
 
                 foreach (var product in products)
@@ -564,6 +565,7 @@ namespace TMTDentalAPI.Controllers
             try
             {
                 await _unitOfWork.BeginTransactionAsync();
+                _productService._ComputeUoMRels(productsUpdate);
                 await _productService.UpdateAsync(productsUpdate);
                 _unitOfWork.Commit();
             }
@@ -703,7 +705,7 @@ namespace TMTDentalAPI.Controllers
             try
             {
                 await _unitOfWork.BeginTransactionAsync();
-
+                _productService._ComputeUoMRels(vals);
                 await _productService.CreateAsync(vals);
 
 
@@ -845,6 +847,7 @@ namespace TMTDentalAPI.Controllers
             try
             {
                 await _unitOfWork.BeginTransactionAsync();
+                _productService._ComputeUoMRels(productsUpdate);
                 await _productService.UpdateAsync(productsUpdate);
                 _unitOfWork.Commit();
             }
@@ -983,6 +986,7 @@ namespace TMTDentalAPI.Controllers
             try
             {
                 await _unitOfWork.BeginTransactionAsync();
+                _productService._ComputeUoMRels(productsCreate);
                 await _productService.CreateAsync(productsCreate);
                 _unitOfWork.Commit();
             }
@@ -1127,6 +1131,7 @@ namespace TMTDentalAPI.Controllers
             try
             {
                 await _unitOfWork.BeginTransactionAsync();
+                _productService._ComputeUoMRels(productsUpdate);
                 await _productService.UpdateAsync(productsUpdate);
                 _unitOfWork.Commit();
             }
@@ -1212,6 +1217,7 @@ namespace TMTDentalAPI.Controllers
                 vals.Add(pd);
             }
 
+            _productService._ComputeUoMRels(vals);
             await _productService.CreateAsync(vals);
 
             _unitOfWork.Commit();
@@ -1293,6 +1299,7 @@ namespace TMTDentalAPI.Controllers
                 vals.Add(pd);
             }
 
+            _productService._ComputeUoMRels(vals);
             await _productService.CreateAsync(vals);
 
             _unitOfWork.Commit();
