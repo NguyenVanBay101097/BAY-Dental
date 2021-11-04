@@ -43,7 +43,7 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
   ngOnInit(): void {
     this.formGroup = this.fb.group({
       barcode: ['', [Validators.required,createLengthValidator()]],
-      cardType: [null,[Validators.required]],
+      type: [null,[Validators.required]],
       partner: null,
     });
     this.customerCbx.filterChange
@@ -103,7 +103,7 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
 
     let val = this.formGroup.value;
     // val.partnerId = this.partnerId ? this.partnerId : (val.partner ? val.partner.id : '');
-    val.typeId = val.cardType ? val.cardType.id : '';
+    val.typeId = val.type ? val.type.id : '';
     val.partnerId = val.partner ? val.partner.id: '';
     if (this.id) {
       this.cardCardsService.update(this.id, val).subscribe((res: any) => {
@@ -121,7 +121,7 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
 
   actionActivate(){
     let val = this.formGroup.value;
-    val.typeId = val.cardType ? val.cardType.id : '';
+    val.typeId = val.type ? val.type.id : '';
     val.partnerId = val.partner ? val.partner.id: '';
     if (val.partner == null){
       this.notifyService.notify('error','Khách hàng đang trống, cần bổ sung khách hàng');
@@ -151,10 +151,14 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
     if (this.id) {
       this.cardCardsService.get(this.id).subscribe(res => {
       this.formGroup.patchValue(res);
-      this.setValueFC('cardType',res.type);
+      this.setValueFC('type',res.type);
       this.state = res.state;
       if (res.state == 'in_use')
         this.formGroup.disable();
+      })
+    } else {
+      this.cardCardsService.getDefault().subscribe(res => {
+        this.formGroup.patchValue(res);
       })
     }
   }

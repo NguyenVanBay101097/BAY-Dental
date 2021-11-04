@@ -139,6 +139,8 @@ export class MemberCardCreateUpdateComponent implements OnInit {
       this.cardForm.patchValue(result);
       this.colorSelected = result.color;
       this.cardTypeName = result.name;
+      this.productPricelistItems.clear();
+
       result.productPricelistItems.forEach((item, index) => {
         this.productExists.push(item.productId);
         var productItem = {

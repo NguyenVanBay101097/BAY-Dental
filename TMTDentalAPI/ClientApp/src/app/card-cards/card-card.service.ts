@@ -66,6 +66,10 @@ export class CardCardService {
     apiUrl = 'api/CardCards';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
+    getDefault(): Observable<CardCardDisplay> {
+        return this.http.get<CardCardDisplay>(this.baseApi + this.apiUrl + "/GetDefault" );
+    }
+
     getPaged(val: any): Observable<PagedResult2<CardCardBasic>> {
         return this.http.get<PagedResult2<CardCardBasic>>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
     }
