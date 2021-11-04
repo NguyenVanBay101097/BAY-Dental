@@ -78,6 +78,10 @@ export class CommissionSettlementAgentHistoryComponent implements OnInit {
 
 
   deleteItem(item: any) {
+    if (item.state === 'cancel') {
+      this.notifyService.notify('error', 'Không thể hủy phiếu ở trạng thái Đã hủy');
+      return false;
+    }
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Hủy phiếu chi hoa hồng';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn hủy phiếu chi hoa hồng ?';
