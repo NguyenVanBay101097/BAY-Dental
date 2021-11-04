@@ -4,7 +4,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { TotalAmountAgentFilter } from 'src/app/agents/agent.service';
 import { PhieuThuChiPaged, PhieuThuChiSave, PhieuThuChiService } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
@@ -46,6 +46,13 @@ export class CommissionSettlementAgentHistoryComponent implements OnInit {
     this.dateTo = this.monthEnd;
     this.agentId = this.route.parent.snapshot.paramMap.get('id');
     this.loadDataFromApi();
+    this.searchUpdate.pipe(
+      debounceTime(400),
+      distinctUntilChanged())
+      .subscribe(() => {
+        this.skip = 0;
+        this.loadDataFromApi();
+      });
   }
 
   loadDataFromApi() {
@@ -56,6 +63,7 @@ export class CommissionSettlementAgentHistoryComponent implements OnInit {
     val.accountType = 'commission';
     val.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     val.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
+    val.search = this.search ? this.search : '';
     this.phieuThuChiService.getPaged(val).pipe(
       map((response: any) => (<GridDataResult>{
         data: response.items,
@@ -130,7 +138,7 @@ export class CommissionSettlementAgentHistoryComponent implements OnInit {
   getState(val) {
     switch (val) {
       case "cancel":
-        return 'Hủy';
+        return 'Đã hủy';
       default:
         return 'Đã thanh toán';
     }
