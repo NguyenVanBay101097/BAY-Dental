@@ -44,8 +44,6 @@ namespace Infrastructure.Services
 
             await _GenerateCodeIfEmpty(entities);
 
-            _ComputeUoMRels(entities);
-
             await base.CreateAsync(entities);
 
             await _CheckProductExistCode(entities);
@@ -55,9 +53,9 @@ namespace Infrastructure.Services
             return entities;
         }
 
-        private void _ComputeUoMRels(IEnumerable<Product> self)
+        public void _ComputeUoMRels(IEnumerable<Product> self)
         {
-            foreach(var product in self)
+            foreach (var product in self)
             {
                 var rels_remove = new List<ProductUoMRel>();
                 var uom_ids = new List<Guid>() { product.UOMId, product.UOMPOId };
@@ -89,8 +87,6 @@ namespace Infrastructure.Services
             _SetNameNoSign(entities);
 
             await _GenerateCodeIfEmpty(entities);
-
-            _ComputeUoMRels(entities);
 
             await base.UpdateAsync(entities);
 
@@ -597,6 +593,7 @@ namespace Infrastructure.Services
             _SaveUoMRels(product, val);
 
             UpdateProductCriteriaRel(product, val);
+            _ComputeUoMRels(new List<Product>() { product });
 
             product = await CreateAsync(product);
 
@@ -630,6 +627,7 @@ namespace Infrastructure.Services
             _SaveUoMRels(product, val);
 
             SetStandardPrice(product, val.StandardPrice, force_company: product.CompanyId);
+            _ComputeUoMRels(new List<Product>() { product });
 
             await _SetListPrice(product, val.ListPrice);
 

@@ -988,7 +988,7 @@ namespace Infrastructure.Services
             //set constraint
             await _dbContext.ExecuteSqlCommandAsync("EXEC sp_MSForEachTable 'ALTER TABLE ? NOCHECK CONSTRAINT ALL'");
             // delete all tables except some tables
-            string exceptTables = "('Partners','AspNetUsers','Companies')";
+            string exceptTables = "('__EFMigrationsHistory','Partners','AspNetUsers','Companies')";
             await _dbContext.ExecuteSqlCommandAsync($@"DECLARE @strSQL Varchar(MAX) = '';
                                                        SELECT @strSQL = @strSQL + 'Delete ' + name + ' ; '
                                                        FROM sys.tables

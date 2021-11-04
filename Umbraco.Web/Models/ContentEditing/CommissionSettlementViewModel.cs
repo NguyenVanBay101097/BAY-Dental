@@ -41,6 +41,13 @@ namespace Umbraco.Web.Models.ContentEditing
         /// partner : đối tác
         /// </summary>
         public string Classify { get; set; }
+
+        /// <summary>
+        /// "" : hiển thị tất cả
+        /// "greater_than_zero": hiển thị hoa hồng > 0
+        /// "equals_zero": hiển thị hoa hồng = 0
+        /// </summary>
+        public string CommissionDisplay { get; set; }
     }
 
     public class CommissionSettlementReportRes

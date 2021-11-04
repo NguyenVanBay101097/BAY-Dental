@@ -34,6 +34,7 @@ export class CommissionSettlementAgentReportDetailComponent implements OnInit {
   commissionType: string = '';
   loading = false;
   pagerSettings: any;
+  IscommissionDisplay: boolean = false;
   @ViewChild('agentCbx', {static: true}) agentCbx: ComboBoxComponent;
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
@@ -83,6 +84,7 @@ export class CommissionSettlementAgentReportDetailComponent implements OnInit {
     val.dateTo = this.dateFrom ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-ddTHH:mm:ss') : null;
     val.groupBy = 'agent';
     val.classify = this.agentType;
+    val.commissionDisplay = this.IscommissionDisplay == false ? 'greater_than_zero' : 'equals_zero';
     this.commissionSettlementService.getReportDetail(val).pipe(
       map((res: any) => <GridDataResult>{
         data: res.items,
@@ -95,6 +97,11 @@ export class CommissionSettlementAgentReportDetailComponent implements OnInit {
         console.log(err);
         this.loading = false;
       })
+  }
+
+  checkCommissionDisplay(event) {
+    this.IscommissionDisplay = event.target.checked;
+    this.loadDataFromApi();
   }
 
   loadAgentList(){
@@ -151,6 +158,7 @@ export class CommissionSettlementAgentReportDetailComponent implements OnInit {
     val.dateTo = this.dateFrom ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-ddTHH:mm:ss') : '';
     val.groupBy = 'agent';
     val.classify = this.agentType || '';
+    val.commissionDisplay = this.IscommissionDisplay == false ? 'greater_than_zero' : 'equals_zero';
     this.commissionSettlementService.excelCommissionDetailExport(val).subscribe((result:any) => {
       let filename = "CTHoaHongNguoiGioiThieu";
       let newBlob = new Blob([result], {
