@@ -1,3 +1,17 @@
 .date-picker {
     white-space: nowrap;
 }
+
+.o_cp_t_right{
+    justify-content: flex-end !important;
+    /* width: 100% !important; */
+}
+
+.o_cp_searchview{
+    width: 80% !important;
+}
+
+
+.label_checkbox{
+    font-weight: 500;
+  }
