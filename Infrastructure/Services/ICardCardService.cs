@@ -9,7 +9,7 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public interface ICardCardService: IBaseService<CardCard>
+    public interface ICardCardService : IBaseService<CardCard>
     {
         Task<decimal?> ConvertAmountToPoint(decimal? amount);
         Task<PagedResult2<CardCardBasic>> GetPagedResultAsync(CardCardPaged val);
@@ -29,5 +29,6 @@ namespace Infrastructure.Services
 
         Task<IEnumerable<CardCardResponse>> GetCardCards(GetCardCardFilter val);
         Task<ImportExcelResponse> ActionImport(IFormFile formFile);
+        Task<CardCard> GetDefault();
     }
 }

@@ -29,7 +29,8 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
   dateFrom: Date;
   dateTo: Date;
   today: Date = new Date();
-  activatedDate: any;
+  activatedDateFrom: any;
+  activatedDateTo: any;
   state: string;
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
@@ -65,7 +66,8 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
     val.offset = this.skip;
     val.search = this.search ? this.search : '';
     val.state = this.state ? this.state : '';
-    val.activatedDate = this.activatedDate ? moment(this.activatedDate).format('YYYY-MM-DD') : '';
+    val.activatedDateFrom = this.activatedDateFrom ? moment(this.activatedDateFrom).format('YYYY-MM-DD') : '';
+    val.activatedDateTo = this.activatedDateFrom ? moment(this.activatedDateTo).format('YYYY-MM-DD') : '';
     val.dateFrom = this.dateFrom ? moment(this.dateFrom).format('YYYY-MM-DD') : '';
     val.dateTo = this.dateTo ? moment(this.dateTo).format('YYYY-MM-DD') : '';
 
@@ -163,6 +165,7 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
     const modalRef = this.modalService.open(ServiceCardCardsPreferentialImportDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
     modalRef.componentInstance.title = 'Import excel';
     modalRef.result.then((result) => {
+      this.notifyService.notify('success', 'Import thành công');
       this.loadDataFromApi();
     }, () => {
     });
@@ -218,8 +221,9 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
     }
   }
 
-  onChangeActivatedDate(e) {
-    this.activatedDate = e;
+  onActivatedDateChange(e) {
+    this.activatedDateFrom = e.dateFrom;
+    this.activatedDateTo = e.dateTo;
     this.skip = 0;
     this.loadDataFromApi();
   }
