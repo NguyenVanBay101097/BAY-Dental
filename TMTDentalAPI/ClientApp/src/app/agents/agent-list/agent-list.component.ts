@@ -71,7 +71,7 @@ export class AgentListComponent implements OnInit {
     const modalRef = this.modalService.open(AgentCreateUpdateDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm người giới thiệu';
     modalRef.result.then(() => {
-      this.notifyService.notify('success','Lưu thành công');
+      this.notifyService.notify('success', 'Lưu thành công');
       this.loadDataFromApi();
     }, er => { })
   }
@@ -81,7 +81,7 @@ export class AgentListComponent implements OnInit {
     modalRef.componentInstance.title = 'Sửa người giới thiệu';
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {
-      this.notifyService.notify('success','Lưu thành công');
+      this.notifyService.notify('success', 'Lưu thành công');
       this.loadDataFromApi();
     }, () => {
     })
@@ -93,7 +93,7 @@ export class AgentListComponent implements OnInit {
     modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa người giới thiệu ?';
     modalRef.result.then(() => {
       this.agentService.delete(item.id).subscribe(() => {
-        this.notifyService.notify('success','Xóa thành công');
+        this.notifyService.notify('success', 'Xóa thành công');
         this.loadDataFromApi();
       }, () => {
       });
@@ -101,8 +101,8 @@ export class AgentListComponent implements OnInit {
     });
   }
 
-  getAgentType(type){
-    switch(type) {
+  getAgentType(type) {
+    switch (type) {
       case 'customer':
         return 'Khách hàng';
       case 'employee':
@@ -114,7 +114,11 @@ export class AgentListComponent implements OnInit {
     }
   }
 
-  actionPayment(item: any){
+  actionPayment(item: any) {
+    if (item.baseAmount <= 0) {
+      this.notifyService.notify('error', 'Không thể chi hoa hồng cho Người giới thiệu chưa phát sinh khoản thu dịch vụ tính hoa hồng');
+      return false;
+    }
     const modalRef = this.modalService.open(CommissionSettlementAgentPaymentDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Chi hoa hồng';
     modalRef.componentInstance.type = 'chi';

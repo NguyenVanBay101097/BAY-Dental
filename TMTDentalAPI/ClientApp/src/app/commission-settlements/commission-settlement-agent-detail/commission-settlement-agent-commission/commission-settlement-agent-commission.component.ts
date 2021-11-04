@@ -57,6 +57,13 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
     this.loadAmountDebitTotalAgent();
     this.loadAgent();
     this.loadSumAmountTotal();
+    this.searchUpdate.pipe(
+      debounceTime(400),
+      distinctUntilChanged())
+      .subscribe(() => {
+        this.skip = 0;
+        this.loadDataFromApi();
+      });
   }
 
   loadAgent() {

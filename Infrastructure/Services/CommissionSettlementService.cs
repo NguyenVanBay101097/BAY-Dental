@@ -243,11 +243,11 @@ namespace Infrastructure.Services
             var query = SearchQuery();
 
             if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.MoveLine.Move.InvoiceOrigin.Contains(val.Search)
+                query = query.Where(x => x.SaleOrderLine.Order.Name.Contains(val.Search)
                 || x.Product.Name.Contains(val.Search)
                 || x.Product.NameNoSign.Contains(val.Search)
-                || x.MoveLine.Partner.Name.Contains(val.Search)
-                || x.MoveLine.Partner.NameNoSign.Contains(val.Search)
+                || x.SaleOrderLine.OrderPartner.Name.Contains(val.Search)
+                || x.SaleOrderLine.OrderPartner.NameNoSign.Contains(val.Search)
                 );
 
 
