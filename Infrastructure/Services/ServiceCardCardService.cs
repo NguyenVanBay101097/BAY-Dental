@@ -227,6 +227,10 @@ namespace Infrastructure.Services
 
             if (val.OrderId.HasValue)
                 spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.SaleLine.OrderId == val.OrderId.Value));
+
+            if (val.PartnerId.HasValue)
+                spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.PartnerId == val.PartnerId.Value));
+
             if (!string.IsNullOrEmpty(val.state))
             {
                 spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.State == val.state));
@@ -279,44 +283,6 @@ namespace Infrastructure.Services
             return self;
         }
 
-        public async Task<IEnumerable<ServiceCardCardResponse>> GetServiceCardCards(ServiceCardCardFilter val)
-        {
-            var today = DateTime.Today;
-            var productPriceListItemObj = GetService<IProductPricelistItemService>();
-            var query = SearchQuery();
-
-            if (val.PartnerId.HasValue)
-                query = query.Where(x => x.PartnerId == val.PartnerId);
-
-            if (val.ProductId.HasValue)
-            {
-                query = query.Where(x => x.CardType.ProductPricelist.Items.Any(s => s.ProductId == val.ProductId));
-
-                query = query.Where(x => (!x.ActivatedDate.HasValue || today >= x.ActivatedDate.Value) && (!x.ExpiredDate.HasValue || today <= x.ExpiredDate.Value));
-            }
-
-            if (!string.IsNullOrEmpty(val.State))
-                query = query.Where(x => x.State == val.State);
-
-            var items = await query.Include(x => x.CardType).ThenInclude(x => x.ProductPricelist).ThenInclude(x => x.Items).ToListAsync();
-
-            var res = _mapper.Map<IEnumerable<ServiceCardCardResponse>>(items);
-
-            //if (val.ProductId.HasValue)
-            //{
-            //    var productPricelist = res.Select(x => x.CardType.ProductPricelistId.Value).Distinct().ToList();
-            //    var pricelistItems = await productPriceListItemObj.SearchQuery(x => productPricelist.Contains(x.PriceListId.Value)).ToListAsync();
-            //    foreach (var item in res)
-            //    {
-            //        var pricelistItem = pricelistItems.Where(x => x.PriceListId == item.CardType.ProductPricelistId && x.ProductId == val.ProductId.Value).FirstOrDefault();
-            //        item.ProductPricelistItem = pricelistItem == null ? null : _mapper.Map<ProductPricelistItemDisplay>(pricelistItem);
-            //    }
-
-            //}
-
-            return res;
-        }
-
 
         public CheckPromoCodeMessage _CheckServiceCardCardApplySaleLine(ServiceCardCard self, SaleOrderLine line)
         {
@@ -326,6 +292,8 @@ namespace Infrastructure.Services
 
             if (line.Promotions.Any(x => x.ServiceCardCardId == self.Id))
                 message.Error = "Trùng thẻ ưu đãi đang áp dụng";
+            else if (self.State != "in_use")
+                message.Error = "Thẻ không khả dụng";
             else if (line.Promotions.Any(x => x.ServiceCardCardId.HasValue))
                 message.Error = "Không thể dùng chung với thẻ ưu đãi dịch vụ khác";
             else if ((self.ActivatedDate.HasValue && today < self.ActivatedDate.Value) || today > self.ExpiredDate.Value)

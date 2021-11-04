@@ -82,5 +82,9 @@ namespace Infrastructure.Services
 
         Task<IEnumerable<SaleOrderLine>> GetOrderLinesBySaleOrderId(Guid orderId);
 
+        Task<IEnumerable<ServiceCardCardBasic>> GetListServiceCardCardApplyable(Guid id);
+
+        Task<IEnumerable<CardCardBasic>> GetListCardCardApplyable(Guid id);
+
     }
 }

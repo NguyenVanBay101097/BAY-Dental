@@ -19,7 +19,6 @@ namespace Infrastructure.Services
         Task Unlink(IEnumerable<Guid> ids);
         Task<ServiceCardCard> CheckCode(string code);
 
-        Task<IEnumerable<ServiceCardCardResponse>> GetServiceCardCards(ServiceCardCardFilter val);
         Task ActionLock(IEnumerable<Guid> ids);
         Task ActionCancel(IEnumerable<Guid> ids);
 

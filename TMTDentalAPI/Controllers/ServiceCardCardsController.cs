@@ -103,14 +103,6 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "ServiceCard.Card.Read")]
-        public async Task<IActionResult> GetServiceCardCards(ServiceCardCardFilter val)
-        {
-            var rels = await _cardCardService.GetServiceCardCards(val);
-            return Ok(rels);
-        }
-
-        [HttpPost("[action]")]
         [CheckAccess(Actions = "ServiceCard.Card.Update")]
         public async Task<IActionResult> ButtonActive(IEnumerable<Guid> ids)
         {

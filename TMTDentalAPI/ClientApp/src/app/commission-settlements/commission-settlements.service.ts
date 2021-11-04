@@ -14,6 +14,7 @@ export class CommissionSettlementFilterReport {
   groupBy: string;
   agentId: string;
   classify: string;
+  commissionDisplay: string;
 }
 
 export class CommissionSettlementReportOutput {

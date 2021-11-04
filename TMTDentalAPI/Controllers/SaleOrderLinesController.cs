@@ -282,6 +282,20 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetListServiceCardCardApplyable(Guid id)
+        {
+            var res = await _saleLineService.GetListServiceCardCardApplyable(id);
+            return Ok(res);
+        }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetListCardCardApplyable(Guid id)
+        {
+            var res = await _saleLineService.GetListCardCardApplyable(id);
+            return Ok(res);
+        }
+
         [HttpGet("[action]")]
         public async Task<IActionResult> GetSaleReportExportExcel([FromQuery] SaleOrderLinesPaged val)
         {

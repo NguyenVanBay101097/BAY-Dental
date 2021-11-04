@@ -230,7 +230,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   }
 
   onSave() {
-      this.submitted = true;
+    this.submitted = true;
     
     if (!this.formGroup.valid) {
       return false;
@@ -310,7 +310,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       user: item.user ? item.user : null,
       dateObj: [null, Validators.required],
       timeObj: [null, Validators.required],
-      note: null,
+      note: item.note ? item.note : null,
       companyId: item.companyId ? item.companyId : null,
       doctor: item.doctor ? item.doctor : null,
       timeExpected: 30,

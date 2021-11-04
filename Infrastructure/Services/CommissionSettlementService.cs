@@ -195,6 +195,7 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<CommissionSettlementReportDetailOutput>> GetReportDetail(CommissionSettlementFilterReport val)
         {
             var query = GetQueryableReportPaged(val);
+
             var totalItems = await query.CountAsync();
 
             var items = await query.Select(x => new CommissionSettlementReportDetailOutput
@@ -243,11 +244,11 @@ namespace Infrastructure.Services
             var query = SearchQuery();
 
             if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.MoveLine.Move.InvoiceOrigin.Contains(val.Search)
+                query = query.Where(x => x.SaleOrderLine.Order.Name.Contains(val.Search)
                 || x.Product.Name.Contains(val.Search)
                 || x.Product.NameNoSign.Contains(val.Search)
-                || x.MoveLine.Partner.Name.Contains(val.Search)
-                || x.MoveLine.Partner.NameNoSign.Contains(val.Search)
+                || x.SaleOrderLine.OrderPartner.Name.Contains(val.Search)
+                || x.SaleOrderLine.OrderPartner.NameNoSign.Contains(val.Search)
                 );
 
 
@@ -283,6 +284,14 @@ namespace Infrastructure.Services
 
                 if (!string.IsNullOrEmpty(val.Classify))
                     query = query.Where(x => x.Agent.Classify == val.Classify);
+            }
+
+            if (!string.IsNullOrEmpty(val.CommissionDisplay))
+            {
+                if (val.CommissionDisplay == "greater_than_zero")
+                    query = query.Where(x => x.Percentage > 0);
+                else if(val.CommissionDisplay == "equals_zero")
+                    query = query.Where(x => x.Percentage == 0);
             }
 
 

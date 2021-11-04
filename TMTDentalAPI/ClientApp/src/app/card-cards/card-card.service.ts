@@ -122,10 +122,6 @@ export class CardCardService {
         return this.http.get(this.baseApi + this.apiUrl + '/ExportExcelFile', { responseType: 'blob', params: paged });
     }
 
-    getCardCards(val) {
-        return this.http.post(this.baseApi + this.apiUrl + '/GetCardCards', val);
-    }
-
     actionImport(val: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/ImportExcel', val);
     }

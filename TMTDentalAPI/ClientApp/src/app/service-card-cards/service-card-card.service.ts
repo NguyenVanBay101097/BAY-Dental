@@ -42,10 +42,6 @@ export class ServiceCardCardService {
         return this.http.delete(this.baseApi + this.apiUrl + '/' + id);
     }
 
-    getServiceCardCards(val) {
-        return this.http.post(this.baseApi + this.apiUrl + '/GetServiceCardCards', val);
-    }
-
     buttonActive(ids: string[]) {
         return this.http.post(this.baseApi + this.apiUrl + '/ButtonActive', ids);
     }
