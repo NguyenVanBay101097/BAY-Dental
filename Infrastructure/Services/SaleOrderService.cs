@@ -1933,7 +1933,7 @@ namespace Infrastructure.Services
                     .Include(x => x.Employee)
                     .ToListAsync();
 
-                order.SaleOrderPayments = await saleOrderPaymentObj.SearchQuery(x => x.OrderId == order.Id)
+                order.SaleOrderPayments = await saleOrderPaymentObj.SearchQuery(x => x.OrderId == order.Id && x.State == "posted")
                     .Include(x => x.Lines).ThenInclude(x => x.SaleOrderLine)
                     .Include(x => x.PaymentRels).ThenInclude(x => x.Payment).ThenInclude(x => x.Journal)
                     .ToListAsync();
