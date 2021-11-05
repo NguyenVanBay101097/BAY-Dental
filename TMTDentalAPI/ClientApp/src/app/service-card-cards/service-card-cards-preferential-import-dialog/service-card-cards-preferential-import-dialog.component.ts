@@ -1,10 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { isThisSecond } from 'date-fns';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { CardCardService } from 'src/app/card-cards/card-card.service';
-import { NotifyService } from 'src/app/shared/services/notify.service';
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { ServiceCardCardService } from '../service-card-card.service';
 
 @Component({
@@ -18,11 +16,13 @@ export class ServiceCardCardsPreferentialImportDialogComponent implements OnInit
   formData = new FormData();
   formGroup: FormGroup;
   isMemberCard = false;
+  correctFormat = true;
   constructor(
     public activeModal: NgbActiveModal,
     private serviceCardsService: ServiceCardCardService,
     private fb: FormBuilder,
-    private cardCardService: CardCardService
+    private cardCardService: CardCardService,
+    private notificationService: NotificationService,
   ) { }
 
 
@@ -33,9 +33,14 @@ export class ServiceCardCardsPreferentialImportDialogComponent implements OnInit
   }
 
   import() {
+    if (!this.correctFormat){
+      this.notify('error','File import sai định dạng. Vui lòng tải file mẫu và nhập dữ liệu đúng');
+      return;
+    }
     if (this.isMemberCard){
       this.cardCardService.actionImport(this.formData).subscribe((result: any) =>{
         if (result.success) {
+          this.notify("success","Import dữ liệu thành công");
           this.activeModal.close(true);
         } else {
           this.errors = result.errors;
@@ -44,6 +49,7 @@ export class ServiceCardCardsPreferentialImportDialogComponent implements OnInit
     }else {
       this.serviceCardsService.actionImport(this.formData).subscribe((result: any) => {
         if (result.success) {
+          this.notify("success","Import dữ liệu thành công");
           this.activeModal.close(true);
         } else {
           this.errors = result.errors;
@@ -55,9 +61,20 @@ export class ServiceCardCardsPreferentialImportDialogComponent implements OnInit
 
   onFileChange(file) {
     this.formData.append('file', file);
+    this.errors = [];
   }
 
   notifyError(value) {
     this.errors = value;
+  }
+
+  notify(Style, Content) {
+    this.notificationService.show({
+      content: Content,
+      hideAfter: 3000,
+      position: { horizontal: 'center', vertical: 'top' },
+      animation: { type: 'fade', duration: 400 },
+      type: { style: Style, icon: true }
+    });
   }
 }

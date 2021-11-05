@@ -4,7 +4,7 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { result } from 'lodash';
 import * as moment from 'moment';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { CardCardFilter, CardCardPaged, CardCardResponse, CardCardService } from 'src/app/card-cards/card-card.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
@@ -50,12 +50,14 @@ export class CardCardsMemberComponent implements OnInit {
     val.search = this.search;
     val.limit = this.limit;
     val.offset = this.skip;
-    this.cardCardsService.getPaged(val).subscribe(result => {
-      this.gridData = {
-        data: result.items,
-        total: result.totalItems
-      }
-    })
+    this.cardCardsService.getPaged(val).pipe(
+      map((response: any) => (<GridDataResult>{
+        data: response.items,
+        total: response.totalItems
+      }))
+    ).subscribe((res) => {
+      this.gridData = res;
+    });
   }
 
   createItem(){

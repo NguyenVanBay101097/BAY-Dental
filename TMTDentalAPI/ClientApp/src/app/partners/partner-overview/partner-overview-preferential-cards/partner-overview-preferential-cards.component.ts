@@ -31,7 +31,9 @@ export class PartnerOverviewPreferentialCardsComponent implements OnInit {
     modalRef.componentInstance.title = "Tạo thẻ ưu đãi dịch vụ";
     modalRef.componentInstance.partnerId = this.partnerId;
     modalRef.result.then(result => {
-      this.notifyService.notify('success', 'Lưu thành công');
+      if (!result) {
+        this.notifyService.notify('success', 'Lưu thành công');
+      }
       this.getNextCard();
     }, () => { });
   }
@@ -40,8 +42,11 @@ export class PartnerOverviewPreferentialCardsComponent implements OnInit {
     const modalRef = this.modalService.open(ServiceCardCardsPreferentialCuDialogComponent, { scrollable: true, windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = "Chỉnh sửa thẻ " + item.barcode;
     modalRef.componentInstance.id = item.id;
+    modalRef.componentInstance.isEditInOverview = true;
     modalRef.result.then(result => {
-      this.notifyService.notify('success', 'Lưu thành công');
+      if (!result) {
+        this.notifyService.notify('success', 'Lưu thành công');
+      }
       this.getNextCard();
     }, () => { });
   }
@@ -49,7 +54,7 @@ export class PartnerOverviewPreferentialCardsComponent implements OnInit {
   getState(state){
     switch (state){
       case 'draft':
-        return 'Nháp';
+        return 'Chưa kích hoạt';
       case 'in_use':
         return 'Đã kích hoạt';
       case 'locked':
@@ -93,7 +98,7 @@ export class PartnerOverviewPreferentialCardsComponent implements OnInit {
         total: response.totalItems
       }))
     ).subscribe((res) => {
-      this.preferentialCards = res;
+      this.preferentialCards = res.data;
     });
   }
 }

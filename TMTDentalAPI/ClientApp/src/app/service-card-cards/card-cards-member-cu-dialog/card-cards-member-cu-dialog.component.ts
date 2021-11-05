@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
@@ -39,52 +39,52 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.formGroup = this.fb.group({
-      barcode: ['', [Validators.required,createLengthValidator()]],
+      barcode: ['', [Validators.required, createLengthValidator()]],
       type: null,
       partner: null,
     });
     this.customerCbx.filterChange
-    .asObservable()
-    .pipe(
-      debounceTime(300),
-      tap(() => (this.customerCbx.loading = true)),
-      switchMap((value) => this.searchCustomers(value)
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.customerCbx.loading = true)),
+        switchMap((value) => this.searchCustomers(value)
+        )
       )
-    )
-    .subscribe((x) => {
-      this.customerSimpleFilter = x;
-      this.customerCbx.loading = false;
-    });
+      .subscribe((x) => {
+        this.customerSimpleFilter = x;
+        this.customerCbx.loading = false;
+      });
     this.cardTypeCbx.filterChange
-    .asObservable()
-    .pipe(
-      debounceTime(300),
-      tap(() => (this.cardTypeCbx.loading = true)),
-      switchMap((value) => this.searchCardTypes(value)
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.cardTypeCbx.loading = true)),
+        switchMap((value) => this.searchCardTypes(value)
+        )
       )
-    )
-    .subscribe((x) => {
-      this.cardTypeSimpleFilter = x.items;
-      this.cardTypeCbx.loading = false;
-    });
+      .subscribe((x) => {
+        this.cardTypeSimpleFilter = x.items;
+        this.cardTypeCbx.loading = false;
+      });
     this.loadCustomers();
     this.loadCardTypes();
     this.loadDataFromApi();
   }
 
   getState(state) {
-    if (state=="in_use")
+    if (state == "in_use")
       return "Đã kích hoạt";
-    else if (state=="draft")
+    else if (state == "draft")
       return "Chưa kích hoạt";
     return "";
   }
 
-  quickCreateCustomerModal(){
+  quickCreateCustomerModal() {
     let modalRef = this.modalService.open(PartnerCustomerCuDialogComponent, { size: 'xl', scrollable: true, windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-      modalRef.componentInstance.title = 'Thêm khách hàng';
-      modalRef.result.then((res) => {
-        this.setValueFC('partner', res);
+    modalRef.componentInstance.title = 'Thêm khách hàng';
+    modalRef.result.then((res) => {
+      this.setValueFC('partner', res);
     });
   }
 
@@ -92,81 +92,94 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
     this.formGroup.controls[key].setValue(value);
   }
 
-  onSave(){
+  onSave() {
     this.submitted = true;
     if (this.formGroup.invalid) {
-      return false;
+      this.touched();
+      return;
     }
 
     let val = this.formGroup.value;
     // val.partnerId = this.partnerId ? this.partnerId : (val.partner ? val.partner.id : '');
     val.typeId = val.type ? val.type.id : '';
-    val.partnerId = val.partner ? val.partner.id: '';
+    val.partnerId = val.partner ? val.partner.id : '';
     if (this.id) {
       this.cardCardsService.update(this.id, val).subscribe((res: any) => {
-        this.notifyService.notify('success','Lưu thành công');
+        this.notifyService.notify('success', 'Lưu thành công');
         this.activeModal.close(res);
       }, (error) => { console.log(error) });
     } else {
       this.cardCardsService.create(val).subscribe((res: any) => {
-        this.notifyService.notify('success','Lưu thành công');
+        this.notifyService.notify('success', 'Lưu thành công');
         this.activeModal.close(res);
       }, (error) => { console.log(error) });
     }
 
   }
+  touched() {
+    (<any>Object).values(this.formGroup.controls).forEach((control: FormControl) => {
+      control.markAsTouched();
+    })
+    return;
+  }
 
-  actionActivate(){
-    let val = this.formGroup.value;
-    val.typeId = val.type ? val.type.id : '';
-    val.partnerId = val.partner ? val.partner.id: '';
-    if (val.partner == null){
-      this.notifyService.notify('error','Khách hàng đang trống, cần bổ sung khách hàng');
+  actionActivate() {
+    if (this.formGroup.invalid) {
+      this.touched();
       return;
     }
-    if (this.id){
-      this.cardCardsService.update(this.id,val).subscribe(res => {
-        this.cardCardsService.buttonActive([this.id]).subscribe(()=> {
-          this.notifyService.notify('success','Kích hoạt thành công');
+    let val = this.formGroup.value;
+    val.typeId = val.type ? val.type.id : '';
+    val.partnerId = val.partner ? val.partner.id : '';
+    if (val.partner == null) {
+      this.notifyService.notify('error', 'Khách hàng đang trống, cần bổ sung khách hàng');
+      return;
+    }
+    if (this.id) {
+      this.cardCardsService.update(this.id, val).subscribe(res => {
+        this.cardCardsService.buttonActive([this.id]).subscribe(() => {
+          this.notifyService.notify('success', 'Kích hoạt thành công');
           this.activeModal.close();
         })
       })
     }
     else {
       this.cardCardsService.create(val).subscribe(res => {
-        this.cardCardsService.buttonActive([res.id]).subscribe(()=> {
-          this.notifyService.notify('success','Kích hoạt thành công');
+        this.cardCardsService.buttonActive([res.id]).subscribe(() => {
+          this.notifyService.notify('success', 'Kích hoạt thành công');
           this.activeModal.close();
-
         })
       })
     }
-      
   }
 
-  loadDataFromApi(){
+  loadDataFromApi() {
     if (this.id) {
       this.cardCardsService.get(this.id).subscribe(res => {
-      this.formGroup.patchValue(res);
-      this.setValueFC('type',res.type);
-      this.state = res.state;
-      if (res.state == 'in_use')
-        this.formGroup.disable();
+        this.formGroup.patchValue(res);
+        this.setValueFC('type', res.type);
+        this.state = res.state;
+        if (res.state == 'in_use')
+          this.formGroup.disable();
       })
     } else {
       this.cardCardsService.getDefault().subscribe(res => {
         this.formGroup.patchValue(res);
+        this.setValueFC('type', res.type);
+        this.state = res.state;
+        if (res.state == 'in_use')
+          this.formGroup.disable();
       })
     }
   }
 
-  loadCustomers(){
+  loadCustomers() {
     this.searchCustomers().subscribe((res: any) => {
       this.customerSimpleFilter = res;
     })
   }
 
-  loadCardTypes(){
+  loadCardTypes() {
     this.searchCardTypes().subscribe(result => {
       this.cardTypeSimpleFilter = result.items;
     })
@@ -183,22 +196,21 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
   }
 
   searchCardTypes(q?: string) {
-    var val = {search: q || '', offset: 0, limit: 10};
+    var val = { search: q || '', offset: 0, limit: 0 };
     return this.cardService.getPaged(val);
   }
 
-  get f(){
+  get f() {
     return this.formGroup.controls;
   }
-  
 }
 
 export function createLengthValidator(): ValidatorFn {
-  return (control:AbstractControl) : ValidationErrors | null => {
-      const valueLength = control.value.toString().length;
-      var lengthValid = true;
-      if (valueLength < 10 || valueLength > 15)
-        lengthValid = false;
-      return !lengthValid ? {lengthError:true}: null;
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = control.value;
+    var lengthValid = true;
+    if (!value || value.length < 10 || value.length > 15)
+      lengthValid = false;
+    return !lengthValid ? { lengthError: true } : null;
   }
 }
