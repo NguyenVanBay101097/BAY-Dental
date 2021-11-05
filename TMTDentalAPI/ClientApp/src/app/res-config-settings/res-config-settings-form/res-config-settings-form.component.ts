@@ -10,6 +10,9 @@ import * as _ from 'lodash';
 import { SmsMessageService } from 'src/app/sms/sms-message.service';
 import { SmsCampaignService } from 'src/app/sms/sms-campaign.service';
 import { forkJoin } from 'rxjs';
+import { WebSessionService } from 'src/app/core/services/web-session.service';
+import { SessionInfoStorageService } from 'src/app/core/services/session-info-storage.service';
+import { mergeMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-res-config-settings-form',
@@ -27,7 +30,8 @@ export class ResConfigSettingsFormComponent implements OnInit {
   @ViewChild('papersizeCbx', { static: true }) papersizeCbx: ComboBoxComponent;
   constructor(private fb: FormBuilder, private configSettingsService: ResConfigSettingsService, private printPaperSizeService: PrintPaperSizeService,
     private authService: AuthService,
-    private intlService: IntlService) {
+    private webSessionService: WebSessionService,
+    private sessionInfoStorageService: SessionInfoStorageService) {
   }
 
   ngOnInit() {
@@ -80,26 +84,19 @@ export class ResConfigSettingsFormComponent implements OnInit {
   onSave() {
     this.submitted = true;
     var val = this.formGroup.value;
-    val.tCareRunAt = val.tCareRunAtObj ? this.intlService.formatDate(val.tCareRunAtObj, 'yyyy-MM-ddTHH:mm:ss') : null;
-    if (val.groupServiceCard) {
-      this.configSettingsService.insertServiceCardData().subscribe(() => {
-        this.configSettingsService.create(val).subscribe(result => {
-          this.configSettingsService.excute(result.id).subscribe(() => {
-            this.authService.getGroups().subscribe((result: any) => {
-              window.location.reload();
-            });
-          });
-        })
-      });
-    } else {
-      this.configSettingsService.create(val).subscribe(result => {
-        this.configSettingsService.excute(result.id).subscribe(() => {
-          this.authService.getGroups().subscribe((result: any) => {
-            window.location.reload();
-          });
-        });
+    this.configSettingsService.create(val)
+    .pipe(
+      mergeMap(result => {
+        return this.configSettingsService.excute(result.id);
+      }),
+      mergeMap(() => {
+        return this.webSessionService.getSessionInfo();
       })
-    }
+    )
+    .subscribe(sessionInfo => {
+      this.sessionInfoStorageService.saveSession(sessionInfo);
+      window.location.reload();
+    });
   }
 
   get groupLoyaltyCard() {

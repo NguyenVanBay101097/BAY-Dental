@@ -251,7 +251,7 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("[action]")]
         public async Task<IActionResult> GetGroups()
         {
-            var res = await _userService.GetGroups();
+            var res = await _userService.GetGroups(UserId);
             return Ok(res);
         }
 
