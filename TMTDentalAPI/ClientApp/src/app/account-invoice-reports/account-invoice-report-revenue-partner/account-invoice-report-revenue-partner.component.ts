@@ -1,6 +1,5 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { WorkbookSheetRowCell } from '@progress/kendo-angular-excel-export';
 import { GridComponent, GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import * as moment from 'moment';
@@ -199,10 +198,10 @@ export class AccountInvoiceReportRevenuePartnerComponent implements OnInit {
   }
 
   public onExcelExport(args: any): void {
-    const observables = [];
-    const workbook = args.workbook;
+    // const observables = [];
+    // const workbook = args.workbook;
     var sheet = args.workbook.sheets[0];
-    var rows = sheet.rows;
+    // var rows = sheet.rows;
     sheet.mergedCells = ["A1:G1", "A2:G2","A3:F3"];
     sheet.frozenRows = 3;
     sheet.name = 'BaoCaoDoanhThu_TheoKH';

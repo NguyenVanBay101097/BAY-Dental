@@ -1,9 +1,7 @@
-import { Component, OnInit, ViewChild, Output, EventEmitter, ElementRef } from '@angular/core';
-import { AshipRequest, AshipData, PartnerSourceSimple, District, City, Ward } from 'src/app/partners/partner-simple';
-import { NgbPopover, NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { FormGroup, FormBuilder } from '@angular/forms';
-import { AddressCheckApi } from 'src/app/price-list/price-list';
+import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { NgbActiveModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { PartnerService } from 'src/app/partners/partner.service';
+import { AddressCheckApi } from 'src/app/price-list/price-list';
 
 
 @Component({

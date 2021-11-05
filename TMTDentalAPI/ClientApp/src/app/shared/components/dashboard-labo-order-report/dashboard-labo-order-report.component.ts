@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { forkJoin, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { AuthService } from 'src/app/auth/auth.service';
 import { LaboOrderReportInput, LaboOrderService } from 'src/app/labo-orders/labo-order.service';
 
 @Component({
@@ -19,7 +18,6 @@ export class DashboardLaboOrderReportComponent implements OnInit {
   ]
 
   constructor(private intlService: IntlService, 
-    private authService: AuthService, 
     private laboOrderService: LaboOrderService, 
   ) { }
 

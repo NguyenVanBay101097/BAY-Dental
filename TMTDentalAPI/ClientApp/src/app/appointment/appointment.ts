@@ -1,7 +1,6 @@
 
-import { PartnerSimple } from '../partners/partner-simple';
-import { LocaleDateTimeFormats } from '@progress/kendo-angular-intl';
 import { EmployeeSimple } from '../employees/employee';
+import { PartnerSimple } from '../partners/partner-simple';
 
 export class AppointmentBasic {
     id: string;

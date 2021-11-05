@@ -1,9 +1,8 @@
-import { Component, OnInit, ViewChild, Input, Renderer2 } from '@angular/core';
-import { SaleOrderBasic } from 'src/app/sale-orders/sale-order-basic';
-import { SharedService } from 'src/app/shared/shared.service';
+import { Component, Input, OnInit, Renderer2 } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { SaleOrderService } from 'src/app/core/services/sale-order.service';
+import { SaleOrderBasic } from 'src/app/sale-orders/sale-order-basic';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 
 @Component({
@@ -19,7 +18,6 @@ export class PartnerCustomerTreatmentPaymentChildComponent implements OnInit {
 
   constructor(
     private renderer2: Renderer2,
-    private sharedService: SharedService,
     private modalService: NgbModal,
     private saleOrderService: SaleOrderService
 

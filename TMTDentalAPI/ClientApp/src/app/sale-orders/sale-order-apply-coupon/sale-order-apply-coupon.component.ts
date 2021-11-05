@@ -1,7 +1,6 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NotifyService } from 'src/app/shared/services/notify.service';
-import { SaleOrderService } from '../../core/services/sale-order.service';
 
 @Component({
   selector: 'app-sale-order-apply-coupon',
@@ -11,7 +10,8 @@ import { SaleOrderService } from '../../core/services/sale-order.service';
 export class SaleOrderApplyCouponComponent implements OnInit {
   formGroup: FormGroup;
   @Output() applySuccess = new EventEmitter<any>();
-  constructor(private fb: FormBuilder, private saleOrderService: SaleOrderService, private notifyService: NotifyService) { }
+  constructor(private fb: FormBuilder, 
+    private notifyService: NotifyService) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({

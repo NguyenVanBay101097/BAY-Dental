@@ -1,6 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -40,7 +39,6 @@ export class SmsAppointmentFormManualComponent implements OnInit {
     private modalService: NgbModal,
     private notificationService: NotificationService,
     private intlService: IntlService,
-    private activedRoute: ActivatedRoute,
     private appointmentService: AppointmentService,
     private smsCampaignService: SmsCampaignService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig

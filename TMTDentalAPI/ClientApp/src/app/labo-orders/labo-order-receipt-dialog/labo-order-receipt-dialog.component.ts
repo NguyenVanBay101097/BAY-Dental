@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -57,7 +57,7 @@ export class LaboOrderReceiptDialogComponent implements OnInit {
     if (this.labo) {
      this.laboOrderService.get(this.labo.id).subscribe(rs => {   
       this.formGroup.patchValue(rs);
-      let warrantyPeriodObj = new Date(rs.warrantyPeriod);
+      // let warrantyPeriodObj = new Date(rs.warrantyPeriod);
       this.formGroup.get("warrantyPeriodObj").patchValue(rs.warrantyPeriod ? new Date(rs.warrantyPeriod) : null);
       // this.formGroup.get('warrantyPeriod').setValue(rs.warrantyPeriod ? new Date(rs.warrantyPeriod) : null);
       // this.formGroup.get('warrantyCode').setValue(rs.warrantyCode ? this.labo.warrantyCode : null);

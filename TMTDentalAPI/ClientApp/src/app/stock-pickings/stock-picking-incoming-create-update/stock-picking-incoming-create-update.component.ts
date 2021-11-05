@@ -1,30 +1,29 @@
-import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, FormArray, AbstractControl, Validators } from '@angular/forms';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { StockPickingMlDialogComponent } from '../stock-picking-ml-dialog/stock-picking-ml-dialog.component';
-import { StockMoveDisplay, StockPickingService, StockPickingDefaultGet, StockPickingDisplay } from '../stock-picking.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { PartnerFilter, PartnerService } from 'src/app/partners/partner.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
-import { StockPickingTypeService, StockPickingTypeBasic } from 'src/app/stock-picking-types/stock-picking-type.service';
-import { StockMoveService, StockMoveOnChangeProduct } from 'src/app/stock-moves/stock-move.service';
+import { forkJoin } from 'rxjs';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
+import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
+import { PartnerService } from 'src/app/partners/partner.service';
 import { ProductSimple } from 'src/app/products/product-simple';
-import { ProductPaged, ProductBasic2, ProductService } from 'src/app/products/product.service';
-import { TaiProductListSelectableComponent } from 'src/app/shared/tai-product-list-selectable/tai-product-list-selectable.component';
-import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { debounceTime, tap, switchMap } from 'rxjs/operators';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ProductBasic2, ProductPaged, ProductService } from 'src/app/products/product.service';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { PermissionService } from 'src/app/shared/permission.service';
 import { SelectUomProductDialogComponent } from 'src/app/shared/select-uom-product-dialog/select-uom-product-dialog.component';
 import { PrintService } from 'src/app/shared/services/print.service';
-import { forkJoin } from 'rxjs';
-import { unionBy } from 'lodash';
-import { observe } from 'fast-json-patch';
-import { CheckPermissionService } from 'src/app/shared/check-permission.service';
-import { AuthService } from 'src/app/auth/auth.service';
-import { PermissionService } from 'src/app/shared/permission.service';
-declare var jquery: any;
+import { TaiProductListSelectableComponent } from 'src/app/shared/tai-product-list-selectable/tai-product-list-selectable.component';
+import { StockMoveOnChangeProduct, StockMoveService } from 'src/app/stock-moves/stock-move.service';
+import {
+  StockPickingDisplay,
+  StockPickingService
+} from '../stock-picking.service';
+// declare var jquery: any;
 declare var $: any;
 
 @Component({
@@ -69,7 +68,6 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
     private router: Router,
     private partnerService: PartnerService,
     private notificationService: NotificationService,
-    private pickingTypeService: StockPickingTypeService,
     private stockMoveService: StockMoveService,
     private productService: ProductService,
     private modalService: NgbModal,

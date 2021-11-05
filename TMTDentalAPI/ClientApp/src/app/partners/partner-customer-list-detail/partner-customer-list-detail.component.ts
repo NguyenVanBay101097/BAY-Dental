@@ -1,5 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { PartnerDisplay, PartnerInfoViewModel } from '../partner-simple';
+import { Component, Input, OnInit } from '@angular/core';
+import { PartnerInfoViewModel } from '../partner-simple';
 import { PartnerService } from '../partner.service';
 
 @Component({

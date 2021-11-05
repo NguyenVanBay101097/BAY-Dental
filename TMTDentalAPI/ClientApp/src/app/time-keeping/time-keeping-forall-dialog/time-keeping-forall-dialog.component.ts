@@ -1,11 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { WorkEntryTypeService, WorkEntryTypePage } from 'src/app/work-entry-types/work-entry-type.service';
-import { Observable, BehaviorSubject, from } from 'rxjs';
-import { delay, switchMap, map, tap, debounceTime } from 'rxjs/operators';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { WorkEntryTypePage, WorkEntryTypeService } from 'src/app/work-entry-types/work-entry-type.service';
 
 @Component({
   selector: 'app-time-keeping-forall-dialog',

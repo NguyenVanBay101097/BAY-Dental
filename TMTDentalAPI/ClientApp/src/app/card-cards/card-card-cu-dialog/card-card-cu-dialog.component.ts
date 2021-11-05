@@ -1,16 +1,16 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { CardCardDisplay, CardCardService } from '../card-card.service';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { debounceTime, tap, switchMap, finalize } from 'rxjs/operators';
-import { PartnerSimple, PartnerPaged, PartnerBasic } from 'src/app/partners/partner-simple';
-import { PartnerService } from 'src/app/partners/partner.service';
-import { CardTypeBasic, CardTypePaged, CardTypeService } from 'src/app/card-types/card-type.service';
-import * as _ from 'lodash';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import * as _ from 'lodash';
 import { of } from 'rxjs';
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { debounceTime, finalize, switchMap, tap } from 'rxjs/operators';
+import { CardTypeBasic, CardTypePaged, CardTypeService } from 'src/app/card-types/card-type.service';
+import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
+import { PartnerService } from 'src/app/partners/partner.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { CardCardDisplay, CardCardService } from '../card-card.service';
 
 @Component({
   selector: 'app-card-card-cu-dialog',

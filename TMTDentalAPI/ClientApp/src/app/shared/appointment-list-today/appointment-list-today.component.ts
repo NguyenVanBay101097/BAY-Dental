@@ -1,23 +1,14 @@
-import { AppointmentBasic } from './../../appointment/appointment';
-import { DashboardReportService, GetDefaultRequest } from './../../core/services/dashboard-report.service';
-import { NotifyService } from 'src/app/shared/services/notify.service';
-import { state } from '@angular/animations';
-import { Component, DoCheck, EventEmitter, Input, IterableDiffer, IterableDiffers, OnInit, Output, SimpleChanges } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, DoCheck, EventEmitter, Input, IterableDiffer, IterableDiffers, OnInit, Output } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { forkJoin, of, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, mergeMap, switchMap } from 'rxjs/operators';
-import { AppointmentGetCountVM, AppointmentPaged, AppointmentPatch, AppointmentStatePatch, DateFromTo } from 'src/app/appointment/appointment';
+import { Subject } from 'rxjs';
+import { AppointmentStatePatch } from 'src/app/appointment/appointment';
 import { AppointmentService } from 'src/app/appointment/appointment.service';
-import { EmployeeService } from 'src/app/employees/employee.service';
-import { AppointmentCreateUpdateComponent } from '../appointment-create-update/appointment-create-update.component';
-import { CustomerReceipCreateUpdateComponent } from '../customer-receip-create-update/customer-receip-create-update.component';
-import { AuthService } from 'src/app/auth/auth.service';
-import { ReceiveAppointmentDialogComponent } from '../receive-appointment-dialog/receive-appointment-dialog.component';
 import { ReceiveAppointmentService } from 'src/app/customer-receipt/receive-appointment.service';
+import { NotifyService } from 'src/app/shared/services/notify.service';
+import { AppointmentCreateUpdateComponent } from '../appointment-create-update/appointment-create-update.component';
+import { ReceiveAppointmentDialogComponent } from '../receive-appointment-dialog/receive-appointment-dialog.component';
+import { AppointmentBasic } from './../../appointment/appointment';
 
 @Component({
   selector: 'app-appointment-list-today',
@@ -54,12 +45,11 @@ export class AppointmentListTodayComponent implements OnInit, DoCheck {
 
   iterableDiffer: IterableDiffer<any>;
 
-  constructor(private appointmentService: AppointmentService,
-    private intlService: IntlService, private modalService: NgbModal,
+  constructor(
+    private appointmentService: AppointmentService,
+    private modalService: NgbModal,
     private notifyService: NotifyService,
-    private authService: AuthService,
-    private dashboardReportService : DashboardReportService,
-    private notificationService: NotificationService, private router: Router, private employeeService: EmployeeService,
+    private notificationService: NotificationService,
     private receiveAppointmentService: ReceiveAppointmentService,
     private iterableDiffers: IterableDiffers
     ) { 

@@ -1,22 +1,21 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges, ViewChildren } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import * as moment from 'moment';
 import { catchError, mergeMap } from 'rxjs/operators';
 import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
 import { SaleOrderService } from 'src/app/core/services/sale-order.service';
+import { EmployeePaged } from 'src/app/employees/employee';
+import { EmployeeService } from 'src/app/employees/employee.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
+import { ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
 import { SaleOrderLineCuComponent } from '../sale-order-line-cu/sale-order-line-cu.component';
 import { SaleOrderLinePromotionDialogComponent } from '../sale-order-line-promotion-dialog/sale-order-line-promotion-dialog.component';
 import { SaleOrderPromotionDialogComponent } from '../sale-order-promotion-dialog/sale-order-promotion-dialog.component';
 import { SaleOrderPromotionService } from '../sale-order-promotion.service';
-import * as moment from 'moment';
-import { ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
-import { EmployeePaged } from 'src/app/employees/employee';
-import { EmployeeService } from 'src/app/employees/employee.service';
-import { ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
 
 @Component({
   selector: 'app-sale-order-service-list',
@@ -38,8 +37,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
   submitted = false;
   @Output() updateOrderEvent = new EventEmitter<any>();
 
-  constructor(private router: Router,
-     private route: ActivatedRoute,
+  constructor(
      private saleOrderService: SaleOrderService,
      private notificationService: NotificationService,
      private intlService: IntlService,

@@ -4,7 +4,6 @@ import { Subject } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { PhieuThuChiFormComponent } from '../phieu-thu-chi-form/phieu-thu-chi-form.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { loaiThuChiBasic } from 'src/app/loai-thu-chi/loai-thu-chi.service';
 import { PhieuThuChiService, PhieuThuChiPaged } from '../phieu-thu-chi.service';

@@ -1,20 +1,18 @@
 
-import { CustomerReceiptDisplay } from './../../customer-receipt/customer-receipt.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
-import { debounceTime, mergeMap, switchMap, tap } from 'rxjs/operators';
-import { CustomerReceiptBasic, CustomerReceiptService } from 'src/app/customer-receipt/customer-receipt.service';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { ReceiveAppointmentService } from 'src/app/customer-receipt/receive-appointment.service';
 import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductPaged, ProductService } from 'src/app/products/product.service';
 import { AppSharedShowErrorService } from '../shared-show-error.service';
-import { ReceiveAppointmentService } from 'src/app/customer-receipt/receive-appointment.service';
 
 @Component({
   selector: 'app-receive-appointment-dialog',

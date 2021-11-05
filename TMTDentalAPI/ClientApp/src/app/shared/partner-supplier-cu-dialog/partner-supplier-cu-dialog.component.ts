@@ -1,15 +1,10 @@
-import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
-import { FormBuilder, FormGroup, Validators, FormArray } from "@angular/forms";
 import { HttpClient } from "@angular/common/http";
-import {
-  PartnerCategoryService,
-  PartnerCategoryPaged,
-} from "src/app/partner-categories/partner-category.service";
+import { Component, OnInit } from "@angular/core";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
-import { AppSharedShowErrorService } from "src/app/shared/shared-show-error.service";
-import { PartnerService } from 'src/app/partners/partner.service';
-import { NotificationService } from "@progress/kendo-angular-notification";
 import { IntlService } from "@progress/kendo-angular-intl";
+import { NotificationService } from "@progress/kendo-angular-notification";
+import { PartnerService } from 'src/app/partners/partner.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -60,11 +55,9 @@ export class PartnerSupplierCuDialogComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
-    private partnerCategoryService: PartnerCategoryService,
     private partnerService: PartnerService,
     public activeModal: NgbActiveModal,
     private notificationService: NotificationService,
-    private showErrorService: AppSharedShowErrorService,
     private intlService: IntlService,
   ) { }
 

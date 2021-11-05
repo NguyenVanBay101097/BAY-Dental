@@ -1,7 +1,6 @@
 import { HttpParams } from '@angular/common/http';
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { SaleOrderLineService, SaleOrderLinesPaged } from 'src/app/core/services/sale-order-line.service';
@@ -35,7 +34,6 @@ export class PartnerCustomerTreatmentSaleOrderLineComponent implements OnInit {
   public total: any;
   constructor(
     private saleOrderlineService: SaleOrderLineService,
-    private intlService: IntlService,
     private saleOrderOdataService: SaleOrdersOdataService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }

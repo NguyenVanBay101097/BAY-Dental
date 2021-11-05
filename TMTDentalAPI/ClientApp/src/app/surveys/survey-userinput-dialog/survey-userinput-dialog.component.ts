@@ -1,14 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
-import { WebService } from 'src/app/core/services/web.service';
-import { SurveyQuestionPaged, SurveyQuestionService } from '../survey-question.service';
 import { SurveyTagDialogComponent } from '../survey-tag-dialog/survey-tag-dialog.component';
 import { SurveyTagBasic, SurveyTagPaged, SurveyTagService } from '../survey-tag.service';
-import { SurveyUserInputDisplay, SurveyUserInputPaged, SurveyUserinputService } from '../survey-userinput.service';
+import { SurveyUserInputDisplay, SurveyUserinputService } from '../survey-userinput.service';
 
 @Component({
   selector: 'app-survey-userinput-dialog',
@@ -35,9 +32,6 @@ export class SurveyUserinputDialogComponent implements OnInit {
     private surveyTagService: SurveyTagService,
     private notificationService: NotificationService,
     private userInputService: SurveyUserinputService,
-    private intlService: IntlService,
-    private questionService: SurveyQuestionService,
-    private webService: WebService
   ) { }
 
   ngOnInit() {

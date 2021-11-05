@@ -1,9 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { map } from 'rxjs/operators';
-import { ProductRequestService } from 'src/app/shared/product-request.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { ProductRequestService } from 'src/app/shared/product-request.service';
 import { ProductRequestPaged } from '../product-request';
 import { SaleOrderProductRequestDialogComponent } from '../sale-order-product-request-dialog/sale-order-product-request-dialog.component';
 

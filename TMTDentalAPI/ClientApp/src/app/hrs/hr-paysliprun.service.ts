@@ -1,8 +1,6 @@
-import { EmployeeBasic } from './../employees/employee';
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HrPayslipDisplay } from './hr-payslip.service';
 
 
 export class HrPayslipRunBasic {

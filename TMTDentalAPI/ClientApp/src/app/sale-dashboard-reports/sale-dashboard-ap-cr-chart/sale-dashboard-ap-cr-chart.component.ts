@@ -1,6 +1,5 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
-import { IntlService } from '@progress/kendo-angular-intl';
 import { ChartDataset, ChartOptions } from 'chart.js';
 import * as pluginDataLabels from 'chartjs-plugin-datalabels';
 
@@ -66,7 +65,6 @@ export class SaleDashboardApCrChartComponent implements OnInit {
   pieReceiptPlugins = [pluginDataLabels];
 
   constructor(
-    private intlService: IntlService,
     private router: Router,
   ) { }
 

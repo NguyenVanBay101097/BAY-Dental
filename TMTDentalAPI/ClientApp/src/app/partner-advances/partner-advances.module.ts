@@ -4,7 +4,6 @@ import { PartnerAdvanceListComponent } from './partner-advance-list/partner-adva
 import { PartnerAdvanceCreateUpdateDialogComponent } from './partner-advance-create-update-dialog/partner-advance-create-update-dialog.component';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from '../shared/shared.module';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { PartnerAdvanceService } from './partner-advance.service';

@@ -2,14 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { ChartData, ChartDataset, ChartOptions, ChartType, TooltipItem } from 'chart.js';
-// import {  } from 'ng2-charts';
+import { ChartDataset, ChartOptions } from 'chart.js';
+import * as pluginDataLabels from 'chartjs-plugin-datalabels';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { AccountInvoiceReportService, RevenueDistrictAreaPar } from 'src/app/account-invoice-reports/account-invoice-report.service';
 import { CompanyPaged, CompanyService } from 'src/app/companies/company.service';
 import { PartnerOldNewReportByWardReq, PartnerOldNewReportService } from 'src/app/sale-report/partner-old-new-report.service';
 import { environment } from 'src/environments/environment';
-import * as pluginDataLabels from 'chartjs-plugin-datalabels';
 
 @Component({
   selector: 'app-partner-area-report',
@@ -147,7 +146,6 @@ export class PartnerAreaReportComponent implements AfterViewInit, OnInit {
     private companyService: CompanyService,
     private accountInvoiceReportService: AccountInvoiceReportService,
     private intlService: IntlService,
-    private _elementRef: ElementRef,
     private partnerOldNewRpService: PartnerOldNewReportService
   ) { }
 

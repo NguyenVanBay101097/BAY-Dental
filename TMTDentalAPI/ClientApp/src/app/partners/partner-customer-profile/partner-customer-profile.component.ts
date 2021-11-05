@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { AppointmentDisplay } from 'src/app/appointment/appointment';
+import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { PartnerDisplay } from '../partner-simple';
 import { PartnerService } from '../partner.service';
-import { ActivatedRoute } from '@angular/router';
-import { AppointmentService } from 'src/app/appointment/appointment.service';
-import { AppointmentDisplay } from 'src/app/appointment/appointment';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 
 @Component({
   selector: 'app-partner-customer-profile',
@@ -20,7 +19,6 @@ export class PartnerCustomerProfileComponent implements OnInit {
   constructor(
     private partnerService: PartnerService,
     private activeRoute: ActivatedRoute,
-    private serviceAppointment: AppointmentService,
     private modalService: NgbModal
   ) {}
 

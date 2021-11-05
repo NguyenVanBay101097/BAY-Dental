@@ -1,5 +1,4 @@
 import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { fromEvent, Subject } from 'rxjs';
@@ -7,7 +6,6 @@ import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
 import { ProductServiceCuDialogComponent } from 'src/app/products/product-service-cu-dialog/product-service-cu-dialog.component';
 import { ProductPaged, ProductService } from 'src/app/products/product.service';
 import { ToothDisplay } from 'src/app/teeth/tooth.service';
-import { ProductsOdataService } from '../services/ProductsOdata.service';
 
 @Component({
   selector: 'app-product-list-share',
@@ -36,7 +34,6 @@ export class ProductListShareComponent implements OnInit {
   constructor(
     private productService: ProductService,
     private modalService: NgbModal,
-    private fb: FormBuilder,
     private notificationService: NotificationService
   ) { }
 

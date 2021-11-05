@@ -1,13 +1,13 @@
-import { Component, ViewChild, OnInit, Inject } from '@angular/core';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { WindowService, WindowCloseResult, DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
-import { LaboOrderLinePaged, LaboOrderLineService, LaboOrderLineDisplay } from '../labo-order-line.service';
-import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { LaboOrderLineCuDialogComponent } from '../labo-order-line-cu-dialog/labo-order-line-cu-dialog.component';
-import { Subject } from 'rxjs';
-import { IntlService } from '@progress/kendo-angular-intl';
+import { Component, Inject, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { DialogCloseResult, DialogRef, DialogService } from '@progress/kendo-angular-dialog';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { IntlService } from '@progress/kendo-angular-intl';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { LaboOrderLineCuDialogComponent } from '../labo-order-line-cu-dialog/labo-order-line-cu-dialog.component';
+import { LaboOrderLineDisplay, LaboOrderLinePaged, LaboOrderLineService } from '../labo-order-line.service';
 
 @Component({
   selector: 'app-labo-order-line-list',
@@ -34,8 +34,10 @@ export class LaboOrderLineListComponent implements OnInit {
   receivedDateTo: Date;
   searchUpdate = new Subject<string>();
 
-  constructor(private laboOrderLineService: LaboOrderLineService,
-    private windowService: WindowService, private dialogService: DialogService, private intlService: IntlService,
+  constructor(
+    private laboOrderLineService: LaboOrderLineService,
+    private dialogService: DialogService,
+    private intlService: IntlService,
     private modalService: NgbModal,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }

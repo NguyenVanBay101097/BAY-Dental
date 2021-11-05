@@ -59,7 +59,7 @@ export class HrPayslipDateFilterComponent implements OnInit {
   }
 
   getMonthFilter() {
-    const today = new Date();
+    // const today = new Date();
     if (this.dateFrom && this.dateFrom !== '') {
       return (this.dateFrom.getMonth() + 1) + '/' + this.dateFrom.getFullYear();
     } else {

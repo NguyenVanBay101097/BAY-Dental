@@ -1,15 +1,14 @@
 import { Component, Inject, OnInit } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
-import { UoMCategoryPaged } from 'src/app/uom-categories/uom-category.service';
-import { UoMPaged, UomService } from '../uom.service';
-import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { UomCrUpComponent } from '../uom-cr-up/uom-cr-up.component';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { UomImportExcelDialogComponent } from '../uom-import-excel-dialog/uom-import-excel-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { NotifyService } from 'src/app/shared/services/notify.service';
+import { UomCrUpComponent } from '../uom-cr-up/uom-cr-up.component';
+import { UomImportExcelDialogComponent } from '../uom-import-excel-dialog/uom-import-excel-dialog.component';
+import { UoMPaged, UomService } from '../uom.service';
 
 @Component({
   selector: 'app-uom-list',

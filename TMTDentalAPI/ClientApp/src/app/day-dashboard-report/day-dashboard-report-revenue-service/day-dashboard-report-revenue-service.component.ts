@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { aggregateBy } from '@progress/kendo-data-query';

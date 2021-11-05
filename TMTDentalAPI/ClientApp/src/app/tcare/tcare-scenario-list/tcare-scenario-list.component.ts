@@ -6,7 +6,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { TcareScenarioCrDialogComponent } from '../tcare-scenario-cr-dialog/tcare-scenario-cr-dialog.component';
 import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({

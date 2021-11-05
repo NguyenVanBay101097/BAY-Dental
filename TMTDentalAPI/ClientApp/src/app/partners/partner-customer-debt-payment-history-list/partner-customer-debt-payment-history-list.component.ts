@@ -1,17 +1,15 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { PhieuThuChiPaged, PhieuThuChiService } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { NotifyService } from 'src/app/shared/services/notify.service';
-import { PartnerService } from '../partner.service';
-import { PrintService } from "src/app/shared/services/print.service";
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { NotifyService } from 'src/app/shared/services/notify.service';
+import { PrintService } from "src/app/shared/services/print.service";
 
 @Component({
   selector: 'app-partner-customer-debt-payment-history-list',
@@ -35,9 +33,7 @@ export class PartnerCustomerDebtPaymentHistoryListComponent implements OnInit {
 
   constructor(private intlService: IntlService,
     private modalService: NgbModal,
-    private partnerService: PartnerService,
     private phieuthuchiService: PhieuThuChiService,
-    private router: Router,
     private printService: PrintService,
     private route: ActivatedRoute,
     private notifyService: NotifyService,

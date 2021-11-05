@@ -1,20 +1,18 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Injectable, Inject } from '@angular/core';
-import { PagedResult2 } from '../paged-result-2';
+import { map } from 'rxjs/operators';
+import { PaymentInfoContent } from '../../account-invoices/account-invoice.service';
+import { AccountPaymentBasic } from '../../account-payments/account-payment.service';
+import { AccountRegisterPaymentDefaultGet, AccountRegisterPaymentDisplay } from '../../account-payments/account-register-payment.service';
+import { DotKhamBasic, DotKhamDisplay } from '../../dot-khams/dot-khams';
+import { LaboOrderDisplay } from '../../labo-orders/labo-order.service';
 import { SaleOrderBasic } from '../../sale-orders/sale-order-basic';
 import { SaleOrderDisplay } from '../../sale-orders/sale-order-display';
-import { DotKhamBasic, DotKhamDisplay } from '../../dot-khams/dot-khams';
-import { AccountRegisterPaymentDefaultGet, AccountRegisterPaymentDisplay } from '../../account-payments/account-register-payment.service';
-import { AccountPaymentPaged, AccountPaymentBasic } from '../../account-payments/account-payment.service';
-import { PaymentInfoContent } from '../../account-invoices/account-invoice.service';
-import { LaboOrderBasic, LaboOrderDisplay } from '../../labo-orders/labo-order.service';
-import { SaleOrderLineBasic } from '../../partners/partner.service';
 import { SaleOrderLineDisplay } from '../../sale-orders/sale-order-line-display';
+import { PagedResult2 } from '../paged-result-2';
 import { SaleOrderLineForProductRequest } from './sale-order-line.service';
-import { ToothDiagnosisSave } from 'src/app/tooth-diagnosis/tooth-diagnosis.service';
 import { RegisterSaleOrderPayment } from './sale-order-payment.service';
-import { map } from 'rxjs/operators';
 
 export class SaleOrderPaged {
     limit: number;

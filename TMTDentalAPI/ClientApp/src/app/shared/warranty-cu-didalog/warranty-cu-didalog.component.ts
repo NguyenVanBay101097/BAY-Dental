@@ -1,9 +1,8 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
@@ -35,8 +34,6 @@ export class WarrantyCuDidalogComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     public activeModal: NgbActiveModal,
-    private modalService: NgbModal,
-    private notificationService: NotificationService,
     private intlService: IntlService,
     private employeeService: EmployeeService,
     private laboWarrantyService: LaboWarrantyService,

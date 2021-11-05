@@ -1,10 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ProductService, ProductImportExcelViewModel, ProductImportExcelBaseViewModel, ProductPaged } from '../product.service';
-import { WindowRef } from '@progress/kendo-angular-dialog';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { of } from 'rxjs';
+import { ProductImportExcelBaseViewModel, ProductService } from '../product.service';
 
 @Component({
   selector: 'app-product-import-excel-dialog',
@@ -18,8 +15,10 @@ export class ProductImportExcelDialogComponent implements OnInit {
   title: string;
   isUpdate: boolean = false;
   correctFormat = true;
-  constructor(private productService: ProductService, public activeModal: NgbActiveModal, private notificationService: NotificationService,
-    private errorService: AppSharedShowErrorService) { }
+  constructor(private productService: ProductService, 
+    public activeModal: NgbActiveModal, 
+    private notificationService: NotificationService,
+    ) { }
 
   ngOnInit() {
   }

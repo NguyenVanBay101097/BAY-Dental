@@ -1,25 +1,17 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { NotificationService } from "@progress/kendo-angular-notification";
+import { Subject } from "rxjs";
 import { EmployeePaged } from "src/app/employees/employee";
 import { EmployeeService } from "src/app/employees/employee.service";
-import { SaleOrderLineDisplay } from "../sale-order-line-display";
-import {
-  ToothDisplay,
-  ToothFilter,
-  ToothService,
-} from "src/app/teeth/tooth.service";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { SaleOrderLineLaboOrdersDialogComponent } from "../sale-order-line-labo-orders-dialog/sale-order-line-labo-orders-dialog.component";
-import { ToothCategoryService } from "src/app/tooth-categories/tooth-category.service";
-import { NotificationService } from "@progress/kendo-angular-notification";
-import { SaleOrderPromotionDialogComponent } from "../sale-order-promotion-dialog/sale-order-promotion-dialog.component";
-import { BehaviorSubject, Subject } from "rxjs";
-import { SaleOrderLineService } from "src/app/core/services/sale-order-line.service";
 import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
-import { SaleOrderLinePromotionDialogComponent } from "../sale-order-line-promotion-dialog/sale-order-line-promotion-dialog.component";
-import { FilterCellWrapperComponent } from "@progress/kendo-angular-grid";
-import { CheckPermissionService } from "src/app/shared/check-permission.service";
 import { ToothSelectionDialogComponent } from "src/app/shared/tooth-selection-dialog/tooth-selection-dialog.component";
+import {
+  ToothDisplay
+} from "src/app/teeth/tooth.service";
+import { SaleOrderLineDisplay } from "../sale-order-line-display";
+import { SaleOrderLineLaboOrdersDialogComponent } from "../sale-order-line-labo-orders-dialog/sale-order-line-labo-orders-dialog.component";
 
 @Component({
   selector: "app-sale-order-line-cu",
@@ -82,11 +74,7 @@ export class SaleOrderLineCuComponent implements OnInit {
     private fb: FormBuilder,
     private employeeService: EmployeeService,
     private modalService: NgbModal,
-    private toothService: ToothService,
-    private toothCategoryService: ToothCategoryService,
     private notificationService: NotificationService,
-    private saleOrderLineService: SaleOrderLineService,
-    private checkPermissionService: CheckPermissionService
   ) { }
 
   ngOnInit() {

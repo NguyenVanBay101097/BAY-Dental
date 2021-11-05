@@ -1,18 +1,16 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, tap, switchMap } from 'rxjs/operators';
-import { DotKhamStepService, DotKhamStepPaged } from 'src/app/dot-khams/dot-kham-step.service';
-import { IntlService, load } from '@progress/kendo-angular-intl';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
-import { UserSimple } from 'src/app/users/user-simple';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
-import { PartnerService } from 'src/app/partners/partner.service';
-import { UserPaged, UserService } from 'src/app/users/user.service';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { IntlService } from '@progress/kendo-angular-intl';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { DotKhamStepPaged, DotKhamStepService } from 'src/app/dot-khams/dot-kham-step.service';
 import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
+import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
+import { PartnerService } from 'src/app/partners/partner.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
@@ -48,7 +46,6 @@ export class DotKhamStepReportComponent implements OnInit {
     private fb: FormBuilder,
     private intl: IntlService,
     private partnerService: PartnerService,
-    private userService: UserService,
     private employeeService: EmployeeService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }

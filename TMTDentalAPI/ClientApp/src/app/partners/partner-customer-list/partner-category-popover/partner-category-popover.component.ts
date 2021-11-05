@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angu
 import { MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { Observable, Subject } from 'rxjs';
 import { of } from 'rxjs/internal/observable/of';
-import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 import { PartnerCategoryDisplay, PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { PartnerAddRemoveTags, PartnerService } from '../../partner.service';

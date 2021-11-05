@@ -1,8 +1,6 @@
-import { AuthService } from 'src/app/auth/auth.service';
-import { DashboardReportService, ReportTodayRequest, RevenueTodayReponse } from './../../../core/services/dashboard-report.service';
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import { IntlService } from '@progress/kendo-angular-intl';
 import { ChartDataset, ChartOptions, ChartType } from 'chart.js';
+import { RevenueTodayReponse } from './../../../core/services/dashboard-report.service';
 
 @Component({
   selector: 'app-dashboard-revenue-today-report',
@@ -49,9 +47,7 @@ export class DashboardRevenueTodayReportComponent implements OnInit {
   ];
 
 
-  constructor(private intlService: IntlService,
-    private dashboardService: DashboardReportService,
-    private authService: AuthService
+  constructor(
   ) { }
 
   ngOnInit() {

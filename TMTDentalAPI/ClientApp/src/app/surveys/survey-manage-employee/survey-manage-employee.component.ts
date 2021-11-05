@@ -2,10 +2,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, takeUntil } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
-import { SurveyAssignmentService } from '../survey.service';
 
 @Component({
   selector: 'app-survey-manage-employee',

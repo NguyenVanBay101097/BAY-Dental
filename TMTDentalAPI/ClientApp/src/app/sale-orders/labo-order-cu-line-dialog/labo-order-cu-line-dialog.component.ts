@@ -1,33 +1,24 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { FormGroup, FormBuilder, Validators } from "@angular/forms";
-import { ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
-import { debounceTime, tap, switchMap, map } from "rxjs/operators";
+import { Component, OnInit } from "@angular/core";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
+import { IntlService } from "@progress/kendo-angular-intl";
+import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
+import {
+  LaboOrderLineDefaultGet, LaboOrderLineDisplay, LaboOrderLineOnChangeProduct, LaboOrderLineService
+} from "src/app/labo-order-lines/labo-order-line.service";
+import { ProductSimple } from "src/app/products/product-simple";
 import {
   ProductFilter,
-  ProductService,
+  ProductService
 } from "src/app/products/product.service";
-import { ProductSimple } from "src/app/products/product-simple";
-import * as _ from "lodash";
-import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
+import { SaleOrderLineDisplay } from 'src/app/sale-orders/sale-order-line-display';
 import {
-  ToothCategoryBasic,
-  ToothCategoryService,
-} from "src/app/tooth-categories/tooth-category.service";
-import {
-  ToothDisplay,
-  ToothFilter,
-  ToothService,
-  ToothBasic,
+  ToothBasic, ToothDisplay
 } from "src/app/teeth/tooth.service";
 import {
-  LaboOrderLineDisplay,
-  LaboOrderLineService,
-  LaboOrderLineOnChangeProduct,
-  LaboOrderLineDefaultGet,
-} from "src/app/labo-order-lines/labo-order-line.service";
-import { IntlService } from "@progress/kendo-angular-intl";
-import { SaleOrderLineDisplay } from 'src/app/sale-orders/sale-order-line-display';
-import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
+  ToothCategoryBasic,
+  ToothCategoryService
+} from "src/app/tooth-categories/tooth-category.service";
 
 @Component({
   selector: "app-labo-order-cu-line-dialog",
@@ -54,7 +45,6 @@ export class LaboOrderCuLineDialogComponent implements OnInit {
     private fb: FormBuilder,
     private productService: ProductService,
     public activeModal: NgbActiveModal,
-    private toothService: ToothService,
     private toothCategoryService: ToothCategoryService,
     private laboOrderLineService: LaboOrderLineService,
     private intlService: IntlService, private saleLineService: SaleOrderLineService

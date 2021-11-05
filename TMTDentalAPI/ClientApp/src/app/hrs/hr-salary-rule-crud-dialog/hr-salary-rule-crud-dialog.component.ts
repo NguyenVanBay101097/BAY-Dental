@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { validator } from 'fast-json-patch';
 
 @Component({
   selector: 'app-salary-rule-crud-dialog',
@@ -29,7 +27,7 @@ export class HrSalaryRuleCrudDialogComponent implements OnInit {
     { text: 'Hoa hồng', value: 'hoa_hong' }
   ];
 
-  constructor(public activeModal: NgbActiveModal, private fb: FormBuilder, private activeroute: ActivatedRoute) { }
+  constructor(public activeModal: NgbActiveModal, private fb: FormBuilder) { }
 
   ngOnInit() {
     this.RuleForm = this.fb.group({

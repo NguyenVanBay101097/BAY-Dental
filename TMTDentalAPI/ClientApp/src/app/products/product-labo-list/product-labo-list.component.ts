@@ -1,21 +1,14 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { ProductService, ProductPaged, ProductBasic2, ProductLaboBasic } from '../product.service';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import { WindowService, WindowCloseResult, DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
-import { ProductDialogComponent } from '../product-dialog/product-dialog.component';
-import { ProductServiceCuDialogComponent } from '../product-service-cu-dialog/product-service-cu-dialog.component';
-import { Product } from '../product';
-import { ProductAdvanceFilter } from '../product-advance-filter/product-advance-filter.component';
-import { ProductMedicineCuDialogComponent } from '../product-medicine-cu-dialog/product-medicine-cu-dialog.component';
-import { ProductLaboCuDialogComponent } from '../product-labo-cu-dialog/product-labo-cu-dialog.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/labo-order-cu-dialog.component';
-import { ProductImportExcelDialogComponent } from '../product-import-excel-dialog/product-import-excel-dialog.component';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { ProductImportExcelDialogComponent } from '../product-import-excel-dialog/product-import-excel-dialog.component';
+import { ProductLaboCuDialogComponent } from '../product-labo-cu-dialog/product-labo-cu-dialog.component';
+import { ProductLaboBasic, ProductPaged, ProductService } from '../product.service';
 @Component({
   selector: 'app-product-labo-list',
   templateUrl: './product-labo-list.component.html',

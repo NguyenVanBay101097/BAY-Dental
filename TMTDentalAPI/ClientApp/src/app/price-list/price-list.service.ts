@@ -1,11 +1,11 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { ProductBasic2 } from '../products/product.service';
+import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PagedResult2 } from '../employee-categories/emp-category';
-import { ProductCategoryPaging, ProductCategoryBasic } from '../product-categories/product-category.service';
-import { PartnerCategoryPaged, PartnerCategoryBasic } from '../partner-categories/partner-category.service';
+import { PartnerCategoryBasic, PartnerCategoryPaged } from '../partner-categories/partner-category.service';
+import { ProductCategoryBasic } from '../product-categories/product-category.service';
 import { ProductSimple } from '../products/product-simple';
+import { ProductBasic2 } from '../products/product.service';
 import { ProductPriceListBasic, ProductPriceListSave } from './price-list';
 
 @Injectable({

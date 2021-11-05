@@ -7,13 +7,9 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
-import { PartnerPaged } from 'src/app/partners/partner-simple';
-import { PartnerService } from 'src/app/partners/partner.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { SmsComfirmDialogComponent } from '../sms-comfirm-dialog/sms-comfirm-dialog.component';
-import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
 import { SmsMessageDetailPaged, SmsMessageDetailService } from '../sms-message-detail.service';
-import { SmsTemplateService } from '../sms-template.service';
 
 @Component({
   selector: 'app-sms-message-detail-statistic',

@@ -85,7 +85,7 @@ namespace Infrastructure.Services
                 Barcode = x.Barcode,
                 State = x.State,
                 PartnerPhone = x.Partner.Phone
-            }).ToListAsync();
+            }).Skip(val.Offset).Take(val.Limit).ToListAsync();
 
             var totalItems = await query.CountAsync();
             return new PagedResult2<CardCardBasic>(totalItems, val.Offset, val.Limit)

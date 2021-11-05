@@ -1,17 +1,17 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { Workbook } from '@progress/kendo-angular-excel-export';
-import { GridComponent, GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { aggregateBy } from '@progress/kendo-data-query';
-import { Observable, of, Subject, zip } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
-import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
-import { AccountCommonPartnerReportService, ReportPartnerDebitDetailReq, ReportPartnerDebitDetailRes, ReportPartnerDebitReq, ReportPartnerDebitRes } from '../account-common-partner-report.service';
 import { saveAs } from '@progress/kendo-file-saver';
-import { PrintService } from 'src/app/shared/services/print.service';
 import * as moment from 'moment';
+import { Observable, Subject, zip } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
+import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { PrintService } from 'src/app/shared/services/print.service';
+import { AccountCommonPartnerReportService, ReportPartnerDebitDetailReq, ReportPartnerDebitDetailRes, ReportPartnerDebitReq, ReportPartnerDebitRes } from '../account-common-partner-report.service';
 @Component({
   selector: 'app-partner-debit-list-report',
   templateUrl: './partner-debit-list-report.component.html',

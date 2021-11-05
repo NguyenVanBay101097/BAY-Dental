@@ -1,11 +1,9 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridComponent, GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { matches } from 'lodash';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { MedicineOrderCreateDialogComponent } from '../medicine-order-create-dialog/medicine-order-create-dialog.component';
 import { MedicineOrderService, PrecscriptionPaymentPaged, PrecscriptionPaymentReport } from '../medicine-order.service';
@@ -16,7 +14,7 @@ import { MedicineOrderService, PrecscriptionPaymentPaged, PrecscriptionPaymentRe
   styleUrls: ['./medicine-order-prescription-payment-list.component.css']
 })
 export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
-  @ViewChild(GridComponent, { static: true }) private grid: GridComponent;
+  @ViewChild(GridComponent, { static: true }) 
   gridData: GridDataResult;
   searchUpdate = new Subject<string>();
   search: string;

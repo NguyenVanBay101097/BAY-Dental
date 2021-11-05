@@ -1,19 +1,17 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { EmployeePaged, EmployeeBasic } from '../employee';
-import { FormGroup, FormBuilder } from '@angular/forms';
-import { EmployeeService } from '../employee.service';
-import { map, distinctUntilChanged, debounceTime, tap, switchMap } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import { EmployeeCreateUpdateComponent } from '../employee-create-update/employee-create-update.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { ActivatedRoute } from '@angular/router';
-import { NotificationService } from '@progress/kendo-angular-notification';
-import { AuthService } from 'src/app/auth/auth.service';
-import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { NotificationService } from '@progress/kendo-angular-notification';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { HrJobService, HrJobsPaged } from 'src/app/hr-jobs/hr-job.service';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { EmployeeBasic, EmployeePaged } from '../employee';
+import { EmployeeCreateUpdateComponent } from '../employee-create-update/employee-create-update.component';
+import { EmployeeService } from '../employee.service';
 
 @Component({
   selector: 'app-employee-list',
@@ -34,9 +32,9 @@ export class EmployeeListComponent implements OnInit {
     width: 'auto'
   };
   hrJobs: any[] = [];
-  constructor(private fb: FormBuilder, private service: EmployeeService,
+  constructor(private service: EmployeeService,
     private notificationService: NotificationService,
-    private activeroute: ActivatedRoute, private modalService: NgbModal,
+    private modalService: NgbModal,
     private authService: AuthService,
     private hrJobService: HrJobService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig

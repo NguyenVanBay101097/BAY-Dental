@@ -1,7 +1,6 @@
-import { Component, OnInit, Input, Inject } from '@angular/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { PartnerReportLocationCity, PartnerReportLocationDistrict, PartnerService, PartnerReportLocationWard } from 'src/app/partners/partner.service';
-import { aggregateBy } from '@progress/kendo-data-query';
+import { PartnerReportLocationDistrict, PartnerReportLocationWard, PartnerService } from 'src/app/partners/partner.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({

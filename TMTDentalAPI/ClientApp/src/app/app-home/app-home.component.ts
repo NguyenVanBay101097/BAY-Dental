@@ -4,14 +4,17 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
+import { map, mergeMap } from 'rxjs/operators';
 import { AuthService } from '../auth/auth.service';
 import { IrConfigParameterService } from '../core/services/ir-config-parameter.service';
+import { SessionInfoStorageService } from '../core/services/session-info-storage.service';
+import { WebSessionService } from '../core/services/web-session.service';
 import { WebService } from '../core/services/web.service';
 import { ChangePasswordDialogComponent } from '../shared/change-password-dialog/change-password-dialog.component';
+import { CheckPermissionService } from '../shared/check-permission.service';
 import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog.component';
 import { ImportSampleDataComponent } from '../shared/import-sample-data/import-sample-data.component';
 import { PermissionService } from '../shared/permission.service';
-import { SearchAllService } from '../shared/search-all.service';
 import { UserProfileEditComponent } from '../shared/user-profile-edit/user-profile-edit.component';
 import { UserChangeCurrentCompanyVM, UserService } from '../users/user.service';
 
@@ -223,6 +226,7 @@ export class AppHomeComponent implements OnInit {
 
   minimized = false;
   irImportSampleData = null;
+  sessionInfo: any;
 
   constructor(
     private modalService: NgbModal,
@@ -233,18 +237,32 @@ export class AppHomeComponent implements OnInit {
     private notificationService: NotificationService,
     private permissionService: PermissionService,
     private irConfigParamService: IrConfigParameterService,
+    private sessionInfoStorageService: SessionInfoStorageService,
+    private webSessionService: WebSessionService,
+    private checkPermissionService: CheckPermissionService
   ) { }
 
   ngOnInit() {
-    this.loadChangeCurrentCompany();
-    this.loadExpire();
-
+    this.sessionInfo = this.sessionInfoStorageService.getSessionInfo();
     this.menus = this.filterMenus();
-    this.permissionService.permissionStoreChangeEmitter.subscribe(() => {
-      this.menus = this.filterMenus();
-    });
-
     this.loadIrConfigParam();
+  }
+
+  showExpirationDate(dateStr) {
+    const expireDate = new Date(dateStr);
+    const date = new Date();
+    var diff = expireDate.getTime() - date.getTime();
+
+    var days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    diff -=  days * (1000 * 60 * 60 * 24);
+    
+    var hours = Math.floor(diff / (1000 * 60 * 60));
+    diff -= hours * (1000 * 60 * 60);
+    
+    var mins = Math.floor(diff / (1000 * 60));
+    diff -= mins * (1000 * 60);
+
+    return `${days} ngày ${hours} giờ ${mins} phút`;
   }
 
   filterMenus() {
@@ -279,29 +297,13 @@ export class AppHomeComponent implements OnInit {
   }
 
   hasPermission(menuItem) {
-    var pm = localStorage.getItem("user_permission");
-    if (pm != null) {
-      var user_permission = JSON.parse(pm);
-      if (user_permission.isUserRoot) {
-        return true;
-      }
-
-      if (menuItem.permissions) {
-        var listPermission = user_permission.permission;
-        for (var i = 0; i < menuItem.permissions.length; i++) {
-          var permission = menuItem.permissions[i];
-          if (listPermission.includes(permission)) {
-            return true;
-          }
-        }
-
-        return false;
-      }
-
+    if (!menuItem.permissions) {
       return true;
     }
 
-    return false;
+    return menuItem.permissions.some(x => {
+      return this.checkPermissionService.check(x);
+    });
   }
 
   toggleMinimize(e) {
@@ -324,18 +326,20 @@ export class AppHomeComponent implements OnInit {
   }
 
   switchCompany(companyId) {
-    this.userService.switchCompany({ companyId: companyId }).subscribe(() => {
-      this.authService.refresh().subscribe(() => {
-        this.userService.getChangeCurrentCompany().subscribe(result => {
-          localStorage.setItem('user_change_company_vm', JSON.stringify(result));
-          var userInfo = JSON.parse(localStorage.getItem("user_info"));
-          localStorage.removeItem('user_info');
-          userInfo.companyId = result.currentCompany.id;
-          localStorage.setItem('user_info', JSON.stringify(userInfo));
-          window.location.reload();
-        });
+    this.userService.switchCompany({ companyId: companyId })
+      .pipe(
+        mergeMap(() => {
+          return this.webSessionService.getSessionInfo();
+        }),
+        mergeMap((sessionInfo) => {
+          this.sessionInfoStorageService.saveSession(sessionInfo);
+          return this.webSessionService.getCurrentUserInfo();
+        }),
+      )
+      .subscribe(userInfo => {
+        localStorage.setItem('user_info', JSON.stringify(userInfo));
+        window.location.reload();
       });
-    });
   }
 
   changePassword() {

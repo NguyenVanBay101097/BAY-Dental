@@ -1,14 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { forkJoin, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { AccountPaymentPaged, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
-import { CashBookDetailFilter, CashBookPaged, CashBookService, CashBookSummarySearch, ReportDataResult } from '../cash-book.service';
+import { CashBookDetailFilter, CashBookService, CashBookSummarySearch } from '../cash-book.service';
 
 @Component({
   selector: 'app-cash-book-tab-page-ca-bo',
@@ -38,11 +36,9 @@ export class CashBookTabPageCaBoComponent implements OnInit {
   resultSelection = 'cash_bank';
 
   constructor(
-    private modalService: NgbModal,
     private cashBookService: CashBookService,
     private intlService: IntlService,
     private authService: AuthService,
-    private accountPaymentService: AccountPaymentService, 
     private route: ActivatedRoute,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }

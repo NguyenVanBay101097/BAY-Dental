@@ -51,7 +51,7 @@ export class PartnerOverviewMemberCardsComponent implements OnInit {
   getState(state){
     switch (state){
       case 'draft':
-        return 'Nháp';
+        return 'Chưa kích hoạt';
       case 'in_use':
         return 'Đã kích hoạt';
       default:

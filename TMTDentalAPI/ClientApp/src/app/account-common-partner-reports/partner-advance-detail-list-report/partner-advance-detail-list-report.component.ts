@@ -1,6 +1,5 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { IntlService } from '@progress/kendo-angular-intl';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { AccountCommonPartnerReportService, ReportPartnerAdvanceDetail, ReportPartnerAdvanceDetailFilter } from '../account-common-partner-report.service';
 
@@ -19,7 +18,6 @@ export class PartnerAdvanceDetailListReportComponent implements OnInit {
   details: ReportPartnerAdvanceDetail[];
   
   constructor(
-    private intlService: IntlService,
     private reportService: AccountCommonPartnerReportService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }

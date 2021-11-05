@@ -1,21 +1,19 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
-import { AuthService } from 'src/app/auth/auth.service';
-import { PrintService } from 'src/app/shared/services/print.service';
 import { ProductCategoryBasic, ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
-import { ProductService } from 'src/app/products/product.service';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { StockInventoryCriteriaBasic, StockInventoryCriteriaPaged, StockInventoryCriteriaService } from '../stock-inventory-criteria.service';
-import { StockInventoryLineByProductId, StockInventoryService } from '../stock-inventory.service';
-import { StockInventoryLineService, StockInventoryLineOnChangeCreateLine } from '../stock-inventory-line.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PrintService } from 'src/app/shared/services/print.service';
+import { StockInventoryCriteriaBasic, StockInventoryCriteriaPaged, StockInventoryCriteriaService } from '../stock-inventory-criteria.service';
+import { StockInventoryLineOnChangeCreateLine, StockInventoryLineService } from '../stock-inventory-line.service';
+import { StockInventoryService } from '../stock-inventory.service';
 
 @Component({
   selector: 'app-stock-inventory-form',
@@ -63,10 +61,8 @@ export class StockInventoryFormComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private notificationService: NotificationService,
-    private productService: ProductService,
     private productCategoryService: ProductCategoryService,
     private stockInventorySevice: StockInventoryService,
-    private authService: AuthService,
     private intlService: IntlService,
     private criteriaService: StockInventoryCriteriaService,
     private printService: PrintService,
@@ -176,7 +172,7 @@ export class StockInventoryFormComponent implements OnInit {
         this.onChangeFilter();
       });
     } else {
-      var companyId = this.authService.userInfo.companyId;
+      // var companyId = this.authService.userInfo.companyId;
       this.stockInventorySevice.getDefault().subscribe((result: any) => {
         this.formGroup.patchValue(result);
         let date = new Date(result.date);

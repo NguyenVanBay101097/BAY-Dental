@@ -1,7 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { GridComponent, GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { IntlService } from '@progress/kendo-angular-intl';
+import { GridComponent, GridDataResult } from '@progress/kendo-angular-grid';
 import { map } from 'rxjs/operators';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { GetStockHistoryReq, StockReportService } from 'src/app/stock-reports/stock-report.service';
@@ -24,7 +23,6 @@ export class StockXuatNhapTonDetailDialogComponent implements OnInit {
   constructor(
     public activeModal: NgbActiveModal,
     private stockReportService: StockReportService,
-    private intlService: IntlService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) {
     this.pagerSettings = config.pagerSettingsPopup

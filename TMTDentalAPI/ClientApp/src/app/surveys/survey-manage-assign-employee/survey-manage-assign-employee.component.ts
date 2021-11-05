@@ -4,12 +4,12 @@ import { GridDataResult } from "@progress/kendo-angular-grid";
 import { IntlService } from "@progress/kendo-angular-intl";
 import { NotificationService } from "@progress/kendo-angular-notification";
 import { Subject } from "rxjs";
-import { debounceTime, distinctUntilChanged, map, switchMap, tap } from "rxjs/operators";
+import { debounceTime, distinctUntilChanged, map } from "rxjs/operators";
 import { SaleOrderService, SaleOrderToSurveyFilter } from "src/app/core/services/sale-order.service";
-import { EmployeePaged, EmployeeSimple } from "src/app/employees/employee";
+import { EmployeeSimple } from "src/app/employees/employee";
 import { EmployeeService } from "src/app/employees/employee.service";
 import { PageGridConfig, PAGER_GRID_CONFIG } from "src/app/shared/pager-grid-kendo.config";
-import { SurveyAssignmentDefaultGetPar, SurveyAssignmentPaged, SurveyAssignmentService } from "../survey.service";
+import { SurveyAssignmentService } from "../survey.service";
 @Component({
   selector: 'app-survey-manage-assign-employee',
   templateUrl: './survey-manage-assign-employee.component.html',

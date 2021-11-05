@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { WindowRef } from '@progress/kendo-angular-dialog';
-import { EmpCategoryService } from '../emp-category.service';
-import { EmployeeCategoryDisplay } from '../emp-category';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { EmployeeCategoryDisplay } from '../emp-category';
+import { EmpCategoryService } from '../emp-category.service';
 
 @Component({
   selector: 'app-emp-categories-create-update',

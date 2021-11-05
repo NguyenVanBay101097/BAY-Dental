@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { HomeService, TopServices } from '../home.service';
 import { IntlService } from '@progress/kendo-angular-intl';
-import * as _ from 'lodash';
-import { ProductService } from 'src/app/products/product.service';
+import { HomeService } from '../home.service';
 
 export class AppointmentState {
   state: string;
@@ -19,7 +17,10 @@ export class AppointmentState {
 })
 export class HomeComponent implements OnInit {
 
-  constructor(private intlService: IntlService, private homeService: HomeService, private productService: ProductService) { }
+  constructor(
+    private intlService: IntlService,
+    private homeService: HomeService
+  ) { }
 
   invoiceItems = [];
   appointItems = [];

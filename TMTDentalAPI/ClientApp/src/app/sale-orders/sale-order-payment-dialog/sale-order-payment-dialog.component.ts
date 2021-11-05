@@ -1,23 +1,15 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
-import { ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
-import {
-  AccountJournalSimple,
-  AccountJournalService,
-  AccountJournalFilter,
-} from "src/app/account-journals/account-journal.service";
-import { AccountRegisterPaymentDisplay } from "src/app/account-payments/account-register-payment.service";
-import { FormGroup, FormBuilder, Validators, FormArray } from "@angular/forms";
-import { AccountPaymentService } from "src/app/account-payments/account-payment.service";
-import { IntlService } from "@progress/kendo-angular-intl";
+import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
-import { NotificationService } from "@progress/kendo-angular-notification";
-import { AppSharedShowErrorService } from "src/app/shared/shared-show-error.service";
+import { ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
+import { IntlService } from "@progress/kendo-angular-intl";
+import {
+  AccountJournalFilter, AccountJournalService, AccountJournalSimple
+} from "src/app/account-journals/account-journal.service";
 import { AuthService } from "src/app/auth/auth.service";
-import { debounceTime, tap, switchMap } from "rxjs/operators";
-import { AccountPaymentsOdataService } from "src/app/shared/services/account-payments-odata.service";
 import { SaleOrderPaymentService } from "src/app/core/services/sale-order-payment.service";
-import { validator } from "fast-json-patch";
 import { PartnerService } from "src/app/partners/partner.service";
+import { AppSharedShowErrorService } from "src/app/shared/shared-show-error.service";
 
 @Component({
   selector: "app-sale-order-payment-dialog",
@@ -47,11 +39,9 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     private fb: FormBuilder,
     private intlService: IntlService,
     public activeModal: NgbActiveModal,
-    private notificationService: NotificationService,
     private accountJournalService: AccountJournalService,
     private errorService: AppSharedShowErrorService,
     private authService: AuthService,
-    private accountPaymenetOdataService: AccountPaymentsOdataService,
     private saleOrderPaymentService: SaleOrderPaymentService,
     private partnerService: PartnerService
   ) { }

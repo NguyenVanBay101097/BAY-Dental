@@ -1,18 +1,18 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { GridDataResult, PageChangeEvent, RowArgs } from '@progress/kendo-angular-grid';
-import { FacebookPageService, MultiUserProfilesVm } from '../facebook-page.service';
-import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { FacebookUserProfilesService } from '../facebook-user-profiles.service';
-import { NotificationService } from '@progress/kendo-angular-notification';
-import { Subject } from 'rxjs';
-import { FacebookPageMarketingCustomerDialogComponent } from '../facebook-page-marketing-customer-dialog/facebook-page-marketing-customer-dialog.component';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { FacebookUserProfilesODataService } from 'src/app/shared/services/facebook-user-profiles.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { CompositeFilterDescriptor, State } from '@progress/kendo-data-query';
-import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { Operation } from 'fast-json-patch';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
+import { FacebookUserProfilesODataService } from 'src/app/shared/services/facebook-user-profiles.service';
+import { FacebookPageMarketingCustomerDialogComponent } from '../facebook-page-marketing-customer-dialog/facebook-page-marketing-customer-dialog.component';
+import { FacebookPageService, MultiUserProfilesVm } from '../facebook-page.service';
+import { FacebookUserProfilesService } from '../facebook-user-profiles.service';
 
 @Component({
   selector: 'app-facebook-page-marketing-customer-list',
@@ -21,10 +21,12 @@ import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-ken
 })
 export class FacebookPageMarketingCustomerListComponent implements OnInit {
 
-  constructor(private modalService: NgbModal,
+  constructor(
+    private modalService: NgbModal,
+    private route: ActivatedRoute,
+    private notificationService: NotificationService,
     private facebookPageService: FacebookPageService,
     private facebookUserProfilesService: FacebookUserProfilesService,
-    private notificationService: NotificationService, private route: ActivatedRoute,
     private facebookUserProfilesODataService: FacebookUserProfilesODataService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettingsPopup }

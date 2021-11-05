@@ -1,13 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Product } from '../product';
-import { ProductService } from '../product.service';
-import { WindowRef, WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-// import { debug } from 'util';
-import { ProductMedicineFormComponent } from '../product-medicine-form/product-medicine-form.component';
-import { ProductCategoryDisplay, ProductCategoryBasic, ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
-import * as _ from 'lodash';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { WindowRef } from '@progress/kendo-angular-dialog';
 import { ProductStepFormComponent } from '../product-step-form/product-step-form.component';
+import { ProductService } from '../product.service';
 
 @Component({
   selector: 'app-product-step-cu-dialog',
@@ -21,7 +16,7 @@ export class ProductStepCuDialogComponent implements OnInit {
   @ViewChild('productForm', { static: true }) productForm: ProductStepFormComponent;
 
   constructor(private productService: ProductService, public window: WindowRef, private fb: FormBuilder,
-    private windowService: WindowService, private productCategoryService: ProductCategoryService) {
+    ) {
     this.formGroup = this.fb.group({
       name: ['', Validators.required],
       saleOK: false,

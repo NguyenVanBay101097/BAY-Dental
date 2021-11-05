@@ -1,10 +1,10 @@
-import { Component, OnInit, ViewChild, ComponentFactoryResolver, Output, EventEmitter, ComponentRef } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray, FormControl } from '@angular/forms';
+import { Component, ComponentFactoryResolver, ComponentRef, OnInit, ViewChild } from '@angular/core';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { AnchorHostDirective } from 'src/app/shared/anchor-host.directive';
 import { FacebookPageMarketingMessageAddButtonComponent } from '../facebook-page-marketing-message-add-button/facebook-page-marketing-message-add-button.component';
 import { MarketingCampaignActivitiesService } from '../marketing-campaign-activities.service';
-import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-facebook-page-marketing-activity-dialog',
@@ -31,10 +31,12 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
 
   @ViewChild(AnchorHostDirective, { static: true }) anchorHost: AnchorHostDirective;
 
-  constructor(private fb: FormBuilder, public activeModal: NgbActiveModal,
-    private componentFactoryResolver: ComponentFactoryResolver, 
-    private marketingCampaignActivitiesService: MarketingCampaignActivitiesService, 
-    private notificationService: NotificationService ) { }
+  constructor(
+    private fb: FormBuilder, public activeModal: NgbActiveModal,
+    private componentFactoryResolver: ComponentFactoryResolver,
+    private marketingCampaignActivitiesService: MarketingCampaignActivitiesService,
+    private notificationService: NotificationService
+  ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -136,7 +138,7 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
     //
     var value = this.formGroup.value;
     // console.log(value);
-    
+
     if (this.activityId) {
       // console.log(this.activityId);
       this.marketingCampaignActivitiesService.put(this.activityId, value).subscribe(res => {
@@ -183,7 +185,7 @@ export class FacebookPageMarketingActivityDialogComponent implements OnInit {
     this.selectArea_start = event.target.selectionStart;
     this.selectArea_end = event.target.selectionEnd;
   }
-  addContentPluginTextarea(event) {  
+  addContentPluginTextarea(event) {
     if (this.formGroup.value.text) {
       this.formGroup.patchValue({
         text: this.formGroup.value.text.slice(0, this.selectArea_start) + event + this.formGroup.value.text.slice(this.selectArea_end)

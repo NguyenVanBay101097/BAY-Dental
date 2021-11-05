@@ -58,7 +58,7 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      name: ["", Validators.required],
+      name: "",
       gender: "male",
       birthDayStr: '',
       birthMonthStr: '',
@@ -119,7 +119,7 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
         this.customerCbx.loading = false;
       }
     )
-    
+
     this.employeeCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => this.employeeCbx.loading = true),
@@ -190,12 +190,17 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
     return this.commissionService.getPaged(val);
   }
 
+  setValidator(key: string){
+    this.f[key].setValidators(Validators.required);
+    this.f[key].updateValueAndValidity();
+  }
+
   reload() {
     if (this.id) {
       this.agentService.get(this.id).subscribe((result: any) => {
-        console.log(result);
         this.formGroup.patchValue(result);
         this.classify = result.classify ? result.classify : 'partner';
+        this.setValidator(this.classify);
         if (result.birthYear) {
           this.formGroup.get("birthYearStr").setValue(result.birthYear + '');
         }
@@ -208,6 +213,9 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
           this.formGroup.get("birthDayStr").setValue(result.birthDay + '');
         }
       });
+    }
+    else {
+      this.setValidator('name');
     }
   }
 
@@ -265,16 +273,15 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
     let val = e.target.value;
     this.classify = val;
     this.resetFormGroup();
-    if ( val === 'partner' ) {
+    if (val === 'partner') {
       this.f.name.setValidators(Validators.required);
       this.f.name.updateValueAndValidity();
       this.f.customer.clearValidators();
       this.f.customer.updateValueAndValidity();
       this.f.employee.clearValidators();
       this.f.employee.updateValueAndValidity();
-      
     }
-    else if ( val === 'customer' ) {
+    else if (val === 'customer') {
       this.f.customer.setValidators(Validators.required);
       this.f.customer.updateValueAndValidity();
       this.f.name.clearValidators();
@@ -296,15 +303,15 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
     if (e) {
       this.formGroup.patchValue(e);
       if (e.birthYear) {
-        this.formGroup.get("birthYearStr").setValue(e.birthYear);
+        this.formGroup.get("birthYearStr").patchValue(e.birthYear);
       }
 
       if (e.birthMonth) {
-        this.formGroup.get("birthMonthStr").setValue(e.birthMonth);
+        this.formGroup.get("birthMonthStr").patchValue(e.birthMonth);
       }
 
       if (e.birthDay) {
-        this.formGroup.get("birthDayStr").setValue(e.birthDay);
+        this.formGroup.get("birthDayStr").patchValue(e.birthDay);
       }
     }
     else {

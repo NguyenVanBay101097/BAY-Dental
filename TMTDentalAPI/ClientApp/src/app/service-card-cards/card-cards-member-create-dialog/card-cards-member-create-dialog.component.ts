@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
@@ -21,6 +21,7 @@ export class CardCardsMemberCreateDialogComponent implements OnInit {
   cardTypeSimpleFilter: any[] = [];
   partnerId: string;
   title: string = '';
+
   constructor(
     private fb: FormBuilder,
     public activeModal: NgbActiveModal,
@@ -34,7 +35,7 @@ export class CardCardsMemberCreateDialogComponent implements OnInit {
   ngOnInit(): void {
     this.formGroup = this.fb.group({
       barcode: ['', [Validators.required,createLengthValidator()]],
-      cardType: [null,Validators.required],
+      type: [null,Validators.required],
     });
     this.cardTypeCbx.filterChange
     .asObservable()
@@ -49,19 +50,28 @@ export class CardCardsMemberCreateDialogComponent implements OnInit {
       this.cardTypeCbx.loading = false;
     });
     this.loadCardTypes();
+    this.getDefault();
   }
 
   onSave(){
+    this.submitted = true;
+    // this.touched();
     if (this.formGroup.invalid)
       return;
     var val = this.formGroup.value;
-    val.typeId = val.cardType ? val.cardType.id : '';
+    val.typeId = val.type ? val.type.id : '';
     val.partnerId = this.partnerId || '';
     this.cardCardsService.create(val).subscribe(res => {
       this.cardCardsService.buttonActive([res.id]).subscribe(()=> {
         this.notifyService.notify('success','Lưu và kích hoạt thành công');
         this.activeModal.close();
       })
+    })
+  }
+
+  getDefault(){
+    this.cardCardsService.getDefault().subscribe(res => {
+      this.formGroup.get("type").setValue(res.type);
     })
   }
 
@@ -72,8 +82,15 @@ export class CardCardsMemberCreateDialogComponent implements OnInit {
   }
 
   searchCardTypes(q?: string) {
-    var val = {search: q || '', offset: 0, limit: 10};
+    var val = {search: q || '', offset: 0, limit: 0};
     return this.cardService.getPaged(val);
+  }
+
+  touched() {
+    (<any>Object).values(this.formGroup.controls).forEach((control: FormControl) => {
+      control.markAsTouched();
+    })
+    return;
   }
 
   get f(){

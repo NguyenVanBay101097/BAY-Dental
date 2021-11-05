@@ -1,8 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NotificationService } from '@progress/kendo-angular-notification';
 import { NotifyService } from 'src/app/shared/services/notify.service';
-import { QuotationService } from '../quotation.service';
 
 @Component({
   selector: 'app-quotation-apply-coupon',
@@ -17,7 +15,6 @@ export class QuotationApplyCouponComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private notifyService: NotifyService,
-    private notificationService: NotificationService
   ) { }
 
   ngOnInit() {

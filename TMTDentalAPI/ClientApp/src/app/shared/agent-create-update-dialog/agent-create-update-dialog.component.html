@@ -72,7 +72,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div *ngIf="classify=='employee'">
+                                                    <div [class.d-none]="classify !== 'employee'">
                                                         <kendo-combobox formControlName="employee" [filterable]="true"
                                                             [data]="employeeSimpleFilter" #employeeCbx
                                                             [valueField]="'id'" [textField]="'name'" placeholder="Họ tên, sđt, mã"

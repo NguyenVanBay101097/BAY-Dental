@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { FacebookPageMarketingActivityDialogComponent } from '../facebook-page-marketing-activity-dialog/facebook-page-marketing-activity-dialog.component';
-import { MarketingCampaignService } from 'src/app/marketing-campaigns/marketing-campaign.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
-import { MarketingCampaignActivitiesService } from '../marketing-campaign-activities.service';
+import { MarketingCampaignService } from 'src/app/marketing-campaigns/marketing-campaign.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { FacebookPageMarketingActivityDialogComponent } from '../facebook-page-marketing-activity-dialog/facebook-page-marketing-activity-dialog.component';
+import { MarketingCampaignActivitiesService } from '../marketing-campaign-activities.service';
 
 @Component({
   selector: 'app-facebook-page-marketing-campaign-create-update',
@@ -20,10 +20,11 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
   campaign: any;
   activities: any;
 
-  constructor(private fb: FormBuilder, private modalService: NgbModal,
+  constructor(
+    private fb: FormBuilder, private modalService: NgbModal,
     private marketingCampaignService: MarketingCampaignService,
     private notificationService: NotificationService,
-    private router: Router, private route: ActivatedRoute, 
+    private router: Router, private route: ActivatedRoute,
     private marketingCampaignActivitiesService: MarketingCampaignActivitiesService) { }
 
   ngOnInit() {
@@ -74,7 +75,7 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
           let modalRef = this.modalService.open(FacebookPageMarketingActivityDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
           modalRef.componentInstance.title = 'Thêm hoạt động';
           modalRef.componentInstance.campaignId = this.id;
-      
+
           modalRef.result.then(result => {
             if (result === "loading") {
               this.loadRecord();
@@ -86,7 +87,7 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
         let modalRef = this.modalService.open(FacebookPageMarketingActivityDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = 'Thêm hoạt động';
         modalRef.componentInstance.campaignId = this.id;
-    
+
         modalRef.result.then(result => {
           if (result === "loading") {
             this.loadRecord();
@@ -292,7 +293,7 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
       i = i + 1;
       if (i >= activities_length && activities_length > 0) {
         i = 0;
-      } 
+      }
       if (activities_length == 0) {
         this.activities = activities_sort;
         this.addMarginLeft();
@@ -314,6 +315,6 @@ export class FacebookPageMarketingCampaignCreateUpdateComponent implements OnIni
           this.activities[i].marginLeft = 0;
         }
       }
-    } 
+    }
   }
 }

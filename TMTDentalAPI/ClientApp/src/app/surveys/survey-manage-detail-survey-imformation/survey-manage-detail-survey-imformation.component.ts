@@ -1,11 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
-import { WebService } from 'src/app/core/services/web.service';
-import { SurveyQuestionService } from '../survey-question.service';
 import { SurveyTagBasic, SurveyTagPaged, SurveyTagService } from '../survey-tag.service';
 import { SurveyUserInputDisplay, SurveyUserinputService } from '../survey-userinput.service';
 import { SurveyAssignmentService } from '../survey.service';

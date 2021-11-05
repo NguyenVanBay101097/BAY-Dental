@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Umbraco.Web.Models.ContentEditing;
+using Umbraco.Web.Session;
 
 namespace Umbraco.Web.Mapping
 {
@@ -27,6 +28,8 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<ApplicationUserRowExcel, ApplicationUser>();
             CreateMap<ApplicationUser, ApplicationUserPrintTemplate>();
+
+            CreateMap<ApplicationUser, UserInfoDto>();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
@@ -50,6 +51,7 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid TypeId { get; set; }
         public Guid? PartnerId { get; set; }
+        [Required]
         public string Barcode { get; set; }
     }
 }

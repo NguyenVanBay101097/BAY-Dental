@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { ToothBasic, ToothDisplay } from 'src/app/teeth/tooth.service';
+import { ToothDisplay } from 'src/app/teeth/tooth.service';
 
 @Component({
   selector: 'app-teeth-chart',

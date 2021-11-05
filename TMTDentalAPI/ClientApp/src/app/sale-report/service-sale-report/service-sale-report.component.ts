@@ -1,9 +1,7 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { DateRangeComponent } from '@progress/kendo-angular-dateinputs';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridComponent, GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { isNaN } from 'lodash';
 import * as moment from 'moment';
 import { Subject } from 'rxjs/internal/Subject';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
@@ -15,8 +13,6 @@ import { SaleOrderLinePaged } from 'src/app/partners/partner.service';
 import { DateRangePickerFilterComponent } from 'src/app/shared/date-range-picker-filter/date-range-picker-filter.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { PrintService } from 'src/app/shared/services/print.service';
-import { ToothBasic } from 'src/app/teeth/tooth.service';
-import { SaleReportService, ServiceReportReq } from '../sale-report.service';
 
 
 @Component({

@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import * as moment from 'moment';
@@ -20,6 +20,7 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
   @Input() title: string;
   @Input() id: string;
   partnerId: string;
+  isEditInOverview = false;
   @ViewChild('customerCbx', { static: true }) customerCbx: ComboBoxComponent;
   @ViewChild('cardTypeCbx', { static: true }) cardTypeCbx: ComboBoxComponent;
 
@@ -126,7 +127,7 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
     this.submitted = true;
 
     if (this.formGroup.invalid) {
-      return false;
+      return;
     }
 
     let val = this.formGroup.value;
@@ -149,22 +150,26 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
   actionActivate() {
     this.submitted = true;
     if (this.formGroup.invalid) {
-      return false;
+      return;
     }
     let val = this.formGroup.value;
     val.partnerId = this.partnerId ? this.partnerId : (val.partner ? val.partner.id : '');
     val.cardTypeId = val.cardType ? val.cardType.id : '';
 
     if (this.id) {
-      this.serviceCardsService.buttonActive([this.id]).subscribe((res: any) => {
-        this.activeModal.close('activate');
-      })
+      this.serviceCardsService.update(this.id, val).subscribe((res: any) => {
+        this.serviceCardsService.buttonActive([this.id]).subscribe((res: any) => {
+          this.notifyService.notify('success', 'Kích hoạt thành công');
+          this.activeModal.close('activate');
+        })
+      }, (error) => { console.log(error) });
+      
     }
     else {
       this.serviceCardsService.create(val).subscribe((res: any) => {
         this.serviceCardsService.buttonActive([res.id]).subscribe((res: any) => {
           this.notifyService.notify('success', 'Kích hoạt thành công');
-          this.activeModal.close();
+          this.activeModal.close(true);
         })
       }, (error) => { console.log(error) });
     }
@@ -178,6 +183,7 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
       this.setValueFC('partner', res);
     });
   }
+
 
   getState(state) {
     switch (state) {

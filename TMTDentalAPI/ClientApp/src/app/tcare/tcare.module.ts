@@ -27,10 +27,8 @@ import { TcareScenarioCrUpComponent } from './tcare-scenario-cr-up/tcare-scenari
 import { TcareScenarioCrDialogComponent } from './tcare-scenario-cr-dialog/tcare-scenario-cr-dialog.component';
 import { AudienceFilterLastExaminationComponent } from './tcare-campaign-dialog-rule/audience-filter/audience-filter-dropdown/audience-filter-last-examination/audience-filter-last-examination.component';
 import { AudienceFilterAppointmentDayComponent } from './tcare-campaign-dialog-rule/audience-filter/audience-filter-dropdown/audience-filter-appointment-day/audience-filter-appointment-day.component';
-import { FacebookPluginTextareaComponent } from '../socials-channel/facebook-plugin-textarea/facebook-plugin-textarea.component';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
-import { SocialsChannelModule } from '../socials-channel/socials-channel.module';
 import { TcareScenarioMessageTextareaComponent } from './tcare-scenario-message-textarea/tcare-scenario-message-textarea.component';
 import { TcareMessageTemplateListComponent } from './tcare-message-template-list/tcare-message-template-list.component';
 import { TcareMessageTemplateCuDialogComponent } from './tcare-message-template-cu-dialog/tcare-message-template-cu-dialog.component';

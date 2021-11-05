@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/forms';
-import { NotificationService } from '@progress/kendo-angular-notification';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { AuthService } from 'src/app/auth/auth.service';
 import { MustMatch } from '../must-match-validator';
 
@@ -15,8 +15,10 @@ export class ChangePasswordDialogComponent implements OnInit {
   resetPwdForm: FormGroup;
   error: string;
   submitted = false;
-  constructor(public authService: AuthService, public router: Router, private fb: FormBuilder, private notificationService: NotificationService,
-    private route: ActivatedRoute, public activeModal: NgbActiveModal) { }
+  constructor(public authService: AuthService, 
+    public router: Router, private fb: FormBuilder, 
+    private notificationService: NotificationService,
+    public activeModal: NgbActiveModal) { }
 
   ngOnInit() {
     this.resetPwdForm = this.fb.group({

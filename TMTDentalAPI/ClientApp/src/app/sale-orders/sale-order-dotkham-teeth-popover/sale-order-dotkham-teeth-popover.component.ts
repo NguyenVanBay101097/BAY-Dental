@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
-import { SaleOrderLinesOdataService } from 'src/app/shared/services/sale-order-linesOdata.service';
 
 @Component({
   selector: 'app-sale-order-dotkham-teeth-popover',

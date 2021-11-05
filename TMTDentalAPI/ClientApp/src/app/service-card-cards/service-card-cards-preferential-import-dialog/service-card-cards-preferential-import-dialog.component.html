@@ -17,7 +17,7 @@
                     <td colspan="1" style="width: 100%;">
                         <app-binary-file-input
                             [accept]="'.xlsm,.xls,.xlsx,.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel'"
-                            (fileChange)="onFileChange($event)" (error)="notifyError($event)">
+                            (fileChange)="onFileChange($event)" (checkFormat)="correctFormat=$event" (error)="notifyError($event)">
                         </app-binary-file-input>
                     </td>
                 </tr>

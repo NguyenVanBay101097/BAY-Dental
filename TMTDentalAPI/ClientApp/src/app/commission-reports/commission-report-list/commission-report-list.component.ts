@@ -1,16 +1,15 @@
-import { UserPaged, UserService } from './../../users/user.service';
-import { UserSimple } from './../../users/user-simple';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { FormGroup, FormBuilder } from '@angular/forms';
-import { Subject } from 'rxjs';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { CommissionReportsService, CommissionReport, ReportFilterCommission } from '../commission-reports.service';
-import { map, debounceTime, tap, switchMap } from 'rxjs/operators';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { IntlService } from '@progress/kendo-angular-intl';
 import * as _ from 'lodash';
-import { CompanyBasic, CompanyService, CompanyPaged } from 'src/app/companies/company.service';
+import { Subject } from 'rxjs';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { CommissionReport, CommissionReportsService, ReportFilterCommission } from '../commission-reports.service';
+import { UserSimple } from './../../users/user-simple';
+import { UserPaged, UserService } from './../../users/user.service';
 
 @Component({
   selector: 'app-commission-report-list',
@@ -30,13 +29,14 @@ export class CommissionReportListComponent implements OnInit {
   formGroup: FormGroup;
   dateTo: Date;
   searchUpdate = new Subject<string>();
-  
+
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   filteredUsers: UserSimple[] = [];
-  
-  constructor(private commissionReportService: CommissionReportsService,
-    private fb: FormBuilder,
-    private intl: IntlService,private userService: UserService,
+
+  constructor(
+    private fb: FormBuilder, private intl: IntlService,
+    private userService: UserService,
+    private commissionReportService: CommissionReportsService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -45,7 +45,7 @@ export class CommissionReportListComponent implements OnInit {
       dateFrom: this.monthStart,
       dateTo: this.monthEnd,
       company: null,
-      user:null
+      user: null
     });
 
     this.loadDataFromApi();
@@ -60,34 +60,34 @@ export class CommissionReportListComponent implements OnInit {
       this.filteredUsers = result;
       this.userCbx.loading = false;
     });
-      
+
   }
 
-  loadDataFromApi() {   
+  loadDataFromApi() {
     var formValue = this.formGroup.value;
     var val = new ReportFilterCommission();
     val.dateFrom = formValue.dateFrom ? this.intl.formatDate(formValue.dateFrom, 'yyyy-MM-ddTHH:mm:ss') : null;
     val.dateTo = formValue.dateTo ? this.intl.formatDate(formValue.dateTo, 'yyyy-MM-ddTHH:mm:ss') : null;
     val.companyId = formValue.company ? formValue.company.id : null;
     val.userId = formValue.user ? formValue.user.id : null;
-    
+
     this.loading = true;
     this.commissionReportService.getReport(val).subscribe(result => {
-      this.reportResults = result;      
-      console.log(result); 
+      this.reportResults = result;
+      console.log(result);
       this.loading = false;
     }, () => {
       this.loading = false;
     });
-  
+
   }
 
-  getDateFrom(){
+  getDateFrom() {
     var formValue = this.formGroup.value;
     return formValue.dateFrom ? this.intl.formatDate(formValue.dateFrom, 'yyyy-MM-ddTHH:mm:ss') : null;
   }
 
-  getDateTo(){
+  getDateTo() {
     var formValue = this.formGroup.value;
     return formValue.dateTo ? this.intl.formatDate(formValue.dateTo, 'yyyy-MM-ddTHH:mm:ss') : null;
   }
@@ -114,7 +114,7 @@ export class CommissionReportListComponent implements OnInit {
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;
     this.loadDataFromApi();
-    
+
   }
-  
+
 }

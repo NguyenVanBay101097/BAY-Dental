@@ -1,9 +1,8 @@
-import { SaleOrderSimple } from './../../quotations/quotation.service';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AccountPaymentBasic } from 'src/app/account-payments/account-payment.service';
-import { PagedResult2 } from 'src/app/employee-categories/emp-category';
+import { SaleOrderSimple } from './../../quotations/quotation.service';
 
 export class SaleOrderPaymentPaged {
   offset: number;

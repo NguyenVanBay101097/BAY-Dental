@@ -1,23 +1,20 @@
-import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
-import { Observable, Observer } from 'rxjs';
-import { Injectable, Inject, OnChanges } from '@angular/core';
-import { PartnerSimple, PartnerBasic, PartnerDisplay, PartnerPaged, PagedResult2, City, Ward, District, PartnerInfoViewModel, PartnerPrint, PartnerSimpleContact, PartnerCategorySimple, PartnerSimpleInfo } from './partner-simple';
-import { ApplicationUserSimple, ApplicationUserPaged, ApplicationUserDisplay, AppointmentDisplay } from '../appointment/appointment';
-import { AccountInvoiceDisplay, AccountInvoiceBasic, AccountInvoicePaged, PaymentInfoContent, AccountInvoicePrint } from '../account-invoices/account-invoice.service';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { AccountInvoiceLineDisplay } from '../account-invoices/account-invoice-line-display';
+import { AccountInvoiceBasic, AccountInvoiceDisplay, AccountInvoicePaged, AccountInvoicePrint, PaymentInfoContent } from '../account-invoices/account-invoice.service';
+import { AccountPaymentBasic } from '../account-payments/account-payment.service';
+import { ApplicationUserDisplay, ApplicationUserPaged, ApplicationUserSimple, AppointmentDisplay } from '../appointment/appointment';
 import { DotKhamDisplay } from '../dot-khams/dot-khams';
 import { EmployeeSimple } from '../employees/employee';
-import { HistoryPaged, HistorySimple } from '../history/history';
-import { AccountInvoiceLinePaged, AccountInvoiceLineDisplay } from '../account-invoices/account-invoice-line-display';
-import { AddressCheckApi } from '../price-list/price-list';
-import { SaleOrderBasic } from '../sale-orders/sale-order-basic';
-import { AccountPaymentBasic } from '../account-payments/account-payment.service';
+import { HistorySimple } from '../history/history';
 import { LaboOrderBasic } from '../labo-orders/labo-order.service';
+import { AddressCheckApi } from '../price-list/price-list';
 import { PurchaseOrderBasic } from '../purchase-orders/purchase-order.service';
-import { ToothDisplay } from '../teeth/tooth.service';
-import { ProductBasic2 } from '../products/product.service';
-import { Product } from '../products/product';
-import { StringFilterComponent } from '@progress/kendo-angular-grid';
+import { SaleOrderBasic } from '../sale-orders/sale-order-basic';
 import { IrAttachmentBasic } from '../shared/shared';
+import { ToothDisplay } from '../teeth/tooth.service';
+import { City, District, PagedResult2, PartnerBasic, PartnerDisplay, PartnerInfoViewModel, PartnerPaged, PartnerPrint, PartnerSimple, PartnerSimpleContact, PartnerSimpleInfo, Ward } from './partner-simple';
 
 export class PartnerFilter {
     search: string;

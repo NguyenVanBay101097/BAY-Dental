@@ -1,22 +1,20 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
-import { StockPickingMlDialogComponent } from '../stock-picking-ml-dialog/stock-picking-ml-dialog.component';
-import { StockMoveDisplay, StockPickingService, StockPickingDefaultGet } from '../stock-picking.service';
-import { IntlService } from '@progress/kendo-angular-intl';
+import { WindowCloseResult, WindowService } from '@progress/kendo-angular-dialog';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { PartnerFilter, PartnerService } from 'src/app/partners/partner.service';
-import { debounceTime, tap, switchMap } from 'rxjs/operators';
-import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
+import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
-import { StockPickingTypeService, StockPickingTypeBasic } from 'src/app/stock-picking-types/stock-picking-type.service';
-import { StockMoveService, StockMoveOnChangeProduct } from 'src/app/stock-moves/stock-move.service';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
+import { PartnerService } from 'src/app/partners/partner.service';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductPaged } from 'src/app/products/product.service';
-// import { debug } from 'util';
-declare var jquery: any;
+import { StockPickingTypeBasic, StockPickingTypeService } from 'src/app/stock-picking-types/stock-picking-type.service';
+import { StockPickingMlDialogComponent } from '../stock-picking-ml-dialog/stock-picking-ml-dialog.component';
+import { StockMoveDisplay, StockPickingDefaultGet, StockPickingService } from '../stock-picking.service';
+// declare var jquery: any;
 declare var $: any;
 
 @Component({
@@ -43,7 +41,7 @@ export class StockPickingCreateUpdateComponent implements OnInit {
     private windowService: WindowService, private intlService: IntlService,
     private stockPickingService: StockPickingService, private router: Router, private partnerService: PartnerService,
     private notificationService: NotificationService, private pickingTypeService: StockPickingTypeService,
-    private stockMoveService: StockMoveService) { }
+    ) { }
 
   ngOnInit() {
     this.pickingForm = this.fb.group({
@@ -202,7 +200,7 @@ export class StockPickingCreateUpdateComponent implements OnInit {
       this.opened = false;
       if (result instanceof WindowCloseResult) {
       } else {
-        var a = result as StockMoveDisplay;
+        // var a = result as StockMoveDisplay;
         line.patchValue(result);
       }
     });

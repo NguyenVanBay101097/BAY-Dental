@@ -1,18 +1,11 @@
-import { Component, Input, OnInit, Output, ViewChild, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { TooltipTemplateService } from '@progress/kendo-angular-charts';
-import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
-import * as _ from 'lodash';
-import { Observable, of, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
-import { LaboOrderLineDefaultGet } from 'src/app/labo-order-lines/labo-order-line.service';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { map } from 'rxjs/operators';
 import { PartnerCategoryDisplay, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
-import { PartnerAddRemoveTags, PartnerService } from 'src/app/partners/partner.service';
 import { EmployeesOdataService } from 'src/app/shared/services/employeeOdata.service';
-import { PartnerCategoriesService } from 'src/app/shared/services/partner-categories.service';
-import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
-import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
-import { log } from 'util';
+import { ToothDisplay, ToothFilter } from 'src/app/teeth/tooth.service';
+import { ToothCategoryBasic } from 'src/app/tooth-categories/tooth-category.service';
 
 @Component({
   selector: 'app-sale-order-teeth-popover',
@@ -37,12 +30,8 @@ export class SaleOrderTeethPopoverComponent implements OnInit {
   @Input() lineValue: any;
 
   constructor(
-    private partnerCategoriesService: PartnerCategoriesService,
     private partnerCategoryService: PartnerCategoryService,
-    private partnerService: PartnerService,
-    private toothService: ToothService,
     private employeeOdataService: EmployeesOdataService,
-    private toothCategoryService: ToothCategoryService,
     private fb: FormBuilder
   ) { }
 

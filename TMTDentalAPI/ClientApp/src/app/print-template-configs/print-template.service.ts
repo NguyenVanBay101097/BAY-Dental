@@ -1,8 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable, Pipe, PipeTransform } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
-import { Observable } from 'rxjs';
-import { PrintPaperSizeDisplay } from '../config-prints/print-paper-size.service';
+import { Inject, Injectable } from '@angular/core';
 
 export class PrintTemplateDefault {
   type: string;

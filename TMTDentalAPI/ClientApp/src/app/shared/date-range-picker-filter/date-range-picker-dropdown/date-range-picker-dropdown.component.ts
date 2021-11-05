@@ -1,6 +1,5 @@
 import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 import * as _moment from 'moment';
 import { LocaleConfig } from '../config/daterangepicker.config';
 import { LocaleService } from '../config/locale.service';
@@ -344,8 +343,8 @@ export class DateRangePickerDropdownComponent  implements OnInit {
     // generate AM/PM
     if (!this.timePicker24Hour) {
 
-      const am_html = '';
-      const pm_html = '';
+      // const am_html = '';
+      // const pm_html = '';
 
       if (minDate && selected.clone().hour(12).minute(0).second(0).isBefore(minDate)) {
         this.timepickerVariables[side].amDisabled = true;

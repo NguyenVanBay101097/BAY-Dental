@@ -1,13 +1,11 @@
 import { Component, OnInit, ViewChild, ComponentFactoryResolver, Type } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { AnchorHostDirective } from 'src/app/shared/anchor-host.directive';
 import { AudienceFilterBirthdayComponent } from './audience-filter/audience-filter-dropdown/audience-filter-birthday/audience-filter-birthday.component';
 import { Observable } from 'rxjs';
 import { AudienceFilterLastTreatmentDayComponent } from './audience-filter/audience-filter-dropdown/audience-filter-last-treatment-day/audience-filter-last-treatment-day.component';
-import { AudienceFilterServiceComponent } from './audience-filter/audience-filter-dropdown/audience-filter-service/audience-filter-service.component';
 import { AudienceFilterPartnerCategoryComponent } from './audience-filter/audience-filter-dropdown/audience-filter-partner-category/audience-filter-partner-category.component';
-import { AudienceFilterServiceCategoryComponent } from './audience-filter/audience-filter-dropdown/audience-filter-service-category/audience-filter-service-category.component';
 import { AudienceFilterLastExaminationComponent } from './audience-filter/audience-filter-dropdown/audience-filter-last-examination/audience-filter-last-examination.component';
 import { AudienceFilterAppointmentDayComponent } from './audience-filter/audience-filter-dropdown/audience-filter-appointment-day/audience-filter-appointment-day.component';
 

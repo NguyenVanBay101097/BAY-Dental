@@ -7,6 +7,7 @@ import { LoginForm } from './login-form';
 import { HttpErrorResponse, HttpClient } from '@angular/common/http';
 // import { debug } from 'util';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { WebSessionService } from '../core/services/web-session.service';
 
 export class UserInfo {
     avatar: string;
@@ -21,7 +22,9 @@ export class AuthService {
 
     public currentUser: Observable<UserViewModel>;
 
-    constructor(private authResource: AuthResource, public jwtHelper: JwtHelperService, private http: HttpClient, @Inject('BASE_API') private baseApi: string) {
+    constructor(private authResource: AuthResource, public jwtHelper: JwtHelperService, private http: HttpClient, @Inject('BASE_API') private baseApi: string,
+        private webSessionService: WebSessionService
+    ) {
         var user_info = localStorage.getItem('user_info');
         if (typeof user_info != 'string') {
             localStorage.removeItem('user_info');
@@ -50,7 +53,7 @@ export class AuthService {
                         localStorage.setItem('refresh_token', result.refreshToken);
                         this.isLoggedIn = true;
                         this.currentUserSubject.next(result.user);
-                        return this.authResource.getPermission();
+                        return this.webSessionService.getSessionInfo();
                         // get permission
                     } else {
                         return of(result);
@@ -121,8 +124,9 @@ export class AuthService {
 
     logout(): void {
         localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
         localStorage.removeItem('user_info');
-        localStorage.removeItem('user_change_company_vm');
+        localStorage.removeItem('session_info');
         this.isLoggedIn = false;
         this.currentUserSubject.next(null);
     }

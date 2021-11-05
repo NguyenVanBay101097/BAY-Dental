@@ -1,13 +1,13 @@
-import { Component, Inject, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { aggregateBy } from '@progress/kendo-data-query';
-import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
-import * as _ from 'lodash';
-import { SaleOrderLinePaged } from 'src/app/partners/partner.service';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
+import { aggregateBy } from '@progress/kendo-data-query';
+import * as _ from 'lodash';
 import { map } from 'rxjs/operators';
+import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
+import { SaleOrderLinePaged } from 'src/app/partners/partner.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-day-dashboard-report-registration-service',

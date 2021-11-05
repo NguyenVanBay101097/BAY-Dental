@@ -1,8 +1,7 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PagedResult2 } from '../core/paged-result-2';
-import { ResPartnerBankBasic } from './res-partner-bank';
 
 export class ResBankSimple {
   id: string;

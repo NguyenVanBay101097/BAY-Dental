@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
 import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
 
@@ -18,7 +17,6 @@ export class TreatmentHistoryTeethPopoverComponent implements OnInit {
   @ViewChild('popOver', { static: true }) public popover: any;
   
   constructor(
-    private fb: FormBuilder,
     private toothService: ToothService,
     private toothCategoryService: ToothCategoryService,
   ) { }

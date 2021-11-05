@@ -1,12 +1,10 @@
 import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { fromEvent, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
-import { Product } from 'src/app/products/product';
+import { distinctUntilChanged, filter } from 'rxjs/operators';
 import { ProductServiceCuDialogComponent } from 'src/app/products/product-service-cu-dialog/product-service-cu-dialog.component';
-import { ProductBasic2, ProductPaged, ProductService } from 'src/app/products/product.service';
 import { ProductsOdataService } from 'src/app/shared/services/ProductsOdata.service';
 import { ToothDisplay } from 'src/app/teeth/tooth.service';
 

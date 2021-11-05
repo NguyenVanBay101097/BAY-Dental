@@ -1,11 +1,10 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, Inject, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { PartnerService } from 'src/app/partners/partner.service';
 import { PhieuThuChiPaged, PhieuThuChiService } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
@@ -34,9 +33,7 @@ export class AgentCommmissionHistoryComponent implements OnInit {
 
   constructor(private intlService: IntlService,
     private modalService: NgbModal,
-    private partnerService: PartnerService,
     private phieuthuchiService: PhieuThuChiService,
-    private router: Router,
     private printService: PrintService,
     private route: ActivatedRoute,
     private notifyService: NotifyService,

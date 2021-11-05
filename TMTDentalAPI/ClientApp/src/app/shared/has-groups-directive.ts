@@ -1,8 +1,5 @@
-import { NgControl } from '@angular/forms';
-import { Directive, Input, ElementRef, Renderer2, OnInit } from '@angular/core';
-import * as _ from 'lodash';
+import { Directive, ElementRef, Input, OnInit, Renderer2 } from '@angular/core';
 import { PermissionService } from './permission.service';
-import { AuthService } from '../auth/auth.service';
 
 @Directive({
     selector: '[hasGroups]'
@@ -12,8 +9,7 @@ export class HasGroupsDirective implements OnInit {
     @Input() item: any;
     @Input() child: any;
     constructor(private elementRef: ElementRef, private renderer: Renderer2,
-        private permissionService: PermissionService,
-        private authService: AuthService) {
+        private permissionService: PermissionService,) {
 
     }
 

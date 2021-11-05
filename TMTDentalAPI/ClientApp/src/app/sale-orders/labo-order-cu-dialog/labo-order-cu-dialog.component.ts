@@ -1,23 +1,21 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
-import { debounceTime, switchMap, tap, map } from 'rxjs/operators';
-import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
-import { PartnerService } from 'src/app/partners/partner.service';
-import { UserService, UserPaged } from 'src/app/users/user.service';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { ProductService, ProductFilter } from 'src/app/products/product.service';
 import { IntlService } from '@progress/kendo-angular-intl';
-import * as _ from 'lodash';
-import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { SaleOrderBasic } from 'src/app/sale-orders/sale-order-basic';
+import * as _ from 'lodash';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { SaleOrderPaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
-import { LaboOrderDisplay, LaboOrderService, LaboOrderDefaultGet } from 'src/app/labo-orders/labo-order.service';
-import { LaboOrderCuLineDialogComponent } from '../labo-order-cu-line-dialog/labo-order-cu-line-dialog.component';
+import { LaboOrderDefaultGet, LaboOrderDisplay, LaboOrderService } from 'src/app/labo-orders/labo-order.service';
+import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
+import { PartnerService } from 'src/app/partners/partner.service';
+import { ProductFilter, ProductService } from 'src/app/products/product.service';
+import { SaleOrderBasic } from 'src/app/sale-orders/sale-order-basic';
 import { PartnerSupplierCuDialogComponent } from 'src/app/shared/partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
-import { ProductSimple } from 'src/app/products/product-simple';
-import { ToothBasic, ToothDisplay } from 'src/app/teeth/tooth.service';
+import { ToothDisplay } from 'src/app/teeth/tooth.service';
+import { LaboOrderCuLineDialogComponent } from '../labo-order-cu-line-dialog/labo-order-cu-line-dialog.component';
 declare var $: any;
 
 
@@ -49,8 +47,6 @@ export class  LaboOrderCuDialogComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private partnerService: PartnerService,
-    private userService: UserService,
-    private route: ActivatedRoute,
     private laboOrderService: LaboOrderService,
     private productService: ProductService,
     private intlService: IntlService,
