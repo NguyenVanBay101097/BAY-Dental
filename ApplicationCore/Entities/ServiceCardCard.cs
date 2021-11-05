@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ApplicationCore.Entities
 {
-    public class ServiceCardCard: BaseEntity
+    public class ServiceCardCard : BaseEntity
     {
         public ServiceCardCard()
         {
@@ -20,9 +20,13 @@ namespace ApplicationCore.Entities
 
         public Guid? PartnerId { get; set; }
         public Partner Partner { get; set; }
-
+        /// <summary>
+        /// ngày bắt đầu
+        /// </summary>
         public DateTime? ActivatedDate { get; set; }
-
+        /// <summary>
+        /// ngày kết thúc
+        /// </summary>
         public DateTime? ExpiredDate { get; set; }
 
         /// <summary>
@@ -37,7 +41,6 @@ namespace ApplicationCore.Entities
 
         /// <summary>
         /// draft: Nháp
-        /// confirmed: Chờ cấp thẻ
         /// in_use: Đang sử dụng
         /// locked: Đã khóa
         /// cancelled: Đã hủy

@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AsyncValidatorFn } from '@angular/forms';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -32,7 +33,7 @@ import { IrAttachmentBasic } from '../shared';
 })
 export class LaboOrderCuDialogComponent implements OnInit {
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
-
+  orderCuDialogModal: NgbActiveModal;
   title: string;
   myForm: FormGroup;
   id: string;// có thể là input
@@ -52,6 +53,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
     'down_right': [],
     'down_left': []
   };
+  submitted = false;
   constructor(private fb: FormBuilder,
     public activeModal: NgbActiveModal,
     private modalService: NgbModal,
@@ -65,7 +67,9 @@ export class LaboOrderCuDialogComponent implements OnInit {
     private bridgeService: LaboBridgeService,
     private webService: WebService,
     private printService: PrintService,
-    private toothService: ToothService
+    private router: Router,
+    private toothService: ToothService,
+    
   ) { }
 
   ngOnInit() {
@@ -342,7 +346,7 @@ export class LaboOrderCuDialogComponent implements OnInit {
       name: imgObj.name,
       date: null,
       note: null,
-      uploadId: imgObj.url
+      url: imgObj.url
     };
     const imgs = this.imagesFA.value.map(x => {
       return {
@@ -350,11 +354,11 @@ export class LaboOrderCuDialogComponent implements OnInit {
         name: x.name,
         date: null,
         note: null,
-        uploadId: x.url
+        url: x.url
       };
     });
-    modalRef.componentInstance.partnerImages = imgs;
-    modalRef.componentInstance.partnerImageSelected = img;
+    modalRef.componentInstance.images = imgs;
+    modalRef.componentInstance.selectedImage = img;
   }
 
   onRemoveImg(i) {
@@ -400,6 +404,8 @@ export class LaboOrderCuDialogComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
+    
     if (this.myForm.invalid) {
       return;
     }
@@ -494,5 +500,13 @@ export class LaboOrderCuDialogComponent implements OnInit {
         this.printService.printHtml(result.html);
       })
     }
+  }
+
+  actionRedirect(saleOrderLine){
+    this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
+      this.router.navigate(['/sale-orders/', saleOrderLine?.orderId]);
+    });
+    this.activeModal.dismiss();
+    this.orderCuDialogModal.dismiss();
   }
 }

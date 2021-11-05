@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml;
 using ApplicationCore.Entities;
 using ApplicationCore.Models;
 using ApplicationCore.Utilities;
@@ -13,6 +14,7 @@ using DinkToPdf.Contracts;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -39,13 +41,17 @@ namespace TMTDentalAPI.Controllers
         private readonly IPrintTemplateConfigService _printTemplateConfigService;
         private readonly IPrintTemplateService _printTemplateService;
         private readonly IIRModelDataService _modelDataService;
+        private readonly IIrAttachmentService _irAttachmentService;
         private IConverter _converter;
+        private readonly ISaleOrderPromotionService _saleOrderPromotionService;
 
         public SaleOrdersController(ISaleOrderService saleOrderService, IMapper mapper,
             IUnitOfWorkAsync unitOfWork, IDotKhamService dotKhamService,
             ICardCardService cardService, IProductPricelistService pricelistService,
             ISaleOrderLineService saleLineService, IViewRenderService viewRenderService, IConverter converter,
-        IViewToStringRenderService viewToStringRenderService, IPrintTemplateConfigService printTemplateConfigService , IPrintTemplateService printTemplateService, IIRModelDataService modelDataService)
+            IIrAttachmentService irAttachmentService,
+        IViewToStringRenderService viewToStringRenderService, IPrintTemplateConfigService printTemplateConfigService, IPrintTemplateService printTemplateService, IIRModelDataService modelDataService,
+        ISaleOrderPromotionService saleOrderPromotionService)
         {
             _saleOrderService = saleOrderService;
             _mapper = mapper;
@@ -60,6 +66,8 @@ namespace TMTDentalAPI.Controllers
             _printTemplateConfigService = printTemplateConfigService;
             _modelDataService = modelDataService;
             _printTemplateService = printTemplateService;
+            _irAttachmentService = irAttachmentService;
+            _saleOrderPromotionService = saleOrderPromotionService;
         }
 
         [HttpGet]
@@ -68,6 +76,17 @@ namespace TMTDentalAPI.Controllers
         {
             var result = await _saleOrderService.GetPagedResultAsync(val);
             return Ok(result);
+        }
+
+        [HttpGet("{id}/[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Read")]
+        public async Task<IActionResult> GetBasic(Guid id)
+        {
+            var order = await _saleOrderService.SearchQuery(x => x.Id == id)
+                .Include(x => x.Partner)
+                .FirstOrDefaultAsync();
+
+            return Ok(_mapper.Map<SaleOrderBasic>(order));
         }
 
         [HttpGet("[action]")]
@@ -85,15 +104,6 @@ namespace TMTDentalAPI.Controllers
             var res = await _saleOrderService.GetSaleOrderForDisplayAsync(id);
             if (res == null)
                 return NotFound();
-
-            //var res = _mapper.Map<SaleOrderDisplay>(res);
-            //res.InvoiceCount = res.OrderLines.SelectMany(x => x.SaleOrderLineInvoice2Rels).Select(x => x.InvoiceLine.Move)
-            //    .Where(x => x.Type == "out_invoice" || x.Type == "out_refund").Distinct().Count();
-            //res.OrderLines = res.OrderLines.OrderBy(x => x.Sequence);
-            //foreach (var inl in res.OrderLines)
-            //{
-            //    inl.Teeth = inl.Teeth.OrderBy(x => x.Name);
-            //}
 
             return Ok(res);
         }
@@ -291,9 +301,9 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpGet("{id}/Print")]
+        [HttpPost("Print")]
         [CheckAccess(Actions = "Basic.SaleOrder.Read")]
-        public async Task<IActionResult> GetPrint(Guid id)
+        public async Task<IActionResult> GetPrint(SaleOrderPrint val)
         {
 
             //tim trong bảng config xem có dòng nào để lấy ra template
@@ -312,7 +322,16 @@ namespace TMTDentalAPI.Controllers
                     throw new Exception("Không tìm thấy mẫu in mặc định");
             }
 
-            var result = await _printTemplateService.GeneratePrintHtml(template, new List<Guid>() { id }, paperSize);     
+            //lấy object đầy đủ
+            var saleOrders = await _saleOrderService.GetPrintTemplate(new List<Guid>() { val.Id });
+            var attachments = await _irAttachmentService.SearchQuery(x => val.AttachmentIds.Contains(x.Id)).ToListAsync();
+            foreach (var item in saleOrders)
+            {
+                item.IrAttachments = attachments;
+            }
+
+            var result = await _printTemplateService.GeneratePrintHtml(template, saleOrders);
+
             return Ok(new PrintData() { html = result });
         }
 
@@ -574,10 +593,10 @@ namespace TMTDentalAPI.Controllers
                         row++;
 
                     }
-                    rowE = row-1;
+                    rowE = row - 1;
                     worksheet.Cells[$"B{rowF}:F{rowF}"].Style.Font.Bold = true;
                     worksheet.Cells[$"A{rowF}:A{rowE}"].Merge = true;
-                    
+
                 }
                 worksheet.Cells.AutoFitColumns();
                 package.Save();
@@ -711,7 +730,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> ExportManagementExcel(SaleOrderPaged val)
         {
             var data = await _saleOrderService.ExportManagementExcel(val);
-            
+
             var stream = new MemoryStream();
             byte[] fileContent;
 
@@ -725,7 +744,7 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells["A1:F1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
                 worksheet.Cells["A1:F1"].Merge = true;
                 worksheet.Cells["A1:F1"].Style.Font.Bold = true;
-               
+
                 worksheet.Cells["A2:F2"].Value = "";
                 worksheet.Cells["A3"].Value = "Ngày lập phiếu";
                 worksheet.Cells["B3"].Value = "Số phiếu";
@@ -839,5 +858,75 @@ namespace TMTDentalAPI.Controllers
             return Ok(dotKhamIds);
         }
 
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GenerateXML()
+        {
+            var irModelObj = (IIRModelDataService)HttpContext.RequestServices.GetService(typeof(IIRModelDataService));
+            var _hostingEnvironment = (IWebHostEnvironment)HttpContext.RequestServices.GetService(typeof(IWebHostEnvironment));
+            var xmlService = (IXmlService)HttpContext.RequestServices.GetService(typeof(IXmlService));
+            string path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\ImportXML\sale_order.xml");
+
+            var irModelCreate = new List<IRModelData>();
+            var dateToData = new DateTime(2021, 08, 25);
+            var listIrModelData = await irModelObj.SearchQuery(x => x.Module == "sample" && (x.Model == "product" || x.Model == "uom" || x.Model == "partner")).ToListAsync();// các irmodel cần thiết
+            var entities = await _saleOrderService.SearchQuery(x => x.DateOrder.Date <= dateToData.Date).Include(x => x.OrderLines).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var data = new List<SaleOrderXmlSampleDataRecord>();
+            foreach (var entity in entities)
+            {
+                var item = _mapper.Map<SaleOrderXmlSampleDataRecord>(entity);
+                item.Id = $@"sample.sale_order_{entities.IndexOf(entity) + 1}";
+                var irmodelDataPartner = listIrModelData.FirstOrDefault(x => x.ResId == entity.PartnerId.ToString());
+                item.PartnerId = irmodelDataPartner?.Module + "." + irmodelDataPartner?.Name;
+                item.DateRound = (int)(dateToData - entity.DateOrder).TotalDays;
+                //add lines
+                foreach (var lineEntity in entity.OrderLines)
+                {
+                    var itemLine = _mapper.Map<SaleOrderLineXmlSampleDataRecord>(lineEntity);
+                    itemLine.Id = $@"sample.sale_order_{entities.IndexOf(entity) + 1}_sale_order_line_{entity.OrderLines.ToList().IndexOf(lineEntity) + 1}";
+                    itemLine.DateRound = (int)(dateToData - lineEntity.DateCreated.Value).TotalDays;
+                    var irmodelDataProduct = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.ProductId.ToString());
+                    itemLine.ProductId = irmodelDataProduct?.Module + "." + irmodelDataProduct?.Name;
+                    item.OrderLines.Add(itemLine);
+                    // add IRModelData
+                    irModelCreate.Add(new IRModelData()
+                    {
+                        Module = "sample",
+                        Model = "sale.order.line",
+                        ResId = lineEntity.Id.ToString(),
+                        Name = $"sale_order_{entities.IndexOf(entity) + 1}_sale_order_line_{entity.OrderLines.ToList().IndexOf(lineEntity) + 1}"
+                    });
+                }
+                data.Add(item);
+                // add IRModelData
+                irModelCreate.Add(new IRModelData()
+                {
+                    Module = "sample",
+                    Model = "sale.order",
+                    ResId = entity.Id.ToString(),
+                    Name = $"sale_order_{entities.IndexOf(entity) + 1}"
+                });
+            }
+            //writeFile
+            xmlService.WriteXMLFile(path, data);
+            await irModelObj.CreateAsync(irModelCreate);
+            return Ok();
+        }
+
+        [HttpGet("{id}/[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Read")]
+        public async Task<IActionResult> GetListAttachment(Guid id)
+        {
+            var res = await _saleOrderService.GetListAttachment(id);
+            return Ok(_mapper.Map<IEnumerable<IrAttachmentBasic>>(res));
+        }
+
+        [HttpGet("{id}/[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Read")]
+        public async Task<IActionResult> GetPromotions(Guid id)
+        {
+            var res = await _saleOrderPromotionService.SearchQuery(x => x.SaleOrderId == id).ToListAsync();
+            return Ok(_mapper.Map<IEnumerable<SaleOrderPromotionBasic>>(res));
+        }
     }
 }

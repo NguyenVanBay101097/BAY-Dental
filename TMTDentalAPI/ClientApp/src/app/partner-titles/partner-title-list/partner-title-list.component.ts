@@ -8,6 +8,7 @@ import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PartnerTitleCuDialogComponent } from 'src/app/shared/partner-title-cu-dialog/partner-title-cu-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { NotifyService } from 'src/app/shared/services/notify.service';
 
 @Component({
   selector: 'app-partner-title-list',
@@ -28,6 +29,7 @@ export class PartnerTitleListComponent implements OnInit {
   constructor(private route: ActivatedRoute, 
     private modalService: NgbModal, 
     private partnerTitleService: PartnerTitleService,
+    private notifyService: NotifyService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -74,6 +76,7 @@ export class PartnerTitleListComponent implements OnInit {
     const modalRef = this.modalService.open(PartnerTitleCuDialogComponent, { scrollable: true, windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm danh xưng';
     modalRef.result.then(() => {
+      this.notifyService.notify("success","Lưu thành công");
        this.loadDataFromApi();
     }, () => {
 
@@ -85,6 +88,7 @@ export class PartnerTitleListComponent implements OnInit {
     modalRef.componentInstance.title = 'Sửa danh xưng';
     modalRef.componentInstance.itemId = item.id;
     modalRef.result.then(() => {
+      this.notifyService.notify("success","Lưu thành công");
        this.loadDataFromApi();
     }, () => {
 
@@ -94,9 +98,11 @@ export class PartnerTitleListComponent implements OnInit {
   deleteItem(item: PartnerTitle) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa danh xưng';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn xóa danh xưng';
 
     modalRef.result.then(() => {
       this.partnerTitleService.delete(item.id).subscribe(() => {
+      this.notifyService.notify("success","Xóa thành công");
         this.loadDataFromApi();
       }, () => {
       });

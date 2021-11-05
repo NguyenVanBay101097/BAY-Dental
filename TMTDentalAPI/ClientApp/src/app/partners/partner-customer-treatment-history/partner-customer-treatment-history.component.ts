@@ -64,7 +64,7 @@ export class PartnerCustomerTreatmentHistoryComponent implements OnInit {
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
   @ViewChild('pricelistCbx', { static: true }) pricelistCbx: ComboBoxComponent;
   @ViewChild(AccountPaymentPrintComponent, { static: true }) accountPaymentPrintComponent: AccountPaymentPrintComponent;
-  @ViewChild('employeeCbx', { static: false }) employeeCbx: ComboBoxComponent;
+  @ViewChild('employeeCbx') employeeCbx: ComboBoxComponent;
 
   saleOrder: SaleOrderDisplay = new SaleOrderDisplay();
   saleOrderPrint: any;

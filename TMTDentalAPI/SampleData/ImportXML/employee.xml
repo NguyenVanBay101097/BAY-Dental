@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Record>
+    <Id>sample.employee_1</Id>
+    <Name>Bảo vệ: Võ Hồng Hoàng</Name>
+    <IsDoctor>false</IsDoctor>
+    <BirthDay xsi:nil="true" />
+    <StartWorkDate xsi:nil="true" />
+    <Address />
+  </Record>
+  <Record>
+    <Id>sample.employee_2</Id>
+    <Name>Đặng Thế Tài</Name>
+    <IsDoctor>true</IsDoctor>
+    <Phone>0398387677</Phone>
+    <BirthDay xsi:nil="true" />
+    <StartWorkDate>2019-06-01T00:00:00</StartWorkDate>
+    <Address />
+  </Record>
+  <Record>
+    <Id>sample.employee_3</Id>
+    <Name>Võ Duyên</Name>
+    <IsDoctor>true</IsDoctor>
+    <Phone>0398387777</Phone>
+    <BirthDay xsi:nil="true" />
+    <StartWorkDate>2021-02-12T00:00:00</StartWorkDate>
+    <Address />
+  </Record>
+  <Record>
+    <Id>sample.employee_4</Id>
+    <Name>Trương Ngọc Huyền</Name>
+    <IsDoctor>false</IsDoctor>
+    <BirthDay>1996-08-15T00:00:00</BirthDay>
+    <StartWorkDate>2021-04-02T00:00:00</StartWorkDate>
+    <Email />
+    <Address />
+  </Record>
+  <Record>
+    <Id>sample.employee_5</Id>
+    <Name>Hồ Thị Thanh Thảo</Name>
+    <IsDoctor>false</IsDoctor>
+    <BirthDay>1996-01-07T00:00:00</BirthDay>
+    <StartWorkDate>2021-04-22T00:00:00</StartWorkDate>
+    <Address />
+  </Record>
+</Data>

@@ -82,6 +82,17 @@
                                                 </kendo-datepicker>
                                             </td>
                                         </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Chức vụ
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <kendo-combobox formControlName="hrJob" [filterable]="true" #cbxHrJob [popupSettings]="cbxPopupSettings" [data]="hrJobs" [valueField]="'id'" [textField]="'name'">
+                                                </kendo-combobox>
+                                            </td>
+                                        </tr>
 
                                         <!-- <tr>
                                     <td colspan="1" class="o_td_label">

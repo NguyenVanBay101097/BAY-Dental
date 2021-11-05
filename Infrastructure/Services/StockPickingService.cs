@@ -31,7 +31,7 @@ namespace Infrastructure.Services
         {
             var query = GetQueryPaged(val);
 
-            var items = await query.Include(x => x.Partner).Include(x=> x.CreatedBy).Skip(val.Offset).Take(val.Limit)
+            var items = await query.Include(x => x.Partner).Include(x => x.CreatedBy).Skip(val.Offset).Take(val.Limit)
                 .ToListAsync();
             var totalItems = await query.CountAsync();
 
@@ -78,7 +78,7 @@ namespace Infrastructure.Services
                 res.LocationId = pickingType.DefaultLocationSrcId.Value;
                 res.LocationDestId = pickingType.DefaultLocationDestId.Value;
             }
-         
+
             return res;
         }
 
@@ -131,26 +131,31 @@ namespace Infrastructure.Services
 
         public async Task<StockPicking> GetPickingForDisplay(Guid id)
         {
-            return await SearchQuery(x => x.Id == id).Include(x => x.Partner).Include(x=> x.CreatedBy)
+            return await SearchQuery(x => x.Id == id).Include(x => x.Partner).Include(x => x.CreatedBy)
                 .Include(x => x.MoveLines)
                 .Include("MoveLines.Product.Categ")
                  .Include("MoveLines.ProductUOM")
                 .FirstOrDefaultAsync();
         }
 
-        public async override Task<StockPicking> CreateAsync(StockPicking entity)
+        public override async Task<IEnumerable<StockPicking>> CreateAsync(IEnumerable<StockPicking> entities)
         {
-            if (string.IsNullOrEmpty(entity.Name) || entity.Name == "/")
-            {
-                var pickingTypeId = entity.PickingTypeId;
-                var pickingTypeObj = GetService<IStockPickingTypeService>();
-                var pickingType = await pickingTypeObj.GetByIdAsync(pickingTypeId);
-                var sequenceId = pickingType.IRSequenceId;
-                var seqObj = GetService<IIRSequenceService>();
-                entity.Name = await seqObj.NextById(sequenceId);
-            }
+            var pickingTypeObj = GetService<IStockPickingTypeService>();
+            var seqObj = GetService<IIRSequenceService>();
 
-            return await base.CreateAsync(entity);
+            var pickingTypeIds = entities.Select(x => x.PickingTypeId);
+            var pickingTypes = await pickingTypeObj.SearchQuery(x => pickingTypeIds.Any(z => z == x.Id)).ToListAsync();
+            foreach (var entity in entities)
+            {
+                if (string.IsNullOrEmpty(entity.Name) || entity.Name == "/")
+                {
+                    var pickingTypeId = entity.PickingTypeId;
+                    var pickingType = pickingTypes.FirstOrDefault(x => x.Id == entity.PickingTypeId);
+                    var sequenceId = pickingType.IRSequenceId;
+                    entity.Name = await seqObj.NextById(sequenceId);
+                }
+            }
+            return await base.CreateAsync(entities);
         }
 
         public async Task ActionDone(IEnumerable<Guid> ids)
@@ -168,7 +173,7 @@ namespace Infrastructure.Services
                 await moveObj.ActionDone(picking.MoveLines);
                 picking.State = "done";
             }
-          
+
             await UpdateAsync(self);
         }
 
@@ -196,7 +201,7 @@ namespace Infrastructure.Services
                 if (self.Any(x => x.PickingType.Code == "incoming"))
                 {
                     throw new Exception("Không thể xóa phiếu nhập kho đã hoàn thành");
-                } 
+                }
                 else if (self.Any(x => x.PickingType.Code == "outgoing"))
                 {
                     throw new Exception("Không thể xóa phiếu xuất kho đã hoàn thành");

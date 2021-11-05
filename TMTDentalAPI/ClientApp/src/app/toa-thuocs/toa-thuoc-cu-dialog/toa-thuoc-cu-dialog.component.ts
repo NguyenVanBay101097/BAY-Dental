@@ -183,9 +183,9 @@ export class ToaThuocCuDialogComponent implements OnInit {
       this.samplePrescriptionsService.get(item.id).subscribe(
         (result) => {
           this.toaThuocForm.get("note").patchValue(result.note);
-  
+
           this.lines.clear();
-  
+
           result.lines.forEach((line) => {
             this.lines.push(
               this.fb.group({
@@ -343,7 +343,7 @@ export class ToaThuocCuDialogComponent implements OnInit {
     this.lines.removeAt(index);
   }
 
-  getUsedAt(useAt) {;
+  getUsedAt(useAt) {
     switch (useAt) {
       case 'before_meal':
         return 'Trước khi ăn';
@@ -357,6 +357,20 @@ export class ToaThuocCuDialogComponent implements OnInit {
         return 'Khác';
       default:
         return 'Sau khi ăn';
+    }
+  }
+
+  getGender() {
+    const gender = this.getFBValueItem('partner').gender;
+      switch (gender) {
+        case 'male':
+          return 'Name';
+        case 'female':
+          return 'Nữ';
+        case 'other':
+          return 'Khác';
+        default:
+          return '';
     }
   }
 }

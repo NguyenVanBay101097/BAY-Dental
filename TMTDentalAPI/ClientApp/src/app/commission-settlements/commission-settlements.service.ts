@@ -11,6 +11,10 @@ export class CommissionSettlementFilterReport {
   limit: number;
   offset: number;
   commissionType: string;
+  groupBy: string;
+  agentId: string;
+  classify: string;
+  commissionDisplay: string;
 }
 
 export class CommissionSettlementReportOutput {
@@ -52,6 +56,13 @@ export class CommissionSettlementReportRes {
   commissionType: string;
   amount: number;
 }
+
+export class CommissionSettlementOverviewFilter {
+  dateFrom: string;
+  dateTo: string;
+  groupBy: string;
+  classify: string;
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -75,10 +86,22 @@ export class CommissionSettlementsService {
     return this.http.post(this.baseApi + this.apiUrl + '/GetSumReport', val);
   }
 
+  getSumAmountTotalReport(val: any) {
+    return this.http.post(this.baseApi + this.apiUrl + '/GetSumAmountTotalReport', val);
+  }
+
+  getAgentOverview(val: CommissionSettlementOverviewFilter){
+    return this.http.post(this.baseApi + this.apiUrl + '/GetCommissionSettlementReport',val);
+  }
+
   excelCommissionExport(val) {
     return this.http.get(this.baseApi + this.apiUrl + '/ExportExcel', { params: val, responseType: 'blob' });
   }
   excelCommissionDetailExport(val) {
-    return this.http.get(this.baseApi + this.apiUrl + '/DetailExportExcel', { params: val, responseType: 'blob' });
+    return this.http.get(this.baseApi + this.apiUrl + '/DetailExportExcel', { params: new HttpParams({fromObject: val}), responseType: 'blob' });
+  }
+
+  exportExcelCommissionItemDetail(val) {
+    return this.http.get(this.baseApi + this.apiUrl + '/ItemDetailExportExcel', { params: new HttpParams({fromObject: val}), responseType: 'blob' });
   }
 }

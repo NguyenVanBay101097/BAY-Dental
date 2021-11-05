@@ -42,7 +42,7 @@ export class ProductProductListComponent implements OnInit {
   filteredCategs: ProductCategoryBasic[];
   searchUpdate = new Subject<string>();
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
-  @ViewChild(HasGroupsDirective, { static: false }) hasGroup: HasGroupsDirective;
+  @ViewChild(HasGroupsDirective) hasGroup: HasGroupsDirective;
 
   constructor(
     private productService: ProductService,

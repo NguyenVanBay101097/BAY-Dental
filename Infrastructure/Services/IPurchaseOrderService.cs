@@ -21,5 +21,6 @@ namespace Infrastructure.Services
         Task ButtonConfirm(IEnumerable<Guid> ids);
         Task ButtonCancel(IEnumerable<Guid> ids);
         Task PreparePurchase(IEnumerable<Guid> ids);
+        void _AmountAll(IEnumerable<PurchaseOrder> orders);
     }
 }

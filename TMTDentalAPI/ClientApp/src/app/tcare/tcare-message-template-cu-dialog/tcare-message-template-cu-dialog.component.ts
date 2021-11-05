@@ -28,7 +28,7 @@ export class TcareMessageTemplateCuDialogComponent implements OnInit {
     }
   ];
 
-  @ViewChild('textTemp', {static: false}) textTemp: TcareMessageTemplateContentComponent;
+  @ViewChild('textTemp') textTemp: TcareMessageTemplateContentComponent;
   // @ViewChild('couponCbx', { static: true }) couponCbx: ComboBoxComponent;
 
 

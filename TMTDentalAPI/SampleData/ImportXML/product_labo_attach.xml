@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Record>
+    <Id>sample.product_labo_attach_1</Id>
+    <Name>Cần sáp</Name>
+  </Record>
+  <Record>
+    <Id>sample.product_labo_attach_2</Id>
+    <Name>Giá khớp</Name>
+  </Record>
+  <Record>
+    <Id>sample.product_labo_attach_3</Id>
+    <Name>Hàm đối diện</Name>
+  </Record>
+  <Record>
+    <Id>sample.product_labo_attach_4</Id>
+    <Name>Khay lấy dấu</Name>
+  </Record>
+</Data>

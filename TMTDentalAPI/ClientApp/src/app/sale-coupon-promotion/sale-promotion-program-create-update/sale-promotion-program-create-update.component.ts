@@ -104,7 +104,6 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
         this.loadRecord();
       } else {
         this.programService.defaultGet('promotion_program').subscribe((result: any) => {
-          console.log(result);
           this.program = result;
           this.updateFormGroup(result);
         })
@@ -222,9 +221,6 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
     this.memberLevelService.get().subscribe(result => {
       this.listMemberLevel = result;
       this.filterMemberLevel = this.listMemberLevel;
-      console.log(result);
-      console.log(this.filterMemberLevel);
-      
     })
   }
 
@@ -459,8 +455,6 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   onSave() {
     this.submitted = true;
     if (!this.formGroup.valid) {
-      console.log(this.formGroup);
-      
       return false;
     }
 

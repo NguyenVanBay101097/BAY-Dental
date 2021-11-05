@@ -1,10 +1,18 @@
 <div class="report-prescription-payment">
-    <div class="revenue" *ngFor="let type of types">
+    <div class="revenue">
         <div class="title">
-            <h6>{{type.text}}</h6>
+            <h6>Tạm ứng đã đóng</h6>
         </div>
         <h4 class="text-primary">
-            {{(typeAmount[type.value] | number) || 0}}
+            {{summary2?.totalCredit || 0 | number}}
+        </h4>
+    </div>
+    <div class="revenue">
+        <div class="title">
+            <h6>Tạm ứng đã hoàn</h6>
+        </div>
+        <h4 class="text-primary">
+            {{summary2?.totalRefund || 0 | number}}
         </h4>
     </div>
     <div class="revenue">
@@ -12,7 +20,7 @@
             <h6>Tạm ứng đã dùng</h6>
         </div>
         <h4 class="text-primary">
-            {{(amountAdvanceUsed | number) || 0}}
+            {{summary2?.totalDebit || 0 | number}}
         </h4>
     </div>
     <div class="revenue">
@@ -20,7 +28,7 @@
             <h6>Tạm ứng còn lại</h6>
         </div>
         <h4 class="text-primary">
-            {{(amountBalance | number) || 0}}
+            {{summary2?.totalEnd || 0 | number}}
         </h4>
     </div>
 </div>

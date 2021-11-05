@@ -18,7 +18,7 @@ import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-ken
 export class CommissionSettlementReportListComponent implements OnInit {
   reportResults: GridDataResult;
   search: string = '';
-  limit = 20;
+  limit = 2;
   skip = 0;
   pagerSettings: any;
   loading = false;
@@ -71,6 +71,7 @@ export class CommissionSettlementReportListComponent implements OnInit {
     val.search = this.search || '';
     val.employeeId = this.employeeId ? this.employeeId : '';
     val.commissionType = this.commissionType ? this.commissionType : '';
+    val.groupBy = 'employee';
     this.loading = true;
     this.commissionSettlementsService.getReportPaged(val).pipe(
       map((response: any) => (<GridDataResult>{

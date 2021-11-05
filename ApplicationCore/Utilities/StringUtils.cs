@@ -1424,9 +1424,21 @@ namespace ApplicationCore.Utilities
         {
             return Encipher(input, 26 - key);
         }
+        /// <summary>
+        /// trả về string chữ thường kèm ký tự đằng trước từ ký tự thường thứ 2 trở đi.
+        /// example: NguyenVanA NguyenVanB => nguyen_van_a nguyen_van_b, if true => Nguyen_van_a Nguyen_van_b
+        /// </summary>
+        public static string ToLowerWith(this string input, string key, bool isFirstLower = true)
+        {
+            var res = Regex.Replace(input, @"\B[A-Z]", m => key + m.ToString().ToLower());
+            return isFirstLower ? res.ToLower() : res;
+        }
 
-
-
+        public static string ToUpperWith(this string input, string key, bool isFirstUpper = true)
+        {
+            string res = Regex.Replace(input, @"[^A-Za-z0-9].", m => m.ToString().Replace(key, "").ToUpper());
+            return isFirstUpper ? char.ToUpper(res[0]) + res.Substring(1) : res;
+        }
 
     }
 }

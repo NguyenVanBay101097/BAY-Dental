@@ -120,12 +120,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     val.ids = this.mySelection;
     this.advisoryService.createSaleOrder(val).subscribe(
       result => {
-        this.router.navigate(['sale-orders/form'], { queryParams: { id: result.id } });
-        // this.router.navigate(['/sale-orders/form'], {
-        //   queryParams: {
-        //     partner_id: this.customerId
-        //   },
-        // });
+        this.router.navigate(['/sale-orders', result.id]);
       }
     )
   }
@@ -234,7 +229,6 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     val.customerId = this.customerId;
     val.toothIds = this.teethSelected.map(x => x.id);
     this.advisoryService.getPaged(val).subscribe(res => {
-      console.log(res);
       this.gridData = <GridDataResult>{
         data: res.items,
         total: res.totalItems
@@ -326,6 +320,8 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
       return;
     }
     this.advisoryService.getPrint(this.mySelection).subscribe((res: any) => {
+      // console.log(res);
+      // return
       this.printService.printHtml(res);
     });
   }

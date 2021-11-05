@@ -95,6 +95,19 @@ namespace Infrastructure.Services
             self.AccountId = account.Id;
         }
 
+        public async Task ComputeProps(IEnumerable<PhieuThuChi> selfs)
+        {
+            var journalObj = GetService<IAccountJournalService>();
+            var journals = await journalObj.GetJournalWithDebitCreditAccount(selfs.Select(x => x.JournalId));
+            foreach (var self in selfs)
+            {
+                var journal = journals.FirstOrDefault(x => x.Id == self.JournalId);
+                self.CompanyId = journal.CompanyId;
+                var account = await ComputeDestinationAccount(self);
+                self.AccountId = account.Id;
+            }
+        }
+
         public async Task<AccountAccount> ComputeDestinationAccount(PhieuThuChi self)
         {
             var accountObj = GetService<IAccountAccountService>();

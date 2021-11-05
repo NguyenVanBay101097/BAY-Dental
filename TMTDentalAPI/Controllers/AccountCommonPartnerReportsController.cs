@@ -450,29 +450,29 @@ namespace TMTDentalAPI.Controllers
             {
                 var worksheet = package.Workbook.Worksheets.Add("BaoCaoTamUng");
 
-                worksheet.Cells["A1:H1"].Value = "BÁO CÁO TẠM ỨNG";
-                worksheet.Cells["A1:H1"].Style.Font.Size = 14;
-                worksheet.Cells["A1:H1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
-                worksheet.Cells["A1:H1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                worksheet.Cells["A1:H1"].Merge = true;
-                worksheet.Cells["A1:H1"].Style.Font.Bold = true;
-                worksheet.Cells["A2:H2"].Value = dateToDate;
-                worksheet.Cells["A2:H2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                worksheet.Cells["A2:H2"].Merge = true;
-                worksheet.Cells["A3:H3"].Value = "";
+                worksheet.Cells["A1:I1"].Value = "BÁO CÁO TẠM ỨNG";
+                worksheet.Cells["A1:I1"].Style.Font.Size = 14;
+                worksheet.Cells["A1:I1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
+                worksheet.Cells["A1:I1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells["A1:I1"].Merge = true;
+                worksheet.Cells["A1:I1"].Style.Font.Bold = true;
+                worksheet.Cells["A2:I2"].Value = dateToDate;
+                worksheet.Cells["A2:I2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells["A2:I2"].Merge = true;
+                worksheet.Cells["A3:I3"].Value = "";
                 worksheet.Cells["A4:C4"].Value = "Khách hàng";
                 worksheet.Cells["A4:C4"].Merge = true;
                 worksheet.Cells["D4"].Value = "Số điện thoại";
                 worksheet.Cells["E4"].Value = "Dư đầu kỳ";
-                worksheet.Cells["F4"].Value = "Phát sinh";
-                worksheet.Cells["G4"].Value = "Thanh toán";
-                worksheet.Cells["H4"].Value = "Dư cuối kỳ";
-                worksheet.Cells["A4:H4"].Style.Font.Bold = true;
-                worksheet.Cells["A4:H4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                worksheet.Cells["A4:H4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
-                worksheet.Cells["A4:H4"].Style.Font.Color.SetColor(Color.White);
-
-
+                worksheet.Cells["F4"].Value = "Đã đóng";
+                worksheet.Cells["G4"].Value = "Đã dùng";
+                worksheet.Cells["H4"].Value = "Đã hoàn";
+                worksheet.Cells["I4"].Value = "Dư cuối kỳ";
+                worksheet.Cells["A4:I4"].Style.Font.Bold = true;
+                worksheet.Cells["A4:I4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["A4:I4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
+                worksheet.Cells["A4:I4"].Style.Font.Color.SetColor(Color.White);
+              
                 var row = 5;
                 foreach (var item in data)
                 {
@@ -485,13 +485,16 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 5].Value = item.Begin;
                     worksheet.Cells[row, 6].Value = item.Debit;
                     worksheet.Cells[row, 7].Value = item.Credit;
-                    worksheet.Cells[row, 8].Value = item.End;
-                    worksheet.Cells[row, 5, row, 8].Style.Numberformat.Format = "#,##0";
+                    worksheet.Cells[row, 8].Value = item.Refund;
+                    worksheet.Cells[row, 9].Value = item.End;
+                    worksheet.Cells[row, 5, row, 9].Style.Numberformat.Format = "#,##0";
 
-                    worksheet.Cells[row, 1, row, 8].Style.Border.Top.Style = ExcelBorderStyle.Thin;
-                    worksheet.Cells[row, 1, row, 8].Style.Border.Left.Style = ExcelBorderStyle.Thin;
-                    worksheet.Cells[row, 1, row, 8].Style.Border.Right.Style = ExcelBorderStyle.Thin;
-                    worksheet.Cells[row, 1, row, 8].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells[row, 1, row, 9].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells[row, 1, row, 9].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells[row, 1, row, 9].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells[row, 1, row, 9].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+
+                    row++;
 
                     var childs = await _reportService.ReportPartnerAdvanceDetail(new ReportPartnerAdvanceDetailFilter
                     {
@@ -501,7 +504,6 @@ namespace TMTDentalAPI.Controllers
                         PartnerId = item.PartnerId
                     });
 
-                    row++;
                     if (childs.Any())
                     {
                         worksheet.Cells[row, 2].Value = "Ngày";
@@ -510,18 +512,19 @@ namespace TMTDentalAPI.Controllers
                         worksheet.Cells[row, 5].Value = "Dư đầu kỳ";
                         worksheet.Cells[row, 6].Value = "Phát sinh";
                         worksheet.Cells[row, 7].Value = "Thanh toán";
-                        worksheet.Cells[row, 8].Value = "Dư cuối kỳ";
+                        worksheet.Cells[row, 7, row, 8].Merge = true;
+                        worksheet.Cells[row, 9].Value = "Dư cuối kỳ";
                         worksheet.Cells[row, 2].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                         worksheet.Cells[row, 3].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                         worksheet.Cells[row, 4].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                         worksheet.Cells[row, 5].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                         worksheet.Cells[row, 6].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                         worksheet.Cells[row, 7].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                        worksheet.Cells[row, 8].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                        worksheet.Cells[row, 2, row, 8].Style.Font.Bold = true;
-                        worksheet.Cells[row, 2, row, 8].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                        worksheet.Cells[row, 2, row, 8].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#DDEBF7"));
-                        worksheet.Cells[row, 2, row, 8].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                        worksheet.Cells[row, 9].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                        worksheet.Cells[row, 2, row, 9].Style.Font.Bold = true;
+                        worksheet.Cells[row, 2, row, 9].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        worksheet.Cells[row, 2, row, 9].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#DDEBF7"));
+                        worksheet.Cells[row, 2, row, 9].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                         var rowEnd = row + childs.Count();
                         worksheet.Cells[row, 1, rowEnd, 1].Merge = true;
                         row++;
@@ -535,7 +538,8 @@ namespace TMTDentalAPI.Controllers
                             worksheet.Cells[row, 5].Value = line.Begin;
                             worksheet.Cells[row, 6].Value = line.Debit;
                             worksheet.Cells[row, 7].Value = line.Credit;
-                            worksheet.Cells[row, 8].Value = line.End;
+                            worksheet.Cells[row, 7, row, 8].Merge = true;
+                            worksheet.Cells[row, 9].Value = line.End;
                             worksheet.Cells[row, 2].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                             worksheet.Cells[row, 3].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                             worksheet.Cells[row, 4].Style.Border.BorderAround(ExcelBorderStyle.Thin);
@@ -543,17 +547,11 @@ namespace TMTDentalAPI.Controllers
                             worksheet.Cells[row, 6].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                             worksheet.Cells[row, 7].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                             worksheet.Cells[row, 8].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                            worksheet.Cells[row, 4, row, 8].Style.Numberformat.Format = "#,##0";
+                            worksheet.Cells[row, 9].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                            worksheet.Cells[row, 4, row, 9].Style.Numberformat.Format = "#,##0";
                             row++;
                         }
-
-
                     }
-                    else
-                    {
-                        //row++;
-                    }
-
                 }
 
                 worksheet.Cells.AutoFitColumns();

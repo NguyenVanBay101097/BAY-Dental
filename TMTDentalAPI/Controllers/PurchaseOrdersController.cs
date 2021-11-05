@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml;
 using ApplicationCore.Entities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -173,7 +175,7 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 7].Style.Numberformat.Format = (item.AmountTotal ?? 0) > 0 ? "#,###" : "0";
                     worksheet.Cells[row, 6].Value = item.State != "draft" ? ((item.AmountTotal ?? 0) - (item.AmountResidual ?? 0)) : 0;
                     worksheet.Cells[row, 6].Style.Numberformat.Format = ((item.AmountTotal ?? 0) - (item.AmountResidual ?? 0)) > 0 && item.State != "draft" ? "#,###" : "0";
-                    worksheet.Cells[row, 7].Value = item.AmountResidual ?? 0 ;
+                    worksheet.Cells[row, 7].Value = item.AmountResidual ?? 0;
                     worksheet.Cells[row, 7].Style.Numberformat.Format = (item.AmountResidual ?? 0) > 0 ? "#,###" : "0";
                     worksheet.Cells[row, 8].Value = item.State == "draft" ? "Nháp" : (item.State == "purchase" ? "Đơn hàng" : "Hoàn thành");
 
@@ -209,7 +211,7 @@ namespace TMTDentalAPI.Controllers
         [HttpGet("{id}/Print")]
         public async Task<IActionResult> GetPrint(Guid id)
         {
-            var res = await _purchaseOrderService.GetByIdAsync(id);        
+            var res = await _purchaseOrderService.GetByIdAsync(id);
             //tim trong bảng config xem có dòng nào để lấy ra template
             var printConfig = await _printTemplateConfigService.SearchQuery(x => x.Type == (res.Type == "order" ? "tmp_purchase_order" : "tmp_purchase_refund") && x.IsDefault)
                 .Include(x => x.PrintPaperSize)
@@ -228,6 +230,112 @@ namespace TMTDentalAPI.Controllers
 
             var result = await _printTemplateService.GeneratePrintHtml(template, new List<Guid>() { id }, paperSize);
             return Ok(new PrintData() { html = result });
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GenerateOrderXML()
+        {
+            var irModelObj = (IIRModelDataService)HttpContext.RequestServices.GetService(typeof(IIRModelDataService));
+            var _hostingEnvironment = (IWebHostEnvironment)HttpContext.RequestServices.GetService(typeof(IWebHostEnvironment));
+            var xmlService = (IXmlService)HttpContext.RequestServices.GetService(typeof(IXmlService));
+            string path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\ImportXML\purchase_order_order.xml");
+
+            var irModelCreate = new List<IRModelData>();
+            var dateToData = new DateTime(2021, 08, 25);
+            var listIrModelData = await irModelObj.SearchQuery(x => (x.Module == "sample" || x.Module == "stock" || x.Module == "account" || x.Module == "product")).ToListAsync();// các irmodel cần thiết
+            var entities = await _purchaseOrderService.SearchQuery(x => x.Type == "order").Include(x => x.OrderLines).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var data = new List<PurchaseOrderXmlSampleDataRecord>();
+            foreach (var entity in entities)
+            {
+                var item = _mapper.Map<PurchaseOrderXmlSampleDataRecord>(entity);
+
+                item.Id = $@"sample.purchase_order_order_{entities.IndexOf(entity) + 1}";
+                item.DateRound = (int)(dateToData - entity.DateOrder).TotalDays;
+                var irmodelDataPartner = listIrModelData.FirstOrDefault(x => x.ResId == entity.PartnerId.ToString());
+                item.PartnerId = irmodelDataPartner == null ? "" : irmodelDataPartner?.Module + "." + irmodelDataPartner?.Name;
+                var irmodelDataPickingType = listIrModelData.FirstOrDefault(x => x.ResId == entity.PickingTypeId.ToString());
+                item.PickingTypeId = irmodelDataPickingType == null ? "" : irmodelDataPickingType.Module + "." + irmodelDataPickingType?.Name;
+                var irmodelDataJournal = listIrModelData.FirstOrDefault(x => x.ResId == entity.JournalId.ToString());
+                item.JournalId = irmodelDataJournal == null ? "" : irmodelDataJournal.Module + "." + irmodelDataJournal?.Name;
+                //add lines
+                foreach (var lineEntity in entity.OrderLines)
+                {
+                    var itemLine = _mapper.Map<PurchaseOrderLineXmlSampleDataRecord>(lineEntity);
+                    var irmodelDataProductUom = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.ProductUOMId.ToString());
+                    itemLine.ProductUOMId = irmodelDataProductUom?.Module + "." + irmodelDataProductUom?.Name;
+                    var irmodelDataProduct = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.ProductId.ToString());
+                    itemLine.ProductId = irmodelDataProduct?.Module + "." + irmodelDataProduct?.Name;
+                    var irmodelDataPartnerLine = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.PartnerId.ToString());
+                    itemLine.PartnerId = irmodelDataPartnerLine?.Module + "." + irmodelDataPartnerLine?.Name;
+                    item.OrderLines.Add(itemLine);
+                }
+                data.Add(item);
+                // add IRModelData
+                irModelCreate.Add(new IRModelData()
+                {
+                    Module = "sample",
+                    Model = "purchase.order",
+                    ResId = entity.Id.ToString(),
+                    Name = $"purchase_order_order_{entities.IndexOf(entity) + 1}"
+                });
+            }
+            //writeFile
+            xmlService.WriteXMLFile(path, data);
+            await irModelObj.CreateAsync(irModelCreate);
+            return Ok();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GenerateRefundXML()
+        {
+            var irModelObj = (IIRModelDataService)HttpContext.RequestServices.GetService(typeof(IIRModelDataService));
+            var _hostingEnvironment = (IWebHostEnvironment)HttpContext.RequestServices.GetService(typeof(IWebHostEnvironment));
+            var xmlService = (IXmlService)HttpContext.RequestServices.GetService(typeof(IXmlService));
+            string path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\ImportXML\purchase_order_refund.xml");
+
+            var irModelCreate = new List<IRModelData>();
+            var dateToData = new DateTime(2021, 08, 25);
+            var listIrModelData = await irModelObj.SearchQuery(x => (x.Module == "sample" || x.Module == "stock" || x.Module == "account" || x.Module == "product")).ToListAsync();// các irmodel cần thiết
+            var entities = await _purchaseOrderService.SearchQuery(x => x.Type == "refund" && x.DateOrder.Date <= dateToData.Date).Include(x => x.OrderLines).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var data = new List<PurchaseOrderXmlSampleDataRecord>();
+            foreach (var entity in entities)
+            {
+                var item = _mapper.Map<PurchaseOrderXmlSampleDataRecord>(entity);
+
+                item.Id = $@"sample.purchase_order_refund_{entities.IndexOf(entity) + 1}";
+                item.DateRound = (int)(dateToData - entity.DateOrder).TotalDays;
+                var irmodelDataPartner = listIrModelData.FirstOrDefault(x => x.ResId == entity.PartnerId.ToString());
+                item.PartnerId = irmodelDataPartner == null ? "" : irmodelDataPartner?.Module + "." + irmodelDataPartner?.Name;
+                var irmodelDataPickingType = listIrModelData.FirstOrDefault(x => x.ResId == entity.PickingTypeId.ToString());
+                item.PickingTypeId = irmodelDataPickingType == null ? "" : irmodelDataPickingType.Module + "." + irmodelDataPickingType?.Name;
+                var irmodelDataJournal = listIrModelData.FirstOrDefault(x => x.ResId == entity.JournalId.ToString());
+                item.JournalId = irmodelDataJournal == null ? "" : irmodelDataJournal.Module + "." + irmodelDataJournal?.Name;
+                //add lines
+                foreach (var lineEntity in entity.OrderLines)
+                {
+                    var itemLine = _mapper.Map<PurchaseOrderLineXmlSampleDataRecord>(lineEntity);
+                    var irmodelDataProductUom = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.ProductUOMId.ToString());
+                    itemLine.ProductUOMId = irmodelDataProductUom?.Module + "." + irmodelDataProductUom?.Name;
+                    var irmodelDataProduct = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.ProductId.ToString());
+                    itemLine.ProductId = irmodelDataProduct?.Module + "." + irmodelDataProduct?.Name;
+                    var irmodelDataPartnerLine = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.PartnerId.ToString());
+                    itemLine.PartnerId = irmodelDataPartnerLine?.Module + "." + irmodelDataPartnerLine?.Name;
+                    item.OrderLines.Add(itemLine);
+                }
+                data.Add(item);
+                // add IRModelData
+                irModelCreate.Add(new IRModelData()
+                {
+                    Module = "sample",
+                    Model = "purchase.order",
+                    ResId = entity.Id.ToString(),
+                    Name = $"purchase_order_refund_{entities.IndexOf(entity) + 1}"
+                });
+            }
+            //writeFile
+            xmlService.WriteXMLFile(path, data);
+            await irModelObj.CreateAsync(irModelCreate);
+            return Ok();
         }
     }
 }

@@ -7,9 +7,11 @@ using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TMTDentalAPI.Features.PartnerAdvanceReport;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -26,10 +28,12 @@ namespace TMTDentalAPI.Controllers
         private readonly IPrintTemplateConfigService _printTemplateConfigService;
         private readonly IPrintTemplateService _printTemplateService;
         private readonly IIRModelDataService _modelDataService;
+        private readonly IMediator _mediator;
         public PartnerAdvancesController(IMapper mapper, IPartnerAdvanceService partnerAdvanceService, IViewRenderService view, IUnitOfWorkAsync unitOfWork,
              IPrintTemplateService printTemplateService,
             IIRModelDataService modelDataService
-            , IPrintTemplateConfigService printTemplateConfigService)
+            , IPrintTemplateConfigService printTemplateConfigService,
+            IMediator mediator)
         {
             _mapper = mapper;
             _partnerAdvanceService = partnerAdvanceService;
@@ -38,6 +42,7 @@ namespace TMTDentalAPI.Controllers
             _printTemplateConfigService = printTemplateConfigService;
             _printTemplateService = printTemplateService;
             _modelDataService = modelDataService;
+            _mediator = mediator;
         }
 
         [HttpGet]
@@ -153,6 +158,14 @@ namespace TMTDentalAPI.Controllers
 
             await _partnerAdvanceService.DeleteAsync(partnerAdvance);
             return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.PartnerAdvance.Read")]
+        public async Task<IActionResult> GetSummary2(PartnerAdvanceSummaryFilter2 val)
+        {
+            var viewModel = await _mediator.Send(new PartnerAdvanceReportGetSummary(val.PartnerId, val.CompanyId));
+            return Ok(viewModel);
         }
     }
 }

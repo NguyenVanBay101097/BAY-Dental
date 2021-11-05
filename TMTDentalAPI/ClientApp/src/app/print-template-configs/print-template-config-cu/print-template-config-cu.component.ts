@@ -53,7 +53,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
     filter = new PrintTemplateConfigChangePaperSize();
     formGroup: FormGroup;
 
-    @ViewChild("editor", { static: false }) editor;
+    @ViewChild("editor") editor;
 
     constructor(private configService: PrintTemplateConfigService,
         private activeRoute: ActivatedRoute,

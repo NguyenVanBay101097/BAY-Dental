@@ -85,18 +85,20 @@
 <table border="1" cellpadding="3" cellspacing="1" style="width:100%">
     <tbody>
         <tr>
-            <td><strong>Mã thanh toán</strong></td>
-            <td><strong>Ngày thanh toán</strong></td>
-            <td style="text-align:right"><strong>Số tiền</strong></td>
-            <td><strong>Phương thức</strong></td>
-            <td style="text-align:right"><strong>Thanh toán</strong></td>
+            <td style="width:120px"><strong>Mã thanh toán</strong></td>
+            <td style="width:120px"><strong>Ngày thanh toán</strong></td>
+            <td style="width:200px"><strong>Dịch vụ</strong></td>
+            <td style="text-align:right;width:120px;"><strong>Số tiền</strong></td>
+            <td style="width:120px"><strong>Phương thức</strong></td>
+            <td style="text-align:right;width:120px"><strong>Thanh toán</strong></td>
         </tr>
         <!--{{for sop in o.sale_order_payments}}--><!--{{for item in sop.payment_rels}}-->
         <tr>
             <td>{{item.payment?.name}}</td>
             <!--{{if item.payment?.id == sop.payment_rels[0]?.payment.id}}-->
-            <td rowspan="{{sop.payments | array.size}}">{{item.payment?.payment_date | date.to_string '%d/%m/%Y'}}</td>
-            <td rowspan="{{sop.payments | array.size}}" style="text-align:right">{{sop.amount | math.format "N0" }}</td>
+            <td rowspan="{{sop.payment_rels | array.size}}">{{item.payment?.payment_date | date.to_string '%d/%m/%Y'}}</td>
+            <td rowspan="{{sop.payment_rels | array.size}}">{{sop.lines_display}}</td>
+            <td rowspan="{{sop.payment_rels | array.size}}" style="text-align:right">{{sop.amount | math.format "N0" }}</td>
             <!--{{end}}-->
             <td>{{item.payment?.journal?.name}}</td>
             <td style="text-align:right">{{item.payment?.amount | math.format "N0"}}</td>
@@ -120,11 +122,13 @@
             <td><strong>Răng, Chi tiết điều trị</strong></td>
         </tr>
 
-        <!--{{for dotkham in o.dot_khams}}--><!--{{for line in dotkham.lines}}-->
+        <!--{{for dotkham in o.dot_khams}}-->
+            {{i = for.index + 1}}
+            <!--{{for line in dotkham.lines}}-->
         <tr>
 
             <!--{{if line.id == (dotkham.lines[0]?.id)}}-->
-            <td rowspan="{{(dotkham.lines | array.size)}}" style="text-align:center">{{for.index + 1}}</td>
+            <td rowspan="{{(dotkham.lines | array.size)}}" style="text-align:center">{{i}}</td>
             <td rowspan="{{(dotkham.lines | array.size)}}">{{dotkham.date | date.to_string '%d/%m/%Y' }}</td>
             <td rowspan="{{(dotkham.lines | array.size)}}">{{dotkham.doctor ? dotkham.doctor?.name : ""}}</td>
             <td rowspan="{{(dotkham.lines | array.size)}}" style="vertical-align:top">{{dotkham.reason}}</td>
@@ -141,6 +145,11 @@
         <!--{{end}}--><!--{{end}}-->
     </tbody>
 </table>
+<!--{{end}}-->
+<!--{{if (o.ir_attachments.size > 0)}}-->
+<h6>PHIM XQKTS</h6>
+
+<p><!--{{for ir in o.ir_attachments}}--><img alt="{{ir.name}}" class="img-fluid" src="{{ir.url}}?width=240&height=240)" style="width:150px" /> <!--{{end}}--></p>
 <!--{{end}}-->
 <table border="0" cellpadding="0" cellspacing="1" style="width:100%">
     <tbody>
@@ -161,7 +170,7 @@
                 <br />
                 <br />
                 <br />
-                <strong>{{o.partner?.name}}</strong>
+                <strong>{{o.partner?.name | string.upcase}}</strong>
             </td>
         </tr>
     </tbody>

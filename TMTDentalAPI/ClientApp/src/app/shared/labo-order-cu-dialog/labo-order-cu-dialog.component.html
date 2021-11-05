@@ -44,7 +44,7 @@
                                             </label>
                                         </td>
                                         <td colspan="1" style="width: 100%;">
-                                            <a class="text-primary" (click)="activeModal.dismiss()" [routerLink]="['/sale-orders/form']" [queryParams]="{id: saleOrderLine?.orderId}">
+                                            <a class="text-primary" (click)="actionRedirect(saleOrderLine)">
                                                 {{saleOrderLine?.order?.name}}
                                             </a>
                                         </td>
@@ -79,7 +79,10 @@
                                                 </div>
                                             </div>
                                             <span *ngIf="state == 'confirmed'">{{partnerFC.value.name}}</span>
-                                            <label *ngIf="partnerFC.errors?.required" class="text-danger" for="">Chọn nhà cung cấp Labo</label>
+                                            <div *ngIf="partnerFC.errors && (partnerFC.touched || partnerFC.dirty || submitted)"
+                                                class="text-danger">
+                                                <div *ngIf="partnerFC.errors.required">Chọn nhà cung cấp Labo</div>
+                                            </div>
                                         </td>
                                     </tr>
                                     

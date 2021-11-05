@@ -4,11 +4,13 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml;
 using ApplicationCore.Entities;
 using ApplicationCore.Models;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.JsonPatch;
@@ -32,13 +34,20 @@ namespace TMTDentalAPI.Controllers
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly INotificationHubService _notificationHubService;
         private readonly IDotKhamService _dotKhamService;
+        private readonly IPrintTemplateConfigService _printTemplateConfigService;
+        private readonly IPrintTemplateService _printTemplateService;
+        private readonly IIRModelDataService _modelDataService;
 
         public AppointmentsController(IAppointmentService appointmentService,
             IMapper mapper, UserManager<ApplicationUser> userManager,
             IMailMessageService mailMessageService,
             IUnitOfWorkAsync unitOfWork,
             INotificationHubService notificationHubService,
-            IDotKhamService dotKhamService)
+            IDotKhamService dotKhamService,
+            IPrintTemplateConfigService printTemplateConfigService,
+            IPrintTemplateService printTemplateService,
+            IIRModelDataService modelDataService
+            )
         {
             _appointmentService = appointmentService;
             _mapper = mapper;
@@ -47,6 +56,9 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork = unitOfWork;
             _notificationHubService = notificationHubService;
             _dotKhamService = dotKhamService;
+            _printTemplateConfigService = printTemplateConfigService;
+            _printTemplateService = printTemplateService;
+            _modelDataService = modelDataService;
         }
 
         [HttpGet]
@@ -380,6 +392,83 @@ namespace TMTDentalAPI.Controllers
         {
             var result = await _appointmentService.GetListDoctor(val);
             return Ok(result);
+        }
+        [HttpGet("{id}/Print")]
+        [CheckAccess(Actions = "Basic.Appointment.Read")]
+        public async Task<IActionResult> GetPrint(Guid id)
+        {
+            //tim trong bảng config xem có dòng nào để lấy ra template
+            var printConfig = await _printTemplateConfigService.SearchQuery(x => x.Type == "tmp_appointment" && x.IsDefault)
+                .Include(x => x.PrintPaperSize)
+                .Include(x => x.PrintTemplate)
+                .FirstOrDefaultAsync();
+
+            PrintTemplate template = printConfig != null ? printConfig.PrintTemplate : null;
+            PrintPaperSize paperSize = printConfig != null ? printConfig.PrintPaperSize : null;
+            if (template == null)
+            {
+                //tìm template mặc định sử dụng chung cho tất cả chi nhánh, sử dụng bảng IRModelData hoặc bảng IRConfigParameter
+                template = await _modelDataService.GetRef<PrintTemplate>("base.print_template_appointment");
+                if (template == null)
+                    throw new Exception("Không tìm thấy mẫu in mặc định");
+            }
+
+            var result = await _printTemplateService.GeneratePrintHtml(template, new List<Guid>() { id }, paperSize);
+            return Ok(new PrintData() { html = result });
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GenerateXML()
+        {
+            var irModelObj = (IIRModelDataService)HttpContext.RequestServices.GetService(typeof(IIRModelDataService));
+            var _hostingEnvironment = (IWebHostEnvironment)HttpContext.RequestServices.GetService(typeof(IWebHostEnvironment));
+            var xmlService = (IXmlService)HttpContext.RequestServices.GetService(typeof(IXmlService));
+            string path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\ImportXML\appointment.xml");
+
+            var irModelCreate = new List<IRModelData>();
+            var dateToData = new DateTime(2021, 08, 25);
+            var listIrModelData = await irModelObj.SearchQuery(x => (x.Module == "sample") && (x.Model == "employee" || x.Model == "partner" || x.Model == "sale.order" || x.Model == "product")).ToListAsync();// các irmodel cần thiết
+            var entities = await _appointmentService.SearchQuery(x => x.Date.Date <= dateToData.Date).Include(x => x.AppointmentServices).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var data = new List<AppointmentXmlSampleDataRecord>();
+            foreach (var entity in entities)
+            {
+                var item = _mapper.Map<AppointmentXmlSampleDataRecord>(entity);
+
+                var partnerModelData = listIrModelData.FirstOrDefault(x => x.ResId == entity.PartnerId.ToString());
+                var doctorModelData = listIrModelData.FirstOrDefault(x => x.ResId == entity.DoctorId.ToString());
+                var orderModelData = listIrModelData.FirstOrDefault(x => x.ResId == entity.SaleOrderId.ToString());
+
+                item.Id = $@"sample.appointment_{entities.IndexOf(entity) + 1}";
+                item.DateRound = (int)(dateToData - entity.Date).TotalDays;
+                item.PartnerId = partnerModelData == null ? "" : partnerModelData?.Module + "." + partnerModelData?.Name;
+                item.DoctorId = doctorModelData == null ? "" : doctorModelData?.Module + "." + doctorModelData?.Name;
+                item.SaleOrderId = orderModelData == null ? "" : orderModelData?.Module + "." + orderModelData?.Name;
+
+                //add lines
+                foreach (var lineEntity in entity.AppointmentServices)
+                {
+                    var irmodelDataProduct = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.ProductId.ToString());
+                    var itemLine = new ProductAppointmentRelXmlSampleDataRecord()
+                    {
+                        ProductId = irmodelDataProduct == null ? "" : irmodelDataProduct?.Module + "." + irmodelDataProduct?.Name
+                    };
+                    item.AppointmentServices.Add(itemLine);
+                }
+
+                data.Add(item);
+                // add IRModelData
+                irModelCreate.Add(new IRModelData()
+                {
+                    Module = "sample",
+                    Model = "appointment",
+                    ResId = entity.Id.ToString(),
+                    Name = $"appointment_{entities.IndexOf(entity) + 1}"
+                });
+            }
+            //writeFile
+            xmlService.WriteXMLFile(path, data);
+            await irModelObj.CreateAsync(irModelCreate);
+            return Ok();
         }
     }
 }

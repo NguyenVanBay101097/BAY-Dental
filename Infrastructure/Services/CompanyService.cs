@@ -287,6 +287,7 @@ namespace Infrastructure.Services
                 UserTypeId = currentLiabilities.Id,
                 CompanyId = company.Id,
             };
+
             #endregion
 
             #region For payableAccType
@@ -631,6 +632,7 @@ namespace Infrastructure.Services
 
             var modelDatas = new List<IRModelData>();
             modelDatas.AddRange(PrepareModelData(account_type_dict, "account.account.type"));
+            modelDatas.AddRange(PrepareModelData(account_journal_dict, "account.journal"));
             var modelDataObj = GetService<IIRModelDataService>();
             await modelDataObj.CreateAsync(modelDatas);
         }
@@ -872,6 +874,7 @@ namespace Infrastructure.Services
 
             var modelDatas = new List<IRModelData>();
             modelDatas.AddRange(PrepareModelData(product_uom_dict, "uom"));
+            modelDatas.AddRange(PrepareModelData(product_uom_categ_dict, "uom.category"));
             var modelDataObj = GetService<IIRModelDataService>();
             await modelDataObj.CreateAsync(modelDatas);
         }
@@ -1008,7 +1011,8 @@ namespace Infrastructure.Services
                         else if (field_name == "paperFormat")
                         {
                             printPaperSize.PaperFormat = field.InnerText;
-                        }else if (field_name == "topMargin")
+                        }
+                        else if (field_name == "topMargin")
                         {
                             printPaperSize.TopMargin = int.Parse(field.InnerText);
                         }
@@ -1026,7 +1030,8 @@ namespace Infrastructure.Services
                         }
                     }
                     paper_size_dict.Add(id, printPaperSize);
-                }else if (model == "sms.campaign")
+                }
+                else if (model == "sms.campaign")
                 {
                     var smsCampaign = new SmsCampaign();
                     var fields = record.GetElementsByTagName("field");
@@ -1050,7 +1055,7 @@ namespace Infrastructure.Services
                         {
                             smsCampaign.DefaultType = field.InnerText;
                         }
-                       
+
                     }
                     sms_campaign_dict.Add(id, smsCampaign);
                 }
@@ -1106,6 +1111,10 @@ namespace Infrastructure.Services
 
             await modelDataObj.CreateAsync(PrepareModelData(print_template_dict, "print.template"));
 
+            var modelDatas = new List<IRModelData>();
+            modelDatas.AddRange(PrepareModelData(tooth_category_dict, "tooth.category"));
+            modelDatas.AddRange(PrepareModelData(tooth_dict, "tooth"));
+            await modelDataObj.CreateAsync(modelDatas);
         }
 
         private IEnumerable<IRModelData> PrepareModelData<T>(IDictionary<string, T> dict, string model) where T : BaseEntity
@@ -1405,7 +1414,7 @@ namespace Infrastructure.Services
         public async Task ActionArchive(IEnumerable<Guid> ids)
         {
             var companies = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
-            foreach(var company in companies)
+            foreach (var company in companies)
             {
                 if (company.Id == CompanyId)
                     throw new Exception("Không thể đóng chi nhánh đang làm việc");

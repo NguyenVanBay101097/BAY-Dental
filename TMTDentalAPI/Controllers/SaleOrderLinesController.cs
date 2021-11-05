@@ -153,6 +153,38 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Áp dụng thẻ ưu đãi
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ApplyServiceCardCard(ApplyServiceCardCardRequest val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleLineService.ApplyServiceCardCard(val);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Áp dụng thẻ thành viên
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ApplyCardCard(ApplyCardCardRequest val)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleLineService.ApplyCardCard(val);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
         [HttpPatch("{id}/[action]")]
         public async Task<IActionResult> PatchIsActive(Guid id, SaleOrderLineIsActivePatch result)
         {
@@ -247,6 +279,20 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetHistory([FromQuery]SaleOrderLineHistoryReq val)
         {
             var res = await _saleLineService.GetHistory(val);
+            return Ok(res);
+        }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetListServiceCardCardApplyable(Guid id)
+        {
+            var res = await _saleLineService.GetListServiceCardCardApplyable(id);
+            return Ok(res);
+        }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetListCardCardApplyable(Guid id)
+        {
+            var res = await _saleLineService.GetListCardCardApplyable(id);
             return Ok(res);
         }
 

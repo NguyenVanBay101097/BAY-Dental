@@ -48,6 +48,7 @@ namespace Umbraco.Web.Models.ContentEditing
     public class ServiceReportDetailRes
     {
         public DateTime? Date { get; set; }
+        public string OrderPartnerId { get; set; }
         public string OrderPartnerName { get; set; }
         public string Name { get; set; }
         public string EmployeeName { get; set; }
@@ -72,6 +73,8 @@ namespace Umbraco.Web.Models.ContentEditing
         }
         public decimal ProductUOMQty { get; set; }
         public decimal PriceSubTotal { get; set; }
+        public decimal AmountPaid { get; set; }
+        public decimal AmountResidual { get; set; }
         public string State { get; set; }
         public string StateDisplay
         {
@@ -90,6 +93,7 @@ namespace Umbraco.Web.Models.ContentEditing
                 }
             }
         }
+        public string OrderId { get; set; }
         public string OrderName { get; set; }
         public Guid ProductId { get; set; }
 

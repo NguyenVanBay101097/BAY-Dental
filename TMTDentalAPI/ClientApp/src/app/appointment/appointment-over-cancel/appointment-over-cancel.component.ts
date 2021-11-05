@@ -22,7 +22,7 @@ import { AppointmentService } from '../appointment.service';
 })
 export class AppointmentOverCancelComponent implements OnInit {
 
-  @ViewChild('dropdownMenuBtn', { static: false }) dropdownMenuBtn: NgbDropdownToggle;
+  @ViewChild('dropdownMenuBtn') dropdownMenuBtn: NgbDropdownToggle;
   @ViewChild('employeeCbx', { static: true }) employeeCbx: ComboBoxComponent;
 
   gridData: GridDataResult;

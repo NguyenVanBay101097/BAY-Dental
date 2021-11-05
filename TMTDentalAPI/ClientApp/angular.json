@@ -4,6 +4,18 @@
   "newProjectRoot": "projects",
   "projects": {
     "tmt-dental": {
+      "i18n": {
+        "locales": {
+          "vi": {
+            "translation": "src/locale/messages.vi.xlf",
+            "baseHref": ""
+          },
+          "es": {
+            "translation": "src/locale/messages.es.xlf",
+            "baseHref": ""
+          }
+        }
+      },
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -18,7 +30,7 @@
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
-            "aot": false,
+            "aot": true,
             "assets": [
               "src/favicon.ico",
               "src/assets",
@@ -32,6 +44,7 @@
             "styles": [
               "node_modules/@progress/kendo-theme-bootstrap/dist/all.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/@fortawesome/fontawesome-free/css/all.css",
               "src/styles.css",
               "src/tai-styles.css",
               "src/quan-styles.css",
@@ -51,23 +64,26 @@
           },
           "configurations": {
             "vi": {
-              "aot": true,
               "outputPath": "dist/tmt-dental-vi",
               "i18nFile": "src/locale/messages.vi.xlf",
-              "i18nFormat": "xlf",
               "i18nLocale": "vi"
             },
             "production-vi": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
-              "aot": true,
-              "i18nFile": "src/locale/messages.es.xlf",
-              "i18nFormat": "xlf",
-              "i18nLocale": "es",
+            "localize": [
+              "es"
+            ],
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
@@ -78,6 +94,12 @@
               "buildOptimizer": true
             },
             "production": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -89,7 +111,6 @@
               "sourceMap": false,
               "extractCss": true,
               "namedChunks": false,
-              "aot": true,
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,

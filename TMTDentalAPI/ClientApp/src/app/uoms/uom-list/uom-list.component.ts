@@ -9,6 +9,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { UomImportExcelDialogComponent } from '../uom-import-excel-dialog/uom-import-excel-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { NotifyService } from 'src/app/shared/services/notify.service';
 
 @Component({
   selector: 'app-uom-list',
@@ -28,6 +29,7 @@ export class UomListComponent implements OnInit {
   constructor(
     private uoMService: UomService,
     private modalService: NgbModal,
+    private notifyService: NotifyService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -82,8 +84,9 @@ export class UomListComponent implements OnInit {
 
   createItem() {
     let modalRef = this.modalService.open(UomCrUpComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm: ' + this.title;
+    modalRef.componentInstance.title = 'Thêm đơn vị tính';
     modalRef.result.then(() => {
+      this.notifyService.notify('success', 'Lưu thành công');
       this.loadDataFromApi();
     }, () => {
     });
@@ -97,9 +100,10 @@ export class UomListComponent implements OnInit {
 
   editItem(item) {
     let modalRef = this.modalService.open(UomCrUpComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm: ' + this.title;
+    modalRef.componentInstance.title = 'Sửa đơn vị tính';
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {
+      this.notifyService.notify('success', 'Lưu thành công');
       this.loadDataFromApi();
     }, () => {
     });
@@ -107,10 +111,11 @@ export class UomListComponent implements OnInit {
 
   deleteItem(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Xóa: ' + this.title;
+    modalRef.componentInstance.title = 'Xóa đơn vị tính';
 
     modalRef.result.then(() => {
       this.uoMService.delete(item.id).subscribe(() => {
+        this.notifyService.notify('success', 'Xóa thành công');
         this.loadDataFromApi();
       }, err => {
         console.log(err);

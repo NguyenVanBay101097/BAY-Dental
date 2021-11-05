@@ -7,6 +7,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { PrintService } from 'src/app/shared/services/print.service';
 import { AccountCommonPartnerReportService, ReportPartnerAdvance, ReportPartnerAdvanceFilter } from '../account-common-partner-report.service';
 
 @Component({
@@ -41,6 +42,7 @@ export class PartnerAdvanceListReportComponent implements OnInit {
     private intlService: IntlService,
     private companyService: CompanyService,
     private reportService: AccountCommonPartnerReportService,
+    private printService: PrintService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -152,24 +154,25 @@ export class PartnerAdvanceListReportComponent implements OnInit {
     val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null;
     val.search = this.search ? this.search : '';
     val.companyId = this.companyId || '';
-    this.reportService.getReportPartnerAdvancePdf(val).subscribe(result => {
-      this.loading = false;
-      let filename ="BaoCaoTamUng";
+    this.reportService.printReportPartnerAdvance(val).subscribe(result => {
+      this.printService.printHtml(result);
+      // this.loading = false;
+      // let filename ="BaoCaoTamUng";
 
-      let newBlob = new Blob([result], {
-        type:
-          "application/pdf",
-      });
+      // let newBlob = new Blob([result], {
+      //   type:
+      //     "application/pdf",
+      // });
 
-      let data = window.URL.createObjectURL(newBlob);
-      let link = document.createElement("a");
-      link.href = data;
-      link.download = filename;
-      link.click();
-      setTimeout(() => {
-        // For Firefox it is necessary to delay revoking the ObjectURL
-        window.URL.revokeObjectURL(data);
-      }, 100);
+      // let data = window.URL.createObjectURL(newBlob);
+      // let link = document.createElement("a");
+      // link.href = data;
+      // link.download = filename;
+      // link.click();
+      // setTimeout(() => {
+      //   // For Firefox it is necessary to delay revoking the ObjectURL
+      //   window.URL.revokeObjectURL(data);
+      // }, 100);
     })
   }
 

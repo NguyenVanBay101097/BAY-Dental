@@ -26,6 +26,7 @@ import { NotifyService } from '../services/notify.service';
 import { Subject } from 'rxjs';
 import { FacebookUserProfileService } from 'src/app/facebook-config/shared/facebook-user-profile.service';
 import { AppointmentBasic, AppointmentDisplay } from 'src/app/appointment/appointment';
+import { PrintService } from '../services/print.service';
 
 @Component({
   selector: 'app-appointment-create-update',
@@ -78,7 +79,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     private odataPartnerService: PartnersService,
     private productService: ProductService,
     private employeeService: EmployeeService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private printService: PrintService
    ) { }
 
   ngOnInit() {
@@ -189,13 +191,30 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     return this.employeeService.getEmployeePaged(val);
   }
 
-  onSave() {
+  onSavePrint(){
     this.submitted = true;
-    
-    if (!this.formGroup.valid) {
+    if (!this.formGroup.valid)
       return false;
+    var appoint = this.dataSave();
+    this.appointmentService.create(appoint)
+    .pipe(
+      mergeMap((rs: any) => {
+        return this.appointmentService.get(rs.id);
+      })).subscribe( (res:any) => {
+        var basic = this.getBasic(res);
+        this.activeModal.close(basic);
+        this.notify("success","Lưu thành công");
+        this.appointId = res.id;
+        this.onPrint();
+      },
+      er => {
+        this.errorService.show(er);
+        this.submitted = false;
+      },
+    )
     }
-    
+
+  dataSave(){
     var appoint = this.formGroup.getRawValue();
     appoint.partnerId = appoint.partner ? appoint.partner.id : null;
     appoint.doctorId = appoint.doctor ? appoint.doctor.id : null;
@@ -207,6 +226,16 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     if (this.state != 'cancel') {
       appoint.reason = null;
     }
+    return appoint;
+  }
+
+  onSave() {
+    this.submitted = true;
+    
+    if (!this.formGroup.valid) {
+      return false;
+    }
+    var appoint = this.dataSave();
 
     if (this.appointId) {   
       this.appointmentService.update(this.appointId, appoint).subscribe(
@@ -281,7 +310,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       user: item.user ? item.user : null,
       dateObj: [null, Validators.required],
       timeObj: [null, Validators.required],
-      note: null,
+      note: item.note ? item.note : null,
       companyId: item.companyId ? item.companyId : null,
       doctor: item.doctor ? item.doctor : null,
       timeExpected: 30,
@@ -576,5 +605,11 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       this.formGroup.get('reason').clearValidators();
       this.formGroup.get('reason').updateValueAndValidity();
     }
+  }
+
+  onPrint() {
+    this.appointmentService.print(this.appointId).subscribe((res: any) => {
+      this.printService.printHtml(res.html);
+    });
   }
 }

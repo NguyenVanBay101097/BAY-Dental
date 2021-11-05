@@ -33,6 +33,7 @@ import { AccountCommonPartnerReportsModule } from '../account-common-partner-rep
 import { HrSalaryPaymentComponent } from './hr-salary-payment/hr-salary-payment.component';
 import { TimeKeepingModule } from '../time-keeping/time-keeping.module';
 import { SalaryPaymentModule } from '../salary-payment/salary-payment.module';
+import { HrJobsModule } from '../hr-jobs/hr-jobs.module';
 
 @NgModule({
   declarations: [
@@ -65,7 +66,8 @@ import { SalaryPaymentModule } from '../salary-payment/salary-payment.module';
     NgbModule,
     SharedModule,
     TimeKeepingModule,
-    SalaryPaymentModule
+    SalaryPaymentModule,
+    HrJobsModule
   ],
   providers: [
     HrPayrollStructureService,

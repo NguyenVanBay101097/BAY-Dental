@@ -15,7 +15,16 @@ import { AgentCommissionFormComponent } from '../agents/agent-commission-form/ag
 import { AgentCommmissionFormDetailComponent } from '../agents/agent-commmission-form-detail/agent-commmission-form-detail.component';
 import { AgentCommmissionHistoryComponent } from '../agents/agent-commmission-history/agent-commmission-history.component';
 import { AgentCommmissionFormDetailItemComponent } from '../agents/agent-commmission-form-detail-item/agent-commmission-form-detail-item.component';
-import { AgentCommmissionPaymentDialogComponent } from '../agents/agent-commmission-payment-dialog/agent-commmission-payment-dialog.component';
+// import { AgentCommmissionPaymentDialogComponent } from '../agents/agent-commmission-payment-dialog/agent-commmission-payment-dialog.component';
+import { CommissionSettlementAgentDetailComponent } from './commission-settlement-agent-detail/commission-settlement-agent-detail.component';
+import { CommissionSettlementAgentProfileComponent } from './commission-settlement-agent-detail/commission-settlement-agent-profile/commission-settlement-agent-profile.component';
+import { CommissionSettlementAgentCommissionComponent } from './commission-settlement-agent-detail/commission-settlement-agent-commission/commission-settlement-agent-commission.component';
+import { CommissionSettlementAgentHistoryComponent } from './commission-settlement-agent-detail/commission-settlement-agent-history/commission-settlement-agent-history.component';
+import { CommissionSettlementAgentReportComponent } from './commission-settlement-agent-report/commission-settlement-agent-report.component';
+import { CommissionSettlementAgentReportOverviewComponent } from './commission-settlement-agent-report-overview/commission-settlement-agent-report-overview.component';
+import { CommissionSettlementAgentReportDetailComponent } from './commission-settlement-agent-report-detail/commission-settlement-agent-report-detail.component';
+import { CommissionSettlementAgentPaymentDialogComponent } from './commission-settlement-agent-payment-dialog/commission-settlement-agent-payment-dialog.component';
+import { AgentCreateUpdateDialogComponent } from '../shared/agent-create-update-dialog/agent-create-update-dialog.component';
 
 @NgModule({
   declarations: [CommissionSettlementReportListComponent, CommissionSettlementReportDetailComponent,
@@ -25,7 +34,17 @@ import { AgentCommmissionPaymentDialogComponent } from '../agents/agent-commmiss
     AgentCommmissionFormDetailComponent,
     AgentCommmissionHistoryComponent,
     AgentCommmissionFormDetailItemComponent,
-    AgentCommmissionPaymentDialogComponent
+    // AgentCommmissionPaymentDialogComponent,
+    CommissionSettlementAgentDetailComponent,
+    // AgentCommmissionPaymentDialogComponent,
+    CommissionSettlementAgentDetailComponent,
+    CommissionSettlementAgentProfileComponent,
+    CommissionSettlementAgentCommissionComponent,
+    CommissionSettlementAgentHistoryComponent,
+    CommissionSettlementAgentReportComponent,
+    CommissionSettlementAgentReportOverviewComponent,
+    CommissionSettlementAgentReportDetailComponent,
+    CommissionSettlementAgentPaymentDialogComponent
   ],
   imports: [
     CommonModule,
@@ -37,6 +56,6 @@ import { AgentCommmissionPaymentDialogComponent } from '../agents/agent-commmiss
     SharedModule
   ],
   providers: [CommissionSettlementsService],
-  entryComponents: [AgentCommmissionPaymentDialogComponent]
+  entryComponents: [CommissionSettlementAgentPaymentDialogComponent, AgentCreateUpdateDialogComponent]
 })
 export class CommissionSettlementsModule { }

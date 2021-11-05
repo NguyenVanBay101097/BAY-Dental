@@ -18,6 +18,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? EmployeeId { get; set; }
 
+        public Guid? AgentId { get; set; }
+
         public Guid? CompanyId { get; set; }
         public string CommissionType { get; set; }
 
@@ -26,13 +28,33 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Offset { get; set; }
 
         public int Limit { get; set; }
+
+        /// <summary>
+        /// employee : nhân viên
+        /// agent : người giới thiệu
+        /// </summary>
+        public string GroupBy { get; set; }
+
+        /// <summary>
+        /// customer : khách hàng
+        /// employee : nhân viên
+        /// partner : đối tác
+        /// </summary>
+        public string Classify { get; set; }
+
+        /// <summary>
+        /// "" : hiển thị tất cả
+        /// "greater_than_zero": hiển thị hoa hồng > 0
+        /// "equals_zero": hiển thị hoa hồng = 0
+        /// </summary>
+        public string CommissionDisplay { get; set; }
     }
 
     public class CommissionSettlementReportRes
     {
         public string EmployeeName { get; set; }
         public Guid? EmployeeId { get; set; }
-        public string CommissionType { get;set; }
+        public string CommissionType { get; set; }
         public decimal? Amount { get; set; }
 
     }
@@ -144,8 +166,19 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Nguồn
         /// </summary>
         public string InvoiceOrigin { get; set; }
-        public string EmployeeName { get; set; }
+        public Guid? SaleOrderId { get; set; }
+        public string Name { get; set; }
         public string CommissionType { get; set; }
+
+        /// <summary>
+        /// chỉ sử dụng cho người giới thiệu
+        /// customer : khách hàng
+        /// employee : nhân viên
+        /// partner : đối tác
+        /// </summary>
+        public string Classify { get; set; }
+
+        public decimal? TotalAmount { get; set; }
     }
 
     public class CommissionSettlementReportDetailOutputExcel
@@ -206,5 +239,48 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? CompanyId { get; set; }
         public string CommissionType { get; set; }
         public string Search { get; set; }
+    }
+
+    public class CommissionSettlementOverviewFilter
+    {
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
+
+        public string Classify { get; set; }
+
+        public string GroupBy { get; set; }
+    }
+
+    public class CommissionSettlementOverview
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+
+        public string Classify { get; set; }
+
+        /// <summary>
+        /// tổng tiền lợi nhuận
+        /// </summary>
+        public decimal BaseAmount { get; set; }
+
+        /// <summary>
+        /// Tổng tiền hoa hồng
+        /// </summary>
+        public decimal Amount { get; set; }
+    }
+
+    public class SumAmountTotalReponse {
+
+        /// <summary>
+        /// Tổng tiên thanh toán
+        /// </summary>
+        public decimal TotalAmount { get; set; }
+
+        //Tong tiền lợi nhuận
+        public decimal TotalBaseAmount { get; set; }
+
+        //Tong tiền hoa hồng
+        public decimal TotalComissionAmount { get; set; }
     }
 }

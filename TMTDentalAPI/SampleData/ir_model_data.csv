@@ -87,12 +87,10 @@ sms.model_sms_config,SmsConfig,Sms Config,0
 sms.model_sms_template,SmsTemplate,Sms Template,0
 sms.model_sms_message,SmsMessage,Sms Message,0
 sms.model_sms_message_detail,SmsMessageDetail,Sms Message Detail,0
-
-
-
 base.model_agent,Agent,Agent,0
-base.model_customer_receipt, CustomerReceipt,Customer Receipt,0
-base.model_print_template_config, PrintTemplateConfig,Print Template Config ,0
+base.model_customer_receipt,CustomerReceipt,Customer Receipt,0
+base.model_print_template_config,PrintTemplateConfig,Print Template Config,0
+hr.model_hr_job,HrJob,Chức vụ,0
 
 
 

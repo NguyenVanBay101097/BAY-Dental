@@ -53,6 +53,29 @@ namespace Infrastructure.Services
             return entities;
         }
 
+        public void _ComputeUoMRels(IEnumerable<Product> self)
+        {
+            foreach (var product in self)
+            {
+                var rels_remove = new List<ProductUoMRel>();
+                var uom_ids = new List<Guid>() { product.UOMId, product.UOMPOId };
+                foreach (var rel in product.ProductUoMRels)
+                {
+                    if (!uom_ids.Contains(rel.UoMId))
+                        rels_remove.Add(rel);
+                }
+
+                foreach (var rel in rels_remove)
+                    product.ProductUoMRels.Remove(rel);
+
+                foreach (var uom_id in uom_ids)
+                {
+                    if (!product.ProductUoMRels.Any(x => x.UoMId == uom_id))
+                        product.ProductUoMRels.Add(new ProductUoMRel() { UoMId = uom_id });
+                }
+            }
+        }
+
         private void _SetNameNoSign(IEnumerable<Product> self)
         {
             foreach (var product in self)
@@ -486,7 +509,7 @@ namespace Infrastructure.Services
             query = query.OrderBy(x => x.Name);
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
-            var items = await query.Include(x => x.UOM).ToListAsync();
+            var items = await query.Include(x => x.UOM).Include(x => x.Categ).ToListAsync();
 
             var res = _mapper.Map<IEnumerable<ProductSimple>>(items);
 
@@ -570,6 +593,7 @@ namespace Infrastructure.Services
             _SaveUoMRels(product, val);
 
             UpdateProductCriteriaRel(product, val);
+            _ComputeUoMRels(new List<Product>() { product });
 
             product = await CreateAsync(product);
 
@@ -603,6 +627,7 @@ namespace Infrastructure.Services
             _SaveUoMRels(product, val);
 
             SetStandardPrice(product, val.StandardPrice, force_company: product.CompanyId);
+            _ComputeUoMRels(new List<Product>() { product });
 
             await _SetListPrice(product, val.ListPrice);
 

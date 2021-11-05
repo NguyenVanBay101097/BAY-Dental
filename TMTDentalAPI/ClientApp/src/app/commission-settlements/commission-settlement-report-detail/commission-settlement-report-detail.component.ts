@@ -73,7 +73,7 @@ export class CommissionSettlementReportDetailComponent implements OnInit {
 
   loadDataFromApi() {
     this.loading = true;
-    var val = new CommissionSettlementDetailReportPar();
+    var val = new CommissionSettlementFilterReport();
     val.offset = this.skip;
     val.limit = this.limit;
     val.search = this.search ? this.search : '';
@@ -81,7 +81,7 @@ export class CommissionSettlementReportDetailComponent implements OnInit {
     val.commissionType = this.commissionType ? this.commissionType : '';
     val.dateFrom = this.dateFrom ? this.intl.formatDate(this.dateFrom, 'yyyy-MM-ddTHH:mm:ss') : null;
     val.dateTo = this.dateFrom ? this.intl.formatDate(this.dateTo, 'yyyy-MM-ddTHH:mm:ss') : null;
-
+    val.groupBy = 'employee';
     this.commissionSettlementsService.getReportDetail(val).pipe(
       map((response: any) => (<GridDataResult>{
         data: response.items,
@@ -148,6 +148,7 @@ export class CommissionSettlementReportDetailComponent implements OnInit {
     val.search = this.search || '';
     val.employeeId = this.employeeId ? this.employeeId : '';
     val.commissionType = this.commissionType ? this.commissionType : '';
+    val.groupBy = 'employee';
     this.commissionSettlementsService.excelCommissionDetailExport(val).subscribe((res: any) => {
       let filename = "Chi tiết hoa hồng nhân viên";
       let newBlob = new Blob([res], {

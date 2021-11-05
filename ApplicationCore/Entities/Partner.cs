@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApplicationCore.Utilities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
@@ -207,6 +208,11 @@ namespace ApplicationCore.Entities
         /// </summary>
         public ICollection<PartnerAdvance> PartnerAdvances { get; set; } = new List<PartnerAdvance>();
 
+        /// <summary>
+        /// Thẻ thành viên
+        /// </summary>
+        public ICollection<CardCard> CardCards { get; set; } = new List<CardCard>();
+
         public string GetAddress()
         {
             var list = new List<string>();
@@ -276,6 +282,19 @@ namespace ApplicationCore.Entities
                 $"{(BirthMonth.HasValue ? BirthMonth.Value.ToString() : "--")}/" +
                 $"{(BirthYear.HasValue ? BirthYear.Value.ToString() : "----")}";
         }
+
+        public void ComputeNameNoSign()
+        {
+            NameNoSign = StringUtils.RemoveSignVietnameseV2(Name);
+        }
+
+        public void ComputeDisplayName()
+        {
+            DisplayName = Name;
+            if (!string.IsNullOrEmpty(Ref))
+                DisplayName = "[" + Ref + "] " + Name;
+        }
+
 
         //public string GetGender()
         //{

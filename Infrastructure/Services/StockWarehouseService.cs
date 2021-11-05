@@ -49,6 +49,23 @@ namespace Infrastructure.Services
             await base.CreateAsync(wh);
 
             await CreateSequencesAndPickingTypes(wh);
+            // irmodeldata location
+            var irModelObj = GetService<IIRModelDataService>();
+            var irModeldatas = new List<IRModelData>();
+            var stlocations = new List<StockLocation>();
+            stlocations.Add(viewLocation);
+            stlocations.Add(location);
+            foreach (var item in stlocations)
+            {
+                irModeldatas.Add(new IRModelData()
+                {
+                    Module = "stock",
+                    Model = "stock.location",
+                    ResId = item.Id.ToString(),
+                    Name = $@"stock_location_{item.Name}"
+                });
+            }
+            await irModelObj.CreateAsync(irModeldatas);
             return wh;
         }
 
@@ -85,7 +102,7 @@ namespace Infrastructure.Services
                 NumberNext = 1,
             };
 
-            await irSequenceObj.CreateAsync(new List<IRSequence>() { inSequence , outSequence, intSequence });
+            await irSequenceObj.CreateAsync(new List<IRSequence>() { inSequence, outSequence, intSequence });
 
             //create picking types
             var customerLoc = await locObj.GetDefaultCustomerLocation();
@@ -133,6 +150,24 @@ namespace Infrastructure.Services
             warehouse.InTypeId = inType.Id;
 
             await UpdateAsync(warehouse);
+
+            // irmodeldata stockpicking type, warehouse
+            var irModelObj = GetService<IIRModelDataService>();
+            var irModeldatas = new List<IRModelData>();
+            var stpickingTypes = new List<StockPickingType>();
+            stpickingTypes.Add(inType);
+            stpickingTypes.Add(outType);
+            foreach (var item in stpickingTypes)
+            {
+                irModeldatas.Add(new IRModelData()
+                {
+                    Module = "stock",
+                    Model = "stock.picking.type",
+                    ResId = item.Id.ToString(),
+                    Name = $@"stock_picking_type_{item.Code}"
+                });
+            }
+            await irModelObj.CreateAsync(irModeldatas);
         }
 
         public override ISpecification<StockWarehouse> RuleDomainGet(IRRule rule)
