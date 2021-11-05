@@ -159,7 +159,7 @@ export class MemberCardCreateUpdateComponent implements OnInit {
         } else {
           var group = this.fb.group({
             id: product.categId,
-            name: product.categName,
+            name: product.categ.name,
             products: this.fb.array([])
           });
 
@@ -188,7 +188,7 @@ export class MemberCardCreateUpdateComponent implements OnInit {
             control.get('fixedAmountPrice').setValue(res.price);
           }
         });
-        this.touchedFixedAmount();
+        // this.touchedFixedAmount();
 
       })
     }, () => {
@@ -211,7 +211,7 @@ export class MemberCardCreateUpdateComponent implements OnInit {
           control.get('fixedAmountPrice').setValue(res.price);
         }
       });
-      this.touchedFixedAmount();
+      // this.touchedFixedAmount();
     }, () => {
     });
   }
