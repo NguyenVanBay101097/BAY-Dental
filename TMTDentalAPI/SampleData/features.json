@@ -1073,7 +1073,7 @@
           },
           {
             "Name": "Thêm",
-            "Permission": "Card.Card..Create"
+            "Permission": "Card.Card.Create"
           },
           {
             "Name": "Cập nhật",
