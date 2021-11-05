@@ -1,9 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 import { GridDataResult } from "@progress/kendo-angular-grid";
-import { NotificationService } from "@progress/kendo-angular-notification";
 import { Subject } from "rxjs";
-import { debounceTime, distinctUntilChanged, map } from "rxjs/operators";
+import { debounceTime, distinctUntilChanged } from "rxjs/operators";
 import { PartnerPaged } from "src/app/partners/partner-simple";
 import { PartnerService } from "src/app/partners/partner.service";
 
@@ -23,7 +22,6 @@ export class SmsPartnerListDialogComponent implements OnInit {
 
   constructor(
     public activeModal: NgbActiveModal,
-    private notificationService: NotificationService,
     private partnerService: PartnerService
   ) { }
 

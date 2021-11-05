@@ -1,10 +1,8 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
 import { NgbDropdownToggle, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { NotificationService } from '@progress/kendo-angular-notification';
 import { forkJoin, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
@@ -53,7 +51,6 @@ export class AppointmentOverCancelComponent implements OnInit {
     private appointmentService: AppointmentService,
     private intlService: IntlService,
     private modalService: NgbModal,
-    private notificationService: NotificationService,
     private employeeService: EmployeeService, 
     private checkPermissionService: CheckPermissionService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig

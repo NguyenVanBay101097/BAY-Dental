@@ -1,8 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { Validators } from '@angular/forms';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbDropdown, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
-import { AppointmentService } from 'src/app/appointment/appointment.service';
 
 @Component({
   selector: 'app-popover-state-appointment',
@@ -23,7 +21,7 @@ export class PopoverStateAppointmentComponent implements OnInit {
     { text: 'Hoàn thành', value: 'done' },
     { text: 'Hủy hẹn', value: 'cancel' }
   ];
-  constructor(private fb: FormBuilder, private appointmentService: AppointmentService) { }
+  constructor(private fb: FormBuilder) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({

@@ -1,15 +1,14 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { ProductCategoryBasic } from 'src/app/product-categories/product-category.service';
-import { map } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { map } from 'rxjs/operators';
+import { ProductCategoryBasic } from 'src/app/product-categories/product-category.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { ToaThuocPaged, ToaThuocService } from 'src/app/toa-thuocs/toa-thuoc.service';
-import { ToaThuocPrintComponent } from 'src/app/shared/toa-thuoc-print/toa-thuoc-print.component';
-import { ToaThuocCuDialogSaveComponent } from 'src/app/shared/toa-thuoc-cu-dialog-save/toa-thuoc-cu-dialog-save.component';
-import { PrintService } from 'src/app/shared/services/print.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { PrintService } from 'src/app/shared/services/print.service';
+import { ToaThuocCuDialogSaveComponent } from 'src/app/shared/toa-thuoc-cu-dialog-save/toa-thuoc-cu-dialog-save.component';
+import { ToaThuocPaged, ToaThuocService } from 'src/app/toa-thuocs/toa-thuoc.service';
 
 @Component({
   selector: 'app-partner-customer-product-toa-thuoc-list',

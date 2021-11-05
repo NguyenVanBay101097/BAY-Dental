@@ -1,12 +1,13 @@
-import { NotifyService } from './../../shared/services/notify.service';
 import { Component, Inject, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { AgentCreateUpdateDialogComponent } from 'src/app/shared/agent-create-update-dialog/agent-create-update-dialog.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { AgentPaged, AgentService } from '../agent.service';
+import { NotifyService } from './../../shared/services/notify.service';
 import { AgentCreateUpdateDialogComponent } from 'src/app/shared/agent-create-update-dialog/agent-create-update-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { CommissionSettlementAgentPaymentDialogComponent } from 'src/app/commission-settlements/commission-settlement-agent-payment-dialog/commission-settlement-agent-payment-dialog.component';
@@ -25,8 +26,8 @@ export class AgentListComponent implements OnInit {
 
   search: string;
   searchUpdate = new Subject<string>();
-  constructor(private route: ActivatedRoute, private modalService: NgbModal,
-    private agentService: AgentService, private router: Router,
+  constructor(private modalService: NgbModal,
+    private agentService: AgentService,
     private notifyService: NotifyService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }

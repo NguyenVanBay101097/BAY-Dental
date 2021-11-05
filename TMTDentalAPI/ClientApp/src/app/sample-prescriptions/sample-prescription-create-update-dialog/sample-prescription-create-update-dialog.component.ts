@@ -1,13 +1,11 @@
-import { SamplePrescriptionLineSave, SamplePrescriptionsService } from './../sample-prescriptions.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, FormArray, Validators, FormControl } from '@angular/forms';
-import { ProductSimple } from 'src/app/products/product-simple';
-import { ComboBoxComponent, DropDownFilterSettings } from '@progress/kendo-angular-dropdowns';
-import { IntlService } from '@progress/kendo-angular-intl';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { ProductService, ProductFilter } from 'src/app/products/product.service';
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { ComboBoxComponent, DropDownFilterSettings } from '@progress/kendo-angular-dropdowns';
 import { SamplePrescriptionLineService } from 'src/app/core/services/sample-prescription-line.service';
+import { ProductSimple } from 'src/app/products/product-simple';
+import { ProductFilter, ProductService } from 'src/app/products/product.service';
+import { SamplePrescriptionsService } from './../sample-prescriptions.service';
 
 @Component({
   selector: 'app-sample-prescription-create-update-dialog',
@@ -26,9 +24,9 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
   get f() { return this.PrescriptionForm.controls; }
   get lines() { return this.PrescriptionForm.get('lines') as FormArray; }
 
-  constructor(private fb: FormBuilder, private samplePrescriptionsService: SamplePrescriptionsService, private intlService: IntlService,
-    private productService: ProductService, public activeModal: NgbActiveModal,
-    private errorService: AppSharedShowErrorService, private samplePrescriptionLineService: SamplePrescriptionLineService) { }
+  constructor(private fb: FormBuilder, private samplePrescriptionsService: SamplePrescriptionsService,
+    private productService: ProductService, public activeModal: NgbActiveModal, 
+    private samplePrescriptionLineService: SamplePrescriptionLineService) { }
 
   ngOnInit() {
     this.PrescriptionForm = this.fb.group({

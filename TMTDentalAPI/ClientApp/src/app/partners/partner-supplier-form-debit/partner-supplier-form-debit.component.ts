@@ -1,6 +1,3 @@
-import { AccountInvoiceRegisterPaymentDialogV2Component } from './../../shared/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
-import { offset } from '@progress/kendo-date-math';
-import { PartnerGetDebtPagedFilter } from './../partner.service';
 import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -8,12 +5,13 @@ import { GridComponent, GridDataResult, PageChangeEvent } from '@progress/kendo-
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { AccountCommonPartnerReportItemDetail, AccountCommonPartnerReportSearch, AccountCommonPartnerReportService, AccountMoveBasic } from 'src/app/account-common-partner-reports/account-common-partner-report.service';
+import { AccountMoveBasic } from 'src/app/account-common-partner-reports/account-common-partner-report.service';
 import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { AuthService } from 'src/app/auth/auth.service';
-import { PartnerSupplierFormDebitPaymentDialogComponent } from '../partner-supplier-form-debit-payment-dialog/partner-supplier-form-debit-payment-dialog.component';
-import { PartnerService } from '../partner.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { PartnerService } from '../partner.service';
+import { AccountInvoiceRegisterPaymentDialogV2Component } from './../../shared/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
+import { PartnerGetDebtPagedFilter } from './../partner.service';
 
 @Component({
   selector: 'app-partner-supplier-form-debit',
@@ -37,7 +35,6 @@ export class PartnerSupplierFormDebitComponent implements OnInit {
   searchUpdate = new Subject<string>();
   selectedIds: string[] = [];
   constructor(
-    private reportService: AccountCommonPartnerReportService,
     private activeRoute: ActivatedRoute,
     private authService: AuthService,
     private modalService: NgbModal,

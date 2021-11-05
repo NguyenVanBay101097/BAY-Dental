@@ -1,14 +1,9 @@
-import {
-  PartnerSourceBasic,
-  PartnerSourceService,
-  PartnerSourcePaged,
-} from "./../partner-source.service";
-import { Component, OnInit, ViewChild, ElementRef, Input } from "@angular/core";
-import { FormGroup, FormBuilder, Validators } from "@angular/forms";
-import { ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
+import { Component, Input, OnInit } from "@angular/core";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
-import { Observable } from "rxjs";
-import { AppSharedShowErrorService } from "src/app/shared/shared-show-error.service";
+import {
+  PartnerSourceService
+} from "./../partner-source.service";
 
 
 @Component({
@@ -28,7 +23,6 @@ export class PartnerSourceCreateUpdateDialogComponent implements OnInit {
     private fb: FormBuilder,
     private partnerSourceService: PartnerSourceService,
     public activeModal: NgbActiveModal,
-    private showErrorService: AppSharedShowErrorService
   ) {}
 
   ngOnInit() {

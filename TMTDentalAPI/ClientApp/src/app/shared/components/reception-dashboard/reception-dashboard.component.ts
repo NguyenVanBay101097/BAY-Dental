@@ -1,22 +1,20 @@
-import { AppointmentBasic } from './../../../appointment/appointment';
-import { DashboardReportService, ReportTodayRequest, RevenueTodayReponse } from './../../../core/services/dashboard-report.service';
-import { AuthService } from 'src/app/auth/auth.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { LegendLabelsContentArgs } from '@progress/kendo-angular-charts';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { forkJoin, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
-import { AppointmentGetCountVM, AppointmentPaged } from 'src/app/appointment/appointment';
-import { AppointmentService } from 'src/app/appointment/appointment.service';
-import { CashBookService, CashBookSummarySearch } from 'src/app/cash-book/cash-book.service';
-import { CheckPermissionService } from '../../check-permission.service';
-import { CustomerReceiptBasic, CustomerReceiptPaged, CustomerReceiptService } from 'src/app/customer-receipt/customer-receipt.service';
-import { GridDataResult } from '@progress/kendo-angular-grid';
-import { DashboardCustomerReceiptListTodayComponent } from '../dashboard-customer-receipt-list-today/dashboard-customer-receipt-list-today.component';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { GridDataResult } from '@progress/kendo-angular-grid';
+import { IntlService } from '@progress/kendo-angular-intl';
+import { map } from 'rxjs/operators';
+import { AppointmentPaged } from 'src/app/appointment/appointment';
+import { AppointmentService } from 'src/app/appointment/appointment.service';
+import { AuthService } from 'src/app/auth/auth.service';
+import { CashBookService, CashBookSummarySearch } from 'src/app/cash-book/cash-book.service';
+import { SaleOrderService } from 'src/app/core/services/sale-order.service';
+import { CustomerReceiptBasic, CustomerReceiptPaged, CustomerReceiptService } from 'src/app/customer-receipt/customer-receipt.service';
 import { EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
-import { SaleOrderService } from 'src/app/core/services/sale-order.service';
+import { CheckPermissionService } from '../../check-permission.service';
+import { DashboardCustomerReceiptListTodayComponent } from '../dashboard-customer-receipt-list-today/dashboard-customer-receipt-list-today.component';
+import { AppointmentBasic } from './../../../appointment/appointment';
+import { DashboardReportService, ReportTodayRequest, RevenueTodayReponse } from './../../../core/services/dashboard-report.service';
 
 @Component({
   selector: 'app-reception-dashboard',

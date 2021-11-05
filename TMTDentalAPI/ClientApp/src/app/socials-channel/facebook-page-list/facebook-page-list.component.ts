@@ -1,17 +1,17 @@
 import { Component, Inject, OnInit } from "@angular/core";
-import { GridDataResult, PageChangeEvent } from "@progress/kendo-angular-grid";
-import { map, debounceTime, distinctUntilChanged } from "rxjs/operators";
-import { Subject } from "rxjs";
+import { Router } from "@angular/router";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { ActivatedRoute, ParamMap, Router } from "@angular/router";
-import { FacebookPageService } from "../facebook-page.service";
-import { FacebookPagePaged } from "../facebook-page-paged";
-import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
+import { GridDataResult, PageChangeEvent } from "@progress/kendo-angular-grid";
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { FacebookService, LoginOptions, LoginResponse } from 'ngx-facebook';
-import { FacebookConnectService } from '../facebook-connect.service';
-import { ZaloOAConfigSave, ZaloOAConfigService } from 'src/app/zalo-oa-config/zalo-oa-config.service';
+import { Subject } from "rxjs";
+import { debounceTime, distinctUntilChanged, map } from "rxjs/operators";
+import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
 import { PageGridConfig, PAGER_GRID_CONFIG } from "src/app/shared/pager-grid-kendo.config";
+import { ZaloOAConfigSave, ZaloOAConfigService } from 'src/app/zalo-oa-config/zalo-oa-config.service';
+import { FacebookConnectService } from '../facebook-connect.service';
+import { FacebookPagePaged } from "../facebook-page-paged";
+import { FacebookPageService } from "../facebook-page.service";
 
 @Component({
   selector: "app-facebook-page-list",
@@ -31,15 +31,17 @@ export class FacebookPageListComponent implements OnInit {
   searchUpdate = new Subject<string>();
   title = "Danh sách kênh";
 
-  constructor(private fb: FacebookService, private facebookConnectService: FacebookConnectService,
+  constructor(
+    private fb: FacebookService,
+    private facebookConnectService: FacebookConnectService,
     private zaloOAConfigService: ZaloOAConfigService,
     private facebookPageService: FacebookPageService,
     private modalService: NgbModal,
     private router: Router,
     private notificationService: NotificationService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
-  ) { 
-    this.pagerSettings = config.pagerSettings 
+  ) {
+    this.pagerSettings = config.pagerSettings
     fb.init({
       appId: '327268081110321',
       status: true,

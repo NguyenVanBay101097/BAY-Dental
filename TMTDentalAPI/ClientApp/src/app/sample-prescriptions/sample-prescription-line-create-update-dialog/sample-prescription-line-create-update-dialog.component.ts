@@ -1,11 +1,11 @@
-import { SamplePrescriptionLineSave } from './../sample-prescriptions.service';
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
-import { ProductSimple } from 'src/app/products/product-simple';
-import { FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ProductService, ProductFilter } from 'src/app/products/product.service';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import * as _ from 'lodash';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { ProductSimple } from 'src/app/products/product-simple';
+import { ProductFilter, ProductService } from 'src/app/products/product.service';
+import { SamplePrescriptionLineSave } from './../sample-prescriptions.service';
 
 @Component({
   selector: 'app-sample-prescription-line-create-update-dialog',

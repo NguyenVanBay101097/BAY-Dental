@@ -1,21 +1,19 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { WindowService, WindowRef, WindowCloseResult, DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
-import { SortDescriptor, orderBy } from '@progress/kendo-data-query';
-import { PartnerService, ImportExcelDirect } from '../partner.service';
-import { PartnerBasic, PartnerPaged, PartnerDisplay } from '../partner-simple';
-import { PartnerCreateUpdateComponent } from '../partner-create-update/partner-create-update.component';
-import { GridDataResult, PageChangeEvent, GridComponent, SelectionEvent, CellClickEvent } from '@progress/kendo-angular-grid';
 import { ActivatedRoute } from '@angular/router';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { Subject, Observable } from 'rxjs';
-import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { WindowCloseResult, WindowRef, WindowService } from '@progress/kendo-angular-dialog';
+import { CellClickEvent, GridComponent, GridDataResult, PageChangeEvent, SelectionEvent } from '@progress/kendo-angular-grid';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { PartnerImportComponent } from '../partner-import/partner-import.component';
-import { saveAs } from '@progress/kendo-drawing/pdf';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { SortDescriptor } from '@progress/kendo-data-query';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/shared/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { PartnerCreateUpdateComponent } from '../partner-create-update/partner-create-update.component';
+import { PartnerImportComponent } from '../partner-import/partner-import.component';
+import { PartnerDisplay, PartnerPaged } from '../partner-simple';
+import { PartnerService } from '../partner.service';
 
 
 @Component({
@@ -59,7 +57,7 @@ export class PartnerListComponent implements OnInit {
 
   constructor(
     private partnerService: PartnerService, private windowService: WindowService,
-    private activeRoute: ActivatedRoute, private dialogService: DialogService, private modalService: NgbModal,
+    private activeRoute: ActivatedRoute, private modalService: NgbModal,
     private notificationService: NotificationService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }

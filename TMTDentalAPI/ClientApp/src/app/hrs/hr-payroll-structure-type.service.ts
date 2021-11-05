@@ -1,6 +1,5 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { ResourceCalendarBasic } from '../resource-calendars/resource-calendar.service';
+import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 export class HrPayrollStructureTypeBasic {

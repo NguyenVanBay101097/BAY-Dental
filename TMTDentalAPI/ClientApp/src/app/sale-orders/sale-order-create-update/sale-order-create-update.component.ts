@@ -1,48 +1,37 @@
-import { DiscountDefault, SaleOrderPrint } from '../../core/services/sale-order.service';
-import { Component, EventEmitter, KeyValueDiffer, KeyValueDiffers, OnChanges, OnInit, QueryList, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
-import { FormControl, FormGroup, FormBuilder, FormArray, Validators, NgForm } from '@angular/forms';
-import { switchMap, mergeMap, catchError, delay } from 'rxjs/operators';
-import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
-import { PartnerService } from 'src/app/partners/partner.service';
-import { UserService, UserPaged } from 'src/app/users/user.service';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { SaleOrderService } from '../../core/services/sale-order.service';
+import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
-import * as _ from 'lodash';
-import { UserSimple } from 'src/app/users/user-simple';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { AccountPaymentBasic, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
+import { BehaviorSubject } from 'rxjs';
+import { catchError, mergeMap } from 'rxjs/operators';
 import { PaymentInfoContent } from 'src/app/account-invoices/account-invoice.service';
-import { CardCardService, CardCardPaged } from 'src/app/card-cards/card-card.service';
-import { ProductPriceListBasic, ProductPricelistPaged } from 'src/app/price-list/price-list';
-import { PriceListService } from 'src/app/price-list/price-list.service';
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
-import { BehaviorSubject, of, Subject } from 'rxjs';
-import { LaboOrderBasic, LaboOrderService, LaboOrderPaged } from 'src/app/labo-orders/labo-order.service';
-import { SaleOrderLineService } from '../../core/services/sale-order-line.service';
-import { SaleOrderPaymentDialogComponent } from '../sale-order-payment-dialog/sale-order-payment-dialog.component';
-import { EmployeeService } from 'src/app/employees/employee.service';
-import { ToaThuocService } from 'src/app/toa-thuocs/toa-thuoc.service';
-import { PrintService } from 'src/app/shared/services/print.service';
-import { PartnerCustomerToathuocListComponent } from '../partner-customer-toathuoc-list/partner-customer-toathuoc-list.component';
+import { AccountPaymentBasic } from 'src/app/account-payments/account-payment.service';
+import { SaleOrderPaymentService } from 'src/app/core/services/sale-order-payment.service';
+import { LaboOrderBasic } from 'src/app/labo-orders/labo-order.service';
+import { PartnerSimple } from 'src/app/partners/partner-simple';
+import { PartnerService } from 'src/app/partners/partner.service';
+import { ProductPriceListBasic } from 'src/app/price-list/price-list';
 import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
-import { SaleOrderPaymentListComponent } from '../sale-order-payment-list/sale-order-payment-list.component';
-import { AccountPaymentsOdataService } from 'src/app/shared/services/account-payments-odata.service';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PrintService } from 'src/app/shared/services/print.service';
+import { SmsMessageService } from 'src/app/sms/sms-message.service';
 import { ToaThuocCuDialogComponent } from 'src/app/toa-thuocs/toa-thuoc-cu-dialog/toa-thuoc-cu-dialog.component';
-import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
+import { ToaThuocService } from 'src/app/toa-thuocs/toa-thuoc.service';
 import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
-import { SaleOrderPromotionDialogComponent } from '../sale-order-promotion-dialog/sale-order-promotion-dialog.component';
+import { UserSimple } from 'src/app/users/user-simple';
+import { SaleOrderLineService } from '../../core/services/sale-order-line.service';
+import { DiscountDefault, SaleOrderPrint, SaleOrderService } from '../../core/services/sale-order.service';
+import { PartnerCustomerToathuocListComponent } from '../partner-customer-toathuoc-list/partner-customer-toathuoc-list.component';
 import { SaleOrderLineCuComponent } from '../sale-order-line-cu/sale-order-line-cu.component';
 import { SaleOrderLinePromotionDialogComponent } from '../sale-order-line-promotion-dialog/sale-order-line-promotion-dialog.component';
-import { Location } from '@angular/common';
-import { SaleOrderPromotionService } from '../sale-order-promotion.service';
-import { SaleOrderPaymentService } from 'src/app/core/services/sale-order-payment.service';
-import { SmsMessageService } from 'src/app/sms/sms-message.service';
-import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { SaleOrderPaymentDialogComponent } from '../sale-order-payment-dialog/sale-order-payment-dialog.component';
+import { SaleOrderPaymentListComponent } from '../sale-order-payment-list/sale-order-payment-list.component';
 import { SaleOrderPrintPopupComponent } from '../sale-order-print-popup/sale-order-print-popup.component';
+import { SaleOrderPromotionDialogComponent } from '../sale-order-promotion-dialog/sale-order-promotion-dialog.component';
+import { SaleOrderPromotionService } from '../sale-order-promotion.service';
 import { SaleOrderServiceListComponent } from '../sale-order-service-list/sale-order-service-list.component';
 declare var $: any;
 
@@ -112,7 +101,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private partnerService: PartnerService,
-    private userService: UserService,
     public route: ActivatedRoute,
     private saleOrderService: SaleOrderService,
     private saleOrderLineService: SaleOrderLineService,
@@ -120,21 +108,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     private modalService: NgbModal,
     private router: Router,
     private notificationService: NotificationService,
-    private cardCardService: CardCardService,
-    private pricelistService: PriceListService,
-    private errorService: AppSharedShowErrorService,
     private toaThuocService: ToaThuocService,
     private printService: PrintService,
-    private accountPaymentOdataService: AccountPaymentsOdataService,
     private toothCategoryService: ToothCategoryService,
-    private location: Location,
-    private toothService: ToothService,
-    private employeeService: EmployeeService,
     private saleOrderPromotionService: SaleOrderPromotionService,
     private smsMessageService: SmsMessageService,
     private saleOrderPaymentService: SaleOrderPaymentService,
-    private differs: KeyValueDiffers,
-    private checkPermissionService: CheckPermissionService
   ) {
   }
 

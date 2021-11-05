@@ -1,11 +1,9 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridComponent, GridDataResult } from '@progress/kendo-angular-grid';
-import { IntlService } from '@progress/kendo-angular-intl';
 import * as moment from 'moment';
-import { of } from 'rxjs/internal/observable/of';
 import { Subject } from 'rxjs/internal/Subject';
-import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
@@ -47,7 +45,6 @@ export class ServiceReportServiceComponent implements OnInit {
     private saleReportService: SaleReportService,
     private companyService: CompanyService,
     private employeeService: EmployeeService,
-    private intlService: IntlService,
     private serviceReportManageService: ServiceReportManageService,
     private printService: PrintService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig

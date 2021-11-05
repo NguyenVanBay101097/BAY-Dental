@@ -1,7 +1,7 @@
-import { Injectable, Inject } from '@angular/core';
-import { HttpParams, HttpClient } from '@angular/common/http';
-import { EmployeePaged, PagedResult2, EmployeeBasic, EmployeeDisplay, EmployeeSimple } from './employee';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { EmployeeBasic, EmployeeDisplay, EmployeeSimple, PagedResult2 } from './employee';
 
 export class EmployeeSurveyDisplay{
   id : string;

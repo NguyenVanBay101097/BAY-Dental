@@ -1,8 +1,8 @@
-import { Component, DoCheck, EventEmitter, Input, IterableDiffer, IterableDiffers, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, DoCheck, EventEmitter, Input, IterableDiffer, IterableDiffers, OnInit, Output } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { ProductCategory } from 'src/app/product-categories/product-category';
 import { ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';

@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { SaleOrderService } from '../../core/services/sale-order.service';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { SharedErrorDialogComponent } from 'src/app/shared/shared-error-dialog/shared-error-dialog.component';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { SaleOrderService } from '../../core/services/sale-order.service';
 
 @Component({
   selector: 'app-sale-order-apply-coupon-dialog',
@@ -13,8 +12,10 @@ import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.serv
 export class SaleOrderApplyCouponDialogComponent implements OnInit {
   orderId: string;
   formGroup: FormGroup;
-  constructor(private fb: FormBuilder, private saleOrderService: SaleOrderService, public activeModal: NgbActiveModal,
-    private modalService: NgbModal, private errorService: AppSharedShowErrorService) { }
+  constructor(private fb: FormBuilder,
+     private saleOrderService: SaleOrderService,
+     public activeModal: NgbActiveModal,
+     private errorService: AppSharedShowErrorService) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({

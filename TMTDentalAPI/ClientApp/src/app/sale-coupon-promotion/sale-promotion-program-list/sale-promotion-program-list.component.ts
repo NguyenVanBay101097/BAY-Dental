@@ -1,16 +1,15 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { map, debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, Inject, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { SaleCouponProgramService, SaleCouponProgramBasic, SaleCouponProgramGetListPagedRequest } from '../sale-coupon-program.service';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { CheckPermissionService } from 'src/app/shared/check-permission.service';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { NotificationService } from '@progress/kendo-angular-notification';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { NotificationService } from '@progress/kendo-angular-notification';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { SaleCouponProgramBasic, SaleCouponProgramGetListPagedRequest, SaleCouponProgramService } from '../sale-coupon-program.service';
 
 @Component({
   selector: 'app-sale-promotion-program-list',
@@ -31,9 +30,9 @@ export class SalePromotionProgramListComponent implements OnInit {
   selectedIds: string[] = [];
   filterActive = true;
   listStatus = [
-    { text: 'Chưa chạy', value: 'waiting' }, 
-    { text: 'Đang chạy', value: 'running' }, 
-    { text: 'Tạm dừng', value: 'paused' }, 
+    { text: 'Chưa chạy', value: 'waiting' },
+    { text: 'Đang chạy', value: 'running' },
+    { text: 'Tạm dừng', value: 'paused' },
     { text: 'Hết hạn', value: 'expired' },
   ]
   listFilterStatus = this.listStatus;
@@ -50,8 +49,9 @@ export class SalePromotionProgramListComponent implements OnInit {
   canSaleCouponProgramUpdate = this.checkPermissionService.check(["SaleCoupon.SaleCouponProgram.Update"]);
   canSaleCouponProgramDelete = this.checkPermissionService.check(["SaleCoupon.SaleCouponProgram.Delete"]);
 
-  constructor(private programService: SaleCouponProgramService, private route: ActivatedRoute, 
-    private router: Router, private modalService: NgbModal, 
+  constructor(
+    private programService: SaleCouponProgramService,
+    private router: Router, private modalService: NgbModal,
     private checkPermissionService: CheckPermissionService,
     private notificationService: NotificationService,
     private intlService: IntlService,

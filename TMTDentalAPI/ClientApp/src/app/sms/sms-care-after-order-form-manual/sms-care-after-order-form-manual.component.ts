@@ -1,16 +1,13 @@
-import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { fromEvent, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { SaleOrderLineService, SmsCareAfterOrderPaged } from 'src/app/core/services/sale-order-line.service';
-import { ProductSimple } from 'src/app/products/product-simple';
-import { ProductPaged, ProductService } from 'src/app/products/product.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
-import { ProductsOdataService } from 'src/app/shared/services/ProductsOdata.service';
 import { SmsCampaignService } from '../sms-campaign.service';
 import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
 
@@ -46,7 +43,6 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
 
   constructor(
     private notificationService: NotificationService,
-    private productService: ProductService,
     private saleOrderLineService: SaleOrderLineService,
     private modalService: NgbModal,
     private intlService: IntlService,
@@ -64,7 +60,7 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
     setTimeout(() => {
       this.loadDefaultCampaignCareAfterOrder();
     }, 1000);
-  
+
 
     this.searchProductUpdate.pipe(
       debounceTime(400),
@@ -94,11 +90,11 @@ export class SmsCareAfterOrderFormManualComponent implements OnInit {
 
   filterProducts(val: string) {
     this.filteredProducts = this.listProducts.filter(x => x.name.toLowerCase().includes(val.toLowerCase()) ||
-     x.nameNoSign.toLowerCase().includes(val.toLowerCase()));
+      x.nameNoSign.toLowerCase().includes(val.toLowerCase()));
   }
 
   onSearchProduct() {
-    var search = this.searchProduct || '';
+    // var search = this.searchProduct || '';
     return this.saleOrderLineService.getProductSmsCareAfterOrder({
       dateFrom: this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : '',
       dateTo: this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : '',

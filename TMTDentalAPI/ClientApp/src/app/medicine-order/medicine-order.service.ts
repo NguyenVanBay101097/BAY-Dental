@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { EmployeeSimpleContact } from '../employees/employee';
 import { PartnerBasic } from '../partners/partner-simple';
 import { AccountJournalBasic } from '../res-partner-banks/res-partner-bank.service';
-import { ToaThuocDisplay, ToaThuocLineDisplay, ToaThuocVM } from '../toa-thuocs/toa-thuoc.service';
+import { ToaThuocDisplay, ToaThuocLineDisplay } from '../toa-thuocs/toa-thuoc.service';
 
 export class PrecscriptionPaymentPaged {
   limit: number;

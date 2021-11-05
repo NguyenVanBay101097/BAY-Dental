@@ -1,10 +1,9 @@
-import { Injectable, Inject } from '@angular/core';
+import { formatDate } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { HttpHeaders } from '@angular/common/http';
-import { AppointmentDisplay, AppointmentPaged, AppointmentBasic, AppointmentPaging, AppointmentPatch, AppointmentDefaultGet, AppointmentSearchByDate } from './appointment';
+import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PagedResult2 } from '../partners/partner-simple';
-import { formatDate } from '@angular/common';
+import { AppointmentBasic, AppointmentDisplay, AppointmentPaged, AppointmentSearchByDate } from './appointment';
 
 @Injectable({
   providedIn: 'root'

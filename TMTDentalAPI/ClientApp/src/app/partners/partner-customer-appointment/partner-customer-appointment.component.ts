@@ -1,23 +1,14 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { DotKhamPaged } from 'src/app/dot-khams/dot-khams';
-import { SaleOrderCreateDotKhamDialogComponent } from 'src/app/sale-orders/sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
-import { AppointmentBasic, AppointmentSearchByDate, AppointmentPaged } from 'src/app/appointment/appointment';
-import { PagedResult2 } from 'src/app/employee-categories/emp-category';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { forkJoin } from 'rxjs';
-import { distinctUntilChanged, debounceTime, map } from 'rxjs/operators';
-import { AppointmentVMService } from 'src/app/appointment/appointment-vm.service';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { AppointmentService } from 'src/app/appointment/appointment.service';
-import { NgbModal, NgbDropdownToggle } from '@ng-bootstrap/ng-bootstrap';
-import { NotificationService } from '@progress/kendo-angular-notification';
-import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
-import { Router, ActivatedRoute } from '@angular/router';
-import * as _ from 'lodash';
+import { Component, Inject, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { PartnerService } from '../partner.service';
-import { PartnerDisplay } from '../partner-simple';
+import { NotificationService } from '@progress/kendo-angular-notification';
+import { map } from 'rxjs/operators';
+import { AppointmentBasic, AppointmentPaged } from 'src/app/appointment/appointment';
+import { AppointmentVMService } from 'src/app/appointment/appointment-vm.service';
+import { AppointmentService } from 'src/app/appointment/appointment.service';
 import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { PrintService } from 'src/app/shared/services/print.service';
 
@@ -38,7 +29,6 @@ export class PartnerCustomerAppointmentComponent implements OnInit {
   constructor(
     private appointmentService: AppointmentService,
     private modalService: NgbModal,
-    private partnerService: PartnerService,
     private notificationService: NotificationService,
     private activeRoute: ActivatedRoute,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig,

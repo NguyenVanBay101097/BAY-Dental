@@ -1,15 +1,10 @@
-import { AccountPaymentPaged } from './../../account-payments/account-payment.service';
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
-import { HistoryPartnerAdvanceFilter, SaleOrderPaymentPaged, SaleOrderPaymentService } from 'src/app/core/services/sale-order-payment.service';
-import { PartnerService } from 'src/app/partners/partner.service';
+import { HistoryPartnerAdvanceFilter, SaleOrderPaymentService } from 'src/app/core/services/sale-order-payment.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
@@ -35,11 +30,8 @@ export class PartnerAdvanceHistoryListComponent implements OnInit {
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
 
   constructor( private intlService: IntlService,
-    private modalService: NgbModal,
-    private partnerService: PartnerService,
     private router: Router,
     private route: ActivatedRoute,
-    private notificationService: NotificationService,
     private saleOrderPaymentService: SaleOrderPaymentService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }

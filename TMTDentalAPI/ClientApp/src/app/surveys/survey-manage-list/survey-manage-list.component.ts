@@ -1,23 +1,19 @@
-import { Route } from '@angular/compiler/src/core';
-import { AfterViewInit, Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { forkJoin, of, Subject, from } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, mergeMap, switchMap, tap } from 'rxjs/operators';
-import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
+import { from, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
-import { PartnerSimple } from 'src/app/partners/partner-simple';
-import { PartnerFilter, PartnerService } from 'src/app/partners/partner.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { SurveyManageAssignEmployeeCreateDialogComponent } from '../survey-manage-assign-employee-create-dialog/survey-manage-assign-employee-create-dialog.component';
 import { SurveyAssignmentGetSummaryFilter, SurveyAssignmentPaged, SurveyAssignmentService, SurveyAssignmentUpdateEmployee } from '../survey.service';
-declare var $: any;
+// declare var $: any;
 
 
 @Component({
@@ -68,7 +64,6 @@ export class SurveyManageListComponent implements OnInit {
     private intlService: IntlService,
     private modalService: NgbModal,
     private router: Router,
-    private partnerService: PartnerService,
     private employeeService: EmployeeService,
     private notificationService: NotificationService,
     private surveyAssignmentService: SurveyAssignmentService,

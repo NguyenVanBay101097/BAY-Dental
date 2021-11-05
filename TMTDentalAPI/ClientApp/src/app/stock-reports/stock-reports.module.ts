@@ -8,7 +8,6 @@ import { FormsModule } from '@angular/forms';
 import { StockReportService } from './stock-report.service';
 import { StockReportXuatNhapTonDetailComponent } from './stock-report-xuat-nhap-ton-detail/stock-report-xuat-nhap-ton-detail.component';
 import { SharedModule } from '../shared/shared.module';
-import { GridModule } from '@progress/kendo-angular-grid';
 
 @NgModule({
   declarations: [StockReportXuatNhapTonComponent, StockReportXuatNhapTonDetailComponent],

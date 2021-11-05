@@ -2,17 +2,14 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { IntlService } from '@progress/kendo-angular-intl';
-import * as _ from 'lodash';
 import { WebService } from 'src/app/core/services/web.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { ImageViewerComponent } from 'src/app/shared/image-viewer/image-viewer.component';
 import { IrAttachmentService } from 'src/app/shared/ir-attachment.service';
 import { NotifyService } from 'src/app/shared/services/notify.service';
 import { IrAttachmentBasic } from 'src/app/shared/shared';
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { environment } from 'src/environments/environment';
-import { PartnerImageBasic, PartnerImageViewModel, PartnerService } from '../../partner.service';
+import { PartnerImageViewModel, PartnerService } from '../../partner.service';
 
 @Component({
   selector: 'app-partner-overview-image',
@@ -32,9 +29,7 @@ export class PartnerOverviewImageComponent implements OnInit {
     private modalService: NgbModal,
     private partnerService: PartnerService,
     private fb: FormBuilder,
-    private intlService: IntlService,
     private activeRoute: ActivatedRoute,
-    private showErrorService: AppSharedShowErrorService,
     private webService: WebService,
     private irAttachmentService: IrAttachmentService,
     private notifyService: NotifyService

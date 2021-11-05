@@ -1,15 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { GridDataResult } from '@progress/kendo-angular-grid';
-import { Subject } from 'rxjs';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { HrPayrollStructureTypeService, HrPayrollStructureTypeDisplay, HrPayrollStructureTypeSave } from '../hr-payroll-structure-type.service';
-import { ResourceCalendarService, ResourceCalendarPaged, ResourceCalendarBasic } from 'src/app/resource-calendars/resource-calendar.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { debounceTime, tap, switchMap } from 'rxjs/operators';
-import { TimeKeepingService } from 'src/app/time-keeping/time-keeping.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { WorkEntryTypeBasic, WorkEntryTypeService } from 'src/app/work-entry-types/work-entry-type.service';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { ResourceCalendarBasic, ResourceCalendarPaged, ResourceCalendarService } from 'src/app/resource-calendars/resource-calendar.service';
+import { WorkEntryTypeService } from 'src/app/work-entry-types/work-entry-type.service';
+import { HrPayrollStructureTypeDisplay, HrPayrollStructureTypeSave, HrPayrollStructureTypeService } from '../hr-payroll-structure-type.service';
 
 @Component({
   selector: 'app-hr-payroll-structure-type-create',
@@ -31,7 +28,6 @@ export class HrPayrollStructureTypeCreateComponent implements OnInit {
     public activeModal: NgbActiveModal,
     private hrPayrollStructureTypeService: HrPayrollStructureTypeService,
     private resourceCalendarService: ResourceCalendarService,
-    private timeKeepingService: TimeKeepingService,
     private notificationService: NotificationService,
     private workEntryTypeService : WorkEntryTypeService
   ) { }

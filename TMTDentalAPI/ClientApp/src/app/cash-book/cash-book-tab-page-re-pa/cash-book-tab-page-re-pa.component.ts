@@ -8,7 +8,6 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { CashBookCuDialogComponent } from '../../shared/cash-book-cu-dialog/cash-book-cu-dialog.component';
 import { AuthService } from 'src/app/auth/auth.service';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { AccountPaymentPaged, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { PhieuThuChiPaged, PhieuThuChiService } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';

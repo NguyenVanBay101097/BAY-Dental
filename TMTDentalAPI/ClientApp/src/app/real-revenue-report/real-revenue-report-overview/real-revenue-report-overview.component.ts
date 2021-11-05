@@ -1,12 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { RealRevenueReportSearch, RealRevenueReportService, RealRevenueReportItem, RealRevenueReportResult } from '../real-revenue-report.service';
-import { IntlService } from '@progress/kendo-angular-intl';
-import * as _ from 'lodash';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { IntlService } from '@progress/kendo-angular-intl';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/company.service';
-import { debounceTime, tap, switchMap } from 'rxjs/operators';
+import { RealRevenueReportResult, RealRevenueReportSearch, RealRevenueReportService } from '../real-revenue-report.service';
 
 @Component({
   selector: 'app-real-revenue-report-overview',

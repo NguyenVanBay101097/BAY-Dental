@@ -1,30 +1,24 @@
-import { HrPayrollStructureTypePaged, HrPayrollStructureTypeService } from './../../hrs/hr-payroll-structure-type.service';
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { EmployeeService } from '../employee.service';
-import { WindowRef, WindowCloseResult, WindowService } from '@progress/kendo-angular-dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { EmpCategoriesCreateUpdateComponent } from 'src/app/employee-categories/emp-categories-create-update/emp-categories-create-update.component';
-import { EmpCategoryService } from 'src/app/employee-categories/emp-category.service';
-import { EmployeeCategoryPaged, EmployeeCategoryBasic, EmployeeCategoryDisplay } from 'src/app/employee-categories/emp-category';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { CommissionPaged, CommissionService, Commission } from 'src/app/commissions/commission.service';
-import * as _ from 'lodash';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { UserSimple } from 'src/app/users/user-simple';
-import { debounceTime, tap, switchMap, map } from 'rxjs/operators';
-import { UserPaged, UserService } from 'src/app/users/user.service';
-import { HrPayrollStructureTypeSimple } from 'src/app/hrs/hr-payroll-structure-type.service';
+import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import * as _ from 'lodash';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { Commission, CommissionPaged, CommissionService } from 'src/app/commissions/commission.service';
 import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/company.service';
-import { MustMatch } from 'src/app/shared/must-match-validator';
-import { validator } from 'fast-json-patch';
-import { ResGroupBasic, ResGroupService } from 'src/app/res-groups/res-group.service';
-import { AuthService } from 'src/app/auth/auth.service';
-import { PermissionService } from 'src/app/shared/permission.service';
-import { ApplicationRolePaged, RoleService } from 'src/app/roles/role.service';
+import { EmpCategoriesCreateUpdateComponent } from 'src/app/employee-categories/emp-categories-create-update/emp-categories-create-update.component';
+import { EmployeeCategoryBasic, EmployeeCategoryDisplay, EmployeeCategoryPaged } from 'src/app/employee-categories/emp-category';
+import { EmpCategoryService } from 'src/app/employee-categories/emp-category.service';
 import { HrJobService, HrJobsPaged } from 'src/app/hr-jobs/hr-job.service';
+import { HrPayrollStructureTypeSimple } from 'src/app/hrs/hr-payroll-structure-type.service';
+import { ResGroupService } from 'src/app/res-groups/res-group.service';
+import { ApplicationRolePaged, RoleService } from 'src/app/roles/role.service';
+import { UserSimple } from 'src/app/users/user-simple';
+import { UserPaged, UserService } from 'src/app/users/user.service';
+import { EmployeeService } from '../employee.service';
+import { HrPayrollStructureTypePaged, HrPayrollStructureTypeService } from './../../hrs/hr-payroll-structure-type.service';
 
 @Component({
   selector: 'app-employee-create-update',
@@ -42,8 +36,6 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     private intlService: IntlService, private commissionService: CommissionService, private userService: UserService,
     private companyService: CompanyService,
     private resGroupService: ResGroupService,
-    private authService: AuthService,
-    private permissionService: PermissionService,
     private roleService: RoleService,
     private hrJobService: HrJobService,
   ) { }

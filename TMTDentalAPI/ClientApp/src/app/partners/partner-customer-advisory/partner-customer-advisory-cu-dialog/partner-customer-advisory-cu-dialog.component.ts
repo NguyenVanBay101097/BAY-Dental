@@ -5,17 +5,15 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { result, values } from 'lodash';
 import { Observable, of, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { AdvisoryDefaultGet, AdvisoryService } from 'src/app/advisories/advisory.service';
-import { EmployeeBasic, EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
+import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { ProductPaged, ProductService } from 'src/app/products/product.service';
 import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
 import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
 import { ToothDiagnosisPaged, ToothDiagnosisSave, ToothDiagnosisService } from 'src/app/tooth-diagnosis/tooth-diagnosis.service';
-import {ToothDiagnosisPopoverComponent} from '../partner-customer-advisory-list/tooth-diagnosis-popover/tooth-diagnosis-popover.component'
 
 @Component({
   selector: 'app-partner-customer-advisory-cu-dialog',

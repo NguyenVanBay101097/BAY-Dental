@@ -1,14 +1,14 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { debounceTime, tap, switchMap, distinctUntilChanged } from 'rxjs/operators';
-import { StockReportXuatNhapTonItem, StockReportService, StockReportXuatNhapTonSearch } from '../stock-report.service';
-import { ProductSimple } from 'src/app/products/product-simple';
-import { ProductCategoryBasic, ProductCategoryService, ProductCategoryPaged } from 'src/app/product-categories/product-category.service';
-import { ProductService, ProductPaged, ProductFilter } from 'src/app/products/product.service';
 import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { ProductCategoryBasic, ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
+import { ProductSimple } from 'src/app/products/product-simple';
+import { ProductFilter, ProductService } from 'src/app/products/product.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { StockReportService, StockReportXuatNhapTonItem, StockReportXuatNhapTonSearch } from '../stock-report.service';
 
 
 @Component({

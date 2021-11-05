@@ -1,16 +1,14 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
-import { HrPayrollStructureService, HrPayrollStructurePaged, HrPayrollStructureDisplay, HrSalaryRuleDisplay } from '../hr-payroll-structure.service';
-import { NotificationService } from '@progress/kendo-angular-notification';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { debounceTime } from 'rxjs/internal/operators/debounceTime';
-import { tap } from 'rxjs/internal/operators/tap';
-import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { NotificationService } from '@progress/kendo-angular-notification';
+import { debounceTime } from 'rxjs/internal/operators/debounceTime';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { tap } from 'rxjs/internal/operators/tap';
 import { HrPayrollStructureTypeCreateComponent } from '../hr-payroll-structure-type-create/hr-payroll-structure-type-create.component';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { HrPayrollStructureDisplay, HrPayrollStructurePaged, HrPayrollStructureService, HrSalaryRuleDisplay } from '../hr-payroll-structure.service';
 import { HrSalaryRuleCrudDialogComponent } from '../hr-salary-rule-crud-dialog/hr-salary-rule-crud-dialog.component';
 
 @Component({

@@ -1,25 +1,19 @@
-import { Component, OnInit, NgModuleRef, ViewChild } from '@angular/core';
-import { EmployeeService } from 'src/app/employees/employee.service';
-import { EmployeeSimple, EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
-import { NgbModal, NgbPopoverConfig } from '@ng-bootstrap/ng-bootstrap';
-import { NotificationService } from '@progress/kendo-angular-notification';
-import { DateInputModule } from '@progress/kendo-angular-dateinputs';
-import { IntlService, load } from '@progress/kendo-angular-intl';
-import { from, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, tap, switchMap, map } from 'rxjs/operators';
-import { offset } from '@progress/kendo-date-math';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { TimeSheetEmployee, TimeKeepingService, EmployeeChamCongPaged, ChamCongBasic, ChamCongPaged, ChamCongSave, TaoChamCongNguyenThangViewModel } from '../time-keeping.service';
+import { NgbModal, NgbPopoverConfig } from '@ng-bootstrap/ng-bootstrap';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { IntlService } from '@progress/kendo-angular-intl';
+import { NotificationService } from '@progress/kendo-angular-notification';
+import { Subject } from 'rxjs';
+import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
+import { EmployeeService } from 'src/app/employees/employee.service';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { TimeKeepingForallDialogComponent } from '../time-keeping-forall-dialog/time-keeping-forall-dialog.component';
+import { TimeKeepingImportFileComponent } from '../time-keeping-import-file/time-keeping-import-file.component';
 import { TimeKeepingSettingDialogComponent } from '../time-keeping-setting-dialog/time-keeping-setting-dialog.component';
 import { TimeKeepingSetupDialogComponent } from '../time-keeping-setup-dialog/time-keeping-setup-dialog.component';
-import { TimeKeepingImportFileComponent } from '../time-keeping-import-file/time-keeping-import-file.component';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { PopupCloseEvent } from '@progress/kendo-angular-grid';
-import { TimeKeepingForallDialogComponent } from '../time-keeping-forall-dialog/time-keeping-forall-dialog.component';
-import { FormBuilder } from '@angular/forms';
-import { guid } from '@progress/kendo-angular-common';
-import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { ChamCongBasic, ChamCongPaged, EmployeeChamCongPaged, TaoChamCongNguyenThangViewModel, TimeKeepingService, TimeSheetEmployee } from '../time-keeping.service';
 
 @Component({
   selector: 'app-time-keeping-view-calendar',
@@ -55,7 +49,6 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
     private modalService: NgbModal,
     private timeKeepingService: TimeKeepingService,
     private router: Router,
-    private fb: FormBuilder,
     config: NgbPopoverConfig,
     private notificationService: NotificationService,
     private checkPermissionService: CheckPermissionService

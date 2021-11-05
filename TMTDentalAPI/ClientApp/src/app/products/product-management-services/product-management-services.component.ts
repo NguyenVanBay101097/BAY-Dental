@@ -1,15 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
-import { ProductCategory } from 'src/app/product-categories/product-category';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
-import { ProductCategoryDialogComponent } from 'src/app/shared/product-category-dialog/product-category-dialog.component';
 import { Product } from '../product';
 import { ProductImportExcelDialogComponent } from '../product-import-excel-dialog/product-import-excel-dialog.component';
 import { ProductServiceCuDialogComponent } from '../product-service-cu-dialog/product-service-cu-dialog.component';
@@ -36,8 +33,7 @@ export class ProductManagementServicesComponent implements OnInit {
   canAdd = false; // quyền thêm dịch vụ
   canEdit = false; // quyền sửa dịch vụ
   canDelete = false; // quyền xóa dịch vụ
-  constructor(private route: ActivatedRoute,
-    private router: Router,
+  constructor(
     private productCategoryService: ProductCategoryService,
     private productService: ProductService,
     private modalService: NgbModal,

@@ -1,14 +1,12 @@
-import { AuthService } from './../../auth/auth.service';
-import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component, Inject, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { NotifyService } from 'src/app/shared/services/notify.service';
-import { AgentService, CommissionAgentFilter } from '../agent.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { AgentService, CommissionAgentFilter } from '../agent.service';
+import { AuthService } from './../../auth/auth.service';
 
 @Component({
   selector: 'app-agent-commission-list',
@@ -30,11 +28,10 @@ export class AgentCommissionListComponent implements OnInit {
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
 
-  constructor(private route: ActivatedRoute, private modalService: NgbModal,
+  constructor(
     private agentService: AgentService, private router: Router,
     private intlService: IntlService,
     private authService: AuthService,
-    private notifyService: NotifyService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 

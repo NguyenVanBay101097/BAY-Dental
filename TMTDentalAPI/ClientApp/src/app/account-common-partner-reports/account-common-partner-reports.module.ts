@@ -7,8 +7,6 @@ import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { FormsModule } from '@angular/forms';
 import { AccountCommonCustomerReportListComponent } from './account-common-customer-report-list/account-common-customer-report-list.component';
 import { SharedModule } from '../shared/shared.module';
-import { AccountCommonPartnerReportListComponent } from './account-common-partner-report-list/account-common-partner-report-list.component';
-import { AccountCommonPartnerReportDetailComponent } from './account-common-partner-report-detail/account-common-partner-report-detail.component';
 import { PartnerDebitListReportComponent } from './partner-debit-list-report/partner-debit-list-report.component';
 import { PartnerDebitDetailListReportComponent } from './partner-debit-detail-list-report/partner-debit-detail-list-report.component';
 import { PartnerReportManagementComponent } from './partner-report-management/partner-report-management.component';
@@ -21,7 +19,16 @@ import { PartnerAreaReportComponent } from './partner-area-report/partner-area-r
 import { AccountInvoiceReportService } from '../account-invoice-reports/account-invoice-report.service';
 
 @NgModule({
-    declarations: [AccountCommonCustomerReportListComponent, AccountCommonPartnerReportDetailComponent, AccountCommonPartnerReportListComponent, PartnerDebitListReportComponent, PartnerDebitDetailListReportComponent, PartnerReportManagementComponent, PartnerReportOverviewComponent, PartnerReportSaleOrderComponent, PartnerAdvanceListReportComponent, PartnerAdvanceDetailListReportComponent, PartnerAreaReportComponent],
+  declarations: [
+    AccountCommonCustomerReportListComponent,
+    PartnerDebitListReportComponent,
+    PartnerDebitDetailListReportComponent,
+    PartnerReportManagementComponent,
+    PartnerReportOverviewComponent,
+    PartnerReportSaleOrderComponent,
+    PartnerAdvanceListReportComponent,
+    PartnerAdvanceDetailListReportComponent,
+    PartnerAreaReportComponent],
   imports: [
     CommonModule,
     AccountCommonPartnerReportsRoutingModule,

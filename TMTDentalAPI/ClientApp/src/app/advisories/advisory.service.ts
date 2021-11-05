@@ -1,8 +1,7 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { EmployeeSimple } from '../employees/employee';
-import { ProductBasic2 } from '../products/product.service';
 import { ToothDisplay } from '../teeth/tooth.service';
 import { ToothCategoryBasic } from '../tooth-categories/tooth-category.service';
 

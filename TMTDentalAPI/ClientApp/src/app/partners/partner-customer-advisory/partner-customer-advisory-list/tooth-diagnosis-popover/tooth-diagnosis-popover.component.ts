@@ -1,10 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { anyChanged } from '@progress/kendo-angular-common';
 import { MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
-import { result } from 'lodash';
 import { Observable, of, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
-import { ProductPaged, ProductService } from 'src/app/products/product.service';
 import { ToothDiagnosisPaged, ToothDiagnosisSave, ToothDiagnosisService } from 'src/app/tooth-diagnosis/tooth-diagnosis.service';
 
 @Component({
@@ -30,7 +27,6 @@ export class ToothDiagnosisPopoverComponent implements OnInit {
   @ViewChild('multiSelect', { static: true }) multiSelect: MultiSelectComponent;
   constructor(
     private toothDiagnosisService: ToothDiagnosisService,
-    private productService: ProductService
   ) { }
 
   ngOnInit() {

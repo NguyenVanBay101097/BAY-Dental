@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { IntlService } from '@progress/kendo-angular-intl';
 import * as moment from 'moment';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -20,7 +19,7 @@ export class SaleOrderImagesLibraryPopupComponent implements OnInit {
   data: any[] =[];
   items: any[] = [];
   id: string = '';
-  constructor(public activeModal: NgbActiveModal,private intlService: IntlService,
+  constructor(public activeModal: NgbActiveModal,
     private saleOrderService: SaleOrderService
     ) { }
   

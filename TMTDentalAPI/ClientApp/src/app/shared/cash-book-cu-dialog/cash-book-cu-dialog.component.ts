@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ɵConsole } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { NgbActiveModal, NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
@@ -9,13 +9,12 @@ import { of } from "rxjs";
 import { debounceTime, switchMap, tap } from "rxjs/operators";
 import {
   AccountJournalFilter,
-  AccountJournalService,
+  AccountJournalService
 } from "src/app/account-journals/account-journal.service";
-import { AccountPaymentDisplay, AccountPaymentService } from "src/app/account-payments/account-payment.service";
 import { AuthService } from "src/app/auth/auth.service";
 import { loaiThuChiPaged, LoaiThuChiService } from "src/app/loai-thu-chi/loai-thu-chi.service";
-import { PartnerPaged, PartnerSimple } from "src/app/partners/partner-simple";
-import { PartnerFilter, PartnerService } from "src/app/partners/partner.service";
+import { PartnerPaged } from "src/app/partners/partner-simple";
+import { PartnerService } from "src/app/partners/partner.service";
 import { PhieuThuChiDisplay, PhieuThuChiService } from "src/app/phieu-thu-chi/phieu-thu-chi.service";
 import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
 import { LoaiThuChiFormComponent } from "src/app/shared/loai-thu-chi-form/loai-thu-chi-form.component";

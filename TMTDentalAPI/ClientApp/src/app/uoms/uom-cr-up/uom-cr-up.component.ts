@@ -1,11 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { UomService, UoMDisplay } from '../uom.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { debounceTime, tap, switchMap } from 'rxjs/operators';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { UoMCategoryBasic, UoMCategoryPaged, UomCategoryService } from 'src/app/uom-categories/uom-category.service';
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { UoMDisplay, UomService } from '../uom.service';
 
 @Component({
   selector: 'app-uom-cr-up',
@@ -30,7 +29,7 @@ export class UomCrUpComponent implements OnInit {
     private uoMService: UomService,
     public activeModal: NgbActiveModal,
     private uomCategoryService: UomCategoryService,
-    private fb: FormBuilder, private showErrorService: AppSharedShowErrorService
+    private fb: FormBuilder,
   ) { }
 
   ngOnInit() {

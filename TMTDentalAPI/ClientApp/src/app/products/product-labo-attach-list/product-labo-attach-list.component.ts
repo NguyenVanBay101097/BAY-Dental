@@ -1,6 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { DialogService, WindowService } from '@progress/kendo-angular-dialog';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';

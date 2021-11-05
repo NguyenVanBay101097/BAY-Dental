@@ -1,5 +1,5 @@
-import {Component, Input, OnInit, OnDestroy, Inject, Renderer2, HostBinding} from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+import { Component, HostBinding, Inject, Input, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 
 @Component({
   selector: 'app-header, cui-header',
@@ -63,7 +63,7 @@ export class AppHeaderComponent implements OnInit, OnDestroy {
   setToggerBreakpointClass(breakpoint = 'md') {
     let togglerClass = 'd-none d-md-block';
     if (this.breakpoints.includes(breakpoint)) {
-      const breakpointIndex = this.breakpoints.indexOf(breakpoint);
+      // const breakpointIndex = this.breakpoints.indexOf(breakpoint);
       togglerClass = `d-none d-${breakpoint}-block`;
     }
     return togglerClass;

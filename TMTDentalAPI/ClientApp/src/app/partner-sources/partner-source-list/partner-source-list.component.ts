@@ -1,15 +1,14 @@
-import { PartnerSourcePaged, PartnerSourceBasic } from "./../partner-source.service";
 import { Component, Inject, OnInit } from "@angular/core";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { GridDataResult, PageChangeEvent } from "@progress/kendo-angular-grid";
 import { Subject } from "rxjs";
-import { PartnerSourceService } from "../partner-source.service";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { map, debounceTime, distinctUntilChanged } from "rxjs/operators";
+import { debounceTime, distinctUntilChanged, map } from "rxjs/operators";
 import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
-import { PartnerSourceCreateUpdateDialogComponent } from "../partner-source-create-update-dialog/partner-source-create-update-dialog.component";
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from "src/app/shared/pager-grid-kendo.config";
 import { NotifyService } from "src/app/shared/services/notify.service";
+import { PartnerSourceCreateUpdateDialogComponent } from "../partner-source-create-update-dialog/partner-source-create-update-dialog.component";
+import { PartnerSourceService } from "../partner-source.service";
+import { PartnerSourceBasic, PartnerSourcePaged } from "./../partner-source.service";
 
 @Component({
   selector: "app-partner-source-list",
@@ -28,7 +27,6 @@ export class PartnerSourceListComponent implements OnInit {
   constructor(
     private partnerSourceService: PartnerSourceService,
     private modalService: NgbModal,
-    private showErrorService: AppSharedShowErrorService,
     private notifyService: NotifyService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }

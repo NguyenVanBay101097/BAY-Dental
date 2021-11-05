@@ -6,7 +6,7 @@ import { DotKhamStepReportComponent } from './dot-kham-step-report/dot-kham-step
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
-import { NgbDropdown, NgbDropdownModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { DotKhamStepService } from '../dot-khams/dot-kham-step.service';
 
 @NgModule({

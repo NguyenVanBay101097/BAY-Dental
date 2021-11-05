@@ -1,17 +1,13 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { forkJoin, of, Subject } from 'rxjs';
-import { count, debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
-import { PartnerSimple } from 'src/app/partners/partner-simple';
-import { PartnerService } from 'src/app/partners/partner.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { SurveyAssignmentGetSummaryFilter, SurveyAssignmentPaged, SurveyAssignmentService } from '../survey.service';
 
@@ -60,11 +56,9 @@ export class SurveyAssignmentListComponent implements OnInit {
 
   constructor(
     private intlService: IntlService,
-    private modalService: NgbModal,
     private router: Router,
     private employeeService: EmployeeService,
     private surveyAssignmentService: SurveyAssignmentService,
-    private fb: FormBuilder,
     private authService: AuthService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }

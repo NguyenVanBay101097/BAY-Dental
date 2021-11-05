@@ -4,8 +4,7 @@ import { DataResult } from '@progress/kendo-data-query';
 import * as moment from 'moment';
 import { map } from 'rxjs/operators';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
-import { ToothBasic } from 'src/app/teeth/tooth.service';
-import { SaleReportService, ServiceReportDetailReq, ServiceReportDetailRes } from '../sale-report.service';
+import { SaleReportService, ServiceReportDetailReq } from '../sale-report.service';
 
 @Component({
   selector: 'app-service-report-detail',

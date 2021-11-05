@@ -1,12 +1,11 @@
-import { Component, Inject, Input, OnInit, Type } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, Inject, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { forkJoin, of, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
@@ -51,11 +50,9 @@ export class PartnerAdvanceListComponent implements OnInit {
     private intlService: IntlService,
     private modalService: NgbModal,
     private partnerService: PartnerService,
-    private router: Router,
     private route: ActivatedRoute,
     private notificationService: NotificationService,
     private partnerAdvanceService: PartnerAdvanceService,
-    private fb: FormBuilder,
     private authService: AuthService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }

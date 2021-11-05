@@ -1,14 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { CheckableSettings, CheckedState } from '@progress/kendo-angular-treeview';
-import { element } from 'protractor';
 import { Observable, of } from 'rxjs';
 import { AuthResource } from 'src/app/auth/auth.resource';
-import { WebService } from 'src/app/core/services/web.service';
 import { UserPaged, UserService } from 'src/app/users/user.service';
-import { PermissionTreeViewModel, RoleService } from '../role.service';
+import { RoleService } from '../role.service';
 
 @Component({
   selector: 'app-role-form',
@@ -30,7 +28,6 @@ export class RoleFormComponent implements OnInit {
     private route: ActivatedRoute,
     private roleService: RoleService,
     private userService: UserService,
-    private webService: WebService,
     private notificationService: NotificationService,
     private router: Router,
     private authResource: AuthResource

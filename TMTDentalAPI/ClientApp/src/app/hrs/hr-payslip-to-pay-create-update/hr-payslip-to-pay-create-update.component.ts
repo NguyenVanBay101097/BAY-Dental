@@ -1,18 +1,17 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { HrPayslipDisplay, HrPayslipService } from '../hr-payslip.service';
-import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
-import { NotificationService } from '@progress/kendo-angular-notification';
-import { EmployeeDisplay, EmployeePaged, EmployeeBasic } from 'src/app/employees/employee';
-import { EmployeeService } from 'src/app/employees/employee.service';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { debounceTime, tap, switchMap } from 'rxjs/operators';
-import { IntlService } from '@progress/kendo-angular-intl';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { IntlService } from '@progress/kendo-angular-intl';
+import { NotificationService } from '@progress/kendo-angular-notification';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeCreateUpdateComponent } from 'src/app/employees/employee-create-update/employee-create-update.component';
-import { HrPayrollStructureService, HrPayrollStructurePaged } from '../hr-payroll-structure.service';
-import { validator } from 'fast-json-patch';
+import { EmployeeService } from 'src/app/employees/employee.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { HrPayrollStructurePaged, HrPayrollStructureService } from '../hr-payroll-structure.service';
+import { HrPayslipService } from '../hr-payslip.service';
 
 @Component({
   selector: 'app-hr-payslip-to-pay-create-update',

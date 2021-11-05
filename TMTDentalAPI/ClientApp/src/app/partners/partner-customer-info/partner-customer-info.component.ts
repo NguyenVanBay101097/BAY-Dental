@@ -1,8 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { PartnerService } from '../partner.service';
-import { PartnerDisplay, PartnerCategorySimple } from '../partner-simple';
-import { HistorySimple } from 'src/app/history/history';
-import { PartnerCategoryBasic } from 'src/app/partner-categories/partner-category.service';
+import {
+  PartnerDisplay,
+} from '../partner-simple';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { PartnerCreateUpdateComponent } from '../partner-create-update/partner-create-update.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';

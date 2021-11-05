@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { CellOptions, Workbook, WorkbookSheetColumn, WorkbookSheetRow, WorkbookSheetRowCell } from '@progress/kendo-angular-excel-export';
-import { SaleReportService, ServiceReportDetailReq, ServiceReportDetailRes } from '../sale-report.service';
-import { ServiceReportManageService } from './service-report-manage';
+import { Workbook, WorkbookSheetColumn, WorkbookSheetRow, WorkbookSheetRowCell } from '@progress/kendo-angular-excel-export';
 import { saveAs } from '@progress/kendo-file-saver';
 import * as moment from 'moment';
 import { Observable, zip } from 'rxjs';
+import { SaleReportService, ServiceReportDetailReq, ServiceReportDetailRes } from '../sale-report.service';
+import { ServiceReportManageService } from './service-report-manage';
 
 @Component({
   selector: 'app-service-report-management',
@@ -36,7 +36,7 @@ export class ServiceReportManagementComponent implements OnInit {
     var data = e.data;
     var args = e.args;
     var parentFilter = e.filter;
-    var employeeFilter = e.employeeFilter || 'none';
+    // var employeeFilter = e.employeeFilter || 'none';
     var title = e.title || 'báo cáo dịch vụ', header = e.header || "BÁO CÁO DỊCH VỤ";
     // Prevent automatically saving the file. We will save it manually after we fetch and add the details
     args.preventDefault();

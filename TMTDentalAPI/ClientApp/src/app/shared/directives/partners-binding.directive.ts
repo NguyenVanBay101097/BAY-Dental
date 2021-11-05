@@ -1,4 +1,4 @@
-import { Directive, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import { Directive, Input, OnDestroy, OnInit } from '@angular/core';
 import { DataBindingDirective, GridComponent } from '@progress/kendo-angular-grid';
 import { Subscription } from 'rxjs';
 import { PartnersService } from '../services/partners.service';

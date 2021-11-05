@@ -1,15 +1,10 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { aggregateBy } from '@progress/kendo-data-query';
-import { SaleReportItem, SaleReportService, SaleReportSearch, SaleReportPartnerSearch, SaleReportPartnerItem, SaleReportPartnerItemV3, SaleReportPartnerSearchV3 } from '../sale-report.service';
-import * as _ from 'lodash';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { AuthService } from 'src/app/auth/auth.service';
 import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/company.service';
-import { PartnerOldNewReport, PartnerOldNewReportSearch, PartnerOldNewReportService } from '../partner-old-new-report.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { PartnerOldNewReport, PartnerOldNewReportSearch, PartnerOldNewReportService } from '../partner-old-new-report.service';
 
 @Component({
   selector: 'app-sale-report-partner',

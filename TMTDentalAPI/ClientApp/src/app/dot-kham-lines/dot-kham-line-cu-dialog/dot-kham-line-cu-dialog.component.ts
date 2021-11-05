@@ -1,18 +1,17 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { ProductSimple } from 'src/app/products/product-simple';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { WindowCloseResult, WindowRef, WindowService } from '@progress/kendo-angular-dialog';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { ProductService, ProductFilter } from 'src/app/products/product.service';
-import { WindowRef, WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
-import { RoutingSimple, RoutingService, RoutingPaged } from 'src/app/routings/routing.service';
-import { UserSimple } from 'src/app/users/user-simple';
-import { DotKhamLineService } from 'src/app/dot-kham-lines/dot-kham-line.service';
-import { UserService } from 'src/app/users/user.service';
-import { debounceTime, tap, switchMap } from 'rxjs/operators';
-import * as _ from 'lodash';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import * as _ from 'lodash';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { DotKhamLineService } from 'src/app/dot-kham-lines/dot-kham-line.service';
 import { DotKhamLineOperationService } from 'src/app/dot-khams/dot-kham-line-operation.service';
+import { ProductSimple } from 'src/app/products/product-simple';
+import { ProductFilter, ProductService } from 'src/app/products/product.service';
+import { RoutingPaged, RoutingService, RoutingSimple } from 'src/app/routings/routing.service';
+import { UserSimple } from 'src/app/users/user-simple';
+import { UserService } from 'src/app/users/user.service';
 import { DotKhamLineChangeRoutingDialogComponent } from '../dot-kham-line-change-routing-dialog/dot-kham-line-change-routing-dialog.component';
 
 @Component({
@@ -32,7 +31,7 @@ export class DotKhamLineCuDialogComponent implements OnInit {
   @ViewChild('routingCbx', { static: true }) routingCbx: ComboBoxComponent;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
 
-  constructor(private fb: FormBuilder, private dotKhamLineService: DotKhamLineService, private intlService: IntlService,
+  constructor(private fb: FormBuilder, private dotKhamLineService: DotKhamLineService,
     private productService: ProductService, private windowRef: WindowRef, private windowService: WindowService,
     private userService: UserService, private routingService: RoutingService,
     private notificationService: NotificationService, private operationService: DotKhamLineOperationService) { }

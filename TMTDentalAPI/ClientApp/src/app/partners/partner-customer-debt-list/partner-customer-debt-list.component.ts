@@ -1,18 +1,15 @@
-import { AuthService } from './../../auth/auth.service';
 import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { AmountCustomerDebtFilter, CustomerDebtFilter, CustomerDebtReportService } from 'src/app/core/services/customer-debt-report.service';
-import { SaleOrderPaymentService } from 'src/app/core/services/sale-order-payment.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { NotifyService } from 'src/app/shared/services/notify.service';
 import { PartnerCustomerDebtPaymentDialogComponent } from '../partner-customer-debt-payment-dialog/partner-customer-debt-payment-dialog.component';
-import { PartnerService } from '../partner.service';
-import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { AuthService } from './../../auth/auth.service';
 
 @Component({
   selector: 'app-partner-customer-debt-list',
@@ -38,13 +35,11 @@ export class PartnerCustomerDebtListComponent implements OnInit {
 
   constructor(private intlService: IntlService,
     private modalService: NgbModal,
-    private partnerService: PartnerService,
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
     private customerDebtReportService: CustomerDebtReportService,
     private notifyService: NotifyService,
-    private saleOrderPaymentService: SaleOrderPaymentService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 

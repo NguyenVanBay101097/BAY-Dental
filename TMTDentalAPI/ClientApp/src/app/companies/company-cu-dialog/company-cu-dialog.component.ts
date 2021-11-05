@@ -1,16 +1,12 @@
 
-import { Component, OnInit, Inject, ViewChild, ElementRef } from '@angular/core';
-import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
-import { ProductCategoryService, ProductCategoryFilter, ProductCategoryPaged, ProductCategoryBasic } from 'src/app/product-categories/product-category.service';
-import { WindowRef, WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import * as _ from 'lodash';
-// import { debug } from 'util';
-import { CompanyService } from '../company.service';
 import { HttpClient } from '@angular/common/http';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { ProductCategoryBasic } from 'src/app/product-categories/product-category.service';
 import { environment } from 'src/environments/environment';
+import { CompanyService } from '../company.service';
 
 @Component({
   selector: 'app-company-cu-dialog',
@@ -41,7 +37,7 @@ export class CompanyCuDialogComponent implements OnInit {
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
 
   constructor(private fb: FormBuilder, private companyService: CompanyService, public activeModal: NgbActiveModal, private http: HttpClient,
-    private showErrorService: AppSharedShowErrorService) {
+    ) {
   }
 
   ngOnInit() {

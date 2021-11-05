@@ -1,9 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { IntlService, load } from '@progress/kendo-angular-intl';
+import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
 import { AccountJournalFilter, AccountJournalService } from 'src/app/account-journals/account-journal.service';
@@ -32,12 +31,10 @@ export class PartnerAdvanceCreateUpdateDialogComponent implements OnInit {
 
   constructor(private fb: FormBuilder,
     private partnerAdvanceService: PartnerAdvanceService,
-    private route: ActivatedRoute, private modalService: NgbModal,
     public activeModal: NgbActiveModal,
     private partnerService: PartnerService,
     private accountJournalService: AccountJournalService,
     private notificationService: NotificationService,
-    private router: Router,
     private intlService: IntlService,
     private authService: AuthService,
     private printService: PrintService) { }
