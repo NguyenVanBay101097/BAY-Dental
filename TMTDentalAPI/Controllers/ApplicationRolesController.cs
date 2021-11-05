@@ -92,6 +92,14 @@ namespace TMTDentalAPI.Controllers
             await _unitOfWork.BeginTransactionAsync();
             var role = _mapper.Map<ApplicationRole>(val);
 
+            foreach (var function in val.Functions)
+            {
+                role.Functions.Add(new ApplicationRoleFunction()
+                {
+                    Func = function
+                });
+            }
+
             try
             {
                 var result = await _roleManager.CreateAsync(role);
