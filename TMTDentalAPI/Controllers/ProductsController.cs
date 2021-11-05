@@ -1439,9 +1439,8 @@ namespace TMTDentalAPI.Controllers
             using (var package = new ExcelPackage(stream))
             {
                 var worksheet = package.Workbook.Worksheets.Add(sheetName);
-
-                worksheet.Cells[1, 1].Value = "Mã vật tư";
-                worksheet.Cells[1, 2].Value = "Tên vật tư";
+                worksheet.Cells[1, 1].Value = "Tên vật tư";
+                worksheet.Cells[1, 2].Value = "Mã vật tư";
                 worksheet.Cells[1, 3].Value = "Loại";
                 worksheet.Cells[1, 4].Value = "Nhóm vật tư";
                 worksheet.Cells[1, 5].Value = "Giá mua";
@@ -1455,8 +1454,8 @@ namespace TMTDentalAPI.Controllers
                 var row = 2;
                 foreach (var item in products)
                 {
-                    worksheet.Cells[row, 1].Value = item.DefaultCode;
-                    worksheet.Cells[row, 2].Value = item.Name;
+                    worksheet.Cells[row, 1].Value = item.Name;
+                    worksheet.Cells[row, 2].Value = item.DefaultCode;
                     worksheet.Cells[row, 3].Value = type_dict[item.Type];
                     worksheet.Cells[row, 4].Value = item.CategName;
                     worksheet.Cells[row, 5].Value = item.PurchasePrice ?? 0;
@@ -1496,9 +1495,8 @@ namespace TMTDentalAPI.Controllers
             using (var package = new ExcelPackage(stream))
             {
                 var worksheet = package.Workbook.Worksheets.Add(sheetName);
-
-                worksheet.Cells[1, 1].Value = "Mã thuốc";
-                worksheet.Cells[1, 2].Value = "Tên thuốc";
+                worksheet.Cells[1, 1].Value = "Tên thuốc";
+                worksheet.Cells[1, 2].Value = "Mã thuốc";
                 worksheet.Cells[1, 3].Value = "Nhóm thuốc";
                 worksheet.Cells[1, 4].Value = "Giá thuốc";
                 worksheet.Cells[1, 5].Value = "Đơn vị tính mặc định";
@@ -1510,8 +1508,8 @@ namespace TMTDentalAPI.Controllers
                 var row = 2;
                 foreach (var item in products)
                 {
-                    worksheet.Cells[row, 1].Value = item.DefaultCode;
-                    worksheet.Cells[row, 2].Value = item.Name;
+                    worksheet.Cells[row, 1].Value = item.Name;
+                    worksheet.Cells[row, 2].Value = item.DefaultCode;
                     worksheet.Cells[row, 3].Value = item.CategName;
                     worksheet.Cells[row, 4].Value = item.ListPrice;
                     worksheet.Cells[row, 5].Value = item.UomName;
