@@ -59,6 +59,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Create(ServiceCardCardSave val)
         {
             var entity = _mapper.Map<ServiceCardCard>(val);
+            entity.CompanyId = CompanyId;
             await _unitOfWork.BeginTransactionAsync();
             await _cardCardService.CreateAsync(entity);
             _unitOfWork.Commit();
@@ -77,6 +78,8 @@ namespace TMTDentalAPI.Controllers
 
             await _unitOfWork.BeginTransactionAsync();
             entity = _mapper.Map(val, entity);
+            if (!entity.CompanyId.HasValue)
+                entity.CompanyId = CompanyId;
             await _cardCardService.UpdateAsync(entity);
             _unitOfWork.Commit();
 

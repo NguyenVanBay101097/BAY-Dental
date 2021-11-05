@@ -74,6 +74,7 @@ namespace TMTDentalAPI.Controllers
             await _productPricelistService.CreateAsync(priceList);
 
             entity.PricelistId = priceList.Id;
+            entity.CompanyId = CompanyId;
             //tạo loại thẻ
             await _cardTypeService.CreateAsync(entity);
             _unitOfWork.Commit();
@@ -94,6 +95,8 @@ namespace TMTDentalAPI.Controllers
 
             await _unitOfWork.BeginTransactionAsync();
             entity = _mapper.Map(val, entity);
+            if (!entity.CompanyId.HasValue)
+                entity.CompanyId = CompanyId;
             var serviceItems = _mapper.Map<IEnumerable<ProductPricelistItem>>(val.ProductPricelistItems);
             //tạo pricelist
             var priceList = entity.Pricelist;

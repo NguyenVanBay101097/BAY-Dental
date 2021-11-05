@@ -63,6 +63,7 @@ namespace TMTDentalAPI.Controllers
             if (null == val || !ModelState.IsValid)
                 return BadRequest();
             var entity = _mapper.Map<CardCard>(val);
+            entity.CompanyId = CompanyId;
             await _unitOfWork.BeginTransactionAsync();
             await _cardCardService.CreateAsync(entity);
             _unitOfWork.Commit();
@@ -83,6 +84,8 @@ namespace TMTDentalAPI.Controllers
 
             await _unitOfWork.BeginTransactionAsync();
             entity = _mapper.Map(val, entity);
+            if (!entity.CompanyId.HasValue)
+                entity.CompanyId = CompanyId;
             await _cardCardService.UpdateAsync(entity);
             _unitOfWork.Commit();
 
