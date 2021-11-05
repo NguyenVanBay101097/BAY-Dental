@@ -44,6 +44,16 @@
                                         <tr>
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">
+                                                    Mã thuốc
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <input type="text" placeholder="Để trống sẽ phát sinh tự động" class="form-control" formControlName="defaultCode" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
                                                     Nhóm thuốc
                                                 </label>
                                             </td>
@@ -66,11 +76,64 @@
                                         <tr>
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">
-                                                    Mã thuốc
+                                                    Xuất xứ
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
-                                                <input type="text" placeholder="Để trống sẽ phát sinh tự động" class="form-control" formControlName="defaultCode" />
+                                                <input type="text" class="form-control" formControlName="origin" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Thời hạn sử dụng (tháng)
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <kendo-numerictextbox [min]="0" formControlName="expiry">
+                                                </kendo-numerictextbox>
+                                            </td>
+                                        </tr>
+                                        <tr hasGroups [groups]="'medicineOrder.group_medicine'">
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Tiêu chí kiểm kho
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <kendo-multiselect [filterable]="true" #criteriaMultiSelect class="mr-3"
+                                                    [data]="listProductCriteria" [textField]="'name'"
+                                                    [valueField]="'id'" formControlName="productCriterias">
+                                                </kendo-multiselect>
+
+                                            </td>
+                                        </tr>
+                                        
+                                    </tbody>
+                                </table>
+                                <table class="o_group o_inner_group o_group_col_6">
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Mức tồn tối thiểu
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <kendo-numerictextbox [min]="0" [format]="'n2'" formControlName="minInventory">
+                                                </kendo-numerictextbox>
+                                            </td>
+                                        </tr>
+                                        <tr *ngIf="showStandardPrice">
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Giá vốn
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                                    formControlName="standardPrice">
+                                                </kendo-numerictextbox>
                                             </td>
                                         </tr>
                                         <tr>
@@ -92,33 +155,7 @@
 
                                             </td>
                                         </tr>
-                                        <tr *ngIf="showStandardPrice">
-                                            <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">
-                                                    Giá vốn
-                                                </label>
-                                            </td>
-                                            <td colspan="1" style="width: 100%;">
-                                                <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                    formControlName="standardPrice">
-                                                </kendo-numerictextbox>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">
-                                                    Mức tồn tối thiểu
-                                                </label>
-                                            </td>
-                                            <td colspan="1" style="width: 100%;">
-                                                <kendo-numerictextbox [min]="0" [format]="'n2'" formControlName="minInventory">
-                                                </kendo-numerictextbox>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <table class="o_group o_inner_group o_group_col_6">
-                                    <tbody>
+                                        
                                         <tr>
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">
@@ -132,20 +169,7 @@
                                                 </kendo-combobox>
                                             </td>
                                         </tr>
-                                        <tr hasGroups [groups]="'medicineOrder.group_medicine'">
-                                            <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">
-                                                    Tiêu chí kiểm kho
-                                                </label>
-                                            </td>
-                                            <td colspan="1" style="width: 100%;">
-                                                <kendo-multiselect [filterable]="true" #criteriaMultiSelect class="mr-3"
-                                                    [data]="listProductCriteria" [textField]="'name'"
-                                                    [valueField]="'id'" formControlName="productCriterias">
-                                                </kendo-multiselect>
-
-                                            </td>
-                                        </tr>
+                                        
                                         <!-- <tr hasGroups [groups]="'product.group_uom'">
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">
