@@ -127,7 +127,6 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
     this.submitted = true;
 
     if (this.formGroup.invalid) {
-      this.touched();
       return;
     }
 
@@ -151,7 +150,6 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
   actionActivate() {
     this.submitted = true;
     if (this.formGroup.invalid) {
-      this.touched();
       return;
     }
     let val = this.formGroup.value;
@@ -184,13 +182,6 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
     modalRef.result.then((res) => {
       this.setValueFC('partner', res);
     });
-  }
-
-  touched() {
-    (<any>Object).values(this.formGroup.controls).forEach((control: FormControl) => {
-      control.markAsTouched();
-    })
-    return;
   }
 
 

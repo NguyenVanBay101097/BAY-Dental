@@ -95,7 +95,6 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
   onSave() {
     this.submitted = true;
     if (this.formGroup.invalid) {
-      this.touched();
       return;
     }
 
@@ -116,16 +115,9 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
     }
 
   }
-  touched() {
-    (<any>Object).values(this.formGroup.controls).forEach((control: FormControl) => {
-      control.markAsTouched();
-    })
-    return;
-  }
 
   actionActivate() {
     if (this.formGroup.invalid) {
-      this.touched();
       return;
     }
     let val = this.formGroup.value;

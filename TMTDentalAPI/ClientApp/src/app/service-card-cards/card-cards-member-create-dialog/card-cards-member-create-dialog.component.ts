@@ -55,7 +55,7 @@ export class CardCardsMemberCreateDialogComponent implements OnInit {
 
   onSave(){
     this.submitted = true;
-    this.touched();
+    // this.touched();
     if (this.formGroup.invalid)
       return;
     var val = this.formGroup.value;
