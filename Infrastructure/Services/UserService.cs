@@ -85,9 +85,8 @@ namespace Infrastructure.Services
             return (T)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(T));
         }
 
-        public async Task<List<string>> GetGroups()
+        public async Task<List<string>> GetGroups(string userId)
         {
-            var userId = UserId;
             var groupIds = await _userManager.Users.Where(x => x.Id == userId).SelectMany(x => x.ResGroupsUsersRels)
                 .Select(x => x.GroupId.ToString()).ToListAsync();
             var irModelDataObj = GetService<IIRModelDataService>();

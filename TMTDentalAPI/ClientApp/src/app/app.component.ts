@@ -1,17 +1,9 @@
-import { Component, AfterViewInit, HostListener, ElementRef, OnInit } from '@angular/core';
-import { AuthService } from './auth/auth.service';
-import { Router } from '@angular/router';
-declare var $: any;
-import * as _ from 'lodash';
-import { PermissionService } from './shared/permission.service';
-import { ImportSampleDataComponent } from './shared/import-sample-data/import-sample-data.component';
-import { environment } from 'src/environments/environment';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { NotificationService } from '@progress/kendo-angular-notification';
-import { IrConfigParameterService } from './core/services/ir-config-parameter.service';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { SwUpdate } from '@angular/service-worker';
-import { interval } from 'rxjs';
+import * as _ from 'lodash';
+import { AuthService } from './auth/auth.service';
+import { PermissionService } from './shared/permission.service';
+declare var $: any;
 
 @Component({
   selector: 'app-root',
@@ -23,27 +15,11 @@ export class AppComponent implements OnInit {
   _areAccessKeyVisible = false;
   constructor(
     public authService: AuthService,
-    private router: Router,
-    private notificationService: NotificationService,
-    private el: ElementRef,
     private permissionService: PermissionService,
-    private http: HttpClient,
-    private modalService: NgbModal,
     private swUpdate: SwUpdate) {
-    this.loadGroups();
 
     this.authService.currentUser.subscribe((user) => {
-      if (user) {
-        this.authService.getGroups().subscribe((result: any) => {
-          this.permissionService.define(result);
-        });
-      }
     });
-    if (this.authService.isAuthenticated()) {
-      this.authService.getGroups().subscribe((result: any) => {
-        this.permissionService.define(result);
-      });
-    }
 
     console.log('swUpdate ' + this.swUpdate.isEnabled);
     if (this.swUpdate.isEnabled) {
@@ -106,21 +82,4 @@ export class AppComponent implements OnInit {
       overlay.appendTo($overlayParent);
     });
   }
-
-  loadGroups() {
-    if (this.authService.isAuthenticated()) {
-      this.authService.getGroups().subscribe((result: any) => {
-        this.permissionService.define(result);
-      });
-      // this.authService.currentUser.subscribe(user => {
-      //   if (user) {
-      //     this.authService.getGroups().subscribe((result: any) => {
-      //       console.log(result);
-      //       this.permissionService.define(result);
-      //     });
-      //   }
-      // });
-    }
-  }
-
 }
