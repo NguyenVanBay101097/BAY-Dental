@@ -245,5 +245,16 @@ namespace TMTDentalAPI.Controllers
             var res = await _cardCardService.ActionImport(file);
             return Ok(res);
         }
+
+        [HttpGet("[action]")]
+        [CheckAccess(Actions = "Card.Card.Read")]
+        public async Task<IActionResult> GetDefault()
+        {
+            var res = await _cardCardService.GetDefault();
+            var display = _mapper.Map<CardCardDisplay>(res);
+            if (res.Type != null)
+                display.TypeId = res.Type.Id;
+            return Ok(display);
+        }
     }
 }

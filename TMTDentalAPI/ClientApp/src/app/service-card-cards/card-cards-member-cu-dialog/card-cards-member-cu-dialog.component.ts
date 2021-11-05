@@ -2,9 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { result } from 'lodash';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
-import { CardCardPaged, CardCardService } from 'src/app/card-cards/card-card.service';
+import { CardCardService } from 'src/app/card-cards/card-card.service';
 import { CardTypeService } from 'src/app/card-types/card-type.service';
 import { PartnerPaged, PartnerSimpleContact } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
@@ -36,14 +35,12 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
     private partnerService: PartnerService,
     private cardCardsService: CardCardService,
     private cardService: CardTypeService,
-
-
   ) { }
 
   ngOnInit(): void {
     this.formGroup = this.fb.group({
       barcode: ['', [Validators.required,createLengthValidator()]],
-      cardType: [null,[Validators.required]],
+      type: null,
       partner: null,
     });
     this.customerCbx.filterChange
@@ -103,7 +100,7 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
 
     let val = this.formGroup.value;
     // val.partnerId = this.partnerId ? this.partnerId : (val.partner ? val.partner.id : '');
-    val.typeId = val.cardType ? val.cardType.id : '';
+    val.typeId = val.type ? val.type.id : '';
     val.partnerId = val.partner ? val.partner.id: '';
     if (this.id) {
       this.cardCardsService.update(this.id, val).subscribe((res: any) => {
@@ -121,7 +118,7 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
 
   actionActivate(){
     let val = this.formGroup.value;
-    val.typeId = val.cardType ? val.cardType.id : '';
+    val.typeId = val.type ? val.type.id : '';
     val.partnerId = val.partner ? val.partner.id: '';
     if (val.partner == null){
       this.notifyService.notify('error','Khách hàng đang trống, cần bổ sung khách hàng');
@@ -151,10 +148,14 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
     if (this.id) {
       this.cardCardsService.get(this.id).subscribe(res => {
       this.formGroup.patchValue(res);
-      this.setValueFC('cardType',res.type);
+      this.setValueFC('type',res.type);
       this.state = res.state;
       if (res.state == 'in_use')
         this.formGroup.disable();
+      })
+    } else {
+      this.cardCardsService.getDefault().subscribe(res => {
+        this.formGroup.patchValue(res);
       })
     }
   }

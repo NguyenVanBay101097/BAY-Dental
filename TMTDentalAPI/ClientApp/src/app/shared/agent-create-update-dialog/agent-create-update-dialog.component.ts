@@ -40,7 +40,7 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
   @ViewChild('agentCommissionCbx', { static: false }) agentCommissionCbx: ComboBoxComponent;
   @ViewChild('listBankCbx', { static: false }) listBankCbx: ComboBoxComponent;
   @ViewChild('customerCbx', { static: false }) customerCbx: ComboBoxComponent;
-  @ViewChild('employeeCbx', { static: true }) employeeCbx: ComboBoxComponent;
+  @ViewChild('employeeCbx', { static: false }) employeeCbx: ComboBoxComponent;
 
   constructor(private fb: FormBuilder,
     public agentService: AgentService,
@@ -109,28 +109,27 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
       this.listBankCbx.loading = false;
     });
 
-    // this.customerCbx.filterChange.asObservable().pipe(
-    //   debounceTime(300),
-    //   tap(() => this.customerCbx.loading = true),
-    //   switchMap(val => this.searchCustomers(val.toString().toLowerCase()))
-    // ).subscribe(
-    //   (rs: any) => {
-    //     this.customerSimpleFilter = rs;
-    //     this.customerCbx.loading = false;
-    //   }
-    // )
-
-    if (this.employeeCbx) {
-      this.employeeCbx.filterChange.asObservable().pipe(
-        debounceTime(300),
-        tap(() => this.employeeCbx.loading = true),
-        switchMap(val => this.searchEmloyee(val))
-      ).subscribe((rs: any) => {
+    this.customerCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => this.customerCbx.loading = true),
+      switchMap(val => this.searchCustomers(val.toString().toLowerCase()))
+    ).subscribe(
+      (rs: any) => {
+        this.customerSimpleFilter = rs;
+        this.customerCbx.loading = false;
+      }
+    )
+    
+    this.employeeCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => this.employeeCbx.loading = true),
+      switchMap(val => this.searchEmloyee(val.toString().toLowerCase()))
+    ).subscribe(
+      (rs: any) => {
         this.employeeSimpleFilter = rs;
-        console.log(rs);
         this.employeeCbx.loading = false;
-      })
-    }
+      }
+    )
   }
 
   loadListBank() {
@@ -194,8 +193,9 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
   reload() {
     if (this.id) {
       this.agentService.get(this.id).subscribe((result: any) => {
+        console.log(result);
         this.formGroup.patchValue(result);
-        this.classify = result.classify;
+        this.classify = result.classify ? result.classify : 'partner';
         if (result.birthYear) {
           this.formGroup.get("birthYearStr").setValue(result.birthYear + '');
         }
@@ -265,6 +265,31 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
     let val = e.target.value;
     this.classify = val;
     this.resetFormGroup();
+    if ( val === 'partner' ) {
+      this.f.name.setValidators(Validators.required);
+      this.f.name.updateValueAndValidity();
+      this.f.customer.clearValidators();
+      this.f.customer.updateValueAndValidity();
+      this.f.employee.clearValidators();
+      this.f.employee.updateValueAndValidity();
+      
+    }
+    else if ( val === 'customer' ) {
+      this.f.customer.setValidators(Validators.required);
+      this.f.customer.updateValueAndValidity();
+      this.f.name.clearValidators();
+      this.f.name.updateValueAndValidity();
+      this.f.employee.clearValidators();
+      this.f.employee.updateValueAndValidity();
+    }
+    else {
+      this.f.employee.setValidators(Validators.required);
+      this.f.employee.updateValueAndValidity();
+      this.f.name.clearValidators();
+      this.f.name.updateValueAndValidity();
+      this.f.customer.clearValidators();
+      this.f.customer.updateValueAndValidity();
+    }
   }
 
   onChangeCustomer(e) {

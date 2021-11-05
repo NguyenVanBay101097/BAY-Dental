@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AsyncValidatorFn } from '@angular/forms';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -32,7 +33,7 @@ import { IrAttachmentBasic } from '../shared';
 })
 export class LaboOrderCuDialogComponent implements OnInit {
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
-
+  orderCuDialogModal: NgbActiveModal;
   title: string;
   myForm: FormGroup;
   id: string;// có thể là input
@@ -66,7 +67,9 @@ export class LaboOrderCuDialogComponent implements OnInit {
     private bridgeService: LaboBridgeService,
     private webService: WebService,
     private printService: PrintService,
-    private toothService: ToothService
+    private router: Router,
+    private toothService: ToothService,
+    
   ) { }
 
   ngOnInit() {
@@ -497,5 +500,13 @@ export class LaboOrderCuDialogComponent implements OnInit {
         this.printService.printHtml(result.html);
       })
     }
+  }
+
+  actionRedirect(saleOrderLine){
+    this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
+      this.router.navigate(['/sale-orders/', saleOrderLine?.orderId]);
+    });
+    this.activeModal.dismiss();
+    this.orderCuDialogModal.dismiss();
   }
 }

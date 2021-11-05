@@ -29,7 +29,8 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
   dateFrom: Date;
   dateTo: Date;
   today: Date = new Date();
-  activatedDate: any;
+  activatedDateFrom: any;
+  activatedDateTo: any;
   state: string;
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
@@ -37,7 +38,7 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
     { name: 'Chưa kích hoạt', value: 'draft' },
     { name: 'Đã kích hoạt', value: 'in_use' },
     { name: 'Tạm dừng', value: 'locked' },
-    { name: 'Hết hạn', value: 'cancelled' },
+    { name: 'Đã hủy', value: 'cancelled' },
   ]
   constructor(
     private modalService: NgbModal,
@@ -65,10 +66,11 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
     val.offset = this.skip;
     val.search = this.search ? this.search : '';
     val.state = this.state ? this.state : '';
-    val.activatedDate = this.activatedDate ? moment(this.activatedDate).format('YYYY-MM-DD') : '';
+    val.activatedDateFrom = this.activatedDateFrom ? moment(this.activatedDateFrom).format('YYYY-MM-DD') : '';
+    val.activatedDateTo = this.activatedDateFrom ? moment(this.activatedDateTo).format('YYYY-MM-DD') : '';
     val.dateFrom = this.dateFrom ? moment(this.dateFrom).format('YYYY-MM-DD') : '';
     val.dateTo = this.dateTo ? moment(this.dateTo).format('YYYY-MM-DD') : '';
-    
+
     this.serviceCardsService.getPaged(val).pipe(
       map((response: any) => (<GridDataResult>{
         data: response.items,
@@ -90,7 +92,6 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
     const modalRef = this.modalService.open(ServiceCardCardsPreferentialCuDialogComponent, { scrollable: true, windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = "Tạo thẻ ưu đãi dịch vụ";
     modalRef.result.then(result => {
-      
       this.notifyService.notify('success', 'Lưu thành công');
       this.loadDataFromApi();
     }, () => { });
@@ -102,8 +103,12 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(result => {
       console.log(result);
-
-      this.notifyService.notify('success', 'Lưu thành công');
+      if (result === 'activate') {
+        this.notifyService.notify('success', 'Kích hoạt thành công');
+      }
+      else {
+        this.notifyService.notify('success', 'Lưu thành công');
+      }
       this.loadDataFromApi();
     }, () => { });
   }
@@ -160,6 +165,7 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
     const modalRef = this.modalService.open(ServiceCardCardsPreferentialImportDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
     modalRef.componentInstance.title = 'Import excel';
     modalRef.result.then((result) => {
+      this.notifyService.notify('success', 'Import thành công');
       this.loadDataFromApi();
     }, () => {
     });
@@ -215,8 +221,9 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
     }
   }
 
-  onChangeActivatedDate(e) {
-    this.activatedDate = e;
+  onActivatedDateChange(e) {
+    this.activatedDateFrom = e.dateFrom;
+    this.activatedDateTo = e.dateTo;
     this.skip = 0;
     this.loadDataFromApi();
   }

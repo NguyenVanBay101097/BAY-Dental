@@ -2,7 +2,7 @@
     <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
             <li>
-                <a [routerLink]="['/partners/customer/' + saleOrder.partnerId + '/treatment']">Phiếu điều trị</a>
+                <a [routerLink]="['/partners/customer/' + saleOrder?.partnerId + '/treatment']">Phiếu điều trị</a>
             </li>
             <li class="active">
                 <span *ngIf="saleOrder && saleOrder.id">{{saleOrder?.name}}</span>

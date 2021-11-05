@@ -118,6 +118,7 @@ export class PartnerCustomerTreatmentListComponent implements OnInit {
     orderLineFilter.offset = this.skip;
     orderLineFilter.limit = this.limit;
     orderLineFilter.orderPartnerId = this.partnerId;
+    orderLineFilter.companyId = this.authService.userInfo.companyId;
     orderLineFilter.dateOrderFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd")
     orderLineFilter.dateOrderTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:59")
     this.saleOrderlineService.getPaged(orderLineFilter).pipe(

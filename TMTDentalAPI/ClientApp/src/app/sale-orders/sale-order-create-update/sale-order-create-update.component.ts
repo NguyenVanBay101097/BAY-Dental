@@ -231,12 +231,12 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   get customerId() {
     // var parterIdParam = this.route.snapshot.queryParamMap.get('partner_id');
-    if (this.saleOrder.partnerId) {
-      return this.saleOrder.partnerId;
+    if (this.saleOrder?.partnerId) {
+      return this.saleOrder?.partnerId;
     }
 
     if (this.saleOrder && this.saleOrder.partnerId) {
-      return this.saleOrder.partnerId;
+      return this.saleOrder?.partnerId;
     }
 
     return undefined;

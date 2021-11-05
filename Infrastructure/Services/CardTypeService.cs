@@ -101,6 +101,7 @@ namespace Infrastructure.Services
             foreach (var entity in entities)
             {
                 await _CheckNameUnique(entity.Name);
+                await _CheckBasicPointUnique(entity.BasicPoint.Value);
             }
         }
 
@@ -111,12 +112,20 @@ namespace Infrastructure.Services
                 throw new Exception($"Trùng tên hạng thẻ khác");
         }
 
+        private async Task _CheckBasicPointUnique(decimal point)
+        {
+            var count = await SearchQuery(x => x.BasicPoint.Value == point).CountAsync();
+            if (count >= 2)
+                throw new Exception($"Trùng điểm của hạng thẻ khác");
+        }
+
         public override async Task<IEnumerable<CardType>> CreateAsync(IEnumerable<CardType> entities)
         {
             await base.CreateAsync(entities);
             foreach (var entity in entities)
             {
                 await _CheckNameUnique(entity.Name);
+                await _CheckBasicPointUnique(entity.BasicPoint.Value);
             }
             return entities;
         }

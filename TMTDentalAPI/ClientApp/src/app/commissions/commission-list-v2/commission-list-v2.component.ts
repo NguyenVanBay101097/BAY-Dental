@@ -3,6 +3,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { NotifyService } from 'src/app/shared/services/notify.service';
 import { CommissionDialogComponent } from '../commission-dialog/commission-dialog.component';
 import { CommissionProductRuleService } from '../commission-product-rule.service';
 import { CommissionPaged, CommissionService } from '../commission.service';
@@ -21,8 +22,11 @@ export class CommissionListV2Component implements OnInit {
   commission: any;
   checkCreate: boolean = false;
 
-  constructor(private commissionService: CommissionService, 
-    private modalService: NgbModal) { }
+  constructor(
+    private commissionService: CommissionService, 
+    private modalService: NgbModal,
+    private notifyService: NotifyService
+    ) { }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -65,6 +69,7 @@ export class CommissionListV2Component implements OnInit {
     let modalRef = this.modalService.open(CommissionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Thêm bảng hoa hồng';
     modalRef.result.then(result => {
+      this.notifyService.notify('success', 'Lưu thành công');
       this.checkCreate = true;
       this.loadDataFromApi();
     }, () => {
@@ -76,6 +81,7 @@ export class CommissionListV2Component implements OnInit {
     modalRef.componentInstance.title = 'Sửa bảng hoa hồng';
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(result => {
+      this.notifyService.notify('success', 'Lưu thành công');
       this.loadDataFromApi();
     }, () => {
     });
@@ -84,8 +90,10 @@ export class CommissionListV2Component implements OnInit {
   deleteCommission(item: any, i) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa bảng hoa hồng';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa Bảng hoa hồng?';
     modalRef.result.then(() => {
       this.commissionService.delete(item.id).subscribe(() => {
+        this.notifyService.notify('success', 'Xóa thành công');
         this.loadDataFromApi();
         if (item.id == this.commission.id) {
           this.commission = null;

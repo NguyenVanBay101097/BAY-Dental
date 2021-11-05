@@ -11,7 +11,7 @@
                             <option value="saleOrder">Theo phiếu điều trị</option>
                             <option value="saleOrderLine">Theo dịch vụ</option>
                         </select>
-                        <app-date-range-picker-filter class="mb-2 mr-2" [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
+                        <app-date-range-picker-filter class="mb-2 mr-2" [opens]="'right'" title="Ngày tạo" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
                         <button type="button" (click)="createNewSaleOrder()" class="mb-2 mr-2 btn btn-primary"><i class="fas fa-plus-circle mr-1"></i> Thêm phiếu điều trị</button>
                     </div>
                     <div class="w-50">
@@ -31,7 +31,7 @@
                             <a class="text-primary" (click)="getFormSaleOrder(dataItem.id)">{{dataItem.name}}</a>
                         </ng-template>
                     </kendo-grid-column>
-                    <kendo-grid-column field="DateOrder" title="Ngày lập phiếu" width="120">
+                    <kendo-grid-column field="DateOrder" title="Ngày tạo phiếu" width="120">
                         <ng-template kendoGridCellTemplate let-dataItem>
                             {{dataItem.dateOrder | date:'short'}}
                         </ng-template>
@@ -58,7 +58,7 @@
                             <span *ngIf="dataItem.state === 'sale'">Đang điều trị</span>
                         </ng-template>
                     </kendo-grid-column>
-                    <kendo-grid-column  title="#" width="40">
+                    <kendo-grid-column  title="Thao tác" width="40">
                         <ng-template kendoGridCellTemplate let-dataItem>
                             <button type="button" class="btn btn-icon btn-light" (click)="deleteItem(dataItem)">
                                 <span class="k-icon k-i-delete"></span>
@@ -76,8 +76,8 @@
                     <kendo-grid-column title="Dịch vụ" field="name" width="200">
                         <ng-template kendoGridCellTemplate let-dataItem>
                             <div>
-                                <div>{{dataItem.name}}</div>
-                                <a class="text-primary" (click)="getFormSaleOrder(dataItem.order.id)">{{dataItem.order.name}}</a>
+                                <a class="text-primary" (click)="getFormSaleOrder(dataItem.order.id)">{{dataItem.name}}</a>
+                                <div>{{dataItem.order.name}}</div>
                             </div>
                         </ng-template>
                     </kendo-grid-column>

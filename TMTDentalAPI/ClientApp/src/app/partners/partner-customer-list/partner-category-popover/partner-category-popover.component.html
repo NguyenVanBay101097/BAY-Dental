@@ -19,7 +19,7 @@
         <kendo-multiselect class="mr-1" [data]="dataPopOver" [(ngModel)]="tags_temp" (filterChange)="this.searchUpdatePopOver.next($event)" [filterable]="true" [textField]="'name'" [valueField]="'id'" placeholder="Thêm nhãn cho khách hàng" [allowCustom]="true" [valueNormalizer]="valueNormalizer"
             [popupSettings]="{appendTo: 'component'}">
         </kendo-multiselect>
-        <button type="button" class="btn btn-sm mt-1 btn-primary" (click)="SavePartnerCategories()" accesskey="c">
+        <button type="button" class="btn mt-1 btn-primary" (click)="SavePartnerCategories()" accesskey="c">
             Lưu
         </button>
     </div>

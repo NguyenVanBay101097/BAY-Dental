@@ -428,5 +428,15 @@ namespace Infrastructure.Services
 
             return new ImportExcelResponse { Success = true };
         }
+
+        public async Task<CardCard> GetDefault()
+        {
+            var cardTypeObj = GetService<ICardTypeService>();
+            var type = await cardTypeObj.SearchQuery().OrderBy(x => x.BasicPoint).FirstOrDefaultAsync();
+            return new CardCard()
+            {
+                Type = type
+            };
+        }
     }
 }

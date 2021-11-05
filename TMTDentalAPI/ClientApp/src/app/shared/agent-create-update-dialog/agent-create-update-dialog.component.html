@@ -50,21 +50,40 @@
                                                     <label class="o_form_label">Người giới thiệu</label>
                                                 </td>
                                                 <td colspan="1" style="width: 100%; vertical-align: initial;">
-                                                    <input class="form-control" *ngIf="classify=='partner'"
-                                                        formControlName="name" name="name">
-                                                    <div *ngIf="classify=='customer'">
+                                                    <div [class.d-none]="classify !== 'partner'">
+                                                        <input class="form-control" formControlName="name" name="name">
+                                                        <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
+                                                            class="text-danger mb-1">
+                                                            <div *ngIf="f.name.errors.required">Nhập tên người giới
+                                                                thiệu
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div [class.d-none]="classify !== 'customer'">
                                                         <kendo-combobox formControlName="customer" [filterable]="true"
                                                             [data]="customerSimpleFilter" #customerCbx
-                                                            [valueField]="'id'" [textField]="'displayName'"
+                                                            [valueField]="'id'" [textField]="'displayName'" placeholder="Họ tên, sđt, mã"
                                                             (valueChange)="onChangeCustomer($event)">
                                                         </kendo-combobox>
+                                                        <div *ngIf="f.customer.errors && (f.customer.touched || f.customer.dirty || submitted)"
+                                                            class="text-danger mb-1">
+                                                            <div *ngIf="f.customer.errors.required">Nhập tên người giới
+                                                                thiệu
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                     <div *ngIf="classify=='employee'">
                                                         <kendo-combobox formControlName="employee" [filterable]="true"
                                                             [data]="employeeSimpleFilter" #employeeCbx
-                                                            [valueField]="'id'" [textField]="'name'"
+                                                            [valueField]="'id'" [textField]="'name'" placeholder="Họ tên, sđt, mã"
                                                             (valueChange)="onChangeEmployee($event)">
                                                         </kendo-combobox>
+                                                        <div *ngIf="f.employee.errors && (f.employee.touched || f.employee.dirty || submitted)"
+                                                            class="text-danger mb-1">
+                                                            <div *ngIf="f.employee.errors.required">Nhập tên người giới
+                                                                thiệu
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </td>
                                             </tr>
