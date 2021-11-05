@@ -65,7 +65,7 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
           product: item.product,
           computePrice: [item.computePrice,Validators.required],
           percentPrice: [item.percentPrice,Validators.required],
-          fixedAmountPrice: item.fixedAmountPrice,
+          fixedAmountPrice: [item.fixedAmountPrice, Validators.required],
         };
         
         var product = item.product;

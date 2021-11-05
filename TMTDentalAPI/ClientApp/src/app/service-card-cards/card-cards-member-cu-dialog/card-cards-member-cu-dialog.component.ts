@@ -43,7 +43,7 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
   ngOnInit(): void {
     this.formGroup = this.fb.group({
       barcode: ['', [Validators.required,createLengthValidator()]],
-      type: [null,[Validators.required]],
+      type: null,
       partner: null,
     });
     this.customerCbx.filterChange

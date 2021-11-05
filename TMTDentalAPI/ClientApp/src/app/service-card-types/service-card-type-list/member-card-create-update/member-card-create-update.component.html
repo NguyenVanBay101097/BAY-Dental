@@ -80,7 +80,7 @@
                 <div class="d-flex justify-content-between mb-2">
                     <app-service-list-search-dropdown (onSelectService)="addLine($event)" [placeHolder] = "'Tìm kiếm theo mã hoặc tên dịch vụ...'" ></app-service-list-search-dropdown>
                     <div>
-                        <button *ngIf="this.productPricelistItems.controls.length" class="btn btn-primary" (click) ='onApplyAll()'>Áp dụng cho toàn bộ</button>
+                        <button *ngIf="this.productPricelistItems.controls.length" class="btn btn-primary" (click) ="onApplyAll()">Áp dụng cho toàn bộ</button>
                     </div>
                 </div>
                 <div>
