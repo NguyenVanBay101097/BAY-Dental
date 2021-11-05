@@ -122,11 +122,13 @@
             <td><strong>Răng, Chi tiết điều trị</strong></td>
         </tr>
 
-        <!--{{for dotkham in o.dot_khams}}--><!--{{for line in dotkham.lines}}-->
+        <!--{{for dotkham in o.dot_khams}}-->
+            {{i = for.index + 1}}
+            <!--{{for line in dotkham.lines}}-->
         <tr>
 
             <!--{{if line.id == (dotkham.lines[0]?.id)}}-->
-            <td rowspan="{{(dotkham.lines | array.size)}}" style="text-align:center">{{for.index + 1}}</td>
+            <td rowspan="{{(dotkham.lines | array.size)}}" style="text-align:center">{{i}}</td>
             <td rowspan="{{(dotkham.lines | array.size)}}">{{dotkham.date | date.to_string '%d/%m/%Y' }}</td>
             <td rowspan="{{(dotkham.lines | array.size)}}">{{dotkham.doctor ? dotkham.doctor?.name : ""}}</td>
             <td rowspan="{{(dotkham.lines | array.size)}}" style="vertical-align:top">{{dotkham.reason}}</td>
