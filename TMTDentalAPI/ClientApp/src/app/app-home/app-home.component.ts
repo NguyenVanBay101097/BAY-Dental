@@ -236,15 +236,8 @@ export class AppHomeComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    if (localStorage.getItem('user_change_company_vm')) {
-      this.userChangeCurrentCompany = JSON.parse(localStorage.getItem('user_change_company_vm'));
-    }
-    this.authService.currentUser.subscribe(result => {
-      if (result) {
-        this.loadChangeCurrentCompany();
-        this.loadExpire();
-      }
-    });
+    this.loadChangeCurrentCompany();
+    this.loadExpire();
 
     this.menus = this.filterMenus();
     this.permissionService.permissionStoreChangeEmitter.subscribe(() => {
