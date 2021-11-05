@@ -8,8 +8,6 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { AgentPaged, AgentService } from '../agent.service';
 import { NotifyService } from './../../shared/services/notify.service';
-import { AgentCreateUpdateDialogComponent } from 'src/app/shared/agent-create-update-dialog/agent-create-update-dialog.component';
-import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { CommissionSettlementAgentPaymentDialogComponent } from 'src/app/commission-settlements/commission-settlement-agent-payment-dialog/commission-settlement-agent-payment-dialog.component';
 
 @Component({
