@@ -301,9 +301,7 @@ export class AppHomeComponent implements OnInit {
       return true;
     }
 
-    return menuItem.permissions.some(x => {
-      return this.checkPermissionService.check(x);
-    });
+    return this.checkPermissionService.check(menuItem.permissions);
   }
 
   toggleMinimize(e) {
