@@ -33,7 +33,6 @@ import { IrAttachmentBasic } from '../shared';
 })
 export class LaboOrderCuDialogComponent implements OnInit {
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
-  orderCuDialogModal: NgbActiveModal;
   title: string;
   myForm: FormGroup;
   id: string;// có thể là input
@@ -507,6 +506,5 @@ export class LaboOrderCuDialogComponent implements OnInit {
       this.router.navigate(['/sale-orders/', saleOrderLine?.orderId]);
     });
     this.activeModal.dismiss();
-    this.orderCuDialogModal.dismiss();
   }
 }

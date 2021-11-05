@@ -69,10 +69,10 @@
                                 <div class="d-flex">
                                     <div class="flex-grow-1">
                                         <kendo-combobox [filterable]="true" [data]="customerSimpleFilter" #customerCbx
-                                            [valueField]="'id'" [textField]="'name'" formControlName="partner">
+                                            [valueField]="'id'" [textField]="'name'" formControlName="partner" [attr.disabled]="isEditInOverview">
                                         </kendo-combobox>
                                     </div>
-                                    <div class="ml-2" *ngIf="!state ||state === 'draft'">
+                                    <div class="ml-2" *ngIf="!state ||state === 'draft'" || !isEditInOverview>
                                         <a title="Thêm khách hàng" class=" btn btn-primary"
                                             (click)="quickCreateCustomerModal()">
                                             <i class="fas fa-plus text-white"></i>

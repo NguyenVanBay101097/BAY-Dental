@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit } from '@angular/core';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SaleOrderLineDisplay } from '../../sale-orders/sale-order-line-display';
 import { NotificationService } from '@progress/kendo-angular-notification';
@@ -9,6 +9,8 @@ import { SaleOrderLineService } from '../../core/services/sale-order-line.servic
 import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { PrintService } from 'src/app/shared/services/print.service';
+import { NavigationStart, Router, RouterEvent } from '@angular/router';
+import { filter, take, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-sale-order-line-labo-orders-dialog',
@@ -21,11 +23,17 @@ export class SaleOrderLineLaboOrdersDialogComponent implements OnInit {
     private laboOrderService: LaboOrderService,
     public activeModal: NgbActiveModal,
     public modalService: NgbModal,
-    private showErrorService: AppSharedShowErrorService,
-    private saleLineService: SaleOrderLineService,
-    private laboOrderServie: LaboOrderService,
-    private printService: PrintService
-  ) { }
+    private printService: PrintService,
+    private router: Router,
+  ) {
+
+    // Close any opened dialog when route changes
+    router.events.pipe(
+      filter((event: RouterEvent) => event instanceof NavigationStart),
+      tap(() => this.activeModal.dismiss()),
+      take(1),
+    ).subscribe(rs => {});
+      }
   saleOrderLineId: string;
   laboOrders: LaboOrderBasic[] = [];
   title: string;
@@ -69,8 +77,6 @@ export class SaleOrderLineLaboOrdersDialogComponent implements OnInit {
       modalRef.componentInstance.id = item.id;
     } else {
       modalRef.componentInstance.title = 'Tạo phiếu Labo';
-      modalRef.componentInstance.orderCuDialogModal = this.activeModal;
-
     }
 
     modalRef.componentInstance.saleOrderLineId = this.saleOrderLineId;
