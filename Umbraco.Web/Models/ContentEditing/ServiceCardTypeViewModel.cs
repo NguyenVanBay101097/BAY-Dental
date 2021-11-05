@@ -6,10 +6,14 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class CreateServiceCardTypeReq
     {
+        public CreateServiceCardTypeReq()
+        {
+            NbrPeriod = 1;
+        }
         public string Name { get; set; }
         public string Period { get; set; }
 
-        public int? NbrPeriod { get; set; }
+        public int NbrPeriod { get; set; }
         public IEnumerable<ProductPricelistItemCreate> ProductPricelistItems { get; set; } = new List<ProductPricelistItemCreate>();
         public Guid? CompanyId { get; set; }
     }

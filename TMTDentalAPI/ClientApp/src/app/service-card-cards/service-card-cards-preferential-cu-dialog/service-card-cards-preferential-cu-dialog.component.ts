@@ -46,7 +46,7 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.formGroup = this.fb.group({
-      barcode: ['', [Validators.required,createLengthValidator()]],
+      barcode: ['', [Validators.required, createLengthValidator()]],
       activatedDateObj: null,
       expiredDateObj: null,
       partner: null,
@@ -55,17 +55,17 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
     });
 
     this.cardTypeCbx.filterChange
-    .asObservable()
-    .pipe(
-      debounceTime(300),
-      tap(() => (this.cardTypeCbx.loading = true)),
-      switchMap((value) => this.searchCardTypes(value)
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.cardTypeCbx.loading = true)),
+        switchMap((value) => this.searchCardTypes(value)
+        )
       )
-    )
-    .subscribe((x: any) => {
-      this.cardTypeSimpleFilter = x;
-      this.cardTypeCbx.loading = false;
-    });
+      .subscribe((x: any) => {
+        this.cardTypeSimpleFilter = x;
+        this.cardTypeCbx.loading = false;
+      });
 
     if (this.id) {
       this.loadDataFromApi();
@@ -154,11 +154,10 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
     let val = this.formGroup.value;
     val.partnerId = this.partnerId ? this.partnerId : (val.partner ? val.partner.id : '');
     val.cardTypeId = val.cardType ? val.cardType.id : '';
-    
+
     if (this.id) {
       this.serviceCardsService.buttonActive([this.id]).subscribe((res: any) => {
-        this.notifyService.notify('success', 'Kích hoạt thành công');
-        this.activeModal.close();
+        this.activeModal.close('activate');
       })
     }
     else {
@@ -196,11 +195,11 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
 
 
 export function createLengthValidator(): ValidatorFn {
-  return (control:AbstractControl) : ValidationErrors | null => {
-      const valueLength = control.value.toString().length;
-      var lengthValid = true;
-      if (valueLength < 10 || valueLength > 15)
-        lengthValid = false;
-      return !lengthValid ? {lengthError:true}: null;
+  return (control: AbstractControl): ValidationErrors | null => {
+    const valueLength = control.value.toString().length;
+    var lengthValid = true;
+    if (valueLength < 10 || valueLength > 15)
+      lengthValid = false;
+    return !lengthValid ? { lengthError: true } : null;
   }
 }

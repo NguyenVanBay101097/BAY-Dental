@@ -26,7 +26,6 @@ export class SaleOrderLineLaboOrdersDialogComponent implements OnInit {
     private laboOrderServie: LaboOrderService,
     private printService: PrintService
   ) { }
-
   saleOrderLineId: string;
   laboOrders: LaboOrderBasic[] = [];
   title: string;
@@ -70,6 +69,8 @@ export class SaleOrderLineLaboOrdersDialogComponent implements OnInit {
       modalRef.componentInstance.id = item.id;
     } else {
       modalRef.componentInstance.title = 'Tạo phiếu Labo';
+      modalRef.componentInstance.orderCuDialogModal = this.activeModal;
+
     }
 
     modalRef.componentInstance.saleOrderLineId = this.saleOrderLineId;

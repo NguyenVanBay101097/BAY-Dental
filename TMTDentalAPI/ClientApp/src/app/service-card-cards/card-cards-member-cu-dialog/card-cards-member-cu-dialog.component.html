@@ -33,6 +33,20 @@
                         </tr>
                         <tr>
                             <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Hạng thẻ</label>
+                            </td>
+                            <td colspan="1">
+                                <div class="d-flex">
+                                    <div class="flex-grow-1">
+                                        <kendo-combobox [filterable]="true" [data]="cardTypeSimpleFilter" #cardTypeCbx
+                                            [valueField]="'id'" [textField]="'name'" formControlName="type" disabled="true">
+                                        </kendo-combobox>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
                                 <label class="o_form_label">Khách hàng</label>
                             </td>
                             <td colspan="1">
@@ -51,23 +65,7 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label">Hạng thẻ</label>
-                            </td>
-                            <td colspan="1">
-                                <div class="d-flex">
-                                    <div class="flex-grow-1">
-                                        <kendo-combobox [filterable]="true" [data]="cardTypeSimpleFilter" #cardTypeCbx
-                                            [valueField]="'id'" [textField]="'name'" formControlName="cardType">
-                                        </kendo-combobox>
-                                    </div>
-                                </div>
-                                <div *ngIf="f.cardType.errors && (f.cardType.touched || f.cardType.dirty || submitted)" class="text-danger mb-1">
-                                    <div *ngIf="f.cardType.errors?.required">Chọn hạng thẻ</div>
-                                </div>
-                            </td>
-                        </tr>
+    
                     </tbody>
                 </table>
             </div>

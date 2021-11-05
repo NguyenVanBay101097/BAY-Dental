@@ -241,13 +241,23 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.ActivatedDate.Value.Date == val.ActivatedDate.Value.Date));
             }
 
+            if (val.ActivatedDateFrom.HasValue)
+            {
+                spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.ActivatedDate.Value.Date >= val.ActivatedDateFrom.Value.Date));
+            }
+
+            if (val.ActivatedDateTo.HasValue)
+            {
+                spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.ActivatedDate.Value.Date <= val.ActivatedDateTo.Value.Date));
+            }
+            
             if (val.DateFrom.HasValue)
             {
                 spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.ExpiredDate.Value.Date >= val.DateFrom.Value.Date));
             }
             if (val.DateTo.HasValue)
             {
-                spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.ActivatedDate.Value.Date <= val.DateTo.Value.Date));
+                spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.ExpiredDate.Value.Date <= val.DateTo.Value.Date));
             }
 
 
