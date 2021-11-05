@@ -188,13 +188,14 @@ namespace Infrastructure.Services
             return builder.ToString();
         }
 
+
         public override ISpecification<ServiceCardCard> RuleDomainGet(IRRule rule)
         {
             var companyId = CompanyId;
             switch (rule.Code)
             {
                 case "service_card.service_card_card_comp_rule":
-                    return new InitialSpecification<ServiceCardCard>(x => !x.CardType.CompanyId.HasValue || x.CardType.CompanyId == companyId);
+                    return new InitialSpecification<ServiceCardCard>(x => !x.CompanyId.HasValue || x.CompanyId == companyId);
                 default:
                     return null;
             }

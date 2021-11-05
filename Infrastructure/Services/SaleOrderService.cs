@@ -3138,8 +3138,8 @@ namespace Infrastructure.Services
         public async Task<long> GetCountSaleOrder(GetCountSaleOrderFilter val)
         {
             var saleOrderObj = GetService<ISaleOrderService>();
-
-            var query = saleOrderObj.SearchQuery();
+            var states = new string[] {"cancel", "draft" };
+            var query = saleOrderObj.SearchQuery(x => !states.Contains(x.State));
 
             if (val.DateFrom.HasValue)
                 query = query.Where(x => x.DateOrder >= val.DateFrom.Value.AbsoluteBeginOfDate());

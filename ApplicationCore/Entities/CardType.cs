@@ -39,5 +39,11 @@ namespace ApplicationCore.Entities
         /// màu sắc
         /// </summary>
         public string Color { get; set; }
+
+        /// <summary>
+        /// Chi nhánh
+        /// </summary>
+        public Guid? CompanyId { get; set; }
+        public Company Company { get; set; }
     }
 }

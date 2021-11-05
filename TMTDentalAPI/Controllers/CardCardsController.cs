@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -199,9 +200,9 @@ namespace TMTDentalAPI.Controllers
 
             var stateDict = new Dictionary<string, string>()
             {
-                {"draft","Nháp"},
+                {"draft","Chưa kích hoạt"},
                 {"confirmed","Chờ cấp thẻ"},
-                {"in_use","Đang sử dụng"},
+                {"in_use","Đã kích hoạt"},
                 {"locked","Đã khóa"},
                 {"cancelled","Đã hủy"}
             };
@@ -214,7 +215,14 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[1, 3].Value = "Họ tên";
                 worksheet.Cells[1, 4].Value = "Điện thoại";
                 worksheet.Cells[1, 5].Value = "Trạng thái";
+
                 worksheet.Cells["A1:E1"].Style.Font.Bold = true;
+                worksheet.Cells["A1:E1"].Style.Font.Size = 12;
+                worksheet.Cells["A1:E1"].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells["A1:E1"].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells["A1:E1"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells["A1:E1"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+
 
                 var row = 2;
                 foreach (var item in paged.Items)
@@ -224,8 +232,15 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 3].Value = item.PartnerName;
                     worksheet.Cells[row, 4].Value = item.PartnerPhone;
                     worksheet.Cells[row, 5].Value = stateDict.ContainsKey(item.State) ? stateDict[item.State] : "";
+
+                    worksheet.Cells[row, 1, row, 5].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells[row, 1, row, 5].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells[row, 1, row, 5].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells[row, 1, row, 5].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
                     row++;
                 }
+
+                worksheet.Cells.AutoFitColumns();
 
                 package.Save();
 

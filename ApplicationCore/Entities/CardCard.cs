@@ -55,5 +55,11 @@ namespace ApplicationCore.Entities
 
         public Guid? UpgradeTypeId { get; set; }
         public CardType UpgradeType { get; set; }
+
+        /// <summary>
+        /// Chi nhánh
+        /// </summary>
+        public Guid? CompanyId { get; set; }
+        public Company Company { get; set; }
     }
 }

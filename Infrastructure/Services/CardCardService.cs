@@ -438,5 +438,17 @@ namespace Infrastructure.Services
                 Type = type
             };
         }
+
+        public override ISpecification<CardCard> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "member_card.card_card_comp_rule":
+                    return new InitialSpecification<CardCard>(x => !x.CompanyId.HasValue || x.CompanyId == companyId);
+                default:
+                    return null;
+            }
+        }
     }
 }

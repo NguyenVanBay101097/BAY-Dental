@@ -129,5 +129,17 @@ namespace Infrastructure.Services
             }
             return entities;
         }
+
+        public override ISpecification<CardType> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "member_card.card_type_comp_rule":
+                    return new InitialSpecification<CardType>(x => !x.CompanyId.HasValue || x.CompanyId == companyId);
+                default:
+                    return null;
+            }
+        }
     }
 }

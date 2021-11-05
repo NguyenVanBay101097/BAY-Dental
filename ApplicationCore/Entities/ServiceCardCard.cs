@@ -55,6 +55,12 @@ namespace ApplicationCore.Entities
         /// </summary>
         public string Barcode { get; set; }
 
+        /// <summary>
+        /// Chi nhánh
+        /// </summary>
+        public Guid? CompanyId { get; set; }
+        public Company Company { get; set; }
+
         public ICollection<SaleOrderServiceCardCardRel> SaleOrderCardRels { get; set; } = new List<SaleOrderServiceCardCardRel>();
     }
 }
