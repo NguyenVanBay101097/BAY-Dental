@@ -31,10 +31,10 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                 if (tenant == null)
                     return Task.CompletedTask;
 
-                Version version1 = new Version(_version);
-                Version version2 = new Version(tenant.Version);
-                if (version2.CompareTo(version1) >= 0)
-                    return Task.CompletedTask;
+                //Version version1 = new Version(_version);
+                //Version version2 = new Version(tenant.Version);
+                //if (version2.CompareTo(version1) >= 0)
+                //    return Task.CompletedTask;
 
                 var scopedServices = scope.ServiceProvider;
                 var context = scope.ServiceProvider.GetService<CatalogDbContext>();
