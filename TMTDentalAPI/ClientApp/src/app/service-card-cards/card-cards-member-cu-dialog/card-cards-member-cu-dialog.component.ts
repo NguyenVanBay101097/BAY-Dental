@@ -2,9 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { result } from 'lodash';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
-import { CardCardPaged, CardCardService } from 'src/app/card-cards/card-card.service';
+import { CardCardService } from 'src/app/card-cards/card-card.service';
 import { CardTypeService } from 'src/app/card-types/card-type.service';
 import { PartnerPaged, PartnerSimpleContact } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
@@ -36,8 +35,6 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
     private partnerService: PartnerService,
     private cardCardsService: CardCardService,
     private cardService: CardTypeService,
-
-
   ) { }
 
   ngOnInit(): void {
