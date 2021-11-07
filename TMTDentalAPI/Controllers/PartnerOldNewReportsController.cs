@@ -221,7 +221,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> ReportByIsNew([FromQuery] PartnerOldNewReportByIsNewReq val)
+        public async Task<IActionResult> ReportByIsNew(PartnerOldNewReportByIsNewReq val)
         {
             var res = await _partnerOldNewReportService.ReportByIsNew(val);
             return Ok(res);
