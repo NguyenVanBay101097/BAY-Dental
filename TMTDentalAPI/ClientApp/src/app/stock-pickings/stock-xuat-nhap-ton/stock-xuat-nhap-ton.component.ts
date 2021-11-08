@@ -1,5 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { ExcelExportData, Workbook } from '@progress/kendo-angular-excel-export';
 import { GridComponent, GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -41,6 +43,12 @@ export class StockXuatNhapTonComponent implements OnInit {
 
   filteredProducts: ProductSimple[];
   filteredCategs: ProductCategoryBasic[];
+
+  showOrigin = false;
+  showExpiry = false;
+  showAverageExport = false;
+  showMinInventory = false;
+  isExpand = false;
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
@@ -86,6 +94,8 @@ export class StockXuatNhapTonComponent implements OnInit {
          x.productName.toLowerCase().indexOf(val.toLowerCase()) !== -1);
         this.loadItems2(items);
       });
+
+    this.getLocalStorge();
   }
 
   onSearchChange(data) {
@@ -147,6 +157,28 @@ export class StockXuatNhapTonComponent implements OnInit {
     this.sumEnd = result.end ? result.end.sum : 0;
   }
 
+  getLocalStorge(){
+    let columns = localStorage.getItem('stock_report_columns');
+    if (columns){
+      this.showAverageExport = columns.indexOf('averageExport') != -1;
+      this.showOrigin = columns.indexOf('origin') != -1;
+      this.showMinInventory = columns.indexOf('minInventory') != -1;
+      this.showExpiry = columns.indexOf('expiry') != -1;
+    }
+  }
+
+  setLocalStorge(columns: any[]){
+    if (this.showAverageExport) 
+      columns.push("averageExport");
+    if (this.showExpiry) 
+      columns.push("expiry");  
+    if (this.showMinInventory) 
+      columns.push("minInventory");
+    if (this.showOrigin) 
+      columns.push("origin");
+    localStorage.setItem('stock_report_columns',columns.toString());
+  }
+
   onCellClick(e) {
     this.clickedRowItem = e.dataItem;
   }
@@ -202,15 +234,6 @@ export class StockXuatNhapTonComponent implements OnInit {
     return result;
   }
 
-  // public excelData(): ExcelExportData {
-  //   const result: ExcelExportData = {
-  //     data: process(this.items, {
-  //       sort: [{ field: 'productCode', dir: 'asc' }]
-  //     }).data
-  //   };
-  //   return result;
-  // }
-
   onExcelExport(args) {
     args.preventDefault();
     this.loading = true;
@@ -221,5 +244,15 @@ export class StockXuatNhapTonComponent implements OnInit {
       saveAs(dataUrl, "NhapXuatTon.xlsx");
       this.loading = false;
     });
+  }
+
+  Apply(form: NgForm){
+    this.isExpand = false;
+    this.showAverageExport = form.controls["averageExport"].value;
+    this.showExpiry = form.controls["expiry"].value;
+    this.showMinInventory = form.controls["minInventory"].value;
+    this.showOrigin = form.controls["origin"].value;
+    let columns = [];
+    this.setLocalStorge(columns);
   }
 }

@@ -72,7 +72,7 @@
                                             [valueField]="'id'" [textField]="'name'" formControlName="partner" [attr.disabled]="isEditInOverview">
                                         </kendo-combobox>
                                     </div>
-                                    <div class="ml-2" *ngIf="!state ||state === 'draft'" || !isEditInOverview>
+                                    <div class="ml-2" *ngIf="!state ||state === 'draft' || !isEditInOverview">
                                         <a title="Thêm khách hàng" class=" btn btn-primary"
                                             (click)="quickCreateCustomerModal()">
                                             <i class="fas fa-plus text-white"></i>

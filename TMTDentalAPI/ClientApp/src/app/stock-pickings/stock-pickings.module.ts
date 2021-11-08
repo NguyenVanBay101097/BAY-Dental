@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { StockPickingsRoutingModule } from './stock-pickings-routing.module';
 import { StockPickingListComponent } from './stock-picking-list/stock-picking-list.component';
 import { StockPickingService } from './stock-picking.service';
@@ -47,7 +47,8 @@ import { PurchaseOrdersModule } from '../purchase-orders/purchase-orders.module'
     StockInventoriesModule,
     FormsModule,
     SharedModule,
-    PurchaseOrdersModule
+    PurchaseOrdersModule,
+    NgbModule
   ],
   providers: [
     StockPickingService, StockReportService
