@@ -186,6 +186,22 @@ namespace Infrastructure.Services
             await UpdateAsync(self);
         }
 
+        public CheckPromoCodeMessage _CheckCardCardApplySaleLine(CardCard self, SaleOrderLine line)
+        {
+            var message = new CheckPromoCodeMessage();
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var date = line.Date;
+
+            if (line.Promotions.Any(x => x.ServiceCardCardId == self.Id))
+                message.Error = "Trùng thẻ thành viên đang áp dụng";
+            else if (self.State != "in_use")
+                message.Error = "Thẻ không khả dụng";
+            else if (line.Promotions.Any(x => x.SaleCouponProgramId.HasValue && x.SaleCouponProgram.PromoCodeUsage == "no_code_needed") || line.Promotions.Any(x => x.ServiceCardCardId.HasValue))
+                message.Error = "Không thể áp dụng";
+
+            return message;
+        }
+
         public async Task ButtonActive(IEnumerable<Guid> ids, bool check_basic_points = true)
         {
             var cardTypeObj = GetService<ICardTypeService>();

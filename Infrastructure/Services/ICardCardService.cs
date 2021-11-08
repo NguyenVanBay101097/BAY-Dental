@@ -29,5 +29,7 @@ namespace Infrastructure.Services
 
         Task<ImportExcelResponse> ActionImport(IFormFile formFile);
         Task<CardCard> GetDefault();
+
+        CheckPromoCodeMessage _CheckCardCardApplySaleLine(CardCard self, SaleOrderLine line);
     }
 }

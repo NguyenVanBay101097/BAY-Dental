@@ -181,13 +181,13 @@ namespace Infrastructure.Services
 
             if (partnerId.HasValue)
             {
-                //lấy hạng thành viên hiện tại của partner            
-                var partnerLevelId = GetMemberLevel(partnerId.Value);
+                //lấy loại thẻ thành viên hiện tại của partner            
+                var cardTypeId = await GetCardTypeId(partnerId.Value);
 
                 query = query.Where(x => string.IsNullOrEmpty(x.ApplyPartnerOn)
                 || x.ApplyPartnerOn == "all"
                 || (x.ApplyPartnerOn == "specific_partners" && x.DiscountSpecificPartners.Any(x => x.PartnerId == partnerId))
-                || (x.ApplyPartnerOn == "member_levels" && x.DiscountMemberLevels.Any(x => x.MemberLevelId == partnerLevelId))
+                || (x.ApplyPartnerOn == "card_types" && x.DiscountCardTypes.Any(x => x.CardTypeId == cardTypeId))
                 );
             }
 
@@ -211,13 +211,13 @@ namespace Infrastructure.Services
 
             if (partnerId.HasValue)
             {
-                //lấy hạng thành viên hiện tại của partner
-                var partnerLevelId = GetMemberLevel(partnerId.Value);
+                //lấy loại thẻ thành viên hiện tại của partner            
+                var cardTypeId = await GetCardTypeId(partnerId.Value);
 
                 query = query.Where(x => string.IsNullOrEmpty(x.ApplyPartnerOn)
                     || x.ApplyPartnerOn == "all"
                     || (x.ApplyPartnerOn == "specific_partners" && x.DiscountSpecificPartners.Any(x => x.PartnerId == partnerId))
-                    || (x.ApplyPartnerOn == "member_levels" && x.DiscountMemberLevels.Any(x => x.MemberLevelId == partnerLevelId)));
+                    || (x.ApplyPartnerOn == "card_types" && x.DiscountCardTypes.Any(x => x.CardTypeId == cardTypeId)));
             }
 
             var promotions = await query.ToListAsync();
@@ -226,14 +226,13 @@ namespace Infrastructure.Services
             return basics;
         }
 
-        private Guid? GetMemberLevel(Guid partnerId)
+        private async Task<Guid?> GetCardTypeId(Guid partnerId)
         {
-            var propertyObj = GetService<IIRPropertyService>();
-            var partnerLevelProp = propertyObj.get("member_level", "res.partner", res_id: $"res.partner,{partnerId}", force_company: CompanyId);
-            var partnerLevelValue = partnerLevelProp == null ? string.Empty : partnerLevelProp.ToString();
-            var partnerLevelId = !string.IsNullOrEmpty(partnerLevelValue) ? Guid.Parse(partnerLevelValue.Split(",")[1]) : (Guid?)null;
+            var cardCardObj = GetService<ICardCardService>();
+            var cardCard = await cardCardObj.SearchQuery(x => x.PartnerId == partnerId && x.CompanyId == CompanyId).FirstOrDefaultAsync();
+            var cardTypeId = cardCard == null ? (Guid?)null : cardCard.TypeId;
 
-            return partnerLevelId;
+            return cardTypeId;
         }
 
         public async Task<IEnumerable<SaleCouponProgramDisplay>> GetPromotionByFastSaleOrder()
@@ -264,18 +263,7 @@ namespace Infrastructure.Services
                     return null;
             }
         }
-
-        public void _CheckRuleMinimumAmount(SaleCouponProgram self)
-        {
-            if (self.RuleMinimumAmount < 0)
-                throw new Exception("Số tiền mua tối thiểu nên lớn hơn hoặc bằng 0");
-        }
-
-        public void _CheckRuleMinQuantity(SaleCouponProgram self)
-        {
-            if (self.RuleMinQuantity <= 0)
-                throw new Exception("Số lượng tối thiểu nên lớn hơn 0");
-        }
+   
 
         public async Task<SaleCouponProgram> CreateProgram(SaleCouponProgramSave val)
         {
@@ -335,31 +323,36 @@ namespace Infrastructure.Services
                 }
             }
 
-            if (val.ApplyPartnerOn == "member_levels" && val.DiscountMemberLevelIds.Any())
+            if (val.ApplyPartnerOn == "card_types" && val.DiscountCardTypeIds.Any())
             {
-                foreach (var id in val.DiscountMemberLevelIds)
+                foreach (var id in val.DiscountCardTypeIds)
                 {
-                    program.DiscountMemberLevels.Add(new SaleCouponProgramMemberLevelRel
+                    program.DiscountCardTypes.Add(new SaleCouponProgramCardTypeRel
                     {
-                        MemberLevelId = id
+                        CardTypeId = id
 
                     });
                 }
             }
+          
 
 
-            _CheckRuleDate(program);
-            _CheckDiscountPercentage(program);
-            _CheckRuleMinimumAmount(program);
-            _CheckRuleMinQuantity(program);
-
+            //_CheckRuleDate(program);
+            //_CheckDiscountPercentage(program);
+            //_CheckRuleMinimumAmount(program);
+            //_CheckRuleMinQuantity(program);
+          
             if (program.PromoCodeUsage == "code_needed" && !string.IsNullOrEmpty(program.PromoCode))
             {
                 await CheckAndUpdatePromoCode(program.PromoCode);
             }
 
+            var error_status = await CheckConditionCreateUpdatePromo(program);
+            if (!string.IsNullOrEmpty(error_status.Error))
+                throw new Exception(error_status.Error);
+
             await CreateAsync(program);
-            await _CheckPromoCodeConstraint(program);
+            //await _CheckPromoCodeConstraint(program);
             return program;
         }
 
@@ -375,13 +368,45 @@ namespace Infrastructure.Services
                 throw new Exception("Ngày kết thúc đang nhỏ hơn ngày bắt đầu!");
         }
 
+        public void _CheckRuleMinimumAmount(SaleCouponProgram self)
+        {
+            if (self.RuleMinimumAmount < 0)
+                throw new Exception("Số tiền mua tối thiểu nên lớn hơn hoặc bằng 0");
+        }
+
+        public void _CheckRuleMinQuantity(SaleCouponProgram self)
+        {
+            if (self.RuleMinQuantity <= 0)
+                throw new Exception("Số lượng tối thiểu nên lớn hơn 0");
+        }
+
+
+        public async Task<CheckPromoCodeMessage> CheckConditionCreateUpdatePromo(SaleCouponProgram self)
+        {
+            var message = new CheckPromoCodeMessage();
+            var is_exist = await _CheckPromoCodeConstraint(self);
+            if (is_exist)
+                message.Error = "Ngày kết thúc đang nhỏ hơn ngày bắt đầu!";
+            else if (self.RuleDateFrom > self.RuleDateTo)
+                message.Error = "Ngày kết thúc đang nhỏ hơn ngày bắt đầu!";
+            else if(self.DiscountType == "percentage" && (self.DiscountPercentage < 0 || self.DiscountPercentage > 100))
+                message.Error = "Chiết khấu phần trăm phải từ 0-100";
+            else if (self.RuleMinimumAmount < 0)
+                message.Error = "Số tiền mua tối thiểu nên lớn hơn hoặc bằng 0";
+            else if (self.RuleMinQuantity <= 0)
+                message.Error = "Số lượng tối thiểu nên lớn hơn 0";
+
+            return message;
+        }
+
+
         public async Task<SaleCouponProgramDisplay> GetDisplay(Guid id)
         {
             var program = await SearchQuery(x => x.Id == id)
                 .Include(x => x.DiscountSpecificProductCategories).ThenInclude(x => x.ProductCategory)
                 .Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product)
                 .Include(x => x.DiscountSpecificPartners).ThenInclude(x => x.Partner)
-                .Include(x => x.DiscountMemberLevels).ThenInclude(x => x.MemberLevel)
+                .Include(x => x.DiscountCardTypes).ThenInclude(x => x.CardType)
                 .FirstOrDefaultAsync();
 
             var res = _mapper.Map<SaleCouponProgramDisplay>(program);
@@ -398,7 +423,7 @@ namespace Infrastructure.Services
                 .Include(x => x.DiscountSpecificProducts)
                 .Include(x => x.DiscountSpecificProductCategories)
                 .Include(x => x.DiscountSpecificPartners)
-                .Include(x => x.DiscountMemberLevels)
+                .Include(x => x.DiscountCardTypes)
                 .FirstOrDefaultAsync();
 
             program = _mapper.Map(val, program);
@@ -428,19 +453,25 @@ namespace Infrastructure.Services
             if (program.ApplyPartnerOn == "specific_partners")
                 SaveDiscountSpecificPartners(program, val);
 
-            if (program.ApplyPartnerOn == "member_levels")
-                SaveDiscountMemberLevels(program, val);
+            if (program.ApplyPartnerOn == "card_types")
+                SaveDiscountCardTypes(program, val);
 
-            _CheckRuleDate(program);
-            _CheckDiscountPercentage(program);
-            _CheckRuleMinimumAmount(program);
-            _CheckRuleMinQuantity(program);
+            //_CheckRuleDate(program);
+            //_CheckDiscountPercentage(program);
+            //_CheckRuleMinimumAmount(program);
+            //_CheckRuleMinQuantity(program);
+            
             if (program.PromoCodeUsage == "code_needed" && !string.IsNullOrEmpty(program.PromoCode))
             {
                 await CheckAndUpdatePromoCode(program.PromoCode);
             }
+
+            var error_status = await CheckConditionCreateUpdatePromo(program);
+            if (!string.IsNullOrEmpty(error_status.Error))
+                throw new Exception(error_status.Error);
+
             await UpdateAsync(program);
-            await _CheckPromoCodeConstraint(program);
+            //await _CheckPromoCodeConstraint(program);
 
             if (program.Coupons.Any())
             {
@@ -495,26 +526,27 @@ namespace Infrastructure.Services
             }
         }
 
-        private void SaveDiscountMemberLevels(SaleCouponProgram program, SaleCouponProgramSave val)
+        private void SaveDiscountCardTypes(SaleCouponProgram program, SaleCouponProgramSave val)
         {
             var mblObj = GetService<IMemberLevelService>();
-            var to_remove = program.DiscountMemberLevels.Where(x => !val.DiscountMemberLevelIds.Contains(x.MemberLevelId)).ToList();
+            var to_remove = program.DiscountCardTypes.Where(x => !val.DiscountCardTypeIds.Contains(x.CardTypeId)).ToList();
             foreach (var item in to_remove)
-                program.DiscountMemberLevels.Remove(item);
-            var to_add = val.DiscountMemberLevelIds.Where(x => !program.DiscountMemberLevels.Any(s => s.MemberLevelId == x)).ToList();
-            foreach (var memberLevelId in to_add)
+                program.DiscountCardTypes.Remove(item);
+            var to_add = val.DiscountCardTypeIds.Where(x => !program.DiscountCardTypes.Any(s => s.CardTypeId == x)).ToList();
+            foreach (var cardTypeId in to_add)
             {
-                program.DiscountMemberLevels.Add(new SaleCouponProgramMemberLevelRel { MemberLevelId = memberLevelId });
+                program.DiscountCardTypes.Add(new SaleCouponProgramCardTypeRel { CardTypeId = cardTypeId });
             }
         }
 
-        public async Task _CheckPromoCodeConstraint(SaleCouponProgram self)
+        public async Task<bool> _CheckPromoCodeConstraint(SaleCouponProgram self)
         {
-            //if (self.PromoCodeUsage == "code_needed" && string.IsNullOrEmpty(self.PromoCode))
-            //    throw new Exception("Vui lòng nhập mã khuyến mãi!");
-            var exist = await SearchQuery(x => x.PromoCodeUsage == "code_needed" && x.PromoCode == self.PromoCode).CountAsync();
-            if (exist > 1)
-                throw new Exception("Mã khuyến mãi phải là duy nhất!");
+            var exist = false;
+            var count = await SearchQuery(x => x.PromoCodeUsage == "code_needed" && x.PromoCode == self.PromoCode).CountAsync();
+            if (count >= 1)
+                exist = true;              
+
+            return exist;
         }
 
         private async Task<string> GetRewardDisplayName(SaleCouponProgram self)
@@ -615,10 +647,10 @@ namespace Infrastructure.Services
             var today = DateTime.Today;
             var saleObj = GetService<ISaleOrderService>();
             var countApplied = await _GetCountAppliedAsync(self);
-            var memberLevelId = GetMemberLevel(order.PartnerId);
+            var cardTypeId = await GetCardTypeId(order.PartnerId);
             if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
                 message.Error = $"Mã khuyến mãi vượt quá hạn mức áp dụng";
-            if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.DiscountMemberLevels.Any() && (!memberLevelId.HasValue || self.DiscountMemberLevels.Any(x=> x.MemberLevelId != memberLevelId)))
+            if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.DiscountMemberLevels.Any() && (!cardTypeId.HasValue || self.DiscountCardTypes.Any(x=> x.CardTypeId != cardTypeId)))
                 message.Error = $"Mã khuyến mãi không áp dụng cho hạng thành viên này hoặc chưa có hạng thành viên";
             else if ((self.RuleDateFrom.HasValue && self.RuleDateFrom.Value > order.DateOrder) || (self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() < order.DateOrder) || today > self.RuleDateTo)
                 message.Error = $"CTKM đã hết hạn.";
@@ -654,10 +686,10 @@ namespace Infrastructure.Services
             var today = DateTime.Today;
             var saleObj = GetService<ISaleOrderService>();
             var countApplied = await _GetCountAppliedQuotationAsync(self);
-            var memberLevelId = GetMemberLevel(quotation.PartnerId);
+            var cardTypeId = await GetCardTypeId(quotation.PartnerId);
             if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
                 message.Error = "Mã khuyến mãi vượt quá hạn mức áp dụng";
-            if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.DiscountMemberLevels.Any() && (!memberLevelId.HasValue || self.DiscountMemberLevels.Any(x => x.MemberLevelId != memberLevelId)))
+            if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.DiscountMemberLevels.Any() && (!cardTypeId.HasValue || self.DiscountCardTypes.Any(x => x.CardTypeId != cardTypeId)))
                 message.Error = $"Mã khuyến mãi không áp dụng cho hạng thành viên này hoặc chưa có hạng thành viên";
             else if (self.DiscountApplyOn == "on_order" && self.IsApplyMinimumDiscount && self.RuleMinimumAmount > quotation.TotalAmount)
                 message.Error = $"Phiếu điều trị tối thiểu {self.RuleMinimumAmount} để có thể nhận thưởng";
@@ -739,10 +771,10 @@ namespace Infrastructure.Services
             var saleLineObj = GetService<ISaleOrderLineService>();
             var today = DateTime.Today;
             var countApplied = await _GetCountAppliedAsync(self);
-            var memberLevelId = GetMemberLevel(line.OrderPartnerId.Value);
+            var cardTypeId = await GetCardTypeId(line.OrderPartnerId.Value);
             if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
                 message.Error = $"Mã khuyến mãi vượt quá hạn mức áp dụng.";
-            if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.DiscountMemberLevels.Any() && (!memberLevelId.HasValue || self.DiscountMemberLevels.Any(x => x.MemberLevelId != memberLevelId)))
+            if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.DiscountMemberLevels.Any() && (!cardTypeId.HasValue || self.DiscountCardTypes.Any(x => x.CardTypeId != cardTypeId)))
                 message.Error = $"Mã khuyến mãi không áp dụng cho hạng thành viên này hoặc chưa có hạng thành viên";
             else if ((self.RuleDateFrom.HasValue && self.RuleDateFrom.Value > line.Order.DateOrder))
                 message.Error = $"Mã khuyến mãi không được áp dụng trong hôm nay";
@@ -766,6 +798,8 @@ namespace Infrastructure.Services
                 message.Error = "Đang áp dụng khuyến mãi không dùng chung. Vui lòng xóa các CTKM đó";
             else if (self.NotIncremental == true && line.Promotions.Any(x => x.SaleCouponProgram != null))
                 message.Error = "Khuyến mãi này không dùng chung với CTKM khác";
+            else if (line.Promotions.Any(x=> x.ServiceCardCardId.HasValue) || line.Promotions.Any(x => x.CardCardId.HasValue))
+                message.Error = "Không thể áp dụng";
             //else
             //{
             //    if (!applicable_programs.Contains(self) && self.PromoApplicability == "on_current_order")
@@ -782,13 +816,13 @@ namespace Infrastructure.Services
             var today = DateTime.Today;
             //var applicable_programs = await saleObj._GetApplicablePrograms(order);
             var countApplied = await _GetCountAppliedQuotationAsync(self);
-            var memberLevelId = GetMemberLevel(line.Quotation.PartnerId);
+            var cardTypeId = await GetCardTypeId(line.Quotation.PartnerId);
             if (self.DiscountApplyOn == "on_order")
                 message.Error = "Mã khuyến mãi không áp dụng cho dịch vụ";
             else if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
             // message.Error = $"Mã khuyến mãi vượt quá hạn mức áp dụng.";
             message.Error = "Mã khuyến mãi vượt quá hạn mức áp dụng";
-            else if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.DiscountMemberLevels.Any() && (!memberLevelId.HasValue || self.DiscountMemberLevels.Any(x => x.MemberLevelId != memberLevelId)))
+            else if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.DiscountCardTypes.Any() && (!cardTypeId.HasValue || self.DiscountCardTypes.Any(x => x.CardTypeId != cardTypeId)))
                 message.Error = $"Mã khuyến mãi không áp dụng cho hạng thành viên này hoặc chưa có hạng thành viên";
             else if ((self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() < line.Quotation.DateQuotation) || today > self.RuleDateTo)
                 // message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";

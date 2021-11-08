@@ -497,7 +497,7 @@ namespace Infrastructure.Services
             var program = await programObj.SearchQuery(x => x.PromoCode == couponCode && x.Active).Include(x => x.DiscountSpecificProducts)
                 .Include(x => x.DiscountSpecificProductCategories)
                 .Include(x => x.DiscountSpecificPartners)
-                .Include(x => x.DiscountMemberLevels)
+                .Include(x => x.DiscountCardTypes)
                 .FirstOrDefaultAsync();
 
             if (program != null)
@@ -2541,7 +2541,7 @@ namespace Infrastructure.Services
                         {
                             var program = await programObj.SearchQuery(x => x.Id == item.SaleCouponProgramId)
                                 .Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product)
-                                .Include(x => x.DiscountMemberLevels)
+                                .Include(x => x.DiscountCardTypes)
                                 .FirstOrDefaultAsync();
                             if (program != null)
                             {
@@ -2603,7 +2603,7 @@ namespace Infrastructure.Services
                         var error_status = new CheckPromoCodeMessage();
                         var program = await programObj.SearchQuery(x => x.Id == promotion.SaleCouponProgramId)
                             .Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product)
-                            .Include(x => x.DiscountMemberLevels)
+                            .Include(x => x.DiscountCardTypes)
                             .FirstOrDefaultAsync();
                         if (program != null)
                         {

@@ -36,8 +36,9 @@ export class CardTypeSave {
     productPricelistItems: any;
     color: string;
 }
-
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+  })
 export class CardTypeService {
     apiUrl = 'api/CardTypes';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
@@ -64,5 +65,9 @@ export class CardTypeService {
 
     delete(id: string) {
         return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
+    }
+
+    autoComplete(val): Observable<CardTypeBasic[]> {
+        return this.http.post<CardTypeBasic[]>(this.baseApi + this.apiUrl + "/AutoComplete", val);
     }
 }

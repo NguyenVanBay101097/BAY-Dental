@@ -299,7 +299,7 @@ namespace Infrastructure.Services
         {
             var message = new CheckPromoCodeMessage();
             var saleLineObj = GetService<ISaleOrderLineService>();
-            var today = DateTime.Today;
+            var date = line.Date;
 
             if (line.Promotions.Any(x => x.ServiceCardCardId == self.Id))
                 message.Error = "Trùng thẻ ưu đãi đang áp dụng";
@@ -307,8 +307,10 @@ namespace Infrastructure.Services
                 message.Error = "Thẻ không khả dụng";
             else if (line.Promotions.Any(x => x.ServiceCardCardId.HasValue))
                 message.Error = "Không thể dùng chung với thẻ ưu đãi dịch vụ khác";
-            else if ((self.ActivatedDate.HasValue && today < self.ActivatedDate.Value) || today > self.ExpiredDate.Value)
+            else if ((self.ActivatedDate.HasValue && date < self.ActivatedDate.Value) || date > self.ExpiredDate.Value)
                 message.Error = $"Thẻ ưu đãi đã hết hạn";
+            else if (line.Promotions.Any(x => x.SaleCouponProgramId.HasValue && x.SaleCouponProgram.PromoCodeUsage == "no_code_needed") || line.Promotions.Any(x => x.CardCardId.HasValue))
+                message.Error = "Không thể áp dụng";
 
             return message;
         }

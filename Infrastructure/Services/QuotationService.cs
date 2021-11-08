@@ -675,7 +675,7 @@ namespace Infrastructure.Services
                 .Include(x => x.DiscountSpecificProducts)
                 .Include(x => x.DiscountSpecificProductCategories)
                 .Include(x => x.DiscountSpecificPartners)
-                .Include(x => x.DiscountMemberLevels)
+                .Include(x => x.DiscountCardTypes)
                 .FirstOrDefaultAsync();
 
             if (program != null)

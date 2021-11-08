@@ -14,15 +14,15 @@ export class PermissionDirective implements OnInit {
   ) { }
 
   ngOnInit() {
-    const pm = localStorage.getItem('user_permission');
-    this.user_permission = JSON.parse(pm);
+    const session_info = JSON.parse(localStorage['session_info']);
+    this.user_permission = session_info.permissions;
     if (this.user_permission) {
-      if (this.user_permission.isUserRoot) {
+      if (session_info.isAdmin) {
         this.viewContainer.createEmbeddedView(this.templateRef);
         return true;
       }
-      if (this.user_permission.permission) {
-        this.allPermissions = this.user_permission.permission;
+      if (session_info.permissions) {
+        this.allPermissions = this.user_permission;
       }
     } 
     this.updateView();

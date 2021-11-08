@@ -855,7 +855,7 @@ namespace Infrastructure.Services
                 .Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product)
                 .Include(x => x.DiscountSpecificProductCategories).ThenInclude(x => x.ProductCategory)
                 .Include(x => x.DiscountSpecificPartners)
-                .Include(x => x.DiscountMemberLevels)
+                .Include(x => x.DiscountCardTypes)
                 .FirstOrDefaultAsync();
 
             if (program != null)
@@ -933,7 +933,14 @@ namespace Infrastructure.Services
 
             if (cardCard != null)
             {
-                await _CreateCardCardRewardLine(orderLine, cardCard);
+                var error_status = cardCardObj._CheckCardCardApplySaleLine(cardCard, orderLine);
+                if (string.IsNullOrEmpty(error_status.Error))
+                {
+                    await _CreateCardCardRewardLine(orderLine, cardCard);
+
+                }
+                else
+                    throw new Exception(error_status.Error);              
             }
             else
             {
@@ -963,7 +970,7 @@ namespace Infrastructure.Services
                 .Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product)
                 .Include(x => x.DiscountSpecificProductCategories).ThenInclude(x => x.ProductCategory)
                 .Include(x => x.DiscountSpecificPartners)
-                .Include(x => x.DiscountMemberLevels)
+                .Include(x => x.DiscountCardTypes)
                 .FirstOrDefaultAsync();
             if (program != null)
             {
@@ -1020,6 +1027,12 @@ namespace Infrastructure.Services
             orderObj._AmountAll(self.Order);
             await orderObj.UpdateAsync(self.Order);
         }
+
+        //public async Task<bool> CheckCoditionApplyable(SaleOrderLine self)
+        //{
+        //    var res = false;
+        //    var prmotion = 
+        //}
 
 
         private async Task _CreateCardCardRewardLine(SaleOrderLine self, CardCard card)

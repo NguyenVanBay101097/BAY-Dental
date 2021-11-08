@@ -20,7 +20,7 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
   @Input() title: string;
   @Input() id: string;
   partnerId: string;
-  isEditInOverview = false;
+  partnerDisable = false;
   @ViewChild('customerCbx', { static: true }) customerCbx: ComboBoxComponent;
   @ViewChild('cardTypeCbx', { static: true }) cardTypeCbx: ComboBoxComponent;
 
@@ -54,7 +54,6 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
       cardType: [null, Validators.required],
       state: 'draft',
     });
-
     this.cardTypeCbx.filterChange
       .asObservable()
       .pipe(

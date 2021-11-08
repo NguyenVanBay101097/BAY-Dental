@@ -97,6 +97,7 @@ namespace TMTDentalAPI.Controllers
             entity = _mapper.Map(val, entity);
             if (!entity.CompanyId.HasValue)
                 entity.CompanyId = CompanyId;
+
             var serviceItems = _mapper.Map<IEnumerable<ProductPricelistItem>>(val.ProductPricelistItems);
             //tạo pricelist
             var priceList = entity.Pricelist;
@@ -134,6 +135,14 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork.Commit();
 
             return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Card.Type.Read")]
+        public async Task<IActionResult> AutoComplete(CardTypePaged val)
+        {
+            var res = await _cardTypeService.GetAutoComplete(val);
+            return Ok(res);
         }
 
         [HttpDelete("{id}")]

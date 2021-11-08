@@ -14,5 +14,7 @@ namespace Infrastructure.Services
         Task<CardType> CreateCardType(CardTypeDisplay val);
         Task UpdateCardType(Guid id, CardTypeDisplay val);
         DateTime GetPeriodEndDate(CardType self, DateTime? dStart = null);
+
+        Task<IEnumerable<CardType>> GetAutoComplete(CardTypePaged val);
     }
 }

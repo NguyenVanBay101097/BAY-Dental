@@ -105,6 +105,18 @@ namespace Infrastructure.Services
             }
         }
 
+        public async Task<IEnumerable<CardType>> GetAutoComplete(CardTypePaged val)
+        {
+            var query = SearchQuery();
+
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search));
+
+            var items = await query.OrderByDescending(x => x.DateCreated).ToListAsync();
+
+            return items;
+        }
+
         private async Task _CheckNameUnique(string name)
         {
             var count = await SearchQuery(x => x.Name == name).CountAsync();

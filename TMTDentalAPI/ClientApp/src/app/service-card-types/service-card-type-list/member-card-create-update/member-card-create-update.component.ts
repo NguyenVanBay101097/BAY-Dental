@@ -148,7 +148,7 @@ export class MemberCardCreateUpdateComponent implements OnInit {
           product: item.product,
           computePrice: [item.computePrice, Validators.required],
           percentPrice: [item.percentPrice, Validators.required],
-          fixedAmountPrice: [item.fixedAmountPrice, Validators.required],
+          fixedAmountPrice: [(item.fixedAmountPrice ?? 0), Validators.required],
         };
 
         var product = item.product;

@@ -277,6 +277,7 @@ namespace Infrastructure.Data
 
         public DbSet<MemberLevel> MemberLevels { get; set; }
         public DbSet<SaleCouponProgramMemberLevelRel> SaleCouponProgramMemberLevelRels { get; set; }
+      
         public DbSet<AccountFinancialRevenueReport> AccountFinancialRevenueReports { get; set; }
         public DbSet<AccountFinancialRevenueReportAccountAccountRel> AccountFinancialRevenueReportAccountAccountRels { get; set; }
         public DbSet<AccountFinancialRevenueReportAccountAccountTypeRel> AccountFinancialRevenueReportAccountAccountTypeRels { get; set; }
@@ -328,6 +329,8 @@ namespace Infrastructure.Data
         /// Chức vụ nhân viên
         /// </summary>
         public DbSet<HrJob> HrJobs { get; set; }
+
+        public DbSet<SaleCouponProgramCardTypeRel> SaleCouponProgramCardTypeRels { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -552,6 +555,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new PrintPaperSizeConfigution());
             builder.ApplyConfiguration(new MemberLevelConfiguration());
             builder.ApplyConfiguration(new SaleCouponProgramMemberLevelRelConfiguration());
+            builder.ApplyConfiguration(new SaleCouponProgramCardTypeRelConfiguration());
 
             builder.ApplyConfiguration(new SmsAccountConfiguration());
             builder.ApplyConfiguration(new SmsComposerConfiguration());

@@ -32,8 +32,7 @@
                         (click)="onSave()">
                         Lưu
                     </button>
-                    <button *ngIf="!program.active" type="button" class="btn btn-primary"
-                        (click)="onSaveActive()">
+                    <button *ngIf="!program.active" type="button" class="btn btn-primary" (click)="onSaveActive()">
                         Lưu và kích hoạt
                     </button>
                     <button *ngIf="!program.isPaused && program.active && program.statusDisplay == 'Đang chạy'"
@@ -52,12 +51,14 @@
                         <div class="left_header d-flex">
                             <div class="left border"></div>
                             <div class="right px-2 w-100">
-                                <div class="d-flex justify-content-center m-auto" style="cursor: pointer;" (click)="showHistoryApplyPromotion()">
+                                <div class="d-flex justify-content-center m-auto" style="cursor: pointer;"
+                                    (click)="showHistoryApplyPromotion()">
                                     <div class="d-flex align-items-center mr-2"><i class="fas fa-dollar-sign"></i></div>
                                     <div>
-                                        <div><label class="o_form_label" style="cursor: pointer;">Giá trị khuyến mãi</label></div>
-                                        <div class="d-flex justify-content-center text-success" ><label style="cursor: pointer;"
-                                                class="o_form_label">
+                                        <div><label class="o_form_label" style="cursor: pointer;">Giá trị khuyến
+                                                mãi</label></div>
+                                        <div class="d-flex justify-content-center text-success"><label
+                                                style="cursor: pointer;" class="o_form_label">
                                                 {{program.amountTotal | number}}
                                             </label></div>
                                     </div>
@@ -473,7 +474,8 @@
                         <div class="p-2">
                             <div class="custom-control custom-radio">
                                 <input type="radio" id="allPartner" class="custom-control-input" value="all"
-                                    (change)="onChangePartnerApplyOn($event.target.value)" formControlName="applyPartnerOn">
+                                    (change)="onChangePartnerApplyOn($event.target.value)"
+                                    formControlName="applyPartnerOn">
                                 <label class="custom-control-label" for="allPartner">Tất cả khách hàng</label>
                             </div>
                             <div class="custom-control custom-radio">
@@ -494,19 +496,18 @@
                             </div>
 
                             <div class="custom-control custom-radio">
-                                <input type="radio" id="member_level" class="custom-control-input"
-                                    (change)="onChangePartnerApplyOn($event)" value="member_levels"
+                                <input type="radio" id="card_type" class="custom-control-input"
+                                    (change)="onChangePartnerApplyOn($event.target.value)" value="card_types"
                                     formControlName="applyPartnerOn">
-                                <label class="custom-control-label" for="member_level">Hạng thành viên</label>
+                                <label class="custom-control-label" for="card_type">Loại thẻ thành viên</label>
                             </div>
-                            <div [class.d-none]="applyPartnerOn != 'member_levels'">
-                                <kendo-multiselect class="cus-kendo-multiselect" [data]="filterMemberLevel" (filterChange)="onChangeMemberLevel($event)"
-                                    [filterable]="true" [textField]="'name'" [valueField]="'id'"
-                                    formControlName="discountMemberLevels">
+                            <div [class.d-none]="applyPartnerOn != 'card_types'">
+                                <kendo-multiselect class="cus-kendo-multiselect" [data]="listCardType"
+                                [filterable]="true" #cardTypeCbx [textField]="'name'" [valueField]="'id'" formControlName="discountCardTypes">
                                 </kendo-multiselect>
-                                <div *ngIf="f.discountMemberLevels.errors && (f.discountMemberLevels.touched || f.discountMemberLevels.dirty || submitted)"
+                                <div *ngIf="f.discountCardTypes.errors && (f.discountCardTypes.touched || f.discountCardTypes.dirty || submitted)"
                                     class="text-danger mb-1">
-                                    <div *ngIf="f.discountMemberLevels.errors.required">Chọn hạng thành viên</div>
+                                    <div *ngIf="f.discountCardTypes.errors.required">Chọn loại thẻ thành viên</div>
                                 </div>
                             </div>
                         </div>

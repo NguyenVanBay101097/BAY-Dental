@@ -148,7 +148,7 @@ namespace Infrastructure.Services
 
             var program = await programObj.SearchQuery(x => x.Id == val.SaleProgramId)
                 .Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product)
-                .Include(x => x.DiscountMemberLevels)
+                .Include(x => x.DiscountCardTypes)
                 .FirstOrDefaultAsync();
             if (program != null)
             {
@@ -184,7 +184,7 @@ namespace Infrastructure.Services
             //Chương trình khuyến mãi sử dụng mã
             var program = await programObj.SearchQuery(x => x.PromoCode == couponCode)
                 .Include(x => x.DiscountSpecificProducts)
-                .Include(x => x.DiscountMemberLevels)
+                .Include(x => x.DiscountCardTypes)
                 .Include(x => x.DiscountSpecificPartners)
                 .FirstOrDefaultAsync();
             if (program != null)
