@@ -1,13 +1,14 @@
-import { Injectable, Inject } from '@angular/core';
-
-import { Observable, of, ReplaySubject, BehaviorSubject } from 'rxjs';
-import { tap, delay, catchError, retry, switchMap, map, mergeMap } from 'rxjs/operators';
-import { AuthResource, LoginTokenResult, LoginUserInfo, LoginViewModel, LoggedInViewModel, ForgotPasswordViewModel, RefreshViewModel, RefreshResponseViewModel, UserViewModel } from './auth.resource';
-import { LoginForm } from './login-form';
-import { HttpErrorResponse, HttpClient } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 // import { debug } from 'util';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { BehaviorSubject, Observable, of, ReplaySubject } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
 import { WebSessionService } from '../core/services/web-session.service';
+import { AuthResource, LoggedInViewModel, LoginViewModel, RefreshResponseViewModel, RefreshViewModel, UserViewModel } from './auth.resource';
+import { LoginForm } from './login-form';
+import { environment } from '../../environments/environment';
+
 
 export class UserInfo {
     avatar: string;
@@ -51,10 +52,10 @@ export class AuthService {
                         localStorage.setItem('access_token', result.token);
                         localStorage.setItem('user_info', JSON.stringify(result.user));
                         localStorage.setItem('refresh_token', result.refreshToken);
+                        localStorage.setItem('app_version', environment.version + '');
                         this.isLoggedIn = true;
                         this.currentUserSubject.next(result.user);
                         return this.webSessionService.getSessionInfo();
-                        // get permission
                     } else {
                         return of(result);
                     }
