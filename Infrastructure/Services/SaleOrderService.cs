@@ -1666,6 +1666,10 @@ namespace Infrastructure.Services
 
             foreach (var order in self)
             {
+                if (!order.OrderLines.Any())
+                {
+                    throw new Exception("Phải có ít nhất 1 dịch vụ trong phiếu điều trị");
+                }
                 order.State = "sale";
                 foreach (var line in order.OrderLines)
                 {
@@ -3138,7 +3142,7 @@ namespace Infrastructure.Services
         public async Task<long> GetCountSaleOrder(GetCountSaleOrderFilter val)
         {
             var saleOrderObj = GetService<ISaleOrderService>();
-            var states = new string[] {"cancel", "draft" };
+            var states = new string[] { "cancel", "draft" };
             var query = saleOrderObj.SearchQuery(x => !states.Contains(x.State));
 
             if (val.DateFrom.HasValue)

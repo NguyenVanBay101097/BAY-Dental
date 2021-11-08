@@ -64,13 +64,7 @@
         </kendo-grid-column>
         <kendo-grid-column title="Răng, chuẩn đoán" width="150">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                <ng-container *ngIf="dataItem?.toothType == 'manual'; else elseTeethTemplate">
                     {{showInfo(dataItem)}}
-                </ng-container>
-                <ng-template #elseTeethTemplate>
-                    {{getToothType(dataItem?.toothType)?.name}}
-                </ng-template>
-                <!-- {{showInfo(dataItem)}} -->
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column title="Bác sĩ" width="120">

@@ -185,10 +185,14 @@ export class LaboOrderListComponent implements OnInit {
 
   showInfo(val) {
     var list = [];
-    if (val.teeth.length) {
-      list.push(val.teeth.map(x => x.name).join(','));
+    if(val.toothType == 'manual'){
+      if (val.teeth.length) {
+        list.push(val.teeth.map(x => x.name).join(','));
+      }
+    } else {
+      list.push(this.toothTypeDict.find(x=> x.value == val.toothType)?.name)
     }
-
+   
     if (val.diagnostic) {
       list.push(val.diagnostic);
     }
