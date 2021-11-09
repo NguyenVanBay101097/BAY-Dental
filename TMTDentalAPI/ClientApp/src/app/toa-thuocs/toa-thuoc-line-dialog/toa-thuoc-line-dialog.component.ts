@@ -105,15 +105,15 @@ export class ToaThuocLineDialogComponent implements OnInit {
     var useAt = this.lineForm.get('useAt').value;
     switch (useAt) {
       case 'before_meal':
-        return 'trước khi ăn';
+        return 'Trước khi ăn';
       case 'in_meal':
-        return 'trong khi ăn';
+        return 'Trong khi ăn';
       case 'after_wakeup':
-        return 'sau khi thức dậy';
+        return 'Sau khi thức dậy';
       case 'before_sleep':
-        return 'trước khi đi ngủ';
+        return 'Trước khi đi ngủ';
       default:
-        return 'sau khi ăn';
+        return 'Sau khi ăn';
     }
   }
 

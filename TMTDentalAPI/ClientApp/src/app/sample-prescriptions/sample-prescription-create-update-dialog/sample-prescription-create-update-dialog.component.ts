@@ -178,17 +178,17 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
   getUsedAt(useAt) {
     switch (useAt) {
       case 'before_meal':
-        return 'trước khi ăn';
+        return 'Trước khi ăn';
       case 'in_meal':
-        return 'trong khi ăn';
+        return 'Trong khi ăn';
       case 'after_wakeup':
-        return 'sau khi thức dậy';
+        return 'Sau khi thức dậy';
       case 'before_sleep':
-        return 'trước khi đi ngủ';
+        return 'Trước khi đi ngủ';
       case 'other':
-        return 'trước khi đi ngủ';
+        return 'Khác';
       default:
-        return 'sau khi ăn';
+        return 'Sau khi ăn';
     }
   }
 
