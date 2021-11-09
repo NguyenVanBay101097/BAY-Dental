@@ -59,7 +59,7 @@ namespace TMTDentalAPI.Controllers
                 UserCompanies = new SessionUserCompany
                 {
                     CurrentCompany = _mapper.Map<CompanySimple>(user.Company),
-                    AllowedCompanies = user.ResCompanyUsersRels.Select(x => _mapper.Map<CompanySimple>(x.Company))
+                    AllowedCompanies = user.ResCompanyUsersRels.Where(x => x.Company.Active).Select(x => _mapper.Map<CompanySimple>(x.Company))
                 }
             };
 
