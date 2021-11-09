@@ -1165,7 +1165,7 @@ html .o_web_client {
 }
 
 .o_form_view .o_form_statusbar>.o_statusbar_status>.o_arrow_button.o_arrow_button_bg_primary:not(:first-child):before {
-    right: -10px;
+    right: -11px;
     border-left-color: white !important;
 }
 

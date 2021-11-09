@@ -2,31 +2,6 @@ input[type="radio"].btn-radio {
     display: none;
 }
 
-.block_left {
-    flex: 1;
-    padding-right: 30px;
-    width: 100%;
-}
-
-.block_right {
-    flex: 0 0 30%;
-}
-
-.block_right .header {
-    background-color: #dee2e6;
-}
-
-.left_header {
-    /* border-bottom: 1px solid; */
-    min-height: 50px;
-    width: 100%;
-}
-
-.left_header .left {
-    min-width: 80%;
-    /* border-right: 1px solid !important; */
-}
-
 .o_field_radio.o_vertical.o_field_widget {
     width: 100%;
 }
@@ -41,7 +16,7 @@ input[type="radio"].btn-radio {
 
 .btn-check {
     position: absolute;
-    clip: rect(0,0,0,0);
+    clip: rect(0, 0, 0, 0);
     pointer-events: none;
 }
 
@@ -59,13 +34,12 @@ input[type="radio"].btn-radio {
     opacity: 0;
 }
 
-.o_form_view .oe_button_box .btn.oe_stat_button {
-    /* text-align: right; */
-}
-
 @media (min-width: 1200px) {
-    .o_form_view .oe_button_box>.btn.oe_stat_button,
-    .o_form_view .oe_button_box>.o_dropdown_more {
+    .o_form_view .oe_button_box>.btn.oe_stat_button, .o_form_view .oe_button_box>.o_dropdown_more {
         width: 25.5%;
     }
+}
+
+.o_form_view .oe_button_box .btn.oe_stat_button > .o_button_icon {
+    vertical-align: unset;
 }

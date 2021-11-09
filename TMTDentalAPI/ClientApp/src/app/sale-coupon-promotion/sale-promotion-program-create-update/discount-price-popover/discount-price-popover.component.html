@@ -1,10 +1,11 @@
 <header class="modal-header">
     <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
 </header>
 
 <div class="modal-body o_act_window p-3">
-    <div class="discount_price rounded align-middle w-25 d-flex justify-content-start mb-2">
+    <!-- <div class="discount_price rounded align-middle w-25 d-flex justify-content-start mb-2">
         <div class="p-2 m-2">
             <div>
                 <h5>Tổng giá trị khuyến mãi</h5>
@@ -13,15 +14,25 @@
                 <h5 class="d-flex"><i class="fas fa-dollar-sign mr-2 d-flex align-items-center"></i>{{amountTotal | number}}</h5>
             </div>
         </div>
-    </div>
-    <div class="d-flex justify-content-between mb-2">
-        <div class="w-40">
-            <input type="text" class="form-control form-control-sm" [placeholder]="typeApply != 'on_order' ? 'Tìm kiếm theo tên dịch vụ' : 'Tìm kiếm theo số phiếu điều trị'" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+    </div> -->
+    <div class="d-flex mb-2">
+        <app-date-range-picker-filter class="mr-2" [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo"
+            (searchChange)="searchChangeDate($event)"></app-date-range-picker-filter>
+        <div class="mr-2" style="width: 400px;">
+            <div class="o_searchview">
+                <input class="o_searchview_input"
+                    [placeholder]="typeApply != 'on_order' ? 'Tìm kiếm theo dịch vụ' : 'Tìm kiếm theo số phiếu'"
+                    [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
+                <span class="o_searchview_icon fas fa-search"></span>
+            </div>
         </div>
-        <app-date-range-picker-filter class="mr-2" [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="searchChangeDate($event)"></app-date-range-picker-filter>
+        <button type="button" class="btn btn-primary mr-2" (click)="onExportExcel()" accesskey="s">
+            <i class="fas fa-download"></i>&nbsp;Xuất file
+        </button>
     </div>
     <div class="o_content">
-        <kendo-grid #grid [data]="gridView" [pageable]="pagerSettings" [pageSize]="pageSize" [skip]="skip" (pageChange)="pageChange($event)">
+        <kendo-grid #grid [data]="gridView" [pageable]="pagerSettings" [pageSize]="pageSize" [skip]="skip"
+            (pageChange)="pageChange($event)">
             <kendo-grid-column field="datePromotion" title="Ngày sử dụng" width="100">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{dataItem.datePromotion | date : 'shortDate'}}
@@ -29,8 +40,10 @@
             </kendo-grid-column>
             <kendo-grid-column field="partnerName" title="Khách hàng" width="100"></kendo-grid-column>
             <kendo-grid-column field="saleOrderName" title="Số phiếu" width="100"></kendo-grid-column>
-            <kendo-grid-column *ngIf="typeApply != 'on_order'" field="saleOrderLineName" title="Dịch vụ" width="100"></kendo-grid-column>
-            <kendo-grid-column *ngIf="typeApply != 'on_order'" field="saleOrderLinePriceTotal" title="Tiền dịch vụ" width="100">
+            <kendo-grid-column *ngIf="typeApply != 'on_order'" field="saleOrderLineName" title="Dịch vụ" width="100">
+            </kendo-grid-column>
+            <kendo-grid-column *ngIf="typeApply != 'on_order'" field="saleOrderLinePriceTotal" title="Tiền dịch vụ"
+                width="100">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{dataItem.saleOrderLinePriceTotal | number}}
                 </ng-template>
@@ -51,7 +64,6 @@
 
 <div class="modal-footer">
     <div>
-        <button type="button" class="btn btn-primary mr-2" (click)="onExportExcel()" accesskey="s">Xuất file</button>
         <button type="button" class="btn btn-light mr-2" (click)="onCancel()" accesskey="q">Đóng</button>
     </div>
 </div>

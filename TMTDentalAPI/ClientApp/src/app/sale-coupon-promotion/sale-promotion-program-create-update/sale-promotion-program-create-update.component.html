@@ -44,13 +44,45 @@
                         Kích hoạt
                     </button>
                 </div>
+                <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                    <button [disabled]="program?.statusDisplay !== 'Hết hạn'"
+                        class="btn o_arrow_button o_arrow_button_bg_primary disabled"
+                        [ngClass]="{'btn-primary': program?.statusDisplay === 'Hết hạn', 'btn-secondary': program?.statusDisplay !== 'Hết hạn'}"
+                        type="button">
+                        Hết hạn
+                    </button>
+                    <button [disabled]="program?.statusDisplay !== 'Tạm ngừng'"
+                        class="btn o_arrow_button o_arrow_button_bg_primary disabled"
+                        [ngClass]="{'btn-primary': program?.statusDisplay === 'Tạm ngừng', 'btn-secondary': program?.statusDisplay !== 'Tạm ngừng'}"
+                        type="button">
+                        Tạm ngừng
+                    </button>
+                    <button [disabled]="program?.statusDisplay !== 'Đang chạy'"
+                        class="btn o_arrow_button o_arrow_button_bg_primary disabled"
+                        [ngClass]="{'btn-primary': program?.statusDisplay === 'Đang chạy', 'btn-secondary': program?.statusDisplay !== 'Đang chạy'}"
+                        type="button">
+                        Đang chạy
+                    </button>
+                    <button [disabled]="program?.statusDisplay !== 'Chưa chạy'"
+                        class="btn o_arrow_button o_arrow_button_bg_primary disabled"
+                        [ngClass]="{'btn-primary': program?.statusDisplay === 'Chưa chạy', 'btn-secondary': program?.statusDisplay !== 'Chưa chạy'}"
+                        type="button">
+                        Chưa chạy
+                    </button>
+                    <button [disabled]="program?.statusDisplay !== 'Lưu nháp'"
+                        class="btn o_arrow_button o_arrow_button_bg_primary disabled"
+                        [ngClass]="{'btn-primary': program?.statusDisplay === 'Lưu nháp', 'btn-secondary': program?.statusDisplay !== 'Lưu nháp'}"
+                        type="button">
+                        Nháp
+                    </button>
+                </div>
             </div>
             <div class="container-xxl py-3">
                 <div class="row">
                     <div class="col-8">
                         <div class="o_form_sheet m-0">
                             <div class="o_not_full oe_button_box">
-                                <button class="btn oe_stat_button">
+                                <button class="btn oe_stat_button" (click)="showHistoryApplyPromotion()">
                                     <i class="fas fa-dollar-sign o_button_icon"></i>
                                     <div class="o_field_widget o_stat_info o_readonly_modifier">
                                         <span class="o_stat_text">
@@ -265,7 +297,7 @@
                                                 <table>
                                                     <tbody>
                                                         <tr>
-                                                            <td class="o_td_label"> Số tiền giảm </td>
+                                                            <td class="o_td_label"> Số tiền giảm giá </td>
                                                             <td class="w-70">
                                                                 <kendo-numerictextbox [min]="0" [format]="'n0'"
                                                                     formControlName="discountFixedAmount"
@@ -274,7 +306,7 @@
                                                                 <div *ngIf="f.discountFixedAmount.errors && (f.discountFixedAmount.touched || f.discountFixedAmount.dirty || submitted)"
                                                                     class="text-danger mb-1">
                                                                     <div *ngIf="f.discountFixedAmount.errors.required">
-                                                                        Nhập số tiền giảm
+                                                                        Nhập số tiền giảm giá
                                                                     </div>
                                                                 </div>
                                                             </td>
@@ -572,7 +604,7 @@
                                                 (change)="onChangePartnerApplyOn($event.target.value)"
                                                 value="card_types" formControlName="applyPartnerOn">
                                             <label class="custom-control-label" for="card_type">
-                                                Thẻ thành viên
+                                                Loại thẻ thành viên
                                             </label>
                                         </div>
                                         <div [class.d-none]="applyPartnerOn != 'card_types'">
@@ -583,7 +615,7 @@
                                             <div *ngIf="f.discountCardTypes.errors && (f.discountCardTypes.touched || f.discountCardTypes.dirty || submitted)"
                                                 class="text-danger mb-1">
                                                 <div *ngIf="f.discountCardTypes.errors.required">
-                                                    Chọn thẻ thành viên
+                                                    Loại thẻ thành viên
                                                 </div>
                                             </div>
                                         </div>

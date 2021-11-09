@@ -60,7 +60,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   @ViewChild('productCategoriesMultiSelect', { static: true }) productCategoriesMultiSelect: MultiSelectComponent;
   @ViewChild('partnerMultiSelect', { static: true }) partnerMultiSelect: MultiSelectComponent;
   @ViewChild('cardTypeCbx', { static: true }) cardTypeCbx: MultiSelectComponent;
-
+  status: string = 'Đang chạy';
 
   constructor(private fb: FormBuilder, private programService: SaleCouponProgramService,
     private router: Router, private route: ActivatedRoute, private notificationService: NotificationService, private partnerService: PartnerService, private memberLevelService: MemberLevelService,
@@ -446,37 +446,12 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       }
 
       if (result.active) {
-        this.disabled();
+        this.formGroup.disable();
       }
 
       this.promoCode = result.promoCode;
+      console.log(this.program);
     });
-  }
-
-  disabled() {
-    this.f.name.disable();
-    this.f.promoCodeUsage.disable();
-    this.f.promoCode.disable();
-    this.f.notIncremental.disable();
-    this.f.maximumUseNumber.disable();
-    this.f.ruleDateFromObj.disable();
-    this.f.ruleDateToObj.disable();
-    this.f.isApplyDayOfWeek.disable();
-    this.f.daysSelected.disable();
-    this.f.discountType.disable();
-    this.f.discountPercentage.disable();
-    this.f.discountMaxAmount.disable();
-    this.f.discountFixedAmount.disable();
-    this.f.discountApplyOn.disable();
-    this.f.discountSpecificProducts.disable();
-    this.f.discountSpecificProductCategories.disable();
-    this.f.ruleMinimumAmount.disable();
-    this.f.applyPartnerOn.disable();
-    this.f.discountSpecificPartners.disable();
-    this.f.discountMemberLevels.disable();
-    this.f.discountCardTypes.disable();
-    this.f.isApplyMinimumDiscount.disable();
-    this.f.isApplyMaxDiscount.disable();
   }
 
   createNew() {
