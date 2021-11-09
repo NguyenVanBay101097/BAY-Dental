@@ -44,12 +44,6 @@ export class StockXuatNhapTonComponent implements OnInit {
   filteredProducts: ProductSimple[];
   filteredCategs: ProductCategoryBasic[];
 
-  showOrigin = false;
-  showExpiry = false;
-  showAverageExport = false;
-  showMinInventory = false;
-  isExpand = false;
-
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
 
@@ -59,6 +53,25 @@ export class StockXuatNhapTonComponent implements OnInit {
   excelItems: any[]=[];
   sumImport: number = 0;
   sumExport: number = 0;
+  visibleColumns: string[] = [];
+  columnMenuItems: any[] = [
+    {
+      text: 'Xuất xứ',
+      field: 'origin'
+    },
+    {
+      text: 'Thời hạn sử dụng',
+      field: 'expiry'
+    },
+    {
+      text: 'Lượng xuất trung bình',
+      field: 'averageExport'
+    },
+    {
+      text: 'Mức tồn tối thiểu',
+      field: 'minInventory'
+    }
+  ]
 
   filteredInventory: { text: string, value: string }[] = [
     { text: 'Trên mức tối thiểu', value: 'above_minInventory' },
@@ -95,7 +108,24 @@ export class StockXuatNhapTonComponent implements OnInit {
         this.loadItems2(items);
       });
 
-    this.getLocalStorge();
+    if (localStorage.getItem('xuat_nhap_ton_grid_visible_columns')) {
+      this.visibleColumns = localStorage.getItem('xuat_nhap_ton_grid_visible_columns').split(',');      
+    }
+  }
+
+  onCheckColumn(e) {
+    var field = e.target.attributes["data-field"].value;
+    if (e.target.checked) {
+      this.visibleColumns.push(field);
+    } else {
+      var index = this.visibleColumns.indexOf(field);
+      if (index !== -1) {
+        this.visibleColumns.splice(index, 1);
+      }
+    }
+
+    //save to localstorage
+    localStorage.setItem('xuat_nhap_ton_grid_visible_columns', this.visibleColumns.join(','));
   }
 
   onSearchChange(data) {
@@ -155,28 +185,6 @@ export class StockXuatNhapTonComponent implements OnInit {
     this.sumImport = result.import ? result.import.sum : 0;
     this.sumExport = result.export ? result.export.sum : 0;
     this.sumEnd = result.end ? result.end.sum : 0;
-  }
-
-  getLocalStorge(){
-    let columns = localStorage.getItem('stock_report_columns');
-    if (columns){
-      this.showAverageExport = columns.indexOf('averageExport') != -1;
-      this.showOrigin = columns.indexOf('origin') != -1;
-      this.showMinInventory = columns.indexOf('minInventory') != -1;
-      this.showExpiry = columns.indexOf('expiry') != -1;
-    }
-  }
-
-  setLocalStorge(columns: any[]){
-    if (this.showAverageExport) 
-      columns.push("averageExport");
-    if (this.showExpiry) 
-      columns.push("expiry");  
-    if (this.showMinInventory) 
-      columns.push("minInventory");
-    if (this.showOrigin) 
-      columns.push("origin");
-    localStorage.setItem('stock_report_columns',columns.toString());
   }
 
   onCellClick(e) {
@@ -244,15 +252,5 @@ export class StockXuatNhapTonComponent implements OnInit {
       saveAs(dataUrl, "NhapXuatTon.xlsx");
       this.loading = false;
     });
-  }
-
-  apply(form: NgForm){
-    this.isExpand = false;
-    this.showAverageExport = form.controls["averageExport"].value;
-    this.showExpiry = form.controls["expiry"].value;
-    this.showMinInventory = form.controls["minInventory"].value;
-    this.showOrigin = form.controls["origin"].value;
-    let columns = [];
-    this.setLocalStorge(columns);
   }
 }

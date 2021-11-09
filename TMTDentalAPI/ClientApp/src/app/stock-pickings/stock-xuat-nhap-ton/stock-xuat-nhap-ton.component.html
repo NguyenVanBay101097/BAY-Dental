@@ -1,51 +1,29 @@
 <div class="p-2 d-flex bg-white">
     <div class="d-flex flex-fill">
-        <div class="mr-1">
+        <div class="mr-2">
             <app-date-range-picker-filter [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo"
                 (searchChange)="onSearchChange($event)"></app-date-range-picker-filter>
         </div>
-        <div class="mr-1">
+        <div class="mr-2">
             <kendo-combobox style="width: 200px;" [popupSettings]="" [placeholder]="'Tất cả sản phẩm'"
                 [valuePrimitive]="true" [data]="filteredInventory" [valueField]="'value'" [textField]="'text'"
                 (valueChange)="inventoryChange($event)">
             </kendo-combobox>
         </div>
-        <div class="dropdown mr-1">
-            <div class="btn btn-dropdown-menu text-left" type="button" id="dropdownMenuButton1" data-toggle="dropdown"
-                aria-haspopup="true" aria-expanded="false">
+        <div ngbDropdown class="mr-2" [autoClose]="'outside'">
+            <button class="btn btn-secondary" ngbDropdownToggle type="button" id="dropdownMenuButton1">
                 Tùy chọn hiển thị
-                <span class="drop-menu">
-                    <span class="k-icon k-i-arrow-s"></span>
-                </span>
+            </button>
+            <div ngbDropdownMenu aria-labelledby="dropdownMenuButton1">
+                <div ngbDropdownItem *ngFor="let item of columnMenuItems">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" [checked]="visibleColumns.indexOf(item.field) !== -1" [attr.id]="item.field" [attr.data-field]="item.field" (change)="onCheckColumn($event)" />
+                        <label class="form-check-label" [for]="item.field">
+                            {{item.text}}
+                        </label>
+                    </div>
+                </div>
             </div>
-            <form class="dropdown-menu p-3" aria-labelledby="dropdownMenuButton1" [ngClass]="{'show':isExpand}"
-                #form="ngForm" (ngSubmit)="apply(form)">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="defaultCheck1" [ngModel]="this.showOrigin" name="origin" >
-                    <label class="form-check-label" for="defaultCheck1">
-                        Xuất xứ
-                    </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="defaultCheck2"  [ngModel]="this.showExpiry" name="expiry">
-                    <label class="form-check-label" for="defaultCheck2">
-                        Thời hạn sử dụng
-                    </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="defaultCheck3" [ngModel]="this.showAverageExport" name="averageExport" >
-                    <label class="form-check-label" for="defaultCheck3">
-                        Lượng xuất trung bình
-                    </label>
-                </div>
-                <div class="form-check mb-2">
-                    <input class="form-check-input" type="checkbox" id="defaultCheck4" [ngModel]="this.showMinInventory" name="minInventory" >
-                    <label class="form-check-label" for="defaultCheck4">
-                        Mức tồn tối thiểu
-                    </label>
-                </div>
-                <input type="submit" class="btn btn-primary" (click)="isExpand = !isExpand" value="Áp dụng">
-            </form>
         </div>
         <div>
             <button type="button" class="btn btn-primary" (click)="exportExcelFile(grid)">
@@ -80,13 +58,11 @@
                 </span>
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="origin" title="Xuất xứ" *ngIf="showOrigin" width="150">
-
+        <kendo-grid-column field="origin" title="Xuất xứ" [hidden]="visibleColumns.indexOf('origin') == -1" width="150">
         </kendo-grid-column>
-        <kendo-grid-column field="expiry" title="Thời hạn sử dụng (tháng)" *ngIf="showExpiry" width="180">
-
+        <kendo-grid-column field="expiry" title="Thời hạn sử dụng (tháng)" [hidden]="visibleColumns.indexOf('expiry') == -1" width="180">
         </kendo-grid-column>
-        <kendo-grid-column field="averageExport" title="Lượng xuất trung bình" width="180" *ngIf="showAverageExport">
+        <kendo-grid-column field="averageExport" title="Lượng xuất trung bình" width="180" [hidden]="visibleColumns.indexOf('averageExport') == -1">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 <ng-template #popContent>
                     <span>
@@ -143,7 +119,7 @@
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="minInventory" class="text-right" title="Mức tồn tối thiểu" width="130"
-            *ngIf="showMinInventory">
+            [hidden]="visibleColumns.indexOf('minInventory') == -1">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <span [class.text-danger]="dataItem.end<dataItem.minInventory">
                     {{(dataItem.minInventory || 0) | number}}
