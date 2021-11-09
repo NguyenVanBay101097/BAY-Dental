@@ -1174,6 +1174,14 @@ td.oe_form_group_cell_label label {
     line-height: 1.2;
 }
 
+.o_form_view .oe_button_box .btn.oe_stat_button > .o_button_icon {
+    margin-left: 6px;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 44px;
+    width: 30%;
+}
+
 .o_form_view.o_form_nosheet {
     display: block;
     padding-top: 24px;
