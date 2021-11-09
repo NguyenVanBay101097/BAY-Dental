@@ -327,6 +327,9 @@ export class AppHomeComponent implements OnInit {
     this.userService.switchCompany({ companyId: companyId })
       .pipe(
         mergeMap(() => {
+          return this.authService.refresh();
+        }),
+        mergeMap(() => {
           return this.webSessionService.getSessionInfo();
         }),
         mergeMap((sessionInfo) => {
