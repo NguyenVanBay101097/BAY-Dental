@@ -1,5 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { ExcelExportData, Workbook } from '@progress/kendo-angular-excel-export';
 import { GridComponent, GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -51,6 +53,25 @@ export class StockXuatNhapTonComponent implements OnInit {
   excelItems: any[]=[];
   sumImport: number = 0;
   sumExport: number = 0;
+  visibleColumns: string[] = [];
+  columnMenuItems: any[] = [
+    {
+      text: 'Xuất xứ',
+      field: 'origin'
+    },
+    {
+      text: 'Thời hạn sử dụng',
+      field: 'expiry'
+    },
+    {
+      text: 'Lượng xuất trung bình',
+      field: 'averageExport'
+    },
+    {
+      text: 'Mức tồn tối thiểu',
+      field: 'minInventory'
+    }
+  ]
 
   filteredInventory: { text: string, value: string }[] = [
     { text: 'Trên mức tối thiểu', value: 'above_minInventory' },
@@ -86,6 +107,25 @@ export class StockXuatNhapTonComponent implements OnInit {
          x.productName.toLowerCase().indexOf(val.toLowerCase()) !== -1);
         this.loadItems2(items);
       });
+
+    if (localStorage.getItem('xuat_nhap_ton_grid_visible_columns')) {
+      this.visibleColumns = localStorage.getItem('xuat_nhap_ton_grid_visible_columns').split(',');      
+    }
+  }
+
+  onCheckColumn(e) {
+    var field = e.target.attributes["data-field"].value;
+    if (e.target.checked) {
+      this.visibleColumns.push(field);
+    } else {
+      var index = this.visibleColumns.indexOf(field);
+      if (index !== -1) {
+        this.visibleColumns.splice(index, 1);
+      }
+    }
+
+    //save to localstorage
+    localStorage.setItem('xuat_nhap_ton_grid_visible_columns', this.visibleColumns.join(','));
   }
 
   onSearchChange(data) {
@@ -201,15 +241,6 @@ export class StockXuatNhapTonComponent implements OnInit {
     }
     return result;
   }
-
-  // public excelData(): ExcelExportData {
-  //   const result: ExcelExportData = {
-  //     data: process(this.items, {
-  //       sort: [{ field: 'productCode', dir: 'asc' }]
-  //     }).data
-  //   };
-  //   return result;
-  // }
 
   onExcelExport(args) {
     args.preventDefault();

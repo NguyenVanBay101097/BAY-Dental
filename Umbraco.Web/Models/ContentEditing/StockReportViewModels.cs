@@ -51,6 +51,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? MinInventory { get; set; }
 
         public Guid? CompanyId { get; set; }
+
+        public string Origin { get; set; }
+
+        public decimal? Expiry { get; set; }
+        public double? AverageExport { get; set; }
     }
 
     public class StockReportXuatNhapTonItemDetail
