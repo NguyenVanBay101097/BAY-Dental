@@ -196,7 +196,7 @@
                                 <td colspan="1" style="width: 100%;">
                                     <textarea *ngIf="purchaseOrder?.state == 'draft'" class="form-control" rows="3"
                                         id="comment" formControlName="notes"></textarea>
-                                    <span *ngIf="purchaseOrder?.state == 'draft'">{{purchaseOrder?.note}}</span>
+                                    <span *ngIf="purchaseOrder?.state != 'draft'">{{purchaseOrder?.notes}}</span>
                                 </td>
                             </tr>
                         </tbody>

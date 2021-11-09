@@ -51,6 +51,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public decimal AmountResidual { get; set; }
 
-        public string Note { get; set; }
+        public string Notes { get; set; }
     }
 }
