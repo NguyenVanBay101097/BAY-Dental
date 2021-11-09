@@ -44,9 +44,9 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   hasDefined = false;
   filteredPartners: PartnerSimple[];
 
-  @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('journalCbx', { static: true }) journalCbx: ComboBoxComponent;
   @ViewChild('searchInput', { static: true }) searchInput: ElementRef;
+  @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
 
   productList: ProductSimple[] = [];
   filteredJournals: any = [];
@@ -58,6 +58,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   submitted = false;
   amountTotal = 0;
   get f() { return this.formGroup.controls; }
+
 
   constructor(
     private fb: FormBuilder,
@@ -103,11 +104,17 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     this.authService.getGroups().subscribe((result: any) => {
       this.permissionService.define(result);
       this.hasDefined = this.permissionService.hasOneDefined(['product.group_uom']);
+    });
 
+    this.partnerCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.partnerCbx.loading = true)),
+      switchMap(value => this.searchPartners(value))
+    ).subscribe(result => {
+      this.filteredPartners = result;
+      this.partnerCbx.loading = false;
     });
   }
-
-
 
   loadRecord() {
     this.loadDataApi().subscribe((result: any) => {
@@ -126,18 +133,18 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
         g.get('productQty').setValidators([Validators.required]);
         control.push(g);
 
-        setTimeout(() => {
-          if (this.partnerCbx) {
-            this.partnerCbx.filterChange.asObservable().pipe(
-              debounceTime(300),
-              tap(() => (this.partnerCbx.loading = true)),
-              switchMap(value => this.searchPartners(value))
-            ).subscribe(result => {
-              this.filteredPartners = result;
-              this.partnerCbx.loading = false;
-            });
-          }
-        }, 0);
+        // setTimeout(() => {
+        //   if (this.partnerCbx) {
+        //     this.partnerCbx.filterChange.asObservable().pipe(
+        //       debounceTime(300),
+        //       tap(() => (this.partnerCbx.loading = true)),
+        //       switchMap(value => this.searchPartners(value))
+        //     ).subscribe(result => {
+        //       this.filteredPartners = result;
+        //       this.partnerCbx.loading = false;
+        //     });
+        //   }
+        // }, 0);
       });
     });
   }
@@ -200,7 +207,6 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     this.productService
       .autocomplete2(val).subscribe(
         (res) => {
-          console.log(res);
           this.productList = res;
         },
         (err) => {
