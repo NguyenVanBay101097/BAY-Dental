@@ -86,7 +86,7 @@
         <kendo-grid-column field="expiry" title="Thời hạn sử dụng (tháng)" *ngIf="showExpiry" width="180">
 
         </kendo-grid-column>
-        <kendo-grid-column field="averageExport" title="Lượng xuất trung bình" width="150" *ngIf="showAverageExport">
+        <kendo-grid-column field="averageExport" title="Lượng xuất trung bình" width="180" *ngIf="showAverageExport">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                 <ng-template #popContent>
                     <span>
@@ -104,7 +104,7 @@
                 Tổng
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="begin" class="text-right" title="Tồn đầu kỳ" width="100"
+        <kendo-grid-column field="begin" class="text-right" title="Tồn đầu kỳ" width="120"
             footerClass="text-right font-weight-600">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.begin | number}}
@@ -113,7 +113,7 @@
                 {{sumBegin}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="import" class="text-right" title="Nhập trong kỳ" width="100"
+        <kendo-grid-column field="import" class="text-right" title="Nhập trong kỳ" width="120"
             footerClass="text-right font-weight-600">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.import | number}}
@@ -122,7 +122,7 @@
                 {{sumImport}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="export" class="text-right" title="Xuất trong kỳ" width="100"
+        <kendo-grid-column field="export" class="text-right" title="Xuất trong kỳ" width="120"
             footerClass="text-right font-weight-600">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.export | number}}
