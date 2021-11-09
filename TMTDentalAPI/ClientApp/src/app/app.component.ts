@@ -2,8 +2,9 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { SwUpdate } from '@angular/service-worker';
 import * as _ from 'lodash';
 import { AuthService } from './auth/auth.service';
-import { PermissionService } from './shared/permission.service';
 declare var $: any;
+import { environment } from '../environments/environment';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -15,13 +16,9 @@ export class AppComponent implements OnInit {
   _areAccessKeyVisible = false;
   constructor(
     public authService: AuthService,
-    private permissionService: PermissionService,
-    private swUpdate: SwUpdate) {
+    private swUpdate: SwUpdate,
+    private router: Router) {
 
-    this.authService.currentUser.subscribe((user) => {
-    });
-
-    console.log('swUpdate ' + this.swUpdate.isEnabled);
     if (this.swUpdate.isEnabled) {
       this.swUpdate.available.subscribe(() => {
         if (confirm("Có phiên bản mới, tải ngay?")) {
@@ -32,6 +29,15 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.checkAppVersion();
+  }
+
+  checkAppVersion() {
+    var version = localStorage['app_version'] ? parseInt(localStorage['app_version']) : 0;
+    if (version != environment.version) {
+      this.authService.logout();
+      this.router.navigate(['/auth/login']);
+    }
   }
 
   @HostListener('document:keydown', ['$event']) onKeydownHandler(keyDownEvent: KeyboardEvent) {

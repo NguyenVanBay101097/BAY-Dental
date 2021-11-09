@@ -747,8 +747,7 @@ namespace Infrastructure.Services
                 await productStepObj.CreateAsync(stepsAdd);
             }
         }
-
-        public async Task ComputeProductRequestedQuantity(IEnumerable<Guid> ids)
+        public async Task ComputeProductRequestedQuantity(IEnumerable<Guid> ids) //compute quantity after do something
         {
             var reqLineObj = GetService<IProductRequestLineService>();
             var requestedObj = GetService<ISaleOrderLineProductRequestedService>();
@@ -764,22 +763,44 @@ namespace Infrastructure.Services
                 .ToListAsync();
 
             var requesteds = await requestedObj.SearchQuery(x => ids.Contains(x.SaleOrderLineId)).ToListAsync();
-            await requestedObj.DeleteAsync(requesteds);
-
+            //
             var toCreateRequested = new List<SaleOrderLineProductRequested>();
+            var toDeleteRequested = new List<SaleOrderLineProductRequested>();
+            var toUpdateRequested = new List<SaleOrderLineProductRequested>();
+
+            foreach (var item in requesteds)
+            {
+                if (!requestLines.Any(x => x.SaleOrderLineId == item.SaleOrderLineId))
+                    toDeleteRequested.Add(item);
+            }
+
             foreach (var item in requestLines)
             {
-                var requested = new SaleOrderLineProductRequested
+                var existRequested = requesteds.FirstOrDefault(x => x.SaleOrderLineId == item.SaleOrderLineId);
+                if (existRequested == null)
                 {
-                    SaleOrderLineId = item.SaleOrderLineId,
-                    ProductId = item.ProductId,
-                    RequestedQuantity = item.Total
-                };
-                toCreateRequested.Add(requested);
+                    var requested = new SaleOrderLineProductRequested
+                    {
+                        SaleOrderLineId = item.SaleOrderLineId,
+                        ProductId = item.ProductId,
+                        RequestedQuantity = item.Total
+                    };
+                    toCreateRequested.Add(requested);
+                }
+                else
+                {
+                    existRequested.RequestedQuantity = item.Total;
+                    toUpdateRequested.Add(existRequested);
+                }
             }
 
             //save changes
-            await requestedObj.CreateAsync(toCreateRequested);
+            if (toCreateRequested.Any())
+                await requestedObj.CreateAsync(toCreateRequested);
+            if (requesteds.Any())
+                await requestedObj.UpdateAsync(requesteds);
+            if (toDeleteRequested.Any())
+                await requestedObj.DeleteAsync(toDeleteRequested);
         }
 
 

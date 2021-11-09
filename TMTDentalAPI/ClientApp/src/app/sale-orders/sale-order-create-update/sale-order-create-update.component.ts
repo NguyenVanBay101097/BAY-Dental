@@ -347,10 +347,25 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   }
 
   onSaveConfirm() {
-    this.saleOrderService.actionConfirm([this.saleOrder.id]).subscribe(() => {
-      this.notify('success', 'Xác nhận thành công');
-      this.loadSaleOrder();
-    })
+    if (this.serviceListComp.lineSelected != null) { //Nếu dữ liệu cần lưu lại
+      var viewChild = this.serviceListComp.lineVCR.find(x => x.line == this.serviceListComp.lineSelected);
+      var rs = viewChild.updateLineInfo();
+      if (rs) {
+        viewChild.onUpdateSignSubject.subscribe(value => {
+          if(value){
+            this.saleOrderService.actionConfirm([this.saleOrder.id]).subscribe(() => {
+              this.notify('success', 'Xác nhận thành công');
+              this.loadSaleOrder();
+            })
+          }
+        })
+      }
+    } else {
+      this.saleOrderService.actionConfirm([this.saleOrder.id]).subscribe(() => {
+        this.notify('success', 'Xác nhận thành công');
+        this.loadSaleOrder();
+      })
+    }
   }
 
   updateFormGroupDataToSaleOrder() {
