@@ -19,9 +19,9 @@
                 </span>
             </div>
             <form class="dropdown-menu p-3" aria-labelledby="dropdownMenuButton1" [ngClass]="{'show':isExpand}"
-                #form="ngForm" (ngSubmit)="Apply(form)">
+                #form="ngForm" (ngSubmit)="apply(form)">
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="defaultCheck1" [ngModel]="this.showOrigin" [value]="this.showOrigin" name="origin" >
+                    <input class="form-check-input" type="checkbox" id="defaultCheck1" [ngModel]="this.showOrigin" name="origin" >
                     <label class="form-check-label" for="defaultCheck1">
                         Xuất xứ
                     </label>
@@ -33,13 +33,13 @@
                     </label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="defaultCheck3" [ngModel]="this.showAverageExport" [value]="this.showAverageExport" name="averageExport" >
+                    <input class="form-check-input" type="checkbox" id="defaultCheck3" [ngModel]="this.showAverageExport" name="averageExport" >
                     <label class="form-check-label" for="defaultCheck3">
                         Lượng xuất trung bình
                     </label>
                 </div>
                 <div class="form-check mb-2">
-                    <input class="form-check-input" type="checkbox" id="defaultCheck4" [ngModel]="this.showMinInventory" [value]="this.showMinInventory" name="minInventory" >
+                    <input class="form-check-input" type="checkbox" id="defaultCheck4" [ngModel]="this.showMinInventory" name="minInventory" >
                     <label class="form-check-label" for="defaultCheck4">
                         Mức tồn tối thiểu
                     </label>

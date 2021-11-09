@@ -246,7 +246,7 @@ export class StockXuatNhapTonComponent implements OnInit {
     });
   }
 
-  Apply(form: NgForm){
+  apply(form: NgForm){
     this.isExpand = false;
     this.showAverageExport = form.controls["averageExport"].value;
     this.showExpiry = form.controls["expiry"].value;

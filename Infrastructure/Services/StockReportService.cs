@@ -127,7 +127,7 @@ namespace Infrastructure.Services
                 if (data.Begin == 0 && data.Import == 0 && data.Export == 0)
                     continue;
                 var product = productDict[item.Key];
-                var totalDays = (val.DateFrom.HasValue && val.DateTo.HasValue) ? (val.DateTo.Value - val.DateFrom.Value).TotalDays : 0;
+                var totalDays = (val.DateFrom.HasValue && val.DateTo.HasValue) ? (val.DateTo.Value - val.DateFrom.Value).TotalDays + 1 : 0;
                 var averageExport = totalDays!=0 ? Math.Round(data.Export / (decimal)totalDays) : null;
                 result.Add(new StockReportXuatNhapTonItem
                 {
