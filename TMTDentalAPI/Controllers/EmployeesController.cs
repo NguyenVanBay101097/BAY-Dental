@@ -108,13 +108,15 @@ namespace TMTDentalAPI.Controllers
             if (!employee.CompanyId.HasValue)
                 employee.CompanyId = CompanyId;
 
-            await SaveUser(employee, val);
+            if (val.IsUser)
+            {
+                var user = await _CreateEmployeeUser(val);
+                employee.UserId = user.Id;
+            }
 
             await UpdateSalary(val, employee);
 
             await UpdateCommission(val, employee);
-
-            await _employeeService.UpdateResgroupForSurvey(employee);
 
             await _employeeService.CreateAsync(employee);
             _unitOfWork.Commit();
@@ -123,217 +125,41 @@ namespace TMTDentalAPI.Controllers
             return Ok(basic);
         }
 
-        private async Task SaveUser(Employee employee, EmployeeSave val)
+        private async Task UpdateRole(ApplicationUser user, EmployeeSave val)
         {
-            var user = employee.User;
-            if (val.IsUser)
-            {
-                if (user != null)
-                {
-                    if (user.Partner != null)
-                    {
-                        var userPartner = user.Partner;
-                        userPartner.Name = employee.Name;
-                        userPartner.Email = employee.Email;
-                        userPartner.Phone = employee.Phone;
-                        userPartner.Avatar = employee.Avatar;
-                        await _partnerService.UpdateAsync(userPartner);
-                    }
-
-                    user.Name = employee.Name;
-                    if (user.UserName != val.UserName)
-                    {
-                        if (string.IsNullOrEmpty(val.UserName))
-                            throw new Exception("Tên đăng nhập không được trống");
-                        var exist = await _userManager.FindByNameAsync(val.UserName);
-                        if (exist != null)
-                            throw new Exception("Tài khoản đã tồn tại!");
-
-                        user.UserName = val.UserName;
-                    }
-
-                    user.Active = true;
-                    user.Email = employee.Email;
-                    user.PhoneNumber = employee.Phone;
-                    user.CompanyId = val.UserCompanyId.HasValue ? val.UserCompanyId.Value : user.CompanyId;
-                    var updateResult = await _userManager.UpdateAsync(user);
-                    if (!updateResult.Succeeded)
-                        throw new Exception($"Cập nhật người dùng không thành công");
-                }
-                else
-                {
-                    //check if exist user that usernam == val.Username and this user ever map => map this user
-                    var existUser = await _userManager.Users.Where(x => x.UserName == val.UserName && x.CompanyId == employee.CompanyId).Include(x => x.ResCompanyUsersRels).FirstOrDefaultAsync();
-                    if (existUser != null)
-                    {
-                        //check user đã đk map chưa
-                        var isMapped = await _employeeService.SearchQuery(x => x.UserId == existUser.Id).AnyAsync();
-                        if (isMapped == true) throw new Exception("Tài khoản đã tồn tại");
-                        user = existUser;
-                        employee.UserId = existUser.Id;
-                        employee.User = existUser;
-                    }
-                    else
-                    {
-                        if (string.IsNullOrEmpty(val.UserName))
-                            throw new Exception("Tên đăng nhập không được trống");
-                        if (!val.UserCompanyId.HasValue)
-                            throw new Exception("Chi nhánh hiện tại không được trống");
-
-                        var userPartner = new Partner()
-                        {
-                            Name = employee.Name,
-                            Email = employee.Email,
-                            CompanyId = employee.CompanyId,
-                            Phone = employee.Phone,
-                            Customer = false,
-                            Avatar = employee.Avatar
-                        };
-
-                        await _partnerService.CreateAsync(userPartner);
-
-                        user = new ApplicationUser()
-                        {
-                            Name = employee.Name,
-                            UserName = val.UserName,
-                            CompanyId = val.UserCompanyId.Value,
-                            PartnerId = userPartner.Id,
-                        };
-
-                        try
-                        {
-                            var result = await _userManager.CreateAsync(user);
-
-                            if (!result.Succeeded)
-                            {
-                                if (result.Errors.Any(x => x.Code == "DuplicateUserName"))
-                                    throw new Exception($"Tài khoản {val.UserName} đã được sử dụng");
-                                else
-                                    throw new Exception(string.Join(", ", result.Errors.Select(x => x.Description)));
-                            }
-
-                            await SaveUserResGroup(user);
-                        }
-                        catch (Exception)
-                        {
-                            throw new Exception("Tạo tài khoản người dùng không thành công");
-                        }
-
-                        employee.UserId = user.Id;
-                        employee.User = user;
-                    }
-                }
-
-                user.ResCompanyUsersRels.Clear();
-                foreach (var userCompanyId in val.UserCompanyIds)
-                {
-                    user.ResCompanyUsersRels.Add(new ResCompanyUsersRel { CompanyId = userCompanyId });
-                }
-
-                if (val.CreateChangePassword)
-                {
-                    if (string.IsNullOrEmpty(val.UserPassword) || val.UserPassword.Trim().Length < 6)
-                        throw new Exception("Mật khẩu không được trống và từ 6 kí tự trở lên");
-
-                    if (await _userManager.HasPasswordAsync(user))
-                    {
-                        await _userManager.RemovePasswordAsync(user);
-                        await _userManager.AddPasswordAsync(user, val.UserPassword);
-                    }
-                    else
-                    {
-                        await _userManager.AddPasswordAsync(user, val.UserPassword);
-                    }
-                }
-
-
-
-                await _userManager.UpdateAsync(user);
-
-                //update role
-                await UpdateRole(employee, val);
-
-                //add cho nhân viên role base
-                await UpdateBaseRole(employee);
-            }
-            else
-            {
-                if (user != null)
-                {
-                    user.Active = false;
-                    await _userManager.UpdateAsync(user);
-                }
-            }
-        }
-
-        private async Task UpdateBaseRole(Employee employee)
-        {
-            if (employee.User != null)
-            {
-                var hasBaseRole = await _userManager.IsInRoleAsync(employee.User, "BaseUser");
-                if (!hasBaseRole)
-                {
-                    //tìm base role, nếu chưa có thì tạo
-                    ApplicationRole baseRole = await _roleManager.Roles.Where(x => x.Name == "BaseUser").FirstOrDefaultAsync();
-                    if (baseRole == null)
-                    {
-                        baseRole = await _appRoleService.CreateBaseUserRole();
-
-                    }
-
-                    await _userManager.AddToRoleAsync(employee.User, baseRole.Name);
-                }
-            }
-        }
-
-        private async Task UpdateRole(Employee employee, EmployeeSave val)
-        {
-            var currentRoleNames = await this._userManager.GetRolesAsync(employee.User);
+            var currentRoleNames = await _userManager.GetRolesAsync(user);
 
             //remove all role
-            var result = await _userManager.RemoveFromRolesAsync(employee.User, currentRoleNames);
+            var result = await _userManager.RemoveFromRolesAsync(user, currentRoleNames);
             if (!result.Succeeded)
-            {
                 throw new Exception(string.Join(";", result.Errors.Select(x => x.Description)));
-            }
+
             //add role
             var idsAdd = val.RoleIds.Select(x => x.ToString()).ToList();
             var roleNamesAdd = await this._roleManager.Roles.Where(x => idsAdd.Contains(x.Id)).Include(x => x.Functions).Select(x => x.Name).ToListAsync();
-            var resultAdd = await _userManager.AddToRolesAsync(employee.User, roleNamesAdd);
+            var resultAdd = await _userManager.AddToRolesAsync(user, roleNamesAdd);
+
             if (!result.Succeeded)
-            {
                 throw new Exception(string.Join(";", result.Errors.Select(x => x.Description)));
-            }
 
             //clear cache
-            _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-permissions-{employee.UserId}");
+            _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-permissions-{user.Id}");
         }
 
-        private async Task SaveUserResGroup(ApplicationUser user)
+        private async Task AddGroupUser(ApplicationUser user)
         {
-            //get group internal user to add to user then call function add all group to user
+            //add base.group_user cho user và các group đang kế thừa base.group_user
             var groupInternalUser = await _iRModelDataService.GetRef<ResGroup>("base.group_user");
             var to_add = new List<Guid>();
             if (groupInternalUser != null)
+            {
                 to_add.Add(groupInternalUser.Id);
-            var add_dict = _resGroupService._GetTransImplied(to_add);
+                var add_dict = _resGroupService._GetTransImplied(new List<Guid>() { groupInternalUser.Id });
+                to_add = to_add.Union(add_dict[groupInternalUser.Id].Select(x => x.Id)).ToList();
+            }
 
             foreach (var group_id in to_add)
-            {
-                var rel2 = user.ResGroupsUsersRels.FirstOrDefault(x => x.GroupId == group_id);
-                if (rel2 == null)
-                    user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = group_id });
-
-                var groups = add_dict[group_id];
-                foreach (var group in groups)
-                {
-                    var rel = user.ResGroupsUsersRels.FirstOrDefault(x => x.GroupId == group.Id);
-                    if (rel == null)
-                        user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = group.Id });
-                }
-            }
-            await _userManager.UpdateAsync(user);
-            await _resGroupService.AddAllImpliedGroupsToAllUser(to_add);
+                user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = group_id });
         }
 
         private async Task UpdatePartnerToEmployee(Employee employee)
@@ -343,6 +169,7 @@ namespace TMTDentalAPI.Controllers
             var pn = employee.Partner;
             pn.Name = employee.Name;
             pn.Phone = employee.Phone;
+            pn.Email = employee.Email;
             await _partnerService.UpdateAsync(pn);
         }
 
@@ -384,9 +211,6 @@ namespace TMTDentalAPI.Controllers
                 .Include(x => x.Commission)
                 .Include(x => x.AssistantCommission)
                 .Include(x => x.CounselorCommission)
-                .Include(x => x.User.Partner)
-                .Include(x => x.User.Company)
-                .Include(x => x.User).ThenInclude(x => x.ResCompanyUsersRels).ThenInclude(x => x.Company)
                 .Include(x => x.Partner)
                 .FirstOrDefaultAsync();
 
@@ -395,22 +219,174 @@ namespace TMTDentalAPI.Controllers
 
             await _unitOfWork.BeginTransactionAsync();
 
+            var oldSurveyGroupId = employee.GroupId;
             employee = _mapper.Map(val, employee);
+
             await UpdateSalary(val, employee);
 
             await UpdateCommission(val, employee);
 
             await UpdatePartnerToEmployee(employee);
 
-            await _employeeService.UpdateResgroupForSurvey(employee);
+            ApplicationUser user = null;
+            if (!string.IsNullOrEmpty(employee.UserId))
+            {
+                user = await _userManager.Users.Where(x => x.Id == employee.UserId)
+                  .Include(x => x.Partner)
+                  .Include(x => x.ResCompanyUsersRels)
+                  .Include(x => x.ResGroupsUsersRels)
+                  .FirstOrDefaultAsync();
+            }
+
+            if (val.IsUser)
+            {
+                //ko có user thì tạo
+                if (user == null)
+                {
+                    user = await _CreateEmployeeUser(val);
+                    employee.UserId = user.Id;
+                }
+                else
+                {
+                    var userPartner = user.Partner;
+                    userPartner.Name = val.Name;
+                    userPartner.Email = val.Email;
+                    userPartner.Phone = val.Phone;
+                    await _partnerService.UpdateAsync(userPartner);
+
+                    user.Name = val.Name;
+                    user.UserName = val.UserName;
+                    user.Email = val.Email;
+                    user.PhoneNumber = val.Phone;
+                    user.CompanyId = val.UserCompanyId.Value;
+
+                    if (val.IsAllowSurvey && val.GroupId.HasValue && val.GroupId.Value != oldSurveyGroupId)
+                    {
+                        if (oldSurveyGroupId.HasValue)
+                        {
+                            var oldSurveyGroup = user.ResGroupsUsersRels.Where(x => x.GroupId == oldSurveyGroupId).FirstOrDefault();
+                            user.ResGroupsUsersRels.Remove(oldSurveyGroup);
+                        }
+
+                        if (!user.ResGroupsUsersRels.Any(x => x.GroupId == val.GroupId))
+                            user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = val.GroupId.Value });
+                        //clear rule cache
+                        _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-ir.rule-{user.Id}");
+                    }
+                    else if (!val.IsAllowSurvey && oldSurveyGroupId.HasValue)
+                    {
+                        var oldSurveyGroup = user.ResGroupsUsersRels.Where(x => x.GroupId == oldSurveyGroupId).FirstOrDefault();
+                        user.ResGroupsUsersRels.Remove(oldSurveyGroup);
+                        //clear rule cache
+                        _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-ir.rule-{user.Id}");
+                    }
+
+                    var allowedCompanyIds = val.UserCompanyIds.Union(new List<Guid>() { val.UserCompanyId.Value });
+                    user.ResCompanyUsersRels.Clear();
+                    foreach (var companyId in allowedCompanyIds)
+                        user.ResCompanyUsersRels.Add(new ResCompanyUsersRel { CompanyId = companyId });
+
+                    var updateResult = await _userManager.UpdateAsync(user);
+                    if (!updateResult.Succeeded)
+                    {
+                        if (updateResult.Errors.Any(x => x.Code == "DuplicateUserName"))
+                            throw new Exception($"Tài khoản {val.UserName} đã được sử dụng");
+                        else
+                            throw new Exception($"Cập nhật người dùng không thành công");
+                    }
+
+                    if (val.CreateChangePassword && !string.IsNullOrEmpty(val.UserPassword))
+                    {
+                        if (await _userManager.HasPasswordAsync(user))
+                        {
+                            await _userManager.RemovePasswordAsync(user);
+                            await _userManager.AddPasswordAsync(user, val.UserPassword);
+                        }
+                        else
+                        {
+                            await _userManager.AddPasswordAsync(user, val.UserPassword);
+                        }
+                    }
+
+                    await UpdateRole(user, val);
+                }
+            }
+            else
+            {
+                if (user != null)
+                {
+                    var userPartner = user.Partner;
+                    userPartner.Name = employee.Name;
+                    userPartner.Email = employee.Email;
+                    userPartner.Phone = employee.Phone;
+                    await _partnerService.UpdateAsync(userPartner);
+
+                    user.Name = employee.Name;
+                    user.Email = employee.Email;
+                    user.PhoneNumber = employee.Phone;
+                    user.CompanyId = val.UserCompanyId.Value;
+                    user.Active = false;
+                    var updateResult = await _userManager.UpdateAsync(user);
+                    if (!updateResult.Succeeded)
+                        throw new Exception($"Cập nhật người dùng không thành công");
+                }
+            }
 
             await _employeeService.UpdateAsync(employee);
-
-            await SaveUser(employee, val);
 
             _unitOfWork.Commit();
 
             return NoContent();
+        }
+
+        private async Task<ApplicationUser> _CreateEmployeeUser(EmployeeSave val)
+        {
+            var userPartner = new Partner()
+            {
+                Name = val.Name,
+                Email = val.Email,
+                CompanyId = CompanyId,
+                Phone = val.Phone,
+                Customer = false,
+            };
+
+            await _partnerService.CreateAsync(userPartner);
+
+            if (!val.UserCompanyId.HasValue)
+                throw new Exception($"Chi nhánh hiện tại không được trống");
+
+            var user = new ApplicationUser()
+            {
+                Name = val.Name,
+                Email = val.Email,
+                PhoneNumber = val.Phone,
+                UserName = val.UserName,
+                CompanyId = val.UserCompanyId.Value,
+                PartnerId = userPartner.Id,
+            };
+
+            await AddGroupUser(user);
+
+            var allowedCompanyIds = val.UserCompanyIds.Union(new List<Guid>() { val.UserCompanyId.Value });
+            foreach (var companyId in allowedCompanyIds)
+                user.ResCompanyUsersRels.Add(new ResCompanyUsersRel { CompanyId = companyId });
+
+            if (val.IsAllowSurvey && val.GroupId.HasValue)
+                user.ResGroupsUsersRels.Add(new ResGroupsUsersRel { GroupId = val.GroupId.Value });
+
+            var result = await _userManager.CreateAsync(user, val.UserPassword);
+
+            if (!result.Succeeded)
+            {
+                if (result.Errors.Any(x => x.Code == "DuplicateUserName"))
+                    throw new Exception($"Tài khoản {val.UserName} đã được sử dụng");
+                else
+                    throw new Exception(string.Join(", ", result.Errors.Select(x => x.Description)));
+            }
+
+            await UpdateRole(user, val);
+
+            return user;
         }
 
         [HttpDelete("{id}")]
