@@ -60,7 +60,7 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   @ViewChild('productCategoriesMultiSelect', { static: true }) productCategoriesMultiSelect: MultiSelectComponent;
   @ViewChild('partnerMultiSelect', { static: true }) partnerMultiSelect: MultiSelectComponent;
   @ViewChild('cardTypeCbx', { static: true }) cardTypeCbx: MultiSelectComponent;
-  status: string = 'Đang chạy';
+  statusList: string[] = [ 'Hết hạn', 'Tạm ngừng', 'Đang chạy', 'Chưa chạy', 'Lưu nháp' ];
 
   constructor(private fb: FormBuilder, private programService: SaleCouponProgramService,
     private router: Router, private route: ActivatedRoute, private notificationService: NotificationService, private partnerService: PartnerService, private memberLevelService: MemberLevelService,
@@ -450,7 +450,6 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
       }
 
       this.promoCode = result.promoCode;
-      console.log(this.program);
     });
   }
 

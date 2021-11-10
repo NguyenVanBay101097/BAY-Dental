@@ -45,36 +45,14 @@
                     </button>
                 </div>
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                    <button [disabled]="program?.statusDisplay !== 'Hết hạn'"
-                        class="btn o_arrow_button o_arrow_button_bg_primary disabled"
-                        [ngClass]="{'btn-primary': program?.statusDisplay === 'Hết hạn', 'btn-secondary': program?.statusDisplay !== 'Hết hạn'}"
-                        type="button">
-                        Hết hạn
-                    </button>
-                    <button [disabled]="program?.statusDisplay !== 'Tạm ngừng'"
-                        class="btn o_arrow_button o_arrow_button_bg_primary disabled"
-                        [ngClass]="{'btn-primary': program?.statusDisplay === 'Tạm ngừng', 'btn-secondary': program?.statusDisplay !== 'Tạm ngừng'}"
-                        type="button">
-                        Tạm ngừng
-                    </button>
-                    <button [disabled]="program?.statusDisplay !== 'Đang chạy'"
-                        class="btn o_arrow_button o_arrow_button_bg_primary disabled"
-                        [ngClass]="{'btn-primary': program?.statusDisplay === 'Đang chạy', 'btn-secondary': program?.statusDisplay !== 'Đang chạy'}"
-                        type="button">
-                        Đang chạy
-                    </button>
-                    <button [disabled]="program?.statusDisplay !== 'Chưa chạy'"
-                        class="btn o_arrow_button o_arrow_button_bg_primary disabled"
-                        [ngClass]="{'btn-primary': program?.statusDisplay === 'Chưa chạy', 'btn-secondary': program?.statusDisplay !== 'Chưa chạy'}"
-                        type="button">
-                        Chưa chạy
-                    </button>
-                    <button [disabled]="program?.statusDisplay !== 'Lưu nháp'"
-                        class="btn o_arrow_button o_arrow_button_bg_primary disabled"
-                        [ngClass]="{'btn-primary': program?.statusDisplay === 'Lưu nháp', 'btn-secondary': program?.statusDisplay !== 'Lưu nháp'}"
-                        type="button">
-                        Nháp
-                    </button>
+                    <ng-container *ngFor="let state of statusList; i as index">
+                        <button [disabled]="program?.statusDisplay !== state"
+                            class="btn o_arrow_button o_arrow_button_bg_primary disabled"
+                            [ngClass]="{'btn-primary': program?.statusDisplay === state, 'btn-secondary': program?.statusDisplay !== state}"
+                            type="button">
+                            {{state}}
+                        </button>
+                    </ng-container>
                 </div>
             </div>
             <div class="container-xxl py-3">
@@ -82,7 +60,7 @@
                     <div class="col-8">
                         <div class="o_form_sheet m-0">
                             <div class="o_not_full oe_button_box">
-                                <button class="btn oe_stat_button" (click)="showHistoryApplyPromotion()">
+                                <button class="btn oe_stat_button" (click)="showHistoryApplyPromotion()" title="Giá trị khuyễn mãi">
                                     <i class="fas fa-dollar-sign o_button_icon"></i>
                                     <div class="o_field_widget o_stat_info o_readonly_modifier">
                                         <span class="o_stat_text">
@@ -460,39 +438,6 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <!-- <div class="block_left">
-                                <div class="border bg-white">
-                                    <div class="left_header d-flex border-bottom">
-                                        <div class="left"></div>
-                                        <div class="right px-2 w-100 border-left">
-                                            <div class="d-flex justify-content-center m-auto" style="cursor: pointer;"
-                                                (click)="showHistoryApplyPromotion()">
-                                                <div class="d-flex align-items-center mr-2"><i class="fas fa-dollar-sign"></i></div>
-                                                <div>
-                                                    <div><label class="o_form_label" style="cursor: pointer;">Giá trị khuyến
-                                                            mãi</label></div>
-                                                    <div class="d-flex justify-content-center text-success"><label
-                                                            style="cursor: pointer;" class="o_form_label">
-                                                            {{program.amountTotal | number}}
-                                                        </label></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="p-2">
-                                        <div style="width:100%" class="d-flex">
-                                            <div style="width:80%" class="oe_title">
-                                               
-                                            </div>
-                                            <div class="o_form_label">Trạng thái <span class="ml-3"
-                                                    [ngClass]="getColorStatus(program.statusDisplay)">{{program.statusDisplay}}</span>
-                                            </div>
-                                        </div>
-                                    
-                                    </div>
-                                </div>
-                            </div> -->
-
                         </div>
                     </div>
                     <div class="col-4">
