@@ -36,7 +36,6 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
   formGroup: FormGroup;
   submitted = false;
   @Output() updateOrderEvent = new EventEmitter<any>();
-
   constructor(
      private saleOrderService: SaleOrderService,
      private notificationService: NotificationService,
@@ -188,6 +187,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
       amountPromotionToOrder: 0,
       amountPromotionToOrderLine: 0,
       amountDiscountTotal: 0,
+      orderPartnerId: this.saleOrder.partnerId,
       date: new Date()
     };
 
@@ -412,7 +412,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
   }
 
   onOpenLinePromotionDialog(i) {
-    var line = this.orderLines[i];
+    var line = this.orderLines[i];  
     let modalRef = this.modalService.open(SaleOrderLinePromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
     modalRef.componentInstance.saleOrderLine = line;
 
@@ -618,7 +618,6 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
 
     if (!line.id) {
       this.saleOrderLineService.create(valLine).subscribe(res => {
-        console.log(res);
         line.id = res.id;
         this.notify('success', 'Lưu thành công');
         var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);

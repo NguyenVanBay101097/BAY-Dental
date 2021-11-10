@@ -25,7 +25,6 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit, OnDestroy 
   servicePreferenceCards : any[] = [];
   cardCards : any[] = [];
   @Input() saleOrderLine: SaleOrderLineDisplay = null;
-
   private updateSubject = new Subject<any>();
 
   isChange = false;
@@ -52,7 +51,7 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit, OnDestroy 
     private cardCardService: CardCardService,
   ) { }
 
-  ngOnInit() {
+  ngOnInit() { 
     setTimeout(() => {
       this.loadDefaultPromotion();
       this.loadServiceCards();
@@ -94,7 +93,7 @@ export class SaleOrderLinePromotionDialogComponent implements OnInit, OnDestroy 
     return this.btnDeletePromoSubject.asObservable();
   }
 
-  loadDefaultPromotion() {
+  loadDefaultPromotion() { 
     this.promotionService.getPromotionBySaleOrderLine(this.saleOrderLine.productId, this.saleOrderLine.orderPartnerId).subscribe((res: any) => {
       this.autoPromotions = res;
     });
