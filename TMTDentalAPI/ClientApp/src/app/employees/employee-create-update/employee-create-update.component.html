@@ -162,7 +162,7 @@
                             <input class="custom-control-input switch" type="checkbox" formControlName="isUser" id="isUser" (change)="onChangeIsUser($event)">
                             <label class="custom-control-label" for="isUser"> Người dùng hệ thống? </label>
                         </div>
-
+                            
                         <div class="o_group mb-0" [class.d-none]="!isUser">
                             <table class="o_group o_inner_group">
                                 <tbody>
@@ -185,6 +185,7 @@
                                                 formControlName="userPassword" />
                                             <div *ngIf="createChangePassword && f.userPassword.errors && (f.userPassword.touched || f.userPassword.dirty || submitted)" class="text-danger">
                                                 <div *ngIf="f.userPassword.errors.required">Nhập mật khẩu</div>
+                                                <div *ngIf="f.userPassword.errors.minlength">Mật khẩu tối thiểu 6 kí tự</div>
                                             </div>
                                         </td>
                                     </tr>

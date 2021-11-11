@@ -263,7 +263,7 @@ namespace Infrastructure.Services
                     return null;
             }
         }
-   
+
 
         public async Task<SaleCouponProgram> CreateProgram(SaleCouponProgramSave val)
         {
@@ -334,14 +334,14 @@ namespace Infrastructure.Services
                     });
                 }
             }
-          
+
 
 
             //_CheckRuleDate(program);
             //_CheckDiscountPercentage(program);
             //_CheckRuleMinimumAmount(program);
             //_CheckRuleMinQuantity(program);
-          
+
             if (program.PromoCodeUsage == "code_needed" && !string.IsNullOrEmpty(program.PromoCode))
             {
                 await CheckAndUpdatePromoCode(program.PromoCode);
@@ -389,7 +389,7 @@ namespace Infrastructure.Services
                 message.Error = "Ngày kết thúc đang nhỏ hơn ngày bắt đầu!";
             else if (self.RuleDateFrom > self.RuleDateTo)
                 message.Error = "Ngày kết thúc đang nhỏ hơn ngày bắt đầu!";
-            else if(self.DiscountType == "percentage" && (self.DiscountPercentage < 0 || self.DiscountPercentage > 100))
+            else if (self.DiscountType == "percentage" && (self.DiscountPercentage < 0 || self.DiscountPercentage > 100))
                 message.Error = "Chiết khấu phần trăm phải từ 0-100";
             else if (self.RuleMinimumAmount < 0)
                 message.Error = "Số tiền mua tối thiểu nên lớn hơn hoặc bằng 0";
@@ -460,7 +460,7 @@ namespace Infrastructure.Services
             //_CheckDiscountPercentage(program);
             //_CheckRuleMinimumAmount(program);
             //_CheckRuleMinQuantity(program);
-            
+
             if (program.PromoCodeUsage == "code_needed" && !string.IsNullOrEmpty(program.PromoCode))
             {
                 await CheckAndUpdatePromoCode(program.PromoCode);
@@ -544,7 +544,7 @@ namespace Infrastructure.Services
             var exist = false;
             var count = await SearchQuery(x => x.PromoCodeUsage == "code_needed" && x.PromoCode == self.PromoCode).CountAsync();
             if (count >= 1)
-                exist = true;              
+                exist = true;
 
             return exist;
         }
@@ -650,7 +650,7 @@ namespace Infrastructure.Services
             var cardTypeId = await GetCardTypeId(order.PartnerId);
             if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
                 message.Error = $"Mã khuyến mãi vượt quá hạn mức áp dụng";
-            if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.DiscountMemberLevels.Any() && (!cardTypeId.HasValue || self.DiscountCardTypes.Any(x=> x.CardTypeId != cardTypeId)))
+            if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.DiscountCardTypes.Any() && (!cardTypeId.HasValue || self.DiscountCardTypes.Any(x => x.CardTypeId != cardTypeId)))
                 message.Error = $"Mã khuyến mãi không áp dụng cho hạng thành viên này hoặc chưa có hạng thành viên";
             else if ((self.RuleDateFrom.HasValue && self.RuleDateFrom.Value > order.DateOrder) || (self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() < order.DateOrder) || today > self.RuleDateTo)
                 message.Error = $"CTKM đã hết hạn.";
@@ -689,7 +689,7 @@ namespace Infrastructure.Services
             var cardTypeId = await GetCardTypeId(quotation.PartnerId);
             if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
                 message.Error = "Mã khuyến mãi vượt quá hạn mức áp dụng";
-            if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.DiscountMemberLevels.Any() && (!cardTypeId.HasValue || self.DiscountCardTypes.Any(x => x.CardTypeId != cardTypeId)))
+            if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.DiscountCardTypes.Any() && (!cardTypeId.HasValue || self.DiscountCardTypes.Any(x => x.CardTypeId != cardTypeId)))
                 message.Error = $"Mã khuyến mãi không áp dụng cho hạng thành viên này hoặc chưa có hạng thành viên";
             else if (self.DiscountApplyOn == "on_order" && self.IsApplyMinimumDiscount && self.RuleMinimumAmount > quotation.TotalAmount)
                 message.Error = $"Phiếu điều trị tối thiểu {self.RuleMinimumAmount} để có thể nhận thưởng";
@@ -700,20 +700,16 @@ namespace Infrastructure.Services
                 message.Error = "Mã đang trùng CTKM đang áp dụng";
             else if (self.DiscountApplyOn != "on_order")
                 message.Error = "Mã khuyến mãi không áp dụng trên báo giá";
-            else if ((self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() < quotation.DateQuotation) || today > self.RuleDateTo )
+            else if ((self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() < quotation.DateQuotation) || today > self.RuleDateTo)
                 // message.Error = $"Chương trình khuyến mãi {self.Name} đã hết hạn.";
                 message.Error = "Chương trình khuyến mãi đã hết hạn";
             else if (self.RuleDateFrom.HasValue && self.RuleDateFrom.Value > quotation.DateQuotation)
                 message.Error = "Mã khuyến mãi không được áp dụng trong hôm nay";
             else if (!string.IsNullOrEmpty(self.ApplyPartnerOn) && self.ApplyPartnerOn == "specific_partners" && !self.DiscountSpecificPartners.Any(x => x.PartnerId == quotation.PartnerId))
                 message.Error = "Mã khuyến mãi không áp dụng cho khách hàng này";
-            else if (!string.IsNullOrEmpty(self.ApplyPartnerOn) && self.ApplyPartnerOn == "member_levels")
+            else if (!string.IsNullOrEmpty(self.ApplyPartnerOn) && self.ApplyPartnerOn == "card_types")
             {
-                var propertyObj = GetService<IIRPropertyService>();
-                var partnerLevelProp = propertyObj.get("member_level", "res.partner", res_id: $"res.partner,{quotation.PartnerId}", force_company: quotation.CompanyId);
-                var partnerLevelValue = partnerLevelProp == null ? string.Empty : partnerLevelProp.ToString();
-                var partnerLevelId = !string.IsNullOrEmpty(partnerLevelValue) ? Guid.Parse(partnerLevelValue.Split(",")[1]) : (Guid?)null;
-                if (!self.DiscountMemberLevels.Any(x => x.MemberLevelId == partnerLevelId))
+                if (!self.DiscountCardTypes.Any(x => x.CardTypeId == cardTypeId))
                     message.Error = "Mã khuyến mãi không áp dụng cho hạng thành viên này";
             }
             else if ((quotation.Promotions.Any(x => x.SaleCouponProgramId == self.Id)))
@@ -774,7 +770,7 @@ namespace Infrastructure.Services
             var cardTypeId = await GetCardTypeId(line.OrderPartnerId.Value);
             if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
                 message.Error = $"Mã khuyến mãi vượt quá hạn mức áp dụng.";
-            if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.DiscountMemberLevels.Any() && (!cardTypeId.HasValue || self.DiscountCardTypes.Any(x => x.CardTypeId != cardTypeId)))
+            if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.DiscountCardTypes.Any() && (!cardTypeId.HasValue || self.DiscountCardTypes.Any(x => x.CardTypeId != cardTypeId)))
                 message.Error = $"Mã khuyến mãi không áp dụng cho hạng thành viên này hoặc chưa có hạng thành viên";
             else if ((self.RuleDateFrom.HasValue && self.RuleDateFrom.Value > line.Order.DateOrder))
                 message.Error = $"Mã khuyến mãi không được áp dụng trong hôm nay";
@@ -798,7 +794,7 @@ namespace Infrastructure.Services
                 message.Error = "Đang áp dụng khuyến mãi không dùng chung. Vui lòng xóa các CTKM đó";
             else if (self.NotIncremental == true && line.Promotions.Any(x => x.SaleCouponProgram != null))
                 message.Error = "Khuyến mãi này không dùng chung với CTKM khác";
-            else if (line.Promotions.Any(x=> x.ServiceCardCardId.HasValue) || line.Promotions.Any(x => x.CardCardId.HasValue))
+            else if (self.PromoCodeUsage == "no_code_needed" && (line.Promotions.Any(x => x.ServiceCardCardId.HasValue) || line.Promotions.Any(x => x.CardCardId.HasValue)))
                 message.Error = "Không thể áp dụng";
             //else
             //{
@@ -822,8 +818,8 @@ namespace Infrastructure.Services
             else if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.IsApplyDayOfWeek && !string.IsNullOrEmpty(self.Days) && !self.Days.Contains(((int)today.DayOfWeek).ToString()))
                 message.Error = $"Mã khuyến mãi không được áp dụng trong hôm nay";
             else if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
-            // message.Error = $"Mã khuyến mãi vượt quá hạn mức áp dụng.";
-            message.Error = "Mã khuyến mãi vượt quá hạn mức áp dụng";
+                // message.Error = $"Mã khuyến mãi vượt quá hạn mức áp dụng.";
+                message.Error = "Mã khuyến mãi vượt quá hạn mức áp dụng";
             else if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.DiscountCardTypes.Any() && (!cardTypeId.HasValue || self.DiscountCardTypes.Any(x => x.CardTypeId != cardTypeId)))
                 message.Error = $"Mã khuyến mãi không áp dụng cho hạng thành viên này hoặc chưa có hạng thành viên";
             else if ((self.RuleDateTo.HasValue && self.RuleDateTo.Value.AbsoluteEndOfDate() < line.Quotation.DateQuotation) || today > self.RuleDateTo)
@@ -842,13 +838,9 @@ namespace Infrastructure.Services
                 message.Error = "Mã đang trùng CTKM đang áp dụng";
             else if (!string.IsNullOrEmpty(self.ApplyPartnerOn) && self.ApplyPartnerOn == "specific_partners" && !self.DiscountSpecificPartners.Any(x => x.PartnerId == line.Quotation.PartnerId))
                 message.Error = "Mã khuyến mãi không áp dụng cho khách hàng này";
-            else if (!string.IsNullOrEmpty(self.ApplyPartnerOn) && self.ApplyPartnerOn == "member_levels")
+            else if (!string.IsNullOrEmpty(self.ApplyPartnerOn) && self.ApplyPartnerOn == "card_types")
             {
-                var propertyObj = GetService<IIRPropertyService>();
-                var partnerLevelProp = propertyObj.get("member_level", "res.partner", res_id: $"res.partner,{line.Quotation.PartnerId}", force_company: line.Quotation.CompanyId);
-                var partnerLevelValue = partnerLevelProp == null ? string.Empty : partnerLevelProp.ToString();
-                var partnerLevelId = !string.IsNullOrEmpty(partnerLevelValue) ? Guid.Parse(partnerLevelValue.Split(",")[1]) : (Guid?)null;
-                if (!self.DiscountMemberLevels.Any(x => x.MemberLevelId == partnerLevelId))
+                if (!self.DiscountCardTypes.Any(x => x.CardTypeId == cardTypeId))
                     message.Error = "Mã khuyến mãi không áp dụng cho hạng thành viên này";
             }
             else if (self.Active && self.IsPaused)
