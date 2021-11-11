@@ -74,7 +74,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.formCreate = this.fb.group({
-      name: [null, Validators.required],
+      name: [null, Validators.required, Validators.minLength(6)],
       phone: null,
       address: null,
       ref: null,

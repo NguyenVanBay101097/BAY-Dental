@@ -1,126 +1,126 @@
 <header class="modal-header">
-  <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
-  <button type="button" class="close" data-dismiss="modal" aria-label="Close" ngbAutofocus
-      (click)="activeModal.dismiss()" tabindex="-1">×</button>
-</header>
-<div class="modal-body o_act_window">
-  <form class="o_form_view" [formGroup]="formGroup">
-      <div class="o_form_sheet_bg">
-          <div class="o_form_sheet">
-              <table class="o_group o_inner_group o_group_col_12">
-                  <tbody class="w-100">
-                      <tr>
-                          <th>
-                              <h5>Thông tin cơ bản</h5>
-                          </th>
-                          <th></th>
-                      </tr>
-                      <tr>
-                          <td colspan="1" class="o_td_label">
-                              <label class="o_form_label">Khách hàng</label>
-                          </td>
-                          <td colspan="1">
-                              <span>{{receiveAppointmentDisplay.partner.name}}</span>
-                          </td>
-                      </tr>
-                      <!-- <tr *ngIf="partnerInfo">
-                          <td colspan="1" class="o_td_label">
-                              <label class="o_form_label">Số điện thoại</label>
-                          </td>
-                          <td colspan="1">
-                              {{partnerInfo.phone}}
-                          </td>
-                      </tr> -->
-                      <tr>
-                          <td colspan="1" class="o_td_label">
-                              <label class="o_form_label">Bác sĩ</label>
-                          </td>
-                          <td colspan="1">
-                              <kendo-combobox formControlName="doctor" [filterable]="true" [data]="filteredEmployees"
-                                  #doctorCbx [valueField]="'id'" [textField]="'name'">
-                              </kendo-combobox>
-                              <div *ngIf="f.doctor.errors && (f.doctor.touched || f.doctor.dirty || submitted)"
-                                  class="text-danger">
-                                  <div *ngIf="f.doctor.errors.required">Chọn bác sĩ</div>
-                              </div>
-                          </td>
-                      </tr>
-                      <tr>
-                          <td colspan="1" class="o_td_label">
-                              <label class="o_form_label">Giờ tiếp nhận</label>
-                          </td>
-                          <td colspan="1">
-                              <div class="d-flex justify-content-between">
-                                  <div class="mr-2 ">
-                                      <kendo-timepicker formControlName="dateObj" format="HH:mm"></kendo-timepicker>
-                                      <div *ngIf="f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)"
-                                          class="text-danger">
-                                          <div *ngIf="f.dateObj.errors.required">Chọn giờ tiếp nhận</div>
-                                      </div>
-                                  </div>
-                                  <div class="d-flex">
-                                      <span class="mr-1 text-time p-1" style="width: 100px;">Dự kiến</span>
-                                      <!-- <input type="number" class="form-control" formControlName="timeExpected"
-                                          [min]="0"> -->
-                                      <kendo-numerictextbox [min]="0" [format]="'n0'" [spinners]="false"
-                                          [autoCorrect]="true" formControlName="timeExpected">
-                                      </kendo-numerictextbox>
-                                      <span class="mr-1 text-time p-1">Phút</span>
-                                  </div>
-                              </div>
-
-                          </td>
-                      </tr>
-                      <tr>
-                          <th>
-                              <h5>Thông tin nâng cao</h5>
-                          </th>
-                          <th></th>
-                      </tr>
-                      <tr>
-                          <td colspan="1"></td>
-                          <td colspan="1">
-                              <div class="form-check">
-                                  <input type="checkbox" class="form-check-input" id="exampleCheck1"
-                                      formControlName="isRepeatCustomer" >
-                                  <label class="form-check-label" for="exampleCheck1">Khách tái khám</label>
-                              </div>
-                          </td>
-                      </tr>
-                      <tr>
-                          <td colspan="1" class="o_td_label">
-                              <label class="o_form_label">Dịch vụ</label>
-                          </td>
-                          <td colspan="1">
-                              <kendo-multiselect [data]="filteredServices" [valueField]="'id'"
-                                  [textField]="'name'" [placeholder]="'Chọn dịch vụ'" formControlName="services"
-                                  [filterable]="true" #serviceMultiSelect  >
-                                  <!-- <ng-template kendoMultiSelectTagTemplate let-dataItem>
-                                      <div class="template">
-                                          <span [title]="dataItem.name">{{dataItem.name}}</span>
-                                      </div>
-                                  </ng-template> -->
-                              </kendo-multiselect>
-                          </td>
-                      </tr>
-                      <tr>
-                          <td colspan="1" class="o_td_label">
-                              <label class="o_form_label">Nội dung</label>
-                          </td>
-                          <td colspan="1">
-                              <textarea  class="form-control" rows="3" formControlName="note"
-                                  [placeholder]="'Nhập nội dung'" ></textarea>
-                          </td>
-                      </tr>
-                  </tbody>
-              </table>
-          </div>
-      </div>
-  </form>
-</div>
-<div class="modal-footer">
-  <button type="button" class="btn btn-primary mr-2" accesskey="s" (click)="onSave()">
-      Lưu</button>
-  <button type="button" class="btn btn-secondary mr-2" accesskey="q" (click)="activeModal.dismiss()">
-      Đóng</button>
-</div>
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ngbAutofocus
+        (click)="activeModal.dismiss()" tabindex="-1">×</button>
+  </header>
+  <div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <table class="o_group o_inner_group o_group_col_12">
+                    <tbody class="w-100">
+                        <tr>
+                            <th>
+                                <h5>Thông tin cơ bản</h5>
+                            </th>
+                            <th></th>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Khách hàng</label>
+                            </td>
+                            <td colspan="1">
+                                <span>{{receiveAppointmentDisplay.partner.name}}</span>
+                            </td>
+                        </tr>
+                        <tr *ngIf="receiveAppointmentDisplay.partner">
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Số điện thoại</label>
+                            </td>
+                            <td colspan="1">
+                                {{receiveAppointmentDisplay.partner?.phone}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Bác sĩ</label>
+                            </td>
+                            <td colspan="1">
+                                <kendo-combobox formControlName="doctor" [filterable]="true" [data]="filteredEmployees"
+                                    #doctorCbx [valueField]="'id'" [textField]="'name'">
+                                </kendo-combobox>
+                                <div *ngIf="f.doctor.errors && (f.doctor.touched || f.doctor.dirty || submitted)"
+                                    class="text-danger">
+                                    <div *ngIf="f.doctor.errors.required">Chọn bác sĩ</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Giờ tiếp nhận</label>
+                            </td>
+                            <td colspan="1">
+                                <div class="d-flex justify-content-between">
+                                    <div class="mr-2 ">
+                                        <kendo-timepicker formControlName="dateObj" format="HH:mm"></kendo-timepicker>
+                                        <div *ngIf="f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)"
+                                            class="text-danger">
+                                            <div *ngIf="f.dateObj.errors.required">Chọn giờ tiếp nhận</div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex">
+                                        <span class="mr-1 text-time p-1" style="width: 100px;">Dự kiến</span>
+                                        <!-- <input type="number" class="form-control" formControlName="timeExpected"
+                                            [min]="0"> -->
+                                        <kendo-numerictextbox [min]="0" [format]="'n0'" [spinners]="false"
+                                            [autoCorrect]="true" formControlName="timeExpected">
+                                        </kendo-numerictextbox>
+                                        <span class="mr-1 text-time p-1">Phút</span>
+                                    </div>
+                                </div>
+  
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <h5>Thông tin nâng cao</h5>
+                            </th>
+                            <th></th>
+                        </tr>
+                        <tr>
+                            <td colspan="1"></td>
+                            <td colspan="1">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="exampleCheck1"
+                                        formControlName="isRepeatCustomer" >
+                                    <label class="form-check-label" for="exampleCheck1">Khách tái khám</label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Dịch vụ</label>
+                            </td>
+                            <td colspan="1">
+                                <kendo-multiselect [data]="filteredServices" [valueField]="'id'"
+                                    [textField]="'name'" [placeholder]="'Chọn dịch vụ'" formControlName="services"
+                                    [filterable]="true" #serviceMultiSelect  >
+                                    <!-- <ng-template kendoMultiSelectTagTemplate let-dataItem>
+                                        <div class="template">
+                                            <span [title]="dataItem.name">{{dataItem.name}}</span>
+                                        </div>
+                                    </ng-template> -->
+                                </kendo-multiselect>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Nội dung</label>
+                            </td>
+                            <td colspan="1">
+                                <textarea  class="form-control" rows="3" formControlName="note"
+                                    [placeholder]="'Nhập nội dung'" ></textarea>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary mr-2" accesskey="s" (click)="onSave()">
+        Lưu</button>
+    <button type="button" class="btn btn-secondary mr-2" accesskey="q" (click)="activeModal.dismiss()">
+        Đóng</button>
+  </div>

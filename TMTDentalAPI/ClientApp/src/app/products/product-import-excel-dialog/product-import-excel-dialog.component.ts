@@ -39,7 +39,6 @@ export class ProductImportExcelDialogComponent implements OnInit {
   }
 
   onSave() {
-    debugger
     if (!this.correctFormat){
       this.notify('error','File import sai định dạng. Vui lòng tải file mẫu và nhập dữ liệu đúng');
       return;
