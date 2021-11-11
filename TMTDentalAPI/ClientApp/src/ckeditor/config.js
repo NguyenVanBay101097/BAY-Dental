@@ -24,6 +24,6 @@ CKEDITOR.editorConfig = function (config) {
 
 	config.removeButtons = 'Save,ExportPdf,Preview,Templates,Find,Replace,Scayt,Flash,Smiley,PageBreak,Iframe,CopyFormatting,RemoveFormat,Blockquote,JustifyBlock,Language,Form,Radio,Checkbox,TextField,Textarea,Select,Button,ImageButton,HiddenField,Link,Unlink,Anchor,About,Maximize,NewPage,Print,Cut,Copy,Paste,PasteText,PasteFromWord,Undo,Redo,SelectAll,Strike,BidiLtr,BidiRtl';
 	config.removePlugins = 'divarea';
-	config.contentsCss = ['/css/print.css', CKEDITOR.basePath + 'content.config.css'];
+	config.contentsCss = ['/assets/css/print.css', CKEDITOR.basePath + 'content.config.css'];
 	config.bodyClass = 'container';
 };
