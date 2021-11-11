@@ -501,7 +501,7 @@ namespace Infrastructure.Services
                 }
                 await accessObj.CreateAsync(accessDict.Values);
             }
-            await InsertAccesses(module: "sale");
+            //await InsertAccesses(module: "sale");
 
             modelDataList.AddRange(GetModelData(groupDict, "res.groups"));
             modelDataList.AddRange(GetModelData(ruleDict, "ir.rule"));
