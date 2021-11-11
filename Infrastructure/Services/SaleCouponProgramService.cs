@@ -819,6 +819,8 @@ namespace Infrastructure.Services
             var cardTypeId = await GetCardTypeId(line.Quotation.PartnerId);
             if (self.DiscountApplyOn == "on_order")
                 message.Error = "Mã khuyến mãi không áp dụng cho dịch vụ";
+            else if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.IsApplyDayOfWeek && !string.IsNullOrEmpty(self.Days) && !self.Days.Contains(((int)today.DayOfWeek).ToString()))
+                message.Error = $"Mã khuyến mãi không được áp dụng trong hôm nay";
             else if (!string.IsNullOrEmpty(self.PromoCode) && self.PromoCodeUsage == "code_needed" && self.MaximumUseNumber != 0 && countApplied >= self.MaximumUseNumber)
             // message.Error = $"Mã khuyến mãi vượt quá hạn mức áp dụng.";
             message.Error = "Mã khuyến mãi vượt quá hạn mức áp dụng";
