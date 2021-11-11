@@ -61,7 +61,7 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr *ngIf="!partnerId">
+                        <tr [class.d-none]="partnerId">
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label">Khách hàng</label>
                             </td>
