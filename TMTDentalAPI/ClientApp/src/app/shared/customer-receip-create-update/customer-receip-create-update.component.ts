@@ -373,7 +373,6 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
   }
 
   loadDefault() {
-    
     //default
     this.customerReceipt = <CustomerReceiptDisplay>{
       state: 'waiting'
@@ -382,14 +381,12 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     if (this.appointId) {
       this.dashboardReportService.getDefaultCustomerReceipt(this.appointId).subscribe(
         (rs: any) => {
+          this.formGroup.get('partner').setValue(rs.partner);
+          this.onChangePartner();
+
           if (rs.doctor) {
             this.formGroup.get('doctor').setValue(rs.doctor);
             this.filteredEmployees = _.unionBy(this.filteredEmployees, [rs.doctor], 'id');
-          }
-          
-          if (rs.partner) {
-            this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [rs.partner], 'id');
-            this.onChangePartner();
           }
 
           if (rs.services) {

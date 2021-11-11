@@ -142,7 +142,6 @@ export class SalePromotionProgramListComponent implements OnInit {
     ).subscribe(res => {
       this.gridData = res;
       this.loading = false;
-      console.log(this.gridData);
     }, err => {
       console.log(err);
       this.loading = false;

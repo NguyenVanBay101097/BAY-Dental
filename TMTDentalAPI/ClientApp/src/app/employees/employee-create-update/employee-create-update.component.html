@@ -185,7 +185,6 @@
                                                 formControlName="userPassword" />
                                             <div *ngIf="createChangePassword && f.userPassword.errors && (f.userPassword.touched || f.userPassword.dirty || submitted)" class="text-danger">
                                                 <div *ngIf="f.userPassword.errors.required">Nhập mật khẩu</div>
-                                                <div *ngIf="f.userPassword.errors.minlength">Mật khẩu tối thiểu 6 kí tự</div>
                                             </div>
                                         </td>
                                     </tr>

@@ -22,10 +22,11 @@
         <div class="o_content">
             <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings"
                 [loading]="loading" (pageChange)="pageChange($event)">
-                <ng-template kendoGridDetailTemplate let-dataItem let-rowIndex="rowIndex"
-                *ngIf="showOnlyBeveragesDetails">
-                    <app-labo-warranty-detail-list [item]="dataItem"></app-labo-warranty-detail-list>
-                </ng-template>            
+                <div *kendoGridDetailTemplate="let dataItem">
+                    <div  *appPermission="['Labo.LaboWarranty.Read']">
+                        <app-labo-warranty-detail-list  [item]="dataItem"></app-labo-warranty-detail-list>
+                    </div>                 
+                </div>
                 <kendo-grid-column field="name" title="Phiếu Labo" width="100">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                         <a class="text-primary" (click)="editItem(dataItem)"> {{dataItem.name}}</a>

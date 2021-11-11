@@ -167,12 +167,6 @@ export class PartnerCustomerLaboOrdersComponentComponent implements OnInit {
 
   checkRole() {
     this.canUpdateSaleOrder = this.checkPermissionService.check(['Basic.SaleOrder.Update']);
-   
+    this.canReadLaboWarranty = this.checkPermissionService.check(['Labo.LaboWarranty.Read']);
   }
-
-  get showOnlyBeveragesDetails() {
-    var isShow = this.checkPermissionService.check(['Labo.LaboWarranty.Read']);
-    return isShow === true;
-  }
-
 }

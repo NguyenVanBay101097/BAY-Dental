@@ -115,9 +115,4 @@ export class LaboWarrantyDetailListComponent implements OnInit {
     this.canUpdate = this.checkPermissionService.check(['Labo.LaboWarranty.Update']);
     this.canDelete = this.checkPermissionService.check(['Labo.LaboWarranty.Delete']);
   }
-
-  get showOnlyBeveragesCreate() {
-    var isShow = this.checkPermissionService.check(['Labo.LaboWarranty.Create']);
-    return isShow === true;
-  }
 }

@@ -1165,7 +1165,7 @@ html .o_web_client {
 }
 
 .o_form_view .o_form_statusbar>.o_statusbar_status>.o_arrow_button.o_arrow_button_bg_primary:not(:first-child):before {
-    right: -10px;
+    right: -11px;
     border-left-color: white !important;
 }
 
@@ -2279,6 +2279,30 @@ kendo-pager-page-sizes select{
 
 .text-title-1 {
     color: #0B92F3;
+}
+
+.container,
+.container-fluid,
+.container-xxl,
+.container-xl,
+.container-lg,
+.container-md,
+.container-sm {
+  width: 100%;
+  padding-right: 0.75rem;
+  padding-left: 0.75rem;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.row {
+    --bs-gutter-x: 1.5rem;
+    --bs-gutter-y: 0;
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: calc(var(--bs-gutter-y) * -1);
+    margin-right: calc(var(--bs-gutter-x) * -.5);
+    margin-left: calc(var(--bs-gutter-x) * -.5);
 }
 
 

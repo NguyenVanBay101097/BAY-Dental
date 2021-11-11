@@ -3,7 +3,7 @@
         <h6 class="mb-0">Lịch sử bảo hành</h6>
     </div>
     <div class="card-body p-2">
-        <button *ngIf="showOnlyBeveragesCreate" type="button" class="btn btn-primary mb-2" (click)="createNewWarranty()">
+        <button *ngIf="canAdd" type="button" class="btn btn-primary mb-2" (click)="createNewWarranty()">
             <i class="fas fa-plus-circle text-white"></i>
             <span> Tạo phiếu bảo hành </span>
         </button>
