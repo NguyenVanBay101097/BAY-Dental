@@ -83,7 +83,7 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
     val.dateFrom = this.dateFrom ? this.intl.formatDate(this.dateFrom, 'yyyy-MM-ddTHH:mm:ss') : null;
     val.dateTo = this.dateFrom ? this.intl.formatDate(this.dateTo, 'yyyy-MM-ddTHH:mm:ss') : null;
     val.groupBy = 'agent';
-    val.commissionDisplay = this.IscommissionDisplay == false ? 'greater_than_zero' : 'equals_zero';
+    val.commissionDisplay = this.IscommissionDisplay == false ? 'greater_than_zero' : '';
     this.commissionSettlementsService.getReportDetail(val).subscribe((res: any) => {
       this.items = res.items;
       this.loadItems(this.items);

@@ -84,7 +84,7 @@ export class CommissionSettlementAgentReportDetailComponent implements OnInit {
     val.dateTo = this.dateFrom ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-ddTHH:mm:ss') : null;
     val.groupBy = 'agent';
     val.classify = this.agentType;
-    val.commissionDisplay = this.IscommissionDisplay == false ? 'greater_than_zero' : 'equals_zero';
+    val.commissionDisplay = this.IscommissionDisplay == false ? 'greater_than_zero' : '';
     this.commissionSettlementService.getReportDetail(val).pipe(
       map((res: any) => <GridDataResult>{
         data: res.items,

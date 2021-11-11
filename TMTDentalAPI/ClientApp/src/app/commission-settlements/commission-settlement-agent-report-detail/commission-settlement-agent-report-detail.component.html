@@ -25,11 +25,31 @@
         </div>
     </div>
     <div class="o_cp_t_left flex-wrap">
-        <div class="form-check pl-0 d-flex">
-            <div class="mr-3" for="commissionDisplay">
-                <label class="form-check-label label_checkbox" for="IscommissionDisplay">
-                    Hiển thị các khoản thu dịch vụ không tính hoa hồng
+        <div class="d-flex">
+            <div class="form-check mr-2">
+                <input class="form-check-input" type="checkbox" (change)="checkCommissionDisplay($event)"
+                    formControlName="IscommissionDisplay" id="IscommissionDisplay">
+                <label class="form-check-label" for="IscommissionDisplay">
+                   <strong>Hiển thị các khoản thu dịch vụ không tính hoa hồng</strong> 
                 </label>
+            </div>
+            <div class="icon-hover">
+                <i class="fas fa-info-circle text-primary" triggers="mouseenter:mouseleave"
+                    placement="top" [autoClose]="true" [ngbPopover]="popContent"></i>
+            </div>
+            <ng-template #popContent>
+                Các khoản thu của dịch vụ có tỉ lệ % hoa hồng là 0%
+            </ng-template>
+        </div>
+
+        <!-- <div class="form-check pl-0 d-flex">
+            <label class="form-check-label label_checkbox" for="IscommissionDisplay">
+                Hiển thị các khoản thu dịch vụ không tính hoa hồng
+            </label>
+            <input class="form-check-input ml-2" type="checkbox" (change)="checkCommissionDisplay($event)"
+            id="IscommissionDisplay">
+            <div class="mr-3" for="commissionDisplay">
+             
             </div>
             <div>
                 <div class="icon-hover mr-2">
@@ -41,10 +61,9 @@
                 </ng-template>
             </div>
             <div>
-                <input class="form-check-input ml-2" type="checkbox" (change)="checkCommissionDisplay($event)"
-                    id="IscommissionDisplay">
+               
             </div>
-        </div>
+        </div> -->
     </div>
     <div class="o_cp_t_right"></div>
 </div>
