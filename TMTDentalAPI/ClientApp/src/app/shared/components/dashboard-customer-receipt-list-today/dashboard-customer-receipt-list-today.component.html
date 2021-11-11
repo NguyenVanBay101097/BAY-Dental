@@ -11,7 +11,7 @@
                     </button>
                 </div>
                 <div class="mr-2 mb-2">
-                    <kendo-combobox [filterable]="true" (filterChange)="onEmployeeFilter($event.target.value)"
+                    <kendo-combobox [filterable]="true" (filterChange)="onEmployeeFilter($event)"
                         (selectionChange)="onChangeDoctor($event)" [data]="filteredEmployeesDoctor" [textField]="'name'"
                         #employeeCbx [valueField]="'id'" placeholder="Lọc theo bác sĩ">
                     </kendo-combobox>

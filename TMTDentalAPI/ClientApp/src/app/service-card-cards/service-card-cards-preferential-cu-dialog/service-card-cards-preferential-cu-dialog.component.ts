@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
@@ -16,12 +16,12 @@ import { ServiceCardCardService } from '../service-card-card.service';
   templateUrl: './service-card-cards-preferential-cu-dialog.component.html',
   styleUrls: ['./service-card-cards-preferential-cu-dialog.component.css']
 })
-export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
+export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit, AfterViewInit {
   @Input() title: string;
   @Input() id: string;
   partnerId: string;
   partnerDisable = false;
-  @ViewChild('customerCbx', { static: true }) customerCbx: ComboBoxComponent;
+  @ViewChild('customerCbx', { static: false }) customerCbx: ComboBoxComponent;
   @ViewChild('cardTypeCbx', { static: true }) cardTypeCbx: ComboBoxComponent;
 
 
@@ -74,6 +74,23 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
     this.loadCustomers();
     this.loadCardTypes();
   }
+
+  ngAfterViewInit(): void {
+    this.customerCbxFilterChange();
+  }
+
+  customerCbxFilterChange() {
+    this.customerCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.customerCbx.loading = true)),
+      switchMap((value) => this.searchCustomers(value))
+    ).subscribe((result) => {
+      console.log(result);
+      this.customerSimpleFilter = result;
+      this.customerCbx.loading = false;
+    });
+  }
+
 
   setValueFC(key: string, value: any) {
     this.formGroup.controls[key].setValue(value);
@@ -162,7 +179,7 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit {
           this.activeModal.close('activate');
         })
       }, (error) => { console.log(error) });
-      
+
     }
     else {
       this.serviceCardsService.create(val).subscribe((res: any) => {

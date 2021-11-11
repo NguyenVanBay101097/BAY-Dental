@@ -79,7 +79,7 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
 
   ngOnInit() {
     this.pickingForm = this.fb.group({
-      partner: [null, Validators.required],
+      partner: [null],
       dateObj: new Date(),
       note: null,
       moveLines: this.fb.array([]),
