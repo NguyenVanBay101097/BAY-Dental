@@ -118,7 +118,7 @@ namespace Infrastructure.Data
             if (orderBy != null)
                 query = orderBy(query);
 
-            if (isPagingEnabled)
+            if (limit > 0)
                 query = query.Skip(offSet).Take(limit);
           
             return query;
