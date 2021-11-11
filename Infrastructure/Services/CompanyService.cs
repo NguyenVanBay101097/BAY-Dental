@@ -1079,7 +1079,7 @@ namespace Infrastructure.Services
                         else if (field_name == "model")
                         {
                             printTemplate.Model = field.InnerText;
-                        }                      
+                        }
 
                     }
                     print_template_dict.Add(id, printTemplate);
@@ -1260,7 +1260,7 @@ namespace Infrastructure.Services
                 }
                 await accessObj.CreateAsync(accessDict.Values);
             }
-            await InsertAccesses();
+            //await InsertAccesses();
         }
 
         public async Task Unlink(Company self)
