@@ -97,7 +97,7 @@ export class DiscountPricePopoverComponent implements OnInit {
       let data = window.URL.createObjectURL(newBlob);
       let link = document.createElement("a");
       link.href = data;
-      link.download = this.name;
+      link.download = 'ChiTietApDung_CTKM';
       link.click();
       setTimeout(() => {
         // For Firefox it is necessary to delay revoking the ObjectURL

@@ -347,11 +347,12 @@ namespace Infrastructure.Services
                 await CheckAndUpdatePromoCode(program.PromoCode);
             }
 
+            await CreateAsync(program);
+
             var error_status = await CheckConditionCreateUpdatePromo(program);
             if (!string.IsNullOrEmpty(error_status.Error))
                 throw new Exception(error_status.Error);
 
-            await CreateAsync(program);
             //await _CheckPromoCodeConstraint(program);
             return program;
         }
@@ -386,8 +387,8 @@ namespace Infrastructure.Services
             var message = new CheckPromoCodeMessage();
             var is_exist = await _CheckPromoCodeConstraint(self);
             if (is_exist)
-                message.Error = "Ngày kết thúc đang nhỏ hơn ngày bắt đầu!";
-            else if (self.RuleDateFrom > self.RuleDateTo)
+                message.Error = $"Đã tồn tại CTKM mới mã {self.PromoCode}";
+            else if (self.RuleDateFrom.HasValue && self.RuleDateTo.HasValue && self.RuleDateFrom.Value.AbsoluteBeginOfDate() > self.RuleDateTo.Value.AbsoluteEndOfDate())
                 message.Error = "Ngày kết thúc đang nhỏ hơn ngày bắt đầu!";
             else if (self.DiscountType == "percentage" && (self.DiscountPercentage < 0 || self.DiscountPercentage > 100))
                 message.Error = "Chiết khấu phần trăm phải từ 0-100";
@@ -466,11 +467,12 @@ namespace Infrastructure.Services
                 await CheckAndUpdatePromoCode(program.PromoCode);
             }
 
+            await UpdateAsync(program);
+
             var error_status = await CheckConditionCreateUpdatePromo(program);
             if (!string.IsNullOrEmpty(error_status.Error))
                 throw new Exception(error_status.Error);
 
-            await UpdateAsync(program);
             //await _CheckPromoCodeConstraint(program);
 
             if (program.Coupons.Any())
@@ -543,7 +545,7 @@ namespace Infrastructure.Services
         {
             var exist = false;
             var count = await SearchQuery(x => x.PromoCodeUsage == "code_needed" && x.PromoCode == self.PromoCode).CountAsync();
-            if (count >= 1)
+            if (count >= 2)
                 exist = true;
 
             return exist;

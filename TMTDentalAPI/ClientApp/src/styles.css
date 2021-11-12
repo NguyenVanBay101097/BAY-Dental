@@ -335,6 +335,7 @@ select {
     -webkit-box-flex: 1;
     flex: 1 0 auto;
     border: none;
+    outline: none;
 }
 
 .o_searchview {
@@ -363,6 +364,7 @@ select {
     border-image: initial;
     padding: .375rem 0;
     background: none;
+    outline: none;
 }
 
 .o_searchview .o_searchview_icon {
