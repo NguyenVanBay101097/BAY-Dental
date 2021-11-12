@@ -381,6 +381,35 @@ namespace Infrastructure.Services
             return phieu.Partner;
         }
 
+        public async Task<PhieuThuChiDisplay> GetCommissionPaymentByAgentId(GetCommissionPaymentByAgentIdReq val)
+        {
+            var journalObj = GetService<IAccountJournalService>();
+            var agentObj = GetService<IAgentService>();
+            var commissionSettlementObj = GetService<ICommissionSettlementService>();
+
+            var totalDebitAgent = await agentObj.GetAmountDebitTotalAgent(val.AgentId,CompanyId,null,null);          
+            var totalBaseAgent = await commissionSettlementObj.SearchQuery(x => x.AgentId.HasValue && x.AgentId == val.AgentId).SumAsync(x => x.BaseAmount);
+
+            if (totalBaseAgent < 0)
+                throw new Exception("Tiền hoa hồng bằng 0, không thể chi hoa hồng");
+
+            if(totalBaseAgent == totalDebitAgent.AmountDebitTotal)
+                throw new Exception("Tiền hoa hồng đã thanh toán đủ");
+
+            if (totalDebitAgent.AmountDebitTotal > totalBaseAgent)
+                throw new Exception("Không thể chi hoa hồng");
+
+            var res = new PhieuThuChiDisplay();
+            res.Date = DateTime.Now;
+            res.Type = val.Type;
+            res.CompanyId = CompanyId;
+            var journal = await journalObj.SearchQuery(x => x.CompanyId == CompanyId && x.Type == "cash").FirstOrDefaultAsync();
+            res.Journal = _mapper.Map<AccountJournalSimple>(journal);
+            res.IsAccounting = false;
+
+            return res;
+        }
+
         /// <summary>
         /// hủy phiếu
         /// </summary>
@@ -451,6 +480,7 @@ namespace Infrastructure.Services
 
             return res;
         }
+
 
         public async Task InsertModelsIfNotExists()
         {

@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { AgentService, TotalAmountAgentFilter } from 'src/app/agents/agent.service';
 import { AuthService } from 'src/app/auth/auth.service';
+import { PhieuThuChiService } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { NotifyService } from 'src/app/shared/services/notify.service';
 import { CommissionSettlementAgentPaymentDialogComponent } from '../../commission-settlement-agent-payment-dialog/commission-settlement-agent-payment-dialog.component';
@@ -47,6 +48,7 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
     private authService: AuthService,
     private agentService: AgentService,
     private notifyService: NotifyService,
+    private phieuThuChiService: PhieuThuChiService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -144,19 +146,22 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
   }
 
   actionPayment() {
-    const modalRef = this.modalService.open(CommissionSettlementAgentPaymentDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Chi hoa hồng';
-    modalRef.componentInstance.type = 'chi';
-    modalRef.componentInstance.accountType = 'commission';
-    modalRef.componentInstance.agentId = this.agentId;
-    modalRef.componentInstance.amountBalanceTotal = this.totalAmountAgent.totalComissionAmount - this.amountDebit.amountDebitTotal;
-    modalRef.componentInstance.partnerId = this.agentObj ? this.agentObj.partnerId : null;
-    modalRef.result.then(() => {
-      this.notifyService.notify('success', 'Thanh toán thành công');
-      this.loadDataFromApi();
-      this.loadAmountDebitTotalAgent();
-      this.loadSumAmountTotal();
-    }, er => { })
+    this.phieuThuChiService.getCommissionPaymentByAgentId({agentId: this.agentId , type:'agent'}).subscribe(res => {
+      const modalRef = this.modalService.open(CommissionSettlementAgentPaymentDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = 'Chi hoa hồng';
+      modalRef.componentInstance.type = 'chi';
+      modalRef.componentInstance.accountType = 'commission';
+      modalRef.componentInstance.agentId = this.agentId;
+      modalRef.componentInstance.amountBalanceTotal = this.totalAmountAgent.totalComissionAmount - this.amountDebit.amountDebitTotal;
+      modalRef.componentInstance.partnerId = this.agentObj ? this.agentObj.partnerId : null;
+      modalRef.result.then(() => {
+        this.notifyService.notify('success', 'Thanh toán thành công');
+        this.loadDataFromApi();
+        this.loadAmountDebitTotalAgent();
+        this.loadSumAmountTotal();
+      }, er => { })
+    });
+    
   }
 
   exportExcelFile() {

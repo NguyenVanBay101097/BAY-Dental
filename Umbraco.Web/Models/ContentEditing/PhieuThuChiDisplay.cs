@@ -90,4 +90,10 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public string Type { get; set; }
     }
+
+    public class GetCommissionPaymentByAgentIdReq
+    {
+        public Guid AgentId { get; set; }
+        public string Type { get; set; }
+    }
 }
