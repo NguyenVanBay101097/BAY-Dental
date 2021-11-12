@@ -74,7 +74,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.formCreate = this.fb.group({
-      name: [null, Validators.required, Validators.minLength(6)],
+      name: [null, Validators.required],
       phone: null,
       address: null,
       ref: null,
@@ -234,7 +234,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
 
   onChangeCreateChangePassword(e) {
     if (this.createChangePassword) {
-      this.formCreate.get('userPassword').setValidators([Validators.required]);
+      this.formCreate.get('userPassword').setValidators([Validators.required, Validators.minLength(6)]);
       this.formCreate.get('userPassword').updateValueAndValidity();
       this.f.userPassword.markAsDirty();
     } else {
@@ -268,7 +268,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       this.formCreate.get('userName').setValidators([Validators.required]);
       this.formCreate.get('userName').updateValueAndValidity();
 
-      this.formCreate.get('userPassword').setValidators([Validators.required]);
+      this.formCreate.get('userPassword').setValidators([Validators.required, Validators.minLength(6)]);
       this.formCreate.get('userPassword').updateValueAndValidity();
       this.formCreate.get('createChangePassword').setValue(true);
 
