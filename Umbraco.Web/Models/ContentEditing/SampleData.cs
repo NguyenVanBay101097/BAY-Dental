@@ -253,7 +253,6 @@ namespace Umbraco.Web.Models.ContentEditing
     public class LaboOrderXmlSampleDataRecord
     {
         public string Id { get; set; }
-        public string Name { get; set; }
         public string PartnerId { get; set; }
         public int DateRound { get; set; } // để set date.now - this
         public string ProductId { get; set; }
@@ -298,7 +297,6 @@ namespace Umbraco.Web.Models.ContentEditing
     public class AppointmentXmlSampleDataRecord
     {
         public string Id { get; set; }
-        public string Name { get; set; }
         public string PartnerId { get; set; }
         public int DateRound { get; set; } // để set date.now - this
         public string Reason { get; set; }
@@ -306,6 +304,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool IsRepeatCustomer { get; set; }
         public string DoctorId { get; set; }
         public string SaleOrderId { get; set; }
+        public string State { get; set; }
 
         [XmlArray("AppointmentServices")]
         [XmlArrayItem("Record")]
@@ -359,10 +358,8 @@ namespace Umbraco.Web.Models.ContentEditing
     public class PurchaseOrderXmlSampleDataRecord
     {
         public string Id { get; set; }
-        public string Name { get; set; }
         public string PartnerId { get; set; }
         public string PickingTypeId { get; set; }
-        public decimal? AmountTotal { get; set; }
         public string JournalId { get; set; }
         public int DateRound { get; set; } // để set date.now - this
         [XmlArray("OrderLines")]
@@ -377,9 +374,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal ProductQty { get; set; }
         public string ProductUOMId { get; set; }
         public string ProductId { get; set; }
-        public decimal? PriceSubtotal { get; set; }
-        public decimal? PriceTotal { get; set; }
-        public string PartnerId { get; set; }
         public decimal PriceUnit { get; set; }
     }
 
@@ -389,8 +383,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Id { get; set; }
         public string PartnerId { get; set; }
         public string PickingTypeId { get; set; }
-        public string LocationId { get; set; }
-        public string LocationDestId { get; set; }
         public int DateRound { get; set; } // để set date.now - this
         [XmlArray("OrderLines")]
         [XmlArrayItem("Record")]
@@ -402,14 +394,11 @@ namespace Umbraco.Web.Models.ContentEditing
     public class StockMoveXmlSampleDataRecord
     {
         public string Name { get; set; }
-        public string PickingTypeId { get; set; }
         public string PartnerId { get; set; }
         public decimal ProductUOMQty { get; set; }
         public decimal? ProductQty { get; set; }
         public string ProductUOMId { get; set; }
         public string ProductId { get; set; }
-        public string LocationId { get; set; }
-        public string LocationDestId { get; set; }
         public double? PriceUnit { get; set; }
         public int DateRound { get; set; } // để set date.now - this
     }
