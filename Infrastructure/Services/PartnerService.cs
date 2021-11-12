@@ -2205,6 +2205,7 @@ namespace Infrastructure.Services
             var accObj = GetService<IAccountAccountService>();
             var irProperyObj = GetService<IIRPropertyService>();
             var cardCardObj = GetService<ICardCardService>();
+            var serviceCardCardObj = GetService<IServiceCardCardService>();
 
             var companyId = CompanyId;
             var partnerOrderStateQr = from v in saleOrderObj.SearchQuery(x => x.CompanyId == companyId)
@@ -2239,7 +2240,7 @@ namespace Infrastructure.Services
             var irPropertyQr = from ir in irProperyObj.SearchQuery(x => x.Name == "member_level" && x.Field.Model == "res.partner" && x.CompanyId == companyId)
                                select ir;
 
-            var cardCardQr = from card in cardCardObj.SearchQuery(x => x.State == "in_use")
+            var cardCardQr = from card in cardCardObj.SearchQuery()
                              select card;
 
             var ResponseQr = from p in SearchQuery(x => x.Customer)
@@ -2276,15 +2277,34 @@ namespace Infrastructure.Services
                                  DateCreated = p.DateCreated,
                                  SourceName = p.Source.Name,
                                  TitleName = p.Title.Name,
-                                 CardCardId = card.Id,
-                                 CardBarCode = card == null ? null : card.Barcode,
-                                 CardTypeId = card == null ? null : (Guid?)card.TypeId,
+                                 CardTypeName = card.Type.Name
                              };
 
             if (!string.IsNullOrEmpty(val.Search))
             {
-                ResponseQr = ResponseQr.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search)
-                || x.Ref.Contains(val.Search) || x.Phone.Contains(val.Search) || x.CardBarCode.Contains(val.Search));
+                IQueryable<Guid> partnersByKeywords;
+
+                partnersByKeywords =
+                      from p in ResponseQr
+                      where p.Name.Contains(val.Search) || p.NameNoSign.Contains(val.Search)
+                || p.Ref.Contains(val.Search) || p.Phone.Contains(val.Search)
+                      select p.Id;
+
+                partnersByKeywords = partnersByKeywords.Union(
+                        from card in cardCardObj.SearchQuery()
+                        where card.Barcode.Contains(val.Search) && card.PartnerId.HasValue
+                        select card.PartnerId.Value
+                    );
+
+                partnersByKeywords = partnersByKeywords.Union(
+                       from card in serviceCardCardObj.SearchQuery()
+                       where card.Barcode.Contains(val.Search) && card.PartnerId.HasValue
+                       select card.PartnerId.Value
+                   );
+            
+                ResponseQr = from a in ResponseQr
+                             join pbk in partnersByKeywords on a.Id equals pbk
+                             select a;
             }
 
             if (val.CategIds.Any())
@@ -2321,14 +2341,15 @@ namespace Infrastructure.Services
                 ResponseQr = ResponseQr.Where(x => x.TotalDebit == 0 || x.TotalDebit == null);
             }
 
-            if (val.MemberLevelId.HasValue)
-            {
-                ResponseQr = ResponseQr.Where(x => x.MemberLevelId.Contains(val.MemberLevelId.Value.ToString()));
-            }
-
             if (val.CardTypeId.HasValue)
             {
-                ResponseQr = ResponseQr.Where(x => x.CardTypeId == val.CardTypeId);
+                var filterPartnerQr =
+                   from pcr in cardCardObj.SearchQuery(x => x.TypeId == val.CardTypeId)
+                   select pcr.PartnerId;
+
+                ResponseQr = from a in ResponseQr
+                             join pbk in filterPartnerQr on a.Id equals pbk
+                             select a;
             }
 
             if (!string.IsNullOrEmpty(val.OrderState))
@@ -2353,11 +2374,6 @@ namespace Infrastructure.Services
             var categDict = cateList.GroupBy(x => x.PartnerId).ToDictionary(x => x.Key, x => x.Select(s => s.Category));
             foreach (var item in res)
             {
-                if (item.CardCardId.HasValue)
-                {
-                    var card = await cardCardObj.SearchQuery(x => x.State == "in_use" && x.PartnerId.HasValue && x.PartnerId == item.Id).Include(x => x.Type).FirstOrDefaultAsync();
-                    item.CardCard = _mapper.Map<CardCardBasic>(card);
-                }
                 item.Categories = _mapper.Map<List<PartnerCategoryBasic>>(categDict.ContainsKey(item.Id) ? categDict[item.Id] : new List<PartnerCategory>());
             }
             var items = _mapper.Map<IEnumerable<PartnerInfoDisplay>>(res);
