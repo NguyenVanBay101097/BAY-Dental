@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Models;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,7 +9,7 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public interface ICardCardService: IBaseService<CardCard>
+    public interface ICardCardService : IBaseService<CardCard>
     {
         Task<decimal?> ConvertAmountToPoint(decimal? amount);
         Task<PagedResult2<CardCardBasic>> GetPagedResultAsync(CardCardPaged val);
@@ -25,5 +26,10 @@ namespace Infrastructure.Services
         Task ButtonUpgradeCard(IEnumerable<Guid> ids);
         Task<CardCard> GetValidCard(Guid partnerId);
         Task _CheckUpgrade(IEnumerable<CardCard> self, decimal? points = null);
+
+        Task<ImportExcelResponse> ActionImport(IFormFile formFile);
+        Task<CardCard> GetDefault();
+
+        CheckPromoCodeMessage _CheckCardCardApplySaleLine(CardCard self, SaleOrderLine line);
     }
 }

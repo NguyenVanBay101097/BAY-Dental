@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit } from '@angular/core';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SaleOrderLineDisplay } from '../../sale-orders/sale-order-line-display';
 import { NotificationService } from '@progress/kendo-angular-notification';
@@ -9,6 +9,8 @@ import { SaleOrderLineService } from '../../core/services/sale-order-line.servic
 import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { PrintService } from 'src/app/shared/services/print.service';
+import { NavigationStart, Router, RouterEvent } from '@angular/router';
+import { filter, take, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-sale-order-line-labo-orders-dialog',
@@ -21,12 +23,17 @@ export class SaleOrderLineLaboOrdersDialogComponent implements OnInit {
     private laboOrderService: LaboOrderService,
     public activeModal: NgbActiveModal,
     public modalService: NgbModal,
-    private showErrorService: AppSharedShowErrorService,
-    private saleLineService: SaleOrderLineService,
-    private laboOrderServie: LaboOrderService,
-    private printService: PrintService
-  ) { }
+    private printService: PrintService,
+    private router: Router,
+  ) {
 
+    // Close any opened dialog when route changes
+    router.events.pipe(
+      filter((event: RouterEvent) => event instanceof NavigationStart),
+      tap(() => this.activeModal.dismiss()),
+      take(1),
+    ).subscribe(rs => {});
+      }
   saleOrderLineId: string;
   laboOrders: LaboOrderBasic[] = [];
   title: string;
@@ -66,7 +73,7 @@ export class SaleOrderLineLaboOrdersDialogComponent implements OnInit {
   actionLabo(item?) {
     const modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     if (item && item.id) {
-      modalRef.componentInstance.title = 'Cập nhật phiếu labo';
+      modalRef.componentInstance.title = 'Cập nhật phiếu Labo';
       modalRef.componentInstance.id = item.id;
     } else {
       modalRef.componentInstance.title = 'Tạo phiếu Labo';
@@ -81,20 +88,20 @@ export class SaleOrderLineLaboOrdersDialogComponent implements OnInit {
 
   printLabo(item: any) {
     this.laboOrderService.getPrint(item.id).subscribe((result: any) => {
-      this.printService.printHtml(result);
+      this.printService.printHtml(result.html);
     });
   }
 
   deleteLabo(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = 'Xóa phiếu labo';
-    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
+    modalRef.componentInstance.title = 'Xóa phiếu Labo';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa phiếu Labo?';
     modalRef.result.then(() => {
       this.laboOrderService.delete(item.id).subscribe(res => {
         this.loadLaboOrderList();
       }, (err) => {
       });
-    }, () => {});
+    }, () => { });
   }
 }
 

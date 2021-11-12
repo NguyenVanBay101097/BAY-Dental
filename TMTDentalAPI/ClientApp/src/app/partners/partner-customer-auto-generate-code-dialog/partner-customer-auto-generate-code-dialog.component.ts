@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { IRSequencesService } from 'src/app/shared/services/ir-sequences.service';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
-import { IrSequenceDisplay, IrsequenceService } from '../irsequence.service';
 
 @Component({
   selector: 'app-partner-customer-auto-generate-code-dialog',

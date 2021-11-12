@@ -1,34 +1,28 @@
-import { AgentPaged, AgentService, AgentBasic } from './../../agents/agent.service';
-import { GenderPartner } from './../../partners/partner.service';
-import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
-import { FormBuilder, FormGroup, Validators, FormArray } from "@angular/forms";
 import { HttpClient } from "@angular/common/http";
-import {
-  PartnerCategoryService,
-  PartnerCategoryPaged,
-} from "src/app/partner-categories/partner-category.service";
-import { NgbActiveModal, NgbModal, NgbPopover } from "@ng-bootstrap/ng-bootstrap";
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { NgbActiveModal, NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
+import { IntlService } from "@progress/kendo-angular-intl";
+import * as _ from "lodash";
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { HistorySimple } from "src/app/history/history";
 import { PartnerCategoryCuDialogComponent } from "src/app/partner-categories/partner-category-cu-dialog/partner-category-cu-dialog.component";
-import * as _ from "lodash";
-import { AppSharedShowErrorService } from "src/app/shared/shared-show-error.service";
-import { IntlService } from "@progress/kendo-angular-intl";
-import { ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
-import { UserSimple } from "src/app/users/user-simple";
-import { PartnerSourceService, PartnerSourcePaged } from "src/app/partner-sources/partner-source.service";
-import { UserService, UserPaged } from "src/app/users/user.service";
-import { debounceTime, tap, switchMap } from 'rxjs/operators';
-import { AddressCheckApi } from 'src/app/price-list/price-list';
-import { PartnerSourceSimple, District, City, Ward, PartnerCategorySimple } from 'src/app/partners/partner-simple';
-import { PartnerService } from 'src/app/partners/partner.service';
+import {
+  PartnerCategoryPaged, PartnerCategoryService
+} from "src/app/partner-categories/partner-category.service";
+import { PartnerSourcePaged, PartnerSourceService } from "src/app/partner-sources/partner-source.service";
 import { PartnerTitle, PartnerTitlePaged, PartnerTitleService } from 'src/app/partner-titles/partner-title.service';
-import { PartnerTitleCuDialogComponent } from '../partner-title-cu-dialog/partner-title-cu-dialog.component';
-import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
-import { EmployeeService } from 'src/app/employees/employee.service';
-import { PermissionService } from '../permission.service';
-import { CheckPermissionService } from '../check-permission.service';
-import { AgentCreateUpdateDialogComponent } from '../agent-create-update-dialog/agent-create-update-dialog.component';
+import { City, District, PartnerCategorySimple, PartnerSourceSimple, Ward } from 'src/app/partners/partner-simple';
+import { PartnerService } from 'src/app/partners/partner.service';
+import { AddressCheckApi } from 'src/app/price-list/price-list';
+import { UserSimple } from "src/app/users/user-simple";
+import { UserPaged, UserService } from "src/app/users/user.service";
 import { environment } from 'src/environments/environment';
+import { AgentCreateUpdateDialogComponent } from '../agent-create-update-dialog/agent-create-update-dialog.component';
+import { CheckPermissionService } from '../check-permission.service';
+import { PartnerTitleCuDialogComponent } from '../partner-title-cu-dialog/partner-title-cu-dialog.component';
+import { AgentBasic, AgentPaged, AgentService } from './../../agents/agent.service';
 
 @Component({
   selector: "app-partner-customer-cu-dialog",
@@ -119,11 +113,9 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     private partnerService: PartnerService,
     public activeModal: NgbActiveModal,
     private modalService: NgbModal,
-    private showErrorService: AppSharedShowErrorService,
     private intlService: IntlService,
     private userService: UserService,
     private partnerTitleService: PartnerTitleService,
-    private employeeService: EmployeeService,
     private checkPermissionService: CheckPermissionService
   ) { }
 

@@ -148,7 +148,7 @@ namespace Infrastructure.Services
 
             var program = await programObj.SearchQuery(x => x.Id == val.SaleProgramId)
                 .Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product)
-                .Include(x => x.DiscountMemberLevels)
+                .Include(x => x.DiscountCardTypes)
                 .FirstOrDefaultAsync();
             if (program != null)
             {
@@ -184,7 +184,7 @@ namespace Infrastructure.Services
             //Chương trình khuyến mãi sử dụng mã
             var program = await programObj.SearchQuery(x => x.PromoCode == couponCode)
                 .Include(x => x.DiscountSpecificProducts)
-                .Include(x => x.DiscountMemberLevels)
+                .Include(x => x.DiscountCardTypes)
                 .Include(x => x.DiscountSpecificPartners)
                 .FirstOrDefaultAsync();
             if (program != null)
@@ -225,12 +225,12 @@ namespace Infrastructure.Services
         {
             var promotionObj = GetService<IQuotationPromotionService>();
             var programObj = GetService<ISaleCouponProgramService>();
+            var productObj = GetService<IProductService>();
 
-            if (program.DiscountLineProduct == null)
-            {
-                var productObj = GetService<IProductService>();
-                program.DiscountLineProduct = productObj.GetById(program.DiscountLineProductId);
-            }
+            //if (program.DiscountLineProduct == null)
+            //{
+            //    program.DiscountLineProduct = productObj.GetById(program.DiscountLineProductId);
+            //}
 
             if (program.DiscountType == "fixed_amount")
             {
@@ -261,9 +261,33 @@ namespace Infrastructure.Services
                 }
             }
 
+            if (program.DiscountApplyOn == "specific_product_categories")
+            {
+                var discount_specific_categ_ids = program.DiscountSpecificProductCategories.Select(x => x.ProductCategoryId).ToList();
+                var tmp = productObj.SearchQuery(x => discount_specific_categ_ids.Contains(x.CategId.Value)).Select(x => x.Id).ToList();
+                var discount_amount = _GetRewardValuesDiscountPercentagePerOrderLine(program, self);
+                var promotionLine = promotionObj.PreparePromotionToQuotationLine(self, program, discount_amount);
+
+                return promotionLine;
+            }
+
             return new QuotationPromotion();
         }
 
+        public decimal _GetRewardValuesDiscountPercentagePerOrderLine(SaleCouponProgram program, QuotationLine line)
+        {
+            //discount_amount = so luong * don gia da giam * phan tram
+            var price_reduce = line.SubPrice * (1 - (program.DiscountPercentage ?? 0) / 100);
+            var discount_amount = (line.SubPrice - price_reduce) * line.Qty;
+
+            if (program.IsApplyMaxDiscount && program.DiscountMaxAmount.HasValue && program.DiscountMaxAmount.Value > 0)
+            {
+                if (discount_amount >= program.DiscountMaxAmount)
+                    discount_amount = program.DiscountMaxAmount.Value;
+            }
+
+            return discount_amount ?? 0;
+        }
 
         public void RecomputePromotionLine(IEnumerable<QuotationLine> self)
         {
@@ -301,6 +325,5 @@ namespace Infrastructure.Services
 
 
         }
-
     }
 }

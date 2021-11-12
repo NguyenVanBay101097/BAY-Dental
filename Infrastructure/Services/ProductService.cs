@@ -53,6 +53,29 @@ namespace Infrastructure.Services
             return entities;
         }
 
+        public void _ComputeUoMRels(IEnumerable<Product> self)
+        {
+            foreach (var product in self)
+            {
+                var rels_remove = new List<ProductUoMRel>();
+                var uom_ids = new List<Guid>() { product.UOMId, product.UOMPOId };
+                foreach (var rel in product.ProductUoMRels)
+                {
+                    if (!uom_ids.Contains(rel.UoMId))
+                        rels_remove.Add(rel);
+                }
+
+                foreach (var rel in rels_remove)
+                    product.ProductUoMRels.Remove(rel);
+
+                foreach (var uom_id in uom_ids)
+                {
+                    if (!product.ProductUoMRels.Any(x => x.UoMId == uom_id))
+                        product.ProductUoMRels.Add(new ProductUoMRel() { UoMId = uom_id });
+                }
+            }
+        }
+
         private void _SetNameNoSign(IEnumerable<Product> self)
         {
             foreach (var product in self)
@@ -197,7 +220,11 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<ProductBasic>> GetPagedResultAsync(ProductPaged val)
         {
             var query = GetQueryPaged(val);
-            query = query.OrderBy(x => x.Name);
+
+            if (val.Type2 == "labo" || val.Type2 == "labo_attach")
+                query = query.OrderByDescending(x => x.DateCreated);
+            else
+                query = query.OrderBy(x => x.Name);
 
             var totalItems = await query.CountAsync();
             if (val.Limit > 0)
@@ -482,11 +509,11 @@ namespace Infrastructure.Services
             query = query.OrderBy(x => x.Name);
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
-            var items = await query.Include(x => x.UOM).ToListAsync();
+            var items = await query.Include(x => x.UOM).Include(x => x.Categ).ToListAsync();
 
             var res = _mapper.Map<IEnumerable<ProductSimple>>(items);
 
-            foreach (var item in res.Where(x=> x.Type2 == "medicine"))
+            foreach (var item in res.Where(x => x.Type2 == "medicine"))
                 item.StandardPrice = _GetStandardPrice(item.Id);
 
             return res;
@@ -558,7 +585,7 @@ namespace Infrastructure.Services
             //    if (await IsExistProductCode(product.DefaultCode))
             //        throw new Exception($"Đã tồn tại sản phầm với mã {val.DefaultCode}");
             //}
-                
+
             _SaveProductSteps(product, val.StepList);
 
             _SaveProductBoms(product, val.Boms);
@@ -566,6 +593,7 @@ namespace Infrastructure.Services
             _SaveUoMRels(product, val);
 
             UpdateProductCriteriaRel(product, val);
+            _ComputeUoMRels(new List<Product>() { product });
 
             product = await CreateAsync(product);
 
@@ -599,6 +627,7 @@ namespace Infrastructure.Services
             _SaveUoMRels(product, val);
 
             SetStandardPrice(product, val.StandardPrice, force_company: product.CompanyId);
+            _ComputeUoMRels(new List<Product>() { product });
 
             await _SetListPrice(product, val.ListPrice);
 
@@ -1159,6 +1188,8 @@ namespace Infrastructure.Services
                 UomName = x.UOM.Name,
                 UoMPOName = x.UOMPO.Name,
                 MinInventory = x.MinInventory,
+                Origin = x.Origin,
+                Expiry = x.Expiry
             }).ToListAsync();
 
             return res;
@@ -1180,7 +1211,9 @@ namespace Infrastructure.Services
                 Type = x.Type,
                 ListPrice = x.ListPrice,
                 UomName = x.UOM.Name,
-                MinInventory = x.MinInventory
+                MinInventory = x.MinInventory,
+                Origin = x.Origin,
+                Expiry = x.Expiry
             }).ToListAsync();
 
             return res;
@@ -1199,7 +1232,8 @@ namespace Infrastructure.Services
             var isMatching = rg.IsMatch(productCode);
             return isMatching;
         }
-        private async Task<string> GenerateCodeIfEmpty() {
+        private async Task<string> GenerateCodeIfEmpty()
+        {
             var seqObj = GetService<IIRSequenceService>();
 
             var code = await seqObj.NextByCode("product_seq");
@@ -1211,7 +1245,8 @@ namespace Infrastructure.Services
             }
             return code;
         }
-        private async Task UpdateNextCode(string productCode) {
+        private async Task UpdateNextCode(string productCode)
+        {
             Regex rgx = new Regex(@"SP", RegexOptions.IgnoreCase);
             var result = rgx.Split(productCode, 2, 0);
             var numberCode = result[1];
@@ -1223,7 +1258,7 @@ namespace Infrastructure.Services
                 await _InsertProductSequence();
                 sequence = await sequenceObj.SearchQuery(x => x.Code == "product_seq").FirstOrDefaultAsync();
             }
-                
+
             if (number > sequence.NumberNext)
             {
                 sequence.NumberNext = number + sequence.NumberIncrement;

@@ -33,9 +33,7 @@ namespace TMTDentalAPI.ViewControllers
         {
             var salaries = await _salaryPaymentService.SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
 
-            var salaryPayments = await _mapper.ProjectTo<SalaryPaymentPrintVm>(_salaryPaymentService.SearchQuery(x => ids.Contains(x.Id))).ToListAsync();
-            foreach (var print in salaryPayments)
-                print.AmountString = AmountToText.amount_to_text(print.Amount);      
+            var salaryPayments = await _mapper.ProjectTo<SalaryPaymentPrintVm>(_salaryPaymentService.SearchQuery(x => ids.Contains(x.Id))).ToListAsync();  
 
             return View(salaryPayments);
         }

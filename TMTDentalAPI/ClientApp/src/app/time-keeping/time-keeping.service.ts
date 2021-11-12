@@ -1,7 +1,7 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { EmployeeSimple, EmployeeBasic, EmployeeDisplay } from '../employees/employee';
+import { EmployeeBasic, EmployeeDisplay } from '../employees/employee';
 import { WorkEntryType } from '../work-entry-types/work-entry-type.service';
 
 export class ChamCongSave {

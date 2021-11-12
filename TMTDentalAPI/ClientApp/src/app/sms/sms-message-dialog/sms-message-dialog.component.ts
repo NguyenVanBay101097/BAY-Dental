@@ -1,4 +1,3 @@
-import { state } from '@angular/animations';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -10,10 +9,8 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { SmsAccountService, SmsAccountPaged } from '../sms-account.service';
 import { SmsCampaignService, SmsCampaignPaged } from '../sms-campaign.service';
 import { SmsComfirmDialogComponent } from '../sms-comfirm-dialog/sms-comfirm-dialog.component';
-import { SmsConfigService } from '../sms-config.service';
 import { SmsMessageService } from '../sms-message.service';
 import { SmsPartnerListDialogComponent } from '../sms-partner-list-dialog/sms-partner-list-dialog.component';
-import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
 import { SmsTemplateService, SmsTemplateFilter } from '../sms-template.service';
 
 @Component({
@@ -26,7 +23,7 @@ export class SmsMessageDialogComponent implements OnInit {
   @ViewChild("smsCampaignCbx", { static: true }) smsCampaignCbx: ComboBoxComponent;
   @ViewChild("smsAccountCbx", { static: true }) smsAccountCbx: ComboBoxComponent;
   @ViewChild("smsTemplateCbx", { static: true }) smsTemplateCbx: ComboBoxComponent;
-  @ViewChild('textarea', { static: false }) textarea: ElementRef;
+  @ViewChild('textarea') textarea: ElementRef;
 
   formGroup: FormGroup;
   title: string;

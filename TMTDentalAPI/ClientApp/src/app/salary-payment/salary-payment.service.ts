@@ -1,12 +1,7 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { Injectable, Inject } from "@angular/core";
-import { GridDataResult } from "@progress/kendo-angular-grid";
-import { map } from "rxjs/operators";
-import { PagedResult2 } from "../core/paged-result-2";
-import { UoMDisplay, UoMBasic } from "../uoms/uom.service";
-import { EmployeeSimple } from "../employees/employee";
+import { Inject, Injectable } from "@angular/core";
 import { AccountJournalSimple } from "../account-journals/account-journal.service";
+import { EmployeeSimple } from "../employees/employee";
 
 
 export class SalaryPaymentPaged {
@@ -82,15 +77,15 @@ export class SalaryPaymentService {
         return this.http.post(this.baseApi + this.apiUrl + "/ActionConfirm", ids);
     }
 
-    // getPrint(ids: string[]) {
-    //     return this.http.post(this.baseApi + this.apiUrl + "/GetPrint", ids);
-    // }
-
     getPrint(ids: string[]) {
-        return this.http.post(this.baseApi + this.apiPrintUrl + "/Print", ids , { responseType: 'text' });
+        return this.http.post(this.baseApi + this.apiUrl + "/Print", ids);
     }
 
-    public actionMultiSalaryPayment(val:any){
+    // getPrint(ids: string[]) {
+    //     return this.http.post(this.baseApi + this.apiPrintUrl + "/Print", ids , { responseType: 'text' });
+    // }
+
+    public actionMultiSalaryPayment(val: any) {
         return this.http.post(this.baseApi + this.apiUrl + "/CreateMultiSalaryPayment", val);
     }
 

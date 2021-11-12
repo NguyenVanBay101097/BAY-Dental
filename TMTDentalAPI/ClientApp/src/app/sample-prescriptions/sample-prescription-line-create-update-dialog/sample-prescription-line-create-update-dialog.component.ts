@@ -1,11 +1,11 @@
-import { SamplePrescriptionLineSave } from './../sample-prescriptions.service';
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
-import { ProductSimple } from 'src/app/products/product-simple';
-import { FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ProductService, ProductFilter } from 'src/app/products/product.service';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { debounceTime, tap, switchMap } from 'rxjs/operators';
 import * as _ from 'lodash';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { ProductSimple } from 'src/app/products/product-simple';
+import { ProductFilter, ProductService } from 'src/app/products/product.service';
+import { SamplePrescriptionLineSave } from './../sample-prescriptions.service';
 
 @Component({
   selector: 'app-sample-prescription-line-create-update-dialog',
@@ -143,15 +143,15 @@ export class SamplePrescriptionLineCreateUpdateDialogComponent implements OnInit
     var useAt = this.lineForm.get('useAt').value;
     switch (useAt) {
       case 'before_meal':
-        return 'trước khi ăn';
+        return 'Trước khi ăn';
       case 'in_meal':
-        return 'trong khi ăn';
+        return 'Trong khi ăn';
       case 'after_wakeup':
-        return 'sau khi thức dậy';
+        return 'Sau khi thức dậy';
       case 'before_sleep':
-        return 'trước khi đi ngủ';
+        return 'Trước khi đi ngủ';
       default:
-        return 'sau khi ăn';
+        return 'Sau khi ăn';
     }
   }
 

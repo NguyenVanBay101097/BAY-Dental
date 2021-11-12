@@ -1,10 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, Validators, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { FacebookTagsService, FacebookTagsPaged, FacebookTagBasic } from 'src/app/socials-channel/facebook-tags.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
-import { PartnerCategoryBasic, PartnerCategoryService, PartnerCategoryPaged } from 'src/app/partner-categories/partner-category.service';
+import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 
 @Component({
   selector: 'app-tcare-campaign-dialog-message',

@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, NgForm, ValidatorFn, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as _ from 'lodash';
-import { update } from 'lodash';
-import { forkJoin } from 'rxjs';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { NotifyService } from 'src/app/shared/services/notify.service';
@@ -105,8 +103,8 @@ export class MemberLevelCreateUpdateComponent implements OnInit {
         this.partnerService.checkUpdateLevel().subscribe(() => {
           this.notifyService.notify("success", "Lưu hạng thành viên thành công");
           vals.length > 0 ?
-            this.router.navigate(['catalog/member-level/list']) :
-            this.router.navigate(['catalog/member-level/management']);
+            this.router.navigate(['member-level/list']) :
+            this.router.navigate(['member-level/management']);
         });
       })
     });

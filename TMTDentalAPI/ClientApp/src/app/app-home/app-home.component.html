@@ -1,6 +1,4 @@
-<app-header [navbarBrandRouterLink]="['/dashboard']" [fixed]="true"
-    [navbarBrandFull]="{src: 'assets/images/logo-color.svg', width: 89, height: 25, alt: 'TDental Logo'}"
-    [navbarBrandMinimized]="{src: 'assets/images/logo-color.svg', width: 30, height: 30, alt: 'TDental Logo'}"
+<app-header [navbarBrandRouterLink]="['/dashboard']" [fixed]="true" [navbarBrandFull]="{src: 'assets/images/logo-color.svg', width: 89, height: 25, alt: 'TDental Logo'}" [navbarBrandMinimized]="{src: 'assets/images/logo-color.svg', width: 30, height: 30, alt: 'TDental Logo'}"
     [sidebarToggler]="'lg'" [asideMenuToggler]="false">
     <ul class="navbar-nav ml-auto">
         <li class="nav-item">
@@ -8,8 +6,8 @@
         </li>
     </ul>
     <ul class="navbar-nav ml-auto">
-        <li class="nav-item dropdown">
-            <a class="nav-link text-success">{{expire}}</a>
+        <li class="nav-item dropdown" *ngIf="sessionInfo && sessionInfo.expirationDate">
+            <a class="nav-link text-success">{{showExpirationDate(sessionInfo.expirationDate)}}</a>
         </li>
         <!-- <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="bd-setting" role="button" data-toggle="dropdown"
@@ -23,18 +21,16 @@
                     chấm công</a>
             </div>
         </li> -->
-        <li class="o_switch_company_menu nav-item dropdown" ngbDropdown placement="bottom-right"
-            *ngIf="userChangeCurrentCompany && userChangeCurrentCompany.companies.length >= 2">
+        <li class="o_switch_company_menu nav-item dropdown" ngbDropdown placement="bottom-right" *ngIf="sessionInfo && sessionInfo.userCompanies.allowedCompanies.length >= 2">
             <a class="nav-link px-2" ngbDropdownToggle>
-                <span class="oe_topbar_name">{{userChangeCurrentCompany.currentCompany.name}}</span> <span
-                    class="caret"></span>
+                <span class="oe_topbar_name">{{sessionInfo.userCompanies.currentCompany.name}}</span> <span class="caret"></span>
             </a>
             <ul ngbDropdownMenu>
-                <li *ngFor="let company of userChangeCurrentCompany.companies">
+                <li *ngFor="let company of sessionInfo.userCompanies.allowedCompanies">
                     <button (click)="switchCompany(company.id)" class="dropdown-item">
-                        <i *ngIf="company.id == userChangeCurrentCompany.currentCompany.id"
+                        <i *ngIf="company.id == sessionInfo.userCompanies.currentCompany.id"
                             class="fa fa-check o_current_company"></i>
-                        <span *ngIf="company.id !== userChangeCurrentCompany.currentCompany.id"
+                        <span *ngIf="company.id !== sessionInfo.userCompanies.currentCompany.id"
                             class="o_company"></span>
                         {{company.name}}
                     </button>
@@ -52,10 +48,18 @@
                 <button class="dropdown-item" type="button" (click)="removeSampleData()">Xóa dữ liệu mẫu</button>
             </div>
         </li> -->
+        <li *ngIf="irImportSampleData == 'Installed'" class="nav-item dropdown" ngbDropdown placement="bottom-right">
+            <a class="nav-link" ngbDropdownToggle>
+              Thiết lập
+            </a>
+            <div ngbDropdownMenu class="dropdown-menu">
+                <a class="dropdown-item" (click)="removeSampleData()">Xóa dữ liệu mẫu</a>
+                <!-- <button class="dropdown-item" type="button" (click)="removeSampleData()">Xóa dữ liệu mẫu</button> -->
+            </div>
+        </li>
         <li class="nav-item dropdown" ngbDropdown placement="bottom-right">
             <a class="nav-link o-no-caret px-2" ngbDropdownToggle>
-                <img *ngIf="authService.userInfo" [src]="getAvatarImgSource(authService.userInfo.avatar)" width="40"
-                    height="40" class="rounded-circle mr-2">
+                <img *ngIf="authService.userInfo" [src]="getAvatarImgSource(authService.userInfo.avatar)" width="40" height="40" class="rounded-circle mr-2">
                 <span class="oe_topbar_name" *ngIf="authService.userInfo">{{authService.userInfo.name}}</span>
             </a>
             <div ngbDropdownMenu>

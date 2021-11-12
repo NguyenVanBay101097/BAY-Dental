@@ -1,21 +1,19 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
-import { AuthService } from 'src/app/auth/auth.service';
-import { PrintService } from 'src/app/shared/services/print.service';
 import { ProductCategoryBasic, ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
-import { ProductService } from 'src/app/products/product.service';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { StockInventoryCriteriaBasic, StockInventoryCriteriaPaged, StockInventoryCriteriaService } from '../stock-inventory-criteria.service';
-import { StockInventoryLineByProductId, StockInventoryService } from '../stock-inventory.service';
-import { StockInventoryLineService, StockInventoryLineOnChangeCreateLine } from '../stock-inventory-line.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PrintService } from 'src/app/shared/services/print.service';
+import { StockInventoryCriteriaBasic, StockInventoryCriteriaPaged, StockInventoryCriteriaService } from '../stock-inventory-criteria.service';
+import { StockInventoryLineOnChangeCreateLine, StockInventoryLineService } from '../stock-inventory-line.service';
+import { StockInventoryService } from '../stock-inventory.service';
 
 @Component({
   selector: 'app-stock-inventory-form',
@@ -63,10 +61,8 @@ export class StockInventoryFormComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private notificationService: NotificationService,
-    private productService: ProductService,
     private productCategoryService: ProductCategoryService,
     private stockInventorySevice: StockInventoryService,
-    private authService: AuthService,
     private intlService: IntlService,
     private criteriaService: StockInventoryCriteriaService,
     private printService: PrintService,
@@ -166,7 +162,7 @@ export class StockInventoryFormComponent implements OnInit {
           var g = this.fb.group(line);
           control.push(g);
         });
-        
+
         let moveControl = this.formGroup.get('moves') as FormArray;
         moveControl.clear();
         result.moves.forEach(move => {
@@ -176,8 +172,8 @@ export class StockInventoryFormComponent implements OnInit {
         this.onChangeFilter();
       });
     } else {
-      var companyId = this.authService.userInfo.companyId;
-      this.stockInventorySevice.getDefault().subscribe((result:any) => {
+      // var companyId = this.authService.userInfo.companyId;
+      this.stockInventorySevice.getDefault().subscribe((result: any) => {
         this.formGroup.patchValue(result);
         let date = new Date(result.date);
         this.formGroup.get('dateObj').patchValue(date);
@@ -216,13 +212,13 @@ export class StockInventoryFormComponent implements OnInit {
       this.formGroup.get("category").updateValueAndValidity();
       this.formGroup.get('criteria').clearValidators();
       this.formGroup.get('criteria').updateValueAndValidity();
-    } 
-    else if(res.filter === 'criteria'){
+    }
+    else if (res.filter === 'criteria') {
       this.formGroup.get("criteria").setValidators([Validators.minLength(0), Validators.required]);
       this.formGroup.get("criteria").updateValueAndValidity();
       this.formGroup.get('category').clearValidators();
       this.formGroup.get('category').updateValueAndValidity();
-    }   
+    }
     else {
       res.category = null;
       res.criteria = null;
@@ -323,7 +319,7 @@ export class StockInventoryFormComponent implements OnInit {
   }
 
   deleteLine(index: number) {
-    this.lines.removeAt(index);      
+    this.lines.removeAt(index);
   }
 
   onChangeSearch(value) {
@@ -375,7 +371,7 @@ export class StockInventoryFormComponent implements OnInit {
     }
   }
 
-  actionCancel(){
+  actionCancel() {
     if (this.id) {
       let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = 'Hủy phiếu kiểm kho';
@@ -405,7 +401,7 @@ export class StockInventoryFormComponent implements OnInit {
       return;
     }
     this.stockInventorySevice.getPrint(this.id).subscribe((result: any) => {
-      this.printService.printHtml(result);
+      this.printService.printHtml(result.html);
     });
   }
 
@@ -422,9 +418,9 @@ export class StockInventoryFormComponent implements OnInit {
     }
   }
 
-  checkRole(){
+  checkRole() {
     this.canCreate = this.checkPermissionRole.check(["Stock.Inventory.Create"]);
-    this.canCreateUpdate = this.checkPermissionRole.check(["Stock.Inventory.Create","Stock.Inventory.Update"]);
+    this.canCreateUpdate = this.checkPermissionRole.check(["Stock.Inventory.Create", "Stock.Inventory.Update"]);
     this.canPrint = this.checkPermissionRole.check(["Stock.Inventory.Read"]);
     this.canprepareInventory = this.checkPermissionRole.check(["Stock.Inventory.Update"]);
     this.canCancel = this.checkPermissionRole.check(["Stock.Inventory.Update"]);

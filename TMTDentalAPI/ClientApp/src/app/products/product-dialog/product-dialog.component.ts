@@ -1,19 +1,17 @@
-import { Component, OnInit, Inject, ViewChild, ElementRef, Input } from '@angular/core';
-import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
-import { ProductService } from '../product.service';
-import { Product } from '../product';
-import { ProductCategoryService, ProductCategoryPaged, ProductCategoryBasic } from 'src/app/product-categories/product-category.service';
-import { ProductCategory } from 'src/app/product-categories/product-category';
-import { debounceTime, switchMap, tap, map, distinctUntilChanged } from 'rxjs/operators';
-import { WindowRef, WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { Observable, Subject } from 'rxjs';
-import * as _ from 'lodash';
-import { ProductStepDisplay } from '../product-step';
-import { or } from '@progress/kendo-angular-grid/dist/es2015/utils';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import * as _ from 'lodash';
+import { Subject } from 'rxjs';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { ProductCategory } from 'src/app/product-categories/product-category';
+import { ProductCategoryBasic, ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
 import { ProductCategoryDialogComponent } from 'src/app/shared/product-category-dialog/product-category-dialog.component';
+import { Product } from '../product';
+import { ProductStepDisplay } from '../product-step';
+import { ProductService } from '../product.service';
 
 @Component({
   selector: 'app-product-dialog',

@@ -1,16 +1,17 @@
-import { Component, OnInit } from '@angular/core';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { EmployeePaged, EmployeeBasic } from '../employee';
-import { FormGroup, FormBuilder } from '@angular/forms';
-import { EmployeeService } from '../employee.service';
-import { map, distinctUntilChanged, debounceTime } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import { EmployeeCreateUpdateComponent } from '../employee-create-update/employee-create-update.component';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { ActivatedRoute } from '@angular/router';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
+import { HrJobService, HrJobsPaged } from 'src/app/hr-jobs/hr-job.service';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { EmployeeBasic, EmployeePaged } from '../employee';
+import { EmployeeCreateUpdateComponent } from '../employee-create-update/employee-create-update.component';
+import { EmployeeService } from '../employee.service';
 
 @Component({
   selector: 'app-employee-list',
@@ -26,16 +27,25 @@ export class EmployeeListComponent implements OnInit {
     { name: 'Ngưng làm việc', value: false }
   ];
   defaultFilter: any = this.filterLaboStatus[0];
-  constructor(private fb: FormBuilder, private service: EmployeeService,
+  @ViewChild('cbxHrJob', { static: true }) public cbxHrJob: ComboBoxComponent;
+  cbxPopupSettings = {
+    width: 'auto'
+  };
+  hrJobs: any[] = [];
+  constructor(private service: EmployeeService,
     private notificationService: NotificationService,
-    private activeroute: ActivatedRoute, private modalService: NgbModal,
-    private authService: AuthService) { }
+    private modalService: NgbModal,
+    private authService: AuthService,
+    private hrJobService: HrJobService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   loading = false;
   gridView: GridDataResult;
   windowOpened: boolean = false;
   skip = 0;
-  pageSize = 20;
+  limit = 20;
+  pagerSettings: any;
   active: boolean = true;
 
   search: string;
@@ -44,21 +54,37 @@ export class EmployeeListComponent implements OnInit {
   isDoctor: boolean;
   isAssistant: boolean;
   isOther: boolean;
-
+  hrJobId: string;
   btnDropdown: any[] = [{ text: 'Bác sĩ' }, { text: 'Phụ tá' }, { text: 'Nhân viên khác' }];
 
   ngOnInit() {
     this.getEmployeesList();
     this.searchChange();
+    this.loadHrJobs();
+    this.cbxHrJob.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.cbxHrJob.loading = true)),
+      switchMap(value => this.searchHrJob(value))
+    ).subscribe((res : any) => {
+      this.hrJobs = res.items;
+      this.cbxHrJob.loading = false;
+    });
+  }
+
+  loadHrJobs() {
+    this.searchHrJob().subscribe((res:any) => {
+      this.hrJobs = res.items;
+    })
   }
 
   getEmployeesList() {
     this.loading = true;
     var empPaged = new EmployeePaged();
-    empPaged.limit = this.pageSize;
+    empPaged.limit = this.limit;
     empPaged.offset = this.skip;
     empPaged.companyId = this.authService.userInfo.companyId;
     empPaged.active = (this.active || this.active == false) ? this.active : '';
+    empPaged.hrJobId = this.hrJobId || '';
     if (this.search) {
       empPaged.search = this.search;
     }
@@ -96,6 +122,7 @@ export class EmployeeListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.getEmployeesList();
   }
 
@@ -171,18 +198,18 @@ export class EmployeeListComponent implements OnInit {
   }
 
   btnDropdownItemClick(e) {
-    console.log(e);
+    // console.log(e);
     switch (e.text.toString()) {
       case "Bác sĩ":
-        console.log(1);
+        // console.log(1);
         this.openModal(null, true, false);
         break;
       case "Phụ tá":
-        console.log(2);
+        // console.log(2);
         this.openModal(null, false, true);
         break;
       case "Nhân viên khác":
-        console.log(3);
+        // console.log(3);
         this.openModal(null, false, false);
         break;
     }
@@ -211,6 +238,20 @@ export class EmployeeListComponent implements OnInit {
     this.active = e ? e.value : null;
     this.skip = 0;
     this.getEmployeesList();
+  }
+
+  onHrJobSelect(e){
+    this.skip = 0;
+    this.hrJobId = e?e.id:'';
+    this.getEmployeesList();
+  }
+
+  searchHrJob(s?) {
+    var val = new HrJobsPaged();
+    val.offset = 0;
+    val.limit = 20;
+    val.search = s || '';
+    return this.hrJobService.getPaged(val);
   }
 
   notify(Style, Content) {

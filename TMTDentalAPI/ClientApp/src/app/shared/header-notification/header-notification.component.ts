@@ -1,13 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { environment } from '../../../environments/environment';
-import { AuthService } from 'src/app/auth/auth.service';
-import { MailMessageFormat } from 'src/app/core/mail-message-format';
-import { MailMessageService, MailMessageFetch } from 'src/app/mail-messages/mail-message.service';
-import { Howl } from 'howler';
-import { NotificationService } from '@progress/kendo-angular-notification';
-import { AppointmentService } from 'src/app/appointment/appointment.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NotificationService } from '@progress/kendo-angular-notification';
+import { Howl } from 'howler';
 import { AppointmentDetailDialogComponent } from 'src/app/appointment/appointment-detail-dialog/appointment-detail-dialog.component';
+import { AppointmentService } from 'src/app/appointment/appointment.service';
+import { MailMessageFormat } from 'src/app/core/mail-message-format';
+import { MailMessageFetch, MailMessageService } from 'src/app/mail-messages/mail-message.service';
 
 
 @Component({
@@ -18,7 +16,7 @@ import { AppointmentDetailDialogComponent } from 'src/app/appointment/appointmen
 export class HeaderNotificationComponent implements OnInit {
   messages: MailMessageFormat[] = [];
   messageCount = 0;
-  constructor(private authService: AuthService, private mailMessageService: MailMessageService,
+  constructor(private mailMessageService: MailMessageService,
     private notificationService: NotificationService, private appointmentService: AppointmentService,
     private modalService: NgbModal) { }
   myDate = new Date();

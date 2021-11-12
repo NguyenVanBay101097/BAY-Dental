@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
 using ApplicationCore.Utilities;
 using Newtonsoft.Json;
+using ApplicationCore.Models.PrintTemplate;
 
 namespace Infrastructure.Services
 {
@@ -64,24 +65,27 @@ namespace Infrastructure.Services
             return await CreateAsync(order);
         }
 
-        public async override Task<SaleOrder> CreateAsync(SaleOrder entity)
+        public override async Task<IEnumerable<SaleOrder>> CreateAsync(IEnumerable<SaleOrder> entities)
         {
-            if (string.IsNullOrEmpty(entity.Name) || entity.Name == "/")
+            foreach (var entity in entities)
             {
-                var sequenceService = GetService<IIRSequenceService>();
-                if (entity.IsQuotation == true)
+                if (string.IsNullOrEmpty(entity.Name) || entity.Name == "/")
                 {
-                    entity.Name = await sequenceService.NextByCode("sale.quotation");
-                    if (string.IsNullOrEmpty(entity.Name))
+                    var sequenceService = GetService<IIRSequenceService>();
+                    if (entity.IsQuotation == true)
                     {
-                        await InsertSaleQuotationSequence();
                         entity.Name = await sequenceService.NextByCode("sale.quotation");
+                        if (string.IsNullOrEmpty(entity.Name))
+                        {
+                            await InsertSaleQuotationSequence();
+                            entity.Name = await sequenceService.NextByCode("sale.quotation");
+                        }
                     }
+                    else
+                        entity.Name = await sequenceService.NextByCode("sale.order");
                 }
-                else
-                    entity.Name = await sequenceService.NextByCode("sale.order");
             }
-            return await base.CreateAsync(entity);
+            return await base.CreateAsync(entities);
         }
 
         public async Task<SaleOrder> CreateOrderAsync(SaleOrderSave val)
@@ -255,7 +259,7 @@ namespace Infrastructure.Services
             if (val.IsQuotation.HasValue)
                 spec = spec.And(new InitialSpecification<SaleOrder>(x => (!x.IsQuotation.HasValue && val.IsQuotation == false) || x.IsQuotation == val.IsQuotation));
 
-            if (!string.IsNullOrEmpty(val.OverInterval)&& val.OverIntervalNbr.HasValue)
+            if (!string.IsNullOrEmpty(val.OverInterval) && val.OverIntervalNbr.HasValue)
             {
                 if (val.OverInterval == "month")
                     spec = spec.And(new InitialSpecification<SaleOrder>(x => x.DateOrder.AddMonths(val.OverIntervalNbr.Value) < DateTime.Now));
@@ -269,7 +273,7 @@ namespace Infrastructure.Services
                 query = query.Skip(val.Offset).Take(val.Limit);
 
             var items = await _mapper.ProjectTo<SaleOrderBasic>(query).ToListAsync();
-          
+
             return new PagedResult2<SaleOrderBasic>(totalItems, val.Offset, val.Limit)
             {
                 Items = items
@@ -305,16 +309,16 @@ namespace Infrastructure.Services
                 AmountTotal = x.AmountTotal,
                 TotalPaid = x.TotalPaid,
                 Residual = x.Residual,
-               SaleOrderLineDisplays = x.OrderLines.Any() ? x.OrderLines.Select(s=> new SaleOrderLineDisplay
-               { 
+                SaleOrderLineDisplays = x.OrderLines.Any() ? x.OrderLines.Select(s => new SaleOrderLineDisplay
+                {
                     Name = s.Name,
                     ProductUOMQty = s.ProductUOMQty,
                     PriceSubTotal = s.PriceSubTotal,
                     AmountPaid = s.AmountPaid,
                     AmountResidual = s.AmountResidual
-                    
-                    
-               }).ToList() : new List<SaleOrderLineDisplay>(),
+
+
+                }).ToList() : new List<SaleOrderLineDisplay>(),
 
             }).ToListAsync();
 
@@ -493,7 +497,7 @@ namespace Infrastructure.Services
             var program = await programObj.SearchQuery(x => x.PromoCode == couponCode && x.Active).Include(x => x.DiscountSpecificProducts)
                 .Include(x => x.DiscountSpecificProductCategories)
                 .Include(x => x.DiscountSpecificPartners)
-                .Include(x => x.DiscountMemberLevels)
+                .Include(x => x.DiscountCardTypes)
                 .FirstOrDefaultAsync();
 
             if (program != null)
@@ -1245,7 +1249,7 @@ namespace Infrastructure.Services
                 .Include(x => x.OrderPartner).ToListAsync();
 
             display.OrderLines = _mapper.Map<IEnumerable<SaleOrderLineDisplay>>(lines);
-            display.AmountDiscountTotal = Math.Round(lines.Sum(z => (decimal)(z.AmountDiscountTotal??0) * z.ProductUOMQty));
+            display.AmountDiscountTotal = Math.Round(lines.Sum(z => (decimal)(z.AmountDiscountTotal ?? 0) * z.ProductUOMQty));
 
             var promotionObj = GetService<ISaleOrderPromotionService>();
             display.Promotions = await promotionObj.SearchQuery(x => x.SaleOrderId.HasValue && x.SaleOrderId == display.Id && !x.SaleOrderLineId.HasValue).Select(x => new SaleOrderPromotionBasic
@@ -1260,6 +1264,13 @@ namespace Infrastructure.Services
             return display;
         }
 
+
+        public async Task<IEnumerable<SaleOrder>> GetSaleOrdersByPartnerId(Guid partnerId)
+        {
+            var saleOrders = await SearchQuery(x => x.PartnerId == partnerId).ToListAsync();
+
+            return saleOrders;
+        }
         //public async Task<SaleOrderDisplay> GetDisplayAsync(Guid id)
         //{
         //    var res = await _mapper.ProjectTo<SaleOrderDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
@@ -1305,7 +1316,8 @@ namespace Infrastructure.Services
                 //.Include(x => x.OrderLines).ThenInclude(x => x.Order).ThenInclude(x => x.OrderLines)
                 .FirstOrDefaultAsync();
 
-            order = _mapper.Map(val, order);
+            //order = _mapper.Map(val, order);
+            order.DateOrder = val.DateOrder;
 
             //await SaveOrderLines(val, order);
             await UpdateAsync(order); //update trước để generate id cho những sale order line
@@ -1654,6 +1666,10 @@ namespace Infrastructure.Services
 
             foreach (var order in self)
             {
+                if (!order.OrderLines.Any())
+                {
+                    throw new Exception("Phải có ít nhất 1 dịch vụ trong phiếu điều trị");
+                }
                 order.State = "sale";
                 foreach (var line in order.OrderLines)
                 {
@@ -1900,7 +1916,35 @@ namespace Infrastructure.Services
             return invoices;
         }
 
+        public async Task<IEnumerable<SaleOrder>> GetPrintTemplate(IEnumerable<Guid> ids)
+        {
+            var saleOrderLineObj = GetService<ISaleOrderLineService>();
+            var saleOrderPaymentObj = GetService<ISaleOrderPaymentService>();
+            var orders = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.Company).ThenInclude(x => x.Partner)
+                .Include(x => x.Partner)
+                .Include(x => x.DotKhams).ThenInclude(s => s.Doctor)
+                .Include(x => x.DotKhams).ThenInclude(s => s.Lines).ThenInclude(x => x.ToothRels).ThenInclude(x => x.Tooth)
+                .Include(x => x.CreatedBy)
+                .ToListAsync();
+            foreach (var order in orders)
+            {
+                //Lược bỏ những dòng số lượng bằng 0
+                order.OrderLines = await saleOrderLineObj.SearchQuery(x => x.OrderId == order.Id)
+                    .OrderBy(x => x.Sequence)
+                    .Where(x => x.ProductUOMQty != 0)
+                    .Include(x => x.Product)
+                    .Include(x => x.Employee)
+                    .ToListAsync();
 
+                order.SaleOrderPayments = await saleOrderPaymentObj.SearchQuery(x => x.OrderId == order.Id && x.State == "posted")
+                    .Include(x => x.Lines).ThenInclude(x => x.SaleOrderLine)
+                    .Include(x => x.PaymentRels).ThenInclude(x => x.Payment).ThenInclude(x => x.Journal)
+                    .ToListAsync();
+            }
+
+            return orders;
+        }
 
         public async Task<SaleOrderPrintVM> GetPrint(Guid id)
         {
@@ -1924,6 +1968,7 @@ namespace Infrastructure.Services
                 Name = x.Name,
                 DateOrder = x.DateOrder,
                 AmountTotal = x.AmountTotal.HasValue ? x.AmountTotal.Value : 0,
+                TotalPaid = x.TotalPaid.HasValue ? x.TotalPaid.Value : 0,
                 Residual = x.Residual.HasValue ? x.Residual.Value : 0,
                 Partner = x.Partner != null ? new PartnerSimpleInfo
                 {
@@ -1949,7 +1994,9 @@ namespace Infrastructure.Services
             //order.OrderLines = res.OrderLines.Where(x => x.ProductUOMQty != 0);        
             order.DotKhams = await _GetListDotkhamInfo(order.Id);
             var saleOrderPaymentObj = GetService<ISaleOrderPaymentService>();
-            order.HistoryPayments = _mapper.Map<IEnumerable<SaleOrderPaymentBasic>>(await saleOrderPaymentObj.SearchQuery(x => x.OrderId == id).Include(x => x.PaymentRels).ThenInclude(x => x.Payment).ThenInclude(x => x.Journal).ToListAsync());
+            order.HistoryPayments = _mapper.Map<IEnumerable<SaleOrderPaymentBasic>>(await saleOrderPaymentObj.SearchQuery(x => x.OrderId == id)
+                .Include(x => x.PaymentRels).ThenInclude(x => x.Payment).ThenInclude(x => x.Journal)
+                .Include(x => x.Lines).ThenInclude(x => x.SaleOrderLine).ToListAsync());
             //get currentuser
             order.User = _mapper.Map<ApplicationUserSimple>(await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId));
             return order;
@@ -2498,7 +2545,7 @@ namespace Infrastructure.Services
                         {
                             var program = await programObj.SearchQuery(x => x.Id == item.SaleCouponProgramId)
                                 .Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product)
-                                .Include(x => x.DiscountMemberLevels)
+                                .Include(x => x.DiscountCardTypes)
                                 .FirstOrDefaultAsync();
                             if (program != null)
                             {
@@ -2560,7 +2607,7 @@ namespace Infrastructure.Services
                         var error_status = new CheckPromoCodeMessage();
                         var program = await programObj.SearchQuery(x => x.Id == promotion.SaleCouponProgramId)
                             .Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product)
-                            .Include(x => x.DiscountMemberLevels)
+                            .Include(x => x.DiscountCardTypes)
                             .FirstOrDefaultAsync();
                         if (program != null)
                         {
@@ -3054,7 +3101,7 @@ namespace Infrastructure.Services
             if (val.Limit > 0) query = query.Skip(val.Offset).Take(val.Limit);
 
             var res = await _mapper.ProjectTo<SaleOrderRevenueReport>(query).ToListAsync();
-            
+
             return new PagedResult2<SaleOrderRevenueReport>(count, val.Offset, val.Limit) { Items = res };
         }
 
@@ -3095,8 +3142,8 @@ namespace Infrastructure.Services
         public async Task<long> GetCountSaleOrder(GetCountSaleOrderFilter val)
         {
             var saleOrderObj = GetService<ISaleOrderService>();
-
-            var query = saleOrderObj.SearchQuery();
+            var states = new string[] { "cancel", "draft" };
+            var query = saleOrderObj.SearchQuery(x => !states.Contains(x.State));
 
             if (val.DateFrom.HasValue)
                 query = query.Where(x => x.DateOrder >= val.DateFrom.Value.AbsoluteBeginOfDate());
@@ -3118,7 +3165,7 @@ namespace Infrastructure.Services
             var allLines = await GetSaleOrderLineBySaleOrder(null);
             foreach (var item in allData)
             {
-                item.Lines = allLines.Where(x=> x.OrderId == item.Id).ToList();
+                item.Lines = allLines.Where(x => x.OrderId == item.Id).ToList();
             }
             var res = new GetPrintManagementRes()
             {
@@ -3147,9 +3194,25 @@ namespace Infrastructure.Services
             {
                 item.Lines = allLines.Where(x => x.OrderId == item.Id).ToList();
             }
-            
+
 
             return allData;
+        }
+
+        public async Task<IEnumerable<IrAttachment>> GetListAttachment(Guid id)
+        {
+            var attObj = GetService<IIrAttachmentService>();
+            var dotkhamObj = GetService<IDotKhamService>();
+
+            var attQr = attObj.SearchQuery();
+            var dotkhamQr = dotkhamObj.SearchQuery();
+
+            var resQr = from att in attQr
+                        from dk in dotkhamQr.Where(x => x.Id == att.ResId).DefaultIfEmpty()
+                        where att.ResId == id || dk.SaleOrderId == id
+                        select att;
+            var res = await resQr.OrderByDescending(x => x.DateCreated).ToListAsync();
+            return res;
         }
     }
 }

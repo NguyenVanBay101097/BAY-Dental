@@ -2,14 +2,15 @@
     <table class="table table-sm t-sticky-thead">
         <thead>
             <tr>
-                <th>Mã thanh toán</th>
-                <th>Ngày thanh toán</th>
-                <th>Số tiền</th>
-                <th>Phương thức</th>
-                <th>Thanh toán</th>
-                <th>Nội dung</th>
-                <th>Trạng thái</th>
-                <th>Thao tác</th>
+                <th width="150">Mã thanh toán</th>
+                <th width="150">Ngày thanh toán</th>
+                <th width="120">Số tiền</th>
+                <th width="250">Dịch vụ</th>
+                <th width="120">Phương thức</th>
+                <th width="120">Thanh toán</th>
+                <th width="200">Nội dung</th>
+                <th width="120">Trạng thái</th>
+                <th width="100">Thao tác</th>
             </tr>
         </thead>
         <tbody>
@@ -18,6 +19,11 @@
                     <td>{{item.name}}</td>
                     <td *ngIf="i == 0" [attr.rowspan]="payment.payments.length">{{payment.date | date : 'shortDate'}}</td>
                     <td *ngIf="i == 0" [attr.rowspan]="payment.payments.length" class="text-right">{{payment.amount | number}}</td>
+                    <td *ngIf="i == 0" [attr.rowspan]="payment.payments.length" class="services-name">
+                        <span [title]="showServicesName(payment.saleOrderLines)">
+                            {{showServicesName(payment.saleOrderLines)}}
+                        </span>
+                    </td>
                     <td>{{item.journalName}}</td>
                     <td class="text-right">{{item.amount | number}}</td>
                     <td>{{item.communication}}</td>

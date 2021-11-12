@@ -2,11 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { NotificationService } from '@progress/kendo-angular-notification';
-import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
-import { PartnerFilter, PartnerService } from 'src/app/partners/partner.service';
 import { SurveyAssignmentDefaultGet, SurveyAssignmentDefaultGetPar, SurveyAssignmentService } from '../survey.service';
 
 @Component({
@@ -23,7 +20,6 @@ export class SurveyManageAssignEmployeeCreateDialogComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     public activeModal: NgbActiveModal,
-    private notificationService: NotificationService,
     private surveyService: SurveyAssignmentService,
     private employeeService: EmployeeService
   ) { }

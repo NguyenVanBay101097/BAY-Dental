@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Record>
+    <Id>sample.stock_picking_1</Id>
+    <PartnerId>sample.employee_2</PartnerId>
+    <PickingTypeId>stock.stock_picking_type_outgoing</PickingTypeId>
+    <LocationId>stock.stock_location_Dự trữ</LocationId>
+    <LocationDestId>stock.stock_location_customers</LocationDestId>
+    <DateRound>1</DateRound>
+    <OrderLines>
+      <Record>
+        <Name>Kẹp gắp</Name>
+        <PickingTypeId />
+        <PartnerId>sample.employee_2</PartnerId>
+        <ProductUOMQty>1.00</ProductUOMQty>
+        <ProductQty>1.00</ProductQty>
+        <ProductUOMId>product.product_uom_unit</ProductUOMId>
+        <ProductId>sample.product_product_36</ProductId>
+        <LocationId>stock.stock_location_Dự trữ</LocationId>
+        <LocationDestId>stock.stock_location_customers</LocationDestId>
+        <PriceUnit>0</PriceUnit>
+        <DateRound>1</DateRound>
+      </Record>
+      <Record>
+        <Name>Khẩu trang kháng khuẩn</Name>
+        <PickingTypeId />
+        <PartnerId>sample.employee_2</PartnerId>
+        <ProductUOMQty>1.00</ProductUOMQty>
+        <ProductQty>1.00</ProductQty>
+        <ProductUOMId>product.product_uom_unit</ProductUOMId>
+        <ProductId>sample.product_product_73</ProductId>
+        <LocationId>stock.stock_location_Dự trữ</LocationId>
+        <LocationDestId>stock.stock_location_customers</LocationDestId>
+        <PriceUnit>0</PriceUnit>
+        <DateRound>1</DateRound>
+      </Record>
+    </OrderLines>
+  </Record>
+</Data>

@@ -28,25 +28,46 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"
     (pageChange)="pageChange($event)">
-        <kendo-grid-column field="name" title="Tên người giới thiệu" width="100">
+        <kendo-grid-column field="name" title="Người giới thiệu" width="150">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.name}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="journalName" title="Số điện thoại" width="120">
+        <kendo-grid-column field="phone" title="Số điện thoại" width="120">
+        </kendo-grid-column>
+        <kendo-grid-column field="classify" title="Phân loại" width="120">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.phone }}
+                {{getAgentType(dataItem.classify)}}
             </ng-template>
         </kendo-grid-column>
-
+        <kendo-grid-column field="baseAmount" title="Lợi nhuận tính hoa hồng" width="150" class="text-right">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.baseAmount | number }}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="amount" title="Tiền hoa hồng" width="120" class="text-right">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.amount | number }}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="amountCommission" title="Hoa hồng đã chi" width="120" class="text-right">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.amountCommission | number }}
+            </ng-template>
+        </kendo-grid-column>
         <kendo-grid-command-column title="Thao tác" width="100">
             <ng-template kendoGridCellTemplate let-dataItem>
-                <button kendoButton (click)="editItem(dataItem)" class="btn btn-success mr-2"><i title="Sửa"
-                        class="far fa-edit"></i></button>
-                <button kendoButton (click)="deleteItem(dataItem)" class="btn btn-danger "><i title="Xóa"
-                        class="far fa-trash-alt"></i></button>
+                <a class="btn-action btn-payment mr-2" (click)="actionPayment(dataItem)">
+                    <i class="fas fa-money-bill-alt fa-lg bg-white text-primary" title="Chi hoa hồng"></i>
+                </a>
+                <a class="btn-action mr-2" (click)="editItem(dataItem)">
+                    <i class="far fa-edit fa-lg bg-white text-success" title="Sửa"></i>
+                </a>
+                <a class="btn-action" (click)="deleteItem(dataItem)">
+                    <i class="far fa-trash-alt fa-lg bg-white text-danger" title="Xóa"></i>
+                </a>
             </ng-template>
         </kendo-grid-command-column>
     </kendo-grid>

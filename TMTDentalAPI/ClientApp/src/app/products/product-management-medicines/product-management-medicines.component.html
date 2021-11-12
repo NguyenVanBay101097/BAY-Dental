@@ -1,7 +1,8 @@
 <div class="pms-wrapper d-flex">
     <div class="pms-left border mr-2">
         <app-product-category-list (onDelete)="onDeletecate($event)" (createBtnEvent)="onCreateBtnEvent($event)"
-            [categories]="categories" (updateBtnEvent)="onUpdateBtnEvent($event)" (onSelect)="onSelectedCate($event)" [type]="type"></app-product-category-list>
+            [categories]="categories" (updateBtnEvent)="onUpdateBtnEvent($event)" (onSelect)="onSelectedCate($event)"
+            [type]="type"></app-product-category-list>
     </div>
     <div class="pms-right border h-100 overflow-auto d-flex flex-column p-2">
         <div class="flex-0-0-auto mb-3 d-flex align-items-center">
@@ -24,7 +25,7 @@
             </div>
         </div>
         <div class="flex-1-1-100 h-100 overflow-hidden">
-            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"
                 (pageChange)="pageChange($event)">
                 <kendo-grid-column field="name" title="Tên thuốc" width="200">
                 </kendo-grid-column>
@@ -36,6 +37,14 @@
                     width="150">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                         {{dataItem.listPrice | number}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="origin" title="Xuất xứ" width="150">
+                </kendo-grid-column>
+                <kendo-grid-column field="expiry" title="Thời hạn sử dụng (tháng)"
+                    width="200">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{dataItem.expiry | number}}
                     </ng-template>
                 </kendo-grid-column>
                 <kendo-grid-column *ngIf="canEdit || canDelete" field="id" width="100">

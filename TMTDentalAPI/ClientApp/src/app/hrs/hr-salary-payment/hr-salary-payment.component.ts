@@ -1,15 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { AccountJournalFilter, AccountJournalService } from 'src/app/account-journals/account-journal.service';
-import { AccountPaymentSave, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { SalaryPaymentService } from 'src/app/salary-payment/salary-payment.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PrintService } from 'src/app/shared/services/print.service';
-import { SalaryPaymentSaveDefault } from 'src/app/shared/services/salary-payment.service';
 
 @Component({
   selector: 'app-hr-salary-payment',
@@ -36,7 +33,6 @@ export class HrSalaryPaymentComponent implements OnInit {
     private notificationService: NotificationService,
     private printService: PrintService,
     private modalService: NgbModal,
-    private intlService: IntlService
   ) { }
 
   ngOnInit() {
@@ -53,15 +49,15 @@ export class HrSalaryPaymentComponent implements OnInit {
   get paymentFA() { return this.paymentForm.get('paymentFA') as FormArray; }
 
   loadDefaultRecord() {
-      if (!this.payslipIds || !this.payslipIds.length) {
+    if (!this.payslipIds || !this.payslipIds.length) {
       this.isDisable = true;
     }
     if (this.payments.length > 0) {
-        this.paymentFA.clear();
-        this.payments.forEach(e => {
-            const fg = this.fb.group(e);
-            this.paymentFA.push(fg);
-        });
+      this.paymentFA.clear();
+      this.payments.forEach(e => {
+        const fg = this.fb.group(e);
+        this.paymentFA.push(fg);
+      });
     }
   }
 
@@ -75,11 +71,9 @@ export class HrSalaryPaymentComponent implements OnInit {
   }
 
   onChangeJournal(e) {
-    const val = e.target;
-    console.log(val);
-
-
+    // const val = e.target;
   }
+
   onSave() {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Chi lương';
@@ -127,8 +121,8 @@ export class HrSalaryPaymentComponent implements OnInit {
           this.notify('error', 'Không có phiếu chi lương để in');
         }
         this.paymentService.getPrint(res).subscribe(
-          result => {
-            this.printService.printHtml(result);
+          (result: any) => {
+            this.printService.printHtml(result.html);
           }
         );
 
@@ -148,8 +142,6 @@ export class HrSalaryPaymentComponent implements OnInit {
 
   onRemovePayment(i) {
     this.paymentFA.removeAt(i);
-    console.log(this.paymentFA);
-
   }
 
 }

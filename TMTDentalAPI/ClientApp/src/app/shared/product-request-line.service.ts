@@ -1,9 +1,7 @@
-import { HttpClient, HttpParams } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable } from "@angular/core";
-import { Observable } from "rxjs";
 import { ProductRequestGetLinePar } from "src/app/sale-orders/product-request";
 import { ProductRequestLineDisplay } from "src/app/sale-orders/product-request-line";
-import { PagedResult2 } from "../core/paged-result-2";
 
 @Injectable({ providedIn: 'root' })
 export class ProductRequestLineService {

@@ -1,27 +1,22 @@
-import { Component, OnInit, Inject, ViewChild, ElementRef, Input } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
-import { ProductFilter, ProductService } from '../product.service';
-import { Product } from '../product';
-import { ProductCategoryService, ProductCategoryPaged, ProductCategoryBasic } from 'src/app/product-categories/product-category.service';
-import { ProductCategory } from 'src/app/product-categories/product-category';
-import { debounceTime, switchMap, tap, map, distinctUntilChanged } from 'rxjs/operators';
-import { WindowRef, WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { Observable, Subject } from 'rxjs';
-import * as _ from 'lodash';
-import { ProductStepDisplay } from '../product-step';
-import { or } from '@progress/kendo-angular-grid/dist/es2015/utils';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
-import { ProductCategoryDialogComponent } from 'src/app/shared/product-category-dialog/product-category-dialog.component';
-import { ProductProductCuDialogComponent } from '../product-product-cu-dialog/product-product-cu-dialog.component';
-import { ProductBomDisplay } from '../product-bom';
-import { result } from 'lodash';
-import { Console } from 'console';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import * as _ from 'lodash';
+import { Subject } from 'rxjs';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
+import { ProductCategory } from 'src/app/product-categories/product-category';
+import { ProductCategoryBasic, ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { ProductCategoryDialogComponent } from 'src/app/shared/product-category-dialog/product-category-dialog.component';
+import { Product } from '../product';
+import { ProductBomDisplay } from '../product-bom';
+import { ProductProductCuDialogComponent } from '../product-product-cu-dialog/product-product-cu-dialog.component';
+import { ProductStepDisplay } from '../product-step';
+import { ProductFilter, ProductService } from '../product.service';
 
 @Component({
   selector: 'app-product-service-cu-dialog',
@@ -60,12 +55,10 @@ export class ProductServiceCuDialogComponent implements OnInit {
   @ViewChild('form', { static: true }) formView: any;
   @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
-  @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
 
   constructor(private fb: FormBuilder, private productService: ProductService,
     private productCategoryService: ProductCategoryService, public activeModal: NgbActiveModal,
     private modalService: NgbModal, 
-    private showErrorService: AppSharedShowErrorService, 
     private notificationService: NotificationService, 
     private authService: AuthService,
     private checkPermissionService: CheckPermissionService) {
@@ -180,14 +173,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
   }
 
   productCbxFilterChange() {
-    this.productCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.productCbx.loading = true)),
-      switchMap(value => this.searchProducts(value))
-    ).subscribe(result => {
-      this.filteredProducts = result;
-      this.productCbx.loading = false;
-    });
+   
   }
 
   categCbxFilterChange2(e: string) {
@@ -475,7 +461,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
     var line = this.fb.group({
       materialProduct: [null, Validators.required],
       productUOM: null,
-      quantity: [1, Validators.required]
+      quantity: [0, Validators.required]
     });
 
     this.boms.push(line);

@@ -16,6 +16,8 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.OrderLines, x => x.Ignore());
             CreateMap<ServiceCardOrderSave, ServiceCardOrder>()
                 .ForMember(x => x.OrderLines, x => x.Ignore());
+
+            CreateMap<ServiceCardOrder, ServiceCardCardResponse>();
         }
     }
 }

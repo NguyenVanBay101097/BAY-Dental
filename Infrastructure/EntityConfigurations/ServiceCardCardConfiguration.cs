@@ -15,12 +15,16 @@ namespace Infrastructure.EntityConfigurations
                .IsRequired();
 
             builder.HasOne(x => x.Partner)
-                .WithMany()
+                .WithMany(x => x.ServiceCardCards)
                 .HasForeignKey(x => x.PartnerId);
 
             builder.HasOne(x => x.SaleLine)
               .WithMany(x => x.Cards)
               .HasForeignKey(x => x.SaleLineId);
+
+            builder.HasOne(x => x.Company)
+             .WithMany()
+             .HasForeignKey(x => x.CompanyId);
 
             builder.HasOne(x => x.CardType)
                 .WithMany()

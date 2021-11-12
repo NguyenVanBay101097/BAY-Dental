@@ -12,9 +12,10 @@ import { UomService } from '../uom.service';
 export class UomImportExcelDialogComponent implements OnInit {
   fileBase64 = '';
   type: string;
-  errors: string[];
+  errors: string[] = [];
   title: string = "Import đơn vị tính";
   isUpdate: boolean = false;
+  correctFormat = true;
   constructor(private uomService: UomService, public activeModal: NgbActiveModal, private notificationService: NotificationService) { }
 
   ngOnInit() {
@@ -35,6 +36,10 @@ export class UomImportExcelDialogComponent implements OnInit {
   }
 
   onSave() {
+    if (!this.correctFormat){
+      this.notify('error','File import sai định dạng. Vui lòng tải file mẫu và nhập dữ liệu đúng');
+      return;
+    }
     if (!this.fileBase64 || this.fileBase64 === '') {
       if (this.isUpdate) {
         this.notify('error', 'Vui lòng chọn file để cập nhật');

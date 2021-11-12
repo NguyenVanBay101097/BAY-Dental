@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Record>
+    <Id>sample.labo_finish_line_1</Id>
+    <Name>Bờ vai</Name>
+  </Record>
+  <Record>
+    <Id>sample.labo_finish_line_2</Id>
+    <Name>Bờ vai sát cạnh</Name>
+  </Record>
+  <Record>
+    <Id>sample.labo_finish_line_3</Id>
+    <Name>Bờ xuôi</Name>
+  </Record>
+  <Record>
+    <Id>sample.labo_finish_line_4</Id>
+    <Name>Bờ xuôi sát cạnh</Name>
+  </Record>
+</Data>

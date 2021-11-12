@@ -1,25 +1,19 @@
-import { Component, OnInit, Inject, Renderer2, Input, Output, EventEmitter, OnChanges, SimpleChanges, ViewChild } from "@angular/core";
-import { FormGroup, FormBuilder, Validators } from "@angular/forms";
-import { ActivatedRoute } from "@angular/router";
+import { Component, EventEmitter, Inject, Input, OnChanges, OnInit, Output, Renderer2, SimpleChanges, ViewChild } from "@angular/core";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import {
-  TcareService,
-  TCareCampaignDisplay,
-} from "../tcare.service";
-import { TcareCampaignDialogSequencesComponent } from "../tcare-campaign-dialog-sequences/tcare-campaign-dialog-sequences.component";
-import { TcareCampaignDialogRuleComponent } from "../tcare-campaign-dialog-rule/tcare-campaign-dialog-rule.component";
-
-import { NotificationService } from "@progress/kendo-angular-notification";
-import { TcareCampaignDialogMessageComponent } from "../tcare-campaign-dialog-message/tcare-campaign-dialog-message.component";
-import { IntlService, load } from "@progress/kendo-angular-intl";
-import * as xml2js from "xml2js";
-import { TcareCampaignStartDialogComponent } from "../tcare-campaign-start-dialog/tcare-campaign-start-dialog.component";
-import { mxgraph } from 'src/mxgraph-types';
-import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { NotificationService } from "@progress/kendo-angular-notification";
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
-import { result } from 'lodash';
 import { PartnerCategoryCuDialogComponent } from 'src/app/partner-categories/partner-category-cu-dialog/partner-category-cu-dialog.component';
+import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
+import * as xml2js from "xml2js";
+import { TcareCampaignDialogMessageComponent } from "../tcare-campaign-dialog-message/tcare-campaign-dialog-message.component";
+import { TcareCampaignDialogRuleComponent } from "../tcare-campaign-dialog-rule/tcare-campaign-dialog-rule.component";
+import { TcareCampaignDialogSequencesComponent } from "../tcare-campaign-dialog-sequences/tcare-campaign-dialog-sequences.component";
+import {
+  TCareCampaignDisplay, TcareService
+} from "../tcare.service";
+
 
 declare var mxUtils: any;
 declare var mxDivResizer: any;
@@ -70,7 +64,6 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
     private tcareService: TcareService,
     private renderer2: Renderer2,
     private notificationService: NotificationService,
-    private intlService: IntlService,
     private tagService: PartnerCategoryService
   ) {
     this.editor = new mxEditor();
@@ -198,7 +191,7 @@ export class TcareCampaignCreateUpdateComponent implements OnInit, OnChanges {
       // Sets the graph container and configures the editor
       that.editor.setGraphContainer(container);
 
-      var iconTolerance = 20;
+      // var iconTolerance = 20;
       var splash = document.getElementById("splash");
       if (splash != null) {
         try {

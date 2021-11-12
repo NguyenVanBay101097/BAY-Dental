@@ -1,27 +1,23 @@
-import { State } from '@progress/kendo-data-query';
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { NgbActiveModal, NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
+import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from "@progress/kendo-angular-notification";
+import * as _ from "lodash";
+import { Observable } from 'rxjs';
+import { debounceTime, switchMap, tap } from "rxjs/operators";
 import {
   AccountJournalFilter,
-  AccountJournalService,
+  AccountJournalService
 } from "src/app/account-journals/account-journal.service";
 import { AuthService } from "src/app/auth/auth.service";
 import { EmployeePaged, EmployeeSimple } from "src/app/employees/employee";
-import * as _ from "lodash";
 import { EmployeeService } from "src/app/employees/employee.service";
-import { debounceTime, switchMap, tap } from "rxjs/operators";
-import { IntlService } from '@progress/kendo-angular-intl';
-import { PrintService } from 'src/app/shared/services/print.service';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { Observable } from 'rxjs';
-import { AccountPaymentSave, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
-import { PartnerFilter, PartnerService } from 'src/app/partners/partner.service';
-import { PartnerSimple } from 'src/app/partners/partner-simple';
-import { SalaryPaymentDisplay, SalaryPaymentService } from '../salary-payment.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PrintService } from 'src/app/shared/services/print.service';
+import { SalaryPaymentDisplay, SalaryPaymentService } from '../salary-payment.service';
 
 @Component({
   selector: "app-salary-payment-form",
@@ -56,7 +52,7 @@ export class SalaryPaymentFormComponent implements OnInit {
     private accountJournalService: AccountJournalService,
     private employeeService: EmployeeService,
     private intlService: IntlService,
-    private printService: PrintService, 
+    private printService: PrintService,
     private checkPermissionService: CheckPermissionService
   ) { }
 
@@ -248,9 +244,9 @@ export class SalaryPaymentFormComponent implements OnInit {
 
   printItem(id) {
     this.salaryPaymentService.getPrint([id]).subscribe(
-      (result:any) => {
+      (result: any) => {
         if (result) {
-          this.printService.printHtml(result);
+          this.printService.printHtml(result.html);
         } else {
           alert('Có lỗi xảy ra, thử lại sau');
         }

@@ -32,8 +32,9 @@ export class LoginComponent implements OnInit {
       if (data.succeeded == false) {
         alert(data.message);
       } else {
-        localStorage.setItem('user_permission', JSON.stringify(data));
-        this.router.navigateByUrl('/app/dashboard');
+        // localStorage.setItem('user_permission', JSON.stringify(data));
+        localStorage.setItem('session_info', JSON.stringify(data));
+        this.router.navigateByUrl('/');
       }
     }, error => {
       console.log('error login', error);

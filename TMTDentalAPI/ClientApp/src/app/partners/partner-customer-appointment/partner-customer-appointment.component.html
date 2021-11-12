@@ -6,7 +6,7 @@
     </div>
     <div>
         <div class="o_content">
-            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
+            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading" (pageChange)="pageChange($event)">
                 <kendo-grid-column field="name" title="Mã lịch hẹn" width="100">
                 </kendo-grid-column>
                 <kendo-grid-column field="date" title="Ngày hẹn" width="150">
@@ -18,23 +18,26 @@
                 </kendo-grid-column>
                 <kendo-grid-column field="note" title="Nội dung" width="150">
                 </kendo-grid-column>
-                <kendo-grid-column field="state" title="Trạng thái" width="100">
-                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                        <span>{{stateGet(dataItem.state)}}</span>
-                        <!-- <label *ngIf="dataItem.state == 'confirmed'">Đang hẹn</label>
-                        <label *ngIf="dataItem.state =='done'">Đã tới</label>
-                        <label *ngIf="dataItem.state =='cancel'">Hủy hẹn</label> -->
+                <kendo-grid-column title="Loại khám" width="150">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        <label>{{ dataItem.isRepeatCustomer ? "Tái khám" : "Khám mới" }}</label>
                     </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column field="id" width="100">
+                <kendo-grid-column field="stateDisplay" title="Trạng thái" width="100">
+                </kendo-grid-column>
+                <kendo-grid-column field="reason" title="Lý do" width="150">
+                </kendo-grid-column>
+                <kendo-grid-column field="id" width="120">
                     <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                         Thao tác
                     </ng-template>
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                         <button class="btn btn-success mr-2" title="Sửa" (click)="dialogAppointment(dataItem)">
                             <span class="far fa-edit"></span></button>
-                        <button class="btn btn-danger" title="Xóa" (click)="deleteAppointment(dataItem)">
+                        <button class="btn btn-danger mr-2" title="Xóa" (click)="deleteAppointment(dataItem)">
                             <span class="far fa-trash-alt"></span></button>
+                        <button class="btn btn-secondary" (click)="onPrint(dataItem.id)">
+                            <i class="fas fa-print"></i></button>
                     </ng-template>
                 </kendo-grid-column>
             </kendo-grid>

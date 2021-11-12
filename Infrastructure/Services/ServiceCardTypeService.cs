@@ -33,8 +33,10 @@ namespace Infrastructure.Services
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
 
-            var items = await _mapper.ProjectTo<ServiceCardTypeBasic>(query).ToListAsync();
             var totalItems = await query.CountAsync();
+            if (val.Limit > 0)
+                query = query.Skip(val.Offset).Take(val.Limit);
+            var items = await _mapper.ProjectTo<ServiceCardTypeBasic>(query.OrderByDescending(x => x.DateCreated)).ToListAsync();
 
             return new PagedResult2<ServiceCardTypeBasic>(totalItems, val.Offset, val.Limit)
             {
@@ -112,6 +114,76 @@ namespace Infrastructure.Services
 
             await productObj.CreateAsync(product);
             return product;
+        }
+
+        public void SaveProductPricelistItem(ServiceCardType self, IEnumerable<ProductPricelistItem> listItems)
+        {
+            if (!listItems.Any())
+            {
+                self.ProductPricelistId = null;
+                self.ProductPricelist = null;
+                return;
+            }    
+
+            if (self.ProductPricelist == null)
+            {
+                var prList = new ProductPricelist()
+                {
+                    CompanyId = self.CompanyId,
+                    Name = "Bảng giá của ưu đãi " + self.Name
+                };
+                self.ProductPricelist = prList;
+            }
+
+            //var lineToRemoves = new List<ProductPricelistItem>();
+            //lineToRemoves.AddRange(self.ProductPricelist.Items.Where(x => listItems.All(z => z.Id != x.Id)));
+            ////check delete item
+            //foreach (var line in lineToRemoves)
+            //{
+            //    self.ProductPricelist.Items.Remove(line);
+            //}
+
+            self.ProductPricelist.Items.Clear();
+            foreach (var item in listItems)
+            {
+                item.CompanyId = self.ProductPricelist.CompanyId;
+                self.ProductPricelist.Items.Add(item);
+            }
+        }
+
+        public async Task<IEnumerable<ServiceCardTypeSimple>> AutoCompleteSearch(string search)
+        {
+            var query = SearchQuery();
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(x => x.Name.Contains(search));
+            }
+            var res = await query.ToListAsync();
+            return _mapper.Map<IEnumerable<ServiceCardTypeSimple>>(res);
+        }
+
+        public override async Task UpdateAsync(IEnumerable<ServiceCardType> entities)
+        {
+            await base.UpdateAsync(entities);
+            foreach (var entity in entities)
+            {
+                await _CheckNameUnique(entity.Name);
+            }
+        }
+        private async Task _CheckNameUnique(string name)
+        {
+            var count = await SearchQuery(x => x.Name == name).CountAsync();
+            if (count >= 2)
+                throw new Exception($"Trùng tên hạng thẻ khác");
+        }
+        public override async Task<IEnumerable<ServiceCardType>> CreateAsync(IEnumerable<ServiceCardType> entities)
+        {
+            await base.CreateAsync(entities);
+            foreach (var entity in entities)
+            {
+                await _CheckNameUnique(entity.Name);
+            }
+            return entities;
         }
     }
 }

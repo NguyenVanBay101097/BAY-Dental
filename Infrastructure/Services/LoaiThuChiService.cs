@@ -29,7 +29,7 @@ namespace Infrastructure.Services
         {
             ISpecification<LoaiThuChi> spec = new InitialSpecification<LoaiThuChi>(x => true);
             if (!string.IsNullOrEmpty(val.Search))
-                spec = spec.And(new InitialSpecification<LoaiThuChi>(x => x.Name.Contains(val.Search)));
+                spec = spec.And(new InitialSpecification<LoaiThuChi>(x => x.Name.Contains(val.Search) || x.Code.Contains(val.Search)));
 
             spec = spec.And(new InitialSpecification<LoaiThuChi>(x => x.Type == val.Type));
 

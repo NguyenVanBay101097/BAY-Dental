@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import {
     HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpResponse, HttpErrorResponse
 } from '@angular/common/http';
-import { map, catchError, finalize, retry, switchMap } from 'rxjs/operators';
-import { throwError, BehaviorSubject } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { AppLoadingService } from './shared/app-loading.service';
 import { AuthService } from './auth/auth.service';
@@ -31,7 +31,7 @@ export class HttpHandleErrorInterceptor implements HttpInterceptor {
                     // Server Error
                     message = error.message;
                     if (error.error) {
-                        message = error.error.message;
+                        message = request.responseType == 'json' ? error.error.message : JSON.parse(error.error).message;
                     }
 
                     if (message) {

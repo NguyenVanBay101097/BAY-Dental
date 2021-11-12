@@ -1,10 +1,9 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { GridDataResult, PageChangeEvent, SelectionEvent } from '@progress/kendo-angular-grid';
-import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { PartnerService } from '../partner.service';
-import { SelectionChange } from '@angular/cdk/collections';
+import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { GridDataResult, PageChangeEvent, SelectionEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { PartnerService } from '../partner.service';
 
 @Component({
   selector: 'app-partner-search-dialog',

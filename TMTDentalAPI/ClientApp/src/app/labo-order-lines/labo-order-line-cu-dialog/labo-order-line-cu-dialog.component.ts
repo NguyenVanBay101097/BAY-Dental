@@ -1,27 +1,21 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
-import { FormGroup, FormBuilder, Validators } from "@angular/forms";
-import {
-  LaboOrderLineService,
-  LaboOrderLineDefaultGet,
-  LaboOrderLineOnChangeProduct,
-} from "../labo-order-line.service";
-import * as _ from "lodash";
-import { IntlService } from "@progress/kendo-angular-intl";
-import { PartnerSimple, PartnerPaged } from "src/app/partners/partner-simple";
-import { ProductSimple } from "src/app/products/product-simple";
-import { ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
-import {
-  PartnerFilter,
-  PartnerService,
-} from "src/app/partners/partner.service";
-import {
-  ProductService,
-  ProductFilter,
-  ProductPaged,
-} from "src/app/products/product.service";
-import { debounceTime, tap, switchMap } from "rxjs/operators";
-import { WindowRef } from "@progress/kendo-angular-dialog";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
+import { ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
+import { IntlService } from "@progress/kendo-angular-intl";
+import { debounceTime, switchMap, tap } from "rxjs/operators";
+import { PartnerPaged, PartnerSimple } from "src/app/partners/partner-simple";
+import {
+  PartnerService
+} from "src/app/partners/partner.service";
+import { ProductSimple } from "src/app/products/product-simple";
+import {
+  ProductPaged, ProductService
+} from "src/app/products/product.service";
+import {
+  LaboOrderLineDefaultGet,
+  LaboOrderLineOnChangeProduct, LaboOrderLineService
+} from "../labo-order-line.service";
 
 @Component({
   selector: "app-labo-order-line-cu-dialog",

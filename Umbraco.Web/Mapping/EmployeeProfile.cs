@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -12,10 +13,14 @@ namespace Umbraco.Web.Mapping
     {
         public EmployeeProfile()
         {
-            CreateMap<Employee, EmployeeSimple>();
+            CreateMap<Employee, EmployeeSimple>()
+                .ForMember(x => x.HrJobName, x => x.MapFrom(s => s.HrJob.Name));
+
             CreateMap<Employee, EmployeeSimpleContact>();
+            CreateMap<Employee, EmployeeSimpleInfo>();
             CreateMap<Employee, EmployeeBasic>()
-                .ForMember(x => x.UserName, x => x.MapFrom(s => s.User.UserName));
+                .ForMember(x => x.UserName, x => x.MapFrom(s => s.User.UserName))
+                .ForMember(x => x.HrJobName, x => x.MapFrom(s => s.HrJob.Name));
 
             CreateMap<EmployeeDisplay, Employee>()
                 .ForMember(x => x.Id, x => x.Ignore())
@@ -40,6 +45,9 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.OvertimeRate, x => x.Ignore())
                 .ForMember(x => x.RestDayRate, x => x.Ignore())
                 .ForMember(x => x.Allowance, x => x.Ignore());
+
+            CreateMap<Employee, EmployeePrintTemplate>();
+            CreateMap<Employee, EmployeeBasicPrintTemplate>();
         }
     }
 }

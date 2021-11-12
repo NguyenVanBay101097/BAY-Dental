@@ -29,7 +29,7 @@
     </div>
     <div class="text-center mb-2">
         <div class="text-3xl font-semibold">BIÊN LAI THANH TOÁN</div>
-        <div>Ngày @Model.Date.Day tháng @Model.Date.Month năm @Model.Date.Year </div>
+        <div>Ngày @Model.DatePayment.Day tháng @Model.DatePayment.Month năm @Model.DatePayment.Year </div>
         @*<div class="font-semibold">Số: @Model.Name</div>*@
     </div>
     <div class="o_form_view mb-2">
@@ -76,7 +76,7 @@
                             </div>
                         </td>
                         <td colspan="1" style="width: 100%;">
-                            <div class="o_field_widget">@(string.Format(info, "{0:dd/MM/yyyy}", Model.Date))</div>
+                            <div class="o_field_widget">@(string.Format(info, "{0:dd/MM/yyyy}", Model.DatePayment))</div>
                         </td>
                     </tr>
                     <tr>
@@ -86,7 +86,7 @@
                             </div>
                         </td>
                         <td colspan="1" style="width: 100%;">
-                            <div class="o_field_widget">@(string.Join(", ",Model.JournalLines.Select(x => x.Journal.Name)))</div>
+                            <div class="o_field_widget">@(Model.JournalName)</div>
                         </td>
                     </tr>
                     <tr>
@@ -97,6 +97,16 @@
                         </td>
                         <td colspan="1" style="width: 100%;">
                             <div class="o_field_widget">@(string.Format(info, "{0:0,0}", Model.Amount))</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <div class="o_form_label o_form_label_help">
+                                Dịch vụ thực hiện
+                            </div>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            <div class="o_field_widget">@(string.Join(", ",Model.SaleOrderLines.Select(x => x.Name)))</div>
                         </td>
                     </tr>
                     <tr>

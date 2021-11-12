@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { map } from 'rxjs/operators';

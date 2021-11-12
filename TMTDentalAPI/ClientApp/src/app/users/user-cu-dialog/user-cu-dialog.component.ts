@@ -1,14 +1,12 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { UserService } from '../user.service';
-import { WindowRef } from '@progress/kendo-angular-dialog';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { CompanyBasic, CompanySimple, CompanyService, CompanyPaged } from 'src/app/companies/company.service';
 import * as _ from 'lodash';
-import { ResGroupBasic, ResGroupService, ResGroupPaged } from 'src/app/res-groups/res-group.service';
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/company.service';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
+import { ResGroupBasic, ResGroupPaged, ResGroupService } from 'src/app/res-groups/res-group.service';
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-user-cu-dialog',
@@ -25,9 +23,12 @@ export class UserCuDialogComponent implements OnInit {
   listGroups: ResGroupBasic[] = [];
 
   title: string;
-  constructor(private fb: FormBuilder, private userService: UserService, public activeModal: NgbActiveModal,
-    private companyService: CompanyService, private resGroupService: ResGroupService,
-    private showErrorService: AppSharedShowErrorService, private employeeService: EmployeeService) {
+  constructor(private fb: FormBuilder, 
+    private userService: UserService, 
+    public activeModal: NgbActiveModal,
+    private companyService: CompanyService, 
+    private resGroupService: ResGroupService,
+    private employeeService: EmployeeService) {
   }
 
   ngOnInit() {

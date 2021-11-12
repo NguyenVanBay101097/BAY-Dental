@@ -1,7 +1,5 @@
-import { CustomerReceiptDisplay } from './../../customer-receipt/customer-receipt.service';
-import { AuthService } from './../../auth/auth.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -10,6 +8,7 @@ import * as _ from 'lodash';
 import { Subject } from 'rxjs';
 import { debounceTime, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { AppointmentService } from 'src/app/appointment/appointment.service';
+import { CustomerReceiptRequest, DashboardReportService } from 'src/app/core/services/dashboard-report.service';
 import { CustomerReceiptBasic, CustomerReceiptService } from 'src/app/customer-receipt/customer-receipt.service';
 import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
@@ -18,14 +17,13 @@ import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductPaged, ProductService } from 'src/app/products/product.service';
-import { UserCuDialogComponent } from 'src/app/users/user-cu-dialog/user-cu-dialog.component';
 import { UserSimple } from 'src/app/users/user-simple';
 import { UserPaged, UserService } from 'src/app/users/user.service';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { PartnerCustomerCuDialogComponent } from '../partner-customer-cu-dialog/partner-customer-cu-dialog.component';
-import { PartnersService } from '../services/partners.service';
 import { AppSharedShowErrorService } from '../shared-show-error.service';
-import { CustomerReceiptRequest, DashboardReportService } from 'src/app/core/services/dashboard-report.service';
+import { AuthService } from './../../auth/auth.service';
+import { CustomerReceiptDisplay } from './../../customer-receipt/customer-receipt.service';
 
 @Component({
   selector: 'app-customer-receip-create-update',
@@ -76,7 +74,6 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     public activeModal: NgbActiveModal,
     private modalService: NgbModal,
     private errorService: AppSharedShowErrorService,
-    private odataPartnerService: PartnersService,
     private productService: ProductService,
     private employeeService: EmployeeService,
     private notificationService: NotificationService,
@@ -376,20 +373,23 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
   }
 
   loadDefault() {
+    
     //default
     this.customerReceipt = <CustomerReceiptDisplay>{
       state: 'waiting'
     };
 
     if (this.appointId) {
-      this.appointmentService.get(this.appointId).subscribe(
+      this.dashboardReportService.getDefaultCustomerReceipt(this.appointId).subscribe(
         (rs: any) => {
-          this.formGroup.get('partner').setValue(rs.partner);
-          this.onChangePartner();
-
           if (rs.doctor) {
             this.formGroup.get('doctor').setValue(rs.doctor);
             this.filteredEmployees = _.unionBy(this.filteredEmployees, [rs.doctor], 'id');
+          }
+          
+          if (rs.partner) {
+            this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [rs.partner], 'id');
+            this.onChangePartner();
           }
 
           if (rs.services) {

@@ -1,10 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ProductService, ProductImportExcelViewModel, ProductImportExcelBaseViewModel, ProductPaged } from '../product.service';
-import { WindowRef } from '@progress/kendo-angular-dialog';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { of } from 'rxjs';
+import { ProductImportExcelBaseViewModel, ProductService } from '../product.service';
 
 @Component({
   selector: 'app-product-import-excel-dialog',
@@ -14,18 +11,21 @@ import { of } from 'rxjs';
 export class ProductImportExcelDialogComponent implements OnInit {
   fileBase64 = '';
   type: string;
-  errors: string[];
+  errors: string[] = [];
   title: string;
   isUpdate: boolean = false;
   correctFormat = true;
-  constructor(private productService: ProductService, public activeModal: NgbActiveModal, private notificationService: NotificationService,
-    private errorService: AppSharedShowErrorService) { }
+  constructor(private productService: ProductService, 
+    public activeModal: NgbActiveModal, 
+    private notificationService: NotificationService,
+    ) { }
 
   ngOnInit() {
   }
 
   onFileChange(value) {
     this.fileBase64 = value;
+    this.errors = [];
   }
 
   notify(Style, Content) {
@@ -40,7 +40,7 @@ export class ProductImportExcelDialogComponent implements OnInit {
 
   onSave() {
     if (!this.correctFormat){
-      this.notify('error','Dữ liệu không đúng định dạng mẫu');
+      this.notify('error','File import sai định dạng. Vui lòng tải file mẫu và nhập dữ liệu đúng');
       return;
     }
     if (!this.fileBase64 || this.fileBase64 === '') {

@@ -1,15 +1,14 @@
-import { Component, Input, OnInit, SimpleChanges, Output } from '@angular/core';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbDate, NgbDateParserFormatter, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { LaboOrderPaged, LaboOrderService, LaboOrderBasic } from '../labo-order.service';
-import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { SaleOrderLineService, SaleOrderLinesLaboPaged, SaleOrderLinesPaged } from 'src/app/core/services/sale-order-line.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { SaleOrderLineService, SaleOrderLinesLaboPaged } from 'src/app/core/services/sale-order-line.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { LaboOrderBasic, LaboOrderService } from '../labo-order.service';
 
 @Component({
   selector: 'app-labo-order-list',
@@ -23,6 +22,7 @@ export class LaboOrderListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   opened = false;
   search: string;
@@ -38,7 +38,12 @@ export class LaboOrderListComponent implements OnInit {
     { name: 'Nháp', value: 'draft' },
     { name: 'Đơn hàng', value: 'confirmed' },
   ];
-
+  toothTypeDict = [
+    { name: "Hàm trên", value: "upper_jaw" },
+    { name: "Nguyên hàm", value: "whole_jaw" },
+    { name: "Hàm dưới", value: "lower_jaw" },
+    { name: "Chọn răng", value: "manual" },
+  ];
   // dateOrderFrom: Date;
   // dateOrderTo: Date;
   // datePlannedFrom: Date;
@@ -53,9 +58,10 @@ export class LaboOrderListComponent implements OnInit {
   constructor(private laboOrderService: LaboOrderService,
     private router: Router,
     private saleOrderLineService: SaleOrderLineService,
-    private modalService: NgbModal, private intlService: IntlService,
-    private checkPermissionService: CheckPermissionService
-    ) { }
+    private modalService: NgbModal,
+    private checkPermissionService: CheckPermissionService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.filterPaged.limit = this.limit;
@@ -149,6 +155,8 @@ export class LaboOrderListComponent implements OnInit {
       }))
     ).subscribe(res => {
       this.gridData = res;
+      console.log(this.gridData);
+      
       this.loading = false;
     }, err => {
       console.log(err);
@@ -171,15 +179,20 @@ export class LaboOrderListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 
   showInfo(val) {
     var list = [];
-    if (val.teeth.length) {
-      list.push(val.teeth.map(x => x.name).join(','));
+    if(val.toothType == 'manual'){
+      if (val.teeth.length) {
+        list.push(val.teeth.map(x => x.name).join(','));
+      }
+    } else {
+      list.push(this.toothTypeDict.find(x=> x.value == val.toothType)?.name)
     }
-
+   
     if (val.diagnostic) {
       list.push(val.diagnostic);
     }
@@ -208,5 +221,10 @@ export class LaboOrderListComponent implements OnInit {
 
   checkRole(){
     this.canUpdateSaleOrder = this.checkPermissionService.check(['Basic.SaleOrder.Update']);
+  }
+
+  getToothType(key) {
+    var type = this.toothTypeDict.find(x=> x.value == key);
+    return type;
   }
 }

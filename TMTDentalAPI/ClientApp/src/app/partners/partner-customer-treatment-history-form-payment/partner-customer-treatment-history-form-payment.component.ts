@@ -1,16 +1,15 @@
-import { Component, OnInit, ViewChild, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
 import { of } from 'rxjs';
-import { mergeMap, switchMap } from 'rxjs/operators';
+import { mergeMap } from 'rxjs/operators';
 import { PaymentInfoContent } from 'src/app/account-invoices/account-invoice.service';
 import { AccountPaymentBasic, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
-import { AccountRegisterPaymentService } from 'src/app/account-payments/account-register-payment.service';
 import { CardCardPaged, CardCardService } from 'src/app/card-cards/card-card.service';
 import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
 import { DiscountDefault, SaleOrderService } from 'src/app/core/services/sale-order.service';
@@ -20,18 +19,15 @@ import { PriceListService } from 'src/app/price-list/price-list.service';
 import { LaboOrderCuDialogComponent } from 'src/app/sale-orders/labo-order-cu-dialog/labo-order-cu-dialog.component';
 import { SaleOrderApplyCouponDialogComponent } from 'src/app/sale-orders/sale-order-apply-coupon-dialog/sale-order-apply-coupon-dialog.component';
 import { SaleOrderApplyServiceCardsDialogComponent } from 'src/app/sale-orders/sale-order-apply-service-cards-dialog/sale-order-apply-service-cards-dialog.component';
-import { SaleOrderCreateDotKhamDialogComponent } from 'src/app/sale-orders/sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
 import { SaleOrderDisplay } from 'src/app/sale-orders/sale-order-display';
 import { SaleOrderLineLaboOrdersDialogComponent } from 'src/app/sale-orders/sale-order-line-labo-orders-dialog/sale-order-line-labo-orders-dialog.component';
 import { SaleOrderPaymentDialogComponent } from 'src/app/sale-orders/sale-order-payment-dialog/sale-order-payment-dialog.component';
 import { AccountPaymentPrintComponent } from 'src/app/shared/account-payment-print/account-payment-print.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
 import { SaleOrderLineDialogComponent } from 'src/app/shared/sale-order-line-dialog/sale-order-line-dialog.component';
 import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 import { UserSimple } from 'src/app/users/user-simple';
 import { UserPaged, UserService } from 'src/app/users/user.service';
-import { PartnerSearchDialogComponent } from '../partner-search-dialog/partner-search-dialog.component';
 import { PartnerPaged, PartnerSimple } from '../partner-simple';
 import { PartnerService } from '../partner.service';
 
@@ -66,13 +62,13 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
   partnerSend: any;
   type: string;
   constructor(private fb: FormBuilder, private partnerService: PartnerService,
-    private userService: UserService, private route: ActivatedRoute, private saleOrderService: SaleOrderService,
+    private userService: UserService, private saleOrderService: SaleOrderService,
     private saleOrderLineService: SaleOrderLineService, private intlService: IntlService, private modalService: NgbModal,
     private router: Router, private notificationService: NotificationService, private cardCardService: CardCardService,
     private pricelistService: PriceListService, private errorService: AppSharedShowErrorService,
-    private registerPaymentService: AccountRegisterPaymentService, private paymentService: AccountPaymentService,
+    private paymentService: AccountPaymentService,
     private laboOrderService: LaboOrderService) { }
-    
+
   ngOnChanges(changes: SimpleChanges): void {
     if (this.saleOrderLine) {
       this.addLine(this.saleOrderLine);
@@ -583,7 +579,7 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
     if (this.id) {
       let modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       if (item && item.id) {
-        modalRef.componentInstance.title = 'Cập nhật phiếu labo';
+        modalRef.componentInstance.title = 'Cập nhật phiếu Labo';
         modalRef.componentInstance.id = item.id;
       }
       else {
@@ -1150,7 +1146,7 @@ export class PartnerCustomerTreatmentHistoryFormPaymentComponent implements OnIn
   }
 
   printPayment(payment) {
-    this.paymentService.getPrint(payment.accountPaymentId).subscribe(result => {
+    this.paymentService.getPrint(payment.accountPaymentId).subscribe((result: any) => {
       this.accountPaymentPrintComponent.print(result);
     });
   }

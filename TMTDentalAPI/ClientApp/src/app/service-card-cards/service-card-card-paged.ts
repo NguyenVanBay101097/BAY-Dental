@@ -3,4 +3,11 @@ export class ServiceCardCardPaged {
     limit: number;
     search: string;
     orderId: string;
+    partnerId: string;
+    state: string;
+    activatedDate: string;
+    activatedDateFrom: string;
+    activatedDateTo: string;
+    dateFrom: string;
+    dateTo: string;
 }

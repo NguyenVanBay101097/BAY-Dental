@@ -7,7 +7,6 @@ import * as _ from 'lodash';
 import { mergeMap } from 'rxjs/operators';
 import { AccountJournalFilter, AccountJournalService } from 'src/app/account-journals/account-journal.service';
 import { AuthService } from 'src/app/auth/auth.service';
-import { PartnerService } from 'src/app/partners/partner.service';
 import { PhieuThuChiService } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
 import { AgentService, TotalAmountAgentFilter } from '../agent.service';
 
@@ -29,8 +28,9 @@ export class AgentCommmissionPaymentDialogComponent implements OnInit {
 
   @ViewChild("journalCbx", { static: true }) journalCbx: ComboBoxComponent;
 
-  constructor(private phieuthuchiService: PhieuThuChiService, private fb: FormBuilder, private intlService: IntlService, private agentService: AgentService,
-    public activeModal: NgbActiveModal, private accountJournalService: AccountJournalService, private partnerService: PartnerService,
+  constructor(private phieuthuchiService: PhieuThuChiService, private fb: FormBuilder, private intlService: IntlService, 
+    private agentService: AgentService,
+    public activeModal: NgbActiveModal, private accountJournalService: AccountJournalService, 
     private authService: AuthService) { }
 
   ngOnInit() {
@@ -43,7 +43,6 @@ export class AgentCommmissionPaymentDialogComponent implements OnInit {
 
     this.loadDefault();
     this.loadFilteredJournals();
-    this.loadAmountCommissionAgentBalance();
   }
 
   loadDefault() {
@@ -73,21 +72,6 @@ export class AgentCommmissionPaymentDialogComponent implements OnInit {
     );
   }
 
-  loadAmountCommissionAgentBalance() {
-    if (this.agentId) {
-      var val = new TotalAmountAgentFilter();
-      val.agentId = this.agentId;
-      val.companyId = this.authService.userInfo.companyId;
-      val.partnerId = this.partnerId;
-      this.agentService.getAmountBalanceCommissionAgentForPartner(val).subscribe((res: any) => {
-        this.amountTotalBalance = res;
-      },
-        (error) => {
-          console.log(error);
-        }
-      );
-    }
-  }
 
   get f() { return this.formGroup.controls; }
 

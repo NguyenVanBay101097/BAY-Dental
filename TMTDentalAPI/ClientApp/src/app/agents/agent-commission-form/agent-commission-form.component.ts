@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
 import { AgentService } from '../agent.service';
 
 @Component({

@@ -1,32 +1,28 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
-import { FormGroup, FormBuilder, FormArray, Validators, FormControl } from "@angular/forms";
-import { UserPaged, UserService } from "src/app/users/user.service";
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { NgbActiveModal, NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import {
+  ComboBoxComponent, DropDownFilterSettings
+} from "@progress/kendo-angular-dropdowns";
 import { IntlService } from "@progress/kendo-angular-intl";
-import { AppSharedShowErrorService } from "src/app/shared/shared-show-error.service";
+import { NotificationService } from '@progress/kendo-angular-notification';
+import * as _ from "lodash";
+import { debounceTime, switchMap, tap } from "rxjs/operators";
+import { ToaThuocLineService } from "src/app/core/services/toa-thuoc-line.service";
+import { EmployeeBasic, EmployeePaged } from "src/app/employees/employee";
+import { EmployeeService } from "src/app/employees/employee.service";
+import { ProductMedicineCuDialogComponent } from 'src/app/products/product-medicine-cu-dialog/product-medicine-cu-dialog.component';
 import { ProductSimple } from "src/app/products/product-simple";
 import {
   ProductFilter,
-  ProductService,
+  ProductService
 } from "src/app/products/product.service";
 import {
-  DropDownFilterSettings,
-  ComboBoxComponent,
-} from "@progress/kendo-angular-dropdowns";
-import {
-  SamplePrescriptionsService,
-  SamplePrescriptionsDisplay,
-  SamplePrescriptionsSimple,
-  SamplePrescriptionsPaged,
+  SamplePrescriptionsPaged, SamplePrescriptionsService,
+  SamplePrescriptionsSimple
 } from "src/app/sample-prescriptions/sample-prescriptions.service";
-import { debounceTime, tap, switchMap } from "rxjs/operators";
+import { AppSharedShowErrorService } from "src/app/shared/shared-show-error.service";
 import { ToaThuocService } from "src/app/toa-thuocs/toa-thuoc.service";
-import { EmployeeBasic, EmployeePaged } from "src/app/employees/employee";
-import { EmployeeService } from "src/app/employees/employee.service";
-import * as _ from "lodash";
-import { ProductMedicineCuDialogComponent } from 'src/app/products/product-medicine-cu-dialog/product-medicine-cu-dialog.component';
-import { NotificationService } from '@progress/kendo-angular-notification';
-import { ToaThuocLineService } from "src/app/core/services/toa-thuoc-line.service";
 
 @Component({
   selector: "app-toa-thuoc-cu-dialog-save",

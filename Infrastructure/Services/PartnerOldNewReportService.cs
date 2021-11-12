@@ -4,13 +4,11 @@ using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -129,7 +127,7 @@ namespace Infrastructure.Services
             if (val.DateFrom.HasValue)
                 query = query.Where(x => x.DateOrder.Date >= val.DateFrom.Value.AbsoluteBeginOfDate());
             if (val.DateTo.HasValue)
-                query = query.Where(x => x.DateOrder.Date <= val.DateTo.Value.AbsoluteBeginOfDate());
+                query = query.Where(x => x.DateOrder.Date <= val.DateTo.Value.AbsoluteEndOfDate());
             if (val.CompanyId.HasValue)
             {
                 query = query.Where(x => x.CompanyId == val.CompanyId);
@@ -198,11 +196,108 @@ namespace Infrastructure.Services
             var res = await SumReportQuery(val).SumAsync(x => x.TotalPaid ?? 0);
             return res;
         }
+
         public async Task<int> SumReport(PartnerOldNewReportReq val)
         {
             var query = SumReportQuery(val);
             return await query.GroupBy(x => x.PartnerId).Select(x => x.Key).CountAsync();
         }
+
+        public async Task<IEnumerable<PartnerOldNewReportByWard>> ReportByWard(PartnerOldNewReportByWardReq val)
+        {
+
+            var userObj = GetService<IUserService>();
+            var company_ids = userObj.GetListCompanyIdsAllowCurrentUser();
+            var query = _context.PartnerOldNewInSaleOrders.Where(x => company_ids.Contains(x.CompanyId) && x.SaleOrder.State != "draft");
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+
+            if (!string.IsNullOrEmpty(val.CityCode))
+                query = query.Where(x => x.Partner.CityCode == val.CityCode);
+            else
+                query = query.Where(x => string.IsNullOrEmpty(x.Partner.CityCode));
+
+            if (!string.IsNullOrEmpty(val.DistrictCode))
+                query = query.Where(x => x.Partner.DistrictCode == val.DistrictCode);
+            else
+                query = query.Where(x => string.IsNullOrEmpty(x.Partner.DistrictCode));
+          
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.DateOrder >= val.DateFrom.Value.AbsoluteBeginOfDate());
+
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.DateOrder <= val.DateTo.Value.AbsoluteEndOfDate());
+
+            //group by theo wardcode, wardname, những dòng isNew true là số khách mới, những dòng isnew false là số khách quay lại, count distince
+            var result = await query.GroupBy(x => new
+            {
+                WardCode = x.Partner.WardCode,
+                WardName = x.Partner.WardName,
+                PartnerId = x.PartnerId,
+                IsNew = x.IsNew
+            }).Select(x => new
+            {
+                WardCode = x.Key.WardCode,
+                WardName = x.Key.WardName,
+                IsNew = x.Key.IsNew,
+                //PartnerCount = x.Sum(s => 1),
+                PartnerRevenue = x.Sum(s => s.TotalPaid),
+            })
+            .GroupBy(x => new
+            {
+                WardCode = x.WardCode,
+                WardName = x.WardName,
+            })
+            .Select(x => new PartnerOldNewReportByWard()
+            {
+                WardCode = x.Key.WardCode,
+                WardName = x.Key.WardName,
+                PartnerNewCount = x.Sum(s => s.IsNew ? 1 : 0),
+                PartnerNewRevenue = x.Sum(s => s.IsNew ? s.PartnerRevenue : 0),
+                PartnerOldCount = x.Sum(s => !s.IsNew ? 1 : 0),
+                PartnerOldRevenue = x.Sum(s => !s.IsNew ? s.PartnerRevenue : 0),
+            })
+            .ToListAsync();
+
+            return result;
+        }
+
+        public async Task<IEnumerable<PartnerOldNewReportByIsNewItem>> ReportByIsNew(PartnerOldNewReportByIsNewReq val)
+        {
+
+            var userObj = GetService<IUserService>();
+            var company_ids = userObj.GetListCompanyIdsAllowCurrentUser();
+            var query = _context.PartnerOldNewInSaleOrders.Where(x => company_ids.Contains(x.CompanyId) && x.SaleOrder.State != "draft");
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.DateOrder >= val.DateFrom.Value.AbsoluteBeginOfDate());
+
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.DateOrder <= val.DateTo.Value.AbsoluteEndOfDate());
+
+            var result = await query.GroupBy(x => new
+            {
+                PartnerId = x.PartnerId,
+                IsNew = x.IsNew,
+            }).Select(x => new
+            {
+                IsNew = x.Key.IsNew,
+                PartnerId = x.Key.PartnerId,
+                TotalOrder = x.Sum(s => 1)
+            })
+            .GroupBy(x => x.IsNew)
+            .Select(x => new PartnerOldNewReportByIsNewItem()
+            {
+                IsNew = x.Key ? 1 : 0,
+                PartnerTotal = x.Sum(s => 1),
+            })
+            .ToListAsync();
+
+            return result;
+        }
+
         public IQueryable<PartnerInfoTemplate> GetReportQuery(PartnerOldNewReportReq val)
         {
             var saleOrderObj = GetService<ISaleOrderService>();

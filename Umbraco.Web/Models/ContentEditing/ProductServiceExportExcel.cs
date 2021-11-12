@@ -66,5 +66,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string UoMPOName { get; set; }
 
         public decimal? MinInventory { get; set; }
+        public string Origin { get; set; }
+        public decimal? Expiry { get; set; }
     }
 }

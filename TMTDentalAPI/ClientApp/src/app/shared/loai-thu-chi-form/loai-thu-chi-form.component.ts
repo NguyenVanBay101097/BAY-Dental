@@ -27,7 +27,6 @@ export class LoaiThuChiFormComponent implements OnInit {
       isAccounting: null,
       companyId: null,
     });
-
     setTimeout(() => {
       if (!this.itemId) 
         this.defaultGet();

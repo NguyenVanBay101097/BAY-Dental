@@ -12,6 +12,19 @@ namespace ApplicationCore.Entities
         public string Name { get; set; }
 
         /// <summary>
+        /// customer : khách hàng
+        /// employee : nhân viên
+        /// partner : đối tác
+        /// </summary>
+        public string Classify { get; set; }
+
+        public Guid? CustomerId { get; set; }
+        public Partner Customer { get; set; }
+
+        public Guid? EmployeeId { get; set; }
+        public Employee Employee { get; set; }
+
+        /// <summary>
         /// Giới tính
         /// ('male', 'Male')
         /// ('female', 'Female')
@@ -45,13 +58,41 @@ namespace ApplicationCore.Entities
         public string Address { get; set; }
 
         /// <summary>
+        /// ngân hàng
+        /// </summary>
+        public Guid? BankId { get; set; }
+        public ResBank Bank { get; set; }
+
+        /// <summary>
+        /// Chi nhánh ngân hàng
+        /// </summary>
+        public string BankBranch { get; set; }
+
+        /// <summary>
+        /// Số tài khoản
+        /// </summary>
+        public string AccountNumber { get; set; }
+
+        /// <summary>
+        /// Chủ tài khoản
+        /// </summary>
+        public string AccountHolder { get; set; }
+
+
+        /// <summary>
         /// Chi nhánh
         /// </summary>
         public Guid? CompanyId { get; set; }
         public Company Company { get; set; }
 
-        public Guid PartnerId { get; set; }
+        public Guid? PartnerId { get; set; }
         public Partner Partner { get; set; }
+
+        /// <summary>
+        /// kết nối bảng hoa hồng
+        /// </summary>
+        public Guid? CommissionId { get; set; }
+        public Commission Commission { get; set; }
 
         /// <summary>
         /// danh sách khách hàng được giơi thiệu

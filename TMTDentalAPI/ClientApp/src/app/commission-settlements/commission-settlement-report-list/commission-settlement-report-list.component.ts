@@ -1,13 +1,14 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { CommissionSettlementsService, CommissionSettlementReportOutput, CommissionSettlementReportRes, CommissionSettlementFilterReport } from '../commission-settlements.service';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { EmployeeService } from 'src/app/employees/employee.service';
-import { EmployeeSimple, EmployeePaged } from 'src/app/employees/employee';
-import { Subject } from 'rxjs';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import * as _ from 'lodash';
-import { debounceTime, tap, switchMap, map } from 'rxjs/operators';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { IntlService } from '@progress/kendo-angular-intl';
+import * as _ from 'lodash';
+import { Subject } from 'rxjs';
+import { debounceTime, map, switchMap, tap } from 'rxjs/operators';
+import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
+import { EmployeeService } from 'src/app/employees/employee.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { CommissionSettlementFilterReport, CommissionSettlementsService } from '../commission-settlements.service';
 
 @Component({
   selector: 'app-commission-settlement-report-list',
@@ -17,8 +18,9 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 export class CommissionSettlementReportListComponent implements OnInit {
   reportResults: GridDataResult;
   search: string = '';
-  limit = 20;
+  limit = 2;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   dateFrom: Date;
   dateTo: Date;
@@ -41,7 +43,8 @@ export class CommissionSettlementReportListComponent implements OnInit {
     private commissionSettlementsService: CommissionSettlementsService,
     private intl: IntlService,
     private employeeService: EmployeeService,
-  ) { }
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadEmployees();
@@ -68,6 +71,7 @@ export class CommissionSettlementReportListComponent implements OnInit {
     val.search = this.search || '';
     val.employeeId = this.employeeId ? this.employeeId : '';
     val.commissionType = this.commissionType ? this.commissionType : '';
+    val.groupBy = 'employee';
     this.loading = true;
     this.commissionSettlementsService.getReportPaged(val).pipe(
       map((response: any) => (<GridDataResult>{
@@ -116,6 +120,7 @@ export class CommissionSettlementReportListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

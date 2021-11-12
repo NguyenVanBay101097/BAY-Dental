@@ -1,229 +1,3 @@
-<!-- <div class="row custom py-3">
-    <div class="col mb-2">
-        <div class="d-flex justify-content-center align-items-center">
-            <div class="header-title">
-                BÁO CÁO TỔNG QUAN
-            </div>
-            <div class="header-filter">
-                <kendo-combobox [(ngModel)]="companyId" (valueChange)="changeCompany($event)" class="form-control"
-                    [data]="filteredCompanies" [textField]="'name'" [filterable]="true" #companyCbx [valueField]="'id'"
-                    [valuePrimitive]="true" [placeholder]="'Tất cả chi nhánh'">
-                </kendo-combobox>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12 pt-2">
-                <div class="dashboard-filter">
-                    <div class="btn-group">
-                        <div>
-                            <input class="btn-check" type="radio" [(ngModel)]="groupBy" name="radioButton" id="day"
-                                value="groupby:day" (change)="onChangeType($event.target.value)">
-                            <label class="btn btn-outline-primary mr-2" for="day">
-                                Ngày
-                            </label>
-                        </div>
-                        <div>
-                            <input class="btn-check" type="radio" [(ngModel)]="groupBy" name="radioButton" id="month"
-                                value="groupby:month" (change)="onChangeType($event.target.value)">
-                            <label class="btn btn-outline-primary mr-2" for="month">
-                                Tháng
-                            </label>
-                        </div>
-                        <div>
-                            <app-date-range-picker-filter [opens]="'right'" class="mr-1" [startDate]="dateFrom"
-                                [endDate]="dateTo" (searchChange)="onSearchDateChange($event)">
-                            </app-date-range-picker-filter>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col pt-2">
-                <div class="border border-secondary rounded bg-white">
-                    <app-sale-dashboard-report-chart-flow-year [companyId]="companyId">
-                    </app-sale-dashboard-report-chart-flow-year>
-                    <app-sale-dashboard-invoice-report [companyId]="companyId" [dateFrom]="dateFrom" [dateTo]="dateTo"
-                        [groupby]="groupBy">
-                    </app-sale-dashboard-invoice-report>
-                </div>
-            </div>
-            <div class="col-4">
-                <div class="pb-3 d-flex pt-3">
-                    <div class="w-50 h-100 pr-2">
-                        <div class="position-relative bg-white p-4 text-center border border-secondary rounded">
-                            <div class="text-top font-weight-bold font-size">CÔNG NỢ NCC</div>
-                            <div class="text-bottom font-weight-bold text-danger font-size">
-                                {{(totalDebitNCC ? totalDebitNCC : 0 ) | number}}</div>
-                            <a (click)="redirectTo('ncc-debit-report')" class="position-absolute btn text-info">Chi tiết
-                                >></a>
-                        </div>
-                    </div>
-                    <div class="w-50 h-100 pl-2">
-                        <div class="position-relative bg-white p-4 text-center border border-secondary rounded">
-                            <div class="text-top font-weight-bold font-size">PHẢI THU</div>
-                            <div class="text-bottom font-weight-bold text-danger font-size">
-                                {{(totalDebitCustomer ? totalDebitCustomer : 0) | number}}</div>
-                            <a routerLink="/report-account-common/partner-debit" class="position-absolute btn text-info">Chi
-                                tiết >></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="pb-3">
-                    <div class="position-relative text-center bg-white p-3 border border-secondary rounded">
-                        <div class="pb-2 font-weight-bold">SỔ QUỸ
-                        </div>
-                        <div class="d-flex">
-                            <div class="flex border-right">
-                                <div class=" text-center">
-                                    <div class="text-top font-weight-bold text-danger">TIỀN MẶT</div>
-                                    <div class="text-bottom font-weight-bold text-primary">
-                                        {{(moneyCash ? moneyCash : 0) | number}}</div>
-                                </div>
-                            </div>
-                            <div class="flex">
-                                <div class=" text-center">
-                                    <div class="text-top font-weight-bold text-danger">NGÂN HÀNG</div>
-                                    <div class="text-bottom font-weight-bold text-primary">
-                                        {{(moneyBank ? moneyBank : 0) | number}}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <a (click)="redirectTo('money-report')" class="position-absolute btn text-info">Chi tiết >></a>
-                    </div>
-                </div>
-                <div class="pb-3">
-                    <div class="position-relative text-center bg-white p-3 border border-secondary rounded">
-                        <div class="pb-2 font-weight-bold">BÁO CÁO KHÁCH HÀNG CŨ - MỚI
-                        </div>
-                        <div class="d-flex">
-                            <div class="border-right flex">
-                                <div class=" text-center">
-                                    <div class="text-top font-weight-bold">KHÁCH HÀNG CŨ</div>
-                                    <div class="text-bottom font-weight-bold text-primary">
-                                        {{partnerOldNewReport ? partnerOldNewReport.totalOldPartner : 0}}</div>
-                                </div>
-                            </div>
-                            <div class="flex">
-                                <div class="text-center">
-                                    <div class="text-top font-weight-bold">KHÁCH HÀNG MỚI</div>
-                                    <div class="text-bottom font-weight-bold text-primary">
-                                        {{partnerOldNewReport ? partnerOldNewReport.totalNewPartner : 0}}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <a (click)="redirectTo('new-old-customer-report')" class="position-absolute btn text-info
-                        ">Chi tiết >></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-12">
-        <div class="border border-secondary rounded col-12 d-flex">
-            <div class="header-title">
-                BÁO CÁO THEO THÁNG
-            </div>
-            <div class="header-filter">
-                <div class="float-right">
-                    <b class="mr-2">Thời gian</b>
-                    <kendo-datepicker [(ngModel)]="filterMonthDate" (valueChange)="changeMonth()" [format]="'MM-yyyy'"
-                        [bottomView]="'year'"></kendo-datepicker>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12 pt-3">
-                <div class="border border-secondary rounded">
-                    <app-sale-dashboard-report-chart-flow-month [dateTo]="dateTo" [dateFrom]="dateFrom"
-                        [companyId]="companyId">
-                    </app-sale-dashboard-report-chart-flow-month>
-                    <app-sale-dashboard-cashbook-report [companyId]="companyId" [dateFrom]="dateFrom" [dateTo]="dateTo"
-                    [groupby]="groupBy">
-                </app-sale-dashboard-cashbook-report>
-                </div>
-            </div>
-            <div class="col-6 pt-3">
-                <div class="position-relative bg-white border border-secondary rounded p-3 mb-3 text-center">
-                    <div class="font-weight-bold">BÁO CÁO KẾT QUẢ KINH DOANH
-                    </div>
-                    <div class="d-flex">
-                        <div class="border-right flex">
-                            <div class=" text-center">
-                                <div class="text-top font-weight-bold">DOANH THU</div>
-                                <div class="text-bottom font-weight-bold text-success">
-                                    {{(totalDoanhThu ? totalDoanhThu : 0) | number}}</div>
-                            </div>
-                        </div>
-                        <div class=" text-center flex">
-                            <div class="text-top font-weight-bold">CHI PHÍ</div>
-                            <div class="text-bottom font-weight-bold text-danger">
-                                {{(totalChiPhi ? totalChiPhi : 0) | number}}</div>
-                        </div>
-                    </div>
-                    <a (click)="redirectTo('financial-report')" class="position-absolute btn text-info">Chi tiết >></a>
-                </div>
-                <div class="position-relative bg-white border border-secondary rounded p-3 text-center">
-                    <div class="font-weight-bold">BÁO CÁO THU CHI
-                    </div>
-                    <div class="d-flex">
-                        <div class="border-right flex">
-                            <div class="position-relative text-center">
-                                <div class="text-top font-weight-bold">THỰC THU</div>
-                                <div class="text-bottom font-weight-bold text-success">
-                                    {{(totalThu ? totalThu : 0) | number}}</div>
-                            </div>
-                        </div>
-                        <div class="position-relative flex text-center">
-                            <div class="text-top font-weight-bold">THỰC CHI</div>
-                            <div class="text-bottom font-weight-bold text-danger">
-                                {{(totalChi ? totalChi : 0) | number}}</div>
-                        </div>
-                    </div>
-                    <a routerLink="/cash-book/tab-cabo" class="position-absolute btn text-info">Chi tiết >></a>
-                </div>
-            </div>
-            <div class="col-6 pt-3">
-                <div class="position-relative bg-white border border-secondary rounded mb-3 p-3 text-center">
-                    <div class="font-weight-bold">BÁO CÁO CÔNG NỢ NCC
-                    </div>
-                    <div class="d-flex">
-                        <div class="border-right flex">
-                            <div class="text-center">
-                                <div class="text-top font-weight-bold">PHÁT SINH</div>
-                                <div class="text-bottom font-weight-bold text-success">
-                                    {{(totalDebitNCCByMonth ? totalDebitNCCByMonth : 0) | number}}</div>
-                            </div>
-                        </div>
-                        <div class="text-center flex">
-                            <div class="text-top font-weight-bold">THANH TOÁN</div>
-                            <div class="text-bottom font-weight-bold text-danger">
-                                {{(totalCreditNCCByMonth ? totalCreditNCCByMonth : 0) | number}}</div>
-                        </div>
-                    </div>
-                    <a (click)="redirectTo('ncc-debit-report')" class="position-absolute btn text-info">Chi tiết >></a>
-                </div>
-
-                <div class="position-relative bg-white border border-secondary rounded p-cu">
-                    <div class="text-center">
-                        <div class="text-top font-weight-bold">HOA HỒNG ĐIỀU TRỊ</div>
-                        <div class="text-bottom font-weight-bold text-success">
-                            {{(totalHoaHong ? totalHoaHong : 0) | number}}
-                        </div>
-                    </div>
-                    <a (click)="redirectTo('hoa-hong-report')" class="position-absolute btn text-info">Chi tiết >></a>
-                </div>
-
-            </div>
-
-            <div class="col-12 mt-3">
-                <app-financial-revenue-report [companyId]="companyId"></app-financial-revenue-report>
-            </div>
-        </div>
-    </div>
-</div> -->
-
 <div class="o_cp_controller">
     <div class="o_control_panel">
         <ol class="breadcrumb">
@@ -232,10 +6,6 @@
             </li>
         </ol>
         <div class="o_cp_searchview">
-            <!-- <kendo-combobox [(ngModel)]="companyId" (valueChange)="changeCompany($event)" class="form-control"
-                [data]="filteredCompanies" [textField]="'name'" [filterable]="true" #companyCbx [valueField]="'id'"
-                [valuePrimitive]="true" [placeholder]="'Tất cả chi nhánh'">
-            </kendo-combobox> -->
         </div>
         <div class="o_cp_left">
             <div class="o_cp_sidebar">
@@ -265,7 +35,7 @@
                 <div class="o_aggregate_col o_group_col_2">
                     <div class="o_aggregate">
                         <h5>Quỹ tiền mặt</h5>
-                        <div class="o_value text-success">{{(moneyCash ? moneyCash : 0) | number}}</div>
+                        <div class="o_value text-success">{{summaryReport?.cashTotal || 0 | number}}</div>
                         <div class="link-details">
                             <a (click)="redirectTo('cash-book-cash')">Chi tiết</a>
                         </div>
@@ -274,7 +44,7 @@
                 <div class="o_aggregate_col o_group_col_2">
                     <div class="o_aggregate">
                         <h5>Quỹ ngân hàng</h5>
-                        <div class="o_value text-primary"> {{(moneyBank ? moneyBank : 0) | number}}</div>
+                        <div class="o_value text-primary"> {{summaryReport?.bankTotal || 0 | number}}</div>
                         <div class="link-details">
                             <a (click)="redirectTo('cash-book-bank')">Chi tiết</a>
                         </div>
@@ -283,7 +53,7 @@
                 <div class="o_aggregate_col o_group_col_2">
                     <div class="o_aggregate">
                         <h5>Công nợ phải trả</h5>
-                        <div class="o_value text-danger">{{totalDebitNCC | number }}</div>
+                        <div class="o_value text-danger">{{summaryReport?.payableTotal || 0 | number }}</div>
                         <div class="link-details">
                             <a (click)="redirectTo('ncc-debit-report')">Chi tiết</a>
                         </div>
@@ -292,7 +62,7 @@
                 <div class="o_aggregate_col o_group_col_2">
                     <div class="o_aggregate ">
                         <h5>Công nợ phải thu</h5>
-                        <div class="o_value text-primary">{{totalDebitCustomer | number }}</div>
+                        <div class="o_value text-primary">{{summaryReport?.debtTotal || 0 | number }}</div>
                         <div class="link-details">
                             <a (click)="redirectTo('customer-debit-report')">Chi tiết</a>
                         </div>
@@ -301,7 +71,7 @@
                 <div class="o_aggregate_col o_group_col_2">
                     <div class="o_aggregate ">
                         <h5>Dự kiến thu</h5>
-                        <div class="o_value text-success">{{sumRevenue || 0 | number }}</div>
+                        <div class="o_value text-success">{{summaryReport?.expectTotal || 0 | number }}</div>
                         <div class="link-details">
                             <a (click)="redirectTo('account-invoice-reports')">Chi tiết</a>
                         </div>
@@ -321,27 +91,24 @@
                 <label class="btn btn-outline-primary mr-2" for="month">
                     Tháng
                 </label>
-                <app-date-range-picker-filter [opens]="'right'" class="mr-1" [startDate]="dateFrom" [endDate]="dateTo"
-                    (searchChange)="onSearchDateChange($event)">
+                <app-date-range-picker-filter *ngIf="groupBy=='groupby:day';else elseTemplate" [opens]="'right'"
+                    class="mr-1" [startDate]="dateFrom" [showClearButton] = "false" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)">
                 </app-date-range-picker-filter>
-
-
-
+                <ng-template #elseTemplate>
+                    <app-month-range-filter-dropdown [dateFrom]="monthFrom" [dateTo]="monthTo" (searchChange)="onSearchDateChange($event)"></app-month-range-filter-dropdown>
+                </ng-template>
             </div>
         </div>
         <div class="o_group mb-2 bg-white">
-            <div class="border-group">
-                <app-sale-dashboard-invoice-report [revenues]="revenues" [dataRevenues]="dataRevenues"
-                    [cashBooks]="cashBooks" [dataCashBooks]="dataCashBooks" [totalDataCashBook]="totalDataCashBook"
-                    [groupby]="groupBy">
+            <div class="border">
+                <app-sale-dashboard-invoice-report [revenues]="revenues" [timeUnit]="chartTimeUnit" [cashBooks]="cashBooks" [revenueActualReportData]="revenueActualReportData">
                 </app-sale-dashboard-invoice-report>
             </div>
         </div>
         <div class="o_group mb-2">
             <div class="o_group o_group_col_12">
                 <div class="border-group">
-                    <app-sale-dashboard-cashbook-report [cashBooks]="cashBooks" [dataCashBooks]="dataCashBooks"
-                        [totalDataCashBook]="totalDataCashBook" [groupby]="groupBy">
+                    <app-sale-dashboard-cashbook-report [cashBooks]="cashBooks" [timeUnit]="chartTimeUnit" [thuChiReportData]="thuChiReportData">
                     </app-sale-dashboard-cashbook-report>
                 </div>
             </div>

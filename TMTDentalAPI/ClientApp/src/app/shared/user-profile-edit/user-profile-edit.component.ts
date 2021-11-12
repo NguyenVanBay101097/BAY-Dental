@@ -1,8 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Component, Input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { UserService, UserDisplay } from 'src/app/users/user.service';
-import { ApplicationUserDisplay } from 'src/app/appointment/appointment';
+import { UserDisplay, UserService } from 'src/app/users/user.service';
 
 @Component({
   selector: 'app-user-profile-edit',

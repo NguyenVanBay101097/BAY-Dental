@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Output, EventEmitter, Input } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -58,7 +58,7 @@ export class TimeKeepingDateFilterComponent implements OnInit {
   }
 
   getMonthFilter() {
-    const today = new Date();
+    // const today = new Date();
     if (this.dateFrom && this.dateFrom !== '') {
       return (this.dateFrom.getMonth() + 1) + '/' + this.dateFrom.getFullYear();
     } else {

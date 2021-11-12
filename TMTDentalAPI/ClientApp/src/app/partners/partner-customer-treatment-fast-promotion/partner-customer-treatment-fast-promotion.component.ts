@@ -1,11 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Observable, observable, Subject } from 'rxjs';
-import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
-import { SaleOrderService } from 'src/app/core/services/sale-order.service';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { Subject } from 'rxjs';
 import { SaleCouponProgramDisplay, SaleCouponProgramService } from 'src/app/sale-coupon-promotion/sale-coupon-program.service';
 import { SaleOrderDisplay } from 'src/app/sale-orders/sale-order-display';
-import { SaleOrderPromotionSave, SaleOrderPromotionService } from 'src/app/sale-orders/sale-order-promotion.service';
 import { NotifyService } from 'src/app/shared/services/notify.service';
 
 @Component({
@@ -44,11 +41,7 @@ export class PartnerCustomerTreatmentFastPromotionComponent implements OnInit {
   constructor(
     public activeModal: NgbActiveModal,
     private promotionService: SaleCouponProgramService,
-    private saleOrderPromotionService: SaleOrderPromotionService,
-    private saleOrderSevice: SaleOrderService,
-    private saleOrderLineService: SaleOrderLineService,
     private notificationService: NotifyService,
-    private modelService: NgbModal
   ) { }
 
   ngOnInit() {

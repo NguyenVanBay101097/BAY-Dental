@@ -1,18 +1,14 @@
-import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
-import { TcareService, TCareMessageDisplay } from '../tcare.service';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
-import { FacebookPagePaged } from 'src/app/socials-channel/facebook-page-paged';
-import { FacebookPageService, ChannelSocial } from 'src/app/socials-channel/facebook-page.service';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { DatePipe } from '@angular/common';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { TCareMessageTemplatePaged, TCareMessageTemplateService } from '../tcare-message-template.service';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { SaleCouponProgramPaged, SaleCouponProgramService } from 'src/app/sale-coupon-promotion/sale-coupon-program.service';
-import { validate } from 'fast-json-patch';
+import { FacebookPagePaged } from 'src/app/socials-channel/facebook-page-paged';
+import { ChannelSocial, FacebookPageService } from 'src/app/socials-channel/facebook-page.service';
 import { TcareMessageTemplateCuDialogComponent } from '../tcare-message-template-cu-dialog/tcare-message-template-cu-dialog.component';
+import { TCareMessageTemplatePaged, TCareMessageTemplateService } from '../tcare-message-template.service';
 
 @Component({
   selector: 'app-tcare-campaign-dialog-sequences',
@@ -27,7 +23,7 @@ export class TcareCampaignDialogSequencesComponent implements OnInit {
   @ViewChild('channelSocialCbx', { static: true }) channelSocialCbx: ComboBoxComponent;
   @ViewChild('cbxMess', { static: true }) cbxMess: ComboBoxComponent;
   @ViewChild('couponCbx', { static: true }) couponCbx: ComboBoxComponent;
-  @ViewChild('content', { static: false }) content: ElementRef;
+  @ViewChild('content') content: ElementRef;
 
   model: any;
   formGroup: FormGroup;

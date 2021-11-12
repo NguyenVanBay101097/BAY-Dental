@@ -19,7 +19,7 @@ namespace Infrastructure.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
-        public AccountCommonPartnerReportService(IMapper mapper, IHttpContextAccessor httpContextAccessor, 
+        public AccountCommonPartnerReportService(IMapper mapper, IHttpContextAccessor httpContextAccessor,
             UserManager<ApplicationUser> userManager)
         {
             _mapper = mapper;
@@ -173,7 +173,7 @@ namespace Infrastructure.Services
                     ResultSelection = val.ResultSelection,
                     PartnerRef = value.PartnerRef,
                     Begin = begin,
-                    Debit = debit,  
+                    Debit = debit,
                     Credit = credit,
                     End = end,
                     PartnerName = value.PartnerName,
@@ -294,6 +294,8 @@ namespace Infrastructure.Services
             var date_to = val.ToDate.HasValue ? val.ToDate.Value.AddDays(1).AddMinutes(-1) : today.AddDays(1).AddMinutes(-1); //23h59
             var dict = new Dictionary<Guid, AccountCommonPartnerReportItem>();
             var amlObj = (IAccountMoveLineService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IAccountMoveLineService));
+            var empObj = GetService<IEmployeeService>();
+            var empl_dict = await empObj.SearchQuery(x => x.HrJobId.HasValue).Include(x => x.HrJob).Include(x => x.User).ThenInclude(x => x.Partner).Distinct().ToDictionaryAsync(x => x.PartnerId, x => x.HrJob.Name);
             var query = amlObj._QueryGet(dateFrom: val.FromDate, dateTo: val.ToDate, initBal: true, state: "posted", companyId: val.CompanyId);
             if (!string.IsNullOrWhiteSpace(val.Search))
             {
@@ -317,6 +319,7 @@ namespace Infrastructure.Services
                    PartnerName = x.Key.PartnerName,
                    PartnerRef = x.Key.PartnerRef,
                    PartnerPhone = x.Key.PartnerPhone,
+                   JobName = empl_dict.ContainsKey(x.Key.PartnerId) ? empl_dict[x.Key.PartnerId] : null,
                    x.Key.Type,
                    InitialBalance = x.Sum(s => s.Debit - s.Credit),
                }).ToListAsync();
@@ -331,6 +334,7 @@ namespace Infrastructure.Services
                         PartnerName = item.PartnerName,
                         PartnerRef = item.PartnerRef,
                         PartnerPhone = item.PartnerPhone,
+                        HrJobName = item.JobName,
                         ResultSelection = val.ResultSelection,
                         DateFrom = date_from,
 
@@ -364,6 +368,7 @@ namespace Infrastructure.Services
                         PartnerName = x.Key.PartnerName,
                         PartnerRef = x.Key.PartnerRef,
                         PartnerPhone = x.Key.PartnerPhone,
+                        JobName = empl_dict.ContainsKey(x.Key.PartnerId) ? empl_dict[x.Key.PartnerId] : null,
                         x.Key.Type,
                         Debit = x.Sum(s => s.Debit),
                         Credit = x.Sum(s => s.Credit),
@@ -379,6 +384,7 @@ namespace Infrastructure.Services
                         PartnerName = item.PartnerName,
                         PartnerRef = item.PartnerRef,
                         PartnerPhone = item.PartnerPhone,
+                        HrJobName = item.JobName,
                         ResultSelection = val.ResultSelection,
                         DateFrom = date_from,
                         DateTo = date_to
@@ -411,6 +417,7 @@ namespace Infrastructure.Services
                     End = end,
                     PartnerName = value.PartnerName,
                     PartnerPhone = value.PartnerPhone,
+                    HrJobName = value.HrJobName
                 });
             }
             return res;
@@ -521,7 +528,7 @@ namespace Infrastructure.Services
                        PartnerRef = x.Key.PartnerRef,
                        PartnerPhone = x.Key.PartnerPhone,
                        Begin = x.Sum(s => s.Debit - s.Credit),
-                   }).Where(x=> x.Begin != 0).ToListAsync();
+                   }).ToListAsync();
             }
 
             var query2 = amlObj._QueryGet(dateFrom: date_from, dateTo: date_to, companyId: val.CompanyId);
@@ -618,6 +625,196 @@ namespace Infrastructure.Services
 
         }
 
+        public async Task<IEnumerable<ReportPartnerAdvance>> ReportPartnerAdvance(ReportPartnerAdvanceFilter val)
+        {
+            var amlObj = GetService<IAccountMoveLineService>();
+
+            var dateFrom = val.DateFrom;
+            if (dateFrom.HasValue)
+                dateFrom = dateFrom.Value.AbsoluteBeginOfDate();
+
+            var dateTo = val.DateTo;
+            if (dateTo.HasValue)
+                dateTo = dateTo.Value.AbsoluteEndOfDate();
+
+            var dict = new Dictionary<Guid, ReportPartnerAdvance>();
+            if (dateFrom.HasValue)
+            {
+                var query1 = amlObj._QueryGet(dateFrom: dateFrom, state: "posted", companyId: val.CompanyId, initBal: true);
+
+                if (!string.IsNullOrWhiteSpace(val.Search))
+                {
+                    query1 = query1.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search) ||
+                    x.Partner.Phone.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
+                }
+
+                var list1 = await query1.Where(x => x.Account.Code == "KHTU" || x.Account.Code == "HTU").GroupBy(x => new
+                {
+                    PartnerId = x.Partner.Id,
+                    PartnerName = x.Partner.Name,
+                    PartnerPhone = x.Partner.Phone,
+                })
+                .Select(x => new
+                {
+                    PartnerId = x.Key.PartnerId,
+                    PartnerName = x.Key.PartnerName,
+                    PartnerPhone = x.Key.PartnerPhone,
+                    Balance = x.Sum(s => s.Debit - s.Credit),
+                }).ToListAsync();
+
+                foreach (var item in list1)
+                {
+                    if (!dict.ContainsKey(item.PartnerId))
+                    {
+                        dict.Add(item.PartnerId, new ReportPartnerAdvance()
+                        {
+                            PartnerId = item.PartnerId,
+                            PartnerName = item.PartnerName,
+                            PartnerPhone = item.PartnerPhone,
+                            Begin = -item.Balance
+                        });
+                    }
+                }
+            }
+
+            var query = amlObj._QueryGet(dateFrom: dateFrom, dateTo: dateTo, state: "posted", companyId: val.CompanyId);
+            query = query.Where(x => x.Account.Code == "KHTU" || x.Account.Code == "HTU");
+
+            if (!string.IsNullOrWhiteSpace(val.Search))
+            {
+                query = query.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search) ||
+                x.Partner.Phone.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
+            }
+
+            var list2 = await query
+                .Select(x => new
+                {
+                    PartnerId = x.Partner.Id,
+                    PartnerName = x.Partner.Name,
+                    PartnerPhone = x.Partner.Phone,
+                    Debit = x.Debit,
+                    Credit = x.Credit,
+                    AccountCode = x.Account.Code
+                })
+                   .GroupBy(x => new
+                   {
+                       PartnerId = x.PartnerId,
+                       PartnerName = x.PartnerName,
+                       PartnerPhone = x.PartnerPhone,
+                   }, (k, g) => new
+                   {
+                       PartnerId = k.PartnerId,
+                       PartnerName = k.PartnerName,
+                       PartnerPhone = k.PartnerPhone,
+                       Debit = g.Sum(s => s.AccountCode == "KHTU" ? s.Debit : 0),
+                       Credit = g.Sum(s => s.AccountCode == "KHTU" ? s.Credit : 0),
+                       Return = g.Sum(s => s.AccountCode == "HTU" ? s.Debit : 0)
+                   })
+                   .ToListAsync();
+
+            foreach (var item in list2)
+            {
+                if (!dict.ContainsKey(item.PartnerId))
+                {
+                    dict.Add(item.PartnerId, new ReportPartnerAdvance()
+                    {
+                        PartnerId = item.PartnerId,
+                        PartnerName = item.PartnerName,
+                        PartnerPhone = item.PartnerPhone,
+                        Debit = item.Credit,
+                        Credit = item.Debit,
+                        Refund = item.Return,
+                    });
+
+                    continue;
+                }
+
+                dict[item.PartnerId].Debit = item.Credit;
+                dict[item.PartnerId].Credit = item.Debit;
+                dict[item.PartnerId].Refund = item.Return;
+            }
+
+            var res = new List<ReportPartnerAdvance>();
+            foreach (var item in dict)
+            {
+                var begin = dict[item.Key].Begin;
+                var debit = dict[item.Key].Debit;
+                var credit = dict[item.Key].Credit;
+                var retrn = dict[item.Key].Refund;
+                if (begin == 0 && debit == 0 && credit == 0 && retrn == 0)
+                    continue;
+
+                var end = begin + debit - credit - retrn;
+                var value = item.Value;
+                res.Add(new ReportPartnerAdvance
+                {
+                    Begin = begin,
+                    Debit = debit,
+                    Credit = credit,
+                    Refund = retrn,
+                    End = end,
+                    PartnerName = value.PartnerName,
+                    PartnerPhone = value.PartnerPhone,
+                    PartnerId = item.Key,
+                    DateFrom = val.DateFrom,
+                    DateTo = val.DateTo,
+                    CompanyId = val.CompanyId
+                });
+            }
+
+            return res;
+        }
+
+        public async Task<IEnumerable<ReportPartnerAdvanceDetail>> ReportPartnerAdvanceDetail(ReportPartnerAdvanceDetailFilter val)
+        {
+            var amlObj = GetService<IAccountMoveLineService>();
+
+            var dateFrom = val.DateFrom;
+            if (dateFrom.HasValue)
+                dateFrom = dateFrom.Value.AbsoluteBeginOfDate();
+
+            var dateTo = val.DateTo;
+            if (dateTo.HasValue)
+                dateTo = dateTo.Value.AbsoluteEndOfDate();
+
+            var query = amlObj._QueryGet(dateFrom: dateFrom, dateTo: dateTo, state: "posted", companyId: val.CompanyId);
+
+            query = query.Where(x => x.Account.Code == "KHTU" || x.Account.Code == "HTU");
+
+            if (val.PartnerId.HasValue)
+                query = query.Where(x => x.PartnerId == val.PartnerId);
+
+            var res = await query.Select(x => new ReportPartnerAdvanceDetail
+            {
+                Date = x.Date,
+                Debit = x.Credit,
+                Credit = x.Debit,
+                InvoiceOrigin = x.Move.InvoiceOrigin,
+                Name = x.Name,
+                PartnerId = x.PartnerId
+            }).ToListAsync();
+
+            decimal begin = 0;
+            if (dateFrom.HasValue)
+            {
+                var query1 = amlObj._QueryGet(dateFrom: dateFrom, state: "posted", companyId: val.CompanyId, initBal: true);
+                query1 = query1.Where(x => x.Account.Code == "KHTU" || x.Account.Code == "HTU");
+                if (val.PartnerId.HasValue)
+                    query1 = query1.Where(x => x.PartnerId == val.PartnerId);
+                begin = await query1.SumAsync(x => x.Credit - x.Debit);
+            }
+
+            foreach (var item in res)
+            {
+                item.Begin = begin;
+                item.End = item.Begin + item.Debit - item.Credit;
+                begin = item.End;
+            }
+
+            return res;
+
+        }
+
         public async Task<ReportPartnerDebitSummaryRes> ReportPartnerDebitSummary(ReportPartnerDebitReq val)
         {
             var amlObj = GetService<IAccountMoveLineService>();
@@ -709,6 +906,20 @@ namespace Infrastructure.Services
 
                 return _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             }
+        }
+
+        public async Task<ReportPartnerAdvancePrintVM> ReportPartnerAdvancePrint(ReportPartnerAdvanceFilter val)
+        {
+            var data = await ReportPartnerAdvance(val);
+            var res = new ReportPartnerAdvancePrintVM();
+            var companyObj = GetService<ICompanyService>();
+            res.DateFrom = val.DateFrom;
+            res.DateTo = val.DateTo;
+            res.Company = val.CompanyId.HasValue ? _mapper.Map<CompanyPrintVM>(await companyObj.SearchQuery(x => x.Id == val.CompanyId).Include(x => x.Partner).FirstOrDefaultAsync()) : null;
+            res.User = _mapper.Map<ApplicationUserSimple>(await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId));
+            res.ReportPartnerAdvances = data;
+
+            return res;
         }
     }
 

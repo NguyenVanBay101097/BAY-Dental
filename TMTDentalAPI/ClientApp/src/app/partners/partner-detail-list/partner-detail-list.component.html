@@ -2,7 +2,7 @@
     <button type="button" class="btn btn-secondary btn-sm">Thêm</button>
 </div>
 
-<kendo-grid [data]="gridView" [pageable]="true" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)"
+<kendo-grid [data]="gridView" [pageable]="pagerSettings" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)"
     [loading]="gridLoading">
     <kendo-grid-column field="name" title="Số phiếu" width="140px">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">

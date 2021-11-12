@@ -1,9 +1,7 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild, Input } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
-import { ProductCategoryBasic, ProductCategoryService, ProductCategoryPaged } from 'src/app/product-categories/product-category.service';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { debounceTime, tap, switchMap, distinctUntilChanged, catchError } from 'rxjs/operators';
-import { of, Observable } from 'rxjs';
+import { ProductCategoryBasic, ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
 
 @Component({
   selector: 'app-product-advance-search',

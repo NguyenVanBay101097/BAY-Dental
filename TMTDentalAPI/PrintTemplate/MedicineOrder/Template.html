@@ -1,0 +1,104 @@
+﻿<table border="0" cellpadding="5" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="width:100px"><img alt="{{o.company.name}}" class="img-fluid" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
+            <td>
+                <strong>{{o.company.name}}</strong><br />
+                Địa chỉ: {{o.company.address}}<br />
+                ĐT: {{o.company.phone}}<br />
+                Email: {{o.company.email}}
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h3 style="text-align:center">HÓA ĐƠN THUỐC</h3>
+
+<p style="text-align:center">
+    Ngày {{o.order_date.day}} tháng {{o.order_date.month}} năm {{o.order_date.year}}<br />
+    <strong>Số: {{o.name}}</strong>
+</p>
+
+<table cellpadding="3" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="width:120px"><strong>Khách hàng</strong></td>
+            <td>{{o.partner?.name}}</td>
+        </tr>
+        <tr>
+            <td style="width:120px"><strong>Địa chỉ</strong></td>
+            <td>{{o.partner?.address}}</td>
+        </tr>
+        <tr>
+            <td style="width:120px"><strong>Bác sĩ</strong></td>
+            <td>{{o.employee?.name}}</td>
+        </tr>
+    </tbody>
+</table>
+
+<table border="1" cellpadding="3" cellspacing="0" style="width:100%">
+    <thead>
+        <tr>
+            <th scope="col" style="width:200px">Tên thuốc</th>
+            <th scope="col" style="width:80px">Số lượng</th>
+            <th scope="col" style="width:80px">Đơn giá</th>
+            <th scope="col" style="width:80px">Thành tiền</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!--{{ for line in  o.medicine_order_lines }}-->
+        <tr>
+            <td>
+                <strong>{{line.product?.name}}</strong><br />
+                <em>Ngày uống {{line.toa_thuoc_line?.number_of_times | math.format "N0"}} lần, mỗi lần {{line.toa_thuoc_line?.amount_of_times | math.format "N0"}} {{line.product_uo_m?.name}}, {{line.toa_thuoc_line?.use_at_display}}</em>
+            </td>
+            <td style="text-align:right">{{line.quantity | math.format "N0"}}</td>
+            <td style="text-align:right">{{line.price | math.format "N0"}}</td>
+            <td style="text-align:right">{{line.amount_total | math.format "N0"}}</td>
+        </tr>
+
+        <!--{{ end }}-->
+    </tbody>
+</table>
+
+<table align="right" cellpadding="3" cellspacing="1">
+    <tbody>
+        <tr>
+            <td style="width:120px"><strong>Tổng tiền</strong></td>
+            <td style="text-align:right">{{o.amount | math.format "N0"}}</td>
+        </tr>
+        <tr>
+            <td style="width:120px"><strong>Thanh toán</strong></td>
+            <td style="text-align:right">{{o.account_payment?.amount | math.format "N0"}}</td>
+        </tr>
+        <tr>
+            <td style="width:120px"><strong>Còn lại</strong></td>
+            <td style="text-align:right">{{o.amount - o.account_payment?.amount | math.format "N0"}}</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="clearfix"></div>
+
+<table border="0" cellpadding="0" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="text-align:center;width:50%">
+                <strong>Người lập phiếu</strong><br />
+                <em>(Ký, họ tên)</em><br />
+                <br />
+                <br />
+                <br />
+                <strong>{{ o.employee?.name | string.upcase }}</strong>
+            </td>
+            <td style="text-align:center;width:50%">
+                <strong>Bệnh nhân</strong><br />
+                <em>(Ký, họ tên)</em><br />
+                <br />
+                <br />
+                <br />
+                <strong>{{o.partner?.name | string.upcase}}</strong>
+            </td>
+        </tr>
+    </tbody>
+</table>

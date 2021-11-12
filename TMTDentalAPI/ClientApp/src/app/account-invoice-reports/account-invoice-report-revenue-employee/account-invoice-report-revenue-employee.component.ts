@@ -1,21 +1,17 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { Workbook } from '@progress/kendo-angular-excel-export';
 import { GridComponent, GridDataResult } from '@progress/kendo-angular-grid';
-import { DataResult } from '@progress/kendo-data-query';
+import { IntlService } from '@progress/kendo-angular-intl';
 import * as moment from 'moment';
-import { Observable, of, zip } from "rxjs";
+import { of } from "rxjs";
 import { debounceTime, map, switchMap, tap } from 'rxjs/operators';
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
-import { ProductSimple } from 'src/app/products/product-simple';
-import { ProductFilter, ProductService } from 'src/app/products/product.service';
-import { saveAs } from '@progress/kendo-file-saver';
-import { AccountInvoiceReportService, RevenueEmployeeReportDisplay, RevenueEmployeeReportPar } from '../account-invoice-report.service';
-import { RevenueManageService } from '../account-invoice-report-revenue-manage/revenue-manage.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { PrintService } from 'src/app/shared/services/print.service';
-import { IntlService } from '@progress/kendo-angular-intl';
+import { RevenueManageService } from '../account-invoice-report-revenue-manage/revenue-manage.service';
+import { AccountInvoiceReportService, RevenueEmployeeReportPar } from '../account-invoice-report.service';
 
 
 @Component({
@@ -34,6 +30,7 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
   loading = false;
   skip = 0;
   limit = 20;
+  pagerSettings: any;
 
   @ViewChild("companyCbx", { static: true }) companyVC: ComboBoxComponent;
   @ViewChild(GridComponent, { static: true }) public grid: GridComponent;
@@ -45,9 +42,9 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
     private revenueManageService: RevenueManageService,
     private employeeService: EmployeeService,
     private printService: PrintService,
-    private intlService: IntlService
-
-  ) { }
+    private intlService: IntlService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.initFilterData();
@@ -168,6 +165,7 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
 
   pageChange(e) {
     this.skip = e.skip;
+    this.limit = e.take;
     this.loadReport();
   }
 
@@ -225,10 +223,10 @@ export class AccountInvoiceReportRevenueEmployeeComponent implements OnInit {
   }
 
   public onExcelExport(args: any): void {
-    const observables = [];
-    const workbook = args.workbook;
+    // const observables = [];
+    // const workbook = args.workbook;
     var sheet = args.workbook.sheets[0];
-    var rows = sheet.rows;
+    // var rows = sheet.rows;
     sheet.mergedCells = ["A1:G1", "A2:G2", "A3:F3"];
     sheet.frozenRows = 3;
     sheet.name = 'BaoCaoDoanhThu_TheoNV';

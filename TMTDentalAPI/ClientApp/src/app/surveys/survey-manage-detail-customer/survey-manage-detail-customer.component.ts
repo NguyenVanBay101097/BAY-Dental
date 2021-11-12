@@ -2,11 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { SurveyCallcontentService } from '../survey-callcontent.service';
 import { SurveyUserinputDialogComponent } from '../survey-userinput-dialog/survey-userinput-dialog.component';
 import { AssignmentActionDone, SurveyAssignmentDisplay, SurveyAssignmentService } from '../survey.service';
 
@@ -24,12 +22,10 @@ export class SurveyManageDetailCustomerComponent implements OnInit {
   loading = false;
 
   constructor(
-    private intlService: IntlService,
     private modalService: NgbModal,
     private surveyService: SurveyAssignmentService,
     private activateRoute: ActivatedRoute,
     private notificationService: NotificationService,
-    private callContentService: SurveyCallcontentService,
     private fb: FormBuilder
   ) { }
 

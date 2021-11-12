@@ -4,11 +4,12 @@ using System.Text;
 
 namespace ApplicationCore.Entities
 {
-    public class CardCard: BaseEntity
+    public class CardCard : BaseEntity
     {
         public CardCard()
         {
             State = "draft";
+            TotalPoint = 0;
         }
         /// <summary>
         /// Số thẻ
@@ -54,5 +55,11 @@ namespace ApplicationCore.Entities
 
         public Guid? UpgradeTypeId { get; set; }
         public CardType UpgradeType { get; set; }
+
+        /// <summary>
+        /// Chi nhánh
+        /// </summary>
+        public Guid? CompanyId { get; set; }
+        public Company Company { get; set; }
     }
 }

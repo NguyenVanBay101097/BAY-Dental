@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, Inject, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { SurveyTagDialogComponent } from '../survey-tag-dialog/survey-tag-dialog.component';
 import { SurveyTagPaged, SurveyTagService } from '../survey-tag.service';
 
@@ -18,6 +18,7 @@ export class SurveyTagListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   opened = false;
 
@@ -28,8 +29,9 @@ export class SurveyTagListComponent implements OnInit {
   constructor(private surveyTagService: SurveyTagService,
     private notificationService: NotificationService,
     private modalService: NgbModal,
-    private route: ActivatedRoute) {
-  }
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
+
   ngOnInit() {
     this.loadDataFromApi();
 
@@ -43,7 +45,6 @@ export class SurveyTagListComponent implements OnInit {
   }
 
   loadDataFromApi() {
-    this.loading = true;
     var val = new SurveyTagPaged();
     val.limit = this.limit;
     val.offset = this.skip;
@@ -56,15 +57,14 @@ export class SurveyTagListComponent implements OnInit {
       }))
     ).subscribe(res => {
       this.gridData = res;
-      this.loading = false;
     }, err => {
       console.log(err);
-      this.loading = false;
     })
   }
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

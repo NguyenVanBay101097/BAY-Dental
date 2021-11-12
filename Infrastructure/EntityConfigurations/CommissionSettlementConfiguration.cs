@@ -13,12 +13,16 @@ namespace Infrastructure.EntityConfigurations
         public void Configure(EntityTypeBuilder<CommissionSettlement> builder)
         {
             builder.HasOne(x => x.Partner)
-          .WithMany()
-          .HasForeignKey(x => x.PartnerId);
+            .WithMany()
+            .HasForeignKey(x => x.PartnerId);
 
             builder.HasOne(x => x.Employee)
             .WithMany()
             .HasForeignKey(x => x.EmployeeId);
+
+            builder.HasOne(x => x.Agent)
+            .WithMany()
+            .HasForeignKey(x => x.AgentId);
 
             builder.HasOne(x => x.MoveLine)
             .WithMany(x => x.CommissionSettlements)
@@ -32,6 +36,9 @@ namespace Infrastructure.EntityConfigurations
             .WithMany()
             .HasForeignKey(x => x.ProductId);
 
+            builder.HasOne(x => x.HistoryLine)
+               .WithMany()
+               .HasForeignKey(x => x.HistoryLineId);
 
             builder.HasOne(x => x.CreatedBy)
             .WithMany()

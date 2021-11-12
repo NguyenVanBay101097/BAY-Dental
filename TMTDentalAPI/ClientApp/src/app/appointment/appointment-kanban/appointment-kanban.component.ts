@@ -1,33 +1,23 @@
-import { Component, OnInit, Input, ViewChild, ElementRef, ViewChildren, AfterViewInit, ViewEncapsulation } from '@angular/core';
-import { AppointmentVMService } from '../appointment-vm.service';
-import { AppointmentService } from '../appointment.service';
-import { forkJoin, Subject } from 'rxjs';
-import { AppointmentSearchByDate, AppointmentBasic, AppointmentPaged } from '../appointment';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { PagedResult2 } from 'src/app/core/paged-result-2';
-import * as _ from 'lodash';
-import { NgbModal, NgbDropdownToggle } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { debounceTime, distinctUntilChanged, tap, switchMap, map } from 'rxjs/operators';
-import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
-import { DotkhamEntitySearchBy, DotKhamPaged } from 'src/app/dot-khams/dot-khams';
-import { NotificationService } from '@progress/kendo-angular-notification';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
-import { SaleOrderCreateDotKhamDialogComponent } from 'src/app/sale-orders/sale-order-create-dot-kham-dialog/sale-order-create-dot-kham-dialog.component';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { UserSimple } from 'src/app/users/user-simple';
-import { UserPaged, UserService } from 'src/app/users/user.service';
-import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
+import { NgbDropdownToggle, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { IntlService } from '@progress/kendo-angular-intl';
+import { NotificationService } from '@progress/kendo-angular-notification';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { ReceiveAppointmentService } from 'src/app/customer-receipt/receive-appointment.service';
 import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
+import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
-import { RevenueTimeReportPar } from 'src/app/account-invoice-reports/account-invoice-report.service';
-import { GridDataResult, PageChangeEvent, RowClassArgs } from '@progress/kendo-angular-grid';
-import { MyDateRange } from '../my-date-range';
-import { CustomerReceipCreateUpdateComponent } from 'src/app/shared/customer-receip-create-update/customer-receip-create-update.component';
-import { AppointmentFilterExportExcelDialogComponent } from '../appointment-filter-export-excel-dialog/appointment-filter-export-excel-dialog.component';
-import { ReceiveAppointmentService } from 'src/app/customer-receipt/receive-appointment.service';
 import { ReceiveAppointmentDialogComponent } from 'src/app/shared/receive-appointment-dialog/receive-appointment-dialog.component';
+import { PrintService } from 'src/app/shared/services/print.service';
+import {
+  AppointmentPaged
+} from '../appointment';
+import { AppointmentFilterExportExcelDialogComponent } from '../appointment-filter-export-excel-dialog/appointment-filter-export-excel-dialog.component';
+import { AppointmentService } from '../appointment.service';
 @Component({
   encapsulation: ViewEncapsulation.None, //<<<<< this one! 
   // To css active with innerHTML
@@ -37,7 +27,7 @@ import { ReceiveAppointmentDialogComponent } from 'src/app/shared/receive-appoin
   host: { 'class': 'h-100' }
 })
 export class AppointmentKanbanComponent implements OnInit {
-  @ViewChild('dropdownMenuBtn', { static: false }) dropdownMenuBtn: NgbDropdownToggle;
+  @ViewChild('dropdownMenuBtn') dropdownMenuBtn: NgbDropdownToggle;
   dateFrom: Date;
   dateTo: Date;
   state: string;
@@ -60,15 +50,23 @@ export class AppointmentKanbanComponent implements OnInit {
 
   // appointmentByDate: { [id: string]: AppointmentBasic[]; } = {};
 
-  states: { text: string, value: string, color?: string }[] = [
-    { text: 'Tất cả', value: '', color: '' },
-    { text: 'Đang hẹn', value: 'confirmed', color: '#2395FF' },
-    { text: 'Đã đến', value: 'done', color: '#28A745' },
-    { text: 'Hủy hẹn', value: 'cancel', color: '#EB3B5B' },
-    { text: 'Quá hẹn', value: 'overdue', color: '#FFC107' }
+  states: { text: string, value: string }[] = [
+    { text: 'Tất cả', value: '' },
+    { text: 'Đang hẹn', value: 'confirmed' },
+    { text: 'Đã đến', value: 'done' },
+    { text: 'Hủy hẹn', value: 'cancel' },
+    { text: 'Quá hẹn', value: 'overdue' }
   ];
-
   stateSelected: string = this.states[0].value;
+
+  types: { text: string, value: string }[] = [
+    { text: 'Tất cả', value: '' },
+    { text: 'Tái khám', value: 'repeat' },
+    { text: 'Khám mới', value: 'new' }
+  ];
+  typeSelected: string = this.states[0].value;
+  isRepeatCustomer: boolean;
+
   listEmployees: EmployeeBasic[] = [];
   employeeSelected: string = '';
 
@@ -112,13 +110,12 @@ export class AppointmentKanbanComponent implements OnInit {
     private appointmentService: AppointmentService,
     private intlService: IntlService,
     private modalService: NgbModal,
-    private dotkhamService: DotKhamService,
     private notificationService: NotificationService,
     private router: Router,
     private employeeService: EmployeeService,
     private checkPermissionService: CheckPermissionService,
-    private elementRef: ElementRef,
-    private receiveAppointmentService: ReceiveAppointmentService
+    private receiveAppointmentService: ReceiveAppointmentService,
+    private printService: PrintService
   ) { }
 
   ngOnInit() {
@@ -180,6 +177,18 @@ export class AppointmentKanbanComponent implements OnInit {
     this.renderCalendar(); // Render Calendar
   }
 
+  onChangeType(type) {
+    if (type === 'repeat') {
+      this.isRepeatCustomer = true;
+    } else if (type === 'new') {
+      this.isRepeatCustomer = false;
+    } else {
+      this.isRepeatCustomer = undefined;
+    }
+
+    this.renderCalendar(); // Render Calendar
+  }
+
   // createAppointment() {
   //   const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
   //   modalRef.componentInstance.title = "Đặt lịch hẹn";
@@ -206,6 +215,9 @@ export class AppointmentKanbanComponent implements OnInit {
     val.doctorId = this.employeeSelected || '';
     val.dateTimeFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
     val.dateTimeTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
+    if (this.isRepeatCustomer != undefined) {
+      val.isRepeatCustomer = this.isRepeatCustomer;
+    }
 
     this.appointmentService.getPaged(val).pipe(
       map((response: any) =>
@@ -360,10 +372,16 @@ export class AppointmentKanbanComponent implements OnInit {
     var val = new AppointmentPaged();
     val.limit = 1000;
     val.state = this.state || '';
+    if (this.isLateFilter) {
+      val.isLate = this.isLateFilter;
+    }
     val.search = this.search || '';
     val.doctorId = this.employeeSelected || '';
     val.dateTimeFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
     val.dateTimeTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
+    if (this.isRepeatCustomer != undefined) {
+      val.isRepeatCustomer = this.isRepeatCustomer;
+    }
 
     const modalRef = this.modalService.open(AppointmentFilterExportExcelDialogComponent, { size: 'md', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xuất dữ liệu lịch hẹn';
@@ -1055,7 +1073,7 @@ export class AppointmentKanbanComponent implements OnInit {
   // form tiếp nhận
   receiveAppointment(id = null) {
     if (id) {
-      const appoint = this.dataAppointments.find(value => value.id === id);
+      // const appoint = this.dataAppointments.find(value => value.id === id);
 
       this.receiveAppointmentService.defaultGet(id).subscribe(res => {
         const modalRef = this.modalService.open(ReceiveAppointmentDialogComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
@@ -1074,4 +1092,11 @@ export class AppointmentKanbanComponent implements OnInit {
       })
     }
   }
+
+  onPrint(id) {
+    this.appointmentService.print(id).subscribe((res: any) => {
+      this.printService.printHtml(res.html);
+    });
+  }
+
 }

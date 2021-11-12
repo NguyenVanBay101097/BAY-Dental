@@ -1,25 +1,32 @@
 <div class="py-3 container">
     <div class="form-inline">
-        <app-date-range-picker-filter class="mr-1" [startDate]="filter.dateFrom" [endDate]="filter.dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
-        <select [(ngModel)]="empFilter" (change)="onChangeEmployeeFilter()" class="form-control w-auto mr-1" aria-label="Default select example">
-          <option value="employee">Bác sĩ</option>
-          <option value="assistant">Phụ tá</option>
-      </select>
-        <kendo-combobox class="mr-1" [placeholder]="'Nhân viên'" [valueField]="'id'" [textField]="'name'" [filterable]="true" #emp [data]="listEmployee" (selectionChange)="onSelectEmployee($event)">
+        <app-date-range-picker-filter [showClearButton]="false" class="mr-1" [startDate]="filter.dateFrom" [endDate]="filter.dateTo"
+            (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
+        <select [(ngModel)]="empFilter" (change)="onChangeEmployeeFilter()" class="form-control w-auto mr-1"
+            aria-label="Default select example">
+            <option value="employee">Bác sĩ</option>
+            <option value="assistant">Phụ tá</option>
+        </select>
+        <kendo-combobox class="mr-1" [placeholder]="'Nhân viên'" [valueField]="'id'" [textField]="'name'"
+            [filterable]="true" #emp [data]="listEmployee" (selectionChange)="onSelectEmployee($event)">
         </kendo-combobox>
-        <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
+        <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-1" [valueField]="'id'" [textField]="'name'"
+            [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
         </kendo-combobox>
         <div class="dropdown mr-1">
-            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-download"></i> Xuất File</button>
+            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-download"></i> Xuất File</button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" (click)="exportExcel(grid)">Xuất Excel</a>
+                <a class="dropdown-item" (click)="exportExcel()">Xuất Excel</a>
                 <a class="dropdown-item" (click)="onExportPDF()">Xuất PDF</a>
             </div>
         </div>
         <button class="btn btn-primary" (click)="printReport()">In báo cáo</button>
     </div>
-    <kendo-grid (excelExport)="onExcelExport($event)" [resizable]="true" #grid class="mt-2" [loading]="loading" [data]="gridData" [pageSize]="this.limit" [skip]="this.skip" [pageable]="true" (pageChange)="pageChange($event)">
+    <kendo-grid (excelExport)="onExcelExport($event)" [resizable]="true" #grid class="mt-2" [loading]="loading"
+        [data]="gridData" [pageSize]="this.limit" [skip]="this.skip" [pageable]="pagerSettings"
+        (pageChange)="pageChange($event)">
         <kendo-grid-column field="employeeName" title="Nhân viên">
             <ng-template kendoGridCellTemplate let-dataItem>
                 {{dataItem.employeeName|| 'Không xác định'}}

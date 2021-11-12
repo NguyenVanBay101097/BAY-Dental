@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
-import { Inject, Injectable } from "@angular/core";
+import { Inject } from "@angular/core";
 import { GridDataResult } from "@progress/kendo-angular-grid";
 import { toODataString } from "@progress/kendo-data-query";
 import { BehaviorSubject, Observable } from "rxjs";

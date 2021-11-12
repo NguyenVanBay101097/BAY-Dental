@@ -5,7 +5,6 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { map } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PrintService } from 'src/app/shared/services/print.service';
-import { ToaThuocCuDialogSaveComponent } from 'src/app/shared/toa-thuoc-cu-dialog-save/toa-thuoc-cu-dialog-save.component';
 import { ToaThuocCuDialogComponent } from 'src/app/toa-thuocs/toa-thuoc-cu-dialog/toa-thuoc-cu-dialog.component';
 import { ToaThuocPaged, ToaThuocService } from 'src/app/toa-thuocs/toa-thuoc.service';
 
@@ -42,7 +41,7 @@ export class PartnerCustomerToathuocListComponent implements OnInit {
         total: response.totalItems
       }))
     ).subscribe(res => {
-      console.log(res);
+      // console.log(res);
       this.toathuocs = res.data;
     }, err => {
       console.log(err);
@@ -52,7 +51,7 @@ export class PartnerCustomerToathuocListComponent implements OnInit {
   printToaThuoc(item) {
     this.toaThuocService.getPrint(item.id).subscribe((result: any) => {
       console.log(result);
-      this.printService.printHtml(result);
+      this.printService.printHtml(result.html);
     });
   }
 
@@ -62,7 +61,7 @@ export class PartnerCustomerToathuocListComponent implements OnInit {
     modalRef.componentInstance.id = item.id;
     modalRef.componentInstance.partnerId = item.partnerId;
     modalRef.result.then((result) => {
-      this.notify('success','Lưu thành công');
+      this.notify('success', 'Lưu thành công');
       this.loadData();
       if (result.print) {
         this.printToaThuoc(item);
@@ -85,7 +84,7 @@ export class PartnerCustomerToathuocListComponent implements OnInit {
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa đơn thuốc này?';
     modalRef.result.then(() => {
       this.toaThuocService.delete(item.id).subscribe(() => {
-      this.notify('success','Xóa thành công');
+        this.notify('success', 'Xóa thành công');
         this.loadData();
       }, err => {
         console.log(err);

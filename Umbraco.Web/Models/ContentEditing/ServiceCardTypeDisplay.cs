@@ -33,5 +33,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Period { get; set; }
 
         public int? NbrPeriod { get; set; }
+
+        public IEnumerable<ProductPricelistItemDisplay> productPricelistItems { get; set; } = new List<ProductPricelistItemDisplay>();
     }
 }

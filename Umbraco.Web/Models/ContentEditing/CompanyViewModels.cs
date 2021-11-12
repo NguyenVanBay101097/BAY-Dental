@@ -33,6 +33,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Search { get; set; }
 
         public bool? Active { get; set; }
+
+        public string CityCode { get; set; }
     }
 
     public class CompanyBasic

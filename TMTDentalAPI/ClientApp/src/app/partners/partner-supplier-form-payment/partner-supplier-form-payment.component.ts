@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
@@ -6,7 +6,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { map } from 'rxjs/operators';
 import { AccountPaymentPaged, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { AccountPaymentsOdataService } from 'src/app/shared/services/account-payments-odata.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { PartnerService } from '../partner.service';
 
@@ -21,15 +21,16 @@ export class PartnerSupplierFormPaymentComponent implements OnInit {
   gridView: GridDataResult;
   limit = 10;
   skip = 0;
+  pagerSettings: any;
   constructor(
     private service: PartnerService,
     private modalService: NgbModal,
     private paymentService: AccountPaymentService,
     private activeRoute: ActivatedRoute,
-    private accountPaymentOdataService: AccountPaymentsOdataService,
     private printService: PrintService,
-    private notificationService: NotificationService
-  ) { }
+    private notificationService: NotificationService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettingsPopup }
 
   ngOnInit() {
     this.id = this.activeRoute.parent.snapshot.paramMap.get('id');
@@ -102,7 +103,7 @@ export class PartnerSupplierFormPaymentComponent implements OnInit {
     //   }
     // });
     if (payment && payment.id) {
-      this.paymentService.getPrint(payment.id).subscribe(result => {
+      this.paymentService.getPrint(payment.id).subscribe((result: any) => {
         this.printService.printHtml(result);
       });
     }

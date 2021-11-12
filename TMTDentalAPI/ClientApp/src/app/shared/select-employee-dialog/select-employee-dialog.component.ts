@@ -1,13 +1,13 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { EmployeeService } from 'src/app/employees/employee.service';
-import { ActivatedRoute } from '@angular/router';
-import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subject } from 'rxjs';
+import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent, SelectionEvent } from '@progress/kendo-angular-grid';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeCreateUpdateComponent } from 'src/app/employees/employee-create-update/employee-create-update.component';
-import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { EmployeePaged, EmployeeBasic } from 'src/app/employees/employee';
+import { EmployeeService } from 'src/app/employees/employee.service';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from '../pager-grid-kendo.config';
 
 @Component({
   selector: 'app-select-employee-dialog',
@@ -22,6 +22,7 @@ export class SelectEmployeeDialogComponent implements OnInit {
   windowOpened: boolean = false;
   skip = 0;
   pageSize = 20;
+  pagerSettings: any;
 
   search: string;
   searchUpdate = new Subject<string>();
@@ -34,8 +35,9 @@ export class SelectEmployeeDialogComponent implements OnInit {
 
   btnDropdown: any[] = [{ text: 'Bác sĩ' }, { text: 'Phụ tá' }, { text: 'Nhân viên khác' }];
   
-  constructor(private service: EmployeeService,
-    private activeroute: ActivatedRoute, private modalService: NgbModal, public activeModal: NgbActiveModal) { }
+  constructor(private service: EmployeeService,private modalService: NgbModal, public activeModal: NgbActiveModal,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.getEmployeesList();
@@ -43,7 +45,7 @@ export class SelectEmployeeDialogComponent implements OnInit {
   }
 
   getEmployeesList() {
-    var positionList = new Array<string>();
+    // var positionList = new Array<string>();
     this.loading = true;
     var empPaged = new EmployeePaged();
     empPaged.limit = this.pageSize;
@@ -84,6 +86,7 @@ export class SelectEmployeeDialogComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.pageSize = event.take;
     this.getEmployeesList();
   }
 

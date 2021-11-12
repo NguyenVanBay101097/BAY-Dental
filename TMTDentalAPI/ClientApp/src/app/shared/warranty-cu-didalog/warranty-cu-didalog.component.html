@@ -1,0 +1,216 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small" ngbAutofocus></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view o_form_editable" [formGroup]="myForm" (submit)="onSave()">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_statusbar">
+                <div class="o_statusbar_buttons">
+                    <h3 *ngIf="laboWarrantyName" class="m-0">{{laboWarrantyName}}</h3>
+                </div>
+                <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                    <button [disabled]="true" class="btn o_arrow_button o_arrow_button_bg_primary disabled"
+                        [ngClass]="getValueFC('state') != 'draft' ? 'btn-primary' : 'btn-secondary'" type="button">
+                        Đơn bảo hành
+                    </button>
+                    <button [disabled]="true" class="btn o_arrow_button o_arrow_button_bg_primary disabled"
+                        [ngClass]="getValueFC('state') === 'draft' ? 'btn-primary' : 'btn-secondary'" type="button">
+                        Nháp
+                    </button>
+                </div>
+            </div>
+            <div class="o_form_sheet">
+                <div class="o_group my-0">
+                    <div class="o_group o_inner_group o_group_col_12 m-0">
+                        <div class="o_group o_inner_group o_group_col_6 m-0">
+                            <div class="card border-light mb-3 border-0 mr-2">
+                                <h5 class="card-header border-0">Thông tin chung</h5>
+                                <div class="card-body">
+                                    <table>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    NCC Labo
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <span>{{infoLabo?.supplierName}}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Khách hàng
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <span>{{infoLabo?.customerName}}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Mã phiếu Labo
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <span>{{infoLabo?.laboOrderName}}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Bác sĩ
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <div [class.d-none]="getValueFC('state') != 'draft'">
+                                                    <kendo-combobox #doctorCbx [data]="filteredDoctors"
+                                                        [textField]="'name'" [valueField]="'id'" [filterable]="true"
+                                                        formControlName="doctor">
+                                                    </kendo-combobox>
+                                                </div>
+                                                <span *ngIf="getValueFC('state') != 'draft'">
+                                                    {{getValueFC('doctor')?.name}}
+                                                </span>
+                                                <div *ngIf="f.doctor.errors && (f.doctor.touched || f.doctor.dirty || submitted)"
+                                                    class="text-danger">
+                                                    <div *ngIf="f.doctor.errors.required">Chọn bác sĩ</div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Ngày nhận bảo hành
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <ng-container *ngIf="getValueFC('state') === 'draft'; else dateReceipt">
+                                                    <kendo-datepicker formControlName="dateReceiptObj">
+                                                    </kendo-datepicker>
+                                                    <span *ngIf="getControlFC('dateReceiptObj')?.errors?.required"
+                                                        class="text-danger">
+                                                        Chọn ngày nhận bảo hành
+                                                    </span>
+                                                </ng-container>
+                                                <ng-template #dateReceipt>
+                                                    {{getValueFC('dateReceiptObj') | date:'dd/MM/yyyy'}}
+                                                </ng-template>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="o_group o_inner_group o_group_col_6 m-0">
+                            <div class="card border-light mb-3 border-0 mr-2">
+                                <h5 class="card-header border-0">Nội dung bảo hành</h5>
+                                <div class="card-body">
+                                    <table>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Loại phục hình
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <span style="word-break: break-word;">{{infoLabo?.saleOrderLineName}}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Răng
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <ng-container>
+                                                    <button [disabled]="getValueFC('state') !== 'draft'"
+                                                        *ngFor="let tooth of laboTeeth" (click)="onToothSelected(tooth)"
+                                                        [ngClass]="isToothSelected(tooth)? 'btn-primary':'btn-light'"
+                                                        type="button" class="btn btn-sm mr-1 mb-1">{{tooth.name}}</button>
+                                                </ng-container>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Lý do bảo hành
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <ng-container *ngIf="getValueFC('state') === 'draft'; else reason">
+                                                    <textarea type="text" formControlName="reason"
+                                                        [class.border-danger]="invalid" class="form-control"></textarea>
+                                                </ng-container>
+                                                <ng-template #reason>
+                                                    <span style="word-break: break-word;">
+                                                        {{getValueFC('reason')}}
+                                                    </span>
+                                                </ng-template>
+                                                <div *ngIf="f.reason.errors && (f.reason.touched || f.reason.dirty || submitted)"
+                                                    class="text-danger">
+                                                    <div *ngIf="f.reason.errors.required">Nhập lý do</div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Nội dung bảo hành
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <ng-container *ngIf="getValueFC('state') === 'draft'; else content">
+                                                    <textarea type="text" formControlName="content"
+                                                        class="form-control"></textarea>
+                                                </ng-container>
+                                                <ng-template #content>
+                                                    <span style="word-break: break-word;">
+                                                        {{getValueFC('content')}}
+                                                    </span>
+                                                </ng-template>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Ghi chú
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <ng-container *ngIf="getValueFC('state') === 'draft'; else note">
+                                                    <textarea type="text" formControlName="note"
+                                                        class="form-control"></textarea>
+                                                </ng-container>
+                                                <ng-template #note>
+                                                    <span style="word-break: break-word;">
+                                                        {{getValueFC('note')}}
+                                                    </span>
+                                                </ng-template>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button *ngIf="getValueFC('state') === 'draft'" type="button" class="btn btn-primary" (click)="onSave()"
+        accesskey="s">Lưu</button>
+    <button *ngIf="getValueFC('state') === 'draft'" type="button" class="btn btn-primary" (click)="onConfirm()"
+        accesskey="s">Xác nhận</button>
+    <button *ngIf="getValueFC('state') !== 'draft'" type="button" class="btn btn-danger" (click)="onCancel()"
+        accesskey="s">Hủy phiếu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onClose()" accesskey="q">Đóng</button>
+</footer>

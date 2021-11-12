@@ -21,6 +21,7 @@ namespace ApplicationCore.Entities
         /// doctor : hoa hồng bác sĩ
         /// assistant : hoa hồng phụ tá
         /// counselor : hoa hồng tư vấn
+        /// agent : hoa hồng người giới thiệu
         /// </summary>
         public string Type { get; set; }
 

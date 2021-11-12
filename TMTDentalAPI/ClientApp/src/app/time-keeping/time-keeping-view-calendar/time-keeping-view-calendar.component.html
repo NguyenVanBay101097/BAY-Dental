@@ -63,10 +63,11 @@
     <!-- <div class="float-right pb-2 mr-3">
 
     </div> -->
-    <table class="table table-bordered table-content">
+    <table class="table table-sm table-bordered table-content">
         <thead>
             <tr>
                 <th class="align-self-center" scope="col">Tên nhân viên</th>
+                <th class="text-left" scope="col">Chức vụ</th>
                 <th scope="col" *ngFor="let date of dateList">
                     <div class="o_kanban_header">
                         <div class="o_kanban_header_title" *ngIf="date.toDateString() != today.toDateString()">
@@ -86,6 +87,7 @@
             <ng-container *ngFor="let empl of listEmployeies">
                 <tr>
                     <th class="oe_kanban_label_Emp">{{empl.name}}</th>
+                    <td class="" style="min-width: 150px;">{{empl.hrJobName}}</td>
                     <!-- <th scope="row" style="min-width: 200px;"></th> -->
                     <td *ngFor="let date of this.listTimeSheetByEmpId[empl.id]">
                         <div class="oe_kanban_content">

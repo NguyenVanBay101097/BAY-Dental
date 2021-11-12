@@ -1,3 +1,7 @@
 .btnExport {
     white-space: nowrap;
 }
+
+.dropdown{
+    display: inline-block;
+}

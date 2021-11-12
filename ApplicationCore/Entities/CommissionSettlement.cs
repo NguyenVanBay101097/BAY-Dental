@@ -6,11 +6,22 @@ namespace ApplicationCore.Entities
 {
     public class CommissionSettlement : BaseEntity
     {
+        public CommissionSettlement()
+        {
+            Date = DateTime.Now;
+        }
+
         public Guid? PartnerId { get; set; }
         public Partner Partner { get; set; }
 
         public Guid? EmployeeId { get; set; }
         public Employee Employee { get; set; }
+
+        /// <summary>
+        /// người giới thiệu
+        /// </summary>
+        public Guid? AgentId { get; set; }
+        public Agent Agent { get; set; }
 
         /// <summary>
         /// Tiền thanh toán trên 1 line
@@ -52,5 +63,7 @@ namespace ApplicationCore.Entities
         public Guid? SaleOrderLineId { get; set; }
         public SaleOrderLine SaleOrderLine { get; set; }
 
+        public Guid? HistoryLineId { get; set; }
+        public SaleOrderPaymentHistoryLine HistoryLine { get; set; }
     }
 }

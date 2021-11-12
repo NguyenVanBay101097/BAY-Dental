@@ -1,11 +1,9 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
-import { Subject } from 'rxjs';
-import { NotificationService } from '@progress/kendo-angular-notification';
-import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
+import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import * as _ from 'lodash';
-import { PartnerCategoryService, PartnerCategoryPaged } from 'src/app/partner-categories/partner-category.service';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 
 @Component({
   selector: 'app-audience-filter-partner-category',

@@ -1,13 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { GridDataResult, PageChangeEvent, SelectableSettings, SelectAllCheckboxState } from '@progress/kendo-angular-grid';
-import { Subject } from 'rxjs';
-import { PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { PartnerService, PartnerAddRemoveTags } from '../partner.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { NotificationService } from '@progress/kendo-angular-notification';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { PartnerAddRemoveTags, PartnerService } from '../partner.service';
 
 @Component({
   selector: 'app-partner-customer-categories',
@@ -18,6 +18,7 @@ export class PartnerCustomerCategoriesComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
 
   searchUpdate = new Subject<string>();
@@ -33,8 +34,11 @@ export class PartnerCustomerCategoriesComponent implements OnInit {
   showBtnManipulation: boolean = false;
 
   constructor(private partnerCategoryService: PartnerCategoryService,
-    private modalService: NgbModal, private activeRoute: ActivatedRoute, 
-    private partnerService: PartnerService, private notificationService: NotificationService) { }
+    private modalService: NgbModal, 
+    private activeRoute: ActivatedRoute, 
+    private partnerService: PartnerService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.partnerId = this.activeRoute.parent.snapshot.paramMap.get('id');
@@ -72,6 +76,7 @@ export class PartnerCustomerCategoriesComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

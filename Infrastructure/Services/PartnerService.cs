@@ -150,6 +150,8 @@ namespace Infrastructure.Services
             var query = GetQueryPaged(val);
             var totalItems = await query.CountAsync();
 
+            query = query.OrderByDescending(x => x.DateCreated);
+
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
 
             if (val.ComputeCreditDebit)
@@ -368,11 +370,12 @@ namespace Infrastructure.Services
 
         public async Task<decimal> GetAmountAdvanceBalance(Guid id)
         {
-            ///lay tu moveline account
             var moveLineObj = GetService<IAccountMoveLineService>();
-            var accountObj = GetService<IAccountAccountService>();
-            var accountAdvance = await accountObj.GetAccountAdvanceCurrentCompany();
-            var amounBalance = await moveLineObj.SearchQuery(x => x.PartnerId == id && x.AccountId == accountAdvance.Id).SumAsync(x => x.Debit - x.Credit);
+
+            var query = moveLineObj._QueryGet(state: "posted", companyId: CompanyId);
+            query = query.Where(x => x.PartnerId == id && (x.Account.Code == "KHTU" || x.Account.Code == "HTU"));
+
+            var amounBalance = await query.SumAsync(x => x.Debit - x.Credit);
             var sign = -1;
             return amounBalance * sign;
         }
@@ -495,6 +498,15 @@ namespace Infrastructure.Services
                 Name = x.Name,
                 Phone = x.Phone,
                 BirthYear = x.BirthYear,
+                BirthDay = x.BirthDay,
+                BirthMonth = x.BirthMonth,
+                Email = x.Email,
+                JobTitle = x.JobTitle,
+                CityName = x.CityName,
+                Street = x.Street,
+                Gender = x.Gender,
+                DistrictName = x.DistrictName,
+                WardName = x.WardName
             }).ToListAsync();
 
             var cateList = await cateObj.SearchQuery(x => x.PartnerPartnerCategoryRels.Any(s => partners.Select(i => i.Id).Contains(s.PartnerId)))
@@ -2081,7 +2093,7 @@ namespace Infrastructure.Services
             {
                 Id = x.Id,
                 Name = x.Name,
-                Age = x.GetAge(),
+                Age = x.GetAge,
                 BirthDay = x.BirthDay,
                 BirthMonth = x.BirthMonth,
                 BirthYear = x.BirthYear,
@@ -2092,7 +2104,7 @@ namespace Infrastructure.Services
                 DateOfBirth = x.GetDateOfBirth(),
                 Phone = x.Phone,
                 Address = x.GetAddress(),
-                Gender = x.GetGender(),
+                Gender = x.GetGender,
                 CountLine = saleReportDict.ContainsKey(x.Id) ? saleReportDict[x.Id].ProductUOMQty : 0,
                 Debit = saleReportDict.ContainsKey(x.Id) ? saleReportDict[x.Id].PriceTotal : 0,
             }).ToListAsync();
@@ -2110,7 +2122,7 @@ namespace Infrastructure.Services
                 {
                     Id = x.Partner.Id,
                     Name = x.Partner.Name,
-                    Age = x.Partner.GetAge(),
+                    Age = x.Partner.GetAge,
                     BirthDay = x.Partner.BirthDay,
                     BirthMonth = x.Partner.BirthMonth,
                     BirthYear = x.Partner.BirthYear,
@@ -2121,7 +2133,7 @@ namespace Infrastructure.Services
                     DateOfBirth = x.Partner.GetDateOfBirth(),
                     Phone = x.Partner.Phone,
                     Address = x.Partner.GetAddress(),
-                    Gender = x.Partner.GetGender(),
+                    Gender = x.Partner.GetGender,
                     AppointmnetId = x.Id,
                     AppointmnetName = x.Name,
                     Time = x.Time,
@@ -2192,6 +2204,8 @@ namespace Infrastructure.Services
             var amlObj = GetService<IAccountMoveLineService>();
             var accObj = GetService<IAccountAccountService>();
             var irProperyObj = GetService<IIRPropertyService>();
+            var cardCardObj = GetService<ICardCardService>();
+            var serviceCardCardObj = GetService<IServiceCardCardService>();
 
             var companyId = CompanyId;
             var partnerOrderStateQr = from v in saleOrderObj.SearchQuery(x => x.CompanyId == companyId)
@@ -2226,11 +2240,15 @@ namespace Infrastructure.Services
             var irPropertyQr = from ir in irProperyObj.SearchQuery(x => x.Name == "member_level" && x.Field.Model == "res.partner" && x.CompanyId == companyId)
                                select ir;
 
+            var cardCardQr = from card in cardCardObj.SearchQuery()
+                             select card;
+
             var ResponseQr = from p in SearchQuery(x => x.Customer)
                              from pr in PartnerResidualQr.Where(x => x.PartnerId == p.Id).DefaultIfEmpty()
                              from pd in partnerDebQr.Where(x => x.PartnerId == p.Id).DefaultIfEmpty()
                              from pos in partnerOrderStateQr.Where(x => x.PartnerId == p.Id).DefaultIfEmpty()
                              from ir in irPropertyQr.Where(x => !string.IsNullOrEmpty(x.ResId) && x.ResId.Contains(p.Id.ToString().ToLower())).DefaultIfEmpty()
+                             from card in cardCardQr.Where(x=> x.PartnerId == p.Id).DefaultIfEmpty()
                              select new PartnerInfoTemplate
                              {
                                  Id = p.Id,
@@ -2258,13 +2276,35 @@ namespace Infrastructure.Services
                                  MemberLevelId = ir.ValueReference,
                                  DateCreated = p.DateCreated,
                                  SourceName = p.Source.Name,
-                                 TitleName = p.Title.Name
+                                 TitleName = p.Title.Name,
+                                 CardTypeName = card.Type.Name
                              };
 
             if (!string.IsNullOrEmpty(val.Search))
             {
-                ResponseQr = ResponseQr.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search)
-                || x.Ref.Contains(val.Search) || x.Phone.Contains(val.Search));
+                IQueryable<Guid> partnersByKeywords;
+
+                partnersByKeywords =
+                      from p in ResponseQr
+                      where p.Name.Contains(val.Search) || p.NameNoSign.Contains(val.Search)
+                || p.Ref.Contains(val.Search) || p.Phone.Contains(val.Search)
+                      select p.Id;
+
+                partnersByKeywords = partnersByKeywords.Union(
+                        from card in cardCardObj.SearchQuery()
+                        where card.Barcode.Contains(val.Search) && card.PartnerId.HasValue
+                        select card.PartnerId.Value
+                    );
+
+                partnersByKeywords = partnersByKeywords.Union(
+                       from card in serviceCardCardObj.SearchQuery()
+                       where card.Barcode.Contains(val.Search) && card.PartnerId.HasValue
+                       select card.PartnerId.Value
+                   );
+            
+                ResponseQr = from a in ResponseQr
+                             join pbk in partnersByKeywords on a.Id equals pbk
+                             select a;
             }
 
             if (val.CategIds.Any())
@@ -2301,9 +2341,15 @@ namespace Infrastructure.Services
                 ResponseQr = ResponseQr.Where(x => x.TotalDebit == 0 || x.TotalDebit == null);
             }
 
-            if (val.MemberLevelId.HasValue)
+            if (val.CardTypeId.HasValue)
             {
-                ResponseQr = ResponseQr.Where(x => x.MemberLevelId.Contains(val.MemberLevelId.Value.ToString()));
+                var filterPartnerQr =
+                   from pcr in cardCardObj.SearchQuery(x => x.TypeId == val.CardTypeId)
+                   select pcr.PartnerId;
+
+                ResponseQr = from a in ResponseQr
+                             join pbk in filterPartnerQr on a.Id equals pbk
+                             select a;
             }
 
             if (!string.IsNullOrEmpty(val.OrderState))
@@ -2318,6 +2364,7 @@ namespace Infrastructure.Services
             var memberLevelObj = GetService<IMemberLevelService>();
             var cateObj = GetService<IPartnerCategoryService>();
             var partnerCategoryRelObj = GetService<IPartnerPartnerCategoryRelService>();
+            var cardCardObj = GetService<ICardCardService>();
 
             var ResponseQr = await GetQueryPartnerInfoPaged2(val);
             var count = await ResponseQr.CountAsync();
@@ -2325,20 +2372,8 @@ namespace Infrastructure.Services
 
             var cateList = await partnerCategoryRelObj.SearchQuery(x => res.Select(i => i.Id).Contains(x.PartnerId)).Include(x => x.Category).ToListAsync();
             var categDict = cateList.GroupBy(x => x.PartnerId).ToDictionary(x => x.Key, x => x.Select(s => s.Category));
-            var memberLevelIds = res.Where(x => !string.IsNullOrEmpty(x.MemberLevelId)).Select(x => new Guid(x.MemberLevelId.Substring(x.MemberLevelId.IndexOf(",") + 1))).Distinct().ToList();
-            var memberLevels = await memberLevelObj.SearchQuery(x => memberLevelIds.Contains(x.Id)).ToListAsync();
-            var memberLevelDict = memberLevels.ToDictionary(x => x.Id, x => x);
             foreach (var item in res)
             {
-                if (!string.IsNullOrEmpty(item.MemberLevelId))
-                {
-                    var pnMemberLevelId = new Guid(item.MemberLevelId.Substring(item.MemberLevelId.IndexOf(",") + 1));
-                    if (memberLevelDict.ContainsKey(pnMemberLevelId))
-                    {
-                        var level = memberLevelDict[pnMemberLevelId];
-                        item.MemberLevel = _mapper.Map<MemberLevelBasic>(level);
-                    }
-                }
                 item.Categories = _mapper.Map<List<PartnerCategoryBasic>>(categDict.ContainsKey(item.Id) ? categDict[item.Id] : new List<PartnerCategory>());
             }
             var items = _mapper.Map<IEnumerable<PartnerInfoDisplay>>(res);
@@ -2414,6 +2449,42 @@ namespace Infrastructure.Services
                 Items = items
             };
 
+        }
+        public async Task<IEnumerable<IrAttachment>> GetListAttachment(Guid id)
+        {
+            var attObj = GetService<IIrAttachmentService>();
+            var dotkhamObj = GetService<IDotKhamService>();
+            var saleObj = GetService<ISaleOrderService>();
+            //check company
+            var attQr = attObj.SearchQuery();
+            var saleQr = saleObj.SearchQuery(x=> x.CompanyId == CompanyId);
+            var dotkhamQr = dotkhamObj.SearchQuery();
+
+            var resQr = from att in attQr
+                        from so in saleQr.Where(x => x.Id == att.ResId).DefaultIfEmpty()
+                        from dk in dotkhamQr.Where(x => x.Id == att.ResId).DefaultIfEmpty()
+                        where att.ResId == id || so.PartnerId == id || dk.PartnerId == id
+                        select att;
+            var res = await resQr.OrderByDescending(x => x.DateCreated).ToListAsync();
+            return res;
+        }
+
+        public async Task<IEnumerable<Partner>> GetPublicPartners(int limit , int offset , string search)
+        {
+            var query = SearchQuery(x => x.Active && x.Customer);
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(x => x.Name.Contains(search) || x.NameNoSign.Contains(search)
+              || x.Ref.Contains(search) || x.Phone.Contains(search));
+            }
+
+            if (limit > 0)
+                query = query.Skip(offset).Take(limit);
+
+            var items = await query.OrderByDescending(x => x.DateCreated).ToListAsync();
+
+            return items;
         }
     }
 

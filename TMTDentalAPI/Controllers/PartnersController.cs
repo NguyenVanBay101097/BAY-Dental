@@ -23,6 +23,8 @@ using NPOI.XSSF.UserModel;
 using OfficeOpenXml;
 using Infrastructure;
 using TMTDentalAPI.JobFilters;
+using Microsoft.AspNetCore.Hosting;
+using System.Xml;
 
 namespace TMTDentalAPI.Controllers
 {
@@ -130,7 +132,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetAmountAdvanceBalance(Guid id)
         {
             await _unitOfWork.BeginTransactionAsync();
-           var amountAdvanceBalance =  await _partnerService.GetAmountAdvanceBalance(id);
+            var amountAdvanceBalance = await _partnerService.GetAmountAdvanceBalance(id);
             _unitOfWork.Commit();
 
             return Ok(amountAdvanceBalance);
@@ -762,7 +764,7 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> GetPartnerForTCare(PartnerForTCarePaged val)
         {
-            var res =await _partnerService.GetPartnerForTCare(val);
+            var res = await _partnerService.GetPartnerForTCare(val);
             return Ok(res);
         }
 
@@ -789,6 +791,83 @@ namespace TMTDentalAPI.Controllers
             var result = await _partnerService.GetPartnerInfoPaged2(val);
 
             return Ok(result);
+        }
+        [HttpGet("{id}/[action]")]
+        [CheckAccess(Actions = "Basic.Partner.Read")]
+        public async Task<IActionResult> GetListAttachment(Guid id)
+        {
+            var res = await _partnerService.GetListAttachment(id);
+            return Ok(_mapper.Map<IEnumerable<IrAttachmentBasic>>(res));
+        }
+
+        [HttpPost("[action]")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GenerateCustomerXML()
+        {
+            var irModelObj = (IIRModelDataService)HttpContext.RequestServices.GetService(typeof(IIRModelDataService));
+            var _hostingEnvironment = (IWebHostEnvironment)HttpContext.RequestServices.GetService(typeof(IWebHostEnvironment));
+            var xmlService = (IXmlService)HttpContext.RequestServices.GetService(typeof(IXmlService));
+            string path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\ImportXML\partner_customer.xml");
+
+            var irModelCreate = new List<IRModelData>();
+            var dateToData = new DateTime(2021, 08, 25);
+            var entities = await _partnerService.SearchQuery(x => x.Customer == true && x.DateCreated <= dateToData).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var data = new List<PartnerCustomerXmlSampleDataRecord>();
+            foreach (var entity in entities)
+            {
+                var item = _mapper.Map<PartnerCustomerXmlSampleDataRecord>(entity);
+                item.Id = $@"sample.partner_customer_{entities.IndexOf(entity) + 1}";
+                item.DateRound = (int)(dateToData - entity.Date.Value).TotalDays;
+                data.Add(item);
+                // add IRModelData
+                irModelCreate.Add(new IRModelData()
+                {
+                    Module = "sample",
+                    Model = "partner",
+                    ResId = entity.Id.ToString(),
+                    Name = $"partner_customer_{entities.IndexOf(entity) + 1}"
+                });
+            }
+            //writeFile
+            xmlService.WriteXMLFile(path, data);
+            await irModelObj.CreateAsync(irModelCreate);
+            return Ok();
+
+        }
+
+        [HttpPost("[action]")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GenerateSupplierXML()
+        {
+            var irModelObj = (IIRModelDataService)HttpContext.RequestServices.GetService(typeof(IIRModelDataService));
+            var _hostingEnvironment = (IWebHostEnvironment)HttpContext.RequestServices.GetService(typeof(IWebHostEnvironment));
+            var xmlService = (IXmlService)HttpContext.RequestServices.GetService(typeof(IXmlService));
+            string path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\ImportXML\partner_supplier.xml");
+
+            var irModelCreate = new List<IRModelData>();
+            var dateToData = new DateTime(2021, 08, 25);
+            var entities = await _partnerService.SearchQuery(x => x.Supplier == true && x.DateCreated <= dateToData).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var data = new List<PartnerSupplierXmlSampleDataRecord>();
+            foreach (var entity in entities)
+            {
+                var item = _mapper.Map<PartnerSupplierXmlSampleDataRecord>(entity);
+                item.Id = $@"sample.partner_supplier_{entities.IndexOf(entity) + 1}";
+                item.DateRound = (int)(dateToData - entity.Date.Value).TotalDays;
+                data.Add(item);
+                // add IRModelData
+                irModelCreate.Add(new IRModelData()
+                {
+                    Module = "sample",
+                    Model = "partner",
+                    ResId = entity.Id.ToString(),
+                    Name = $"partner_supplier_{entities.IndexOf(entity) + 1}"
+                });
+            }
+            //writeFile
+            xmlService.WriteXMLFile(path, data);
+            await irModelObj.CreateAsync(irModelCreate);
+            return Ok();
+
         }
     }
 }

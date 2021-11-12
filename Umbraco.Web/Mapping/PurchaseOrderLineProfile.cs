@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,10 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<PurchaseOrderLineSave, PurchaseOrderLine>()
               .ForMember(x => x.Id, x => x.Ignore());
+
+            CreateMap<PurchaseOrderLine, PurchaseOrderLinePrintVm>();
+
+            CreateMap<PurchaseOrderLine, PurchaseOrderLinePrintTemplate>();
         }
     }
 }

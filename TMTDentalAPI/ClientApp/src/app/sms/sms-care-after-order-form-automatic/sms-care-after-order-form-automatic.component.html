@@ -24,7 +24,7 @@
 </div>
 
 
-<kendo-grid [data]="gridData" [selectable]="true" (pageChange)="pageChange($event)" [skip]="offset" [pageable]="true"
+<kendo-grid [data]="gridData" [selectable]="true" (pageChange)="pageChange($event)" [skip]="offset" [pageable]="pagerSettings"
     [pageSize]="limit">
     <kendo-grid-column field="name" title="Tên thiết lập" width="200"></kendo-grid-column>
     <kendo-grid-column field="brandName" title="Brandname" width="150"></kendo-grid-column>

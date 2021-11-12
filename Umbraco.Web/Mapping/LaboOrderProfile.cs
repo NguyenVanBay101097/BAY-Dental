@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using Umbraco.Web.Models.ContentEditing;
+using ApplicationCore.Models.PrintTemplate;
 
 namespace Umbraco.Web.Mapping
 {
@@ -15,8 +16,8 @@ namespace Umbraco.Web.Mapping
             CreateMap<LaboOrder, LaboOrderBasic>()
                  .ForMember(x => x.SaleOrderId, x => x.MapFrom(s => s.SaleOrderLine.OrderId))
                  .ForMember(x => x.SaleOrderName, x => x.MapFrom(s => s.SaleOrderLine.Order.Name))
-                .ForMember(x => x.Teeth, x => x.MapFrom(s => s.LaboOrderToothRel.Select(x => x.Tooth)));
-
+                 .ForMember(x => x.Teeth, x => x.MapFrom(s => s.LaboOrderToothRel.Select(x => x.Tooth)));
+                 
             CreateMap<LaboOrder, LaboOrderDisplay>()
                 .ForMember(x => x.LaboOrderProducts, x => x.MapFrom(s => s.LaboOrderProductRel.Select(x => x.Product)))
                .ForMember(x => x.Teeth, x => x.MapFrom(s => s.LaboOrderToothRel.Select(m => m.Tooth)));
@@ -41,6 +42,9 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<LaboOrder, LaboOrderPrintVM>();
             CreateMap<LaboOrder, LaboOrderReceiptBasic>();
+
+            CreateMap<LaboOrder, LaboOrderPrintTemplate>()
+                .ForMember(x => x.Teeth, x => x.MapFrom(s => s.LaboOrderToothRel.Select(m => m.Tooth)));
         }
     }
 }

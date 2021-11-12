@@ -1,12 +1,14 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { PartnerCategoryService, PartnerCategoryPaged, PartnerCategoryBasic } from '../partner-category.service';
-import { PartnerCategoryCuDialogComponent } from '../partner-category-cu-dialog/partner-category-cu-dialog.component';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { NotifyService } from 'src/app/shared/services/notify.service';
+import { PartnerCategoryCuDialogComponent } from '../partner-category-cu-dialog/partner-category-cu-dialog.component';
 import { PartnerCategoryImportComponent } from '../partner-category-import/partner-category-import.component';
+import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } from '../partner-category.service';
 
 @Component({
   selector: 'app-partner-category-list',
@@ -21,6 +23,7 @@ export class PartnerCategoryListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   opened = false;
 
@@ -29,9 +32,12 @@ export class PartnerCategoryListComponent implements OnInit {
 
   title = 'Nhãn khách hàng';
 
-  constructor(private partnerCategoryService: PartnerCategoryService,
-    private modalService: NgbModal) {
-  }
+  constructor(
+    private partnerCategoryService: PartnerCategoryService,
+    private modalService: NgbModal,
+    private notifyService: NotifyService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -77,14 +83,16 @@ export class PartnerCategoryListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 
   createItem() {
     let modalRef = this.modalService.open(PartnerCategoryCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Thêm: ' + this.title;
+    modalRef.componentInstance.title = 'Thêm nhãn khách hàng';
 
     modalRef.result.then(() => {
+      this.notifyService.notify("success","Lưu thành công");
       this.loadDataFromApi();
     }, () => {
     });
@@ -92,9 +100,10 @@ export class PartnerCategoryListComponent implements OnInit {
 
   editItem(item: PartnerCategoryBasic) {
     let modalRef = this.modalService.open(PartnerCategoryCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Sửa: ' + this.title;
+    modalRef.componentInstance.title = 'Sửa nhãn khách hàng';
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {
+      this.notifyService.notify("success","Lưu thành công");
       this.loadDataFromApi();
     }, () => {
     });
@@ -102,9 +111,11 @@ export class PartnerCategoryListComponent implements OnInit {
 
   deleteItem(item: PartnerCategoryBasic) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Xóa: ' + this.title;
+    modalRef.componentInstance.title = 'Xóa nhãn khách hàng';
+    modalRef.componentInstance.body = 'Bạn có chắc chắn xóa nhãn khách hàng';
     modalRef.result.then(() => {
       this.partnerCategoryService.delete(item.id).subscribe(() => {
+      this.notifyService.notify("success","Xóa thành công");
         this.loadDataFromApi();
       }, err => {
         console.log(err);

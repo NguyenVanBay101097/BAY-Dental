@@ -1,13 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { NgbModal, NgbPopover } from "@ng-bootstrap/ng-bootstrap";
+import { FormGroup } from '@angular/forms';
+import { NgbPopover } from "@ng-bootstrap/ng-bootstrap";
 import { NotificationService } from "@progress/kendo-angular-notification";
+import { generate, observe } from 'fast-json-patch';
 import { PartnerSimple } from "src/app/partners/partner-simple";
-import { PartnerFilter, PartnerService } from "src/app/partners/partner.service";
-import { FacebookUserProfilesService } from "src/app/socials-channel/facebook-user-profiles.service";
-import { observe, generate } from 'fast-json-patch';
-import { PartnersService } from 'src/app/shared/services/partners.service';
 import { FacebookUserProfilesODataService } from 'src/app/shared/services/facebook-user-profiles.service';
+import { PartnersService } from 'src/app/shared/services/partners.service';
+import { FacebookUserProfilesService } from "src/app/socials-channel/facebook-user-profiles.service";
 
 @Component({
   selector: 'app-facebook-user-profile-update-phone-partner-popover',
@@ -37,11 +36,8 @@ export class FacebookUserProfileUpdatePhonePartnerPopoverComponent implements On
   @Output() createPartnerClick = new EventEmitter<any>();
 
   constructor(
-    private partnerService: PartnerService,
-    private modalService: NgbModal,
     private facebookUserProfilesService: FacebookUserProfilesService,
     private notificationService: NotificationService,
-    private fb: FormBuilder,
     private partnersService: PartnersService,
     private facebookUserProfilesODataService: FacebookUserProfilesODataService
   ) { }

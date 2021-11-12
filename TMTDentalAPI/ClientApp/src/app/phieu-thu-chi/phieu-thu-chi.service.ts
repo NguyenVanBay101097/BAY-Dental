@@ -151,21 +151,29 @@ export class PhieuThuChiService {
   }
 
   // getPrint(id: string) {
-  //   return this.http.get(this.baseApi + this.apiUrl+ '/' + id + '/GetPrint');
+  //   return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/Print');
   // }
+
+  getPrint2(id: string) {
+    return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/Print2');
+  }
 
   getPrint(id: string) {
     return this.http.get(this.baseApi + this.apiPrint + '/Print' + `?id=${id}`, { responseType: 'text' });
   }
 
-  getPrint2(id: string) {
-    return this.http.get(this.baseApi + this.apiPrint + '/Print2' + `?id=${id}`, { responseType: 'text' });
-  }
+  // getPrint2(id: string) {
+  //   return this.http.get(this.baseApi + this.apiPrint + '/Print2' + `?id=${id}`, { responseType: 'text' });
+  // }
 
   exportExcelFile(val: any) {
     return this.http.get(this.baseApi + this.apiUrl + "/ExportExcelFile", {
       responseType: "blob",
       params: val,
     });
+  }
+
+  exportExcelCommissionAgentFile(val) {
+    return this.http.get(this.baseApi + this.apiUrl + '/ExportExcelCommissionAgentFile', { params: new HttpParams({fromObject: val}), responseType: 'blob' });
   }
 }

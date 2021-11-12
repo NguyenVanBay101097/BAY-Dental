@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml;
 using ApplicationCore.Entities;
 using ApplicationCore.Models;
 using ApplicationCore.Utilities;
@@ -10,6 +12,7 @@ using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +32,7 @@ namespace TMTDentalAPI.Controllers
         private readonly IProductCategoryService _productCategoryService;
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly IIRModelAccessService _modelAccessService;
+        private readonly IIRModelDataService _modelDataService;
         private readonly IProductStepService _productStepService;
         private readonly IUoMService _uomService;
         private readonly IUoMCategoryService _uomCategService;
@@ -37,6 +41,7 @@ namespace TMTDentalAPI.Controllers
             IApplicationRoleFunctionService roleFunctionService,
             IProductCategoryService productCategoryService,
             IUnitOfWorkAsync unitOfWork, IIRModelAccessService modelAccessService,
+            IIRModelDataService modelDataService,
             IProductStepService productStepService, IUoMService uomService,
             IUoMCategoryService uomCategService)
         {
@@ -46,6 +51,7 @@ namespace TMTDentalAPI.Controllers
             _productCategoryService = productCategoryService;
             _unitOfWork = unitOfWork;
             _modelAccessService = modelAccessService;
+            _modelDataService = modelDataService;
             _productStepService = productStepService;
             _uomService = uomService;
             _uomCategService = uomCategService;
@@ -280,6 +286,7 @@ namespace TMTDentalAPI.Controllers
                 vals.Add(pd);
             }
 
+            _productService._ComputeUoMRels(vals);
             await _productService.CreateAsync(vals);
 
             _unitOfWork.Commit();
@@ -307,8 +314,8 @@ namespace TMTDentalAPI.Controllers
                         for (var row = 2; row <= worksheet.Dimension.Rows; row++)
                         {
                             var errs = new List<string>();
-                            var name = Convert.ToString(worksheet.Cells[row, 1].Value);
-                            var categName = Convert.ToString(worksheet.Cells[row, 3].Value);
+                            var name = Convert.ToString(worksheet.Cells[row, 2].Value);
+                            var categName = Convert.ToString(worksheet.Cells[row, 4].Value);
 
                             if (string.IsNullOrEmpty(name))
                                 errs.Add("Tên dịch vụ là bắt buộc");
@@ -324,13 +331,14 @@ namespace TMTDentalAPI.Controllers
                             var item = new ProductServiceImportExcelRow
                             {
                                 Name = name,
-                                IsLabo = Convert.ToBoolean(worksheet.Cells[row, 2].Value),
+                                DefaultCode = Convert.ToString(worksheet.Cells[row, 1].Value),
+                                IsLabo = Convert.ToBoolean(worksheet.Cells[row, 3].Value),
                                 CategName = categName,
-                                ListPrice = Convert.ToDecimal(worksheet.Cells[row, 4].Value),
-                                StandardPrice = Convert.ToDecimal(worksheet.Cells[row, 5].Value),
-                                Steps = Convert.ToString(worksheet.Cells[row, 6].Value),
-                                LaboPrice = Convert.ToDecimal(worksheet.Cells[row, 7].Value),
-                                Firm = Convert.ToString(worksheet.Cells[row, 8].Value),
+                                ListPrice = Convert.ToDecimal(worksheet.Cells[row, 5].Value),
+                                StandardPrice = Convert.ToDecimal(worksheet.Cells[row, 6].Value),
+                                Steps = Convert.ToString(worksheet.Cells[row, 7].Value),
+                                LaboPrice = Convert.ToDecimal(worksheet.Cells[row, 8].Value),
+                                Firm = Convert.ToString(worksheet.Cells[row, 9].Value),
                             };
                             data.Add(item);
                         }
@@ -389,6 +397,7 @@ namespace TMTDentalAPI.Controllers
                 product.UOMId = uom.Id;
                 product.UOMPOId = uom.Id;
                 product.Name = item.Name;
+                product.DefaultCode = item.DefaultCode;
                 product.SaleOK = true;
                 product.PurchaseOK = false;
                 product.Type = "service";
@@ -415,7 +424,7 @@ namespace TMTDentalAPI.Controllers
             try
             {
                 await _unitOfWork.BeginTransactionAsync();
-
+                _productService._ComputeUoMRels(productsCreate);
                 var products = await _productService.CreateAsync(productsCreate);
 
                 foreach (var product in products)
@@ -556,6 +565,7 @@ namespace TMTDentalAPI.Controllers
             try
             {
                 await _unitOfWork.BeginTransactionAsync();
+                _productService._ComputeUoMRels(productsUpdate);
                 await _productService.UpdateAsync(productsUpdate);
                 _unitOfWork.Commit();
             }
@@ -593,8 +603,8 @@ namespace TMTDentalAPI.Controllers
                         {
                             var errs = new List<string>();
                             var name = Convert.ToString(worksheet.Cells[row, 1].Value);
-                            var categName = Convert.ToString(worksheet.Cells[row, 2].Value);
-                            var price = Convert.ToString(worksheet.Cells[row, 3].Value);
+                            var categName = Convert.ToString(worksheet.Cells[row, 3].Value);
+                            var price = Convert.ToString(worksheet.Cells[row, 4].Value);
                             //var defaultCode = Convert.ToString(worksheet.Cells[row, 5].Value);
 
                             if (string.IsNullOrEmpty(name))
@@ -604,7 +614,7 @@ namespace TMTDentalAPI.Controllers
                             if (string.IsNullOrEmpty(price))
                                 errs.Add("Giá thuốc là bắt buộc");
 
-                            var uomName = Convert.ToString(worksheet.Cells[row, 4].Value).Trim();
+                            var uomName = Convert.ToString(worksheet.Cells[row, 5].Value).Trim();
                             if (string.IsNullOrEmpty(uomName))
                                 errs.Add("Đơn vị mặc định là bắt buộc");
 
@@ -613,14 +623,19 @@ namespace TMTDentalAPI.Controllers
                                 errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
                                 continue;
                             }
-
+                            var minInventory = worksheet.Cells[row, 6].Value;
+                            var origin = worksheet.Cells[row, 7].Value;
+                            var expiry = worksheet.Cells[row, 8].Value;
                             var item = new ProductMedicineImportExcelRow
                             {
                                 Name = name,
+                                DefaultCode = Convert.ToString(worksheet.Cells[row, 2].Value),
                                 CategName = categName,
-                                ListPrice = Convert.ToDecimal(worksheet.Cells[row, 3].Value),
+                                ListPrice = Convert.ToDecimal(worksheet.Cells[row, 4].Value),
                                 UoM = uomName,
-                                MinInventory = Convert.ToDecimal(worksheet.Cells[row, 5].Value),
+                                MinInventory = minInventory != null ? Convert.ToDecimal(minInventory) : (decimal?)minInventory,
+                                Origin = origin !=null ? Convert.ToString(origin) : null,
+                                Expiry = expiry !=null ? Convert.ToDecimal(expiry) : (decimal?)expiry
                             };
                             data.Add(item);
                         }
@@ -678,6 +693,7 @@ namespace TMTDentalAPI.Controllers
                 pd.UOMId = uomDict[item.UoM].Id;
                 pd.UOMPOId = uomDict[item.UoM].Id;
                 pd.Name = item.Name;
+                pd.DefaultCode = item.DefaultCode;
                 pd.SaleOK = false;
                 pd.PurchaseOK = false;
                 pd.KeToaOK = true;
@@ -687,13 +703,15 @@ namespace TMTDentalAPI.Controllers
                 pd.ListPrice = item.ListPrice;
                 pd.PurchasePrice = 0;
                 pd.MinInventory = item.MinInventory;
+                pd.Origin = item.Origin;
+                pd.Expiry = item.Expiry;
                 vals.Add(pd);
             }
 
             try
             {
                 await _unitOfWork.BeginTransactionAsync();
-
+                _productService._ComputeUoMRels(vals);
                 await _productService.CreateAsync(vals);
 
 
@@ -733,9 +751,9 @@ namespace TMTDentalAPI.Controllers
                         {
                             var errs = new List<string>();
                             var name = Convert.ToString(worksheet.Cells[row, 1].Value);
-                            var categName = Convert.ToString(worksheet.Cells[row, 2].Value);
-                            var price = Convert.ToString(worksheet.Cells[row, 3].Value);
-                            var defaultCode = Convert.ToString(worksheet.Cells[row, 5].Value);
+                            var categName = Convert.ToString(worksheet.Cells[row, 3].Value);
+                            var price = Convert.ToString(worksheet.Cells[row, 4].Value);
+                            var defaultCode = Convert.ToString(worksheet.Cells[row, 2].Value);
 
                             if (string.IsNullOrEmpty(defaultCode))
                                 errs.Add("Mã thuốc là bắt buộc"); ;
@@ -747,7 +765,7 @@ namespace TMTDentalAPI.Controllers
                                 errs.Add("Giá thuốc là bắt buộc");
 
                             //tìm exist đơn vị tính và gán Id uom cho thuốc
-                            var uomName = Convert.ToString(worksheet.Cells[row, 4].Value).Trim();
+                            var uomName = Convert.ToString(worksheet.Cells[row, 5].Value).Trim();
                             if (string.IsNullOrEmpty(uomName))
                                 errs.Add("Đơn vị mặc định là bắt buộc");
 
@@ -756,14 +774,20 @@ namespace TMTDentalAPI.Controllers
                                 errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
                                 continue;
                             }
-
+                            var minInventory = worksheet.Cells[row, 6].Value;
+                            var origin = worksheet.Cells[row, 7].Value;
+                            var expiry = worksheet.Cells[row, 8].Value;
                             var item = new ProductMedicineUpdateExcelRow
                             {
                                 Name = name,
                                 CategName = categName,
-                                ListPrice = Convert.ToDecimal(worksheet.Cells[row, 3].Value),
+                                ListPrice = Convert.ToDecimal(worksheet.Cells[row, 4].Value),
                                 UoM = uomName,
-                                DefaultCode = defaultCode
+                                DefaultCode = defaultCode,
+                                MinInventory = minInventory !=null ? Convert.ToDecimal(minInventory) : (decimal?)minInventory,
+                                Origin = origin != null ? Convert.ToString(origin) : null,
+                                Expiry = expiry != null ? Convert.ToDecimal(expiry) : (decimal?)expiry
+
                             };
                             data.Add(item);
                         }
@@ -816,7 +840,7 @@ namespace TMTDentalAPI.Controllers
 
             var productsUpdate = new List<Product>();
             var productCodes = data.Select(x => x.DefaultCode).Distinct().ToList();
-            var productsToUpdate = await _productService.SearchQuery(x => productCodes.Contains(x.DefaultCode)).ToListAsync();
+            var productsToUpdate = await _productService.SearchQuery(x => productCodes.Contains(x.DefaultCode)).Include(x=>x.ProductUoMRels).ToListAsync();
             var productDict = productsToUpdate.ToDictionary(x => x.DefaultCode, x => x);
             foreach (var item in data)
             {
@@ -829,12 +853,15 @@ namespace TMTDentalAPI.Controllers
                 product.UOMId = uomDict[item.UoM].Id;
                 product.UOMPOId = uomDict[item.UoM].Id;
                 product.ListPrice = item.ListPrice;
+                product.Origin = item.Origin;
+                product.Expiry = item.Expiry;
                 productsUpdate.Add(product);
             }
 
             try
             {
                 await _unitOfWork.BeginTransactionAsync();
+                _productService._ComputeUoMRels(productsUpdate);
                 await _productService.UpdateAsync(productsUpdate);
                 _unitOfWork.Commit();
             }
@@ -873,10 +900,10 @@ namespace TMTDentalAPI.Controllers
                         {
                             var errs = new List<string>();
                             var name = Convert.ToString(worksheet.Cells[row, 1].Value);
-                            var categName = Convert.ToString(worksheet.Cells[row, 3].Value);
-                            var type = Convert.ToString(worksheet.Cells[row, 2].Value);
-                            var uomName = Convert.ToString(worksheet.Cells[row, 5].Value);
-                            var uomPOName = Convert.ToString(worksheet.Cells[row, 6].Value);
+                            var categName = Convert.ToString(worksheet.Cells[row, 4].Value);
+                            var type = Convert.ToString(worksheet.Cells[row, 3].Value);
+                            var uomName = Convert.ToString(worksheet.Cells[row, 6].Value);
+                            var uomPOName = Convert.ToString(worksheet.Cells[row, 7].Value);
 
                             if (string.IsNullOrEmpty(name))
                                 errs.Add("Tên vật tư là bắt buộc");
@@ -897,16 +924,21 @@ namespace TMTDentalAPI.Controllers
                                 errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
                                 continue;
                             }
-
+                            var minInventory = worksheet.Cells[row, 8].Value;
+                            var origin = worksheet.Cells[row, 9].Value;
+                            var expiry = worksheet.Cells[row, 10].Value;
                             var item = new ProductProductImportExcelRow
                             {
                                 Name = name,
+                                DefaultCode = Convert.ToString(worksheet.Cells[row, 2].Value),
                                 Type = type,
                                 CategName = categName,
-                                PurchasePrice = Convert.ToDecimal(worksheet.Cells[row, 4].Value),
+                                PurchasePrice = Convert.ToDecimal(worksheet.Cells[row, 5].Value),
                                 UOM = uomName,
                                 UOMPO = uomPOName,
-                                MinInventory = Convert.ToDecimal(worksheet.Cells[row, 7].Value),
+                                MinInventory = minInventory !=null ? Convert.ToDecimal(minInventory) : (decimal?)minInventory,
+                                Origin = origin !=null ? Convert.ToString(origin) : null,
+                                Expiry = expiry !=null ? Convert.ToDecimal(expiry) : (decimal?)expiry
                             };
                             data.Add(item);
                         }
@@ -954,6 +986,7 @@ namespace TMTDentalAPI.Controllers
                 product.UOMId = uom.Id;
                 product.UOMPOId = uomPO.Id;
                 product.Name = item.Name;
+                product.DefaultCode = item.DefaultCode;
                 product.NameNoSign = StringUtils.RemoveSignVietnameseV2(item.Name);
                 product.SaleOK = false;
                 product.Type = typeDict[item.Type];
@@ -961,6 +994,8 @@ namespace TMTDentalAPI.Controllers
                 product.CategId = categDict[item.CategName].Id;
                 product.PurchasePrice = item.PurchasePrice ?? 0;
                 product.MinInventory = item.MinInventory ?? 0;
+                product.Origin = item.Origin;
+                product.Expiry = item.Expiry;
                 product.ProductUoMRels.Add(new ProductUoMRel { UoMId = uom.Id });
                 if (uom.Id != uomPO.Id)
                     product.ProductUoMRels.Add(new ProductUoMRel { UoMId = uomPO.Id });
@@ -971,6 +1006,7 @@ namespace TMTDentalAPI.Controllers
             try
             {
                 await _unitOfWork.BeginTransactionAsync();
+                _productService._ComputeUoMRels(productsCreate);
                 await _productService.CreateAsync(productsCreate);
                 _unitOfWork.Commit();
             }
@@ -1006,8 +1042,8 @@ namespace TMTDentalAPI.Controllers
                         for (var row = 2; row <= worksheet.Dimension.Rows; row++)
                         {
                             var errs = new List<string>();
-                            var productCode = Convert.ToString(worksheet.Cells[row, 1].Value);
-                            var name = Convert.ToString(worksheet.Cells[row, 2].Value);
+                            var productCode = Convert.ToString(worksheet.Cells[row, 2].Value);
+                            var name = Convert.ToString(worksheet.Cells[row, 1].Value);
                             var type = Convert.ToString(worksheet.Cells[row, 3].Value);
                             var categName = Convert.ToString(worksheet.Cells[row, 4].Value);
                             var uomName = Convert.ToString(worksheet.Cells[row, 6].Value);
@@ -1033,7 +1069,9 @@ namespace TMTDentalAPI.Controllers
                                 errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
                                 continue;
                             }
-
+                            var minInventory = worksheet.Cells[row, 8].Value;
+                            var origin = worksheet.Cells[row, 9].Value;
+                            var expiry = worksheet.Cells[row, 10].Value;
                             var item = new ProductProductImportExcelRow
                             {
                                 Name = name,
@@ -1043,7 +1081,9 @@ namespace TMTDentalAPI.Controllers
                                 PurchasePrice = Convert.ToDecimal(worksheet.Cells[row, 5].Value),
                                 UOM = uomName,
                                 UOMPO = uomPOName,
-                                MinInventory = Convert.ToDecimal(worksheet.Cells[row, 8].Value),
+                                MinInventory = minInventory != null ? Convert.ToDecimal(minInventory) : (decimal?)minInventory,
+                                Origin = origin != null ? Convert.ToString(origin) : null,
+                                Expiry = expiry != null ? Convert.ToDecimal(expiry) : (decimal?)expiry
                             };
                             data.Add(item);
                         }
@@ -1104,6 +1144,8 @@ namespace TMTDentalAPI.Controllers
                 product.UOMId = uomDict[item.UOM].Id;
                 product.UOMPOId = uomDict[item.UOMPO].Id;
                 product.MinInventory = item.MinInventory ?? 0;
+                product.Origin = item.Origin;
+                product.Expiry = item.Expiry;
                 product.ProductUoMRels.Clear();
                 product.ProductUoMRels.Add(new ProductUoMRel { UoMId = uomDict[item.UOM].Id });
                 if (uomDict[item.UOM].Id != uomDict[item.UOMPO].Id)
@@ -1115,6 +1157,7 @@ namespace TMTDentalAPI.Controllers
             try
             {
                 await _unitOfWork.BeginTransactionAsync();
+                _productService._ComputeUoMRels(productsUpdate);
                 await _productService.UpdateAsync(productsUpdate);
                 _unitOfWork.Commit();
             }
@@ -1200,6 +1243,7 @@ namespace TMTDentalAPI.Controllers
                 vals.Add(pd);
             }
 
+            _productService._ComputeUoMRels(vals);
             await _productService.CreateAsync(vals);
 
             _unitOfWork.Commit();
@@ -1281,6 +1325,7 @@ namespace TMTDentalAPI.Controllers
                 vals.Add(pd);
             }
 
+            _productService._ComputeUoMRels(vals);
             await _productService.CreateAsync(vals);
 
             _unitOfWork.Commit();
@@ -1394,30 +1439,31 @@ namespace TMTDentalAPI.Controllers
             using (var package = new ExcelPackage(stream))
             {
                 var worksheet = package.Workbook.Worksheets.Add(sheetName);
-
-                worksheet.Cells[1, 1].Value = "Mã vật tư";
-                worksheet.Cells[1, 2].Value = "Tên vật tư";
+                worksheet.Cells[1, 1].Value = "Tên vật tư";
+                worksheet.Cells[1, 2].Value = "Mã vật tư";
                 worksheet.Cells[1, 3].Value = "Loại";
                 worksheet.Cells[1, 4].Value = "Nhóm vật tư";
                 worksheet.Cells[1, 5].Value = "Giá mua";
                 worksheet.Cells[1, 6].Value = "Đơn vị mặc định";
                 worksheet.Cells[1, 7].Value = "Đơn vị mua";
                 worksheet.Cells[1, 8].Value = "Mức tồn tối thiểu";
-
-                worksheet.Cells["A1:H1"].Style.Font.Bold = true;
+                worksheet.Cells[1, 9].Value = "Xuất xứ";
+                worksheet.Cells[1, 10].Value = "Thời hạn sử dụng (tháng)";
+                worksheet.Cells["A1:J1"].Style.Font.Bold = true;
 
                 var row = 2;
                 foreach (var item in products)
                 {
-                    worksheet.Cells[row, 1].Value = item.DefaultCode;
-                    worksheet.Cells[row, 2].Value = item.Name;
+                    worksheet.Cells[row, 1].Value = item.Name;
+                    worksheet.Cells[row, 2].Value = item.DefaultCode;
                     worksheet.Cells[row, 3].Value = type_dict[item.Type];
                     worksheet.Cells[row, 4].Value = item.CategName;
                     worksheet.Cells[row, 5].Value = item.PurchasePrice ?? 0;
                     worksheet.Cells[row, 6].Value = item.UomName;
                     worksheet.Cells[row, 7].Value = item.UoMPOName;
                     worksheet.Cells[row, 8].Value = item.MinInventory ?? 0;
-
+                    worksheet.Cells[row, 9].Value = item.Origin;
+                    worksheet.Cells[row, 10].Value = item.Expiry;
                     row++;
                 }
 
@@ -1449,25 +1495,27 @@ namespace TMTDentalAPI.Controllers
             using (var package = new ExcelPackage(stream))
             {
                 var worksheet = package.Workbook.Worksheets.Add(sheetName);
-
-                worksheet.Cells[1, 1].Value = "Mã thuốc";
-                worksheet.Cells[1, 2].Value = "Tên thuốc";
+                worksheet.Cells[1, 1].Value = "Tên thuốc";
+                worksheet.Cells[1, 2].Value = "Mã thuốc";
                 worksheet.Cells[1, 3].Value = "Nhóm thuốc";
                 worksheet.Cells[1, 4].Value = "Giá thuốc";
                 worksheet.Cells[1, 5].Value = "Đơn vị tính mặc định";
                 worksheet.Cells[1, 6].Value = "Mức tồn tối thiểu";
-
-                worksheet.Cells["A1:F1"].Style.Font.Bold = true;
+                worksheet.Cells[1, 7].Value = "Xuất xứ";
+                worksheet.Cells[1, 8].Value = "Thời hạn sử dụng (tháng)";
+                worksheet.Cells["A1:H1"].Style.Font.Bold = true;
 
                 var row = 2;
                 foreach (var item in products)
                 {
-                    worksheet.Cells[row, 1].Value = item.DefaultCode;
-                    worksheet.Cells[row, 2].Value = item.Name;
+                    worksheet.Cells[row, 1].Value = item.Name;
+                    worksheet.Cells[row, 2].Value = item.DefaultCode;
                     worksheet.Cells[row, 3].Value = item.CategName;
                     worksheet.Cells[row, 4].Value = item.ListPrice;
                     worksheet.Cells[row, 5].Value = item.UomName;
                     worksheet.Cells[row, 6].Value = item.MinInventory;
+                    worksheet.Cells[row, 7].Value = item.Origin;
+                    worksheet.Cells[row, 8].Value = item.Expiry;
                     row++;
                 }
 
@@ -1483,5 +1531,184 @@ namespace TMTDentalAPI.Controllers
 
             return new FileContentResult(fileContent, mimeType);
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GenerateServiceXML()
+        {
+            var irModelObj = (IIRModelDataService)HttpContext.RequestServices.GetService(typeof(IIRModelDataService));
+            var _hostingEnvironment = (IWebHostEnvironment)HttpContext.RequestServices.GetService(typeof(IWebHostEnvironment));
+            var xmlService = (IXmlService)HttpContext.RequestServices.GetService(typeof(IXmlService));
+            string path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\ImportXML\product_service.xml");
+
+            var irModelCreate = new List<IRModelData>();
+            var dateToData = new DateTime(2021, 08, 25);
+            var listIrModelData = await irModelObj.SearchQuery(x => (x.Module == "sample" || x.Module == "product") && (x.Model == "product.category" || (x.Model == "uom"))).ToListAsync();// các irmodel cần thiết
+            var entities = await _productService.SearchQuery(x => x.Type2 == "service" && x.DateCreated <= dateToData).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var data = new List<ProductServiceXmlSampleDataRecord>();
+            foreach (var entity in entities)
+            {
+                var item = _mapper.Map<ProductServiceXmlSampleDataRecord>(entity);
+                item.Id = $@"sample.product_service_{entities.IndexOf(entity) + 1}";
+                var irmodelData = listIrModelData.FirstOrDefault(x => x.ResId == item.CategId.ToString());
+                item.CategId = irmodelData?.Module + "." + irmodelData?.Name;
+                data.Add(item);
+                // add IRModelData
+                irModelCreate.Add(new IRModelData()
+                {
+                    Module = "sample",
+                    Model = "product",
+                    ResId = entity.Id.ToString(),
+                    Name = $"product_service_{entities.IndexOf(entity) + 1}"
+                });
+            }
+            //writeFile
+            xmlService.WriteXMLFile(path, data);
+            await irModelObj.CreateAsync(irModelCreate);
+            return Ok();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GenerateProductXML()
+        {
+            var irModelObj = (IIRModelDataService)HttpContext.RequestServices.GetService(typeof(IIRModelDataService));
+            var _hostingEnvironment = (IWebHostEnvironment)HttpContext.RequestServices.GetService(typeof(IWebHostEnvironment));
+            var xmlService = (IXmlService)HttpContext.RequestServices.GetService(typeof(IXmlService));
+            string path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\ImportXML\product_product.xml");
+
+            var irModelCreate = new List<IRModelData>();
+            var dateToData = new DateTime(2021, 08, 25);
+            var listIrModelData = await irModelObj.SearchQuery(x => (x.Module == "sample" || x.Module == "product") && (x.Model == "product.category" || (x.Model == "uom"))).ToListAsync();// các irmodel cần thiết
+            var entities = await _productService.SearchQuery(x => x.Type2 == "product" && x.DateCreated <= dateToData).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var data = new List<ProductProductXmlSampleDataRecord>();
+            foreach (var entity in entities)
+            {
+                var item = _mapper.Map<ProductProductXmlSampleDataRecord>(entity);
+                item.Id = $@"sample.product_product_{entities.IndexOf(entity) + 1}";
+                var irmodelData = listIrModelData.FirstOrDefault(x => x.ResId == item.CategId.ToString());
+                item.CategId = irmodelData?.Module + "." + irmodelData?.Name;
+                var irmodelDataUom = listIrModelData.FirstOrDefault(x => x.ResId == item.UOMId.ToString());
+                item.UOMId = irmodelDataUom?.Module + "." + irmodelDataUom?.Name;
+                var irmodelDataUomPo = listIrModelData.FirstOrDefault(x => x.ResId == item.UOMPOId.ToString());
+                item.UOMPOId = irmodelDataUomPo?.Module + "." + irmodelDataUomPo?.Name;
+                data.Add(item);
+                // add IRModelData
+                irModelCreate.Add(new IRModelData()
+                {
+                    Module = "sample",
+                    Model = "product",
+                    ResId = entity.Id.ToString(),
+                    Name = $"product_product_{entities.IndexOf(entity) + 1}"
+                });
+            }
+            //writeFile
+            xmlService.WriteXMLFile(path, data);
+            await irModelObj.CreateAsync(irModelCreate);
+            return Ok();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GenerateMedicineXML()
+        {
+            var irModelObj = (IIRModelDataService)HttpContext.RequestServices.GetService(typeof(IIRModelDataService));
+            var _hostingEnvironment = (IWebHostEnvironment)HttpContext.RequestServices.GetService(typeof(IWebHostEnvironment));
+            var xmlService = (IXmlService)HttpContext.RequestServices.GetService(typeof(IXmlService));
+            string path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\ImportXML\product_medicine.xml");
+
+            var irModelCreate = new List<IRModelData>();
+            var dateToData = new DateTime(2021, 08, 25);
+            var listIrModelData = await irModelObj.SearchQuery(x => (x.Module == "sample" || x.Module == "product") && (x.Model == "product.category" || (x.Model == "uom"))).ToListAsync();// các irmodel cần thiết
+            var entities = await _productService.SearchQuery(x => x.Type2 == "medicine" && x.DateCreated <= dateToData).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var data = new List<ProductMedicineXmlSampleDataRecord>();
+            foreach (var entity in entities)
+            {
+                var item = _mapper.Map<ProductMedicineXmlSampleDataRecord>(entity);
+                item.Id = $@"sample.product_medicine_{entities.IndexOf(entity) + 1}";
+                var irmodelData = listIrModelData.FirstOrDefault(x => x.ResId == item.CategId.ToString());
+                item.CategId = irmodelData?.Module + "." + irmodelData?.Name;
+                var irmodelDataUom = listIrModelData.FirstOrDefault(x => x.ResId == item.UOMId.ToString());
+                item.UOMId = irmodelDataUom?.Module + "." + irmodelDataUom?.Name;
+                data.Add(item);
+                // add IRModelData
+                irModelCreate.Add(new IRModelData()
+                {
+                    Module = "sample",
+                    Model = "product",
+                    ResId = entity.Id.ToString(),
+                    Name = $"product_medicine_{entities.IndexOf(entity) + 1}"
+                });
+            }
+            //writeFile
+            xmlService.WriteXMLFile(path, data);
+            await irModelObj.CreateAsync(irModelCreate);
+            return Ok();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GenerateLaboXML()
+        {
+            var irModelObj = (IIRModelDataService)HttpContext.RequestServices.GetService(typeof(IIRModelDataService));
+            var _hostingEnvironment = (IWebHostEnvironment)HttpContext.RequestServices.GetService(typeof(IWebHostEnvironment));
+            var xmlService = (IXmlService)HttpContext.RequestServices.GetService(typeof(IXmlService));
+            string path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\ImportXML\product_labo.xml");
+
+            var irModelCreate = new List<IRModelData>();
+            var dateToData = new DateTime(2021, 08, 25);
+            var entities = await _productService.SearchQuery(x => x.Type2 == "labo" && x.DateCreated <= dateToData).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var data = new List<ProductLaboXmlSampleDataRecord>();
+            foreach (var entity in entities)
+            {
+                var item = _mapper.Map<ProductLaboXmlSampleDataRecord>(entity);
+                item.Id = $@"sample.product_labo_{entities.IndexOf(entity) + 1}";
+                data.Add(item);
+                // add IRModelData
+                irModelCreate.Add(new IRModelData()
+                {
+                    Module = "sample",
+                    Model = "product",
+                    ResId = entity.Id.ToString(),
+                    Name = $"product_labo_{entities.IndexOf(entity) + 1}"
+                });
+            }
+            //writeFile
+            xmlService.WriteXMLFile(path, data);
+            await irModelObj.CreateAsync(irModelCreate);
+            return Ok();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GenerateLaboAttachXML()
+        {
+            var irModelObj = (IIRModelDataService)HttpContext.RequestServices.GetService(typeof(IIRModelDataService));
+            var _hostingEnvironment = (IWebHostEnvironment)HttpContext.RequestServices.GetService(typeof(IWebHostEnvironment));
+            var xmlService = (IXmlService)HttpContext.RequestServices.GetService(typeof(IXmlService));
+            string path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\ImportXML\product_labo_attach.xml");
+
+            var irModelCreate = new List<IRModelData>();
+            var dateToData = new DateTime(2021, 08, 25);
+            var entities = await _productService.SearchQuery(x => x.Type2 == "labo_attach" && x.DateCreated <= dateToData).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var data = new List<ProductLaboXmlSampleDataRecord>();
+            foreach (var entity in entities)
+            {
+                var item = _mapper.Map<ProductLaboXmlSampleDataRecord>(entity);
+                item.Id = $@"sample.product_labo_attach_{entities.IndexOf(entity) + 1}";
+                data.Add(item);
+                // add IRModelData
+                irModelCreate.Add(new IRModelData()
+                {
+                    Module = "sample",
+                    Model = "product",
+                    ResId = entity.Id.ToString(),
+                    Name = $"product_labo_attach_{entities.IndexOf(entity) + 1}"
+                });
+            }
+            //writeFile
+            xmlService.WriteXMLFile(path, data);
+            await irModelObj.CreateAsync(irModelCreate);
+            return Ok();
+            //string[] listProInfoStr = { "Name","Type","Type2","ListPrice","PurchasePrice","SaleOk","PurchaseOk","KetoanOk","IsLabo","MinInventory",
+            //"Firm","CategId", "UOMPOId", "UOMId"};
+        }
     }
+
+
 }

@@ -127,6 +127,8 @@ namespace Infrastructure.Services
                 if (data.Begin == 0 && data.Import == 0 && data.Export == 0)
                     continue;
                 var product = productDict[item.Key];
+                var totalDays = (date_from.HasValue && date_to.HasValue) ? (date_to.Value.Date - date_from.Value.Date).TotalDays + 1 : 0;
+                var averageExport = totalDays != 0 ? Math.Round(data.Export / (decimal)totalDays) : 0;
                 result.Add(new StockReportXuatNhapTonItem
                 {
                     Begin = data.Begin,
@@ -141,10 +143,13 @@ namespace Infrastructure.Services
                     ProductName = product.Name,
                     ProductUomName = product.UOM.Name,
                     ProductNameNoSign = product.NameNoSign,
-                    CompanyId = val.CompanyId
+                    CompanyId = val.CompanyId,
+                    Expiry = product.Expiry,
+                    AverageExport = (double?)averageExport,
+                    Origin = product.Origin
                 });
             }
-           
+
             return result;
         }
 

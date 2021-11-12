@@ -17,13 +17,19 @@ namespace TMTDentalAPI.Controllers
     {
         private readonly IPartnerService _partnerService;
         private readonly ISaleOrderService _saleOrderService;
+        private readonly ICardCardService _cardCardService;
+        private readonly IServiceCardCardService _serviceCardCardService;
         private readonly IMapper _mapper;
 
-        public SearchAllsController(IMapper mapper, IPartnerService partnerService, ISaleOrderService saleOrderService)
+        public SearchAllsController(IMapper mapper, IPartnerService partnerService, ISaleOrderService saleOrderService,
+            ICardCardService cardCardService,
+            IServiceCardCardService serviceCardCardService)
         {
             _partnerService = partnerService;
             _saleOrderService = saleOrderService;
             _mapper = mapper;
+            _cardCardService = cardCardService;
+            _serviceCardCardService = serviceCardCardService;
         }
 
         [HttpPost("[action]")]
@@ -37,8 +43,33 @@ namespace TMTDentalAPI.Controllers
 
             if (val.ResultSelection == "all" || val.ResultSelection == "customer")
             {
-                var customers = await _partnerService.SearchQuery(x => x.Customer == true && (x.Name.Contains(val.Search) ||
-                x.NameNoSign.Contains(val.Search) || x.Ref.Contains(val.Search) || x.Phone.Contains(val.Search)))
+                var customerQuery = _partnerService.SearchQuery(x => x.Active && x.Customer);
+                IQueryable<Guid> partnersByKeywords;
+
+                partnersByKeywords =
+                      from p in customerQuery
+                      where p.Name.Contains(val.Search) || p.NameNoSign.Contains(val.Search)
+                || p.Ref.Contains(val.Search) || p.Phone.Contains(val.Search)
+                      select p.Id;
+
+                partnersByKeywords = partnersByKeywords.Union(
+                        from card in _cardCardService.SearchQuery()
+                        where card.Barcode.Contains(val.Search) && card.PartnerId.HasValue
+                        select card.PartnerId.Value
+                    );
+
+                partnersByKeywords = partnersByKeywords.Union(
+                       from card in _serviceCardCardService.SearchQuery()
+                       where card.Barcode.Contains(val.Search) && card.PartnerId.HasValue
+                       select card.PartnerId.Value
+                   );
+
+                customerQuery = from a in customerQuery
+                             join pbk in partnersByKeywords on a.Id equals pbk
+                             select a;
+
+
+                var customers = await customerQuery
                     .Select(x => new SearchAllViewModel { 
                         Id = x.Id,
                         Name = "KH: " + x.Name,

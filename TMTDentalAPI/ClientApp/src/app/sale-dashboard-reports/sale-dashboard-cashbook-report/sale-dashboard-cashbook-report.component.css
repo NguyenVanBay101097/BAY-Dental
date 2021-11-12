@@ -16,3 +16,8 @@
     line-height: 12px;
     font-weight: 500;
 }
+
+.chart {
+    display: block;
+    height: 380px;
+}

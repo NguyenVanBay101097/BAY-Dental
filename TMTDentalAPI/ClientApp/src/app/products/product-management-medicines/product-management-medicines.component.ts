@@ -1,7 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, Inject, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
@@ -9,6 +7,7 @@ import { ProductCategoryPaged, ProductCategoryService } from 'src/app/product-ca
 import { ResConfigSettingsService } from 'src/app/res-config-settings/res-config-settings.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { Product } from '../product';
 import { ProductImportExcelDialogComponent } from '../product-import-excel-dialog/product-import-excel-dialog.component';
 import { ProductMedicineCuDialogComponent } from '../product-medicine-cu-dialog/product-medicine-cu-dialog.component';
@@ -26,6 +25,7 @@ export class ProductManagementMedicinesComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   searchMedicine: string;
   cateId: string;
   selectedCateg: any;
@@ -37,14 +37,14 @@ export class ProductManagementMedicinesComponent implements OnInit {
   canDelete = false;
 
 
-  constructor(private route: ActivatedRoute,
-    private router: Router,
+  constructor(
     private productCategoryService: ProductCategoryService,
     private configSettingsService: ResConfigSettingsService,
     private productService: ProductService,
     private modalService: NgbModal,
-    private checkPermissionService: CheckPermissionService
-  ) { }
+    private checkPermissionService: CheckPermissionService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.searchMedicineUpdate
@@ -85,7 +85,7 @@ export class ProductManagementMedicinesComponent implements OnInit {
         (res) => {
           this.gridData = res;
           this.loading = false;
-          console.log(res);
+          // console.log(res);
         },
         (err) => {
           console.log(err);
@@ -120,6 +120,7 @@ export class ProductManagementMedicinesComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadMedicines();
   }
 
@@ -262,7 +263,7 @@ export class ProductManagementMedicinesComponent implements OnInit {
     );
   }
 
-  checkPermission(){
+  checkPermission() {
     this.canAdd = this.checkPermissionService.check(['Catalog.Products.Create']);
     this.canEdit = this.checkPermissionService.check(['Catalog.Products.Update']);
     this.canDelete = this.checkPermissionService.check(['Catalog.Products.Delete']);

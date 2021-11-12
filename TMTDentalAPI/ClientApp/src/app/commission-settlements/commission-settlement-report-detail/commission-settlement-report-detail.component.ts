@@ -1,13 +1,14 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { CommissionSettlementReportDetailOutput, CommissionSettlementsService, CommissionSettlementReportOutput, CommissionSettlementDetailReportPar, CommissionSettlementFilterReport } from '../commission-settlements.service';
+import { IntlService } from '@progress/kendo-angular-intl';
+import * as _ from 'lodash';
+import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
-import * as _ from 'lodash';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { Subject } from 'rxjs';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { CommissionSettlementDetailReportPar, CommissionSettlementFilterReport, CommissionSettlementsService } from '../commission-settlements.service';
 
 @Component({
   selector: 'app-commission-settlement-report-detail',
@@ -19,6 +20,7 @@ export class CommissionSettlementReportDetailComponent implements OnInit {
   loading = false;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   search: string = '';
   searchUpdate = new Subject<string>();
   dateFrom: Date;
@@ -40,8 +42,8 @@ export class CommissionSettlementReportDetailComponent implements OnInit {
     private commissionSettlementsService: CommissionSettlementsService,
     private employeeService: EmployeeService,
     private intl: IntlService,
-
-  ) { }
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -71,7 +73,7 @@ export class CommissionSettlementReportDetailComponent implements OnInit {
 
   loadDataFromApi() {
     this.loading = true;
-    var val = new CommissionSettlementDetailReportPar();
+    var val = new CommissionSettlementFilterReport();
     val.offset = this.skip;
     val.limit = this.limit;
     val.search = this.search ? this.search : '';
@@ -79,7 +81,7 @@ export class CommissionSettlementReportDetailComponent implements OnInit {
     val.commissionType = this.commissionType ? this.commissionType : '';
     val.dateFrom = this.dateFrom ? this.intl.formatDate(this.dateFrom, 'yyyy-MM-ddTHH:mm:ss') : null;
     val.dateTo = this.dateFrom ? this.intl.formatDate(this.dateTo, 'yyyy-MM-ddTHH:mm:ss') : null;
-
+    val.groupBy = 'employee';
     this.commissionSettlementsService.getReportDetail(val).pipe(
       map((response: any) => (<GridDataResult>{
         data: response.items,
@@ -108,6 +110,7 @@ export class CommissionSettlementReportDetailComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 
@@ -145,6 +148,7 @@ export class CommissionSettlementReportDetailComponent implements OnInit {
     val.search = this.search || '';
     val.employeeId = this.employeeId ? this.employeeId : '';
     val.commissionType = this.commissionType ? this.commissionType : '';
+    val.groupBy = 'employee';
     this.commissionSettlementsService.excelCommissionDetailExport(val).subscribe((res: any) => {
       let filename = "Chi tiết hoa hồng nhân viên";
       let newBlob = new Blob([res], {

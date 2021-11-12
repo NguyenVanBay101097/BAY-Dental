@@ -1,10 +1,8 @@
-import { EmployeeBasic, EmployeeDisplay } from 'src/app/employees/employee';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Injectable, Inject } from '@angular/core';
-import { identifierModuleUrl } from '@angular/compiler';
+import { EmployeeDisplay } from 'src/app/employees/employee';
 import { HrPayrollStructureDisplay } from './hr-payroll-structure.service';
-import { validator } from 'fast-json-patch';
 
 export class HrPayslipPaging {
     offset: number;

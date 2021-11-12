@@ -1,11 +1,8 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { PagedResult2 } from '../employee-categories/emp-category';
 import { EmployeeSimple } from '../employees/employee';
 import { SaleOrderBasic } from '../sale-orders/sale-order-basic';
-import { SaleOrderDisplay, SaleOrderDisplayVm } from '../sale-orders/sale-order-display';
-import { SurveyCallContentDisplay } from './survey-callcontent.service';
 import { SurveyUserInputDisplay } from './survey-userinput.service';
 
 export class SurveyAssignmentPaged {

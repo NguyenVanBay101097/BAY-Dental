@@ -1,0 +1,36 @@
+<div class="card border-0 mt-3">
+    <div *ngIf="!memberCard" class="card-body mt-3 pt-0">
+        <div class="card-body border rounded card-body-item">
+            <div class="d-flex justify-content-between">
+                <h5 class="card-header-title text-primary">
+                    Thẻ thành viên
+                </h5>
+                <div class="text-primary">
+                    <a (click)="createCard()"><i class="fas fa-plus"></i></a>
+                </div>
+            </div>
+            <div class="mt-3 text-center opacity-8">
+                Chưa có thẻ thành viên
+            </div>
+        </div>
+    </div>
+    <div *ngIf="memberCard" class="card-body">
+        <div class="d-flex justify-content-between">
+            <h5 class="card-header-title text-primary">
+                Thẻ thành viên
+            </h5>
+        </div>
+        <div class="card-body border rounded card-body-item">
+            <div class="d-flex justify-content-start">
+                <h5 class="card-header-title">
+                    {{memberCard.barcode}}
+                </h5>
+            </div>
+            <div>
+                <div [class]="getStateClass(memberCard.state)" style="min-width: 76px;">{{getState(memberCard.state)}}</div>
+                <p class="card-text opacity-8 mb-0">Hạng thẻ: {{memberCard?.typeName}}</p>
+                <p class="card-text opacity-8 mb-0">Hạn sử dụng: Không giới hạn</p>
+            </div>
+        </div>
+    </div>
+</div>

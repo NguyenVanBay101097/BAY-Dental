@@ -1,12 +1,10 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
-import { WebService } from 'src/app/core/services/web.service';
-import { environment } from '../../../environments/environment';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NotificationService } from '@progress/kendo-angular-notification';
+import { WebService } from 'src/app/core/services/web.service';
 import { ImageViewerComponent } from '../image-viewer/image-viewer.component';
 import { PartnerWebcamComponent } from '../partner-webcam/partner-webcam.component';
 import { IrAttachmentBasic } from '../shared';
-import { PartnerImageBasic } from 'src/app/partners/partner.service';
-import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-image-file-upload',
@@ -91,8 +89,13 @@ export class ImageFileUploadComponent implements OnInit, OnChanges {
 
   onViewImage() {
     var modalRef = this.modalService.open(ImageViewerComponent, { windowClass: 'o_image_viewer o_modal_fullscreen' });
-    const img = {uploadId: this.imageId, name: this.imageId, id: this.imageId,note: null,date: Date() } as (PartnerImageBasic);
-    modalRef.componentInstance.partnerImages = [img];
-    modalRef.componentInstance.partnerImageSelected = img;
+    // const img = {uploadId: this.imageId, name: this.imageId, id: this.imageId,note: null,date: Date() } as (PartnerImageBasic);
+    const img = {
+      id: this.imageId,
+      name: this.imageId,
+      url: this.imageId,
+    } as (IrAttachmentBasic);
+    modalRef.componentInstance.images = [img];
+    modalRef.componentInstance.selectedImage = img;
   }
 }

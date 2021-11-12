@@ -26,15 +26,23 @@ namespace TMTDentalAPI.Controllers
         private readonly IIRModelAccessService _modelAccessService;
         private readonly IViewRenderService _view;
         private readonly IUnitOfWorkAsync _unitOfWork;
+        private readonly IPrintTemplateConfigService _printTemplateConfigService;
+        private readonly IPrintTemplateService _printTemplateService;
+        private readonly IIRModelDataService _modelDataService;
 
         public ToaThuocsController(IToaThuocService toaThuocService, IMapper mapper, IViewRenderService view,
-            IIRModelAccessService modelAccessService, IUnitOfWorkAsync unitOfWork)
+            IIRModelAccessService modelAccessService, IUnitOfWorkAsync unitOfWork, IPrintTemplateConfigService printTemplateConfigService,
+            IPrintTemplateService printTemplateService,
+            IIRModelDataService modelDataService)
         {
             _toaThuocService = toaThuocService;
             _mapper = mapper;
             _modelAccessService = modelAccessService;
             _view = view;
             _unitOfWork = unitOfWork;
+            _printTemplateConfigService = printTemplateConfigService;
+            _printTemplateService = printTemplateService;
+            _modelDataService = modelDataService;
         }
 
         [HttpGet]
@@ -115,11 +123,24 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Medicine.ToaThuoc.Read")]
         public async Task<IActionResult> GetPrint(Guid id)
         {
-            var res = await _toaThuocService.GetToaThuocPrint(id);
+            //tim trong bảng config xem có dòng nào để lấy ra template
+            var printConfig = await _printTemplateConfigService.SearchQuery(x => x.Type == "tmp_toathuoc" && x.IsDefault)
+                .Include(x => x.PrintPaperSize)
+                .Include(x => x.PrintTemplate)
+                .FirstOrDefaultAsync();
 
-            var html = _view.Render("ToaThuoc/Print", res);
+            PrintTemplate template = printConfig != null ? printConfig.PrintTemplate : null;
+            PrintPaperSize paperSize = printConfig != null ? printConfig.PrintPaperSize : null;
+            if (template == null)
+            {
+                //tìm template mặc định sử dụng chung cho tất cả chi nhánh, sử dụng bảng IRModelData hoặc bảng IRConfigParameter
+                template = await _modelDataService.GetRef<PrintTemplate>("base.print_template_toa_thuoc");
+                if (template == null)
+                    throw new Exception("Không tìm thấy mẫu in mặc định");
+            }
 
-            return Ok(new PrintData() { html = html });
+            var result = await _printTemplateService.GeneratePrintHtml(template, new List<Guid>() { id }, paperSize);
+            return Ok(new PrintData() { html = result });
         }
 
         [HttpGet("{id}/[action]")]

@@ -1,33 +1,33 @@
 <div class="container py-3">
     <div class="flex-0-0-auto mb-2">
         <div class="filter d-flex flex-wrap mb-2">
-            <app-date-range-picker-filter [opens]="'right'" class="mr-1" [startDate]="dateFrom" [endDate]="dateTo"
+            <app-date-range-picker-filter [showClearButton]="false" [opens]="'right'" class="mr-1" [startDate]="dateFrom" [endDate]="dateTo"
                 (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
             <kendo-combobox width="auto" [placeholder]="'Tất cả chi nhánh'" class="mr-1" [valueField]="'id'"
                 [textField]="'name'" [filterable]="true" [data]="listCompany"
                 (selectionChange)="onSelectCompany($event)" #companyCbx>
             </kendo-combobox>
             <button class="btn btn-secondary mr-1" type="button" data-toggle="collapse"
-                href="#panelsStayOpen-collapseOne" aria-expanded="false"
-                aria-controls="panelsStayOpen-collapseOne"><i class="fas fa-filter"></i> Lọc nâng cao
+                href="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne"><i
+                    class="fas fa-filter"></i> Lọc nâng cao
             </button>
-            <div class="dropdown mr-auto">
-            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fas fa-download"></i> Xuất File</button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" (click)="onExcelExport()">Xuất Excel</a>
-                <a class="dropdown-item" (click)="onExportPDF()">Xuất PDF</a>
-            </div>
-        </div>
-            <input class="form-control filter-search" placeholder="Tìm kiếm theo mã, tên, số điện thoại khách hàng"
+            <input class="form-control filter-search mr-1" placeholder="Tìm kiếm theo mã, tên, số điện thoại khách hàng"
                 type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+            <div class="dropdown mr-auto">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-download"></i> Xuất File</button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" (click)="onExcelExport()">Xuất Excel</a>
+                    <a class="dropdown-item" (click)="onExportPDF()">Xuất PDF</a>
+                </div>
+            </div>
         </div>
         <div class="accordion-collapse collapse " id="panelsStayOpen-collapseOne"
             aria-labelledby="panelsStayOpen-headingOne">
             <div class="filter d-flex flex-0-0-auto mt-2 ">
                 <kendo-combobox class="mr-1" [placeholder]="'Bác sĩ'" [valueField]="'id'" [textField]="'name'"
-                    [filterable]="true" #employeeCbx [data]="listEmployee"
-                    (selectionChange)="onSelectEmployee($event)">
+                    [filterable]="true" #employeeCbx [data]="listEmployee" (selectionChange)="onSelectEmployee($event)">
                 </kendo-combobox>
                 <kendo-combobox (selectionChange)="onChangeExamination($event)" placeholder="Loại khám" class="mr-1"
                     [data]="filterExamination" [textField]="'text'" [valueField]="'value'">
@@ -36,8 +36,8 @@
                     class="mr-1" style="width: auto;" [data]="filterNoTreatment" [textField]="'text'"
                     [valueField]="'value'">
                 </kendo-combobox>
-                <kendo-combobox (selectionChange)="onChangeState($event)" placeholder="Trạng thái"
-                    style="width: auto;" [data]="filterState" [textField]="'text'" [valueField]="'value'">
+                <kendo-combobox (selectionChange)="onChangeState($event)" placeholder="Trạng thái" style="width: auto;"
+                    [data]="filterState" [textField]="'text'" [valueField]="'value'">
                 </kendo-combobox>
             </div>
 
@@ -53,29 +53,20 @@
                 <span class="box-overview-title">Loại khám</span>
                 <div class="box-overview-content">
                     <ng-container *ngIf="pieDataExamination.length; else elseTemplate">
-                        <div class="d-flex justify-content-center align-items-center"> 
-                            <div>
-                                <kendo-chart class="size-chart" [transitions]="true">                                            
-                                    <kendo-chart-series>
-                                        <kendo-chart-series-item type="pie" [data]="pieDataExamination"
-                                            field="countCustomerReceipt" [name]="'name'" categoryField="name">
-                                        </kendo-chart-series-item>
-                                    </kendo-chart-series>
-                                    <kendo-chart-legend [visible]="false" pói></kendo-chart-legend>
-                                </kendo-chart>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <div style="position: relative; height: 200px;">
+                                <canvas baseChart
+                                    [type]="'pie'"
+                                    [plugins]="pieChartPlugins"
+                                    [labels]="pieChartLabels"
+                                    [options]="pieChartOptions"
+                                    [datasets]="pieChartData">
+                                </canvas>
                             </div>
-                            <div>
-                                <div *ngFor="let item of pieDataExamination">
-                                    <div>
-                                        <i class="fas fa-circle mr-2" [style.color]="item.color"></i>
-                                        <span>{{getInfo(item)}}</span>
-                                    </div>                             
-                                </div>                          
-                            </div>
-                        </div>                                          
+                        </div>
                     </ng-container>
                     <ng-template #elseTemplate>
-                        <img src="./../../../assets/icons/NoData.svg" class="img-nodata ">                   
+                        <img src="./../../../assets/icons/NoData.svg" class="img-nodata ">
                     </ng-template>
                 </div>
             </div>
@@ -83,35 +74,26 @@
                 <span class="box-overview-title">Kết quả khám mới</span>
                 <div class="box-overview-content">
                     <ng-container *ngIf="pieDataNoTreatment.length; else elseTemplate">
-                        <div class="d-flex justify-content-center align-items-center"> 
-                            <div>
-                                <kendo-chart class="size-chart" [transitions]="true">                                            
-                                    <kendo-chart-series>
-                                        <kendo-chart-series-item type="pie" [data]="pieDataNoTreatment"
-                                            field="countCustomerReceipt" [name]="'name'" categoryField="name">
-                                        </kendo-chart-series-item>
-                                    </kendo-chart-series>
-                                    <kendo-chart-legend [visible]="false" pói></kendo-chart-legend>
-                                </kendo-chart>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <div style="position: relative; height: 200px;">
+                                <canvas baseChart
+                                    [type]="'pie'"
+                                    [plugins]="pieChartPlugins"
+                                    [labels]="noTreatmentChartLabels"
+                                    [options]="pieChartOptions"
+                                    [datasets]="noTreatmentChartData">
+                                </canvas>
                             </div>
-                            <div>
-                                <div *ngFor="let item of pieDataNoTreatment">
-                                    <div>
-                                        <i class="fas fa-circle mr-2" [style.color]="item.color"></i>
-                                        <span>{{getInfo(item)}}</span>
-                                    </div>                             
-                                </div>                          
-                            </div>
-                        </div>      
+                        </div>
                     </ng-container>
                     <ng-template #elseTemplate>
-                        <img src="./../../../assets/icons/NoData.svg" class="img-nodata ">  
+                        <img src="./../../../assets/icons/NoData.svg" class="img-nodata ">
                     </ng-template>
                 </div>
             </div>
         </div>
     </div>
-    <kendo-grid #grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [resizable]="true"
+    <kendo-grid #grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [resizable]="true"
         [loading]="loading" (pageChange)="pageChange($event)">
         <kendo-grid-column title="Ngày tiếp nhận" width="120">
             <ng-template kendoGridCellTemplate let-dataItem>

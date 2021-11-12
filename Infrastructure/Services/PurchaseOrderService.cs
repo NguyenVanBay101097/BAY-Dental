@@ -178,17 +178,20 @@ namespace Infrastructure.Services
             await DeleteAsync(self);
         }
 
-        public override async Task<PurchaseOrder> CreateAsync(PurchaseOrder purchase)
+        public override async Task<IEnumerable<PurchaseOrder>> CreateAsync(IEnumerable<PurchaseOrder> entities)
         {
-            if (string.IsNullOrEmpty(purchase.Name) || purchase.Name == "/")
+            foreach (var purchase in entities)
             {
-                var sequenceObj = GetService<IIRSequenceService>();
-                if (purchase.Type == "refund")
-                    purchase.Name = await sequenceObj.NextByCode("purchase.refund");
-                else
-                    purchase.Name = await sequenceObj.NextByCode("purchase.order");
+                if (string.IsNullOrEmpty(purchase.Name) || purchase.Name == "/")
+                {
+                    var sequenceObj = GetService<IIRSequenceService>();
+                    if (purchase.Type == "refund")
+                        purchase.Name = await sequenceObj.NextByCode("purchase.refund");
+                    else
+                        purchase.Name = await sequenceObj.NextByCode("purchase.order");
+                }
             }
-            return await base.CreateAsync(purchase);
+            return await base.CreateAsync(entities);
         }
 
         public override ISpecification<PurchaseOrder> RuleDomainGet(IRRule rule)
@@ -556,7 +559,7 @@ namespace Infrastructure.Services
             res.Journal = _mapper.Map<AccountJournalSimple>(cashJournal);
             res.AmountPayment = 0;
             res.Partner = _mapper.Map<PartnerSimple>(purchase.Partner);
-            res.OrderLines = await purchaseLineObj.SearchQuery(x=>x.OrderId == purchase.Id).Select(x => new PurchaseOrderLineDisplay
+            res.OrderLines = await purchaseLineObj.SearchQuery(x => x.OrderId == purchase.Id).Select(x => new PurchaseOrderLineDisplay
             {
                 Name = x.Name,
                 PriceTotal = x.PriceTotal,
@@ -755,7 +758,7 @@ namespace Infrastructure.Services
             {
                 Id = x.Id,
                 Name = x.Name,
-                Date = x.DateOrder,
+                DateOrder = x.DateOrder,
                 Note = x.Notes,
                 Company = x.Company != null ? new CompanyPrintVM
                 {
@@ -767,7 +770,7 @@ namespace Infrastructure.Services
                     PartnerDistrictName = x.Company.Partner.DistrictName,
                     PartnerWardName = x.Company.Partner.WardName,
                     PartnerStreet = x.Company.Partner.Street,
-                } : null,         
+                } : null,
                 AmountTotal = (x.AmountTotal ?? 0),
                 PartnerName = x.Partner != null ? x.Partner.Name : null,
                 StockPickingName = x.Picking != null ? x.Picking.Name : null,
@@ -776,7 +779,7 @@ namespace Infrastructure.Services
                 CreatedById = x.CreatedById
             }).FirstOrDefaultAsync();
 
-            purchaseOrder.Lines = await lineObj.SearchQuery(x=> x.OrderId == purchaseOrder.Id).Select(s => new PurchaseOrderLinePrintVm
+            purchaseOrder.OrderLines = await lineObj.SearchQuery(x => x.OrderId == purchaseOrder.Id).Select(s => new PurchaseOrderLinePrintVm
             {
                 Sequence = s.Sequence,
                 Name = s.Name,

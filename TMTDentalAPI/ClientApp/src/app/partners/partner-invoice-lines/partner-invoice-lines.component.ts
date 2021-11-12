@@ -1,8 +1,9 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Inject } from '@angular/core';
 import { AccountInvoiceLinePaged } from 'src/app/account-invoices/account-invoice-line-display';
 import { PartnerService, SaleOrderLinePaged } from '../partner.service';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { map } from 'rxjs/operators';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-partner-invoice-lines',
@@ -12,12 +13,16 @@ import { map } from 'rxjs/operators';
 export class PartnerInvoiceLinesComponent implements OnInit {
 
   @Input() public id: string; // ID của khách hàng
-  constructor(private service: PartnerService) { }
+  constructor(
+    private service: PartnerService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettingsPopup }
 
   gridView: GridDataResult;
   loading = false;
   skip = 0;
-  pageSize = 5;
+  pageSize = 10;
+  pagerSettings: any
   gridLoading = false;
 
   ngOnInit() {

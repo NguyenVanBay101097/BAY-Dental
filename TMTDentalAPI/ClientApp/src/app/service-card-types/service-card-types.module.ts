@@ -6,12 +6,18 @@ import { ServiceCardTypeListComponent } from './service-card-type-list/service-c
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { ServiceCardTypeCuDialogComponent } from './service-card-type-cu-dialog/service-card-type-cu-dialog.component';
-import { SharedModule } from '@progress/kendo-angular-dialog';
+import { SharedModule } from '../shared/shared.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { MemberCardListComponent } from './service-card-type-list/member-card-list/member-card-list.component';
+import { PreferentialCardListComponent } from './service-card-type-list/preferential-card-list/preferential-card-list.component';
+import { PreferentialCardCreateUpdateComponent } from './service-card-type-list/preferential-card-create-update/preferential-card-create-update.component';
+import { ServiceCardTypeApplyDialogComponent } from './service-card-type-list/service-card-type-apply-dialog/service-card-type-apply-dialog.component';
+import { MemberCardCreateUpdateComponent } from './service-card-type-list/member-card-create-update/member-card-create-update.component';
+import { CardCardsModule } from '../card-cards/card-cards.module';
 
 
 @NgModule({
-  declarations: [ServiceCardTypeListComponent, ServiceCardTypeCuDialogComponent],
+  declarations: [ServiceCardTypeListComponent, ServiceCardTypeCuDialogComponent, MemberCardListComponent, PreferentialCardListComponent, PreferentialCardCreateUpdateComponent, ServiceCardTypeApplyDialogComponent, MemberCardCreateUpdateComponent],
   imports: [
     ServiceCardTypesRoutingModule,
     ReactiveFormsModule,
@@ -20,11 +26,13 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     CommonModule,
     SharedModule,
     MyCustomKendoModule,
-    NgbModule
+    NgbModule,
+    CardCardsModule
   
   ],
   entryComponents: [
     ServiceCardTypeCuDialogComponent,
+    ServiceCardTypeApplyDialogComponent
   ]
 })
 export class ServiceCardTypesModule { }

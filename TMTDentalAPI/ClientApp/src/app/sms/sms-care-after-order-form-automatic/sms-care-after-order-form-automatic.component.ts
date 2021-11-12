@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { NotificationService } from '@progress/kendo-angular-notification';
@@ -6,11 +6,10 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { SmsCampaignService } from '../sms-campaign.service';
 import { SmsCareAfterOrderAutomationConfigService } from '../sms-care-after-order-automation-config.service';
 import { SmsCareAfterOrderFormAutomaticDialogComponent } from '../sms-care-after-order-form-automatic-dialog/sms-care-after-order-form-automatic-dialog.component';
-import { SmsConfigService } from '../sms-config.service';
-import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
 
 @Component({
   selector: 'app-sms-care-after-order-form-automatic',
@@ -22,6 +21,7 @@ export class SmsCareAfterOrderFormAutomaticComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   offset = 0;
+  pagerSettings: any;
   campaign: any;
   loading = false;
   searchUpdate = new Subject<string>();
@@ -37,8 +37,9 @@ export class SmsCareAfterOrderFormAutomaticComponent implements OnInit {
     private smsConfigService: SmsCareAfterOrderAutomationConfigService,
     private smsCampaignService: SmsCampaignService,
     private notificationService: NotificationService,
-    private authService: AuthService
-  ) { }
+    private authService: AuthService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -143,6 +144,7 @@ export class SmsCareAfterOrderFormAutomaticComponent implements OnInit {
 
   pageChange(event): void {
     this.offset = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

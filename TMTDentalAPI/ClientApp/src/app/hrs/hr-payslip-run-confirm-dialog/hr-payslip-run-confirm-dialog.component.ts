@@ -1,20 +1,17 @@
 
-import { EmployeeBasic } from './../../employees/employee';
-import { EmployeeService } from 'src/app/employees/employee.service';
-import { debounceTime, tap, switchMap, map, filter } from 'rxjs/operators';
-import { Component, OnInit, ViewChild, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
-import { IntlService } from '@progress/kendo-angular-intl';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
-import { HrPaysliprunService, PaySlipRunConfirmViewModel, HrPayslipRunDefaultGet } from '../hr-paysliprun.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { HrPayrollStructureService, HrPayrollStructureDisplay, HrPayrollStructurePaged } from '../hr-payroll-structure.service';
-import { SelectEmployeeDialogComponent } from 'src/app/shared/select-employee-dialog/select-employee-dialog.component';
-import { EmployeePaged } from 'src/app/employees/employee';
+import { GridDataResult } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { ActivatedRoute } from '@angular/router';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { EmployeePaged } from 'src/app/employees/employee';
+import { EmployeeService } from 'src/app/employees/employee.service';
+import { SelectEmployeeDialogComponent } from 'src/app/shared/select-employee-dialog/select-employee-dialog.component';
+import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { HrPayrollStructureDisplay, HrPayrollStructurePaged, HrPayrollStructureService } from '../hr-payroll-structure.service';
+import { HrPaysliprunService, PaySlipRunConfirmViewModel } from '../hr-paysliprun.service';
 
 @Component({
   selector: 'app-hr-payslip-run-confirm-dialog',
@@ -42,11 +39,10 @@ export class HrPayslipRunConfirmDialogComponent implements OnInit {
 
   @ViewChild('structureCbx', { static: true }) structureCbx: ComboBoxComponent;
  
-  constructor(private fb: FormBuilder, private hrPaysliprunService: HrPaysliprunService, private intlService: IntlService,
+  constructor(private fb: FormBuilder, private hrPaysliprunService: HrPaysliprunService, 
     private hrPayrollStructureService : HrPayrollStructureService,
     private employeeService : EmployeeService,
     public activeModal: NgbActiveModal,
-    private activeroute: ActivatedRoute,
     private modalService: NgbModal,
     private errorService: AppSharedShowErrorService) { }
 

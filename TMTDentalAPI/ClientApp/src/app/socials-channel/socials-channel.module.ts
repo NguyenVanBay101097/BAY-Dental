@@ -13,7 +13,6 @@ import { FacebookPageMarketingCampaignsComponent } from './facebook-page-marketi
 import { FacebookPageMarketingCampaignCreateUpdateComponent } from './facebook-page-marketing-campaign-create-update/facebook-page-marketing-campaign-create-update.component';
 import { FacebookPageMarketingCampaignListComponent } from './facebook-page-marketing-campaign-list/facebook-page-marketing-campaign-list.component';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
-import { FacebookPageMarketingCampaignActivityDetailComponent } from './facebook-page-marketing-campaign-activity-detail/facebook-page-marketing-campaign-activity-detail.component';
 import { FacebookPageMarketingActivityDialogComponent } from './facebook-page-marketing-activity-dialog/facebook-page-marketing-activity-dialog.component';
 import { AutosizeModule } from 'ngx-autosize';
 import { FacebookPageMarketingMessageAddButtonComponent } from './facebook-page-marketing-message-add-button/facebook-page-marketing-message-add-button.component';
@@ -24,7 +23,6 @@ import { FacebookMassMessagingListComponent } from './facebook-mass-messaging-li
 import { FacebookMassMessagingsComponent } from './facebook-mass-messagings/facebook-mass-messagings.component';
 import { FacebookMassMessagingCreateUpdateComponent } from './facebook-mass-messaging-create-update/facebook-mass-messaging-create-update.component';
 import { FacebookMassMessagingScheduleDialogComponent } from './facebook-mass-messaging-schedule-dialog/facebook-mass-messaging-schedule-dialog.component';
-import { FacebookMassMessagingStatisticsDialogComponent } from './facebook-mass-messaging-statistics-dialog/facebook-mass-messaging-statistics-dialog.component';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import { ClickOutsideDirective } from './click-outside.directive';
@@ -39,7 +37,6 @@ import { FacebookAudienceFilterComponent } from './facebook-audience-filter/face
 import { FacebookSelectTagComponent } from './facebook-select-tag/facebook-select-tag.component';
 import { FacebookPluginTextareaComponent } from './facebook-plugin-textarea/facebook-plugin-textarea.component';
 import { FacebookPageListComponent } from './facebook-page-list/facebook-page-list.component';
-import { FacebookModule } from 'ngx-facebook';
 import { ZaloOAConfigService } from '../zalo-oa-config/zalo-oa-config.service';
 import { FacebookUserProfileUpdatePhonePartnerPopoverComponent } from './facebook-user-profile-update-phone-partner-popover/facebook-user-profile-update-phone-partner-popover.component';
 
@@ -52,7 +49,6 @@ import { FacebookUserProfileUpdatePhonePartnerPopoverComponent } from './faceboo
     FacebookPageMarketingCampaignsComponent,
     FacebookPageMarketingCampaignCreateUpdateComponent,
     FacebookPageMarketingCampaignListComponent,
-    FacebookPageMarketingCampaignActivityDetailComponent,
     FacebookPageMarketingActivityDialogComponent,
     FacebookPageMarketingMessageAddButtonComponent,
     FacebookPageMarketingCustomerListComponent,
@@ -60,7 +56,6 @@ import { FacebookUserProfileUpdatePhonePartnerPopoverComponent } from './faceboo
     FacebookMassMessagingsComponent,
     FacebookMassMessagingCreateUpdateComponent,
     FacebookMassMessagingScheduleDialogComponent,
-    FacebookMassMessagingStatisticsDialogComponent,
     ClickOutsideDirective,
     MyAutofocusDirective,
     FacebookMassMessagingCreateUpdateDialogComponent,

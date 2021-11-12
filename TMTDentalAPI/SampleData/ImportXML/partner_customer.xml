@@ -1,0 +1,837 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Record>
+    <Name>Võ Thị Trang</Name>
+    <Phone>0986654633</Phone>
+    <Gender>female</Gender>
+    <BirthYear>2002</BirthYear>
+    <BirthMonth>12</BirthMonth>
+    <BirthDay>9</BirthDay>
+    <Email />
+    <JobTitle>Học Sinh - Sinh Viên</JobTitle>
+    <Street>622/10 Công Hoà</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>765</DistrictCode>
+    <DistrictName>Quận Bình Thạnh</DistrictName>
+    <WardCode>26905</WardCode>
+    <WardName>Phường 13</WardName>
+    <Id>sample.partner_customer_1</Id>
+    <DateRound>213</DateRound>
+  </Record>
+  <Record>
+    <Name>Vũ Phượng</Name>
+    <Phone>0976905695</Phone>
+    <Gender>female</Gender>
+    <BirthYear>1994</BirthYear>
+    <BirthMonth>12</BirthMonth>
+    <BirthDay>17</BirthDay>
+    <Email />
+    <JobTitle>Công Nhân</JobTitle>
+    <Street>Số 24 Đường 3</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>764</DistrictCode>
+    <DistrictName>Quận Gò Vấp</DistrictName>
+    <WardCode>26897</WardCode>
+    <WardName>Phường 9</WardName>
+    <Id>sample.partner_customer_2</Id>
+    <DateRound>213</DateRound>
+  </Record>
+  <Record>
+    <Name>Vũ Như Nguyễn</Name>
+    <Phone>0868669322</Phone>
+    <Gender>female</Gender>
+    <BirthYear>1998</BirthYear>
+    <BirthMonth>1</BirthMonth>
+    <BirthDay>6</BirthDay>
+    <Email />
+    <JobTitle>Học Sinh - Sinh Viên</JobTitle>
+    <Street>86 Quảng Hiền </Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>765</DistrictCode>
+    <DistrictName>Quận Bình Thạnh</DistrictName>
+    <WardCode>26908</WardCode>
+    <WardName>Phường 11</WardName>
+    <Id>sample.partner_customer_3</Id>
+    <DateRound>213</DateRound>
+  </Record>
+  <Record>
+    <Name>Đặng Văn Dũng </Name>
+    <Phone>0932585997</Phone>
+    <Gender>male</Gender>
+    <BirthYear>1999</BirthYear>
+    <BirthMonth>11</BirthMonth>
+    <BirthDay>23</BirthDay>
+    <Email />
+    <JobTitle>Nhân Viên Văn Phòng</JobTitle>
+    <Street>254/17/2H Lê Văn Thọ</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>764</DistrictCode>
+    <DistrictName>Quận Gò Vấp</DistrictName>
+    <WardCode>26899</WardCode>
+    <WardName>Phường 11</WardName>
+    <Id>sample.partner_customer_4</Id>
+    <DateRound>215</DateRound>
+  </Record>
+  <Record>
+    <Name>Lê Thị Ngọc Bích</Name>
+    <Phone>0988254285</Phone>
+    <Gender>male</Gender>
+    <BirthYear>1973</BirthYear>
+    <BirthMonth>2</BirthMonth>
+    <BirthDay>29</BirthDay>
+    <Email />
+    <JobTitle>Nhân Viên Văn Phòng</JobTitle>
+    <Street>250 Thống Nhất </Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>764</DistrictCode>
+    <DistrictName>Quận Gò Vấp</DistrictName>
+    <WardCode>26878</WardCode>
+    <WardName>Phường 16</WardName>
+    <Id>sample.partner_customer_5</Id>
+    <DateRound>211</DateRound>
+  </Record>
+  <Record>
+    <Name>Trần Ngọc Quỳnh Anh</Name>
+    <Phone>0961688080</Phone>
+    <Gender>male</Gender>
+    <BirthYear>1976</BirthYear>
+    <BirthMonth>11</BirthMonth>
+    <BirthDay>24</BirthDay>
+    <Email />
+    <JobTitle>Nhân Viên Văn Phòng</JobTitle>
+    <Street>138/4 Nguyễn Duy Cung</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>764</DistrictCode>
+    <DistrictName>Quận Gò Vấp</DistrictName>
+    <WardCode>26881</WardCode>
+    <WardName>Phường 12</WardName>
+    <Id>sample.partner_customer_6</Id>
+    <DateRound>323</DateRound>
+  </Record>
+  <Record>
+    <Name>Nguyễn Thị Ngọc Diễm</Name>
+    <Phone>0905026699</Phone>
+    <Gender>male</Gender>
+    <BirthYear>1971</BirthYear>
+    <BirthMonth>2</BirthMonth>
+    <BirthDay>25</BirthDay>
+    <Email />
+    <JobTitle>Nhân Viên Văn Phòng</JobTitle>
+    <Street>604 Quang Trung, P11, Q Gò Vấp, Hcm</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>764</DistrictCode>
+    <DistrictName>Quận Gò Vấp</DistrictName>
+    <WardCode>26899</WardCode>
+    <WardName>Phường 11</WardName>
+    <Id>sample.partner_customer_7</Id>
+    <DateRound>532</DateRound>
+  </Record>
+  <Record>
+    <Name>Ánh Tuyết</Name>
+    <Phone>0366511878</Phone>
+    <Gender>male</Gender>
+    <BirthYear>1982</BirthYear>
+    <BirthMonth>12</BirthMonth>
+    <BirthDay>10</BirthDay>
+    <Email />
+    <JobTitle>Nhân Viên Văn Phòng</JobTitle>
+    <Street />
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27022</WardCode>
+    <WardName>Phường Tân Thành</WardName>
+    <Id>sample.partner_customer_8</Id>
+    <DateRound>567</DateRound>
+  </Record>
+  <Record>
+    <Name>Đỗ Quốc Thịnh</Name>
+    <Phone>0908075455</Phone>
+    <Gender>male</Gender>
+    <BirthYear>1987</BirthYear>
+    <BirthMonth>9</BirthMonth>
+    <BirthDay>16</BirthDay>
+    <Email>doquocthinh@gmail.com</Email>
+    <JobTitle>IT</JobTitle>
+    <Street />
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27019</WardCode>
+    <WardName>Phường Tân Quý</WardName>
+    <Id>sample.partner_customer_9</Id>
+    <DateRound>14</DateRound>
+  </Record>
+  <Record>
+    <Name>Nguyễn Bảo Nhàn</Name>
+    <Phone>0981697259</Phone>
+    <Gender>male</Gender>
+    <BirthYear>1996</BirthYear>
+    <BirthMonth>5</BirthMonth>
+    <BirthDay>13</BirthDay>
+    <JobTitle>Nhân viên văn phòng</JobTitle>
+    <Street />
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27010</WardCode>
+    <WardName>Phường Tân Sơn Nhì</WardName>
+    <Id>sample.partner_customer_10</Id>
+    <DateRound>12</DateRound>
+  </Record>
+  <Record>
+    <Name>Bùi Thị Dung</Name>
+    <Phone>0879177809</Phone>
+    <Gender>female</Gender>
+    <BirthYear>1989</BirthYear>
+    <BirthMonth>7</BirthMonth>
+    <BirthDay>23</BirthDay>
+    <Email />
+    <JobTitle>Nhân viên văn phòng</JobTitle>
+    <Street>164/3a lê đình thám p tân quý quận tân phú tphcm</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27019</WardCode>
+    <WardName>Phường Tân Quý</WardName>
+    <Id>sample.partner_customer_11</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Bùi Xuân</Name>
+    <Phone>0967780148</Phone>
+    <Gender>female</Gender>
+    <BirthYear>1992</BirthYear>
+    <BirthMonth>8</BirthMonth>
+    <BirthDay>14</BirthDay>
+    <Email />
+    <JobTitle>Nhân viên văn phòng</JobTitle>
+    <Street>104A, Phường Tân Thành, Quận Tân Phú, Thành phố Hồ Chí Minh</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27022</WardCode>
+    <WardName>Phường Tân Thành</WardName>
+    <Id>sample.partner_customer_12</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Cát Mộng</Name>
+    <Phone>0328467548</Phone>
+    <Gender>female</Gender>
+    <BirthYear>1995</BirthYear>
+    <BirthMonth>6</BirthMonth>
+    <BirthDay>25</BirthDay>
+    <Email />
+    <JobTitle>Nhân viên văn phòng</JobTitle>
+    <Street>116/16/6, huỳnh thị lộc, Phường Hòa Thạnh, Quận Tân Phú, Thành phố Hồ Chí Minh</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27034</WardCode>
+    <WardName>Phường Hòa Thạnh</WardName>
+    <Id>sample.partner_customer_13</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Châu Thúy Thơ</Name>
+    <Phone>0907330984</Phone>
+    <Gender>female</Gender>
+    <BirthYear>1987</BirthYear>
+    <BirthMonth>3</BirthMonth>
+    <BirthDay>23</BirthDay>
+    <Email />
+    <JobTitle>Nhân viên văn phòng</JobTitle>
+    <Street>51 khuôn Việt Phường Phú Trung, Quận Tân Phú, Thành phố Hồ Chí Minh</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27031</WardCode>
+    <WardName>Phường Phú Trung</WardName>
+    <Id>sample.partner_customer_14</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Chị Vân</Name>
+    <Phone>0933554498</Phone>
+    <Gender>female</Gender>
+    <BirthYear>1989</BirthYear>
+    <BirthMonth>5</BirthMonth>
+    <BirthDay>12</BirthDay>
+    <Email />
+    <JobTitle>Nhân viên văn phòng</JobTitle>
+    <Street>63Gò Dầu, Phường Tân Quý, Quận Tân Phú, Thành phố Hồ Chí Minh</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27019</WardCode>
+    <WardName>Phường Tân Quý</WardName>
+    <Id>sample.partner_customer_15</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Đài Trần</Name>
+    <Phone>0938953212</Phone>
+    <Gender>female</Gender>
+    <BirthYear>1997</BirthYear>
+    <BirthMonth>2</BirthMonth>
+    <BirthDay>14</BirthDay>
+    <Email />
+    <JobTitle>Nhân viên văn phòng</JobTitle>
+    <Street>38 Dương Đức Thành Phường Tây Thạnh, Quận Tân Phú, Thành phố Hồ Chí Minh</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27013</WardCode>
+    <WardName>Phường Tây Thạnh</WardName>
+    <Id>sample.partner_customer_16</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Đặng Gấm</Name>
+    <Phone>0983 035167</Phone>
+    <Gender>female</Gender>
+    <BirthYear>1992</BirthYear>
+    <BirthMonth>7</BirthMonth>
+    <BirthDay>16</BirthDay>
+    <Email />
+    <JobTitle>Nhân viên văn phòng</JobTitle>
+    <Street>295 Tân Kì Tân Quý, Phường Tân Sơn Nhì, Quận Tân Phú, Thành phố Hồ Chí Minh</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27010</WardCode>
+    <WardName>Phường Tân Sơn Nhì</WardName>
+    <Id>sample.partner_customer_17</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Diễm Châu Trần</Name>
+    <Phone>0935979750</Phone>
+    <Gender>female</Gender>
+    <BirthYear>1993</BirthYear>
+    <BirthMonth>8</BirthMonth>
+    <BirthDay>27</BirthDay>
+    <Email />
+    <JobTitle>Nhân viên văn phòng</JobTitle>
+    <Street>201A Thống Nhất, Phường Tân Thành, Quận Tân Phú, Thành phố Hồ Chí Minh</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27022</WardCode>
+    <WardName>Phường Tân Thành</WardName>
+    <Id>sample.partner_customer_18</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Diễm Thi</Name>
+    <Phone>0366238660</Phone>
+    <Gender>female</Gender>
+    <BirthYear>1995</BirthYear>
+    <BirthMonth>1</BirthMonth>
+    <BirthDay>23</BirthDay>
+    <Email />
+    <JobTitle>Nhân viên văn phòng</JobTitle>
+    <Street>91 Gò Dầu, Phường Tân Quý, Quận Tân Phú, Thành phố Hồ Chí Minh</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27019</WardCode>
+    <WardName>Phường Tân Quý</WardName>
+    <Id>sample.partner_customer_19</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Diễm Thơm</Name>
+    <Phone>0358496947</Phone>
+    <Gender>female</Gender>
+    <BirthYear>2001</BirthYear>
+    <BirthMonth>8</BirthMonth>
+    <BirthDay>17</BirthDay>
+    <Email />
+    <JobTitle>Sinh Viên</JobTitle>
+    <Street>278 Lũy Bán Bích, Phường Hòa Thạnh, Quận Tân Phú, Thành phố Hồ Chí Minh</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27034</WardCode>
+    <WardName>Phường Hòa Thạnh</WardName>
+    <Id>sample.partner_customer_20</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Đỗ Bích Ngọc</Name>
+    <Phone>0339538997</Phone>
+    <Gender>female</Gender>
+    <BirthYear>2015</BirthYear>
+    <BirthMonth>8</BirthMonth>
+    <BirthDay>18</BirthDay>
+    <Email />
+    <JobTitle>Học Sinh</JobTitle>
+    <Street>52 Thạch Lam, Phường Phú Thạnh, Quận Tân Phú, Thành phố Hồ Chí Minh</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27028</WardCode>
+    <WardName>Phường Phú Thạnh</WardName>
+    <Id>sample.partner_customer_21</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Dương Tuyền</Name>
+    <Phone>0906920226</Phone>
+    <Gender>female</Gender>
+    <BirthYear>1997</BirthYear>
+    <BirthMonth>8</BirthMonth>
+    <BirthDay>19</BirthDay>
+    <Email />
+    <JobTitle>Nhân viên văn phòng</JobTitle>
+    <Street>2/2 /76_78 đg lê thúc hoạch Phường Phú Thọ Hòa, Quận Tân Phú, Thành phố Hồ Chí Minh</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27025</WardCode>
+    <WardName>Phường Phú Thọ Hòa</WardName>
+    <Id>sample.partner_customer_22</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Hạ Vy</Name>
+    <Phone>0383418514</Phone>
+    <Gender>female</Gender>
+    <BirthYear>1996</BirthYear>
+    <BirthMonth>8</BirthMonth>
+    <BirthDay>20</BirthDay>
+    <Email />
+    <JobTitle>Nhân viên văn phòng</JobTitle>
+    <Street>196/18 Tân Hương, Phường Tân Quý, Quận Tân Phú, Thành phố Hồ Chí Minh</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27019</WardCode>
+    <WardName>Phường Tân Quý</WardName>
+    <Id>sample.partner_customer_23</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Hải Nhiên</Name>
+    <Phone>0936455887</Phone>
+    <Gender>female</Gender>
+    <BirthYear>1986</BirthYear>
+    <BirthMonth>7</BirthMonth>
+    <BirthDay>21</BirthDay>
+    <Email />
+    <JobTitle>Nhân viên văn phòng</JobTitle>
+    <Street>chung cư emerald cổng 1 , Phường Sơn Kỳ, Quận Tân Phú, Thành phố Hồ Chí Minh</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27016</WardCode>
+    <WardName>Phường Sơn Kỳ</WardName>
+    <Id>sample.partner_customer_24</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Hoàng Hường</Name>
+    <Phone>0909438081</Phone>
+    <Gender>female</Gender>
+    <BirthYear>2003</BirthYear>
+    <BirthMonth>4</BirthMonth>
+    <BirthDay>24</BirthDay>
+    <Email />
+    <JobTitle>Sinh Viên</JobTitle>
+    <Street>số 477 xệp 17 xệp 5 Âu cơ phường phú trung quận tân phú tphcm </Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27031</WardCode>
+    <WardName>Phường Phú Trung</WardName>
+    <Id>sample.partner_customer_25</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Hồng Hạnh Nguyễn</Name>
+    <Phone>0984163378</Phone>
+    <Gender>female</Gender>
+    <BirthYear>1987</BirthYear>
+    <BirthMonth>8</BirthMonth>
+    <BirthDay>26</BirthDay>
+    <Email />
+    <JobTitle>Nhân viên văn phòng</JobTitle>
+    <Street>57 Lê Đình Thám, Phường Tân Quý, Quận Tân Phú, Thành phố Hồ Chí Minh</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27019</WardCode>
+    <WardName>Phường Tân Quý</WardName>
+    <Id>sample.partner_customer_26</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Hường Nguyễn</Name>
+    <Phone>0708869826</Phone>
+    <Gender>female</Gender>
+    <BirthYear>1989</BirthYear>
+    <BirthMonth>2</BirthMonth>
+    <BirthDay>28</BirthDay>
+    <Email />
+    <JobTitle>Nhân viên văn phòng</JobTitle>
+    <Street>281 đường Tân Hương Phường Tân Quý, Quận Tân Phú, Thành phố Hồ Chí Minh</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27019</WardCode>
+    <WardName>Phường Tân Quý</WardName>
+    <Id>sample.partner_customer_27</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Huyền Trăm</Name>
+    <Phone>0523853550</Phone>
+    <Gender>female</Gender>
+    <BirthYear>2000</BirthYear>
+    <BirthMonth>3</BirthMonth>
+    <BirthDay>27</BirthDay>
+    <Email />
+    <JobTitle>Sinh Viên</JobTitle>
+    <Street>29/31 Nguyễn Sơn, Quận Tân Phú, Thành phố Hồ Chí Minh</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27037</WardCode>
+    <WardName>Phường Hiệp Tân</WardName>
+    <Id>sample.partner_customer_28</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Huỳnh Thanh Bình</Name>
+    <Phone>0929461487</Phone>
+    <Gender>male</Gender>
+    <BirthYear>1992</BirthYear>
+    <BirthMonth>9</BirthMonth>
+    <BirthDay>23</BirthDay>
+    <Email />
+    <JobTitle>Nhân viên văn phòng</JobTitle>
+    <Street>30 Lê Ngã, Phường Phú Trung, Quận Tân Phú, Thành phố Hồ Chí Minh</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27031</WardCode>
+    <WardName>Phường Phú Trung</WardName>
+    <Id>sample.partner_customer_29</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Huỳnh Trang</Name>
+    <Phone>0966629656</Phone>
+    <Gender>female</Gender>
+    <BirthYear>1993</BirthYear>
+    <BirthMonth>10</BirthMonth>
+    <BirthDay>12</BirthDay>
+    <Email />
+    <JobTitle>Nhân viên văn phòng</JobTitle>
+    <Street>số 6 nguyễn cửu đàm  Phường Tân Sơn Nhì, Quận Tân Phú, Thành phố Hồ Chí Minh</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27010</WardCode>
+    <WardName>Phường Tân Sơn Nhì</WardName>
+    <Id>sample.partner_customer_30</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Kiều Anh Vũ</Name>
+    <Phone>0816363639</Phone>
+    <Gender>female</Gender>
+    <BirthYear>1995</BirthYear>
+    <BirthMonth>12</BirthMonth>
+    <BirthDay>5</BirthDay>
+    <Email />
+    <JobTitle>Nhân viên văn phòng</JobTitle>
+    <Street>Chung cư Ruby cổng 2 36 Bờ Bao Tân Thắng, Phường Sơn Kỳ, Quận Tân Phú, Thành phố Hồ Chí Minh</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27016</WardCode>
+    <WardName>Phường Sơn Kỳ</WardName>
+    <Id>sample.partner_customer_31</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Kim Yến Âu</Name>
+    <Phone>0938382328</Phone>
+    <Gender>female</Gender>
+    <BirthYear>1993</BirthYear>
+    <BirthMonth>7</BirthMonth>
+    <BirthDay>15</BirthDay>
+    <Email />
+    <JobTitle>Nhân viên văn phòng</JobTitle>
+    <Street>269A Tân Hương, Phường Tân Quý, Quận Tân Phú, Thành phố Hồ Chí Minh</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27019</WardCode>
+    <WardName>Phường Tân Quý</WardName>
+    <Id>sample.partner_customer_32</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Lan Anh</Name>
+    <Phone>0938282989</Phone>
+    <Gender>female</Gender>
+    <BirthYear>1994</BirthYear>
+    <BirthMonth>8</BirthMonth>
+    <BirthDay>16</BirthDay>
+    <Email />
+    <JobTitle>Nhân viên văn phòng</JobTitle>
+    <Street>phòng 20 - 05 .659 âu cơ Phường Tân Thành quận Tân Phú thành phố Hồ Chí Minh</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27022</WardCode>
+    <WardName>Phường Tân Thành</WardName>
+    <Id>sample.partner_customer_33</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Lê Thanh Kiều</Name>
+    <Phone>0906053409</Phone>
+    <Gender>female</Gender>
+    <BirthYear>1997</BirthYear>
+    <BirthMonth>9</BirthMonth>
+    <BirthDay>31</BirthDay>
+    <Email />
+    <JobTitle>Nhân viên văn phòng</JobTitle>
+    <Street>236taan hương, Phường Tân Quý, Quận Tân Phú, Thành phố Hồ Chí Minh</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27019</WardCode>
+    <WardName>Phường Tân Quý</WardName>
+    <Id>sample.partner_customer_34</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Minh Trang</Name>
+    <Phone>0903255949</Phone>
+    <Gender>female</Gender>
+    <BirthYear>1994</BirthYear>
+    <BirthMonth>6</BirthMonth>
+    <BirthDay>6</BirthDay>
+    <Email />
+    <JobTitle>Nhân viên văn phòng</JobTitle>
+    <Street>chung cu sang thanh so 36 trinh dinh thao Phường Hòa Thạnh, Quận Tân Phú, Thành phố Hồ Chí Minh</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27034</WardCode>
+    <WardName>Phường Hòa Thạnh</WardName>
+    <Id>sample.partner_customer_35</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Ngọc Mai</Name>
+    <Phone>0902403521</Phone>
+    <Gender>female</Gender>
+    <BirthYear>1989</BirthYear>
+    <BirthMonth>12</BirthMonth>
+    <BirthDay>15</BirthDay>
+    <Email />
+    <JobTitle>Nhân viên văn phòng</JobTitle>
+    <Street>312/12B Khuông Việt, Phường Phú Trung, Quận Tân Phú, Thành phố Hồ Chí Minh</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27031</WardCode>
+    <WardName>Phường Phú Trung</WardName>
+    <Id>sample.partner_customer_36</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Nguyễn Phương Hảo</Name>
+    <Phone>0332987379</Phone>
+    <Gender>female</Gender>
+    <BirthYear>1992</BirthYear>
+    <BirthMonth>8</BirthMonth>
+    <BirthDay>23</BirthDay>
+    <Email />
+    <JobTitle>Nhân viên văn phòng</JobTitle>
+    <Street>ko muốn mua hàng nữa 281k 8/6</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27037</WardCode>
+    <WardName>Phường Hiệp Tân</WardName>
+    <Id>sample.partner_customer_37</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Phương My</Name>
+    <Phone>0911311136</Phone>
+    <Gender>female</Gender>
+    <BirthYear>1997</BirthYear>
+    <BirthMonth>7</BirthMonth>
+    <BirthDay>10</BirthDay>
+    <Email />
+    <JobTitle>Nhân viên văn phòng</JobTitle>
+    <Street>76 Lê Sao, Phường Phú Thạnh, Quận Tân Phú, Thành phố Hồ Chí Minh</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27028</WardCode>
+    <WardName>Phường Phú Thạnh</WardName>
+    <Id>sample.partner_customer_38</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Quyết Oanh</Name>
+    <Phone>0907895896</Phone>
+    <Gender>female</Gender>
+    <BirthYear>1996</BirthYear>
+    <BirthMonth>9</BirthMonth>
+    <BirthDay>12</BirthDay>
+    <Email />
+    <JobTitle>Nhân viên văn phòng</JobTitle>
+    <Street>228/3/2 nguyễn sơn  Phường Phú Thọ Hòa, Quận Tân Phú, Thành phố Hồ Chí Minh</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27025</WardCode>
+    <WardName>Phường Phú Thọ Hòa</WardName>
+    <Id>sample.partner_customer_39</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Trần Châu</Name>
+    <Phone>0983748553</Phone>
+    <Gender>female</Gender>
+    <BirthYear>1989</BirthYear>
+    <BirthMonth>5</BirthMonth>
+    <BirthDay>19</BirthDay>
+    <Email />
+    <JobTitle>Nhân viên văn phòng</JobTitle>
+    <Street>75/30 đường vò dầu p Tân quý Tân Phú</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27019</WardCode>
+    <WardName>Phường Tân Quý</WardName>
+    <Id>sample.partner_customer_40</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Trần Linh Giang</Name>
+    <Phone>0975116867</Phone>
+    <Gender>female</Gender>
+    <BirthYear>1992</BirthYear>
+    <BirthMonth>8</BirthMonth>
+    <BirthDay>27</BirthDay>
+    <Email />
+    <JobTitle>Nhân viên văn phòng</JobTitle>
+    <Street>72 Thoại Ngọc Hầu, Phường Hòa Thạnh, Quận Tân Phú, Thành phố Hồ Chí Minh</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27034</WardCode>
+    <WardName>Phường Hòa Thạnh</WardName>
+    <Id>sample.partner_customer_41</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Trương Hằng Trương</Name>
+    <Phone>0937907922</Phone>
+    <Gender>female</Gender>
+    <BirthYear>2003</BirthYear>
+    <BirthMonth>8</BirthMonth>
+    <BirthDay>25</BirthDay>
+    <Email />
+    <JobTitle>Sinh Viên</JobTitle>
+    <Street>123/4 le dinh tham Phường Tân Quý, Quận Tân Phú, Thành phố Hồ Chí Minh</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>767</DistrictCode>
+    <DistrictName>Quận Tân Phú</DistrictName>
+    <WardCode>27019</WardCode>
+    <WardName>Phường Tân Quý</WardName>
+    <Id>sample.partner_customer_42</Id>
+    <DateRound>9</DateRound>
+  </Record>
+  <Record>
+    <Name>Nguyễn Ánh Ngọc</Name>
+    <Phone>0981044744</Phone>
+    <Gender>male</Gender>
+    <BirthYear>1990</BirthYear>
+    <BirthMonth>5</BirthMonth>
+    <BirthDay>15</BirthDay>
+    <JobTitle>Nhân viên văn phòng</JobTitle>
+    <Street>17</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>769</DistrictCode>
+    <DistrictName>Thành phố Thủ Đức</DistrictName>
+    <WardCode>27091</WardCode>
+    <WardName>Phường An Phú</WardName>
+    <Id>sample.partner_customer_43</Id>
+    <DateRound>2</DateRound>
+  </Record>
+  <Record>
+    <Name>Đặng Thái Hòa</Name>
+    <Phone>0931478425</Phone>
+    <Gender>male</Gender>
+    <BirthYear>1993</BirthYear>
+    <BirthMonth>9</BirthMonth>
+    <BirthDay>23</BirthDay>
+    <Email>dangthaia@gmail.com</Email>
+    <JobTitle>Kinh Doanh Tự Do</JobTitle>
+    <Street>1047 Cách Mạng Tháng Tám</Street>
+    <CityCode>79</CityCode>
+    <CityName>Thành phố Hồ Chí Minh</CityName>
+    <DistrictCode>766</DistrictCode>
+    <DistrictName>Quận Tân Bình</DistrictName>
+    <WardCode>26986</WardCode>
+    <WardName>Phường 07</WardName>
+    <Id>sample.partner_customer_44</Id>
+    <DateRound>2</DateRound>
+  </Record>
+</Data>

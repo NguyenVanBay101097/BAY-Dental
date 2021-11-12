@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace TMTDentalAPI.ViewControllers
 {
@@ -20,7 +21,7 @@ namespace TMTDentalAPI.ViewControllers
         {
             var accountPayment = await _accountPaymentService.GetPrint(id);
             if (accountPayment == null)
-                return NotFound();
+                return NotFound();       
 
             return View(accountPayment);
         }

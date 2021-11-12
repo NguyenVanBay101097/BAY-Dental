@@ -1,28 +1,24 @@
-import { HrPayslipService, HrPayslipPaged, HrPayslipSave, HrPayslipDisplay, HrPayslipSaveDefaultValue } from './../hr-payslip.service';
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
-import { HrPaysliprunService, HrPayslipRunDefaultGet, HrPayslipRunDisplay } from '../hr-paysliprun.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { NotificationService } from '@progress/kendo-angular-notification';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { HrPayslipRunConfirmDialogComponent } from '../hr-payslip-run-confirm-dialog/hr-payslip-run-confirm-dialog.component';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { map, mergeMap } from 'rxjs/operators';
-import { validate, validator } from 'fast-json-patch';
-import { error } from 'protractor';
-import { SalaryPaymentModule } from 'src/app/salary-payment/salary-payment.module';
-import { HrSalaryPaymentComponent } from '../hr-salary-payment/hr-salary-payment.component';
-import { SalaryPaymentSave } from 'src/app/shared/services/salary-payment.service';
-import { PrintService } from "src/app/shared/services/print.service";
+import { NotificationService } from '@progress/kendo-angular-notification';
+import { mergeMap } from 'rxjs/operators';
 import { SalaryPaymentService } from 'src/app/salary-payment/salary-payment.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PrintService } from "src/app/shared/services/print.service";
+import { HrPayslipRunDefaultGet, HrPaysliprunService } from '../hr-paysliprun.service';
+import { HrSalaryPaymentComponent } from '../hr-salary-payment/hr-salary-payment.component';
+import { HrPayslipSaveDefaultValue } from './../hr-payslip.service';
 
 @Component({
   selector: 'app-hr-payslip-run-form',
   templateUrl: './hr-payslip-run-form.component.html',
-  styleUrls: ['./hr-payslip-run-form.component.css']
+  styleUrls: ['./hr-payslip-run-form.component.css'],
+   host: {
+    class: "o_action o_view_controller",
+  },
 })
 export class HrPayslipRunFormComponent implements OnInit {
   FormGroup: FormGroup;
@@ -33,16 +29,15 @@ export class HrPayslipRunFormComponent implements OnInit {
   checkAll = false;
   canAdd = false;
   canUpdate = false;
+  filterDate = new Date();
   constructor(private fb: FormBuilder,
     private hrPaysliprunService: HrPaysliprunService,
-    private route: ActivatedRoute, private modalService: NgbModal,
+    private modalService: NgbModal,
     private notificationService: NotificationService,
-    private hrPayslipService: HrPayslipService,
     private printService: PrintService,
-    private paymentService: SalaryPaymentService,
-    private router: Router, private intlService: IntlService,
+    private paymentService: SalaryPaymentService,private intlService: IntlService,
     private checkPermissionService: CheckPermissionService
-    ) { }
+  ) { }
 
   ngOnInit() {
     this.FormGroup = this.fb.group({
@@ -204,8 +199,8 @@ export class HrPayslipRunFormComponent implements OnInit {
             this.notify('success', 'Bảng lương xác nhận thành công');
             this.loadRecord();
           });
-        });    
-      }else{
+        });
+      } else {
         this.hrPaysliprunService.create(val).pipe(
           mergeMap((result: any) => {
             return this.hrPaysliprunService.CreatePayslipByRunId(result.id);
@@ -218,7 +213,7 @@ export class HrPayslipRunFormComponent implements OnInit {
         });
       }
     });
-   
+
   }
 
   actionCancel() {
@@ -307,15 +302,15 @@ export class HrPayslipRunFormComponent implements OnInit {
 
     var value = this.getFormData();
     if (value)
-    this.hrPaysliprunService.printAllEmpSalary(this.id, value).subscribe(
-      (result:any) => {
-        if (result) {
-          this.printService.printHtml(result);
-        } else {
-          alert('Bạn chưa chọn nhân viên nào để in, vui lòng chọn nhân viên để tiếp tục.');
+      this.hrPaysliprunService.printAllEmpSalary(this.id, value).subscribe(
+        (result: any) => {
+          if (result) {
+            this.printService.printHtml(result.html);
+          } else {
+            alert('Bạn chưa chọn nhân viên nào để in, vui lòng chọn nhân viên để tiếp tục.');
+          }
         }
-      }
-    )
+      )
   }
 
   onExport() {
@@ -345,11 +340,11 @@ export class HrPayslipRunFormComponent implements OnInit {
 
   onPayment() {
     const slipIds = this.slipsFormArray.value.filter(x => x.isCheck === true).map(x => x.id);
-    if(slipIds.length == 0) this.notify('error','Chưa chọn phiếu lương để chi lương');
-   
-      this.paymentService.defaulCreateBy(slipIds).subscribe((res: any) => {
+    if (slipIds.length == 0) this.notify('error', 'Chưa chọn phiếu lương để chi lương');
 
-      if(res.data.length > 0) {
+    this.paymentService.defaulCreateBy(slipIds).subscribe((res: any) => {
+
+      if (res.data.length > 0) {
 
         const modalRef = this.modalService.open(HrSalaryPaymentComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = `PHIẾU CHI LƯƠNG THÁNG  ${this.dateFC.value.getMonth() + 1}/${this.dateFC.value.getFullYear()}`;
@@ -358,7 +353,7 @@ export class HrPayslipRunFormComponent implements OnInit {
         modalRef.result.then((res: any) => {
           this.loadRecord();
         });
-      } 
+      }
 
       res.errors.forEach(e => {
         this.notify('error', e);

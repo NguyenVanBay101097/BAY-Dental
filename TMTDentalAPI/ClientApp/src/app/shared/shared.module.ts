@@ -13,7 +13,6 @@ import { MyCustomKendoModule } from './my-customer-kendo.module';
 import { ImageViewerComponent } from './image-viewer/image-viewer.component';
 import { DisableControlDirective } from './disable-control-directive';
 import { AppLoadingService } from './app-loading.service';
-import { LoadingComponent } from './loading/loading.component';
 import { ClickOutsideDirective } from './click-outside-directive';
 import { TaiSearchInputComponent } from './tai-search-input/tai-search-input.component';
 import { TaiProductListSelectableComponent } from './tai-product-list-selectable/tai-product-list-selectable.component';
@@ -77,7 +76,6 @@ import { LaboFinnishLineImportComponent } from '../labo-finish-lines/labo-finnis
 import { ProductMedicineCuDialogComponent } from '../products/product-medicine-cu-dialog/product-medicine-cu-dialog.component';
 import { CashBookCuDialogComponent } from './cash-book-cu-dialog/cash-book-cu-dialog.component';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { SearchAllComponent } from './search-all/search-all.component';
 import { ProductListShareComponent } from './product-list-share/product-list-share.component';
 import { DiscountPopoverShareComponent } from './discount-popover-share/discount-popover-share.component';
 import { ServiceListSearchDropdownComponent } from './service-list-search-dropdown/service-list-search-dropdown.component';
@@ -103,8 +101,14 @@ import { CustomerReceipCreateUpdateComponent } from './customer-receip-create-up
 import { CustomerReceiptStatePopoverComponent } from './customer-receipt-state-popover/customer-receipt-state-popover.component';
 import { IsEllipsisActiveDirective } from './is-ellipsis-active.directive';
 import { AddressDialogComponent } from './address-dialog/address-dialog.component';
-import { ChartsModule } from 'ng2-charts';
+import { NgChartsModule } from 'ng2-charts';
 import { ReceiveAppointmentDialogComponent } from './receive-appointment-dialog/receive-appointment-dialog.component';
+import { WarrantyCuDidalogComponent } from './warranty-cu-didalog/warranty-cu-didalog.component';
+import { LaboWarrantyDetailListComponent } from './labo-warranty-detail-list/labo-warranty-detail-list.component';
+import { MonthRangeFilterDropdownComponent } from './month-range-filter-dropdown/month-range-filter-dropdown.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BankCuDialogComponent } from './bank-cu-dialog/bank-cu-dialog.component';
+
 
 const config: LocaleConfig = {};
 @NgModule({
@@ -119,7 +123,6 @@ const config: LocaleConfig = {};
         ImageViewerComponent,
         DateRangeAdvanceSearchComponent,
         DisableControlDirective,
-        LoadingComponent,
         ClickOutsideDirective,
         TaiSearchInputComponent,
         TaiProductListSelectableComponent,
@@ -179,7 +182,6 @@ const config: LocaleConfig = {};
         PartnerWebcamComponent,
         LaboFinnishLineImportComponent,
         CashBookCuDialogComponent,
-        SearchAllComponent,
         ProductListShareComponent,
         DiscountPopoverShareComponent,
         ServiceListSearchDropdownComponent,
@@ -204,7 +206,11 @@ const config: LocaleConfig = {};
         CustomerReceipCreateUpdateComponent,
         CustomerReceiptStatePopoverComponent,
         AddressDialogComponent,
-        ReceiveAppointmentDialogComponent
+        ReceiveAppointmentDialogComponent,
+        WarrantyCuDidalogComponent,
+        LaboWarrantyDetailListComponent,
+        MonthRangeFilterDropdownComponent,
+        BankCuDialogComponent
     ],
     exports: [
         ConfirmDialogComponent,
@@ -213,7 +219,6 @@ const config: LocaleConfig = {};
         FieldBinaryImageSimpleComponent,
         DateRangeAdvanceSearchComponent,
         DisableControlDirective,
-        LoadingComponent,
         ClickOutsideDirective,
         TaiSearchInputComponent,
         TaiProductListSelectableComponent,
@@ -268,7 +273,6 @@ const config: LocaleConfig = {};
         PartnerWebcamComponent,
         LaboFinnishLineImportComponent,
         CashBookCuDialogComponent,
-        SearchAllComponent,
         ProductListShareComponent,
         DiscountPopoverShareComponent,
         ServiceListSearchDropdownComponent,
@@ -293,7 +297,12 @@ const config: LocaleConfig = {};
         CustomerReceipCreateUpdateComponent,
         CustomerReceiptStatePopoverComponent,
         AddressDialogComponent,
-        ReceiveAppointmentDialogComponent
+        ReceiveAppointmentDialogComponent,
+        WarrantyCuDidalogComponent,
+        LaboWarrantyDetailListComponent,
+        MonthRangeFilterDropdownComponent,
+        NgChartsModule,
+        BankCuDialogComponent
     ],
     imports: [
         NgbModule,
@@ -303,7 +312,7 @@ const config: LocaleConfig = {};
         MyCustomKendoModule,
         NgSelectModule,
         FormsModule,
-        ChartsModule,
+        NgChartsModule,
         MyCustomNgbModule,
         CalendarModule,
         MomentModule.forRoot({
@@ -347,7 +356,9 @@ const config: LocaleConfig = {};
         ToothSelectionDialogComponent,        
         CustomerReceipCreateUpdateComponent,
         AddressDialogComponent,
-        ReceiveAppointmentDialogComponent
+        ReceiveAppointmentDialogComponent,
+        WarrantyCuDidalogComponent,
+        BankCuDialogComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

@@ -1,15 +1,15 @@
-import { HistoryImportExcelBaseViewModel } from './../history.service';
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { HistoryService } from '../history.service';
+import { Component, Inject, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { NotifyService } from 'src/app/shared/services/notify.service';
 import { HistoriesCreateUpdateComponent } from '../histories-create-update/histories-create-update.component';
 import { HistoryPaged } from '../history';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { HistoryImportExcelDialogComponent } from '../history-import-excel-dialog/history-import-excel-dialog.component';
+import { HistoryService } from '../history.service';
 
 @Component({
   selector: 'app-histories-list',
@@ -18,13 +18,19 @@ import { HistoryImportExcelDialogComponent } from '../history-import-excel-dialo
 })
 export class HistoriesListComponent implements OnInit {
 
-  constructor(private fb: FormBuilder, private service: HistoryService, private modalService: NgbModal) { }
+  constructor(
+    private service: HistoryService,
+    private modalService: NgbModal,
+    private notifyService: NotifyService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   loading = false;
   gridView: GridDataResult;
   windowOpened: boolean = false;
   skip = 0;
   pageSize = 20;
+  pagerSettings: any;
 
   search: string;
   searchUpdate = new Subject<string>();
@@ -79,6 +85,7 @@ export class HistoriesListComponent implements OnInit {
     }
     modalRef.result.then(
       rs => {
+        this.notifyService.notify("success","Lưu thành công");
         this.getList();
       },
       er => { }
@@ -98,6 +105,7 @@ export class HistoriesListComponent implements OnInit {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Xóa tiểu sử bệnh';
     modalRef.result.then(() => {
+      this.notifyService.notify("success","Xóa thành công");
       this.service.delete(id).subscribe(
         () => { this.getList(); }
       );

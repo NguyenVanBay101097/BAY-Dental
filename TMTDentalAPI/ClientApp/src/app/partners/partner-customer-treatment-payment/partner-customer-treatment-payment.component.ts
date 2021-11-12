@@ -1,19 +1,19 @@
 
 
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { GridDataResult, PageChangeEvent, GridComponent } from '@progress/kendo-angular-grid';
-import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { Subject } from 'rxjs';
-import { Router, ActivatedRoute } from '@angular/router';
-import { NgbDate, NgbDateParserFormatter, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { UserSimple } from 'src/app/users/user-simple';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { Component, Inject, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
-import { SaleOrderService, SaleOrderPaged } from 'src/app/core/services/sale-order.service';
+import { SaleOrderPaged, SaleOrderService } from 'src/app/core/services/sale-order.service';
+import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
 import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/shared/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { UserSimple } from 'src/app/users/user-simple';
 
 @Component({
   selector: 'app-partner-customer-treatment-payment',
@@ -24,6 +24,7 @@ export class PartnerCustomerTreatmentPaymentComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   opened = false;
   searchInvoiceNumber: string;
@@ -46,9 +47,14 @@ export class PartnerCustomerTreatmentPaymentComponent implements OnInit {
 
   partnerId: string;
 
-  constructor(private saleOrderService: SaleOrderService, private intlService: IntlService, private router: Router,
-    private modalService: NgbModal, private paymentService: AccountPaymentService, private notificationService: NotificationService,
-    private route: ActivatedRoute) { }
+  constructor(private saleOrderService: SaleOrderService, 
+    private router: Router,
+    private modalService: NgbModal, 
+    private paymentService: AccountPaymentService, 
+    private notificationService: NotificationService,
+    private route: ActivatedRoute,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.partnerId = this.route.parent.snapshot.paramMap.get('id');
@@ -138,6 +144,7 @@ export class PartnerCustomerTreatmentPaymentComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

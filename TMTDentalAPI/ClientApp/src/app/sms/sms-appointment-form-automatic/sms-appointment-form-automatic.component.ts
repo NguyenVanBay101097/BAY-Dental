@@ -2,16 +2,13 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
-import { AuthService } from 'src/app/auth/auth.service';
-import { SmsAccountService, SmsAccountPaged } from '../sms-account.service';
+import { SmsAccountPaged, SmsAccountService } from '../sms-account.service';
 import { SmsAppointmentAutomationConfigService } from '../sms-appointment-automation-config.service';
 import { SmsCampaignService } from '../sms-campaign.service';
-import { SmsConfigService } from '../sms-config.service';
 import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
-import { SmsTemplateService, SmsTemplateFilter } from '../sms-template.service';
+import { SmsTemplateFilter, SmsTemplateService } from '../sms-template.service';
 
 @Component({
   selector: 'app-sms-appointment-form-automatic',
@@ -22,7 +19,7 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
 
   @ViewChild("smsTemplateCbx", { static: true }) smsTemplateCbx: ComboBoxComponent
   @ViewChild("smsAccountCbx", { static: true }) smsAccountCbx: ComboBoxComponent
-  @ViewChild('textarea', { static: false }) textarea: ElementRef;
+  @ViewChild('textarea') textarea: ElementRef;
 
   formGroup: FormGroup;
   filteredConfigSMS: any[];
@@ -52,11 +49,9 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
     private modalService: NgbModal,
     private smsTemplateService: SmsTemplateService,
     private smsConfigService: SmsAppointmentAutomationConfigService,
-    private intlService: IntlService,
     private smsAccountService: SmsAccountService,
     private notificationService: NotificationService,
     private smsCampaignService: SmsCampaignService,
-    private authService: AuthService
   ) { }
 
   ngOnInit() {
@@ -68,7 +63,7 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
       timeBeforSend: [1, Validators.required],
       templateName: '',
     })
-   
+
     this.loadDataFormApi();
     this.loadSmsTemplate();
     this.loadDefaultCampaignAppointmentReminder();
@@ -107,7 +102,7 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
       this.isTemplateCopy = true;
       this.f.templateName.setValidators(Validators.required);
       this.f.templateName.updateValueAndValidity();
-      
+
     } else {
       this.isTemplateCopy = false;
       this.f.templateName.clearValidators();

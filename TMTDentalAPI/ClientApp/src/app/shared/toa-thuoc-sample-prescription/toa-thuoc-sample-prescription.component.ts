@@ -1,10 +1,6 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 import { SamplePrescriptionsPaged, SamplePrescriptionsService, SamplePrescriptionsSimple } from 'src/app/sample-prescriptions/sample-prescriptions.service';
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
-import { NgbModal, NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-toa-thuoc-sample-prescription',
@@ -23,8 +19,7 @@ export class ToaThuocSamplePrescriptionComponent implements OnInit, OnChanges {
   @Output() itemSamplePrescription = new EventEmitter<string>();
   @ViewChild('myDrop', { static: true }) myDrop: NgbDropdown;
 
-  constructor(private samplePrescriptionsService: SamplePrescriptionsService, 
-    private errorService: AppSharedShowErrorService, private modalService: NgbModal) { }
+  constructor(private samplePrescriptionsService: SamplePrescriptionsService, ) { }
 
   ngOnInit() {
     setTimeout(() => {

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Record>
+    <Id>sample.loai_thu_chi_thu_1</Id>
+    <Name>tiền điện</Name>
+    <Code>A11</Code>
+  </Record>
+  <Record>
+    <Id>sample.loai_thu_chi_thu_2</Id>
+    <Name>tiền vật tư</Name>
+    <Code>b1</Code>
+  </Record>
+</Data>

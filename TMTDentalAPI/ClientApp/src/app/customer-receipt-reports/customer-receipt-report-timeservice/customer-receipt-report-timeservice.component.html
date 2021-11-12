@@ -1,7 +1,7 @@
 <div class="container py-3">
     <div class="flex-0-0-auto">
         <div class="filter d-flex flex-wrap">
-            <app-date-range-picker-filter [opens]="'right'" class="mr-1" [startDate]="dateFrom" [endDate]="dateTo"
+            <app-date-range-picker-filter [showClearButton]="false" [opens]="'right'" class="mr-1" [startDate]="dateFrom" [endDate]="dateTo"
                 (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
             <kendo-combobox class="mr-1" [placeholder]="'Bác sĩ'" [valueField]="'id'" [textField]="'name'"
                 [filterable]="true" #employeeCbx [data]="listEmployee" (selectionChange)="onSelectEmployee($event)">
@@ -10,7 +10,8 @@
                 [textField]="'name'" [filterable]="true" [data]="listCompany"
                 (selectionChange)="onSelectCompany($event)" #companyCbx>
             </kendo-combobox>
-
+            <input class="form-control filter-search mr-1" placeholder="Tìm kiếm theo mã, tên, số điện thoại khách hàng"
+                type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
             <div class="dropdown mr-auto">
                 <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -20,8 +21,6 @@
                     <a class="dropdown-item" (click)="onExportPDF()">Xuất PDF</a>
                 </div>
             </div>
-            <input class="form-control filter-search" placeholder="Tìm kiếm theo mã, tên, số điện thoại khách hàng"
-                type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
         </div>
 
     </div>
@@ -31,7 +30,7 @@
             {{time.text}} <span class="badge bg-primary" [class.bg-white]="timeStart == time.timeStart" [class.text-dark]="timeStart == time.timeStart">{{timeCount[time.timeStart] || 0}}</span>
         </button>
     </div>
-    <kendo-grid #grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+    <kendo-grid #grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"
         (pageChange)="pageChange($event)">
         <kendo-grid-column title="Ngày tiếp nhận" width="120">
             <ng-template kendoGridCellTemplate let-dataItem>

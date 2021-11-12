@@ -1,23 +1,22 @@
 <div class="container py-3">
     <div class="form-inline">
-        <app-date-range-picker-filter [opens]="'right'" class="mb-2 mr-2" [startDate]="filter.dateFrom"
+        <app-date-range-picker-filter [showClearButton]="false" [opens]="'right'" class="mb-2 mr-2" [startDate]="filter.dateFrom"
             [endDate]="filter.dateTo" (searchChange)="onSearchDateChange($event)" opens="right">
         </app-date-range-picker-filter>
         <kendo-combobox [placeholder]="'Tất cả bác sĩ'" class="mb-2 mr-2" [valueField]="'id'" [textField]="'name'"
             [filterable]="true" [data]="employees" (selectionChange)="onSelectEmployee($event)" #empCbx>
         </kendo-combobox>
-        <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mb-2 mr-2" [valueField]="'id'"
-            [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)"
-            #companyCbx>
+        <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mb-2 mr-2" [valueField]="'id'" [textField]="'name'"
+            [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
         </kendo-combobox>
         <input class="mb-2 mr-2 form-control filter-search" placeholder="Tìm kiếm khách hàng, dịch vụ" type="text"
             [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)">
         <div class="dropdown mb-2 mr-2">
-            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
-                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
                 <i class="fas fa-download"></i> Xuất File</button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" (click)="exportExcel(grid)">Xuất Excel</a>
+                <a class="dropdown-item" (click)="exportExcel()">Xuất Excel</a>
                 <a class="dropdown-item" (click)="onExportPDF()">Xuất PDF</a>
             </div>
         </div>
@@ -38,14 +37,13 @@
         <label class="btn btn-outline-primary mr-2 mb-0" for="notActive">Ngừng điều trị</label> -->
 
         <button type="button" *ngFor="let item of filterState" class="btn btn-outline-primary mr-2"
-            (click)="onChangeFilterState(item)" [class.active]="state == item.value">
+            (click)="onChangeFilterState(item)" [class.active]="filter.state == item.value">
             {{item.text}}
         </button>
-        
+
     </div>
-    <kendo-grid (excelExport)="onExcelExport($event)" [resizable]="true" #grid class="" [loading]="loading"
-        [data]="gridData" [pageSize]="this.limit" [skip]="this.skip" [pageable]="true"
-        (pageChange)="pageChange($event)">
+    <kendo-grid [resizable]="true" #grid class="" [loading]="loading" [data]="gridData" [pageSize]="this.limit"
+        [skip]="this.skip" [pageable]="pagerSettings" (pageChange)="pageChange($event)">
         <kendo-grid-column field="date" title="Ngày tạo">
             <ng-template kendoGridCellTemplate let-dataItem>
                 {{dataItem.date | date: 'dd/MM/yyyy'}}

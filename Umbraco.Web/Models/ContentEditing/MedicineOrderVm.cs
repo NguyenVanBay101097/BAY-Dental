@@ -49,12 +49,14 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime OrderDate { get; set; }
 
         public string EmployeeName { get; set; }
-
+        public Guid PartnerId { get; set; }
         public string PartnerName { get; set; }
         public string PartnerDisplayName { get; set; }
 
         public Guid ToaThuocId { get; set; }
         public ToaThuocBasic ToaThuoc { get; set; }
+        public Guid JournalId { get; set; }
+        public AccountJournal Journal { get; set; }
 
         public decimal Amount { get; set; }
         public string State { get; set; }
@@ -121,7 +123,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class MedicineOrderPrint
     {
-        public Company Company { get; set; }
+        public CompanyPrintVM Company { get; set; }
         public Guid Id { get; set; }
 
         public string Name { get; set; }
@@ -143,7 +145,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public AccountJournalSimple Journal { get; set; }
 
         public Guid PartnerId { get; set; }
-        public PartnerDisplay Partner { get; set; }
+        public PartnerPrintVM Partner { get; set; }
 
         public Guid? AccountPaymentId { get; set; }
         public AccountPaymentDisplay AccountPayment { get; set; }

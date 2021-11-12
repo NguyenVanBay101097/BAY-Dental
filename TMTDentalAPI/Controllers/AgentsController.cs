@@ -34,7 +34,7 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Catalog.Agent.Read")]
         public async Task<IActionResult> Get([FromQuery] AgentPaged val)
         {
-            var result = await _agentService.GetPagedResultAsync(val);
+            var result = await _agentService.GetAgentPagedResult(val);
             return Ok(result);
         }
 
@@ -56,9 +56,9 @@ namespace TMTDentalAPI.Controllers
 
         [HttpGet("[action]")]
         [CheckAccess(Actions = "Catalog.Agent.Read")]
-        public async Task<IActionResult> GetAmountBalanceCommissionAgentForPartner([FromQuery] TotalAmountAgentFilter val)
+        public async Task<IActionResult> GetAmountDebitTotalAgent([FromQuery] TotalAmountAgentFilter val)
         {
-            var result = await _agentService.GetAmountBalanceCommissionAgentForPartner(val);
+            var result = await _agentService.GetAmountDebitTotalAgent(id: val.AgentId.Value , companyId : val.CompanyId , dateFrom: val.DateFrom , dateTo: val.DateTo);
             return Ok(result);
         }
 

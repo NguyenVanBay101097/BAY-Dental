@@ -1,8 +1,7 @@
-import { Injectable, EventEmitter } from "@angular/core";
+import { EventEmitter, Injectable } from "@angular/core";
 import { Subject } from 'rxjs';
-import { AppointmentBasic, AppointmentPaged } from './appointment';
-import { AppointmentService } from './appointment.service';
 import { map } from 'rxjs/operators';
+import { AppointmentService } from './appointment.service';
 
 @Injectable()
 export class AppointmentVMService {

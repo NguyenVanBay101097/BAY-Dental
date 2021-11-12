@@ -29,16 +29,19 @@ namespace Infrastructure.Services
             ISpecification<CardType> spec = new InitialSpecification<CardType>(x => true);
             if (!string.IsNullOrEmpty(val.Search))
                 spec = spec.And(new InitialSpecification<CardType>(x => x.Name.Contains(val.Search)));
-            
-            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderBy(s => s.Name));
 
-            var items = await query.Select(x => new CardTypeBasic
+            var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderBy(s => s.Name));
+            var totalItems = await query.CountAsync();
+
+            if (val.Limit > 0)
+                query = query.Skip(val.Offset).Take(val.Limit);
+
+            var items = await query.OrderByDescending(x => x.DateCreated).Select(x => new CardTypeBasic
             {
                 Id = x.Id,
                 Name = x.Name,
             }).ToListAsync();
 
-            var totalItems = await query.CountAsync();
             return new PagedResult2<CardTypeBasic>(totalItems, val.Offset, val.Limit)
             {
                 Items = items
@@ -90,6 +93,65 @@ namespace Infrastructure.Services
             if (self.Period == "year")
                 nb = nb * 12;
             return dStart.Value.AddMonths(nb);
+        }
+
+        public override async Task UpdateAsync(IEnumerable<CardType> entities)
+        {
+            await base.UpdateAsync(entities);
+            foreach (var entity in entities)
+            {
+                await _CheckNameUnique(entity.Name);
+                await _CheckBasicPointUnique(entity.BasicPoint.Value);
+            }
+        }
+
+        public async Task<IEnumerable<CardType>> GetAutoComplete(CardTypePaged val)
+        {
+            var query = SearchQuery();
+
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search));
+
+            var items = await query.OrderByDescending(x => x.DateCreated).ToListAsync();
+
+            return items;
+        }
+
+        private async Task _CheckNameUnique(string name)
+        {
+            var count = await SearchQuery(x => x.Name == name).CountAsync();
+            if (count >= 2)
+                throw new Exception($"Trùng tên hạng thẻ khác");
+        }
+
+        private async Task _CheckBasicPointUnique(decimal point)
+        {
+            var count = await SearchQuery(x => x.BasicPoint.Value == point).CountAsync();
+            if (count >= 2)
+                throw new Exception($"Trùng điểm của hạng thẻ khác");
+        }
+
+        public override async Task<IEnumerable<CardType>> CreateAsync(IEnumerable<CardType> entities)
+        {
+            await base.CreateAsync(entities);
+            foreach (var entity in entities)
+            {
+                await _CheckNameUnique(entity.Name);
+                await _CheckBasicPointUnique(entity.BasicPoint.Value);
+            }
+            return entities;
+        }
+
+        public override ISpecification<CardType> RuleDomainGet(IRRule rule)
+        {
+            var companyId = CompanyId;
+            switch (rule.Code)
+            {
+                case "member_card.card_type_comp_rule":
+                    return new InitialSpecification<CardType>(x => !x.CompanyId.HasValue || x.CompanyId == companyId);
+                default:
+                    return null;
+            }
         }
     }
 }

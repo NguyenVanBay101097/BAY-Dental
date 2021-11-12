@@ -10,5 +10,6 @@ namespace Infrastructure.Services
     {
         Task<ApplicationRoleFunctionHasAccessResult> HasAccess(IEnumerable<string> functions);
         Task<GetPermission> GetPermission();
+        Task<GetPermission> GetPermission(string uid);
     }
 }

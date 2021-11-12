@@ -1,13 +1,14 @@
-import { SamplePrescriptionBasic, SamplePrescriptionsSave, SamplePrescriptionsDisplay } from './../sample-prescriptions.service';
-import { Component, OnInit } from '@angular/core';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { SamplePrescriptionsService, SamplePrescriptionsPaged } from '../sample-prescriptions.service';
-import { Subject } from 'rxjs';
+import { Component, Inject, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ActivatedRoute } from '@angular/router';
-import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { NotifyService } from 'src/app/shared/services/notify.service';
 import { SamplePrescriptionCreateUpdateDialogComponent } from '../sample-prescription-create-update-dialog/sample-prescription-create-update-dialog.component';
+import { SamplePrescriptionsPaged, SamplePrescriptionsService } from '../sample-prescriptions.service';
+import { SamplePrescriptionBasic, SamplePrescriptionsDisplay } from './../sample-prescriptions.service';
 
 @Component({
   selector: 'app-sample-prescription-list',
@@ -18,6 +19,7 @@ export class SamplePrescriptionListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   opened = false;
 
@@ -25,7 +27,12 @@ export class SamplePrescriptionListComponent implements OnInit {
   searchUpdate = new Subject<string>();
   title = 'Đơn thuốc mẫu';
 
-  constructor(private samplePrescriptionsService: SamplePrescriptionsService, private modalService: NgbModal, private route: ActivatedRoute) { }
+  constructor(
+    private samplePrescriptionsService: SamplePrescriptionsService,
+    private modalService: NgbModal,
+    private notifyService: NotifyService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -69,14 +76,16 @@ export class SamplePrescriptionListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 
   createItem() {
     let modalRef = this.modalService.open(SamplePrescriptionCreateUpdateDialogComponent, { size: 'xl', windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
-    modalRef.componentInstance.title = "Thêm: " + this.title;
+    modalRef.componentInstance.title = "Thêm đơn thuốc mẫu";
     modalRef.result.then(
       () => {
+        this.notifyService.notify('success', 'Lưu thành công');
         this.loadDataFromApi();
       },
       () => { }
@@ -85,10 +94,11 @@ export class SamplePrescriptionListComponent implements OnInit {
 
   editItem(item: SamplePrescriptionsDisplay) {
     let modalRef = this.modalService.open(SamplePrescriptionCreateUpdateDialogComponent, { size: 'xl', windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
-    modalRef.componentInstance.title = "Sửa: " + this.title;
+    modalRef.componentInstance.title = "Sửa đơn thuốc mẫu";
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(
       () => {
+        this.notifyService.notify('success', 'Lưu thành công');
         this.loadDataFromApi();
       },
       () => { }
@@ -97,11 +107,12 @@ export class SamplePrescriptionListComponent implements OnInit {
 
   deleteItem(item: SamplePrescriptionBasic) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static" });
-    modalRef.componentInstance.title = "Xóa: " + this.title;
+    modalRef.componentInstance.title = "Xóa đơn thuốc mẫu";
     modalRef.result.then(
       () => {
         this.samplePrescriptionsService.delete(item.id).subscribe(
           () => {
+            this.notifyService.notify('success', 'Xóa thành công');
             this.loadDataFromApi();
           },
           (err) => {

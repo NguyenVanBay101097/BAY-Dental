@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { SurveyAnswerDisplay, SurveyQuestionDisplay, SurveyQuestionService } from '../survey-question.service';
+import { SurveyQuestionDisplay, SurveyQuestionService } from '../survey-question.service';
 
 @Component({
   selector: 'app-survey-configuration-evaluation-dialog',
@@ -52,7 +52,10 @@ export class SurveyConfigurationEvaluationDialogComponent implements OnInit {
         if (this.question && this.question.answers) {
           var answers = this.formGroup.get('answers') as FormArray;
           this.question.answers.sort((a, b) => a.sequence - b.sequence).forEach(item => {
-            answers.push(this.fb.group(item));
+            let formGroupChild = this.fb.group(item);
+            formGroupChild.controls.name.setValidators(Validators.required);
+            formGroupChild.controls.name.updateValueAndValidity();
+            answers.push(formGroupChild);
           })
         }
 

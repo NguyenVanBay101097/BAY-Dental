@@ -1,13 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { LaboOrderCuDialogComponent } from 'src/app/shared/labo-order-cu-dialog/labo-order-cu-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { LaboOrderReceiptDialogComponent } from '../labo-order-receipt-dialog/labo-order-receipt-dialog.component';
 import { LaboOrderBasic, LaboOrderService, OrderLaboPaged } from '../labo-order.service';
 
@@ -19,6 +19,7 @@ import { LaboOrderBasic, LaboOrderService, OrderLaboPaged } from '../labo-order.
 export class OrderLaboListComponent implements OnInit {
   skip = 0;
   limit = 20;
+  pagerSettings: any;
   gridData: GridDataResult;
   details: LaboOrderBasic[];
   search: string;
@@ -40,7 +41,13 @@ export class OrderLaboListComponent implements OnInit {
   ];
   canUpdate = false;
   canUpdateSaleOrder = false;
-  constructor(private laboOrderService: LaboOrderService, private modalService: NgbModal, private intlService: IntlService, private notificationService: NotificationService, private checkPermissionService: CheckPermissionService) { }
+  constructor(
+    private laboOrderService: LaboOrderService,
+    private modalService: NgbModal,
+    private notificationService: NotificationService, 
+    private checkPermissionService: CheckPermissionService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -115,6 +122,7 @@ export class OrderLaboListComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 
@@ -123,7 +131,7 @@ export class OrderLaboListComponent implements OnInit {
     modalRef.componentInstance.labo = item;
     modalRef.result.then(() => {
       this.notificationService.show({
-        content: 'Cập nhật thành công',
+        content: 'Lưu thành công',
         hideAfter: 3000,
         position: { horizontal: 'center', vertical: 'top' },
         animation: { type: 'fade', duration: 400 },
@@ -131,6 +139,20 @@ export class OrderLaboListComponent implements OnInit {
       });
       this.loadDataFromApi();
     }, er => { });
+  }
+  
+  editLabo(item){
+    console.log(item);
+    const modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Cập nhật phiếu Labo';
+    modalRef.componentInstance.id = item.id;
+    modalRef.componentInstance.saleOrderLineId = item.saleOrderLine.id;
+    modalRef.componentInstance.saleOrderLineLabo = item;
+
+    modalRef.result.then(res => {
+      this.loadDataFromApi();
+    }, () => {
+    });
   }
 
   cellClick(item) {

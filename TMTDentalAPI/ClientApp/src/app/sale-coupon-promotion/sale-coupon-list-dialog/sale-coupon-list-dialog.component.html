@@ -10,7 +10,7 @@
             <input type="text" class="form-control" placeholder="Tìm kiếm" [(ngModel)]="search"
                 (ngModelChange)="this.searchUpdate.next($event)" />
         </div>
-        <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+        <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"
             (pageChange)="pageChange($event)">
             <kendo-grid-column field="code" title="Mã coupon">
             </kendo-grid-column>

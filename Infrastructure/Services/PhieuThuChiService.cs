@@ -95,6 +95,19 @@ namespace Infrastructure.Services
             self.AccountId = account.Id;
         }
 
+        public async Task ComputeProps(IEnumerable<PhieuThuChi> selfs)
+        {
+            var journalObj = GetService<IAccountJournalService>();
+            var journals = await journalObj.GetJournalWithDebitCreditAccount(selfs.Select(x => x.JournalId));
+            foreach (var self in selfs)
+            {
+                var journal = journals.FirstOrDefault(x => x.Id == self.JournalId);
+                self.CompanyId = journal.CompanyId;
+                var account = await ComputeDestinationAccount(self);
+                self.AccountId = account.Id;
+            }
+        }
+
         public async Task<AccountAccount> ComputeDestinationAccount(PhieuThuChi self)
         {
             var accountObj = GetService<IAccountAccountService>();
@@ -423,6 +436,20 @@ namespace Infrastructure.Services
             result.User = _mapper.Map<ApplicationUserSimple>(res.CreatedBy);
             return result;
 
+        }
+
+        public async Task<IEnumerable<PhieuThuChi>> GetPrintTemplate(IEnumerable<Guid> resIds)
+        {
+            var res = await SearchQuery(x => resIds.Contains(x.Id))
+               .Include(x => x.Company)
+               .Include(x => x.CreatedBy)
+               .Include(x => x.Partner)
+               .Include(x => x.LoaiThuChi)
+                .Include(x => x.Journal)
+                .Include(x => x.Agent)
+               .ToListAsync();
+
+            return res;
         }
 
         public async Task InsertModelsIfNotExists()

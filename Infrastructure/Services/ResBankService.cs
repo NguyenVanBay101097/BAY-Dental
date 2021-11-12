@@ -43,7 +43,7 @@ namespace Infrastructure.Services
             var rpBank = SearchQuery();
 
             if (!string.IsNullOrEmpty(val.Search))
-                rpBank = rpBank.Where(x => x.Name.Contains(val.Search) && x.BIC.Contains(val.Search));
+                rpBank = rpBank.Where(x => x.Name.Contains(val.Search) || x.BIC.Contains(val.Search));
 
             var items = await rpBank.Skip(val.Offset).Take(val.Limit)
                 .Select(x=> new ResBankSimple

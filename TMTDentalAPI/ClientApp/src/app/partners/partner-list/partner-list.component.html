@@ -36,7 +36,7 @@
 </div>
 
 <div class="o_content">
-  <kendo-grid #grid [data]="gridView" [pageable]="true" [pageSize]="pageSize" [skip]="skip"
+  <kendo-grid #grid [data]="gridView" [pageable]="pagerSettings" [pageSize]="pageSize" [skip]="skip"
     (pageChange)="pageChange($event)" [loading]="loading" [selectable]="{mode : 'single'}"
     (cellClick)="cellClick($event)" [kendoGridSelectBy]="'id'">
     <kendo-grid-column field="ref" title="Mã" width="100"></kendo-grid-column>

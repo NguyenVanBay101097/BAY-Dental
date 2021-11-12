@@ -1,0 +1,81 @@
+﻿<table border="0" cellpadding="5" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="width:100px"><img alt="{{o.company.name}}" class="img-fluid" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
+            <td>
+                <strong>{{o.company.name}}</strong><br />
+                Địa chỉ: {{o.company.address}}<br />
+                Điện thoại: {{o.company.phone}}<br />
+                Email: {{o.company.email}}
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h3 style="text-align:center">PHIẾU XUẤT KHO</h3>
+
+<p style="text-align:center">
+    Ngày {{date.now.day}} tháng {{date.now.month}} năm {{date.now.year}}<br />
+    <strong>Số: {{o.name}}</strong>
+</p>
+
+<h6>THÔNG TIN CHI TIẾT</h6>
+
+<table border="0" cellpadding="1" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td><strong>Đối tác</strong></td>
+            <td>{{o.partner?.name}}</td>
+            <td><strong>Ngày</strong></td>
+            <td>{{o.date | date.to_string '%d/%m/%Y'}}</td>
+        </tr>
+        <tr>
+            <td><strong>Ghi chú</strong></td>
+            <td>{{o.note ? o.note : ""}}</td>
+            <td> </td>
+            <td> </td>
+        </tr>
+    </tbody>
+</table>
+
+<h6>DANH SÁCH SẢN PHẨM XUẤT KHO</h6>
+
+<table border="1" cellpadding="5" cellspacing="0" style="width:100%">
+    <thead>
+        <tr>
+            <th scope="col" style="width:50px">STT</th>
+            <th scope="col" style="width:100px">Mã sản phẩm</th>
+            <th scope="col" style="width:150px">Sản phẩm</th>
+            <th scope="col" style="width:100px">Loại sản phẩm</th>
+            <th scope="col" style="width:80px">Số lượng</th>
+            <th scope="col" style="width:80px">Đơn vị tính</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!--{{ for line in o.move_lines }}-->
+        <tr>
+            <td style="text-align:center">{{for.index + 1}}</td>
+            <td>{{line.product?.default_code}}</td>
+            <td>{{line.name}}</td>
+            <td>{{line.product?.categ?.name}}</td>
+            <td style="text-align:right">{{line.product_uomqty}}</td>
+            <td>{{line.product_uom?.name}}</td>
+        </tr>
+        <!--{{end}}-->
+    </tbody>
+</table>
+
+<table border="0" cellpadding="0" cellspacing="1" style="float:right; width:50%">
+    <tbody>
+        <tr>
+            <td style="text-align:center">
+                <strong>Người lập phiếu</strong><br />
+                <em>(Ký, họ tên)</em><br />
+                <br />
+                <br />
+                <br />
+                <strong>{{o.created_by ? (o.created_by?.name | string.upcase) : ""}}</strong>
+            </td>
+        </tr>
+    </tbody>
+</table>

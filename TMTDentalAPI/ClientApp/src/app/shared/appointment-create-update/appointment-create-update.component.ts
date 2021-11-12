@@ -1,31 +1,29 @@
-import { UserPaged, UserService } from './../../users/user.service';
-import { UserCuDialogComponent } from './../../users/user-cu-dialog/user-cu-dialog.component';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
-import { PartnerService, PartnerFilter } from 'src/app/partners/partner.service';
-import { PartnerBasic, PartnerDisplay, PartnerSimple, PartnerPaged, PartnerCategorySimple, PartnerSimpleInfo } from 'src/app/partners/partner-simple';
-import * as _ from 'lodash';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { EmployeePaged, EmployeeSimple, EmployeeBasic } from 'src/app/employees/employee';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
-import { EmployeeService } from 'src/app/employees/employee.service';
-import { debounceTime, tap, switchMap, mergeMap } from 'rxjs/operators';
+import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { PartnerSearchDialogComponent } from 'src/app/partners/partner-search-dialog/partner-search-dialog.component';
-import { Router } from '@angular/router';
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
-import { UserSimple } from 'src/app/users/user-simple';
+import * as _ from 'lodash';
+import { Subject } from 'rxjs';
+import { debounceTime, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { AppointmentBasic } from 'src/app/appointment/appointment';
 import { AppointmentService } from 'src/app/appointment/appointment.service';
-import { PartnerCustomerCuDialogComponent } from '../partner-customer-cu-dialog/partner-customer-cu-dialog.component';
-import { PartnersService } from '../services/partners.service';
+import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
+import { EmployeeService } from 'src/app/employees/employee.service';
+import { PartnerSearchDialogComponent } from 'src/app/partners/partner-search-dialog/partner-search-dialog.component';
+import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
+import { PartnerService } from 'src/app/partners/partner.service';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductPaged, ProductService } from 'src/app/products/product.service';
+import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { UserSimple } from 'src/app/users/user-simple';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
-import { NotifyService } from '../services/notify.service';
-import { Subject } from 'rxjs';
-import { FacebookUserProfileService } from 'src/app/facebook-config/shared/facebook-user-profile.service';
-import { AppointmentBasic, AppointmentDisplay } from 'src/app/appointment/appointment';
+import { PartnerCustomerCuDialogComponent } from '../partner-customer-cu-dialog/partner-customer-cu-dialog.component';
+import { PartnersService } from '../services/partners.service';
+import { PrintService } from '../services/print.service';
+import { UserCuDialogComponent } from './../../users/user-cu-dialog/user-cu-dialog.component';
+import { UserPaged, UserService } from './../../users/user.service';
 
 @Component({
   selector: 'app-appointment-create-update',
@@ -78,7 +76,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     private odataPartnerService: PartnersService,
     private productService: ProductService,
     private employeeService: EmployeeService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private printService: PrintService
    ) { }
 
   ngOnInit() {
@@ -189,13 +188,30 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     return this.employeeService.getEmployeePaged(val);
   }
 
-  onSave() {
+  onSavePrint(){
     this.submitted = true;
-    
-    if (!this.formGroup.valid) {
+    if (!this.formGroup.valid)
       return false;
+    var appoint = this.dataSave();
+    this.appointmentService.create(appoint)
+    .pipe(
+      mergeMap((rs: any) => {
+        return this.appointmentService.get(rs.id);
+      })).subscribe( (res:any) => {
+        var basic = this.getBasic(res);
+        this.activeModal.close(basic);
+        this.notify("success","Lưu thành công");
+        this.appointId = res.id;
+        this.onPrint();
+      },
+      er => {
+        this.errorService.show(er);
+        this.submitted = false;
+      },
+    )
     }
-    
+
+  dataSave(){
     var appoint = this.formGroup.getRawValue();
     appoint.partnerId = appoint.partner ? appoint.partner.id : null;
     appoint.doctorId = appoint.doctor ? appoint.doctor.id : null;
@@ -207,6 +223,16 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     if (this.state != 'cancel') {
       appoint.reason = null;
     }
+    return appoint;
+  }
+
+  onSave() {
+    this.submitted = true;
+    
+    if (!this.formGroup.valid) {
+      return false;
+    }
+    var appoint = this.dataSave();
 
     if (this.appointId) {   
       this.appointmentService.update(this.appointId, appoint).subscribe(
@@ -281,7 +307,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       user: item.user ? item.user : null,
       dateObj: [null, Validators.required],
       timeObj: [null, Validators.required],
-      note: null,
+      note: item.note ? item.note : null,
       companyId: item.companyId ? item.companyId : null,
       doctor: item.doctor ? item.doctor : null,
       timeExpected: 30,
@@ -448,7 +474,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
           // this.formGroup.get('apptHour').patchValue(date.getHours());
           // this.formGroup.get('apptMinute').patchValue(date.getMinutes());
 
-          var appoint = this.formGroup.value;
+          // var appoint = this.formGroup.value;
           //console.log(appoint);
 
           if (rs.partner) {
@@ -576,5 +602,11 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       this.formGroup.get('reason').clearValidators();
       this.formGroup.get('reason').updateValueAndValidity();
     }
+  }
+
+  onPrint() {
+    this.appointmentService.print(this.appointId).subscribe((res: any) => {
+      this.printService.printHtml(res.html);
+    });
   }
 }

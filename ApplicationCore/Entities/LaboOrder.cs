@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Text;
 
 namespace ApplicationCore.Entities
@@ -153,5 +155,24 @@ namespace ApplicationCore.Entities
         /// list gửu kèm
         /// </summary>
         public ICollection<LaboOrderProductRel> LaboOrderProductRel { get; set; } = new List<LaboOrderProductRel>();
+
+        public ICollection<LaboWarranty> LaboWarranties { get; set; } = new List<LaboWarranty>();
+        [NotMapped]
+        public string TeethDisplay
+        {
+            get
+            {
+                return string.Join(", ", LaboOrderToothRel.Select(x => x.Tooth.Name));
+            }
+        }
+
+        [NotMapped]
+        public string LaboOrderProductsDisplay
+        {
+            get
+            {
+                return string.Join(", ", LaboOrderProductRel.Select(x => x.Product.Name));
+            }
+        }
     }
 }

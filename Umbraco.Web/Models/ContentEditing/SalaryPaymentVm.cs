@@ -88,9 +88,10 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public decimal Amount { get; set; }
 
-        public string AmountString
+        public string AmountText
         {
-            get; set;
+            get { return AmountToText.amount_to_text(Amount); }
+            set { }
         }
 
         public string UserName { get; set; }
@@ -108,10 +109,15 @@ namespace Umbraco.Web.Models.ContentEditing
         public ICollection<Guid> Ids { get; set; } = new List<Guid>();
     }
 
-    public class SalaryPaymentSalary
+    public class SalaryPaymentPrint
     {
-        public ICollection<MultiSalaryPaymentVm> MultiSalaryPayments { get; set; } = new List<MultiSalaryPaymentVm>();
+        public ICollection<SalaryPaymentPrintVm> Salaries { get; set; } = new List<SalaryPaymentPrintVm>();
     }
+
+    //public class SalaryPaymentPrint
+    //{
+    //    public IEnumerable<MultiSalaryPaymentVm> MultiSalaryPayments { get; set; } = new List<MultiSalaryPaymentVm>();
+    //}
 
     public class SalaryPaymentBasic
     {

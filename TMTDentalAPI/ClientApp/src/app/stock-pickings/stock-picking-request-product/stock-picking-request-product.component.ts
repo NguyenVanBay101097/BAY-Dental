@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -6,6 +6,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ProductRequestPaged } from 'src/app/sale-orders/product-request';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { ProductRequestService } from 'src/app/shared/product-request.service';
 import { StockPickingRequestProductDialogComponent } from '../stock-picking-request-product-dialog/stock-picking-request-product-dialog.component';
 
@@ -18,6 +19,7 @@ export class StockPickingRequestProductComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   search: string;
   states: any[] = [{ value: 'confirmed', name: 'Đang yêu cầu' }, { value: 'done', name: 'Đã xuất' }];
@@ -34,8 +36,9 @@ export class StockPickingRequestProductComponent implements OnInit {
     private modalService: NgbModal,
     private intlService: IntlService,
     private productRequestService: ProductRequestService,
-    private notificationService: NotificationService
-  ) { }
+    private notificationService: NotificationService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.dateFrom = this.monthStart;
@@ -114,7 +117,7 @@ export class StockPickingRequestProductComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
-
 }

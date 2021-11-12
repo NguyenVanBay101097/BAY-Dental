@@ -77,6 +77,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? LaboPrice { get; set; }
 
         public decimal? MinInventory { get; set; }
+        public string Origin { get; set; }
+        public decimal? Expiry { get; set; }
     }
 
     public class ProductPaged
@@ -164,10 +166,13 @@ namespace Umbraco.Web.Models.ContentEditing
     public class ProductMedicineImportExcelRow
     {
         public string Name { get; set; }
+        public string DefaultCode { get; set; }
         public string CategName { get; set; }
         public decimal ListPrice { get; set; }
         public string UoM { get; set; }
         public decimal? MinInventory { get; set; }
+        public string Origin { get; set; }
+        public decimal? Expiry { get; set; }
     }
 
     public class ProductMedicineUpdateExcelRow
@@ -177,6 +182,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal ListPrice { get; set; }
         public string UoM { get; set; }
         public string DefaultCode { get; set; }
+        public decimal? MinInventory { get; set; }
+        public string Origin { get; set; }
+        public decimal? Expiry { get; set; }
     }
 
     public class ProductProductImportExcelRow
@@ -196,6 +204,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string UOMPO { get; set; }
 
         public decimal? MinInventory { get; set; }
+        public string Origin { get; set; }
+        public decimal? Expiry { get; set; }
     }
 
     public class ProductLaboImportExcelRow

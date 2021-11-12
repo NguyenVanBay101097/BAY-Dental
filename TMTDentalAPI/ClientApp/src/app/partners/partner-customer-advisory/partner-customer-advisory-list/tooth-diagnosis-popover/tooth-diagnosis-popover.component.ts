@@ -1,10 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { anyChanged } from '@progress/kendo-angular-common';
 import { MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
-import { result } from 'lodash';
 import { Observable, of, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
-import { ProductPaged, ProductService } from 'src/app/products/product.service';
 import { ToothDiagnosisPaged, ToothDiagnosisSave, ToothDiagnosisService } from 'src/app/tooth-diagnosis/tooth-diagnosis.service';
 
 @Component({
@@ -30,7 +27,6 @@ export class ToothDiagnosisPopoverComponent implements OnInit {
   @ViewChild('multiSelect', { static: true }) multiSelect: MultiSelectComponent;
   constructor(
     private toothDiagnosisService: ToothDiagnosisService,
-    private productService: ProductService
   ) { }
 
   ngOnInit() {
@@ -49,7 +45,7 @@ export class ToothDiagnosisPopoverComponent implements OnInit {
       popover.close();
     } else {
       this.loadPopOver();
-      this.mytags = mytags;
+      this.mytags = this.tags.slice();
       popover.open({ mytags });
     }
   }
@@ -68,9 +64,9 @@ export class ToothDiagnosisPopoverComponent implements OnInit {
   loadPopOver(q?: string) {
     this.getPageDiagnosis(q);
   }
-  update(tags) {
+  update() {
     this.popover.close();
-    this.onSave.emit(tags);
+    this.onSave.emit(this.mytags);
   }
 
   public valueNormalizer = (text$: Observable<string>): any => text$.pipe(

@@ -1,20 +1,17 @@
 
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { debounceTime, tap, switchMap, map } from 'rxjs/operators';
-import { ProductFilter, ProductService } from 'src/app/products/product.service';
-import { ProductSimple } from 'src/app/products/product-simple';
-import * as _ from 'lodash';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
-import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
-import { UserSimple } from 'src/app/users/user-simple';
-import { UserPaged, UserService } from 'src/app/users/user.service';
-import { AuthService } from 'src/app/auth/auth.service';
-import { SaleOrderLineService, SaleOrderLineOnChangeProduct } from 'src/app/core/services/sale-order-line.service';
-import { EmployeeService } from 'src/app/employees/employee.service';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import * as _ from 'lodash';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { SaleOrderLineOnChangeProduct, SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
 import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
+import { EmployeeService } from 'src/app/employees/employee.service';
+import { ProductSimple } from 'src/app/products/product-simple';
+import { ProductFilter, ProductService } from 'src/app/products/product.service';
+import { ToothDisplay, ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
+import { ToothCategoryBasic, ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
 
 @Component({
   selector: 'app-sale-order-line-dialog',
@@ -46,8 +43,7 @@ export class SaleOrderLineDialogComponent implements OnInit {
     private saleLineService: SaleOrderLineService,
     private toothService: ToothService,
     private toothCategoryService: ToothCategoryService,
-    private userService: UserService,
-    private authService: AuthService, private employeeService: EmployeeService
+    private employeeService: EmployeeService
   ) { }
 
   ngOnInit() {
@@ -61,8 +57,8 @@ export class SaleOrderLineDialogComponent implements OnInit {
       discountType: 'percentage',
       discountFixed: 0,
       priceSubTotal: 1,
-      amountPaid:0,
-      amountResidual:0,
+      amountPaid: 0,
+      amountResidual: 0,
       diagnostic: null,
       toothCategory: null,
       state: 'draft',
@@ -82,7 +78,7 @@ export class SaleOrderLineDialogComponent implements OnInit {
         if (this.line.employee) {
           this.filteredEmployees = _.unionBy(this.filteredEmployees, [this.line.employee], 'id');
         }
-       
+
         this.saleLineForm.patchValue(this.line);
         this.teethSelected = [...this.line.teeth];
 
@@ -323,8 +319,8 @@ export class SaleOrderLineDialogComponent implements OnInit {
       discountType: 'percentage',
       discountFixed: 0,
       priceSubTotal: 1,
-      amountPaid:0,
-      amountResidual:0,
+      amountPaid: 0,
+      amountResidual: 0,
       diagnostic: null,
       toothCategory: null,
       state: 'draft',

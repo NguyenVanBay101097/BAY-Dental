@@ -1,13 +1,14 @@
-import { PartnerSourcePaged, PartnerSourceBasic } from "./../partner-source.service";
-import { Component, OnInit } from "@angular/core";
+import { Component, Inject, OnInit } from "@angular/core";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { GridDataResult, PageChangeEvent } from "@progress/kendo-angular-grid";
 import { Subject } from "rxjs";
-import { PartnerSourceService } from "../partner-source.service";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { map, debounceTime, distinctUntilChanged } from "rxjs/operators";
+import { debounceTime, distinctUntilChanged, map } from "rxjs/operators";
 import { ConfirmDialogComponent } from "src/app/shared/confirm-dialog/confirm-dialog.component";
+import { PageGridConfig, PAGER_GRID_CONFIG } from "src/app/shared/pager-grid-kendo.config";
+import { NotifyService } from "src/app/shared/services/notify.service";
 import { PartnerSourceCreateUpdateDialogComponent } from "../partner-source-create-update-dialog/partner-source-create-update-dialog.component";
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { PartnerSourceService } from "../partner-source.service";
+import { PartnerSourceBasic, PartnerSourcePaged } from "./../partner-source.service";
 
 @Component({
   selector: "app-partner-source-list",
@@ -18,6 +19,7 @@ export class PartnerSourceListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
 
   search: string;
@@ -25,8 +27,9 @@ export class PartnerSourceListComponent implements OnInit {
   constructor(
     private partnerSourceService: PartnerSourceService,
     private modalService: NgbModal,
-    private showErrorService: AppSharedShowErrorService
-  ) { }
+    private notifyService: NotifyService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -64,6 +67,7 @@ export class PartnerSourceListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 
@@ -71,6 +75,7 @@ export class PartnerSourceListComponent implements OnInit {
     let modalRef = this.modalService.open(PartnerSourceCreateUpdateDialogComponent, { size: 'xl', windowClass: "o_technical_modal", keyboard: false, backdrop: "static", });
     modalRef.componentInstance.title = "Thêm nguồn khách hàng";
     modalRef.result.then(() => {
+      this.notifyService.notify("success","Lưu thành công");
       this.loadDataFromApi();
     }, () => { }
     );
@@ -81,6 +86,7 @@ export class PartnerSourceListComponent implements OnInit {
     modalRef.componentInstance.title = "Sửa nguồn khách hàng";
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {
+      this.notifyService.notify("success","Lưu thành công");
       this.loadDataFromApi();
     }, () => { }
     );
@@ -88,9 +94,10 @@ export class PartnerSourceListComponent implements OnInit {
 
   deleteItem(item: PartnerSourceBasic) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: "sm", windowClass: "o_technical_modal", keyboard: false, backdrop: "static", });
-    modalRef.componentInstance.title = "Xóa: Nguồn khách hàng";
+    modalRef.componentInstance.title = "Xóa nguồn khách hàng";
     modalRef.result.then(() => {
       this.partnerSourceService.delete(item.id).subscribe(() => {
+      this.notifyService.notify("success","Xóa thành công");
         this.loadDataFromApi();
       }
       );

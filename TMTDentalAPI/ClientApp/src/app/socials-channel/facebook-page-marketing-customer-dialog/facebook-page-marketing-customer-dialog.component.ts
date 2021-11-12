@@ -1,17 +1,15 @@
-import { PartnerSimpleContact } from './../../partners/partner-simple';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FacebookUserProfilesService } from '../facebook-user-profiles.service';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { FacebookTagsPaged, FacebookTagsService } from '../facebook-tags.service';
-import { NotificationService } from '@progress/kendo-angular-notification';
-import { Subject, Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, tap, switchMap } from 'rxjs/operators';
-import { PartnerService, PartnerFilter } from 'src/app/partners/partner.service';
-import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
-import { FormGroup, FormBuilder } from '@angular/forms';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { PartnerPaged } from 'src/app/partners/partner-simple';
+import { PartnerService } from 'src/app/partners/partner.service';
 import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
+import { FacebookUserProfilesService } from '../facebook-user-profiles.service';
+import { PartnerSimpleContact } from './../../partners/partner-simple';
 
 @Component({
   selector: 'app-facebook-page-marketing-customer-dialog',
@@ -73,7 +71,7 @@ export class FacebookPageMarketingCustomerDialogComponent implements OnInit {
       this.profile = res;
       this.formGroup.patchValue(res);
       if (res.partner) {
-        this.filteredPartners = _.unionBy(this.filteredPartners , [res.partner], 'id');
+        this.filteredPartners = _.unionBy(this.filteredPartners, [res.partner], 'id');
       }
     });
   }

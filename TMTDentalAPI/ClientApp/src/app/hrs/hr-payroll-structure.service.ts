@@ -1,7 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Injectable, Inject } from '@angular/core';
-import { identifierModuleUrl } from '@angular/compiler';
 
 export class HrPayrollStructurePaging {
     offset: number;

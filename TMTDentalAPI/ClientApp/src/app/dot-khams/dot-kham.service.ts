@@ -1,18 +1,12 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Injectable, Inject } from '@angular/core';
-import { PartnerSimple } from '../partners/partner-simple';
-import { UserSimple } from '../users/user-simple';
-import { GridDataResult } from '@progress/kendo-angular-grid';
-import { map } from 'rxjs/operators';
-import { ToaThuocBasic } from '../toa-thuocs/toa-thuoc.service';
-import { DotKhamLineDisplay, DotKhamLineBasic } from '../dot-kham-lines/dot-kham-line.service';
-import { LaboOrderLineBasic } from '../labo-order-lines/labo-order-line.service';
 import { AccountInvoiceCbx } from '../account-invoices/account-invoice.service';
-import { DotKhamPaging, DotKhamDefaultGet, DotKhamDisplay, DotKhamStepDisplay, DotKhamPatch, DotkhamEntitySearchBy } from './dot-khams';
-import { AppointmentDisplay } from '../appointment/appointment';
-import { IrAttachmentSearchRead, IrAttachmentBasic } from '../shared/shared';
+import { LaboOrderLineBasic } from '../labo-order-lines/labo-order-line.service';
 import { LaboOrderBasic } from '../labo-orders/labo-order.service';
+import { IrAttachmentBasic, IrAttachmentSearchRead } from '../shared/shared';
+import { ToaThuocBasic } from '../toa-thuocs/toa-thuoc.service';
+import { DotKhamDefaultGet, DotKhamDisplay, DotkhamEntitySearchBy, DotKhamPaging, DotKhamStepDisplay } from './dot-khams';
 
 
 

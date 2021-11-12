@@ -1,11 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { NotificationService } from '@progress/kendo-angular-notification';
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
-import { WorkEntryTypeService } from 'src/app/work-entry-types/work-entry-type.service';
-import { TimeKeepingService } from '../time-keeping.service';
+import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-time-keeping-popover',
@@ -22,13 +17,7 @@ export class TimeKeepingPopoverComponent implements OnInit {
   @ViewChild('popOver', { static: true }) public popover: NgbPopover;
 
   constructor(
-    private fb: FormBuilder,
-    private timeKeepingServive: TimeKeepingService,
-    private intl: IntlService,
-    private workEntryTypeService: WorkEntryTypeService,
-    private notificationService: NotificationService,
-    private showErrorService: AppSharedShowErrorService,
-    private modalService: NgbModal) { }
+    private fb: FormBuilder) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({

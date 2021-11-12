@@ -3,15 +3,13 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { AccountJournalFilter, AccountJournalService, AccountJournalSimple } from 'src/app/account-journals/account-journal.service';
 import { AuthService } from 'src/app/auth/auth.service';
-import { MedicineOrderService, PrecscriptPaymentDisplay, PrecsriptionPaymentSave } from '../medicine-order.service';
-import { PrintService } from 'src/app/shared/services/print.service';
-import { Router } from '@angular/router';
-import { PageChangeEvent } from '@progress/kendo-angular-grid';
-import { NotificationService } from '@progress/kendo-angular-notification';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PrintService } from 'src/app/shared/services/print.service';
+import { MedicineOrderService, PrecscriptPaymentDisplay } from '../medicine-order.service';
 
 @Component({
   selector: 'app-medicine-order-create-dialog',
@@ -40,7 +38,6 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
     public activeModal: NgbActiveModal,
     private medicineOrderService: MedicineOrderService,
     private intlService: IntlService,
-    private router: Router,
     private notificationService: NotificationService,
     private modalService: NgbModal
   ) { }
@@ -222,7 +219,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
       return false;
     }
 
-    if(this.medicineOrderLines.length <= 0) {
+    if (this.medicineOrderLines.length <= 0) {
       this.notificationService.show({
         content: 'Đơn thuốc không có thuốc để thanh toán',
         hideAfter: 3000,
@@ -231,7 +228,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
         type: { style: 'error', icon: true }
       });
       return false;
-    
+
     }
 
     var val = this.formGroup.value;
@@ -257,7 +254,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
       return false;
     }
 
-    if(this.medicineOrderLines.length <= 0) {
+    if (this.medicineOrderLines.length <= 0) {
       this.notificationService.show({
         content: 'Đơn thuốc không có thuốc để thanh toán',
         hideAfter: 3000,
@@ -281,7 +278,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
         });
         this.activeModal.close();
         this.medicineOrderService.getPrint(res.id).subscribe((result: any) => {
-          this.printService.printHtml(result);
+          this.printService.printHtml(result.html);
         });
       }
     )
@@ -318,7 +315,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
       return;
     }
     this.medicineOrderService.getPrint(this.id).subscribe((result: any) => {
-      this.printService.printHtml(result);
+      this.printService.printHtml(result.html);
     });
   }
 

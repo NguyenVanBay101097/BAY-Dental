@@ -48,7 +48,7 @@
         <input type="radio" name="filterActive" class="btn-check" id="saleProgramInactive" [value]="false" [(ngModel)]="filterActive" (change)="changeFilterActive()">
         <label for="saleProgramInactive" class="btn btn rounded-left-0" [ngClass]="!filterActive ? 'btn-primary' : 'btn-outline-primary'">Chưa kích hoạt</label>
     </div>
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)" [selectable]="true" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading" (pageChange)="pageChange($event)" [selectable]="true" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
         <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
         <kendo-grid-column field="name" title="Chương trình">
         </kendo-grid-column>

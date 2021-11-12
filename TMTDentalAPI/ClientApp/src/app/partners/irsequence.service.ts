@@ -1,7 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { inject } from '@angular/core/testing';
-import { Observable } from 'rxjs';
 import { ODataService } from '../odata.service';
 
 

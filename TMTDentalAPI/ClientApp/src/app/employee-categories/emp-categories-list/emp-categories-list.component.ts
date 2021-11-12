@@ -1,14 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { FormGroup, FormBuilder } from '@angular/forms';
-import { map, distinctUntilChanged, debounceTime } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import { DialogRef, DialogCloseResult, WindowService, DialogService, WindowRef, WindowCloseResult } from '@progress/kendo-angular-dialog';
-import { EmployeeCategoryPaged, EmployeeCategoryBasic } from '../emp-category';
-import { EmpCategoryService } from '../emp-category.service';
-import { EmpCategoriesCreateUpdateComponent } from '../emp-categories-create-update/emp-categories-create-update.component';
+import { Component, Inject, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { EmpCategoriesCreateUpdateComponent } from '../emp-categories-create-update/emp-categories-create-update.component';
+import { EmployeeCategoryBasic, EmployeeCategoryPaged } from '../emp-category';
+import { EmpCategoryService } from '../emp-category.service';
 
 @Component({
   selector: 'app-emp-categories-list',
@@ -20,13 +19,18 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 })
 export class EmpCategoriesListComponent implements OnInit {
 
-  constructor(private fb: FormBuilder, private service: EmpCategoryService, private modalService: NgbModal) { }
+  constructor(
+    private service: EmpCategoryService,
+    private modalService: NgbModal,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   loading = false;
   gridView: GridDataResult;
   windowOpened: boolean = false;
   skip = 0;
-  pageSize = 20;
+  limit = 20;
+  pagerSettings: any;
 
   search: string;
   searchUpdate = new Subject<string>();
@@ -40,7 +44,7 @@ export class EmpCategoriesListComponent implements OnInit {
   getCategEmployeesList() {
     this.loading = true;
     var empPaged = new EmployeeCategoryPaged();
-    empPaged.limit = this.pageSize;
+    empPaged.limit = this.limit;
     empPaged.offset = this.skip;
     if (this.search) {
       empPaged.search = this.search;
@@ -72,6 +76,7 @@ export class EmpCategoriesListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.getCategEmployeesList();
   }
 

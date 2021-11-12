@@ -1,0 +1,44 @@
+<div class="card border-0 mt-3">
+    <div *ngIf="!preferentialCards?.length" class="card-body mt-3 pt-0">
+        <div class="card-body border border-primary rounded">
+            <div class="d-flex justify-content-between">
+                <h5 class="card-header-title text-primary">
+                    Thẻ ưu đãi dịch vụ
+                </h5>
+                <div class="text-primary">
+                    <a (click)="createCard()"><i class="fas fa-plus"></i></a>
+                </div>
+            </div>
+            <div class="mt-3 text-center opacity-8">
+                Chưa có thẻ ưu đãi dịch vụ
+            </div>
+        </div>
+    </div>
+    <div *ngIf="preferentialCards?.length" class="card-body">
+        <div class="d-flex justify-content-between">
+            <h5 class="card-header-title text-primary">
+                Thẻ ưu đãi dịch vụ
+            </h5>
+            <div class="card-header-icon text-primary">
+                <a (click)="createCard()"><i class="fas fa-plus"></i></a>
+            </div>
+        </div>
+        <ng-container *ngFor="let item of preferentialCards">
+            <div class="card mb-3">
+                <div class="card-body card-body-item">
+                    <div class="d-flex justify-content-between">
+                        <h5>
+                            {{item.barcode}}
+                        </h5>
+                        <div class="card-header-edit text-primary">
+                            <a (click)="editCard(item)"><i class="far fa-edit"></i></a>
+                        </div>
+                    </div>
+                    <div [class]="getStateClass(item.state)" style="min-width: 76px;">{{getState(item.state)}}</div>
+                    <p class="card-text opacity-8 mb-0">Hạng thẻ: {{item?.cardType?.name}}</p>
+                    <p class="card-text opacity-8 mb-0">Hạn sử dụng: {{item.activatedDate ? getExpiry(item) : ''}}</p>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</div>

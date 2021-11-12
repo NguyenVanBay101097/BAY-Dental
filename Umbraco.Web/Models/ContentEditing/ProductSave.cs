@@ -48,6 +48,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public decimal ListPrice { get; set; }
         public decimal? MinInventory { get; set; }
+        public string Origin { get; set; }
+        public decimal? Expiry { get; set; }
 
         public IEnumerable<ProductStepDisplay> StepList { get; set; } = new List<ProductStepDisplay>();
         

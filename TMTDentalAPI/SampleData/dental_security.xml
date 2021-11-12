@@ -182,6 +182,12 @@
 			<field name="global" eval="True"/>
 		</record>
 
+		<record model="ir.rule" id="labo.labo_warranty_comp_rule">
+			<field name="name">Labo Warranty company rule</field>
+			<field name="model_id" ref="labo.model_labo_warranty"/>
+			<field name="global" eval="True"/>
+		</record>
+
 		<record model="ir.rule" id="sale.appointment_comp_rule">
 			<field name="name">Appointment multi-company</field>
 			<field name="model_id" ref="sale.model_appointment"/>
@@ -211,6 +217,18 @@
 			<field name="model_id" ref="sale_coupon.model_sale_coupon"/>
 			<field name="global" eval="True"/>
 		</record>
+    
+    <record model="ir.rule" id="member_card.card_type_comp_rule">
+			<field name="name"> Card Type company rule</field>
+			<field name="model_id" ref="member_card.model_card_type"/>
+			<field name="global" eval="True"/>
+		</record>
+
+    <record model="ir.rule" id="member_card.card_card_comp_rule">
+      <field name="name"> Card Card company rule</field>
+      <field name="model_id" ref="member_card.model_card_card"/>
+      <field name="global" eval="True"/>
+    </record>
 
 		<record model="ir.rule" id="service_card.service_card_order_comp_rule">
 			<field name="name">Service Card Order multi-company</field>
@@ -417,7 +435,18 @@
 			<field name="model_id" ref="base.model_customer_receipt"/>
 			<field name="global" eval="True"/>
 		</record>
-		
+
+		<record model="ir.rule" id="base.print_template_config_comp_rule">
+			<field name="name">Print Template Config multi-company</field>
+			<field name="model_id" ref="base.model_print_template_config"/>
+			<field name="global" eval="True"/>
+		</record>
+
+    <record model="ir.rule" id="hr.hr_job_comp_rule">
+      <field name="name">Job multi company rule</field>
+      <field name="model_id" ref="hr.model_hr_job"/>
+      <field name="global" eval="True"/>
+    </record>
 	</data>
 </odoo>
 

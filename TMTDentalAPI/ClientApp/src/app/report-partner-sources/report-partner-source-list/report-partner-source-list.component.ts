@@ -1,14 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { Subject } from 'rxjs';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { ReportSource, ReportPartnerSourceSearch } from "./../report-partner-sources.service";
-import { ReportPartnerSourcesService } from '../report-partner-sources.service';
-import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
+import { Component, OnInit } from '@angular/core';
 import { LegendLabelsContentArgs } from '@progress/kendo-angular-charts';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { PartnerSourceSimple } from 'src/app/partners/partner-simple';
-import { PartnerSourcePaged, PartnerSourceService } from 'src/app/partner-sources/partner-source.service';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { IntlService } from '@progress/kendo-angular-intl';
+import { ChartDataset, ChartOptions } from 'chart.js';
+import { ReportPartnerSourcesService } from '../report-partner-sources.service';
+import { ReportPartnerSourceSearch, ReportSource } from "./../report-partner-sources.service";
 
 @Component({
   selector: 'app-report-partner-source-list',
@@ -32,7 +28,22 @@ export class ReportPartnerSourceListComponent implements OnInit {
 
   // Pie
   public pieData: any[] = [];
-
+  public pieChartLabels: string[] = [];
+  public pieChartOptions: ChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom'
+      }
+    }
+  };
+  public pieChartData: ChartDataset[] = [
+    { 
+      label: 'Khách hàng',
+      data: [],
+    }
+  ];
   constructor(private intlService: IntlService, private reportPartnerSource: ReportPartnerSourcesService) { 
     this.labelContent = this.labelContent.bind(this);
   }
@@ -72,6 +83,8 @@ export class ReportPartnerSourceListComponent implements OnInit {
     for (let i = 0; i < this.reportResults.length; i++) {
       this.pieData.push({category: this.reportResults[i].name || 'Chưa xác định', value:this.reportResults[i].countPartner , percentage: (this.reportResults[i].countPartner / this.reportResults[i].totalPartner * 100).toFixed(2)})
      };
+    this.pieChartLabels = this.pieData.map(x => x.category);
+    this.pieChartData[0].data = this.pieData.map(x => x.value);
   }
 
   public labelContent(args: LegendLabelsContentArgs): string {

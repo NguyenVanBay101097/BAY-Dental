@@ -1,7 +1,7 @@
 <div class="container py-3">
     <div class="flex-0-0-auto mb-2">
         <div class="filter d-flex flex-wrap mb-2">
-            <app-date-range-picker-filter [opens]="'right'" class="mr-1" [startDate]="dateFrom" [endDate]="dateTo"
+            <app-date-range-picker-filter [showClearButton]="false" [opens]="'right'" class="mr-1" [startDate]="dateFrom" [endDate]="dateTo"
                 (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
             <kendo-combobox width="auto" [placeholder]="'Tất cả chi nhánh'" class="mr-1" [valueField]="'id'"
                 [textField]="'name'" [filterable]="true" [data]="listCompany"
@@ -19,27 +19,17 @@
             </div>
         </div>
         <div class="mb-3">
-            <kendo-chart class="mh-chart-year">
-                <kendo-chart-title text="BÁO CÁO THEO GIỜ TIẾP NHẬN">
-                </kendo-chart-title>
-                <kendo-chart-legend position='bottom' orientation='horizontal'></kendo-chart-legend>
-                <kendo-chart-series>
-                    <ng-container *ngIf="customerReceiptTimes.length > 0">
-                        <kendo-chart-series-item type="column" [data]="customerReceiptTimes" field="timeRangeCount"
-                            categoryField="timeRange" [style]="'smooth'">
-                            <kendo-chart-series-item-tooltip>
-                                <ng-template let-dataItem="dataItem">
-                                    <b>{{dataItem.timeRange}}</b>:
-                                    <b> Số lượng: {{dataItem.timeRangeCount || 0 | number }} </b>
-                                </ng-template>
-                            </kendo-chart-series-item-tooltip>
-                        </kendo-chart-series-item>
-                    </ng-container>
-                </kendo-chart-series>
-            </kendo-chart>
+            <div style="position: relative; height: 300px;">
+                <canvas baseChart
+                    [type]="'bar'"
+                    [labels]="barChartLabels"
+                    [datasets]="barChartData"
+                    [options]="barChartOptions">
+                </canvas>
+            </div>
         </div>
     </div>
-    <kendo-grid #grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+    <kendo-grid #grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"
         (pageChange)="pageChange($event)">
         <kendo-grid-column title="Giờ tiếp nhận">
             <ng-template kendoGridCellTemplate let-dataItem>

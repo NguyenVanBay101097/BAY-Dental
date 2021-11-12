@@ -123,19 +123,19 @@
                         <label class="o_form_label">Nhãn</label>
                     </td>
                     <td style="width: 100%">
-                        <app-partner-category-popover [popOverPlace]="'top'" [tags]="categories"
+                        <app-partner-category-popover [popOverPlace]="'right'" [tags]="categories"
                             (onSave)="categories=$event" [rowPartnerId]="partner.id">
                         </app-partner-category-popover>
                     </td>
                 </tr>
-                <tr>
+                <!-- <tr>
                     <td class="o_td_label">
-                        <label class="o_form_label">Hạng thành viên</label>
+                        <label class="o_form_label">Thẻ thành viên</label>
                     </td>
                     <td style="width: 100%">
-                        <span class="o_field_widget">{{partner.memberLevel?.name}}</span>
+                        <span class="o_field_widget">{{partner?.cardTypeName}}</span>
                     </td>
-                </tr>
+                </tr> -->
                 <tr>
                     <td class="o_td_label">
                         <label class="o_form_label">Điểm tích lũy</label>

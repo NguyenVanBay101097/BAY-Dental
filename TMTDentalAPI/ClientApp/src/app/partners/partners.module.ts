@@ -92,7 +92,12 @@ import { PartnerCustomerDebtPaymentHistoryListComponent } from './partner-custom
 import { PartnerCustomerDebtManagementComponent } from './partner-customer-debt-management/partner-customer-debt-management.component';
 import { PartnerOverviewTreatmentHistoryComponent } from './partner-overview/partner-overview-treatment-history/partner-overview-treatment-history.component';
 import { AccountInvoiceReportService } from '../account-invoice-reports/account-invoice-report.service';
-import { CatalogModule } from '../catalog/catalog.module';
+import { PartnerSupplierListComponent } from '../catalog/partner-supplier-list/partner-supplier-list.component';
+import { PartnerOverviewPreferentialCardsComponent } from './partner-overview/partner-overview-preferential-cards/partner-overview-preferential-cards.component';
+import { PartnerOverviewMemberCardsComponent } from './partner-overview/partner-overview-member-cards/partner-overview-member-cards.component';
+import { CardCardsModule } from '../card-cards/card-cards.module';
+import { CardCardsMemberCreateDialogComponent } from '../service-card-cards/card-cards-member-create-dialog/card-cards-member-create-dialog.component';
+// import { CatalogModule } from '../catalog/catalog.module';
 
 
 
@@ -106,7 +111,7 @@ import { CatalogModule } from '../catalog/catalog.module';
     PartnerCustomerInvoicesComponent,
     PartnerDetailListComponent,
     PartnerInvoiceLinesComponent,
-    // PartnerImportComponent,
+    PartnerImportComponent,
     PartnerPaymentsComponent,
     PurchaseOrderRefundComponent,
     PartnerCardsTabPaneComponent,
@@ -175,7 +180,10 @@ import { CatalogModule } from '../catalog/catalog.module';
     PartnerCustomerDebtPaymentDialogComponent,
     PartnerCustomerDebtPaymentHistoryListComponent,
     PartnerCustomerDebtManagementComponent,
-    PartnerOverviewTreatmentHistoryComponent
+    PartnerOverviewTreatmentHistoryComponent,
+    PartnerSupplierListComponent,
+    PartnerOverviewPreferentialCardsComponent,
+    PartnerOverviewMemberCardsComponent,
   ],
   imports: [
     CommonModule,
@@ -191,7 +199,8 @@ import { CatalogModule } from '../catalog/catalog.module';
     PartnerSourcesModule,
     PartnerAdvancesModule,
     HistoryModule,
-    CatalogModule
+    CardCardsModule,
+    // CatalogModule
   ],
   entryComponents: [
     PartnerCreateUpdateComponent,
@@ -208,7 +217,8 @@ import { CatalogModule } from '../catalog/catalog.module';
     PartnerCustomerAdvisoryCuDialogComponent,
     PartnerCustomerTreatmentFastPromotionComponent,
     PartnerCustomerTreatmentLineFastPromotionComponent,
-    PartnerCustomerDebtPaymentDialogComponent
+    PartnerCustomerDebtPaymentDialogComponent,
+    CardCardsMemberCreateDialogComponent
   ],
   providers: [SaleCouponProgramService, AccountInvoiceReportService],
   exports: [

@@ -1,24 +1,20 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, FormArray, Validators, FormControl } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { map, debounceTime, tap, switchMap } from 'rxjs/operators';
-import { ToaThuocService, ToaThuocDefaultGet, ToaThuocLineDefaultGet, ToaThuocLineDisplay } from '../toa-thuoc.service';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { ProductSimple } from 'src/app/products/product-simple';
-import { ComboBoxComponent, DropDownFilterSettings } from '@progress/kendo-angular-dropdowns';
-import { ProductService, ProductFilter } from 'src/app/products/product.service';
-import { WindowRef, WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
-import { ToaThuocLineDialogComponent } from '../toa-thuoc-line-dialog/toa-thuoc-line-dialog.component';
-import { update } from 'lodash';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
-import { SamplePrescriptionsPaged, SamplePrescriptionsService, SamplePrescriptionsSimple } from 'src/app/sample-prescriptions/sample-prescriptions.service';
+import { ComboBoxComponent, DropDownFilterSettings } from '@progress/kendo-angular-dropdowns';
+import { IntlService } from '@progress/kendo-angular-intl';
+import { NotificationService } from '@progress/kendo-angular-notification';
+import * as _ from 'lodash';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { ToaThuocLineService } from 'src/app/core/services/toa-thuoc-line.service';
 import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
-import { NotificationService } from '@progress/kendo-angular-notification';
-import { ToaThuocLineService } from 'src/app/core/services/toa-thuoc-line.service';
-import * as _ from 'lodash';
 import { ProductMedicineCuDialogComponent } from 'src/app/products/product-medicine-cu-dialog/product-medicine-cu-dialog.component';
+import { ProductSimple } from 'src/app/products/product-simple';
+import { ProductFilter, ProductService } from 'src/app/products/product.service';
+import { SamplePrescriptionsPaged, SamplePrescriptionsService, SamplePrescriptionsSimple } from 'src/app/sample-prescriptions/sample-prescriptions.service';
+import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { ToaThuocService } from '../toa-thuoc.service';
 
 @Component({
   selector: 'app-toa-thuoc-cu-dialog',
@@ -183,9 +179,9 @@ export class ToaThuocCuDialogComponent implements OnInit {
       this.samplePrescriptionsService.get(item.id).subscribe(
         (result) => {
           this.toaThuocForm.get("note").patchValue(result.note);
-  
+
           this.lines.clear();
-  
+
           result.lines.forEach((line) => {
             this.lines.push(
               this.fb.group({
@@ -343,7 +339,7 @@ export class ToaThuocCuDialogComponent implements OnInit {
     this.lines.removeAt(index);
   }
 
-  getUsedAt(useAt) {;
+  getUsedAt(useAt) {
     switch (useAt) {
       case 'before_meal':
         return 'Trước khi ăn';
@@ -357,6 +353,20 @@ export class ToaThuocCuDialogComponent implements OnInit {
         return 'Khác';
       default:
         return 'Sau khi ăn';
+    }
+  }
+
+  getGender() {
+    const gender = this.getFBValueItem('partner').gender;
+      switch (gender) {
+        case 'male':
+          return 'Name';
+        case 'female':
+          return 'Nữ';
+        case 'other':
+          return 'Khác';
+        default:
+          return '';
     }
   }
 }

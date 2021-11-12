@@ -1,10 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { WindowRef } from '@progress/kendo-angular-dialog';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { WindowRef, WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
-import { RoutingSimple, RoutingService, RoutingPaged } from 'src/app/routings/routing.service';
-import { debounceTime, tap, switchMap } from 'rxjs/operators';
-import { DotKhamLineService, DotKhamLineChangeRouting } from 'src/app/dot-kham-lines/dot-kham-line.service';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { DotKhamLineChangeRouting, DotKhamLineService } from 'src/app/dot-kham-lines/dot-kham-line.service';
+import { RoutingPaged, RoutingService, RoutingSimple } from 'src/app/routings/routing.service';
 
 @Component({
   selector: 'app-dot-kham-line-change-routing-dialog',

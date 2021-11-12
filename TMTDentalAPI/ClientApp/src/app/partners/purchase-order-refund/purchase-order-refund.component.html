@@ -14,7 +14,7 @@
         </label>
     </div>
 </div>
-<kendo-grid [data]="gridView" [pageable]="true" [pageSize]="pageSize" [skip]="skip" (pageChange)="pageChange($event)"
+<kendo-grid [data]="gridView" [pageable]="pagerSettings" [pageSize]="pageSize" [skip]="skip" (pageChange)="pageChange($event)"
     [loading]="gridLoading">
     <kendo-grid-column field="name" title="Số phiếu">
     </kendo-grid-column>

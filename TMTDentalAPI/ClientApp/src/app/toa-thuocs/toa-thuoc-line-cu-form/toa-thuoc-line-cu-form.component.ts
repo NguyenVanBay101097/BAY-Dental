@@ -1,18 +1,10 @@
-import { Component, OnInit, ViewChild, Output, EventEmitter, Input, OnChanges } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { UserSimple } from 'src/app/users/user-simple';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { debounceTime, tap, switchMap, map } from 'rxjs/operators';
-import { ProductFilter, ProductService } from 'src/app/products/product.service';
-import { UserService } from 'src/app/users/user.service';
-import { WindowRef } from '@progress/kendo-angular-dialog';
-import { ProductSimple } from 'src/app/products/product-simple';
-import { Observable } from 'rxjs';
-import { PartnerService, PartnerFilter } from 'src/app/partners/partner.service';
-import { PartnerSimple } from 'src/app/partners/partner-simple';
-import { ToothService, ToothFilter, ToothDisplay } from 'src/app/teeth/tooth.service';
-import { ToothCategoryService, ToothCategoryBasic } from 'src/app/tooth-categories/tooth-category.service';
 import * as _ from 'lodash';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { ProductSimple } from 'src/app/products/product-simple';
+import { ProductFilter, ProductService } from 'src/app/products/product.service';
 import { ToaThuocLineDisplay } from '../toa-thuoc.service';
 
 @Component({
@@ -30,8 +22,8 @@ export class ToaThuocLineCuFormComponent implements OnInit, OnChanges {
   @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
   defaultVal: Object;
 
-  constructor(private fb: FormBuilder, private productService: ProductService,
-    private userService: UserService) { }
+  constructor(private fb: FormBuilder, 
+    private productService: ProductService,) { }
 
   ngOnInit() {
     this.defaultVal = {
@@ -157,15 +149,15 @@ export class ToaThuocLineCuFormComponent implements OnInit, OnChanges {
     var useAt = this.lineForm.get('useAt').value;
     switch (useAt) {
       case 'before_meal':
-        return 'trước khi ăn';
+        return 'Trước khi ăn';
       case 'in_meal':
-        return 'trong khi ăn';
+        return 'Trong khi ăn';
       case 'after_wakeup':
-        return 'sau khi thức dậy';
+        return 'Sau khi thức dậy';
       case 'before_sleep':
-        return 'trước khi đi ngủ';
+        return 'Trước khi đi ngủ';
       default:
-        return 'sau khi ăn';
+        return 'Sau khi ăn';
     }
   }
 

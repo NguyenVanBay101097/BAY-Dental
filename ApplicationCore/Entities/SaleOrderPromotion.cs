@@ -50,9 +50,22 @@ namespace ApplicationCore.Entities
         /// promotion_program : chương trình khuyến mãi
         /// </summary>
         public string Type { get; set; }
-        
+
 
         public ICollection<SaleOrderPromotionLine> Lines { get; set; } = new List<SaleOrderPromotionLine>();
+
+        /// <summary>
+        /// áp dụng thẻ ưu đãi
+        /// </summary>
+        public Guid? ServiceCardCardId { get; set; }
+        public ServiceCardCard ServiceCardCard { get; set; }
+
+        /// <summary>
+        /// áp dụng thẻ thành viên
+        /// </summary>
+
+        public Guid? CardCardId { get; set; }
+        public CardCard CardCard { get; set; }
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,11 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<SalaryPayment, SalaryPaymentSave>();
             CreateMap<SalaryPaymentSave, SalaryPayment>();
+
+            CreateMap<SalaryPayment, SalaryPaymentPrintTemplate>()
+                .ForMember(x => x.UserName, x => x.MapFrom(s => s.CreatedBy.Name));
+
+            CreateMap<SalaryPayment, SalaryPaymentBasicPrintTemplate>();
         }
     }
 }

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Record>
+    <Id>sample.product_category_1</Id>
+    <Name>Răng sứ thẩm mỹ</Name>
+    <Type>service</Type>
+  </Record>
+  <Record>
+    <Id>sample.product_category_2</Id>
+    <Name>Cấy ghép implant</Name>
+    <Type>service</Type>
+  </Record>
+  <Record>
+    <Id>sample.product_category_3</Id>
+    <Name>Niềng răng chỉnh nha</Name>
+    <Type>service</Type>
+  </Record>
+  <Record>
+    <Id>sample.product_category_4</Id>
+    <Name>Dịch vụ miễn phí</Name>
+    <Type>service</Type>
+  </Record>
+  <Record>
+    <Id>sample.product_category_5</Id>
+    <Name>Hàm giả tháo lắp</Name>
+    <Type>service</Type>
+  </Record>
+  <Record>
+    <Id>sample.product_category_6</Id>
+    <Name>Tẩy trắng răng</Name>
+    <Type>service</Type>
+  </Record>
+  <Record>
+    <Id>sample.product_category_7</Id>
+    <Name>Trám răng thẩm mỹ</Name>
+    <Type>service</Type>
+  </Record>
+  <Record>
+    <Id>sample.product_category_8</Id>
+    <Name>Cạo vôi răng</Name>
+    <Type>service</Type>
+  </Record>
+  <Record>
+    <Id>sample.product_category_9</Id>
+    <Name>Nội nha chữa tủy</Name>
+    <Type>service</Type>
+  </Record>
+  <Record>
+    <Id>sample.product_category_10</Id>
+    <Name>Tiểu phẫu răng khôn</Name>
+    <Type>service</Type>
+  </Record>
+  <Record>
+    <Id>sample.product_category_11</Id>
+    <Name>Nhổ răng thường</Name>
+    <Type>service</Type>
+  </Record>
+  <Record>
+    <Id>sample.product_category_12</Id>
+    <Name>Thiết bị phòng khám</Name>
+    <Type>product</Type>
+  </Record>
+  <Record>
+    <Id>sample.product_category_13</Id>
+    <Name>Dụng cụ khám</Name>
+    <Type>product</Type>
+  </Record>
+  <Record>
+    <Id>sample.product_category_14</Id>
+    <Name>Dụng cụ phẫu thuật</Name>
+    <Type>product</Type>
+  </Record>
+  <Record>
+    <Id>sample.product_category_15</Id>
+    <Name>Dụng cụ lấy dấu</Name>
+    <Type>product</Type>
+  </Record>
+  <Record>
+    <Id>sample.product_category_16</Id>
+    <Name>Vật tư tiêu hao y tế</Name>
+    <Type>product</Type>
+  </Record>
+  <Record>
+    <Id>sample.product_category_17</Id>
+    <Name>Thuốc gây tê tại chỗ</Name>
+    <Type>medicine</Type>
+  </Record>
+  <Record>
+    <Id>sample.product_category_18</Id>
+    <Name>Giảm đau chống viêm</Name>
+    <Type>medicine</Type>
+  </Record>
+  <Record>
+    <Id>sample.product_category_19</Id>
+    <Name>Kháng viêm - phù nề</Name>
+    <Type>medicine</Type>
+  </Record>
+  <Record>
+    <Id>sample.product_category_20</Id>
+    <Name>Giảm đau hạ sốt</Name>
+    <Type>medicine</Type>
+  </Record>
+  <Record>
+    <Id>sample.product_category_21</Id>
+    <Name>Điều trị</Name>
+    <Type>medicine</Type>
+  </Record>
+  <Record>
+    <Id>sample.product_category_22</Id>
+    <Name>Vitamin</Name>
+    <Type>medicine</Type>
+  </Record>
+  <Record>
+    <Id>sample.product_category_23</Id>
+    <Name>Trám răng</Name>
+    <Type>service</Type>
+  </Record>
+</Data>

@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml;
 using ApplicationCore.Entities;
 using ApplicationCore.Models;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -26,9 +29,15 @@ namespace TMTDentalAPI.Controllers
         private readonly IIRModelAccessService _modelAccessService;
         private readonly IStockMoveService _stockMoveService;
         private readonly IViewRenderService _viewRenderService;
+        private readonly IPrintTemplateConfigService _printTemplateConfigService;
+        private readonly IPrintTemplateService _printTemplateService;
+        private readonly IIRModelDataService _modelDataService;
 
         public StockPickingsController(IStockPickingService stockPickingService, IMapper mapper,
-            IUnitOfWorkAsync unitOfWork, IIRModelAccessService modelAccessService, IStockMoveService stockMoveService, IViewRenderService viewRenderService)
+            IUnitOfWorkAsync unitOfWork, IIRModelAccessService modelAccessService, IStockMoveService stockMoveService, IViewRenderService viewRenderService,
+             IPrintTemplateService printTemplateService,
+            IIRModelDataService modelDataService
+            , IPrintTemplateConfigService printTemplateConfigService)
         {
             _stockPickingService = stockPickingService;
             _mapper = mapper;
@@ -36,6 +45,9 @@ namespace TMTDentalAPI.Controllers
             _modelAccessService = modelAccessService;
             _stockMoveService = stockMoveService;
             _viewRenderService = viewRenderService;
+            _printTemplateConfigService = printTemplateConfigService;
+            _printTemplateService = printTemplateService;
+            _modelDataService = modelDataService;
         }
 
         [HttpGet]
@@ -204,26 +216,104 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpPost("[action]/{id}")]
+        [HttpPost("{id}/Print")]
         [CheckAccess(Actions = "Stock.Picking.Read")]
         public async Task<IActionResult> Print(Guid id)
         {
-            var picking = await _stockPickingService.SearchQuery(x => x.Id == id).Include(x => x.Partner).Include(x=>x.PickingType)
-                .Include(x => x.MoveLines)
-                .Include("Company.Partner")
-                .Include(x=> x.CreatedBy)
-                .Include("MoveLines.Product")
-                .Include("MoveLines.Product.Categ")
-                 .Include("MoveLines.ProductUOM")
+
+            var res = await _stockPickingService.SearchQuery(x => x.Id == id).Include(x => x.PickingType).FirstOrDefaultAsync();
+            //tim trong bảng config xem có dòng nào để lấy ra template
+            var printConfig = await _printTemplateConfigService.SearchQuery(x => x.Type == (res.PickingType.Code == "outgoing" ? "tmp_stock_picking_outgoing" : "tmp_stock_picking_incoming") && x.IsDefault)
+                .Include(x => x.PrintPaperSize)
+                .Include(x => x.PrintTemplate)
                 .FirstOrDefaultAsync();
-            if (picking == null)
-                return NotFound();
 
-            picking.MoveLines = picking.MoveLines.OrderBy(x=> x.Sequence).ToList();
+            PrintTemplate template = printConfig != null ? printConfig.PrintTemplate : null;
+            PrintPaperSize paperSize = printConfig != null ? printConfig.PrintPaperSize : null;
+            if (template == null)
+            {
+                //tìm template mặc định sử dụng chung cho tất cả chi nhánh, sử dụng bảng IRModelData hoặc bảng IRConfigParameter
+                template = await _modelDataService.GetRef<PrintTemplate>(res.PickingType.Code == "outgoing" ? "base.print_template_stock_picking_outgoing" : "base.print_template_stock_picking_incoming");
+                if (template == null)
+                    throw new Exception("Không tìm thấy mẫu in mặc định");
+            }
 
-            var html = _viewRenderService.Render("StockPicking/Print", picking);
+            var result = await _printTemplateService.GeneratePrintHtml(template, new List<Guid>() { id }, paperSize);
 
-            return Ok(new PrintData() { html = html });
+            return Ok(new PrintData() { html = result });
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GenerateXML()
+        {
+            //chonj partner cuar m=employee vafo 
+            var empObj = (IEmployeeService)HttpContext.RequestServices.GetService(typeof(IEmployeeService));
+            var irModelObj = (IIRModelDataService)HttpContext.RequestServices.GetService(typeof(IIRModelDataService));
+            var _hostingEnvironment = (IWebHostEnvironment)HttpContext.RequestServices.GetService(typeof(IWebHostEnvironment));
+            var xmlService = (IXmlService)HttpContext.RequestServices.GetService(typeof(IXmlService));
+            string path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\ImportXML\stock_picking.xml");
+
+            var irModelCreate = new List<IRModelData>();
+            var dateToData = new DateTime(2021, 08, 25);
+            var listIrModelData = await irModelObj.SearchQuery(x => (x.Module == "sample" || x.Module == "stock" || x.Module == "account" || x.Module == "product")).ToListAsync();// các irmodel cần thiết
+            var entities = await _stockPickingService.SearchQuery(x => x.MoveLines.All(z => z.PurchaseLineId == null) && x.Date.Value.Date <= dateToData.Date).Include(x => x.MoveLines).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var data = new List<StockPickingXmlSampleDataRecord>();
+            foreach (var entity in entities)
+            {
+                var empPartner = await empObj.SearchQuery(x => x.PartnerId == entity.PartnerId).FirstOrDefaultAsync();
+
+                var item = _mapper.Map<StockPickingXmlSampleDataRecord>(entity);
+
+                item.Id = $@"sample.stock_picking_{entities.IndexOf(entity) + 1}";
+                item.DateRound = (int)(dateToData - entity.Date.Value).TotalDays;
+                var irmodelDataPartner = listIrModelData.FirstOrDefault(x => x.ResId == empPartner.Id.ToString());
+                item.PartnerId = irmodelDataPartner == null ? "" : irmodelDataPartner?.Module + "." + irmodelDataPartner?.Name;
+                var irmodelDataPickingType = listIrModelData.FirstOrDefault(x => x.ResId == entity.PickingTypeId.ToString());
+                item.PickingTypeId = irmodelDataPickingType == null ? "" : irmodelDataPickingType.Module + "." + irmodelDataPickingType?.Name;
+                var irmodelDataLocation = listIrModelData.FirstOrDefault(x => x.ResId == entity.LocationId.ToString());
+                item.LocationId = irmodelDataLocation == null ? "" : irmodelDataLocation.Module + "." + irmodelDataLocation?.Name;
+                var irmodelDataLocationDes = listIrModelData.FirstOrDefault(x => x.ResId == entity.LocationDestId.ToString());
+                item.LocationDestId = irmodelDataLocationDes == null ? "" : irmodelDataLocationDes.Module + "." + irmodelDataLocationDes?.Name;
+                //add lines
+                foreach (var lineEntity in entity.MoveLines)
+                {
+                    var irmodelDataLocationLine = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.LocationId.ToString());
+                    var irmodelDataLocationDesLine = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.LocationDestId.ToString());
+                    //var irmodelDataPartnerLine = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.PartnerId.ToString());
+                    var irmodelDataPickingTypeLine = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.PickingTypeId.ToString());
+                    var irmodelDataProductLine = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.ProductId.ToString());
+                    var irmodelDataProductUomLine = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.ProductUOMId.ToString());
+
+                    var itemLine = new StockMoveXmlSampleDataRecord()
+                    {
+                        DateRound = (int)(dateToData - lineEntity.Date).TotalDays,
+                        LocationId = irmodelDataLocationLine == null ? "" : irmodelDataLocationLine.Module + "." + irmodelDataLocationLine?.Name,
+                        LocationDestId = irmodelDataLocationDesLine == null ? "" : irmodelDataLocationDesLine.Module + "." + irmodelDataLocationDesLine?.Name,
+                        Name = lineEntity.Name,
+                        PartnerId = irmodelDataPartner == null ? "" : irmodelDataPartner.Module + "." + irmodelDataPartner?.Name,
+                        PickingTypeId = irmodelDataPickingTypeLine == null ? "" : irmodelDataPickingTypeLine.Module + "." + irmodelDataPickingTypeLine?.Name,
+                        PriceUnit = lineEntity.PriceUnit,
+                        ProductId = irmodelDataProductLine == null ? "" : irmodelDataProductLine.Module + "." + irmodelDataProductLine?.Name,
+                        ProductQty = lineEntity.ProductQty,
+                        ProductUOMId = irmodelDataProductUomLine == null ? "" : irmodelDataProductUomLine.Module + "." + irmodelDataProductUomLine?.Name,
+                        ProductUOMQty = lineEntity.ProductUOMQty
+                    };
+                    item.MoveLines.Add(itemLine);
+                }
+                data.Add(item);
+                // add IRModelData
+                irModelCreate.Add(new IRModelData()
+                {
+                    Module = "sample",
+                    Model = "stock.picking",
+                    ResId = entity.Id.ToString(),
+                    Name = $"stock_picking_{entities.IndexOf(entity) + 1}"
+                });
+            }
+            //writeFile
+            xmlService.WriteXMLFile(path, data);
+            await irModelObj.CreateAsync(irModelCreate);
+            return Ok();
         }
     }
 }

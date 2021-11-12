@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { ConfigPrintManagementComponent } from './config-print-management/config-print-management.component';
 import { ConfigPrintFormComponent } from './config-print-form/config-print-form.component';
 import { PrintPaperSizeListComponent } from './print-paper-size-list/print-paper-size-list.component';
-import { PrintPaperSizeCreateUpdateDialogComponent } from './print-paper-size-create-update-dialog/print-paper-size-create-update-dialog.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -13,7 +12,7 @@ import { PrintPaperSizeService } from './print-paper-size.service';
 import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
-  declarations: [ConfigPrintManagementComponent, ConfigPrintFormComponent, PrintPaperSizeListComponent, PrintPaperSizeCreateUpdateDialogComponent],
+  declarations: [ConfigPrintManagementComponent, ConfigPrintFormComponent, PrintPaperSizeListComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -28,7 +27,6 @@ import { SharedModule } from '../shared/shared.module';
     PrintPaperSizeService
   ],
   entryComponents: [
-    PrintPaperSizeCreateUpdateDialogComponent
   ]
 })
 export class ConfigPrintsModule { }

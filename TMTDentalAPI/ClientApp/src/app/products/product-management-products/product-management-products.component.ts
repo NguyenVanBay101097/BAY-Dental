@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, Inject, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
@@ -7,8 +6,8 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { PermissionService } from 'src/app/shared/permission.service';
-import { ToothDiagnosisSave } from 'src/app/tooth-diagnosis/tooth-diagnosis.service';
 import { Product } from '../product';
 import { ProductImportExcelDialogComponent } from '../product-import-excel-dialog/product-import-excel-dialog.component';
 import { ProductProductCuDialogComponent } from '../product-product-cu-dialog/product-product-cu-dialog.component';
@@ -27,6 +26,7 @@ export class ProductManagementProductsComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   searchProduct: string;
   cateId: string;
   selectedCateg: any;
@@ -35,14 +35,14 @@ export class ProductManagementProductsComponent implements OnInit {
   canAdd = false;
   canEdit = false;
   canDelete =false;
-  constructor(private route: ActivatedRoute,
-    private router: Router,
+  constructor(
     private productCategoryService: ProductCategoryService,
     private productService: ProductService,
     public permissionService: PermissionService,
     private modalService: NgbModal,
-    private checkPermissionService: CheckPermissionService
-  ) { }
+    private checkPermissionService: CheckPermissionService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.searchProductUpdate
@@ -108,6 +108,7 @@ export class ProductManagementProductsComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadProducts();
   }
 

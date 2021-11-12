@@ -1,5 +1,5 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 import { TaiDateRange } from 'src/app/core/tai-date-range';
 

@@ -1,12 +1,12 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { WorkbookSheetRowCell } from '@progress/kendo-angular-excel-export';
 import { GridComponent, GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import * as moment from 'moment';
 import { of, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { RevenueManageService } from '../account-invoice-report-revenue-manage/revenue-manage.service';
 import { AccountInvoiceReportService, RevenuePartnerReportPar } from '../account-invoice-report.service';
@@ -25,6 +25,7 @@ export class AccountInvoiceReportRevenuePartnerComponent implements OnInit {
   loading = false;
   skip = 0;
   limit = 20;
+  pagerSettings: any;
   searchUpdate = new Subject<string>();
 
 
@@ -36,7 +37,8 @@ export class AccountInvoiceReportRevenuePartnerComponent implements OnInit {
     private revenueManagePartner: RevenueManageService,
     private printPartner: PrintService,
     private intlPartner: IntlService,
-  ) { }
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.initFilterData();
@@ -139,6 +141,7 @@ export class AccountInvoiceReportRevenuePartnerComponent implements OnInit {
 
   pageChange(e) {
     this.skip = e.skip;
+    this.limit = e.take;
     this.loadReport();
   }
 
@@ -195,10 +198,10 @@ export class AccountInvoiceReportRevenuePartnerComponent implements OnInit {
   }
 
   public onExcelExport(args: any): void {
-    const observables = [];
-    const workbook = args.workbook;
+    // const observables = [];
+    // const workbook = args.workbook;
     var sheet = args.workbook.sheets[0];
-    var rows = sheet.rows;
+    // var rows = sheet.rows;
     sheet.mergedCells = ["A1:G1", "A2:G2","A3:F3"];
     sheet.frozenRows = 3;
     sheet.name = 'BaoCaoDoanhThu_TheoKH';

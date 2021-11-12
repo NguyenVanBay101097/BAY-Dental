@@ -16,6 +16,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public double StandardPrice { get; set; }
 
         public Guid? CategId { get; set; }
+        public ProductCategoryBasic Categ { get; set; }
+
         public string Type2 { get; set; }
 
 
@@ -30,5 +32,12 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid UOMId { get; set; }
         public UoMBasic UOM { get; set; }
+    }
+
+    public class ProductSimplePublic
+    {
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
     }
 }

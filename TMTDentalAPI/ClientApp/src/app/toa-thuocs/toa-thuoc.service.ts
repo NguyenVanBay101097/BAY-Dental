@@ -1,6 +1,6 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Injectable, Inject } from '@angular/core';
 import { ProductSimple } from '../products/product-simple';
 
 export class ToaThuocDefaultGet {
@@ -178,13 +178,13 @@ export class ToaThuocService {
         return this.http.post(this.baseApi + this.apiUrl + `/${id}/ActionConfirm`, null);
     }
 
-    // getPrint(id: string) {
-    //     return this.http.get(this.baseApi + this.apiUrl + `/${id}/Print`);
-    // }
-
     getPrint(id: string) {
-        return this.http.get(this.baseApi + this.apiPrintUrl + '/Print' + `?id=${id}`, { responseType: 'text' });
+        return this.http.get(this.baseApi + this.apiUrl + `/${id}/Print`);
     }
+
+    // getPrint(id: string) {
+    //     return this.http.get(this.baseApi + this.apiPrintUrl + '/Print' + `?id=${id}`, { responseType: 'text' });
+    // }
 
     getFromUI(id): Observable<ToaThuocDisplay> {
         return this.http.get<ToaThuocDisplay>(this.baseApi + this.apiUrl + `/${id}/GetFromUI`);

@@ -1,14 +1,7 @@
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges, ViewChildren } from '@angular/core';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { SurveyCallContentPaged, SurveyCallcontentService } from '../survey-callcontent.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { NotificationService } from '@progress/kendo-angular-notification';
-import { EmployeeService } from 'src/app/employees/employee.service';
-import { PartnerService } from 'src/app/partners/partner.service';
 import { SurveyAssignmentDisplayCallContent } from '../survey.service';
 
 @Component({
@@ -38,9 +31,6 @@ export class SurveyCallContentListComponent implements OnInit {
   @ViewChildren('nameInput') nameInputs: QueryList<ElementRef>;
   
   constructor(
-    private callcontentService: SurveyCallcontentService,
-    private intlService: IntlService,
-    private notificationService: NotificationService,
     private fb: FormBuilder
   ) {
 

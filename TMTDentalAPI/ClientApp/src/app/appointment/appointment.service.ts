@@ -1,10 +1,9 @@
-import { Injectable, Inject } from '@angular/core';
+import { formatDate } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { HttpHeaders } from '@angular/common/http';
-import { AppointmentDisplay, AppointmentPaged, AppointmentBasic, AppointmentPaging, AppointmentPatch, AppointmentDefaultGet, AppointmentSearchByDate } from './appointment';
+import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PagedResult2 } from '../partners/partner-simple';
-import { formatDate } from '@angular/common';
+import { AppointmentBasic, AppointmentDisplay, AppointmentPaged, AppointmentSearchByDate } from './appointment';
 
 @Injectable({
   providedIn: 'root'
@@ -128,6 +127,10 @@ export class AppointmentService {
 
   getListDoctor(val) {
     return this.http.get<any[]>(this.baseApi + 'api/Appointments/GetListDoctor', { params: new HttpParams({ fromObject: val }) });
+  }
+
+  print(id) {
+    return this.http.get(this.baseApi + 'api/Appointments/' + id + '/Print');
   }
 
   //cập nhật các cuộc hẹn quá hạn

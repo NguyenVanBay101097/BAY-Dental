@@ -19,7 +19,7 @@ namespace Infrastructure.Services
         Task<IEnumerable<SaleReportPartnerItemV3>> GetReportPartnerV3(SaleReportPartnerSearch val);
         Task<IEnumerable<SaleReportPartnerItemV3>> GetReportPartnerV4(SaleReportPartnerSearch val);
         Task<IEnumerable<SaleReportItem>> GetTopSaleProduct(SaleReportTopSaleProductSearch val);
-        Task<PagedResult2<SaleOrderLineDisplay>> GetReportService(SaleReportSearch val);
+        Task<PagedResult2<SaleOrderLineDisplay>> GetReportService(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string search, string state);
         Task<SaleReportOldNewPartnerOutput> GetReportOldNewPartner(SaleReportOldNewPartnerInput val);
         Task<IEnumerable<ServiceReportRes>> GetServiceReportByTime(ServiceReportReq val);
         Task<IEnumerable<ServiceReportRes>> GetServiceReportByService(ServiceReportReq val);

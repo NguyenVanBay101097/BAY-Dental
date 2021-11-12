@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace ApplicationCore.Entities
@@ -43,5 +44,14 @@ namespace ApplicationCore.Entities
         /// Trạng thái chi nhánh
         /// </summary>
         public bool Active { get; set; }
+
+        [NotMapped]
+        public string Address 
+        {
+            get
+            {
+                return Partner != null ? Partner.GetAddress() : "";
+            }
+        }
     }
 }
