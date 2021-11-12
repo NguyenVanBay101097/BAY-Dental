@@ -28,7 +28,6 @@ export class AgentListComponent implements OnInit {
   constructor(private modalService: NgbModal,
     private agentService: AgentService,
     private notifyService: NotifyService,
-    private phieuThuChiService: PhieuThuChiService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -116,7 +115,8 @@ export class AgentListComponent implements OnInit {
   }
 
   actionPayment(item: any) {
-    this.phieuThuChiService.getCommissionPaymentByAgentId({agentId: item.id , type:'agent'}).subscribe(res => {
+    var val =  {agentId: item.id , type:'chi'};
+    this.agentService.getCommissionPaymentByAgentId(val).subscribe(res => {
       const modalRef = this.modalService.open(CommissionSettlementAgentPaymentDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = 'Chi hoa hồng';
       modalRef.componentInstance.type = 'chi';

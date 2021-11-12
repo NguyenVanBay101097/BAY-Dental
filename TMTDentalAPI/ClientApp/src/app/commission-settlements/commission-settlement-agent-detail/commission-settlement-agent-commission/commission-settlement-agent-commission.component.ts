@@ -146,22 +146,24 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
   }
 
   actionPayment() {
-    this.phieuThuChiService.getCommissionPaymentByAgentId({agentId: this.agentId , type:'agent'}).subscribe(res => {
-      const modalRef = this.modalService.open(CommissionSettlementAgentPaymentDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-      modalRef.componentInstance.title = 'Chi hoa hồng';
-      modalRef.componentInstance.type = 'chi';
-      modalRef.componentInstance.accountType = 'commission';
-      modalRef.componentInstance.agentId = this.agentId;
-      modalRef.componentInstance.amountBalanceTotal = this.totalAmountAgent.totalComissionAmount - this.amountDebit.amountDebitTotal;
-      modalRef.componentInstance.partnerId = this.agentObj ? this.agentObj.partnerId : null;
-      modalRef.result.then(() => {
-        this.notifyService.notify('success', 'Thanh toán thành công');
-        this.loadDataFromApi();
-        this.loadAmountDebitTotalAgent();
-        this.loadSumAmountTotal();
-      }, er => { })
-    });
-    
+    if(this.agentId){
+      var val =  {agentId: this.agentId , type:'chi'};
+      this.agentService.getCommissionPaymentByAgentId(val).subscribe(res => {
+        const modalRef = this.modalService.open(CommissionSettlementAgentPaymentDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        modalRef.componentInstance.title = 'Chi hoa hồng';
+        modalRef.componentInstance.type = 'chi';
+        modalRef.componentInstance.accountType = 'commission';
+        modalRef.componentInstance.agentId = this.agentId;
+        modalRef.componentInstance.amountBalanceTotal = this.totalAmountAgent.totalComissionAmount - this.amountDebit.amountDebitTotal;
+        modalRef.componentInstance.partnerId = this.agentObj ? this.agentObj.partnerId : null;
+        modalRef.result.then(() => {
+          this.notifyService.notify('success', 'Thanh toán thành công');
+          this.loadDataFromApi();
+          this.loadAmountDebitTotalAgent();
+          this.loadSumAmountTotal();
+        }, er => { })
+      });
+    }    
   }
 
   exportExcelFile() {
