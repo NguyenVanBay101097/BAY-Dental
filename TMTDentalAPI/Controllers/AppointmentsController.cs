@@ -440,6 +440,10 @@ namespace TMTDentalAPI.Controllers
 
                 item.Id = $@"sample.appointment_{entities.IndexOf(entity) + 1}";
                 item.DateRound = (int)(dateToData - entity.Date).TotalDays;
+                item.TimeHour = entity.Date.Hour;
+                item.TimeMinute = entity.Date.Minute;
+                if (item.DateRound == 0)
+                    item.State = "confirmed";
                 item.PartnerId = partnerModelData == null ? "" : partnerModelData?.Module + "." + partnerModelData?.Name;
                 item.DoctorId = doctorModelData == null ? "" : doctorModelData?.Module + "." + doctorModelData?.Name;
                 item.SaleOrderId = orderModelData == null ? "" : orderModelData?.Module + "." + orderModelData?.Name;

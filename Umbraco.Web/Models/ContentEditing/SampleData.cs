@@ -299,6 +299,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Id { get; set; }
         public string PartnerId { get; set; }
         public int DateRound { get; set; } // để set date.now - this
+        public int TimeHour { get; set; }
+        public int TimeMinute { get; set; }
         public string Reason { get; set; }
         public int TimeExpected { get; set; }
         public bool IsRepeatCustomer { get; set; }
@@ -323,6 +325,12 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public string Id { get; set; }
         public int DateRound { get; set; } // để set date.now - this
+        public int WaitingTimeHour { get; set; }
+        public int WaitingTimeMinute { get; set; }
+        public int? ExaminationTimeHour { get; set; }
+        public int? ExaminationTimeMinute { get; set; }
+        public int? DoneTimeHour { get; set; }
+        public int? DoneTimeMinute { get; set; }
         public int TimeExpected { get; set; }
         public string Note { get; set; }
         public string PartnerId { get; set; }
@@ -330,6 +338,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Reason { get; set; }
         public bool IsRepeatCustomer { get; set; }
         public bool IsNoTreatment { get; set; }
+        public string State { get; set; }
 
         [XmlArray("CustomerReceiptProductRels")]
         [XmlArrayItem("Record")]

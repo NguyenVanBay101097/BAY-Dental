@@ -271,9 +271,7 @@ namespace TMTDentalAPI.Controllers
                 var irmodelDataPickingType = listIrModelData.FirstOrDefault(x => x.ResId == entity.PickingTypeId.ToString());
                 item.PickingTypeId = irmodelDataPickingType == null ? "" : irmodelDataPickingType.Module + "." + irmodelDataPickingType?.Name;
                 var irmodelDataLocation = listIrModelData.FirstOrDefault(x => x.ResId == entity.LocationId.ToString());
-                item.LocationId = irmodelDataLocation == null ? "" : irmodelDataLocation.Module + "." + irmodelDataLocation?.Name;
                 var irmodelDataLocationDes = listIrModelData.FirstOrDefault(x => x.ResId == entity.LocationDestId.ToString());
-                item.LocationDestId = irmodelDataLocationDes == null ? "" : irmodelDataLocationDes.Module + "." + irmodelDataLocationDes?.Name;
                 //add lines
                 foreach (var lineEntity in entity.MoveLines)
                 {
@@ -287,11 +285,8 @@ namespace TMTDentalAPI.Controllers
                     var itemLine = new StockMoveXmlSampleDataRecord()
                     {
                         DateRound = (int)(dateToData - lineEntity.Date).TotalDays,
-                        LocationId = irmodelDataLocationLine == null ? "" : irmodelDataLocationLine.Module + "." + irmodelDataLocationLine?.Name,
-                        LocationDestId = irmodelDataLocationDesLine == null ? "" : irmodelDataLocationDesLine.Module + "." + irmodelDataLocationDesLine?.Name,
                         Name = lineEntity.Name,
                         PartnerId = irmodelDataPartner == null ? "" : irmodelDataPartner.Module + "." + irmodelDataPartner?.Name,
-                        PickingTypeId = irmodelDataPickingTypeLine == null ? "" : irmodelDataPickingTypeLine.Module + "." + irmodelDataPickingTypeLine?.Name,
                         PriceUnit = lineEntity.PriceUnit,
                         ProductId = irmodelDataProductLine == null ? "" : irmodelDataProductLine.Module + "." + irmodelDataProductLine?.Name,
                         ProductQty = lineEntity.ProductQty,

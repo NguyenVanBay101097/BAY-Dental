@@ -266,7 +266,6 @@ namespace TMTDentalAPI.Controllers
                     var irmodelDataProduct = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.ProductId.ToString());
                     itemLine.ProductId = irmodelDataProduct?.Module + "." + irmodelDataProduct?.Name;
                     var irmodelDataPartnerLine = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.PartnerId.ToString());
-                    itemLine.PartnerId = irmodelDataPartnerLine?.Module + "." + irmodelDataPartnerLine?.Name;
                     item.OrderLines.Add(itemLine);
                 }
                 data.Add(item);
@@ -319,7 +318,6 @@ namespace TMTDentalAPI.Controllers
                     var irmodelDataProduct = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.ProductId.ToString());
                     itemLine.ProductId = irmodelDataProduct?.Module + "." + irmodelDataProduct?.Name;
                     var irmodelDataPartnerLine = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.PartnerId.ToString());
-                    itemLine.PartnerId = irmodelDataPartnerLine?.Module + "." + irmodelDataPartnerLine?.Name;
                     item.OrderLines.Add(itemLine);
                 }
                 data.Add(item);

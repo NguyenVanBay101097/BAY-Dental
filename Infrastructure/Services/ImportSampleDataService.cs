@@ -156,7 +156,7 @@ namespace Infrastructure.Services
                 medicine.KeToaOK = true;
                 medicine.CompanyId = companyId;
                 medicine.Type = "product";
-                medicine.Type2 = "medicnie";
+                medicine.Type2 = "medicine";
                 medicine.UOMId = uomDict.ContainsKey(item.UOMId) ? uomDict[item.UOMId].Id : (await irModelDataObj.GetRef<UoM>(item.UOMId)).Id;
                 medicine.UOMPOId = defaultUoM.Id;
                 medicine.CategId = productCategoryDict.ContainsKey(item.CategId) ? productCategoryDict[item.CategId].Id : (await irModelDataObj.GetRef<ProductCategory>(item.CategId)).Id;
@@ -453,9 +453,7 @@ namespace Infrastructure.Services
             foreach (var item in appointmentData.Records)
             {
                 var appointment = _mapper.Map<Appointment>(item);
-                if (item.DateRound == 0)
-                    appointment.State = "confirmed";
-                appointment.Date = DateTime.Now.AddDays(-item.DateRound);
+                appointment.Date = DateTime.Today.AddDays(-item.DateRound).AddHours(item.TimeHour).AddMinutes(item.TimeMinute);
                 appointment.CompanyId = companyId;
                 appointment.PartnerId = partnerDict[item.PartnerId].Id;
                 appointment.DoctorId = employeeDict.ContainsKey(item.DoctorId) ? (Guid?)employeeDict[item.DoctorId].Id : null;
@@ -484,9 +482,12 @@ namespace Infrastructure.Services
             foreach (var item in customerReceiptData.Records)
             {
                 var customerReceipt = _mapper.Map<CustomerReceipt>(item);
-                customerReceipt.State = "examination";
-                customerReceipt.DateWaiting = DateTime.Now.AddDays(-item.DateRound);
-                customerReceipt.DateExamination = DateTime.Now.AddDays(-item.DateRound);
+                customerReceipt.DateWaiting = DateTime.Today.AddDays(-item.DateRound).AddHours(item.WaitingTimeHour).AddMinutes(item.WaitingTimeHour);
+                if (item.ExaminationTimeHour.HasValue)
+                    customerReceipt.DateExamination = DateTime.Today.AddDays(-item.DateRound).AddHours(item.ExaminationTimeHour.Value).AddMinutes(item.ExaminationTimeMinute.Value);
+                if (item.DoneTimeHour.HasValue)
+                    customerReceipt.DateWaiting = DateTime.Today.AddDays(-item.DateRound).AddHours(item.DoneTimeHour.Value).AddMinutes(item.DoneTimeHour.Value);
+
                 customerReceipt.CompanyId = companyId;
                 customerReceipt.PartnerId = partnerDict[item.PartnerId].Id;
                 customerReceipt.DoctorId = employeeDict.ContainsKey(item.DoctorId) ? (Guid?)employeeDict[item.DoctorId].Id : null;
@@ -600,9 +601,9 @@ namespace Infrastructure.Services
                     var line = _mapper.Map<PurchaseOrderLine>(lineItem);
                     line.CompanyId = companyId;
                     line.Sequence = sequence++;
+                    line.PartnerId = purchaseorder.PartnerId;
                     line.ProductId = productDict.ContainsKey(lineItem.ProductId) ? productDict[lineItem.ProductId].Id : (await irModelDataObj.GetRef<Product>(lineItem.ProductId)).Id;
                     line.ProductUOMId = uomDict.ContainsKey(lineItem.ProductUOMId) ? productDict[lineItem.ProductUOMId].Id : (await irModelDataObj.GetRef<UoM>(lineItem.ProductUOMId)).Id;
-                    line.PartnerId = partnerDict.ContainsKey(lineItem.PartnerId) ? partnerDict[lineItem.PartnerId].Id : (await irModelDataObj.GetRef<Partner>(lineItem.PartnerId)).Id;
                     purchaseorder.OrderLines.Add(line);
                 }
                 purchaseorderDict.Add(item.Id, purchaseorder);

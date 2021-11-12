@@ -143,6 +143,12 @@ namespace TMTDentalAPI.Controllers
 
                 item.Id = $@"sample.customer_receipt_{entities.IndexOf(entity) + 1}";
                 item.DateRound = (int)(dateToData - entity.DateWaiting.Value).TotalDays;
+                item.WaitingTimeHour = entity.DateWaiting.Value.Hour;
+                item.WaitingTimeMinute = entity.DateWaiting.Value.Minute;
+                item.ExaminationTimeHour = entity.DateExamination.HasValue ? entity.DateExamination.Value.Hour : (int?)null;
+                item.ExaminationTimeMinute = entity.DateExamination.HasValue ? entity.DateExamination.Value.Minute : (int?)null;
+                item.DoneTimeHour = entity.DateDone.HasValue ? entity.DateDone.Value.Hour : (int?)null;
+                item.DoneTimeMinute = entity.DateDone.HasValue ? entity.DateDone.Value.Minute : (int?)null;
                 item.PartnerId = partnerModelData == null ? "" : partnerModelData?.Module + "." + partnerModelData?.Name;
                 item.DoctorId = doctorModelData == null ? "" : doctorModelData?.Module + "." + doctorModelData?.Name;
 
