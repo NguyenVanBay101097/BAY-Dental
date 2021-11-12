@@ -2,7 +2,6 @@
 <Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Record>
     <Id>sample.labo_order_1</Id>
-    <Name>LB00002</Name>
     <PartnerId>sample.partner_supplier_1</PartnerId>
     <DateRound>6</DateRound>
     <ProductId />
@@ -41,7 +40,6 @@
   </Record>
   <Record>
     <Id>sample.labo_order_2</Id>
-    <Name>LB00003</Name>
     <PartnerId>sample.partner_supplier_1</PartnerId>
     <DateRound>6</DateRound>
     <ProductId>sample.product_labo_3</ProductId>
@@ -89,7 +87,6 @@
   </Record>
   <Record>
     <Id>sample.labo_order_3</Id>
-    <Name>LB00004</Name>
     <PartnerId>sample.partner_supplier_1</PartnerId>
     <DateRound>1</DateRound>
     <ProductId />
@@ -121,7 +118,6 @@
   </Record>
   <Record>
     <Id>sample.labo_order_4</Id>
-    <Name>LB00005</Name>
     <PartnerId>sample.partner_supplier_1</PartnerId>
     <DateRound>1</DateRound>
     <ProductId>sample.product_labo_5</ProductId>
@@ -147,7 +143,6 @@
   </Record>
   <Record>
     <Id>sample.labo_order_5</Id>
-    <Name>LB00006</Name>
     <PartnerId>sample.partner_supplier_1</PartnerId>
     <DateRound>0</DateRound>
     <ProductId>sample.product_labo_3</ProductId>
@@ -193,7 +188,6 @@
   </Record>
   <Record>
     <Id>sample.labo_order_6</Id>
-    <Name>LB00007</Name>
     <PartnerId>sample.partner_supplier_1</PartnerId>
     <DateRound>0</DateRound>
     <ProductId />
@@ -234,7 +228,6 @@
   </Record>
   <Record>
     <Id>sample.labo_order_7</Id>
-    <Name>LB00008</Name>
     <PartnerId>sample.partner_supplier_1</PartnerId>
     <DateRound>0</DateRound>
     <ProductId>sample.product_labo_5</ProductId>

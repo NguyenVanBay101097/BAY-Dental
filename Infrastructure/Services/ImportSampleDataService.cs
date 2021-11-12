@@ -453,7 +453,8 @@ namespace Infrastructure.Services
             foreach (var item in appointmentData.Records)
             {
                 var appointment = _mapper.Map<Appointment>(item);
-                appointment.State = "done";
+                if (item.DateRound == 0)
+                    appointment.State = "confirmed";
                 appointment.Date = DateTime.Now.AddDays(-item.DateRound);
                 appointment.CompanyId = companyId;
                 appointment.PartnerId = partnerDict[item.PartnerId].Id;
@@ -557,11 +558,13 @@ namespace Infrastructure.Services
             var purchaseorderData = xmlObj.GetObject<XmlSampleData<PurchaseOrderXmlSampleDataRecord>>(purchaseorderFilePath);
             foreach (var item in purchaseorderData.Records)
             {
+                var pickingType = await irModelDataObj.GetRef<StockPickingType>("stock.stock_picking_type_incoming");
                 var purchaseorder = _mapper.Map<PurchaseOrder>(item);
+
                 purchaseorder.DateOrder = DateTime.Now.AddDays(-item.DateRound);
                 purchaseorder.CompanyId = companyId;
                 purchaseorder.PartnerId = partnerDict[item.PartnerId].Id;
-                purchaseorder.PickingTypeId = (await irModelDataObj.GetRef<StockPickingType>(item.PickingTypeId)).Id;
+                purchaseorder.PickingTypeId = pickingType.Id;
                 purchaseorder.JournalId = (await irModelDataObj.GetRef<AccountJournal>(item.JournalId)).Id;
                 purchaseorder.Type = "order";
                 purchaseorder.UserId = UserId;
@@ -570,11 +573,11 @@ namespace Infrastructure.Services
                 {
                     var line = _mapper.Map<PurchaseOrderLine>(lineItem);
                     line.CompanyId = companyId;
+                    line.PartnerId = purchaseorder.PartnerId;
                     line.Sequence = sequence++;
                     line.Name = productDict.ContainsKey(lineItem.ProductId) ? productDict[lineItem.ProductId].Name : "";
                     line.ProductId = productDict.ContainsKey(lineItem.ProductId) ? productDict[lineItem.ProductId].Id : (await irModelDataObj.GetRef<Product>(lineItem.ProductId)).Id;
                     line.ProductUOMId = uomDict.ContainsKey(lineItem.ProductUOMId) ? productDict[lineItem.ProductUOMId].Id : (await irModelDataObj.GetRef<UoM>(lineItem.ProductUOMId)).Id;
-                    line.PartnerId = partnerDict.ContainsKey(lineItem.PartnerId) ? partnerDict[lineItem.PartnerId].Id : (await irModelDataObj.GetRef<Partner>(lineItem.PartnerId)).Id;
                     purchaseorder.OrderLines.Add(line);
                 }
                 purchaseorderDict.Add(item.Id, purchaseorder);
@@ -653,26 +656,29 @@ namespace Infrastructure.Services
             var stockPickingData = xmlObj.GetObject<XmlSampleData<StockPickingXmlSampleDataRecord>>(stockPickingFilePath);
             foreach (var item in stockPickingData.Records)
             {
+                var pickingType = (await irModelDataObj.GetRef<StockPickingType>("stock.stock_picking_type_outgoing"));
+
                 var stockPicking = _mapper.Map<StockPicking>(item);
                 stockPicking.Date = DateTime.Now.AddDays(-item.DateRound);
                 stockPicking.CompanyId = companyId;
                 stockPicking.PartnerId = employeeDict[item.PartnerId].PartnerId;
-                stockPicking.PickingTypeId = (await irModelDataObj.GetRef<StockPickingType>(item.PickingTypeId)).Id;
-                stockPicking.LocationId = (await irModelDataObj.GetRef<StockLocation>(item.LocationId)).Id;
-                stockPicking.LocationDestId = (await irModelDataObj.GetRef<StockLocation>(item.LocationDestId)).Id;
+                stockPicking.PickingTypeId = pickingType.Id;
+                stockPicking.LocationId = pickingType.DefaultLocationSrcId.Value;
+                stockPicking.LocationDestId = pickingType.DefaultLocationDestId.Value;
                 var sequence = 0;
                 foreach (var lineItem in item.MoveLines)
                 {
                     var line = _mapper.Map<StockMove>(lineItem);
+                    line.ProductUOMQty = line.ProductQty.Value;
                     line.CompanyId = companyId;
-                    line.Date = DateTime.Now.AddDays(-lineItem.DateRound);
+                    line.Date = stockPicking.Date.Value;
                     line.Sequence = sequence++;
-                    line.PickingTypeId = !string.IsNullOrEmpty(lineItem.PickingTypeId) ? (Guid?)(await irModelDataObj.GetRef<StockPickingType>(lineItem.PickingTypeId)).Id : null;
+                    line.PickingTypeId = pickingType.Id;
                     line.PartnerId = employeeDict[lineItem.PartnerId].PartnerId;
                     line.ProductUOMId = uomDict.ContainsKey(lineItem.ProductUOMId) ? productDict[lineItem.ProductUOMId].Id : (await irModelDataObj.GetRef<UoM>(lineItem.ProductUOMId)).Id;
                     line.ProductId = productDict.ContainsKey(lineItem.ProductId) ? productDict[lineItem.ProductId].Id : (await irModelDataObj.GetRef<Product>(lineItem.ProductId)).Id;
-                    line.LocationId = (await irModelDataObj.GetRef<StockLocation>(lineItem.LocationId)).Id;
-                    line.LocationDestId = (await irModelDataObj.GetRef<StockLocation>(lineItem.LocationDestId)).Id;
+                    line.LocationId = pickingType.DefaultLocationSrcId.Value;
+                    line.LocationDestId = pickingType.DefaultLocationDestId.Value;
                     stockPicking.MoveLines.Add(line);
                 }
                 stockPickingDict.Add(item.Id, stockPicking);
