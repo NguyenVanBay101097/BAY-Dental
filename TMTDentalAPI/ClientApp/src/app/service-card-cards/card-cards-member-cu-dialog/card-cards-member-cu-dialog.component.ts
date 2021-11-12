@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import * as _ from 'lodash';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { CardCardService } from 'src/app/card-cards/card-card.service';
 import { CardTypeService } from 'src/app/card-types/card-type.service';
@@ -153,6 +154,8 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
         this.state = res.state;
         if (res.state == 'in_use')
           this.formGroup.disable();
+      this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [res.partner], 'id');
+
       })
     } else {
       this.cardCardsService.getDefault().subscribe(res => {

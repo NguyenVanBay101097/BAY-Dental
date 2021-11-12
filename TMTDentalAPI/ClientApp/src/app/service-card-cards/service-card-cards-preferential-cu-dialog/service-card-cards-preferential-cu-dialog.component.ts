@@ -2,6 +2,7 @@ import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/cor
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import * as _ from 'lodash';
 import * as moment from 'moment';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
@@ -105,6 +106,8 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit, Af
       this.formGroup.patchValue(res);
       this.formGroup.get('activatedDateObj').patchValue(new Date(res.activatedDate));
       this.formGroup.get('expiredDateObj').patchValue(new Date(res.expiredDate));
+      this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter,[res.partner], 'id');
+      
       this.state = res.state;
       if (this.id && this.state !== 'draft') {
         this.formGroup.disable();
