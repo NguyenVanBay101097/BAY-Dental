@@ -172,7 +172,7 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<SaleCouponProgramBasic>> GetPromotionBySaleOrder(Guid? partnerId)
         {
             var today = DateTime.Today;
-            var wdToday = today.DayOfWeek.ToString();
+            var wdToday = ((int)today.DayOfWeek).ToString();
             var partnerObj = GetService<IPartnerService>();
             var query = SearchQuery(x => x.Active && !x.IsPaused && x.ProgramType == "promotion_program"
            && x.PromoCodeUsage == "no_code_needed" && x.DiscountApplyOn == "on_order"
