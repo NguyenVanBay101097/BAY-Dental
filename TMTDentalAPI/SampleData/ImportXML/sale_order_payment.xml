@@ -851,7 +851,7 @@
     <DateRound>0</DateRound>
     <JournalLines>
       <Record>
-        <JournalId>account.data_account_journal_debt</JournalId>
+        <JournalId>account.data_account_journal_cash</JournalId>
         <Amount>3400000.00</Amount>
       </Record>
     </JournalLines>
@@ -869,7 +869,7 @@
     <DateRound>0</DateRound>
     <JournalLines>
       <Record>
-        <JournalId>account.data_account_journal_debt</JournalId>
+        <JournalId>account.data_account_journal_bank</JournalId>
         <Amount>20000000.00</Amount>
       </Record>
     </JournalLines>
