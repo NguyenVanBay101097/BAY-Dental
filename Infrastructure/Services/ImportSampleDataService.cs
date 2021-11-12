@@ -259,6 +259,7 @@ namespace Infrastructure.Services
             foreach (var item in employeeData.Records)
             {
                 var entity = _mapper.Map<Employee>(item);
+                entity.CompanyId = companyId;
                 employeeDict.Add(item.Id, entity);
             }
             await employeeObj.CreateAsync(employeeDict.Values);
@@ -396,6 +397,7 @@ namespace Infrastructure.Services
                     };
                     saleOrderPayment.JournalLines.Add(line);
                 }
+
                 saleOrderPaymentDict.Add(item.Id, saleOrderPayment);
             }
 
@@ -486,7 +488,7 @@ namespace Infrastructure.Services
                 if (item.ExaminationTimeHour.HasValue)
                     customerReceipt.DateExamination = DateTime.Today.AddDays(-item.DateRound).AddHours(item.ExaminationTimeHour.Value).AddMinutes(item.ExaminationTimeMinute.Value);
                 if (item.DoneTimeHour.HasValue)
-                    customerReceipt.DateWaiting = DateTime.Today.AddDays(-item.DateRound).AddHours(item.DoneTimeHour.Value).AddMinutes(item.DoneTimeHour.Value);
+                    customerReceipt.DateDone = DateTime.Today.AddDays(-item.DateRound).AddHours(item.DoneTimeHour.Value).AddMinutes(item.DoneTimeHour.Value);
 
                 customerReceipt.CompanyId = companyId;
                 customerReceipt.PartnerId = partnerDict[item.PartnerId].Id;

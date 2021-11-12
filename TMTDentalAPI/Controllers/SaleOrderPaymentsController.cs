@@ -138,7 +138,7 @@ namespace TMTDentalAPI.Controllers
             var irModelCreate = new List<IRModelData>();
             var dateToData = new DateTime(2021, 08, 25);
             var listIrModelData = await irModelObj.SearchQuery(x => (x.Module == "sample" || x.Module == "account")).ToListAsync();// các irmodel cần thiết
-            var entities = await _saleOrderPaymentService.SearchQuery(x => x.Date.Date <= dateToData.Date).Include(x => x.JournalLines).Include(x => x.Order.OrderLines).Include(x => x.Lines).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var entities = await _saleOrderPaymentService.SearchQuery(x => x.Date.Date <= dateToData.Date && x.State == "posted").Include(x => x.JournalLines).Include(x => x.Order.OrderLines).Include(x => x.Lines).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
             var data = new List<SaleOrderPaymentXmlSampleDataRecord>();
             foreach (var entity in entities)
             {
