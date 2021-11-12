@@ -213,6 +213,11 @@ namespace ApplicationCore.Entities
         /// </summary>
         public ICollection<CardCard> CardCards { get; set; } = new List<CardCard>();
 
+        /// <summary>
+        /// The uu dai
+        /// </summary>
+        public ICollection<ServiceCardCard> ServiceCardCards { get; set; } = new List<ServiceCardCard>();
+
         public string GetAddress()
         {
             var list = new List<string>();

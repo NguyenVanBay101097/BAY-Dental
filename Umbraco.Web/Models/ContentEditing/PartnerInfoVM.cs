@@ -11,12 +11,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public string MemberLevelId { get; set; }
         public string NameNoSign { get; set; }
 
-        public Guid? CardCardId { get; set; }
-
-        public string CardBarCode { get; set; }
-
-        public Guid? CardTypeId { get; set; }
-
         public DateTime? Date { get; set; }
         public string Gender { get; set; }
         public string CityName { get; set; }
@@ -67,7 +61,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// thẻ thành viên
         /// </summary>
-        public CardCardBasic CardCard { get; set; }
+        public string CardTypeName { get; set; }
 
         public IEnumerable<PartnerCategoryBasic> Categories { get; set; } = new List<PartnerCategoryBasic>();
         public string DateOfBirth
