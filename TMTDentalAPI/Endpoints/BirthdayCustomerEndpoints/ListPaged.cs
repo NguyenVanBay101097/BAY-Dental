@@ -78,9 +78,8 @@ namespace TMTDentalAPI.Endpoints.BirthdayCustomerEndpoints
                             Gender = partner.Gender
                         };
 
-            query = query.OrderBy(x => x.BirthDay);
             var totalItems = await query.CountAsync();
-            query = query.OrderBy(x => x.Name).Skip(request.Offset);
+            query = query.OrderBy(x => x.BirthDay).Skip(request.Offset);
             if (request.Limit > 0)
                 query = query.Take(request.Limit);
             var items = await query.ToListAsync();
