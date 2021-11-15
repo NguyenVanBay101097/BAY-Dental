@@ -153,12 +153,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
-        [HttpPost("[action]")]
-        public async Task<IActionResult> GetCommissionPaymentByAgentId(GetCommissionPaymentByAgentIdReq val)
-        {
-            var res = await _phieuThuChiService.GetCommissionPaymentByAgentId(val);
-            return Ok(res);
-        }
+      
 
         [HttpGet("{id}/Print")]
         //[CheckAccess(Actions = "Account.PhieuThuChi.Read")]

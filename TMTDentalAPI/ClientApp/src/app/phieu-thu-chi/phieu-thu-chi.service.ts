@@ -146,10 +146,6 @@ export class PhieuThuChiService {
     return this.http.post(this.baseApi + this.apiUrl + '/DefaultGet', val);
   }
 
-  getCommissionPaymentByAgentId(val: any) {
-    return this.http.post(this.baseApi + this.apiUrl + '/GetCommissionPaymentByAgentId', val);
-  }
-
   reportPhieuThuChi(val: any): Observable<PhieuThuChiReport[]> {
     return this.http.get<PhieuThuChiReport[]>(this.baseApi + this.apiUrl + '/ReportPhieuThuChi', { params: val });
   }

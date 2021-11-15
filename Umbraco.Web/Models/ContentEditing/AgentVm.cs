@@ -304,4 +304,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal AmountDebitTotal { get; set; }
     }
 
+    public class GetCommissionPaymentByAgentIdReq
+    {
+        public Guid AgentId { get; set; }
+        public string Type { get; set; }
+    }
+
 }

@@ -26,8 +26,6 @@ namespace Infrastructure.Services
         Task<List<PhieuThuChiExportExcel>> GetExportExcel(PhieuThuChiPaged val);
         Task<PrintVM> GetPrint(Guid id);
 
-        Task<PhieuThuChiDisplay> GetCommissionPaymentByAgentId(GetCommissionPaymentByAgentIdReq val);
-
         Task<IEnumerable<PhieuThuChi>> GetPrintTemplate(IEnumerable<Guid> resIds);
         Task ComputeProps(PhieuThuChi self);
         Task ComputeProps(IEnumerable<PhieuThuChi> selfs);

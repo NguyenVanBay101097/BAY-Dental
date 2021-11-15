@@ -88,6 +88,13 @@ namespace TMTDentalAPI.Controllers
             return Ok(amountCommissionTotal);
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetCommissionPaymentByAgentId(GetCommissionPaymentByAgentIdReq val)
+        {
+            var res = await _agentService.GetCommissionPaymentByAgentId(val);
+            return Ok(res);
+        }
+
         [HttpPost]
         [CheckAccess(Actions = "Catalog.Agent.Create")]
         public async Task<IActionResult> Create(AgentSave val)

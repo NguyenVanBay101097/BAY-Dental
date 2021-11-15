@@ -314,6 +314,37 @@ namespace Infrastructure.Services
             return res;
         }
 
+        public async Task<PhieuThuChiDisplay> GetCommissionPaymentByAgentId(GetCommissionPaymentByAgentIdReq val)
+        {
+            var journalObj = GetService<IAccountJournalService>();
+            var commissionSettlementObj = GetService<ICommissionSettlementService>();
+
+            var totalDebitAgent = await GetAmountDebitTotalAgent(val.AgentId, CompanyId, null, null);
+            var totalBaseAgent = await commissionSettlementObj.SearchQuery(x => x.AgentId.HasValue && x.AgentId == val.AgentId).SumAsync(x => x.BaseAmount);
+            var totalResidual = totalBaseAgent - totalDebitAgent.AmountDebitTotal;
+
+            if (totalResidual < 0)
+                throw new Exception("Không thể chi hoa hồng");
+
+            if (totalBaseAgent == 0)
+                throw new Exception("Tiền hoa hồng bằng 0, không thể chi hoa hồng");
+          
+            if (totalResidual == 0)
+                throw new Exception("Tiền hoa hồng đã thanh toán đủ");
+
+         
+
+            var res = new PhieuThuChiDisplay();
+            res.Date = DateTime.Now;
+            res.Type = val.Type;
+            res.CompanyId = CompanyId;
+            var journal = await journalObj.SearchQuery(x => x.CompanyId == CompanyId && x.Type == "cash").FirstOrDefaultAsync();
+            res.Journal = _mapper.Map<AccountJournalSimple>(journal);
+            res.IsAccounting = false;
+
+            return res;
+        }
+
         public async Task<AmountDebitTotalAgentReponse> GetAmountDebitTotalAgent(Guid id, Guid? companyId, DateTime? dateFrom, DateTime? dateTo)
         {
             var moveLineObj = GetService<IAccountMoveLineService>();
