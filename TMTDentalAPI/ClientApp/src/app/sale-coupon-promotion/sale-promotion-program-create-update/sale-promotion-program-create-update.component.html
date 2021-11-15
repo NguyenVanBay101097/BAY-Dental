@@ -233,7 +233,7 @@
                                                                     <label class="form-check-label"
                                                                         for="isApplyMaxDiscount"> Mức giảm tối đa
                                                                     </label>
-                                                                    <span class="text-primary" placement="top"
+                                                                    <span class="text-primary ml-2" placement="top"
                                                                         ngbTooltip="Số tiền tối đa có thể giảm">
                                                                         <i class="fas fa-exclamation-circle"></i>
                                                                     </span>
@@ -304,14 +304,14 @@
                                                             class="custom-control-input o_radio_input"
                                                             id="radio151_on_order" value="on_order"
                                                             (change)="onChangeOption($event.target.value)">
-                                                        <label class="custom-control-label o_form_label"
+                                                        <label class="custom-control-label"
                                                             for="radio151_on_order">
                                                             Phiếu điều trị
-                                                            <span class="text-primary" placement="top"
-                                                                ngbTooltip="KM giảm trên thành tiền phiếu điều trị">
-                                                                <i class="fas fa-exclamation-circle"></i>
-                                                            </span>
                                                         </label>
+                                                        <span class="text-primary ml-2" placement="top"
+                                                            ngbTooltip="KM giảm trên thành tiền phiếu điều trị">
+                                                            <i class="fas fa-exclamation-circle"></i>
+                                                        </span>
                                                     </div>
                                                     <div [class.d-none]="discountApplyOn != 'on_order'">
                                                         <div class="d-flex">
@@ -324,11 +324,11 @@
                                                                 <label class="form-check-label"
                                                                     for="isApplyMinimumDiscount">
                                                                     Giá trị phiếu điều trị tối thiểu
-                                                                    <span class="text-primary" placement="top"
-                                                                        ngbTooltip="Tổng tiền của phiếu điều trị phải đạt giá trị tối thiểu mới được áp dụng khuyến mãi">
-                                                                        <i class="fas fa-exclamation-circle"></i>
-                                                                    </span>
                                                                 </label>
+                                                                <span class="text-primary ml-2" placement="top"
+                                                                    ngbTooltip="Tổng tiền của phiếu điều trị phải đạt giá trị tối thiểu mới được áp dụng khuyến mãi">
+                                                                    <i class="fas fa-exclamation-circle"></i>
+                                                                </span>
                                                             </div>
                                                             <div [class.hide]="!isApplyMinimumDiscount">
                                                                 <div class="d-flex">
@@ -356,14 +356,14 @@
                                                             value="specific_product_categories"
                                                             id="radio151_specific_product_categories"
                                                             (change)="onChangeOption($event.target.value)">
-                                                        <label class="custom-control-label o_form_label"
+                                                        <label class="custom-control-label"
                                                             for="radio151_specific_product_categories">
                                                             Nhóm dịch vụ
-                                                            <span class="text-primary" placement="top"
-                                                                ngbTooltip="KM giảm trên đơn giá nhóm dịch vụ">
-                                                                <i class="fas fa-exclamation-circle"></i>
-                                                            </span>
                                                         </label>
+                                                        <span class="text-primary ml-2" placement="top"
+                                                            ngbTooltip="KM giảm trên đơn giá nhóm dịch vụ">
+                                                            <i class="fas fa-exclamation-circle"></i>
+                                                        </span>
                                                     </div>
                                                     <div [class.d-none]="discountApplyOn != 'specific_product_categories'">
                                                         <kendo-multiselect class="cus-kendo-multiselect"
@@ -386,14 +386,14 @@
                                                             class="custom-control-input o_radio_input"
                                                             value="specific_products" id="radio151_specific_products"
                                                             (change)="onChangeOption($event.target.value)">
-                                                        <label class="custom-control-label o_form_label"
+                                                        <label class="custom-control-label"
                                                             for="radio151_specific_products">
                                                             Dịch vụ
-                                                            <span class="text-primary" placement="top"
-                                                                ngbTooltip="KM giảm trên đơn giá dịch vụ">
-                                                                <i class="fas fa-exclamation-circle"></i>
-                                                            </span>
                                                         </label>
+                                                        <span class="text-primary ml-2" placement="top"
+                                                            ngbTooltip="KM giảm trên đơn giá dịch vụ">
+                                                            <i class="fas fa-exclamation-circle"></i>
+                                                        </span>
                                                     </div>
                                                     <div [class.d-none]="discountApplyOn != 'specific_products' || ['product', 'free_shipping'].indexOf(rewardType) !== -1">
                                                         <kendo-multiselect class="cus-kendo-multiselect"
@@ -528,9 +528,11 @@
                                                 value="card_types" formControlName="applyPartnerOn">
                                             <label class="custom-control-label" for="card_type">
                                                 Loại thẻ thành viên
-                                                <i class="fas fa-question-circle text-primary" placement="top"
-                                                ngbPopover="Áp dụng CTKM cho KH theo loại thẻ thành viên"></i>
                                             </label>
+                                            <span class="text-primary ml-2" placement="top"
+                                                ngbTooltip="Áp dụng CTKM cho KH theo loại thẻ thành viên">
+                                                <i class="fas fa-exclamation-circle"></i>
+                                            </span>
                                         </div>
                                         <div [class.d-none]="applyPartnerOn != 'card_types'">
                                             <kendo-multiselect class="cus-kendo-multiselect" [data]="listCardType"
