@@ -55,11 +55,11 @@ export class CommissionSettlementAgentPaymentDialogComponent implements OnInit {
 
     if(this.resAgent){
       this.formGroup.patchValue(this.resAgent);
-      var paymentDate = new Date(this.resAgent);
+      var paymentDate = new Date(this.resAgent.date);
       this.formGroup.get('dateObj').setValue(paymentDate);
 
       if (this.resAgent) {
-        this.filteredJournals = _.unionBy(this.filteredJournals, this.resAgent, 'id');
+        this.filteredJournals = _.unionBy(this.filteredJournals, this.resAgent.journal, 'id');
       }
 
     }else{
