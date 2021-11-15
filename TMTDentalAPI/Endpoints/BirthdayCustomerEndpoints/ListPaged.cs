@@ -60,8 +60,6 @@ namespace TMTDentalAPI.Endpoints.BirthdayCustomerEndpoints
                 partnerQuery = partnerQuery.Where(x => x.BirthDay == request.Day.Value);
             if (request.Month.HasValue && request.Month != 0)
                 partnerQuery = partnerQuery.Where(x => x.BirthMonth == request.Month.Value);
-            if (request.Day.HasValue && request.Day == 0 && request.Month.HasValue && request.Month == 0)
-                partnerQuery = partnerQuery.Where(x => x.BirthDay == today.Day && x.BirthMonth == today.Month);
             if (!string.IsNullOrEmpty(request.Search))
                 partnerQuery = partnerQuery.Where(x => x.Name.Contains(request.Search) || x.NameNoSign.Contains(request.Search) || x.Phone.Contains(request.Search));
             
@@ -80,7 +78,7 @@ namespace TMTDentalAPI.Endpoints.BirthdayCustomerEndpoints
                             Gender = partner.Gender
                         };
 
-
+            query = query.OrderBy(x => x.BirthDay);
             var totalItems = await query.CountAsync();
             query = query.OrderBy(x => x.Name).Skip(request.Offset);
             if (request.Limit > 0)
