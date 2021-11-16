@@ -1,12 +1,15 @@
 <h4 class="ml-3 my-2 title-header">Sổ quỹ</h4>
 
 <div style="position: relative; height:320px;">
-    <canvas baseChart
+    <canvas baseChart *ngIf="cashBooks.length"
       [labels]="barChartLabels"
       [datasets]="barChartData"
       [options]="barChartOptions"
       [type]="'bar'">
     </canvas>
+    <div class="d-flex justify-content-center align-items-center" style="height: 100%;" *ngIf="!cashBooks.length">
+        <img src="./../../../assets/icons/NoData.svg" class="img-nodata ">
+    </div>
   </div>
 
 <div class="container-fluid pb-4 bg-white">
