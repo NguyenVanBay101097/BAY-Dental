@@ -129,9 +129,9 @@ namespace TMTDentalAPI.Controllers
             //    });
             //}
 
-            //await _productPricelistService.CreateAsync(priceList);
+            await _productPricelistService.CreateAsync(priceList);
 
-            //cardType.ProductPricelistId = priceList.Id;
+            cardType.ProductPricelistId = priceList.Id;
             await _cardTypeService.CreateAsync(cardType);
             _unitOfWork.Commit();
             var basic = _mapper.Map<ServiceCardTypeBasic>(cardType);
@@ -214,14 +214,20 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("{id}/[action]")]
-        public async Task<IActionResult> ApplyServiceCategories(Guid id, [FromBody] List<ApplyServiceCategoryReq> categIds)
+        public async Task<IActionResult> ApplyServiceCategories(Guid id, [FromBody] List<ApplyServiceCategoryReq> vals)
         {
+            await _unitOfWork.BeginTransactionAsync();
+            await _cardTypeService.ApplyServiceCategories(id, vals);
+            _unitOfWork.Commit();
             return Ok();
         }
 
         [HttpPost("{id}/[action]")]
         public async Task<IActionResult> ApplyAllServices(Guid id, [FromBody] ApplyAllServiceReq val)
         {
+            await _unitOfWork.BeginTransactionAsync();
+            await _cardTypeService.ApplyAllServices(id, val);
+            _unitOfWork.Commit();
             return Ok();
         }
 
