@@ -185,5 +185,56 @@ namespace Infrastructure.Services
             }
             return entities;
         }
+
+        public async Task AddProductPricelistItem(Guid id, IEnumerable<Guid> productIds)
+        {
+            var priceListItemObj = GetService<IProductPricelistItemService>();
+            var self = await SearchQuery(x=> x.Id == id).Include(x=> x.ProductPricelist.Items).FirstOrDefaultAsync();
+            if (self == null)
+                throw new Exception("Không tìm thấy hạng thẻ");
+            if (self.ProductPricelist == null)
+                throw new Exception("Không tìm thấy bảng giá của hạng thẻ");
+
+            var priceListItems = self.ProductPricelist.Items;
+            var toAdds = new List<ProductPricelistItem>();
+            foreach (var proId in productIds)
+            {
+                if (priceListItems.Any(x => x.ProductId == proId))
+                    continue;
+                toAdds.Add(new ProductPricelistItem()
+                {
+                    AppliedOn = "0_product_variant",
+                    ComputePrice = "percentage",
+                    PercentPrice = 0,
+                    ProductId = proId
+                });
+            }
+            await priceListItemObj.CreateAsync(toAdds);
+        }
+
+        public async Task UpdateProductPricelistItem(Guid id, IEnumerable<ProductPricelistItemCreate> items)
+        {
+            var priceListItemObj = GetService<IProductPricelistItemService>();
+            var self = await SearchQuery(x => x.Id == id).Include(x => x.ProductPricelist.Items).FirstOrDefaultAsync();
+            if (self == null)
+                throw new Exception("Không tìm thấy hạng thẻ");
+            if (self.ProductPricelist == null)
+                throw new Exception("Không tìm thấy bảng giá của hạng thẻ");
+
+            var priceListItems = self.ProductPricelist.Items;
+            var toUpdates = new List<ProductPricelistItem>();
+            foreach (var item in items)
+            {
+                var existItem = priceListItems.FirstOrDefault(x=> x.Id == item.Id);
+                if (item == null)
+                    continue;
+                existItem.ComputePrice = item.ComputePrice;
+                existItem.PercentPrice = item.PercentPrice;
+                existItem.FixedAmountPrice = item.FixedAmountPrice;
+
+                toUpdates.Add(existItem);
+            }
+            await priceListItemObj.UpdateAsync(toUpdates);
+        }
     }
 }

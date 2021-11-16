@@ -117,21 +117,21 @@ namespace TMTDentalAPI.Controllers
                 CompanyId = val.CompanyId,
             };
 
-            foreach (var item in val.ProductPricelistItems)
-            {
-                priceList.Items.Add(new ProductPricelistItem
-                {
-                    AppliedOn = "0_product_variant",
-                    ComputePrice = item.ComputePrice,
-                    PercentPrice = item.PercentPrice,
-                    FixedAmountPrice = item.FixedAmountPrice,
-                    ProductId = item.ProductId
-                });
-            }
+            //foreach (var item in val.ProductPricelistItems)
+            //{
+            //    priceList.Items.Add(new ProductPricelistItem
+            //    {
+            //        AppliedOn = "0_product_variant",
+            //        ComputePrice = item.ComputePrice,
+            //        PercentPrice = item.PercentPrice,
+            //        FixedAmountPrice = item.FixedAmountPrice,
+            //        ProductId = item.ProductId
+            //    });
+            //}
 
-            await _productPricelistService.CreateAsync(priceList);
+            //await _productPricelistService.CreateAsync(priceList);
 
-            cardType.ProductPricelistId = priceList.Id;
+            //cardType.ProductPricelistId = priceList.Id;
             await _cardTypeService.CreateAsync(cardType);
             _unitOfWork.Commit();
             var basic = _mapper.Map<ServiceCardTypeBasic>(cardType);
@@ -144,45 +144,44 @@ namespace TMTDentalAPI.Controllers
         {
             await _unitOfWork.BeginTransactionAsync();
             var cardType = await _cardTypeService.SearchQuery(x => x.Id == id)
-                .Include(x => x.ProductPricelist).ThenInclude(x => x.Items)
                 .FirstOrDefaultAsync();
             _mapper.Map(val, cardType);
-            var priceList = cardType.ProductPricelist;
-            priceList.Name = "Bảng giá " + cardType.Name;
+            //var priceList = cardType.ProductPricelist;
+            //priceList.Name = "Bảng giá " + cardType.Name;
 
-            var itemsRemove = new List<ProductPricelistItem>();
-            foreach (var item in priceList.Items)
-            {
-                if (!val.ProductPricelistItems.Any(x => x.Id == item.Id))
-                    itemsRemove.Add(item);
-            }
+            //var itemsRemove = new List<ProductPricelistItem>();
+            //foreach (var item in priceList.Items)
+            //{
+            //    if (!val.ProductPricelistItems.Any(x => x.Id == item.Id))
+            //        itemsRemove.Add(item);
+            //}
 
-            foreach (var item in itemsRemove)
-                priceList.Items.Remove(item);
+            //foreach (var item in itemsRemove)
+            //    priceList.Items.Remove(item);
 
-            foreach (var item in val.ProductPricelistItems)
-            {
-                if (!item.Id.HasValue || item.Id == Guid.Empty)
-                {
-                    priceList.Items.Add(new ProductPricelistItem
-                    {
-                        AppliedOn = "0_product_variant",
-                        ComputePrice = item.ComputePrice,
-                        PercentPrice = item.PercentPrice,
-                        FixedAmountPrice = item.FixedAmountPrice,
-                        ProductId = item.ProductId
-                    });
-                }
-                else
-                {
-                    var plItem = priceList.Items.Where(x => x.Id == item.Id).FirstOrDefault();
-                    plItem.ComputePrice = item.ComputePrice;
-                    plItem.PercentPrice = item.PercentPrice;
-                    plItem.FixedAmountPrice = item.FixedAmountPrice;
-                }
-            }
+            //foreach (var item in val.ProductPricelistItems)
+            //{
+            //    if (!item.Id.HasValue || item.Id == Guid.Empty)
+            //    {
+            //        priceList.Items.Add(new ProductPricelistItem
+            //        {
+            //            AppliedOn = "0_product_variant",
+            //            ComputePrice = item.ComputePrice,
+            //            PercentPrice = item.PercentPrice,
+            //            FixedAmountPrice = item.FixedAmountPrice,
+            //            ProductId = item.ProductId
+            //        });
+            //    }
+            //    else
+            //    {
+            //        var plItem = priceList.Items.Where(x => x.Id == item.Id).FirstOrDefault();
+            //        plItem.ComputePrice = item.ComputePrice;
+            //        plItem.PercentPrice = item.PercentPrice;
+            //        plItem.FixedAmountPrice = item.FixedAmountPrice;
+            //    }
+            //}
 
-            await _productPricelistService.UpdateAsync(priceList);
+            //await _productPricelistService.UpdateAsync(priceList);
 
             await _cardTypeService.UpdateAsync(cardType);
             _unitOfWork.Commit();
@@ -194,6 +193,36 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _cardTypeService.AutoCompleteSearch(search);
             return Ok(res);
+        }
+
+        [HttpPost("{id}/AddServices")]
+        public async Task<IActionResult> AddProductPricelistItem(Guid id,[FromBody] List<Guid> productIds)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _cardTypeService.AddProductPricelistItem(id, productIds);
+            _unitOfWork.Commit();
+            return Ok();
+        }
+
+        [HttpPost("{id}/UpdateServices")]
+        public async Task<IActionResult> UpdateProductPricelistItem(Guid id, [FromBody] List<ProductPricelistItemCreate> items)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _cardTypeService.UpdateProductPricelistItem(id, items);
+            _unitOfWork.Commit();
+            return Ok();
+        }
+
+        [HttpPost("{id}/[action]")]
+        public async Task<IActionResult> ApplyServiceCategories(Guid id, [FromBody] List<ApplyServiceCategoryReq> categIds)
+        {
+            return Ok();
+        }
+
+        [HttpPost("{id}/[action]")]
+        public async Task<IActionResult> ApplyAllServices(Guid id, [FromBody] ApplyAllServiceReq val)
+        {
+            return Ok();
         }
 
     }

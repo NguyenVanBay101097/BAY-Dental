@@ -14,7 +14,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Period { get; set; }
 
         public int NbrPeriod { get; set; }
-        public IEnumerable<ProductPricelistItemCreate> ProductPricelistItems { get; set; } = new List<ProductPricelistItemCreate>();
+        //public IEnumerable<ProductPricelistItemCreate> ProductPricelistItems { get; set; } = new List<ProductPricelistItemCreate>();
         public Guid? CompanyId { get; set; }
     }
 
@@ -33,5 +33,24 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
+    }
+
+    public class ApplyServiceCategoryReq
+    {
+        public Guid CategId { get; set; }
+        public string ComputePrice { get; set; }
+
+        public decimal? PercentPrice { get; set; }
+
+        public decimal? FixedAmountPrice { get; set; }
+    }
+
+    public class ApplyAllServiceReq
+    {
+        public string ComputePrice { get; set; }
+
+        public decimal? PercentPrice { get; set; }
+
+        public decimal? FixedAmountPrice { get; set; }
     }
 }
