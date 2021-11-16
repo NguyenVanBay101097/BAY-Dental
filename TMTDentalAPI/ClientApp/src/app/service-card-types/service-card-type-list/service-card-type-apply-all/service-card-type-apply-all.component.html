@@ -26,14 +26,12 @@
                                             </kendo-numerictextbox>
                                         </div>
                                         <div>
-                                            <input type="radio" class="btn-check" id = 'radio1' name="radio" value = "percentage" [(ngModel)]="computePrice"
-                                            (ngModelChange)="changePrice('percentage')">
+                                            <input type="radio" class="btn-check" id = 'radio1' name="radio" value = "percentage" [(ngModel)]="computePrice">
                                             <label class="btn btn-outline-primary mb-0 mr-2" [ngClass]="{'btn-primary': computePrice == 'percentage'}" 
                                             for="radio1">%</label>
                                         </div>
                                         <div>
-                                            <input type="radio" class="btn-check" id = 'radio2' name = 'radio' value = "fixed_amount" [(ngModel)]="computePrice"
-                                            (ngModelChange)="changePrice('fixed_amount')">
+                                            <input type="radio" class="btn-check" id = 'radio2' name = 'radio' value = "fixed_amount" [(ngModel)]="computePrice">
                                             <label class="btn btn-outline-primary mb-0 mr-2" [ngClass]="{'btn-primary': computePrice != 'percentage'}" 
                                             for="radio2">VNĐ</label>
                                         </div>

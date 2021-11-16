@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { ServiceCardTypeService } from '../../service-card-type.service';
+import { ServiceCardTypeApplyAllComponent } from '../service-card-type-apply-all/service-card-type-apply-all.component';
 import { ServiceCardTypeApplyDialogComponent } from '../service-card-type-apply-dialog/service-card-type-apply-dialog.component';
 
 @Component({
@@ -179,46 +180,47 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
   }
 
   onApplyAll() {
-    let modalRef = this.modalService.open(ServiceCardTypeApplyDialogComponent,
+    let modalRef = this.modalService.open(ServiceCardTypeApplyAllComponent,
       { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Áp dụng ưu đãi cho tất cả dịch vụ';
     modalRef.result.then(res => {
-      this.productPricelistItems.controls.forEach((productControl,index) => {
-        var productsFormArray = this.productPricelistItems.at(index).get('products') as FormArray;
-        productsFormArray.controls.forEach(control => {
-          control.get('computePrice').setValue(res.computePrice);
-          if (res.computePrice == 'percentage') {
-            control.get('percentPrice').setValue(res.price);
-            control.get('fixedAmountPrice').setValue(0);
-          } else {
-            control.get('percentPrice').setValue(0);
-            control.get('fixedAmountPrice').setValue(res.price);
-          }
-        });
-      // this.touchedFixedAmount();
-
-      })
+      if (!this.cardTypeId) {
+        var formValue = this.cardForm.value;
+        this.cardTypeService.create(formValue).subscribe(result => {
+          this.cardTypeId = result.id;
+          this.cardTypeService.onApplyAll(result.id,res.val).subscribe(() => {
+            this.getCardTypeById();
+          })
+        })
+      }
+      else {
+        this.cardTypeService.onApplyAll(this.cardTypeId,res.val).subscribe(() => {
+          this.getCardTypeById();
+        })
+      }
     }, () => {
     });
   }
 
-  onApplyCateg(index) {
+  onApplyCateg() {
     let modalRef = this.modalService.open(ServiceCardTypeApplyDialogComponent,
-      { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Áp dụng ưu đãi cho nhóm dịch vụ';
     modalRef.result.then(res => {
-      var productsFormArray = this.productPricelistItems.at(index).get('products') as FormArray;
-      productsFormArray.controls.forEach(control => {
-        control.get('computePrice').setValue(res.computePrice);
-        if (res.computePrice == 'percentage') {
-          control.get('percentPrice').setValue(res.price);
-          control.get('fixedAmountPrice').setValue(0);
-        } else {
-          control.get('percentPrice').setValue(0);
-          control.get('fixedAmountPrice').setValue(res.price);
-        }
-      });
-      // this.touchedFixedAmount();
+      if (!this.cardTypeId) {
+        var formValue = this.cardForm.value;
+        this.cardTypeService.create(formValue).subscribe(result => {
+          this.cardTypeId = result.id;
+          this.cardTypeService.onApplyInCateg(result.id,res.val).subscribe(() => {
+            this.getCardTypeById();
+          })
+        })
+      }
+      else {
+        this.cardTypeService.onApplyInCateg(this.cardTypeId,res.val).subscribe(() => {
+          this.getCardTypeById();
+        })
+      }
     }, () => {
     });
   }

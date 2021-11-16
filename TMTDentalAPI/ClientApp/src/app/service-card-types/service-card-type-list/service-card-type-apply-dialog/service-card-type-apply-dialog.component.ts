@@ -37,7 +37,7 @@ export class ServiceCardTypeApplyDialogComponent implements OnInit {
 
   onApply(){
     var val = this.productCategoryListItems.value;
-    this.activeModal.dismiss(val);
+    this.activeModal.close(val);
   }
 
   changePeriod(){
