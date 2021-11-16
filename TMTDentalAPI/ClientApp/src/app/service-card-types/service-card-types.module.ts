@@ -14,10 +14,11 @@ import { PreferentialCardCreateUpdateComponent } from './service-card-type-list/
 import { ServiceCardTypeApplyDialogComponent } from './service-card-type-list/service-card-type-apply-dialog/service-card-type-apply-dialog.component';
 import { MemberCardCreateUpdateComponent } from './service-card-type-list/member-card-create-update/member-card-create-update.component';
 import { CardCardsModule } from '../card-cards/card-cards.module';
+import { ServiceCardTypeApplyAllComponent } from './service-card-type-list/service-card-type-apply-all/service-card-type-apply-all.component';
 
 
 @NgModule({
-  declarations: [ServiceCardTypeListComponent, ServiceCardTypeCuDialogComponent, MemberCardListComponent, PreferentialCardListComponent, PreferentialCardCreateUpdateComponent, ServiceCardTypeApplyDialogComponent, MemberCardCreateUpdateComponent],
+  declarations: [ServiceCardTypeListComponent, ServiceCardTypeCuDialogComponent, MemberCardListComponent, PreferentialCardListComponent, PreferentialCardCreateUpdateComponent, ServiceCardTypeApplyDialogComponent, MemberCardCreateUpdateComponent, ServiceCardTypeApplyAllComponent],
   imports: [
     ServiceCardTypesRoutingModule,
     ReactiveFormsModule,

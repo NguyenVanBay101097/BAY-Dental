@@ -80,7 +80,12 @@
                 <div class="d-flex justify-content-between mb-2">
                     <app-service-list-search-dropdown (onSelectService)="addLine($event)" [placeHolder] = "'Tìm kiếm theo mã hoặc tên dịch vụ...'" ></app-service-list-search-dropdown>
                     <div>
-                        <button *ngIf="this.productPricelistItems.controls.length" class="btn btn-primary" (click) ="onApplyAll()">Áp dụng cho toàn bộ</button>
+                        <button class="btn btn-primary mr-2" (click)="onApplyCateg()">
+                            Áp dụng cho cả nhóm
+                        </button>
+                        <button class="btn btn-primary" (click) ="onApplyAll()">
+                            Áp dụng cho toàn bộ
+                        </button>
                     </div>
                 </div>
                 <div>
@@ -102,7 +107,7 @@
                                             {{categ.get('name').value}}
                                         </td>
                                         <td class="text-right">
-                                            <button class="btn btn-primary" (click)="onApplyCateg(categIndex)">
+                                            <button class="btn btn-primary" (click)="onApplyCateg()">
                                                 Áp dụng cho cả nhóm
                                             </button>
                                         </td>
@@ -110,7 +115,7 @@
                                     </tr>
 
                                     <ng-container formArrayName="products">
-                                        <tr *ngFor="let gr of categ.get('products').controls; let proIndex = index"
+                                        <tr *ngFor="let gr of categ.get('products')['controls']; let proIndex = index"
                                             [formGroupName]="proIndex">
                                             <td class="w-50">
                                                 <div>{{gr.get('product').value.name}}</div>
