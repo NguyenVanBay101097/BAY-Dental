@@ -322,7 +322,7 @@ namespace Infrastructure.Services
             var totalDebitAgent = await GetAmountDebitTotalAgent(val.AgentId, CompanyId, null, null);
             var totalBaseAmount = await commissionSettlementObj.SearchQuery(x => x.AgentId.HasValue && x.AgentId == val.AgentId).SumAsync(x => x.BaseAmount ?? 0);
             var totalAmount = await commissionSettlementObj.SearchQuery(x => x.AgentId.HasValue && x.AgentId == val.AgentId).SumAsync(x => x.Amount ?? 0);
-            var totalResidual = totalBaseAmount - totalDebitAgent.AmountDebitTotal;
+            var totalResidual = totalAmount - totalDebitAgent.AmountDebitTotal;
 
             if (totalBaseAmount == 0 || totalAmount == 0)
                 throw new Exception("Tiền hoa hồng bằng 0, không thể chi hoa hồng");
