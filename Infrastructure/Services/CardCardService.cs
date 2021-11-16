@@ -172,6 +172,10 @@ namespace Infrastructure.Services
         {
             if (string.IsNullOrEmpty(barcode))
                 return;
+            if (barcode.Length < 5 || barcode.Length > 15)
+            {
+                throw new Exception($"Số ID tối thiểu 5 và tối đa 15 ký tự");
+            }
 
             var count = await SearchQuery(x => x.Barcode == barcode).CountAsync();
             if (count >= 2)
@@ -411,9 +415,9 @@ namespace Infrastructure.Services
                                 errors.Add($"Dòng {row}: không tìm thấy hạng thẻ");
 
                             var barcode = worksheet.Cells[row, 1].Text.Trim();
-                            if (barcode.Length < 10 || barcode.Length > 15)
+                            if (barcode.Length < 5 || barcode.Length > 15)
                             {
-                                errors.Add($"Dòng {row}: Số ID tối thiểu 10 và tối đa 15 ký tự");
+                                errors.Add($"Dòng {row}: Số ID tối thiểu 5 và tối đa 15 ký tự");
                             }
                             var exist = await SearchQuery(x => x.Barcode == barcode).AnyAsync();
                             if (exist)
