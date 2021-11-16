@@ -9,7 +9,8 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 export class ServiceCardTypeApplyAllComponent implements OnInit {
   title: string = '';
   computePrice = 'percentage';
-  price = 0;
+  percentPrice = 0;
+  fixedAmountPrice = 0;
   constructor(
     public activeModal: NgbActiveModal,
 
@@ -19,11 +20,13 @@ export class ServiceCardTypeApplyAllComponent implements OnInit {
   }
 
   onApply() {
-    this.activeModal.close({price: this.price, computePrice: this.computePrice});
+    this.activeModal.close({percentPrice: this.percentPrice, fixedAmountPrice: this.fixedAmountPrice, computePrice: this.computePrice});
   }
 
   changePrice() {
-    this.price = 0;
+    this.percentPrice = 0;
+    this.fixedAmountPrice = 0;
+
   }
 
 }

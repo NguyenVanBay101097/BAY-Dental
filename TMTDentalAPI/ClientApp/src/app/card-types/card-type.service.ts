@@ -70,4 +70,20 @@ export class CardTypeService {
     autoComplete(val): Observable<CardTypeBasic[]> {
         return this.http.post<CardTypeBasic[]>(this.baseApi + this.apiUrl + "/AutoComplete", val);
     }
+
+    onApplyInCateg(id: string,val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/" + id + "/ApplyServiceCategories", val);
+    }
+
+    onApplyAll(id: string,val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/" + id + "/ApplyAllServices", val);
+    }
+
+    addProductPricelistItem (id: string, val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/" + id + "/AddProductPricelistItem", val);
+    }
+
+    updateProductPricelistItem (id: string, val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/" + id + "/UpdateProductPricelistItem", val);
+    }
 }

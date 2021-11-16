@@ -3,6 +3,7 @@ import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { CardTypeService } from 'src/app/card-types/card-type.service';
 import { ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
 import { ProductCategoriesSearchDropdownComponent } from 'src/app/shared/product-categories-search-dropdown/product-categories-search-dropdown.component';
 
@@ -12,10 +13,6 @@ import { ProductCategoriesSearchDropdownComponent } from 'src/app/shared/product
   styleUrls: ['./service-card-type-apply-dialog.component.css']
 })
 export class ServiceCardTypeApplyDialogComponent implements OnInit {
-  price: number = 0;
-  computePrice = 'percentage';
-  priceMin: number;
-  categId: string;
   title: string;
   search: string = '';
   searchUpdate = new Subject<string>();
@@ -26,7 +23,9 @@ export class ServiceCardTypeApplyDialogComponent implements OnInit {
   constructor(
     public activeModal: NgbActiveModal,
     private fb: FormBuilder,
-    private productCategoryService: ProductCategoryService
+    private productCategoryService: ProductCategoryService,
+    private cardTypeService: CardTypeService,
+
     ) { }
 
   ngOnInit(): void {
@@ -37,11 +36,11 @@ export class ServiceCardTypeApplyDialogComponent implements OnInit {
   }
 
   onApply(){
-    this.activeModal.close({price: this.price, computePrice: this.computePrice});
+    var val = this.productCategoryListItems.value;
+    this.activeModal.dismiss(val);
   }
 
   changePeriod(){
-    this.price = 0;
   }
 
   addLine(event) {

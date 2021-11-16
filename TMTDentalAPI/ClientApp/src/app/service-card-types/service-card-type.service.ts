@@ -68,4 +68,8 @@ export class ServiceCardTypeService {
     autoComplete(search: string) {
         return this.http.get(this.baseApi + this.apiUrl + "/AutoComplete", { params: {search} });
     }
+
+    onApplyInCateg(id: string,val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/" + id + "/ApplyServiceCategories", val);
+    }
 }
