@@ -320,8 +320,8 @@ namespace Infrastructure.Services
             var commissionSettlementObj = GetService<ICommissionSettlementService>();
 
             var totalDebitAgent = await GetAmountDebitTotalAgent(val.AgentId, CompanyId, null, null);
-            var totalBaseAmount = await commissionSettlementObj.SearchQuery(x => x.AgentId.HasValue && x.AgentId == val.AgentId).SumAsync(x => x.BaseAmount);
-            var totalAmount = await commissionSettlementObj.SearchQuery(x => x.AgentId.HasValue && x.AgentId == val.AgentId).SumAsync(x => x.BaseAmount);
+            var totalBaseAmount = await commissionSettlementObj.SearchQuery(x => x.AgentId.HasValue && x.AgentId == val.AgentId).SumAsync(x => x.BaseAmount ?? 0);
+            var totalAmount = await commissionSettlementObj.SearchQuery(x => x.AgentId.HasValue && x.AgentId == val.AgentId).SumAsync(x => x.Amount ?? 0);
             var totalResidual = totalBaseAmount - totalDebitAgent.AmountDebitTotal;
 
             if (totalBaseAmount == 0 || totalAmount == 0)
