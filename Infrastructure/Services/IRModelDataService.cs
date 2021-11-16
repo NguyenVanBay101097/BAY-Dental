@@ -193,6 +193,12 @@ namespace Infrastructure.Services
                                 var jounal = await service.GetByIdAsync(data.ResId);
                                 return (T)(object)jounal;
                             }
+                        case "tooth.category":
+                            {
+                                var service = GetService<IToothCategoryService>();
+                                var toothCate = await service.GetByIdAsync(data.ResId);
+                                return (T)(object)toothCate;
+                            }
                         default:
                             {
                                 return null;

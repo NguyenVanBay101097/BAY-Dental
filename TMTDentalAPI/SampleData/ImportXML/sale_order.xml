@@ -3,7 +3,9 @@
   <Record>
     <Id>sample.sale_order_1</Id>
     <PartnerId>sample.partner_customer_4</PartnerId>
-    <DateRound>8</DateRound>
+    <DateRound>9</DateRound>
+    <TimeHour>16</TimeHour>
+    <TimeMinute>14</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_1_sale_order_line_1</Id>
@@ -12,14 +14,40 @@
         <ProductUOMQty>7.00</ProductUOMQty>
         <ProductId>sample.product_service_44</ProductId>
         <Diagnostic />
-        <DateRound>8</DateRound>
+        <DateRound>9</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_21</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_22</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_23</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_31</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_32</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_33</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_41</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_2</Id>
     <PartnerId>sample.partner_customer_35</PartnerId>
-    <DateRound>7</DateRound>
+    <DateRound>8</DateRound>
+    <TimeHour>14</TimeHour>
+    <TimeMinute>6</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_2_sale_order_line_1</Id>
@@ -28,14 +56,31 @@
         <ProductUOMQty>4.00</ProductUOMQty>
         <ProductId>sample.product_service_40</ProductId>
         <Diagnostic>Viêm quanh Implant</Diagnostic>
-        <DateRound>7</DateRound>
+        <DateRound>8</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_21</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_22</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_31</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_42</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_3</Id>
     <PartnerId>sample.partner_customer_1</PartnerId>
-    <DateRound>7</DateRound>
+    <DateRound>8</DateRound>
+    <TimeHour>15</TimeHour>
+    <TimeMinute>0</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_3_sale_order_line_1</Id>
@@ -44,14 +89,43 @@
         <ProductUOMQty>8.00</ProductUOMQty>
         <ProductId>sample.product_service_10</ProductId>
         <Diagnostic>Răng ố vàng, nhiều mảng bám</Diagnostic>
-        <DateRound>7</DateRound>
+        <DateRound>8</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_35</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_36</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_37</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_38</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_45</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_46</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_47</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_48</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_4</Id>
     <PartnerId>sample.partner_customer_6</PartnerId>
-    <DateRound>7</DateRound>
+    <DateRound>8</DateRound>
+    <TimeHour>15</TimeHour>
+    <TimeMinute>2</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_4_sale_order_line_1</Id>
@@ -60,14 +134,18 @@
         <ProductUOMQty>1.00</ProductUOMQty>
         <ProductId>sample.product_service_32</ProductId>
         <Diagnostic>Răng không đều</Diagnostic>
-        <DateRound>7</DateRound>
+        <DateRound>8</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels />
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_5</Id>
     <PartnerId>sample.partner_customer_11</PartnerId>
-    <DateRound>7</DateRound>
+    <DateRound>8</DateRound>
+    <TimeHour>15</TimeHour>
+    <TimeMinute>30</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_5_sale_order_line_1</Id>
@@ -76,14 +154,22 @@
         <ProductUOMQty>1.00</ProductUOMQty>
         <ProductId>sample.product_service_2</ProductId>
         <Diagnostic>Viêm tủy răng</Diagnostic>
-        <DateRound>7</DateRound>
+        <DateRound>8</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_48</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_6</Id>
     <PartnerId>sample.partner_customer_5</PartnerId>
-    <DateRound>7</DateRound>
+    <DateRound>8</DateRound>
+    <TimeHour>15</TimeHour>
+    <TimeMinute>32</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_6_sale_order_line_1</Id>
@@ -92,14 +178,31 @@
         <ProductUOMQty>4.00</ProductUOMQty>
         <ProductId>sample.product_service_10</ProductId>
         <Diagnostic>Răng ố vàng, nhiều mảng bám</Diagnostic>
-        <DateRound>7</DateRound>
+        <DateRound>8</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_13</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_14</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_15</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_44</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_7</Id>
     <PartnerId>sample.partner_customer_7</PartnerId>
-    <DateRound>7</DateRound>
+    <DateRound>8</DateRound>
+    <TimeHour>15</TimeHour>
+    <TimeMinute>38</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_7_sale_order_line_1</Id>
@@ -108,14 +211,31 @@
         <ProductUOMQty>4.00</ProductUOMQty>
         <ProductId>sample.product_service_7</ProductId>
         <Diagnostic>Viêm tủy răng</Diagnostic>
-        <DateRound>7</DateRound>
+        <DateRound>8</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_18</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_28</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_37</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_48</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_8</Id>
     <PartnerId>sample.partner_customer_10</PartnerId>
-    <DateRound>7</DateRound>
+    <DateRound>8</DateRound>
+    <TimeHour>15</TimeHour>
+    <TimeMinute>39</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_8_sale_order_line_1</Id>
@@ -124,14 +244,25 @@
         <ProductUOMQty>2.00</ProductUOMQty>
         <ProductId>sample.product_service_12</ProductId>
         <Diagnostic>Viêm tủy răng</Diagnostic>
-        <DateRound>7</DateRound>
+        <DateRound>8</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_47</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_48</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_9</Id>
     <PartnerId>sample.partner_customer_12</PartnerId>
-    <DateRound>6</DateRound>
+    <DateRound>7</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>8</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_9_sale_order_line_1</Id>
@@ -140,14 +271,28 @@
         <ProductUOMQty>3.00</ProductUOMQty>
         <ProductId>sample.product_service_10</ProductId>
         <Diagnostic>Răng ố vàng, nhiều mảng bám</Diagnostic>
-        <DateRound>6</DateRound>
+        <DateRound>7</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_46</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_47</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_48</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_10</Id>
     <PartnerId>sample.partner_customer_14</PartnerId>
-    <DateRound>6</DateRound>
+    <DateRound>7</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>38</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_10_sale_order_line_1</Id>
@@ -156,14 +301,18 @@
         <ProductUOMQty>1.00</ProductUOMQty>
         <ProductId>sample.product_service_29</ProductId>
         <Diagnostic>Răng không đều</Diagnostic>
-        <DateRound>6</DateRound>
+        <DateRound>7</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels />
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_11</Id>
     <PartnerId>sample.partner_customer_19</PartnerId>
-    <DateRound>6</DateRound>
+    <DateRound>7</DateRound>
+    <TimeHour>11</TimeHour>
+    <TimeMinute>28</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_11_sale_order_line_1</Id>
@@ -172,14 +321,31 @@
         <ProductUOMQty>4.00</ProductUOMQty>
         <ProductId>sample.product_service_10</ProductId>
         <Diagnostic>Răng ố vàng, nhiều mảng bám</Diagnostic>
-        <DateRound>6</DateRound>
+        <DateRound>7</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_35</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_36</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_47</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_48</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_12</Id>
     <PartnerId>sample.partner_customer_34</PartnerId>
-    <DateRound>5</DateRound>
+    <DateRound>6</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>32</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_12_sale_order_line_1</Id>
@@ -188,14 +354,37 @@
         <ProductUOMQty>6.00</ProductUOMQty>
         <ProductId>sample.product_service_41</ProductId>
         <Diagnostic>Răng không đều</Diagnostic>
-        <DateRound>5</DateRound>
+        <DateRound>6</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_12</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_13</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_23</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_24</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_33</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_34</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_13</Id>
     <PartnerId>sample.partner_customer_33</PartnerId>
-    <DateRound>5</DateRound>
+    <DateRound>6</DateRound>
+    <TimeHour>11</TimeHour>
+    <TimeMinute>26</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_13_sale_order_line_1</Id>
@@ -204,14 +393,25 @@
         <ProductUOMQty>2.00</ProductUOMQty>
         <ProductId>sample.product_service_64</ProductId>
         <Diagnostic>Sâu răng</Diagnostic>
-        <DateRound>5</DateRound>
+        <DateRound>6</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_12</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_13</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_14</Id>
     <PartnerId>sample.partner_customer_41</PartnerId>
-    <DateRound>5</DateRound>
+    <DateRound>6</DateRound>
+    <TimeHour>11</TimeHour>
+    <TimeMinute>42</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_14_sale_order_line_1</Id>
@@ -220,14 +420,43 @@
         <ProductUOMQty>8.00</ProductUOMQty>
         <ProductId>sample.product_service_10</ProductId>
         <Diagnostic>Răng ố vàng, nhiều mảng bám</Diagnostic>
-        <DateRound>5</DateRound>
+        <DateRound>6</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_15</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_16</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_25</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_26</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_35</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_36</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_45</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_46</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_15</Id>
     <PartnerId>sample.partner_customer_16</PartnerId>
-    <DateRound>5</DateRound>
+    <DateRound>6</DateRound>
+    <TimeHour>11</TimeHour>
+    <TimeMinute>45</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_15_sale_order_line_1</Id>
@@ -236,14 +465,31 @@
         <ProductUOMQty>4.00</ProductUOMQty>
         <ProductId>sample.product_service_7</ProductId>
         <Diagnostic>Viêm tủy răng</Diagnostic>
-        <DateRound>5</DateRound>
+        <DateRound>6</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_17</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_18</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_47</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_48</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_16</Id>
     <PartnerId>sample.partner_customer_16</PartnerId>
-    <DateRound>5</DateRound>
+    <DateRound>6</DateRound>
+    <TimeHour>14</TimeHour>
+    <TimeMinute>49</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_16_sale_order_line_1</Id>
@@ -252,7 +498,22 @@
         <ProductUOMQty>4.00</ProductUOMQty>
         <ProductId>sample.product_service_7</ProductId>
         <Diagnostic>Viêm tủy răng</Diagnostic>
-        <DateRound>5</DateRound>
+        <DateRound>6</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_17</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_18</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_47</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_48</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
       <Record>
         <Id>sample.sale_order_16_sale_order_line_2</Id>
@@ -261,14 +522,31 @@
         <ProductUOMQty>4.00</ProductUOMQty>
         <ProductId>sample.product_service_10</ProductId>
         <Diagnostic />
-        <DateRound>5</DateRound>
+        <DateRound>6</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_17</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_18</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_47</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_48</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_17</Id>
     <PartnerId>sample.partner_customer_30</PartnerId>
-    <DateRound>5</DateRound>
+    <DateRound>6</DateRound>
+    <TimeHour>14</TimeHour>
+    <TimeMinute>51</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_17_sale_order_line_1</Id>
@@ -277,14 +555,31 @@
         <ProductUOMQty>4.00</ProductUOMQty>
         <ProductId>sample.product_service_6</ProductId>
         <Diagnostic>Viêm tủy răng</Diagnostic>
-        <DateRound>5</DateRound>
+        <DateRound>6</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_13</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_14</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_43</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_44</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_18</Id>
     <PartnerId>sample.partner_customer_17</PartnerId>
-    <DateRound>4</DateRound>
+    <DateRound>5</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>0</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_18_sale_order_line_1</Id>
@@ -293,14 +588,18 @@
         <ProductUOMQty>1.00</ProductUOMQty>
         <ProductId>sample.product_service_29</ProductId>
         <Diagnostic />
-        <DateRound>3</DateRound>
+        <DateRound>4</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels />
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_19</Id>
     <PartnerId>sample.partner_customer_22</PartnerId>
-    <DateRound>4</DateRound>
+    <DateRound>5</DateRound>
+    <TimeHour>11</TimeHour>
+    <TimeMinute>50</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_19_sale_order_line_1</Id>
@@ -309,14 +608,28 @@
         <ProductUOMQty>3.00</ProductUOMQty>
         <ProductId>sample.product_service_64</ProductId>
         <Diagnostic>Viêm quanh Implant</Diagnostic>
-        <DateRound>3</DateRound>
+        <DateRound>4</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_17</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_47</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_48</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_20</Id>
     <PartnerId>sample.partner_customer_32</PartnerId>
-    <DateRound>4</DateRound>
+    <DateRound>5</DateRound>
+    <TimeHour>11</TimeHour>
+    <TimeMinute>53</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_20_sale_order_line_1</Id>
@@ -325,14 +638,37 @@
         <ProductUOMQty>6.00</ProductUOMQty>
         <ProductId>sample.product_service_10</ProductId>
         <Diagnostic>Răng ố vàng, nhiều mảng bám</Diagnostic>
-        <DateRound>3</DateRound>
+        <DateRound>4</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_36</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_37</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_38</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_46</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_47</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_48</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_21</Id>
     <PartnerId>sample.partner_customer_24</PartnerId>
-    <DateRound>4</DateRound>
+    <DateRound>5</DateRound>
+    <TimeHour>11</TimeHour>
+    <TimeMinute>55</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_21_sale_order_line_1</Id>
@@ -341,14 +677,25 @@
         <ProductUOMQty>2.00</ProductUOMQty>
         <ProductId>sample.product_service_7</ProductId>
         <Diagnostic>Viêm lợi</Diagnostic>
-        <DateRound>3</DateRound>
+        <DateRound>4</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_46</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_47</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_22</Id>
     <PartnerId>sample.partner_customer_15</PartnerId>
-    <DateRound>3</DateRound>
+    <DateRound>4</DateRound>
+    <TimeHour>12</TimeHour>
+    <TimeMinute>22</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_22_sale_order_line_1</Id>
@@ -357,14 +704,46 @@
         <ProductUOMQty>9.00</ProductUOMQty>
         <ProductId>sample.product_service_10</ProductId>
         <Diagnostic>Viêm tủy răng, Sai khớp cắn, Áp xe má</Diagnostic>
-        <DateRound>3</DateRound>
+        <DateRound>4</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_17</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_27</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_28</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_36</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_37</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_38</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_46</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_47</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_48</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_23</Id>
     <PartnerId>sample.partner_customer_29</PartnerId>
-    <DateRound>1</DateRound>
+    <DateRound>2</DateRound>
+    <TimeHour>9</TimeHour>
+    <TimeMinute>58</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_23_sale_order_line_1</Id>
@@ -373,14 +752,25 @@
         <ProductUOMQty>2.00</ProductUOMQty>
         <ProductId>sample.product_service_2</ProductId>
         <Diagnostic>Sâu răng</Diagnostic>
-        <DateRound>1</DateRound>
+        <DateRound>2</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_17</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_47</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_24</Id>
     <PartnerId>sample.partner_customer_1</PartnerId>
-    <DateRound>1</DateRound>
+    <DateRound>2</DateRound>
+    <TimeHour>16</TimeHour>
+    <TimeMinute>57</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_24_sale_order_line_1</Id>
@@ -389,14 +779,43 @@
         <ProductUOMQty>8.00</ProductUOMQty>
         <ProductId>sample.product_service_10</ProductId>
         <Diagnostic>Răng ố vàng, nhiều mảng bám</Diagnostic>
-        <DateRound>1</DateRound>
+        <DateRound>2</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_11</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_12</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_21</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_22</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_31</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_32</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_41</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_42</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_25</Id>
     <PartnerId>sample.partner_customer_2</PartnerId>
-    <DateRound>1</DateRound>
+    <DateRound>2</DateRound>
+    <TimeHour>17</TimeHour>
+    <TimeMinute>6</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_25_sale_order_line_1</Id>
@@ -405,14 +824,34 @@
         <ProductUOMQty>5.00</ProductUOMQty>
         <ProductId>sample.product_service_40</ProductId>
         <Diagnostic>Răng không đều</Diagnostic>
-        <DateRound>1</DateRound>
+        <DateRound>2</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_11</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_12</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_21</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_31</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_41</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_26</Id>
     <PartnerId>sample.partner_customer_8</PartnerId>
-    <DateRound>1</DateRound>
+    <DateRound>2</DateRound>
+    <TimeHour>17</TimeHour>
+    <TimeMinute>13</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_26_sale_order_line_1</Id>
@@ -421,7 +860,22 @@
         <ProductUOMQty>4.00</ProductUOMQty>
         <ProductId>sample.product_service_10</ProductId>
         <Diagnostic>Răng ố vàng, nhiều mảng bám</Diagnostic>
-        <DateRound>1</DateRound>
+        <DateRound>2</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_14</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_23</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_32</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_43</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
       <Record>
         <Id>sample.sale_order_26_sale_order_line_2</Id>
@@ -430,7 +884,9 @@
         <ProductUOMQty>1.00</ProductUOMQty>
         <ProductId>sample.product_service_28</ProductId>
         <Diagnostic />
-        <DateRound>1</DateRound>
+        <DateRound>2</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels />
       </Record>
       <Record>
         <Id>sample.sale_order_26_sale_order_line_3</Id>
@@ -439,14 +895,28 @@
         <ProductUOMQty>3.00</ProductUOMQty>
         <ProductId>sample.product_service_44</ProductId>
         <Diagnostic />
-        <DateRound>1</DateRound>
+        <DateRound>2</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_14</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_24</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_44</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_27</Id>
     <PartnerId>sample.partner_customer_11</PartnerId>
-    <DateRound>1</DateRound>
+    <DateRound>2</DateRound>
+    <TimeHour>18</TimeHour>
+    <TimeMinute>3</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_27_sale_order_line_1</Id>
@@ -455,14 +925,18 @@
         <ProductUOMQty>1.00</ProductUOMQty>
         <ProductId>sample.product_service_24</ProductId>
         <Diagnostic />
-        <DateRound>1</DateRound>
+        <DateRound>2</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels />
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_28</Id>
     <PartnerId>sample.partner_customer_44</PartnerId>
-    <DateRound>1</DateRound>
+    <DateRound>2</DateRound>
+    <TimeHour>18</TimeHour>
+    <TimeMinute>40</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_28_sale_order_line_1</Id>
@@ -471,7 +945,9 @@
         <ProductUOMQty>1.00</ProductUOMQty>
         <ProductId>sample.product_service_28</ProductId>
         <Diagnostic>Viêm lợi</Diagnostic>
-        <DateRound>1</DateRound>
+        <DateRound>2</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels />
       </Record>
       <Record>
         <Id>sample.sale_order_28_sale_order_line_2</Id>
@@ -480,14 +956,18 @@
         <ProductUOMQty>1.00</ProductUOMQty>
         <ProductId>sample.product_service_10</ProductId>
         <Diagnostic />
-        <DateRound>1</DateRound>
+        <DateRound>2</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels />
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_29</Id>
     <PartnerId>sample.partner_customer_43</PartnerId>
-    <DateRound>0</DateRound>
+    <DateRound>1</DateRound>
+    <TimeHour>9</TimeHour>
+    <TimeMinute>16</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_29_sale_order_line_1</Id>
@@ -496,14 +976,49 @@
         <ProductUOMQty>10.00</ProductUOMQty>
         <ProductId>sample.product_service_10</ProductId>
         <Diagnostic>Răng ố vàng, nhiều mảng bám</Diagnostic>
-        <DateRound>0</DateRound>
+        <DateRound>1</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_11</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_12</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_13</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_21</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_22</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_23</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_31</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_32</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_41</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_42</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_30</Id>
     <PartnerId>sample.partner_customer_18</PartnerId>
-    <DateRound>0</DateRound>
+    <DateRound>1</DateRound>
+    <TimeHour>9</TimeHour>
+    <TimeMinute>52</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_30_sale_order_line_1</Id>
@@ -512,14 +1027,25 @@
         <ProductUOMQty>2.00</ProductUOMQty>
         <ProductId>sample.product_service_12</ProductId>
         <Diagnostic>Sâu răng</Diagnostic>
-        <DateRound>0</DateRound>
+        <DateRound>1</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_36</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_37</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_31</Id>
     <PartnerId>sample.partner_customer_13</PartnerId>
-    <DateRound>0</DateRound>
+    <DateRound>1</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>41</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_31_sale_order_line_1</Id>
@@ -528,14 +1054,25 @@
         <ProductUOMQty>2.00</ProductUOMQty>
         <ProductId>sample.product_service_7</ProductId>
         <Diagnostic>Viêm tủy răng</Diagnostic>
-        <DateRound>0</DateRound>
+        <DateRound>1</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_47</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_48</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_32</Id>
     <PartnerId>sample.partner_customer_18</PartnerId>
-    <DateRound>0</DateRound>
+    <DateRound>1</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>45</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_32_sale_order_line_1</Id>
@@ -544,14 +1081,25 @@
         <ProductUOMQty>2.00</ProductUOMQty>
         <ProductId>sample.product_service_12</ProductId>
         <Diagnostic>Sâu răng</Diagnostic>
-        <DateRound>0</DateRound>
+        <DateRound>1</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_36</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_37</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_33</Id>
     <PartnerId>sample.partner_customer_18</PartnerId>
-    <DateRound>0</DateRound>
+    <DateRound>1</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>47</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_33_sale_order_line_1</Id>
@@ -560,14 +1108,18 @@
         <ProductUOMQty>1.00</ProductUOMQty>
         <ProductId>sample.product_service_28</ProductId>
         <Diagnostic>U răng</Diagnostic>
-        <DateRound>0</DateRound>
+        <DateRound>1</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels />
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_34</Id>
     <PartnerId>sample.partner_customer_27</PartnerId>
-    <DateRound>0</DateRound>
+    <DateRound>1</DateRound>
+    <TimeHour>13</TimeHour>
+    <TimeMinute>37</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_34_sale_order_line_1</Id>
@@ -576,14 +1128,43 @@
         <ProductUOMQty>8.00</ProductUOMQty>
         <ProductId>sample.product_service_41</ProductId>
         <Diagnostic>Răng ố vàng, nhiều mảng bám</Diagnostic>
-        <DateRound>0</DateRound>
+        <DateRound>1</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_11</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_12</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_13</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_21</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_31</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_41</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_42</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_43</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_35</Id>
     <PartnerId>sample.partner_customer_35</PartnerId>
-    <DateRound>0</DateRound>
+    <DateRound>1</DateRound>
+    <TimeHour>14</TimeHour>
+    <TimeMinute>12</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_35_sale_order_line_1</Id>
@@ -592,14 +1173,25 @@
         <ProductUOMQty>2.00</ProductUOMQty>
         <ProductId>sample.product_service_13</ProductId>
         <Diagnostic>bình thường</Diagnostic>
-        <DateRound>0</DateRound>
+        <DateRound>1</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_14</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_28</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_36</Id>
     <PartnerId>sample.partner_customer_44</PartnerId>
-    <DateRound>0</DateRound>
+    <DateRound>1</DateRound>
+    <TimeHour>15</TimeHour>
+    <TimeMinute>30</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_36_sale_order_line_1</Id>
@@ -608,14 +1200,18 @@
         <ProductUOMQty>1.00</ProductUOMQty>
         <ProductId>sample.product_service_32</ProductId>
         <Diagnostic>Răng không đều</Diagnostic>
-        <DateRound>0</DateRound>
+        <DateRound>1</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels />
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_37</Id>
     <PartnerId>sample.partner_customer_6</PartnerId>
-    <DateRound>0</DateRound>
+    <DateRound>1</DateRound>
+    <TimeHour>16</TimeHour>
+    <TimeMinute>12</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_37_sale_order_line_1</Id>
@@ -624,14 +1220,25 @@
         <ProductUOMQty>2.00</ProductUOMQty>
         <ProductId>sample.product_service_33</ProductId>
         <Diagnostic>U răng, Răng không đều</Diagnostic>
-        <DateRound>0</DateRound>
+        <DateRound>1</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_13</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_16</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_38</Id>
     <PartnerId>sample.partner_customer_43</PartnerId>
-    <DateRound>0</DateRound>
+    <DateRound>1</DateRound>
+    <TimeHour>16</TimeHour>
+    <TimeMinute>19</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_38_sale_order_line_1</Id>
@@ -640,14 +1247,18 @@
         <ProductUOMQty>1.00</ProductUOMQty>
         <ProductId>sample.product_service_16</ProductId>
         <Diagnostic />
-        <DateRound>0</DateRound>
+        <DateRound>1</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels />
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_39</Id>
     <PartnerId>sample.partner_customer_11</PartnerId>
-    <DateRound>0</DateRound>
+    <DateRound>1</DateRound>
+    <TimeHour>16</TimeHour>
+    <TimeMinute>20</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_39_sale_order_line_1</Id>
@@ -656,7 +1267,16 @@
         <ProductUOMQty>2.00</ProductUOMQty>
         <ProductId>sample.product_service_48</ProductId>
         <Diagnostic />
-        <DateRound>0</DateRound>
+        <DateRound>1</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_47</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_48</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
       <Record>
         <Id>sample.sale_order_39_sale_order_line_2</Id>
@@ -666,13 +1286,24 @@
         <ProductId>sample.product_service_29</ProductId>
         <Diagnostic />
         <DateRound>0</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels>
+          <Record>
+            <ToothId>base.tooth_47</ToothId>
+          </Record>
+          <Record>
+            <ToothId>base.tooth_48</ToothId>
+          </Record>
+        </SaleOrderLineToothRels>
       </Record>
     </OrderLines>
   </Record>
   <Record>
     <Id>sample.sale_order_40</Id>
     <PartnerId>sample.partner_customer_9</PartnerId>
-    <DateRound>0</DateRound>
+    <DateRound>1</DateRound>
+    <TimeHour>16</TimeHour>
+    <TimeMinute>24</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_40_sale_order_line_1</Id>
@@ -681,7 +1312,9 @@
         <ProductUOMQty>1.00</ProductUOMQty>
         <ProductId>sample.product_service_28</ProductId>
         <Diagnostic>lệch hàm</Diagnostic>
-        <DateRound>0</DateRound>
+        <DateRound>1</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels />
       </Record>
     </OrderLines>
   </Record>
@@ -689,6 +1322,8 @@
     <Id>sample.sale_order_41</Id>
     <PartnerId>sample.partner_customer_10</PartnerId>
     <DateRound>0</DateRound>
+    <TimeHour>11</TimeHour>
+    <TimeMinute>36</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_41_sale_order_line_1</Id>
@@ -698,6 +1333,8 @@
         <ProductId>sample.product_service_10</ProductId>
         <Diagnostic />
         <DateRound>0</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels />
       </Record>
     </OrderLines>
   </Record>
@@ -705,6 +1342,8 @@
     <Id>sample.sale_order_42</Id>
     <PartnerId>sample.partner_customer_12</PartnerId>
     <DateRound>0</DateRound>
+    <TimeHour>14</TimeHour>
+    <TimeMinute>56</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_42_sale_order_line_1</Id>
@@ -714,6 +1353,8 @@
         <ProductId>sample.product_service_17</ProductId>
         <Diagnostic>Răng ố vàng, nhiều mảng bám</Diagnostic>
         <DateRound>0</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels />
       </Record>
     </OrderLines>
   </Record>
@@ -721,6 +1362,8 @@
     <Id>sample.sale_order_43</Id>
     <PartnerId>sample.partner_customer_13</PartnerId>
     <DateRound>0</DateRound>
+    <TimeHour>16</TimeHour>
+    <TimeMinute>24</TimeMinute>
     <OrderLines>
       <Record>
         <Id>sample.sale_order_43_sale_order_line_1</Id>
@@ -730,6 +1373,8 @@
         <ProductId>sample.product_service_32</ProductId>
         <Diagnostic>Răng không đều</Diagnostic>
         <DateRound>0</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels />
       </Record>
       <Record>
         <Id>sample.sale_order_43_sale_order_line_2</Id>
@@ -739,6 +1384,8 @@
         <ProductId>sample.product_service_29</ProductId>
         <Diagnostic />
         <DateRound>0</DateRound>
+        <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
+        <SaleOrderLineToothRels />
       </Record>
     </OrderLines>
   </Record>

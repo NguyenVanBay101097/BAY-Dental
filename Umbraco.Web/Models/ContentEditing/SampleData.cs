@@ -201,6 +201,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Id { get; set; }
         public string PartnerId { get; set; }
         public int DateRound { get; set; } // để set date.now - this
+        public int TimeHour { get; set; }
+        public int TimeMinute { get; set; }
         [XmlArray("OrderLines")]
         [XmlArrayItem("Record")]
         public List<SaleOrderLineXmlSampleDataRecord> OrderLines { get; set; } = new List<SaleOrderLineXmlSampleDataRecord>();
@@ -216,6 +218,16 @@ namespace Umbraco.Web.Models.ContentEditing
         public string ProductId { get; set; }
         public string Diagnostic { get; set; }
         public int DateRound { get; set; } // để set date.now - this
+        public string ToothCategoryId { get; set; }
+        [XmlArray("SaleOrderLineToothRels")]
+        [XmlArrayItem("Record")]
+        public List<SaleOrderLineToothRelXmlSampleDataRecord> SaleOrderLineToothRels { get; set; } = new List<SaleOrderLineToothRelXmlSampleDataRecord>();
+    }
+
+    [XmlRoot("Record")]
+    public class SaleOrderLineToothRelXmlSampleDataRecord
+    {
+        public string ToothId { get; set; }
     }
 
     [XmlType("Record")]

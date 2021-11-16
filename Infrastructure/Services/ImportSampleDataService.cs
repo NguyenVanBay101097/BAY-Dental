@@ -60,7 +60,7 @@ namespace Infrastructure.Services
                 var customer = _mapper.Map<Partner>(item);
                 customer.Customer = true;
                 customer.CompanyId = companyId;
-                customer.Date = DateTime.Now.AddDays(-item.DateRound);
+                customer.Date = DateTime.Today.AddDays(-item.DateRound);
                 partnerDict.Add(item.Id, customer);
             }
             //add data supplier
@@ -72,7 +72,7 @@ namespace Infrastructure.Services
                 supplier.Customer = false;
                 supplier.Supplier = true;
                 supplier.CompanyId = companyId;
-                supplier.Date = DateTime.Now.AddDays(-item.DateRound);
+                supplier.Date = DateTime.Today.AddDays(-item.DateRound);
                 partnerDict.Add(item.Id, supplier);
             }
             await partnerObj.CreateAsync(partnerDict.Values);
@@ -192,7 +192,7 @@ namespace Infrastructure.Services
                 laboAttach.PurchaseOK = false;
                 laboAttach.CompanyId = companyId;
                 laboAttach.Type = "consu";
-                laboAttach.Type2 = "labo";
+                laboAttach.Type2 = "labo_attach";
                 laboAttach.UOMId = defaultUoM.Id;
                 laboAttach.UOMPOId = defaultUoM.Id;
                 productDict.Add(item.Id, laboAttach);
@@ -338,17 +338,23 @@ namespace Infrastructure.Services
             foreach (var item in saleOrderData.Records)
             {
                 var saleOrder = _mapper.Map<SaleOrder>(item);
-                saleOrder.DateOrder = DateTime.Now.AddDays(-item.DateRound);
+                saleOrder.DateOrder = DateTime.Today.AddDays(-item.DateRound).AddHours(item.TimeHour).AddMinutes(item.TimeMinute);
                 saleOrder.CompanyId = companyId;
                 saleOrder.PartnerId = partnerDict.ContainsKey(item.PartnerId) ? partnerDict[item.PartnerId].Id : (await irModelDataObj.GetRef<Partner>(item.PartnerId)).Id;
                 var sequence = 0;
                 foreach (var lineItem in item.OrderLines)
                 {
                     var line = _mapper.Map<SaleOrderLine>(lineItem);
-                    line.Date = DateTime.Now.AddDays(-lineItem.DateRound);
+                    line.Date = DateTime.Today.AddDays(-lineItem.DateRound);
                     line.CompanyId = companyId;
                     line.Sequence = sequence++;
                     line.ProductId = productDict.ContainsKey(lineItem.ProductId) ? productDict[lineItem.ProductId].Id : (await irModelDataObj.GetRef<Product>(lineItem.ProductId)).Id;
+                    line.ToothCategoryId = (await irModelDataObj.GetRef<ToothCategory>(lineItem.ToothCategoryId)).Id;
+                    foreach (var lineItemTooth in lineItem.SaleOrderLineToothRels)
+                    {
+                        line.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel() 
+                        { ToothId = (await irModelDataObj.GetRef<Tooth>(lineItemTooth.ToothId)).Id });
+                    }
 
                     saleOrderLineDict.Add(lineItem.Id, line);
                     saleOrder.OrderLines.Add(line);
@@ -376,7 +382,7 @@ namespace Infrastructure.Services
             foreach (var item in saleOrderPaymentData.Records)
             {
                 var saleOrderPayment = _mapper.Map<SaleOrderPayment>(item);
-                saleOrderPayment.Date = DateTime.Now.AddDays(-item.DateRound);
+                saleOrderPayment.Date = DateTime.Today.AddDays(-item.DateRound);
                 saleOrderPayment.CompanyId = companyId;
                 saleOrderPayment.OrderId = saleOrderDict.ContainsKey(item.OrderId) ? saleOrderDict[item.OrderId].Id : (await irModelDataObj.GetRef<SaleOrder>(item.OrderId)).Id;
                 foreach (var lineItem in item.Lines)
@@ -414,7 +420,7 @@ namespace Infrastructure.Services
             foreach (var item in laboOrderData.Records)
             {
                 var laboOrder = _mapper.Map<LaboOrder>(item);
-                laboOrder.DateOrder = DateTime.Now.AddDays(-item.DateRound);
+                laboOrder.DateOrder = DateTime.Today.AddDays(-item.DateRound);
                 laboOrder.CompanyId = companyId;
                 laboOrder.PartnerId = partnerDict[item.PartnerId].Id;
                 laboOrder.ProductId = productDict.ContainsKey(item.ProductId) ? (Guid?)productDict[item.ProductId].Id : null;
@@ -518,7 +524,7 @@ namespace Infrastructure.Services
             foreach (var item in phieuthuData.Records)
             {
                 var phieuthu = _mapper.Map<PhieuThuChi>(item);
-                phieuthu.Date = DateTime.Now.AddDays(-item.DateRound);
+                phieuthu.Date = DateTime.Today.AddDays(-item.DateRound);
                 phieuthu.CompanyId = companyId;
                 phieuthu.JournalId = (await irModelDataObj.GetRef<AccountJournal>(item.JournalId)).Id;
                 phieuthu.LoaiThuChiId = loaithuchiDict[item.LoaiThuChiId].Id;
@@ -532,7 +538,7 @@ namespace Infrastructure.Services
             foreach (var item in phieuchiData.Records)
             {
                 var phieuchi = _mapper.Map<PhieuThuChi>(item);
-                phieuchi.Date = DateTime.Now.AddDays(-item.DateRound);
+                phieuchi.Date = DateTime.Today.AddDays(-item.DateRound);
                 phieuchi.CompanyId = companyId;
                 phieuchi.JournalId = (await irModelDataObj.GetRef<AccountJournal>(item.JournalId)).Id;
                 phieuchi.LoaiThuChiId = loaithuchiDict[item.LoaiThuChiId].Id;
@@ -564,7 +570,7 @@ namespace Infrastructure.Services
                 var pickingType = await irModelDataObj.GetRef<StockPickingType>("stock.stock_picking_type_incoming");
                 var purchaseorder = _mapper.Map<PurchaseOrder>(item);
 
-                purchaseorder.DateOrder = DateTime.Now.AddDays(-item.DateRound);
+                purchaseorder.DateOrder = DateTime.Today.AddDays(-item.DateRound);
                 purchaseorder.CompanyId = companyId;
                 purchaseorder.PartnerId = partnerDict[item.PartnerId].Id;
                 purchaseorder.PickingTypeId = pickingType.Id;
@@ -591,7 +597,7 @@ namespace Infrastructure.Services
             foreach (var item in purchaserefundData.Records)
             {
                 var purchaseorder = _mapper.Map<PurchaseOrder>(item);
-                purchaseorder.DateOrder = DateTime.Now.AddDays(-item.DateRound);
+                purchaseorder.DateOrder = DateTime.Today.AddDays(-item.DateRound);
                 purchaseorder.CompanyId = companyId;
                 purchaseorder.PartnerId = partnerDict[item.PartnerId].Id;
                 purchaseorder.PickingTypeId = (await irModelDataObj.GetRef<StockPickingType>(item.PickingTypeId)).Id;
@@ -662,7 +668,7 @@ namespace Infrastructure.Services
                 var pickingType = (await irModelDataObj.GetRef<StockPickingType>("stock.stock_picking_type_outgoing"));
 
                 var stockPicking = _mapper.Map<StockPicking>(item);
-                stockPicking.Date = DateTime.Now.AddDays(-item.DateRound);
+                stockPicking.Date = DateTime.Today.AddDays(-item.DateRound);
                 stockPicking.CompanyId = companyId;
                 stockPicking.PartnerId = employeeDict[item.PartnerId].PartnerId;
                 stockPicking.PickingTypeId = pickingType.Id;

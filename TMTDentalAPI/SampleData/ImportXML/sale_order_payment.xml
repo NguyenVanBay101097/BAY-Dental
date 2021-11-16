@@ -223,7 +223,7 @@
     <DateRound>6</DateRound>
     <JournalLines>
       <Record>
-        <JournalId>account.data_account_journal_debt</JournalId>
+        <JournalId>account.data_account_journal_bank</JournalId>
         <Amount>1000000.00</Amount>
       </Record>
     </JournalLines>
@@ -281,7 +281,7 @@
     <DateRound>5</DateRound>
     <JournalLines>
       <Record>
-        <JournalId>account.data_account_journal_advance</JournalId>
+        <JournalId>account.data_account_journal_cash</JournalId>
         <Amount>1000000.00</Amount>
       </Record>
     </JournalLines>
@@ -299,7 +299,7 @@
     <DateRound>5</DateRound>
     <JournalLines>
       <Record>
-        <JournalId>account.data_account_journal_debt</JournalId>
+        <JournalId>account.data_account_journal_cash</JournalId>
         <Amount>1800000.00</Amount>
       </Record>
     </JournalLines>
@@ -317,7 +317,7 @@
     <DateRound>5</DateRound>
     <JournalLines>
       <Record>
-        <JournalId>account.data_account_journal_advance</JournalId>
+        <JournalId>account.data_account_journal_cash</JournalId>
         <Amount>20000000.00</Amount>
       </Record>
     </JournalLines>
@@ -335,11 +335,11 @@
     <DateRound>4</DateRound>
     <JournalLines>
       <Record>
-        <JournalId>account.data_account_journal_advance</JournalId>
+        <JournalId>account.data_account_journal_cash</JournalId>
         <Amount>30000000.00</Amount>
       </Record>
       <Record>
-        <JournalId>account.data_account_journal_debt</JournalId>
+        <JournalId>account.data_account_journal_bank</JournalId>
         <Amount>20000000.00</Amount>
       </Record>
     </JournalLines>
@@ -523,7 +523,7 @@
     <DateRound>1</DateRound>
     <JournalLines>
       <Record>
-        <JournalId>account.data_account_journal_bank</JournalId>
+        <JournalId>account.data_account_journal_cash</JournalId>
         <Amount>150000.00</Amount>
       </Record>
     </JournalLines>
@@ -559,7 +559,7 @@
     <DateRound>1</DateRound>
     <JournalLines>
       <Record>
-        <JournalId>account.data_account_journal_debt</JournalId>
+        <JournalId>account.data_account_journal_bank</JournalId>
         <Amount>75000000.00</Amount>
       </Record>
     </JournalLines>
@@ -613,7 +613,7 @@
     <DateRound>1</DateRound>
     <JournalLines>
       <Record>
-        <JournalId>account.data_account_journal_debt</JournalId>
+        <JournalId>account.data_account_journal_bank</JournalId>
         <Amount>100000000.00</Amount>
       </Record>
     </JournalLines>
@@ -739,7 +739,7 @@
     <DateRound>0</DateRound>
     <JournalLines>
       <Record>
-        <JournalId>account.data_account_journal_debt</JournalId>
+        <JournalId>account.data_account_journal_cash</JournalId>
         <Amount>3400000.00</Amount>
       </Record>
     </JournalLines>
@@ -757,7 +757,7 @@
     <DateRound>0</DateRound>
     <JournalLines>
       <Record>
-        <JournalId>account.data_account_journal_debt</JournalId>
+        <JournalId>account.data_account_journal_bank</JournalId>
         <Amount>20000000.00</Amount>
       </Record>
     </JournalLines>

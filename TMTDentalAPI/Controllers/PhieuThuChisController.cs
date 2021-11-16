@@ -277,7 +277,7 @@ namespace TMTDentalAPI.Controllers
                 var item = _mapper.Map<PhieuThuChiXmlSampleDataRecord>(entity);
 
                 item.Id = $@"sample.phieu_thu_chi_thu_{entities.IndexOf(entity) + 1}";
-                item.DateRound = (int)(dateToData - entity.Date).TotalDays;
+                item.DateRound = (int)(dateToData.Date - entity.Date.Date).TotalDays;
                 var irmodelDataJournal = listIrModelData.FirstOrDefault(x => x.ResId == entity.JournalId.ToString());
                 item.JournalId = irmodelDataJournal == null ? "" : irmodelDataJournal?.Module + "." + irmodelDataJournal?.Name;
                 var irmodelDataLoaiThuChi = listIrModelData.FirstOrDefault(x => x.ResId == entity.LoaiThuChiId.ToString());
@@ -390,7 +390,7 @@ namespace TMTDentalAPI.Controllers
                 var item = _mapper.Map<PhieuThuChiXmlSampleDataRecord>(entity);
 
                 item.Id = $@"sample.phieu_thu_chi_chi_{entities.IndexOf(entity) + 1}";
-                item.DateRound = (int)(dateToData - entity.Date).TotalDays;
+                item.DateRound = (int)(dateToData.Date - entity.Date.Date).TotalDays;
                 var irmodelDataJournal = listIrModelData.FirstOrDefault(x => x.ResId == entity.JournalId.ToString());
                 item.JournalId = irmodelDataJournal == null ? "" : irmodelDataJournal?.Module + "." + irmodelDataJournal?.Name;
                 var irmodelDataLoaiThuChi = listIrModelData.FirstOrDefault(x => x.ResId == entity.LoaiThuChiId.ToString());
