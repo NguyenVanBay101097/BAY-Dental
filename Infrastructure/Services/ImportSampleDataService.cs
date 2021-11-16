@@ -490,11 +490,11 @@ namespace Infrastructure.Services
             foreach (var item in customerReceiptData.Records)
             {
                 var customerReceipt = _mapper.Map<CustomerReceipt>(item);
-                customerReceipt.DateWaiting = DateTime.Today.AddDays(-item.DateRound).AddHours(item.WaitingTimeHour).AddMinutes(item.WaitingTimeHour);
+                customerReceipt.DateWaiting = DateTime.Today.AddDays(-item.DateRound).AddHours(item.WaitingTimeHour).AddMinutes(item.WaitingTimeMinute);
                 if (item.ExaminationTimeHour.HasValue)
                     customerReceipt.DateExamination = DateTime.Today.AddDays(-item.DateRound).AddHours(item.ExaminationTimeHour.Value).AddMinutes(item.ExaminationTimeMinute.Value);
                 if (item.DoneTimeHour.HasValue)
-                    customerReceipt.DateDone = DateTime.Today.AddDays(-item.DateRound).AddHours(item.DoneTimeHour.Value).AddMinutes(item.DoneTimeHour.Value);
+                    customerReceipt.DateDone = DateTime.Today.AddDays(-item.DateRound).AddHours(item.DoneTimeHour.Value).AddMinutes(item.DoneTimeMinute.Value);
 
                 customerReceipt.CompanyId = companyId;
                 customerReceipt.PartnerId = partnerDict[item.PartnerId].Id;

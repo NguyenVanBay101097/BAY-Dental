@@ -3,7 +3,7 @@
   <Record>
     <Id>sample.labo_order_1</Id>
     <PartnerId>sample.partner_supplier_1</PartnerId>
-    <DateRound>6</DateRound>
+    <DateRound>7</DateRound>
     <ProductId />
     <Quantity>6.00</Quantity>
     <PriceUnit>7000000.00</PriceUnit>
@@ -41,7 +41,7 @@
   <Record>
     <Id>sample.labo_order_2</Id>
     <PartnerId>sample.partner_supplier_1</PartnerId>
-    <DateRound>6</DateRound>
+    <DateRound>7</DateRound>
     <ProductId>sample.product_labo_3</ProductId>
     <Quantity>7.00</Quantity>
     <PriceUnit>4000000.00</PriceUnit>
@@ -88,7 +88,7 @@
   <Record>
     <Id>sample.labo_order_3</Id>
     <PartnerId>sample.partner_supplier_1</PartnerId>
-    <DateRound>1</DateRound>
+    <DateRound>2</DateRound>
     <ProductId />
     <Quantity>5.00</Quantity>
     <PriceUnit>5000000.00</PriceUnit>
@@ -119,7 +119,7 @@
   <Record>
     <Id>sample.labo_order_4</Id>
     <PartnerId>sample.partner_supplier_1</PartnerId>
-    <DateRound>1</DateRound>
+    <DateRound>2</DateRound>
     <ProductId>sample.product_labo_5</ProductId>
     <Quantity>3.00</Quantity>
     <PriceUnit>5000000.00</PriceUnit>
@@ -144,7 +144,7 @@
   <Record>
     <Id>sample.labo_order_5</Id>
     <PartnerId>sample.partner_supplier_1</PartnerId>
-    <DateRound>0</DateRound>
+    <DateRound>1</DateRound>
     <ProductId>sample.product_labo_3</ProductId>
     <Color>Trắng</Color>
     <Quantity>6.00</Quantity>
@@ -189,7 +189,7 @@
   <Record>
     <Id>sample.labo_order_6</Id>
     <PartnerId>sample.partner_supplier_1</PartnerId>
-    <DateRound>0</DateRound>
+    <DateRound>1</DateRound>
     <ProductId />
     <Quantity>8.00</Quantity>
     <PriceUnit>8500000.00</PriceUnit>
@@ -229,7 +229,7 @@
   <Record>
     <Id>sample.labo_order_7</Id>
     <PartnerId>sample.partner_supplier_1</PartnerId>
-    <DateRound>0</DateRound>
+    <DateRound>1</DateRound>
     <ProductId>sample.product_labo_5</ProductId>
     <Quantity>2.00</Quantity>
     <PriceUnit>0.00</PriceUnit>
@@ -254,5 +254,25 @@
         <ToothId>base.tooth_16</ToothId>
       </Record>
     </LaboOrderToothRel>
+  </Record>
+  <Record>
+    <Id>sample.labo_order_8</Id>
+    <PartnerId>sample.partner_supplier_1</PartnerId>
+    <DateRound>0</DateRound>
+    <ProductId />
+    <Color />
+    <Quantity>1.00</Quantity>
+    <PriceUnit>6000000.00</PriceUnit>
+    <AmountTotal>6000000.00</AmountTotal>
+    <SaleOrderLineId>sample.sale_order_43_sale_order_line_1</SaleOrderLineId>
+    <LaboFinishLineId />
+    <LaboBiteJointId>sample.labo_bite_joint_1</LaboBiteJointId>
+    <LaboBridgeId>sample.labo_bridge_2</LaboBridgeId>
+    <LaboOrderProductRel>
+      <Record>
+        <ProductId>sample.product_labo_attach_4</ProductId>
+      </Record>
+    </LaboOrderProductRel>
+    <LaboOrderToothRel />
   </Record>
 </Data>
