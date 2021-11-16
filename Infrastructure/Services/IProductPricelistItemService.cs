@@ -7,5 +7,6 @@ namespace Infrastructure.Services
 {
     public interface IProductPricelistItemService: IBaseService<ProductPricelistItem>
     {
+        void ValidateBase(IEnumerable<ProductPricelistItem> selfs);
     }
 }

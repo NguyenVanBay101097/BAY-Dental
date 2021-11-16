@@ -14,7 +14,7 @@ namespace Infrastructure.Services
             : base(repository, httpContextAccessor)
         {
         }
-
+       
         public override ISpecification<ProductPricelistItem> RuleDomainGet(IRRule rule)
         {
             var companyId = CompanyId;
@@ -24,6 +24,26 @@ namespace Infrastructure.Services
                     return new InitialSpecification<ProductPricelistItem>(x => !x.CompanyId.HasValue || x.CompanyId == companyId);
                 default:
                     return null;
+            }
+        }
+        private decimal GetComputePrice(ProductPricelistItem self)
+        {
+            switch (self.ComputePrice)
+            {
+                case "percentage":
+                    return Math.Round(((self.PercentPrice ?? 0) * self.Product.ListPrice) / 100);
+                case "fixed_amount":
+                    return self.FixedAmountPrice ?? 0;
+                default:
+                    return 0;
+            }
+        }
+        public void ValidateBase(IEnumerable<ProductPricelistItem> selfs)
+        {
+            foreach (var self in selfs)
+            {
+                if (GetComputePrice(self) > self.Product.ListPrice)
+                    throw new Exception("Ưu đãi vượt quá giá bán");
             }
         }
     }

@@ -18,5 +18,7 @@ namespace Infrastructure.Services
         Task<IEnumerable<ServiceCardTypeSimple>> AutoCompleteSearch(string search);
         Task AddProductPricelistItem(Guid id, IEnumerable<Guid> productIds);
         Task UpdateProductPricelistItem(Guid id, IEnumerable<ProductPricelistItemCreate> items);
+        Task ApplyServiceCategories(Guid id, IEnumerable<ApplyServiceCategoryReq> vals);
+        Task ApplyAllServices(Guid id, ApplyAllServiceReq val);
     }
 }
