@@ -76,6 +76,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Note { get; set; }
     }
 
+    public class InsuranceIsActivePatch
+    {
+        public bool IsActive { get; set; }
+    }
+
     public class ResInsuranceSimple
     {
         public Guid Id { get; set; }

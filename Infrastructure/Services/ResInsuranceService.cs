@@ -65,6 +65,10 @@ namespace Infrastructure.Services
 
         public override async Task<ResInsurance> CreateAsync(ResInsurance entity)
         {
+            var exist = await CheckInsuranceNameExist(entity.Name);
+            if (exist)
+                throw new Exception("Công ty bảo hiểm đã tồn tại");
+
             var partnerObj = GetService<IPartnerService>();
             var partner = new Partner()
             {
@@ -84,6 +88,12 @@ namespace Infrastructure.Services
 
             var insurance = await base.CreateAsync(entity);
             return insurance;
+        }
+
+        private async Task<bool> CheckInsuranceNameExist(string name)
+        {
+            var exist = await SearchQuery(x => x.Name == name).AnyAsync();
+            return exist;
         }
 
         public override ISpecification<ResInsurance> RuleDomainGet(IRRule rule)

@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -16,6 +17,17 @@ namespace Infrastructure.Services
             : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
+        }
+
+        public override ISpecification<ResInsurancePayment> RuleDomainGet(IRRule rule)
+        {
+            switch (rule.Code)
+            {
+                case "base.res_insurance_payment_comp_rule":
+                    return new InitialSpecification<ResInsurancePayment>(x => x.CompanyId == CompanyId);
+                default:
+                    return null;
+            }
         }
     }
 }

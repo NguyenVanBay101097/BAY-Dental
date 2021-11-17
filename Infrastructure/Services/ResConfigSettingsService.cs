@@ -115,6 +115,9 @@ namespace Infrastructure.Services
                     var value = Convert.ToBoolean(self.GetType().GetProperty(field).GetValue(self, null));
                     var partnerRule = await modelDataObj.GetRef<IRRule>("base.res_partner_rule");
                     self.GetType().GetProperty(field).SetValue(self, !partnerRule.Active);
+
+                    var agentRule = await modelDataObj.GetRef<IRRule>("base.agent_comp_rule");
+                    self.GetType().GetProperty(field).SetValue(self, !agentRule.Active);
                 }
             }
         }
@@ -492,6 +495,7 @@ namespace Infrastructure.Services
                     var agentRule = await modelDataObj.GetRef<IRRule>("base.agent_comp_rule");
                     agentRule.Active = !value;
                     rules.Add(agentRule);
+
 
                     await ruleObj.UpdateAsync(rules);
                 }

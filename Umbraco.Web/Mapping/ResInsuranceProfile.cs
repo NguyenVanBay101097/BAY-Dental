@@ -24,6 +24,9 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Id, x => x.Ignore());
 
             CreateMap<ResInsurance, ResInsuranceSimple>();
+
+            CreateMap<ResInsurance, InsuranceIsActivePatch>();
+            CreateMap<InsuranceIsActivePatch, ResInsurance>();
         }
     }
 }

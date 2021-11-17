@@ -3,6 +3,7 @@ using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -96,6 +97,27 @@ namespace TMTDentalAPI.Controllers
             pn.Name = insurance.Name;
             pn.Phone = insurance.Phone;
             await _partnerService.UpdateAsync(pn);
+        }
+
+        [HttpPatch("{id}/[action]")]
+        [CheckAccess(Actions = "Catalog.Insurance.Update")]
+        public async Task<IActionResult> PatchIsActive(Guid id, InsuranceIsActivePatch result)
+        {
+            var entity = await _insuranceService.GetByIdAsync(id);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            var patch = new JsonPatchDocument<InsuranceIsActivePatch>();
+            patch.Replace(x => x.IsActive, result.IsActive);          
+            var entityMap = _mapper.Map<InsuranceIsActivePatch>(entity);
+            patch.ApplyTo(entityMap);
+
+            entity = _mapper.Map(entityMap, entity);
+            await _insuranceService.UpdateAsync(entity);
+
+            return NoContent();
         }
 
 

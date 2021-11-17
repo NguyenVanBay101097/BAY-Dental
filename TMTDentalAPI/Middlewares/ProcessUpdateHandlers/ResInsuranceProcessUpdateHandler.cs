@@ -53,7 +53,28 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                     context.IRRules.Add(new IRRule
                     {
                         Code = "base.res_insurance_comp_rule",
-                        Name = "Insurance multi-company",
+                        Name = "ResInsurance multi-company",
+                        ModelId = model.Id
+                    });
+                    context.SaveChanges();
+                }
+
+
+                var resInsurancePaymentRule = context.IRRules.Where(x => x.Code == "base.res_insurance_payment_comp_rule").FirstOrDefault();
+                if (resInsurancePaymentRule == null)
+                {
+                    var model = context.IRModels.Where(x => x.Model == "ResInsurancePayment").FirstOrDefault();
+                    if (model == null)
+                    {
+                        model = new IRModel { Name = "ResInsurance Payment", Model = "ResInsurancePayment" };
+                        context.IRModels.Add(model);
+                        context.SaveChanges();
+                    }
+
+                    context.IRRules.Add(new IRRule
+                    {
+                        Code = "base.res_insurance_payment_comp_rule",
+                        Name = "ResInsurance Payment multi-company",
                         ModelId = model.Id
                     });
                     context.SaveChanges();
