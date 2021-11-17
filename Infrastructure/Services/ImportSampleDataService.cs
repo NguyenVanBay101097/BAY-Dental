@@ -1050,13 +1050,9 @@ namespace Infrastructure.Services
                 ResId = user_root.Id,
             });
 
-            await companyObj.InsertModuleAccountData(company_main);
-            await companyObj.InsertModuleStockData(company_main);
-            await companyObj.InsertModuleProductData();
-            await companyObj.InsertModuleDentalData();
-            await groupObj.InsertSecurityData();
-            await companyObj.InsertIrModelFieldData();
+            await companyObj.InsertDataSetuptenant(company_main);
 
+            //await irConfigParameterObj.SetParam("remove_sample_data", "True");
             await irConfigParameterObj.SetParam("import_sample_data", "Removed");
             //xóa cache
             _cache.Remove(_tenant != null ? _tenant.Hostname.ToLower() : "localhost");

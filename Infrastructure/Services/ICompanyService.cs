@@ -23,5 +23,6 @@ namespace Infrastructure.Services
         Task ActionArchive(IEnumerable<Guid> ids);
         Task ActionUnArchive(IEnumerable<Guid> ids);
         Task InsertIrModelFieldData();
+        Task InsertDataSetuptenant(Company mainCompany);
     }
 }

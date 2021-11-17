@@ -12,5 +12,6 @@ namespace Infrastructure.Services
     {
         Task<PagedResult2<ResBankBasic>> GetPagedResultAsync(ResBankPaged paged);
         Task<IEnumerable<ResBankSimple>> AutocompleteAsync(ResPartnerBankPaged val);
+        Task ImportSampleData();
     }
 }
