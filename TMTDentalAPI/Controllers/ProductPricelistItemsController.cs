@@ -10,8 +10,10 @@ namespace TMTDentalAPI.Controllers
     {
         private readonly IProductPricelistItemService _productPriceListItemService;
         private readonly IMapper _mapper;
-        public ProductPricelistItemsController()
+        public ProductPricelistItemsController(IProductPricelistItemService productPricelistItemService, IMapper mapper)
         {
+            _productPriceListItemService = productPricelistItemService;
+            _mapper = mapper;
         }
 
         [HttpDelete("{id}")]

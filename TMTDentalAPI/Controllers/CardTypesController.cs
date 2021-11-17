@@ -65,12 +65,12 @@ namespace TMTDentalAPI.Controllers
                 CompanyId = CompanyId,
             };
 
-            foreach (var item in val.ProductPricelistItems)
-            {
-                var prItem = _mapper.Map<ProductPricelistItem>(item);
-                prItem.AppliedOn = "0_product_variant";
-                priceList.Items.Add(prItem);
-            }
+            //foreach (var item in val.ProductPricelistItems)
+            //{
+            //    var prItem = _mapper.Map<ProductPricelistItem>(item);
+            //    prItem.AppliedOn = "0_product_variant";
+            //    priceList.Items.Add(prItem);
+            //}
             await _productPricelistService.CreateAsync(priceList);
 
             entity.PricelistId = priceList.Id;
@@ -98,38 +98,38 @@ namespace TMTDentalAPI.Controllers
             if (!entity.CompanyId.HasValue)
                 entity.CompanyId = CompanyId;
 
-            var serviceItems = _mapper.Map<IEnumerable<ProductPricelistItem>>(val.ProductPricelistItems);
-            //tạo pricelist
-            var priceList = entity.Pricelist;
-            if (priceList != null)
-                priceList.Name = "Bảng giá " + entity.Name;
+            //var serviceItems = _mapper.Map<IEnumerable<ProductPricelistItem>>(val.ProductPricelistItems);
+            ////tạo pricelist
+            //var priceList = entity.Pricelist;
+            //if (priceList != null)
+            //    priceList.Name = "Bảng giá " + entity.Name;
 
-            var itemsRemove = new List<ProductPricelistItem>();
-            foreach (var item in priceList.Items)
-            {
-                if (!val.ProductPricelistItems.Any(x => x.Id == item.Id))
-                    itemsRemove.Add(item);
-            }
+            //var itemsRemove = new List<ProductPricelistItem>();
+            //foreach (var item in priceList.Items)
+            //{
+            //    if (!val.ProductPricelistItems.Any(x => x.Id == item.Id))
+            //        itemsRemove.Add(item);
+            //}
 
-            foreach (var item in itemsRemove)
-                priceList.Items.Remove(item);
+            //foreach (var item in itemsRemove)
+            //    priceList.Items.Remove(item);
 
-            foreach (var item in val.ProductPricelistItems)
-            {
-                if (!item.Id.HasValue || item.Id == Guid.Empty)
-                {
-                    var prItem = _mapper.Map<ProductPricelistItem>(item);
-                    prItem.AppliedOn = "0_product_variant";
-                    priceList.Items.Add(prItem);
-                }
-                else
-                {
-                    var plItem = priceList.Items.Where(x => x.Id == item.Id).FirstOrDefault();
-                    _mapper.Map(item, plItem);
-                }
-            }
+            //foreach (var item in val.ProductPricelistItems)
+            //{
+            //    if (!item.Id.HasValue || item.Id == Guid.Empty)
+            //    {
+            //        var prItem = _mapper.Map<ProductPricelistItem>(item);
+            //        prItem.AppliedOn = "0_product_variant";
+            //        priceList.Items.Add(prItem);
+            //    }
+            //    else
+            //    {
+            //        var plItem = priceList.Items.Where(x => x.Id == item.Id).FirstOrDefault();
+            //        _mapper.Map(item, plItem);
+            //    }
+            //}
 
-            await _productPricelistService.UpdateAsync(priceList);
+            //await _productPricelistService.UpdateAsync(priceList);
             //update loại thẻ
             await _cardTypeService.UpdateAsync(entity);
             _unitOfWork.Commit();
@@ -158,6 +158,42 @@ namespace TMTDentalAPI.Controllers
             await _cardTypeService.DeleteAsync(type);
 
             return NoContent();
+        }
+
+        [HttpPost("{id}/AddServices")]
+        public async Task<IActionResult> AddProductPricelistItem(Guid id, [FromBody] List<Guid> productIds)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _cardTypeService.AddProductPricelistItem(id, productIds);
+            _unitOfWork.Commit();
+            return Ok();
+        }
+
+        [HttpPost("{id}/UpdateServices")]
+        public async Task<IActionResult> UpdateProductPricelistItem(Guid id, [FromBody] List<ProductPricelistItemCreate> items)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _cardTypeService.UpdateProductPricelistItem(id, items);
+            _unitOfWork.Commit();
+            return Ok();
+        }
+
+        [HttpPost("{id}/[action]")]
+        public async Task<IActionResult> ApplyServiceCategories(Guid id, [FromBody] List<ApplyServiceCategoryReq> vals)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _cardTypeService.ApplyServiceCategories(id, vals);
+            _unitOfWork.Commit();
+            return Ok();
+        }
+
+        [HttpPost("{id}/[action]")]
+        public async Task<IActionResult> ApplyAllServices(Guid id, [FromBody] ApplyAllServiceReq val)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _cardTypeService.ApplyAllServices(id, val);
+            _unitOfWork.Commit();
+            return Ok();
         }
     }
 }
