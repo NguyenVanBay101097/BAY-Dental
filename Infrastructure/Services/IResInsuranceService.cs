@@ -13,5 +13,7 @@ namespace Infrastructure.Services
         Task<PagedResult2<ResInsuranceBasic>> GetAgentPagedResult(ResInsurancePaged val);
 
         Task<ResInsurance> GetDisplayById(Guid id);
+
+        Task<IEnumerable<ResInsurance>> GetAutoComplete(ResInsurancePaged val);
     }
 }

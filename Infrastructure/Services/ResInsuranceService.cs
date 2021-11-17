@@ -14,11 +14,11 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public class ResInsuranceService : BaseService<ResInsurance> , IResInsuranceService
+    public class ResInsuranceService : BaseService<ResInsurance>, IResInsuranceService
     {
         private readonly IMapper _mapper;
 
-        public ResInsuranceService(IAsyncRepository<ResInsurance> repository, IHttpContextAccessor httpContextAccessor , IMapper mapper) 
+        public ResInsuranceService(IAsyncRepository<ResInsurance> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper)
             : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
@@ -48,7 +48,7 @@ namespace Infrastructure.Services
 
             var paged = new PagedResult2<ResInsuranceBasic>(totalItems, val.Offset, val.Limit)
             {
-                Items = _mapper.Map<IEnumerable<ResInsuranceBasic>>(items) 
+                Items = _mapper.Map<IEnumerable<ResInsuranceBasic>>(items)
             };
 
             return paged;
@@ -61,6 +61,18 @@ namespace Infrastructure.Services
                 .FirstOrDefaultAsync();
 
             return insurance;
+        }
+
+        public async Task<IEnumerable<ResInsurance>> GetAutoComplete(ResInsurancePaged val)
+        {
+            var query = SearchQuery(x => x.IsActive);
+
+            if (!string.IsNullOrEmpty(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search) || x.Phone.Contains(val.Search));
+
+            var items = await query.ToListAsync();
+
+            return items;
         }
 
         public override async Task<ResInsurance> CreateAsync(ResInsurance entity)
@@ -97,7 +109,7 @@ namespace Infrastructure.Services
         }
 
         public override ISpecification<ResInsurance> RuleDomainGet(IRRule rule)
-        {         
+        {
             switch (rule.Code)
             {
                 case "base.res_insurance_comp_rule":

@@ -64,6 +64,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(basic);
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> AutoComplete(ResInsurancePaged val)
+        {
+            var insurances = await _insuranceService.GetAutoComplete(val);
+            var itemSimples = _mapper.Map<ResInsuranceSimple>(insurances);
+            return Ok(itemSimples);
+        }
+
         [HttpPut("{id}")]
         [CheckAccess(Actions = "Catalog.Insurance.Update")]
         public async Task<IActionResult> Update(Guid id, ResInsuranceSave val)
