@@ -168,11 +168,13 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(search))
                 query = query.Where(x => x.Move.InvoiceOrigin.Contains(search));
 
+            var totalItems = await query.CountAsync();
+
+            query = query.OrderByDescending(x => x.Date);
             if (limit > 0)
                 query = query.Skip(offset).Take(limit);
-
-            var totalItems = await query.CountAsync();
-            var items = await query.OrderByDescending(x => x.Date).Select(x => new CashBookReportDetail
+      
+            var items = await query.Select(x => new CashBookReportDetail
             {
                 AccountName = x.Account.Name,
                 Amount = x.Credit - x.Debit,

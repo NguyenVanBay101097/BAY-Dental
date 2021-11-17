@@ -410,9 +410,10 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Basic.Partner.Create")]
         public async Task<IActionResult> ActionImportUpdate(PartnerImportExcelViewModel val)
         {
+            //api dùng để cập nhật excel khách hàng
             await _unitOfWork.BeginTransactionAsync();
 
-            var result = await _partnerService.ActionImportUpdate(val);
+            var result = await _partnerService.CustomerImportUpdate(val.FileBase64);
 
             if (result.Success)
                 _unitOfWork.Commit();

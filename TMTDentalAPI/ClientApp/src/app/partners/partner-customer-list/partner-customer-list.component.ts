@@ -23,6 +23,7 @@ import { values } from 'lodash';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { CardCardService } from 'src/app/card-cards/card-card.service';
 import { CardTypeService } from 'src/app/card-types/card-type.service';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-partner-customer-list',
@@ -86,7 +87,8 @@ export class PartnerCustomerListComponent implements OnInit {
     private checkPermissionService: CheckPermissionService,
     private memberLevelService: MemberLevelService,
     private cardService: CardTypeService,
-    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig,
+    private authService: AuthService
   ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
@@ -139,6 +141,7 @@ export class PartnerCustomerListComponent implements OnInit {
     this.filter.hasOrderResidual = -1;
     this.filter.hasTotalDebit = -1;
     this.filter.orderState='';
+    this.filter.companyId = this.authService.userInfo.companyId;
   }
 
   refreshData() {
