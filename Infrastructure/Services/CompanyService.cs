@@ -131,21 +131,23 @@ namespace Infrastructure.Services
             mainPartner.Company = mainCompany;
             await partnerObj.UpdateAsync(mainPartner);
 
+            await InsertDataSetuptenant(mainCompany);
+        }
+
+        public async Task InsertDataSetuptenant(Company mainCompany)
+        {
+            var groupObj = GetService<IResGroupService>();
             await InsertModuleAccountData(mainCompany);
-
             await InsertModuleStockData(mainCompany);
-
             await InsertModuleProductData();
-
             await InsertModuleDentalData();
-
             await groupObj.InsertSecurityData();
-
             //insert những irmodelfield
             await InsertIrModelFieldData();
-
             var appRoleService = GetService<IApplicationRoleService>();
             await appRoleService.CreateBaseUserRole();
+            var resBankObj = GetService<IResBankService>();
+            await resBankObj.ImportSampleData();
         }
 
         public async Task AddIrDataForSurvey()
