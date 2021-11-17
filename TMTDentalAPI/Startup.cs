@@ -382,6 +382,10 @@ namespace TMTDentalAPI
             services.AddScoped<ILaboWarrantyService, LaboWarrantyService>();
             services.AddScoped<IHrJobService, HrJobService>();
 
+            services.AddScoped<IResInsuranceService, ResInsuranceService>();
+            services.AddScoped<IResInsurancePaymentService, ResInsurancePaymentService>();
+            services.AddScoped<IResInsurancePaymentLineService, ResInsurancePaymentLineService>();
+
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
@@ -581,6 +585,9 @@ namespace TMTDentalAPI
                 mc.AddProfile(new HrJobProfile());
                 mc.AddProfile(new ProductPricelistItemProfile());
                 mc.AddProfile(new SampleDataProfile());
+                mc.AddProfile(new ResInsuranceProfile());
+                mc.AddProfile(new ResInsurancePaymentProfile());
+                mc.AddProfile(new ResInsurancePaymentLineProfile());
             };
 
             #endregion
