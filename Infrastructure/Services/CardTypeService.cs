@@ -153,5 +153,164 @@ namespace Infrastructure.Services
                     return null;
             }
         }
+
+        private void ValidateApplyPriceListItem(CardType self)
+        {
+            if (self == null)
+                throw new Exception("Không tìm thấy hạng thẻ");
+            if (self.Pricelist == null)
+                throw new Exception("Không tìm thấy bảng giá của hạng thẻ");
+        }
+        public async Task AddProductPricelistItem(Guid id, IEnumerable<Guid> productIds)
+        {
+            var priceListItemObj = GetService<IProductPricelistItemService>();
+            var productObj = GetService<IProductService>();
+            var self = await SearchQuery(x => x.Id == id).Include(x => x.Pricelist.Items).FirstOrDefaultAsync();
+            ValidateApplyPriceListItem(self);
+
+            var products = await productObj.SearchQuery(x => productIds.Contains(x.Id)).ToListAsync();
+            var priceListItems = self.Pricelist.Items;
+            var toAdds = new List<ProductPricelistItem>();
+            foreach (var pro in products)
+            {
+                if (priceListItems.Any(x => x.ProductId == pro.Id))
+                    continue;
+                toAdds.Add(new ProductPricelistItem()
+                {
+                    AppliedOn = "0_product_variant",
+                    ComputePrice = "percentage",
+                    PercentPrice = 0,
+                    ProductId = pro.Id,
+                    PriceListId = self.PricelistId
+                });
+            }
+
+            await priceListItemObj.CreateAsync(toAdds);
+        }
+
+        public async Task UpdateProductPricelistItem(Guid id, IEnumerable<ProductPricelistItemCreate> items)
+        {
+            var priceListItemObj = GetService<IProductPricelistItemService>();
+            var self = await SearchQuery(x => x.Id == id).Include(x => x.Pricelist.Items).ThenInclude(x => x.Product).FirstOrDefaultAsync();
+            ValidateApplyPriceListItem(self);
+
+            var priceListItems = self.Pricelist.Items;
+            var toUpdates = new List<ProductPricelistItem>();
+            foreach (var item in items)
+            {
+                var existItem = priceListItems.FirstOrDefault(x => x.Id == item.Id);
+                if (item == null)
+                    continue;
+                existItem.ComputePrice = item.ComputePrice;
+                existItem.PercentPrice = item.PercentPrice;
+                existItem.FixedAmountPrice = item.FixedAmountPrice;
+
+                toUpdates.Add(existItem);
+            }
+            priceListItemObj.ValidateBase(toUpdates);// validate before CU
+            await priceListItemObj.UpdateAsync(toUpdates);
+        }
+
+        public async Task ApplyServiceCategories(Guid id, IEnumerable<ApplyServiceCategoryReq> vals)
+        {
+            var priceListItemObj = GetService<IProductPricelistItemService>();
+            var productObj = GetService<IProductService>();
+            var self = await SearchQuery(x => x.Id == id).Include(x => x.Pricelist.Items).ThenInclude(x => x.Product).FirstOrDefaultAsync();
+            ValidateApplyPriceListItem(self);
+            var priceListItems = self.Pricelist.Items;
+            //get list service
+            var categIds = vals.Where(x => x.CategId != Guid.Empty).Select(x => x.CategId);
+            var services = await productObj.SearchQuery(x => x.Active == true && categIds.Contains(x.CategId.Value)).ToListAsync();
+            // add and update pricelistitem
+            var toAdds = new List<ProductPricelistItem>();
+            var toUpdates = new List<ProductPricelistItem>();
+            foreach (var service in services)
+            {
+                var cateVal = vals.FirstOrDefault(x => x.CategId == service.CategId);
+                var existItem = priceListItems.FirstOrDefault(x => x.ProductId == service.Id);
+
+                if (existItem != null)
+                {
+                    existItem.ComputePrice = cateVal.ComputePrice;
+                    existItem.PercentPrice = cateVal.PercentPrice;
+                    existItem.FixedAmountPrice = cateVal.FixedAmountPrice;
+                    toUpdates.Add(existItem);
+                }
+                else
+                {
+                    toAdds.Add(new ProductPricelistItem()
+                    {
+                        AppliedOn = "0_product_variant",
+                        ComputePrice = cateVal.ComputePrice,
+                        PercentPrice = cateVal.PercentPrice,
+                        FixedAmountPrice = cateVal.FixedAmountPrice,
+                        ProductId = service.Id,
+                        Product = service,
+                        PriceListId = self.PricelistId
+                    });
+                }
+            }
+
+            if (toAdds.Any())
+            {
+                priceListItemObj.ValidateBase(toAdds);// validate before CU
+                await priceListItemObj.CreateAsync(toAdds);
+            }
+            if (toUpdates.Any())
+            {
+                priceListItemObj.ValidateBase(toUpdates);// validate before CU
+                await priceListItemObj.UpdateAsync(toUpdates);
+            }
+        }
+
+        public async Task ApplyAllServices(Guid id, ApplyAllServiceReq val)
+        {
+            var priceListItemObj = GetService<IProductPricelistItemService>();
+            var productObj = GetService<IProductService>();
+            var self = await SearchQuery(x => x.Id == id).Include(x => x.Pricelist.Items).ThenInclude(x => x.Product).FirstOrDefaultAsync();
+            ValidateApplyPriceListItem(self);
+            var priceListItems = self.Pricelist.Items;
+            //get list service
+            var services = await productObj.SearchQuery(x => x.Active == true).ToListAsync();
+            // add and update pricelistitem
+            var toAdds = new List<ProductPricelistItem>();
+            var toUpdates = new List<ProductPricelistItem>();
+            foreach (var service in services)
+            {
+                var existItem = priceListItems.FirstOrDefault(x => x.ProductId == service.Id);
+
+                if (existItem != null)
+                {
+                    existItem.ComputePrice = val.ComputePrice;
+                    existItem.PercentPrice = val.PercentPrice;
+                    existItem.FixedAmountPrice = val.FixedAmountPrice;
+                    toUpdates.Add(existItem);
+                }
+                else
+                {
+                    toAdds.Add(new ProductPricelistItem()
+                    {
+                        AppliedOn = "0_product_variant",
+                        ComputePrice = val.ComputePrice,
+                        PercentPrice = val.PercentPrice,
+                        FixedAmountPrice = val.FixedAmountPrice,
+                        ProductId = service.Id,
+                        Product = service,
+                        PriceListId = self.PricelistId
+                    });
+                }
+            }
+
+            if (toAdds.Any())
+            {
+                priceListItemObj.ValidateBase(toAdds);// validate before CU
+                await priceListItemObj.CreateAsync(toAdds);
+            }
+            if (toUpdates.Any())
+            {
+                priceListItemObj.ValidateBase(toUpdates);// validate before CU
+                await priceListItemObj.UpdateAsync(toUpdates);
+            }
+        }
     }
 }
