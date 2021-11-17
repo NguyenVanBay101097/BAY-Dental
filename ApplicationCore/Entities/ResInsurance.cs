@@ -7,7 +7,7 @@ namespace ApplicationCore.Entities
     /// <summary>
     /// bảo hiểm
     /// </summary>
-    public class ResInsurance
+    public class ResInsurance : BaseEntity
     {
         public ResInsurance()
         {
