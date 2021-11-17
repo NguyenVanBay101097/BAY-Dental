@@ -74,6 +74,7 @@ export class ServiceCardTypeApplyDialogComponent implements OnInit {
     val.limit = 20;
     val.offset = 0;
     val.search = search ? search : '';
+    val.type = 'service';
     if (val.search) {
       return this.productCategoryService.autocomplete(val).pipe(map((res: any) => {
         if (res.length > 0) {

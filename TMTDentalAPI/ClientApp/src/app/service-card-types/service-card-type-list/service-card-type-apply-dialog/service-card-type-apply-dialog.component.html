@@ -24,7 +24,7 @@
                             <div class="d-flex">
                                 <div class="w-100 mr-2">
                                     <kendo-numerictextbox *ngIf="item.get('computePrice').value == 'percentage'"
-                                        class="form-control" [format]="'n0'" [min]="0" [autoCorrect]="true"
+                                        class="form-control" [format]="'n0'" [min]="0" [max] = "100" [autoCorrect]="true"
                                         formControlName="percentPrice">
                                     </kendo-numerictextbox>
                                     <kendo-numerictextbox *ngIf="item.get('computePrice').value != 'percentage'"

@@ -169,6 +169,27 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
     }
   }
 
+  apply(event,categIdex,proIndex) {
+    console.log(event);
+    
+    var proFA = ((this.productPricelistItems.controls[categIdex] as FormGroup).controls.products as FormArray);
+    var pro = proFA.controls[proIndex];
+    pro.get('computePrice').setValue(event.computePrice);
+    pro.get('fixedAmountPrice').setValue(event.fixedAmountPrice);
+    pro.get('percentPrice').setValue(event.percentPrice);
+
+  }
+
+  getPriceObj(group) {
+    var obj = {
+      computePrice: group.get('computePrice').value,
+      fixedAmountPrice: group.get('fixedAmountPrice').value,
+      percentPrice: group.get('percentPrice').value,
+    }
+
+    return obj;
+  }
+
   notify(content: string, style) {
     this.notificationService.show({
       content: content,

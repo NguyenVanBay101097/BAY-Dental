@@ -15,6 +15,7 @@ import { ServiceCardTypeApplyDialogComponent } from './service-card-type-list/se
 import { MemberCardCreateUpdateComponent } from './service-card-type-list/member-card-create-update/member-card-create-update.component';
 import { CardCardsModule } from '../card-cards/card-cards.module';
 import { ServiceCardTypeApplyAllComponent } from './service-card-type-list/service-card-type-apply-all/service-card-type-apply-all.component';
+import { ComputePriceInputPopoverComponent } from '../shared/compute-price-input-popover/compute-price-input-popover.component';
 
 
 @NgModule({
@@ -33,7 +34,8 @@ import { ServiceCardTypeApplyAllComponent } from './service-card-type-list/servi
   ],
   entryComponents: [
     ServiceCardTypeCuDialogComponent,
-    ServiceCardTypeApplyDialogComponent
+    ServiceCardTypeApplyDialogComponent,
+    ComputePriceInputPopoverComponent
   ]
 })
 export class ServiceCardTypesModule { }
