@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { CardTypeService } from 'src/app/card-types/card-type.service';
+import { NotifyService } from 'src/app/shared/services/notify.service';
 import { ServiceCardTypeService } from '../../service-card-type.service';
 
 @Component({
@@ -17,16 +18,19 @@ export class MemberCardTypeApplyAllComponent implements OnInit {
   constructor(
     public activeModal: NgbActiveModal,
     private cardTypeService: CardTypeService,
-
+    private notifyService: NotifyService
   ) { }
 
   ngOnInit(): void {
   }
 
-  onApply() {
+  onApply(form) {
+    if (form.invalid)
+      return;
     var res = {percentPrice: this.percentPrice, fixedAmountPrice: this.fixedAmountPrice, computePrice: this.computePrice};
     this.cardTypeService.onApplyAll(this.cardTypeId,res).subscribe(() => {
     this.activeModal.close();
+    this.notifyService.notify('success','Lưu thành công');
     })
   }
 

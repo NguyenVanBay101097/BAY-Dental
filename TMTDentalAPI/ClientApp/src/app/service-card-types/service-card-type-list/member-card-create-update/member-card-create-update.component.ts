@@ -51,9 +51,9 @@ export class MemberCardCreateUpdateComponent implements OnInit {
       productPricelistItems: this.fb.array([])
     });
     this.cardTypeId = this.route.snapshot.queryParamMap.get('id');
-        if (this.cardTypeId) {
-          this.getCardTypeById();
-        }
+    if (this.cardTypeId) {
+      this.getCardTypeById();
+    }
   }
 
   onSave() {
@@ -88,22 +88,19 @@ export class MemberCardCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
     modalRef.result.then(() => {
       this.productPriceListItemService.delete(id).subscribe(() => {
-        this.notify('success','Xóa thành công');
+        this.notify('Xóa thành công', 'success');
         proFA.removeAt(proIndex);
         if (!proFA.length) {
           this.productPricelistItems.removeAt(cateIndex);
         }
       })
     });
-    
+
   }
 
-  apply(event,categIdex,proIndex) {
+  apply(event, categIdex, proIndex) {
     var proFA = ((this.productPricelistItems.controls[categIdex] as FormGroup).controls.products as FormArray);
     var pro = proFA.controls[proIndex];
-    pro.get('computePrice').setValue(event.computePrice);
-    pro.get('fixedAmountPrice').setValue(event.fixedAmountPrice);
-    pro.get('percentPrice').setValue(event.percentPrice);
     var proId = pro.value.product.id;
     var proObj = {
       id: pro.value.id,
@@ -116,12 +113,20 @@ export class MemberCardCreateUpdateComponent implements OnInit {
       var formValue = this.cardForm.value;
       this.cardTypeService.create(formValue).subscribe(result => {
         this.cardTypeId = result.id;
-        this.cardTypeService.updateProductPricelistItem(result.id,[proObj]).subscribe(() => {
+        this.cardTypeService.updateProductPricelistItem(result.id, [proObj]).subscribe(() => {
+          pro.get('computePrice').setValue(event.computePrice);
+          pro.get('fixedAmountPrice').setValue(event.fixedAmountPrice);
+          pro.get('percentPrice').setValue(event.percentPrice);
+          this.notify('Lưu thành công', 'success');
         })
       })
     }
     else {
-      this.cardTypeService.updateProductPricelistItem(this.cardTypeId,[proObj]).subscribe(() => {   
+      this.cardTypeService.updateProductPricelistItem(this.cardTypeId, [proObj]).subscribe(() => {
+        pro.get('computePrice').setValue(event.computePrice);
+        pro.get('fixedAmountPrice').setValue(event.fixedAmountPrice);
+        pro.get('percentPrice').setValue(event.percentPrice);
+        this.notify('Lưu thành công', 'success');
       })
     }
   }
@@ -148,35 +153,35 @@ export class MemberCardCreateUpdateComponent implements OnInit {
     if (!this.cardTypeId) {
       var formValue = this.cardForm.value;
       this.cardTypeService.createCardType(formValue).subscribe(result => {
-        this.cardTypeService.onApplyInCateg(result.id,val).subscribe(() => {
+        this.cardTypeService.onApplyInCateg(result.id, val).subscribe(() => {
 
         })
       })
     }
     else {
-      this.cardTypeService.onApplyInCateg(this.cardTypeId,val).subscribe(() => {
+      this.cardTypeService.onApplyInCateg(this.cardTypeId, val).subscribe(() => {
 
       })
     }
   }
 
-onAddLine(product){
-  let index = this.productExistValue.findIndex(x => x.product.id == product.id);
-  if (index >= 0)
-    return;
-  var item = {
-    id: '',
-    product: product,
-    computePrice: 'percentage',
-    percentPrice: [0, Validators.required],
-    fixedAmountPrice: [0, Validators.required],
-  };
+  onAddLine(product) {
+    let index = this.productExistValue.findIndex(x => x.product.id == product.id);
+    if (index >= 0)
+      return;
+    var item = {
+      id: '',
+      product: product,
+      computePrice: 'percentage',
+      percentPrice: [0, Validators.required],
+      fixedAmountPrice: [0, Validators.required],
+    };
 
-  this.cardTypeService.addProductPricelistItem(this.cardTypeId,[product.id]).subscribe((res: any) => {
-    item.id = res[0].id;
-    this.pushProduct(product,item);
-  })
-}
+    this.cardTypeService.addProductPricelistItem(this.cardTypeId, [product.id]).subscribe((res: any) => {
+      item.id = res[0].id;
+      this.pushProduct(product, item);
+    })
+  }
   addLine(product) {
     this.submitted = true;
     if (this.cardForm.invalid)
@@ -283,10 +288,10 @@ onAddLine(product){
     } else {
       this.onOpenApplyAll();
     }
-    
+
   }
 
-  onOpenApplyAll(){
+  onOpenApplyAll() {
     let modalRef = this.modalService.open(MemberCardTypeApplyAllComponent,
       { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Áp dụng ưu đãi cho tất cả dịch vụ';
@@ -297,7 +302,7 @@ onAddLine(product){
     });
   }
 
-  onOpenApplyCateg(){
+  onOpenApplyCateg() {
     let modalRef = this.modalService.open(MemberCardTypeApplyDialogComponent,
       { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Áp dụng ưu đãi cho nhóm dịch vụ';

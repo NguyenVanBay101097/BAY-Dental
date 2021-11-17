@@ -34,14 +34,14 @@
                                 </div>
                                 <div>
                                     <input type="radio" class="btn-check" [id]="'radio1' + itemId" value="percentage"
-                                        formControlName="computePrice" (change)="changeComputePrice($event)">
+                                        formControlName="computePrice" (change)="changeComputePrice(itemId)">
                                     <label class="btn btn-outline-primary mb-0 mr-2"
                                         [ngClass]="{'btn-primary': item.get('computePrice').value == 'percentage'}"
                                         [for]="'radio1' + itemId">%</label>
                                 </div>
                                 <div>
                                     <input type="radio" class="btn-check" [id]="'radio2' + itemId" value="fixed_amount"
-                                        formControlName="computePrice" (change)="changeComputePrice($event)">
+                                        formControlName="computePrice" (change)="changeComputePrice(itemId)">
                                     <label class="btn btn-outline-primary mb-0 mr-2"
                                         [ngClass]="{'btn-primary': item.get('computePrice').value != 'percentage'}"
                                         [for]="'radio2' + itemId">VNĐ</label>

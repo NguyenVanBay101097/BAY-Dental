@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -27,8 +27,8 @@ export class ComputePriceInputPopoverComponent implements OnInit {
     this.formGroup = this.fb.group({
       productId: this.priceObj.productId,
       computePrice: this.priceObj.computePrice,
-      percentPrice: this.priceObj.percentPrice,
-      fixedAmountPrice: this.priceObj.fixedAmountPrice
+      percentPrice: [this.priceObj.percentPrice, Validators.required],
+      fixedAmountPrice: [this.priceObj.fixedAmountPrice, Validators.required]
     });
   }
 
@@ -41,9 +41,16 @@ export class ComputePriceInputPopoverComponent implements OnInit {
   }
 
   apply() {
+    if (this.formGroup.invalid)
+      return;
     var formValue = this.formGroup.value;
     this.onApply.emit(formValue);
     this.popover.close();
+  }
+
+  onChange() {
+    this.formGroup.get('percentPrice').setValue(0);
+    this.formGroup.get('fixedAmountPrice').setValue(0);
   }
 
 }

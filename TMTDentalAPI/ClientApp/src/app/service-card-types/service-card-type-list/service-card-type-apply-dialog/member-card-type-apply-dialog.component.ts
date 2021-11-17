@@ -1,11 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CardTypeService } from 'src/app/card-types/card-type.service';
 import { ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
 import { ProductCategoriesSearchDropdownComponent } from 'src/app/shared/product-categories-search-dropdown/product-categories-search-dropdown.component';
+import { NotifyService } from 'src/app/shared/services/notify.service';
 import { ServiceCardTypeService } from '../../service-card-type.service';
 
 @Component({
@@ -27,6 +28,7 @@ export class MemberCardTypeApplyDialogComponent implements OnInit {
     private fb: FormBuilder,
     private productCategoryService: ProductCategoryService,
     private cardTypeService: CardTypeService,
+    private notifyService: NotifyService
 
     ) { }
 
@@ -38,9 +40,12 @@ export class MemberCardTypeApplyDialogComponent implements OnInit {
   }
 
   onApply(){
+    if (this.form.invalid)
+      return;
     var val = this.productCategoryListItems.value;
     this.cardTypeService.onApplyInCateg(this.cardTypeId,val).subscribe(() => {
       this.activeModal.close();
+      this.notifyService.notify('success','Lưu thành công');
     })
   }
 
@@ -56,8 +61,8 @@ export class MemberCardTypeApplyDialogComponent implements OnInit {
       categId: event.id,
       name: event.name,
       computePrice: 'percentage',
-      percentPrice: 0,
-      fixedAmountPrice: 0
+      percentPrice: [0, Validators.required],
+      fixedAmountPrice: [0, Validators.required],
     });
 
     this.productCategoryListItems.push(group);
@@ -92,7 +97,9 @@ export class MemberCardTypeApplyDialogComponent implements OnInit {
     }
   }
 
-  changeComputePrice(event) {
+  changeComputePrice(itemId) {
+    this.productCategoryListItems.controls[itemId].get('percentPrice').setValue(0);
+    this.productCategoryListItems.controls[itemId].get('fixedAmountPrice').setValue(0);
   }
 
   onSearchCate(value)

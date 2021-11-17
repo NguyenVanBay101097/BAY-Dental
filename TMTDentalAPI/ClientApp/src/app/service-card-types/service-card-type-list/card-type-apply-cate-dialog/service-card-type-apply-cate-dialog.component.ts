@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { CardTypeService } from 'src/app/card-types/card-type.service';
 import { ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
 import { ProductCategoriesSearchDropdownComponent } from 'src/app/shared/product-categories-search-dropdown/product-categories-search-dropdown.component';
+import { NotifyService } from 'src/app/shared/services/notify.service';
 import { ServiceCardTypeService } from '../../service-card-type.service';
 
 @Component({
@@ -28,6 +29,7 @@ export class ServiceCardTypeApplyCateDialogComponent implements OnInit {
     private fb: FormBuilder,
     private productCategoryService: ProductCategoryService,
     private cardTypeService: ServiceCardTypeService,
+    private notifyService: NotifyService
 
     ) { }
 
@@ -44,6 +46,8 @@ export class ServiceCardTypeApplyCateDialogComponent implements OnInit {
     var val = this.productCategoryListItems.value;
     this.cardTypeService.onApplyInCateg(this.cardTypeId,val).subscribe(() => {
       this.activeModal.close();
+      this.notifyService.notify('success','Lưu thành công');
+
     })
   }
 

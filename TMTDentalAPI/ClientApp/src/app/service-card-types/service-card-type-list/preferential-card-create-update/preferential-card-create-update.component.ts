@@ -212,9 +212,6 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
   apply(event,categIdex,proIndex) {
     var proFA = ((this.productPricelistItems.controls[categIdex] as FormGroup).controls.products as FormArray);
     var pro = proFA.controls[proIndex];
-    pro.get('computePrice').setValue(event.computePrice);
-    pro.get('fixedAmountPrice').setValue(event.fixedAmountPrice);
-    pro.get('percentPrice').setValue(event.percentPrice);
     var proId = pro.value.product.id;
     var proObj = {
       id: pro.value.id,
@@ -228,14 +225,20 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
       this.cardTypeService.create(formValue).subscribe(result => {
         this.cardTypeId = result.id;
         this.cardTypeService.updateProductPricelistItem(result.id,[proObj]).subscribe(() => {
-
+          this.notify('Lưu thành công','success');
+          pro.get('computePrice').setValue(event.computePrice);
+          pro.get('fixedAmountPrice').setValue(event.fixedAmountPrice);
+          pro.get('percentPrice').setValue(event.percentPrice);
         })
       })
     }
     else {
       this.cardTypeService.updateProductPricelistItem(this.cardTypeId,[proObj]).subscribe(() => {
-          
-        })
+        this.notify('Lưu thành công','success');
+        pro.get('computePrice').setValue(event.computePrice);
+        pro.get('fixedAmountPrice').setValue(event.fixedAmountPrice);
+        pro.get('percentPrice').setValue(event.percentPrice);
+      })
     }
   }
 
