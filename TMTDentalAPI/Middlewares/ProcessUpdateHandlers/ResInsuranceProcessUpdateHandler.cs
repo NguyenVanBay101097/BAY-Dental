@@ -28,7 +28,7 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
             using (var scope = _serviceScopeFactory.CreateScope())
             {
                 var tenant = scope.ServiceProvider.GetService<AppTenant>();
-                if (tenant != null)
+                if (tenant == null)
                     return Task.CompletedTask;
 
                 //Version version1 = new Version(_version);

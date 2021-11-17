@@ -279,6 +279,12 @@
       <field name="user_type_id" ref="account.data_account_type_expenses" />
     </record>
 
+    <record model="account.account" id="data_account_CNBH">
+      <field name="name">Công nợ bảo hiểm</field>
+      <field name="code">CNBH</field>
+      <field name="user_type_id" ref="account.data_account_type_current_liabilities" />
+    </record>
+
     <!-- account.journal -->
     <record model="account.journal" id="data_account_journal_cash">
       <field name="name">Tiền mặt</field>
@@ -366,6 +372,15 @@
       <field name="update_posted" eval="True" />
       <field name="default_debit_account_id" ref="account.data_account_HHNGT" />
       <field name="default_credit_account_id" ref="account.data_account_HHNGT" />
+    </record>
+
+    <record model="account.journal" id="data_account_journal_insurance">
+      <field name="name">Bảo hiểm</field>
+      <field name="type">insurance</field>
+      <field name="code">INSURANCE</field>
+      <field name="update_posted" eval="True" />
+      <field name="default_debit_account_id" ref="account.data_account_CNBH" />
+      <field name="default_credit_account_id" ref="account.data_account_CNBH" />
     </record>
 
 
