@@ -1,8 +1,8 @@
 <div tabindex="0" [ngbPopover]="popContent" #popOver="ngbPopover" [autoClose]="'outside'" placement="bottom"
     type="button">
     <div class="d-flex justify-content-start">
-        <div *ngIf="this.priceObj?.computePrice == 'percentage'" class="border-bottom text-center w-100">{{this.priceObj?.percentPrice}}</div>
-        <div *ngIf="this.priceObj?.computePrice != 'percentage'" class="border-bottom text-center w-100">{{this.priceObj?.fixedAmountPrice | number}}</div>
+        <div *ngIf="this.priceObj?.computePrice == 'percentage'" class="border-bottom text-left w-50">{{this.priceObj?.percentPrice}}</div>
+        <div *ngIf="this.priceObj?.computePrice != 'percentage'" class="border-bottom text-left w-50">{{this.priceObj?.fixedAmountPrice | number}}</div>
         <div *ngIf="this.priceObj?.computePrice == 'percentage'">%</div>
         <div *ngIf="this.priceObj?.computePrice != 'percentage'">VNĐ</div>
     </div>

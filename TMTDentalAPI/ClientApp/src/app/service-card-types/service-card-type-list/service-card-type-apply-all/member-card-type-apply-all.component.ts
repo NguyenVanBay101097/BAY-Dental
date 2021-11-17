@@ -4,12 +4,11 @@ import { CardTypeService } from 'src/app/card-types/card-type.service';
 import { ServiceCardTypeService } from '../../service-card-type.service';
 
 @Component({
-  selector: 'app-card-type-apply-all-dialog',
-  templateUrl: './card-type-apply-all-dialog.component.html',
-  styleUrls: ['./card-type-apply-all-dialog.component.css']
+  selector: 'app-member-card-type-apply-all',
+  templateUrl: './member-card-type-apply-all.component.html',
+  styleUrls: ['./member-card-type-apply-all.component.css']
 })
-export class CardTypeApplyAllDialogComponent implements OnInit {
-
+export class MemberCardTypeApplyAllComponent implements OnInit {
   title: string = '';
   computePrice = 'percentage';
   percentPrice = 0;
@@ -17,7 +16,8 @@ export class CardTypeApplyAllDialogComponent implements OnInit {
   cardTypeId:string;
   constructor(
     public activeModal: NgbActiveModal,
-    private cardTypeService: ServiceCardTypeService,
+    private cardTypeService: CardTypeService,
+
   ) { }
 
   ngOnInit(): void {
@@ -33,6 +33,7 @@ export class CardTypeApplyAllDialogComponent implements OnInit {
   changePrice() {
     this.percentPrice = 0;
     this.fixedAmountPrice = 0;
+
   }
 
 }

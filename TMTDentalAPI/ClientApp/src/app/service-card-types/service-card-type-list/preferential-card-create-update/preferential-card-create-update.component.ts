@@ -6,10 +6,8 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { ProductPriceListItemsService } from '../../product-price-list-items.service';
 import { ServiceCardTypeService } from '../../service-card-type.service';
-import { CardTypeApplyAllDialogComponent } from '../card-type-apply-all-dialog/card-type-apply-all-dialog.component';
-import { CardTypeApplyCateDialogComponent } from '../card-type-apply-cate-dialog/card-type-apply-cate-dialog.component';
-import { ServiceCardTypeApplyAllComponent } from '../service-card-type-apply-all/service-card-type-apply-all.component';
-import { ServiceCardTypeApplyDialogComponent } from '../service-card-type-apply-dialog/service-card-type-apply-dialog.component';
+import { ServiceCardTypeApplyAllDialogComponent } from '../card-type-apply-all-dialog/service-card-type-apply-all-dialog.component';
+import { ServiceCardTypeApplyCateDialogComponent } from '../card-type-apply-cate-dialog/service-card-type-apply-cate-dialog.component';
 
 @Component({
   selector: 'app-preferential-card-create-update',
@@ -123,7 +121,6 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
   
       if (!this.cardTypeId) {
         this.cardTypeService.create(val).subscribe(result => {
-          this.notify('Lưu thành công', 'success');
           this.cardTypeId = result.id;
           this.router.navigate([], { queryParams: { id: result.id }, relativeTo: this.route });
           this.onAddLine(product);
@@ -203,7 +200,7 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
     modalRef.result.then(() => {
       this.productPriceListItemService.delete(id).subscribe(() => {
-        this.notify('success','Xóa thành công');
+        this.notify('Xóa thành công','success');
         proFA.removeAt(proIndex);
         if (!proFA.length) {
           this.productPricelistItems.removeAt(cateIndex);
@@ -263,7 +260,7 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
   }
 
   onOpenApplyAll(){
-    let modalRef = this.modalService.open(CardTypeApplyAllDialogComponent,
+    let modalRef = this.modalService.open(ServiceCardTypeApplyAllDialogComponent,
       { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Áp dụng ưu đãi cho tất cả dịch vụ';
     modalRef.componentInstance.cardTypeId = this.cardTypeId;
@@ -274,7 +271,7 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
   }
 
   onOpenApplyCateg(){
-    let modalRef = this.modalService.open(CardTypeApplyCateDialogComponent,
+    let modalRef = this.modalService.open(ServiceCardTypeApplyCateDialogComponent,
       { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Áp dụng ưu đãi cho nhóm dịch vụ';
     modalRef.componentInstance.cardTypeId = this.cardTypeId;
@@ -291,7 +288,6 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
     var val = this.getFormValueSave();
     if (!this.cardTypeId) {
       this.cardTypeService.create(val).subscribe(result => {
-        this.notify('Lưu thành công', 'success');
         this.cardTypeId = result.id;
         this.router.navigate([], { queryParams: { id: result.id }, relativeTo: this.route });
         this.onOpenApplyAll();
@@ -309,7 +305,6 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
 
     if (!this.cardTypeId) {
       this.cardTypeService.create(val).subscribe(result => {
-        this.notify('Lưu thành công', 'success');
         this.cardTypeId = result.id;
         this.router.navigate([], { queryParams: { id: result.id }, relativeTo: this.route });
         this.onOpenApplyCateg();

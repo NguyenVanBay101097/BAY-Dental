@@ -7,8 +7,8 @@ import { switchMap } from 'rxjs/operators';
 import { CardTypeService } from 'src/app/card-types/card-type.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { ProductPriceListItemsService } from '../../product-price-list-items.service';
-import { ServiceCardTypeApplyAllComponent } from '../service-card-type-apply-all/service-card-type-apply-all.component';
-import { ServiceCardTypeApplyDialogComponent } from '../service-card-type-apply-dialog/service-card-type-apply-dialog.component';
+import { MemberCardTypeApplyAllComponent } from '../service-card-type-apply-all/member-card-type-apply-all.component';
+import { MemberCardTypeApplyDialogComponent } from '../service-card-type-apply-dialog/member-card-type-apply-dialog.component';
 
 @Component({
   selector: 'app-member-card-create-update',
@@ -185,7 +185,6 @@ onAddLine(product){
 
     if (!this.cardTypeId) {
       this.cardTypeService.createCardType(val).subscribe(result => {
-        this.notify('Lưu thành công', 'success');
         this.cardTypeId = result.id;
         this.router.navigate([], { queryParams: { id: result.id }, relativeTo: this.route });
         this.onAddLine(product);
@@ -206,7 +205,6 @@ onAddLine(product){
         name: event.categName,
         products: this.fb.array([])
       });
-
       var productFormArray = group.get('products') as FormArray;
       productFormArray.push(this.fb.group(item));
       this.productPricelistItems.push(group);
@@ -278,7 +276,6 @@ onAddLine(product){
 
     if (!this.cardTypeId) {
       this.cardTypeService.createCardType(val).subscribe(result => {
-        this.notify('Lưu thành công', 'success');
         this.cardTypeId = result.id;
         this.router.navigate([], { queryParams: { id: result.id }, relativeTo: this.route });
         this.onOpenApplyAll();
@@ -290,7 +287,7 @@ onAddLine(product){
   }
 
   onOpenApplyAll(){
-    let modalRef = this.modalService.open(ServiceCardTypeApplyAllComponent,
+    let modalRef = this.modalService.open(MemberCardTypeApplyAllComponent,
       { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Áp dụng ưu đãi cho tất cả dịch vụ';
     modalRef.componentInstance.cardTypeId = this.cardTypeId;
@@ -301,8 +298,7 @@ onAddLine(product){
   }
 
   onOpenApplyCateg(){
-    
-    let modalRef = this.modalService.open(ServiceCardTypeApplyDialogComponent,
+    let modalRef = this.modalService.open(MemberCardTypeApplyDialogComponent,
       { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Áp dụng ưu đãi cho nhóm dịch vụ';
     modalRef.componentInstance.cardTypeId = this.cardTypeId;
@@ -320,7 +316,6 @@ onAddLine(product){
 
     if (!this.cardTypeId) {
       this.cardTypeService.createCardType(val).subscribe(result => {
-        this.notify('Lưu thành công', 'success');
         this.cardTypeId = result.id;
         this.router.navigate([], { queryParams: { id: result.id }, relativeTo: this.route });
         this.onOpenApplyCateg();

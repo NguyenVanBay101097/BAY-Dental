@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -9,11 +9,12 @@ import { ProductCategoriesSearchDropdownComponent } from 'src/app/shared/product
 import { ServiceCardTypeService } from '../../service-card-type.service';
 
 @Component({
-  selector: 'app-service-card-type-apply-dialog',
-  templateUrl: './service-card-type-apply-dialog.component.html',
-  styleUrls: ['./service-card-type-apply-dialog.component.css']
+  selector: 'app-service-card-type-apply-cate-dialog',
+  templateUrl: './service-card-type-apply-cate-dialog.component.html',
+  styleUrls: ['./service-card-type-apply-cate-dialog.component.css']
 })
-export class ServiceCardTypeApplyDialogComponent implements OnInit {
+export class ServiceCardTypeApplyCateDialogComponent implements OnInit {
+
   title: string;
   search: string = '';
   searchUpdate = new Subject<string>();
@@ -26,7 +27,7 @@ export class ServiceCardTypeApplyDialogComponent implements OnInit {
     public activeModal: NgbActiveModal,
     private fb: FormBuilder,
     private productCategoryService: ProductCategoryService,
-    private cardTypeService: CardTypeService,
+    private cardTypeService: ServiceCardTypeService,
 
     ) { }
 
@@ -38,6 +39,8 @@ export class ServiceCardTypeApplyDialogComponent implements OnInit {
   }
 
   onApply(){
+    if (this.form.invalid)
+      return;
     var val = this.productCategoryListItems.value;
     this.cardTypeService.onApplyInCateg(this.cardTypeId,val).subscribe(() => {
       this.activeModal.close();
@@ -56,8 +59,8 @@ export class ServiceCardTypeApplyDialogComponent implements OnInit {
       categId: event.id,
       name: event.name,
       computePrice: 'percentage',
-      percentPrice: 0,
-      fixedAmountPrice: 0
+      percentPrice: [0, Validators.required],
+      fixedAmountPrice: [0, Validators.required]
     });
 
     this.productCategoryListItems.push(group);
