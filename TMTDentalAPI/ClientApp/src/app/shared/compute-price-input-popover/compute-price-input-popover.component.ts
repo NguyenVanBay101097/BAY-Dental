@@ -10,6 +10,7 @@ import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 export class ComputePriceInputPopoverComponent implements OnInit {
   @Output() onApply = new EventEmitter();
   @Input() priceObj: any = {
+    productId: '',
     computePrice: 'percentage',
     percentPrice: 0,
     fixedAmountPrice: 0
@@ -18,17 +19,17 @@ export class ComputePriceInputPopoverComponent implements OnInit {
 
   formGroup: FormGroup;
   constructor(
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    
   ) { }
 
   ngOnInit(): void {
     this.formGroup = this.fb.group({
-      computePrice: 'percentage',
-      percentPrice: 0,
-      fixedAmountPrice: 0
+      productId: this.priceObj.productId,
+      computePrice: this.priceObj.computePrice,
+      percentPrice: this.priceObj.percentPrice,
+      fixedAmountPrice: this.priceObj.fixedAmountPrice
     });
-    console.log(this.priceObj);
-    
   }
 
   toggleWithGreeting(popover) {   

@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { switchMap } from 'rxjs/operators';
 import { CardTypeService } from 'src/app/card-types/card-type.service';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { ProductPriceListItemsService } from '../../product-price-list-items.service';
 import { ServiceCardTypeApplyAllComponent } from '../service-card-type-apply-all/service-card-type-apply-all.component';
 import { ServiceCardTypeApplyDialogComponent } from '../service-card-type-apply-dialog/service-card-type-apply-dialog.component';
 
@@ -29,6 +32,8 @@ export class MemberCardCreateUpdateComponent implements OnInit {
     private notificationService: NotificationService,
     private route: ActivatedRoute,
     private router: Router,
+    private productPriceListItemService: ProductPriceListItemsService
+
   ) { }
 
   ngOnInit(): void {
@@ -46,9 +51,9 @@ export class MemberCardCreateUpdateComponent implements OnInit {
       productPricelistItems: this.fb.array([])
     });
     this.cardTypeId = this.route.snapshot.queryParamMap.get('id');
-    if (this.cardTypeId) {
-      this.getCardTypeById();
-    }
+        if (this.cardTypeId) {
+          this.getCardTypeById();
+        }
   }
 
   onSave() {
@@ -56,21 +61,7 @@ export class MemberCardCreateUpdateComponent implements OnInit {
     if (this.cardForm.invalid)
       return;
     var formValue = this.cardForm.value;
-    var val = {
-      name: formValue.name,
-      basicPoint: formValue.basicPoint,
-      color: this.colorSelected,
-      companyId: this.companyId,
-      productPricelistItems: formValue.productPricelistItems.flatMap(x => x.products).map(x => {
-        return {
-          id: x.id,
-          productId: x.product.id,
-          computePrice: x.computePrice,
-          percentPrice: x.percentPrice,
-          fixedAmountPrice: x.fixedAmountPrice,
-        }
-      })
-    };
+    var val = this.getFormValueSave();
 
     if (this.cardTypeId) {
       this.cardTypeService.update(this.cardTypeId, val).subscribe(() => {
@@ -91,10 +82,58 @@ export class MemberCardCreateUpdateComponent implements OnInit {
 
   deleteItem(cateIndex, proIndex) {
     var proFA = ((this.productPricelistItems.controls[cateIndex] as FormGroup).controls.products as FormArray);
-    proFA.removeAt(proIndex);
-    if (!proFA.length) {
-      this.productPricelistItems.removeAt(cateIndex);
+    var id = proFA.controls[proIndex].value.id;
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xóa dịch vụ';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
+    modalRef.result.then(() => {
+      this.productPriceListItemService.delete(id).subscribe(() => {
+        this.notify('success','Xóa thành công');
+        proFA.removeAt(proIndex);
+        if (!proFA.length) {
+          this.productPricelistItems.removeAt(cateIndex);
+        }
+      })
+    });
+    
+  }
+
+  apply(event,categIdex,proIndex) {
+    var proFA = ((this.productPricelistItems.controls[categIdex] as FormGroup).controls.products as FormArray);
+    var pro = proFA.controls[proIndex];
+    pro.get('computePrice').setValue(event.computePrice);
+    pro.get('fixedAmountPrice').setValue(event.fixedAmountPrice);
+    pro.get('percentPrice').setValue(event.percentPrice);
+    var proId = pro.value.product.id;
+    var proObj = {
+      id: pro.value.id,
+      productId: proId,
+      computePrice: pro.value.computePrice,
+      fixedAmountPrice: pro.value.fixedAmountPrice,
+      percentPrice: pro.value.percentPrice
+    };
+    if (!this.cardTypeId) {
+      var formValue = this.cardForm.value;
+      this.cardTypeService.create(formValue).subscribe(result => {
+        this.cardTypeId = result.id;
+        this.cardTypeService.updateProductPricelistItem(result.id,[proObj]).subscribe(() => {
+        })
+      })
     }
+    else {
+      this.cardTypeService.updateProductPricelistItem(this.cardTypeId,[proObj]).subscribe(() => {   
+      })
+    }
+  }
+
+  getPriceObj(group) {
+    var obj = {
+      productId: group.get('product').value.id,
+      computePrice: group.get('computePrice').value,
+      fixedAmountPrice: group.get('fixedAmountPrice').value,
+      percentPrice: group.get('percentPrice').value,
+    }
+    return obj;
   }
 
   clickColor(i) {
@@ -121,19 +160,43 @@ export class MemberCardCreateUpdateComponent implements OnInit {
     }
   }
 
-  addLine(event) {
-    let index = this.productExistValue.findIndex(x => x.product.id == event.id);
-    if (index >= 0)
+onAddLine(product){
+  let index = this.productExistValue.findIndex(x => x.product.id == product.id);
+  if (index >= 0)
+    return;
+  var item = {
+    id: '',
+    product: product,
+    computePrice: 'percentage',
+    percentPrice: [0, Validators.required],
+    fixedAmountPrice: [0, Validators.required],
+  };
+
+  this.cardTypeService.addProductPricelistItem(this.cardTypeId,[product.id]).subscribe((res: any) => {
+    item.id = res[0].id;
+    this.pushProduct(product,item);
+  })
+}
+  addLine(product) {
+    this.submitted = true;
+    if (this.cardForm.invalid)
       return;
-    var item = {
-      product: event,
-      computePrice: 'percentage',
-      percentPrice: [0, Validators.required],
-      fixedAmountPrice: [0, Validators.required],
-    };
+    var val = this.getFormValueSave();
 
+    if (!this.cardTypeId) {
+      this.cardTypeService.createCardType(val).subscribe(result => {
+        this.notify('Lưu thành công', 'success');
+        this.cardTypeId = result.id;
+        this.router.navigate([], { queryParams: { id: result.id }, relativeTo: this.route });
+        this.onAddLine(product);
+      })
+    } else {
+      this.onAddLine(product);
+    }
+  }
+
+  pushProduct(event, item) {
     var i = this.productPricelistItems.controls.findIndex(x => x.get('id').value == event.categId);
-
     if (i !== -1) {
       var productFormArray = this.productPricelistItems.at(i).get('products') as FormArray;
       productFormArray.push(this.fb.group(item));
@@ -143,21 +206,11 @@ export class MemberCardCreateUpdateComponent implements OnInit {
         name: event.categName,
         products: this.fb.array([])
       });
+
       var productFormArray = group.get('products') as FormArray;
       productFormArray.push(this.fb.group(item));
       this.productPricelistItems.push(group);
     }
-
-    var formValue = this.cardForm.value;
-    if (!this.cardTypeId) {
-      this.cardTypeService.createCardType(formValue).subscribe(res => {
-        this.cardTypeService.addProductPricelistItem(res.id,event.id);
-      })
-    }
-    else {
-      this.cardTypeService.addProductPricelistItem(this.cardTypeId,event.id);
-    }
-
   }
 
   getCardTypeById() {
@@ -197,51 +250,87 @@ export class MemberCardCreateUpdateComponent implements OnInit {
     })
   }
 
+  getFormValueSave() {
+    var formValue = this.cardForm.value;
+    var val = {
+      name: formValue.name,
+      basicPoint: formValue.basicPoint,
+      color: this.colorSelected,
+      companyId: this.companyId,
+      productPricelistItems: formValue.productPricelistItems.flatMap(x => x.products).map(x => {
+        return {
+          id: x.id,
+          productId: x.product.id,
+          computePrice: x.computePrice,
+          percentPrice: x.percentPrice,
+          fixedAmountPrice: x.fixedAmountPrice,
+        }
+      })
+    };
+    return val;
+  }
+
   onApplyAll() {
+    this.submitted = true;
+    if (this.cardForm.invalid)
+      return;
+    var val = this.getFormValueSave();
+
+    if (!this.cardTypeId) {
+      this.cardTypeService.createCardType(val).subscribe(result => {
+        this.notify('Lưu thành công', 'success');
+        this.cardTypeId = result.id;
+        this.router.navigate([], { queryParams: { id: result.id }, relativeTo: this.route });
+        this.onOpenApplyAll();
+      })
+    } else {
+      this.onOpenApplyAll();
+    }
+    
+  }
+
+  onOpenApplyAll(){
     let modalRef = this.modalService.open(ServiceCardTypeApplyAllComponent,
       { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Áp dụng ưu đãi cho tất cả dịch vụ';
+    modalRef.componentInstance.cardTypeId = this.cardTypeId;
     modalRef.result.then(res => {
-      if (!this.cardTypeId) {
-          var formValue = this.cardForm.value;
-          this.cardTypeService.createCardType(formValue).subscribe(result => {
-            this.cardTypeId = result.id;
-            this.cardTypeService.onApplyAll(this.cardTypeId,res).subscribe(() => {
+      this.getCardTypeById();
+    }, () => {
+    });
+  }
 
-            })
-        })
-      }
-      else {
-        this.cardTypeService.onApplyAll(this.cardTypeId,res).subscribe(() => {
-
-        })
-      }
+  onOpenApplyCateg(){
+    
+    let modalRef = this.modalService.open(ServiceCardTypeApplyDialogComponent,
+      { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Áp dụng ưu đãi cho nhóm dịch vụ';
+    modalRef.componentInstance.cardTypeId = this.cardTypeId;
+    modalRef.result.then(res => {
+      this.getCardTypeById();
     }, () => {
     });
   }
 
   onApplyCateg() {
-    let modalRef = this.modalService.open(ServiceCardTypeApplyDialogComponent,
-      { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Áp dụng ưu đãi cho nhóm dịch vụ';
-    modalRef.result.then(res => {
-      if (!this.cardTypeId) {
-        var formValue = this.cardForm.value;
-        this.cardTypeService.createCardType(formValue).subscribe(result => {
-          this.cardTypeService.onApplyInCateg(result.id,res.val).subscribe(() => {
+    this.submitted = true;
+    if (this.cardForm.invalid)
+      return;
+    var val = this.getFormValueSave();
 
-          })
-        })
-      }
-      else {
-        this.cardTypeService.onApplyInCateg(this.cardTypeId,res.val).subscribe(() => {
+    if (!this.cardTypeId) {
+      this.cardTypeService.createCardType(val).subscribe(result => {
+        this.notify('Lưu thành công', 'success');
+        this.cardTypeId = result.id;
+        this.router.navigate([], { queryParams: { id: result.id }, relativeTo: this.route });
+        this.onOpenApplyCateg();
+      })
+    } else {
+      this.onOpenApplyCateg();
+    }
 
-        })
-      }
-    }, () => {
-    });
+
   }
-
   getAllServices() {
     let productItems = this.productPricelistItems.value;
     return productItems;

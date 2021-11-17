@@ -9,11 +9,12 @@ import { ProductCategoriesSearchDropdownComponent } from 'src/app/shared/product
 import { ServiceCardTypeService } from '../../service-card-type.service';
 
 @Component({
-  selector: 'app-service-card-type-apply-dialog',
-  templateUrl: './service-card-type-apply-dialog.component.html',
-  styleUrls: ['./service-card-type-apply-dialog.component.css']
+  selector: 'app-card-type-apply-cate-dialog',
+  templateUrl: './card-type-apply-cate-dialog.component.html',
+  styleUrls: ['./card-type-apply-cate-dialog.component.css']
 })
-export class ServiceCardTypeApplyDialogComponent implements OnInit {
+export class CardTypeApplyCateDialogComponent implements OnInit {
+
   title: string;
   search: string = '';
   searchUpdate = new Subject<string>();
@@ -26,7 +27,7 @@ export class ServiceCardTypeApplyDialogComponent implements OnInit {
     public activeModal: NgbActiveModal,
     private fb: FormBuilder,
     private productCategoryService: ProductCategoryService,
-    private cardTypeService: CardTypeService,
+    private cardTypeService: ServiceCardTypeService,
 
     ) { }
 

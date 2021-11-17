@@ -164,9 +164,9 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> AddProductPricelistItem(Guid id, [FromBody] List<Guid> productIds)
         {
             await _unitOfWork.BeginTransactionAsync();
-            await _cardTypeService.AddProductPricelistItem(id, productIds);
+            var res = await _cardTypeService.AddProductPricelistItem(id, productIds);
             _unitOfWork.Commit();
-            return Ok();
+            return Ok(_mapper.Map<IEnumerable<ProductPricelistItemDisplay>>(res));
         }
 
         [HttpPost("{id}/UpdateServices")]

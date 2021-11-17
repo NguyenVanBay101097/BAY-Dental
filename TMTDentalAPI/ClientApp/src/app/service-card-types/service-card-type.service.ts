@@ -78,10 +78,10 @@ export class ServiceCardTypeService {
     }
 
     addProductPricelistItem (id: string, val: any) {
-        return this.http.post(this.baseApi + this.apiUrl + "/" + id + "/AddProductPricelistItem", val);
+        return this.http.post(this.baseApi + this.apiUrl + "/" + id + "/AddServices", val);
     }
 
     updateProductPricelistItem (id: string, val: any) {
-        return this.http.post(this.baseApi + this.apiUrl + "/" + id + "/UpdateProductPricelistItem", val);
+        return this.http.post(this.baseApi + this.apiUrl + "/" + id + "/UpdateServices", val);
     }
 }

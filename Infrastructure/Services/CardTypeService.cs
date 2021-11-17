@@ -161,7 +161,7 @@ namespace Infrastructure.Services
             if (self.Pricelist == null)
                 throw new Exception("Không tìm thấy bảng giá của hạng thẻ");
         }
-        public async Task AddProductPricelistItem(Guid id, IEnumerable<Guid> productIds)
+        public async Task<IEnumerable<ProductPricelistItem>> AddProductPricelistItem(Guid id, IEnumerable<Guid> productIds)
         {
             var priceListItemObj = GetService<IProductPricelistItemService>();
             var productObj = GetService<IProductService>();
@@ -186,6 +186,8 @@ namespace Infrastructure.Services
             }
 
             await priceListItemObj.CreateAsync(toAdds);
+
+            return toAdds;
         }
 
         public async Task UpdateProductPricelistItem(Guid id, IEnumerable<ProductPricelistItemCreate> items)
@@ -220,7 +222,7 @@ namespace Infrastructure.Services
             var priceListItems = self.Pricelist.Items;
             //get list service
             var categIds = vals.Where(x => x.CategId != Guid.Empty).Select(x => x.CategId);
-            var services = await productObj.SearchQuery(x => x.Active == true && categIds.Contains(x.CategId.Value)).ToListAsync();
+            var services = await productObj.SearchQuery(x => x.Active == true && x.Type2 == "service" && categIds.Contains(x.CategId.Value)).ToListAsync();
             // add and update pricelistitem
             var toAdds = new List<ProductPricelistItem>();
             var toUpdates = new List<ProductPricelistItem>();
@@ -271,7 +273,7 @@ namespace Infrastructure.Services
             ValidateApplyPriceListItem(self);
             var priceListItems = self.Pricelist.Items;
             //get list service
-            var services = await productObj.SearchQuery(x => x.Active == true).ToListAsync();
+            var services = await productObj.SearchQuery(x => x.Active == true && x.Type2 == "service").ToListAsync();
             // add and update pricelistitem
             var toAdds = new List<ProductPricelistItem>();
             var toUpdates = new List<ProductPricelistItem>();

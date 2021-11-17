@@ -16,10 +16,12 @@ import { MemberCardCreateUpdateComponent } from './service-card-type-list/member
 import { CardCardsModule } from '../card-cards/card-cards.module';
 import { ServiceCardTypeApplyAllComponent } from './service-card-type-list/service-card-type-apply-all/service-card-type-apply-all.component';
 import { ComputePriceInputPopoverComponent } from '../shared/compute-price-input-popover/compute-price-input-popover.component';
+import { CardTypeApplyAllDialogComponent } from './service-card-type-list/card-type-apply-all-dialog/card-type-apply-all-dialog.component';
+import { CardTypeApplyCateDialogComponent } from './service-card-type-list/card-type-apply-cate-dialog/card-type-apply-cate-dialog.component';
 
 
 @NgModule({
-  declarations: [ServiceCardTypeListComponent, ServiceCardTypeCuDialogComponent, MemberCardListComponent, PreferentialCardListComponent, PreferentialCardCreateUpdateComponent, ServiceCardTypeApplyDialogComponent, MemberCardCreateUpdateComponent, ServiceCardTypeApplyAllComponent],
+  declarations: [ServiceCardTypeListComponent, ServiceCardTypeCuDialogComponent, MemberCardListComponent, PreferentialCardListComponent, PreferentialCardCreateUpdateComponent, ServiceCardTypeApplyDialogComponent, MemberCardCreateUpdateComponent, ServiceCardTypeApplyAllComponent, CardTypeApplyAllDialogComponent, CardTypeApplyCateDialogComponent],
   imports: [
     ServiceCardTypesRoutingModule,
     ReactiveFormsModule,
