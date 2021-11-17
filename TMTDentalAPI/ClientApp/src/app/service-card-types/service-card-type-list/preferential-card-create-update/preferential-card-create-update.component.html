@@ -99,7 +99,7 @@
                                             {{categ.get('name').value}}
                                         </td>
                                         <td class="text-right">
-                                            <button class="btn btn-primary" (click)="onApplyCateg(categIndex)">
+                                            <button class="btn btn-primary" (click)="onApplyCateg()">
                                                 Áp dụng cho cả nhóm
                                             </button>
                                         </td>
@@ -107,7 +107,7 @@
                                     </tr>
 
                                     <ng-container formArrayName="products">
-                                        <tr *ngFor="let gr of categ.get('products').controls; let proIndex = index"
+                                        <tr *ngFor="let gr of categ.get('products')['controls']; let proIndex = index"
                                             [formGroupName]="proIndex">
                                             <td class="w-50">
                                                 <div>{{gr.get('product').value.name}}</div>

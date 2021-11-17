@@ -5,47 +5,61 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <form class="o_form_view o_form_editable">
-        <div class="o_form_sheet_bg">
-            <div class="o_form_sheet">
-                <div class="o_group">
-                    <table class="o_group o_inner_group" style="width:100%">
-                        <tbody>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">
-                                        Ưu đãi
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <div class="d-flex">
-                                        <div class="w-100 mr-2">
-                                            <kendo-numerictextbox *ngIf="computePrice == 'percentage'" class="form-control" [format]="'n0'" max = '100' [min]="0" [autoCorrect]="true" [(ngModel)] = 'price' name = 'percentage'>
-                                            </kendo-numerictextbox>
-                                            <kendo-numerictextbox *ngIf="computePrice != 'percentage'" class="form-control" [format]="'n0'" [min]="0" [autoCorrect]="true" [(ngModel)] = 'price' name = 'fixed_amount'>
-                                            </kendo-numerictextbox>
-                                        </div>
-                                        <div>
-                                            <input type="radio" class="btn-check" id = 'radio1' name="radio" value = "percentage" [(ngModel)]="computePrice"
-                                            (ngModelChange)="changePeriod()">
-                                            <label class="btn btn-outline-primary mb-0 mr-2" [ngClass]="{'btn-primary': computePrice == 'percentage'}" 
-                                            for="radio1">%</label>
-                                        </div>
-                                        <div>
-                                            <input type="radio" class="btn-check" id = 'radio2'name = 'radio'value = "fixed_amount" [(ngModel)]="computePrice"
-                                            (ngModelChange)="changePeriod()">
-                                            <label class="btn btn-outline-primary mb-0 mr-2" [ngClass]="{'btn-primary': computePrice != 'percentage'}" 
-                                            for="radio2">VNĐ</label>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </form>
+    <div class="ml-2 mt-3 mb-3">
+        <app-product-categories-search-dropdown #searchCateComp (searchOutput)="onSearchCate($event)"
+            (onSelectService)="addLine($event)"></app-product-categories-search-dropdown>
+    </div>
+    <div class="p-2">
+        <table class="table" [formGroup]="form">
+            <tr>
+                <th>Tên nhóm dịch vụ</th>
+                <th>Ưu đãi theo thẻ</th>
+            </tr>
+            <tbody formArrayName="productCategoryListItems">
+                <ng-container *ngFor="let item of this.productCategoryListItems.controls; let itemId = index"
+                    [formGroupName]="itemId">
+                    <tr>
+                        <td>{{item.get("name").value}}</td>
+                        <td>
+                            <div class="d-flex">
+                                <div class="w-100 mr-2">
+                                    <kendo-numerictextbox *ngIf="item.get('computePrice').value == 'percentage'"
+                                        class="form-control" [format]="'n0'" [min]="0" [autoCorrect]="true"
+                                        formControlName="percentPrice">
+                                    </kendo-numerictextbox>
+                                    <kendo-numerictextbox *ngIf="item.get('computePrice').value != 'percentage'"
+                                        class="form-control" [format]="'n0'" [min]="0" [autoCorrect]="true"
+                                        formControlName="fixedAmountPrice">
+                                    </kendo-numerictextbox>
+                                </div>
+                                <div>
+                                    <input type="radio" class="btn-check" [id]="'radio1' + itemId" value="percentage"
+                                        formControlName="computePrice" (change)="changeComputePrice($event)">
+                                    <label class="btn btn-outline-primary mb-0 mr-2"
+                                        [ngClass]="{'btn-primary': item.get('computePrice').value == 'percentage'}"
+                                        [for]="'radio1' + itemId">%</label>
+                                </div>
+                                <div>
+                                    <input type="radio" class="btn-check" [id]="'radio2' + itemId" value="fixed_amount"
+                                        formControlName="computePrice" (change)="changeComputePrice($event)">
+                                    <label class="btn btn-outline-primary mb-0 mr-2"
+                                        [ngClass]="{'btn-primary': item.get('computePrice').value != 'percentage'}"
+                                        [for]="'radio2' + itemId">VNĐ</label>
+                                </div>
+                                <div>
+                                    <button class="btn btn-danger ml-1" title="Xóa"
+                                        (click)="deleteItem(itemId)">
+                                        <span class="far fa-trash-alt"></span>
+                                    </button>
+                                </div>
+
+                            </div>
+                        </td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <footer class="modal-footer">

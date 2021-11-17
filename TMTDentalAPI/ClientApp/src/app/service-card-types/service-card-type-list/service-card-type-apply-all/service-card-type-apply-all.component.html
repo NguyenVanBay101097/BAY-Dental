@@ -1,0 +1,52 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view o_form_editable">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group" style="width:100%">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Ưu đãi
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="d-flex">
+                                        <div class="w-100 mr-2">
+                                            <kendo-numerictextbox *ngIf="computePrice == 'percentage'" class="form-control" [format]="'n0'" max = '100' [min]="0" [autoCorrect]="true" [(ngModel)] = 'percentPrice' name = 'percentage'>
+                                            </kendo-numerictextbox>
+                                            <kendo-numerictextbox *ngIf="computePrice != 'percentage'" class="form-control" [format]="'n0'" [min]="0" [autoCorrect]="true" [(ngModel)] = 'fixedAmountPrice' name = 'fixed_amount'>
+                                            </kendo-numerictextbox>
+                                        </div>
+                                        <div>
+                                            <input type="radio" class="btn-check" id = 'radio1' name="radio" value = "percentage" [(ngModel)]="computePrice">
+                                            <label class="btn btn-outline-primary mb-0 mr-2" [ngClass]="{'btn-primary': computePrice == 'percentage'}" 
+                                            for="radio1">%</label>
+                                        </div>
+                                        <div>
+                                            <input type="radio" class="btn-check" id = 'radio2' name = 'radio' value = "fixed_amount" [(ngModel)]="computePrice">
+                                            <label class="btn btn-outline-primary mb-0 mr-2" [ngClass]="{'btn-primary': computePrice != 'percentage'}" 
+                                            for="radio2">VNĐ</label>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onApply()" accesskey="s">Áp dụng</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

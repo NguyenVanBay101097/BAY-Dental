@@ -68,4 +68,20 @@ export class ServiceCardTypeService {
     autoComplete(search: string) {
         return this.http.get(this.baseApi + this.apiUrl + "/AutoComplete", { params: {search} });
     }
+
+    onApplyInCateg(id: string,val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/" + id + "/ApplyServiceCategories", val);
+    }
+
+    onApplyAll(id: string,val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/" + id + "/ApplyAllServices", val);
+    }
+
+    addProductPricelistItem (id: string, val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/" + id + "/AddProductPricelistItem", val);
+    }
+
+    updateProductPricelistItem (id: string, val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/" + id + "/UpdateProductPricelistItem", val);
+    }
 }
