@@ -218,6 +218,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string ProductId { get; set; }
         public string Diagnostic { get; set; }
         public int DateRound { get; set; } // để set date.now - this
+        public string ToothType { get; set; }
         public string ToothCategoryId { get; set; }
         [XmlArray("SaleOrderLineToothRels")]
         [XmlArrayItem("Record")]
