@@ -107,7 +107,7 @@ namespace TMTDentalAPI.Controllers
                             var name = Convert.ToString(worksheet.Cells[row, 1].Value);
 
                             if (string.IsNullOrEmpty(name))
-                                errs.Add("Tên Đường hoàn tất Labo là bắt buộc");
+                                errs.Add("Tên khớp cắn Labo là bắt buộc");
 
                             if (errs.Any())
                             {

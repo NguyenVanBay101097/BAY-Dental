@@ -136,13 +136,15 @@ namespace TMTDentalAPI.Controllers
             var data = new List<CustomerReceiptXmlSampleDataRecord>();
             foreach (var entity in entities)
             {
+                if (entity.DateDone.HasValue && entity.DateDone <= entity.DateWaiting)
+                    continue;
                 var item = _mapper.Map<CustomerReceiptXmlSampleDataRecord>(entity);
 
                 var partnerModelData = listIrModelData.FirstOrDefault(x => x.ResId == entity.PartnerId.ToString());
                 var doctorModelData = listIrModelData.FirstOrDefault(x => x.ResId == entity.DoctorId.ToString());
 
                 item.Id = $@"sample.customer_receipt_{entities.IndexOf(entity) + 1}";
-                item.DateRound = (int)(dateToData - entity.DateWaiting.Value).TotalDays;
+                item.DateRound = (int)(dateToData.Date - entity.DateWaiting.Value.Date).TotalDays;
                 item.WaitingTimeHour = entity.DateWaiting.Value.Hour;
                 item.WaitingTimeMinute = entity.DateWaiting.Value.Minute;
                 item.ExaminationTimeHour = entity.DateExamination.HasValue ? entity.DateExamination.Value.Hour : (int?)null;

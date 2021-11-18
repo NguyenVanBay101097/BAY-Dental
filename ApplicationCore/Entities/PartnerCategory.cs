@@ -9,6 +9,11 @@ namespace ApplicationCore.Entities
     /// </summary>
     public class PartnerCategory: BaseEntity
     {
+        public PartnerCategory()
+        {
+            Active = true;
+        }
+
         public string Name { get; set; }
 
         public Guid? ParentId { get; set; }

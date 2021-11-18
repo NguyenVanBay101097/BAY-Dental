@@ -142,7 +142,7 @@ export class AppHomeComponent implements OnInit {
       icon: 'fas fa-list',
       children: [
         { name: 'Thông tin khách hàng', url: '/customer-management' },
-        { name: 'Hạng thành viên', url: '/member-level/management' },
+        // { name: 'Hạng thành viên', url: '/member-level/management' },
         { name: 'Nhà cung cấp', url: '/partners/suppliers', permissions: ['Basic.Partner.Read'] },
         { name: 'Dịch vụ - Vật tư - Thuốc', url: '/products', permissions: ['Catalog.Products.Read'] },
         { name: 'Đơn thuốc mẫu', url: '/sample-prescriptions', permissions: ['Catalog.SamplePrescription.Read'] },

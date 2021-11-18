@@ -8,7 +8,7 @@ import { ChartDataset, ChartOptions } from 'chart.js';
   styleUrls: ['./sale-dashboard-cashbook-report.component.css']
 })
 export class SaleDashboardCashbookReportComponent implements OnInit {
-  @Input() cashBooks: any;
+  @Input() cashBooks: any = [];
   @Input() timeUnit: any;
   @Input() thuChiReportData: any;
   barChartLabels: string[] = [];

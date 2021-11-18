@@ -76,25 +76,35 @@ namespace TMTDentalAPI.Controllers
         {
             //Cancel / bo qua
             //Installed / import
-            await _unitOfWork.BeginTransactionAsync();
             if (action == "Installed")
             {
-                await _importSampleDataService.ImportSampleData();
-
+                var configSampleData = await _irConfigParameterService.GetParam("import_sample_data");
+                if (string.IsNullOrEmpty(configSampleData))
+                {
+                    await _unitOfWork.BeginTransactionAsync();
+                    await _importSampleDataService.ImportSampleData();
+                    await _irConfigParameterService.SetParam("import_sample_data", action);
+                    _unitOfWork.Commit();
+                }
             }
-            await _irConfigParameterService.SetParam("import_sample_data", action);
-            _unitOfWork.Commit();
+            else
+            {
+                await _irConfigParameterService.SetParam("import_sample_data", action);
+            }
 
             return NoContent();
-
         }
 
         [HttpGet("[action]")]
         public async Task<IActionResult> DeleteSampleData()
         {
-            await _unitOfWork.BeginTransactionAsync();
-            await _importSampleDataService.DeleteSampleData();
-            _unitOfWork.Commit();
+            var configSampleData = await _irConfigParameterService.GetParam("import_sample_data");
+            if (!string.IsNullOrEmpty(configSampleData) && configSampleData == "Installed")
+            {
+                await _unitOfWork.BeginTransactionAsync();
+                await _importSampleDataService.DeleteSampleData();
+                _unitOfWork.Commit();
+            }
 
             return NoContent();
         }

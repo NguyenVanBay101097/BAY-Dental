@@ -15,6 +15,7 @@
         <ProductId>sample.product_service_44</ProductId>
         <Diagnostic />
         <DateRound>9</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -57,6 +58,7 @@
         <ProductId>sample.product_service_40</ProductId>
         <Diagnostic>Viêm quanh Implant</Diagnostic>
         <DateRound>8</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -90,6 +92,7 @@
         <ProductId>sample.product_service_10</ProductId>
         <Diagnostic>Răng ố vàng, nhiều mảng bám</Diagnostic>
         <DateRound>8</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -135,6 +138,7 @@
         <ProductId>sample.product_service_32</ProductId>
         <Diagnostic>Răng không đều</Diagnostic>
         <DateRound>8</DateRound>
+        <ToothType>whole_jaw</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels />
       </Record>
@@ -155,6 +159,7 @@
         <ProductId>sample.product_service_2</ProductId>
         <Diagnostic>Viêm tủy răng</Diagnostic>
         <DateRound>8</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -179,6 +184,7 @@
         <ProductId>sample.product_service_10</ProductId>
         <Diagnostic>Răng ố vàng, nhiều mảng bám</Diagnostic>
         <DateRound>8</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -212,6 +218,7 @@
         <ProductId>sample.product_service_7</ProductId>
         <Diagnostic>Viêm tủy răng</Diagnostic>
         <DateRound>8</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -245,6 +252,7 @@
         <ProductId>sample.product_service_12</ProductId>
         <Diagnostic>Viêm tủy răng</Diagnostic>
         <DateRound>8</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -272,6 +280,7 @@
         <ProductId>sample.product_service_10</ProductId>
         <Diagnostic>Răng ố vàng, nhiều mảng bám</Diagnostic>
         <DateRound>7</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -302,6 +311,7 @@
         <ProductId>sample.product_service_29</ProductId>
         <Diagnostic>Răng không đều</Diagnostic>
         <DateRound>7</DateRound>
+        <ToothType>whole_jaw</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels />
       </Record>
@@ -322,6 +332,7 @@
         <ProductId>sample.product_service_10</ProductId>
         <Diagnostic>Răng ố vàng, nhiều mảng bám</Diagnostic>
         <DateRound>7</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -355,6 +366,7 @@
         <ProductId>sample.product_service_41</ProductId>
         <Diagnostic>Răng không đều</Diagnostic>
         <DateRound>6</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -394,6 +406,7 @@
         <ProductId>sample.product_service_64</ProductId>
         <Diagnostic>Sâu răng</Diagnostic>
         <DateRound>6</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -421,6 +434,7 @@
         <ProductId>sample.product_service_10</ProductId>
         <Diagnostic>Răng ố vàng, nhiều mảng bám</Diagnostic>
         <DateRound>6</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -466,6 +480,7 @@
         <ProductId>sample.product_service_7</ProductId>
         <Diagnostic>Viêm tủy răng</Diagnostic>
         <DateRound>6</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -499,6 +514,7 @@
         <ProductId>sample.product_service_7</ProductId>
         <Diagnostic>Viêm tủy răng</Diagnostic>
         <DateRound>6</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -523,6 +539,7 @@
         <ProductId>sample.product_service_10</ProductId>
         <Diagnostic />
         <DateRound>6</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -556,6 +573,7 @@
         <ProductId>sample.product_service_6</ProductId>
         <Diagnostic>Viêm tủy răng</Diagnostic>
         <DateRound>6</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -589,6 +607,7 @@
         <ProductId>sample.product_service_29</ProductId>
         <Diagnostic />
         <DateRound>4</DateRound>
+        <ToothType />
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels />
       </Record>
@@ -609,6 +628,7 @@
         <ProductId>sample.product_service_64</ProductId>
         <Diagnostic>Viêm quanh Implant</Diagnostic>
         <DateRound>4</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -639,6 +659,7 @@
         <ProductId>sample.product_service_10</ProductId>
         <Diagnostic>Răng ố vàng, nhiều mảng bám</Diagnostic>
         <DateRound>4</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -678,6 +699,7 @@
         <ProductId>sample.product_service_7</ProductId>
         <Diagnostic>Viêm lợi</Diagnostic>
         <DateRound>4</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -705,6 +727,7 @@
         <ProductId>sample.product_service_10</ProductId>
         <Diagnostic>Viêm tủy răng, Sai khớp cắn, Áp xe má</Diagnostic>
         <DateRound>4</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -753,6 +776,7 @@
         <ProductId>sample.product_service_2</ProductId>
         <Diagnostic>Sâu răng</Diagnostic>
         <DateRound>2</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -780,6 +804,7 @@
         <ProductId>sample.product_service_10</ProductId>
         <Diagnostic>Răng ố vàng, nhiều mảng bám</Diagnostic>
         <DateRound>2</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -825,6 +850,7 @@
         <ProductId>sample.product_service_40</ProductId>
         <Diagnostic>Răng không đều</Diagnostic>
         <DateRound>2</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -861,6 +887,7 @@
         <ProductId>sample.product_service_10</ProductId>
         <Diagnostic>Răng ố vàng, nhiều mảng bám</Diagnostic>
         <DateRound>2</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -885,6 +912,7 @@
         <ProductId>sample.product_service_28</ProductId>
         <Diagnostic />
         <DateRound>2</DateRound>
+        <ToothType />
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels />
       </Record>
@@ -896,6 +924,7 @@
         <ProductId>sample.product_service_44</ProductId>
         <Diagnostic />
         <DateRound>2</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -926,6 +955,7 @@
         <ProductId>sample.product_service_24</ProductId>
         <Diagnostic />
         <DateRound>2</DateRound>
+        <ToothType />
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels />
       </Record>
@@ -946,6 +976,7 @@
         <ProductId>sample.product_service_28</ProductId>
         <Diagnostic>Viêm lợi</Diagnostic>
         <DateRound>2</DateRound>
+        <ToothType>whole_jaw</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels />
       </Record>
@@ -957,6 +988,7 @@
         <ProductId>sample.product_service_10</ProductId>
         <Diagnostic />
         <DateRound>2</DateRound>
+        <ToothType>whole_jaw</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels />
       </Record>
@@ -977,6 +1009,7 @@
         <ProductId>sample.product_service_10</ProductId>
         <Diagnostic>Răng ố vàng, nhiều mảng bám</Diagnostic>
         <DateRound>1</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -1028,6 +1061,7 @@
         <ProductId>sample.product_service_12</ProductId>
         <Diagnostic>Sâu răng</Diagnostic>
         <DateRound>1</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -1055,6 +1089,7 @@
         <ProductId>sample.product_service_7</ProductId>
         <Diagnostic>Viêm tủy răng</Diagnostic>
         <DateRound>1</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -1082,6 +1117,7 @@
         <ProductId>sample.product_service_12</ProductId>
         <Diagnostic>Sâu răng</Diagnostic>
         <DateRound>1</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -1109,6 +1145,7 @@
         <ProductId>sample.product_service_28</ProductId>
         <Diagnostic>U răng</Diagnostic>
         <DateRound>1</DateRound>
+        <ToothType>whole_jaw</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels />
       </Record>
@@ -1129,6 +1166,7 @@
         <ProductId>sample.product_service_41</ProductId>
         <Diagnostic>Răng ố vàng, nhiều mảng bám</Diagnostic>
         <DateRound>1</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -1174,6 +1212,7 @@
         <ProductId>sample.product_service_13</ProductId>
         <Diagnostic>bình thường</Diagnostic>
         <DateRound>1</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -1201,6 +1240,7 @@
         <ProductId>sample.product_service_32</ProductId>
         <Diagnostic>Răng không đều</Diagnostic>
         <DateRound>1</DateRound>
+        <ToothType>whole_jaw</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels />
       </Record>
@@ -1221,6 +1261,7 @@
         <ProductId>sample.product_service_33</ProductId>
         <Diagnostic>U răng, Răng không đều</Diagnostic>
         <DateRound>1</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -1248,6 +1289,7 @@
         <ProductId>sample.product_service_16</ProductId>
         <Diagnostic />
         <DateRound>1</DateRound>
+        <ToothType>whole_jaw</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels />
       </Record>
@@ -1268,6 +1310,7 @@
         <ProductId>sample.product_service_48</ProductId>
         <Diagnostic />
         <DateRound>1</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -1286,6 +1329,7 @@
         <ProductId>sample.product_service_29</ProductId>
         <Diagnostic />
         <DateRound>0</DateRound>
+        <ToothType>manual</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels>
           <Record>
@@ -1313,6 +1357,7 @@
         <ProductId>sample.product_service_28</ProductId>
         <Diagnostic>lệch hàm</Diagnostic>
         <DateRound>1</DateRound>
+        <ToothType>whole_jaw</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels />
       </Record>
@@ -1333,6 +1378,7 @@
         <ProductId>sample.product_service_10</ProductId>
         <Diagnostic />
         <DateRound>0</DateRound>
+        <ToothType>lower_jaw</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels />
       </Record>
@@ -1353,6 +1399,7 @@
         <ProductId>sample.product_service_17</ProductId>
         <Diagnostic>Răng ố vàng, nhiều mảng bám</Diagnostic>
         <DateRound>0</DateRound>
+        <ToothType>lower_jaw</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels />
       </Record>
@@ -1373,6 +1420,7 @@
         <ProductId>sample.product_service_32</ProductId>
         <Diagnostic>Răng không đều</Diagnostic>
         <DateRound>0</DateRound>
+        <ToothType>lower_jaw</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels />
       </Record>
@@ -1384,6 +1432,7 @@
         <ProductId>sample.product_service_29</ProductId>
         <Diagnostic />
         <DateRound>0</DateRound>
+        <ToothType>lower_jaw</ToothType>
         <ToothCategoryId>base.tooth_category_adult</ToothCategoryId>
         <SaleOrderLineToothRels />
       </Record>

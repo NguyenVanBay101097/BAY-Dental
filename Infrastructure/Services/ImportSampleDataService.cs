@@ -490,11 +490,11 @@ namespace Infrastructure.Services
             foreach (var item in customerReceiptData.Records)
             {
                 var customerReceipt = _mapper.Map<CustomerReceipt>(item);
-                customerReceipt.DateWaiting = DateTime.Today.AddDays(-item.DateRound).AddHours(item.WaitingTimeHour).AddMinutes(item.WaitingTimeHour);
+                customerReceipt.DateWaiting = DateTime.Today.AddDays(-item.DateRound).AddHours(item.WaitingTimeHour).AddMinutes(item.WaitingTimeMinute);
                 if (item.ExaminationTimeHour.HasValue)
                     customerReceipt.DateExamination = DateTime.Today.AddDays(-item.DateRound).AddHours(item.ExaminationTimeHour.Value).AddMinutes(item.ExaminationTimeMinute.Value);
                 if (item.DoneTimeHour.HasValue)
-                    customerReceipt.DateDone = DateTime.Today.AddDays(-item.DateRound).AddHours(item.DoneTimeHour.Value).AddMinutes(item.DoneTimeHour.Value);
+                    customerReceipt.DateDone = DateTime.Today.AddDays(-item.DateRound).AddHours(item.DoneTimeHour.Value).AddMinutes(item.DoneTimeMinute.Value);
 
                 customerReceipt.CompanyId = companyId;
                 customerReceipt.PartnerId = partnerDict[item.PartnerId].Id;
@@ -1001,10 +1001,10 @@ namespace Infrastructure.Services
             #endregion
 
             //set constraint
-            await _dbContext.ExecuteSqlCommandAsync("EXEC sp_MSForEachTable 'ALTER TABLE ? NOCHECK CONSTRAINT ALL'");
+            var commandResult = await _dbContext.ExecuteSqlCommandAsync("EXEC sp_MSForEachTable 'ALTER TABLE ? NOCHECK CONSTRAINT ALL'");
             // delete all tables except some tables
             string exceptTables = "('__EFMigrationsHistory','Partners','AspNetUsers','Companies')";
-            await _dbContext.ExecuteSqlCommandAsync($@"DECLARE @strSQL Varchar(MAX) = '';
+            var commandResult2 = await _dbContext.ExecuteSqlCommandAsync($@"DECLARE @strSQL Varchar(MAX) = '';
                                                        SELECT @strSQL = @strSQL + 'Delete ' + name + ' ; '
                                                        FROM sys.tables
                                                        where name not in {exceptTables}
@@ -1057,9 +1057,6 @@ namespace Infrastructure.Services
             await groupObj.InsertSecurityData();
             await companyObj.InsertIrModelFieldData();
 
-            var appRoleService = GetService<IApplicationRoleService>();
-            await appRoleService.CreateBaseUserRole();
-            //await irConfigParameterObj.SetParam("remove_sample_data", "True");
             await irConfigParameterObj.SetParam("import_sample_data", "Removed");
             //xóa cache
             _cache.Remove(_tenant != null ? _tenant.Hostname.ToLower() : "localhost");

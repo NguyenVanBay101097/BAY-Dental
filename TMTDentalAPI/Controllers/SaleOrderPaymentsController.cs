@@ -146,7 +146,7 @@ namespace TMTDentalAPI.Controllers
                 item.Id = $@"sample.sale_order_payment_{entities.IndexOf(entity) + 1}";
                 var irmodelDataOrder = listIrModelData.FirstOrDefault(x => x.ResId == entity.OrderId.ToString());
                 item.OrderId = irmodelDataOrder?.Module + "." + irmodelDataOrder?.Name;
-                item.DateRound = (int)(dateToData - entity.Date).TotalDays;
+                item.DateRound = (int)(dateToData.Date - entity.Date.Date).TotalDays;
                 //add lines
                 foreach (var lineEntity in entity.Lines)
                 {

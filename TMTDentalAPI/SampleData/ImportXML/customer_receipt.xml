@@ -2,7 +2,7 @@
 <Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Record>
     <Id>sample.customer_receipt_1</Id>
-    <DateRound>11</DateRound>
+    <DateRound>12</DateRound>
     <WaitingTimeHour>15</WaitingTimeHour>
     <WaitingTimeMinute>14</WaitingTimeMinute>
     <ExaminationTimeHour>15</ExaminationTimeHour>
@@ -19,7 +19,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_2</Id>
-    <DateRound>11</DateRound>
+    <DateRound>12</DateRound>
     <WaitingTimeHour>15</WaitingTimeHour>
     <WaitingTimeMinute>14</WaitingTimeMinute>
     <ExaminationTimeHour>15</ExaminationTimeHour>
@@ -36,7 +36,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_3</Id>
-    <DateRound>11</DateRound>
+    <DateRound>12</DateRound>
     <WaitingTimeHour>15</WaitingTimeHour>
     <WaitingTimeMinute>16</WaitingTimeMinute>
     <ExaminationTimeHour>17</ExaminationTimeHour>
@@ -53,7 +53,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_4</Id>
-    <DateRound>11</DateRound>
+    <DateRound>12</DateRound>
     <WaitingTimeHour>15</WaitingTimeHour>
     <WaitingTimeMinute>16</WaitingTimeMinute>
     <ExaminationTimeHour>17</ExaminationTimeHour>
@@ -70,7 +70,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_5</Id>
-    <DateRound>11</DateRound>
+    <DateRound>12</DateRound>
     <WaitingTimeHour>15</WaitingTimeHour>
     <WaitingTimeMinute>19</WaitingTimeMinute>
     <ExaminationTimeHour>17</ExaminationTimeHour>
@@ -87,7 +87,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_6</Id>
-    <DateRound>11</DateRound>
+    <DateRound>12</DateRound>
     <WaitingTimeHour>15</WaitingTimeHour>
     <WaitingTimeMinute>19</WaitingTimeMinute>
     <ExaminationTimeHour>19</ExaminationTimeHour>
@@ -104,7 +104,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_7</Id>
-    <DateRound>11</DateRound>
+    <DateRound>12</DateRound>
     <WaitingTimeHour>15</WaitingTimeHour>
     <WaitingTimeMinute>19</WaitingTimeMinute>
     <ExaminationTimeHour>19</ExaminationTimeHour>
@@ -121,7 +121,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_8</Id>
-    <DateRound>11</DateRound>
+    <DateRound>12</DateRound>
     <WaitingTimeHour>15</WaitingTimeHour>
     <WaitingTimeMinute>20</WaitingTimeMinute>
     <ExaminationTimeHour>19</ExaminationTimeHour>
@@ -140,7 +140,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_9</Id>
-    <DateRound>10</DateRound>
+    <DateRound>11</DateRound>
     <WaitingTimeHour>10</WaitingTimeHour>
     <WaitingTimeMinute>20</WaitingTimeMinute>
     <ExaminationTimeHour>10</ExaminationTimeHour>
@@ -162,7 +162,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_10</Id>
-    <DateRound>8</DateRound>
+    <DateRound>9</DateRound>
     <WaitingTimeHour>15</WaitingTimeHour>
     <WaitingTimeMinute>28</WaitingTimeMinute>
     <ExaminationTimeHour>15</ExaminationTimeHour>
@@ -180,7 +180,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_11</Id>
-    <DateRound>8</DateRound>
+    <DateRound>9</DateRound>
     <WaitingTimeHour>13</WaitingTimeHour>
     <WaitingTimeMinute>10</WaitingTimeMinute>
     <ExaminationTimeHour>15</ExaminationTimeHour>
@@ -197,7 +197,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_12</Id>
-    <DateRound>8</DateRound>
+    <DateRound>9</DateRound>
     <WaitingTimeHour>15</WaitingTimeHour>
     <WaitingTimeMinute>29</WaitingTimeMinute>
     <ExaminationTimeHour>15</ExaminationTimeHour>
@@ -214,7 +214,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_13</Id>
-    <DateRound>8</DateRound>
+    <DateRound>9</DateRound>
     <WaitingTimeHour>15</WaitingTimeHour>
     <WaitingTimeMinute>29</WaitingTimeMinute>
     <ExaminationTimeHour>15</ExaminationTimeHour>
@@ -232,7 +232,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_14</Id>
-    <DateRound>8</DateRound>
+    <DateRound>9</DateRound>
     <WaitingTimeHour>15</WaitingTimeHour>
     <WaitingTimeMinute>29</WaitingTimeMinute>
     <ExaminationTimeHour>22</ExaminationTimeHour>
@@ -249,7 +249,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_15</Id>
-    <DateRound>8</DateRound>
+    <DateRound>9</DateRound>
     <WaitingTimeHour>15</WaitingTimeHour>
     <WaitingTimeMinute>29</WaitingTimeMinute>
     <ExaminationTimeHour>22</ExaminationTimeHour>
@@ -266,7 +266,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_16</Id>
-    <DateRound>8</DateRound>
+    <DateRound>9</DateRound>
     <WaitingTimeHour>15</WaitingTimeHour>
     <WaitingTimeMinute>30</WaitingTimeMinute>
     <ExaminationTimeHour>22</ExaminationTimeHour>
@@ -283,7 +283,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_17</Id>
-    <DateRound>8</DateRound>
+    <DateRound>9</DateRound>
     <WaitingTimeHour>15</WaitingTimeHour>
     <WaitingTimeMinute>31</WaitingTimeMinute>
     <ExaminationTimeHour>22</ExaminationTimeHour>
@@ -300,7 +300,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_18</Id>
-    <DateRound>7</DateRound>
+    <DateRound>8</DateRound>
     <WaitingTimeHour>10</WaitingTimeHour>
     <WaitingTimeMinute>9</WaitingTimeMinute>
     <ExaminationTimeHour>15</ExaminationTimeHour>
@@ -317,7 +317,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_19</Id>
-    <DateRound>7</DateRound>
+    <DateRound>8</DateRound>
     <WaitingTimeHour>10</WaitingTimeHour>
     <WaitingTimeMinute>9</WaitingTimeMinute>
     <ExaminationTimeHour>15</ExaminationTimeHour>
@@ -334,7 +334,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_20</Id>
-    <DateRound>7</DateRound>
+    <DateRound>8</DateRound>
     <WaitingTimeHour>10</WaitingTimeHour>
     <WaitingTimeMinute>9</WaitingTimeMinute>
     <ExaminationTimeHour>15</ExaminationTimeHour>
@@ -351,7 +351,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_21</Id>
-    <DateRound>7</DateRound>
+    <DateRound>8</DateRound>
     <WaitingTimeHour>10</WaitingTimeHour>
     <WaitingTimeMinute>9</WaitingTimeMinute>
     <ExaminationTimeHour>15</ExaminationTimeHour>
@@ -368,7 +368,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_22</Id>
-    <DateRound>7</DateRound>
+    <DateRound>8</DateRound>
     <WaitingTimeHour>10</WaitingTimeHour>
     <WaitingTimeMinute>9</WaitingTimeMinute>
     <ExaminationTimeHour>15</ExaminationTimeHour>
@@ -385,7 +385,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_23</Id>
-    <DateRound>7</DateRound>
+    <DateRound>8</DateRound>
     <WaitingTimeHour>10</WaitingTimeHour>
     <WaitingTimeMinute>9</WaitingTimeMinute>
     <ExaminationTimeHour>15</ExaminationTimeHour>
@@ -402,7 +402,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_24</Id>
-    <DateRound>7</DateRound>
+    <DateRound>8</DateRound>
     <WaitingTimeHour>10</WaitingTimeHour>
     <WaitingTimeMinute>10</WaitingTimeMinute>
     <ExaminationTimeHour>15</ExaminationTimeHour>
@@ -419,7 +419,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_25</Id>
-    <DateRound>7</DateRound>
+    <DateRound>8</DateRound>
     <WaitingTimeHour>10</WaitingTimeHour>
     <WaitingTimeMinute>10</WaitingTimeMinute>
     <ExaminationTimeHour>15</ExaminationTimeHour>
@@ -437,7 +437,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_26</Id>
-    <DateRound>6</DateRound>
+    <DateRound>7</DateRound>
     <WaitingTimeHour>10</WaitingTimeHour>
     <WaitingTimeMinute>6</WaitingTimeMinute>
     <ExaminationTimeHour>10</ExaminationTimeHour>
@@ -454,7 +454,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_27</Id>
-    <DateRound>6</DateRound>
+    <DateRound>7</DateRound>
     <WaitingTimeHour>10</WaitingTimeHour>
     <WaitingTimeMinute>12</WaitingTimeMinute>
     <ExaminationTimeHour>10</ExaminationTimeHour>
@@ -471,7 +471,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_28</Id>
-    <DateRound>6</DateRound>
+    <DateRound>7</DateRound>
     <WaitingTimeHour>10</WaitingTimeHour>
     <WaitingTimeMinute>12</WaitingTimeMinute>
     <ExaminationTimeHour>11</ExaminationTimeHour>
@@ -488,7 +488,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_29</Id>
-    <DateRound>5</DateRound>
+    <DateRound>6</DateRound>
     <WaitingTimeHour>10</WaitingTimeHour>
     <WaitingTimeMinute>30</WaitingTimeMinute>
     <ExaminationTimeHour>14</ExaminationTimeHour>
@@ -505,7 +505,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_30</Id>
-    <DateRound>5</DateRound>
+    <DateRound>6</DateRound>
     <WaitingTimeHour>10</WaitingTimeHour>
     <WaitingTimeMinute>31</WaitingTimeMinute>
     <ExaminationTimeHour>14</ExaminationTimeHour>
@@ -522,7 +522,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_31</Id>
-    <DateRound>5</DateRound>
+    <DateRound>6</DateRound>
     <WaitingTimeHour>10</WaitingTimeHour>
     <WaitingTimeMinute>31</WaitingTimeMinute>
     <ExaminationTimeHour>11</ExaminationTimeHour>
@@ -539,7 +539,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_32</Id>
-    <DateRound>5</DateRound>
+    <DateRound>6</DateRound>
     <WaitingTimeHour>10</WaitingTimeHour>
     <WaitingTimeMinute>31</WaitingTimeMinute>
     <ExaminationTimeHour>11</ExaminationTimeHour>
@@ -557,7 +557,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_33</Id>
-    <DateRound>5</DateRound>
+    <DateRound>6</DateRound>
     <WaitingTimeHour>10</WaitingTimeHour>
     <WaitingTimeMinute>31</WaitingTimeMinute>
     <ExaminationTimeHour>11</ExaminationTimeHour>
@@ -574,7 +574,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_34</Id>
-    <DateRound>5</DateRound>
+    <DateRound>6</DateRound>
     <WaitingTimeHour>10</WaitingTimeHour>
     <WaitingTimeMinute>31</WaitingTimeMinute>
     <ExaminationTimeHour>14</ExaminationTimeHour>
@@ -591,7 +591,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_35</Id>
-    <DateRound>3</DateRound>
+    <DateRound>4</DateRound>
     <WaitingTimeHour>12</WaitingTimeHour>
     <WaitingTimeMinute>1</WaitingTimeMinute>
     <ExaminationTimeHour>12</ExaminationTimeHour>
@@ -608,7 +608,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_36</Id>
-    <DateRound>3</DateRound>
+    <DateRound>4</DateRound>
     <WaitingTimeHour>14</WaitingTimeHour>
     <WaitingTimeMinute>0</WaitingTimeMinute>
     <ExaminationTimeHour xsi:nil="true" />
@@ -625,7 +625,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_37</Id>
-    <DateRound>3</DateRound>
+    <DateRound>4</DateRound>
     <WaitingTimeHour>15</WaitingTimeHour>
     <WaitingTimeMinute>2</WaitingTimeMinute>
     <ExaminationTimeHour xsi:nil="true" />
@@ -642,7 +642,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_38</Id>
-    <DateRound>3</DateRound>
+    <DateRound>4</DateRound>
     <WaitingTimeHour>16</WaitingTimeHour>
     <WaitingTimeMinute>0</WaitingTimeMinute>
     <ExaminationTimeHour xsi:nil="true" />
@@ -659,7 +659,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_39</Id>
-    <DateRound>3</DateRound>
+    <DateRound>4</DateRound>
     <WaitingTimeHour>17</WaitingTimeHour>
     <WaitingTimeMinute>0</WaitingTimeMinute>
     <ExaminationTimeHour xsi:nil="true" />
@@ -676,7 +676,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_40</Id>
-    <DateRound>3</DateRound>
+    <DateRound>4</DateRound>
     <WaitingTimeHour>10</WaitingTimeHour>
     <WaitingTimeMinute>4</WaitingTimeMinute>
     <ExaminationTimeHour>12</ExaminationTimeHour>
@@ -693,7 +693,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_41</Id>
-    <DateRound>1</DateRound>
+    <DateRound>2</DateRound>
     <WaitingTimeHour>9</WaitingTimeHour>
     <WaitingTimeMinute>18</WaitingTimeMinute>
     <ExaminationTimeHour>9</ExaminationTimeHour>
@@ -714,7 +714,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_42</Id>
-    <DateRound>1</DateRound>
+    <DateRound>2</DateRound>
     <WaitingTimeHour>17</WaitingTimeHour>
     <WaitingTimeMinute>22</WaitingTimeMinute>
     <ExaminationTimeHour xsi:nil="true" />
@@ -738,7 +738,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_43</Id>
-    <DateRound>1</DateRound>
+    <DateRound>2</DateRound>
     <WaitingTimeHour>16</WaitingTimeHour>
     <WaitingTimeMinute>31</WaitingTimeMinute>
     <ExaminationTimeHour>16</ExaminationTimeHour>
@@ -759,7 +759,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_44</Id>
-    <DateRound>1</DateRound>
+    <DateRound>2</DateRound>
     <WaitingTimeHour>16</WaitingTimeHour>
     <WaitingTimeMinute>54</WaitingTimeMinute>
     <ExaminationTimeHour xsi:nil="true" />
@@ -780,7 +780,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_45</Id>
-    <DateRound>1</DateRound>
+    <DateRound>2</DateRound>
     <WaitingTimeHour>17</WaitingTimeHour>
     <WaitingTimeMinute>6</WaitingTimeMinute>
     <ExaminationTimeHour xsi:nil="true" />
@@ -801,7 +801,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_46</Id>
-    <DateRound>0</DateRound>
+    <DateRound>1</DateRound>
     <WaitingTimeHour>9</WaitingTimeHour>
     <WaitingTimeMinute>5</WaitingTimeMinute>
     <ExaminationTimeHour>9</ExaminationTimeHour>
@@ -818,7 +818,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_47</Id>
-    <DateRound>0</DateRound>
+    <DateRound>1</DateRound>
     <WaitingTimeHour>9</WaitingTimeHour>
     <WaitingTimeMinute>6</WaitingTimeMinute>
     <ExaminationTimeHour>9</ExaminationTimeHour>
@@ -834,30 +834,8 @@
     <CustomerReceiptProductRels />
   </Record>
   <Record>
-    <Id>sample.customer_receipt_48</Id>
-    <DateRound>0</DateRound>
-    <WaitingTimeHour>12</WaitingTimeHour>
-    <WaitingTimeMinute>0</WaitingTimeMinute>
-    <ExaminationTimeHour>10</ExaminationTimeHour>
-    <ExaminationTimeMinute>43</ExaminationTimeMinute>
-    <DoneTimeHour>10</DoneTimeHour>
-    <DoneTimeMinute>43</DoneTimeMinute>
-    <TimeExpected>0</TimeExpected>
-    <Note>đau 45,46</Note>
-    <PartnerId>sample.partner_customer_13</PartnerId>
-    <DoctorId>sample.employee_3</DoctorId>
-    <IsRepeatCustomer>false</IsRepeatCustomer>
-    <IsNoTreatment>false</IsNoTreatment>
-    <State>done</State>
-    <CustomerReceiptProductRels>
-      <Record>
-        <ProductId>sample.product_service_29</ProductId>
-      </Record>
-    </CustomerReceiptProductRels>
-  </Record>
-  <Record>
     <Id>sample.customer_receipt_49</Id>
-    <DateRound>0</DateRound>
+    <DateRound>1</DateRound>
     <WaitingTimeHour>10</WaitingTimeHour>
     <WaitingTimeMinute>40</WaitingTimeMinute>
     <ExaminationTimeHour>10</ExaminationTimeHour>
@@ -878,7 +856,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_50</Id>
-    <DateRound>0</DateRound>
+    <DateRound>1</DateRound>
     <WaitingTimeHour>13</WaitingTimeHour>
     <WaitingTimeMinute>22</WaitingTimeMinute>
     <ExaminationTimeHour>13</ExaminationTimeHour>
@@ -899,7 +877,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_51</Id>
-    <DateRound>0</DateRound>
+    <DateRound>1</DateRound>
     <WaitingTimeHour>14</WaitingTimeHour>
     <WaitingTimeMinute>0</WaitingTimeMinute>
     <ExaminationTimeHour>14</ExaminationTimeHour>
@@ -920,7 +898,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_52</Id>
-    <DateRound>0</DateRound>
+    <DateRound>1</DateRound>
     <WaitingTimeHour>15</WaitingTimeHour>
     <WaitingTimeMinute>23</WaitingTimeMinute>
     <ExaminationTimeHour>15</ExaminationTimeHour>
@@ -938,7 +916,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_53</Id>
-    <DateRound>0</DateRound>
+    <DateRound>1</DateRound>
     <WaitingTimeHour>15</WaitingTimeHour>
     <WaitingTimeMinute>28</WaitingTimeMinute>
     <ExaminationTimeHour>15</ExaminationTimeHour>
@@ -955,7 +933,7 @@
   </Record>
   <Record>
     <Id>sample.customer_receipt_54</Id>
-    <DateRound>0</DateRound>
+    <DateRound>1</DateRound>
     <WaitingTimeHour>16</WaitingTimeHour>
     <WaitingTimeMinute>26</WaitingTimeMinute>
     <ExaminationTimeHour xsi:nil="true" />

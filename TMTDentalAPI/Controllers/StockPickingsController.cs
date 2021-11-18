@@ -265,7 +265,7 @@ namespace TMTDentalAPI.Controllers
                 var item = _mapper.Map<StockPickingXmlSampleDataRecord>(entity);
 
                 item.Id = $@"sample.stock_picking_{entities.IndexOf(entity) + 1}";
-                item.DateRound = (int)(dateToData - entity.Date.Value).TotalDays;
+                item.DateRound = (int)(dateToData.Date - entity.Date.Value.Date).TotalDays;
                 var irmodelDataPartner = listIrModelData.FirstOrDefault(x => x.ResId == empPartner.Id.ToString());
                 item.PartnerId = irmodelDataPartner == null ? "" : irmodelDataPartner?.Module + "." + irmodelDataPartner?.Name;
                 var irmodelDataPickingType = listIrModelData.FirstOrDefault(x => x.ResId == entity.PickingTypeId.ToString());

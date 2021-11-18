@@ -320,20 +320,14 @@ namespace Infrastructure.Services
             var commissionSettlementObj = GetService<ICommissionSettlementService>();
 
             var totalDebitAgent = await GetAmountDebitTotalAgent(val.AgentId, CompanyId, null, null);
-            var totalBaseAmount = await commissionSettlementObj.SearchQuery(x => x.AgentId.HasValue && x.AgentId == val.AgentId).SumAsync(x => x.BaseAmount ?? 0);
-            var totalAmount = await commissionSettlementObj.SearchQuery(x => x.AgentId.HasValue && x.AgentId == val.AgentId).SumAsync(x => x.Amount ?? 0);
-            var totalResidual = totalBaseAmount - totalDebitAgent.AmountDebitTotal;
+            var totalAmount = await commissionSettlementObj.SearchQuery(x => x.AgentId.HasValue && x.AgentId == val.AgentId && x.CompanyId == CompanyId).SumAsync(x => x.Amount ?? 0);
+            var totalResidual = totalAmount - totalDebitAgent.AmountDebitTotal;
 
-            if (totalBaseAmount == 0 || totalAmount == 0)
+            if (totalAmount == 0)
                 throw new Exception("Tiền hoa hồng bằng 0, không thể chi hoa hồng");
-
-            if (totalResidual < 0)
-                throw new Exception("Không thể chi hoa hồng");         
           
-            if (totalResidual == 0)
-                throw new Exception("Tiền hoa hồng đã thanh toán đủ");
-
-         
+            if (totalResidual <= 0)
+                throw new Exception("Tiền hoa hồng đã được thanh toán đủ");
 
             var res = new PhieuThuChiDisplay();
             res.Date = DateTime.Now;
@@ -378,12 +372,6 @@ namespace Infrastructure.Services
 
             query = query.OrderByDescending(x => x.DateCreated);
 
-            var commission_agents = await settlementObj.GetCommissionSettlements(null, null, null, groupBy: "agent");
-            var commissiont_dict = commission_agents.ToDictionary(x => x.Id, x => x);
-
-            var phieuthuchis = await phieuthuchiObj.SearchQuery(x => x.AgentId.HasValue && x.State == "posted").ToListAsync();
-            var phieuthuchi_dict = phieuthuchis.GroupBy(x => x.AgentId).ToDictionary(x => x.Key, x => x.Sum(x => x.Amount));
-
             var items = await query.Select(x => new AgentInfo
             {
                 Id = x.Id,
@@ -391,10 +379,34 @@ namespace Infrastructure.Services
                 Phone = x.Phone,
                 Classify = x.Classify,
                 PartnerId = x.PartnerId,
-                BaseAmount = commissiont_dict.ContainsKey(x.Id) ? commissiont_dict[x.Id].BaseAmount : 0,
-                Amount = commissiont_dict.ContainsKey(x.Id) ? commissiont_dict[x.Id].Amount : 0,
-                AmountCommission = phieuthuchi_dict.ContainsKey(x.Id) ? phieuthuchi_dict[x.Id] : 0,
             }).ToListAsync();
+
+            var ids = items.Select(x => x.Id).ToList();
+            var companyId = CompanyId;
+            var commission_agents = await settlementObj.SearchQuery(x => x.AgentId.HasValue && ids.Contains(x.AgentId.Value) && x.CompanyId == companyId)
+                .GroupBy(x => x.AgentId.Value)
+                .Select(x => new { 
+                    AgentId = x.Key,
+                    BaseAmountTotal = x.Sum(s => s.BaseAmount),
+                    TotalAmount = x.Sum(s => s.Amount),
+                }).ToListAsync();
+            var commissiont_dict = commission_agents.ToDictionary(x => x.AgentId, x => x);
+
+            var phieuthuchis = await phieuthuchiObj.SearchQuery(x => x.AgentId.HasValue && ids.Contains(x.AgentId.Value) && x.State == "posted" && x.CompanyId == companyId)
+                .GroupBy(x => x.AgentId.Value)
+                .Select(x => new {
+                    AgentId = x.Key,
+                    TotalAmount = x.Sum(s => s.Amount),
+                }).ToListAsync();
+
+            var phieuthuchi_dict = phieuthuchis.ToDictionary(x => x.AgentId, x => x);
+
+            foreach (var item in items)
+            {
+                item.BaseAmount = commissiont_dict.ContainsKey(item.Id) ? (commissiont_dict[item.Id].BaseAmountTotal ?? 0) : 0;
+                item.Amount = commissiont_dict.ContainsKey(item.Id) ? (commissiont_dict[item.Id].TotalAmount ?? 0) : 0;
+                item.AmountCommission = phieuthuchi_dict.ContainsKey(item.Id) ? phieuthuchi_dict[item.Id].TotalAmount : 0;
+            }
 
             var paged = new PagedResult2<AgentInfo>(totalItems, val.Offset, val.Limit)
             {
@@ -429,13 +441,10 @@ namespace Infrastructure.Services
 
         public override ISpecification<Agent> RuleDomainGet(IRRule rule)
         {
-            //ra đc list company id ma nguoi dung dc phép
-            var userObj = GetService<IUserService>();
-            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
             switch (rule.Code)
             {
                 case "base.agent_comp_rule":
-                    return new InitialSpecification<Agent>(x => !x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value));
+                    return new InitialSpecification<Agent>(x => !x.CompanyId.HasValue || x.CompanyId == CompanyId);
                 default:
                     return null;
             }
