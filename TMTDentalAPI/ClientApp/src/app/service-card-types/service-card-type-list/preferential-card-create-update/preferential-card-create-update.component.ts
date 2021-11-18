@@ -13,9 +13,6 @@ import { ServiceCardTypeApplyCateDialogComponent } from '../card-type-apply-cate
   selector: 'app-preferential-card-create-update',
   templateUrl: './preferential-card-create-update.component.html',
   styleUrls: ['./preferential-card-create-update.component.css'],
-  host: {
-    class: 'o_action o_view_controller'
-  }
 })
 export class PreferentialCardCreateUpdateComponent implements OnInit {
   cardTypeId: string;

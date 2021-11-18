@@ -13,7 +13,7 @@ import { MemberCardTypeApplyDialogComponent } from '../service-card-type-apply-d
 @Component({
   selector: 'app-member-card-create-update',
   templateUrl: './member-card-create-update.component.html',
-  styleUrls: ['./member-card-create-update.component.css']
+  styleUrls: ['./member-card-create-update.component.css'],
 })
 export class MemberCardCreateUpdateComponent implements OnInit {
   cardTypeId: string;
