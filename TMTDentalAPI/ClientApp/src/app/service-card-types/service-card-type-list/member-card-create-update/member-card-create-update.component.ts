@@ -191,6 +191,7 @@ export class MemberCardCreateUpdateComponent implements OnInit {
     if (!this.cardTypeId) {
       this.cardTypeService.createCardType(val).subscribe(result => {
         this.cardTypeId = result.id;
+        this.cardTypeName = val.name;
         this.router.navigate([], { queryParams: { id: result.id }, relativeTo: this.route });
         this.onAddLine(product);
       })
@@ -282,6 +283,7 @@ export class MemberCardCreateUpdateComponent implements OnInit {
     if (!this.cardTypeId) {
       this.cardTypeService.createCardType(val).subscribe(result => {
         this.cardTypeId = result.id;
+        this.cardTypeName = val.name;
         this.router.navigate([], { queryParams: { id: result.id }, relativeTo: this.route });
         this.onOpenApplyAll();
       })
@@ -322,6 +324,7 @@ export class MemberCardCreateUpdateComponent implements OnInit {
     if (!this.cardTypeId) {
       this.cardTypeService.createCardType(val).subscribe(result => {
         this.cardTypeId = result.id;
+        this.cardTypeName = val.name;
         this.router.navigate([], { queryParams: { id: result.id }, relativeTo: this.route });
         this.onOpenApplyCateg();
       })

@@ -1,5 +1,6 @@
-<div tabindex="0" [ngbPopover]="popContent" #popOver="ngbPopover" [autoClose]="'outside'" placement = "bottom"
-container="body" type="button" trigger = "focus">
+<div style="position: relative">
+    <div tabindex="0" [ngbPopover]="popContent" #popOver="ngbPopover" [autoClose]="'outside'" placement = "bottom"
+type="button" trigger = "focus">
     <div class="d-flex justify-content-start">
         <div *ngIf="this.priceObj?.computePrice == 'percentage'" class="border-bottom text-left w-50">{{this.priceObj?.percentPrice}}</div>
         <div *ngIf="this.priceObj?.computePrice != 'percentage'" class="border-bottom text-left w-50">{{this.priceObj?.fixedAmountPrice | number}}</div>
@@ -37,3 +38,4 @@ container="body" type="button" trigger = "focus">
         <button class="btn btn-secondary" (click) = "this.popover.close()">Đóng</button>
     </div>
 </ng-template>
+</div>
