@@ -1621,6 +1621,17 @@ namespace Infrastructure.Services
             return res;
         }
 
+        //public async Task<ResInsurancePaymentDisplay> GetDefaultInsurancePaymentByOrderId(Guid id)
+        //{
+        //    var saleLineObj = GetService<ISaleOrderLineService>();
+        //    var insurancePaymentLineObj = GetService<IResInsurancePaymentLineService>();
+
+        //    var lines = saleLineObj.SearchQuery(x => x.OrderId == id && x.State != "draft" && x.AmountResidual > 0).ToListAsync();
+        //    var res = new ResInsurancePaymentDisplay();
+        //    res.Date = DateTime.Now;
+            
+        //}
+
         public async Task<SaleOrderDisplay> DefaultGet(SaleOrderDefaultGet val)
         {
             var res = new SaleOrderDisplay();

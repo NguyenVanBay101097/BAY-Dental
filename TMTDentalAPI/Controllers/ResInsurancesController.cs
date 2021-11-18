@@ -68,7 +68,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> AutoComplete(ResInsurancePaged val)
         {
             var insurances = await _insuranceService.GetAutoComplete(val);
-            var itemSimples = _mapper.Map<ResInsuranceSimple>(insurances);
+            var itemSimples = _mapper.Map<IEnumerable<ResInsuranceSimple>>(insurances);
             return Ok(itemSimples);
         }
 
