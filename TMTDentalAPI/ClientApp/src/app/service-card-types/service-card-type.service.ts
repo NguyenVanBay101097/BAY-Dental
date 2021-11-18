@@ -32,12 +32,12 @@ export class ServiceCardTypeService {
     apiUrl = 'api/ServiceCardTypes';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
-    getPreferentialCards(val: any){
-        return this.http.get<PagedResult2<ServiceCardTypeBasic>>(this.baseApi + this.apiUrl, {params: new HttpParams({fromObject: val})});
+    getPreferentialCards(val: any) {
+        return this.http.get<PagedResult2<ServiceCardTypeBasic>>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
     }
 
-    getMemberCards(val: any){
-        
+    getMemberCards(val: any) {
+
     }
 
     getPaged(val: any) {
@@ -56,8 +56,8 @@ export class ServiceCardTypeService {
         return this.http.put(this.baseApi + this.apiUrl + "/" + id, val);
     }
 
-    updateCardType(id: string,val: any){
-        return this.http.put(this.baseApi + this.apiUrl + "/" + id +"/update", val);
+    updateCardType(id: string, val: any) {
+        return this.http.put(this.baseApi + this.apiUrl + "/" + id + "/update", val);
 
     }
 
@@ -66,22 +66,22 @@ export class ServiceCardTypeService {
     }
 
     autoComplete(search: string) {
-        return this.http.get(this.baseApi + this.apiUrl + "/AutoComplete", { params: {search} });
+        return this.http.get(this.baseApi + this.apiUrl + "/AutoComplete", { params: { search } });
     }
 
-    onApplyInCateg(id: string,val: any) {
-        return this.http.post(this.baseApi + this.apiUrl + "/" + id + "/ApplyServiceCategories", val);
+    onApplyInCateg(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/ApplyServiceCategories", val);
     }
 
-    onApplyAll(id: string,val: any) {
-        return this.http.post(this.baseApi + this.apiUrl + "/" + id + "/ApplyAllServices", val);
+    onApplyAll(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/ApplyAllServices", val);
     }
 
-    addProductPricelistItem (id: string, val: any) {
-        return this.http.post(this.baseApi + this.apiUrl + "/" + id + "/AddServices", val);
+    addProductPricelistItem(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/AddServices", val);
     }
 
-    updateProductPricelistItem (id: string, val: any) {
-        return this.http.post(this.baseApi + this.apiUrl + "/" + id + "/UpdateServices", val);
+    updateProductPricelistItem(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/UpdateServices", val);
     }
 }

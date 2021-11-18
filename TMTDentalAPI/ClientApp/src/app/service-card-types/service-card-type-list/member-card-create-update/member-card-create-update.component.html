@@ -20,36 +20,33 @@
     <form class="o_form_view" [formGroup]="cardForm">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
+                <div class="oe_title">
+                    <label class="o_form_label oe_edit_only">Tên hạng thẻ</label>
+                    <h1>
+                        <input class="form-control" formControlName="name">
+                    </h1>
+                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
+                        <div *ngIf="f.name.errors?.required" class="text-danger">
+                            Nhập tên hạng thẻ
+                        </div>
+                    </div>
+                </div>
                 <div class="o_group">
                     <table class="o_group o_inner_group">
                         <tbody>
                             <tr>
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
-                                        Tên hạng thẻ
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width:100%">
-                                    <input class="form-control" formControlName="name">
-                                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
-                                            class="text-danger">
-                                            <div *ngIf="f.name.errors?.required" class="text-danger">
-                                                Nhập tên hạng thẻ
-                                            </div>
-                                        </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
                                         Điểm tích lũy tối thiểu
-                                        <span class="text-primary" placement="right" ngbTooltip="Số điểm tích lũy tối thiểu để đạt hạng thành viên này. Với tỷ lệ quy đổi là 10.000đ thực thu tương ứng với 1 điểm tích lũy.">
+                                        <span class="text-primary" placement="right"
+                                            ngbTooltip="Số điểm tích lũy tối thiểu để đạt hạng thành viên này. Với tỷ lệ quy đổi là 10.000đ thực thu tương ứng với 1 điểm tích lũy.">
                                             <i class="fas fa-exclamation-circle"></i>
                                         </span>
                                     </label>
                                 </td>
                                 <td colspan="1" style="width:100%">
-                                    <kendo-numerictextbox  [min]="0" autoCorrect = 'true'  [format]="'n0'" class="mr-2" formControlName="basicPoint">
+                                    <kendo-numerictextbox [min]="0" style="width: auto" autoCorrect='true' [format]="'n0'" class="mr-2"
+                                        formControlName="basicPoint">
                                     </kendo-numerictextbox>
                                     <div class="text-danger" *ngIf="submitted && f.basicPoint.errors?.required">
                                         Nhập điểm tích lũy tối thiểu
@@ -78,12 +75,13 @@
                     Cấu hình ưu đãi
                 </div>
                 <div class="d-flex justify-content-between mb-2">
-                    <app-service-list-search-dropdown (onSelectService)="addLine($event)" [placeHolder] = "'Tìm kiếm theo mã hoặc tên dịch vụ...'" ></app-service-list-search-dropdown>
+                    <app-service-list-search-dropdown (onSelectService)="addLine($event)"
+                        [placeHolder]="'Tìm kiếm theo mã hoặc tên dịch vụ...'"></app-service-list-search-dropdown>
                     <div>
                         <button class="btn btn-primary mr-2" (click)="onApplyCateg()">
                             Áp dụng cho cả nhóm
                         </button>
-                        <button class="btn btn-primary" (click) ="onApplyAll()">
+                        <button class="btn btn-primary" (click)="onApplyAll()">
                             Áp dụng cho toàn bộ
                         </button>
                     </div>
@@ -121,8 +119,9 @@
                                             </td>
                                             <td class="w-20">{{gr.get('product').value.listPrice | number}}</td>
                                             <td class="w-30">
-                                                <app-compute-price-input-popover (onApply) = "apply($event,categIndex, proIndex)" 
-                                                [priceObj] = "getPriceObj(gr)">
+                                                <app-compute-price-input-popover
+                                                    (onApply)="apply($event,categIndex, proIndex)"
+                                                    [priceObj]="getPriceObj(gr)">
                                                 </app-compute-price-input-popover>
                                             </td>
                                             <td>

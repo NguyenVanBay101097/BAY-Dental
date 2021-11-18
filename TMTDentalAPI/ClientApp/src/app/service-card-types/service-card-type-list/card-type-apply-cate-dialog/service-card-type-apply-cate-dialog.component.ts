@@ -31,30 +31,30 @@ export class ServiceCardTypeApplyCateDialogComponent implements OnInit {
     private cardTypeService: ServiceCardTypeService,
     private notifyService: NotifyService
 
-    ) { }
+  ) { }
 
   ngOnInit(): void {
     this.form = this.fb.group({
       productCategoryListItems: this.fb.array([])
     })
-    
+
   }
 
-  onApply(){
+  onApply() {
     if (this.form.invalid)
       return;
     var val = {
       id: this.cardTypeId,
-      serviceCateGoryApplyDetails:this.productCategoryListItems.value
+      serviceCategoryApplyDetails: this.productCategoryListItems.value
     };
-    this.cardTypeService.onApplyInCateg(this.cardTypeId,val).subscribe(() => {
+    
+    this.cardTypeService.onApplyInCateg(val).subscribe(() => {
       this.activeModal.close();
-      this.notifyService.notify('success','Lưu thành công');
-
+      this.notifyService.notify('success', 'Lưu thành công');
     })
   }
 
-  changePeriod(){
+  changePeriod() {
   }
 
   addLine(event) {
@@ -71,7 +71,7 @@ export class ServiceCardTypeApplyCateDialogComponent implements OnInit {
     });
 
     this.productCategoryListItems.push(group);
-    
+
   }
 
   deleteItem(itemId) {
@@ -105,8 +105,7 @@ export class ServiceCardTypeApplyCateDialogComponent implements OnInit {
   changeComputePrice(event) {
   }
 
-  onSearchCate(value)
-  {
+  onSearchCate(value) {
     this.searchProductCate = value;
     this.searchCateComp.searchResult$ = this.seachProductCategories$(this.searchProductCate);
   }

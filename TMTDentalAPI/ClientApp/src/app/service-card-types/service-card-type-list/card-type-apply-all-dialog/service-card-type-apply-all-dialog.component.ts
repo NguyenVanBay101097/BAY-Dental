@@ -17,7 +17,7 @@ export class ServiceCardTypeApplyAllDialogComponent implements OnInit {
   computePrice = 'percentage';
   percentPrice = 0;
   fixedAmountPrice = 0;
-  cardTypeId:string;
+  cardTypeId: string;
   constructor(
     public activeModal: NgbActiveModal,
     private cardTypeService: ServiceCardTypeService,
@@ -30,10 +30,10 @@ export class ServiceCardTypeApplyAllDialogComponent implements OnInit {
   }
 
   onApply() {
-    var res = {id:this.cardTypeId, percentPrice: this.percentPrice, fixedAmountPrice: this.fixedAmountPrice, computePrice: this.computePrice};
-    this.cardTypeService.onApplyAll(this.cardTypeId,res).subscribe(() => {
-    this.activeModal.close();
-    this.notifyService.notify('success','Lưu thành công');
+    var res = { id: this.cardTypeId, percentPrice: this.percentPrice, fixedAmountPrice: this.fixedAmountPrice, computePrice: this.computePrice };
+    this.cardTypeService.onApplyAll(res).subscribe(() => {
+      this.activeModal.close();
+      this.notifyService.notify('success', 'Lưu thành công');
     })
   }
 

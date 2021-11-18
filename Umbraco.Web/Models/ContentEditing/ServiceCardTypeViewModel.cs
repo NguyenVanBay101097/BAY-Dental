@@ -38,22 +38,27 @@ namespace Umbraco.Web.Models.ContentEditing
     public class UpdateProductPricelistItem
     {
         public Guid Id { get; set; }
-        public IEnumerable<ProductPricelistItemCreate> ProductListItems { get; set; } = new List<ProductPricelistItemCreate>();
+
+        public string ComputePrice { get; set; }
+
+        public decimal? PercentPrice { get; set; }
+
+        public decimal? FixedAmountPrice { get; set; }
     }
 
     public class AddProductPricelistItem
     {
         public Guid Id { get; set; }
-        public IEnumerable<Guid> ProductIds { get; set; } = new List<Guid>();
+        public Guid ProductId { get; set; }
     }
 
     public class ApplyServiceCategoryReq
     {
         public Guid Id { get; set; }
-        public IEnumerable<ServiceCateGoryApplyDetail> ServiceCateGoryApplyDetails { get; set; } = new List<ServiceCateGoryApplyDetail>();
+        public IEnumerable<ServiceCategoryApplyDetail> ServiceCategoryApplyDetails { get; set; } = new List<ServiceCategoryApplyDetail>();
     }
 
-    public class ServiceCateGoryApplyDetail
+    public class ServiceCategoryApplyDetail
     {
         public Guid CategId { get; set; }
         public string ComputePrice { get; set; }

@@ -71,19 +71,19 @@ export class CardTypeService {
         return this.http.post<CardTypeBasic[]>(this.baseApi + this.apiUrl + "/AutoComplete", val);
     }
 
-    onApplyInCateg(id: string,val: any) {
-        return this.http.post(this.baseApi + this.apiUrl + "/" + id + "/ApplyServiceCategories", val);
+    onApplyInCateg(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/ApplyServiceCategories", val);
     }
 
-    onApplyAll(id: string,val: any) {
-        return this.http.post(this.baseApi + this.apiUrl + "/" + id + "/ApplyAllServices", val);
+    onApplyAll(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/ApplyAllServices", val);
     }
 
-    addProductPricelistItem (id: string, val: any) {
-        return this.http.post(this.baseApi + this.apiUrl + "/" + id + "/AddServices", val);
+    addProductPricelistItem(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/AddServices", val);
     }
 
-    updateProductPricelistItem (id: string, val: any) {
-        return this.http.post(this.baseApi + this.apiUrl + "/" + id + "/UpdateServices", val);
+    updateProductPricelistItem (val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/UpdateServices", val);
     }
 }

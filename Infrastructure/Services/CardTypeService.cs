@@ -161,74 +161,61 @@ namespace Infrastructure.Services
             if (self.Pricelist == null)
                 throw new Exception("Không tìm thấy bảng giá của hạng thẻ");
         }
-        public async Task<IEnumerable<ProductPricelistItem>> AddProductPricelistItem(AddProductPricelistItem val)
+
+        public async Task<ProductPricelistItem> AddProductPricelistItem(AddProductPricelistItem val)
         {
+            var self = await GetByIdAsync(val.Id);
             var priceListItemObj = GetService<IProductPricelistItemService>();
-            var productObj = GetService<IProductService>();
-            var self = await SearchQuery(x => x.Id == val.Id).Include(x => x.Pricelist.Items).FirstOrDefaultAsync();
-            ValidateApplyPriceListItem(self);
+            var exist = await priceListItemObj.SearchQuery(x => x.PriceListId == self.PricelistId && x.ProductId == val.ProductId).AnyAsync();
+            if (exist)
+                throw new Exception("Dịch vụ đã được thêm vào danh sách ưu đãi");
 
-            var products = await productObj.SearchQuery(x => val.ProductIds.Contains(x.Id)).ToListAsync();
-            var priceListItems = self.Pricelist.Items;
-            var toAdds = new List<ProductPricelistItem>();
-            foreach (var pro in products)
+            var item = new ProductPricelistItem()
             {
-                if (priceListItems.Any(x => x.ProductId == pro.Id))
-                    continue;
-                toAdds.Add(new ProductPricelistItem()
-                {
-                    AppliedOn = "0_product_variant",
-                    ComputePrice = "percentage",
-                    PercentPrice = 0,
-                    ProductId = pro.Id,
-                    PriceListId = self.PricelistId
-                });
-            }
+                AppliedOn = "0_product_variant",
+                ComputePrice = "percentage",
+                PercentPrice = 0,
+                ProductId = val.ProductId,
+                PriceListId = self.PricelistId
+            };
 
-            await priceListItemObj.CreateAsync(toAdds);
-
-            return toAdds;
+            await priceListItemObj.CreateAsync(item);
+            return item;
         }
 
         public async Task UpdateProductPricelistItem(UpdateProductPricelistItem val)
         {
             var priceListItemObj = GetService<IProductPricelistItemService>();
-            var self = await SearchQuery(x => x.Id == val.Id).Include(x => x.Pricelist.Items).ThenInclude(x => x.Product).FirstOrDefaultAsync();
-            ValidateApplyPriceListItem(self);
+            var priceListItem = await priceListItemObj.SearchQuery(x => x.Id == val.Id)
+                .Include(x => x.Product)
+                .FirstOrDefaultAsync();
 
-            var priceListItems = self.Pricelist.Items;
-            var toUpdates = new List<ProductPricelistItem>();
-            foreach (var item in val.ProductListItems)
-            {
-                var existItem = priceListItems.FirstOrDefault(x => x.Id == item.Id);
-                if (item == null)
-                    continue;
-                existItem.ComputePrice = item.ComputePrice;
-                existItem.PercentPrice = item.PercentPrice;
-                existItem.FixedAmountPrice = item.FixedAmountPrice;
+            priceListItem.ComputePrice = val.ComputePrice;
+            priceListItem.PercentPrice = val.PercentPrice;
+            priceListItem.FixedAmountPrice = val.FixedAmountPrice;
 
-                toUpdates.Add(existItem);
-            }
-            priceListItemObj.ValidateBase(toUpdates);// validate before CU
-            await priceListItemObj.UpdateAsync(toUpdates);
+            //priceListItemObj.ValidateBase(new List<ProductPricelistItem>() { priceListItem });
+            await priceListItemObj.UpdateAsync(priceListItem);
         }
 
         public async Task ApplyServiceCategories(ApplyServiceCategoryReq val)
         {
+            var self = await GetByIdAsync(val.Id);
+
             var priceListItemObj = GetService<IProductPricelistItemService>();
+            var priceListItems = await priceListItemObj.SearchQuery(x => x.PriceListId == self.PricelistId).ToListAsync();
+
+            var categIds = val.ServiceCategoryApplyDetails.Select(x => x.CategId).ToList();
+
             var productObj = GetService<IProductService>();
-            var self = await SearchQuery(x => x.Id == val.Id).Include(x => x.Pricelist.Items).ThenInclude(x => x.Product).FirstOrDefaultAsync();
-            ValidateApplyPriceListItem(self);
-            var priceListItems = self.Pricelist.Items;
-            //get list service
-            var categIds = val.ServiceCateGoryApplyDetails.Where(x => x.CategId != Guid.Empty).Select(x => x.CategId);
             var services = await productObj.SearchQuery(x => x.Active == true && x.Type2 == "service" && categIds.Contains(x.CategId.Value)).ToListAsync();
-            // add and update pricelistitem
+
             var toAdds = new List<ProductPricelistItem>();
             var toUpdates = new List<ProductPricelistItem>();
+
             foreach (var service in services)
             {
-                var cateVal = val.ServiceCateGoryApplyDetails.FirstOrDefault(x => x.CategId == service.CategId);
+                var cateVal = val.ServiceCategoryApplyDetails.FirstOrDefault(x => x.CategId == service.CategId);
                 var existItem = priceListItems.FirstOrDefault(x => x.ProductId == service.Id);
 
                 if (existItem != null)
@@ -253,34 +240,30 @@ namespace Infrastructure.Services
                 }
             }
 
-            if (toAdds.Any())
-            {
-                priceListItemObj.ValidateBase(toAdds);// validate before CU
-                await priceListItemObj.CreateAsync(toAdds);
-            }
-            if (toUpdates.Any())
-            {
-                priceListItemObj.ValidateBase(toUpdates);// validate before CU
-                await priceListItemObj.UpdateAsync(toUpdates);
-            }
+            //priceListItemObj.ValidateBase(toAdds.Concat(toUpdates));
+
+            await priceListItemObj.CreateAsync(toAdds);
+            await priceListItemObj.UpdateAsync(toUpdates);
         }
 
         public async Task ApplyAllServices(ApplyAllServiceReq val)
         {
+            var self = await GetByIdAsync(val.Id);
+
             var priceListItemObj = GetService<IProductPricelistItemService>();
+            var priceListItems = await priceListItemObj.SearchQuery(x => x.PriceListId == self.PricelistId)
+                .Include(x => x.Product)
+                .ToListAsync();
+
             var productObj = GetService<IProductService>();
-            var self = await SearchQuery(x => x.Id == val.Id).Include(x => x.Pricelist.Items).ThenInclude(x => x.Product).FirstOrDefaultAsync();
-            ValidateApplyPriceListItem(self);
-            var priceListItems = self.Pricelist.Items;
-            //get list service
             var services = await productObj.SearchQuery(x => x.Active == true && x.Type2 == "service").ToListAsync();
-            // add and update pricelistitem
+
             var toAdds = new List<ProductPricelistItem>();
             var toUpdates = new List<ProductPricelistItem>();
+
             foreach (var service in services)
             {
                 var existItem = priceListItems.FirstOrDefault(x => x.ProductId == service.Id);
-
                 if (existItem != null)
                 {
                     existItem.ComputePrice = val.ComputePrice;
@@ -303,16 +286,10 @@ namespace Infrastructure.Services
                 }
             }
 
-            if (toAdds.Any())
-            {
-                priceListItemObj.ValidateBase(toAdds);// validate before CU
-                await priceListItemObj.CreateAsync(toAdds);
-            }
-            if (toUpdates.Any())
-            {
-                priceListItemObj.ValidateBase(toUpdates);// validate before CU
-                await priceListItemObj.UpdateAsync(toUpdates);
-            }
+            //priceListItemObj.ValidateBase(toAdds.Concat(toUpdates));
+
+            await priceListItemObj.CreateAsync(toAdds);
+            await priceListItemObj.UpdateAsync(toUpdates);
         }
     }
 }

@@ -110,11 +110,11 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
   
     var val = {
       id: this.cardTypeId,
-      ProductIds: [product.id]
+      productId: product.id
     }
-    this.cardTypeService.addProductPricelistItem(this.cardTypeId,val).subscribe((res: any) => {
-      item.id = res[0].id;
-      this.pushProduct(product,item);
+    this.cardTypeService.addProductPricelistItem(val).subscribe((res: any) => {
+      item.id = res.id;
+      this.pushProduct(product, item);
     })
   }
     addLine(product) {
@@ -216,21 +216,15 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
   apply(event,categIdex,proIndex) {
     var proFA = ((this.productPricelistItems.controls[categIdex] as FormGroup).controls.products as FormArray);
     var pro = proFA.controls[proIndex];
-    var proId = pro.value.product.id;
     var proObj = {
       id: pro.value.id,
-      productId: proId,
-      computePrice: pro.value.computePrice,
-      fixedAmountPrice: pro.value.fixedAmountPrice,
-      percentPrice: pro.value.percentPrice
+      computePrice: event.computePrice,
+      fixedAmountPrice: event.fixedAmountPrice,
+      percentPrice: event.percentPrice
     };
     
     var onApply = ()=> {
-      var val = {
-        id: this.cardTypeId,
-        ProductListItems : [proObj]
-      };
-      this.cardTypeService.updateProductPricelistItem(this.cardTypeId,val).subscribe(() => {
+      this.cardTypeService.updateProductPricelistItem(proObj).subscribe(() => {
         this.notify('Lưu thành công','success');
         pro.get('computePrice').setValue(event.computePrice);
         pro.get('fixedAmountPrice').setValue(event.fixedAmountPrice);

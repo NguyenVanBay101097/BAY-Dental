@@ -45,7 +45,7 @@ export class MemberCardCreateUpdateComponent implements OnInit {
 
     this.cardForm = this.fb.group({
       name: ['', Validators.required],
-      basicPoint: ['', Validators.required],
+      basicPoint: [0, Validators.required],
       color: null,
       companyId: this.companyId,
       productPricelistItems: this.fb.array([])
@@ -101,21 +101,15 @@ export class MemberCardCreateUpdateComponent implements OnInit {
   apply(event, categIdex, proIndex) {
     var proFA = ((this.productPricelistItems.controls[categIdex] as FormGroup).controls.products as FormArray);
     var pro = proFA.controls[proIndex];
-    var proId = pro.value.product.id;
     var proObj = {
       id: pro.value.id,
-      productId: proId,
-      computePrice: pro.value.computePrice,
-      fixedAmountPrice: pro.value.fixedAmountPrice,
-      percentPrice: pro.value.percentPrice
+      computePrice: event.computePrice,
+      fixedAmountPrice: event.fixedAmountPrice,
+      percentPrice: event.percentPrice
     };
 
     var onApply = ()=> {
-      var val = {
-        id: this.cardTypeId,
-        ProductListItems : [proObj]
-      };
-      this.cardTypeService.updateProductPricelistItem(this.cardTypeId, val).subscribe(() => {
+      this.cardTypeService.updateProductPricelistItem(proObj).subscribe(() => {
         pro.get('computePrice').setValue(event.computePrice);
         pro.get('fixedAmountPrice').setValue(event.fixedAmountPrice);
         pro.get('percentPrice').setValue(event.percentPrice);
@@ -166,11 +160,11 @@ export class MemberCardCreateUpdateComponent implements OnInit {
     };
     var val = {
       id: this.cardTypeId,
-      ProductIds: [product.id]
+      productId: product.id
     }
 
-    this.cardTypeService.addProductPricelistItem(this.cardTypeId, val).subscribe((res: any) => {
-      item.id = res[0].id;
+    this.cardTypeService.addProductPricelistItem(val).subscribe((res: any) => {
+      item.id = res.id;
       this.pushProduct(product, item);
     })
   }
@@ -298,7 +292,7 @@ export class MemberCardCreateUpdateComponent implements OnInit {
 
   onOpenApplyCateg() {
     let modalRef = this.modalService.open(MemberCardTypeApplyDialogComponent,
-      { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      { size: 'lg', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Áp dụng ưu đãi cho nhóm dịch vụ';
     modalRef.componentInstance.cardTypeId = this.cardTypeId;
     modalRef.result.then(res => {
