@@ -1,0 +1,122 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="onCancel()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view o_form_editable">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Công ty bảo hiểm
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="d-flex">
+                                        <kendo-combobox [filterable]="true" [valueField]="'id'" [textField]="'name'">
+                                        </kendo-combobox>
+                                        <button class="btn btn-light" (click)="quickCreateInsurance()">
+                                            <span class="k-icon k-i-plus"></span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label for="o_field_input_46" class="o_form_label">
+                                        Ngày thanh toán
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker></kendo-datepicker>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Nội dung
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="text" class="form-control" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label for="o_field_input_46" class="o_form_label">
+                                        Số tiền bảo hiểm trả
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    0
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="o_group">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Dịch vụ</th>
+                                <th class="text-right">Số tiền</th>
+                                <th class="text-right">Bảo hiểm trả</th>
+                                <th class="text-right">Tiền bảo hiểm trả</th>
+                                <th class="text-right">Khách hàng trả</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="align-middle"> Cấy ghép răng Implant </td>
+                                <td class="text-right align-middle"> 1.000.000 </td>
+                                <td class="d-flex">
+                                    <kendo-numerictextbox required class="form-control" [min]="0" [format]="'n0'"
+                                        [spinners]="false">
+                                    </kendo-numerictextbox>
+                                    <!-- <kendo-numerictextbox required class="form-control" [min]="0" [max]="100"
+                                        [autoCorrect]="true" [format]="'n0'" [spinners]="false">
+                                    </kendo-numerictextbox> -->
+                                    <div class="mt-1 ml-2 d-flex">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" [hidden]="true" type="radio" name="payments"
+                                                id="cash" checked value="cash">
+                                            <label class="form-check-label btn btn-outline-primary" for="cash">
+                                                VNĐ
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" [hidden]="true" type="radio" name="payments"
+                                                id="percent" value="percent">
+                                            <label class="form-check-label btn btn-outline-primary" for="percent">
+                                                %
+                                            </label>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-right align-middle"> 300.000 </td>
+                                <td class="text-right align-middle"> 700.000 </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="modal-footer">
+    <div>
+        <button type="button" class="btn btn-primary mr-2" (click)="onSave()" accesskey="s">Xác nhận bảo lãnh</button>
+        <button type="button" class="btn btn-light mr-2" (click)="onCancel()" accesskey="q">Đóng</button>
+    </div>
+</div>

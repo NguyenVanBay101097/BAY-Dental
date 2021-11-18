@@ -1,0 +1,35 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <div class="breadcrumb">
+            <div class="d-flex">
+                <app-date-range-picker-filter [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo"
+                    (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
+
+            </div>
+        </div>
+        <div class="o_cp_searchview">
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"
+        (pageChange)="pageChange($event)">
+        <kendo-grid-column title="Ngày"></kendo-grid-column>
+        <kendo-grid-column title="Số phiếu"></kendo-grid-column>
+        <kendo-grid-column title="Nội dung"></kendo-grid-column>
+        <kendo-grid-column title="Phương thức"></kendo-grid-column>
+        <kendo-grid-column title="Số tiền"></kendo-grid-column>
+        <kendo-grid-column title="Thao tác"></kendo-grid-column>
+    </kendo-grid>
+</div>

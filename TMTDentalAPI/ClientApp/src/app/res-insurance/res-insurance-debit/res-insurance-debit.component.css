@@ -1,0 +1,8 @@
+.filter-left {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-right {
+    width: 50%;
+}

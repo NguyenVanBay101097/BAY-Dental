@@ -1,0 +1,105 @@
+<div class="o_content">
+    <form class="o_form_view">
+        <div class="o_form_sheet_bg">
+            <div class="container-xxl py-3">
+                <div class="row">
+                    <div class="col-4">
+                        <div class="card">
+                            <h5 class="card-header d-flex justify-content-between">
+                                <span> Bảo hiểm </span>
+                                <a class="fas fa-edit text-success" title="Sửa" (click)="editInsurance()"></a>
+                            </h5>
+                            <div class="card-body">
+                                <table class="o_group mt-0 o_inner_group o_group_col_12">
+                                    <tbody>
+                                        <tr>
+                                            <td class="o_td_label">
+                                                <label class="o_form_label">Người đại diện</label>
+                                            </td>
+                                            <td style="width: 100%">
+                                                <span> Lê Trí Khương </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="o_td_label">
+                                                <label class="o_form_label">Số điện thoại</label>
+                                            </td>
+                                            <td style="width: 100%">
+                                                <span> Lê Trí Khương </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="o_td_label">
+                                                <label class="o_form_label">Địa chỉ</label>
+                                            </td>
+                                            <td style="width: 100%">
+                                                <span> Lê Trí Khương </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="o_td_label">
+                                                <label class="o_form_label">Ngày ký kết</label>
+                                            </td>
+                                            <td style="width: 100%">
+                                                <span> Lê Trí Khương </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="o_td_label">
+                                                <label class="o_form_label">Email</label>
+                                            </td>
+                                            <td style="width: 100%">
+                                                <span> Lê Trí Khương </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="o_td_label">
+                                                <label class="o_form_label">Ghi chú</label>
+                                            </td>
+                                            <td style="width: 100%">
+                                                <span> Lê Trí Khương </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-8">
+                        <div class="border p-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <div class="filter-left">
+                                    <app-date-range-picker-filter [showClearButton]="false" [opens]="'right'"
+                                        opens="right">
+                                    </app-date-range-picker-filter>
+                                    <div class="mt-2">
+                                        <button class="btn btn-primary mr-2">Thu tiền</button>
+                                        <button class="btn btn-primary">Xuất excel</button>
+                                    </div>
+                                </div>
+                                <div class="filter-right">
+                                    <div class="o_searchview">
+                                        <input class="o_searchview_input"
+                                            placeholder="Tìm kiếm theo số phiếu, khách hàng, dịch vụ" type="text" />
+                                        <span class="o_searchview_icon fas fa-search"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <kendo-grid>
+                                <kendo-grid-column title="Khách hàng"></kendo-grid-column>
+                                <kendo-grid-column title="Ngày bảo lãnh"></kendo-grid-column>
+                                <kendo-grid-column title="Phiếu điều trị"></kendo-grid-column>
+                                <kendo-grid-column title="Dịch vụ"></kendo-grid-column>
+                                <kendo-grid-column title="Số tiền"></kendo-grid-column>
+                            </kendo-grid>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- <app-date-range-picker-filter [showClearButton]="false" [opens]="'right'" class="mr-1" opens="right">
+</app-date-range-picker-filter>
+<button class="btn btn-primary">Thu tiền</button> -->

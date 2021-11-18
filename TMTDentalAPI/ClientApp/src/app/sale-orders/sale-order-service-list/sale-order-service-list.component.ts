@@ -12,6 +12,7 @@ import { EmployeeService } from 'src/app/employees/employee.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
 import { ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
+import { SaleOrderInsurancePaymentDialogComponent } from '../sale-order-insurance-payment-dialog/sale-order-insurance-payment-dialog.component';
 import { SaleOrderLineCuComponent } from '../sale-order-line-cu/sale-order-line-cu.component';
 import { SaleOrderLinePromotionDialogComponent } from '../sale-order-line-promotion-dialog/sale-order-line-promotion-dialog.component';
 import { SaleOrderPromotionDialogComponent } from '../sale-order-promotion-dialog/sale-order-promotion-dialog.component';
@@ -229,6 +230,15 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
     } else {
       this.openSaleOrderPromotionDialog();
     }
+  }
+
+  actionInsurancePayment() {
+    const modalRef = this.modalService.open(SaleOrderInsurancePaymentDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Bảo hiểm bảo lãnh';
+
+    modalRef.result.then(result => {
+      this.notify('success', "Bảo lãnh thành công");
+    }, () => { });
   }
 
   getFormDataSave() {

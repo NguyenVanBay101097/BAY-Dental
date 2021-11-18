@@ -116,7 +116,7 @@ export class ResInsuranceListComponent implements OnInit {
         this.notifyService.notify("success", "Liên kết thành công")
         this.loadDataFromApi();
       })
-    });
+    }, () => { });
   }
 
   inactiveInsurance(item: any): void {
@@ -130,7 +130,7 @@ export class ResInsuranceListComponent implements OnInit {
         this.notifyService.notify("success", "Ngưng liên kết thành công")
         this.loadDataFromApi();
       })
-    });
+    }, () => { });
   }
 
   onStateChange(data: any): void {
