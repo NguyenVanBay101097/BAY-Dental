@@ -38,6 +38,13 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        public async Task<IActionResult> JournalResBankAutoComplete(AccountJournalFilter val)
+        {
+            var result = await _accountJournalService.GetJournalResBankAutocomplete(val);
+            return Ok(result);
+        }
+
+        [HttpPost("[action]")]
         public async Task<IActionResult> CreateJournalSave(AccountJournalSave val)
         {
             await _unitOfWork.BeginTransactionAsync();

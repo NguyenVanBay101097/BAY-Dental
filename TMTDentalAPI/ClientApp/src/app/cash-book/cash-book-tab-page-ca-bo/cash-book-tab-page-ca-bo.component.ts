@@ -1,11 +1,15 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { forkJoin, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { AccountJournalFilter, AccountJournalService, AccountJournalSimple } from 'src/app/account-journals/account-journal.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { AccountBankCuDialogComponent } from '../account-bank-cu-dialog/account-bank-cu-dialog.component';
 import { CashBookDetailFilter, CashBookService, CashBookSummarySearch } from '../cash-book.service';
 
 @Component({
@@ -25,6 +29,7 @@ export class CashBookTabPageCaBoComponent implements OnInit {
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
+  @ViewChild("accountJournalCbx", { static: true }) accountVC: ComboBoxComponent;
 
   gridData: GridDataResult;
   limit = 20;
@@ -34,12 +39,18 @@ export class CashBookTabPageCaBoComponent implements OnInit {
   dateFrom: Date;
   dateTo: Date;
   resultSelection = 'cash_bank';
-
+  accountJournalSelectedId: string;
+  listAccounts: AccountJournalSimple[] = [];
+  cbxPopupSettings = {
+    width: 250
+  };
   constructor(
     private cashBookService: CashBookService,
     private intlService: IntlService,
     private authService: AuthService,
     private route: ActivatedRoute,
+    private modalService: NgbModal,
+    private accountJournalService: AccountJournalService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -57,13 +68,26 @@ export class CashBookTabPageCaBoComponent implements OnInit {
     this.loadCashBankTotal();
     this.loadDataFromApi();
     this.loadGridData();
-
+    this.loadAccounts();
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
         this.skip = 0;
         this.loadGridData();
+      });
+
+    this.accountVC.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.accountVC.loading = true)),
+        switchMap((value) => this.searchAccounts$(value)
+        )
+      )
+      .subscribe(result => {
+        this.listAccounts = result;
+        this.accountVC.loading = false;
       });
   }
 
@@ -81,6 +105,7 @@ export class CashBookTabPageCaBoComponent implements OnInit {
   loadDataFromApi() {
     this.loading = true;
     var summarySearch = new CashBookSummarySearch();
+    summarySearch.journalId = this.accountJournalSelectedId;
     summarySearch.resultSelection = this.resultSelection;
     summarySearch.companyId = this.authService.userInfo.companyId;
     summarySearch.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : null;
@@ -102,6 +127,7 @@ export class CashBookTabPageCaBoComponent implements OnInit {
     this.loading = true;
     var gridPaged = new CashBookDetailFilter();
     gridPaged.companyId = this.authService.userInfo.companyId;
+    gridPaged.journalId = this.accountJournalSelectedId;;
     gridPaged.resultSelection = this.resultSelection;
     gridPaged.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : null;
     gridPaged.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : null;
@@ -118,7 +144,6 @@ export class CashBookTabPageCaBoComponent implements OnInit {
           })
       ).subscribe(
         (res) => {
-          console.log(res);
           this.gridData = res;
           this.loading = false;
         },
@@ -160,6 +185,55 @@ export class CashBookTabPageCaBoComponent implements OnInit {
       return "Nhà cung cấp";
     } 
     return "";
+  }
+
+  getDifferentThuChi() {
+    if (this.summarySearchResult) {
+      var result = this.summarySearchResult.totalThu - this.summarySearchResult.totalChi;
+      return -result;
+    }
+    return 0;
+  }
+
+  searchAccounts$(search?) {
+    var val = new AccountJournalFilter();
+    val.limit = 20;
+    val.type = 'bank';
+    return this.accountJournalService.journalResBankAutoComplete(val);
+  }
+
+  loadAccounts() {
+    this.searchAccounts$().pipe(
+      tap(res=> {
+        res.forEach((x:any) => {
+          x.displayName = x.bankAccount ? x.bankAccount?.accountNumber + "-" + x.bankAccount?.bank?.bic : x.name;
+        });
+      })
+    ).subscribe(result => {
+      this.listAccounts = result;
+    })
+  }
+
+  editAccountBank() {
+    let modalRef = this.modalService.open(AccountBankCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Chỉnh sửa tài khoản ngân hàng';
+    modalRef.componentInstance.accountId = this.accountJournalSelectedId;
+    modalRef.result.then(() => {
+      this.loadAccounts();
+    });
+  }
+
+  addAccountBank() {
+    let modalRef = this.modalService.open(AccountBankCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Thêm tài khoản ngân hàng';
+    modalRef.result.then(() => {
+      this.loadAccounts();
+    });
+  }
+
+  onSelectAccount(journalObj) {
+    this.accountJournalSelectedId = journalObj ? journalObj.id : '';
+    this.loadGridData();
   }
 
   exportExcelFile() {

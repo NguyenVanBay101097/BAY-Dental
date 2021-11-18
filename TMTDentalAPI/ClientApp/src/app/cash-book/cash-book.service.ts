@@ -19,6 +19,7 @@ export class CashBookSummarySearch {
   resultSelection: string;
   dateFrom: string;
   dateTo: string;
+  journalId: string;
 }
 
 export class AccountMoveLineCashBookVM {
@@ -58,6 +59,7 @@ export class CashBookDetailFilter {
   search: string;
   limit: number;
   offset: number;
+  journalId: string;
 }
 
 export class DataInvoiceFilter {

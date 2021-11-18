@@ -18,5 +18,7 @@ namespace Infrastructure.Services
         Task UpdateJournalSave(Guid id, AccountJournalSave val);
         Task<IEnumerable<AccountJournal>> GetJournalWithDebitCreditAccount(IEnumerable<Guid> journalIds);
         Task Unlink(Guid id);
+        Task<IEnumerable<AccountJournalResBankSimple>> GetJournalResBankAutocomplete(AccountJournalFilter val);
+
     }
 }

@@ -15,6 +15,7 @@ namespace Umbraco.Web.Mapping
             CreateMap<AccountJournal, AccountJournalViewModel>();
             CreateMap<AccountJournal, AccountJournalSimple>();
             CreateMap<AccountJournal, AccountJournalBasic>();
+            CreateMap<AccountJournal, AccountJournalResBankSimple>();
 
             CreateMap<AccountJournalSimple, AccountJournal>();
             CreateMap<AccountJournal, AccountJournalSave>()
