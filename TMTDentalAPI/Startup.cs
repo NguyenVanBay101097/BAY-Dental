@@ -378,6 +378,7 @@ namespace TMTDentalAPI
             services.AddScoped<ICustomerReceiptReportService, CustomerReceiptReportService>();
             services.AddScoped<IPrintTemplateService, PrintTemplateService>();
             services.AddScoped<IPrintTemplateConfigService, PrintTemplateConfigService>();
+            services.AddScoped<IPaymentService, PaymentService>();
 
             services.AddScoped<ILaboWarrantyService, LaboWarrantyService>();
             services.AddScoped<IHrJobService, HrJobService>();
