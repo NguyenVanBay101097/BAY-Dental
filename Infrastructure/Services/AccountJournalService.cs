@@ -47,10 +47,10 @@ namespace Infrastructure.Services
             return await base.CreateAsync(self);
         }
 
-        public async Task CreateJournals(IEnumerable<AccountJournalSave> vals)
+        public async Task<IEnumerable<AccountJournal>> CreateJournals(IEnumerable<AccountJournalSave> vals)
         {
             var accountObj = GetService<IAccountAccountService>();
-
+            var journals = new List<AccountJournal>();
             foreach (var val in vals)
             {
                 var journal = new AccountJournal();
@@ -58,6 +58,8 @@ namespace Infrastructure.Services
                 if (val.Type == "bank" && !journal.BankAccountId.HasValue && !string.IsNullOrEmpty(val.AccountNumber))
                 {
                     var partnerBank = await SetPartnerBankAsync(val.AccountNumber, val.BankId);
+                    partnerBank.AccountHolderName = val.AccountHolderName;
+                    partnerBank.Branch = val.BankBranch;
                     journal.BankAccountId = partnerBank.Id;
                 }
 
@@ -93,8 +95,11 @@ namespace Infrastructure.Services
                     var refund_seq = await _CreateSequence(journal, refund: true);
                     journal.RefundSequenceId = refund_seq.Id;
                 }
-                await base.CreateAsync(journal);
+                journals.Add(journal);
             }
+
+            await base.CreateAsync(journals);
+            return journals;
         }
 
         public async Task UpdateJournalSave(Guid id, AccountJournalSave val)
@@ -102,10 +107,10 @@ namespace Infrastructure.Services
             var resPnBankObj = GetService<IResPartnerBankService>();
             var accountObj = GetService<IAccountAccountService>();
 
-            var journal = SearchQuery(x => x.Id.Equals(id))
+            var journal = await SearchQuery(x => x.Id == id)
                 .Include(x => x.BankAccount)
-                .ThenInclude(x => x.Bank)
-                .FirstOrDefault();
+                //.ThenInclude(x => x.Bank)
+                .FirstOrDefaultAsync();
 
             if (!string.IsNullOrEmpty(val.AccountNumber) && val.BankId.HasValue)
                 journal.Name = await GetBankAccountNameAsync(val.AccountNumber, val.BankId);
@@ -130,13 +135,14 @@ namespace Infrastructure.Services
             //    }
             //}
 
-            //if (val.BankId.HasValue && resPartnerBank!=null && !string.IsNullOrEmpty(val.AccountNumber))
-            //{
-            //    resPartnerBank.BankId = val.BankId ?? Guid.Empty;
-            //    resPartnerBank.AccountNumber = val.AccountNumber;
-            //    if (resPartnerBank.BankId != Guid.Empty)
-            //        await resPnBankObj.UpdateAsync(resPartnerBank);
-            //}
+            if (val.BankId.HasValue && journal.BankAccount != null && !string.IsNullOrEmpty(val.AccountNumber))
+            {
+                journal.BankAccount.BankId = val.BankId.Value;
+                journal.BankAccount.AccountNumber = val.AccountNumber;
+                journal.BankAccount.AccountHolderName = val.AccountHolderName;
+                journal.BankAccount.Branch = val.BankBranch;
+            }
+            journal.Active = val.Active;
 
             //if(journal.DefaultDebitAccountId.HasValue && journal.DefaultCreditAccountId.HasValue)
             //{
@@ -161,7 +167,7 @@ namespace Infrastructure.Services
         {
             var bankObj = GetService<IResBankService>();
             var bank = await bankObj.SearchQuery(x => x.Id.Equals(bankId)).FirstOrDefaultAsync();
-            return string.Format("{0} - {1}", bank.Name, accountNumber);
+            return string.Format("{0} - {1}", accountNumber, bank.BIC);
         }
 
         private async Task<ResPartnerBank> SetPartnerBankAsync(string accountNumber, Guid? bankId)
@@ -340,6 +346,19 @@ namespace Infrastructure.Services
                 default:
                     return null;
             }
+        }
+
+        public async Task Unlink(Guid id)
+        {
+            var resPartnerBankObj = GetService<IResPartnerBankService>();
+            var journal = await SearchQuery(x => x.Id == id)
+               .Include(x => x.BankAccount)
+               .FirstOrDefaultAsync();
+
+            if (journal == null) 
+                throw new Exception("Không tìm thấy phương thức thanh toán");
+            await DeleteAsync(journal);
+            await resPartnerBankObj.DeleteAsync(journal.BankAccount);
         }
     }
 }
