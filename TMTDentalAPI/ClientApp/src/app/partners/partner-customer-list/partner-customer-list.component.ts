@@ -24,6 +24,7 @@ import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-ken
 import { CardCardService } from 'src/app/card-cards/card-card.service';
 import { CardTypeService } from 'src/app/card-types/card-type.service';
 import { AuthService } from 'src/app/auth/auth.service';
+import { SessionInfoStorageService } from 'src/app/core/services/session-info-storage.service';
 
 @Component({
   selector: 'app-partner-customer-list',
@@ -88,7 +89,8 @@ export class PartnerCustomerListComponent implements OnInit {
     private memberLevelService: MemberLevelService,
     private cardService: CardTypeService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig,
-    private authService: AuthService
+    private authService: AuthService,
+    private sessionInfoStorageService: SessionInfoStorageService,
   ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
@@ -141,6 +143,9 @@ export class PartnerCustomerListComponent implements OnInit {
     this.filter.hasOrderResidual = -1;
     this.filter.hasTotalDebit = -1;
     this.filter.orderState='';
+    if (this.sessionInfoStorageService.getSessionInfo().settings && !this.sessionInfoStorageService.getSessionInfo().settings.companySharePartner) {
+      this.filter.companyId = this.authService.userInfo.companyId;
+    }
   }
 
   refreshData() {

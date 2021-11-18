@@ -21,6 +21,8 @@ namespace Umbraco.Web.Session
         public IEnumerable<string> Permissions { get; set; }
 
         public IEnumerable<string> Groups { get; set; }
+
+        public SessionTenantSettings Settings { get; set; }
     }
 
     public class SessionUserCompany
@@ -28,5 +30,10 @@ namespace Umbraco.Web.Session
         public CompanySimple CurrentCompany { get; set; }
 
         public IEnumerable<CompanySimple> AllowedCompanies { get; set; }
+    }
+
+    public class SessionTenantSettings
+    {
+        public bool CompanySharePartner { get; set; }
     }
 }
