@@ -84,5 +84,6 @@ namespace ApplicationCore.Entities
 
         public Guid? CardTypeId { get; set; }
         public CardType CardType { get; set; }
+        
     }
 }

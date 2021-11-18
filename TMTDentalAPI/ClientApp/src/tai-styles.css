@@ -38,7 +38,7 @@ a {
     padding: 0;
 }
 
-.modal.o_technical_modal .modal-content .modal-footer {
+.modal.o_technical_modal .modal-content .modal-footer, .modal .modal-content .modal-footer {
     flex-wrap: wrap;
     text-align: left;
     -webkit-box-pack: start;
