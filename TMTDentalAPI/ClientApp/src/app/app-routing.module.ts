@@ -13,6 +13,11 @@ const routes: Routes = [
     component: AppHomeComponent,
     children: [
       {
+        path: 'res-insurance',
+        loadChildren: () => import('./res-insurance/res-insurance.module').then(m => m.ResInsuranceModule),
+        canActivate: [AuthGuard]
+      },
+      {
         path: 'service-card',
         loadChildren: () => import('./service-card-cards/service-card-cards.module').then(m => m.ServiceCardCardsModule),
         canActivate: [AuthGuard]
