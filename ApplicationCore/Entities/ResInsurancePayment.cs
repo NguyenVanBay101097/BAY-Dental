@@ -34,11 +34,6 @@ namespace ApplicationCore.Entities
 
         public ICollection<ResInsurancePaymentLine> Lines { get; set; } = new List<ResInsurancePaymentLine>();
 
-        /// <summary>
-        /// Invoice
-        /// </summary>
-        public Guid? MoveId { get; set; }
-        public AccountMove Move { get; set; }
 
         public Guid CompanyId { get; set; }
         public Company Company { get; set; }

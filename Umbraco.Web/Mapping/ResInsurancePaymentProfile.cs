@@ -11,6 +11,7 @@ namespace Umbraco.Web.Mapping
     {
         public ResInsurancePaymentProfile()
         {
+            CreateMap<ResInsurancePayment, ResInsurancePaymentBasic>();
 
             CreateMap<ResInsurancePayment, ResInsurancePaymentSave>();
 

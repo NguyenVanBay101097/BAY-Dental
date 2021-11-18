@@ -30,6 +30,7 @@ namespace ApplicationCore.Entities
         /// customer
         /// supplier
         /// employee
+        /// insurance
         /// </summary>
         public string PartnerType { get; set; }
 

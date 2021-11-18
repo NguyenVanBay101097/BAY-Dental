@@ -146,6 +146,12 @@ namespace Infrastructure.Services
             //Mapper
             var saleOrderPayment = _mapper.Map<SaleOrderPayment>(val);
             SaveLines(val, saleOrderPayment);
+
+            //add partner
+            var orderObj = GetService<ISaleOrderService>();
+            var order = await orderObj.GetByIdAsync(val.OrderId);
+            saleOrderPayment.PartnerId = order.PartnerId;
+
             await CreateAsync(saleOrderPayment);
 
             return saleOrderPayment;
@@ -204,6 +210,7 @@ namespace Infrastructure.Services
                 .Include(x => x.Move)
                 .Include(x => x.Order)
                 .Include(x => x.Lines)
+                .Include(x => x.Partner)
                 .Include(x => x.JournalLines)
                 .ToListAsync();
             foreach (var saleOrderPayment in saleOrderPayments)
@@ -476,7 +483,7 @@ namespace Infrastructure.Services
                 Ref = "",
                 Type = "out_invoice",
                 Narration = self.Note,
-                PartnerId = self.Order.PartnerId,
+                PartnerId = self.PartnerId.HasValue? self.PartnerId.Value : self.Order.PartnerId,
                 InvoiceOrigin = self.Order.Name,
                 JournalId = journal.Id,
                 Journal = journal,

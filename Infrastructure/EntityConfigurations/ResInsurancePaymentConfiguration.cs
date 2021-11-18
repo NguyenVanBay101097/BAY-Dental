@@ -11,9 +11,6 @@ namespace Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<ResInsurancePayment> builder)
         {
-            builder.HasOne(x => x.Move)
-              .WithMany()
-              .HasForeignKey(x => x.MoveId);        
 
             builder.HasOne(x => x.Order)
              .WithMany()
