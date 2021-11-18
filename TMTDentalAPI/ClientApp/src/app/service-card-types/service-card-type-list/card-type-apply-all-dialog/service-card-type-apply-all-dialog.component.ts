@@ -30,7 +30,7 @@ export class ServiceCardTypeApplyAllDialogComponent implements OnInit {
   }
 
   onApply() {
-    var res = {percentPrice: this.percentPrice, fixedAmountPrice: this.fixedAmountPrice, computePrice: this.computePrice};
+    var res = {id:this.cardTypeId, percentPrice: this.percentPrice, fixedAmountPrice: this.fixedAmountPrice, computePrice: this.computePrice};
     this.cardTypeService.onApplyAll(this.cardTypeId,res).subscribe(() => {
     this.activeModal.close();
     this.notifyService.notify('success','Lưu thành công');

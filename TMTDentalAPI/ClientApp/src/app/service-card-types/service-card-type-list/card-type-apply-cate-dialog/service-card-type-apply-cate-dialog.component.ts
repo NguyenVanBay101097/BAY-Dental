@@ -43,7 +43,10 @@ export class ServiceCardTypeApplyCateDialogComponent implements OnInit {
   onApply(){
     if (this.form.invalid)
       return;
-    var val = this.productCategoryListItems.value;
+    var val = {
+      id: this.cardTypeId,
+      serviceCateGoryApplyDetails:this.productCategoryListItems.value
+    };
     this.cardTypeService.onApplyInCateg(this.cardTypeId,val).subscribe(() => {
       this.activeModal.close();
       this.notifyService.notify('success','Lưu thành công');

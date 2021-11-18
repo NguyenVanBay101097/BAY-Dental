@@ -16,9 +16,9 @@ namespace Infrastructure.Services
         DateTime GetPeriodEndDate(ServiceCardType self, DateTime? dStart = null);
         void SaveProductPricelistItem(ServiceCardType self, IEnumerable<ProductPricelistItem> listItems);
         Task<IEnumerable<ServiceCardTypeSimple>> AutoCompleteSearch(string search);
-        Task<IEnumerable<ProductPricelistItem>> AddProductPricelistItem(Guid id, IEnumerable<Guid> productIds);
-        Task UpdateProductPricelistItem(Guid id, IEnumerable<ProductPricelistItemCreate> items);
-        Task ApplyServiceCategories(Guid id, IEnumerable<ApplyServiceCategoryReq> vals);
-        Task ApplyAllServices(Guid id, ApplyAllServiceReq val);
+        Task<IEnumerable<ProductPricelistItem>> AddProductPricelistItem(AddProductPricelistItem val);
+        Task UpdateProductPricelistItem(UpdateProductPricelistItem val);
+        Task ApplyServiceCategories(ApplyServiceCategoryReq val);
+        Task ApplyAllServices(ApplyAllServiceReq val);
     }
 }

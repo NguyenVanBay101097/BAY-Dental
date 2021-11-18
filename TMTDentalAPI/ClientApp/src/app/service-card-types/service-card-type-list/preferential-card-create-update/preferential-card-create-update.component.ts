@@ -108,7 +108,11 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
       fixedAmountPrice: [0, Validators.required],
     };
   
-    this.cardTypeService.addProductPricelistItem(this.cardTypeId,[product.id]).subscribe((res: any) => {
+    var val = {
+      id: this.cardTypeId,
+      ProductIds: [product.id]
+    }
+    this.cardTypeService.addProductPricelistItem(this.cardTypeId,val).subscribe((res: any) => {
       item.id = res[0].id;
       this.pushProduct(product,item);
     })
@@ -220,25 +224,29 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
       fixedAmountPrice: pro.value.fixedAmountPrice,
       percentPrice: pro.value.percentPrice
     };
-    if (!this.cardTypeId) {
-      var formValue = this.cardForm.value;
-      this.cardTypeService.create(formValue).subscribe(result => {
-        this.cardTypeId = result.id;
-        this.cardTypeService.updateProductPricelistItem(result.id,[proObj]).subscribe(() => {
-          this.notify('Lưu thành công','success');
-          pro.get('computePrice').setValue(event.computePrice);
-          pro.get('fixedAmountPrice').setValue(event.fixedAmountPrice);
-          pro.get('percentPrice').setValue(event.percentPrice);
-        })
-      })
-    }
-    else {
-      this.cardTypeService.updateProductPricelistItem(this.cardTypeId,[proObj]).subscribe(() => {
+    
+    var onApply = ()=> {
+      var val = {
+        id: this.cardTypeId,
+        ProductListItems : [proObj]
+      };
+      this.cardTypeService.updateProductPricelistItem(this.cardTypeId,val).subscribe(() => {
         this.notify('Lưu thành công','success');
         pro.get('computePrice').setValue(event.computePrice);
         pro.get('fixedAmountPrice').setValue(event.fixedAmountPrice);
         pro.get('percentPrice').setValue(event.percentPrice);
       })
+    }
+   
+    if (!this.cardTypeId) {
+      var formValue = this.cardForm.value;
+      this.cardTypeService.create(formValue).subscribe(result => {
+        this.cardTypeId = result.id;
+        onApply();
+      })
+    }
+    else {
+      onApply();
     }
   }
 

@@ -109,25 +109,29 @@ export class MemberCardCreateUpdateComponent implements OnInit {
       fixedAmountPrice: pro.value.fixedAmountPrice,
       percentPrice: pro.value.percentPrice
     };
-    if (!this.cardTypeId) {
-      var formValue = this.cardForm.value;
-      this.cardTypeService.create(formValue).subscribe(result => {
-        this.cardTypeId = result.id;
-        this.cardTypeService.updateProductPricelistItem(result.id, [proObj]).subscribe(() => {
-          pro.get('computePrice').setValue(event.computePrice);
-          pro.get('fixedAmountPrice').setValue(event.fixedAmountPrice);
-          pro.get('percentPrice').setValue(event.percentPrice);
-          this.notify('Lưu thành công', 'success');
-        })
-      })
-    }
-    else {
-      this.cardTypeService.updateProductPricelistItem(this.cardTypeId, [proObj]).subscribe(() => {
+
+    var onApply = ()=> {
+      var val = {
+        id: this.cardTypeId,
+        ProductListItems : [proObj]
+      };
+      this.cardTypeService.updateProductPricelistItem(this.cardTypeId, val).subscribe(() => {
         pro.get('computePrice').setValue(event.computePrice);
         pro.get('fixedAmountPrice').setValue(event.fixedAmountPrice);
         pro.get('percentPrice').setValue(event.percentPrice);
         this.notify('Lưu thành công', 'success');
       })
+    }
+
+    if (!this.cardTypeId) {
+      var formValue = this.cardForm.value;
+      this.cardTypeService.create(formValue).subscribe(result => {
+        this.cardTypeId = result.id;
+       onApply();
+      })
+    }
+    else {
+      onApply();
     }
   }
 
@@ -149,22 +153,6 @@ export class MemberCardCreateUpdateComponent implements OnInit {
     return this.cardForm.value.productPricelistItems.flatMap(x => x.products) as any[];
   }
 
-  createOrUpdate(val) {
-    if (!this.cardTypeId) {
-      var formValue = this.cardForm.value;
-      this.cardTypeService.createCardType(formValue).subscribe(result => {
-        this.cardTypeService.onApplyInCateg(result.id, val).subscribe(() => {
-
-        })
-      })
-    }
-    else {
-      this.cardTypeService.onApplyInCateg(this.cardTypeId, val).subscribe(() => {
-
-      })
-    }
-  }
-
   onAddLine(product) {
     let index = this.productExistValue.findIndex(x => x.product.id == product.id);
     if (index >= 0)
@@ -176,8 +164,12 @@ export class MemberCardCreateUpdateComponent implements OnInit {
       percentPrice: [0, Validators.required],
       fixedAmountPrice: [0, Validators.required],
     };
+    var val = {
+      id: this.cardTypeId,
+      ProductIds: [product.id]
+    }
 
-    this.cardTypeService.addProductPricelistItem(this.cardTypeId, [product.id]).subscribe((res: any) => {
+    this.cardTypeService.addProductPricelistItem(this.cardTypeId, val).subscribe((res: any) => {
       item.id = res[0].id;
       this.pushProduct(product, item);
     })
