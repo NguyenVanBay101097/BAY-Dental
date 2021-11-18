@@ -82,8 +82,8 @@ namespace Infrastructure.Services
                 var bics = record.GetElementsByTagName("BIC");
                 resBanks.Add(new ResBank()
                 {
-                    Name = names[0].InnerText,
-                    BIC = bics[0].InnerText
+                    Name = names[0].InnerText.Trim(),
+                    BIC = bics[0].InnerText.Trim()
                 });
             }
 
