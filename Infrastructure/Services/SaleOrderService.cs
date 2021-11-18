@@ -1626,10 +1626,15 @@ namespace Infrastructure.Services
         //    var saleLineObj = GetService<ISaleOrderLineService>();
         //    var insurancePaymentLineObj = GetService<IResInsurancePaymentLineService>();
 
-        //    var lines = saleLineObj.SearchQuery(x => x.OrderId == id && x.State != "draft" && x.AmountResidual > 0).ToListAsync();
+        //    var lines = saleLineObj.SearchQuery(x => x.OrderId == id && x.State != "draft" && x.AmountResidual > 0 && !x.InsurancePaymentLines.Any()).ToListAsync();
         //    var res = new ResInsurancePaymentDisplay();
         //    res.Date = DateTime.Now;
-            
+
+        //    foreach(var item in lines)
+        //    {
+        //        res.Lines.
+        //    }
+
         //}
 
         public async Task<SaleOrderDisplay> DefaultGet(SaleOrderDefaultGet val)

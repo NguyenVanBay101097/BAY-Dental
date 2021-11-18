@@ -12,7 +12,7 @@ namespace Infrastructure.EntityConfigurations
         public void Configure(EntityTypeBuilder<ResInsurancePaymentLine> builder)
         {
             builder.HasOne(x => x.SaleOrderLine)
-                  .WithMany()
+                  .WithMany(x => x.InsurancePaymentLines)
                   .HasForeignKey(x => x.SaleOrderLineId);
 
             builder.HasOne(x => x.ResInsurancePayment)

@@ -227,6 +227,12 @@ namespace ApplicationCore.Entities
         public bool IsActive { get; set; }
 
         public ICollection<CommissionSettlement> CommissionSettlements { get; set; } = new List<CommissionSettlement>();
+
+        /// <summary>
+        /// thanh toán = bảo hiểm
+        /// </summary>
+        public ICollection<ResInsurancePaymentLine> InsurancePaymentLines { get; set; } = new List<ResInsurancePaymentLine>();
+
         /// <summary>
         /// ngày của chi tiết điều tr
         /// </summary>

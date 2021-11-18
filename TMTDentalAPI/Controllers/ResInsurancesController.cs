@@ -60,8 +60,8 @@ namespace TMTDentalAPI.Controllers
 
             await _insuranceService.CreateAsync(insurance);
 
-            var basic = _mapper.Map<ResInsuranceBasic>(insurance);
-            return Ok(basic);
+            var simple = _mapper.Map<ResInsuranceSimple>(insurance);
+            return Ok(simple);
         }
 
         [HttpPost("[action]")]
