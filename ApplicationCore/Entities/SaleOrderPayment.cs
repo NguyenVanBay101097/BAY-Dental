@@ -38,14 +38,7 @@ namespace ApplicationCore.Entities
         /// Phiếu điều trị
         /// </summary>
         public Guid OrderId { get; set; }
-        public SaleOrder Order { get; set; }
-
-        /// <summary>
-        /// customer : khách hàng
-        /// insurance : bảo hiểm
-        /// </summary>
-        public Guid? PartnerId { get; set; }
-        public Partner Partner { get; set; }
+        public SaleOrder Order { get; set; }     
 
         /// <summary>
         /// draft : nháp

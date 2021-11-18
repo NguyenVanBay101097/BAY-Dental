@@ -8870,9 +8870,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("PartnerId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");
 
@@ -8888,8 +8885,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("MoveId");
 
                     b.HasIndex("OrderId");
-
-                    b.HasIndex("PartnerId");
 
                     b.HasIndex("WriteById");
 
@@ -8972,6 +8967,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("PartnerId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("SaleOrderPaymentId")
                         .HasColumnType("uniqueidentifier");
 
@@ -8983,6 +8981,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("JournalId");
+
+                    b.HasIndex("PartnerId");
 
                     b.HasIndex("SaleOrderPaymentId");
 
@@ -16180,10 +16180,6 @@ namespace Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ApplicationCore.Entities.Partner", "Partner")
-                        .WithMany()
-                        .HasForeignKey("PartnerId");
-
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
                         .HasForeignKey("WriteById");
@@ -16238,6 +16234,10 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("JournalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.Partner", "Partner")
+                        .WithMany()
+                        .HasForeignKey("PartnerId");
 
                     b.HasOne("ApplicationCore.Entities.SaleOrderPayment", "SaleOrderPayment")
                         .WithMany("JournalLines")

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Infrastructure.Data.Migrations
 {
-    public partial class AddPartnerSaleOrderPayment : Migration
+    public partial class addPartnerSaleOrderPaymentJournalLine : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -21,17 +21,17 @@ namespace Infrastructure.Data.Migrations
 
             migrationBuilder.AddColumn<Guid>(
                 name: "PartnerId",
-                table: "SaleOrderPayments",
+                table: "SaleOrderPaymentJournalLines",
                 nullable: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_SaleOrderPayments_PartnerId",
-                table: "SaleOrderPayments",
+                name: "IX_SaleOrderPaymentJournalLines_PartnerId",
+                table: "SaleOrderPaymentJournalLines",
                 column: "PartnerId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_SaleOrderPayments_Partners_PartnerId",
-                table: "SaleOrderPayments",
+                name: "FK_SaleOrderPaymentJournalLines_Partners_PartnerId",
+                table: "SaleOrderPaymentJournalLines",
                 column: "PartnerId",
                 principalTable: "Partners",
                 principalColumn: "Id",
@@ -41,16 +41,16 @@ namespace Infrastructure.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_SaleOrderPayments_Partners_PartnerId",
-                table: "SaleOrderPayments");
+                name: "FK_SaleOrderPaymentJournalLines_Partners_PartnerId",
+                table: "SaleOrderPaymentJournalLines");
 
             migrationBuilder.DropIndex(
-                name: "IX_SaleOrderPayments_PartnerId",
-                table: "SaleOrderPayments");
+                name: "IX_SaleOrderPaymentJournalLines_PartnerId",
+                table: "SaleOrderPaymentJournalLines");
 
             migrationBuilder.DropColumn(
                 name: "PartnerId",
-                table: "SaleOrderPayments");
+                table: "SaleOrderPaymentJournalLines");
 
             migrationBuilder.AddColumn<Guid>(
                 name: "MoveId",
