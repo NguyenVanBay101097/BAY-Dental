@@ -146,7 +146,7 @@ namespace Infrastructure.Services
             return SumaryCashBook;
         }
 
-        public async Task<PagedResult2<CashBookReportDetail>> GetDetails(DateTime? dateFrom, DateTime? dateTo, int limit , int offset, Guid? companyId,string search, string resultSelection)
+        public async Task<PagedResult2<CashBookReportDetail>> GetDetails(DateTime? dateFrom, DateTime? dateTo, int limit , int offset, Guid? companyId,string search, string resultSelection, Guid? journalId)
         {
             var amlObj = GetService<IAccountMoveLineService>();
 
@@ -167,6 +167,10 @@ namespace Infrastructure.Services
 
             if (!string.IsNullOrEmpty(search))
                 query = query.Where(x => x.Move.InvoiceOrigin.Contains(search));
+            if (journalId.HasValue)
+            {
+                query = query.Where(x=> x.JournalId == journalId.Value);
+            }
 
             if (limit > 0)
                 query = query.Skip(offset).Take(limit);

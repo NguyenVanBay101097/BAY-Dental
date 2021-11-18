@@ -43,7 +43,7 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Account.Read")]
         public async Task<IActionResult> GetDetails(CashBookDetailFilter val)
         {
-            var res = await _cashBookService.GetDetails(val.DateFrom, val.DateTo, val.Limit, val.Offset, val.CompanyId, val.Search, val.ResultSelection);
+            var res = await _cashBookService.GetDetails(val.DateFrom, val.DateTo, val.Limit, val.Offset, val.CompanyId, val.Search, val.ResultSelection,val.JournalId);
             return Ok(res);
         }
 

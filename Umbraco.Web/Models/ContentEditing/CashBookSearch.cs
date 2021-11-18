@@ -57,6 +57,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Limit { get; set; }
 
         public int Offset { get; set; }
+
+        public Guid? JournalId { get; set; }
     }
 
     public class DataInvoiceFilter
