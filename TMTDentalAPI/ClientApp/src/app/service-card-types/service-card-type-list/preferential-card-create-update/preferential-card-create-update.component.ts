@@ -47,10 +47,13 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
       companyId: this.companyId,
       productPricelistItems: this.fb.array([])
     });
-    this.cardTypeId = this.route.snapshot.queryParamMap.get('id');
-    if (this.cardTypeId) {
-      this.getCardTypeById();
-    }
+
+    this.route.queryParamMap.subscribe(params => {
+      this.cardTypeId = params.get('id');
+      if (this.cardTypeId) {
+        this.getCardTypeById();
+      }
+    })
   }
 
   getCardTypeById() {
@@ -272,7 +275,7 @@ export class PreferentialCardCreateUpdateComponent implements OnInit {
 
   onOpenApplyCateg(){
     let modalRef = this.modalService.open(ServiceCardTypeApplyCateDialogComponent,
-      { size: 'lg', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      { size: 'lg', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Áp dụng ưu đãi cho nhóm dịch vụ';
     modalRef.componentInstance.cardTypeId = this.cardTypeId;
     modalRef.result.then(res => {

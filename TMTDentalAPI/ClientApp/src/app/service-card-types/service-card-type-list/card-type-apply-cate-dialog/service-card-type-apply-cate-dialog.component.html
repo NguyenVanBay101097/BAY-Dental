@@ -5,11 +5,11 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <div class="ml-2 mt-3 mb-3">
+    <div class="mb-3">
         <app-product-categories-search-dropdown #searchCateComp (searchOutput)="onSearchCate($event)"
             (onSelectService)="addLine($event)"></app-product-categories-search-dropdown>
     </div>
-    <div class="p-2">
+    <div>
         <table class="table" [formGroup]="form">
             <tr>
                 <th>Tên nhóm dịch vụ</th>

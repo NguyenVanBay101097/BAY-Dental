@@ -120,7 +120,7 @@
 
                                             </td>
                                             <td class="w-20">{{gr.get('product').value.listPrice | number}}</td>
-                                            <td class="w-30 text-right">
+                                            <td class="w-30">
                                                 <app-compute-price-input-popover (onApply) = "apply($event,categIndex, proIndex)" 
                                                 [priceObj] = "getPriceObj(gr)">
                                                 </app-compute-price-input-popover>

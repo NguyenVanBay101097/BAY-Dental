@@ -54,7 +54,7 @@ export class MemberCardTypeApplyDialogComponent implements OnInit {
 
   addLine(event) {
     var list = this.productCategoryListItems.value;
-    if (list.map(x => x.id).indexOf(event.id) != -1)
+    if (list.map(x => x.categId).indexOf(event.id) != -1)
       return;
 
     var group = this.fb.group({
