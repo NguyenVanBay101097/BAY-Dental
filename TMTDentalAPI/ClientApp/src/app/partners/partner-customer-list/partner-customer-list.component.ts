@@ -141,7 +141,6 @@ export class PartnerCustomerListComponent implements OnInit {
     this.filter.hasOrderResidual = -1;
     this.filter.hasTotalDebit = -1;
     this.filter.orderState='';
-    this.filter.companyId = this.authService.userInfo.companyId;
   }
 
   refreshData() {
