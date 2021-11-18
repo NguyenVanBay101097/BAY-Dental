@@ -87,58 +87,66 @@ namespace Infrastructure.Services
             self.Amount = totalAmount;
         }
 
-        public async Task ActionPayment(Guid id)
+        public async Task ActionPayment(IEnumerable<Guid> ids)
         {
             var journalObj = GetService<IAccountJournalService>();
             var saleOrderPaymentObj = GetService<ISaleOrderPaymentService>();
-            var insurancePayment = await SearchQuery(x => x.Id == id)
+            var insurancePayments = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.ResInsurance)
                 .Include(x => x.Lines).ThenInclude(x => x.SaleOrderLine)
-                .FirstOrDefaultAsync();
+                .ToListAsync();
 
-            var saleOrderPayment = new SaleOrderPayment();
-            saleOrderPayment.CompanyId = insurancePayment.CompanyId;
-            saleOrderPayment.OrderId = insurancePayment.OrderId.Value;
-            saleOrderPayment.PartnerId = insurancePayment.SaleOrderPayment.PartnerId;
-            saleOrderPayment.Date = insurancePayment.Date;
-            saleOrderPayment.Note = insurancePayment.Note;
+            var saleOrderPayments = new List<SaleOrderPayment>();
 
-            ///add SaleOrderPaymentHistoryLine
-            foreach (var line in insurancePayment.Lines)
+            foreach(var insurancePayment in insurancePayments)
             {
-                var amount = line.PayType == "percent" ? line.SaleOrderLine.PriceTotal * (1 - (line.Percent ?? 0) / 100) : (line.FixedAmount ?? 0);
-                saleOrderPayment.Lines.Add(new SaleOrderPaymentHistoryLine
+                var saleOrderPayment = new SaleOrderPayment();
+                saleOrderPayment.CompanyId = insurancePayment.CompanyId;
+                saleOrderPayment.OrderId = insurancePayment.OrderId.Value;
+                saleOrderPayment.PartnerId = insurancePayment.SaleOrderPayment.PartnerId;
+                saleOrderPayment.Date = insurancePayment.Date;
+                saleOrderPayment.Note = insurancePayment.Note;
+
+                ///add SaleOrderPaymentHistoryLine
+                foreach (var line in insurancePayment.Lines)
                 {
-                    SaleOrderLineId = line.SaleOrderLineId,
-                    Amount = amount,
+                    var amount = line.PayType == "percent" ? line.SaleOrderLine.PriceTotal * (1 - (line.Percent ?? 0) / 100) : (line.FixedAmount ?? 0);
+                    saleOrderPayment.Lines.Add(new SaleOrderPaymentHistoryLine
+                    {
+                        SaleOrderLineId = line.SaleOrderLineId,
+                        Amount = amount,
+                    });
+                }
+
+                ///add journallines
+                var journal = await journalObj.GetJournalByTypeAndCompany("insurance", saleOrderPayment.CompanyId);
+                if (journal == null)
+                    throw new Exception("Không tìm thấy phương thức bảo hiểm");
+
+                saleOrderPayment.JournalLines.Add(new SaleOrderPaymentJournalLine
+                {
+                    JournalId = journal.Id,
+                    Amount = saleOrderPayment.Lines.Sum(x => x.Amount),
                 });
+
+                saleOrderPayments.Add(saleOrderPayment);
+
+                insurancePayment.SaleOrderPaymentId = saleOrderPayment.Id;
+
+                insurancePayment.State = "posted";
+
+              
             }
 
-            ///add journallines
-            var journal = await journalObj.GetJournalByTypeAndCompany("insurance", saleOrderPayment.CompanyId);
-            if (journal == null)
-                throw new Exception("Không tìm thấy phương thức bảo hiểm");
-
-            saleOrderPayment.JournalLines.Add(new SaleOrderPaymentJournalLine
-            {
-                JournalId = journal.Id,
-                Amount = saleOrderPayment.Lines.Sum(x => x.Amount),
-            });
-
-
-            await saleOrderPaymentObj.CreateAsync(saleOrderPayment);
+            await saleOrderPaymentObj.CreateAsync(saleOrderPayments);
 
 
             ///thanh toan
 
-            await saleOrderPaymentObj.ActionPayment(new List<Guid>() { saleOrderPayment.Id });
-            insurancePayment.SaleOrderPaymentId = saleOrderPayment.Id;
-
-            insurancePayment.State = "posted";
-
-            await UpdateAsync(insurancePayment);
+            await saleOrderPaymentObj.ActionPayment(saleOrderPayments.Select(x => x.Id).ToList());
 
 
+            await UpdateAsync(insurancePayments);
         }
 
         public override ISpecification<ResInsurancePayment> RuleDomainGet(IRRule rule)

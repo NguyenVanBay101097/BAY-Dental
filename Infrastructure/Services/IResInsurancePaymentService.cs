@@ -11,6 +11,6 @@ namespace Infrastructure.Services
     {
         Task<ResInsurancePayment> CreateResInsurancePayment(ResInsurancePaymentSave val);
 
-        Task ActionPayment(Guid id);
+        Task ActionPayment(IEnumerable<Guid> ids);
     }
 }
