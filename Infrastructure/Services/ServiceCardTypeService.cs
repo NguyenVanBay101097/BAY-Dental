@@ -194,14 +194,14 @@ namespace Infrastructure.Services
             return entities;
         }
 
-        public async Task<IEnumerable<ProductPricelistItem>> AddProductPricelistItem(Guid id, IEnumerable<Guid> productIds)
+        public async Task<IEnumerable<ProductPricelistItem>> AddProductPricelistItem(AddProductPricelistItem val)
         {
             var priceListItemObj = GetService<IProductPricelistItemService>();
             var productObj = GetService<IProductService>();
-            var self = await SearchQuery(x=> x.Id == id).Include(x=> x.ProductPricelist.Items).FirstOrDefaultAsync();
+            var self = await SearchQuery(x=> x.Id == val.Id).Include(x=> x.ProductPricelist.Items).FirstOrDefaultAsync();
             ValidateApplyPriceListItem(self);
 
-            var products = await productObj.SearchQuery(x => productIds.Contains(x.Id)).ToListAsync();
+            var products = await productObj.SearchQuery(x => val.ProductIds.Contains(x.Id)).ToListAsync();
             var priceListItems = self.ProductPricelist.Items;
             var toAdds = new List<ProductPricelistItem>();
             foreach (var pro in products)
@@ -222,15 +222,15 @@ namespace Infrastructure.Services
             return toAdds;
         }
 
-        public async Task UpdateProductPricelistItem(Guid id, IEnumerable<ProductPricelistItemCreate> items)
+        public async Task UpdateProductPricelistItem(UpdateProductPricelistItem val)
         {
             var priceListItemObj = GetService<IProductPricelistItemService>();
-            var self = await SearchQuery(x => x.Id == id).Include(x => x.ProductPricelist.Items).ThenInclude(x=> x.Product).FirstOrDefaultAsync();
+            var self = await SearchQuery(x => x.Id == val.Id).Include(x => x.ProductPricelist.Items).ThenInclude(x=> x.Product).FirstOrDefaultAsync();
             ValidateApplyPriceListItem(self);
 
              var priceListItems = self.ProductPricelist.Items;
             var toUpdates = new List<ProductPricelistItem>();
-            foreach (var item in items)
+            foreach (var item in val.ProductListItems)
             {
                 var existItem = priceListItems.FirstOrDefault(x=> x.Id == item.Id);
                 if (item == null)
@@ -245,22 +245,22 @@ namespace Infrastructure.Services
             await priceListItemObj.UpdateAsync(toUpdates);
         }
 
-        public async Task ApplyServiceCategories(Guid id, IEnumerable<ApplyServiceCategoryReq> vals)
+        public async Task ApplyServiceCategories(ApplyServiceCategoryReq val)
         {
             var priceListItemObj = GetService<IProductPricelistItemService>();
             var productObj = GetService<IProductService>();
-            var self = await SearchQuery(x => x.Id == id).Include(x => x.ProductPricelist.Items).ThenInclude(x=> x.Product).FirstOrDefaultAsync();
+            var self = await SearchQuery(x => x.Id == val.Id).Include(x => x.ProductPricelist.Items).ThenInclude(x=> x.Product).FirstOrDefaultAsync();
             ValidateApplyPriceListItem(self);
             var priceListItems = self.ProductPricelist.Items;
             //get list service
-            var categIds = vals.Where(x=> x.CategId != Guid.Empty).Select(x=> x.CategId);
+            var categIds = val.ServiceCateGoryApplyDetails.Where(x=> x.CategId != Guid.Empty).Select(x=> x.CategId);
             var services = await productObj.SearchQuery(x => x.Active == true && x.Type2 == "service" && categIds.Contains(x.CategId.Value)).ToListAsync();
             // add and update pricelistitem
             var toAdds = new List<ProductPricelistItem>();
             var toUpdates = new List<ProductPricelistItem>();
             foreach (var service in services)
             {
-                var cateVal = vals.FirstOrDefault(x => x.CategId == service.CategId);
+                var cateVal = val.ServiceCateGoryApplyDetails.FirstOrDefault(x => x.CategId == service.CategId);
                 var existItem = priceListItems.FirstOrDefault(x => x.ProductId == service.Id);
 
                 if (existItem != null)
@@ -297,11 +297,11 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task ApplyAllServices(Guid id, ApplyAllServiceReq val)
+        public async Task ApplyAllServices(ApplyAllServiceReq val)
         {
             var priceListItemObj = GetService<IProductPricelistItemService>();
             var productObj = GetService<IProductService>();
-            var self = await SearchQuery(x => x.Id == id).Include(x => x.ProductPricelist.Items).ThenInclude(x => x.Product).FirstOrDefaultAsync();
+            var self = await SearchQuery(x => x.Id == val.Id).Include(x => x.ProductPricelist.Items).ThenInclude(x => x.Product).FirstOrDefaultAsync();
             ValidateApplyPriceListItem(self);
             var priceListItems = self.ProductPricelist.Items;
             //get list service

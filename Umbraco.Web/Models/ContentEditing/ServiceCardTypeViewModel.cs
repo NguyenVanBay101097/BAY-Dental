@@ -35,7 +35,25 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
     }
 
+    public class UpdateProductPricelistItem
+    {
+        public Guid Id { get; set; }
+        public IEnumerable<ProductPricelistItemCreate> ProductListItems { get; set; } = new List<ProductPricelistItemCreate>();
+    }
+
+    public class AddProductPricelistItem
+    {
+        public Guid Id { get; set; }
+        public IEnumerable<Guid> ProductIds { get; set; } = new List<Guid>();
+    }
+
     public class ApplyServiceCategoryReq
+    {
+        public Guid Id { get; set; }
+        public IEnumerable<ServiceCateGoryApplyDetail> ServiceCateGoryApplyDetails { get; set; } = new List<ServiceCateGoryApplyDetail>();
+    }
+
+    public class ServiceCateGoryApplyDetail
     {
         public Guid CategId { get; set; }
         public string ComputePrice { get; set; }
@@ -47,6 +65,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class ApplyAllServiceReq
     {
+        public Guid Id { get;set; }
         public string ComputePrice { get; set; }
 
         public decimal? PercentPrice { get; set; }

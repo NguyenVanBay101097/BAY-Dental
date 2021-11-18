@@ -161,28 +161,34 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("{id}/AddServices")]
-        public async Task<IActionResult> AddProductPricelistItem(Guid id, [FromBody] List<Guid> productIds)
+        public async Task<IActionResult> AddProductPricelistItem(Guid id, [FromBody] AddProductPricelistItem val)
         {
             await _unitOfWork.BeginTransactionAsync();
-            var res = await _cardTypeService.AddProductPricelistItem(id, productIds);
+            var res = await _cardTypeService.AddProductPricelistItem(val);
             _unitOfWork.Commit();
             return Ok(_mapper.Map<IEnumerable<ProductPricelistItemDisplay>>(res));
         }
 
         [HttpPost("{id}/UpdateServices")]
-        public async Task<IActionResult> UpdateProductPricelistItem(Guid id, [FromBody] List<ProductPricelistItemCreate> items)
+        public async Task<IActionResult> UpdateProductPricelistItem(Guid id, [FromBody] UpdateProductPricelistItem val)
         {
+            if (id != val.Id)
+                return BadRequest();
+
             await _unitOfWork.BeginTransactionAsync();
-            await _cardTypeService.UpdateProductPricelistItem(id, items);
+            await _cardTypeService.UpdateProductPricelistItem(val);
             _unitOfWork.Commit();
             return Ok();
         }
 
         [HttpPost("{id}/[action]")]
-        public async Task<IActionResult> ApplyServiceCategories(Guid id, [FromBody] List<ApplyServiceCategoryReq> vals)
+        public async Task<IActionResult> ApplyServiceCategories(Guid id, [FromBody] ApplyServiceCategoryReq val)
         {
+            if (id != val.Id)
+                return BadRequest();
+
             await _unitOfWork.BeginTransactionAsync();
-            await _cardTypeService.ApplyServiceCategories(id, vals);
+            await _cardTypeService.ApplyServiceCategories(val);
             _unitOfWork.Commit();
             return Ok();
         }
@@ -190,8 +196,11 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("{id}/[action]")]
         public async Task<IActionResult> ApplyAllServices(Guid id, [FromBody] ApplyAllServiceReq val)
         {
+            if (id != val.Id)
+                return BadRequest();
+
             await _unitOfWork.BeginTransactionAsync();
-            await _cardTypeService.ApplyAllServices(id, val);
+            await _cardTypeService.ApplyAllServices(val);
             _unitOfWork.Commit();
             return Ok();
         }
