@@ -1,6 +1,6 @@
 .filter-left {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
 }
 
 .filter-right {

@@ -37,7 +37,7 @@
         [pageSize]="limit">
         <kendo-grid-column field="name" title="Công ty bảo hiểm">
             <ng-template kendoGridCellTemplate let-dataItem>
-                <a class="text-primary" [routerLink]="['/res-insurance/' + dataItem.id]">
+                <a class="text-primary" [routerLink]="['/res-insurance-reports/' + dataItem.id]">
                     {{dataItem.name}}
                 </a>
             </ng-template>

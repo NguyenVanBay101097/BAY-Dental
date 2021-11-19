@@ -13,6 +13,12 @@
                                 <table class="o_group mt-0 o_inner_group o_group_col_12">
                                     <tbody>
                                         <tr>
+                                            <td colspan="2">
+                                                <img class="avatar" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSllqIXWN4cwTR__4uLBF99Xp-8QqjcUD2w5w&usqp=CAU"
+                                                    alt="">
+                                            </td>
+                                        </tr>
+                                        <tr>
                                             <td class="o_td_label">
                                                 <label class="o_form_label">Người đại diện</label>
                                             </td>
@@ -69,8 +75,8 @@
                         <div class="border p-3">
                             <div class="d-flex justify-content-between mb-2">
                                 <div class="filter-left">
-                                    <app-date-range-picker-filter [showClearButton]="false" [opens]="'right'"
-                                        opens="right">
+                                    <app-date-range-picker-filter [startDate]="dateFrom" [endDate]="dateTo"
+                                    (searchChange)="onSearchDateChange($event)">
                                     </app-date-range-picker-filter>
                                     <div class="mt-2">
                                         <button class="btn btn-primary mr-2">Thu tiền</button>

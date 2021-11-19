@@ -1,0 +1,13 @@
+.filter-left {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-right {
+    width: 50%;
+}
+
+.avatar{
+    width: 80px;
+    height: auto;
+}

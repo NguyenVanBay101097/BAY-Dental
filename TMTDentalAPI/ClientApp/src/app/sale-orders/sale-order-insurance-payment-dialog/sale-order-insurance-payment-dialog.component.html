@@ -67,7 +67,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    {{ f.amount.value | number}}
+                                    {{ (getAmountTotal() || 0) | number }}
                                 </td>
                             </tr>
                         </tbody>
@@ -95,15 +95,14 @@
                                         <ng-container *ngIf="line.value.payType === 'percent'; else elseTemplate">
                                             <kendo-numerictextbox style="width: 150px;" required class="form-control"
                                                 [min]="0" [max]="100" [autoCorrect]="true" [format]="'n0'"
-                                                formControlName="percent" (valueChange)="computeAmount(i)"
-                                                (blur)="onBlurPercent(i)" [spinners]="true">
+                                                formControlName="percent" (blur)="onBlurPercent(i)" [spinners]="true">
                                             </kendo-numerictextbox>
                                         </ng-container>
                                         <ng-template #elseTemplate>
                                             <kendo-numerictextbox style="width: 150px;" required class="form-control"
                                                 [min]="0" [max]="line.value.saleOrderLine.priceTotal"
-                                                formControlName="fixedAmount" (valueChange)="computeAmount(i)"
-                                                (blur)="onBlurfixed(i)" [format]="'n0'" [spinners]="true">
+                                                formControlName="fixedAmount" (blur)="onBlurfixed(i)" [format]="'n0'"
+                                                [spinners]="true">
                                             </kendo-numerictextbox>
                                         </ng-template>
                                         <div class="mt-1 ml-2 d-flex">
@@ -123,11 +122,10 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="text-right align-middle"> {{( line.value.saleOrderLine.amountPaid || 0) |
-                                        number }}
+                                    <td class="text-right align-middle"> {{ (getAmountPaid(line.value, i) || 0) | number}}
                                     </td>
                                     <td class="text-right align-middle">
-                                        {{ (line.value.saleOrderLine.amountResidual || 0) | number }} </td>
+                                        {{ (getAmountResidual(line.value, i) || 0) | number }} </td>
                                 </tr>
                             </ng-container>
                         </tbody>
