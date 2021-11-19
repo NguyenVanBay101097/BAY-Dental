@@ -2,380 +2,444 @@
 <Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Record>
     <Id>sample.appointment_1</Id>
-    <Name>AP00010</Name>
     <PartnerId>sample.partner_customer_1</PartnerId>
     <DateRound>7</DateRound>
+    <TimeHour>9</TimeHour>
+    <TimeMinute>58</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>done</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_2</Id>
-    <Name>AP00011</Name>
     <PartnerId>sample.partner_customer_6</PartnerId>
     <DateRound>7</DateRound>
+    <TimeHour>9</TimeHour>
+    <TimeMinute>58</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>done</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_3</Id>
-    <Name>AP00012</Name>
     <PartnerId>sample.partner_customer_5</PartnerId>
     <DateRound>7</DateRound>
+    <TimeHour>9</TimeHour>
+    <TimeMinute>58</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>done</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_4</Id>
-    <Name>AP00013</Name>
     <PartnerId>sample.partner_customer_10</PartnerId>
     <DateRound>7</DateRound>
+    <TimeHour>9</TimeHour>
+    <TimeMinute>58</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>done</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_5</Id>
-    <Name>AP00014</Name>
     <PartnerId>sample.partner_customer_11</PartnerId>
     <DateRound>7</DateRound>
+    <TimeHour>9</TimeHour>
+    <TimeMinute>58</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>done</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_6</Id>
-    <Name>AP00015</Name>
     <PartnerId>sample.partner_customer_7</PartnerId>
     <DateRound>7</DateRound>
+    <TimeHour>9</TimeHour>
+    <TimeMinute>59</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>done</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_7</Id>
-    <Name>AP00016</Name>
     <PartnerId>sample.partner_customer_8</PartnerId>
     <DateRound>6</DateRound>
+    <TimeHour>9</TimeHour>
+    <TimeMinute>59</TimeMinute>
     <Reason>Khách có việc bận, lịch hẹn khách sẽ thông báo lại sau</Reason>
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>cancel</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_8</Id>
-    <Name>AP00017</Name>
     <PartnerId>sample.partner_customer_12</PartnerId>
     <DateRound>6</DateRound>
+    <TimeHour>9</TimeHour>
+    <TimeMinute>59</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>done</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_9</Id>
-    <Name>AP00018</Name>
     <PartnerId>sample.partner_customer_13</PartnerId>
     <DateRound>6</DateRound>
+    <TimeHour>9</TimeHour>
+    <TimeMinute>59</TimeMinute>
     <Reason>Về nhà đón cháu</Reason>
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>cancel</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_10</Id>
-    <Name>AP00019</Name>
     <PartnerId>sample.partner_customer_14</PartnerId>
     <DateRound>6</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>0</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>done</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_11</Id>
-    <Name>AP00020</Name>
     <PartnerId>sample.partner_customer_19</PartnerId>
     <DateRound>6</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>0</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>done</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_12</Id>
-    <Name>AP00021</Name>
     <PartnerId>sample.partner_customer_39</PartnerId>
     <DateRound>6</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>0</TimeMinute>
     <Reason>Khách có việc đột xuất</Reason>
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>cancel</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_13</Id>
-    <Name>AP00022</Name>
     <PartnerId>sample.partner_customer_30</PartnerId>
     <DateRound>5</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>1</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>done</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_14</Id>
-    <Name>AP00023</Name>
     <PartnerId>sample.partner_customer_16</PartnerId>
     <DateRound>5</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>1</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>done</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_15</Id>
-    <Name>AP00024</Name>
     <PartnerId>sample.partner_customer_41</PartnerId>
     <DateRound>5</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>1</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>done</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_16</Id>
-    <Name>AP00025</Name>
     <PartnerId>sample.partner_customer_42</PartnerId>
     <DateRound>5</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>1</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>done</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_17</Id>
-    <Name>AP00026</Name>
     <PartnerId>sample.partner_customer_33</PartnerId>
     <DateRound>5</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>2</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>done</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_18</Id>
-    <Name>AP00027</Name>
     <PartnerId>sample.partner_customer_34</PartnerId>
     <DateRound>5</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>2</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>done</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_19</Id>
-    <Name>AP00028</Name>
     <PartnerId>sample.partner_customer_24</PartnerId>
     <DateRound>4</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>2</TimeMinute>
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>done</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_20</Id>
-    <Name>AP00029</Name>
     <PartnerId>sample.partner_customer_32</PartnerId>
     <DateRound>4</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>3</TimeMinute>
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId>sample.employee_2</DoctorId>
     <SaleOrderId />
+    <State>done</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_21</Id>
-    <Name>AP00030</Name>
     <PartnerId>sample.partner_customer_22</PartnerId>
     <DateRound>4</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>4</TimeMinute>
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>done</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_22</Id>
-    <Name>AP00031</Name>
     <PartnerId>sample.partner_customer_17</PartnerId>
     <DateRound>4</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>4</TimeMinute>
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>done</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_23</Id>
-    <Name>AP00032</Name>
     <PartnerId>sample.partner_customer_36</PartnerId>
     <DateRound>4</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>4</TimeMinute>
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>confirmed</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_24</Id>
-    <Name>AP00033</Name>
     <PartnerId>sample.partner_customer_38</PartnerId>
     <DateRound>4</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>4</TimeMinute>
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>confirmed</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_25</Id>
-    <Name>AP00034</Name>
     <PartnerId>sample.partner_customer_15</PartnerId>
     <DateRound>3</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>5</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>done</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_26</Id>
-    <Name>AP00035</Name>
     <PartnerId>sample.partner_customer_21</PartnerId>
     <DateRound>3</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>5</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>done</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_27</Id>
-    <Name>AP00036</Name>
     <PartnerId>sample.partner_customer_18</PartnerId>
     <DateRound>3</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>7</TimeMinute>
     <Reason>Khách có việc đột xuất</Reason>
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>cancel</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_28</Id>
-    <Name>AP00037</Name>
     <PartnerId>sample.partner_customer_31</PartnerId>
     <DateRound>3</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>7</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>done</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_29</Id>
-    <Name>AP00038</Name>
     <PartnerId>sample.partner_customer_11</PartnerId>
     <DateRound>3</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>7</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>done</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_30</Id>
-    <Name>AP00039</Name>
     <PartnerId>sample.partner_customer_29</PartnerId>
     <DateRound>3</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>8</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>done</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_31</Id>
-    <Name>AP00042</Name>
     <PartnerId>sample.partner_customer_4</PartnerId>
     <DateRound>0</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>11</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>true</IsRepeatCustomer>
     <DoctorId>sample.employee_2</DoctorId>
     <SaleOrderId />
+    <State>confirmed</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_32</Id>
-    <Name>AP00044</Name>
     <PartnerId>sample.partner_customer_37</PartnerId>
     <DateRound>1</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>30</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId>sample.employee_3</DoctorId>
     <SaleOrderId />
+    <State>done</State>
     <AppointmentServices>
       <Record>
         <ProductId>sample.product_service_29</ProductId>
@@ -384,14 +448,16 @@
   </Record>
   <Record>
     <Id>sample.appointment_33</Id>
-    <Name>AP00046</Name>
     <PartnerId>sample.partner_customer_1</PartnerId>
     <DateRound>1</DateRound>
+    <TimeHour>16</TimeHour>
+    <TimeMinute>51</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId>sample.employee_2</DoctorId>
     <SaleOrderId />
+    <State>done</State>
     <AppointmentServices>
       <Record>
         <ProductId>sample.product_service_10</ProductId>
@@ -400,14 +466,16 @@
   </Record>
   <Record>
     <Id>sample.appointment_34</Id>
-    <Name>AP00047</Name>
     <PartnerId>sample.partner_customer_2</PartnerId>
     <DateRound>1</DateRound>
+    <TimeHour>17</TimeHour>
+    <TimeMinute>30</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId>sample.employee_2</DoctorId>
     <SaleOrderId />
+    <State>done</State>
     <AppointmentServices>
       <Record>
         <ProductId>sample.product_service_40</ProductId>
@@ -416,14 +484,16 @@
   </Record>
   <Record>
     <Id>sample.appointment_35</Id>
-    <Name>AP00048</Name>
     <PartnerId>sample.partner_customer_43</PartnerId>
     <DateRound>1</DateRound>
+    <TimeHour>17</TimeHour>
+    <TimeMinute>59</TimeMinute>
     <Reason>Nhà có việc</Reason>
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>true</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>cancel</State>
     <AppointmentServices>
       <Record>
         <ProductId>sample.product_service_29</ProductId>
@@ -432,13 +502,15 @@
   </Record>
   <Record>
     <Id>sample.appointment_36</Id>
-    <Name>AP00049</Name>
     <PartnerId>sample.partner_customer_8</PartnerId>
     <DateRound>1</DateRound>
+    <TimeHour>17</TimeHour>
+    <TimeMinute>59</TimeMinute>
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>true</IsRepeatCustomer>
     <DoctorId>sample.employee_2</DoctorId>
     <SaleOrderId />
+    <State>done</State>
     <AppointmentServices>
       <Record>
         <ProductId>sample.product_service_10</ProductId>
@@ -447,13 +519,15 @@
   </Record>
   <Record>
     <Id>sample.appointment_37</Id>
-    <Name>AP00051</Name>
     <PartnerId>sample.partner_customer_43</PartnerId>
     <DateRound>0</DateRound>
+    <TimeHour>9</TimeHour>
+    <TimeMinute>3</TimeMinute>
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId>sample.employee_3</DoctorId>
     <SaleOrderId />
+    <State>confirmed</State>
     <AppointmentServices>
       <Record>
         <ProductId>sample.product_service_10</ProductId>
@@ -462,14 +536,16 @@
   </Record>
   <Record>
     <Id>sample.appointment_38</Id>
-    <Name>AP00053</Name>
     <PartnerId>sample.partner_customer_13</PartnerId>
     <DateRound>0</DateRound>
+    <TimeHour>11</TimeHour>
+    <TimeMinute>30</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId>sample.employee_3</DoctorId>
     <SaleOrderId />
+    <State>confirmed</State>
     <AppointmentServices>
       <Record>
         <ProductId>sample.product_service_29</ProductId>
@@ -478,14 +554,16 @@
   </Record>
   <Record>
     <Id>sample.appointment_39</Id>
-    <Name>AP00054</Name>
     <PartnerId>sample.partner_customer_18</PartnerId>
     <DateRound>0</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>39</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId>sample.employee_2</DoctorId>
     <SaleOrderId />
+    <State>confirmed</State>
     <AppointmentServices>
       <Record>
         <ProductId>sample.product_service_28</ProductId>
@@ -494,13 +572,15 @@
   </Record>
   <Record>
     <Id>sample.appointment_40</Id>
-    <Name>AP00056</Name>
     <PartnerId>sample.partner_customer_27</PartnerId>
     <DateRound>0</DateRound>
+    <TimeHour>13</TimeHour>
+    <TimeMinute>28</TimeMinute>
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId>sample.employee_2</DoctorId>
     <SaleOrderId />
+    <State>confirmed</State>
     <AppointmentServices>
       <Record>
         <ProductId>sample.product_service_41</ProductId>
@@ -509,14 +589,16 @@
   </Record>
   <Record>
     <Id>sample.appointment_41</Id>
-    <Name>AP00057</Name>
     <PartnerId>sample.partner_customer_35</PartnerId>
     <DateRound>0</DateRound>
+    <TimeHour>14</TimeHour>
+    <TimeMinute>0</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId>sample.employee_2</DoctorId>
     <SaleOrderId />
+    <State>confirmed</State>
     <AppointmentServices>
       <Record>
         <ProductId>sample.product_service_13</ProductId>
@@ -525,36 +607,42 @@
   </Record>
   <Record>
     <Id>sample.appointment_42</Id>
-    <Name>AP00058</Name>
     <PartnerId>sample.partner_customer_5</PartnerId>
     <DateRound>0</DateRound>
+    <TimeHour>16</TimeHour>
+    <TimeMinute>8</TimeMinute>
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId>sample.employee_2</DoctorId>
     <SaleOrderId />
+    <State>confirmed</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_43</Id>
-    <Name>AP00059</Name>
     <PartnerId>sample.partner_customer_6</PartnerId>
     <DateRound>0</DateRound>
+    <TimeHour>16</TimeHour>
+    <TimeMinute>11</TimeMinute>
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId>sample.employee_2</DoctorId>
     <SaleOrderId />
+    <State>confirmed</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_44</Id>
-    <Name>AP00061</Name>
     <PartnerId>sample.partner_customer_9</PartnerId>
     <DateRound>0</DateRound>
+    <TimeHour>16</TimeHour>
+    <TimeMinute>30</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId>sample.employee_2</DoctorId>
     <SaleOrderId />
+    <State>confirmed</State>
     <AppointmentServices>
       <Record>
         <ProductId>sample.product_service_28</ProductId>
@@ -563,14 +651,16 @@
   </Record>
   <Record>
     <Id>sample.appointment_45</Id>
-    <Name>AP00063</Name>
     <PartnerId>sample.partner_customer_10</PartnerId>
     <DateRound>0</DateRound>
+    <TimeHour>10</TimeHour>
+    <TimeMinute>0</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId>sample.employee_2</DoctorId>
     <SaleOrderId />
+    <State>confirmed</State>
     <AppointmentServices>
       <Record>
         <ProductId>sample.product_service_10</ProductId>
@@ -579,37 +669,43 @@
   </Record>
   <Record>
     <Id>sample.appointment_46</Id>
-    <Name>AP00064</Name>
     <PartnerId>sample.partner_customer_12</PartnerId>
     <DateRound>0</DateRound>
+    <TimeHour>14</TimeHour>
+    <TimeMinute>30</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>false</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>confirmed</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_47</Id>
-    <Name>AP00065</Name>
     <PartnerId>sample.partner_customer_11</PartnerId>
     <DateRound>0</DateRound>
+    <TimeHour>14</TimeHour>
+    <TimeMinute>31</TimeMinute>
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>true</IsRepeatCustomer>
     <DoctorId />
     <SaleOrderId />
+    <State>confirmed</State>
     <AppointmentServices />
   </Record>
   <Record>
     <Id>sample.appointment_48</Id>
-    <Name>AP00066</Name>
     <PartnerId>sample.partner_customer_13</PartnerId>
     <DateRound>0</DateRound>
+    <TimeHour>16</TimeHour>
+    <TimeMinute>22</TimeMinute>
     <Reason />
     <TimeExpected>30</TimeExpected>
     <IsRepeatCustomer>true</IsRepeatCustomer>
     <DoctorId>sample.employee_2</DoctorId>
     <SaleOrderId />
+    <State>confirmed</State>
     <AppointmentServices />
   </Record>
 </Data>

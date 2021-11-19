@@ -26,5 +26,7 @@ namespace Infrastructure.Services
 
         Task<PagedResult2<AgentInfo>> GetAgentPagedResult(AgentPaged val);
 
+        Task<PhieuThuChiDisplay> GetCommissionPaymentByAgentId(GetCommissionPaymentByAgentIdReq val);
+
     }
 }

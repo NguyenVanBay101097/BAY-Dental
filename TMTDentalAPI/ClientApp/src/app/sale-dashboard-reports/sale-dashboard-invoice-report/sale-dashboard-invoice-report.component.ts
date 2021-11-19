@@ -9,11 +9,11 @@ import { vi } from 'date-fns/locale';
   styleUrls: ['./sale-dashboard-invoice-report.component.css']
 })
 export class SaleDashboardInvoiceReportComponent implements OnInit, OnChanges {
-  @Input() revenues: any[];
+  @Input() revenues: any[] = [];
   @Input() timeUnit: any;
-  @Input() cashBooks: any;
+  @Input() cashBooks: any[] = [];
   @Input() revenueActualReportData: any;
-  barChartLabels: string[] = [];
+  barChartLabels: any[] = [];
 
   public barChartOptions: ChartOptions = {
     responsive: true,

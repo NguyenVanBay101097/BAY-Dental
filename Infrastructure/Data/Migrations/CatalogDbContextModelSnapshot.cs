@@ -2002,6 +2002,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid?>("CommissionId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
 
@@ -2046,6 +2049,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("AgentId");
 
                     b.HasIndex("CommissionId");
+
+                    b.HasIndex("CompanyId");
 
                     b.HasIndex("CreatedById");
 
@@ -13059,6 +13064,10 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("CommissionId");
 
+                    b.HasOne("ApplicationCore.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
@@ -16152,7 +16161,7 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("CreatedById");
 
                     b.HasOne("ApplicationCore.Entities.Partner", "Partner")
-                        .WithMany()
+                        .WithMany("ServiceCardCards")
                         .HasForeignKey("PartnerId");
 
                     b.HasOne("ApplicationCore.Entities.ServiceCardOrderLine", "SaleLine")

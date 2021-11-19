@@ -120,5 +120,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? CardTypeId { get; set; }
 
+        public Guid? CompanyId { get; set; }
     }
 }

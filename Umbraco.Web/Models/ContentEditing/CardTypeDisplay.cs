@@ -34,7 +34,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
         public decimal? BasicPoint { get; set; }
 
-        public IEnumerable<ProductPricelistItemCreate> ProductPricelistItems { get; set; } = new List<ProductPricelistItemCreate>();
+        //public IEnumerable<ProductPricelistItemCreate> ProductPricelistItems { get; set; } = new List<ProductPricelistItemCreate>();
         public decimal Discount { get; set; }
 
         //Cấu hình thời hạn hết hạn

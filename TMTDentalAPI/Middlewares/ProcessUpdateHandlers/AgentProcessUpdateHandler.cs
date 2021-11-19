@@ -30,10 +30,10 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                 var tenant = scope.ServiceProvider.GetService<AppTenant>();
                 if (tenant != null)
                 {
-                    Version version1 = new Version(_version);
-                    Version version2 = new Version(tenant.Version);
-                    if (version2.CompareTo(version1) >= 0)
-                        return Task.CompletedTask;
+                    //Version version1 = new Version(_version);
+                    //Version version2 = new Version(tenant.Version);
+                    //if (version2.CompareTo(version1) >= 0)
+                    //    return Task.CompletedTask;
                 }
 
                 var scopedServices = scope.ServiceProvider;
@@ -50,13 +50,29 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                         context.SaveChanges();
                     }
 
-                    context.IRRules.Add(new IRRule
+                    var rule = new IRRule
                     {
                         Code = "base.agent_comp_rule",
                         Name = "Agent multi-company",
                         ModelId = model.Id
-                    });
+                    };
+
+                    context.IRRules.Add(rule);
                     context.SaveChanges();
+
+                    var modelData = new IRModelData { Name = "agent_comp_rule", Module = "base", ResId = rule.Id.ToString(), Model = "ir.rule" };
+                    context.IRModelDatas.Add(modelData);
+                    context.SaveChanges();
+                }
+                else
+                {
+                    var modelData = context.IRModelDatas.Where(x => x.Name == "agent_comp_rule" && x.Module == "base").FirstOrDefault();
+                    if (modelData == null)
+                    {
+                        modelData = new IRModelData { Name = "agent_comp_rule", Module = "base", ResId = agentRule.Id.ToString(), Model = "ir.rule" };
+                        context.IRModelDatas.Add(modelData);
+                        context.SaveChanges();
+                    }    
                 }
 
                 var companies = context.Companies.ToList();

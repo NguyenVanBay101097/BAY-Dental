@@ -108,6 +108,8 @@ import { LaboWarrantyDetailListComponent } from './labo-warranty-detail-list/lab
 import { MonthRangeFilterDropdownComponent } from './month-range-filter-dropdown/month-range-filter-dropdown.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BankCuDialogComponent } from './bank-cu-dialog/bank-cu-dialog.component';
+import { ProductCategoriesSearchDropdownComponent } from './product-categories-search-dropdown/product-categories-search-dropdown.component';
+import { ComputePriceInputPopoverComponent } from './compute-price-input-popover/compute-price-input-popover.component';
 
 
 const config: LocaleConfig = {};
@@ -210,7 +212,9 @@ const config: LocaleConfig = {};
         WarrantyCuDidalogComponent,
         LaboWarrantyDetailListComponent,
         MonthRangeFilterDropdownComponent,
-        BankCuDialogComponent
+        BankCuDialogComponent,
+        ProductCategoriesSearchDropdownComponent,
+        ComputePriceInputPopoverComponent
     ],
     exports: [
         ConfirmDialogComponent,
@@ -293,6 +297,8 @@ const config: LocaleConfig = {};
         TeethChartComponent,
         ToothSelectionDialogComponent,
         SaleOrderLineSwitchStatePopoverComponent,
+        ProductCategoriesSearchDropdownComponent,
+        ComputePriceInputPopoverComponent,
         
         CustomerReceipCreateUpdateComponent,
         CustomerReceiptStatePopoverComponent,

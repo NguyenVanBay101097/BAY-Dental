@@ -32,7 +32,7 @@
     (pageChange)="pageChange($event)">
         <kendo-grid-column field="name" title="Người giới thiệu" width="150">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.name}}
+                <a class="text-primary" routerLink="/commission-settlements/agent/{{dataItem.id}}">{{dataItem.name}}</a>
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="phone" title="Số điện thoại" width="120">

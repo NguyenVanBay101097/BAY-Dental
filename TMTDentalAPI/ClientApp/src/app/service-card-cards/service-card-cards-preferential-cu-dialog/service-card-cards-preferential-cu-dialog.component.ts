@@ -223,7 +223,7 @@ export function createLengthValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const valueLength = control.value.toString().length;
     var lengthValid = true;
-    if (valueLength < 10 || valueLength > 15)
+    if (valueLength < 5 || valueLength > 15)
       lengthValid = false;
     return !lengthValid ? { lengthError: true } : null;
   }

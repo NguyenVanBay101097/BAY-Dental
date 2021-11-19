@@ -250,7 +250,7 @@ namespace TMTDentalAPI.Controllers
                 var item = _mapper.Map<PurchaseOrderXmlSampleDataRecord>(entity);
 
                 item.Id = $@"sample.purchase_order_order_{entities.IndexOf(entity) + 1}";
-                item.DateRound = (int)(dateToData - entity.DateOrder).TotalDays;
+                item.DateRound = (int)(dateToData.Date - entity.DateOrder.Date).TotalDays;
                 var irmodelDataPartner = listIrModelData.FirstOrDefault(x => x.ResId == entity.PartnerId.ToString());
                 item.PartnerId = irmodelDataPartner == null ? "" : irmodelDataPartner?.Module + "." + irmodelDataPartner?.Name;
                 var irmodelDataPickingType = listIrModelData.FirstOrDefault(x => x.ResId == entity.PickingTypeId.ToString());
@@ -266,7 +266,6 @@ namespace TMTDentalAPI.Controllers
                     var irmodelDataProduct = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.ProductId.ToString());
                     itemLine.ProductId = irmodelDataProduct?.Module + "." + irmodelDataProduct?.Name;
                     var irmodelDataPartnerLine = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.PartnerId.ToString());
-                    itemLine.PartnerId = irmodelDataPartnerLine?.Module + "." + irmodelDataPartnerLine?.Name;
                     item.OrderLines.Add(itemLine);
                 }
                 data.Add(item);
@@ -303,7 +302,7 @@ namespace TMTDentalAPI.Controllers
                 var item = _mapper.Map<PurchaseOrderXmlSampleDataRecord>(entity);
 
                 item.Id = $@"sample.purchase_order_refund_{entities.IndexOf(entity) + 1}";
-                item.DateRound = (int)(dateToData - entity.DateOrder).TotalDays;
+                item.DateRound = (int)(dateToData.Date - entity.DateOrder.Date).TotalDays;
                 var irmodelDataPartner = listIrModelData.FirstOrDefault(x => x.ResId == entity.PartnerId.ToString());
                 item.PartnerId = irmodelDataPartner == null ? "" : irmodelDataPartner?.Module + "." + irmodelDataPartner?.Name;
                 var irmodelDataPickingType = listIrModelData.FirstOrDefault(x => x.ResId == entity.PickingTypeId.ToString());
@@ -319,7 +318,6 @@ namespace TMTDentalAPI.Controllers
                     var irmodelDataProduct = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.ProductId.ToString());
                     itemLine.ProductId = irmodelDataProduct?.Module + "." + irmodelDataProduct?.Name;
                     var irmodelDataPartnerLine = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.PartnerId.ToString());
-                    itemLine.PartnerId = irmodelDataPartnerLine?.Module + "." + irmodelDataPartnerLine?.Name;
                     item.OrderLines.Add(itemLine);
                 }
                 data.Add(item);

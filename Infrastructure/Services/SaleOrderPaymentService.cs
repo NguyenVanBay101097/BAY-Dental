@@ -260,7 +260,8 @@ namespace Infrastructure.Services
                             BaseAmount = baseAmountCurrent,
                             Amount = baseAmountCurrent * commPercent / 100,
                             Percentage = commPercent,
-                            TotalAmount = line.Amount
+                            TotalAmount = line.Amount,
+                            CompanyId = saleOrderPayment.CompanyId
                         });
                     }
 
@@ -279,7 +280,8 @@ namespace Infrastructure.Services
                             BaseAmount = baseAmountCurrent,
                             Amount = baseAmountCurrent * commPercent / 100,
                             Percentage = commPercent,
-                            TotalAmount = line.Amount
+                            TotalAmount = line.Amount,
+                            CompanyId = saleOrderPayment.CompanyId
                         });
                     }
 
@@ -298,7 +300,8 @@ namespace Infrastructure.Services
                             BaseAmount = baseAmountCurrent,
                             Amount = baseAmountCurrent * commPercent / 100,
                             Percentage = commPercent,
-                            TotalAmount = line.Amount
+                            TotalAmount = line.Amount,
+                            CompanyId = saleOrderPayment.CompanyId
                         });
                     }
 
@@ -316,7 +319,8 @@ namespace Infrastructure.Services
                             BaseAmount = baseAmountCurrent,
                             Amount = baseAmountCurrent * commPercent / 100,
                             Percentage = commPercent,
-                            TotalAmount = line.Amount
+                            TotalAmount = line.Amount,
+                            CompanyId = saleOrderPayment.CompanyId
                         });
                     }
                 }

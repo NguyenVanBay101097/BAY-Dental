@@ -140,12 +140,12 @@ namespace Infrastructure.Services
 
         public override ISpecification<CommissionSettlement> RuleDomainGet(IRRule rule)
         {
-            var userObj = GetService<IUserService>();
-            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            //var userObj = GetService<IUserService>();
+            //var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
             switch (rule.Code)
             {
                 case "sale.commission_settlement_comp_rule":
-                    return new InitialSpecification<CommissionSettlement>(x => !x.Employee.CompanyId.HasValue || companyIds.Contains(x.Employee.CompanyId.Value));
+                    return new InitialSpecification<CommissionSettlement>(x => !x.CompanyId.HasValue || x.CompanyId == CompanyId);
                 default:
                     return null;
             }
@@ -271,7 +271,7 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.AgentId == val.AgentId);
 
             if (val.CompanyId.HasValue)
-                query = query.Where(x => x.Employee.CompanyId == val.CompanyId);
+                query = query.Where(x => x.CompanyId == val.CompanyId);
 
             if (!string.IsNullOrEmpty(val.CommissionType))
                 query = query.Where(x => x.Commission.Type == val.CommissionType);
@@ -373,7 +373,6 @@ namespace Infrastructure.Services
 
             if (dateTo.HasValue)
                 query = query.Where(x => x.Date <= dateTo.Value.AbsoluteEndOfDate());
-
 
             var res = new List<CommissionSettlementOverview>();
 

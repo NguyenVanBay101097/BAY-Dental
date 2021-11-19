@@ -58,7 +58,7 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Catalog.Agent.Read")]
         public async Task<IActionResult> GetAmountDebitTotalAgent([FromQuery] TotalAmountAgentFilter val)
         {
-            var result = await _agentService.GetAmountDebitTotalAgent(id: val.AgentId.Value , companyId : val.CompanyId , dateFrom: val.DateFrom , dateTo: val.DateTo);
+            var result = await _agentService.GetAmountDebitTotalAgent(id: val.AgentId.Value, companyId: val.CompanyId, dateFrom: val.DateFrom, dateTo: val.DateTo);
             return Ok(result);
         }
 
@@ -86,6 +86,13 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork.Commit();
 
             return Ok(amountCommissionTotal);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetCommissionPaymentByAgentId(GetCommissionPaymentByAgentIdReq val)
+        {
+            var res = await _agentService.GetCommissionPaymentByAgentId(val);
+            return Ok(res);
         }
 
         [HttpPost]

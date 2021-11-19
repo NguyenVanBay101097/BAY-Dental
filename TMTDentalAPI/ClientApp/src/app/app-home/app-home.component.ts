@@ -133,16 +133,16 @@ export class AppHomeComponent implements OnInit {
       icon: 'fas fa-poll',
       children: [
         { name: 'Người giới thiệu', url: '/commission-settlements/agent' },
-        { name: 'Nhân viên', url: '/commission-settlements/employee', permissions: ['Report.Commission'] },
+        { name: 'Nhân viên', url: '/commission-settlements/employee'},
       ],
-      permissions: ['Report.Commission']
+      
     },
     {
       name: 'Danh mục',
       icon: 'fas fa-list',
       children: [
         { name: 'Thông tin khách hàng', url: '/customer-management' },
-        { name: 'Hạng thành viên', url: '/member-level/management' },
+        // { name: 'Hạng thành viên', url: '/member-level/management' },
         { name: 'Nhà cung cấp', url: '/partners/suppliers', permissions: ['Basic.Partner.Read'] },
         { name: 'Dịch vụ - Vật tư - Thuốc', url: '/products', permissions: ['Catalog.Products.Read'] },
         { name: 'Đơn thuốc mẫu', url: '/sample-prescriptions', permissions: ['Catalog.SamplePrescription.Read'] },

@@ -133,6 +133,21 @@ namespace Umbraco.Web.Models.ContentEditing
             set { }
         }
 
+        public string CheckAddress
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(WardName) || string.IsNullOrWhiteSpace(DistrictName) || string.IsNullOrWhiteSpace(CityName))
+                    return string.Empty;
+                var list = new List<string>();
+                list.Add(WardName);
+                list.Add(DistrictName);
+                list.Add(CityName);
+                return string.Join(", ", list);
+            }
+            set { }
+        }
+
         public DateTime? Date { get; set; }
         public string TitleName { get; set; }
         public string SourceName { get; set; }
@@ -151,6 +166,10 @@ namespace Umbraco.Web.Models.ContentEditing
             }
             set { }
         }
+
+        public string MedicalHistory { get; set; }
+
+        public string PartnerCategories { get; set; }
     }
 
     public class WardVm

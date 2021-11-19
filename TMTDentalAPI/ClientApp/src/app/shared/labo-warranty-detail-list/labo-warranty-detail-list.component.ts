@@ -67,7 +67,7 @@ export class LaboWarrantyDetailListComponent implements OnInit {
 
   createNewWarranty() {
     const date = new Date(this.item.warrantyPeriod);
-    const today = new Date();
+    const today = new Date(new Date().toDateString());
     if (this.item.warrantyPeriod && date < today) {
         this.notifyService.notify("error", "Labo đã hết hạn bảo hành");
     } else if (!this.item.dateExport) {

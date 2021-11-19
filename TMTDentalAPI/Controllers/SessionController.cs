@@ -25,18 +25,21 @@ namespace TMTDentalAPI.Controllers
         private readonly IMapper _mapper;
         private readonly IApplicationRoleFunctionService _roleFunctionService;
         private readonly IUserService _userService;
+        private readonly IIRModelDataService _modelDataService;
 
         public SessionController(ITenant<AppTenant> tenant,
             UserManager<ApplicationUser> userManager,
             IMapper mapper,
             IApplicationRoleFunctionService roleFunctionService,
-            IUserService userService)
+            IUserService userService,
+            IIRModelDataService modelDataService)
         {
             _tenant = tenant?.Value;
             _userManager = userManager;
             _mapper = mapper;
             _roleFunctionService = roleFunctionService;
             _userService = userService;
+            _modelDataService = modelDataService;
         }
 
         [HttpGet("[action]")]
@@ -49,6 +52,9 @@ namespace TMTDentalAPI.Controllers
 
             var getPermissionResult = await _roleFunctionService.GetPermission(user.Id);
             var groups = await _userService.GetGroups(user.Id);
+
+            var partnerRule = await _modelDataService.GetRef<IRRule>("base.res_partner_rule");
+
             var sessionInfo = new SessionUserInfo
             {
                 Name = User.Identity.Name,
@@ -60,6 +66,10 @@ namespace TMTDentalAPI.Controllers
                 {
                     CurrentCompany = _mapper.Map<CompanySimple>(user.Company),
                     AllowedCompanies = user.ResCompanyUsersRels.Where(x => x.Company.Active).Select(x => _mapper.Map<CompanySimple>(x.Company))
+                },
+                Settings = new SessionTenantSettings
+                {
+                    CompanySharePartner = !partnerRule.Active
                 }
             };
 
