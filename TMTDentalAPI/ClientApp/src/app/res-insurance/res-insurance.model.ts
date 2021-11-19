@@ -30,6 +30,7 @@ export class ResInsuranceBasic {
     id: string;
     name: string;
     phone: string;
+    totalDebt: number;
     isActive: boolean;
 }
 

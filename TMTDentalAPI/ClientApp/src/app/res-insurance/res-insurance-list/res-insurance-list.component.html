@@ -44,7 +44,10 @@
         </kendo-grid-column>
         <kendo-grid-column field="phone" title="Số điện thoại">
         </kendo-grid-column>
-        <kendo-grid-column title="Công nợ chưa thu">
+        <kendo-grid-column title="Công nợ chưa thu" class="text-right">
+            <ng-template kendoGridCellTemplate let-dataItem>
+              {{dataItem.totalDebt || 0 | number}}
+            </ng-template>
         </kendo-grid-column>
         <kendo-grid-column title="Trạng thái">
             <ng-template kendoGridCellTemplate let-dataItem>

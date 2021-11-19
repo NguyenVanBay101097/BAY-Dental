@@ -1636,7 +1636,7 @@ namespace Infrastructure.Services
                 {
                     Id = x.Id,
                     Name = x.Name,
-                    PriceTotal = x.PriceTotal,
+                    PriceTotal = x.AmountToInvoice,
                     AmountPaid = x.AmountPaid,
                     AmountResidual = x.AmountResidual
 

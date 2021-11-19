@@ -37,7 +37,7 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Catalog.Insurance.Read")]
         public async Task<IActionResult> Get([FromQuery] ResInsurancePaged val)
         {
-            var result = await _insuranceService.GetAgentPagedResult(val);
+            var result = await _insuranceService.GetPagedResult(val);
             return Ok(result);
         }
 

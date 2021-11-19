@@ -25,9 +25,9 @@ namespace Infrastructure.Services
         }
 
 
-        public async Task<PagedResult2<ResInsuranceBasic>> GetAgentPagedResult(ResInsurancePaged val)
+        public async Task<PagedResult2<ResInsuranceBasic>> GetPagedResult(ResInsurancePaged val)
         {
-
+            var movelineObj = GetService<IAccountMoveLineService>(); 
             var query = SearchQuery();
 
             if (!string.IsNullOrEmpty(val.Search))
@@ -43,12 +43,25 @@ namespace Infrastructure.Services
 
             query = query.OrderByDescending(x => x.DateCreated);
 
+            var amlQuery = movelineObj._QueryGet(companyId: CompanyId, state: "posted");
 
-            var items = await query.ToListAsync();
+            amlQuery = amlQuery.Where(x => x.Account.Code == "CNBH" && x.PartnerId.HasValue);
+
+            var amls = await amlQuery.ToListAsync();
+
+            var debt_dict = amls.Any() ? amls.GroupBy(x => x.PartnerId.Value).ToDictionary(x => x.Key, x => x.Sum(x => x.Balance)) : null;
+
+            var items = await query.Select(x => new ResInsuranceBasic { 
+                Id = x.Id,
+                Name = x.Name,
+                Phone = x.Phone,
+                TotalDebt = (debt_dict != null && debt_dict.ContainsKey(x.PartnerId.Value)) ? debt_dict[x.PartnerId.Value] : 0,
+                IsActive = x.IsActive              
+            }).ToListAsync();
 
             var paged = new PagedResult2<ResInsuranceBasic>(totalItems, val.Offset, val.Limit)
             {
-                Items = _mapper.Map<IEnumerable<ResInsuranceBasic>>(items)
+                Items = items
             };
 
             return paged;

@@ -29,6 +29,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Phone { get; set; }
 
+        public decimal TotalDebt { get; set; }
+
         public bool IsActive { get; set; }
     }
 

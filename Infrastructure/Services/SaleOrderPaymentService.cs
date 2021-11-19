@@ -596,6 +596,12 @@ namespace Infrastructure.Services
                     await cardObj.UpdateAsync(card);
                 }
 
+                //remove insurance payment if exist
+                var insurancePaymentObj = GetService<IResInsurancePaymentService>();
+                var insurancePaymentIds = await insurancePaymentObj.SearchQuery(x => x.SaleOrderPaymentId == saleOrderPayment.Id).Select(x => x.Id).ToListAsync();
+                if (insurancePaymentIds.Any())
+                    await insurancePaymentObj.Unlink(insurancePaymentIds);
+
                 saleOrderPayment.State = "cancel";
             }
 

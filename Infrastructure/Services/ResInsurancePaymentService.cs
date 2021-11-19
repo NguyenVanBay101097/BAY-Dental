@@ -80,7 +80,7 @@ namespace Infrastructure.Services
 
             foreach (var line in self.Lines)
             {
-                var amount = line.PayType == "percent" ? line.SaleOrderLine.PriceTotal *  ((line.Percent ?? 0) / 100) : (line.FixedAmount ?? 0);
+                var amount = line.PayType == "percent" ? (line.SaleOrderLine.AmountResidual ?? 0) *  ((line.Percent ?? 0) / 100) : (line.FixedAmount ?? 0);
                 totalAmount += amount;
             }
 
@@ -96,7 +96,7 @@ namespace Infrastructure.Services
                 .Include(x => x.Lines).ThenInclude(x => x.SaleOrderLine)
                 .ToListAsync();
 
-            var saleOrderPayments = new List<SaleOrderPayment>();
+            var reference_dict = new Dictionary<Guid, Guid>();
 
             foreach(var insurancePayment in insurancePayments)
             {
@@ -105,11 +105,12 @@ namespace Infrastructure.Services
                 saleOrderPayment.OrderId = insurancePayment.OrderId.Value;
                 saleOrderPayment.Date = insurancePayment.Date;
                 saleOrderPayment.Note = insurancePayment.Note;
+                saleOrderPayment.Amount = insurancePayment.Amount;
 
                 ///add SaleOrderPaymentHistoryLine
                 foreach (var line in insurancePayment.Lines)
                 {
-                    var amount = line.PayType == "percent" ? line.SaleOrderLine.PriceTotal * (1 - (line.Percent ?? 0) / 100) : (line.FixedAmount ?? 0);
+                    var amount = line.PayType == "percent" ? (line.SaleOrderLine.AmountResidual ?? 0) * ((line.Percent ?? 0) / 100) : (line.FixedAmount ?? 0);
                     saleOrderPayment.Lines.Add(new SaleOrderPaymentHistoryLine
                     {
                         SaleOrderLineId = line.SaleOrderLineId,
@@ -130,24 +131,42 @@ namespace Infrastructure.Services
                     PartnerId = insurancePayment.ResInsurance.PartnerId
                 });
 
-                saleOrderPayments.Add(saleOrderPayment);
+                await saleOrderPaymentObj.CreateAsync(saleOrderPayment);
 
-                insurancePayment.SaleOrderPaymentId = saleOrderPayment.Id;
-
-                insurancePayment.State = "posted";
-
-              
+                reference_dict.Add(insurancePayment.Id, saleOrderPayment.Id);           
             }
-
-            await saleOrderPaymentObj.CreateAsync(saleOrderPayments);
 
 
             ///thanh toan
+            var paymentIds = reference_dict.Values.Select(x => x);
+            await saleOrderPaymentObj.ActionPayment(paymentIds);
 
-            await saleOrderPaymentObj.ActionPayment(saleOrderPayments.Select(x => x.Id).ToList());
+            foreach(var item in insurancePayments)
+            {
+                if (!reference_dict.ContainsKey(item.Id))
+                    continue;
+
+                item.SaleOrderPaymentId = reference_dict[item.Id];
+                item.State = "posted";
+            }
 
 
             await UpdateAsync(insurancePayments);
+        }
+
+        public async Task Unlink(IEnumerable<Guid> ids)
+        {
+            var insurancePamentLineObj = GetService<IResInsurancePaymentLineService>();
+            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Lines).ToListAsync();
+            
+            foreach(var item in self)
+            {
+                if (item.Lines.Any())
+                    await insurancePamentLineObj.DeleteAsync(item.Lines);
+
+            }
+
+            await DeleteAsync(self);
         }
 
         public override ISpecification<ResInsurancePayment> RuleDomainGet(IRRule rule)
