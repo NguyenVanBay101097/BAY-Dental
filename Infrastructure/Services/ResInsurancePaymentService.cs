@@ -103,7 +103,6 @@ namespace Infrastructure.Services
                 var saleOrderPayment = new SaleOrderPayment();
                 saleOrderPayment.CompanyId = insurancePayment.CompanyId;
                 saleOrderPayment.OrderId = insurancePayment.OrderId.Value;
-                saleOrderPayment.PartnerId = insurancePayment.SaleOrderPayment.PartnerId;
                 saleOrderPayment.Date = insurancePayment.Date;
                 saleOrderPayment.Note = insurancePayment.Note;
 
@@ -115,6 +114,7 @@ namespace Infrastructure.Services
                     {
                         SaleOrderLineId = line.SaleOrderLineId,
                         Amount = amount,
+                        
                     });
                 }
 
@@ -127,6 +127,7 @@ namespace Infrastructure.Services
                 {
                     JournalId = journal.Id,
                     Amount = saleOrderPayment.Lines.Sum(x => x.Amount),
+                    PartnerId = insurancePayment.ResInsurance.PartnerId
                 });
 
                 saleOrderPayments.Add(saleOrderPayment);
