@@ -85,6 +85,7 @@ namespace Infrastructure.Services
         Task<IEnumerable<ServiceCardCardBasic>> GetListServiceCardCardApplyable(Guid id);
 
         Task<IEnumerable<CardCardBasic>> GetListCardCardApplyable(Guid id);
+        Task DebtPayment(Guid id);
 
     }
 }

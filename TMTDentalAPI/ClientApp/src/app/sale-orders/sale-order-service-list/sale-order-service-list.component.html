@@ -35,7 +35,7 @@
                         [line]="line" (onCancelEvent)="onCancelEditLine($event, i)" (onDeleteEvent)="onDeleteLine(i)"
                         (onEditEvent)="onEditLine($event)" (onUpdateEvent)="updateLineInfo($event, i)"
                         (onActiveEvent)="onActiveLine($event, line)"
-                        (onUpdateStateEvent)="onUpdateStateLine($event, line)" [orderState]="saleOrder?.state">
+                        (onUpdateStateEvent)="onUpdateStateLine(i, $event)" [orderState]="saleOrder?.state">
                     </app-sale-order-line-cu>
                 </ng-container>
             </div>

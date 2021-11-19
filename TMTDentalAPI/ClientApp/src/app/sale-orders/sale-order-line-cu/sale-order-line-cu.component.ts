@@ -64,8 +64,8 @@ export class SaleOrderLineCuComponent implements OnInit {
   lineId: string = '';
   public listState = [
    {text:'Đang điều trị', value:'sale'},
-   {text:'Hoàn thành', value:'done'},
    {text:'Ngừng điều trị', value:'cancel'},
+   {text:'Hoàn thành', value:'done'},
   ];
 
   stateEdit= ['draft', 'sale'];
@@ -472,8 +472,15 @@ export class SaleOrderLineCuComponent implements OnInit {
     return r? r.text : '';
   }
 
-  onSWitchState(line) {
-    if(line.state == this.line.state) return;
-   this.onUpdateStateEvent.next(line.state);
+  onSWitchState(state) {
+    if(state == this.line.state)
+    return;
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = state == 'cancel'? "Ngừng dịch vụ" : "Hoàn thành dịch vụ";
+    modalRef.componentInstance.body =  state == 'cancel'? "Bạn có muốn ngừng dịch vụ không?" : "Bạn có xác nhận hoàn thành dịch vụ không?";
+    modalRef.componentInstance.body2 =  state == 'cancel'? "(Lưu ý: Sau khi ngừng không thể chỉnh sửa dịch vụ)" : "(Lưu ý: Sau khi hoàn thành không thể chỉnh sửa, xóa dịch vụ)";
+    modalRef.result.then(() => {
+     this.onUpdateStateEvent.next(state);
+    }).catch(() => {});
   }
 }

@@ -1,3 +1,4 @@
+import { DecimalPipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges, ViewChildren } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -20,7 +21,8 @@ import { SaleOrderPromotionService } from '../sale-order-promotion.service';
 @Component({
   selector: 'app-sale-order-service-list',
   templateUrl: './sale-order-service-list.component.html',
-  styleUrls: ['./sale-order-service-list.component.css']
+  styleUrls: ['./sale-order-service-list.component.css'],
+  providers: [DecimalPipe]
 })
 export class SaleOrderServiceListComponent implements OnInit, OnChanges {
   @Input() saleOrder: any;
@@ -46,6 +48,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
      private toothCategoryService: ToothCategoryService,
      private employeeService: EmployeeService,
      private toothService: ToothService,
+     private _decimalPipe: DecimalPipe,
      private fb: FormBuilder) { }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -670,21 +673,38 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
     }
   }
 
-  onUpdateStateLine(state, line) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = state == 'done' ? 'Hoàn thành dịch vụ' : (state == 'cancel' ? 'Ngừng dịch vụ' : 'Lưu dịch vụ');
-    modalRef.componentInstance.body = `Bạn có ${state == 'done' ? 'xác nhận hoàn thành' : (state == 'cancel' ? 'muốn ngừng' : 'muốn lưu')} dịch vụ không ?`;
-    modalRef.componentInstance.body2 = state == 'cancel' ? 'Lưu ý: sau khi ngừng không thể chỉnh sửa dịch vụ' : '';
+  onUpdateStateLine(lineIndex, state) {
+    var line = this.orderLines[lineIndex];
+    if (this.lineSelected != null && this.lineSelected != line) {
+      this.notify('error', 'Vui lòng hoàn thành dịch vụ hiện tại');
+      return;
+    }
+    this.saleOrderLineService.updateState(line.id,state).subscribe(()=>{
+      this.notify('success', 'Lưu thành công');
+      line.state = state;
+      if (this.orderLines.every(x => x.state == 'done' || x.state == 'cancel') &&
+        this.orderLines.some(x => x.state == 'done')
+      ) {
+        this.saleOrder.state = 'done';
+      }
+
+      if(state == "done" && line.priceSubTotal - line.amountInvoiced > 0) {
+        let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = `Ghi công nợ số tiền ${this._decimalPipe.transform((line.priceSubTotal - line.amountInvoiced))}đ`;
+    modalRef.componentInstance.body = `Dịch vụ ${line.name} còn ${this._decimalPipe.transform((line.priceSubTotal - line.amountInvoiced))}đ chưa được thanh toán. Bạn có muốn ghi công nợ số tiền này?`;
+    modalRef.componentInstance.confirmText = "Đồng ý";
+    modalRef.componentInstance.closeText = "Không đồng ý";
+    modalRef.componentInstance.closeClass = "btn-danger";
     modalRef.result.then(() => {
-      this.saleOrderLineService.updateState(line.id, state).subscribe(r => {
-        this.notify('success', 'Lưu thành công');
-        line.state = state;
-        if (this.orderLines.every(x => x.state == 'done' || x.state == 'cancel') &&
-          this.orderLines.some(x => x.state == 'done')
-        ) {
-          this.saleOrder.state = 'done';
-        }
+      this.saleOrderLineService.debtPayment(line.id)
+      .subscribe(r => {
+      this.notify('success', 'Ghi nợ thành công');
+      this.saleOrder.totalPaid = this.saleOrder.totalPaid + (line.priceSubTotal - line.amountInvoiced);
+      line.amountInvoiced =  line.priceSubTotal;
       });
+    })
+
+      }
     })
   }
   
