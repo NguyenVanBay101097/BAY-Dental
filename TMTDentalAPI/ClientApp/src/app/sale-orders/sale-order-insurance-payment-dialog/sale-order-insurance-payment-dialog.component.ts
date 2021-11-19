@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
@@ -16,7 +16,7 @@ import { NotifyService } from 'src/app/shared/services/notify.service';
   templateUrl: './sale-order-insurance-payment-dialog.component.html',
   styleUrls: ['./sale-order-insurance-payment-dialog.component.css']
 })
-export class SaleOrderInsurancePaymentDialogComponent implements OnInit, AfterViewInit {
+export class SaleOrderInsurancePaymentDialogComponent implements OnInit, AfterViewInit, AfterViewChecked {
   @Input() title: string;
   @Input() defaultValue: any;
   @Input() saleOrderId: string;
@@ -25,14 +25,15 @@ export class SaleOrderInsurancePaymentDialogComponent implements OnInit, AfterVi
   formGroup: FormGroup;
   insuranceFilter: ResInsuranceSimple[] = [];
   submitted: boolean = false;
-
+  // amountPaid: number = 0;
   constructor(
     private fb: FormBuilder,
     private activeModal: NgbActiveModal,
     private modalService: NgbModal,
     private notifyService: NotifyService,
     private resInsuranceService: ResInsuranceService,
-    private resInsurancePaymentService: ResInsurancePaymentService
+    private resInsurancePaymentService: ResInsurancePaymentService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -61,6 +62,10 @@ export class SaleOrderInsurancePaymentDialogComponent implements OnInit, AfterVi
       this.insuranceCbx.loading = false;
     });
   }
+  
+  ngAfterViewChecked(): void {
+    this.cdr.detectChanges();
+  }
 
   get f() {
     return this.formGroup.controls;
@@ -70,6 +75,10 @@ export class SaleOrderInsurancePaymentDialogComponent implements OnInit, AfterVi
     return this.f.lines as FormArray;
   }
 
+  lineFCAt(index, key) {
+    return this.linesFC.at(index).get(key);
+  }
+
   loadDefaultValue(data: any): void {
     this.formGroup.patchValue(
       { amount: data.amount, note: data.note, dateObj: new Date(data.date) }
@@ -77,6 +86,8 @@ export class SaleOrderInsurancePaymentDialogComponent implements OnInit, AfterVi
 
     this.linesFC.clear();
     data.lines.forEach((line) => {
+      line.saleOrderLine.amountPaid = 0;
+      line.saleOrderLine.amountResidual = 0;
       const g = this.fb.group(line);
       this.linesFC.push(g);
     });
@@ -107,10 +118,10 @@ export class SaleOrderInsurancePaymentDialogComponent implements OnInit, AfterVi
     data.resInsuranceId = data.insurance ? data.insurance.id : '';
     data.companyId = companyId;
     data.orderId = this.saleOrderId || '';
-  
     this.resInsurancePaymentService.create(data).subscribe((res: any) => {
       this.resInsurancePaymentService.actionPayment([res.id]).subscribe(() => {
         this.notifyService.notify("success", "Bảo lãnh thành công");
+        this.activeModal.close(res);
       }, (error) => console.log(error));
     }, (error) => console.log(error));
   }
@@ -127,47 +138,47 @@ export class SaleOrderInsurancePaymentDialogComponent implements OnInit, AfterVi
 
   changePayType(index): void {
     const lineData = this.linesFC.at(index).value;
-    console.log(lineData);
     if (lineData.payType === 'fixed') {
-      this.linesFC.at(index).get('fixedAmount').setValue(0);
+      this.lineFCAt(index, 'fixedAmount').setValue(0);
     } else {
-      this.linesFC.at(index).get('percent').setValue(0);
+      this.lineFCAt(index, 'percent').setValue(0);
     }
   }
 
-  computeAmount(index) {
-    const lineData = this.linesFC.at(index).value;
-    const priceTotal = lineData.saleOrderLine.priceTotal;
-    const fixedAmount = this.linesFC.at(index).get('fixedAmount').value;
-    const percent = this.linesFC.at(index).get('percent').value;
-    if (lineData.payType === 'fixed') {
-      this.linesFC.at(index).get('saleOrderLine').value.amountPaid = fixedAmount
-      const val = priceTotal - fixedAmount;
-      this.linesFC.at(index).get('saleOrderLine').value.amountResidual = val || 0;
-
+  getAmountPaid(lineData, index): number {
+    let amountPaid = 0;
+    if (lineData.payType === 'percent') {
+      amountPaid = (lineData.percent / 100) * lineData.saleOrderLine.priceTotal;
     } else {
-      const val = this.linesFC.at(index).get('saleOrderLine').value.amountPaid = priceTotal * (percent / 100);
-      this.linesFC.at(index).get('saleOrderLine').value.amountResidual = priceTotal - (val || 0);
+      amountPaid = lineData.fixedAmount;
     }
+    this.lineFCAt(index, 'saleOrderLine').value.amountPaid = amountPaid;
+    return amountPaid;
+  }
 
-    const amount = this.linesFC.value.reduce((previousValue, currentValue) => {
-      return previousValue + currentValue.saleOrderLine.amountPaid;
+  getAmountResidual(lineData, index): number {
+    const amountResidual = lineData.saleOrderLine.priceTotal - this.getAmountPaid(lineData, index);
+    this.lineFCAt(index, 'saleOrderLine').value.amountResidual = amountResidual;
+    return amountResidual;
+  }
+
+  getAmountTotal(): number {
+    return this.linesFC.value.reduce((val, curr) => {
+      return val + curr.saleOrderLine.amountPaid;
     }, 0);
-
-    this.f.amount.setValue(amount);
   }
 
   onBlurPercent(index): void {
-    let percent = this.linesFC.at(index).get('percent').value;
+    let percent = this.lineFCAt(index, 'percent').value;
     if (!percent) {
-      this.linesFC.at(index).get('percent').setValue(0);
+      this.lineFCAt(index, 'percent').setValue(0);
     }
   }
 
   onBlurfixed(index): void {
-    let fixedAmount = this.linesFC.at(index).get('fixedAmount').value;
+    let fixedAmount = this.lineFCAt(index, 'fixedAmount').value;
     if (!fixedAmount) {
-      this.linesFC.at(index).get('fixedAmount').setValue(0);
+      this.lineFCAt(index, 'fixedAmount').setValue(0);
     }
   }
 

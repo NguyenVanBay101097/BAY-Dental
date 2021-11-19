@@ -18,6 +18,11 @@ const routes: Routes = [
         canActivate: [AuthGuard]
       },
       {
+        path: 'res-insurance-reports',
+        loadChildren: () => import('./res-insurance-reports/res-insurance-reports.module').then(m => m.ResInsuranceReportsModule),
+        canActivate: [AuthGuard]
+      },
+      {
         path: 'service-card',
         loadChildren: () => import('./service-card-cards/service-card-cards.module').then(m => m.ServiceCardCardsModule),
         canActivate: [AuthGuard]
