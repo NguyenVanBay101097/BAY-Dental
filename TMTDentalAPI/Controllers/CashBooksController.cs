@@ -28,7 +28,7 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Account.Read")]
         public async Task<IActionResult> GetSumary(CashBookSearch val)
         {
-            var res = await _cashBookService.GetSumary(val.DateFrom, val.DateTo, val.CompanyId, val.ResultSelection);
+            var res = await _cashBookService.GetSumary(val.DateFrom, val.DateTo, val.CompanyId, val.ResultSelection,val.JournalId);
             return Ok(res);
         }
 

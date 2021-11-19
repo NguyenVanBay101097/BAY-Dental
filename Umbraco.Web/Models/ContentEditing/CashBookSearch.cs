@@ -24,6 +24,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// cash_bank: tong quy
         /// </summary>
         public string ResultSelection { get; set; }
+
+        public Guid? JournalId { get; set; }
     }
 
     public class CashBookDetailFilter

@@ -363,7 +363,7 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<AccountJournalResBankSimple>> GetJournalResBankAutocomplete(AccountJournalFilter val)
         {
-            ISpecification<AccountJournal> spec = new InitialSpecification<AccountJournal>(x => x.Active);
+            ISpecification<AccountJournal> spec = new InitialSpecification<AccountJournal>(x => true);
 
             if (!string.IsNullOrEmpty(val.Search))
                 spec = spec.And(new InitialSpecification<AccountJournal>(x => x.Name.Contains(val.Search)));
@@ -371,13 +371,16 @@ namespace Infrastructure.Services
             if (val.CompanyId.HasValue)
                 spec = spec.And(new InitialSpecification<AccountJournal>(x => x.CompanyId == val.CompanyId));
 
+            if (val.Active.HasValue)
+                spec = spec.And(new InitialSpecification<AccountJournal>(x => x.Active == val.Active));
+
             if (!string.IsNullOrEmpty(val.Type))
             {
                 var types = val.Type.Split(",");
                 spec = spec.And(new InitialSpecification<AccountJournal>(x => types.Contains(x.Type)));
             }
 
-            var query = SearchQuery(domain: spec.AsExpression(), orderBy: x => x.OrderBy(s => s.Code));
+            var query = SearchQuery(domain: spec.AsExpression(), orderBy: x => x.OrderBy(s => s.Code).ThenByDescending(x=> x.Active));
             var items = await query.Include(x=> x.BankAccount.Bank).Skip(0).Take(20).ToListAsync();
 
             return _mapper.Map<IEnumerable<AccountJournalResBankSimple>>(items);

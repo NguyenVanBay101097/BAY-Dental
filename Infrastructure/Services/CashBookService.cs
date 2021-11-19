@@ -71,7 +71,7 @@ namespace Infrastructure.Services
             return total;
         }
 
-        public async Task<CashBookReport> GetSumary(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string resultSelection)
+        public async Task<CashBookReport> GetSumary(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string resultSelection, Guid? journalId = null)
         {
             var amlObj = GetService<IAccountMoveLineService>();
             var cashBookReport = new CashBookReport();
@@ -98,6 +98,10 @@ namespace Infrastructure.Services
 
             var query = amlObj._QueryGet(dateFrom: dateFrom, dateTo: dateTo, state: "posted", companyId: companyId);
             query = query.Where(x => types.Contains(x.Journal.Type) && x.AccountInternalType != "liquidity");
+            if (journalId.HasValue)
+            {
+                query = query.Where(x=> x.JournalId == journalId.Value);
+            }
             cashBookReport.TotalThu = await query.SumAsync(x => x.Credit);
             cashBookReport.TotalChi = await query.SumAsync(x => x.Debit);
 
