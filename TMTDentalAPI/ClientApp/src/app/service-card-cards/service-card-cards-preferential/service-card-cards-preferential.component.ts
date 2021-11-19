@@ -92,7 +92,6 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
     const modalRef = this.modalService.open(ServiceCardCardsPreferentialCuDialogComponent, { scrollable: true, windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = "Tạo thẻ ưu đãi dịch vụ";
     modalRef.result.then(result => {
-      this.notifyService.notify('success', 'Lưu thành công');
       this.loadDataFromApi();
     }, () => { });
   }
@@ -102,13 +101,6 @@ export class ServiceCardCardsPreferentialComponent implements OnInit {
     modalRef.componentInstance.title = "Chỉnh sửa thẻ " + item.barcode;
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(result => {
-      console.log(result);
-      if (result === 'activate') {
-        this.notifyService.notify('success', 'Kích hoạt thành công');
-      }
-      else {
-        this.notifyService.notify('success', 'Lưu thành công');
-      }
       this.loadDataFromApi();
     }, () => { });
   }

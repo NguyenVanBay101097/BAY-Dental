@@ -36,13 +36,6 @@ export class PartnerCustomerProfileNextAppointmentComponent implements OnInit {
     modalRef.result.then(result => {
       if (result) {
         this.getNextAppointment();
-        this.notificationService.show({
-          content: "Tạo mới lịch hẹn thành công!.",
-          hideAfter: 3000,
-          position: { horizontal: "center", vertical: "top" },
-          animation: { type: "fade", duration: 400 },
-          type: { style: "success", icon: true },
-        });
       }
     }, () => {
     });
@@ -81,13 +74,6 @@ export class PartnerCustomerProfileNextAppointmentComponent implements OnInit {
     modalRef.componentInstance.appointId = this.customerAppointment.id;
     modalRef.result.then(() => {
       this.getNextAppointment();
-        this.notificationService.show({
-          content: "Sửa lịch hẹn thành công!.",
-          hideAfter: 3000,
-          position: { horizontal: "center", vertical: "top" },
-          animation: { type: "fade", duration: 400 },
-          type: { style: "success", icon: true },
-        });
     }, () => {});
   }
 

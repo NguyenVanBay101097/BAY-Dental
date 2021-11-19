@@ -56,7 +56,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
-        [CheckAccess(Actions = "System.ApplicationUser.Read")]
+        //[CheckAccess(Actions = "System.ApplicationUser.Read")]
         public async Task<IActionResult> Get([FromQuery] ApplicationUserPaged val)
         {
             var query = _userManager.Users;
@@ -82,7 +82,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        [CheckAccess(Actions = "System.ApplicationUser.Read")]
+        //[CheckAccess(Actions = "System.ApplicationUser.Read")]
         public async Task<IActionResult> Get(string id)
         {
             var user = await _userManager.Users.Where(x => x.Id == id).Include(x => x.Company).Include(x => x.ResCompanyUsersRels)

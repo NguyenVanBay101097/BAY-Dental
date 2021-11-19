@@ -155,11 +155,12 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit, Af
 
     if (this.id) {
       this.serviceCardsService.update(this.id, val).subscribe((res: any) => {
+        this.notifyService.notify('success', 'Lưu thành công');
         this.activeModal.close(res);
       }, (error) => { console.log(error) });
     } else {
       this.serviceCardsService.create(val).subscribe((res: any) => {
-        console.log(res);
+        this.notifyService.notify('success', 'Lưu thành công');
         this.activeModal.close(res);
       }, (error) => { console.log(error) });
     }
@@ -171,6 +172,12 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit, Af
     if (this.formGroup.invalid) {
       return;
     }
+
+    if (!this.formGroup.get('partner').value) {
+      this.notifyService.notify('error', 'Khách hàng đang trống, cần bổ sung khách hàng');
+      return false;
+    }
+
     let val = this.formGroup.value;
     val.partnerId = this.partnerId ? this.partnerId : (val.partner ? val.partner.id : '');
     val.cardTypeId = val.cardType ? val.cardType.id : '';
