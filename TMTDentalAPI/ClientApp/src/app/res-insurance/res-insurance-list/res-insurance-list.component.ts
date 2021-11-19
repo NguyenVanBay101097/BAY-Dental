@@ -22,6 +22,7 @@ export class ResInsuranceListComponent implements OnInit {
   pagerSettings: any;
   search: string;
   isActive: string;
+  isDebt: string;
   searchUpdate = new Subject<string>();
 
   statesFilter: { text: string, value: string }[] = [
@@ -29,9 +30,9 @@ export class ResInsuranceListComponent implements OnInit {
     { text: 'Ngưng liên kết', value: 'false' }
   ];
 
-  debitsFilter: { text: string, value: number }[] = [
-    { text: 'Có công nợ', value: 1 },
-    { text: 'Không có công nợ', value: 0 }
+  debitsFilter: { text: string, value: string }[] = [
+    { text: 'Có công nợ', value: 'true' },
+    { text: 'Không có công nợ', value: 'false' }
   ];
 
   constructor(
@@ -62,6 +63,7 @@ export class ResInsuranceListComponent implements OnInit {
     val.offset = this.skip;
     val.search = this.search || '';
     val.isActive = this.isActive || '';
+    val.isDebt = this.isDebt || '';
     this.resInsuranceService.getPaged(val).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
@@ -135,6 +137,11 @@ export class ResInsuranceListComponent implements OnInit {
 
   onStateChange(data: any): void {
     this.isActive = data ? data.value : '';
+    this.loadDataFromApi();
+  }
+  
+  onDebtChange(data: any): void {
+    this.isDebt = data ? data.value : '';
     this.loadDataFromApi();
   }
 

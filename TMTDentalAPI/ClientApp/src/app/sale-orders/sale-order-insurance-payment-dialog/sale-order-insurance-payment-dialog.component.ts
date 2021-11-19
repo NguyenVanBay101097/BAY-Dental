@@ -120,7 +120,6 @@ export class SaleOrderInsurancePaymentDialogComponent implements OnInit, AfterVi
     data.orderId = this.saleOrderId || '';
     this.resInsurancePaymentService.create(data).subscribe((res: any) => {
       this.resInsurancePaymentService.actionPayment([res.id]).subscribe(() => {
-        this.notifyService.notify("success", "Bảo lãnh thành công");
         this.activeModal.close(res);
       }, (error) => console.log(error));
     }, (error) => console.log(error));

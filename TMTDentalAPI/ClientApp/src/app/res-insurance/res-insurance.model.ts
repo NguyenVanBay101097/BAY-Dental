@@ -39,6 +39,7 @@ export class ResInsurancePaged {
     offset: number;
     search: string;
     isActive: string;
+    isDebt: string;
 }
 
 export class InsuranceIsActivePatch {

@@ -25,7 +25,7 @@
                     (selectionChange)="onStateChange($event)" [valueField]="'value'" [textField]="'text'">
                 </kendo-combobox>
                 <kendo-combobox [placeholder]="'Tất cả công nợ'" [data]="debitsFilter" [valueField]="'value'"
-                    [textField]="'text'">
+                (selectionChange)="onDebtChange($event)" [textField]="'text'">
                 </kendo-combobox>
             </div>
         </div>
@@ -65,7 +65,7 @@
                     </button>
                 </ng-container>
                 <ng-template #elseTemplate>
-                    <button class="btn btn-primary mr-2" title="Liên kết" (click)="activeInsurance(dataItem)">
+                    <button class="btn btn-info mr-2" title="Liên kết" (click)="activeInsurance(dataItem)">
                         <span class="fas fa-link"></span>
                     </button>
                 </ng-template>
