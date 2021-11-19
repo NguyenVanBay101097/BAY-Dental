@@ -188,10 +188,9 @@
                     <span>Chỉnh sửa</span>
                 </button>
                 <button *ngIf="isEditting" (click)="updateLineInfo(true)" class="btn btn-primary">
-                    <i class="far fa-edit pr-1"></i>
-                    <span>Cập nhật</span>
+                    <span>Lưu</span>
                 </button>
-                <button (click)="deleteLine()" class="btn btn-danger ml-2" title="Xóa dịch vụ">
+                <button *ngIf="!isEditting" (click)="deleteLine()" class="btn btn-danger ml-2" title="Xóa dịch vụ">
                     <i class="fas fa-trash pr-1"></i>
                     <span>Xóa</span>
                 </button>

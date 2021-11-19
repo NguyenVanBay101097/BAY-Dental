@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { NotificationService } from '@progress/kendo-angular-notification';
 import { PartnerSupplierCuDialogComponent } from 'src/app/shared/partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
 import { PartnerDisplay } from '../partner-simple';
 import { PartnerService } from '../partner.service';
@@ -17,7 +16,6 @@ export class PartnerSupplierFormInforComponent implements OnInit {
   constructor(
     private activeRoute: ActivatedRoute,
     private modalService: NgbModal,
-    private notificationService: NotificationService,
     private partnerService: PartnerService
   ) { }
 

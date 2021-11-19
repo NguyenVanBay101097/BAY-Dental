@@ -1,24 +1,21 @@
 import { Injectable } from "@angular/core";
+import { SessionInfoStorageService } from "../core/services/session-info-storage.service";
 
 @Injectable({
     providedIn: "root",
 })
 export class CheckPermissionService {
-    constructor() {}
+    constructor(private sessionInfoStorageService: SessionInfoStorageService) {}
 
-    check(permission) {
-        const pm = localStorage.getItem("user_permission");
-        const user_permission = JSON.parse(pm);
-        if (user_permission) {
-            if (user_permission.isUserRoot) {
-                return true;
-            }
-            if (user_permission.permission) {
-                return permission.some(x => {
-                    return user_permission.permission.includes(x);
-                });
-            }
+    check(permissions: string[]) {
+        const sessionInfo = this.sessionInfoStorageService.getSessionInfo();
+
+        if (sessionInfo.isAdmin) {
+            return true;
         }
-        return false;
+
+        return permissions.some(x => {
+            return sessionInfo.permissions.includes(x);
+        });
     }
 }

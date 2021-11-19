@@ -30,6 +30,13 @@ export class RevenuePartnerReportPar{
     search?: string;
 }
 
+export class RevenueDistrictAreaPar{
+    dateFrom?: any;
+    dateTo?: any;
+    companyId?: string;
+    cityCode?: string;
+}
+
 export class RevenueTimeReportDisplay {
     invoiceDate?: any;
     priceSubTotal: number;
@@ -122,7 +129,7 @@ export class RevenueReportItem {
     toDetailEmployeeId: string;
 }
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class AccountInvoiceReportService {
     apiUrl = 'api/AccountInvoiceReports';
     constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
@@ -134,6 +141,10 @@ export class AccountInvoiceReportService {
 
     getRevenueTimeReport(val: any) {
         return this.http.get<RevenueTimeReportDisplay[]>(this.baseApi + this.apiUrl + "/GetRevenueTimeReportPaged", { params: new HttpParams({ fromObject: val }) });
+    }
+
+    getRevenueTimeByMonth(val: any) {
+        return this.http.get<RevenueTimeReportDisplay[]>(this.baseApi + this.apiUrl + "/GetRevenueTimeByMonth", { params: new HttpParams({ fromObject: val }) });
     }
 
     getRevenueServiceReport(val: any) {
@@ -188,6 +199,10 @@ export class AccountInvoiceReportService {
     getPrintRevenueEmployeeReport(val: any) {
         return this.http.post(this.baseApi + "AccountInvoiceReport/PrintRevenueEmployeeReport", val, { responseType: "text" });
 
+    }
+
+    getRevenueDistrictArea(val: any){
+        return this.http.post<any[]>(this.baseApi + this.apiUrl + "/GetRevenueDistrictArea", val);
     }
 
     exportRevenueTimeReportExcel(paged) {

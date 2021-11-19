@@ -30,6 +30,10 @@ export class SidebarNavHelper {
   }
 
   public isActive(router, item) {
+    if (item.children && item.children.length) {
+      return item.children.some(x => router.isActive(x.url, false));
+    }
+    
     return router.isActive(item.url, false);
   }
 

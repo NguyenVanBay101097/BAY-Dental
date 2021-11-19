@@ -41,12 +41,13 @@ sale.model_toa_thuoc,ToaThuoc,Toa thuốc,0
 sale.model_sale_order,SaleOrder,Phiếu điều trị,0
 sale.model_sale_order_line,SaleOrderLine,Sale Order Line,1
 labo.model_labo_order,LaboOrder,Phiếu Labo,0
-labo.model_labo_order_line,LaboOrderLine,Labo Order Line,1
+labo.model_labo_order_line,LaboOrderLine,Labo Order Line,1,
+labo.model_labo_warranty,LaboWarranty,Phiếu bảo hành Labo,0
 purchase.model_purchase_order,PurchaseOrder,Mua hàng,0
 purchase.model_purchase_order_line,PurchaseOrderLine,Purchase Order Line,1
 mail.model_mail_message,MailMessage,Mail Message,1
-loyalty_card.model_card_card,CardCard,Thẻ thành viên,0
-loyalty_card.model_card_type,CardType,Loại thẻ thành viên,0
+member_card.model_card_card,CardCard,Thẻ thành viên,0
+member_card.model_card_type,CardType,Loại thẻ thành viên,0
 sale_coupon.model_sale_coupon_program,SaleCouponProgram,Chương trình khuyến mãi/coupon,0
 sale_coupon.model_sale_coupon,SaleCoupon,Coupon,0
 base.model_res_config_settings,ResConfigSettings,Cấu hình chung,0
@@ -86,11 +87,10 @@ sms.model_sms_config,SmsConfig,Sms Config,0
 sms.model_sms_template,SmsTemplate,Sms Template,0
 sms.model_sms_message,SmsMessage,Sms Message,0
 sms.model_sms_message_detail,SmsMessageDetail,Sms Message Detail,0
-
-
-
 base.model_agent,Agent,Agent,0
-base.model_customer_receipt, CustomerReceipt,Customer Receipt,0
+base.model_customer_receipt,CustomerReceipt,Customer Receipt,0
+base.model_print_template_config,PrintTemplateConfig,Print Template Config,0
+hr.model_hr_job,HrJob,Chức vụ,0
 
 
 

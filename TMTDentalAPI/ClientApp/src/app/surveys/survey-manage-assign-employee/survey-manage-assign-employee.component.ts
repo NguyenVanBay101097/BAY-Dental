@@ -1,14 +1,15 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, Inject, OnInit, ViewChild } from "@angular/core";
 import { ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
 import { GridDataResult } from "@progress/kendo-angular-grid";
 import { IntlService } from "@progress/kendo-angular-intl";
 import { NotificationService } from "@progress/kendo-angular-notification";
 import { Subject } from "rxjs";
-import { debounceTime, distinctUntilChanged, map, switchMap, tap } from "rxjs/operators";
+import { debounceTime, distinctUntilChanged, map } from "rxjs/operators";
 import { SaleOrderService, SaleOrderToSurveyFilter } from "src/app/core/services/sale-order.service";
-import { EmployeePaged, EmployeeSimple } from "src/app/employees/employee";
+import { EmployeeSimple } from "src/app/employees/employee";
 import { EmployeeService } from "src/app/employees/employee.service";
-import { SurveyAssignmentDefaultGetPar, SurveyAssignmentPaged, SurveyAssignmentService } from "../survey.service";
+import { PageGridConfig, PAGER_GRID_CONFIG } from "src/app/shared/pager-grid-kendo.config";
+import { SurveyAssignmentService } from "../survey.service";
 @Component({
   selector: 'app-survey-manage-assign-employee',
   templateUrl: './survey-manage-assign-employee.component.html',
@@ -27,8 +28,9 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
   search: string;
   searchUpdate = new Subject<string>();
   gridData: GridDataResult;
-  limit = 10;
+  limit = 20;
   offset = 0;
+  pagerSettings: any;
   filteredEmployees: EmployeeSimple[];
 
   constructor(
@@ -36,8 +38,9 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
     private intlService: IntlService,
     private surveyAssignmentService: SurveyAssignmentService,
     private notificationService: NotificationService,
-    private saleOrderService: SaleOrderService
-  ) { }
+    private saleOrderService: SaleOrderService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit(): void {
     this.dateFrom = this.monthStart;
@@ -86,6 +89,7 @@ export class SurveyManageAssignEmployeeComponent implements OnInit {
 
   pageChange(e) {
     this.offset = e.skip;
+    this.limit = e.take;
     this.loadDataFromApi();
   }
 

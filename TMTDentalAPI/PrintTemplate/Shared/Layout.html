@@ -1,0 +1,21 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TDental.vn</title>
+    <link rel="stylesheet" type="text/css" href="/assets/css/print.css" />
+    <style>
+        @page {
+            size:{{o.paper_format}} portrait landscape!important;
+            margin-top: {{o.top_margin ?? 0}}mm;
+            margin-right: {{o.right_margin ?? 0}}mm;
+            margin-bottom:{{o.bottom_margin ?? 0}}mm;
+            margin-left:{{o.left_margin ?? 0}}mm;
+        }
+    </style>
+</head>
+<body class="{{paper_format}}">
+    <div class="container"></div>
+</body>
+</html>

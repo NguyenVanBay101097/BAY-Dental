@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CardCardCuDialogComponent } from 'src/app/card-cards/card-card-cu-dialog/card-card-cu-dialog.component';
 import { GridDataResult } from '@progress/kendo-angular-grid';
@@ -7,7 +7,6 @@ import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { Subject } from 'rxjs';
 import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
 
 @Component({
   selector: 'app-card-card-list',

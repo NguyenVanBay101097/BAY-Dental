@@ -74,6 +74,9 @@ namespace Infrastructure.Services
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId);
 
+            if (val.HrJobId.HasValue)
+                query = query.Where(x => x.HrJobId == val.HrJobId);
+
             query = query.OrderBy(s => s.Name);
             return query;
         }
@@ -167,7 +170,7 @@ namespace Infrastructure.Services
             var query = GetQueryPaged(val).Include(x => x.Company).AsQueryable();
             var totalItems = await query.CountAsync();
 
-            query = query.Include(x => x.User).OrderByDescending(x => x.DateCreated);
+            query = query.Include(x => x.User).Include(x => x.HrJob).OrderByDescending(x => x.DateCreated);
             if (val.Limit > 0)
             {
                 query = query.Skip(val.Offset).Take(val.Limit);
@@ -192,7 +195,7 @@ namespace Infrastructure.Services
             {
                 query = query.Where(x => x.IsDoctor == false && x.IsAssistant == true);
             }
-
+            query = query.Include(x => x.HrJob);
             if (val.Limit > 0) query = query.Skip(val.Offset).Take(val.Limit);
 
             var items = await query.Where(x => x.Active == true)
@@ -201,9 +204,21 @@ namespace Infrastructure.Services
             return _mapper.Map<IEnumerable<EmployeeSimple>>(items);
         }
 
+        public async Task<IEnumerable<Employee>> GetAutocomplete(EmployeePaged val)
+        {
+            var query = GetQueryPaged(val);        
+
+            if (val.Limit > 0) 
+                query = query.Skip(val.Offset).Take(val.Limit);
+
+            var items = await query.Where(x => x.Active == true)
+                .ToListAsync();
+
+            return items;
+        }
+
         public async Task<IEnumerable<EmployeeSimple>> GetAllowSurveyList()
         {
-            Sudo = true;
             var items = await SearchQuery(x => x.Active && x.IsAllowSurvey).Select(x => new EmployeeSimple
             {
                 Id = x.Id,
@@ -212,38 +227,37 @@ namespace Infrastructure.Services
 
             return items;
         }
-
-        public override async Task<Employee> CreateAsync(Employee entity)
+        public override async Task<IEnumerable<Employee>> CreateAsync(IEnumerable<Employee> entities)
         {
-            if (string.IsNullOrEmpty(entity.Ref) || entity.Ref == "/")
+            var sequenceService = (IIRSequenceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IIRSequenceService));
+            foreach (var entity in entities)
             {
-                var sequenceService = (IIRSequenceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IIRSequenceService));
-                entity.Ref = await sequenceService.NextByCode("employee");
-                if (string.IsNullOrEmpty(entity.Ref))
+                if (string.IsNullOrEmpty(entity.Ref) || entity.Ref == "/")
                 {
-                    await InsertEmployeeSequence();
                     entity.Ref = await sequenceService.NextByCode("employee");
+                    if (string.IsNullOrEmpty(entity.Ref))
+                    {
+                        await InsertEmployeeSequence();
+                        entity.Ref = await sequenceService.NextByCode("employee");
+                    }
                 }
+
+                var partner = new Partner()
+                {
+                    Name = entity.Name,
+                    Employee = true,
+                    Ref = entity.Ref,
+                    Phone = entity.Phone,
+                    Email = entity.Email,
+                    CompanyId = entity.CompanyId,
+                    Customer = false
+                };
+
+                partner.ComputeNameNoSign();
+                partner.ComputeDisplayName();
+                entity.Partner = partner;
             }
-
-            var partnerObj = GetService<IPartnerService>();
-            var partner = new Partner()
-            {
-                Name = entity.Name,
-                Employee = true,
-                Ref = entity.Ref,
-                Phone = entity.Phone,
-                Email = entity.Email,
-                CompanyId = entity.CompanyId,
-                Customer = false
-            };
-
-            await partnerObj.CreateAsync(partner);
-            entity.PartnerId = partner.Id;
-
-            var emp = await base.CreateAsync(entity);
-            //CheckConstraints(entity);
-            return emp;
+            return await base.CreateAsync(entities);
         }
 
         public async Task<Employee> GetByUserIdAsync(string userId)

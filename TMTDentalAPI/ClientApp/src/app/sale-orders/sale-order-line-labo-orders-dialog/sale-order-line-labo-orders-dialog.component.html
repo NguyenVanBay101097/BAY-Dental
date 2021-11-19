@@ -6,7 +6,7 @@
 <div class="modal-body o_act_window">
     <div class="tab-pane m-3" aria-labelledby="labo-tab">
         <div class="mb-2">
-            <button type="button" class="btn btn-secondary" (click)="actionLabo()">
+            <button type="button" class="btn btn-primary" (click)="actionLabo()">
                 Tạo phiếu Labo
             </button>
         </div>
@@ -24,26 +24,25 @@
             </kendo-grid-column>
             <kendo-grid-column field="partnerName" title="NCC Labo" width="150">
             </kendo-grid-column>
+            <kendo-grid-column field="teethDisplay" title="Răng" width="120">
+            </kendo-grid-column>
+            <kendo-grid-column field="quantity" class="text-right" title="Số lượng" width="120">
+            </kendo-grid-column>
             <kendo-grid-column field="dateOrder" title="Ngày gửi" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{dataItem.dateOrder | date : 'shortDate'}}
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column field="datePlanned" title="Ngày nhận" width="120">
+            <kendo-grid-column field="datePlanned" title="Ngày nhận dự kiến" width="150">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{dataItem.datePlanned | date : 'shortDate'}}
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column field="teeth" title="Răng" width="120">
-                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{GetTeeth(dataItem)}}
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column field="amountTotal" title="Thành tiền" class="text-right" width="120">
+            <!-- <kendo-grid-column field="amountTotal" title="Thành tiền" class="text-right" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{dataItem.amountTotal | number}}
                 </ng-template>
-            </kendo-grid-column>
+            </kendo-grid-column> -->
             <kendo-grid-column field="state" title="Trạng thái" width="100">
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     {{stateGet(dataItem.state)}}
@@ -55,11 +54,11 @@
                 </ng-template>
                 <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                     <button class="btn btn-sm mr-1" title="In" (click)="printLabo(dataItem)">
-                        <i class="fas fa-print"></i></button>
+                        <i class="fas fa-print text-primary"></i></button>
                     <button class="btn btn-sm mr-1" title="Sửa" (click)="actionLabo(dataItem)">
-                        <span class="fas fa-edit"></span></button>
+                        <span class="fas fa-edit text-success"></span></button>
                     <button class="btn btn-sm" title="Xóa" (click)="deleteLabo(dataItem)">
-                        <span class="fas fa-trash-alt"></span></button>
+                        <span class="fas fa-trash-alt text-danger"></span></button>
                 </ng-template>
             </kendo-grid-column>
         </kendo-grid>

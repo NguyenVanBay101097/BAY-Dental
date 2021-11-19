@@ -81,6 +81,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public PartnerSimple Partner { get; set; }
 
+        public AgentBasic Agent { get; set; }
+
         public bool IsAccounting { get; set; }
     }
 
@@ -88,4 +90,5 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public string Type { get; set; }
     }
+
 }

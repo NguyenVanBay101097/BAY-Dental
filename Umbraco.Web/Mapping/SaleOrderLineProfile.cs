@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -47,6 +48,8 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<SaleOrderLine, SaleOrderLinePrintVM>();
 
+            CreateMap<SaleOrderLine, SaleOrderLinePrintTemplate>();
+
             CreateMap<SaleOrderLine, SaleOrderLineBasic>()
                 .ForMember(x => x.Teeth, x => x.MapFrom(s => s.SaleOrderLineToothRels.Select(m => m.Tooth)))
                 .ForMember(x => x.IsListLabo, x => x.MapFrom(s => s.Labos.Any()));
@@ -75,6 +78,10 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<SaleOrderLineBasic, ServiceSaleReportExcel>()
                 .ForMember(x => x.Teeth, x => x.MapFrom(s => string.Join(", ", s.Teeth.Select(x => x.Name))));
+
+            CreateMap<SaleOrderLine, SaleOrderLinePublic>()
+              .ForMember(x => x.Teeth, x => x.MapFrom(s => s.SaleOrderLineToothRels.Select(m => m.Tooth)))
+              .ForMember(x => x.AmountResidual, x => x.MapFrom(s => s.PriceSubTotal - s.AmountInvoiced));
         }
     }
 }

@@ -1,12 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { LaboBiteJointService } from 'src/app/labo-bite-joints/labo-bite-joint.service';
 import { LaboBridgeService } from 'src/app/labo-bridges/labo-bridge.service';
-import { ImportExcelDirect } from 'src/app/partners/partner.service';
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
-import { ImportExcelBaseViewModel, LaboFinishLineBasic, LaboFinishLineService } from '../labo-finish-line.service';
+import { ImportExcelBaseViewModel, LaboFinishLineService } from '../labo-finish-line.service';
 
 @Component({
   selector: 'app-labo-finnish-line-import',
@@ -19,8 +16,9 @@ export class LaboFinnishLineImportComponent implements OnInit {
   errors: string[];
   title: string;
   correctFormat = true;
-  constructor(private laboFinishLineService: LaboFinishLineService, public activeModal: NgbActiveModal, private notificationService: NotificationService,
-    private errorService: AppSharedShowErrorService,
+  constructor(private laboFinishLineService: LaboFinishLineService, 
+    public activeModal: NgbActiveModal, 
+    private notificationService: NotificationService,
     private laboBridgeService: LaboBridgeService,
     private laboBiteJointService: LaboBiteJointService) { }
 
@@ -43,7 +41,7 @@ export class LaboFinnishLineImportComponent implements OnInit {
 
   onSave() {
     if (!this.correctFormat){
-      this.notify('error','Dữ liệu không đúng định dạng mẫu');
+      this.notify('error','File import sai định dạng. Vui lòng tải file mẫu và nhập dữ liệu đúng');
       return;
     }
     if (!this.fileBase64 || this.fileBase64 === '') {

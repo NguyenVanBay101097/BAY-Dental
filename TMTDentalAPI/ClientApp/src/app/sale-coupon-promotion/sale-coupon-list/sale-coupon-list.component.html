@@ -38,7 +38,7 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"
         (pageChange)="pageChange($event)">
         <kendo-grid-column field="code" title="Mã coupon">
         </kendo-grid-column>

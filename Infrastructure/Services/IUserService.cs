@@ -14,7 +14,7 @@ namespace Infrastructure.Services
         void ClearSecurityCache(IEnumerable<string> ids);
         void ClearRuleCache(IEnumerable<string> ids);
         Task<ApplicationUser> GetCurrentUser();
-        Task<List<string>> GetGroups();
+        Task<List<string>> GetGroups(string userId);
         Task<bool> HasGroup(string group_ext_id);
         void TestJobFunc(string s, string tenant_id);
         Task UpdateAsync(ApplicationUser user);

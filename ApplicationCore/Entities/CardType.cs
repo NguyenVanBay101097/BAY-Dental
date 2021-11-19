@@ -7,7 +7,7 @@ namespace ApplicationCore.Entities
     /// <summary>
     /// Loại thẻ thành viên: member, gold, vip
     /// </summary>
-    public class CardType: BaseEntity
+    public class CardType : BaseEntity
     {
         /// <summary>
         /// Tên loại card
@@ -35,5 +35,15 @@ namespace ApplicationCore.Entities
         public int? Sequence { get; set; }
 
         public string Note { get; set; }
+        /// <summary>
+        /// màu sắc
+        /// </summary>
+        public string Color { get; set; }
+
+        /// <summary>
+        /// Chi nhánh
+        /// </summary>
+        public Guid? CompanyId { get; set; }
+        public Company Company { get; set; }
     }
 }

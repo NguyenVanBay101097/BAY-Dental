@@ -20,9 +20,13 @@ namespace Infrastructure.Services
 
         Task<TotalAmountAgentResult> GetAmountCommissionAgentTotal(TotalAmountAgentFilter val);
 
-        Task<decimal> GetAmountBalanceCommissionAgentForPartner(TotalAmountAgentFilter val);
+        Task<AmountDebitTotalAgentReponse> GetAmountDebitTotalAgent(Guid id, Guid? companyId, DateTime? dateFrom, DateTime? dateTo);
 
         Task<AgentDisplay> GetDisplayById(Guid id);
+
+        Task<PagedResult2<AgentInfo>> GetAgentPagedResult(AgentPaged val);
+
+        Task<PhieuThuChiDisplay> GetCommissionPaymentByAgentId(GetCommissionPaymentByAgentIdReq val);
 
     }
 }

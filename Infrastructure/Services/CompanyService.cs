@@ -131,21 +131,23 @@ namespace Infrastructure.Services
             mainPartner.Company = mainCompany;
             await partnerObj.UpdateAsync(mainPartner);
 
+            await InsertDataSetuptenant(mainCompany);
+        }
+
+        public async Task InsertDataSetuptenant(Company mainCompany)
+        {
+            var groupObj = GetService<IResGroupService>();
             await InsertModuleAccountData(mainCompany);
-
             await InsertModuleStockData(mainCompany);
-
             await InsertModuleProductData();
-
             await InsertModuleDentalData();
-
             await groupObj.InsertSecurityData();
-
             //insert những irmodelfield
             await InsertIrModelFieldData();
-
             var appRoleService = GetService<IApplicationRoleService>();
             await appRoleService.CreateBaseUserRole();
+            var resBankObj = GetService<IResBankService>();
+            await resBankObj.ImportSampleData();
         }
 
         public async Task AddIrDataForSurvey()
@@ -287,6 +289,7 @@ namespace Infrastructure.Services
                 UserTypeId = currentLiabilities.Id,
                 CompanyId = company.Id,
             };
+
             #endregion
 
             #region For payableAccType
@@ -631,6 +634,7 @@ namespace Infrastructure.Services
 
             var modelDatas = new List<IRModelData>();
             modelDatas.AddRange(PrepareModelData(account_type_dict, "account.account.type"));
+            modelDatas.AddRange(PrepareModelData(account_journal_dict, "account.journal"));
             var modelDataObj = GetService<IIRModelDataService>();
             await modelDataObj.CreateAsync(modelDatas);
         }
@@ -872,6 +876,7 @@ namespace Infrastructure.Services
 
             var modelDatas = new List<IRModelData>();
             modelDatas.AddRange(PrepareModelData(product_uom_dict, "uom"));
+            modelDatas.AddRange(PrepareModelData(product_uom_categ_dict, "uom.category"));
             var modelDataObj = GetService<IIRModelDataService>();
             await modelDataObj.CreateAsync(modelDatas);
         }
@@ -884,6 +889,7 @@ namespace Infrastructure.Services
             var partner_title_dict = new Dictionary<string, PartnerTitle>();
             var paper_size_dict = new Dictionary<string, PrintPaperSize>();
             var sms_campaign_dict = new Dictionary<string, SmsCampaign>();
+            var print_template_dict = new Dictionary<string, PrintTemplate>();
 
             var file_path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\dental_data.xml");
             XmlDocument doc = new XmlDocument();
@@ -1007,7 +1013,8 @@ namespace Infrastructure.Services
                         else if (field_name == "paperFormat")
                         {
                             printPaperSize.PaperFormat = field.InnerText;
-                        }else if (field_name == "topMargin")
+                        }
+                        else if (field_name == "topMargin")
                         {
                             printPaperSize.TopMargin = int.Parse(field.InnerText);
                         }
@@ -1025,7 +1032,8 @@ namespace Infrastructure.Services
                         }
                     }
                     paper_size_dict.Add(id, printPaperSize);
-                }else if (model == "sms.campaign")
+                }
+                else if (model == "sms.campaign")
                 {
                     var smsCampaign = new SmsCampaign();
                     var fields = record.GetElementsByTagName("field");
@@ -1049,9 +1057,34 @@ namespace Infrastructure.Services
                         {
                             smsCampaign.DefaultType = field.InnerText;
                         }
-                       
+
                     }
                     sms_campaign_dict.Add(id, smsCampaign);
+                }
+                else if (model == "print.template")
+                {
+                    var printTemplate = new PrintTemplate();
+                    var fields = record.GetElementsByTagName("field");
+                    for (var j = 0; j < fields.Count; j++)
+                    {
+                        XmlElement field = (XmlElement)fields[j];
+                        var field_name = field.GetAttribute("name");
+                        if (field_name == "pathPrintTemplate")
+                        {
+                            var html = File.ReadAllText(field.InnerText);
+                            printTemplate.Content = html;
+                        }
+                        else if (field_name == "type")
+                        {
+                            printTemplate.Type = field.InnerText;
+                        }
+                        else if (field_name == "model")
+                        {
+                            printTemplate.Model = field.InnerText;
+                        }
+
+                    }
+                    print_template_dict.Add(id, printTemplate);
                 }
             }
 
@@ -1075,6 +1108,15 @@ namespace Infrastructure.Services
 
             await modelDataObj.CreateAsync(PrepareModelData(paper_size_dict, "print.paper.size"));
 
+            var printTemplateObj = GetService<IPrintTemplateService>();
+            await printTemplateObj.CreateAsync(print_template_dict.Values);
+
+            await modelDataObj.CreateAsync(PrepareModelData(print_template_dict, "print.template"));
+
+            var modelDatas = new List<IRModelData>();
+            modelDatas.AddRange(PrepareModelData(tooth_category_dict, "tooth.category"));
+            modelDatas.AddRange(PrepareModelData(tooth_dict, "tooth"));
+            await modelDataObj.CreateAsync(modelDatas);
         }
 
         private IEnumerable<IRModelData> PrepareModelData<T>(IDictionary<string, T> dict, string model) where T : BaseEntity
@@ -1220,7 +1262,7 @@ namespace Infrastructure.Services
                 }
                 await accessObj.CreateAsync(accessDict.Values);
             }
-            await InsertAccesses();
+            //await InsertAccesses();
         }
 
         public async Task Unlink(Company self)
@@ -1318,6 +1360,9 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search));
 
+            if (!string.IsNullOrEmpty(val.CityCode))
+                query = query.Where(x => x.Partner.CityCode == val.CityCode);
+
             if (val.Active != null)
             {
                 query = query.Where(x => x.Active == val.Active);
@@ -1371,7 +1416,7 @@ namespace Infrastructure.Services
         public async Task ActionArchive(IEnumerable<Guid> ids)
         {
             var companies = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
-            foreach(var company in companies)
+            foreach (var company in companies)
             {
                 if (company.Id == CompanyId)
                     throw new Exception("Không thể đóng chi nhánh đang làm việc");

@@ -150,6 +150,8 @@ namespace Infrastructure.Services
             var query = GetQueryPaged(val);
             var totalItems = await query.CountAsync();
 
+            query = query.OrderByDescending(x => x.DateCreated);
+
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
 
             if (val.ComputeCreditDebit)
@@ -368,11 +370,12 @@ namespace Infrastructure.Services
 
         public async Task<decimal> GetAmountAdvanceBalance(Guid id)
         {
-            ///lay tu moveline account
             var moveLineObj = GetService<IAccountMoveLineService>();
-            var accountObj = GetService<IAccountAccountService>();
-            var accountAdvance = await accountObj.GetAccountAdvanceCurrentCompany();
-            var amounBalance = await moveLineObj.SearchQuery(x => x.PartnerId == id && x.AccountId == accountAdvance.Id).SumAsync(x => x.Debit - x.Credit);
+
+            var query = moveLineObj._QueryGet(state: "posted", companyId: CompanyId);
+            query = query.Where(x => x.PartnerId == id && (x.Account.Code == "KHTU" || x.Account.Code == "HTU"));
+
+            var amounBalance = await query.SumAsync(x => x.Debit - x.Credit);
             var sign = -1;
             return amounBalance * sign;
         }
@@ -495,6 +498,15 @@ namespace Infrastructure.Services
                 Name = x.Name,
                 Phone = x.Phone,
                 BirthYear = x.BirthYear,
+                BirthDay = x.BirthDay,
+                BirthMonth = x.BirthMonth,
+                Email = x.Email,
+                JobTitle = x.JobTitle,
+                CityName = x.CityName,
+                Street = x.Street,
+                Gender = x.Gender,
+                DistrictName = x.DistrictName,
+                WardName = x.WardName
             }).ToListAsync();
 
             var cateList = await cateObj.SearchQuery(x => x.PartnerPartnerCategoryRels.Any(s => partners.Select(i => i.Id).Contains(s.PartnerId)))
@@ -879,6 +891,105 @@ namespace Infrastructure.Services
             };
         }
 
+        public dynamic ReadExcelCustomerUpdateData(string fileBase64)
+        {
+            var fileData = Convert.FromBase64String(fileBase64);
+            var data = new List<PartnerCustomerExportExcelVM>();
+            var errors = new List<string>();
+            var partner_code_list = new List<string>();
+
+            using (var stream = new MemoryStream(fileData))
+            {
+                try
+                {
+                    using (var package = new ExcelPackage(stream))
+                    {
+                        ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                        var rowCount = worksheet.Dimension.Rows;
+
+                        for (int row = 2; row <= rowCount; row++)
+                        {
+                            var errs = new List<string>();
+
+                            var name = Convert.ToString(worksheet.Cells[row, 1].Value);
+                            if (string.IsNullOrWhiteSpace(name))
+                                errs.Add($"Tên KH là bắt buộc");
+
+                            var reference = Convert.ToString(worksheet.Cells[row, 2].Value);
+                            if (!string.IsNullOrWhiteSpace(reference))
+                            {
+                                if (partner_code_list.Contains(reference))
+                                    errs.Add($"Đã tồn tại mã KH {reference}");
+                                else
+                                    partner_code_list.Add(reference);
+                            }
+                            else
+                                errs.Add($"Mã KH là bắt buộc");
+
+                            var medicalHistory = Convert.ToString(worksheet.Cells[row, 14].Value);
+
+                            try
+                            {
+                                DateTime? date = null;
+                                var dateExcel = Convert.ToString(worksheet.Cells[row, 3].Value);
+                                long dateLong;
+                                if (!string.IsNullOrEmpty(dateExcel) && long.TryParse(dateExcel, out dateLong))
+                                    date = DateTime.FromOADate(dateLong);
+
+                                var birthDayStr = Convert.ToString(worksheet.Cells[row, 6].Value);
+                                var birthMonthStr = Convert.ToString(worksheet.Cells[row, 7].Value);
+                                var birthYearStr = Convert.ToString(worksheet.Cells[row, 8].Value);
+
+                                data.Add(new PartnerCustomerExportExcelVM
+                                {
+                                    Name = name,
+                                    Ref = reference,
+                                    Date = date,
+                                    Gender = Convert.ToString(worksheet.Cells[row, 5].Value),
+                                    BirthDay = !string.IsNullOrWhiteSpace(birthDayStr) ? Convert.ToInt32(birthDayStr) : (int?)null,
+                                    BirthMonth = !string.IsNullOrWhiteSpace(birthMonthStr) ? Convert.ToInt32(birthMonthStr) : (int?)null,
+                                    BirthYear = !string.IsNullOrWhiteSpace(birthYearStr) ? Convert.ToInt32(birthYearStr) : (int?)null,
+                                    Phone = Convert.ToString(worksheet.Cells[row, 4].Value),
+                                    Street = Convert.ToString(worksheet.Cells[row, 9].Value),
+                                    WardName = Convert.ToString(worksheet.Cells[row, 10].Value),
+                                    DistrictName = Convert.ToString(worksheet.Cells[row, 11].Value),
+                                    CityName = Convert.ToString(worksheet.Cells[row, 12].Value),
+                                    PartnerCategories = Convert.ToString(worksheet.Cells[row, 13].Value),
+                                    MedicalHistory = medicalHistory,
+                                    Job = Convert.ToString(worksheet.Cells[row, 16].Value),
+                                    Email = Convert.ToString(worksheet.Cells[row, 15].Value),
+                                    SourceName = Convert.ToString(worksheet.Cells[row, 17].Value),
+                                    Note = Convert.ToString(worksheet.Cells[row, 18].Value),
+                                });
+                            }
+                            catch
+                            {
+                                errors.Add($"Dòng {row}: {"Dữ liệu import chưa đúng định dạng"}");
+                                continue;
+                            }
+
+                            if (errs.Any())
+                            {
+                                errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
+                                continue;
+                            }
+                        }
+                    }
+
+                }
+                catch (Exception)
+                {
+                    throw new Exception("File import sai định dạng. Vui lòng tải file mẫu và nhập dữ liệu đúng");
+                }
+            }
+
+            return new
+            {
+                Errors = errors,
+                Data = data
+            };
+        }
+
         public async Task<PartnerImportResponse> ActionImport(PartnerImportExcelViewModel val)
         {
             //hàm này chỉ thêm partner, ko có update
@@ -999,6 +1110,11 @@ namespace Infrastructure.Services
             //Get list partner ref
             var partner_code_list = data.Where(x => !string.IsNullOrEmpty(x.Ref)).Select(x => x.Ref).Distinct().ToList();
             var partner_dict = await GetPartnerDictByRefs(partner_code_list);
+
+            var notFoundPartnerCodes = partner_code_list.Where(x => !partner_dict.ContainsKey(x)).ToList();
+            if (notFoundPartnerCodes.Any())
+                return new PartnerImportResponse { Success = false, Errors = new List<string>() { $"Mã khách hàng không tồn tại: {string.Join(", ", notFoundPartnerCodes)}" } };
+
             var address_check_dict = new Dictionary<string, AddressCheckApi>();
             var address_list = data.Where(x => !string.IsNullOrWhiteSpace(x.Address)).Select(x => x.Address).Distinct().ToList();
             //Get list Api check address distionary
@@ -1072,6 +1188,176 @@ namespace Infrastructure.Services
 
                             partner.PartnerHistoryRels.Add(new PartnerHistoryRel { History = medical_history_dict[mh] });
                         }
+                    }
+                }
+
+                partners.Add(partner);
+            }
+
+            try
+            {
+                if (partners.Any())
+                    await UpdateAsync(partners);
+            }
+            catch (Exception ex)
+            {
+                return new PartnerImportResponse { Success = false, Errors = new List<string>() { ex.Message } };
+            }
+
+            return new PartnerImportResponse { Success = true };
+        }
+
+        public async Task<PartnerImportResponse> CustomerImportUpdate(string fileBase64)
+        {
+            //Hàm chỉ update
+            var readResult = ReadExcelCustomerUpdateData(fileBase64);
+            var errors = readResult.Errors as IEnumerable<string>;
+            var data = readResult.Data as IEnumerable<PartnerCustomerExportExcelVM>;
+
+            if (errors.Any())
+                return new PartnerImportResponse { Success = false, Errors = errors };
+
+            //Get list partner ref
+            var partner_code_list = data.Where(x => !string.IsNullOrEmpty(x.Ref)).Select(x => x.Ref).Distinct().ToList();
+            var partner_dict = await GetPartnerDictByRefs(partner_code_list);
+            var address_check_dict = new Dictionary<string, AddressCheckApi>();
+            var address_list = data.Where(x => !string.IsNullOrWhiteSpace(x.CheckAddress))
+                .Select(x => x.CheckAddress).Distinct().ToList();
+            //Get list Api check address distionary
+            address_check_dict = await CheckAddressAsync(address_list);
+
+            var medical_history_dict = new Dictionary<string, History>();
+            var partner_history_list = data.Where(x => !string.IsNullOrEmpty(x.MedicalHistory)).Select(x => x.MedicalHistory.Split(",")).SelectMany(x => x).Distinct().ToList();
+            if (partner_history_list.Any())
+            {
+                var historyObj = GetService<IHistoryService>();
+                var histories = await historyObj.SearchQuery(x => partner_history_list.Contains(x.Name)).ToListAsync();
+                foreach (var history in histories)
+                {
+                    if (!medical_history_dict.ContainsKey(history.Name))
+                        medical_history_dict.Add(history.Name, history);
+                }
+
+                var histories_name_to_insert = partner_history_list.Except(histories.Select(x => x.Name));
+                var histories_to_insert = histories_name_to_insert.Select(x => new History { Name = x }).ToList();
+                await historyObj.CreateAsync(histories_to_insert);
+
+                foreach (var history in histories_to_insert)
+                {
+                    if (!medical_history_dict.ContainsKey(history.Name))
+                        medical_history_dict.Add(history.Name, history);
+                }
+            }
+
+            var partner_category_dict = new Dictionary<string, PartnerCategory>();
+            var partner_category_list = data.Where(x => !string.IsNullOrEmpty(x.PartnerCategories)).Select(x => x.PartnerCategories.Split(",")).SelectMany(x => x).Distinct().ToList();
+            if (partner_category_list.Any())
+            {
+                var partnerCategObj = GetService<IPartnerCategoryService>();
+                var categs = await partnerCategObj.SearchQuery(x => partner_category_list.Contains(x.Name)).ToListAsync();
+                foreach (var categ in categs)
+                {
+                    if (!partner_category_dict.ContainsKey(categ.Name))
+                        partner_category_dict.Add(categ.Name, categ);
+                }
+
+                var categories_name_to_insert = partner_category_list.Except(categs.Select(x => x.Name));
+                var categories_to_insert = categories_name_to_insert.Select(x => new PartnerCategory { Name = x }).ToList();
+                await partnerCategObj.CreateAsync(categories_to_insert);
+
+                foreach (var categ in categories_to_insert)
+                {
+                    if (!partner_category_dict.ContainsKey(categ.Name))
+                        partner_category_dict.Add(categ.Name, categ);
+                }
+            }
+
+            var partner_source_dict = new Dictionary<string, PartnerSource>();
+            var partner_source_list = data.Where(x => !string.IsNullOrEmpty(x.SourceName)).Select(x => x.SourceName).Distinct().ToList();
+            if (partner_source_list.Any())
+            {
+                var partnerSourceObj = GetService<IPartnerSourceService>();
+                var sources = await partnerSourceObj.SearchQuery(x => partner_source_list.Contains(x.Name)).ToListAsync();
+                foreach (var src in sources)
+                {
+                    if (!partner_source_dict.ContainsKey(src.Name))
+                        partner_source_dict.Add(src.Name, src);
+                }
+
+                var sources_name_to_insert = partner_source_list.Except(sources.Select(x => x.Name));
+                var sources_to_insert = sources_name_to_insert.Select(x => new PartnerSource { Name = x }).ToList();
+                await partnerSourceObj.CreateAsync(sources_to_insert);
+
+                foreach (var src in sources_to_insert)
+                {
+                    if (!partner_source_dict.ContainsKey(src.Name))
+                        partner_source_dict.Add(src.Name, src);
+                }
+            }
+
+            var gender_dict = new Dictionary<string, string>()
+            {
+                { "nam", "male" },
+                { "nữ", "female" },
+                { "khác", "other" }
+            };
+
+            var partners = new List<Partner>();
+            foreach (var item in data)
+            {
+                var partner = !string.IsNullOrEmpty(item.Ref) && partner_dict.ContainsKey(item.Ref) ? partner_dict[item.Ref] : null;
+                if (partner == null)
+                    continue;
+
+                var addResult = !string.IsNullOrEmpty(item.CheckAddress) && address_check_dict.ContainsKey(item.CheckAddress) ? address_check_dict[item.CheckAddress] : null;
+
+                partner.Name = item.Name;
+                partner.NameNoSign = StringUtils.RemoveSignVietnameseV2(partner.Name);
+                partner.Ref = item.Ref;
+                partner.Phone = item.Phone;
+                partner.Comment = item.Note;
+                partner.Email = item.Email;
+                partner.Street = item.Street;
+                if (addResult != null)
+                {
+                    partner.WardCode = addResult.WardCode;
+                    partner.WardName = addResult.WardName;
+                    partner.DistrictCode = addResult.DistrictCode;
+                    partner.DistrictName = addResult.DistrictName;
+                    partner.CityCode = addResult.CityCode;
+                    partner.CityName = addResult.CityName;
+                }
+
+                partner.JobTitle = item.Job;
+                partner.BirthDay = item.BirthDay;
+                partner.BirthMonth = item.BirthMonth;
+                partner.BirthYear = item.BirthYear;
+                partner.Gender = !string.IsNullOrEmpty(item.Gender) && gender_dict.ContainsKey(item.Gender.ToLower()) ?
+                   gender_dict[item.Gender.ToLower()] : "male";
+                partner.Date = item.Date ?? DateTime.Today;
+                partner.Source = !string.IsNullOrEmpty(item.SourceName) && partner_source_dict.ContainsKey(item.SourceName) ? partner_source_dict[item.SourceName] : null;
+                partner.PartnerHistoryRels.Clear();
+                if (!string.IsNullOrEmpty(item.MedicalHistory))
+                {
+                    var medical_history_list = item.MedicalHistory.Split(",");
+                    foreach (var mh in medical_history_list)
+                    {
+                        if (!medical_history_dict.ContainsKey(mh))
+                            continue;
+
+                        partner.PartnerHistoryRels.Add(new PartnerHistoryRel { History = medical_history_dict[mh] });
+                    }
+                }
+
+                partner.PartnerPartnerCategoryRels.Clear();
+                if (!string.IsNullOrEmpty(item.PartnerCategories))
+                {
+                    foreach (var ct in item.PartnerCategories.Split(","))
+                    {
+                        if (!partner_category_dict.ContainsKey(ct))
+                            continue;
+
+                        partner.PartnerPartnerCategoryRels.Add(new PartnerPartnerCategoryRel { Category = partner_category_dict[ct] });
                     }
                 }
 
@@ -1325,9 +1611,11 @@ namespace Infrastructure.Services
                 if (type == "supplier")
                     query = query.Where(x => x.Supplier);
                 else if (type == "customer")
-                    query = query.Where(x => x.Customer);
+                    query = query.Where(x => x.Customer)
+                        .Include(x => x.PartnerHistoryRels)
+                        .Include(x => x.PartnerPartnerCategoryRels);
 
-                var list = await query.Include(x => x.PartnerHistoryRels).ToListAsync();
+                var list = await query.ToListAsync();
                 foreach (var item in list)
                 {
                     if (!res.ContainsKey(item.Ref))
@@ -2081,7 +2369,7 @@ namespace Infrastructure.Services
             {
                 Id = x.Id,
                 Name = x.Name,
-                Age = x.GetAge(),
+                Age = x.GetAge,
                 BirthDay = x.BirthDay,
                 BirthMonth = x.BirthMonth,
                 BirthYear = x.BirthYear,
@@ -2092,7 +2380,7 @@ namespace Infrastructure.Services
                 DateOfBirth = x.GetDateOfBirth(),
                 Phone = x.Phone,
                 Address = x.GetAddress(),
-                Gender = x.GetGender(),
+                Gender = x.GetGender,
                 CountLine = saleReportDict.ContainsKey(x.Id) ? saleReportDict[x.Id].ProductUOMQty : 0,
                 Debit = saleReportDict.ContainsKey(x.Id) ? saleReportDict[x.Id].PriceTotal : 0,
             }).ToListAsync();
@@ -2110,7 +2398,7 @@ namespace Infrastructure.Services
                 {
                     Id = x.Partner.Id,
                     Name = x.Partner.Name,
-                    Age = x.Partner.GetAge(),
+                    Age = x.Partner.GetAge,
                     BirthDay = x.Partner.BirthDay,
                     BirthMonth = x.Partner.BirthMonth,
                     BirthYear = x.Partner.BirthYear,
@@ -2121,7 +2409,7 @@ namespace Infrastructure.Services
                     DateOfBirth = x.Partner.GetDateOfBirth(),
                     Phone = x.Partner.Phone,
                     Address = x.Partner.GetAddress(),
-                    Gender = x.Partner.GetGender(),
+                    Gender = x.Partner.GetGender,
                     AppointmnetId = x.Id,
                     AppointmnetName = x.Name,
                     Time = x.Time,
@@ -2192,6 +2480,8 @@ namespace Infrastructure.Services
             var amlObj = GetService<IAccountMoveLineService>();
             var accObj = GetService<IAccountAccountService>();
             var irProperyObj = GetService<IIRPropertyService>();
+            var cardCardObj = GetService<ICardCardService>();
+            var serviceCardCardObj = GetService<IServiceCardCardService>();
 
             var companyId = CompanyId;
             var partnerOrderStateQr = from v in saleOrderObj.SearchQuery(x => x.CompanyId == companyId)
@@ -2226,11 +2516,71 @@ namespace Infrastructure.Services
             var irPropertyQr = from ir in irProperyObj.SearchQuery(x => x.Name == "member_level" && x.Field.Model == "res.partner" && x.CompanyId == companyId)
                                select ir;
 
-            var ResponseQr = from p in SearchQuery(x => x.Customer)
+            var cardCardQr = from card in cardCardObj.SearchQuery()
+                             select card;
+
+            var mainQuery = SearchQuery(x => x.Active && x.Customer);
+            if (val.CompanyId.HasValue)
+                mainQuery = mainQuery.Where(x => x.CompanyId == val.CompanyId);
+
+            if (!string.IsNullOrEmpty(val.Search))
+            {
+                IQueryable<Guid> partnersByKeywords;
+
+                partnersByKeywords =
+                      from p in mainQuery
+                      where p.Name.Contains(val.Search) || p.NameNoSign.Contains(val.Search)
+                || p.Ref.Contains(val.Search) || p.Phone.Contains(val.Search)
+                      select p.Id;
+
+                partnersByKeywords = partnersByKeywords.Union(
+                        from card in cardCardObj.SearchQuery()
+                        where card.Barcode.Contains(val.Search) && card.PartnerId.HasValue
+                        select card.PartnerId.Value
+                    );
+
+                partnersByKeywords = partnersByKeywords.Union(
+                       from card in serviceCardCardObj.SearchQuery()
+                       where card.Barcode.Contains(val.Search) && card.PartnerId.HasValue
+                       select card.PartnerId.Value
+                   );
+
+                mainQuery = from a in mainQuery
+                            join pbk in partnersByKeywords on a.Id equals pbk
+                             select a;
+            }
+
+            if (val.CategIds.Any())
+            {
+                var partnerCategoryRelService = GetService<IPartnerPartnerCategoryRelService>();
+
+                var filterPartnerQr = from pcr in partnerCategoryRelService.SearchQuery(x => val.CategIds.Contains(x.CategoryId))
+                                      group pcr by pcr.PartnerId into g
+                                      select g.Key;
+
+                mainQuery = from a in mainQuery
+                            join pbk in filterPartnerQr on a.Id equals pbk
+                            select a;
+            }
+
+            if (val.CardTypeId.HasValue)
+            {
+                var filterPartnerQr =
+                   from pcr in cardCardObj.SearchQuery(x => x.TypeId == val.CardTypeId)
+                   select pcr.PartnerId;
+
+                mainQuery = from a in mainQuery
+                            join pbk in filterPartnerQr on a.Id equals pbk
+                            select a;
+            }
+
+
+            var ResponseQr = from p in mainQuery
                              from pr in PartnerResidualQr.Where(x => x.PartnerId == p.Id).DefaultIfEmpty()
                              from pd in partnerDebQr.Where(x => x.PartnerId == p.Id).DefaultIfEmpty()
                              from pos in partnerOrderStateQr.Where(x => x.PartnerId == p.Id).DefaultIfEmpty()
                              from ir in irPropertyQr.Where(x => !string.IsNullOrEmpty(x.ResId) && x.ResId.Contains(p.Id.ToString().ToLower())).DefaultIfEmpty()
+                             from card in cardCardQr.Where(x=> x.PartnerId == p.Id).DefaultIfEmpty()
                              select new PartnerInfoTemplate
                              {
                                  Id = p.Id,
@@ -2258,28 +2608,9 @@ namespace Infrastructure.Services
                                  MemberLevelId = ir.ValueReference,
                                  DateCreated = p.DateCreated,
                                  SourceName = p.Source.Name,
-                                 TitleName = p.Title.Name
+                                 TitleName = p.Title.Name,
+                                 CardTypeName = card.Type.Name
                              };
-
-            if (!string.IsNullOrEmpty(val.Search))
-            {
-                ResponseQr = ResponseQr.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search)
-                || x.Ref.Contains(val.Search) || x.Phone.Contains(val.Search));
-            }
-
-            if (val.CategIds.Any())
-            {
-                var partnerCategoryRelService = GetService<IPartnerPartnerCategoryRelService>();
-
-                var filterPartnerQr =
-                       from pcr in partnerCategoryRelService.SearchQuery(x => val.CategIds.Contains(x.CategoryId))
-                       select new
-                       {
-                           PartnerId = pcr.PartnerId
-                       };
-
-                ResponseQr = ResponseQr.Where(x => filterPartnerQr.Any(i => i.PartnerId == x.Id));
-            }
 
             if (val.HasOrderResidual.HasValue && val.HasOrderResidual.Value == 1)
             {
@@ -2301,11 +2632,6 @@ namespace Infrastructure.Services
                 ResponseQr = ResponseQr.Where(x => x.TotalDebit == 0 || x.TotalDebit == null);
             }
 
-            if (val.MemberLevelId.HasValue)
-            {
-                ResponseQr = ResponseQr.Where(x => x.MemberLevelId.Contains(val.MemberLevelId.Value.ToString()));
-            }
-
             if (!string.IsNullOrEmpty(val.OrderState))
             {
                 ResponseQr = ResponseQr.Where(x => x.OrderState == val.OrderState);
@@ -2318,6 +2644,7 @@ namespace Infrastructure.Services
             var memberLevelObj = GetService<IMemberLevelService>();
             var cateObj = GetService<IPartnerCategoryService>();
             var partnerCategoryRelObj = GetService<IPartnerPartnerCategoryRelService>();
+            var cardCardObj = GetService<ICardCardService>();
 
             var ResponseQr = await GetQueryPartnerInfoPaged2(val);
             var count = await ResponseQr.CountAsync();
@@ -2325,20 +2652,8 @@ namespace Infrastructure.Services
 
             var cateList = await partnerCategoryRelObj.SearchQuery(x => res.Select(i => i.Id).Contains(x.PartnerId)).Include(x => x.Category).ToListAsync();
             var categDict = cateList.GroupBy(x => x.PartnerId).ToDictionary(x => x.Key, x => x.Select(s => s.Category));
-            var memberLevelIds = res.Where(x => !string.IsNullOrEmpty(x.MemberLevelId)).Select(x => new Guid(x.MemberLevelId.Substring(x.MemberLevelId.IndexOf(",") + 1))).Distinct().ToList();
-            var memberLevels = await memberLevelObj.SearchQuery(x => memberLevelIds.Contains(x.Id)).ToListAsync();
-            var memberLevelDict = memberLevels.ToDictionary(x => x.Id, x => x);
             foreach (var item in res)
             {
-                if (!string.IsNullOrEmpty(item.MemberLevelId))
-                {
-                    var pnMemberLevelId = new Guid(item.MemberLevelId.Substring(item.MemberLevelId.IndexOf(",") + 1));
-                    if (memberLevelDict.ContainsKey(pnMemberLevelId))
-                    {
-                        var level = memberLevelDict[pnMemberLevelId];
-                        item.MemberLevel = _mapper.Map<MemberLevelBasic>(level);
-                    }
-                }
                 item.Categories = _mapper.Map<List<PartnerCategoryBasic>>(categDict.ContainsKey(item.Id) ? categDict[item.Id] : new List<PartnerCategory>());
             }
             var items = _mapper.Map<IEnumerable<PartnerInfoDisplay>>(res);
@@ -2414,6 +2729,42 @@ namespace Infrastructure.Services
                 Items = items
             };
 
+        }
+        public async Task<IEnumerable<IrAttachment>> GetListAttachment(Guid id)
+        {
+            var attObj = GetService<IIrAttachmentService>();
+            var dotkhamObj = GetService<IDotKhamService>();
+            var saleObj = GetService<ISaleOrderService>();
+            //check company
+            var attQr = attObj.SearchQuery();
+            var saleQr = saleObj.SearchQuery(x=> x.CompanyId == CompanyId);
+            var dotkhamQr = dotkhamObj.SearchQuery();
+
+            var resQr = from att in attQr
+                        from so in saleQr.Where(x => x.Id == att.ResId).DefaultIfEmpty()
+                        from dk in dotkhamQr.Where(x => x.Id == att.ResId).DefaultIfEmpty()
+                        where att.ResId == id || so.PartnerId == id || dk.PartnerId == id
+                        select att;
+            var res = await resQr.OrderByDescending(x => x.DateCreated).ToListAsync();
+            return res;
+        }
+
+        public async Task<IEnumerable<Partner>> GetPublicPartners(int limit , int offset , string search)
+        {
+            var query = SearchQuery(x => x.Active && x.Customer);
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(x => x.Name.Contains(search) || x.NameNoSign.Contains(search)
+              || x.Ref.Contains(search) || x.Phone.Contains(search));
+            }
+
+            if (limit > 0)
+                query = query.Skip(offset).Take(limit);
+
+            var items = await query.OrderByDescending(x => x.DateCreated).ToListAsync();
+
+            return items;
         }
     }
 

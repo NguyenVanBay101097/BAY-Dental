@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { NotificationService } from '@progress/kendo-angular-notification';
 import { SmsAccountService, SmsAccountBasic } from '../sms-account.service';
 
 @Component({
@@ -18,7 +17,6 @@ export class SmsAccountSettingDialogComponent implements OnInit {
   title: string;
   constructor(
     private fb: FormBuilder,
-    private notificationService: NotificationService,
     private smsAccountService: SmsAccountService,
     public activeModal: NgbActiveModal
   ) { }
@@ -81,7 +79,7 @@ export class SmsAccountSettingDialogComponent implements OnInit {
 
   onSave() {
     this.submitted = true;
-    
+
     if (this.formGroup.invalid)
       return false;
 

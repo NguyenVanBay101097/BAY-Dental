@@ -1,11 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component, Inject, OnInit } from '@angular/core';
 import { GridDataResult } from '@progress/kendo-angular-grid';
-import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { SmsMessagePaged, SmsMessageService } from '../sms-message.service';
-import { SmsTemplateService } from '../sms-template.service';
 
 @Component({
   selector: 'app-sms-message-statistic',
@@ -17,14 +15,14 @@ export class SmsMessageStatisticComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   searchUpdate = new Subject<string>();
   search: string;
   constructor(
-    private modalService: NgbModal,
-    private notificationService: NotificationService,
-    private smsMessageService: SmsMessageService
-  ) { }
+    private smsMessageService: SmsMessageService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -67,6 +65,7 @@ export class SmsMessageStatisticComponent implements OnInit {
 
   pageChange(event): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 }

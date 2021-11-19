@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SaasKit.Multitenancy;
@@ -71,29 +72,39 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> ImportSampleData([FromQuery]string action)
+        public async Task<IActionResult> ImportSampleData([FromQuery] string action)
         {
             //Cancel / bo qua
             //Installed / import
-            await _unitOfWork.BeginTransactionAsync();
             if (action == "Installed")
             {
-                await _importSampleDataService.ImportSampleData();
-
+                var configSampleData = await _irConfigParameterService.GetParam("import_sample_data");
+                if (string.IsNullOrEmpty(configSampleData))
+                {
+                    await _unitOfWork.BeginTransactionAsync();
+                    await _importSampleDataService.ImportSampleData();
+                    await _irConfigParameterService.SetParam("import_sample_data", action);
+                    _unitOfWork.Commit();
+                }
             }
-            await _irConfigParameterService.SetParam("import_sample_data", action);
-            _unitOfWork.Commit();
+            else
+            {
+                await _irConfigParameterService.SetParam("import_sample_data", action);
+            }
 
             return NoContent();
-
         }
 
         [HttpGet("[action]")]
         public async Task<IActionResult> DeleteSampleData()
         {
-            await _unitOfWork.BeginTransactionAsync();
-            await _importSampleDataService.DeleteSampleData();
-            _unitOfWork.Commit();
+            var configSampleData = await _irConfigParameterService.GetParam("import_sample_data");
+            if (!string.IsNullOrEmpty(configSampleData) && configSampleData == "Installed")
+            {
+                await _unitOfWork.BeginTransactionAsync();
+                await _importSampleDataService.DeleteSampleData();
+                _unitOfWork.Commit();
+            }
 
             return NoContent();
         }
@@ -108,7 +119,7 @@ namespace TMTDentalAPI.Controllers
                 await _importSampleDataService.OldSaleOrderPaymentProcessUpdate();
                 _unitOfWork.Commit();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _unitOfWork.Rollback();
                 throw e;
@@ -120,7 +131,7 @@ namespace TMTDentalAPI.Controllers
 
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> BinaryUploadAttachment([FromForm]UploadAttachmentViewModel val)
+        public async Task<IActionResult> BinaryUploadAttachment([FromForm] UploadAttachmentViewModel val)
         {
             if (val == null || !ModelState.IsValid)
             {
@@ -148,9 +159,9 @@ namespace TMTDentalAPI.Controllers
                 {
                     ResModel = val.model,
                     ResId = val.id,
-                    Name = item.FileName,
-                    Type = "upload",
-                    UploadId = item.FileUrl,
+                    Name = item.Name,
+                    Type = "url",
+                    Url = item.FileUrl,
                     CompanyId = CompanyId
                 };
 
@@ -209,8 +220,9 @@ namespace TMTDentalAPI.Controllers
             var fileName = System.Web.HttpUtility.UrlEncode(attachment.DatasFname);
             Response.Headers.Add("Content-Disposition", String.Format("attachment;filename*=UTF-8\"{0}\"", fileName));
             return File(content, attachment.MineType, attachment.DatasFname);
-        }
+        }       
 
+     
         [HttpPost("[action]")]
         public async Task<IActionResult> UploadImage(IFormFile file)
         {

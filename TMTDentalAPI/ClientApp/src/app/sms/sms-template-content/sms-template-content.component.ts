@@ -14,7 +14,7 @@ export class SmsTemplateContentComponent implements OnInit, OnChanges {
   @Input() template: any;
   @Input() textareaLength: any;
   @Input() submitted: boolean;
-  @ViewChild('textarea', { static: false }) textarea: ElementRef;
+  @ViewChild('textarea') textarea: ElementRef;
 
   tabs: Array<{ name: string, value: string }> = [];
 

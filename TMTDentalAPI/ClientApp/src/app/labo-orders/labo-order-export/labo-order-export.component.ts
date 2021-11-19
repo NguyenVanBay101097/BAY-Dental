@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, Inject, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -8,6 +7,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { LaboOrderExportDialogComponent } from '../labo-order-export-dialog/labo-order-export-dialog.component';
 import { ExportLaboPaged, LaboOrderService } from '../labo-order.service';
 
@@ -24,6 +24,7 @@ export class LaboOrderExportComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   search: string;
   searchUpdate = new Subject<string>();
@@ -53,8 +54,9 @@ export class LaboOrderExportComponent implements OnInit {
     private intlService: IntlService, 
     private modalService: NgbModal,
     private notificationService: NotificationService,
-    private checkPermissionService: CheckPermissionService
-  ) { }
+    private checkPermissionService: CheckPermissionService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -91,6 +93,7 @@ export class LaboOrderExportComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

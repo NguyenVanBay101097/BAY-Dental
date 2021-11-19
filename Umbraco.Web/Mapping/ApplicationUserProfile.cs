@@ -1,10 +1,12 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Umbraco.Web.Models.ContentEditing;
+using Umbraco.Web.Session;
 
 namespace Umbraco.Web.Mapping
 {
@@ -25,6 +27,9 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Groups, x => x.MapFrom(s => s.ResGroupsUsersRels.Select(m => m.Group).Where(k => !k.CategoryId.HasValue)));
 
             CreateMap<ApplicationUserRowExcel, ApplicationUser>();
+            CreateMap<ApplicationUser, ApplicationUserPrintTemplate>();
+
+            CreateMap<ApplicationUser, UserInfoDto>();
         }
     }
 }

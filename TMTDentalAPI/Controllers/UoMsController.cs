@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml;
 using ApplicationCore.Entities;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -208,6 +212,42 @@ namespace TMTDentalAPI.Controllers
             }
 
             return Ok(new { success = true });
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GenerateXML()
+        {
+            var irModelObj = (IIRModelDataService)HttpContext.RequestServices.GetService(typeof(IIRModelDataService));
+            var _hostingEnvironment = (IWebHostEnvironment)HttpContext.RequestServices.GetService(typeof(IWebHostEnvironment));
+            var xmlService = (IXmlService)HttpContext.RequestServices.GetService(typeof(IXmlService));
+            string path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\ImportXML\uom.xml");
+
+            var irModelCreate = new List<IRModelData>();
+            var dateToData = new DateTime(2021, 08, 25);
+            var exceptIds = await irModelObj.SearchQuery(x => x.Module == "product" && x.Model == "uom").Select(x => x.ResId).ToListAsync();
+            var listIrModelData = await irModelObj.SearchQuery(x => x.Module == "product" && x.Model == "uom.category").ToListAsync();// các cate mặc định, 
+            var entities = await _uoMService.SearchQuery(x => !exceptIds.Any(z => x.Id.ToString() == z) && x.DateCreated <= dateToData).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var data = new List<UomXmlSampleDataRecord>();
+            foreach (var entity in entities)
+            {
+                var item = _mapper.Map<UomXmlSampleDataRecord>(entity);
+                item.Id = $@"sample.uom_{entities.IndexOf(entity) + 1}";
+                var irmodelData = listIrModelData.FirstOrDefault(x => x.ResId == item.CategoryId.ToString());
+                item.CategoryId = irmodelData?.Module + "." + irmodelData?.Name;
+                data.Add(item);
+                // add IRModelData
+                irModelCreate.Add(new IRModelData()
+                {
+                    Module = "sample",
+                    Model = "uom",
+                    ResId = entity.Id.ToString(),
+                    Name = $"uom_{entities.IndexOf(entity) + 1}"
+                });
+            }
+            //writeFile
+            xmlService.WriteXMLFile(path, data);
+            await irModelObj.CreateAsync(irModelCreate);
+            return Ok();
         }
     }
 }

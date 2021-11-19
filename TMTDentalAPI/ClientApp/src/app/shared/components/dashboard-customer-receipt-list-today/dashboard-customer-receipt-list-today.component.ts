@@ -1,21 +1,14 @@
-import { CustomerReceiptBasic, CustomerReceiptDisplay, CustomerReceiptGetCountVM, CustomerReceiptStatePatch } from './../../../customer-receipt/customer-receipt.service';
-import { EmployeeService } from 'src/app/employees/employee.service';
-import { EmployeeSimple } from 'src/app/employees/employee';
-import { NotifyService } from 'src/app/shared/services/notify.service';
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { GridDataResult } from '@progress/kendo-angular-grid';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { forkJoin, of, Subject, pipe } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, switchMap, subscribeOn, mergeMap } from 'rxjs/operators';
-import { AppointmentGetCountVM } from 'src/app/appointment/appointment';
-import { AppointmentService } from 'src/app/appointment/appointment.service';
-import { CustomerReceiptPaged, CustomerReceiptService } from 'src/app/customer-receipt/customer-receipt.service';
-import { CustomerReceipCreateUpdateComponent } from '../../customer-receip-create-update/customer-receip-create-update.component';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { EmployeePaged } from 'src/app/employees/employee';
-import { groupBy } from 'lodash';
-import { AuthService } from 'src/app/auth/auth.service';
+import { IntlService } from '@progress/kendo-angular-intl';
+import { mergeMap } from 'rxjs/operators';
+import { CustomerReceiptService } from 'src/app/customer-receipt/customer-receipt.service';
+import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
+import { EmployeeService } from 'src/app/employees/employee.service';
+import { NotifyService } from 'src/app/shared/services/notify.service';
+import { CustomerReceipCreateUpdateComponent } from '../../customer-receip-create-update/customer-receip-create-update.component';
+import { CustomerReceiptBasic, CustomerReceiptDisplay, CustomerReceiptStatePatch } from './../../../customer-receipt/customer-receipt.service';
 
 @Component({
   selector: 'app-dashboard-customer-receipt-list-today',
@@ -55,7 +48,6 @@ export class DashboardCustomerReceiptListTodayComponent implements OnInit {
   constructor(private intlService: IntlService, private customerReceiptService: CustomerReceiptService,
     private employeeService: EmployeeService,
     private notifyService: NotifyService,
-    private authService: AuthService,
     private modalService: NgbModal) { }
 
   ngOnChanges(changes: SimpleChanges): void {

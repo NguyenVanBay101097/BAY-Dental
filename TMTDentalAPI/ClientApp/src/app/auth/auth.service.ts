@@ -1,12 +1,14 @@
-import { Injectable, Inject } from '@angular/core';
-
-import { Observable, of, ReplaySubject, BehaviorSubject } from 'rxjs';
-import { tap, delay, catchError, retry, switchMap, map, mergeMap } from 'rxjs/operators';
-import { AuthResource, LoginTokenResult, LoginUserInfo, LoginViewModel, LoggedInViewModel, ForgotPasswordViewModel, RefreshViewModel, RefreshResponseViewModel, UserViewModel } from './auth.resource';
-import { LoginForm } from './login-form';
-import { HttpErrorResponse, HttpClient } from '@angular/common/http';
-import { debug } from 'util';
+import { HttpClient } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+// import { debug } from 'util';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { BehaviorSubject, Observable, of, ReplaySubject } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
+import { WebSessionService } from '../core/services/web-session.service';
+import { AuthResource, LoggedInViewModel, LoginViewModel, RefreshResponseViewModel, RefreshViewModel, UserViewModel } from './auth.resource';
+import { LoginForm } from './login-form';
+import { environment } from '../../environments/environment';
+
 
 export class UserInfo {
     avatar: string;
@@ -21,7 +23,9 @@ export class AuthService {
 
     public currentUser: Observable<UserViewModel>;
 
-    constructor(private authResource: AuthResource, public jwtHelper: JwtHelperService, private http: HttpClient, @Inject('BASE_API') private baseApi: string) {
+    constructor(private authResource: AuthResource, public jwtHelper: JwtHelperService, private http: HttpClient, @Inject('BASE_API') private baseApi: string,
+        private webSessionService: WebSessionService
+    ) {
         var user_info = localStorage.getItem('user_info');
         if (typeof user_info != 'string') {
             localStorage.removeItem('user_info');
@@ -48,10 +52,10 @@ export class AuthService {
                         localStorage.setItem('access_token', result.token);
                         localStorage.setItem('user_info', JSON.stringify(result.user));
                         localStorage.setItem('refresh_token', result.refreshToken);
+                        localStorage.setItem('app_version', environment.version + '');
                         this.isLoggedIn = true;
                         this.currentUserSubject.next(result.user);
-                        return this.authResource.getPermission();
-                        // get permission
+                        return this.webSessionService.getSessionInfo();
                     } else {
                         return of(result);
                     }
@@ -121,8 +125,9 @@ export class AuthService {
 
     logout(): void {
         localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
         localStorage.removeItem('user_info');
-        localStorage.removeItem('user_change_company_vm');
+        localStorage.removeItem('session_info');
         this.isLoggedIn = false;
         this.currentUserSubject.next(null);
     }

@@ -1,9 +1,7 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Injectable, Inject } from '@angular/core';
 import { PagedResult2 } from '../core/paged-result-2';
-import { PartnerSimple } from '../partners/partner-simple';
-import { CardTypeBasic } from '../card-types/card-type.service';
 import { ProductSimple } from '../products/product-simple';
 
 export class SaleCouponProgramPaged {

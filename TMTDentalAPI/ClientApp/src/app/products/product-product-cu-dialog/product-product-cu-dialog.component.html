@@ -31,6 +31,17 @@
                                     <tbody>
                                         <tr>
                                             <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Mã vật tư
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <input type="text" placeholder="Để trống sẽ phát sinh tự động"
+                                                    class="form-control" formControlName="defaultCode" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label o_form_label_help">
                                                     Loại
                                                 </label>
@@ -64,6 +75,31 @@
                                         <tr>
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">
+                                                    Xuất xứ
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <input type="text" class="form-control" formControlName="origin" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Thời hạn sử dụng (tháng)
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <kendo-numerictextbox [min]="0" format = "n0" formControlName="expiry">
+                                                </kendo-numerictextbox>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <table class="o_group o_inner_group o_group_col_6">
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
                                                     Tiêu chí kiểm kho
                                                 </label>
                                             </td>
@@ -79,25 +115,10 @@
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
-                                                <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="minInventory">
+                                                <kendo-numerictextbox [min]="0" [format]="'n2'" formControlName="minInventory">
                                                 </kendo-numerictextbox>
                                             </td>
                                         </tr>
-                                        <!-- <tr>
-                                            <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">
-                                                    Mã vật tư
-                                                </label>
-                                            </td>
-                                            <td colspan="1" style="width: 100%;">
-                                                <input type="text" placeholder="Để trống sẽ phát sinh tự động"
-                                                    class="form-control" formControlName="defaultCode" />
-                                            </td>
-                                        </tr> -->
-                                    </tbody>
-                                </table>
-                                <table class="o_group o_inner_group o_group_col_6">
-                                    <tbody>
                                         <tr>
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">

@@ -1,6 +1,5 @@
-import { Component, OnInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, NgForm } from '@angular/forms';
-import { ProductCategoryBasic, ProductCategoryService, ProductCategoryPaged } from 'src/app/product-categories/product-category.service';
+import { Component, Input, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-product-step-form',
@@ -9,7 +8,7 @@ import { ProductCategoryBasic, ProductCategoryService, ProductCategoryPaged } fr
 })
 export class ProductStepFormComponent implements OnInit {
   @Input() formGroup: FormGroup;
-  constructor(private fb: FormBuilder, private productCategoryService: ProductCategoryService) { }
+  constructor() { }
 
   ngOnInit() {
 

@@ -1,8 +1,6 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Injectable, Inject } from '@angular/core';
-import { property } from 'lodash';
-import { prototype } from 'events';
 
 export class ToothBasic {
     id: string;

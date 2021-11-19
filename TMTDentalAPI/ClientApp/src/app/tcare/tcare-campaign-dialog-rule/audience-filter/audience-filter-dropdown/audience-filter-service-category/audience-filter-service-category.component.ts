@@ -1,9 +1,9 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
-import { debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
+import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ProductCategoryService, ProductCategoryPaged } from 'src/app/product-categories/product-category.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import * as _ from 'lodash';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
 
 @Component({
   selector: 'app-audience-filter-service-category',
@@ -21,8 +21,10 @@ export class AudienceFilterServiceCategoryComponent implements OnInit {
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
   data: any;
 
-  constructor(private fb: FormBuilder, 
-    private productCategoryService: ProductCategoryService) { }
+  constructor(
+    private fb: FormBuilder, 
+    private productCategoryService: ProductCategoryService
+  ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({

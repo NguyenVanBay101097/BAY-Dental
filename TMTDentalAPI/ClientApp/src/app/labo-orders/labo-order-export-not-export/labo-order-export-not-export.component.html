@@ -1,0 +1,70 @@
+
+<div class="p-2 d-flex bg-white">
+    <div class="d-flex flex-fill">
+        <div class="mr-1">
+            <kendo-combobox style="width: 200px;" [popupSettings]="" [placeholder]="'Nhà cung cấp'" 
+            [valuePrimitive]="true" [data]="supplierData" [valueField]="'id'" [textField]="'name'" 
+            #supplierDataCbx
+            (valueChange)="supplierChange($event)">
+            </kendo-combobox>
+        </div>
+        <div class="mr-1">
+            <app-date-range-picker-filter [opens]="'right'" [startDate]="dateExportFrom" [endDate]="dateExportTo" 
+            (searchChange)="dateReceiptChange($event)" [title]="'Ngày nhận thực tế'"></app-date-range-picker-filter>
+        </div>
+    </div>
+    <div class="flex-fill">
+        <div class="o_searchview">
+            <i class="o_searchview_icon fa fa-search"></i>
+            <div class="o_searchview_input_container">
+                <input class="o_searchview_input" placeholder="Tìm kiếm theo tên khách hàng, phiếu điều trị, phiếu labo, mã bảo hành"
+                 type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading" (pageChange)="pageChange($event)">
+        <kendo-grid-column field="partnerDisplayName" title="NCC Labo" width="100">
+        </kendo-grid-column>
+        <kendo-grid-column field="saleOrderName" title="Phiếu điều trị" width="100">
+            <ng-template *ngIf="canReadSaleOrder else notRead" kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <a class="text-primary" *ngIf="dataItem.saleOrderId" [routerLink]="['/sale-orders', dataItem.saleOrderId]"> {{dataItem.saleOrderName}}</a>
+            </ng-template>
+            <ng-template #notRead kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.saleOrderName}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="name" title="Phiếu Labo" width="100">
+            <ng-template *ngIf="canUpdate else elseBlock" kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <a class="text-primary" (click)="editItem(dataItem)"> {{dataItem.name}}</a>
+            </ng-template>
+            <ng-template #elseBlock kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.name}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="saleOrderLineName" title="Loại phục hình" width="120">
+        </kendo-grid-column>
+        <kendo-grid-column field="customerName" title="Khách hàng" width="100">
+        </kendo-grid-column>
+        <kendo-grid-column field="dateReceipt" title="Ngày nhận thực tế" width="150">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.dateReceipt | date: 'shortDate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="warrantyCode" title="Mã bảo hành" width="100">
+        </kendo-grid-column>
+        <kendo-grid-column field="warrantyPeriod" title="Hạn bảo hành" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.warrantyPeriod | date: 'shortDate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="Id" title="Xuất khách" width="100" *ngIf="canExport">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                <button class="btn btn-success mr-2" title="Xuất khách" (click)="exportPartner(dataItem)">
+                    <i class="far fa-edit"></i>
+                </button>
+            </ng-template>
+        </kendo-grid-column>
+    </kendo-grid>
+</div>

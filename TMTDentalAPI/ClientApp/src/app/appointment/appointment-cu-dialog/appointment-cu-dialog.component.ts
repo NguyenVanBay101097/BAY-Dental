@@ -1,16 +1,15 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
-import { WindowRef, WindowService, WindowCloseResult } from '@progress/kendo-angular-dialog';
-import { AppointmentService } from '../appointment.service';
-import { PartnerService, PartnerFilter } from 'src/app/partners/partner.service';
-import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
-import { AppointmentDisplay, ApplicationUserSimple, ApplicationUserPaged, ApplicationUserDisplay } from '../appointment';
-import { map, debounceTime, tap, switchMap } from 'rxjs/operators';
-import * as _ from 'lodash';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { UserSimple } from 'src/app/users/user-simple';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { WindowRef } from '@progress/kendo-angular-dialog';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { UserService, UserPaged } from 'src/app/users/user.service';
+import { IntlService } from '@progress/kendo-angular-intl';
+import * as _ from 'lodash';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
+import { PartnerService } from 'src/app/partners/partner.service';
+import { UserSimple } from 'src/app/users/user-simple';
+import { UserPaged, UserService } from 'src/app/users/user.service';
+import { AppointmentService } from '../appointment.service';
 
 @Component({
   selector: 'app-appointment-cu-dialog',
@@ -29,7 +28,7 @@ export class AppointmentCuDialogComponent implements OnInit {
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
 
   constructor(private window: WindowRef, private appointmentService: AppointmentService,
-    private partnerService: PartnerService, private windowService: WindowService,
+    private partnerService: PartnerService,
     private userService: UserService,
     private intlService: IntlService, private fb: FormBuilder) { }
 

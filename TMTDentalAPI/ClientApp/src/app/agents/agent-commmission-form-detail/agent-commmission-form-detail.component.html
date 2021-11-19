@@ -35,7 +35,7 @@
         <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo khách hàng" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
     </div>
 </div>
-<kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="pageChange($event)">
+<kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading" (pageChange)="pageChange($event)">
     <div *kendoGridDetailTemplate="let dataItem" width="50">
         <app-agent-commmission-form-detail-item [partnerId]="dataItem.partner.id" [dateFrom]="dateFrom" [dateTo]="dateTo">
         </app-agent-commmission-form-detail-item>

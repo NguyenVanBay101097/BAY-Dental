@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit, Inject } from '@angular/core';
 import { ProductCategoryService, ProductCategoryPaged, ProductCategoryDisplay } from '../product-category.service';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { ProductCategory } from '../product-category';
@@ -9,6 +9,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { ProductCategoryImportExcelDialogComponent } from '../product-category-import-excel-dialog/product-category-import-excel-dialog.component';
 import { ProductCategoryDialogComponent } from 'src/app/shared/product-category-dialog/product-category-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-product-category-list',
@@ -23,6 +24,7 @@ export class ProductCategoryListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   opened = false;
 
@@ -32,8 +34,9 @@ export class ProductCategoryListComponent implements OnInit {
 
   constructor(private productCategoryService: ProductCategoryService,
     private modalService: NgbModal,
-    private route: ActivatedRoute) {
-  }
+    private route: ActivatedRoute,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -85,6 +88,7 @@ export class ProductCategoryListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

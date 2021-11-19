@@ -29,7 +29,7 @@
     </div>
 </div>
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" (pageChange)="onPageChange($event)">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading" (pageChange)="onPageChange($event)">
         <kendo-grid-column field="name" title="Tên đường hoàn tất Labo">
         </kendo-grid-column>
         <kendo-grid-column field="id">

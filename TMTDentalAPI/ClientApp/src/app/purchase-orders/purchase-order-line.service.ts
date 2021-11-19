@@ -1,6 +1,6 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { Injectable, Inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { UoMDisplay } from '../uoms/uom.service';
 
 export class PurchaseOrderLineOnChangeProduct {

@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { TimeKeepingService } from '../time-keeping.service';
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { TimeKeepingService } from '../time-keeping.service';
 
 @Component({
   selector: 'app-time-keeping-import-file',
@@ -13,7 +12,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 export class TimeKeepingImportFileComponent implements OnInit {
 
   constructor(public activeModal: NgbActiveModal, private fb: FormBuilder,
-    private timeKeepingService: TimeKeepingService, private showErrorService: AppSharedShowErrorService,
+    private timeKeepingService: TimeKeepingService,
     private notificationService: NotificationService) { }
 
   formGroup: FormGroup;

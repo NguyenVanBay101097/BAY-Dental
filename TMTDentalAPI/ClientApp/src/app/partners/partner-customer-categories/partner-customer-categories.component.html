@@ -33,7 +33,7 @@
     <div>
         <div class="o_content">
             <kendo-grid [data]="gridData"
-                [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+                [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"
                 (pageChange)="pageChange($event)" 
                 [selectable]="{ enabled: true, checkboxOnly: true }"
                 kendoGridSelectBy="id"

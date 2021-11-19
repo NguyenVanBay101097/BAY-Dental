@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToothDisplay } from 'src/app/teeth/tooth.service';
 import { ToothCategoryBasic } from 'src/app/tooth-categories/tooth-category.service';

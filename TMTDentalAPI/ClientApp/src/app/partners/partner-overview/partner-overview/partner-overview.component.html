@@ -13,7 +13,7 @@ overflow: auto;
                     <div>
                         <app-partner-overview-info *ngIf="partner" (updateEvent)="onPartnerUpdate()" [partner]="partner">
                         </app-partner-overview-info>
-                        <div class="image" style="padding-right: 15px;">
+                        <div class="image">
                             <app-partner-overview-image [partnerId]="partnerId">
                             </app-partner-overview-image>
                         </div>
@@ -88,6 +88,14 @@ overflow: auto;
                         <app-partner-overview-appointment [partnerId]="partnerId"
                         [customerAppointment]="customerAppointment">
                         </app-partner-overview-appointment>
+                    </div>
+                    <div>
+                        <app-partner-overview-member-cards [partnerId]="partnerId" [memberCard]="memberCard">
+                        </app-partner-overview-member-cards>
+                    </div>
+                    <div>
+                        <app-partner-overview-preferential-cards [partnerId]="partnerId" [preferentialCards]="preferentialCards">
+                        </app-partner-overview-preferential-cards>
                     </div>
                 </div>
             </div>

@@ -25,5 +25,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Period { get; set; }
 
         public int? NbrPeriod { get; set; }
+        public Guid? CompanyId { get; set; }
     }
 }

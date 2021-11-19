@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { AuthService } from 'src/app/auth/auth.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { ToothDiagnosisCreateUpdateDialogComponent } from '../tooth-diagnosis-create-update-dialog/tooth-diagnosis-create-update-dialog.component';
 import { ToothDiagnosisPaged, ToothDiagnosisService } from '../tooth-diagnosis.service';
 
@@ -19,8 +19,9 @@ export class ToothDiagnosisListComponent implements OnInit {
   loading = false;
   items: any[];
   gridData: GridDataResult;
-  limit = 10;
+  limit = 20;
   skip = 0;
+  pagerSettings: any;
   
   search: string;
   searchUpdate = new Subject<string>();
@@ -28,8 +29,8 @@ export class ToothDiagnosisListComponent implements OnInit {
     private modalService: NgbModal,
     private toothDiagnosisService: ToothDiagnosisService,
     private notificationService: NotificationService,
-    private authService : AuthService
-  ) { }
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -107,6 +108,7 @@ export class ToothDiagnosisListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent){
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 }

@@ -1,4 +1,4 @@
-<kendo-grid [data]="gridData" [loading]="loading" [pageSize]="limit" [skip]="skip" [pageable]="true"
+<kendo-grid [data]="gridData" [loading]="loading" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings"
 [scrollable]="'none'" (pageChange)="pageChange($event)" [navigable]="true" >
     <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}" field="name"
         title="Dịch vụ" width="150">

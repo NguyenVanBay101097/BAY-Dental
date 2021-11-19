@@ -1,7 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
-import { Workbook, WorkbookSheetColumn, WorkbookSheetRow, WorkbookSheetRowCell } from '@progress/kendo-angular-excel-export';
 import { GridComponent, GridDataResult } from '@progress/kendo-angular-grid';
 import * as moment from 'moment';
 import { forkJoin, of, Subject } from 'rxjs';
@@ -10,10 +9,10 @@ import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/c
 import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 import { PartnerSourcePaged, PartnerSourceService } from 'src/app/partner-sources/partner-source.service';
 import { PartnerSourceSimple } from 'src/app/partners/partner-simple';
-import { GetSaleOrderPagedReq, PartnerOldNewReportReq, PartnerOldNewReportRes, PartnerOldNewReportService, PartnerOldNewReportSumReq } from 'src/app/sale-report/partner-old-new-report.service';
+import { GetSaleOrderPagedReq, PartnerOldNewReportReq, PartnerOldNewReportRes, PartnerOldNewReportService } from 'src/app/sale-report/partner-old-new-report.service';
 import { AddressDialogComponent } from 'src/app/shared/address-dialog/address-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { PrintService } from 'src/app/shared/services/print.service';
-import { saveAs } from '@progress/kendo-file-saver';
 
 @Component({
   selector: 'app-partner-report-overview',
@@ -53,6 +52,7 @@ export class PartnerReportOverviewComponent implements OnInit {
   revenueNew = 0;
   isFilterAdvance = false;
   addressFilter = null;
+  pagerSettings: any;
 
   @ViewChild("companyCbx", { static: true }) companyVC: ComboBoxComponent;
   @ViewChild("pnSourceCbx", { static: true }) pnSourceVC: ComboBoxComponent;
@@ -64,8 +64,9 @@ export class PartnerReportOverviewComponent implements OnInit {
     private partnerOldNewRpService: PartnerOldNewReportService,
     private partnerCategoryService: PartnerCategoryService,
     private printService: PrintService,
-    private modalService: NgbModal
-  ) { }
+    private modalService: NgbModal,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.initFilterData();
@@ -265,6 +266,7 @@ export class PartnerReportOverviewComponent implements OnInit {
 
   pageChange(e) {
     this.filter.offset = e.skip;
+    this.filter.limit = e.take;
     this.loadData();
   }
 

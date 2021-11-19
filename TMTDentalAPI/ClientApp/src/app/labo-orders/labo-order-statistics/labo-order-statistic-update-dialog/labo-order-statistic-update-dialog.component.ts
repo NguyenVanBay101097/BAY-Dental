@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { dateFieldName, IntlService } from '@progress/kendo-angular-intl';
+import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { LaboOrderLineService } from '../../labo-order-line.service';
 import { compare } from 'fast-json-patch';
+import { LaboOrderLineService } from '../../labo-order-line.service';
 
 @Component({
   selector: 'app-labo-order-statistic-update-dialog',
@@ -20,7 +19,6 @@ export class LaboOrderStatisticUpdateDialogComponent implements OnInit {
   title: string;
 
   constructor(
-    private fb: FormBuilder,
     private intelservice: IntlService,
     private laboOrderLineService: LaboOrderLineService,
     public activeModal: NgbActiveModal,

@@ -33,7 +33,7 @@
         </div>
     }
     <div class="text-center mb-2">
-        <div class="text-3xl font-semibold">ĐẶT HÀNG LABO</div>
+        <div class="text-3xl font-semibold">PHIẾU LABO</div>
         <div>Ngày @now.Day tháng @now.Month năm @now.Year </div>
         <div class="font-semibold">Số: @Model.Name</div>
     </div>
@@ -45,11 +45,33 @@
                     <tr>
                         <td colspan="1" class="o_td_label">
                             <label class="o_form_label o_form_label_help">
-                                Bác sĩ
+                                Khách hàng
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">@(Model.Customer.Name)</td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Bác sĩ chỉ định
                             </label>
                         </td>
                         <td colspan="1" style="width: 100%;">@(Model.SaleOrderLine.Employee != null ? Model.SaleOrderLine.Employee.Name : "")</td>
                     </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                NCC Labo
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">@(Model.Partner.Name)</td>
+                    </tr>
+                    
+
+                </tbody>
+            </table>
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
                     <tr>
                         <td colspan="1" class="o_td_label">
                             <label class="o_form_label o_form_label_help">
@@ -61,39 +83,34 @@
                     <tr>
                         <td colspan="1" class="o_td_label">
                             <label class="o_form_label o_form_label_help">
-                                Khách hàng
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">@(Model.Customer.Name)</td>
-                    </tr>
-                </tbody>
-            </table>
-            <table class="o_group o_inner_group o_group_col_6">
-                <tbody>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                NCC Labo
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">@(Model.Partner.Name)</td>
-                    </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
                                 Ngày gửi
                             </label>
                         </td>
                         <td colspan="1" style="width: 100%;">@(Model.DateOrder.ToString("dd/MM/yyyy"))</td>
                     </tr>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Ngày nhận dự kiến
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">@(Model.DatePlanned.HasValue ? Model.DatePlanned.Value.ToString("dd/MM/yyyy") : "")</td>
-                    </tr>
+                    @if (!Model.DateReceipt.HasValue)
+                    {
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Ngày nhận dự kiến
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.DatePlanned.HasValue ? Model.DatePlanned.Value.ToString("dd/MM/yyyy") : "")</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Ngày nhận thực tế
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.DateReceipt.HasValue ? Model.DateReceipt.Value.ToString("dd/MM/yyyy") : "")</td>
+                        </tr>
+                    }
+
                 </tbody>
             </table>
         </div>
@@ -218,35 +235,6 @@
                     </tbody>
                 </table>
             </div>
-        </div>
-    </div>
-    <div class="o_form_view mb-2">
-        <div class="text-lg font-semibold mb-1">THÔNG TIN BẢO HÀNH</div>
-        <div class="d-flex">
-            <table class="o_group o_inner_group o_group_col_6">
-                <tbody>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Mã bảo hành
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">@(Model.WarrantyCode)</td>
-                    </tr>
-                </tbody>
-            </table>
-            <table class="o_group o_inner_group o_group_col_6">
-                <tbody>
-                    <tr>
-                        <td colspan="1" class="o_td_label">
-                            <label class="o_form_label o_form_label_help">
-                                Hạn bảo hành
-                            </label>
-                        </td>
-                        <td colspan="1" style="width: 100%;">@(Model.WarrantyPeriod.HasValue ? Model.WarrantyPeriod.Value.ToString("dd/MM/yyyy") : "")</td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
     </div>
     <div class="d-flex">

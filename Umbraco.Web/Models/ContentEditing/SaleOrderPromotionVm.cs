@@ -28,6 +28,10 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? SaleCouponProgramId { get; set; }
 
+        public Guid? ServiceCardCardId { get; set; }
+
+        public Guid? CardCardId { get; set; }
+
         public decimal Amount { get; set; }
 
         /// <summary>

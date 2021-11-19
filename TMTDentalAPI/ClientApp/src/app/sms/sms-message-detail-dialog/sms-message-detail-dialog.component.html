@@ -23,7 +23,7 @@
         </div>
     </div>
     <div class="o_content">
-        <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="true" [loading]="loading"
+        <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="pagerSettings" [loading]="loading"
             (pageChange)="pageChange($event)" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
             <kendo-grid-checkbox-column showSelectAll="true" width="50">
             </kendo-grid-checkbox-column>

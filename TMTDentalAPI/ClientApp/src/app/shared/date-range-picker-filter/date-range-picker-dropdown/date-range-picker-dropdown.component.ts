@@ -1,6 +1,5 @@
 import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 import * as _moment from 'moment';
 import { LocaleConfig } from '../config/daterangepicker.config';
 import { LocaleService } from '../config/locale.service';
@@ -344,8 +343,8 @@ export class DateRangePickerDropdownComponent  implements OnInit {
     // generate AM/PM
     if (!this.timePicker24Hour) {
 
-      const am_html = '';
-      const pm_html = '';
+      // const am_html = '';
+      // const pm_html = '';
 
       if (minDate && selected.clone().hour(12).minute(0).second(0).isBefore(minDate)) {
         this.timepickerVariables[side].amDisabled = true;
@@ -1003,32 +1002,33 @@ export class DateRangePickerDropdownComponent  implements OnInit {
         this.isShown = false; // hide calendars
       }
       this.rangeClicked.emit({ label: label, dates: dates });
-      if (!this.keepCalendarOpeningWithRange || this.autoApply) {
-        this.clickApply();
-      } else {
-        if (!this.alwaysShowCalendars) {
-          return this.clickApply();
-        }
-        if (this.maxDate && this.maxDate.isSame(dates[0], 'month')) {
-          this.rightCalendar.month.month(dates[0].month());
-          this.rightCalendar.month.year(dates[0].year());
-          this.leftCalendar.month.month(dates[0].month() - 1);
-          this.leftCalendar.month.year(dates[1].year());
-        } else {
-          this.leftCalendar.month.month(dates[0].month());
-          this.leftCalendar.month.year(dates[0].year());
-          // get the next year
-          const nextMonth = dates[0].clone().add(1, 'month');
-          this.rightCalendar.month.month(nextMonth.month());
-          this.rightCalendar.month.year(nextMonth.year());
-        }
-        this.updateCalendars();
-        if (this.timePicker) {
-          this.renderTimePicker(SideEnum.left);
-          this.renderTimePicker(SideEnum.right);
-        }
-      }
+      this.clickApply();
 
+      // if (!this.keepCalendarOpeningWithRange || this.autoApply) {
+      //   this.clickApply();
+      // } else {
+      //   if (!this.alwaysShowCalendars) {
+      //     return this.clickApply();
+      //   }
+      //   if (this.maxDate && this.maxDate.isSame(dates[0], 'month')) {
+      //     this.rightCalendar.month.month(dates[0].month());
+      //     this.rightCalendar.month.year(dates[0].year());
+      //     this.leftCalendar.month.month(dates[0].month() - 1);
+      //     this.leftCalendar.month.year(dates[1].year());
+      //   } else {
+      //     this.leftCalendar.month.month(dates[0].month());
+      //     this.leftCalendar.month.year(dates[0].year());
+      //     // get the next year
+      //     const nextMonth = dates[0].clone().add(1, 'month');
+      //     this.rightCalendar.month.month(nextMonth.month());
+      //     this.rightCalendar.month.year(nextMonth.year());
+      //   }
+      //   this.updateCalendars();
+      //   if (this.timePicker) {
+      //     this.renderTimePicker(SideEnum.left);
+      //     this.renderTimePicker(SideEnum.right);
+      //   }
+      // }
     }
   }
 

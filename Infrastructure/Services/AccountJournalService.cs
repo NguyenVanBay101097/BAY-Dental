@@ -271,6 +271,14 @@ namespace Infrastructure.Services
                 .FirstOrDefaultAsync();
         }
 
+        public async Task<IEnumerable<AccountJournal>> GetJournalWithDebitCreditAccount(IEnumerable<Guid> journalIds)
+        {
+            return await SearchQuery(x => journalIds.Any(z => z == x.Id))
+                .Include(x => x.DefaultCreditAccount)
+                .Include(x => x.DefaultDebitAccount)
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<AccountJournalSimple>> GetAutocomplete(AccountJournalFilter val)
         {
             ISpecification<AccountJournal> spec = new InitialSpecification<AccountJournal>(x => x.Active);

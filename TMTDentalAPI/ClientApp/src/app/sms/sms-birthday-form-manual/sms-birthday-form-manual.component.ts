@@ -1,17 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { AuthService } from 'src/app/auth/auth.service';
 import { BirthdayCustomerService, ListPagedBirthdayCustomerRequest } from 'src/app/core/services/birthday-customer.service';
-import { PartnerPaged } from 'src/app/partners/partner-simple';
-import { PartnerService } from 'src/app/partners/partner.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { SmsCampaignService } from '../sms-campaign.service';
 import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
-import { SmsTemplateService, SmsTemplateFilter } from '../sms-template.service';
+import { SmsTemplateFilter, SmsTemplateService } from '../sms-template.service';
 
 @Component({
   selector: 'app-sms-birthday-form-manual',
@@ -25,6 +23,7 @@ export class SmsBirthdayFormManualComponent implements OnInit {
   filteredTemplate: any[];
   skip: number = 0;
   limit: number = 20;
+  pagerSettings: any;
   day: number = 0;
   month: number = 0;
   isBirthday: boolean = true;
@@ -37,17 +36,17 @@ export class SmsBirthdayFormManualComponent implements OnInit {
   monthList: number[] = [];
 
   constructor(
-    private partnerService: PartnerService,
     private smsTemplateService: SmsTemplateService,
     private modalService: NgbModal,
     private notificationService: NotificationService,
     private smsCampaignService: SmsCampaignService,
     private birthCustomerService: BirthdayCustomerService,
-    private authService: AuthService
-  ) { }
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
-
+    this.day = new Date().getDate();
+    this.month = new Date().getMonth() + 1;
     this.loadDataFromApi();
     setTimeout(() => {
       this.loadDefaultCampaignBirthday();
@@ -100,6 +99,7 @@ export class SmsBirthdayFormManualComponent implements OnInit {
 
   pageChange(event) {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

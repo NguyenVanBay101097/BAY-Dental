@@ -130,10 +130,9 @@ namespace TMTDentalAPI.Controllers
 
             await _unitOfWork.BeginTransactionAsync();
             var saleLineIds = request.Lines.Where(x => x.SaleOrderLineId.HasValue).Select(x => x.SaleOrderLineId.Value).Distinct().ToList();
+            await _productRequestService.DeleteAsync(request);
             if (saleLineIds.Any())
                 await _saleLineService.ComputeProductRequestedQuantity(saleLineIds);
-
-            await _productRequestService.DeleteAsync(request);
             _unitOfWork.Commit();
             return NoContent();
         }

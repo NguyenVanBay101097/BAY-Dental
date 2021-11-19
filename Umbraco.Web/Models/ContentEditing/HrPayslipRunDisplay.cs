@@ -39,7 +39,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public CompanyPrintVM Company { get; set; }
 
         public string State { get; set; }
-        public DateTime? Date { get; set; }
+        public DateTime? DateSalary { get; set; }
 
         public string CreatedById { get; set; }
         public IEnumerable<HrPayslipDisplay> Slips { get; set; } = new List<HrPayslipDisplay>();

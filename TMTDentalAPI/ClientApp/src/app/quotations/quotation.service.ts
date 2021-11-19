@@ -1,12 +1,10 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PagedResult2 } from '../core/paged-result-2';
 import { EmployeeSimple } from '../employees/employee';
 import { PartnerSimple } from '../partners/partner-simple';
-import { SaleOrderBasic } from '../sale-orders/sale-order-basic';
-import { ToothBasic } from '../teeth/tooth.service';
 import { UserSimple } from '../users/user-simple';
 
 // import { PagedResult2 } from '../paged-result-2';
@@ -133,6 +131,8 @@ export class QuotationsPaged {
 })
 export class QuotationService {
   apiUrl = 'api/Quotations';
+  apiPrintUrl = "Quotation";
+
   constructor(private http: HttpClient, @Inject('BASE_API') private baseApi: string) { }
 
   getPaged(val: any): Observable<PagedResult2<QuotationsBasic>> {
@@ -217,8 +217,12 @@ export class QuotationService {
       );
   }
 
+  // printQuotation(id: string) {
+  //   return this.http.get(this.baseApi + 'Quotation' + '/Print' + `?id=${id}`, { responseType: 'text' });
+  // }
+
   printQuotation(id: string) {
-    return this.http.get(this.baseApi + 'Quotation' + '/Print' + `?id=${id}`, { responseType: 'text' });
+    return this.http.get(this.baseApi + this.apiUrl + `/${id}/Print`);
   }
 
   defaultGet(partnerId: string): Observable<QuotationsDisplay> {

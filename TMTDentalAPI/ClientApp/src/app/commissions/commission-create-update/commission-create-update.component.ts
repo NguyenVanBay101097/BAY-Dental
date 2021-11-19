@@ -1,16 +1,13 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { switchMap, debounceTime, tap } from 'rxjs/operators';
-import { CommissionService, CommissionProductRule } from '../commission.service';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { CommissionCreateUpdateDialogComponent } from '../commission-create-update-dialog/commission-create-update-dialog.component';
-import { ProductCategoryBasic, ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
-import * as _ from 'lodash';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { ProductPaged, ProductService } from 'src/app/products/product.service';
-import { ProductSimple } from 'src/app/products/product-simple';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import * as _ from 'lodash';
+import { ProductCategoryBasic, ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
+import { ProductPaged, ProductService } from 'src/app/products/product.service';
+import { CommissionCreateUpdateDialogComponent } from '../commission-create-update-dialog/commission-create-update-dialog.component';
+import { CommissionService } from '../commission.service';
 
 @Component({
   selector: 'app-commission-create-update',

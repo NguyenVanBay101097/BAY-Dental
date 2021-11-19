@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Record>
+    <Id>sample.product_labo_1</Id>
+    <Name>Zirconia horus</Name>
+  </Record>
+  <Record>
+    <Id>sample.product_labo_2</Id>
+    <Name>Sứ Venus</Name>
+  </Record>
+  <Record>
+    <Id>sample.product_labo_3</Id>
+    <Name>Sứ nacera</Name>
+  </Record>
+  <Record>
+    <Id>sample.product_labo_4</Id>
+    <Name>Sứ kim loại</Name>
+  </Record>
+  <Record>
+    <Id>sample.product_labo_5</Id>
+    <Name>Sứ chrome - corbalt</Name>
+  </Record>
+  <Record>
+    <Id>sample.product_labo_6</Id>
+    <Name>Titan</Name>
+  </Record>
+</Data>

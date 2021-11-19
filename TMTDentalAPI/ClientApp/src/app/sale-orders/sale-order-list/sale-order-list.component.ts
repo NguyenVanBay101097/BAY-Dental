@@ -1,19 +1,19 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { GridDataResult, PageChangeEvent, GridComponent } from '@progress/kendo-angular-grid';
-import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { Subject } from 'rxjs';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
-import { NgbDate, NgbDateParserFormatter, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { UserSimple } from 'src/app/users/user-simple';
-import { SaleOrderService, SaleOrderPaged } from '../../core/services/sale-order.service';
-import { SaleOrderBasic } from '../sale-order-basic';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
+import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
 import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/shared/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { UserSimple } from 'src/app/users/user-simple';
+import { SaleOrderPaged, SaleOrderService } from '../../core/services/sale-order.service';
+import { SaleOrderBasic } from '../sale-order-basic';
 
 @Component({
   selector: 'app-sale-order-list',
@@ -27,6 +27,7 @@ export class SaleOrderListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   opened = false;
   searchInvoiceNumber: string;
@@ -47,8 +48,13 @@ export class SaleOrderListComponent implements OnInit {
 
   selectedIds: string[] = [];
 
-  constructor(private saleOrderService: SaleOrderService, private intlService: IntlService, private router: Router, private dialogService: DialogService,
-    private modalService: NgbModal, private paymentService: AccountPaymentService, private notificationService: NotificationService) { }
+  constructor(private saleOrderService: SaleOrderService, 
+    private intlService: IntlService, private router: Router, 
+    private modalService: NgbModal, 
+    private paymentService: AccountPaymentService, 
+    private notificationService: NotificationService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -146,6 +152,7 @@ export class SaleOrderListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

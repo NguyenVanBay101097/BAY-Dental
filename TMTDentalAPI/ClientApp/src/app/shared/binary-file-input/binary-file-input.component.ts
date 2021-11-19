@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, Input, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-binary-file-input',
@@ -10,6 +10,7 @@ export class BinaryFileInputComponent implements OnInit {
   @Input() value: string;
   @Input() accept: string;
   @Output('valueChange') change = new EventEmitter<string>();
+  @Output('fileChange') fileChange = new EventEmitter<string>();
   @Output() checkFormat = new EventEmitter<boolean>();
   constructor() { }
 
@@ -52,6 +53,7 @@ export class BinaryFileInputComponent implements OnInit {
         data = data.split(',')[1];
         self.onFileUploaded(file.size, file.name, file.type, data);
       };
+      this.fileChange.emit(file)
     }
   }
 

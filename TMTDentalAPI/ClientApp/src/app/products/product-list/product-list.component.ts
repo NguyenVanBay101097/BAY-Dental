@@ -1,19 +1,18 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { ProductService, ProductPaged } from '../product.service';
-import { WindowService, WindowCloseResult, DialogRef, DialogService, DialogCloseResult } from '@progress/kendo-angular-dialog';
-import { ProductDialogComponent } from '../product-dialog/product-dialog.component';
-import { Product } from '../product';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { map, debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import { ProductCategoryBasic, ProductCategoryService, ProductCategoryPaged } from 'src/app/product-categories/product-category.service';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { ProductImportExcelDialogComponent } from '../product-import-excel-dialog/product-import-excel-dialog.component';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ValueAxisLabelsComponent } from '@progress/kendo-angular-charts';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { IntlService } from '@progress/kendo-angular-intl';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { ProductCategoryBasic, ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { Product } from '../product';
+import { ProductDialogComponent } from '../product-dialog/product-dialog.component';
+import { ProductImportExcelDialogComponent } from '../product-import-excel-dialog/product-import-excel-dialog.component';
+import { ProductPaged, ProductService } from '../product.service';
 
 @Component({
   selector: 'app-product-list',
@@ -27,6 +26,7 @@ export class ProductListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   opened = false;
 
@@ -46,9 +46,11 @@ export class ProductListComponent implements OnInit {
 
   showAdvanceFilter = false;
 
-  constructor(private productService: ProductService, private windowService: WindowService,
-    private dialogService: DialogService, public intl: IntlService, private productCategoryService: ProductCategoryService,
-    private route: ActivatedRoute, private modalService: NgbModal) { }
+  constructor(private productService: ProductService,
+    public intl: IntlService, private productCategoryService: ProductCategoryService,
+    private route: ActivatedRoute, private modalService: NgbModal,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.searchUpdate.pipe(
@@ -106,6 +108,7 @@ export class ProductListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 
@@ -191,7 +194,7 @@ export class ProductListComponent implements OnInit {
     } else if (this.type == 'product') {
       modalRef.componentInstance.type = 'product';
     } else if (this.type == 'medicine') {
-      var productDefaultVal = new Product();
+      // var productDefaultVal = new Product();
       modalRef.componentInstance.type = 'consu';
     } else {
       modalRef.componentInstance.type = 'consu';

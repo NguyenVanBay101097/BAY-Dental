@@ -2,13 +2,17 @@
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -71,7 +75,7 @@ namespace TMTDentalAPI.Controllers
             var entity = await _customerReceiptService.GetByIdAsync(id);
             if (entity == null)
                 return NotFound();
-            await _customerReceiptService.UpdateCustomerReceipt(id , val);
+            await _customerReceiptService.UpdateCustomerReceipt(id, val);
             return NoContent();
         }
 
@@ -115,6 +119,66 @@ namespace TMTDentalAPI.Controllers
 
             await _customerReceiptService.DeleteAsync(customerReceipt);
             return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GenerateXML()
+        {
+            var irModelObj = (IIRModelDataService)HttpContext.RequestServices.GetService(typeof(IIRModelDataService));
+            var _hostingEnvironment = (IWebHostEnvironment)HttpContext.RequestServices.GetService(typeof(IWebHostEnvironment));
+            var xmlService = (IXmlService)HttpContext.RequestServices.GetService(typeof(IXmlService));
+            string path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\ImportXML\customer_receipt.xml");
+
+            var irModelCreate = new List<IRModelData>();
+            var dateToData = new DateTime(2021, 08, 25);
+            var listIrModelData = await irModelObj.SearchQuery(x => (x.Module == "sample") && (x.Model == "employee" || x.Model == "partner" || x.Model == "sale.order" || x.Model == "product")).ToListAsync();// các irmodel cần thiết
+            var entities = await _customerReceiptService.SearchQuery(x => x.DateCreated.Value.Date <= dateToData.Date).Include(x => x.CustomerReceiptProductRels).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var data = new List<CustomerReceiptXmlSampleDataRecord>();
+            foreach (var entity in entities)
+            {
+                if (entity.DateDone.HasValue && entity.DateDone <= entity.DateWaiting)
+                    continue;
+                var item = _mapper.Map<CustomerReceiptXmlSampleDataRecord>(entity);
+
+                var partnerModelData = listIrModelData.FirstOrDefault(x => x.ResId == entity.PartnerId.ToString());
+                var doctorModelData = listIrModelData.FirstOrDefault(x => x.ResId == entity.DoctorId.ToString());
+
+                item.Id = $@"sample.customer_receipt_{entities.IndexOf(entity) + 1}";
+                item.DateRound = (int)(dateToData.Date - entity.DateWaiting.Value.Date).TotalDays;
+                item.WaitingTimeHour = entity.DateWaiting.Value.Hour;
+                item.WaitingTimeMinute = entity.DateWaiting.Value.Minute;
+                item.ExaminationTimeHour = entity.DateExamination.HasValue ? entity.DateExamination.Value.Hour : (int?)null;
+                item.ExaminationTimeMinute = entity.DateExamination.HasValue ? entity.DateExamination.Value.Minute : (int?)null;
+                item.DoneTimeHour = entity.DateDone.HasValue ? entity.DateDone.Value.Hour : (int?)null;
+                item.DoneTimeMinute = entity.DateDone.HasValue ? entity.DateDone.Value.Minute : (int?)null;
+                item.PartnerId = partnerModelData == null ? "" : partnerModelData?.Module + "." + partnerModelData?.Name;
+                item.DoctorId = doctorModelData == null ? "" : doctorModelData?.Module + "." + doctorModelData?.Name;
+
+                //add lines
+                foreach (var lineEntity in entity.CustomerReceiptProductRels)
+                {
+                    var irmodelDataProduct = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.ProductId.ToString());
+                    var itemLine = new CustomerReceiptProductRelXmlSampleDataRecord()
+                    {
+                        ProductId = irmodelDataProduct == null ? "" : irmodelDataProduct?.Module + "." + irmodelDataProduct?.Name
+                    };
+                    item.CustomerReceiptProductRels.Add(itemLine);
+                }
+
+                data.Add(item);
+                // add IRModelData
+                irModelCreate.Add(new IRModelData()
+                {
+                    Module = "sample",
+                    Model = "customer.receipt",
+                    ResId = entity.Id.ToString(),
+                    Name = $"customer_receipt_{entities.IndexOf(entity) + 1}"
+                });
+            }
+            //writeFile
+            xmlService.WriteXMLFile(path, data);
+            await irModelObj.CreateAsync(irModelCreate);
+            return Ok();
         }
     }
 }

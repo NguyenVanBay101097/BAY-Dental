@@ -1,12 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component, Inject, Input, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { NotifyService } from 'src/app/shared/services/notify.service';
-import { PrintService } from 'src/app/shared/services/print.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { AgentService, CommissionAgentDetailItemFilter } from '../agent.service';
 
 @Component({
@@ -23,15 +21,16 @@ export class AgentCommmissionFormDetailItemComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   search: string;
   searchUpdate = new Subject<string>();
 
-  constructor(private route: ActivatedRoute, private modalService: NgbModal,
-    private agentService: AgentService, private router: Router,
+  constructor(private route: ActivatedRoute,
+    private agentService: AgentService,
     private intlService: IntlService,
-    private notifyService: NotifyService,
-    private printService: PrintService) { }
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.agentId = this.route.parent.snapshot.paramMap.get('id');
@@ -70,7 +69,7 @@ export class AgentCommmissionFormDetailItemComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
-
 }

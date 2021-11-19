@@ -24,8 +24,12 @@ namespace Infrastructure.EntityConfigurations
            .OnDelete(DeleteBehavior.SetNull);
 
             builder.HasOne(x => x.Partner)
-              .WithMany()
+              .WithMany(x => x.CardCards)
               .HasForeignKey(x => x.PartnerId);
+
+            builder.HasOne(x => x.Company)
+            .WithMany()
+            .HasForeignKey(x => x.CompanyId);
 
             builder.HasOne(x => x.CreatedBy)
           .WithMany()

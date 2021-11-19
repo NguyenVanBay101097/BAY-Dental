@@ -1,22 +1,20 @@
-import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
-import { Observable, Observer } from 'rxjs';
-import { Injectable, Inject, OnChanges } from '@angular/core';
-import { PartnerSimple, PartnerBasic, PartnerDisplay, PartnerPaged, PagedResult2, City, Ward, District, PartnerInfoViewModel, PartnerPrint, PartnerSimpleContact, PartnerCategorySimple, PartnerSimpleInfo } from './partner-simple';
-import { ApplicationUserSimple, ApplicationUserPaged, ApplicationUserDisplay, AppointmentDisplay } from '../appointment/appointment';
-import { AccountInvoiceDisplay, AccountInvoiceBasic, AccountInvoicePaged, PaymentInfoContent, AccountInvoicePrint } from '../account-invoices/account-invoice.service';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { AccountInvoiceLineDisplay } from '../account-invoices/account-invoice-line-display';
+import { AccountInvoiceBasic, AccountInvoiceDisplay, AccountInvoicePaged, AccountInvoicePrint, PaymentInfoContent } from '../account-invoices/account-invoice.service';
+import { AccountPaymentBasic } from '../account-payments/account-payment.service';
+import { ApplicationUserDisplay, ApplicationUserPaged, ApplicationUserSimple, AppointmentDisplay } from '../appointment/appointment';
 import { DotKhamDisplay } from '../dot-khams/dot-khams';
 import { EmployeeSimple } from '../employees/employee';
-import { HistoryPaged, HistorySimple } from '../history/history';
-import { AccountInvoiceLinePaged, AccountInvoiceLineDisplay } from '../account-invoices/account-invoice-line-display';
-import { AddressCheckApi } from '../price-list/price-list';
-import { SaleOrderBasic } from '../sale-orders/sale-order-basic';
-import { AccountPaymentBasic } from '../account-payments/account-payment.service';
+import { HistorySimple } from '../history/history';
 import { LaboOrderBasic } from '../labo-orders/labo-order.service';
+import { AddressCheckApi } from '../price-list/price-list';
 import { PurchaseOrderBasic } from '../purchase-orders/purchase-order.service';
+import { SaleOrderBasic } from '../sale-orders/sale-order-basic';
+import { IrAttachmentBasic } from '../shared/shared';
 import { ToothDisplay } from '../teeth/tooth.service';
-import { ProductBasic2 } from '../products/product.service';
-import { Product } from '../products/product';
-import { StringFilterComponent } from '@progress/kendo-angular-grid';
+import { City, District, PagedResult2, PartnerBasic, PartnerDisplay, PartnerInfoViewModel, PartnerPaged, PartnerPrint, PartnerSimple, PartnerSimpleContact, PartnerSimpleInfo, Ward } from './partner-simple';
 
 export class PartnerFilter {
     search: string;
@@ -36,9 +34,12 @@ export class SaleOrderLineBasic {
     productId: string;
     diagnostic: string;
     dateCreated: string;
-    teeth: ToothDisplay;
+    teeth: ToothDisplay[];
     product: any;
     toothType: string;
+    toothCategoryId: string;
+    order: any;
+    employee: any;
 }
 
 export class SaleOrderLinePaged {
@@ -53,6 +54,8 @@ export class SaleOrderLinePaged {
     dateOrderTo: any;
     employeeId: string;
     companyId: string;
+    dateFrom: string;
+    dateTo: string;
 }
 
 export class PartnerReportLocationCitySearch {
@@ -98,6 +101,7 @@ export class PartnerImageBasic {
     date: string;
     note: string;
     uploadId: string;
+    url: string;
 }
 
 
@@ -165,28 +169,28 @@ export class PartnerGetDebtPagedFilter {
 }
 
 export class PartnerInfoDisplay {
-	id: string;
-	dateCreated: string;
-	ref: string;
-	avatar?: any;
-	displayName: string;
-	name: string;
-	phone: string;
-	email: string;
-	birthYear: number;
-	birthMonth: number;
-	birthDay: number;
-	orderState: string;
-	orderResidual?: any;
-	totalDebit?: any;
-	memberLevelId?: any;
-	memberLevel?: any;
-	categories: any[];
-	dateOfBirth: string;
-	age: string;
+    id: string;
+    dateCreated: string;
+    ref: string;
+    avatar?: any;
+    displayName: string;
+    name: string;
+    phone: string;
+    email: string;
+    birthYear: number;
+    birthMonth: number;
+    birthDay: number;
+    orderState: string;
+    orderResidual?: any;
+    totalDebit?: any;
+    memberLevelId?: any;
+    memberLevel?: any;
+    categories: any[];
+    dateOfBirth: string;
+    age: string;
 }
 
-export class PartnerInfoPaged{
+export class PartnerInfoPaged {
     limit: number;
     offset: number;
     search: string;
@@ -194,7 +198,9 @@ export class PartnerInfoPaged{
     hasOrderResidual?: number;
     hasTotalDebit?: number;
     memberLevelId: string;
+    cardTypeId: string;
     orderState: string;
+    companyId: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -555,15 +561,15 @@ export class PartnerService {
         return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetDebtPaged', { params: new HttpParams({ fromObject: val }) });
     }
 
-    getAmountAdvanceBalance(id){
+    getAmountAdvanceBalance(id) {
         return this.http.get<number>(this.baseApi + this.apiUrl + '/' + id + '/GetAmountAdvanceBalance');
     }
 
-    getAmountAdvanceUsed(id){
+    getAmountAdvanceUsed(id) {
         return this.http.get<number>(this.baseApi + this.apiUrl + '/' + id + '/GetAmountAdvanceUsed');
     }
 
-    getCustomerInfo(id){
+    getCustomerInfo(id) {
         return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/CustomerInfo');
     }
 
@@ -574,21 +580,25 @@ export class PartnerService {
     getCustomerBirthDay(val: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/GetCustomerBirthDay', val);
     }
-    
+
     getCustomerAppointments(val: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/GetCustomerAppointments', val);
     }
 
-    getAmountDebtBalance(id){
+    getAmountDebtBalance(id) {
         return this.http.get<number>(this.baseApi + this.apiUrl + '/' + id + '/GetAmountDebtBalance');
     }
 
     getPartnerInfoPaged(val) {
-        return this.http.get<PagedResult2<PartnerInfoDisplay>>(this.baseApi + this.apiUrl + '/GetPartnerInfoPaged', {params: new HttpParams({fromObject: val})});
+        return this.http.get<PagedResult2<PartnerInfoDisplay>>(this.baseApi + this.apiUrl + '/GetPartnerInfoPaged', { params: new HttpParams({ fromObject: val }) });
     }
 
     getPartnerInfoPaged2(val) {
-        return this.http.get<PagedResult2<PartnerInfoDisplay>>(this.baseApi + this.apiUrl + '/GetPartnerInfoPaged2', {params: new HttpParams({fromObject: val})});
+        return this.http.get<PagedResult2<PartnerInfoDisplay>>(this.baseApi + this.apiUrl + '/GetPartnerInfoPaged2', { params: new HttpParams({ fromObject: val }) });
+    }
+
+    getListAttachment(id) {
+        return this.http.get<IrAttachmentBasic[]>(this.baseApi + this.apiUrl + '/' + id + '/GetListAttachment');
     }
 }
 

@@ -2,7 +2,7 @@
     <div class="o_control_panel o_breadcrumb_full">
         <ol class="breadcrumb">
             <li>
-                <a [routerLink]="['/purchase/orders']" [queryParams]="{type: purchaseOrder?.type}">
+                <a [routerLink]="['/purchase/' + purchaseOrder?.type]">
                     <span *ngIf="purchaseOrder?.type === 'order'">Mua hàng</span>
                     <span *ngIf="purchaseOrder?.type === 'refund'">Trả hàng</span>
                 </a>
@@ -196,7 +196,7 @@
                                 <td colspan="1" style="width: 100%;">
                                     <textarea *ngIf="purchaseOrder?.state == 'draft'" class="form-control" rows="3"
                                         id="comment" formControlName="notes"></textarea>
-                                    <span *ngIf="purchaseOrder?.state == 'draft'">{{purchaseOrder?.note}}</span>
+                                    <span *ngIf="purchaseOrder?.state != 'draft'">{{purchaseOrder?.notes}}</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -245,7 +245,7 @@
                                                         <td class="align-middle">{{ line.get('product').value?.name}}
                                                         </td>
                                                         <td class="align-middle">
-                                                            <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                                            <kendo-numerictextbox [min]="0" [format]="'n2'"
                                                                 *ngIf="purchaseOrder?.state == 'draft'"
                                                                 formControlName="productQty" style="width: 80px;"
                                                                 [spinners]="false" (valueChange)="countAmountTotal()">

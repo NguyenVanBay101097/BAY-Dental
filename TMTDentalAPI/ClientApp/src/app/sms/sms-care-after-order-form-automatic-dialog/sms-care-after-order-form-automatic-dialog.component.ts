@@ -1,21 +1,15 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { EventEmitter } from 'events';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
 import { ProductPaged, ProductService } from 'src/app/products/product.service';
-import { SmsAccountService, SmsAccountPaged } from '../sms-account.service';
-import { SmsCampaignService } from '../sms-campaign.service';
+import { SmsAccountPaged, SmsAccountService } from '../sms-account.service';
 import { SmsCareAfterOrderAutomationConfigService } from '../sms-care-after-order-automation-config.service';
-import { SmsComfirmDialogComponent } from '../sms-comfirm-dialog/sms-comfirm-dialog.component';
-import { SmsConfigService } from '../sms-config.service';
-import { SmsMessageService } from '../sms-message.service';
-import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
-import { SmsTemplateService, SmsTemplateFilter } from '../sms-template.service';
+import { SmsTemplateFilter, SmsTemplateService } from '../sms-template.service';
 
 @Component({
   selector: 'app-sms-care-after-order-form-automatic-dialog',
@@ -26,7 +20,7 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
 
   @ViewChild("smsTemplateCbx", { static: true }) smsTemplateCbx: ComboBoxComponent;
   @ViewChild("smsAccountCbx", { static: true }) smsAccountCbx: ComboBoxComponent;
-  @ViewChild('textarea', { static: false }) textarea: ElementRef;
+  @ViewChild('textarea') textarea: ElementRef;
 
   formGroup: FormGroup;
   filteredConfigSMS: any[];
@@ -55,7 +49,6 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private modalService: NgbModal,
     public activeModal: NgbActiveModal,
     private smsTemplateService: SmsTemplateService,
     private smsConfigService: SmsCareAfterOrderAutomationConfigService,

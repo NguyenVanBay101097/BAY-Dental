@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { UserService, UserPaged, UserBasic } from '../user.service';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -7,6 +7,7 @@ import { UserCuDialogComponent } from '../user-cu-dialog/user-cu-dialog.componen
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { UserListImportComponent } from '../user-list-import/user-list-import.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-user-list',
@@ -20,9 +21,11 @@ export class UserListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
 
-  constructor(private userService: UserService, private modalService: NgbModal, public intl: IntlService) { }
+  constructor(private userService: UserService, private modalService: NgbModal, public intl: IntlService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -30,6 +33,7 @@ export class UserListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 

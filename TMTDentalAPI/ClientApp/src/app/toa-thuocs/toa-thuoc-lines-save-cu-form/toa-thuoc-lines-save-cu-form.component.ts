@@ -1,9 +1,8 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
-import { ToaThuocLineSave } from '../toa-thuoc.service';
-import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
-import { ProductFilter, ProductService } from 'src/app/products/product.service';
-import { ProductSimple } from 'src/app/products/product-simple';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ProductSimple } from 'src/app/products/product-simple';
+import { ProductFilter, ProductService } from 'src/app/products/product.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
@@ -132,17 +131,17 @@ export class ToaThuocLinesSaveCuFormComponent implements OnInit, OnChanges {
   getUsedAt(useAt) {
     switch (useAt) {
       case 'before_meal':
-        return 'trước khi ăn';
+        return 'Trước khi ăn';
       case 'after_meal':
-        return 'sau khi ăn';
+        return 'Sau khi ăn';
       case 'in_meal':
-        return 'trong khi ăn';
+        return 'Trong khi ăn';
       case 'after_wakeup':
-        return 'sau khi thức dậy';
+        return 'Sau khi thức dậy';
       case 'before_sleep':
-        return 'trước khi đi ngủ';
+        return 'Trước khi đi ngủ';
       default:
-        return 'sau khi ăn';
+        return 'Sau khi ăn';
     }
   }
 

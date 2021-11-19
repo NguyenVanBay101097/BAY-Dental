@@ -1,15 +1,15 @@
-import { Component, Input, OnInit, Type } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, Inject, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { forkJoin, of, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { PartnerAdvanceCreateUpdateDialogComponent } from '../partner-advance-create-update-dialog/partner-advance-create-update-dialog.component';
 import { PartnerAdvancePaged, PartnerAdvanceService, PartnerAdvanceSummaryFilter } from '../partner-advance.service';
 
@@ -26,6 +26,7 @@ export class PartnerAdvanceListComponent implements OnInit {
   search: string;
   limit = 20;
   offset = 0;
+  pagerSettings: any;
   edit = false;
   dateFrom: Date;
   dateTo: Date;
@@ -33,6 +34,8 @@ export class PartnerAdvanceListComponent implements OnInit {
   amountBalanceFilter: number = 0;
   amountBalance: number;
   amountAdvanceUsed: number;
+
+  summary2: any;
 
   typeAmount: any = {};
   types: any[] = [
@@ -47,13 +50,12 @@ export class PartnerAdvanceListComponent implements OnInit {
     private intlService: IntlService,
     private modalService: NgbModal,
     private partnerService: PartnerService,
-    private router: Router,
     private route: ActivatedRoute,
     private notificationService: NotificationService,
     private partnerAdvanceService: PartnerAdvanceService,
-    private fb: FormBuilder,
-    private authService: AuthService
-  ) { }
+    private authService: AuthService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.partnerId = this.route.parent.parent.snapshot.paramMap.get('id');
@@ -102,25 +104,16 @@ export class PartnerAdvanceListComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.offset = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 
   loadTypeAmountTotal() {
-    forkJoin(this.types.map(x => {
-      var val = new PartnerAdvanceSummaryFilter();
-      val.type = x.value;
-      val.partnerId = this.partnerId;
-      val.companyId = this.authService.userInfo.companyId;
-      return this.partnerAdvanceService.getSumary(val).pipe(
-        switchMap(amount => of({ type: x.value, amount: amount }))
-      );
-    })).subscribe((result) => {
-      result.forEach(item => {
-        if(item.type == ''){
-          this.amountBalanceFilter = item.amount as number;
-        }       
-        this.typeAmount[item.type] = item.amount;
-      });
+    var val = new PartnerAdvanceSummaryFilter();
+    val.partnerId = this.partnerId;
+    val.companyId = this.authService.userInfo.companyId;
+    return this.partnerAdvanceService.getSumary2(val).subscribe((result: any) => {
+      this.summary2 = result;
     });
   }
 

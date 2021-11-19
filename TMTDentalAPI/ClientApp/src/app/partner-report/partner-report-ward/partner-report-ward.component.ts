@@ -1,7 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { PartnerReportLocationCity, PartnerReportLocationDistrict, PartnerService, PartnerReportLocationWard } from 'src/app/partners/partner.service';
-import { aggregateBy } from '@progress/kendo-data-query';
+import { PartnerReportLocationDistrict, PartnerReportLocationWard, PartnerService } from 'src/app/partners/partner.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-partner-report-ward',
@@ -11,12 +11,16 @@ import { aggregateBy } from '@progress/kendo-data-query';
 export class PartnerReportWardComponent implements OnInit {
   @Input() public item: PartnerReportLocationDistrict;
   skip = 0;
-  limit = 10;
+  limit = 20;
+  pagerSettings: any;
   gridData: GridDataResult;
   details: PartnerReportLocationWard[];
   loading = false;
 
-  constructor(private partnerService: PartnerService) { }
+  constructor(
+    private partnerService: PartnerService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -37,6 +41,7 @@ export class PartnerReportWardComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadItems();
   }
 

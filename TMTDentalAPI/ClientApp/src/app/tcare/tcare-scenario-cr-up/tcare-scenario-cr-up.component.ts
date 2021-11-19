@@ -1,17 +1,17 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray, FormControl } from '@angular/forms';
-import { TCareScenarioDisplay, TcareService, TCareCampaignDisplay } from '../tcare.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { TcareCampaignCreateDialogComponent } from '../tcare-campaign-create-dialog/tcare-campaign-create-dialog.component';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { load, IntlService } from '@progress/kendo-angular-intl';
-import { NotificationService } from '@progress/kendo-angular-notification';
-import { ChannelSocial, FacebookPageService } from 'src/app/socials-channel/facebook-page.service';
-import { FacebookPagePaged } from 'src/app/socials-channel/facebook-page-paged';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { IntlService } from '@progress/kendo-angular-intl';
+import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { FacebookPagePaged } from 'src/app/socials-channel/facebook-page-paged';
+import { FacebookPageService } from 'src/app/socials-channel/facebook-page.service';
+import { TcareCampaignCreateDialogComponent } from '../tcare-campaign-create-dialog/tcare-campaign-create-dialog.component';
+import { TCareCampaignDisplay, TCareScenarioDisplay, TcareService } from '../tcare.service';
 
 @Component({
   selector: 'app-tcare-scenario-cr-up',
@@ -42,7 +42,6 @@ export class TcareScenarioCrUpComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private activeRoute: ActivatedRoute,
     private tcareService: TcareService,
     private modalService: NgbModal,
     private intlService: IntlService,

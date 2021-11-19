@@ -30,17 +30,19 @@ namespace Infrastructure.Services
             _productAppointmentRelService = productAppointmentRelService;
         }
 
-        public override async Task<Appointment> CreateAsync(Appointment entity)
+        public override async Task<IEnumerable<Appointment>> CreateAsync(IEnumerable<Appointment> entities)
         {
             var sequenceService = (IIRSequenceService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IIRSequenceService));
-            entity.Name = await sequenceService.NextByCode("appointment");
-            if (string.IsNullOrEmpty(entity.Name) || entity.Name == "/")
+            foreach (var entity in entities)
             {
-                await InsertAppointmentSequence();
                 entity.Name = await sequenceService.NextByCode("appointment");
+                if (string.IsNullOrEmpty(entity.Name) || entity.Name == "/")
+                {
+                    await InsertAppointmentSequence();
+                    entity.Name = await sequenceService.NextByCode("appointment");
+                }
             }
-          
-            return await base.CreateAsync(entity);
+            return await base.CreateAsync(entities);
         }
 
         public async Task<PagedResult2<Appointment>> GetPagedResultAsync(int offset = 0, int limit = 20, string search = "")
@@ -84,9 +86,9 @@ namespace Infrastructure.Services
         {
             var query = GetSearchQuery(search: val.Search, state: val.State, isLate: val.IsLate,
                 partnerId: val.PartnerId, doctorId: val.DoctorId, dateFrom: val.DateTimeFrom,
-                dateTo: val.DateTimeTo, userId: val.UserId, companyId: val.CompanyId, dotKhamId: val.DotKhamId);
+                dateTo: val.DateTimeTo, userId: val.UserId, companyId: val.CompanyId, 
+                dotKhamId: val.DotKhamId, isRepeatCustomer: val.IsRepeatCustomer);
 
-            query = query.OrderByDescending(x => x.DateCreated);
             var totalItems = await query.CountAsync();
             var limit = val.Limit > 0 ? val.Limit : int.MaxValue;
 
@@ -166,13 +168,14 @@ namespace Infrastructure.Services
 
         public async Task<long> GetCount(AppointmentGetCountVM val)
         {
-            var query = GetSearchQuery(state: val.State, dateFrom: val.DateFrom, dateTo: val.DateTo, isLate: val.IsLate, doctorId: val.DoctorId, search: val.Search, companyId: val.CompanyId );
+            var query = GetSearchQuery(state: val.State, dateFrom: val.DateFrom, dateTo: val.DateTo, isLate: val.IsLate, doctorId: val.DoctorId, search: val.Search, companyId: val.CompanyId);
             return await query.LongCountAsync();
         }
 
         public IQueryable<Appointment> GetSearchQuery(string search = "", Guid? partnerId = null,
             string state = "", DateTime? dateTo = null, DateTime? dateFrom = null, Guid? dotKhamId = null,
-            Guid? doctorId = null, bool? isLate = null, string userId = "", Guid? companyId = null)
+            Guid? doctorId = null, bool? isLate = null, string userId = "", Guid? companyId = null,
+            bool? isRepeatCustomer = null)
         {
             var query = SearchQuery();
             var today = DateTime.Today;
@@ -206,6 +209,11 @@ namespace Infrastructure.Services
 
             if (!string.IsNullOrEmpty(userId))
                 query = query.Where(x => x.UserId == userId);
+
+            if (isRepeatCustomer.HasValue)
+            {
+                query = query.Where(x => x.IsRepeatCustomer == isRepeatCustomer.Value);
+            }
 
             string[] stateList = null;
             if (!string.IsNullOrEmpty(state))
@@ -363,7 +371,8 @@ namespace Infrastructure.Services
         {
             var query = GetSearchQuery(search: val.Search, state: val.State, isLate: val.IsLate,
               partnerId: val.PartnerId, doctorId: val.DoctorId, dateFrom: val.DateTimeFrom,
-              dateTo: val.DateTimeTo, userId: val.UserId, companyId: val.CompanyId, dotKhamId: val.DotKhamId);
+              dateTo: val.DateTimeTo, userId: val.UserId, companyId: val.CompanyId, 
+              dotKhamId: val.DotKhamId, isRepeatCustomer: val.IsRepeatCustomer);
 
             query = query.OrderByDescending(x => x.DateCreated);
 

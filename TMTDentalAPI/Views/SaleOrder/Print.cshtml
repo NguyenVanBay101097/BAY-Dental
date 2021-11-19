@@ -165,6 +165,7 @@
                     <tr>
                         <th>Mã thanh toán</th>
                         <th>Ngày thanh toán</th>
+                        <th>Dịch vụ</th>
                         <th>Số tiền</th>
                         <th>Phương thức</th>
                         <th class="text-right">Thanh toán</th>
@@ -180,6 +181,7 @@
                                 @if (item.Id == payment.Payments.FirstOrDefault().Id)
                                 {
                                     <td rowspan="@payment.Payments.Count()">@item.PaymentDate.ToString("dd/MM/yyyy")</td>
+                                    <td rowspan="@payment.Payments.Count()">@string.Join(", ", payment.SaleOrderLines.Select(x => x.Name))</td>
                                     <td rowspan="@payment.Payments.Count()">@string.Format(culture, "{0:n0}", payment.Amount)</td>
                                 }
                                 <td>@item.JournalName</td>

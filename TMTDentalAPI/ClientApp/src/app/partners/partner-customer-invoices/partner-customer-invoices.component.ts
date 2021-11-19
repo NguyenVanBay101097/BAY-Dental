@@ -1,7 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Inject } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { AccountInvoicePaged, AccountInvoiceService } from 'src/app/account-invoices/account-invoice.service';
 import { map } from 'rxjs/operators';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-partner-customer-invoices',
@@ -11,11 +12,15 @@ import { map } from 'rxjs/operators';
 export class PartnerCustomerInvoicesComponent implements OnInit {
   @Input() partnerId: string;
   gridData: GridDataResult;
-  limit = 5;
+  limit = 10;
   skip = 0;
+  pagerSettings: any;
   loading = false;
 
-  constructor(private accountInvoiceService: AccountInvoiceService) { }
+  constructor(
+    private accountInvoiceService: AccountInvoiceService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettingsPopup }
 
   ngOnInit() {
     this.loadDataFromApi();
@@ -44,6 +49,7 @@ export class PartnerCustomerInvoicesComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 }

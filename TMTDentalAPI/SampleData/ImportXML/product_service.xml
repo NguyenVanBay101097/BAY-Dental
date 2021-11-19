@@ -1,0 +1,579 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Record>
+    <Id>sample.product_service_1</Id>
+    <Name>Nhổ răng sữa tê chích</Name>
+    <CategId>sample.product_category_11</CategId>
+    <ListPrice>50000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>false</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_2</Id>
+    <Name>Nhổ răng không đau</Name>
+    <CategId>sample.product_category_11</CategId>
+    <ListPrice>100000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>false</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_3</Id>
+    <Name>Răng khôn hàm trên</Name>
+    <CategId>sample.product_category_10</CategId>
+    <ListPrice>2000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>false</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_4</Id>
+    <Name>Răng khôn hàm dưới</Name>
+    <CategId>sample.product_category_10</CategId>
+    <ListPrice>4000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>false</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_5</Id>
+    <Name>Lấy tủy răng sữa</Name>
+    <CategId>sample.product_category_9</CategId>
+    <ListPrice>200000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>false</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_6</Id>
+    <Name>Lấy tủy trâm tay</Name>
+    <CategId>sample.product_category_9</CategId>
+    <ListPrice>400000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>false</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_7</Id>
+    <Name>Lấy tủy bằng máy</Name>
+    <CategId>sample.product_category_9</CategId>
+    <ListPrice>500000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>false</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_8</Id>
+    <Name>Đóng chốt kim loại</Name>
+    <CategId>sample.product_category_9</CategId>
+    <ListPrice>300000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>false</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_9</Id>
+    <Name>Đóng chốt sợi Carbon</Name>
+    <CategId>sample.product_category_9</CategId>
+    <ListPrice>500000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>false</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_10</Id>
+    <Name>Cạo vôi - đánh bóng răng</Name>
+    <CategId>sample.product_category_8</CategId>
+    <ListPrice>300000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>false</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_11</Id>
+    <Name>Trám răng sữa</Name>
+    <CategId>sample.product_category_7</CategId>
+    <ListPrice>100000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>false</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_12</Id>
+    <Name>Trám răng Composite</Name>
+    <CategId>sample.product_category_7</CategId>
+    <ListPrice>300000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>false</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_13</Id>
+    <Name>Đính hạt kim cương</Name>
+    <CategId>sample.product_category_7</CategId>
+    <ListPrice>300000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>false</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_14</Id>
+    <Name>Đắp kẽ răng thẩm mỹ</Name>
+    <CategId>sample.product_category_7</CategId>
+    <ListPrice>500000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>false</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_15</Id>
+    <Name>Đắp mặt răng thẩm mỹ</Name>
+    <CategId>sample.product_category_7</CategId>
+    <ListPrice>1000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>false</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_16</Id>
+    <Name>Tẩy trắng răng</Name>
+    <CategId>sample.product_category_6</CategId>
+    <ListPrice>1000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>false</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_17</Id>
+    <Name>Combo tẩy trắng răng 1 lần (laser + tại nhà)</Name>
+    <CategId>sample.product_category_6</CategId>
+    <ListPrice>3400000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>false</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_18</Id>
+    <Name>Combo tẩy trắng răng 2 lần (laser + tại nhà)</Name>
+    <CategId>sample.product_category_6</CategId>
+    <ListPrice>4400000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>false</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_19</Id>
+    <Name>Răng tháo lắp</Name>
+    <CategId>sample.product_category_5</CategId>
+    <ListPrice>200000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>false</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_20</Id>
+    <Name>Đệm hàm mềm</Name>
+    <CategId>sample.product_category_5</CategId>
+    <ListPrice>500000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>false</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_21</Id>
+    <Name>Lưới gia cố nền hàm</Name>
+    <CategId>sample.product_category_5</CategId>
+    <ListPrice>500000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>false</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_22</Id>
+    <Name>Nền hàm nhựa mềm</Name>
+    <CategId>sample.product_category_5</CategId>
+    <ListPrice>1500000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>false</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_23</Id>
+    <Name>Attachment đơn</Name>
+    <CategId>sample.product_category_5</CategId>
+    <ListPrice>2000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>false</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_24</Id>
+    <Name>Attachment đôi</Name>
+    <CategId>sample.product_category_5</CategId>
+    <ListPrice>3000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>false</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_25</Id>
+    <Name>Khung kim loại thường</Name>
+    <CategId>sample.product_category_5</CategId>
+    <ListPrice>2000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>false</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_26</Id>
+    <Name>Khung hợp Titan</Name>
+    <CategId>sample.product_category_5</CategId>
+    <ListPrice>3000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>false</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_27</Id>
+    <Name>Chụp CT Conebeam</Name>
+    <CategId>sample.product_category_4</CategId>
+    <ListPrice>0.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>false</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_28</Id>
+    <Name>Chụp X-Quang</Name>
+    <CategId>sample.product_category_4</CategId>
+    <ListPrice>0.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>false</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_29</Id>
+    <Name>Khám và tư vấn</Name>
+    <CategId>sample.product_category_4</CategId>
+    <ListPrice>0.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>false</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_30</Id>
+    <Name>Mắc cài Kim Loại tự đóng</Name>
+    <CategId>sample.product_category_3</CategId>
+    <ListPrice>40000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_31</Id>
+    <Name>Mắc cài Sứ tự đóng</Name>
+    <CategId>sample.product_category_3</CategId>
+    <ListPrice>50000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_32</Id>
+    <Name>Niềng răng trong suốt Invisalign (đơn giản)</Name>
+    <CategId>sample.product_category_3</CategId>
+    <ListPrice>100000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_33</Id>
+    <Name>Niềng răng trong suốt Invisalign (phức tạp)</Name>
+    <CategId>sample.product_category_3</CategId>
+    <ListPrice>120000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_34</Id>
+    <Name>Hàm Traniner trẻ em</Name>
+    <CategId>sample.product_category_3</CategId>
+    <ListPrice>4000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_35</Id>
+    <Name>Khí cụ nông rộng</Name>
+    <CategId>sample.product_category_3</CategId>
+    <ListPrice>6000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_36</Id>
+    <Name>Minivit hỗ trợ chỉnh đẹp hơn</Name>
+    <CategId>sample.product_category_3</CategId>
+    <ListPrice>2000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_37</Id>
+    <Name>Mặt phẳng nghiêng</Name>
+    <CategId>sample.product_category_3</CategId>
+    <ListPrice>4000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_38</Id>
+    <Name>Face Mask</Name>
+    <CategId>sample.product_category_3</CategId>
+    <ListPrice>10000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_39</Id>
+    <Name>Khí cụ chức năng Twin Block</Name>
+    <CategId>sample.product_category_3</CategId>
+    <ListPrice>10000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_40</Id>
+    <Name>IMPLANT Hàn Quốc</Name>
+    <CategId>sample.product_category_2</CategId>
+    <ListPrice>13000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_41</Id>
+    <Name>IMPLANT Hàn Quốc (cao cấp)</Name>
+    <CategId>sample.product_category_2</CategId>
+    <ListPrice>18000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_42</Id>
+    <Name>IMPLANT Pháp ETK</Name>
+    <CategId>sample.product_category_2</CategId>
+    <ListPrice>23000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_43</Id>
+    <Name>IMPLANT Mỹ Hiossen</Name>
+    <CategId>sample.product_category_2</CategId>
+    <ListPrice>25000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_44</Id>
+    <Name>IMPLANT Mỹ Nobel</Name>
+    <CategId>sample.product_category_2</CategId>
+    <ListPrice>30000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_45</Id>
+    <Name>IMPLANT Mỹ Nobel Active</Name>
+    <CategId>sample.product_category_2</CategId>
+    <ListPrice>35000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_46</Id>
+    <Name>IMPLANT Thụy Sỹ Straumann</Name>
+    <CategId>sample.product_category_2</CategId>
+    <ListPrice>30000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_47</Id>
+    <Name>IMPLANT Thụy Sỹ Straumann Active</Name>
+    <CategId>sample.product_category_2</CategId>
+    <ListPrice>35000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_48</Id>
+    <Name>Răng Sứ (dùng trên trụ Implant)</Name>
+    <CategId>sample.product_category_2</CategId>
+    <ListPrice>3000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_49</Id>
+    <Name>Ghép xương</Name>
+    <CategId>sample.product_category_2</CategId>
+    <ListPrice>3000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_50</Id>
+    <Name>Ghép xương + Đặt màng Collagen tự tiêu</Name>
+    <CategId>sample.product_category_2</CategId>
+    <ListPrice>5000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_51</Id>
+    <Name>Nâng màng xương kín + Ghép xương</Name>
+    <CategId>sample.product_category_2</CategId>
+    <ListPrice>5000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_52</Id>
+    <Name>Nâng màng xương hở + Ghép xương + Đặt màng</Name>
+    <CategId>sample.product_category_2</CategId>
+    <ListPrice>10000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_53</Id>
+    <Name>Chẽ xương + Ghép xương + Đặt màng tự tiêu</Name>
+    <CategId>sample.product_category_2</CategId>
+    <ListPrice>8000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_54</Id>
+    <Name>Sứ Titan Mỹ</Name>
+    <CategId>sample.product_category_1</CategId>
+    <ListPrice>3000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_55</Id>
+    <Name>Sứ Zirconia TQ</Name>
+    <CategId>sample.product_category_1</CategId>
+    <ListPrice>4000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_56</Id>
+    <Name>Sứ Katana Nhật</Name>
+    <CategId>sample.product_category_1</CategId>
+    <ListPrice>4000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_57</Id>
+    <Name>Sứ Zirconia Đức</Name>
+    <CategId>sample.product_category_1</CategId>
+    <ListPrice>5000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_58</Id>
+    <Name>Sứ Cercon HT Mỹ</Name>
+    <CategId>sample.product_category_1</CategId>
+    <ListPrice>7000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_59</Id>
+    <Name>Sứ Cercon XT Mỹ</Name>
+    <CategId>sample.product_category_1</CategId>
+    <ListPrice>8000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_60</Id>
+    <Name>Sứ Zolid Úc</Name>
+    <CategId>sample.product_category_1</CategId>
+    <ListPrice>8000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_61</Id>
+    <Name>Veneer Emax Thụy Sĩ</Name>
+    <CategId>sample.product_category_1</CategId>
+    <ListPrice>9000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_62</Id>
+    <Name>Sứ Ngọc Trai Đức</Name>
+    <CategId>sample.product_category_1</CategId>
+    <ListPrice>10000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_63</Id>
+    <Name>Sứ Lava Plus</Name>
+    <CategId>sample.product_category_1</CategId>
+    <ListPrice>12000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>true</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+  <Record>
+    <Id>sample.product_service_64</Id>
+    <Name>Tráng răng sâu</Name>
+    <CategId>sample.product_category_23</CategId>
+    <ListPrice>30000000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <IsLabo>false</IsLabo>
+    <LaboPrice>0.00</LaboPrice>
+  </Record>
+</Data>

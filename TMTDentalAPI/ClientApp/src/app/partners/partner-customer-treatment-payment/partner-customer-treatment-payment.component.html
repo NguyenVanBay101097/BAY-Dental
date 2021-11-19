@@ -6,12 +6,12 @@
     </div>
     <div>
         <div class="o_content">
-            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"
                 (pageChange)="pageChange($event)">
                 <kendo-grid-column field="name" title="Số phiếu" width="100">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                         <div>
-                            <a class="text-primary" [routerLink]="['/sale-orders/form']" [queryParams]="{ id: dataItem.id}">
+                            <a class="text-primary" [routerLink]="['/sale-orders', dataItem.id]">
                                 {{dataItem.name}}
                             </a>
                         </div>

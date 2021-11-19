@@ -38,7 +38,7 @@ a {
     padding: 0;
 }
 
-.modal.o_technical_modal .modal-content .modal-footer {
+.modal.o_technical_modal .modal-content .modal-footer, .modal .modal-content .modal-footer {
     flex-wrap: wrap;
     text-align: left;
     -webkit-box-pack: start;
@@ -1172,6 +1172,14 @@ td.oe_form_group_cell_label label {
 .o_form_view .oe_button_box .btn.oe_stat_button>.o_stat_info .o_stat_text,
 .o_form_view .oe_button_box .btn.oe_stat_button>span .o_stat_text {
     line-height: 1.2;
+}
+
+.o_form_view .oe_button_box .btn.oe_stat_button > .o_button_icon {
+    margin-left: 6px;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 44px;
+    width: 30%;
 }
 
 .o_form_view.o_form_nosheet {

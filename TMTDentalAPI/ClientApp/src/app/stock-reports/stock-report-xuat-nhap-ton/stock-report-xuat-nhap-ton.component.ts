@@ -1,13 +1,14 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { debounceTime, tap, switchMap, distinctUntilChanged } from 'rxjs/operators';
-import { StockReportXuatNhapTonItem, StockReportService, StockReportXuatNhapTonSearch } from '../stock-report.service';
-import { ProductSimple } from 'src/app/products/product-simple';
-import { ProductCategoryBasic, ProductCategoryService, ProductCategoryPaged } from 'src/app/product-categories/product-category.service';
-import { ProductService, ProductPaged, ProductFilter } from 'src/app/products/product.service';
 import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { ProductCategoryBasic, ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
+import { ProductSimple } from 'src/app/products/product-simple';
+import { ProductFilter, ProductService } from 'src/app/products/product.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { StockReportService, StockReportXuatNhapTonItem, StockReportXuatNhapTonSearch } from '../stock-report.service';
 
 
 @Component({
@@ -26,6 +27,7 @@ export class StockReportXuatNhapTonComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   dateFrom: Date;
   dateTo: Date;
   searchProduct: ProductSimple;
@@ -43,7 +45,9 @@ export class StockReportXuatNhapTonComponent implements OnInit {
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 0).getDate())).toDateString());
 
   constructor(private reportService: StockReportService, private intlService: IntlService,
-    private productService: ProductService, private productCategService: ProductCategoryService) { }
+    private productService: ProductService, private productCategService: ProductCategoryService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.dateFrom = new Date(this.monthStart);
@@ -122,6 +126,7 @@ export class StockReportXuatNhapTonComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadItems();
   }
 

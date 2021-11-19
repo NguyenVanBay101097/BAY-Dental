@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { IntlService } from '@progress/kendo-angular-intl';
 import { LegendLabelsContentArgs } from '@progress/kendo-angular-charts';
-import { PartnerService, PartnerReportLocationDistrict, PartnerReportLocationWard } from 'src/app/partners/partner.service';
+import { IntlService } from '@progress/kendo-angular-intl';
+import { ChartDataset, ChartOptions } from 'chart.js';
+import { PartnerService } from 'src/app/partners/partner.service';
 
 @Component({
   selector: 'app-partner-report-location-chart-pie',
@@ -15,6 +16,54 @@ export class PartnerReportLocationChartPieComponent implements OnInit {
   dateTo: Date;
   date: Date;
   districtCode: string;
+
+  public pieChartLabelsDistrict: string[] = [];
+  public pieChartLabelsWard: string[] = [];
+  public pieChartDistrictOptions: ChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      title: {
+        text: 'Theo quận/huyện lân cận phòng khám',
+        display: true,
+        font: {
+          size: 16
+        }
+      },
+      legend: {
+        position: 'bottom'
+      }
+    }
+  };
+  public pieChartWardOptions: ChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      title: {
+        text: 'Theo phường/xã lân cận phòng khám',
+        display: true,
+        font: {
+          size: 16
+        }
+      },
+      legend: {
+        position: 'bottom'
+      }
+    }
+  };
+  public pieChartDataDistrict: ChartDataset[] = [
+    { 
+      label: 'Khách hàng',
+      data: [],
+    }
+  ];
+  public pieChartDataWard: ChartDataset[] = [
+    { 
+      label: 'Khách hàng',
+      data: [],
+    }
+  ];
+
   constructor(
     private intl: IntlService,
     private partnerService: PartnerService
@@ -24,7 +73,7 @@ export class PartnerReportLocationChartPieComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.labelContent = this.labelContent.bind(this);
+    // this.labelContent = this.labelContent.bind(this);
   }
 
 
@@ -39,8 +88,10 @@ export class PartnerReportLocationChartPieComponent implements OnInit {
     }
 
     this.partnerService.getReportLocationCompanyWard(value).subscribe(
-      res => {
+      (res: any) => {
         this.pieDataWard = res;
+        this.pieChartLabelsWard = res.map(x => x.name ? x.name : 'Chưa xác định');
+        this.pieChartDataWard[0].data = res.map(x => x.total);
       }
     )
   }
@@ -59,8 +110,10 @@ export class PartnerReportLocationChartPieComponent implements OnInit {
     };
   
     this.partnerService.getReportLocationCompanyDistrict(val).subscribe(
-      res => {
+      (res: any) => {
         this.pieDataDistrict = res;
+        this.pieChartLabelsDistrict = res.map(x => x.name ? x.name : 'Chưa xác định');
+        this.pieChartDataDistrict[0].data = res.map(x => x.total);
       }
     )
   }

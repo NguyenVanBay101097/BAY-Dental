@@ -1,13 +1,13 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, Inject, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { PartnerService } from 'src/app/partners/partner.service';
 import { PhieuThuChiPaged, PhieuThuChiService } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { NotifyService } from 'src/app/shared/services/notify.service';
 import { PrintService } from 'src/app/shared/services/print.service';
 
@@ -19,25 +19,26 @@ import { PrintService } from 'src/app/shared/services/print.service';
 export class AgentCommmissionHistoryComponent implements OnInit {
   gridData: GridDataResult;
   searchUpdate = new Subject<string>();
-  agentId : string;
+  agentId: string;
   search: string;
   limit = 20;
   offset = 0;
+  pagerSettings: any;
   edit = false;
   dateFrom: Date;
   dateTo: Date;
   loading = false;
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
-  
+
   constructor(private intlService: IntlService,
     private modalService: NgbModal,
-    private partnerService: PartnerService,
     private phieuthuchiService: PhieuThuChiService,
-    private router: Router,
     private printService: PrintService,
     private route: ActivatedRoute,
-    private notifyService: NotifyService) { }
+    private notifyService: NotifyService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.agentId = this.route.parent.snapshot.paramMap.get('id');
@@ -57,8 +58,8 @@ export class AgentCommmissionHistoryComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  
-  loadDataFromApi(){
+
+  loadDataFromApi() {
     this.loading = true;
     var paged = new PhieuThuChiPaged();
     paged.limit = this.limit;
@@ -83,6 +84,7 @@ export class AgentCommmissionHistoryComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.offset = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 
@@ -95,7 +97,7 @@ export class AgentCommmissionHistoryComponent implements OnInit {
 
   printItem(item) {
     this.phieuthuchiService.getPrint2(item.id).subscribe((data: any) => {
-      this.printService.printHtml(data);
+      this.printService.printHtml(data.html);
     });
   }
 
@@ -104,9 +106,9 @@ export class AgentCommmissionHistoryComponent implements OnInit {
     modalRef.componentInstance.title = 'Xóa phiếu chi hoa hồng';
     modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa phiếu chi hoa hồng ?';
     modalRef.result.then(() => {
-      this.phieuthuchiService.actionCancel([item.id]).subscribe(() =>{
+      this.phieuthuchiService.actionCancel([item.id]).subscribe(() => {
         this.phieuthuchiService.delete(item.id).subscribe(() => {
-          this.notifyService.notify('success','Xóa thành công');
+          this.notifyService.notify('success', 'Xóa thành công');
           this.loadDataFromApi();
         }, () => {
         });

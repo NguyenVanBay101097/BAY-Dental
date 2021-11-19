@@ -1,15 +1,15 @@
-import { AuthService } from './../../auth/auth.service';
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, Inject, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { NotifyService } from 'src/app/shared/services/notify.service';
-import { PrintService } from 'src/app/shared/services/print.service';
 import { AgentCommmissionPaymentDialogComponent } from '../agent-commmission-payment-dialog/agent-commmission-payment-dialog.component';
 import { AgentService, CommissionAgentDetailFilter, TotalAmountAgentFilter } from '../agent.service';
+import { AuthService } from './../../auth/auth.service';
 
 @Component({
   selector: 'app-agent-commmission-form-detail',
@@ -22,22 +22,24 @@ export class AgentCommmissionFormDetailComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   search: string;
   searchUpdate = new Subject<string>();
   dateFrom: Date;
   dateTo: Date;
-  commissionAgentStatistics : any;
+  commissionAgentStatistics: any;
   updateSubject: Subject<boolean> = new Subject<boolean>();
 
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
   constructor(private route: ActivatedRoute, private modalService: NgbModal,
-    private agentService: AgentService, private router: Router,
+    private agentService: AgentService,
     private authService: AuthService,
     private intlService: IntlService,
     private notifyService: NotifyService,
-    private printService: PrintService) { }
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.id = this.route.parent.snapshot.paramMap.get('id');
@@ -79,6 +81,7 @@ export class AgentCommmissionFormDetailComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 
@@ -91,11 +94,10 @@ export class AgentCommmissionFormDetailComponent implements OnInit {
 
   loadAmountCommissionAgentTotal() {
     if (this.id) {
-      debugger
       var val = new TotalAmountAgentFilter();
       val.agentId = this.id;
       val.companyId = this.authService.userInfo.companyId;
-      this.agentService.getAmountCommissionAgentToTal(val).subscribe((result : any) => {
+      this.agentService.getAmountCommissionAgentToTal(val).subscribe((result: any) => {
         this.commissionAgentStatistics = result;
       });
     }

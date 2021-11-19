@@ -1,17 +1,14 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { TimeKeepingService, ChamCongBasic, ChamCongSave } from '../time-keeping.service';
-import { EmployeeSimple, EmployeeBasic } from 'src/app/employees/employee';
-import { IntlService } from '@progress/kendo-angular-intl';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { debounceTime, tap, switchMap } from 'rxjs/operators';
-import { offset } from '@progress/kendo-date-math';
-import { WorkEntryType, WorkEntryTypeService, WorkEntryTypePage } from 'src/app/work-entry-types/work-entry-type.service';
-import { NotificationService } from '@progress/kendo-angular-notification';
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { IntlService } from '@progress/kendo-angular-intl';
 import * as _ from 'lodash';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { EmployeeBasic } from 'src/app/employees/employee';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { WorkEntryType, WorkEntryTypePage, WorkEntryTypeService } from 'src/app/work-entry-types/work-entry-type.service';
+import { ChamCongBasic, TimeKeepingService } from '../time-keeping.service';
 
 @Component({
   selector: 'app-time-keeping-setup-dialog',
@@ -21,7 +18,7 @@ import * as _ from 'lodash';
 export class TimeKeepingSetupDialogComponent implements OnInit {
 
   @ViewChild('workCbx', { static: true }) workCbx: ComboBoxComponent;
-  @ViewChild('timeOutRef', { static: false }) timeOutRef: ElementRef;
+  @ViewChild('timeOutRef') timeOutRef: ElementRef;
   formGroup: FormGroup;
   id: string;
   dateTime: Date;
@@ -39,8 +36,6 @@ export class TimeKeepingSetupDialogComponent implements OnInit {
     private timeKeepingServive: TimeKeepingService,
     private intl: IntlService,
     private workEntryTypeService: WorkEntryTypeService,
-    private notificationService: NotificationService,
-    private showErrorService: AppSharedShowErrorService,
     private modalService: NgbModal
   ) { }
 

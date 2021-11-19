@@ -1,9 +1,9 @@
-import { Component, OnInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, NgForm } from '@angular/forms';
-import { Product } from '../product';
-import { ProductCategoryBasic, ProductCategoryService, ProductCategoryPaged } from 'src/app/product-categories/product-category.service';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { debounceTime, tap, switchMap } from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators';
+import { ProductCategoryBasic } from 'src/app/product-categories/product-category.service';
+import { Product } from '../product';
 
 @Component({
   selector: 'app-product-labo-form',
@@ -19,7 +19,7 @@ export class ProductLaboFormComponent implements OnInit {
   @Output() validate = new EventEmitter<boolean>();
   @Output() btnCreateCategClick = new EventEmitter<any>();
   @Output() filterChangeCateg = new EventEmitter<string>();
-  constructor(private fb: FormBuilder, private productCategoryService: ProductCategoryService) { }
+  constructor() { }
 
   ngOnInit() {
     this.categCbx.filterChange.asObservable().pipe(

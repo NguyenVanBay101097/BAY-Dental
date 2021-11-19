@@ -71,10 +71,16 @@ namespace ApplicationCore.Entities
         public ICollection<SaleCouponProgramProductRel> DiscountSpecificProducts { get; set; } = new List<SaleCouponProgramProductRel>();
         public ICollection<SaleCouponProgramProductCategoryRel> DiscountSpecificProductCategories { get; set; } = new List<SaleCouponProgramProductCategoryRel>();
         public ICollection<SaleCouponProgramMemberLevelRel> DiscountMemberLevels { get; set; } = new List<SaleCouponProgramMemberLevelRel>();
+
+        /// <summary>
+        /// Khuyến mãi theo loại thẻ thành viên
+        /// </summary>
+        public ICollection<SaleCouponProgramCardTypeRel> DiscountCardTypes { get; set; } = new List<SaleCouponProgramCardTypeRel>();
+
         /// <summary>
         /// all : tất cả
         /// specific_partners: khách hàng
-        /// member_levels: hạng thành viên
+        /// card_types: loại thẻ thành viên
         /// </summary>
         public string ApplyPartnerOn { get; set; }
 

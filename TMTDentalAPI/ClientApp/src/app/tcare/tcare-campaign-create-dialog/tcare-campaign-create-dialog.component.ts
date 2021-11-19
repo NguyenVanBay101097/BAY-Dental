@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { TcareService } from '../tcare.service';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-tcare-campaign-create-dialog',
@@ -19,7 +18,6 @@ export class TcareCampaignCreateDialogComponent implements OnInit {
     private fb: FormBuilder,
     public activeModal: NgbActiveModal,
     private tcareService: TcareService,
-    private router: Router
   ) { }
 
   ngOnInit() {

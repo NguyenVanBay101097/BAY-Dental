@@ -32,6 +32,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string PaperFormat { get; set; }
 
+        public bool IsSize { get; set; }
+
         /// <summary>
         /// canh lề trên
         /// </summary>
@@ -61,6 +63,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
 
         public string PaperFormat { get; set; }
+
+        public bool IsSize { get; set; }
 
         /// <summary>
         /// canh lề trên

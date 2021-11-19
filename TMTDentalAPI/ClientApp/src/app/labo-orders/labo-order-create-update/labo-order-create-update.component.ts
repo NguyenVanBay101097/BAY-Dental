@@ -1,36 +1,26 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import {
-  FormControl,
-  FormGroup,
-  FormBuilder,
-  FormArray,
-  Validators,
+  FormArray, FormBuilder, FormGroup, Validators
 } from "@angular/forms";
-import { debounceTime, switchMap, tap, map } from "rxjs/operators";
-import { PartnerSimple, PartnerPaged } from "src/app/partners/partner-simple";
-import { PartnerService } from "src/app/partners/partner.service";
-import { UserService, UserPaged } from "src/app/users/user.service";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
-import { ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
-import {
-  ProductService,
-  ProductFilter,
-} from "src/app/products/product.service";
-import { IntlService } from "@progress/kendo-angular-intl";
-import * as _ from "lodash";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
+import { IntlService } from "@progress/kendo-angular-intl";
 import { NotificationService } from "@progress/kendo-angular-notification";
-import {
-  LaboOrderDisplay,
-  LaboOrderService,
-  LaboOrderDefaultGet,
-} from "../labo-order.service";
-import { SaleOrderBasic } from "src/app/sale-orders/sale-order-basic";
+import * as _ from "lodash";
+import { debounceTime, switchMap, tap } from "rxjs/operators";
 import {
   SaleOrderPaged,
-  SaleOrderService,
+  SaleOrderService
 } from "src/app/core/services/sale-order.service";
+import { PartnerPaged, PartnerSimple } from "src/app/partners/partner-simple";
+import { PartnerService } from "src/app/partners/partner.service";
+import { SaleOrderBasic } from "src/app/sale-orders/sale-order-basic";
 import { PartnerSupplierCuDialogComponent } from 'src/app/shared/partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
+import {
+  LaboOrderDefaultGet, LaboOrderDisplay,
+  LaboOrderService
+} from "../labo-order.service";
 declare var $: any;
 
 @Component({
@@ -57,10 +47,8 @@ export class LaboOrderCreateUpdateComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private partnerService: PartnerService,
-    private userService: UserService,
     private route: ActivatedRoute,
     private laboOrderService: LaboOrderService,
-    private productService: ProductService,
     private intlService: IntlService,
     private modalService: NgbModal,
     private router: Router,

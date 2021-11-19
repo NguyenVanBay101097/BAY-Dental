@@ -1,4 +1,4 @@
-import {Component, Inject, Input, Renderer2} from '@angular/core';
+import {Component, Inject, Input, OnInit, Renderer2} from '@angular/core';
 import {Router} from '@angular/router';
 import {DOCUMENT} from '@angular/common';
 
@@ -13,10 +13,9 @@ import {INavData} from '../app-sidebar-nav';
         <app-sidebar-nav-dropdown
           *ngSwitchCase="'dropdown'"
           [item]="item"
-          [class.open]="helper.isActive(router, item)"
-          [ngClass]="item | appSidebarNavItemClass"
-          appNavDropdown
-          routerLinkActive="open">
+          (itemClick)="itemClick(item)"
+          [class.active]="item === itemSelected"
+          [ngClass]="item | appSidebarNavItemClass">
         </app-sidebar-nav-dropdown>
         <app-sidebar-nav-divider
           *ngSwitchCase="'divider'"
@@ -43,15 +42,17 @@ import {INavData} from '../app-sidebar-nav';
           *ngSwitchDefault
           [item]="item"
           class="nav-item"
+          [class.active]="helper.isActive(router, item)"
           [ngClass]="item | appSidebarNavItemClass"
           (linkClick)="hideMobile()"
+          (itemClick)="itemLinkClick($event, item)"
         >
         </app-sidebar-nav-link>
       </ng-container>
     </ng-container>
   `
 })
-export class AppSidebarNavItemsComponent {
+export class AppSidebarNavItemsComponent implements OnInit {
 
   protected _items: INavData[];
 
@@ -63,6 +64,8 @@ export class AppSidebarNavItemsComponent {
     return this._items;
   }
 
+  itemSelected: INavData;
+
   constructor(
     @Inject(DOCUMENT) private document: any,
     private renderer: Renderer2,
@@ -70,9 +73,27 @@ export class AppSidebarNavItemsComponent {
     public helper: SidebarNavHelper
   ) {}
 
+  ngOnInit(): void {
+    this.itemSelected = this.items.find(x => this.helper.isActive(this.router, x)); 
+  }
+
   public hideMobile() {
     if (this.document.body.classList.contains('sidebar-show')) {
       this.renderer.removeClass(this.document.body, 'sidebar-show');
+    }
+  }
+
+  itemClick(item) {
+    if (item === this.itemSelected) {
+      this.itemSelected = null;
+    } else {
+      this.itemSelected = item;
+    }
+  }
+
+  itemLinkClick(data, item) {
+    if (data.url == item.url) {
+      this.itemSelected = item;
     }
   }
 }

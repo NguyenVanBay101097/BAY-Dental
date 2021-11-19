@@ -1,7 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { AdvisoryLine, AdvisoryLinePaged, AdvisoryService } from 'src/app/advisories/advisory.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
   selector: 'app-partner-customer-sale-order-quotations-lines',
@@ -12,14 +13,16 @@ export class PartnerCustomerSaleOrderQuotationsLinesComponent implements OnInit 
 
   @Input() public advisoryId: string;
   skip = 0;
-  limit = 10;
+  limit = 20;
+  pagerSettings: any;
   gridData: any = [];
   details: AdvisoryLine[];
   loading = false;
   constructor(
     private advisoryService: AdvisoryService,
-    private router: Router
-  ) { }
+    private router: Router,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
 
@@ -46,7 +49,7 @@ export class PartnerCustomerSaleOrderQuotationsLinesComponent implements OnInit 
 
   getFormReference(id , type){
     if(type == "saleOrder") {
-      this.router.navigate(['/sale-orders/form'], { queryParams: { id: id } });
+      this.router.navigate(['/sale-orders', id]);
     }
     else {
       this.router.navigate(['/quotations/form'], { queryParams: { id: id } });
@@ -55,7 +58,7 @@ export class PartnerCustomerSaleOrderQuotationsLinesComponent implements OnInit 
 
   pageChange(event:PageChangeEvent){
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
-
 }

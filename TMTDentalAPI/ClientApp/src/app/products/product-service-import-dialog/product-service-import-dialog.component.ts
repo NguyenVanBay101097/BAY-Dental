@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ProductService, ProductImportExcelViewModel, ProductImportExcelBaseViewModel } from '../product.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { ProductImportExcelBaseViewModel, ProductService } from '../product.service';
 
 @Component({
   selector: 'app-product-service-import-dialog',

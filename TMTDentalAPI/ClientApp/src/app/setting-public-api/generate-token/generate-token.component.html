@@ -1,0 +1,75 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">Thiết lập kết nối API</li>
+        </ol>
+        <div class="o_cp_searchview">
+        </div>
+        <div class="o_cp_left">
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <div class="container-fluid py-2">
+        <div class="row">
+            <div class="col-7">
+                <form class="o_form_view" [formGroup]="formGroup">
+                    <div class="row align-items-center">
+                        <div class="col-2">
+                            <label class="col-form-label label_form">Mã Token</label>
+                        </div>
+                        <div class="col-10">
+                            <div class="d-flex">
+                                <div class="flex-grow-1 mr-2">
+                                    <input class="form-control" formControlName="token" readonly name="token">
+                                </div>
+                                <div>
+                                    <button title="Tạo mã token" (click)="generateToken()" class=" btn btn-primary">Tạo mã</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row align-items-center mt-1">
+                        <div class="col-2">
+                            <label class="col-form-label label_form">Tài liệu API</label>
+                        </div>
+                        <div class="col-10">
+                            <div class="d-flex">
+                                <div class="flex-grow-1 mr-2">
+                                    <a class="label_form" href="https://tdental-api.gitbook.io/public-api-tdental/"
+                                        target="_blank">https://tdental-api.gitbook.io/public-api-tdental/</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-1">
+                        <div class="col-2">
+                            <label class="col-form-label label_form">Lưu ý</label>
+                        </div>
+                        <div class="col-10">
+                            <p class="col-form-label">Nha khoa vui lòng gửi tài liệu API và mã token cho bên thứ 3 để
+                                kết nối với public API của TDental</p>
+                            <p class="col-form-label">Khi tạo mã token mới thì public API với mã token cũ sẽ không hoạt
+                                động. Nha khoa vui lòng gửi mã token mới cho bên thứ 3 để cập nhật kết nối</p>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-5">
+
+            </div>
+        </div>
+
+        <!-- <form class="o_form_view">
+            <div class="o_form_sheet_bg">
+                <div class="o_form_sheet">
+                   
+                </div>
+            </div>
+        </form> -->
+    </div>
+
+</div>

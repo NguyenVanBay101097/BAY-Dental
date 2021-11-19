@@ -1,18 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { UserSimple } from 'src/app/users/user-simple';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { debounceTime, tap, switchMap, map } from 'rxjs/operators';
-import { ProductFilter, ProductService } from 'src/app/products/product.service';
-import { UserService } from 'src/app/users/user.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { WindowRef } from '@progress/kendo-angular-dialog';
-import { ProductSimple } from 'src/app/products/product-simple';
-import { Observable } from 'rxjs';
-import { PartnerService, PartnerFilter } from 'src/app/partners/partner.service';
-import { PartnerSimple } from 'src/app/partners/partner-simple';
-import { ToothService, ToothFilter, ToothDisplay } from 'src/app/teeth/tooth.service';
-import { ToothCategoryService, ToothCategoryBasic } from 'src/app/tooth-categories/tooth-category.service';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import * as _ from 'lodash';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { ProductSimple } from 'src/app/products/product-simple';
+import { ProductFilter, ProductService } from 'src/app/products/product.service';
 import { ToaThuocLineDisplay } from '../toa-thuoc.service';
 
 @Component({
@@ -28,7 +21,7 @@ export class ToaThuocLineDialogComponent implements OnInit {
   @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
 
   constructor(private fb: FormBuilder, private productService: ProductService,
-    private userService: UserService, public window: WindowRef) { }
+    public window: WindowRef) { }
 
   ngOnInit() {
     this.lineForm = this.fb.group({
@@ -112,15 +105,15 @@ export class ToaThuocLineDialogComponent implements OnInit {
     var useAt = this.lineForm.get('useAt').value;
     switch (useAt) {
       case 'before_meal':
-        return 'trước khi ăn';
+        return 'Trước khi ăn';
       case 'in_meal':
-        return 'trong khi ăn';
+        return 'Trong khi ăn';
       case 'after_wakeup':
-        return 'sau khi thức dậy';
+        return 'Sau khi thức dậy';
       case 'before_sleep':
-        return 'trước khi đi ngủ';
+        return 'Trước khi đi ngủ';
       default:
-        return 'sau khi ăn';
+        return 'Sau khi ăn';
     }
   }
 

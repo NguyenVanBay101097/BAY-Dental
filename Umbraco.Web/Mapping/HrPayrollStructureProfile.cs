@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,8 @@ namespace Umbraco.Web.Mapping
             CreateMap<HrPayrollStructureSave, HrPayrollStructure>()
                 .ForMember(x => x.Rules, x => x.Ignore())
                 .ForMember(x => x.Id, x => x.Ignore());
+
+            CreateMap<HrPayrollStructure, HrPayrollStructureBasicPrintTemplate>();
         }
     }
 }

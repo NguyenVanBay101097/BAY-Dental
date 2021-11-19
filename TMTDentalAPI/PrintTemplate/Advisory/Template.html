@@ -1,0 +1,117 @@
+﻿
+<div>
+    <div class="d-flex mb-2">
+        {{ if company.logo != "" && company.logo != null}}
+        <img class="img-fluid me-3 w-20" src="{{company.logo}}" alt="{{company.name}}">
+        {{ end }}
+
+        <div>
+            <div class="text-xl font-semibold">{{company.name}}</div>
+            {{if company.address != ""}}
+
+            <div>Địa chỉ: {{company.address}}</div>
+
+            {{ end }}
+
+            {{ if company.phone}}
+
+            <div>ĐT: {{company.phone}}</div>
+
+            {{ end }}
+
+            {{if company.email }}
+
+            <div>Email: {{company.email}}</div>
+
+            {{ end }}
+
+        </div>
+    </div>
+    <div class="text-center mb-2">
+        <div class="text-3xl font-semibold">TƯ VẤN TIỂU SỬ RĂNG</div>
+        <div>Ngày {{date.now.day}} tháng {{date.now.month}} năm {{date.now.year}} </div>
+    </div>
+    <div class="o_form_view  mb-2">
+        <div class="d-flex">
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Khách hàng
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">{{partner.display_name ? partner.display_name : ""}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Địa chỉ
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">{{partner.address ? partner.address : ""}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Điện thoại
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">{{partner.phone ? partner.phone : ""}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="o_form_view  mb-2">
+        <div class="text-lg font-semibold mb-1">DANH SÁCH TIỂU SỬ RĂNG</div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Ngày tạo</th>
+                    <th>Người tạo</th>
+                    <th width="15%">Răng</th>
+                    <th>Chẩn đoán</th>
+                    <th>Dịch vụ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!--{{for item in advisories}}-->
+                <tr>
+                    <td>{{item.date | date.to_string '%d/%m/%Y'}}</td>
+                    <td>{{item.employee.name ? item.employee.name : ""}}</td>
+                    {{if item.tooth_type != "manual"}}
+                    <td>{{((item.tooth_type == "whole_jaw" ? "Nguyên hàm" : (item.tooth_type == "upper_jaw" ? "Hàm trên" : "Hàm dưới")))}}</td>
+                    {{else}}
+                    <td>{{item.tooths}}</td>
+                    {{end}}
+                    <td>{{item.diagnosis}}</td>
+                    <td>{{item.services}}</td>
+                </tr>
+                <!--{{end}}-->
+            </tbody>
+            od
+            
+
+        </table>
+    </div>
+    <div class="d-flex">
+        <div class="col ">
+
+        </div>
+        <div class="col ">
+            <div class="text-center">
+                <span class="font-semibold">Khách hàng</span> <br />
+                <i>(Ký, họ tên)</i> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span class="font-semibold">{{partner ? (partner.name | string.upcase) : ""}}</span>
+            </div>
+        </div>
+    </div>
+</div>

@@ -41,7 +41,8 @@ namespace Infrastructure.Services
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
-            var items = await query.Include(x => x.PaymentRels).ThenInclude(x => x.Payment).ThenInclude(x => x.Journal).ToListAsync();
+            var items = await query.Include(x => x.PaymentRels).ThenInclude(x => x.Payment).ThenInclude(x => x.Journal)
+                .Include(x => x.Lines).ThenInclude(x => x.SaleOrderLine).ToListAsync();
 
             var paged = new PagedResult2<SaleOrderPaymentBasic>(totalItems, val.Offset, val.Limit)
             {
@@ -129,11 +130,22 @@ namespace Infrastructure.Services
             return saleOrderPaymentDisplay;
         }
 
+        public async Task<IEnumerable<SaleOrderPayment>> GetPaymentsByOrderId(Guid orderId)
+        {
+            var orderPayments = await SearchQuery(x => x.OrderId == orderId && x.Lines.Any(s => s.Amount > 0))
+                .Include(x => x.PaymentRels).ThenInclude(s => s.Payment)
+                .Include(x => x.Lines).ThenInclude(x => x.SaleOrderLine)
+                .Include(x => x.JournalLines).ThenInclude(x => x.Journal)
+                .ToListAsync();
+
+            return orderPayments;
+        }
+
         public async Task<SaleOrderPayment> CreateSaleOrderPayment(SaleOrderPaymentSave val)
         {
             //Mapper
             var saleOrderPayment = _mapper.Map<SaleOrderPayment>(val);
-            SaveLines(val, saleOrderPayment);        
+            SaveLines(val, saleOrderPayment);
             await CreateAsync(saleOrderPayment);
 
             return saleOrderPayment;
@@ -181,6 +193,12 @@ namespace Infrastructure.Services
             var saleLineObj = GetService<ISaleOrderLineService>();
             var paymentObj = GetService<IAccountPaymentService>();
             var partnerObj = GetService<IPartnerService>();
+            var cardObj = GetService<ICardCardService>();
+            var productObj = GetService<IProductService>();
+            var commSetObj = GetService<ICommissionSettlementService>();
+            var commObj = GetService<ICommissionService>();
+            var agentObj = GetService<IAgentService>();
+
             /// truy vấn đủ dữ liệu của saleorder payment`
             var saleOrderPayments = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.Move)
@@ -193,9 +211,121 @@ namespace Infrastructure.Services
                 ///ghi sổ doang thu , công nợ lines               
                 var invoice = await _CreateInvoices(saleOrderPayment, final: true);
 
-                ///cập nhật amount hoa hồng cho bác sĩ , phụ tá , tư vấn
-                var settlements = invoice.Lines.SelectMany(x => x.CommissionSettlements).ToList();
-                await commissionSettlementObj.UpdateAsync(settlements);
+                //ghi nhận hoa hồng trên doanh thu tạo ra
+                var commissionSettlements = new List<CommissionSettlement>();
+
+                var saleLineIds = saleOrderPayment.Lines.Select(x => x.SaleOrderLineId).ToList();
+                var saleLines = await saleLineObj.SearchQuery(x => saleLineIds.Contains(x.Id))
+                    .Include(x => x.Employee)
+                    .Include(x => x.Assistant)
+                    .Include(x => x.Counselor)
+                    .ToListAsync();
+
+                var agent = await agentObj.SearchQuery(x => x.Partners.Any(s => s.Id == saleOrderPayment.Order.PartnerId))
+                    .FirstOrDefaultAsync();
+
+                foreach (var line in saleOrderPayment.Lines)
+                {
+                    //tính hoa hồng
+                    var saleOrderLine = saleLines.FirstOrDefault(x => x.Id == line.SaleOrderLineId);
+
+                    //Tổng thanh toán 
+                    var totalPaid = (saleOrderLine.AmountPaid ?? 0) + line.Amount;
+
+                    //Tổng giá vốn
+                    var totalStandPrice = (decimal)productObj.GetStandardPrice(saleOrderLine.ProductId.Value, saleOrderLine.CompanyId) * saleOrderLine.ProductUOMQty;
+
+                    //Tổng tiền đã tính hoa hồng trước đó
+                    var totalBaseAmount = await commSetObj.SearchQuery(x => x.SaleOrderLineId == line.SaleOrderLineId).SumAsync(x => x.BaseAmount ?? 0);
+
+                    //Tổng tiền lợi nhuận cho lần thanh toán này
+                    var totalProfitAmount = totalPaid - totalStandPrice - totalBaseAmount;
+
+                    //Số tiền lợi nhuận sẽ tính hoa hồng
+                    var baseAmountCurrent = totalProfitAmount > 0 ? totalProfitAmount : 0;
+
+                    //add hoa hồng bác sĩ
+                    if (saleOrderLine.EmployeeId.HasValue && saleOrderLine.Employee.CommissionId.HasValue)
+                    {
+                        //var commPercent = await commObj.getCommissionPercent(saleOrderLine.ProductId, saleOrderLine.Employee.CommissionId);
+                        var commPercent = await commObj.getCommissionPercent(saleOrderLine.ProductId, saleOrderLine.Employee.CommissionId);
+                        commissionSettlements.Add(new CommissionSettlement
+                        {
+                            PartnerId = saleOrderLine.Employee.PartnerId,
+                            EmployeeId = saleOrderLine.EmployeeId,
+                            CommissionId = saleOrderLine.Employee.CommissionId,
+                            ProductId = saleOrderLine.ProductId,
+                            SaleOrderLineId = saleOrderLine.Id,
+                            HistoryLineId = line.Id,
+                            BaseAmount = baseAmountCurrent,
+                            Amount = baseAmountCurrent * commPercent / 100,
+                            Percentage = commPercent,
+                            TotalAmount = line.Amount,
+                            CompanyId = saleOrderPayment.CompanyId
+                        });
+                    }
+
+                    //add hoa hồng phụ tá
+                    if (saleOrderLine.AssistantId.HasValue && saleOrderLine.Assistant.AssistantCommissionId.HasValue)
+                    {
+                        var commPercent = await commObj.getCommissionPercent(saleOrderLine.ProductId, saleOrderLine.Assistant.AssistantCommissionId);
+                        commissionSettlements.Add(new CommissionSettlement
+                        {
+                            PartnerId = saleOrderLine.Assistant.PartnerId,
+                            EmployeeId = saleOrderLine.AssistantId,
+                            CommissionId = saleOrderLine.Assistant.AssistantCommissionId,
+                            ProductId = saleOrderLine.ProductId,
+                            SaleOrderLineId = saleOrderLine.Id,
+                            HistoryLineId = line.Id,
+                            BaseAmount = baseAmountCurrent,
+                            Amount = baseAmountCurrent * commPercent / 100,
+                            Percentage = commPercent,
+                            TotalAmount = line.Amount,
+                            CompanyId = saleOrderPayment.CompanyId
+                        });
+                    }
+
+                    //add hoa hồng tư vấn
+                    if (saleOrderLine.CounselorId.HasValue && saleOrderLine.Counselor.CounselorCommissionId.HasValue)
+                    {
+                        var commPercent = await commObj.getCommissionPercent(saleOrderLine.ProductId, saleOrderLine.Counselor.CounselorCommissionId);
+                        commissionSettlements.Add(new CommissionSettlement
+                        {
+                            PartnerId = saleOrderLine.Counselor.PartnerId,
+                            EmployeeId = saleOrderLine.CounselorId,
+                            CommissionId = saleOrderLine.Counselor.CounselorCommissionId,
+                            ProductId = saleOrderLine.ProductId,
+                            SaleOrderLineId = saleOrderLine.Id,
+                            HistoryLineId = line.Id,
+                            BaseAmount = baseAmountCurrent,
+                            Amount = baseAmountCurrent * commPercent / 100,
+                            Percentage = commPercent,
+                            TotalAmount = line.Amount,
+                            CompanyId = saleOrderPayment.CompanyId
+                        });
+                    }
+
+                    if (agent != null && agent.CommissionId.HasValue)
+                    {
+                        var commPercent = await commObj.getCommissionPercent(saleOrderLine.ProductId, agent.CommissionId);
+                        commissionSettlements.Add(new CommissionSettlement
+                        {
+                            PartnerId = agent.PartnerId,
+                            AgentId = agent.Id,
+                            CommissionId = agent.CommissionId,
+                            ProductId = saleOrderLine.ProductId,
+                            SaleOrderLineId = saleOrderLine.Id,
+                            HistoryLineId = line.Id,
+                            BaseAmount = baseAmountCurrent,
+                            Amount = baseAmountCurrent * commPercent / 100,
+                            Percentage = commPercent,
+                            TotalAmount = line.Amount,
+                            CompanyId = saleOrderPayment.CompanyId
+                        });
+                    }
+                }
+
+                await commissionSettlementObj.CreateAsync(commissionSettlements);
 
                 await moveObj.ActionPost(new List<AccountMove>() { invoice });
 
@@ -215,49 +345,23 @@ namespace Infrastructure.Services
 
                 //Tich diem va cap nhat hang
                 //await ComputePointAndUpdateLevel(saleOrderPayment, saleOrderPayment.Order.PartnerId, "payment");
-                var loyaltyPoints = await ConvertAmountToPoint(saleOrderPayment.Amount);
-                var propertyObj = GetService<IIRPropertyService>();
-                var partnerPointsProp = propertyObj.get("loyalty_points", "res.partner", res_id: $"res.partner,{saleOrderPayment.Order.PartnerId}", force_company: saleOrderPayment.CompanyId);
-                var partnerPoints = Convert.ToDecimal(partnerPointsProp == null ? 0 : partnerPointsProp);
-
-                partnerPoints += loyaltyPoints;
-                var pointValuesDict = new Dictionary<string, object>()
+                var loyaltyPoints = ConvertAmountToPoint(saleOrderPayment.Amount);
+                var card = await cardObj.SearchQuery(x => x.PartnerId == saleOrderPayment.Order.PartnerId && x.State == "in_use").FirstOrDefaultAsync();
+                if(card != null)
                 {
-                    { $"res.partner,{saleOrderPayment.Order.PartnerId}", partnerPoints }
-                };
-
-                propertyObj.set_multi("loyalty_points", "res.partner", pointValuesDict, force_company: saleOrderPayment.CompanyId);
-
-                //lấy hạng thành viên hiện tại của partner
-                var partnerLevelProp = propertyObj.get("member_level", "res.partner", res_id: $"res.partner,{saleOrderPayment.Order.PartnerId}", force_company: saleOrderPayment.CompanyId);
-                var partnerLevelValue = partnerLevelProp == null ? string.Empty : partnerLevelProp.ToString();
-                var partnerLevelId = !string.IsNullOrEmpty(partnerLevelValue) ? Guid.Parse(partnerLevelValue.Split(",")[1]) : (Guid?)null;
-
-                //cập nhật hạng
-                var mbObj = GetService<IMemberLevelService>();
-                var partnerLevel = partnerLevelId.HasValue ? await mbObj.GetByIdAsync(partnerLevelId) : null;
-                MemberLevel type = null;
-                if (partnerLevel != null)
-                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.Point >= partnerLevel.Point && x.Id != partnerLevel.Id && x.CompanyId == CompanyId, orderBy: x => x.OrderByDescending(s => s.Point))
-                        .FirstOrDefaultAsync();
-                else
-                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.CompanyId == CompanyId, orderBy: x => x.OrderByDescending(s => s.Point))
-                          .FirstOrDefaultAsync();
-
-                if (type != null)
-                {
-                    var levelValuesDict = new Dictionary<string, object>()
-                    {
-                        { $"res.partner,{saleOrderPayment.Order.PartnerId}", type.Id }
-                    };
-                    propertyObj.set_multi("member_level", "res.partner", levelValuesDict, force_company: saleOrderPayment.CompanyId);
+                    card.TotalPoint += loyaltyPoints;
+                    var typeId = await UpGradeCardCard((card.TotalPoint ?? 0));
+                    card.TypeId = typeId == Guid.Empty ? card.TypeId : typeId;
+                    await cardObj.UpdateAsync(card);
                 }
+
+             
             }
             //await partnerObj.UpdateMemberLevelForPartner(partnerIds);
             await UpdateAsync(saleOrderPayments);
         }
 
-        public async Task<decimal> ConvertAmountToPoint(decimal amount)
+        public decimal ConvertAmountToPoint(decimal amount)
         {
             //var prate = await GetLoyaltyPointExchangeRate();
             var prate = 10000;
@@ -296,6 +400,24 @@ namespace Infrastructure.Services
 
         }
 
+        public async Task<Guid> UpGradeCardCard(decimal? point)
+        {
+            var cardTypeObj = GetService<ICardTypeService>();
+            var cardTypes = await cardTypeObj.SearchQuery().OrderByDescending(x => x.BasicPoint).ToListAsync();
+            if (cardTypes == null)
+                throw new Exception("Không có danh sách loại thẻ thành viên");
+            for (int i = 0; i < cardTypes.Count(); i++)
+            {
+                var pointValue = cardTypes.ElementAt(i).BasicPoint;
+                if (point >= pointValue)
+                    return cardTypes.ElementAt(i).Id;
+                else
+                    continue;
+
+            }
+            return Guid.Empty;
+        }
+
         public async Task<AccountMove> _CreateInvoices(SaleOrderPayment self, bool final = false)
         {
             //param final: if True, refunds will be generated if necessary
@@ -306,13 +428,14 @@ namespace Infrastructure.Services
             var lines = await paymentLineObj.SearchQuery(x => x.SaleOrderPaymentId == self.Id)
                 .Include(x => x.SaleOrderPayment).ThenInclude(x => x.Order)
                 .Include(x => x.SaleOrderLine).ThenInclude(x => x.Employee)
+                .Include(x => x.SaleOrderLine).ThenInclude(s => s.OrderPartner).ThenInclude(c => c.Agent)
                 .ToListAsync();
 
             foreach (var line in lines)
             {
                 if (line.Amount == 0)
                     continue;
-                var moveline = await _PrepareInvoiceLineAsync(line);
+                var moveline = _PrepareInvoiceLineAsync(line);
                 invoice_vals.InvoiceLines.Add(moveline);
             }
 
@@ -368,7 +491,7 @@ namespace Infrastructure.Services
             return invoice_vals;
         }
 
-        private async Task<AccountMoveLine> _PrepareInvoiceLineAsync(SaleOrderPaymentHistoryLine self)
+        private AccountMoveLine _PrepareInvoiceLineAsync(SaleOrderPaymentHistoryLine self)
         {
             var res = new AccountMoveLine
             {
@@ -381,89 +504,7 @@ namespace Infrastructure.Services
                 AssistantId = self.SaleOrderLine.AssistantId
             };
 
-            var commObj = GetService<ICommissionService>();
-            var commSetObj = GetService<ICommissionSettlementService>();
-            var productObj = GetService<IProductService>();
-            var lineObj = GetService<ISaleOrderLineService>();
-
-            var saleOrderLine = await lineObj.SearchQuery(x => x.Id == self.SaleOrderLineId)
-                .Include(x => x.Employee)
-                .Include(x => x.Assistant)
-                .Include(x => x.Counselor)
-                .FirstOrDefaultAsync();
-
-
-            //tổng thanh toán 
-            var totalPaid = saleOrderLine.AmountPaid + self.Amount;
-
-            //Tổng giá vốn
-            var totalStandPrice = (decimal)productObj.GetStandardPrice(saleOrderLine.ProductId.Value, saleOrderLine.CompanyId) * saleOrderLine.ProductUOMQty;
-
-            //tính lợi nhuận hoa hồng
-            var totalBaseAmount = await commSetObj.SearchQuery(x => x.SaleOrderLineId == self.SaleOrderLineId)
-                .Select(x => new { x.BaseAmount, x.MoveLineId }).Distinct().SumAsync(x => x.BaseAmount);
-
-            //Số tiền lợi nhuận hiên tại
-            var baseAmountCurrent = totalPaid - totalStandPrice - totalBaseAmount > 0 ? totalPaid - totalStandPrice - totalBaseAmount : 0;
-
-            var today = DateTime.Today;
-            //add hoa hồng bác sĩ
-
-            if (saleOrderLine.EmployeeId.HasValue && saleOrderLine.Employee.CommissionId.HasValue)
-            {
-                var commPercent = await commObj.getCommissionPercent(saleOrderLine.ProductId, saleOrderLine.Employee.CommissionId);
-                res.CommissionSettlements.Add(new CommissionSettlement
-                {
-                    EmployeeId = saleOrderLine.EmployeeId,
-                    CommissionId = saleOrderLine.Employee.CommissionId,
-                    ProductId = saleOrderLine.ProductId,
-                    Date = today,
-                    SaleOrderLineId = self.SaleOrderLineId,
-                    BaseAmount = baseAmountCurrent.Value,
-                    Amount = totalPaid > totalStandPrice ? (baseAmountCurrent.Value * commPercent) / 100 : 0,
-                    Percentage = commPercent,
-                    TotalAmount = self.Amount
-                });
-            }
-
-            //add hoa hồng phụ tá
-            if (saleOrderLine.AssistantId.HasValue && saleOrderLine.Assistant.AssistantCommissionId.HasValue)
-            {
-                var commPercent = await commObj.getCommissionPercent(saleOrderLine.ProductId, saleOrderLine.Assistant.AssistantCommissionId);
-                res.CommissionSettlements.Add(new CommissionSettlement
-                {
-                    EmployeeId = saleOrderLine.AssistantId,
-                    CommissionId = saleOrderLine.Assistant.AssistantCommissionId,
-                    ProductId = saleOrderLine.ProductId,
-                    Date = today,
-                    SaleOrderLineId = self.SaleOrderLineId,
-                    BaseAmount = baseAmountCurrent.Value,
-                    Amount = totalPaid > totalStandPrice ? (baseAmountCurrent.Value * commPercent) / 100 : 0,
-                    Percentage = commPercent,
-                    TotalAmount = self.Amount
-                });
-            }
-
-            //add hoa hồng tư vấn
-            if (saleOrderLine.CounselorId.HasValue && saleOrderLine.Counselor.CounselorCommissionId.HasValue)
-            {
-                var commPercent = await commObj.getCommissionPercent(saleOrderLine.ProductId, saleOrderLine.Counselor.CounselorCommissionId);
-                res.CommissionSettlements.Add(new CommissionSettlement
-                {
-                    EmployeeId = saleOrderLine.CounselorId,
-                    CommissionId = saleOrderLine.Counselor.CounselorCommissionId,
-                    ProductId = saleOrderLine.ProductId,
-                    Date = today,
-                    SaleOrderLineId = self.SaleOrderLineId,
-                    BaseAmount = baseAmountCurrent.Value,
-                    Amount = totalPaid > totalStandPrice ? (baseAmountCurrent.Value * commPercent) / 100 : 0,
-                    Percentage = commPercent,
-                    TotalAmount = self.Amount
-                });
-            }
-
             res.SaleLineRels.Add(new SaleOrderLineInvoice2Rel { OrderLineId = self.SaleOrderLineId });
-
 
             return res;
         }
@@ -502,12 +543,14 @@ namespace Infrastructure.Services
             var saleOrderObj = GetService<ISaleOrderService>();
             var saleLineObj = GetService<ISaleOrderLineService>();
             var paymentObj = GetService<IAccountPaymentService>();
+            var cardObj = GetService<ICardCardService>();
             var now = DateTime.Now;
             var firstDayOfMonth = new DateTime(now.Year, now.Month, 1);
             var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
             var saleOrderPayments = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.Move).ThenInclude(s => s.Lines)
                 .Include(x => x.Order)
+                .Include(x => x.Lines)
                 .Include(x => x.PaymentRels).ThenInclude(s => s.Payment)
                 .ToListAsync();
 
@@ -526,9 +569,11 @@ namespace Infrastructure.Services
                 await paymentObj.CancelAsync(payment_ids);
 
 
-                /// xóa các hoa hồng của bác sĩ                 
+                /// xóa các hoa hồng                 
+                var linesIds = saleOrderPayment.Lines.Select(x => x.Id).ToList();
                 var settlementObj = GetService<ICommissionSettlementService>();
-                await settlementObj.Unlink(saleOrderPayment.Move.Lines.Select(x => x.Id).ToList());
+                var commissionSettlements = await settlementObj.SearchQuery(x => x.HistoryLineId.HasValue && linesIds.Contains(x.HistoryLineId.Value)).ToListAsync();
+                await settlementObj.DeleteAsync(commissionSettlements);
 
                 /// tìm và xóa hóa đơn ghi sổ doanh thu , công nợ
                 if (saleOrderPayment.Move.Lines.Any())
@@ -545,42 +590,15 @@ namespace Infrastructure.Services
 
                 //Trừ điểm tích lũy và cập nhật lại hạng thành viên
                 //await ComputePointAndUpdateLevel(saleOrderPayment, saleOrderPayment.Order.PartnerId, "payment");
-                var loyaltyPoints = await ConvertAmountToPoint(saleOrderPayment.Amount);
-                var propertyObj = GetService<IIRPropertyService>();
-                var partnerPointsProp = propertyObj.get("loyalty_points", "res.partner", res_id: $"res.partner,{saleOrderPayment.Order.PartnerId}", force_company: saleOrderPayment.CompanyId);
-                var partnerPoints = Convert.ToDecimal(partnerPointsProp == null ? 0 : partnerPointsProp);
-
-                partnerPoints -= loyaltyPoints;
-                var pointValuesDict = new Dictionary<string, object>()
+                var loyaltyPoints = ConvertAmountToPoint(saleOrderPayment.Amount);
+                var card = await cardObj.SearchQuery(x => x.PartnerId == saleOrderPayment.Order.PartnerId && x.State == "in_use").FirstOrDefaultAsync();
+                if (card != null)
                 {
-                    { $"res.partner,{saleOrderPayment.Order.PartnerId}", partnerPoints }
-                };
-
-                propertyObj.set_multi("loyalty_points", "res.partner", pointValuesDict, force_company: saleOrderPayment.CompanyId);
-
-                //lấy hạng thành viên hiện tại của partner
-                var partnerLevelProp = propertyObj.get("member_level", "res.partner", res_id: $"res.partner,{saleOrderPayment.Order.PartnerId}", force_company: saleOrderPayment.CompanyId);
-                var partnerLevelValue = partnerLevelProp == null ? string.Empty : partnerLevelProp.ToString();
-                var partnerLevelId = !string.IsNullOrEmpty(partnerLevelValue) ? Guid.Parse(partnerLevelValue.Split(",")[1]) : (Guid?)null;
-
-                //cập nhật hạng
-                var mbObj = GetService<IMemberLevelService>();
-                var partnerLevel = partnerLevelId.HasValue ? await mbObj.GetByIdAsync(partnerLevelId) : null;
-                MemberLevel type = null;
-                if (partnerLevel != null)
-                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.Id != partnerLevel.Id && x.CompanyId == CompanyId, orderBy: x => x.OrderByDescending(s => s.Point))
-                        .FirstOrDefaultAsync();
-                else
-                    type = await mbObj.SearchQuery(x => x.Point <= partnerPoints && x.CompanyId == CompanyId, orderBy: x => x.OrderByDescending(s => s.Point))
-                          .FirstOrDefaultAsync();
-
-                var typeId = type != null ? type.Id : Guid.Empty;
-
-                var levelValuesDict = new Dictionary<string, object>()
-                    {
-                        { $"res.partner,{saleOrderPayment.Order.PartnerId}", typeId }
-                    };
-                propertyObj.set_multi("member_level", "res.partner", levelValuesDict, force_company: saleOrderPayment.CompanyId);
+                    card.TotalPoint -= loyaltyPoints;
+                    var typeId = await UpGradeCardCard((card.TotalPoint ?? 0));
+                    card.TypeId = typeId == Guid.Empty ? card.TypeId : typeId;
+                    await cardObj.UpdateAsync(card);
+                }
 
                 saleOrderPayment.State = "cancel";
             }
@@ -634,6 +652,7 @@ namespace Infrastructure.Services
                 .Include(x => x.Order.Partner)
                 .Include(x => x.CreatedBy)
                 .Include(x => x.JournalLines).ThenInclude(x => x.Journal)
+                .Include(x => x.Lines).ThenInclude(x => x.SaleOrderLine)
                 ).FirstOrDefaultAsync();
 
             var result = _mapper.Map<SaleOrderPaymentPrintVM>(payment);

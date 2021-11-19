@@ -119,3 +119,36 @@ textarea[readonly] {
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
+
+.o_form_label {
+    min-width: 150px;
+}
+
+.card-header {
+    background-color: #F2F7FF;
+    color: #1A6DE3;
+}
+
+.o_form_view .o_form_sheet_bg .o_form_sheet{
+    border: none;
+}
+
+.o_form_view .o_form_statusbar {
+    border: none;
+}
+
+.modal-footer {
+    border: none;
+}
+
+tr {
+    line-height: 2.4rem;
+}
+
+tr td {
+    word-break: break-word;
+}
+
+.o_form_view .o_group.o_inner_group {
+    display: inline-block !important;
+}

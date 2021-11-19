@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Record>
+    <Id>sample.phieu_thu_chi_chi_1</Id>
+    <LoaiThuChiId>sample.loai_thu_chi_chi_4</LoaiThuChiId>
+    <JournalId>account.data_account_journal_cash</JournalId>
+    <Amount>500000.00</Amount>
+    <DateRound>5</DateRound>
+  </Record>
+  <Record>
+    <Id>sample.phieu_thu_chi_chi_2</Id>
+    <LoaiThuChiId>sample.loai_thu_chi_chi_1</LoaiThuChiId>
+    <JournalId>account.data_account_journal_cash</JournalId>
+    <Amount>5231000.00</Amount>
+    <DateRound>5</DateRound>
+  </Record>
+  <Record>
+    <Id>sample.phieu_thu_chi_chi_3</Id>
+    <LoaiThuChiId>sample.loai_thu_chi_chi_2</LoaiThuChiId>
+    <JournalId>account.data_account_journal_cash</JournalId>
+    <Amount>936000.00</Amount>
+    <DateRound>5</DateRound>
+  </Record>
+  <Record>
+    <Id>sample.phieu_thu_chi_chi_4</Id>
+    <LoaiThuChiId>sample.loai_thu_chi_chi_3</LoaiThuChiId>
+    <JournalId>account.data_account_journal_cash</JournalId>
+    <Amount>200000.00</Amount>
+    <DateRound>5</DateRound>
+  </Record>
+  <Record>
+    <Id>sample.phieu_thu_chi_chi_5</Id>
+    <LoaiThuChiId>sample.loai_thu_chi_chi_5</LoaiThuChiId>
+    <JournalId>account.data_account_journal_cash</JournalId>
+    <Amount>1500000.00</Amount>
+    <DateRound>5</DateRound>
+  </Record>
+</Data>

@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { HrPayslipPaged } from 'src/app/hrs/hr-payslip.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { TcareMessageTemplateCuDialogComponent } from '../tcare-message-template-cu-dialog/tcare-message-template-cu-dialog.component';
 import { TCareMessageTemplatePaged, TCareMessageTemplateService } from '../tcare-message-template.service';
@@ -30,7 +28,6 @@ export class TcareMessageTemplateListComponent implements OnInit {
     private templateService: TCareMessageTemplateService,
     private modalService: NgbModal,
     private fb: FormBuilder,
-    private router: Router
   ) { }
 
   ngOnInit() {
@@ -48,7 +45,7 @@ export class TcareMessageTemplateListComponent implements OnInit {
       });
   }
 
-  get searchcontrol() {return this.searchForm.get('search'); }
+  get searchcontrol() { return this.searchForm.get('search'); }
 
   loadDataFromApi() {
     this.loading = true;
@@ -79,7 +76,7 @@ export class TcareMessageTemplateListComponent implements OnInit {
     const modalRef = this.modalService.open(TcareMessageTemplateCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Tạo mẫu tin';
     modalRef.result.then((val) => {
-        this.loadDataFromApi();
+      this.loadDataFromApi();
     });
   }
 
@@ -88,7 +85,7 @@ export class TcareMessageTemplateListComponent implements OnInit {
     modalRef.componentInstance.title = 'Sửa mẫu tin';
     modalRef.componentInstance.id = dataitem.id;
     modalRef.result.then(() => {
-        this.loadDataFromApi();
+      this.loadDataFromApi();
     });
   }
 

@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml;
 using ApplicationCore.Entities;
 using AutoMapper;
 using Infrastructure.Services;
 using Infrastructure.UnitOfWork;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
@@ -73,7 +76,7 @@ namespace TMTDentalAPI.Controllers
             var product = await _laboFinishLineService.GetByIdAsync(id);
             if (product == null) return NotFound();
 
-             await _laboFinishLineService.DeleteAsync(product);
+            await _laboFinishLineService.DeleteAsync(product);
             return NoContent();
         }
 
@@ -104,7 +107,7 @@ namespace TMTDentalAPI.Controllers
                             var name = Convert.ToString(worksheet.Cells[row, 1].Value);
 
                             if (string.IsNullOrEmpty(name))
-                                errs.Add("Tên Đường hoàn tất Labo là bắt buộc");
+                                errs.Add("Tên đường hoàn tất Labo là bắt buộc");
 
                             if (errs.Any())
                             {
@@ -133,8 +136,9 @@ namespace TMTDentalAPI.Controllers
             var vals = new List<LaboFinishLine>();
             foreach (var item in data)
             {
-                var pd = new LaboFinishLine() { 
-                Name = item.Name
+                var pd = new LaboFinishLine()
+                {
+                    Name = item.Name
                 };
                 vals.Add(pd);
             }
@@ -152,6 +156,38 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _laboFinishLineService.Autocomplete(val);
             return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GenerateXML()
+        {
+            var irModelObj = (IIRModelDataService)HttpContext.RequestServices.GetService(typeof(IIRModelDataService));
+            var _hostingEnvironment = (IWebHostEnvironment)HttpContext.RequestServices.GetService(typeof(IWebHostEnvironment));
+            var xmlService = (IXmlService)HttpContext.RequestServices.GetService(typeof(IXmlService));
+            string path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\ImportXML\labo_finish_line.xml");
+
+            var irModelCreate = new List<IRModelData>();
+            var dateToData = new DateTime(2021, 08, 25);
+            var entities = await _laboFinishLineService.SearchQuery(x => x.DateCreated <= dateToData).ToListAsync(); ;//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var data = new List<SimpleXmlSampleDataRecord>();
+            foreach (var entity in entities)
+            {
+                var item = _mapper.Map<SimpleXmlSampleDataRecord>(entity);
+                item.Id = $@"sample.labo_finish_line_{entities.IndexOf(entity) + 1}";
+                data.Add(item);
+                // add IRModelData
+                irModelCreate.Add(new IRModelData()
+                {
+                    Module = "sample",
+                    Model = "labo.finish.line",
+                    ResId = entity.Id.ToString(),
+                    Name = $"labo_finish_line_{ entities.IndexOf(entity) + 1}"
+                });
+            }
+            //writeFile
+            xmlService.WriteXMLFile(path, data);
+            await irModelObj.CreateAsync(irModelCreate);
+            return Ok();
         }
     }
 }

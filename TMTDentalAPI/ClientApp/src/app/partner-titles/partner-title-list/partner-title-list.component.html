@@ -21,7 +21,7 @@
         </div>
         <div class="o_cp_t_right">
             <div class="o_searchview">
-                <input class="o_searchview_input" placeholder="Tìm kiếm..." type="text"
+                <input class="o_searchview_input" placeholder="Tìm kiếm tên danh xưng khách hàng" type="text"
                 [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
                 <span class="o_searchview_icon fas fa-search"></span>
             </div>
@@ -30,7 +30,7 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"
         (pageChange)="pageChange($event)">
         <kendo-grid-column field="name" title="Tên danh xưng khách hàng"></kendo-grid-column>
         <kendo-grid-command-column title="Thao tác">

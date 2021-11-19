@@ -1,57 +1,25 @@
 <h4 class="ml-3 my-2 title-header">Sổ quỹ</h4>
-<kendo-chart class="mh-chart-year p-2 mb-2">
-    <kendo-chart-title color="black" text="BIỂU ĐỒ THU CHI">
-    </kendo-chart-title>
-    <kendo-chart-legend position='bottom' orientation='horizontal'></kendo-chart-legend>
-    <kendo-chart-category-axis>
-        <kendo-chart-category-axis-item [categories]="cashbookCategs">
-            <kendo-chart-category-axis-item-labels [content]="labelContent" [rotation]="'auto'">
-            </kendo-chart-category-axis-item-labels>
-        </kendo-chart-category-axis-item>
-    </kendo-chart-category-axis>
-    <kendo-chart-series>
-        <ng-container>
-            <kendo-chart-series-item type="column" [data]="cashBookData" field="totalThu" color="#2395FF"
-                name="Thu">
-                <kendo-chart-series-item-tooltip>
-                    <ng-template let-dataItem="dataItem">
-                        <b> Thu {{groupby == 'groupby:day' ? (dataItem.date | date:'dd/MM/yyyy') :
-                            (dataItem.date | date:'MM/yyyy')}}: {{(dataItem.totalThu ?
-                            dataItem.totalThu : 0) | number }}</b>
-                    </ng-template>
-                </kendo-chart-series-item-tooltip>
-            </kendo-chart-series-item>
-            <kendo-chart-series-item type="column" field="totalChi" [data]="cashBookData" color="#28A745" name="Chi">
-                <kendo-chart-series-item-tooltip>
-                    <ng-template let-dataItem="dataItem">
-                        <b> Chi {{groupby == 'groupby:day' ? (dataItem.date | date:'dd/MM/yyyy') : (dataItem.date |
-                            date:'MM/yyyy') }}: {{(dataItem.totalChi ? dataItem.totalChi : 0) | number }}</b>
-                    </ng-template>
-                </kendo-chart-series-item-tooltip>
-            </kendo-chart-series-item>
-            <kendo-chart-series-item type="line" field="totalAmount" [data]="cashBookData" color="#FF3B4D" name="Tồn sỗ quỹ">
-                <kendo-chart-series-item-tooltip>
-                    <ng-template let-dataItem="dataItem">
-                        <b> Tồn sổ quỹ {{groupby == 'groupby:day' ? (dataItem.date | date:'dd/MM/yyyy') : (dataItem.date |
-                            date:'MM/yyyy') }}: {{(dataItem.totalAmount ? dataItem.totalAmount : 0) | number }}</b>
-                    </ng-template>
-                </kendo-chart-series-item-tooltip>
-            </kendo-chart-series-item>
-        </ng-container>
-    </kendo-chart-series>
-    <kendo-chart-value-axis>
-        <kendo-chart-value-axis-item [labels]="{format: 'n0'}">
-        </kendo-chart-value-axis-item>
-    </kendo-chart-value-axis>
-</kendo-chart>
+
+<div style="position: relative; height:320px;">
+    <canvas baseChart *ngIf="cashBooks.length"
+      [labels]="barChartLabels"
+      [datasets]="barChartData"
+      [options]="barChartOptions"
+      [type]="'bar'">
+    </canvas>
+    <div class="d-flex justify-content-center align-items-center" style="height: 100%;" *ngIf="!cashBooks.length">
+        <img src="./../../../assets/icons/NoData.svg" class="img-nodata ">
+    </div>
+  </div>
+
 <div class="container-fluid pb-4 bg-white">
     <div class="row">
         <div class="col">
-            <div class="my-2 d-flex justify-content-between">
+            <div class="my-2 d-flex align-items-center justify-content-between">
                 <h4>Thu</h4>  
-                <span class="text-success">{{totalThu || 0 | number}}</span>
+                <span class="text-success" style="font-weight: 500;">{{(thuChiReportData?.cashBankIncomeTotal || 0) | number}}</span>
             </div>                    
-            <div class="my-2 d-flex justify-content-between">
+            <div class="my-2 d-flex align-items-center justify-content-between">
                 <span class="title-detail">
                     Khách hàng thanh toán dịch vụ và thuốc
                     <span class="text-primary t-tooltip ml-1" placement="top"
@@ -59,49 +27,49 @@
                         <i class="fas fa-exclamation-circle"></i>
                     </span>
                 </span>
-                <span >{{cashbookCashBank?.credit || 0 | number}}</span>
+                <span >{{thuChiReportData?.customerIncomeTotal || 0 | number}}</span>
             </div>
-            <div class="my-2 d-flex justify-content-between">
+            <div class="my-2 d-flex align-items-center justify-content-between">
                 <span class="title-detail">Khách hàng đóng tạm ứng</span>
-                <span>{{cashbookCusAdvance?.credit || 0 | number}}</span>
+                <span>{{thuChiReportData?.advanceIncomeTotal || 0 | number}}</span>
             </div>
-            <div class="my-2 d-flex justify-content-between">
+            <div class="my-2 d-flex align-items-center justify-content-between">
                 <span class="title-detail">Thu công nợ khách hàng</span>
-                <span> {{cashbookCusDebt?.credit || 0 | number}}</span>
+                <span> {{thuChiReportData?.debtIncomeTotal || 0 | number}}</span>
             </div>
-            <div class="my-2 d-flex justify-content-between">
+            <div class="my-2 d-flex align-items-center justify-content-between">
                 <span class="title-detail">Nhà cung cấp hoàn tiền</span>
-                <span> {{cashbookSupp?.credit || 0 | number}}</span>
+                <span> {{thuChiReportData?.supplierIncomeTotal || 0 | number}}</span>
             </div>
-            <div class="my-2 d-flex justify-content-between">
+            <div class="my-2 d-flex align-items-center justify-content-between">
                 <span class="title-detail">Thu ngoài</span>
-                <span> {{(ortherThu ? ortherThu : 0 ) | number}}</span>
+                <span> {{thuChiReportData?.otherIncomeTotal || 0 | number}}</span>
             </div>
         </div>
         <div class="col">
-            <div class="my-2 d-flex justify-content-between">
+            <div class="my-2 d-flex align-items-center justify-content-between">
                 <h4>Chi</h4>  
-                <span class="text-danger">{{ totalChi || 0 | number}}</span>
+                <span class="text-danger" style="font-weight: 500;">{{ thuChiReportData?.cashBankExpenseTotal || 0 | number}}</span>
             </div>                
-            <div class="my-2 d-flex justify-content-between">
+            <div class="my-2 d-flex align-items-center justify-content-between">
                 <span class="title-detail">Thanh toán cho nhà cung cấp</span>
-                <span >{{cashbookSupp?.debit || 0 | number}}</span>
+                <span >{{thuChiReportData?.supplierExpenseTotal || 0 | number}}</span>
             </div>       
-            <div class="my-2 d-flex justify-content-between">
+            <div class="my-2 d-flex align-items-center justify-content-between">
                 <span class="title-detail">Hoàn tạm ứng cho khách hàng</span>
-                <span> {{cashbookCusAdvance?.debit || 0 | number}}</span>
+                <span> {{thuChiReportData?.advanceExpenseTotal || 0 | number}}</span>
             </div>
-            <div class="my-2 d-flex justify-content-between">
+            <div class="my-2 d-flex align-items-center justify-content-between">
                 <span class="title-detail">Chi lương nhân viên</span>
-                <span> {{cashbookCusSalary?.debit || 0 | number}}</span>
+                <span> {{thuChiReportData?.salaryExpenseTotal || 0 | number}}</span>
             </div>
-            <div class="my-2 d-flex justify-content-between">
+            <div class="my-2 d-flex align-items-center justify-content-between">
                 <span class="title-detail">Hoa hồng người giới thiệu</span>
-                <span> {{cashbookAgentCommission?.debit || 0 | number}}</span>
+                <span> {{thuChiReportData?.commissionExpenseTotal || 0 | number}}</span>
             </div>
-            <div class="my-2 d-flex justify-content-between">
+            <div class="my-2 d-flex align-items-center justify-content-between">
                 <span class="title-detail">Chi ngoài</span>
-                <span> {{(ortherChi ? ortherChi : 0) | number}}</span>
+                <span> {{thuChiReportData?.otherExpenseTotal || 0 | number}}</span>
             </div>
         </div>
     </div>

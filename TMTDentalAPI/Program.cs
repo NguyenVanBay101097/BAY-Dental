@@ -9,6 +9,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Events;
+using Serilog.Sinks.Elasticsearch;
+using System.Reflection;
+using Serilog.Exceptions;
 
 namespace TMTDentalAPI
 {
@@ -23,28 +26,38 @@ namespace TMTDentalAPI
 
         public static void Main(string[] args)
         {
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
             Log.Logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(Configuration)
                 .Enrich.FromLogContext()
-                .WriteTo.File(@"logs\log.txt", rollingInterval: RollingInterval.Day)
+                .Enrich.WithExceptionDetails()
+                .Enrich.WithMachineName()
+                .WriteTo.Console()
                 .WriteTo.Debug()
-                .WriteTo.Console(
-                    outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}")
+                .WriteTo.Elasticsearch(ConfigureElasticSink(Configuration, environment))
+                .Enrich.WithProperty("Environment", environment)
+                .ReadFrom.Configuration(Configuration)
                 .CreateLogger();
 
             try
             {
-                Log.Information("Starting web host");
                 CreateWebHostBuilder(args).Build().Run();
             }
             catch (Exception ex)
             {
-                Log.Fatal(ex, "Host terminated unexpectedly");
+                Log.Fatal($"Failed to start {Assembly.GetExecutingAssembly().GetName().Name}", ex);
+                throw;
             }
-            finally
+        }
+
+        private static ElasticsearchSinkOptions ConfigureElasticSink(IConfiguration configuration, string environment)
+        {
+            return new ElasticsearchSinkOptions(new Uri(configuration["ElasticConfiguration:Uri"]))
             {
-                Log.CloseAndFlush();
-            }
+                AutoRegisterTemplate = true,
+                IndexFormat = $"{Assembly.GetExecutingAssembly().GetName().Name.ToLower().Replace(".", "-")}-{environment?.ToLower().Replace(".", "-")}-{DateTime.UtcNow:yyyy-MM}",
+                ModifyConnectionSettings = x => x.BasicAuthentication(configuration["ElasticConfiguration:Username"], configuration["ElasticConfiguration:Password"]),
+            };
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>

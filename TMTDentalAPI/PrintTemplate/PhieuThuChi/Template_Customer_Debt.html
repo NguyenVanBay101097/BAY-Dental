@@ -1,0 +1,94 @@
+﻿<table border="0" cellpadding="5" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="width:100px"><img alt="{{o.company.name}}" class="img-fluid" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
+            <td>
+                <strong>{{o.company.name}}</strong><br />
+                Địa chỉ: {{o.company.address}}<br />
+                ĐT: {{o.company.phone}}<br />
+                Email: {{o.company.email}}
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h3 style="text-align:center">PHIẾU THU CÔNG NỢ</h3>
+
+<p style="text-align:center">
+    Ngày {{o.date_created.day}} tháng {{o.date_created.month}} năm {{o.date_created.year}}<br />
+    <strong>Số: {{o.name}}</strong>
+</p>
+
+<table border="0" cellpadding="0" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="width:50%">
+                <table border="0" cellpadding="3" cellspacing="1" style="width: 100%; margin-bottom: 0;">
+                    <tbody>
+                        <tr>
+                            <td style="width:120px"><strong>Ngày thanh toán</strong></td>
+                            <td>{{o.date_created | date.to_string '%d/%m/%Y'}}</td>
+                        </tr>
+                        <tr>
+                            <td style="width:120px"><strong>Phương thức</strong></td>
+                            <td>{{o.journal?.name}}</td>
+                        </tr>
+                        <tr>
+                            <td style="width:120px"><strong>Số tiền</strong></td>
+                            <td>{{o.amount | math.format "N0"}}</td>
+                        </tr>
+                        <tr>
+                            <td style="width:120px"><strong>Bằng chữ</strong></td>
+                            <td>{{o.amount_text}}</td>
+                        </tr>
+                        <tr>
+                            <td style="width:120px"><strong>Nội dung</strong></td>
+                            <td>{{o.reason}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+            <td style="width:50%">
+                <table border="0" cellpadding="3" cellspacing="1" style="width:100%;margin-bottom:0;">
+                    <tbody>
+                        <tr>
+                            <td style="width: 120px;"><strong>Khách hàng</strong></td>
+                            <td>{{o.partner?.display_name}}</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 120px;"><strong>Địa chỉ</strong></td>
+                            <td>{{o.partner?.address}}</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 120px;"><strong>Điện thoại</strong></td>
+                            <td>{{o.partner?.phone}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<table border="0" cellpadding="0" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="text-align:center">
+                <strong>Người lập phiếu</strong><br />
+                <em>(Ký, họ tên)</em><br />
+                <br />
+                <br />
+                <br />
+                <strong>{{u.name | string.upcase}}</strong>
+            </td>
+            <td style="text-align:center">
+                <strong>Người nộp tiền</strong><br />
+                <em>(Ký, họ tên)</em><br />
+                <br />
+                <br />
+                <br />
+                <strong>{{o.partner?.name}}</strong>
+            </td>
+        </tr>
+    </tbody>
+</table>

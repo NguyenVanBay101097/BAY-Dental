@@ -1,16 +1,10 @@
-import { Component, AfterViewInit, HostListener, ElementRef, OnInit } from '@angular/core';
-import { AuthService } from './auth/auth.service';
-import { Router } from '@angular/router';
-declare var $: any;
-import * as _ from 'lodash';
-import { PermissionService } from './shared/permission.service';
-import { ImportSampleDataComponent } from './shared/import-sample-data/import-sample-data.component';
-import { environment } from 'src/environments/environment';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { NotificationService } from '@progress/kendo-angular-notification';
-import { IrConfigParameterService } from './core/services/ir-config-parameter.service';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { SwUpdate } from '@angular/service-worker';
+import * as _ from 'lodash';
+import { AuthService } from './auth/auth.service';
+declare var $: any;
+import { environment } from '../environments/environment';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -20,36 +14,10 @@ import { SwUpdate } from '@angular/service-worker';
 export class AppComponent implements OnInit {
   title = 'TDental';
   _areAccessKeyVisible = false;
-  value: string;
   constructor(
     public authService: AuthService,
-    private router: Router,
-    private notificationService: NotificationService,
-    private el: ElementRef,
-    private permissionService: PermissionService,
-    private http: HttpClient,
-    private modalService: NgbModal,
-    private irConfigParamService: IrConfigParameterService,
-    private swUpdate: SwUpdate) {
-    this.loadGroups();
-
-    this.authService.currentUser.subscribe((user) => {
-      if (user) {
-        this.loadIrConfigParam();
-        this.authService.getGroups().subscribe((result: any) => {
-          this.permissionService.define(result);
-        });
-      }
-    });
-    if (this.authService.isAuthenticated()) {
-      this.loadIrConfigParam();
-      this.authService.getGroups().subscribe((result: any) => {
-        this.permissionService.define(result);
-      });
-    }
-  }
-
-  ngOnInit(): void {
+    private swUpdate: SwUpdate,
+    private router: Router) {
 
     if (this.swUpdate.isEnabled) {
       this.swUpdate.available.subscribe(() => {
@@ -57,6 +25,18 @@ export class AppComponent implements OnInit {
           window.location.reload();
         }
       });
+    }
+  }
+
+  ngOnInit(): void {
+    this.checkAppVersion();
+  }
+
+  checkAppVersion() {
+    var version = localStorage['app_version'] ? parseInt(localStorage['app_version']) : 0;
+    if (version != environment.version) {
+      this.authService.logout();
+      this.router.navigate(['/auth/login']);
     }
   }
 
@@ -108,52 +88,4 @@ export class AppComponent implements OnInit {
       overlay.appendTo($overlayParent);
     });
   }
-
-  loadGroups() {
-    if (this.authService.isAuthenticated()) {
-      this.authService.getGroups().subscribe((result: any) => {
-        this.permissionService.define(result);
-      });
-      // this.authService.currentUser.subscribe(user => {
-      //   if (user) {
-      //     this.authService.getGroups().subscribe((result: any) => {
-      //       console.log(result);
-      //       this.permissionService.define(result);
-      //     });
-      //   }
-      // });
-    }
-  }
-
-  loadIrConfigParam() {
-    var key = "import_sample_data";
-    this.irConfigParamService.getParam(key).subscribe(
-      (result: any) => {
-        this.value = result.value;
-        if (!this.value) {
-          this.openPopupImportSimpleData();
-        }
-      }
-    )
-  }
-
-  openPopupImportSimpleData() {
-    const modalRef = this.modalService.open(ImportSampleDataComponent, { scrollable: true, size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.value = this.value;
-    modalRef.result.then(result => {
-      if (result) {
-        this.notificationService.show({
-          content: 'Khởi tạo dữ liệu mẫu thành công',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
-        });
-        window.location.reload();
-      }
-    }, err => {
-      console.log(err);
-    });
-  }
-
 }

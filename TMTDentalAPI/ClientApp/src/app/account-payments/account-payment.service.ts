@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { Injectable, Inject } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { PagedResult2 } from '../core/paged-result-2';
 
 export class AccountPaymentBasic {
@@ -128,7 +128,7 @@ export class AccountPaymentService {
     // }
 
     getPrint(id: string) {
-        return this.http.get(this.baseApi + this.apiPrintUrl +  '/Print' + `?id=${id}`, { responseType: 'text' });
+        return this.http.get(this.baseApi + this.apiPrintUrl + '/Print' + `?id=${id}`, { responseType: 'text' });
     }
 
     supplierDefaultGet(val: AccountPaymentSupplierDefaultGetRequest) {

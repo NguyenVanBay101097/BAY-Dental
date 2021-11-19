@@ -2,65 +2,63 @@
     <div class="t_treatment_wrapper">
         <div class="o_cp_controller">
             <div class="o_control_panel">
-                <div class="breadcrumb">
-                    <div class="d-flex">
-                        <app-date-range-picker-filter [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
-                        <button type="button" (click)="createNewSaleOrder()" class="ml-2 btn btn-primary"><i
-                            class="fas fa-plus"></i> Thêm phiếu điều trị</button>
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex w-50 form-inline">
+                        <label class="mb-2 mr-2">
+                            Chế độ xem
+                        </label>
+                        <select [(ngModel)]="viewType" (change)="onChangeViewType()" class="form-control w-auto mb-2 mr-2">
+                            <option value="saleOrder">Theo phiếu điều trị</option>
+                            <option value="saleOrderLine">Theo dịch vụ</option>
+                        </select>
+                        <app-date-range-picker-filter class="mb-2 mr-2" [opens]="'right'" title="Ngày tạo" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
+                        <button type="button" (click)="createNewSaleOrder()" class="mb-2 mr-2 btn btn-primary"><i class="fas fa-plus-circle mr-1"></i> Thêm phiếu điều trị</button>
                     </div>
-                </div>
-                <div class="o_searchview">
-                    <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo số phiếu điều trị" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
-                    <span class="o_searchview_icon fas fa-search"></span>
-                </div>
-                <div class="o_cp_left">
-                    <div class="o_cp_buttons">
-
+                    <div class="w-50">
+                        <div class="o_searchview">
+                            <input type="text" class="o_searchview_input" [placeholder]="viewType=='saleOrder' ? 'Tìm kiếm theo số phiếu điều trị' : 'Tìm kiếm theo số phiếu điều trị, tên dịch vụ'" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
+                            <span class="o_searchview_icon fas fa-search"></span>
+                        </div>
                     </div>
-                    <div class="o_cp_sidebar">
-                    </div>
-                </div>
-                <div class="o_cp_right">
-
                 </div>
             </div>
         </div>
         <div class="t_treatment_grid">
             <div class="kendo-grid-data">
-                <kendo-grid [data]="saleOrdersData" [pageable]="true" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)" [resizable]="true" [loading]="loading">
-                    <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}" field="Name" title="Số phiếu" width="100">
+                <kendo-grid *ngIf="viewType == 'saleOrder'" [data]="saleOrdersData" [pageable]="pagerSettings" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)" [resizable]="true" [loading]="loading">
+                    <kendo-grid-column field="Name" title="Số phiếu" width="100">
                         <ng-template kendoGridCellTemplate let-dataItem>
                             <a class="text-primary" (click)="getFormSaleOrder(dataItem.id)">{{dataItem.name}}</a>
                         </ng-template>
                     </kendo-grid-column>
-                    <kendo-grid-column [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" field="DateOrder" title="Ngày lập phiếu" width="120">
+                    <kendo-grid-column field="DateOrder" title="Ngày tạo phiếu" width="120">
                         <ng-template kendoGridCellTemplate let-dataItem>
                             {{dataItem.dateOrder | date:'short'}}
                         </ng-template>
                     </kendo-grid-column>
-                    <kendo-grid-column class="text-right" [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" field="AmountTotal" title="Tổng tiền" width="120">
+                    <kendo-grid-column class="text-right" field="AmountTotal" title="Tổng tiền" width="120">
                         <ng-template kendoGridCellTemplate let-dataItem>
                             {{dataItem.amountTotal | number}}
                         </ng-template>
                     </kendo-grid-column>
-                    <kendo-grid-column class="text-right" [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" title="Thanh Toán" width="120">
+                    <kendo-grid-column class="text-right" title="Thanh toán" width="120">
                         <ng-template kendoGridCellTemplate let-dataItem>
                             {{ (dataItem.amountTotal - dataItem.residual) | number }}
                         </ng-template>
                     </kendo-grid-column>
-                    <kendo-grid-column class="text-right" [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" field="Residual" title="Còn lại" width="120">
+                    <kendo-grid-column class="text-right" field="Residual" title="Còn lại" width="120">
                         <ng-template kendoGridCellTemplate let-dataItem>
                             {{dataItem.residual | number}}
                         </ng-template>
                     </kendo-grid-column>
-                    <kendo-grid-column [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" field="State" title="Trạng thái" width="100">
+                    <kendo-grid-column  field="State" title="Trạng thái" width="100">
                         <ng-template kendoGridCellTemplate let-dataItem>
                             <span *ngIf="dataItem.state === 'draft'">Nháp</span>
                             <span *ngIf="dataItem.state === 'done'">Hoàn thành</span>
                             <span *ngIf="dataItem.state === 'sale'">Đang điều trị</span>
                         </ng-template>
                     </kendo-grid-column>
-                    <kendo-grid-column [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" title="#" width="40">
+                    <kendo-grid-column  title="Thao tác" width="40">
                         <ng-template kendoGridCellTemplate let-dataItem>
                             <button type="button" class="btn btn-icon btn-light" (click)="deleteItem(dataItem)">
                                 <span class="k-icon k-i-delete"></span>
@@ -72,7 +70,56 @@
                         </app-partner-customer-treatment-sale-order-line>
                     </div>
                 </kendo-grid>
+
+                <kendo-grid *ngIf="viewType == 'saleOrderLine'" [data]="saleOrderLinesData" [pageable]="pagerSettings" [pageSize]="limit" [skip]="skip" 
+                (pageChange)="pageChange($event)" [resizable]="true" [loading]="loading">
+                    <kendo-grid-column title="Dịch vụ" field="name" width="200">
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            <div>
+                                <a class="text-primary" (click)="getFormSaleOrder(dataItem.order.id)">{{dataItem.name}}</a>
+                                <div>{{dataItem.order.name}}</div>
+                            </div>
+                        </ng-template>
+                    </kendo-grid-column>
+                    <kendo-grid-column title="Ngày tạo" width="150">
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{dataItem.dateCreated | date:'shortDate'}}
+                        </ng-template>
+                    </kendo-grid-column>
+                    <kendo-grid-column title="Răng" field="teethDisplay" width="150">
+                    </kendo-grid-column>
+                    <kendo-grid-column title="Chẩn đoán" field="diagnostic" width="150">
+                    </kendo-grid-column>
+                    <kendo-grid-column title="Bác sĩ" width="150">
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{dataItem.employee ? dataItem.employee.name : ''}}
+                        </ng-template>
+                    </kendo-grid-column>
+                    <kendo-grid-column title="Số lượng" field="productUOMQty" width="100" class="text-right">
+                    </kendo-grid-column>
+                    <kendo-grid-column title="Thành tiền" class="text-right" width="150">
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{dataItem.priceSubTotal | number}}
+                        </ng-template>
+                    </kendo-grid-column>
+                    <kendo-grid-column title="Thanh toán" class="text-right" width="150">
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{dataItem.amountInvoiced | number}}
+                        </ng-template>
+                    </kendo-grid-column>
+                    <kendo-grid-column title="Còn lại" class="text-right" width="150">
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{dataItem.priceSubTotal - dataItem.amountInvoiced | number}}
+                        </ng-template>
+                    </kendo-grid-column>
+                    <kendo-grid-column title="Trạng thái" width="150">
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            <span class="badge" [ngStyle]="{'background-color':getColor(dataItem.state)}">{{getState(dataItem.state)}}</span>
+                        </ng-template>
+                    </kendo-grid-column>
+                </kendo-grid>
             </div>
         </div>
+       
     </div>
 </div>

@@ -91,37 +91,14 @@ namespace TMTDentalAPI.Controllers
         {
             await _unitOfWork.BeginTransactionAsync();
             var role = _mapper.Map<ApplicationRole>(val);
-            var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, @"SampleData\additionalFeatures.json");
-            using (var reader = new StreamReader(filePath))
+
+            foreach (var function in val.Functions)
             {
-                var fileContent = reader.ReadToEnd();
-                var additionalFeatures = JsonConvert.DeserializeObject<List<AdditionalPermissionViewModel>>(fileContent);
-
-                foreach (var function in val.Functions)
+                role.Functions.Add(new ApplicationRoleFunction()
                 {
-                    role.Functions.Add(new ApplicationRoleFunction()
-                    {
-                        Func = function
-                    });
-                    foreach (var feature in additionalFeatures)
-                    {
-                        if (feature.Permissions.Contains(function))
-                        {
-                            foreach (var item in feature.Additionals)
-                            {
-                                role.Functions.Add(new ApplicationRoleFunction()
-                                {
-                                    Func = item
-                                });
-                            }
-                        }
-                    }
-
-                }
-
-
+                    Func = function
+                });
             }
-
 
             try
             {
@@ -178,32 +155,6 @@ namespace TMTDentalAPI.Controllers
                 {
                     Func = function
                 });
-            }
-
-            //thêm cái quyền bổ sung
-            var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, @"SampleData\additionalFeatures.json");
-            using (var reader = new StreamReader(filePath))
-            {
-                var fileContent = reader.ReadToEnd();
-                var additionalFunctions = JsonConvert.DeserializeObject<List<AdditionalPermissionViewModel>>(fileContent);
-
-                foreach (var function in role.Functions.ToList())
-                {
-                    var items = additionalFunctions.Where(x => x.Permissions.Contains(function.Func));
-                    foreach (var item in items)
-                    {
-                        foreach(var additionalFunction in item.Additionals)
-                        {
-                            if (!role.Functions.Any(x => x.Func == additionalFunction))
-                            {
-                                role.Functions.Add(new ApplicationRoleFunction()
-                                {
-                                    Func = additionalFunction
-                                });
-                            }
-                        }
-                    }
-                }
             }
 
             try

@@ -6,9 +6,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { SmsAccountService, SmsAccountPaged } from '../sms-account.service';
-import { SmsCampaignService } from '../sms-campaign.service';
 import { SmsComfirmDialogComponent } from '../sms-comfirm-dialog/sms-comfirm-dialog.component';
-import { SmsComposerService } from '../sms-composer.service';
 import { SmsMessageService } from '../sms-message.service';
 import { SmsTemplateCrUpComponent } from '../sms-template-cr-up/sms-template-cr-up.component';
 import { SmsTemplateService, SmsTemplateFilter } from '../sms-template.service';
@@ -21,7 +19,7 @@ import { SmsTemplateService, SmsTemplateFilter } from '../sms-template.service';
 export class SmsManualDialogComponent implements OnInit {
   @ViewChild("smsTemplateCbx", { static: true }) smsTemplateCbx: ComboBoxComponent;
   @ViewChild("smsAccountCbx", { static: true }) smsAccountCbx: ComboBoxComponent;
-  @ViewChild('textarea', { static: false }) textarea: ElementRef;
+  @ViewChild('textarea') textarea: ElementRef;
 
   listContentTabs: string[] = [];
   title: string;

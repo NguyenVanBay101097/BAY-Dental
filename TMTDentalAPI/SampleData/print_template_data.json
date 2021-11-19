@@ -1,0 +1,2464 @@
+﻿[
+  {
+    "Type": "tmp_sale_order",
+    "Data": {
+      "Company": {
+        "Name": "TPP",
+        "Partner": {
+          "CityName": "Thành phố Hồ Chí Minh",
+          "DistrictName": "Quận Tân Phú",
+          "WardName": "Phường Tân Thành",
+          "Street": "54/35 Diệp Minh Châu"
+        },
+        "Phone": "0938551226",
+        "Email": null,
+        "Logo": "http://statics.tdental.vn/images/localhost/210920/1345070036_logo.jpg"
+      },
+      "User": {
+        "Name": "admin"
+      },
+      "Partner": {
+        "DisplayName": "[KH0007] Khách hàng A",
+        "Name": "Khách hàng A",
+        "Gender": "male",
+        "Email": "khachhanga@gmail.com",
+        "Phone": "0369835014",
+        "BirthYear": 1995,
+        "Age": "26",
+        "Street": "246/16 Độc Lập",
+        "WardName": "Phường Tân Thành",
+        "DistrictName": "Quận Tân Phú",
+        "CityName": "Thành phố Hồ Chí Minh"
+      },
+      "Name": "SO00006",
+      "DateOrder": "2021-09-14T11:04:11",
+      "OrderLines": [
+        {
+          "Product": {
+            "Name": "Tẩy trắng răng bằng đèn Laser Zoom II"
+          },
+          "Name": "Tẩy trắng răng tại nhà",
+          "ProductUOMQty": 1.00,
+          "PriceUnit": 1500000.00,
+          "PriceSubTotal": 1350000.00,
+          "PriceTotal": 0.0,
+          "Sequence": 10,
+          "AmountDiscountTotal": 150000.00000000003
+        },
+        {
+          "Product": {
+            "Name": "Tẩy trắng răng bằng đèn Laser Zoom II"
+          },
+          "Name": "Tẩy trắng răng bằng đèn Laser Zoom II",
+          "ProductUOMQty": 2.00,
+          "PriceUnit": 2500000.00,
+          "PriceSubTotal": 4000000.00,
+          "PriceTotal": 0.0,
+          "Sequence": 10,
+          "AmountDiscountTotal": 500000.0
+        }
+      ],
+      "SaleOrderPayments": [
+        {
+          "Id": "471cdd4c-3e72-4a50-248b-08d977369c30",
+          "Amount": 5350000.00,
+          "Date": "2021-09-14T00:00:00",
+          "Note": "SO00006 - Khách hàng thanh toán",
+          "Lines": [
+            {
+              "SaleOrderLine": {
+                "Name": "Điều trị tủy răng vĩnh viễn"
+              }
+            },
+            {
+              "SaleOrderLine": {
+                "Name": "Lấy cao răng và đánh bóng"
+              }
+            }
+          ],
+          "PaymentRels": [
+            {
+              "Payment": {
+                "Id": "ba9e570d-7ca3-4b07-fe3d-08d977369cc4",
+                "Name": "CUST.IN/2021/0005",
+                "PaymentDate": "2021-09-14T00:00:00",
+                "Journal": {
+                  "Name": "Tiền mặt"
+                },
+                "Amount": 3000000.00,
+                "State": "posted"
+              }
+            },
+            {
+              "Payment": {
+                "Id": "5584bf3e-32f1-44f3-fe3e-08d977369cc4",
+                "Name": "CUST.IN/2021/0006",
+                "PaymentDate": "2021-09-14T00:00:00",
+                "Journal": {
+                  "Name": "Ngân hàng"
+                },
+                "Amount": 2350000.00,
+                "State": "posted"
+              }
+            }
+          ],
+          "State": "posted"
+        }
+      ],
+      "DotKhams": [
+        {
+          "Id": "b7b6a167-5f43-415e-a9aa-08d977366d48",
+          "Sequence": 1,
+          "Date": "2021-09-14T00:00:00",
+          "Reason": "Đợt khám mới của bệnh nhân",
+          "Doctor": {
+            "Id": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+            "Name": "Bác sĩ A"
+          },
+          "Lines": [
+            {
+              "Id": "90668731-5a69-432e-e36e-08d977366d4b",
+              "NameStep": "Công đoạn 1",
+              "Product": {
+                "Id": "5a0c19f6-f2ee-433c-febf-08d9693da293",
+                "Name": "Tẩy trắng răng tại nhà"
+              },
+              "ToothRels": [
+                {
+                  "Tooth": {
+                    "Name": "11"
+                  }
+                }
+              ],
+              "Note": ""
+            }
+          ]
+        }
+      ],
+      "AmountTotal": 5350000.00,
+      "TotalPaid": 5350000.00,
+      "Residual": 0.00,
+      "IrAttachments": [
+        {
+          "Id": "892ea719-afd3-4514-e7f3-08d982fda2ab",
+          "Name": "xquang.jpg",
+          "Url": "https://statics.tdental.vn/images/test3/210930/1901540163_fd.jpg",
+          "DateCreated": "2021-09-03T17:43:43.8056985"
+        },
+        {
+          "Id": "b77f39ee-1821-4980-e7f1-08d982fda2ab",
+          "Name": "xquang",
+          "Url": "https://statics.tdental.vn/images/test3/210930/1901540163_fd.jpg",
+          "DateCreated": "2021-09-29T11:28:39"
+        },
+        {
+          "Id": "fa255c20-aefa-48a6-e7ef-08d982fda2ab",
+          "Name": "xquang",
+          "Url": "https://statics.tdental.vn/images/test3/210930/1901540163_fd.jpg",
+          "DateCreated": "2021-09-29T11:00:36"
+        }
+      ]
+    }
+  },
+  {
+    "Type": "tmp_toathuoc",
+    "Data": {
+      "PartnerId": "8a5316cc-14c3-4b92-1279-08d96ec504cd",
+      "Partner": {
+        "Id": "8a5316cc-14c3-4b92-1279-08d96ec504cd",
+        "Name": "Khách hàng A",
+        "DisplayName": "[KH0007] Khách hàng A",
+        "Gender": "male",
+        "Address": "246/16 Độc Lập, Phường Tân Thành, Quận Tân Phú, Thành phố Hồ Chí Minh",
+        "Street": "246/16 Độc Lập",
+        "WardName": "Phường Tân Thành",
+        "DistrictName": "Quận Tân Phú",
+        "CityName": "Thành phố Hồ Chí Minh",
+        "Age": "26",
+        "BirthYear": 1995
+      },
+      "DotKhamId": null,
+      "DotKham": null,
+      "EmployeeId": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+      "Employee": {
+        "Id": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+        "Name": "Bác sĩ A",
+        "IsDoctor": true,
+        "IsAssistant": false,
+        "Ref": "NV00001",
+        "Phone": "0369835014",
+        "Email": null,
+        "CategoryId": null,
+        "Category": null,
+        "Wage": 10000000.00,
+        "StructureTypeId": null,
+        "LeavePerMonth": 0.00,
+        "RegularHour": 8.00,
+        "OvertimeRate": 150.00,
+        "RestDayRate": 100.00,
+        "Allowance": 0.00,
+        "Active": true,
+        "UserName": null,
+        "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+        "Company": {
+          "Id": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+          "Name": "TPP",
+          "Logo": "http://statics.tdental.vn/images/localhost/210920/1345070036_logo.jpg",
+          "Active": true
+        }
+      },
+      "Lines": [
+        {
+          "Name": "Ngày uống 1 lần, mỗi lần 1 Cái, uống sau khi ăn",
+          "Id": "16779d39-336f-404c-c1ca-08d96ec7b382",
+          "ProductId": "7ba287ee-edee-4c38-feca-08d9693da293",
+          "Product": {
+            "Id": "7ba287ee-edee-4c38-feca-08d9693da293",
+            "Name": "Paracetamol",
+            "UOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "UOMName": "Cái",
+            "CategId": "a12e5f26-bf95-4f63-fe09-08d9693d95c7",
+            "CategName": null,
+            "ListPrice": 0.00,
+            "SaleOK": false,
+            "Active": true,
+            "UOMPOId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "UOMPOName": "Cái",
+            "Type": "consu",
+            "PurchaseOK": true,
+            "Description": null,
+            "DefaultCode": "SP0013",
+            "NameGet": null,
+            "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+            "QtyAvailable": 0.0,
+            "NameNoSign": "Paracetamol|Paracetamol|P",
+            "KeToaOK": true,
+            "IsLabo": false,
+            "Type2": "medicine",
+            "PurchasePrice": null,
+            "LaboPrice": null,
+            "MinInventory": null
+          },
+          "ProductUoMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+          "ProductUoM": {
+            "Id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "Name": "Cái",
+            "Active": true,
+            "UOMType": "reference",
+            "CategoryName": null,
+            "CategoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+          },
+          "Sequence": 1,
+          "NumberOfTimes": 1,
+          "NumberOfDays": 1,
+          "AmountOfTimes": 1.00,
+          "Quantity": 1.00,
+          "UseAt": "after_meal",
+          "GetUseAtDisplay": "Sau khi ăn",
+          "Note": null,
+          "ToInvoiceQuantity": 0.00
+        },
+        {
+          "Name": "Ngày uống 1 lần, mỗi lần 1 Cái, uống sau khi ăn",
+          "Id": "b85bc4ef-ce9d-48db-c1cb-08d96ec7b382",
+          "ProductId": "de05b154-222a-4b46-3535-08d96ec7a94b",
+          "Product": {
+            "Id": "de05b154-222a-4b46-3535-08d96ec7a94b",
+            "Name": "Metanol",
+            "UOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "UOMName": "Cái",
+            "CategId": "a12e5f26-bf95-4f63-fe09-08d9693d95c7",
+            "CategName": null,
+            "ListPrice": 10000.00,
+            "SaleOK": false,
+            "Active": true,
+            "UOMPOId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "UOMPOName": "Cái",
+            "Type": "consu",
+            "PurchaseOK": true,
+            "Description": null,
+            "DefaultCode": "SP0014",
+            "NameGet": null,
+            "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+            "QtyAvailable": 0.0,
+            "NameNoSign": "Metanol|Metanol|M",
+            "KeToaOK": true,
+            "IsLabo": false,
+            "Type2": "medicine",
+            "PurchasePrice": 0.00,
+            "LaboPrice": 0.00,
+            "MinInventory": 20.00
+          },
+          "ProductUoMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+          "ProductUoM": {
+            "Id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "Name": "Cái",
+            "Active": true,
+            "UOMType": "reference",
+            "CategoryName": null,
+            "CategoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+          },
+          "Sequence": 2,
+          "NumberOfTimes": 1,
+          "NumberOfDays": 1,
+          "AmountOfTimes": 1.00,
+          "Quantity": 1.00,
+          "UseAt": "after_meal",
+          "GetUseAtDisplay": "Sau khi ăn",
+          "Note": null,
+          "ToInvoiceQuantity": 0.00
+        }
+      ],
+      "Note": "không ăn đồ nóng",
+      "Date": "2021-09-03T17:43:43.8056985",
+      "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+      "SaleOrderId": "d4335032-f532-426e-657d-08d96ec5b873",
+      "Name": "TT030921-00001",
+      "ReExaminationDate": null,
+      "Diagnostic": null
+    }
+  },
+  {
+    "Type": "tmp_labo_order",
+    "Data": {
+      "Company": {
+        "Name": "TPP",
+        "Partner": {
+          "CityName": "Thành phố Hồ Chí Minh",
+          "DistrictName": "Quận Tân Phú",
+          "WardName": "Phường Tân Thành",
+          "Street": "54/35 Diệp Minh Châu"
+        },
+        "Phone": "0938551226",
+        "Email": null,
+        "Logo": "http://statics.tdental.vn/images/localhost/210920/1345070036_logo.jpg"
+      },
+      "Id": "4a7ddc3a-490a-48fd-e8bd-08d96efc0cea",
+      "Name": "LB00001",
+      "PartnerId": "d0f349d6-870a-4960-b11b-08d9693d942f",
+      "Partner": {
+        "Id": "d0f349d6-870a-4960-b11b-08d9693d942f",
+        "Name": "Labo Việt Tiến",
+        "DisplayName": "[NCC0001] Labo Việt Tiến",
+        "Gender": "male",
+        "GenderConvertcom": "Nam",
+        "BirthMonth": null,
+        "BirthDay": null,
+        "BirthYear": null,
+        "JobTitle": null,
+        "MedicalHistory": null,
+        "Categories": [],
+        "MemberLevel": null
+      },
+      "Employee": null,
+      "CustomerId": "8a5316cc-14c3-4b92-1279-08d96ec504cd",
+      "Customer": {
+        "Id": "8a5316cc-14c3-4b92-1279-08d96ec504cd",
+        "Name": "Khách hàng A",
+        "DisplayName": "[KH0007] Khách hàng A",
+        "Gender": "male",
+        "GenderConvertcom": "Nam",
+        "BirthMonth": 10,
+        "BirthDay": 15,
+        "BirthYear": 1995,
+        "JobTitle": null,
+        "MedicalHistory": null,
+        "Categories": [],
+        "MemberLevel": null
+      },
+      "DateOrder": "2021-09-03T23:57:44",
+      "AmountTotal": 2000000.00,
+      "DatePlanned": "2021-09-10T00:00:00",
+      "DateReceipt": null,
+      "DateExport": null,
+      "ProductId": "3693f294-7218-4c9e-d71c-08d96ee71606",
+      "Product": {
+        "Id": "3693f294-7218-4c9e-d71c-08d96ee71606",
+        "Name": "Răng sứ",
+        "NameNoSign": "Răng sứ|Rang su|Rs",
+        "DefaultCode": "SP0015",
+        "PriceUnit": null,
+        "PurchasePrice": 0.00,
+        "StandardPrice": 0.0,
+        "CategId": null,
+        "Categ": null,
+        "Type2": "labo",
+        "ListPrice": 0.00,
+        "Firm": null,
+        "LaboPrice": 0.00,
+        "UOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+        "UOM": null
+      },
+      "Color": null,
+      "Note": null,
+      "Indicated": null,
+      "TechnicalNote": null,
+      "LaboFinishLineId": "1f36e273-8c17-48d6-75d4-08d96ef04614",
+      "LaboFinishLine": {
+        "Id": "1f36e273-8c17-48d6-75d4-08d96ef04614",
+        "Name": "Bờ xuôi vát cạnh"
+      },
+      "LaboBiteJointId": "43a582d9-e910-4385-301b-08d96ef02f01",
+      "LaboBiteJoint": {
+        "Id": "43a582d9-e910-4385-301b-08d96ef02f01",
+        "Name": "Khớp cắn ngược"
+      },
+      "LaboBridgeId": "4257ae89-9d6d-4d39-8d2c-08d96ef04f27",
+      "LaboBridge": {
+        "Id": "4257ae89-9d6d-4d39-8d2c-08d96ef04f27",
+        "Name": "Nhịp hình trứng"
+      },
+      "LaboOrderProductRel": [
+        {
+          "Product": {
+            "Name": "Hàm đối diện"
+          }
+        }
+      ],
+      "Quantity": 2.00,
+      "PriceUnit": 1000000.00,
+      "SaleOrderLineId": "d70aacf4-32ca-4a7a-30b3-08d96edead93",
+      "SaleOrderLine": {
+        "Id": "d70aacf4-32ca-4a7a-30b3-08d96edead93",
+        "PriceUnit": 1800000.00,
+        "ProductUOMQty": 2.00,
+        "Name": "Răng sứ Titan",
+        "Discount": 0.00,
+        "ProductId": "fe270b18-a964-4534-fec5-08d9693da293",
+        "Product": null,
+        "ProductIsLabo": false,
+        "PriceSubTotal": 3600000.00,
+        "PriceTotal": 3600000.00,
+        "Note": null,
+        "Diagnostic": "",
+        "ToothCategoryId": "7f8e8b6b-da51-4b2a-8313-08d9693d9601",
+        "ToothCategory": null,
+        "Teeth": [],
+        "Promotions": [],
+        "State": "sale",
+        "Sequence": 10,
+        "PromotionProgramId": null,
+        "PromotionId": null,
+        "CouponId": null,
+        "DiscountType": "percentage",
+        "DiscountFixed": 0.00,
+        "QtyInvoiced": 0.00,
+        "ToothType": "manual",
+        "AmountDiscountTotal": 0.0,
+        "AmountPaid": 0.00,
+        "AmountResidual": 3600000.00,
+        "AmountInvoiced": 0.00,
+        "IsRewardLine": false,
+        "IsCancelled": false,
+        "EmployeeId": null,
+        "Employee": {
+          "Name": "Nguyễn Văn A"
+        },
+        "AssistantId": null,
+        "Assistant": null,
+        "OrderId": "21b5efed-8fb5-4240-0468-08d96edead70",
+        "Order": {
+          "Name": "SO00969"
+        },
+        "OrderPartnerId": "8a5316cc-14c3-4b92-1279-08d96ec504cd",
+        "OrderPartner": {
+          "Id": "8a5316cc-14c3-4b92-1279-08d96ec504cd",
+          "Name": "Khách hàng A",
+          "DisplayName": "[KH0007] Khách hàng A",
+          "Gender": "male",
+          "GenderConvertcom": "Nam",
+          "BirthMonth": 10,
+          "BirthDay": 15,
+          "BirthYear": 1995,
+          "JobTitle": null,
+          "MedicalHistory": null,
+          "Categories": [],
+          "MemberLevel": null
+        },
+        "CounselorId": null,
+        "Counselor": null,
+        "IsActive": true,
+        "AmountPromotionToOrder": 0.0,
+        "AmountPromotionToOrderLine": 0.0,
+        "Date": "2021-09-03T20:28:00",
+        "product": {
+          "name": "Răng sứ Titan",
+          "firm": "Thiên an Firm"
+        }
+      },
+      "State": "confirmed",
+      "WarrantyCode": "BH122",
+      "WarrantyPeriod": "2021-09-10T00:00:00",
+      "LaboOrderToothRel": [
+        {
+          "Tooth": {
+            "Name": "14"
+          }
+        }
+      ],
+      "TeethOrderLine": [],
+      "color": "đỏ",
+      "indicated": "chỉ định labo",
+      "note": "ghi chú labo",
+      "technicalnote": "ghi chú kỹ thuật labo"
+    }
+  },
+  {
+    "Type": "tmp_purchase_order",
+    "Data": {
+      "Id": "26b228dc-88b8-4ada-6228-08d96efb75aa",
+      "Name": "PO00001",
+      "Type": "order",
+      "State": "purchase",
+      "PickingTypeId": "51d0eaa8-7638-4533-abcd-08d9693d95b2",
+      "JournalId": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+      "Journal": {
+        "Id": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+        "Name": "Tiền mặt",
+        "Type": "cash"
+      },
+      "UserId": "fb3c81c4-90b2-4918-aeaf-1689263ee7fa",
+      "User": {
+        "Id": "fb3c81c4-90b2-4918-aeaf-1689263ee7fa",
+        "Name": "admin"
+      },
+      "PickingId": "1eed280a-fe9f-432f-b11c-08d96efb7652",
+      "Picking": {
+        "Id": "1eed280a-fe9f-432f-b11c-08d96efb7652",
+        "Name": "WH/IN/00001",
+        "Date": "2021-09-03T23:53:29"
+      },
+      "PartnerId": "d0f349d6-870a-4960-b11b-08d9693d942f",
+      "Partner": {
+        "Id": "d0f349d6-870a-4960-b11b-08d9693d942f",
+        "Name": "Labo Việt Tiến",
+        "DisplayName": "[NCC0001] Labo Việt Tiến",
+        "Gender": "male",
+        "GenderConvertcom": "Nam",
+        "BirthMonth": null,
+        "BirthDay": null,
+        "BirthYear": null,
+        "JobTitle": null,
+        "MedicalHistory": null,
+        "Categories": [],
+        "MemberLevel": null
+      },
+      "DateOrder": "2021-09-03T23:53:29",
+      "AmountTotal": 120000.00,
+      "AmountPayment": 0.00,
+      "OrderLines": [
+        {
+          "Id": "10cb6836-199a-4c37-1fba-08d96efb75ae",
+          "Name": "Banh môi",
+          "Sequence": 1,
+          "ProductQty": 1.00,
+          "ProductUOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+          "ProductUOM": {
+            "Name": "Cái",
+            "Rounding": 0.01,
+            "Active": true,
+            "Factor": 1.0,
+            "FactorInv": null,
+            "UOMType": "reference",
+            "CategoryId": "53160867-8c62-4aeb-47de-08d9693d95dc",
+            "Category": null,
+            "MeasureType": "unit"
+          },
+          "ProductId": "f02bb537-b624-48fe-fec9-08d9693da293",
+          "Product": {
+            "Id": "f02bb537-b624-48fe-fec9-08d9693da293",
+            "Name": "Banh môi",
+            "NameNoSign": "Banh môi|Banh moi|Bm",
+            "DefaultCode": "SP0012",
+            "PriceUnit": null,
+            "PurchasePrice": 100000.00,
+            "StandardPrice": 0.0,
+            "CategId": "58529f50-691d-48d7-fe08-08d9693d95c7",
+            "Categ": null,
+            "Type2": "product",
+            "ListPrice": 0.00,
+            "Firm": null,
+            "LaboPrice": null,
+            "UOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "UOM": {
+              "Id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+              "Name": "Cái",
+              "Active": true,
+              "UOMType": "reference",
+              "CategoryName": null,
+              "CategoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+            }
+          },
+          "PriceSubtotal": 100000.00,
+          "PriceTotal": 100000.00,
+          "PriceTax": 0.00,
+          "PriceUnit": 100000.00,
+          "OldPriceUnit": null,
+          "State": "purchase",
+          "Discount": 0.00
+        },
+        {
+          "Id": "837dd260-6007-4b78-1fbb-08d96efb75ae",
+          "Name": "Kiêm tiêm",
+          "Sequence": 2,
+          "ProductQty": 1.00,
+          "ProductUOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+          "ProductUOM": {
+            "Name": "Cái",
+            "Rounding": 0.01,
+            "Active": true,
+            "Factor": 1.0,
+            "FactorInv": null,
+            "UOMType": "reference",
+            "CategoryId": "53160867-8c62-4aeb-47de-08d9693d95dc",
+            "Category": null,
+            "MeasureType": "unit"
+          },
+          "ProductId": "e90b3565-8603-4a20-fec8-08d9693da293",
+          "Product": {
+            "Id": "e90b3565-8603-4a20-fec8-08d9693da293",
+            "Name": "Kiêm tiêm",
+            "NameNoSign": "Kiêm tiêm|Kiem tiem|Kt",
+            "DefaultCode": "SP0011",
+            "PriceUnit": null,
+            "PurchasePrice": 15000.00,
+            "StandardPrice": 0.0,
+            "CategId": "58529f50-691d-48d7-fe08-08d9693d95c7",
+            "Categ": null,
+            "Type2": "product",
+            "ListPrice": 0.00,
+            "Firm": null,
+            "LaboPrice": null,
+            "UOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "UOM": {
+              "Id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+              "Name": "Cái",
+              "Active": true,
+              "UOMType": "reference",
+              "CategoryName": null,
+              "CategoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+            }
+          },
+          "PriceSubtotal": 15000.00,
+          "PriceTotal": 15000.00,
+          "PriceTax": 0.00,
+          "PriceUnit": 15000.00,
+          "OldPriceUnit": null,
+          "State": "purchase",
+          "Discount": 0.00
+        },
+        {
+          "Id": "0cec61fd-da8c-45fc-1fbc-08d96efb75ae",
+          "Name": "Metanol",
+          "Sequence": 3,
+          "ProductQty": 1.00,
+          "ProductUOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+          "ProductUOM": {
+            "Name": "Cái",
+            "Rounding": 0.01,
+            "Active": true,
+            "Factor": 1.0,
+            "FactorInv": null,
+            "UOMType": "reference",
+            "CategoryId": "53160867-8c62-4aeb-47de-08d9693d95dc",
+            "Category": null,
+            "MeasureType": "unit"
+          },
+          "ProductId": "de05b154-222a-4b46-3535-08d96ec7a94b",
+          "Product": {
+            "Id": "de05b154-222a-4b46-3535-08d96ec7a94b",
+            "Name": "Metanol",
+            "NameNoSign": "Metanol|Metanol|M",
+            "DefaultCode": "SP0014",
+            "PriceUnit": null,
+            "PurchasePrice": 0.00,
+            "StandardPrice": 0.0,
+            "CategId": "a12e5f26-bf95-4f63-fe09-08d9693d95c7",
+            "Categ": null,
+            "Type2": "medicine",
+            "ListPrice": 10000.00,
+            "Firm": null,
+            "LaboPrice": 0.00,
+            "UOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "UOM": {
+              "Id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+              "Name": "Cái",
+              "Active": true,
+              "UOMType": "reference",
+              "CategoryName": null,
+              "CategoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+            }
+          },
+          "PriceSubtotal": 5000.00,
+          "PriceTotal": 5000.00,
+          "PriceTax": 0.00,
+          "PriceUnit": 5000.00,
+          "OldPriceUnit": null,
+          "State": "purchase",
+          "Discount": 0.00
+        }
+      ],
+      "AmountResidual": 120000.00,
+      "Note": null
+    }
+  },
+  {
+    "Type": "tmp_purchase_refund",
+    "Data": {
+      "Id": "6ff7a732-d1fd-4336-6229-08d96efb75aa",
+      "Name": "RPO00001",
+      "Type": "refund",
+      "State": "purchase",
+      "PickingTypeId": "51d0eaa8-7638-4533-abcd-08d9693d95b2",
+      "JournalId": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+      "Journal": {
+        "Id": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+        "Name": "Tiền mặt",
+        "Type": "cash"
+      },
+      "UserId": "fb3c81c4-90b2-4918-aeaf-1689263ee7fa",
+      "User": {
+        "Id": "fb3c81c4-90b2-4918-aeaf-1689263ee7fa",
+        "Name": "admin"
+      },
+      "PickingId": "58d66bda-14f4-4bb4-b11d-08d96efb7652",
+      "Picking": {
+        "Id": "58d66bda-14f4-4bb4-b11d-08d96efb7652",
+        "Name": "WH/OUT/00001",
+        "Date": "2021-09-03T23:54:31"
+      },
+      "PartnerId": "d0f349d6-870a-4960-b11b-08d9693d942f",
+      "Partner": {
+        "Id": "d0f349d6-870a-4960-b11b-08d9693d942f",
+        "Name": "Labo Việt Tiến",
+        "DisplayName": "[NCC0001] Labo Việt Tiến",
+        "Gender": "male",
+        "GenderConvertcom": "Nam",
+        "BirthMonth": null,
+        "BirthDay": null,
+        "BirthYear": null,
+        "JobTitle": null,
+        "MedicalHistory": null,
+        "Categories": [],
+        "MemberLevel": null
+      },
+      "DateOrder": "2021-09-03T23:54:31",
+      "AmountTotal": 120000.00,
+      "AmountPayment": 0.00,
+      "OrderLines": [
+        {
+          "Id": "02a2e949-e533-43cd-1fbd-08d96efb75ae",
+          "Name": "Banh môi",
+          "Sequence": 1,
+          "ProductQty": 1.00,
+          "ProductUOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+          "ProductUOM": {
+            "Name": "Cái",
+            "Rounding": 0.01,
+            "Active": true,
+            "Factor": 1.0,
+            "FactorInv": null,
+            "UOMType": "reference",
+            "CategoryId": "53160867-8c62-4aeb-47de-08d9693d95dc",
+            "Category": null,
+            "MeasureType": "unit"
+          },
+          "ProductId": "f02bb537-b624-48fe-fec9-08d9693da293",
+          "Product": {
+            "Id": "f02bb537-b624-48fe-fec9-08d9693da293",
+            "Name": "Banh môi",
+            "NameNoSign": "Banh môi|Banh moi|Bm",
+            "DefaultCode": "SP0012",
+            "PriceUnit": null,
+            "PurchasePrice": 100000.00,
+            "StandardPrice": 0.0,
+            "CategId": "58529f50-691d-48d7-fe08-08d9693d95c7",
+            "Categ": null,
+            "Type2": "product",
+            "ListPrice": 0.00,
+            "Firm": null,
+            "LaboPrice": null,
+            "UOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "UOM": {
+              "Id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+              "Name": "Cái",
+              "Active": true,
+              "UOMType": "reference",
+              "CategoryName": null,
+              "CategoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+            }
+          },
+          "PriceSubtotal": 100000.00,
+          "PriceTotal": 100000.00,
+          "PriceTax": 0.00,
+          "PriceUnit": 100000.00,
+          "OldPriceUnit": null,
+          "State": "purchase",
+          "Discount": 0.00
+        },
+        {
+          "Id": "53f1d8ed-005a-4b25-1fbe-08d96efb75ae",
+          "Name": "Kiêm tiêm",
+          "Sequence": 2,
+          "ProductQty": 1.00,
+          "ProductUOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+          "ProductUOM": {
+            "Name": "Cái",
+            "Rounding": 0.01,
+            "Active": true,
+            "Factor": 1.0,
+            "FactorInv": null,
+            "UOMType": "reference",
+            "CategoryId": "53160867-8c62-4aeb-47de-08d9693d95dc",
+            "Category": null,
+            "MeasureType": "unit"
+          },
+          "ProductId": "e90b3565-8603-4a20-fec8-08d9693da293",
+          "Product": {
+            "Id": "e90b3565-8603-4a20-fec8-08d9693da293",
+            "Name": "Kiêm tiêm",
+            "NameNoSign": "Kiêm tiêm|Kiem tiem|Kt",
+            "DefaultCode": "SP0011",
+            "PriceUnit": null,
+            "PurchasePrice": 15000.00,
+            "StandardPrice": 0.0,
+            "CategId": "58529f50-691d-48d7-fe08-08d9693d95c7",
+            "Categ": null,
+            "Type2": "product",
+            "ListPrice": 0.00,
+            "Firm": null,
+            "LaboPrice": null,
+            "UOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "UOM": {
+              "Id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+              "Name": "Cái",
+              "Active": true,
+              "UOMType": "reference",
+              "CategoryName": null,
+              "CategoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+            }
+          },
+          "PriceSubtotal": 15000.00,
+          "PriceTotal": 15000.00,
+          "PriceTax": 0.00,
+          "PriceUnit": 15000.00,
+          "OldPriceUnit": null,
+          "State": "purchase",
+          "Discount": 0.00
+        },
+        {
+          "Id": "44229c45-9318-47b6-1fbf-08d96efb75ae",
+          "Name": "Metanol",
+          "Sequence": 3,
+          "ProductQty": 1.00,
+          "ProductUOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+          "ProductUOM": {
+            "Name": "Cái",
+            "Rounding": 0.01,
+            "Active": true,
+            "Factor": 1.0,
+            "FactorInv": null,
+            "UOMType": "reference",
+            "CategoryId": "53160867-8c62-4aeb-47de-08d9693d95dc",
+            "Category": null,
+            "MeasureType": "unit"
+          },
+          "ProductId": "de05b154-222a-4b46-3535-08d96ec7a94b",
+          "Product": {
+            "Id": "de05b154-222a-4b46-3535-08d96ec7a94b",
+            "Name": "Metanol",
+            "NameNoSign": "Metanol|Metanol|M",
+            "DefaultCode": "SP0014",
+            "PriceUnit": null,
+            "PurchasePrice": 0.00,
+            "StandardPrice": 0.0,
+            "CategId": "a12e5f26-bf95-4f63-fe09-08d9693d95c7",
+            "Categ": null,
+            "Type2": "medicine",
+            "ListPrice": 10000.00,
+            "Firm": null,
+            "LaboPrice": 0.00,
+            "UOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "UOM": {
+              "Id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+              "Name": "Cái",
+              "Active": true,
+              "UOMType": "reference",
+              "CategoryName": null,
+              "CategoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+            }
+          },
+          "PriceSubtotal": 5000.00,
+          "PriceTotal": 5000.00,
+          "PriceTax": 0.00,
+          "PriceUnit": 5000.00,
+          "OldPriceUnit": null,
+          "State": "purchase",
+          "Discount": 0.00
+        }
+      ],
+      "AmountResidual": 120000.00,
+      "Note": null
+    }
+  },
+  {
+    "Type": "tmp_medicine_order",
+    "Data": {
+      "Id": "51be00c5-a6bc-4b0b-1777-08d978f24773",
+      "Name": "HDTT160921-00001",
+      "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+      "OrderDate": "2021-09-16T09:13:29.685",
+      "EmployeeId": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+      "Employee": {
+        "Id": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+        "Name": "Bác sĩ A",
+        "PartnerId": "9fe4aeca-9ac8-4a8f-127b-08d96ec504cd"
+      },
+      "ToaThuocId": "4fd8eac1-30b2-4d69-588a-08d96ec7b380",
+      "ToaThuoc": {
+        "PartnerId": "8a5316cc-14c3-4b92-1279-08d96ec504cd",
+        "Partner": {
+          "Id": "8a5316cc-14c3-4b92-1279-08d96ec504cd",
+          "Name": "Khách hàng A",
+          "DisplayName": "[KH0007] Khách hàng A",
+          "Gender": "male",
+          "Address": "246/16 Độc Lập, Phường Tân Thành, Quận Tân Phú, Thành phố Hồ Chí Minh",
+          "Street": "246/16 Độc Lập",
+          "WardName": "Phường Tân Thành",
+          "DistrictName": "Quận Tân Phú",
+          "CityName": "Thành phố Hồ Chí Minh",
+          "Age": "26",
+          "BirthYear": 1995
+        },
+        "DotKhamId": null,
+        "DotKham": null,
+        "EmployeeId": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+        "Employee": {
+          "Id": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+          "Name": "Bác sĩ A",
+          "IsDoctor": true,
+          "IsAssistant": false,
+          "Ref": "NV00001",
+          "Phone": "0369835014",
+          "Email": null,
+          "CategoryId": null,
+          "Category": null,
+          "Wage": 10000000.00,
+          "StructureTypeId": null,
+          "LeavePerMonth": 0.00,
+          "RegularHour": 8.00,
+          "OvertimeRate": 150.00,
+          "RestDayRate": 100.00,
+          "Allowance": 0.00,
+          "Active": true,
+          "UserName": null,
+          "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+          "Company": {
+            "Id": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+            "Name": "TPP",
+            "Logo": "http://statics.tdental.vn/images/localhost/210920/1345070036_logo.jpg",
+            "Active": true
+          }
+        },
+        "Lines": [],
+        "Note": "không ăn đồ nóng",
+        "Date": "2021-09-03T17:43:43.8056985",
+        "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+        "SaleOrderId": "d4335032-f532-426e-657d-08d96ec5b873",
+        "Name": "TT030921-00001",
+        "ReExaminationDate": null,
+        "Diagnostic": null
+      },
+      "JournalId": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+      "Journal": {
+        "Id": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+        "Name": "Tiền mặt",
+        "Type": "cash"
+      },
+      "PartnerId": "8a5316cc-14c3-4b92-1279-08d96ec504cd",
+      "Partner": {
+        "Id": "8a5316cc-14c3-4b92-1279-08d96ec504cd",
+        "Name": "Khách hàng A",
+        "DisplayName": "[KH0007] Khách hàng A",
+        "Phone": "0369835014",
+        "Ref": "KH0007",
+        "Gender": "male",
+        "Address": "246/16 Độc Lập, Phường Tân Thành, Quận Tân Phú, Thành phố Hồ Chí Minh",
+        "Street": "246/16 Độc Lập",
+        "WardName": "Phường Tân Thành",
+        "DistrictName": "Quận Tân Phú",
+        "CityName": "Thành phố Hồ Chí Minh",
+        "BirthYear": 1995,
+        "Debt": 0.0,
+        "Age": "26",
+        "LastAppointmentDate": null,
+        "Debit": 0.0,
+        "Credit": 0.0,
+        "Balance": null,
+        "CompanyName": "TPP",
+        "Categories": [],
+        "DateCreated": "2021-09-03T17:24:31",
+        "Source": null,
+        "JobTitle": null,
+        "Email": "khachhanga@gmail.com",
+        "comment": null,
+        "BirthMonth": 10,
+        "BirthDay": 15,
+        "Active": true,
+        "CountLine": 0.0,
+        "DateOfBirth": "15/10/1995",
+        "AppointmnetId": "00000000-0000-0000-0000-000000000000",
+        "AppointmnetName": null,
+        "Time": null
+      },
+      "AccountPaymentId": "24a0abb8-6e25-443d-2d3c-08d978f24849",
+      "AccountPayment": {
+        "Id": "24a0abb8-6e25-443d-2d3c-08d978f24849",
+        "PartnerId": "8a5316cc-14c3-4b92-1279-08d96ec504cd",
+        "Partner": {
+          "Id": "8a5316cc-14c3-4b92-1279-08d96ec504cd",
+          "Name": "Khách hàng A",
+          "DisplayName": "[KH0007] Khách hàng A",
+          "Phone": "0369835014",
+          "Ref": "KH0007",
+          "Gender": "male",
+          "Address": "246/16 Độc Lập, Phường Tân Thành, Quận Tân Phú, Thành phố Hồ Chí Minh",
+          "Street": "246/16 Độc Lập",
+          "WardName": "Phường Tân Thành",
+          "DistrictName": "Quận Tân Phú",
+          "CityName": "Thành phố Hồ Chí Minh",
+          "BirthYear": 1995,
+          "Debt": 0.0,
+          "Age": "26",
+          "LastAppointmentDate": null,
+          "Debit": 0.0,
+          "Credit": 0.0,
+          "Balance": null,
+          "CompanyName": "TPP",
+          "Categories": [],
+          "DateCreated": "2021-09-03T17:24:31",
+          "Source": null,
+          "JobTitle": null,
+          "Email": "khachhanga@gmail.com",
+          "comment": null,
+          "BirthMonth": 10,
+          "BirthDay": 15,
+          "Active": true,
+          "CountLine": 0.0,
+          "DateOfBirth": "15/10/1995",
+          "AppointmnetId": "00000000-0000-0000-0000-000000000000",
+          "AppointmnetName": null,
+          "Time": null,
+        },
+        "PartnerType": "customer",
+        "PaymentDate": "2021-09-16T09:13:29.685",
+        "JournalId": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+        "Journal": {
+          "Id": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+          "Name": "Tiền mặt",
+          "CompanyName": "TPP"
+        },
+        "State": "posted",
+        "Name": "CUST.IN/2021/0007",
+        "PaymentType": "inbound",
+        "Amount": 20000.00,
+        "Communication": "",
+        "LoaiThuChiId": "00000000-0000-0000-0000-000000000000",
+        "LoaiThuChi": null
+      },
+      "Note": "",
+      "Amount": 20000.00,
+      "State": "confirmed",
+      "MedicineOrderLines": [
+        {
+          "Id": "676429e3-dbe3-4525-30a8-08d978f24776",
+          "ToaThuocLineId": "16779d39-336f-404c-c1ca-08d96ec7b382",
+          "ToaThuocLine": {
+            "Name": "Ngày uống 1 lần, mỗi lần 1 Cái, uống sau khi ăn",
+            "Id": "16779d39-336f-404c-c1ca-08d96ec7b382",
+            "ProductId": "7ba287ee-edee-4c38-feca-08d9693da293",
+            "Product": {
+              "Id": "7ba287ee-edee-4c38-feca-08d9693da293",
+              "Name": "Paracetamol",
+              "UOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+              "UOMName": "Cái",
+              "CategId": "a12e5f26-bf95-4f63-fe09-08d9693d95c7",
+              "CategName": null,
+              "ListPrice": 0.00,
+              "SaleOK": false,
+              "Active": true,
+              "UOMPOId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+              "UOMPOName": "Cái",
+              "Type": "consu",
+              "PurchaseOK": true,
+              "Description": null,
+              "DefaultCode": "SP0013",
+              "NameGet": null,
+              "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+              "QtyAvailable": 0.0,
+              "NameNoSign": "Paracetamol|Paracetamol|P",
+              "KeToaOK": true,
+              "IsLabo": false,
+              "Type2": "medicine",
+              "PurchasePrice": null,
+              "LaboPrice": null,
+              "MinInventory": null
+            },
+            "ProductUoMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "ProductUoM": {
+              "Id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+              "Name": "Cái",
+              "Active": true,
+              "UOMType": "reference",
+              "CategoryName": null,
+              "CategoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+            },
+            "Sequence": 1,
+            "NumberOfTimes": 1,
+            "NumberOfDays": 1,
+            "AmountOfTimes": 1.00,
+            "Quantity": 1.00,
+            "UseAt": "after_meal",
+            "GetUseAtDisplay": "Sau khi ăn",
+            "Note": null,
+            "ToInvoiceQuantity": 0.00
+          },
+          "Quantity": 1.00,
+          "Price": 10000.00,
+          "AmountTotal": 10000.00,
+          "ProductId": "7ba287ee-edee-4c38-feca-08d9693da293",
+          "Product": {
+            "Id": "7ba287ee-edee-4c38-feca-08d9693da293",
+            "Name": "Paracetamol",
+            "UOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "UOMName": "Cái",
+            "CategId": "a12e5f26-bf95-4f63-fe09-08d9693d95c7",
+            "CategName": null,
+            "ListPrice": 0.00,
+            "SaleOK": false,
+            "Active": true,
+            "UOMPOId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "UOMPOName": "Cái",
+            "Type": "consu",
+            "PurchaseOK": true,
+            "Description": null,
+            "DefaultCode": "SP0013",
+            "NameGet": null,
+            "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+            "QtyAvailable": 0.0,
+            "NameNoSign": "Paracetamol|Paracetamol|P",
+            "KeToaOK": true,
+            "IsLabo": false,
+            "Type2": "medicine",
+            "PurchasePrice": null,
+            "LaboPrice": null,
+            "MinInventory": null
+          },
+          "ProductUoMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+          "ProductUoM": {
+            "Id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "Name": "Cái",
+            "Active": true,
+            "UOMType": "reference",
+            "CategoryName": null,
+            "CategoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+          }
+        },
+        {
+          "Id": "ec3263b6-d980-473e-30a9-08d978f24776",
+          "ToaThuocLineId": "b85bc4ef-ce9d-48db-c1cb-08d96ec7b382",
+          "ToaThuocLine": {
+            "Name": "Ngày uống 1 lần, mỗi lần 1 Cái, uống sau khi ăn",
+            "Id": "b85bc4ef-ce9d-48db-c1cb-08d96ec7b382",
+            "ProductId": "de05b154-222a-4b46-3535-08d96ec7a94b",
+            "Product": {
+              "Id": "de05b154-222a-4b46-3535-08d96ec7a94b",
+              "Name": "Metanol",
+              "UOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+              "UOMName": "Cái",
+              "CategId": "a12e5f26-bf95-4f63-fe09-08d9693d95c7",
+              "CategName": null,
+              "ListPrice": 10000.00,
+              "SaleOK": false,
+              "Active": true,
+              "UOMPOId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+              "UOMPOName": "Cái",
+              "Type": "consu",
+              "PurchaseOK": true,
+              "Description": null,
+              "DefaultCode": "SP0014",
+              "NameGet": null,
+              "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+              "QtyAvailable": 0.0,
+              "NameNoSign": "Metanol|Metanol|M",
+              "KeToaOK": true,
+              "IsLabo": false,
+              "Type2": "medicine",
+              "PurchasePrice": 0.00,
+              "LaboPrice": 0.00,
+              "MinInventory": 20.00
+            },
+            "ProductUoMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "ProductUoM": {
+              "Id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+              "Name": "Cái",
+              "Active": true,
+              "UOMType": "reference",
+              "CategoryName": null,
+              "CategoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+            },
+            "Sequence": 2,
+            "NumberOfTimes": 1,
+            "NumberOfDays": 1,
+            "AmountOfTimes": 1.00,
+            "Quantity": 1.00,
+            "UseAt": "after_meal",
+            "GetUseAtDisplay": "Sau khi ăn",
+            "Note": null,
+            "ToInvoiceQuantity": 0.00
+          },
+          "Quantity": 1.00,
+          "Price": 10000.00,
+          "AmountTotal": 10000.00,
+          "ProductId": "de05b154-222a-4b46-3535-08d96ec7a94b",
+          "Product": {
+            "Id": "de05b154-222a-4b46-3535-08d96ec7a94b",
+            "Name": "Metanol",
+            "UOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "UOMName": "Cái",
+            "CategId": "a12e5f26-bf95-4f63-fe09-08d9693d95c7",
+            "CategName": null,
+            "ListPrice": 10000.00,
+            "SaleOK": false,
+            "Active": true,
+            "UOMPOId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "UOMPOName": "Cái",
+            "Type": "consu",
+            "PurchaseOK": true,
+            "Description": null,
+            "DefaultCode": "SP0014",
+            "NameGet": null,
+            "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+            "QtyAvailable": 0.0,
+            "NameNoSign": "Metanol|Metanol|M",
+            "KeToaOK": true,
+            "IsLabo": false,
+            "Type2": "medicine",
+            "PurchasePrice": 0.00,
+            "LaboPrice": 0.00,
+            "MinInventory": 20.00
+          },
+          "ProductUoMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+          "ProductUoM": {
+            "Id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "Name": "Cái",
+            "Active": true,
+            "UOMType": "reference",
+            "CategoryName": null,
+            "CategoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "Type": "tmp_phieu_thu",
+    "Data": {
+      "Id": "a597f262-a38e-4458-864d-08d9735e20a1",
+      "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+      "Company": {
+        "Name": "TPP",
+        "Partner": {
+          "CityName": "Thành phố Hồ Chí Minh",
+          "DistrictName": "Quận Tân Phú",
+          "WardName": "Phường Tân Thành",
+          "Street": "54/35 Diệp Minh Châu"
+        },
+        "Phone": "0938551226",
+        "Email": null,
+        "Logo": "http://statics.tdental.vn/images/localhost/210920/1345070036_logo.jpg"
+      },
+      "Date": "2021-09-09T13:48:12",
+      "DateCreated": "2021-09-09T13:48:12",
+      "JournalId": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+      "Journal": {
+        "Id": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+        "Name": "Tiền mặt",
+        "Type": "cash"
+      },
+      "State": "posted",
+      "Name": "THU/2021/0001",
+      "Type": "thu",
+      "Amount": 200000.00,
+      "Communication": null,
+      "AccountType": "other",
+      "Reason": "Thu thêm",
+      "LoaiThuChiId": "f20b282e-351f-4bed-92b8-08d9735e06f5",
+      "LoaiThuChi": {
+        "Id": "f20b282e-351f-4bed-92b8-08d9735e06f5",
+        "Name": "Khám ngoài giờ"
+      },
+      "PartnerType": "employee",
+      "Partner": {
+        "DisplayName": "[KH0007] Khách hàng A",
+        "Name": "Khách hàng A",
+        "Gender": "male",
+        "Email": "khachhanga@gmail.com",
+        "Phone": "0369835014",
+        "BirthYear": 1995,
+        "Age": "26",
+        "Street": "246/16 Độc Lập",
+        "WardName": "Phường Tân Thành",
+        "DistrictName": "Quận Tân Phú",
+        "CityName": "Thành phố Hồ Chí Minh"
+      },
+      "Agent": null,
+      "CreatedBy": {
+        "Name": "Nguyễn Văn A"
+      },
+      "IsAccounting": false
+    }
+  },
+  {
+    "Type": "tmp_phieu_chi",
+    "Data": {
+      "Id": "2c6f2715-ebd3-4ff5-864e-08d9735e20a1",
+      "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+      "Company": {
+        "Id": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+        "Name": "TPP"
+      },
+      "Date": "2021-09-09T13:50:42",
+      "DateCreated": "2021-09-09T13:48:12",
+      "JournalId": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+      "Journal": {
+        "Id": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+        "Name": "Tiền mặt",
+        "Type": "cash"
+      },
+      "State": "posted",
+      "Name": "CHI/2021/0001",
+      "Type": "chi",
+      "Amount": 300000.00,
+      "Communication": null,
+      "AccountType": "other",
+      "Reason": null,
+      "LoaiThuChiId": "da93d096-ed57-4756-92b9-08d9735e06f5",
+      "LoaiThuChi": {
+        "Id": "da93d096-ed57-4756-92b9-08d9735e06f5",
+        "Name": "Văn Phòng Phẩm"
+      },
+      "PartnerType": "employee",
+      "Partner": {
+        "Id": "9fe4aeca-9ac8-4a8f-127b-08d96ec504cd",
+        "Name": "Bác sĩ A",
+        "DisplayName": "[NV00001] Bác sĩ A",
+        "Gender": "male",
+        "GenderConvertcom": "Nam",
+        "BirthMonth": null,
+        "BirthDay": null,
+        "BirthYear": null,
+        "JobTitle": null,
+        "MedicalHistory": null,
+        "Categories": [],
+        "MemberLevel": null,
+        "Street": "246/16 Độc Lập",
+        "WardName": "Phường Tân Thành",
+        "DistrictName": "Quận Tân Phú",
+        "CityName": "Thành phố Hồ Chí Minh"
+      },
+      "Agent": null,
+      "IsAccounting": false
+    }
+  },
+  {
+    "Type": "tmp_customer_debt",
+    "Data": {
+      "Id": "7696ea0e-acd4-4906-864f-08d9735e20a1",
+      "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+      "Company": {
+        "Id": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+        "Name": "TPP"
+      },
+      "Date": "2021-09-09T14:02:31",
+      "JournalId": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+      "Journal": {
+        "Id": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+        "Name": "Tiền mặt",
+        "Type": "cash"
+      },
+      "State": "posted",
+      "Name": "THUCN/2021/0001",
+      "Type": "thu",
+      "Amount": 500000.00,
+      "Communication": null,
+      "AccountType": "customer_debt",
+      "Reason": "Thu tiền nợ",
+      "LoaiThuChiId": "00000000-0000-0000-0000-000000000000",
+      "LoaiThuChi": null,
+      "PartnerType": null,
+      "Partner": {
+        "DisplayName": "[KH0007] Khách hàng A",
+        "Name": "Khách hàng A",
+        "Gender": "male",
+        "Email": "khachhanga@gmail.com",
+        "Phone": "0369835014",
+        "BirthYear": 1995,
+        "Age": "26",
+        "Street": "246/16 Độc Lập",
+        "WardName": "Phường Tân Thành",
+        "DistrictName": "Quận Tân Phú",
+        "CityName": "Thành phố Hồ Chí Minh"
+      },
+      "Agent": null,
+      "IsAccounting": false
+    }
+  },
+  {
+    "Type": "tmp_agent_commission",
+    "Data": {
+      "Id": "0b9719a5-2889-43e7-10ec-08d97cb3b57d",
+      "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+      "Company": {
+        "Id": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+        "Name": "TPP"
+      },
+      "Date": "2021-09-21T10:55:44",
+      "JournalId": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+      "Journal": {
+        "Id": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+        "Name": "Tiền mặt",
+        "Type": "cash"
+      },
+      "State": "posted",
+      "Name": "CHIHH/2021/0001",
+      "Type": "chi",
+      "Amount": 2000000.00,
+      "Communication": null,
+      "AccountType": "commission",
+      "Reason": null,
+      "LoaiThuChiId": "00000000-0000-0000-0000-000000000000",
+      "LoaiThuChi": null,
+      "PartnerType": null,
+      "Partner": {
+        "Id": "8a5316cc-14c3-4b92-1279-08d96ec504cd",
+        "Name": "Khách hàng A",
+        "DisplayName": "[KH0007] Khách hàng A",
+        "Gender": "male",
+        "GenderConvertcom": "Nam",
+        "BirthMonth": 10,
+        "BirthDay": 15,
+        "BirthYear": 1995,
+        "JobTitle": null,
+        "MedicalHistory": null,
+        "Categories": [],
+        "MemberLevel": null
+      },
+      "Agent": {
+        "Id": "cbe9cc8c-8c88-48b0-20e4-08d97cb3955f",
+        "Name": "Người giới thiệu A",
+        "Phone": "0357142226",
+        "Address": "504 tô ký quận 12 Thành phố Hồ Chí Minh"
+      },
+      "IsAccounting": false
+    }
+  },
+  {
+    "Type": "tmp_stock_picking_incoming",
+    "Data": {
+      "Id": "6d60e560-a613-43b6-94bc-08d9743801c6",
+      "PartnerId": "d0f349d6-870a-4960-b11b-08d9693d942f",
+      "Partner": {
+        "Id": "d0f349d6-870a-4960-b11b-08d9693d942f",
+        "Name": "Labo Việt Tiến",
+        "DisplayName": "[NCC0001] Labo Việt Tiến",
+        "Gender": "male",
+        "GenderConvertcom": "Nam",
+        "BirthMonth": null,
+        "BirthDay": null,
+        "BirthYear": null,
+        "JobTitle": null,
+        "MedicalHistory": null,
+        "Categories": [],
+        "MemberLevel": null
+      },
+      "PickingTypeId": "51d0eaa8-7638-4533-abcd-08d9693d95b2",
+      "Note": null,
+      "State": "done",
+      "Date": "2021-09-10T15:49:53",
+      "Name": "WH/IN/00002",
+      "MoveLines": [
+        {
+          "Id": "70bc4c1e-d0cd-4f89-4500-08d9743801c8",
+          "Note": null,
+          "Name": "Banh môi",
+          "ProductUOMQty": 50.00,
+          "ProductUOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+          "ProductUOM": {
+            "Id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "Name": "Cái",
+            "Active": true,
+            "UOMType": "reference",
+            "CategoryName": null,
+            "CategoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+          },
+          "ProductId": "f02bb537-b624-48fe-fec9-08d9693da293",
+          "Product": {
+            "Id": "f02bb537-b624-48fe-fec9-08d9693da293",
+            "Name": "Banh môi",
+            "NameNoSign": "Banh môi|Banh moi|Bm",
+            "DefaultCode": "SP0012",
+            "PriceUnit": null,
+            "PurchasePrice": 100000.00,
+            "StandardPrice": 0.0,
+            "CategId": "58529f50-691d-48d7-fe08-08d9693d95c7",
+            "Categ": {
+              "Id": "58529f50-691d-48d7-fe08-08d9693d95c7",
+              "Name": "Dụng cụ",
+              "CompleteName": "Dụng cụ",
+              "ParentId": null,
+              "Parent": null
+            },
+            "Type2": "product",
+            "ListPrice": 0.00,
+            "Firm": null,
+            "LaboPrice": null,
+            "UOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "UOM": {
+              "Id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+              "Name": "Cái",
+              "Active": true,
+              "UOMType": "reference",
+              "CategoryName": null,
+              "CategoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+            }
+          },
+          "Sequence": 1,
+          "PriceUnit": 100000.0
+        },
+        {
+          "Id": "54f9f907-d2e3-4fec-4501-08d9743801c8",
+          "Note": null,
+          "Name": "Kiêm tiêm",
+          "ProductUOMQty": 50.00,
+          "ProductUOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+          "ProductUOM": {
+            "Id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "Name": "Cái",
+            "Active": true,
+            "UOMType": "reference",
+            "CategoryName": null,
+            "CategoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+          },
+          "ProductId": "e90b3565-8603-4a20-fec8-08d9693da293",
+          "Product": {
+            "Id": "e90b3565-8603-4a20-fec8-08d9693da293",
+            "Name": "Kiêm tiêm",
+            "NameNoSign": "Kiêm tiêm|Kiem tiem|Kt",
+            "DefaultCode": "SP0011",
+            "PriceUnit": null,
+            "PurchasePrice": 15000.00,
+            "StandardPrice": 0.0,
+            "CategId": "58529f50-691d-48d7-fe08-08d9693d95c7",
+            "Categ": {
+              "Id": "58529f50-691d-48d7-fe08-08d9693d95c7",
+              "Name": "Dụng cụ",
+              "CompleteName": "Dụng cụ",
+              "ParentId": null,
+              "Parent": null
+            },
+            "Type2": "product",
+            "ListPrice": 0.00,
+            "Firm": null,
+            "LaboPrice": null,
+            "UOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "UOM": {
+              "Id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+              "Name": "Cái",
+              "Active": true,
+              "UOMType": "reference",
+              "CategoryName": null,
+              "CategoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+            }
+          },
+          "Sequence": 2,
+          "PriceUnit": 15000.0
+        }
+      ],
+      "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+      "LocationId": "5c4d21f9-1286-4b4e-29b3-08d9693d9511",
+      "LocationDestId": "af2d8792-ef90-4c89-29b6-08d9693d9511",
+      "CreatedByName": "admin",
+      "CreatedBy": {
+        "Id": "fb3c81c4-90b2-4918-aeaf-1689263ee7fa",
+        "Name": "admin"
+      }
+    }
+  },
+  {
+    "Type": "tmp_stock_picking_outgoing",
+    "Data": {
+      "Id": "991a9014-c1e1-4cbe-cfc1-08d97b50a367",
+      "PartnerId": "d0f349d6-870a-4960-b11b-08d9693d942f",
+      "Partner": {
+        "Id": "d0f349d6-870a-4960-b11b-08d9693d942f",
+        "Name": "Labo Việt Tiến",
+        "DisplayName": "[NCC0001] Labo Việt Tiến",
+        "Gender": "male",
+        "GenderConvertcom": "Nam",
+        "BirthMonth": null,
+        "BirthDay": null,
+        "BirthYear": null,
+        "JobTitle": null,
+        "MedicalHistory": null,
+        "Categories": [],
+        "MemberLevel": null
+      },
+      "PickingTypeId": "d9077f3a-8423-4536-abce-08d9693d95b2",
+      "Note": null,
+      "State": "done",
+      "Date": "2021-09-19T16:34:42",
+      "Name": "WH/OUT/00004",
+      "MoveLines": [
+        {
+          "Id": "254b8514-2462-4ce9-db9b-08d97b50a369",
+          "Note": null,
+          "Name": "Banh môi",
+          "ProductUOMQty": 5.00,
+          "ProductUOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+          "ProductUOM": {
+            "Id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "Name": "Cái",
+            "Active": true,
+            "UOMType": "reference",
+            "CategoryName": null,
+            "CategoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+          },
+          "ProductId": "f02bb537-b624-48fe-fec9-08d9693da293",
+          "Product": {
+            "Id": "f02bb537-b624-48fe-fec9-08d9693da293",
+            "Name": "Banh môi",
+            "NameNoSign": "Banh môi|Banh moi|Bm",
+            "DefaultCode": "SP0012",
+            "PriceUnit": null,
+            "PurchasePrice": 100000.00,
+            "StandardPrice": 0.0,
+            "CategId": "58529f50-691d-48d7-fe08-08d9693d95c7",
+            "Categ": {
+              "Id": "58529f50-691d-48d7-fe08-08d9693d95c7",
+              "Name": "Dụng cụ",
+              "CompleteName": "Dụng cụ",
+              "ParentId": null,
+              "Parent": null
+            },
+            "Type2": "product",
+            "ListPrice": 0.00,
+            "Firm": null,
+            "LaboPrice": null,
+            "UOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "UOM": {
+              "Id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+              "Name": "Cái",
+              "Active": true,
+              "UOMType": "reference",
+              "CategoryName": null,
+              "CategoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+            }
+          },
+          "Sequence": 1,
+          "PriceUnit": 100000.0
+        },
+        {
+          "Id": "47bd992e-1f8f-4e97-db9c-08d97b50a369",
+          "Note": null,
+          "Name": "Kiêm tiêm",
+          "ProductUOMQty": 5.00,
+          "ProductUOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+          "ProductUOM": {
+            "Id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "Name": "Cái",
+            "Active": true,
+            "UOMType": "reference",
+            "CategoryName": null,
+            "CategoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+          },
+          "ProductId": "e90b3565-8603-4a20-fec8-08d9693da293",
+          "Product": {
+            "Id": "e90b3565-8603-4a20-fec8-08d9693da293",
+            "Name": "Kiêm tiêm",
+            "NameNoSign": "Kiêm tiêm|Kiem tiem|Kt",
+            "DefaultCode": "SP0011",
+            "PriceUnit": null,
+            "PurchasePrice": 15000.00,
+            "StandardPrice": 0.0,
+            "CategId": "58529f50-691d-48d7-fe08-08d9693d95c7",
+            "Categ": {
+              "Id": "58529f50-691d-48d7-fe08-08d9693d95c7",
+              "Name": "Dụng cụ",
+              "CompleteName": "Dụng cụ",
+              "ParentId": null,
+              "Parent": null
+            },
+            "Type2": "product",
+            "ListPrice": 0.00,
+            "Firm": null,
+            "LaboPrice": null,
+            "UOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "UOM": {
+              "Id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+              "Name": "Cái",
+              "Active": true,
+              "UOMType": "reference",
+              "CategoryName": null,
+              "CategoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+            }
+          },
+          "Sequence": 2,
+          "PriceUnit": 15000.0
+        }
+      ],
+      "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+      "LocationId": "af2d8792-ef90-4c89-29b6-08d9693d9511",
+      "LocationDestId": "5c4d21f9-1286-4b4e-29b3-08d9693d9511",
+      "CreatedByName": "admin",
+      "CreatedBy": {
+        "Id": "fb3c81c4-90b2-4918-aeaf-1689263ee7fa",
+        "Name": "admin"
+      }
+    }
+  },
+  {
+    "Type": "tmp_stock_inventory",
+    "Data": {
+      "Id": "e68e8ccd-4aef-493c-1be9-08d97437d3cf",
+      "Name": "KK00001",
+      "Date": "2021-09-10T15:48:00",
+      "Note": null,
+      "Lines": [
+        {
+          "Id": "e5be3e0b-9fa2-448a-6d9c-08d97437e102",
+          "LocationId": "af2d8792-ef90-4c89-29b6-08d9693d9511",
+          "Location": {
+            "Id": "af2d8792-ef90-4c89-29b6-08d9693d9511",
+            "Name": "Dự trữ",
+            "NameGet": "WH/Dự trữ"
+          },
+          "ProductId": "e90b3565-8603-4a20-fec8-08d9693da293",
+          "Product": {
+            "Id": "e90b3565-8603-4a20-fec8-08d9693da293",
+            "Name": "Kiêm tiêm",
+            "NameNoSign": "Kiêm tiêm|Kiem tiem|Kt",
+            "DefaultCode": "SP0011",
+            "PriceUnit": null,
+            "PurchasePrice": 15000.00,
+            "StandardPrice": 0.0,
+            "CategId": "58529f50-691d-48d7-fe08-08d9693d95c7",
+            "Categ": null,
+            "Type2": "product",
+            "ListPrice": 0.00,
+            "Firm": null,
+            "LaboPrice": null,
+            "UOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "UOM": {
+              "Id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+              "Name": "Cái",
+              "Active": true,
+              "UOMType": "reference",
+              "CategoryName": null,
+              "CategoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+            }
+          },
+          "ProductUOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+          "ProductUOM": {
+            "Id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "Name": "Cái",
+            "Active": true,
+            "UOMType": "reference",
+            "CategoryName": null,
+            "CategoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+          },
+          "ProductQty": 30.00,
+          "TheoreticalQty": 30.00,
+          "InventoryId": "e68e8ccd-4aef-493c-1be9-08d97437d3cf",
+          "Inventory": {
+            "Id": "e68e8ccd-4aef-493c-1be9-08d97437d3cf",
+            "Name": "KK00001",
+            "Date": "2021-09-10T15:48:00",
+            "State": "done"
+          },
+          "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+          "Company": {
+            "Id": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+            "Name": "TPP"
+          },
+          "Sequence": 0
+        },
+        {
+          "Id": "02ecf1ca-9f27-44a3-6d9d-08d97437e102",
+          "LocationId": "af2d8792-ef90-4c89-29b6-08d9693d9511",
+          "Location": {
+            "Id": "af2d8792-ef90-4c89-29b6-08d9693d9511",
+            "Name": "Dự trữ",
+            "NameGet": "WH/Dự trữ"
+          },
+          "ProductId": "f02bb537-b624-48fe-fec9-08d9693da293",
+          "Product": {
+            "Id": "f02bb537-b624-48fe-fec9-08d9693da293",
+            "Name": "Banh môi",
+            "NameNoSign": "Banh môi|Banh moi|Bm",
+            "DefaultCode": "SP0012",
+            "PriceUnit": null,
+            "PurchasePrice": 100000.00,
+            "StandardPrice": 0.0,
+            "CategId": "58529f50-691d-48d7-fe08-08d9693d95c7",
+            "Categ": null,
+            "Type2": "product",
+            "ListPrice": 0.00,
+            "Firm": null,
+            "LaboPrice": null,
+            "UOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "UOM": {
+              "Id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+              "Name": "Cái",
+              "Active": true,
+              "UOMType": "reference",
+              "CategoryName": null,
+              "CategoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+            }
+          },
+          "ProductUOMId": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+          "ProductUOM": {
+            "Id": "88ddb6c7-409b-4ea8-8546-08d9693d95e2",
+            "Name": "Cái",
+            "Active": true,
+            "UOMType": "reference",
+            "CategoryName": null,
+            "CategoryId": "53160867-8c62-4aeb-47de-08d9693d95dc"
+          },
+          "ProductQty": 30.00,
+          "TheoreticalQty": 30.00,
+          "InventoryId": "e68e8ccd-4aef-493c-1be9-08d97437d3cf",
+          "Inventory": {
+            "Id": "e68e8ccd-4aef-493c-1be9-08d97437d3cf",
+            "Name": "KK00001",
+            "Date": "2021-09-10T15:48:00",
+            "State": "done"
+          },
+          "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+          "Company": {
+            "Id": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+            "Name": "TPP"
+          },
+          "Sequence": 1
+        }
+      ],
+      "Moves": [],
+      "State": "done",
+      "LocationId": "af2d8792-ef90-4c89-29b6-08d9693d9511",
+      "Location": {
+        "Id": "af2d8792-ef90-4c89-29b6-08d9693d9511",
+        "Name": "Dự trữ",
+        "NameGet": "WH/Dự trữ"
+      },
+      "ProductId": null,
+      "Product": null,
+      "CategoryId": null,
+      "Category": null,
+      "CriteriaId": null,
+      "Criteria": null,
+      "Filter": "none",
+      "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+      "Exhausted": false,
+      "CreatedBy": {
+        "Id": "fb3c81c4-90b2-4918-aeaf-1689263ee7fa",
+        "Name": "admin"
+      }
+    }
+  },
+  {
+    "Type": "tmp_salary_employee",
+    "Data": {
+      "Id": "f681e7d9-f5a0-4ec0-5591-08d9768f0c19",
+      "Date": "2021-09-13T00:00:00",
+      "State": "done",
+      "Name": "PW/2021/0001",
+      "Type": "salary",
+      "EmployeeId": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+      "Employee": {
+        "Id": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+        "Name": "Bác sĩ A",
+        "PartnerId": "9fe4aeca-9ac8-4a8f-127b-08d96ec504cd"
+      },
+      "JournalId": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+      "Journal": {
+        "Id": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+        "Name": "Tiền mặt",
+        "Type": "cash"
+      },
+      "CreatedBy": {
+        "Id": "fb3c81c4-90b2-4918-aeaf-1689263ee7fa",
+        "Name": "admin"
+      },
+      "Amount": 10000000.00,
+      "Reason": "Chi lương tháng 08/2021"
+    }
+  },
+  {
+    "Type": "tmp_salary_advance",
+    "Data": {
+      "Id": "ac53cbc6-6d92-4bd9-5590-08d9768f0c19",
+      "Date": "2021-09-13T00:00:00",
+      "State": "done",
+      "Name": "AVC/2021/0001",
+      "Type": "advance",
+      "EmployeeId": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+      "Employee": {
+        "Id": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+        "Name": "Bác sĩ A",
+        "PartnerId": "9fe4aeca-9ac8-4a8f-127b-08d96ec504cd"
+      },
+      "JournalId": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+      "Journal": {
+        "Id": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+        "Name": "Tiền mặt",
+        "Type": "cash"
+      },
+      "CreatedBy": {
+        "Id": "fb3c81c4-90b2-4918-aeaf-1689263ee7fa",
+        "Name": "admin"
+      },
+      "Amount": 3000000.00,
+      "Reason": null
+    }
+  },
+  {
+    "Type": "tmp_salary",
+    "Data": {
+      "Id": "fda5749b-aed0-417e-c2cf-08d9768f2b0b",
+      "StructId": null,
+      "Struct": null,
+      "Name": "Phiếu lương tháng 8 2021 Bác sĩ A",
+      "Number": null,
+      "EmployeeId": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+      "Employee": {
+        "Id": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+        "Name": "Bác sĩ A",
+        "IsDoctor": true,
+        "IsAssistant": false,
+        "Ref": "NV00001",
+        "Phone": "0369835014",
+        "Email": null,
+        "CategoryId": null,
+        "Category": null,
+        "Wage": 10000000.00,
+        "StructureTypeId": null,
+        "LeavePerMonth": 0.00,
+        "RegularHour": 8.00,
+        "OvertimeRate": 150.00,
+        "RestDayRate": 100.00,
+        "Allowance": 0.00,
+        "Active": true,
+        "UserName": null,
+        "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+        "Company": {
+          "Id": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+          "Name": "TPP",
+          "Logo": "http://statics.tdental.vn/images/localhost/210920/1345070036_logo.jpg",
+          "Active": true
+        }
+      },
+      "DateFrom": "0001-01-01T00:00:00",
+      "DateTo": "0001-01-01T00:00:00",
+      "State": "draft",
+      "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+      "TotalAmount": 0.00,
+      "StructureTypeId": null,
+      "StructureType": null,
+      "WorkedDaysLines": [],
+      "PayslipRunId": "b3223e96-4bfb-4b82-4002-08d9768f2ae8",
+      "PayslipRun": {
+        "Id": "b3223e96-4bfb-4b82-4002-08d9768f2ae8",
+        "Name": "Bảng lương tháng 8 năm 2021",
+        "Date": "2021-08-13T00:00:00",
+        "DateStart": "0001-01-01T00:00:00",
+        "DateEnd": "0001-01-01T00:00:00",
+        "TotalAmount": 0.00,
+        "State": "done"
+      },
+      "DaySalary": 322580.64516129032258064516129,
+      "WorkedDay": 31.00,
+      "TotalBasicSalary": 10000000.0,
+      "OverTimeHour": 0.0,
+      "OverTimeHourSalary": 0.0,
+      "OverTimeDay": 0.00,
+      "OverTimeDaySalary": 0.0,
+      "Allowance": 0.00,
+      "OtherAllowance": 0.0,
+      "RewardSalary": 0.0,
+      "HolidayAllowance": 0.0,
+      "TotalSalary": 10000000.00,
+      "CommissionSalary": 0.0,
+      "Tax": 0.0,
+      "SocialInsurance": 0.0,
+      "AmercementMoney": 0.0,
+      "AdvancePayment": 0.0,
+      "NetSalary": 10000000.00,
+      "ActualLeavePerMonth": 0.0,
+      "LeavePerMonthUnpaid": 0.00,
+      "SalaryPayment": {
+        "Id": "f681e7d9-f5a0-4ec0-5591-08d9768f0c19",
+        "Date": "2021-09-13T00:00:00",
+        "JournalName": null,
+        "State": "done",
+        "Name": "PW/2021/0001",
+        "Type": "salary",
+        "Amount": 10000000.00,
+        "EmployeeName": "Bác sĩ A"
+      },
+      "CreatedBy": {
+        "Id": "fb3c81c4-90b2-4918-aeaf-1689263ee7fa",
+        "Name": "admin"
+      }
+    }
+  },
+  {
+    "Type": "tmp_partner_advance",
+    "Data": {
+      "Id": "56ceb3af-d9ad-4a5f-e849-08d97b3f411a",
+      "Name": "TUKH/2021/0001",
+      "Date": "2021-09-19T14:29:00",
+      "JournalId": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+      "Journal": {
+        "Id": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+        "Name": "Tiền mặt",
+        "Type": "cash"
+      },
+      "PartnerId": "8a5316cc-14c3-4b92-1279-08d96ec504cd",
+      "Partner": {
+        "Name": "Khách hàng A"
+      },
+      "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+      "Type": "advance",
+      "Amount": 10000000.00,
+      "State": "confirmed",
+      "Note": "Khách hàng đóng tạm ứng",
+      "User": {
+        "Name": "Nguyễn Văn C"
+      }
+    }
+  },
+  {
+    "Type": "tmp_partner_refund",
+    "Data": {
+      "Id": "ee5f6f5d-c2fd-49cf-e84a-08d97b3f411a",
+      "Name": "TUKH/2021/0002",
+      "Date": "2021-09-19T14:29:00",
+      "JournalId": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+      "Journal": {
+        "Id": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+        "Name": "Tiền mặt",
+        "Type": "cash"
+      },
+      "PartnerId": "8a5316cc-14c3-4b92-1279-08d96ec504cd",
+      "Partner": {
+        "Name": "Khách hàng A"
+      },
+      "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+      "Type": "refund",
+      "Amount": 5000000.00,
+      "State": "confirmed",
+      "Note": null
+    }
+  },
+  {
+    "Type": "tmp_quotation",
+    "Data": {
+      "Company": {
+        "Name": "TPP",
+        "Partner": {
+          "CityName": "Thành phố Hồ Chí Minh",
+          "DistrictName": "Quận Tân Phú",
+          "WardName": "Phường Tân Thành",
+          "Street": "54/35 Diệp Minh Châu"
+        },
+        "Phone": "0938551226",
+        "Email": null,
+        "Logo": "http://statics.tdental.vn/images/localhost/210920/1345070036_logo.jpg"
+      },
+      "Partner": {
+        "DisplayName": "[KH0007] Khách hàng A",
+        "Name": "Khách hàng A",
+        "Gender": "male",
+        "Email": "khachhanga@gmail.com",
+        "Phone": "0369835014",
+        "BirthYear": 1995,
+        "Age": "26",
+        "Street": "246/16 Độc Lập",
+        "WardName": "Phường Tân Thành",
+        "DistrictName": "Quận Tân Phú",
+        "CityName": "Thành phố Hồ Chí Minh"
+      },
+      "dateApplies": 10,
+      "dateQuotation": "2021-09-10T15:49:53",
+      "dateEndQuotation": "2021-09-15T15:49:53",
+      "employeeId": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+      "employee": {
+        "id": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+        "name": "Bác sĩ A"
+      },
+      "lines": [
+        {
+          "id": "9caf8e88-b4ac-462a-adb4-08d977650141",
+          "name": "Răng sứ Nacera Q thế hệ mới",
+          "qty": 1,
+          "discountType": "percent",
+          "discountAmountPercent": 10,
+          "subPrice": 10000000,
+          "amountDiscountTotal": 1000000,
+          "amount": 9000000
+        }
+      ],
+      "totalAmount": 9000000,
+      "name": "BG00001",
+      "note": "Tư vấn cho khách hàng về dịch vụ",
+      "payments": [
+        {
+          "id": "11bd82cd-744e-4400-4beb-08d9778790f7",
+          "sequence": 0,
+          "discountPercentType": "cash",
+          "payment": 100000,
+          "amount": 100000,
+          "date": "2021-09-14T11:58:00"
+        },
+        {
+          "id": "709c039e-ab1f-44fe-4bec-08d9778790f7",
+          "sequence": 1,
+          "discountPercentType": "percent",
+          "payment": 10,
+          "amount": 0,
+          "date": "2021-09-14T11:58:00"
+        }
+      ]
+    }
+  },
+  {
+    "Type": "tmp_advisory",
+    "Data": {
+      "Company": {
+        "Name": "TPP",
+        "PartnerName": null,
+        "PartnerCityName": "Thành phố Hồ Chí Minh",
+        "PartnerDistrictName": "Quận Tân Phú",
+        "PartnerWardName": "Phường Tân Thành",
+        "PartnerStreet": "54/35 Diệp Minh Châu",
+        "Address": "54/35 Diệp Minh Châu, Phường Tân Thành, Quận Tân Phú, Thành phố Hồ Chí Minh",
+        "Phone": "0938551226",
+        "Email": null,
+        "Logo": null
+      },
+      "Partner": {
+        "Id": "8a5316cc-14c3-4b92-1279-08d96ec504cd",
+        "Name": "Khách hàng A",
+        "DisplayName": "[KH0007] Khách hàng A",
+        "Phone": "0369835014",
+        "BirthYear": 1995,
+        "Age": "26",
+        "Street": "246/16 Độc Lập",
+        "WardName": "Phường Tân Thành",
+        "DistrictName": "Quận Tân Phú",
+        "CityName": "Thành phố Hồ Chí Minh",
+        "Address": "246/16 Độc Lập, Phường Tân Thành, Quận Tân Phú, Thành phố Hồ Chí Minh",
+        "Email": "khachhanga@gmail.com",
+        "Tags": []
+      },
+      "Advisories": [
+        {
+          "Date": "2021-09-15T15:01:24",
+          "EmployeeId": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+          "Employee": {
+            "Id": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+            "Name": "Bác sĩ A",
+            "PartnerId": null
+          },
+          "ToothType": "manual",
+          "Tooths": "14,15",
+          "Diagnosis": "Niềng răng,Điều trị tủy răng",
+          "Services": "Lấy cao răng và đánh bóng,Điều trị tủy răng vĩnh viễn"
+        }
+      ]
+    }
+  },
+  {
+    "Type": "tmp_account_payment",
+    "Data": {
+      "Id": "471cdd4c-3e72-4a50-248b-08d977369c30",
+      "Amount": 5350000.00,
+      "Date": "2021-09-14T00:00:00",
+      "Order": {
+        "Id": "f99bf6d1-e611-4236-52da-08d97734bbe3",
+        "DateOrder": "2021-09-14T11:04:11",
+        "PartnerId": "8a5316cc-14c3-4b92-1279-08d96ec504cd",
+        "Partner": {
+          "Id": "8a5316cc-14c3-4b92-1279-08d96ec504cd",
+          "Name": "Khách hàng A",
+          "DisplayName": "[KH0007] Khách hàng A",
+          "Phone": "0369835014",
+          "Ref": "KH0007",
+          "Gender": "male",
+          "Address": "246/16 Độc Lập, Phường Tân Thành, Quận Tân Phú, Thành phố Hồ Chí Minh",
+          "Street": "246/16 Độc Lập",
+          "WardName": "Phường Tân Thành",
+          "DistrictName": "Quận Tân Phú",
+          "CityName": "Thành phố Hồ Chí Minh",
+          "BirthYear": 1995,
+          "Debt": 0.0,
+          "Age": "26",
+          "LastAppointmentDate": null,
+          "Debit": 0.0,
+          "Credit": 0.0,
+          "Balance": null,
+          "CompanyName": "TPP",
+          "Categories": [],
+          "DateCreated": "2021-09-03T17:24:31",
+          "Source": null,
+          "JobTitle": null,
+          "Email": "khachhanga@gmail.com",
+          "comment": null,
+          "BirthMonth": 10,
+          "BirthDay": 15,
+          "Active": true,
+          "CountLine": 0.0,
+          "DateOfBirth": "15/10/1995",
+          "AppointmnetId": "00000000-0000-0000-0000-000000000000",
+          "AppointmnetName": null,
+          "Time": null
+        },
+        "AmountTax": 0.00,
+        "AmountUntaxed": 5350000.00,
+        "AmountTotal": 5350000.00,
+        "AmountDiscountTotal": 0.0,
+        "Note": null,
+        "State": "sale",
+        "Name": "SO00006",
+        "OrderLines": [],
+        "Promotions": [],
+        "CompanyId": "43d6c200-1f70-4ee9-94f4-08d9693d9482",
+        "UserId": null,
+        "User": null,
+        "Residual": 0.00,
+        "Paid": null,
+        "PricelistId": null,
+        "Pricelist": null,
+        "JournalId": null,
+        "Journal": null,
+        "QuotationId": null,
+        "Quotation": null,
+        "IsQuotation": false,
+        "IsFast": false,
+        "Quote": null,
+        "Order": null,
+        "InvoiceStatus": "to invoice",
+        "InvoiceCount": 0,
+        "TotalPaid": 5350000.00
+      },
+      "JournalLines": [
+        {
+          "Id": "8b7e3f16-49a3-4698-5cf8-08d977369c32",
+          "JournalId": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+          "Journal": {
+            "Id": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+            "Name": "Tiền mặt",
+            "Type": "cash"
+          },
+          "Amount": 3000000.00
+        },
+        {
+          "Id": "b2549ae1-f390-40b4-5cf9-08d977369c32",
+          "JournalId": "b03db7a4-0c9a-4021-f86b-08d9693d94f2",
+          "Journal": {
+            "Id": "b03db7a4-0c9a-4021-f86b-08d9693d94f2",
+            "Name": "Ngân hàng",
+            "Type": "bank"
+          },
+          "Amount": 2350000.00
+        }
+      ],
+      "Lines": [
+        {
+          "SaleOrderLine": {
+            "Name": "Điều trị tủy răng vĩnh viễn"
+          }
+        },
+        {
+          "SaleOrderLine": {
+            "Name": "Lấy cao răng và đánh bóng"
+          }
+        }
+      ],
+      "Note": "SO00006 - Khách hàng thanh toán",
+      "State": "posted"
+    }
+    
+  },
+  {
+    "Type": "tmp_supplier_payment",
+    "Data": {
+      "Id": "527af367-a8dd-4c36-9ea2-08d9783b06ce",
+      "PartnerId": "d0f349d6-870a-4960-b11b-08d9693d942f",
+      "Partner": {
+        "Id": "d0f349d6-870a-4960-b11b-08d9693d942f",
+        "Name": "Labo Việt Tiến",
+        "DisplayName": "[NCC0001] Labo Việt Tiến",
+        "Phone": "0983830609",
+        "Ref": "NCC0001",
+        "Gender": "male",
+        "Address": "",
+        "Street": null,
+        "WardName": null,
+        "DistrictName": null,
+        "CityName": null,
+        "BirthYear": null,
+        "Debt": 0.0,
+        "Age": "",
+        "LastAppointmentDate": null,
+        "Debit": 0.0,
+        "Credit": 0.0,
+        "Balance": null,
+        "CompanyName": "TPP",
+        "Categories": [],
+        "DateCreated": "2021-08-27T16:32:46",
+        "Source": null,
+        "JobTitle": null,
+        "Email": "lvvietien@gmail.com",
+        "comment": null,
+        "BirthMonth": null,
+        "BirthDay": null,
+        "Active": true,
+        "CountLine": 0.0,
+        "DateOfBirth": "",
+        "AppointmnetId": "00000000-0000-0000-0000-000000000000",
+        "AppointmnetName": null,
+        "Time": null,
+        "Date": "2021-08-27T00:00:00"
+      },
+      "PartnerType": "supplier",
+      "PaymentDate": "2021-09-15T00:00:00",
+      "JournalId": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+      "Journal": {
+        "Id": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+        "Name": "Tiền mặt",
+        "CompanyName": "TPP"
+      },
+      "State": "posted",
+      "Name": "SUPP.OUT/2021/0001",
+      "PaymentType": "outbound",
+      "Amount": 2000000.00,
+      "Communication": null,
+      "LoaiThuChiId": "00000000-0000-0000-0000-000000000000",
+      "LoaiThuChi": null
+    }
+  },
+  {
+    "Type": "tmp_supplier_payment_inbound",
+    "Data": {
+      "Id": "f3007a82-a1e7-43be-3e52-08d97b50ccc9",
+      "PartnerId": "d0f349d6-870a-4960-b11b-08d9693d942f",
+      "Partner": {
+        "Id": "d0f349d6-870a-4960-b11b-08d9693d942f",
+        "Name": "Labo Việt Tiến",
+        "DisplayName": "[NCC0001] Labo Việt Tiến",
+        "Phone": "0983830609",
+        "Ref": "NCC0001",
+        "Gender": "male",
+        "Address": "",
+        "Street": null,
+        "WardName": null,
+        "DistrictName": null,
+        "CityName": null,
+        "BirthYear": null,
+        "Debt": 0.0,
+        "Age": "",
+        "LastAppointmentDate": null,
+        "Debit": 0.0,
+        "Credit": 0.0,
+        "Balance": null,
+        "CompanyName": "TPP",
+        "Categories": [],
+        "DateCreated": "2021-08-27T16:32:46",
+        "Source": null,
+        "JobTitle": null,
+        "Email": "lvvietien@gmail.com",
+        "comment": null,
+        "BirthMonth": null,
+        "BirthDay": null,
+        "Active": true,
+        "CountLine": 0.0,
+        "DateOfBirth": "",
+        "AppointmnetId": "00000000-0000-0000-0000-000000000000",
+        "AppointmnetName": null,
+        "Time": null,
+        "Date": "2021-08-27T00:00:00"
+      },
+      "PartnerType": "supplier",
+      "PaymentDate": "2021-09-19T00:00:00",
+      "JournalId": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+      "Journal": {
+        "Id": "b1313ca9-adcc-4f72-f86a-08d9693d94f2",
+        "Name": "Tiền mặt",
+        "CompanyName": "TPP"
+      },
+      "State": "posted",
+      "Name": "SUPP.IN/2021/0001",
+      "PaymentType": "inbound",
+      "Amount": 575000.00,
+      "Communication": null,
+      "LoaiThuChiId": "00000000-0000-0000-0000-000000000000",
+      "LoaiThuChi": null
+    }
+  },
+  {
+    "Type": "tmp_appointment",
+    "Data": {
+      "Company": {
+        "Name": "TPP",
+        "Partner": {
+          "CityName": "Thành phố Hồ Chí Minh",
+          "DistrictName": "Quận Tân Phú",
+          "WardName": "Phường Tân Thành",
+          "Street": "54/35 Diệp Minh Châu"
+        },
+        "Phone": "0938551226",
+        "Email": null,
+        "Logo": "http://statics.tdental.vn/images/localhost/210920/1345070036_logo.jpg"
+      },
+      "Date": "2021-10-04T10:07:00",
+      "Name": "AP00002",
+      "Partner": {
+        "DisplayName": "[KH0007] Khách hàng A",
+        "Name": "Khách hàng A",
+        "Gender": "male",
+        "Email": "khachhanga@gmail.com",
+        "Phone": "0369835014",
+        "BirthYear": 1995,
+        "Age": "26",
+        "Street": "246/16 Độc Lập",
+        "WardName": "Phường Tân Thành",
+        "DistrictName": "Quận Tân Phú",
+        "CityName": "Thành phố Hồ Chí Minh"
+      },
+      "isRepeatCustomer": "False",
+      "Doctor": {
+        "Id": "27a236c0-f919-4f44-d5b5-08d96ec7124d",
+        "Name": "Bác sĩ A"
+      },
+      "AppointmentServices": [
+        {
+          "Product": {
+            "Name": "Tẩy trắng răng bằng đèn Laser Zoom II"
+          }
+        }
+      ],
+      "Note": "Nội dung cuộc hẹn"
+    }
+  }
+]

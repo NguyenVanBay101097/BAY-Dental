@@ -23,16 +23,19 @@ namespace TMTDentalAPI.Endpoints.PartnerEndpoints.GetCustomerInfo
         private readonly IPartnerService _partnerService;
         private readonly IIRPropertyService _propertyService;
         private readonly IMemberLevelService _memberLevelService;
+        private readonly ICardCardService _cardCardService;
         private readonly IMapper _mapper;
 
         public GetCustomerInfo(IPartnerService partnerService,
             IIRPropertyService propertyService,
             IMemberLevelService memberLevelService,
+            ICardCardService cardCardService,
             IMapper mapper)
         {
             _partnerService = partnerService;
             _propertyService = propertyService;
             _memberLevelService = memberLevelService;
+            _cardCardService = cardCardService;
             _mapper = mapper;
         }
 
@@ -104,18 +107,25 @@ namespace TMTDentalAPI.Endpoints.PartnerEndpoints.GetCustomerInfo
             if (response == null)
                 return NotFound();
 
-            var partnerPointsProp = _propertyService.get("loyalty_points", "res.partner", res_id: $"res.partner,{request.PartnerId}", force_company: CompanyId);
-            var partnerPoints = Convert.ToDecimal(partnerPointsProp == null ? 0 : partnerPointsProp);
-            response.Point = partnerPoints;
-
-            var partnerLevelProp = _propertyService.get("member_level", "res.partner", res_id: $"res.partner,{request.PartnerId}", force_company: CompanyId);
-            var partnerLevelValue = partnerLevelProp == null ? string.Empty : partnerLevelProp.ToString();
-            var partnerLevelId = !string.IsNullOrEmpty(partnerLevelValue) ? Guid.Parse(partnerLevelValue.Split(",")[1]) : (Guid?)null;
-            if (partnerLevelId.HasValue)
+            var card = await _cardCardService.SearchQuery(x => x.PartnerId == response.Id && x.State == "in_use").Include(x => x.Type).FirstOrDefaultAsync();
+            if (card != null)
             {
-                var level = await _memberLevelService.GetByIdAsync(partnerLevelId);
-                response.MemberLevel = _mapper.Map<MemberLevelBasic>(level);
+                response.Point = card.TotalPoint ?? 0;
+                response.CardTypeName = card.Type.Name;
             }
+
+            // var partnerPointsProp = _propertyService.get("loyalty_points", "res.partner", res_id: $"res.partner,{request.PartnerId}", force_company: CompanyId);
+            //var partnerPoints = Convert.ToDecimal(partnerPointsProp == null ? 0 : partnerPointsProp);
+            //response.Point = partnerPoints;
+
+            //var partnerLevelProp = _propertyService.get("member_level", "res.partner", res_id: $"res.partner,{request.PartnerId}", force_company: CompanyId);
+            //var partnerLevelValue = partnerLevelProp == null ? string.Empty : partnerLevelProp.ToString();
+            //var partnerLevelId = !string.IsNullOrEmpty(partnerLevelValue) ? Guid.Parse(partnerLevelValue.Split(",")[1]) : (Guid?)null;
+            //if (partnerLevelId.HasValue)
+            //{
+            //    var level = await _memberLevelService.GetByIdAsync(partnerLevelId);
+            //    response.MemberLevel = _mapper.Map<MemberLevelBasic>(level);
+            //}
 
             return response;
         }

@@ -10,12 +10,10 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Name { get; set; }
 
-        /// <summary>
-        /// Loại
-        /// cash: Thẻ tiền mặt
-        /// </summary>
-        public string Type { get; set; }
+        public string Period { get; set; }
 
-        public decimal? Price { get; set; }
+        public int? NbrPeriod { get; set; }
+
+        public Guid? ProductPricelistId { get; set; }
     }
 }

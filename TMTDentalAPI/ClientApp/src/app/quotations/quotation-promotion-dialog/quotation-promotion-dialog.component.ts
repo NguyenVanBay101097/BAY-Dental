@@ -3,10 +3,7 @@ import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject } from 'rxjs';
 import { SaleCouponProgramService } from 'src/app/sale-coupon-promotion/sale-coupon-program.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { NotifyService } from 'src/app/shared/services/notify.service';
-import { QuotationLineService } from '../quotation-line.service';
-import { QuotationPromotionService } from '../quotation-promotion.service';
-import { QuotationsDisplay, QuotationService } from '../quotation.service';
+import { QuotationsDisplay } from '../quotation.service';
 
 @Component({
   selector: 'app-quotation-promotion-dialog',
@@ -27,12 +24,8 @@ export class QuotationPromotionDialogComponent implements OnInit {
 
   constructor(
     public activeModal: NgbActiveModal,
-    private notificationService: NotifyService,
     private modelService: NgbModal,
     private promotionService: SaleCouponProgramService,
-    private quotationService: QuotationService,
-    private quotationPromotionService: QuotationPromotionService,
-    private quotationLineService: QuotationLineService
   ) { }
   ngOnInit() {
     setTimeout(() => {

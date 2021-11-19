@@ -1,0 +1,63 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">
+                <span>Báo cáo tổng quan ngày</span>
+            </li>
+        </ol>
+        <div class="o_cp_searchview">
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <kendo-datepicker (valueChange)="onChangeDate($event)" class="mr-2" [(ngModel)]="date" [disabledDates]="disabledDates">
+                    </kendo-datepicker>
+                    <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-2" [valueField]="'id'"
+                        [textField]="'name'" [filterable]="true" [data]="listCompany" [(ngModel)]="companyId" [valuePrimitive]="true"
+                        (valueChange)="onSelectCompany($event)" #companyCbx>
+                    </kendo-combobox>
+                    <button type="button" class="btn btn-primary" (click)="exportExcelFile()">
+                        <i class="fas fa-download mr-2"></i>Xuất Excel
+                    </button>
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <div class="py-3 container">
+        <div>
+            <ul ngbNav #nav="ngbNav" [activeId]="route.fragment | async" class="nav-pills">
+                <li [ngbNavItem]="'services'">
+                  <a ngbNavLink routerLink="." [fragment]="'services'">Dịch vụ đăng kí mới</a>
+                  <ng-template ngbNavContent>
+                    <app-day-dashboard-report-registration-service #servicesComp [dateFrom]="dateFrom" [dateTo]="dateTo" [companyId]="companyId">
+                    </app-day-dashboard-report-registration-service>
+                  </ng-template>
+                </li>
+                <li [ngbNavItem]="'revenue'">
+                  <a ngbNavLink routerLink="." [fragment]="'revenue'">Doanh thu</a>
+                  <ng-template ngbNavContent>
+                    <app-day-dashboard-report-revenue-service #revenueComp [dateFrom]="dateFrom" [dateTo]="dateTo" [companyId]="companyId">
+                    </app-day-dashboard-report-revenue-service>
+                  </ng-template>
+                </li>
+                <li [ngbNavItem]="'cashbook'">
+                  <a ngbNavLink routerLink="." [fragment]="'cashbook'">Tình hình thu chi</a>
+                  <ng-template ngbNavContent>
+                    <app-day-dashboard-report-cashbook #cashbookComp [dateFrom]="dateFrom" [dateTo]="dateTo" [companyId]="companyId">
+                    </app-day-dashboard-report-cashbook>
+                  </ng-template>
+                </li>
+              </ul>
+              
+              <div [ngbNavOutlet]="nav" class="mt-2"></div>
+        </div>
+    </div>
+</div>

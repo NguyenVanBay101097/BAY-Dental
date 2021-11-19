@@ -2,7 +2,7 @@
     <button type="button" class="btn btn-primary btn-sm" (click)="registerPayment()">Thanh toán</button>
 </div>
 
-<kendo-grid [data]="gridView" [pageable]="true" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)"
+<kendo-grid [data]="gridView" [pageable]="pagerSettings" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)"
     [loading]="gridLoading">
     <kendo-grid-column field="paymentDate" title="Ngày" width="120">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">

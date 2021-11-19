@@ -1,11 +1,10 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { SaleOrderService } from '../../core/services/sale-order.service';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
-import { PartnerService } from 'src/app/partners/partner.service';
-import { ServiceCardCardService } from 'src/app/service-card-cards/service-card-card.service';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import * as _ from 'lodash';
+import { ServiceCardCardService } from 'src/app/service-card-cards/service-card-card.service';
+import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { SaleOrderService } from '../../core/services/sale-order.service';
 
 @Component({
   selector: 'app-sale-order-apply-service-cards-dialog',
@@ -22,9 +21,11 @@ export class SaleOrderApplyServiceCardsDialogComponent implements OnInit {
   applyFormGroup: FormGroup;
   @ViewChild('codeInput', { static: true }) codeInput: ElementRef;
 
-  constructor(private saleOrderService: SaleOrderService, public activeModal: NgbActiveModal,
+  constructor(
+    private saleOrderService: SaleOrderService, 
+    public activeModal: NgbActiveModal,
     private errorService: AppSharedShowErrorService,
-    private partnerService: PartnerService, private fb: FormBuilder,
+    private fb: FormBuilder,
     private cardService: ServiceCardCardService) { }
 
   ngOnInit() {

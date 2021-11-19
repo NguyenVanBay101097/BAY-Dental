@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Record>
+    <Name>Dental Supplies</Name>
+    <Fax />
+    <CityCode />
+    <CityName />
+    <DistrictCode />
+    <DistrictName />
+    <WardCode />
+    <WardName />
+    <Id>sample.partner_supplier_1</Id>
+    <DateRound>21</DateRound>
+  </Record>
+</Data>

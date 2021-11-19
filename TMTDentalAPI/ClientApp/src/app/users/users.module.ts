@@ -6,12 +6,12 @@ import { UserService } from './user.service';
 import { UserListComponent } from './user-list/user-list.component';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { ReactiveFormsModule } from '@angular/forms';
-import { UserCuDialogComponent } from './user-cu-dialog/user-cu-dialog.component';
 import { SharedModule } from '../shared/shared.module';
 import { UserListImportComponent } from './user-list-import/user-list-import.component';
+import { UserCuDialogComponent } from './user-cu-dialog/user-cu-dialog.component';
 
 @NgModule({
-  declarations: [UserListComponent, UserCuDialogComponent, UserListImportComponent],
+  declarations: [UserCuDialogComponent, UserListComponent, UserListImportComponent],
   imports: [
     CommonModule,
     UsersRoutingModule,

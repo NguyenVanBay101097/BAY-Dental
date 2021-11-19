@@ -4,12 +4,17 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
+import { map, mergeMap } from 'rxjs/operators';
 import { AuthService } from '../auth/auth.service';
+import { IrConfigParameterService } from '../core/services/ir-config-parameter.service';
+import { SessionInfoStorageService } from '../core/services/session-info-storage.service';
+import { WebSessionService } from '../core/services/web-session.service';
 import { WebService } from '../core/services/web.service';
 import { ChangePasswordDialogComponent } from '../shared/change-password-dialog/change-password-dialog.component';
+import { CheckPermissionService } from '../shared/check-permission.service';
 import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog.component';
+import { ImportSampleDataComponent } from '../shared/import-sample-data/import-sample-data.component';
 import { PermissionService } from '../shared/permission.service';
-import { SearchAllService } from '../shared/search-all.service';
 import { UserProfileEditComponent } from '../shared/user-profile-edit/user-profile-edit.component';
 import { UserChangeCurrentCompanyVM, UserService } from '../users/user.service';
 
@@ -46,13 +51,13 @@ export class AppHomeComponent implements OnInit {
     {
       name: 'Labo',
       icon: 'fas fa-tooth',
-      url: '/labo-orders',
       children: [
         { name: 'Quản lý phiếu Labo', url: '/labo-orders/service', permissions: ['Labo.LaboOrder.Read', '.LaboOrder.Create', 'Labo.LaboOrder.Update', 'Labo.LaboOrder.Delete'] },
         { name: 'Đơn hàng Labo', url: '/labo-orders/order', permissions: ['Labo.OrderLabo.Read', 'Labo.OrderLabo.Update'] },
         { name: 'Xuất Labo cho khách', url: '/labo-orders/export', permissions: ['Labo.ExportLabo.Read', 'Labo.ExportLabo.Update'] },
+        { name: 'Quản lý bảo hành', url: '/labo-orders/warranty', permissions: ['Labo.LaboWarranty.Read', '.LaboWarranty.Create', 'Labo.LaboWarranty.Update', 'Labo.LaboWarranty.Delete'] },
       ],
-      permissions: ['Labo.LaboOrder.Read', 'Labo.OrderLabo.Read', 'Labo.ExportLabo.Read']
+      permissions: ['Labo.LaboOrder.Read', 'Labo.OrderLabo.Read', 'Labo.ExportLabo.Read', 'Labo.LaboWarranty.Read']
     },
     {
       name: 'Khảo sát đánh giá',
@@ -62,7 +67,6 @@ export class AppHomeComponent implements OnInit {
         { name: 'Danh sách khảo sát', url: '/surveys/list', permissions: ['Survey.UserInput.Read'], groups: 'survey.group_user,survey.group_manager' },
         { name: 'Quản lý phân việc', url: '/surveys/manage', permissions: ['Survey.Assignment.Read'], groups: 'survey.group_manager' },
         { name: 'Câu hỏi khảo sát', url: '/surveys/config', permissions: ['Survey.Question.Read', 'Survey.Question.Create', 'Survey.Question.Update', 'Survey.Question.Delete'], groups: 'survey.group_manager' },
-        { name: 'Nhãn khảo sát', url: '/surveys/survey-tag', groups: 'survey.group_survey' },
       ],
       groups: 'survey.group_survey',
       permissions: ['Survey.UserInput.Read', 'Survey.Assignment.Read', 'Survey.Question.Read']
@@ -70,10 +74,9 @@ export class AppHomeComponent implements OnInit {
     {
       name: 'Mua hàng',
       icon: 'fas fa-shopping-cart',
-      url: '/purchase',
       children: [
-        { name: 'Mua hàng', url: '/purchase/orders', linkProps: { queryParams: { type: 'order' } }, permissions: ['Purchase.Order.Read', 'Purchase.Order.Create', 'Purchase.Order.Update', 'Purchase.Order.Delete'] },
-        { name: 'Trả hàng', url: '/purchase/orders', linkProps: { queryParams: { type: 'refund' } }, permissions: ['Purchase.Order.Read'] },
+        { name: 'Mua hàng', url: '/purchase/order', permissions: ['Purchase.Order.Read', 'Purchase.Order.Create', 'Purchase.Order.Update', 'Purchase.Order.Delete'] },
+        { name: 'Trả hàng', url: '/purchase/refund', permissions: ['Purchase.Order.Read'] },
       ],
       permissions: ['Purchase.Order.Read']
     },
@@ -86,7 +89,6 @@ export class AppHomeComponent implements OnInit {
     {
       name: 'Lương',
       icon: 'fas fa-money-bill-alt',
-      url: '/hr',
       children: [
         { name: 'Bảng lương', url: '/hr/payslip-run/form', permissions: ['Salary.HrPayslipRun.Read', 'Salary.HrPayslipRun.Create', 'Salary.HrPayslipRun.Update'] },
         { name: 'Chấm công', url: '/hr/time-keepings', permissions: ['Salary.ChamCong.Read'] },
@@ -99,16 +101,19 @@ export class AppHomeComponent implements OnInit {
       name: 'Sổ quỹ', icon: 'fas fa-wallet', url: '/cash-book', permissions: ['Account.Read']
     },
     {
-      name: 'Khuyến mãi',
+      name: 'Marketing',
       icon: 'fas fa-gift',
       groups: 'sale.group_sale_coupon_promotion',
-      url: '/programs/promotion-programs',
-      permissions: ['SaleCoupon.SaleCouponProgram.Read']
+      children: [
+        { name: 'Chương trình khuyến mãi', url: '/programs/promotion-programs', permissions: ['SaleCoupon.SaleCouponProgram.Read'] },
+        { name: 'Quản lý thẻ', url: '/service-card', permissions: ['ServiceCard.Card.Read'] },
+        { name: 'Loại thẻ', url: '/card-types', permissions: ['ServiceCard.Type.Read'] },
+      ],
+      permissions: ['SaleCoupon.SaleCouponProgram.Read', 'ServiceCard.Card.Read']
     },
     {
       name: 'SMS Brandname',
       icon: 'fas fa-sms',
-      url: '/sms',
       children: [
         { name: 'Chúc mừng sinh nhật', url: '/sms/birthday-partners', permissions: ['SMS.Message.Read'] },
         { name: 'Nhắc lịch hẹn', url: '/sms/appointment-reminder', permissions: ['SMS.Message.Read'] },
@@ -124,33 +129,34 @@ export class AppHomeComponent implements OnInit {
       permissions: ['SMS.Account.Read', 'SMS.Campaign.Read', 'SMS.Message.Read', 'SMS.Template.Read', 'SMS.Config.Read', 'SMS.Report.AllMessage', 'SMS.Report.AllSMS']
     },
     {
-      name: 'Người giới thiệu',
+      name: 'Hoa hồng',
       icon: 'fas fa-poll',
-      url: '/agents',
       children: [
-        { name: 'Danh sách', url: '/agents/list' },
-        { name: 'Thống kê hoa hồng', url: '/agents/commission' },
+        { name: 'Người giới thiệu', url: '/commission-settlements/agent' },
+        { name: 'Nhân viên', url: '/commission-settlements/employee'},
       ],
-      permissions: ['Catalog.Agent.Read', 'Report.Commission']
+      
     },
     {
       name: 'Danh mục',
       icon: 'fas fa-list',
-      url: '/catalog',
       children: [
-        { name: 'Thông tin khách hàng', url: '/catalog/customer-management' },
-        { name: 'Hạng thành viên', url: '/catalog/member-level/management' },
-        { name: 'Nhà cung cấp', url: '/catalog/suppliers', permissions: ['Basic.Partner.Read'] },
-        { name: 'Dịch vụ - Vật tư - Thuốc', url: '/catalog/products', permissions: ['Catalog.Products.Read'] },
-        { name: 'Đơn thuốc mẫu', url: '/catalog/sample-prescriptions', permissions: ['Catalog.SamplePrescription.Read'] },
-        { name: 'Đơn vị tính', url: '/catalog/uoms', groups: 'product.group_uom', permissions: ['UoM.UoMs.Read'] },
-        { name: 'Nhóm Đơn vị tính', url: '/catalog/uom-categories', groups: 'product.group_uom', permissions: ["UoM.UoMCategory.Read"] },
-        { name: 'Bảng hoa hồng', url: '/catalog/commissions/v2', permissions: ['Catalog.Commission.Read'] },
-        { name: 'Nhân viên', url: '/catalog/employees', permissions: ['Catalog.Employee.Read'] },
-        { name: 'Thông số Labo', url: '/catalog/labo-managerment', permissions: ['Catalog.LaboFinishLine.Read', 'Catalog.LaboBridge.Read', 'Catalog.LaboBiteJoint.Read'] },
-        { name: 'Loại thu chi', url: '/catalog/loai-thu-chi', permissions: ['Account.LoaiThuChi.Read'] },
-        { name: 'Tiêu chí kiểm kho', url: '/catalog/stock/criterias', permissions: ['Stock.StockInventoryCriteria.Read'] },
-        { name: 'Chẩn đoán răng', url: '/catalog/tooth-diagnosis', permissions: ['Catalog.ToothDiagnosis.Read'] },
+        { name: 'Thông tin khách hàng', url: '/customer-management' },
+        // { name: 'Hạng thành viên', url: '/member-level/management' },
+        { name: 'Nhà cung cấp', url: '/partners/suppliers', permissions: ['Basic.Partner.Read'] },
+        { name: 'Dịch vụ - Vật tư - Thuốc', url: '/products', permissions: ['Catalog.Products.Read'] },
+        { name: 'Đơn thuốc mẫu', url: '/sample-prescriptions', permissions: ['Catalog.SamplePrescription.Read'] },
+        { name: 'Đơn vị tính', url: '/uoms', groups: 'product.group_uom', permissions: ['UoM.UoMs.Read'] },
+        { name: 'Nhóm Đơn vị tính', url: '/uom-categories', groups: 'product.group_uom', permissions: ["UoM.UoMCategory.Read"] },
+        { name: 'Bảng hoa hồng', url: '/commissions', permissions: ['Catalog.Commission.Read'] },
+        { name: 'Nhân viên', url: '/employees', permissions: ['Catalog.Employee.Read'] },
+        { name: 'Chức vụ nhân viên', url: '/hr/jobs' },
+        { name: 'Thông số Labo', url: '/labo-management', permissions: ['Catalog.LaboFinishLine.Read', 'Catalog.LaboBridge.Read', 'Catalog.LaboBiteJoint.Read'] },
+        { name: 'Loại thu chi', url: '/loai-thu-chi', permissions: ['Account.LoaiThuChi.Read'] },
+        { name: 'Tiêu chí kiểm kho', url: '/stock/criterias', permissions: ['Stock.StockInventoryCriteria.Read'] },
+        { name: 'Chẩn đoán răng', url: '/tooth-diagnosis', permissions: ['Catalog.ToothDiagnosis.Read'] },
+        { name: 'Nhãn khảo sát', url: '/surveys/survey-tag', groups: 'survey.group_survey' },
+        { name: 'Người giới thiệu', url: '/agents/list', Permissions: ['Catalog.Agent.Read'] },
       ],
       permissions: [
         'Catalog.PartnerCategory.Read',
@@ -167,37 +173,38 @@ export class AppHomeComponent implements OnInit {
     {
       name: 'Cấu hình',
       icon: 'fas fa-cogs',
-      url: '/setting',
+      id: 'settingMenu',
       children: [
-        { name: 'Chi nhánh', url: '/setting/companies', permissions: ['System.Company.Read'] },
-        { name: 'Nhóm quyền', url: '/setting/roles', permissions: ['System.ApplicationRole.Read'] },
-        { name: 'Cấu hình chung', url: '/setting/config-settings' }
+        { name: 'Chi nhánh', url: '/companies', permissions: ['System.Company.Read'] },
+        { name: 'Nhóm quyền', url: '/roles', permissions: ['System.ApplicationRole.Read'] },
+        { name: 'Cấu hình chung', url: '/config-settings' },
+        // { name: 'Mẫu in', url: '/print-template-config' },
+        // { name: 'Thiết lập kết nối API', url: '/setting-public-api' }
       ],
       permissions: ['System.Company.Read', 'System.ApplicationUser.Read', 'System.ApplicationRole.Read']
     },
     {
       name: 'Báo cáo',
       icon: 'far fa-chart-bar',
-      url: '/report',
+      id: 'reportMenu',
       children: [
-        { name: 'Báo cáo tổng quan', url: '/report/sale-dashboard-reports' },
-        { name: 'Kết quả kinh doanh', url: '/report/financial-report', permissions: ['Report.Financial'] },
-        { name: 'Báo cáo doanh thu', url: '/report/account-invoice-reports/revenue-time', permissions: ['Report.Revenue'] },
-        { name: 'Báo cáo dịch vụ', url: '/report/sale-report/service-report', permissions: ['Report.Sale'] },
-        { name: 'Báo cáo khách hàng', url: '/report/report-account-common/partner-report-overview', permissions: ['Report.AccountPartner'] },
-        { name: 'Báo cáo tiếp nhận', url: '/report/customer-receipt-reports' },
-        { name: 'Công nợ nhà cung cấp', url: '/report/report-account-common/partner', linkProps: { queryParams: { result_selection: 'supplier' }}, permissions: ['Report.AccountPartner'] },
-        { name: 'Khách hàng lân cận phòng khám', url: '/report/partner-report-location', permissions: ['Report.PartnerLocation'] },
-        { name: 'Thống kê nguồn khách hàng', url: '/report/report-partner-sources', permissions: ['Report.PartnerSource'] },
-        { name: 'Quản lý điều trị', url: '/report/sale-orders/management', permissions: ['Basic.SaleOrder.Read'] },
-        { name: 'Hoa hồng nhân viên', url: '/report/commission-settlements/report', permissions: ['Report.Commission'] },
+        { name: 'Báo cáo tổng quan', url: '/sale-dashboard-reports' },
+        { name: 'Báo cáo tổng quan ngày', url: '/day-dashboard-report' },
+        { name: 'Kết quả kinh doanh', url: '/financial-report', permissions: ['Report.Financial'] },
+        { name: 'Báo cáo doanh thu', url: '/account-invoice-reports/revenue-time', permissions: ['Report.Revenue'] },
+        { name: 'Báo cáo dịch vụ', url: '/sale-report/service-report', permissions: ['Report.Sale'] },
+        { name: 'Báo cáo khách hàng', url: '/report-account-common/partner-report-overview', permissions: ['Report.PartnerOldNew'] },
+        { name: 'Báo cáo tiếp nhận', url: '/customer-receipt-reports' },
+        { name: 'Công nợ nhà cung cấp', url: '/report-account-common/partner', linkProps: { queryParams: { result_selection: 'supplier' } }, permissions: ['Report.AccountPartner'] },
+        { name: 'Thống kê nguồn khách hàng', url: '/report-partner-sources', permissions: ['Report.PartnerSource'] },
+        { name: 'Quản lý điều trị', url: '/sale-orders/management', permissions: ['Basic.SaleOrder.Read'] },
       ],
       permissions: [
         'Report.Financial',
-        'Report.CashBankAccount',
+        // 'Report.CashBankAccount',
         'Report.Revenue',
         'Report.Sale',
-        'Report.AccountPartner',
+        // 'Report.AccountPartner',
         'Report.AccountPartner',
         'Report.Stock',
         'Report.RealRevenue',
@@ -218,6 +225,8 @@ export class AppHomeComponent implements OnInit {
   @ViewChild('searchAllSelect', { static: true }) searchAllSelect: NgSelectComponent;
 
   minimized = false;
+  irImportSampleData = null;
+  sessionInfo: any;
 
   constructor(
     private modalService: NgbModal,
@@ -226,24 +235,34 @@ export class AppHomeComponent implements OnInit {
     private userService: UserService,
     private webService: WebService,
     private notificationService: NotificationService,
-    private permissionService: PermissionService
+    private permissionService: PermissionService,
+    private irConfigParamService: IrConfigParameterService,
+    private sessionInfoStorageService: SessionInfoStorageService,
+    private webSessionService: WebSessionService,
+    private checkPermissionService: CheckPermissionService
   ) { }
 
   ngOnInit() {
-    if (localStorage.getItem('user_change_company_vm')) {
-      this.userChangeCurrentCompany = JSON.parse(localStorage.getItem('user_change_company_vm'));
-    }
-    this.authService.currentUser.subscribe(result => {
-      if (result) {
-        this.loadChangeCurrentCompany();
-        this.loadExpire();
-      }
-    });
-
+    this.sessionInfo = this.sessionInfoStorageService.getSessionInfo();
     this.menus = this.filterMenus();
-    this.permissionService.permissionStoreChangeEmitter.subscribe(() => {
-      this.menus = this.filterMenus();
-    });
+    this.loadIrConfigParam();
+  }
+
+  showExpirationDate(dateStr) {
+    const expireDate = new Date(dateStr);
+    const date = new Date();
+    var diff = expireDate.getTime() - date.getTime();
+
+    var days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    diff -=  days * (1000 * 60 * 60 * 24);
+    
+    var hours = Math.floor(diff / (1000 * 60 * 60));
+    diff -= hours * (1000 * 60 * 60);
+    
+    var mins = Math.floor(diff / (1000 * 60));
+    diff -= mins * (1000 * 60);
+
+    return `${days} ngày ${hours} giờ ${mins} phút`;
   }
 
   filterMenus() {
@@ -278,29 +297,11 @@ export class AppHomeComponent implements OnInit {
   }
 
   hasPermission(menuItem) {
-    var pm = localStorage.getItem("user_permission");
-    if (pm != null) {
-      var user_permission = JSON.parse(pm);
-      if (user_permission.isUserRoot) {
-        return true;
-      }
-
-      if (menuItem.permissions) {
-        var listPermission = user_permission.permission;
-        for (var i = 0; i < menuItem.permissions.length; i++) {
-          var permission = menuItem.permissions[i];
-          if (listPermission.includes(permission)) {
-            return true;
-          }
-        }
-
-        return false;
-      }
-
+    if (!menuItem.permissions) {
       return true;
     }
 
-    return false;
+    return this.checkPermissionService.check(menuItem.permissions);
   }
 
   toggleMinimize(e) {
@@ -323,18 +324,23 @@ export class AppHomeComponent implements OnInit {
   }
 
   switchCompany(companyId) {
-    this.userService.switchCompany({ companyId: companyId }).subscribe(() => {
-      this.authService.refresh().subscribe(() => {
-        this.userService.getChangeCurrentCompany().subscribe(result => {
-          localStorage.setItem('user_change_company_vm', JSON.stringify(result));
-          var userInfo = JSON.parse(localStorage.getItem("user_info"));
-          localStorage.removeItem('user_info');
-          userInfo.companyId = result.currentCompany.id;
-          localStorage.setItem('user_info', JSON.stringify(userInfo));
-          window.location.reload();
-        });
+    this.userService.switchCompany({ companyId: companyId })
+      .pipe(
+        mergeMap(() => {
+          return this.authService.refresh();
+        }),
+        mergeMap(() => {
+          return this.webSessionService.getSessionInfo();
+        }),
+        mergeMap((sessionInfo) => {
+          this.sessionInfoStorageService.saveSession(sessionInfo);
+          return this.webSessionService.getCurrentUserInfo();
+        }),
+      )
+      .subscribe(userInfo => {
+        localStorage.setItem('user_info', JSON.stringify(userInfo));
+        window.location.reload();
       });
-    });
   }
 
   changePassword() {
@@ -395,6 +401,37 @@ export class AppHomeComponent implements OnInit {
         }
       )
     }, () => {
+    });
+  }
+
+  loadIrConfigParam() {
+    var key = "import_sample_data";
+    this.irConfigParamService.getParam(key).subscribe(
+      (result: any) => {
+        this.irImportSampleData = result.value;
+        if (!this.irImportSampleData) {
+          this.openPopupImportSimpleData();
+        }
+      }
+    )
+  }
+
+  openPopupImportSimpleData() {
+    const modalRef = this.modalService.open(ImportSampleDataComponent, { scrollable: true, size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.value = this.irImportSampleData;
+    modalRef.result.then(result => {
+      if (result) {
+        this.notificationService.show({
+          content: 'Khởi tạo dữ liệu mẫu thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+        window.location.reload();
+      }
+    }, err => {
+      console.log(err);
     });
   }
 }

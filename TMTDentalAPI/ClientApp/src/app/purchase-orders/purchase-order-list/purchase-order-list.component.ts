@@ -1,18 +1,19 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { map, debounceTime, distinctUntilChanged, tap, switchMap } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import { Router, ActivatedRoute } from '@angular/router';
-import { NgbDate, NgbDateParserFormatter, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
-import { PurchaseOrderService, PurchaseOrderPaged, PurchaseOrderBasic } from '../purchase-order.service';
-import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { CheckPermissionService } from 'src/app/shared/check-permission.service';
-import { PartnerBasic, PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
-import { PartnerService } from 'src/app/partners/partner.service';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { IntlService } from '@progress/kendo-angular-intl';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
+import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
+import { PartnerService } from 'src/app/partners/partner.service';
+import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { NotifyService } from 'src/app/shared/services/notify.service';
+import { PurchaseOrderBasic, PurchaseOrderPaged, PurchaseOrderService } from '../purchase-order.service';
 
 @Component({
   selector: 'app-purchase-order-list',
@@ -26,6 +27,7 @@ export class PurchaseOrderListComponent implements OnInit {
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
   opened = false;
   search: string;
@@ -52,13 +54,14 @@ export class PurchaseOrderListComponent implements OnInit {
     private modalService: NgbModal, private route: ActivatedRoute, private intlService: IntlService,
     private checkPermissionService: CheckPermissionService,
     private partnerService: PartnerService,
-    private notifyService: NotifyService
-  ) { }
+    private notifyService: NotifyService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-    this.route.queryParamMap.subscribe(params => {
-      this.type = params.get('type');
+    this.route.data.subscribe(params => {
+      this.type = params.type;
       this.skip = 0;
       this.loadDataFromApi();
     });
@@ -86,7 +89,7 @@ export class PurchaseOrderListComponent implements OnInit {
     if (value) {
       this.stateFilter = value;
     } else {
-      
+
       this.stateFilter = null;
     }
 
@@ -94,7 +97,7 @@ export class PurchaseOrderListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  
+
 
   handleFilter(event) {
     this.supplierFilter = event ? event.id : null;
@@ -142,7 +145,7 @@ export class PurchaseOrderListComponent implements OnInit {
 
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Xóa phiếu ' + this.getTitle();
-    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa phiếu '+this.getTitle() + '?';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa phiếu ' + this.getTitle() + '?';
     modalRef.result.then(() => {
       this.purchaseOrderService.unlink(this.selectedIds).subscribe(() => {
         this.selectedIds = [];
@@ -162,7 +165,7 @@ export class PurchaseOrderListComponent implements OnInit {
     val.state = this.stateFilter || '';
     val.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     val.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
-  
+
 
     this.purchaseOrderService.getPaged(val).pipe(
       map(response => (<GridDataResult>{
@@ -195,15 +198,16 @@ export class PurchaseOrderListComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 
   createItem() {
-    this.router.navigate(['/purchase/orders/create'], { queryParams: { type: this.type } });
+    this.router.navigate([`/purchase/${this.type}/create`]);
   }
 
   editItem(item: PurchaseOrderBasic) {
-    this.router.navigate(['/purchase/orders/edit/', item.id]);
+    this.router.navigate([`/purchase/${this.type}/edit/`, item.id]);
   }
 
   deleteItem(item) {
@@ -229,7 +233,7 @@ export class PurchaseOrderListComponent implements OnInit {
     val.state = this.stateFilter || '';
     val.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     val.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
-  
+
     this.purchaseOrderService.exportExcelFile(val).subscribe((res) => {
       let filename = this.type == 'order' ? 'Mua-hang' : 'Tra-hang';
 

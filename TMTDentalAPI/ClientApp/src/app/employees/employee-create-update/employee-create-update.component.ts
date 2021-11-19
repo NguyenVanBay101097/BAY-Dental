@@ -1,29 +1,24 @@
-import { HrPayrollStructureTypePaged, HrPayrollStructureTypeService } from './../../hrs/hr-payroll-structure-type.service';
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { EmployeeService } from '../employee.service';
-import { WindowRef, WindowCloseResult, WindowService } from '@progress/kendo-angular-dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { EmpCategoriesCreateUpdateComponent } from 'src/app/employee-categories/emp-categories-create-update/emp-categories-create-update.component';
-import { EmpCategoryService } from 'src/app/employee-categories/emp-category.service';
-import { EmployeeCategoryPaged, EmployeeCategoryBasic, EmployeeCategoryDisplay } from 'src/app/employee-categories/emp-category';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { IntlService } from '@progress/kendo-angular-intl';
-import { CommissionPaged, CommissionService, Commission } from 'src/app/commissions/commission.service';
-import * as _ from 'lodash';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { UserSimple } from 'src/app/users/user-simple';
-import { debounceTime, tap, switchMap, map } from 'rxjs/operators';
-import { UserPaged, UserService } from 'src/app/users/user.service';
-import { HrPayrollStructureTypeSimple } from 'src/app/hrs/hr-payroll-structure-type.service';
+import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import * as _ from 'lodash';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { Commission, CommissionPaged, CommissionService } from 'src/app/commissions/commission.service';
 import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/company.service';
-import { MustMatch } from 'src/app/shared/must-match-validator';
-import { validator } from 'fast-json-patch';
-import { ResGroupBasic, ResGroupService } from 'src/app/res-groups/res-group.service';
-import { AuthService } from 'src/app/auth/auth.service';
-import { PermissionService } from 'src/app/shared/permission.service';
+import { EmpCategoriesCreateUpdateComponent } from 'src/app/employee-categories/emp-categories-create-update/emp-categories-create-update.component';
+import { EmployeeCategoryBasic, EmployeeCategoryDisplay, EmployeeCategoryPaged } from 'src/app/employee-categories/emp-category';
+import { EmpCategoryService } from 'src/app/employee-categories/emp-category.service';
+import { HrJobService, HrJobsPaged } from 'src/app/hr-jobs/hr-job.service';
+import { HrPayrollStructureTypeSimple } from 'src/app/hrs/hr-payroll-structure-type.service';
+import { ResGroupService } from 'src/app/res-groups/res-group.service';
 import { ApplicationRolePaged, RoleService } from 'src/app/roles/role.service';
+import { UserSimple } from 'src/app/users/user-simple';
+import { UserPaged, UserService } from 'src/app/users/user.service';
+import { EmployeeService } from '../employee.service';
+import { HrPayrollStructureTypePaged, HrPayrollStructureTypeService } from './../../hrs/hr-payroll-structure-type.service';
 
 @Component({
   selector: 'app-employee-create-update',
@@ -41,16 +36,16 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     private intlService: IntlService, private commissionService: CommissionService, private userService: UserService,
     private companyService: CompanyService,
     private resGroupService: ResGroupService,
-    private authService: AuthService,
-    private permissionService: PermissionService,
-    private roleService: RoleService
+    private roleService: RoleService,
+    private hrJobService: HrJobService,
   ) { }
   empId: string;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
-  @ViewChild('commissionCbx', { static: false }) commissionCbx: ComboBoxComponent;
-  @ViewChild('assistantCommissionCbx', { static: false }) assistantCommissionCbx: ComboBoxComponent;
-  @ViewChild('counselorCommissionCbx', { static: false }) counselorCommissionCbx: ComboBoxComponent;
+  @ViewChild('commissionCbx') commissionCbx: ComboBoxComponent;
+  @ViewChild('assistantCommissionCbx') assistantCommissionCbx: ComboBoxComponent;
+  @ViewChild('counselorCommissionCbx') counselorCommissionCbx: ComboBoxComponent;
   @ViewChild("name", { static: true }) private nameEL: ElementRef;
+  @ViewChild('cbxHrJob', { static: true }) public cbxHrJob: ComboBoxComponent;
 
 
   isChange: boolean = false;
@@ -72,6 +67,10 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
   listCompanies: CompanyBasic[] = [];
   groupSurvey: any[] = [];
   roles: any[] = [];
+  cbxPopupSettings = {
+    width: 'auto'
+  };
+  hrJobs: any[] = [];
 
   ngOnInit() {
     this.formCreate = this.fb.group({
@@ -114,7 +113,8 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       userAvatar: null,
       groupId: null,
       isAllowSurvey: false,
-      roles: null
+      roles: null,
+      hrJob: null,
     });
 
     setTimeout(() => {
@@ -125,6 +125,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       // this.loadUsers();
       // this.loadstructureTypes();
       this.loadListCompanies();
+      this.loadHrJobs();
 
       // this.userCbx.filterChange.asObservable().pipe(
       //   debounceTime(300),
@@ -137,6 +138,14 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       this.loadGroupSurvey();
 
       this.loadRoles();
+      this.cbxHrJob.filterChange.asObservable().pipe(
+        debounceTime(300),
+        tap(() => (this.cbxHrJob.loading = true)),
+        switchMap(value => this.searchHrJob(value))
+      ).subscribe((res : any) => {
+        this.hrJobs = res.items;
+        this.cbxHrJob.loading = false;
+      });
     });
     document.getElementById('name').focus();
   }
@@ -195,6 +204,20 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     return this.formCreate.get(key);
   }
 
+  loadHrJobs() {
+    this.searchHrJob().subscribe((res:any) => {
+      this.hrJobs = res.items;
+    })
+  }
+  
+  searchHrJob(s?) {
+    var val = new HrJobsPaged();
+    val.offset = 0;
+    val.limit = 20;
+    val.search = s || '';
+    return this.hrJobService.getPaged(val);
+  }
+
   loadUsers() {
     this.searchUsers().subscribe(result => {
       this.filteredUsers = _.unionBy(this.filteredUsers, result, 'id');
@@ -211,7 +234,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
 
   onChangeCreateChangePassword(e) {
     if (this.createChangePassword) {
-      this.formCreate.get('userPassword').setValidators([Validators.required]);
+      this.formCreate.get('userPassword').setValidators([Validators.required, Validators.minLength(6)]);
       this.formCreate.get('userPassword').updateValueAndValidity();
       this.f.userPassword.markAsDirty();
     } else {
@@ -245,7 +268,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
       this.formCreate.get('userName').setValidators([Validators.required]);
       this.formCreate.get('userName').updateValueAndValidity();
 
-      this.formCreate.get('userPassword').setValidators([Validators.required]);
+      this.formCreate.get('userPassword').setValidators([Validators.required, Validators.minLength(6)]);
       this.formCreate.get('userPassword').updateValueAndValidity();
       this.formCreate.get('createChangePassword').setValue(true);
 
@@ -340,6 +363,10 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
           if (rs.counselorCommission) {
             this.listCounselorCommissions = _.unionBy(this.listCounselorCommissions, [rs.counselorCommission], 'id');
           }
+          
+          if (rs.hrJob) {
+            this.hrJobs = _.unionBy(this.hrJobs, [rs.hrJob], 'id');
+          }
       
           this.formCreate.get('createChangePassword').setValue(false);
           this.onChangeCreateChangePassword(null);
@@ -379,6 +406,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     value.commissionId = value.commission ? value.commission.id : null;
     value.counselorCommissionId = value.counselorCommission ? value.counselorCommission.id : null;
     value.assistantCommissionId = value.assistantCommission ? value.assistantCommission.id : null;
+    value.hrJobId = value.hrJob ? value.hrJob.id : null;
     this.isChange = true;
 
     this.employeeService.createUpdateEmployee(value, this.empId).subscribe(

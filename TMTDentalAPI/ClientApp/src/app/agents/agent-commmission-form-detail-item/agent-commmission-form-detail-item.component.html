@@ -1,4 +1,4 @@
-<kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+<kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"
     (pageChange)="pageChange($event)">
     <kendo-grid-column title="Ngày thanh toán" width="135">
         <ng-template kendoGridCellTemplate let-dataItem let-column="column">
@@ -20,5 +20,4 @@
             {{dataItem.amount | number}}
         </ng-template>
     </kendo-grid-column>
-
 </kendo-grid>

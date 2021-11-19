@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewContainerRef, ComponentFactoryResolver, HostListener, Input, Output, EventEmitter, forwardRef, AfterViewInit, ElementRef } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, forwardRef, Input, ViewChild } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { environment } from 'src/environments/environment';
 

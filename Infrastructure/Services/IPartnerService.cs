@@ -77,6 +77,11 @@ namespace Infrastructure.Services
         Task<IEnumerable<PartnerSaleOrderDone>> GetPartnerOrderDone(PartnerPaged val);
         Task<PagedResult2<PartnerInfoDisplay>> GetPartnerInfoPaged(PartnerInfoPaged val);
         Task<PagedResult2<PartnerInfoDisplay>> GetPartnerInfoPaged2(PartnerInfoPaged val);
+        Task<IEnumerable<IrAttachment>> GetListAttachment(Guid id);
+
+        Task<IEnumerable<Partner>> GetPublicPartners(int limit, int offset, string search);
+
+        Task<PartnerImportResponse> CustomerImportUpdate(string fileBase64);
 
     }
 }

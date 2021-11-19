@@ -1,8 +1,6 @@
-import { EmployeeBasic } from './../employees/employee';
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HrPayslipDisplay } from './hr-payslip.service';
 
 
 export class HrPayslipRunBasic {
@@ -112,13 +110,13 @@ export class HrPaysliprunService {
     return this.http.post(this.base_api + this.apiUrl + '/CheckExist?date=' + d.toISOString(), null);
   }
 
-  // printAllEmpSalary(id: string, val: any) {
-  //   return this.http.put(this.base_api + this.apiUrl + `/${id}/Print`, val);
-  // }
-
-  printAllEmpSalary(id: string, val : any ) {
-    return this.http.put(this.base_api + this.apiPrintUrl + '/Print' + `?id=${id}`, val, { responseType: 'text' } );
+  printAllEmpSalary(id: string, val: any) {
+    return this.http.post(this.base_api + this.apiUrl + `/${id}/Print`, val);
   }
+
+  // printAllEmpSalary(id: string, val : any ) {
+  //   return this.http.post(this.base_api + this.apiPrintUrl + '/Print' + `?id=${id}`, val, { responseType: 'text' } );
+  // }
 
   ExportExcelFile(payslipIds: string[]) {
     return this.http.post(this.base_api + this.apiUrl + '/ExportExcelFile', payslipIds, { responseType: 'blob' }

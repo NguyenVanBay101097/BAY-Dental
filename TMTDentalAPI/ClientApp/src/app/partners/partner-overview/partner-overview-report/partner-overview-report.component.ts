@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { AccountCommonPartnerReport, AccountCommonPartnerReportService } from 'src/app/account-common-partner-reports/account-common-partner-report.service';
+import { AccountCommonPartnerReport } from 'src/app/account-common-partner-reports/account-common-partner-report.service';
 
 @Component({
   selector: 'app-partner-overview-report',

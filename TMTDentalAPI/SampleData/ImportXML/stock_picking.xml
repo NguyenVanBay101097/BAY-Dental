@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Record>
+    <Id>sample.stock_picking_1</Id>
+    <PartnerId>sample.employee_2</PartnerId>
+    <DateRound>1</DateRound>
+    <OrderLines>
+      <Record>
+        <Name>Kẹp gắp</Name>
+        <PartnerId>sample.employee_2</PartnerId>
+        <ProductQty>1.00</ProductQty>
+        <ProductUOMId>product.product_uom_unit</ProductUOMId>
+        <ProductId>sample.product_product_36</ProductId>
+      </Record>
+      <Record>
+        <Name>Khẩu trang kháng khuẩn</Name>
+        <PartnerId>sample.employee_2</PartnerId>
+        <ProductQty>1.00</ProductQty>
+        <ProductUOMId>product.product_uom_unit</ProductUOMId>
+        <ProductId>sample.product_product_73</ProductId>
+      </Record>
+    </OrderLines>
+  </Record>
+</Data>

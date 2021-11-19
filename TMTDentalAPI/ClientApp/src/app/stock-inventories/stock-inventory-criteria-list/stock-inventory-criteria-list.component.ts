@@ -1,13 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfigurationService } from '@progress/kendo-angular-charts';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { NotifyService } from 'src/app/shared/services/notify.service';
 import { StockInventoryCriteriaCuDialogComponent } from '../stock-inventory-criteria-cu-dialog/stock-inventory-criteria-cu-dialog.component';
-import { StockInventoryCriteriaBasic, StockInventoryCriteriaPaged, StockInventoryCriteriaPaging, StockInventoryCriteriaSave, StockInventoryCriteriaService } from '../stock-inventory-criteria.service';
+import { StockInventoryCriteriaBasic, StockInventoryCriteriaPaged, StockInventoryCriteriaService } from '../stock-inventory-criteria.service';
 
 @Component({
   selector: 'app-stock-inventory-criteria-list',
@@ -19,14 +19,16 @@ export class StockInventoryCriteriaListComponent implements OnInit {
   constructor(
     private criteriaService: StockInventoryCriteriaService,
     private ngbModal: NgbModal,
-    private notifyService: NotifyService
-  ) { }
+    private notifyService: NotifyService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   search: string;
   searchUpdate = new Subject<string>();
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
+  pagerSettings: any;
   loading = false;
 
   ngOnInit() {
@@ -68,6 +70,7 @@ export class StockInventoryCriteriaListComponent implements OnInit {
 
   pageChange(e: PageChangeEvent) {
     this.skip = e.skip;
+    this.limit = e.take;
     this.loadDataFromApi();
   }
 

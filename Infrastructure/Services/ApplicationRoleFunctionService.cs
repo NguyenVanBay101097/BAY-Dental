@@ -31,9 +31,9 @@ namespace Infrastructure.Services
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public async Task<GetPermission> GetPermission()
+        public async Task<GetPermission> GetPermission(string uid)
         {
-            var key = $"{(_tenant != null ? _tenant.Hostname : "localhost")}-permissions-{UserId}";
+            var key = $"{(_tenant != null ? _tenant.Hostname : "localhost")}-permissions-{uid}";
 
             var permission = await _cache.GetOrCreateAsync(key, async entry =>
             {
@@ -42,6 +42,11 @@ namespace Infrastructure.Services
                 return res;
             });
             return new GetPermission() { IsUserRoot = IsUserRoot, Permission = permission };
+        }
+
+        public async Task<GetPermission> GetPermission()
+        {
+            return await GetPermission(UserId);
         }
 
         public async Task<ApplicationRoleFunctionHasAccessResult> HasAccess(IEnumerable<string> functions)

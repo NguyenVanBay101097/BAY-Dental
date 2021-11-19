@@ -31,6 +31,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string JournalName { get; set; }
 
+        public string JournalType { get; set; }
+
         public string Name { get; set; }
 
         public string InvoiceOrigin { get; set; }
@@ -44,4 +46,25 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal TotalChi { get; set; }
         public decimal TotalThu { get; set; }
     }
+
+    public class CashBookReportDay
+    {
+        public IEnumerable<CashBookReport> DataAmountTotals { get; set; } 
+        public GetThuChiReportResponse DataThuChiReport { get; set; }
+
+        public IEnumerable<CashBookReportDetail> DataDetails { get; set; }
+    }
+
+    public class FilterSumaryCashbookReport
+    {
+        public FilterSumaryCashbookReport(string value , string code)
+        {
+            Value = value;
+            Code = code;
+        }
+
+        public string Value { get; set; }
+        public string Code { get; set; }
+    }
+
 }

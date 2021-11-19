@@ -3,7 +3,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
 import { DotKhamDisplay } from 'src/app/dot-khams/dot-khams';
 import { ImageViewerComponent } from 'src/app/shared/image-viewer/image-viewer.component';
-import { PartnerImageBasic } from 'src/app/shared/services/partners.service';
 
 @Component({
   selector: 'app-partner-dotkham-detail',

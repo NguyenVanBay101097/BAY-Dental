@@ -16,7 +16,7 @@
 </div>
 
 <div class="o_content">
-    <kendo-grid  #grid="kendoGrid" [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading" [selectable]="true" (pageChange)="pageChange($event)" [kendoGridSelectBy]="'moveId'" [selectedKeys]="selectedIds">
+    <kendo-grid  #grid="kendoGrid" [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading" [selectable]="true" (pageChange)="pageChange($event)" [kendoGridSelectBy]="'moveId'" [selectedKeys]="selectedIds">
         <kendo-grid-checkbox-column [width]="50" [headerClass]="{'text-center': true}" [class]="{'text-center': true}" showSelectAll="true"></kendo-grid-checkbox-column>
         <kendo-grid-column field="date" title="Ngày">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">

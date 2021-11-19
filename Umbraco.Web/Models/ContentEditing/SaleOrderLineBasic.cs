@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
@@ -14,8 +15,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid OrderPartnerId { get; set; }
         public PartnerSimple OrderPartner { get; set; }
 
-        public Guid OrderId { get; set; }
-        public SaleOrderBasic Order { get; set; }
+        public SaleOrderSimple Order { get; set; }
 
         public Guid ProductId { get; set; }
         public ProductSimple Product { get; set; }
@@ -24,9 +24,9 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public DateTime DateCreated { get; set; }
 
-        public EmployeeBasic Employee { get; set; }
+        public EmployeeSimple Employee { get; set; }
 
-        public EmployeeBasic Assistant { get; set; }
+        public EmployeeSimple Assistant { get; set; }
         public ToothCategoryBasic ToothCategory { get; set; }
         public IEnumerable<ToothDisplay> Teeth { get; set; } = new List<ToothDisplay>();
 
@@ -43,6 +43,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public decimal? AmountPaid { get; set; }
 
+        public decimal? AmountInvoiced { get; set; }
+
         /// <summary>
         /// whole_jaw: nguyên hàm
         /// upper_jaw : hàm trên
@@ -55,12 +57,48 @@ namespace Umbraco.Web.Models.ContentEditing
         {
             get
             {
-                return PriceTotal - AmountPaid;
+                return PriceTotal - (AmountInvoiced ?? 0);
             }
         }
 
         public bool IsActive { get; set; }
         public DateTime? Date { get; set; }
+
+        public string TeethDisplay
+        {
+            get
+            {
+                switch (ToothType)
+                {
+                    case "whole_jaw":
+                        return "Nguyên hàm";
+                    case "upper_jaw":
+                        return "Hàm trên";
+                    case "lower_jaw":
+                        return "Hàm dưới";
+                    default:
+                        return string.Join(", ", Teeth.Select(x => x.Name));
+                }
+            }
+        }
+
+        public string StateDisplay
+        {
+            get
+            {
+                switch (State)
+                {
+                    case "sale":
+                        return "Đang điều trị";
+                    case "cancel":
+                        return "Ngừng điều trị";
+                    case "done":
+                        return "Hoàn thành";
+                    default:
+                        return "Mới";
+                }
+            }
+        }
     }
 
     public class SaleOrderLineSmsSimple

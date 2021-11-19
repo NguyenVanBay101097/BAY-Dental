@@ -477,14 +477,29 @@ namespace Infrastructure.Services
                     var productRule = await modelDataObj.GetRef<IRRule>("product.product_comp_rule");
                     productRule.Active = !value;
                     await ruleObj.UpdateAsync(productRule);
+
+                    //xử lý clear cache
+                    _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-irmodeldata-product.product_comp_rule");
                 }
 
                 if (field == "CompanySharePartner")
                 {
+                    var rules = new List<IRRule>();
                     var value = Convert.ToBoolean(self.GetType().GetProperty(field).GetValue(self, null));
-                    var partnerRule = await modelDataObj.GetRef<IRRule>("base.res_partner_rule");
+                    
+                    var partnerRule = await ruleObj.GetByIdAsync((await modelDataObj.GetRef<IRRule>("base.res_partner_rule")).Id);
                     partnerRule.Active = !value;
-                    await ruleObj.UpdateAsync(partnerRule);
+                    rules.Add(partnerRule);
+
+                    var agentRule = await ruleObj.GetByIdAsync((await modelDataObj.GetRef<IRRule>("base.agent_comp_rule")).Id);
+                    agentRule.Active = !value;
+                    rules.Add(agentRule);
+
+                    await ruleObj.UpdateAsync(rules);
+
+                    //xử lý clear cache
+                    _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-irmodeldata-base.res_partner_rule");
+                    _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-irmodeldata-base.agent_comp_rule");
                 }
             }
         }

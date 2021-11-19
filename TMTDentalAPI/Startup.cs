@@ -56,6 +56,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using DinkToPdf;
 using DinkToPdf.Contracts;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace TMTDentalAPI
 {
@@ -71,7 +72,7 @@ namespace TMTDentalAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            GlobalConfiguration.Configuration.UseBatches();
+            //GlobalConfiguration.Configuration.UseBatches();
             services.AddMultitenancy<AppTenant, CachingAppTenantResolver>();
             services.AddDbContext<TenantDbContext>(c => c.UseSqlServer(Configuration.GetConnectionString("TenantConnection")));
 
@@ -109,6 +110,15 @@ namespace TMTDentalAPI
             })
                .AddEntityFrameworkStores<CatalogDbContext>()
                .AddDefaultTokenProviders();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("publicApi", policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.RequireClaim("scope", "publicApi");
+                });
+            });
 
             // configure jwt authentication
             services.AddAuthentication(x =>
@@ -366,11 +376,17 @@ namespace TMTDentalAPI
             services.AddScoped<ICustomerReceiptService, CustomerReceiptService>();
             services.AddScoped<IDashboardReportService, DashboardReportService>();
             services.AddScoped<ICustomerReceiptReportService, CustomerReceiptReportService>();
+            services.AddScoped<IPrintTemplateService, PrintTemplateService>();
+            services.AddScoped<IPrintTemplateConfigService, PrintTemplateConfigService>();
+
+            services.AddScoped<ILaboWarrantyService, LaboWarrantyService>();
+            services.AddScoped<IHrJobService, HrJobService>();
 
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
             services.AddSingleton<IMailSender, SendGridSender>();
+            services.AddSingleton<IXmlService, XmlService>();
 
 
             services.AddScoped<IUnitOfWorkAsync, UnitOfWork>();
@@ -559,6 +575,12 @@ namespace TMTDentalAPI
                 mc.AddProfile(new CustomerReceiptProfile());
                 mc.AddProfile(new CustomerReceiptReportProfile());
                 mc.AddProfile(new AccountCommonPartnerReportProfile());
+                mc.AddProfile(new LaboWarrantyProfile());
+                mc.AddProfile(new PrintTemplateConfigProfile());
+                mc.AddProfile(new PrintTemplateProfile());
+                mc.AddProfile(new HrJobProfile());
+                mc.AddProfile(new ProductPricelistItemProfile());
+                mc.AddProfile(new SampleDataProfile());
             };
 
             #endregion
@@ -578,7 +600,7 @@ namespace TMTDentalAPI
                 });
             });
             services.AddCors();
-            services.AddMemoryCache();          
+            services.AddMemoryCache();
 
             // Add Hangfire services.
             services.AddHangfire(configuration => configuration
@@ -699,14 +721,23 @@ namespace TMTDentalAPI
 
             app.UseRequestLocalization(localizationOptions);
 
-            //app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            ////app.UseHttpsRedirection();
+            var provider = new FileExtensionContentTypeProvider();
+            // Add new mappings
+            provider.Mappings[".webmanifest"] = "application/manifest+json";
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                ContentTypeProvider = provider
+            });
 
             app.UseSerilogRequestLogging();
 
             if (!env.IsDevelopment())
             {
-                app.UseSpaStaticFiles();
+                app.UseSpaStaticFiles(new StaticFileOptions
+                {
+                    ContentTypeProvider = provider
+                });
             }
 
             app.UseRouting();
@@ -743,6 +774,8 @@ namespace TMTDentalAPI
 
             app.UseHangfireDashboard();
 
+            //app.UseIdentityServer();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -762,6 +795,7 @@ namespace TMTDentalAPI
                 endpoints.EnableDependencyInjection();
             });
 
+            //bỏ đoạn này sẽ lỗi khi chạy production
             app.UseSpa(spa =>
             {
                 // To learn more about options for serving an Angular SPA from ASP.NET Core,
@@ -769,10 +803,10 @@ namespace TMTDentalAPI
 
                 spa.Options.SourcePath = "ClientApp";
 
-                if (env.IsDevelopment())
-                {
-                    spa.UseAngularCliServer(npmScript: "start");
-                }
+                //if (env.IsDevelopment())
+                //{
+                //    spa.UseAngularCliServer(npmScript: "start");
+                //}
             });
         }
 

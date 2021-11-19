@@ -6,21 +6,17 @@ import { PartnerCategoriesModule } from '../partner-categories/partner-categorie
 import { PartnerSourcesModule } from '../partner-sources/partner-sources.module';
 import { PartnerTitlesModule } from '../partner-titles/partner-titles.module';
 import { HistoryModule } from '../history/history.module';
-import { PartnerInfoCustomerManagementComponent } from './partner-info-customer-management/partner-info-customer-management.component';
 import { MemberLevelModule } from '../member-level/member-level.module';
-import { PartnerSupplierListComponent } from './partner-supplier-list/partner-supplier-list.component';
 import { SharedModule } from '../shared/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
-import { LaboManagementComponent } from './labo-management/labo-management.component';
 import { PartnerImportComponent } from '../partners/partner-import/partner-import.component';
+import { ProductImportExcelDialogComponent } from '../products/product-import-excel-dialog/product-import-excel-dialog.component';
 
 @NgModule({
   declarations: [
-    PartnerInfoCustomerManagementComponent,
-    PartnerSupplierListComponent,
-    LaboManagementComponent,
-    PartnerImportComponent
+    PartnerImportComponent,
+    ProductImportExcelDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -33,9 +29,11 @@ import { PartnerImportComponent } from '../partners/partner-import/partner-impor
     SharedModule,
     FormsModule,
     ReactiveFormsModule,
-    MyCustomKendoModule
+    MyCustomKendoModule,
   ],
   exports: [PartnerImportComponent],
-  entryComponents:[PartnerImportComponent]
+  entryComponents: [PartnerImportComponent,
+    ProductImportExcelDialogComponent,
+  ]
 })
 export class CatalogModule { }

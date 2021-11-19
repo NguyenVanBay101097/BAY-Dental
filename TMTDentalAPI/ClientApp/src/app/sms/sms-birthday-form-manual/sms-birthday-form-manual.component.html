@@ -3,14 +3,14 @@
         <div class="o_cp_left">
             <div class="o_cp_buttons d-flex">
                 <div class="mr-2">
-                    <select class="form-control" (change)="selectDayChange($event)">
+                    <select class="form-control" [(ngModel)]="day" (change)="selectDayChange($event)">
                         <option value="">Ngày sinh</option>
                         <option *ngFor="let i of dayList">
                             {{i}}</option>
                     </select>
                 </div>
                 <div class="mr-2">
-                    <select class="form-control" (change)="selectMonthChange($event)">
+                    <select class="form-control" [(ngModel)]="month" (change)="selectMonthChange($event)">
                         <option value="">Tháng sinh</option>
                         <option *ngFor="let i of monthList">
                             {{i}}</option>
@@ -35,7 +35,7 @@
 </div>
 
 
-<kendo-grid [data]="gridData" [selectable]="true" (pageChange)="pageChange($event)" [skip]="skip" [pageable]="true"
+<kendo-grid [data]="gridData" [selectable]="true" (pageChange)="pageChange($event)" [skip]="skip" [pageable]="pagerSettings"
     [pageSize]="limit" [kendoGridSelectBy]="'id'" [selectedKeys]="selectedIds">
     <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
     <kendo-grid-column field="name" title="Khách hàng" width="200"></kendo-grid-column>

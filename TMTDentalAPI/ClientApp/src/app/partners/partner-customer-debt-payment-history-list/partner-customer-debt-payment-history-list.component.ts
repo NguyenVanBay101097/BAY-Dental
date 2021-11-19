@@ -1,15 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, Inject, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { PhieuThuChiPaged, PhieuThuChiService } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { NotifyService } from 'src/app/shared/services/notify.service';
-import { PartnerService } from '../partner.service';
 import { PrintService } from "src/app/shared/services/print.service";
 
 @Component({
@@ -24,6 +23,7 @@ export class PartnerCustomerDebtPaymentHistoryListComponent implements OnInit {
   search: string;
   limit = 20;
   offset = 0;
+  pagerSettings: any;
   edit = false;
   dateFrom: Date;
   dateTo: Date;
@@ -31,14 +31,14 @@ export class PartnerCustomerDebtPaymentHistoryListComponent implements OnInit {
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
 
-  constructor( private intlService: IntlService,
+  constructor(private intlService: IntlService,
     private modalService: NgbModal,
-    private partnerService: PartnerService,
     private phieuthuchiService: PhieuThuChiService,
-    private router: Router,
     private printService: PrintService,
     private route: ActivatedRoute,
-    private notifyService: NotifyService,) { }
+    private notifyService: NotifyService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.partnerId = this.route.parent.parent.snapshot.paramMap.get('id');
@@ -58,7 +58,7 @@ export class PartnerCustomerDebtPaymentHistoryListComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  loadDataFromApi(){
+  loadDataFromApi() {
     this.loading = true;
     var paged = new PhieuThuChiPaged();
     paged.limit = this.limit;
@@ -83,6 +83,7 @@ export class PartnerCustomerDebtPaymentHistoryListComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.offset = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 
@@ -95,7 +96,7 @@ export class PartnerCustomerDebtPaymentHistoryListComponent implements OnInit {
 
   printItem(item) {
     this.phieuthuchiService.getPrint2(item.id).subscribe((data: any) => {
-      this.printService.printHtml(data);
+      this.printService.printHtml(data.html);
     });
   }
 
@@ -104,9 +105,9 @@ export class PartnerCustomerDebtPaymentHistoryListComponent implements OnInit {
     modalRef.componentInstance.title = 'Xóa thanh toán công nợ';
     modalRef.componentInstance.body = 'Bạn có chắc chắn muốn xóa thanh toán công nợ ?';
     modalRef.result.then(() => {
-      this.phieuthuchiService.actionCancel([item.id]).subscribe(() =>{
+      this.phieuthuchiService.actionCancel([item.id]).subscribe(() => {
         this.phieuthuchiService.delete(item.id).subscribe(() => {
-          this.notifyService.notify('success','Xóa thành công');
+          this.notifyService.notify('success', 'Xóa thành công');
           this.loadDataFromApi();
         }, () => {
         });

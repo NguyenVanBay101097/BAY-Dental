@@ -1,8 +1,6 @@
-import { filter } from 'rxjs/operators';
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
-import { IntlService, load } from '@progress/kendo-angular-intl';
-import { CashBookReportFilter, CashBookReportItem, CashBookService } from 'src/app/cash-book/cash-book.service';
+import { ChartDataset, ChartOptions } from 'chart.js';
 
 @Component({
   selector: 'app-sale-dashboard-cashbook-report',
@@ -10,101 +8,89 @@ import { CashBookReportFilter, CashBookReportItem, CashBookService } from 'src/a
   styleUrls: ['./sale-dashboard-cashbook-report.component.css']
 })
 export class SaleDashboardCashbookReportComponent implements OnInit {
-  @Input() groupby: string;
-  @Input() cashBooks: any;
-  @Input() dataCashBooks: any;
-  @Input() totalDataCashBook: any;
-  cashBookData: CashBookReportItem[] = [];
-  cashbookThu: any[] = [];
-  cashbookChi: any[] = [];
-  cashbookTotal: any[] = [];
-  cashbookCategs: any[] = [];
-  cashbookSeries: any[] = [];
-  public cashbookCashBank: any;
-  public cashbookCusDebt: any;
-  public cashbookCusAdvance: any;
-  public cashbookSuppRefund: any;
-  public cashbookSupp: any;
-  public cashbookCusSalary: any;
-  public cashbookAgentCommission: any;
-  public totalCashbook: any;
+  @Input() cashBooks: any = [];
+  @Input() timeUnit: any;
+  @Input() thuChiReportData: any;
+  barChartLabels: string[] = [];
 
-  constructor(private cashBookService: CashBookService,
-    private router: Router,
-    private intlService: IntlService) { }
+  public barChartOptions: ChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      title: {
+        text: 'BIỂU ĐỒ THU CHI',
+        display: true,
+        font: {
+          size: 16
+        }
+      },
+      legend: {
+        position: 'bottom'
+      },
+      tooltip: {
+        mode: 'index'
+      }
+    },
+    scales: {
+      x: {
+        type: 'time',
+        time: {
+          tooltipFormat: 'dd/MM/yyyy',
+          displayFormats: {
+            'day': 'dd/MM',
+            'month': 'MM/yyyy',
+          },
+          unit: 'day'
+        },
+      },
+      y: {
+        beginAtZero: true,
+      },
+    },
+  };
+
+  public barChartData: ChartDataset[] = [
+    {
+      label: 'Thu',
+      data: [],
+      backgroundColor: 'rgba(35, 149, 255, 1)',
+      hoverBackgroundColor: 'rgba(35, 149, 255, 0.8)',
+      hoverBorderColor: 'rgba(35, 149, 255, 1)',
+    },
+    {
+      label: 'Chi',
+      data: [],
+      backgroundColor: 'rgba(40, 167, 69, 1)',
+      hoverBackgroundColor: 'rgba(40, 167, 69, 0.8)',
+      hoverBorderColor: 'rgba(40, 167, 69, 1)'
+    }
+  ];
+
+  constructor(private router: Router) { }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.loadDataApi();
+    if (changes.cashBooks && !changes.cashBooks.firstChange) {
+      this.barChartLabels = this.cashBooks.map(item => {
+        return new Date(item.date)
+      });
+
+      this.barChartData[0].data = this.cashBooks.map(item => {
+        return item.totalThu;
+      });
+
+      this.barChartData[1].data = this.cashBooks.map(item => {
+        return item.totalChi
+      });
+
+      this.barChartOptions.scales.x['time'].unit = this.timeUnit;
+      this.barChartOptions.scales.x['time'].tooltipFormat = this.timeUnit == 'day' ? 'dd/MM/yyyy' : 'MM/yyyy';
+    }
   }
 
   ngOnInit() {
-    this.loadDataApi();
-  }
-
-  loadDataApi() {
-    if (this.cashBooks) {
-      this.cashBookData = this.cashBooks;
-      this.cashbookSeries = [];
-      this.loadCashbookGroupby();
-      this.loadDataCashbookSeries();
-    }
-  }
-
-  public labelContent = (e: any) => {
-    var res = this.groupby == 'groupby:day' ? this.intlService.formatDate(new Date(e.value), 'dd/MM/yyyy') : this.intlService.formatDate(new Date(e.value), 'MM/yyyy');
-    return res;
-  };
-
-
-  loadDataCashbookSeries() {
-    if (this.dataCashBooks && this.totalDataCashBook) {
-      this.cashbookCashBank = this.dataCashBooks[0];
-      this.cashbookCusDebt = this.dataCashBooks[1];
-      this.cashbookCusAdvance = this.dataCashBooks[2];
-      this.cashbookSupp = this.dataCashBooks[3];
-      this.cashbookCusSalary = this.dataCashBooks[4];
-      this.cashbookAgentCommission = this.dataCashBooks[5];
-      this.totalCashbook = this.totalDataCashBook;
-      this.cashbookThu = this.cashBookData.map(x => x.totalThu);
-      this.cashbookChi = this.cashBookData.map(x => x.totalChi);
-      this.cashbookTotal = this.cashBookData.map(x => x.totalAmount);
-    }
-
-  }
-
-  get ortherThu() {
-    if (this.totalCashbook && this.dataCashBooks) {
-      return (this.totalCashbook.totalThu ? this.totalCashbook.totalThu : 0) - (this.dataCashBooks.reduce((total, val) => total += val.credit, 0));
-    }
-
-    return 0;
-  }
-
-  get ortherChi() {
-    if (this.totalCashbook) {
-      return (this.totalCashbook.totalChi ? this.totalCashbook.totalChi : 0) - (this.cashbookSupp.debit + this.cashbookCusAdvance.debit + this.cashbookCusSalary.debit + this.cashbookAgentCommission.debit);
-    }
-
-    return 0;
-
-  }
-
-  get totalThu() {
-    return (this.cashbookCashBank ? this.cashbookCashBank.credit : 0) + (this.cashbookCusAdvance ? this.cashbookCusAdvance.credit : 0) + (this.cashbookCusDebt ? this.cashbookCusDebt.credit : 0) + (this.cashbookSupp ? this.cashbookSupp.credit : 0) + this.ortherThu;
-  }
-
-  get totalChi() {
-    return (this.cashbookSupp ? this.cashbookSupp.debit : 0) + (this.cashbookCusAdvance ? this.cashbookCusAdvance.debit : 0) + (this.cashbookCusSalary ? this.cashbookCusSalary.debit : 0) + (this.cashbookAgentCommission ? this.cashbookAgentCommission.debit : 0) + this.ortherChi;
-  }
-
-  loadCashbookGroupby() {
-    if (this.cashBookData) {
-      this.cashbookCategs = this.cashBookData.map(s => s.date).sort();
-    }
   }
 
   redirectTo() {
     return this.router.navigateByUrl("cash-book/tab-cabo");
   }
-
 }

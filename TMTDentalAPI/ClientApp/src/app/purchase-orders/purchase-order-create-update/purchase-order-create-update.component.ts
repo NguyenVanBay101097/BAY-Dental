@@ -1,29 +1,29 @@
-import { NotifyService } from 'src/app/shared/services/notify.service';
-import { Component, OnInit, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
-import { FormGroup, FormBuilder, FormArray, Validators, FormControl, AbstractControl } from '@angular/forms';
-import { ProductBasic2, ProductService, ProductPaged } from 'src/app/products/product.service';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PurchaseOrderService, PurchaseOrderDisplay, PurchaseOrderLineDisplay } from '../purchase-order.service';
-import { PartnerSimple, PartnerPaged } from 'src/app/partners/partner-simple';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { debounceTime, tap, switchMap, distinctUntilChanged, mergeMap } from 'rxjs/operators';
-import { PartnerService } from 'src/app/partners/partner.service';
-import * as _ from 'lodash';
-import { ProductSimple } from 'src/app/products/product-simple';
-import { PurchaseOrderLineService, PurchaseOrderLineOnChangeProduct, PurchaseOrderLineOnChangeProductResult } from '../purchase-order-line.service';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import * as _ from 'lodash';
 import { Subject } from 'rxjs';
-import { AuthService } from 'src/app/auth/auth.service';
-import { PermissionService } from 'src/app/shared/permission.service';
-import { UoMDisplay } from 'src/app/uoms/uom.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { SelectUomProductDialogComponent } from 'src/app/shared/select-uom-product-dialog/select-uom-product-dialog.component';
-import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
-import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/shared/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
-import { PrintService } from 'src/app/shared/services/print.service';
+import { debounceTime, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { AccountJournalFilter, AccountJournalService } from 'src/app/account-journals/account-journal.service';
+import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
+import { AuthService } from 'src/app/auth/auth.service';
+import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
+import { PartnerService } from 'src/app/partners/partner.service';
+import { ProductSimple } from 'src/app/products/product-simple';
+import { ProductPaged, ProductService } from 'src/app/products/product.service';
+import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/shared/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
+import { PermissionService } from 'src/app/shared/permission.service';
+import { SelectUomProductDialogComponent } from 'src/app/shared/select-uom-product-dialog/select-uom-product-dialog.component';
+import { NotifyService } from 'src/app/shared/services/notify.service';
+import { PrintService } from 'src/app/shared/services/print.service';
+import { UoMDisplay } from 'src/app/uoms/uom.service';
 import { PurchaseOrderAlmostOutDialogComponent } from '../purchase-order-almost-out-dialog/purchase-order-almost-out-dialog.component';
+import { PurchaseOrderLineOnChangeProduct, PurchaseOrderLineOnChangeProductResult, PurchaseOrderLineService } from '../purchase-order-line.service';
+import { PurchaseOrderService } from '../purchase-order.service';
 declare var $: any;
 
 @Component({
@@ -44,9 +44,9 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   hasDefined = false;
   filteredPartners: PartnerSimple[];
 
-  @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('journalCbx', { static: true }) journalCbx: ComboBoxComponent;
   @ViewChild('searchInput', { static: true }) searchInput: ElementRef;
+  @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
 
   productList: ProductSimple[] = [];
   filteredJournals: any = [];
@@ -58,6 +58,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   submitted = false;
   amountTotal = 0;
   get f() { return this.formGroup.controls; }
+
 
   constructor(
     private fb: FormBuilder,
@@ -89,7 +90,9 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     });
 
     this.id = this.route.snapshot.paramMap.get('id');
-    this.type = this.route.snapshot.queryParamMap.get('type');
+    this.route.data.subscribe(data => {
+      this.type = data.type;
+    });
     this.orderId = this.route.snapshot.queryParamMap.get('orderId');
 
     this.loadRecord();
@@ -101,11 +104,17 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     this.authService.getGroups().subscribe((result: any) => {
       this.permissionService.define(result);
       this.hasDefined = this.permissionService.hasOneDefined(['product.group_uom']);
+    });
 
+    this.partnerCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.partnerCbx.loading = true)),
+      switchMap(value => this.searchPartners(value))
+    ).subscribe(result => {
+      this.filteredPartners = result;
+      this.partnerCbx.loading = false;
     });
   }
-
-
 
   loadRecord() {
     this.loadDataApi().subscribe((result: any) => {
@@ -124,18 +133,18 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
         g.get('productQty').setValidators([Validators.required]);
         control.push(g);
 
-        setTimeout(() => {
-          if (this.partnerCbx) {
-            this.partnerCbx.filterChange.asObservable().pipe(
-              debounceTime(300),
-              tap(() => (this.partnerCbx.loading = true)),
-              switchMap(value => this.searchPartners(value))
-            ).subscribe(result => {
-              this.filteredPartners = result;
-              this.partnerCbx.loading = false;
-            });
-          }
-        }, 0);
+        // setTimeout(() => {
+        //   if (this.partnerCbx) {
+        //     this.partnerCbx.filterChange.asObservable().pipe(
+        //       debounceTime(300),
+        //       tap(() => (this.partnerCbx.loading = true)),
+        //       switchMap(value => this.searchPartners(value))
+        //     ).subscribe(result => {
+        //       this.filteredPartners = result;
+        //       this.partnerCbx.loading = false;
+        //     });
+        //   }
+        // }, 0);
       });
     });
   }
@@ -198,7 +207,6 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     this.productService
       .autocomplete2(val).subscribe(
         (res) => {
-          console.log(res);
           this.productList = res;
         },
         (err) => {
@@ -255,7 +263,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
 
 
   onSaveConfirm() {
-    
+
     var index = _.findIndex(this.orderLines.controls, o => {
       return o.get('productQty').value == null || o.get('priceUnit').value == null;
     });
@@ -296,7 +304,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
         )
         .subscribe(rs => {
           this.notifyService.notify('success', 'Xác nhận thành công');
-          this.router.navigate(['/purchase/orders/edit/' + this.id]);
+          this.router.navigate([`/purchase/${this.type}/edit/` + this.id]);
         });
     }
   }
@@ -344,11 +352,11 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   }
 
   createNew() {
-    this.router.navigate(['/purchase/orders/create'], { queryParams: { type: this.purchaseOrder.type } });
+    this.router.navigate([`/purchase/${this.purchaseOrder.type}/create`]);
   }
 
   actionRefund() {
-    this.router.navigate(['/purchase/orders/create'], { queryParams: { type: 'refund', orderId: this.id } });
+    this.router.navigate(['/purchase/refund/create'], { queryParams: { orderId: this.id } });
   }
 
   focusProductSearchInput() {
@@ -481,14 +489,14 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
           animation: { type: 'fade', duration: 400 },
           type: { style: 'success', icon: true }
         });
-        this.router.navigate(['/purchase/orders/edit/' + result.id]);
+        this.router.navigate([`/purchase/${this.type}/edit/` + result.id]);
       });
     }
   }
 
   getPrint(id) {
     this.purchaseOrderService.getPrint(id).subscribe((data: any) => {
-      this.printService.printHtml(data);
+      this.printService.printHtml(data.html);
     });
   }
 

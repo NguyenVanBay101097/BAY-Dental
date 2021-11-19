@@ -1,16 +1,15 @@
-import { Component, ComponentFactoryResolver, ComponentRef, OnInit, QueryList, ViewChild, ViewChildren } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { TreatmentProcessServiceDialogComponent } from '../treatment-process-service-dialog/treatment-process-service-dialog.component';
-import { NotificationService } from '@progress/kendo-angular-notification';
-import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
-import { forkJoin } from 'rxjs';
-import { AnchorHostDirective } from 'src/app/shared/anchor-host.directive';
-import { SaleOrdersDotkhamCuComponent } from '../sale-orders-dotkham-cu/sale-orders-dotkham-cu.component';
+import { Component, ComponentFactoryResolver, ComponentRef, Input, OnInit, QueryList, ViewChild, ViewChildren } from "@angular/core";
 import { FormBuilder } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NotificationService } from '@progress/kendo-angular-notification';
+import { forkJoin } from 'rxjs';
 import { SaleOrderService } from "src/app/core/services/sale-order.service";
-import { DotKhamService } from "src/app/dot-khams/dot-kham.service";
 import { DotKhamStepService } from "src/app/dot-khams/dot-kham-step.service";
+import { DotKhamService } from "src/app/dot-khams/dot-kham.service";
+import { AnchorHostDirective } from 'src/app/shared/anchor-host.directive';
+import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.service';
+import { SaleOrdersDotkhamCuComponent } from '../sale-orders-dotkham-cu/sale-orders-dotkham-cu.component';
+import { TreatmentProcessServiceDialogComponent } from '../treatment-process-service-dialog/treatment-process-service-dialog.component';
 
 @Component({
   selector: "app-treatment-process-service-list",
@@ -18,7 +17,7 @@ import { DotKhamStepService } from "src/app/dot-khams/dot-kham-step.service";
   styleUrls: ["./treatment-process-service-list.component.css"],
 })
 export class TreatmentProcessServiceListComponent implements OnInit {
-  saleOrderId: string;
+  @Input() saleOrderId: string;
   services: any;
   dotkhams: any[] = [];
   activeDotkham: any;
@@ -34,7 +33,6 @@ export class TreatmentProcessServiceListComponent implements OnInit {
   activeDotKhamRef: ComponentRef<SaleOrdersDotkhamCuComponent>;
 
   constructor(
-    private route: ActivatedRoute,
     private modalService: NgbModal,
     private notificationService: NotificationService,
     private errorService: AppSharedShowErrorService,
@@ -46,7 +44,9 @@ export class TreatmentProcessServiceListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.saleOrderId = this.route.queryParams['value'].id;
+    // this.saleOrderId = this.route.queryParams['value'].id;
+    // console.log('SaleOrderId: ', this.saleOrderId);
+    // let orderId = this.route.snapshot.paramMap.get('id');
 
     this.loadServiceList();
     this.loadDotKhamList();
@@ -66,10 +66,10 @@ export class TreatmentProcessServiceListComponent implements OnInit {
 
   formatTeethList(service) {
     let teethList = '';
-    if(service.toothType && service.toothType != 'manual'){
+    if (service.toothType && service.toothType != 'manual') {
       teethList = this.toothType.find(x => x.value == service.toothType).name;
     }
-    else{
+    else {
       teethList = service.teeth.map(x => x.name).join(', ');
     }
     return teethList;
@@ -227,7 +227,7 @@ export class TreatmentProcessServiceListComponent implements OnInit {
     let dotkham = <any>{};
     dotkham.date = new Date();
     dotkham.lines = [];
-    dotkham.dotKhamImages = [];
+    dotkham.irAttachments = [];
     this.dotkhams.unshift(dotkham);
 
     var index = this.dotkhams.indexOf(dotkham);

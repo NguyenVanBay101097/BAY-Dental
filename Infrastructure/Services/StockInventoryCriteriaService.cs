@@ -39,6 +39,8 @@ namespace Infrastructure.Services
                 query = query.Skip(val.Offset).Take(val.Limit);
             }
 
+            query = query.OrderByDescending(x => x.DateCreated);
+
             var items = await _mapper.ProjectTo<StockInventoryCriteriaBasic>(query).ToListAsync();
 
 

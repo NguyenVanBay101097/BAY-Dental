@@ -1,17 +1,15 @@
-import { AuthService } from './../../auth/auth.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { AmountCustomerDebtFilter, CustomerDebtFilter, CustomerDebtReportService } from 'src/app/core/services/customer-debt-report.service';
-import { SaleOrderPaymentService } from 'src/app/core/services/sale-order-payment.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { NotifyService } from 'src/app/shared/services/notify.service';
 import { PartnerCustomerDebtPaymentDialogComponent } from '../partner-customer-debt-payment-dialog/partner-customer-debt-payment-dialog.component';
-import { PartnerService } from '../partner.service';
+import { AuthService } from './../../auth/auth.service';
 
 @Component({
   selector: 'app-partner-customer-debt-list',
@@ -25,6 +23,7 @@ export class PartnerCustomerDebtListComponent implements OnInit {
   search: string;
   limit = 20;
   offset = 0;
+  pagerSettings: any;
   edit = false;
   dateFrom: Date;
   dateTo: Date;
@@ -36,13 +35,13 @@ export class PartnerCustomerDebtListComponent implements OnInit {
 
   constructor(private intlService: IntlService,
     private modalService: NgbModal,
-    private partnerService: PartnerService,
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
     private customerDebtReportService: CustomerDebtReportService,
     private notifyService: NotifyService,
-    private saleOrderPaymentService: SaleOrderPaymentService) { }
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) { this.pagerSettings = config.pagerSettings }
 
 
   ngOnInit() {
@@ -90,6 +89,7 @@ export class PartnerCustomerDebtListComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.offset = event.skip;
+    this.limit = event.take;
     this.loadDataFromApi();
   }
 
@@ -131,7 +131,7 @@ export class PartnerCustomerDebtListComponent implements OnInit {
 
   getForm(item) {
     if(item.type == "debit"){
-      this.router.navigate(['/sale-orders/form'], { queryParams: { id: item.id } });
+      this.router.navigate(['/sale-orders', item.id]);
     }else{
       this.router.navigate(['/phieu-thu-chi/form'], { queryParams: { id: item.id } });
     }

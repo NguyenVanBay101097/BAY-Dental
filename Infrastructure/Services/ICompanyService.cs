@@ -8,7 +8,7 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public interface ICompanyService: IBaseService<Company>
+    public interface ICompanyService : IBaseService<Company>
     {
         Task SetupCompany(string companyName, string userName, string email, string password, string name = "");
         Task InsertModuleAccountData(Company main_company);
@@ -22,5 +22,7 @@ namespace Infrastructure.Services
         Task InsertModuleDentalData();
         Task ActionArchive(IEnumerable<Guid> ids);
         Task ActionUnArchive(IEnumerable<Guid> ids);
+        Task InsertIrModelFieldData();
+        Task InsertDataSetuptenant(Company mainCompany);
     }
 }

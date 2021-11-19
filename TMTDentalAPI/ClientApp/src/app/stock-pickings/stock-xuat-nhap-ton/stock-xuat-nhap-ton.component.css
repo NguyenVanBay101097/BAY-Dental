@@ -2,3 +2,25 @@
     float: right;
     font-weight: bold;
 }
+
+.btn-dropdown-menu {
+    border-radius: 0.25rem;
+    border: 1px solid #e4e7eb;
+    padding-right: 0;
+    width: 200px;
+}
+
+.btn-dropdown-menu .drop-menu {
+    padding: 5.25px;
+    background-color: #e4e7eb;
+    border: 1px solid #e4e7eb;
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-top-right-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+}
+
+.dropdown-menu {
+    width: 200px;
+}

@@ -15,6 +15,12 @@ namespace ApplicationCore.Entities
         public string PaperFormat { get; set; }
 
         /// <summary>
+        /// false : portrait (dọc)
+        /// true : landscape (ngang)
+        /// </summary>
+        public bool IsSize { get; set; }
+
+        /// <summary>
         /// canh lề trên
         /// </summary>
         public int TopMargin { get; set; }
