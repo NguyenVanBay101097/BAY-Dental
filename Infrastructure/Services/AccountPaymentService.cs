@@ -251,6 +251,7 @@ namespace Infrastructure.Services
                 var liquidity_amount = counterpart_amount;
 
                 var rec_pay_line_name = "";
+                Guid? move_invoice_partnerId = Guid.Empty;
                 if (payment.PaymentType == "transfer")
                 {
                     rec_pay_line_name = payment.Name;
@@ -272,6 +273,7 @@ namespace Infrastructure.Services
 
                 if (payment.AccountMovePaymentRels.Any())
                 {
+                    move_invoice_partnerId = payment.AccountMovePaymentRels.Select(x => x.Move.PartnerId.Value).Distinct().FirstOrDefault();
                     var move_origins = payment.AccountMovePaymentRels.Select(x => x.Move.InvoiceOrigin).ToList();
                     rec_pay_line_name += $": {string.Join(", ", move_origins)}";
                 }
@@ -282,13 +284,17 @@ namespace Infrastructure.Services
                 else
                     liquidity_line_name = payment.Name;
 
+
+
+
+
                 var move_vals = new AccountMove
                 {
                     Date = payment.PaymentDate,
                     Ref = payment.Communication,
                     JournalId = payment.JournalId,
                     Journal = payment.Journal,
-                    PartnerId = payment.PartnerId,
+                    PartnerId = payment.PartnerId.Equals(move_invoice_partnerId) ? payment.PartnerId : move_invoice_partnerId,
                     CompanyId = payment.CompanyId,
                     InvoiceOrigin = payment.Name,
                 };
@@ -301,7 +307,7 @@ namespace Infrastructure.Services
                         Debit = balance > 0 ? balance : 0,
                         Credit = balance < 0 ? -balance : 0,
                         DateMaturity = payment.PaymentDate,
-                        PartnerId = payment.PartnerId,
+                        PartnerId = payment.PartnerId.Equals(move_invoice_partnerId) ? payment.PartnerId : move_invoice_partnerId,
                         AccountId = payment.DestinationAccount.Id,
                         Account = payment.DestinationAccount,
                         PaymentId = payment.Id,

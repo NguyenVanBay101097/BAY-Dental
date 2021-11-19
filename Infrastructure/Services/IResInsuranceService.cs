@@ -10,7 +10,7 @@ namespace Infrastructure.Services
 {
     public interface IResInsuranceService : IBaseService<ResInsurance>
     {
-        Task<PagedResult2<ResInsuranceBasic>> GetAgentPagedResult(ResInsurancePaged val);
+        Task<PagedResult2<ResInsuranceBasic>> GetPagedResult(ResInsurancePaged val);
 
         Task<ResInsurance> GetDisplayById(Guid id);
 
