@@ -29,10 +29,10 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                 var tenant = scope.ServiceProvider.GetService<AppTenant>();
                 if (tenant != null)
                 {
-                    Version version1 = new Version(_version);
-                    Version version2 = new Version(tenant.Version);
-                    if (version2.CompareTo(version1) >= 0)
-                        return;
+                    //Version version1 = new Version(_version);
+                    //Version version2 = new Version(tenant.Version);
+                    //if (version2.CompareTo(version1) >= 0)
+                    //    return;
                 }
 
                 var scopedServices = scope.ServiceProvider;
