@@ -7656,6 +7656,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("MoveId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
@@ -7679,6 +7682,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("CompanyId");
 
                     b.HasIndex("CreatedById");
+
+                    b.HasIndex("MoveId");
 
                     b.HasIndex("OrderId");
 
@@ -8870,9 +8875,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("PartnerId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");
 
@@ -8888,8 +8890,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("MoveId");
 
                     b.HasIndex("OrderId");
-
-                    b.HasIndex("PartnerId");
 
                     b.HasIndex("WriteById");
 
@@ -15575,6 +15575,10 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
+                    b.HasOne("ApplicationCore.Entities.AccountMove", "Move")
+                        .WithMany()
+                        .HasForeignKey("MoveId");
+
                     b.HasOne("ApplicationCore.Entities.SaleOrder", "Order")
                         .WithMany()
                         .HasForeignKey("OrderId");
@@ -15605,7 +15609,7 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("ApplicationCore.Entities.SaleOrderLine", "SaleOrderLine")
-                        .WithMany("InsurancePaymentLines")
+                        .WithMany()
                         .HasForeignKey("SaleOrderLineId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -16179,10 +16183,6 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("ApplicationCore.Entities.Partner", "Partner")
-                        .WithMany()
-                        .HasForeignKey("PartnerId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
