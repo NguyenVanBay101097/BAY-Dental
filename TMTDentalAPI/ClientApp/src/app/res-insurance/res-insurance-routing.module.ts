@@ -11,7 +11,7 @@ const routes: Routes = [
     component: ResInsuranceListComponent,
   },
   {
-    path: "detail",
+    path: ":id",
     component: ResInsuranceDetailComponent,
     children: [
       { path: '', redirectTo: 'debit', pathMatch: 'full' },

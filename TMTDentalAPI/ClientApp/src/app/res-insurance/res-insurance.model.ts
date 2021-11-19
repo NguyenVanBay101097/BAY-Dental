@@ -43,3 +43,20 @@ export class ResInsurancePaged {
 export class InsuranceIsActivePatch {
     isActive: string;
 }
+
+export class ResInsurancePaymentBasic {
+    id: string;
+    amount: number;
+    date: string;
+    note: string;
+}
+
+export class ResInsurancePaymentSave {
+    amount: number;
+    date: string;
+    resInsuranceId: string;
+    orderId: string;
+    companyId: string;
+    lines: any[];
+    note: string;
+}

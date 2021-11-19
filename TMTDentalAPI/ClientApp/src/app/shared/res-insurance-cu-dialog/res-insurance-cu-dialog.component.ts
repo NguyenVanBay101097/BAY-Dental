@@ -33,6 +33,7 @@ export class ResInsuranceCuDialogComponent implements OnInit {
       address: '',
       note: '',
     });
+    this.formGroup.get('dateObj').patchValue(new Date());
 
     if (this.id) {
       this.loadRecord(this.id);
@@ -41,11 +42,9 @@ export class ResInsuranceCuDialogComponent implements OnInit {
 
   loadRecord(id: string) {
     this.resInsuranceService.getById(id).subscribe((res: any) => {
-      console.log(res);
       this.formGroup.patchValue(res);
       let date = new Date(res.date);
       this.formGroup.get('dateObj').patchValue(date);
-
     })
   }
 
@@ -61,7 +60,6 @@ export class ResInsuranceCuDialogComponent implements OnInit {
         this.activeModal.close(res);
       });
     }
-
   }
 
   onAvatarUploaded(data) {

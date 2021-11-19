@@ -5,7 +5,7 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <form class="o_form_view o_form_editable">
+    <form class="o_form_view o_form_editable" [formGroup]="formGroup">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="o_group">
@@ -19,11 +19,16 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <div class="d-flex">
-                                        <kendo-combobox [filterable]="true" [valueField]="'id'" [textField]="'name'">
+                                        <kendo-combobox [data]="insuranceFilter" #insuranceCbx [filterable]="true"
+                                            formControlName="insurance" [valueField]="'id'" [textField]="'name'">
                                         </kendo-combobox>
                                         <button class="btn btn-light" (click)="quickCreateInsurance()">
                                             <span class="k-icon k-i-plus"></span>
                                         </button>
+                                    </div>
+                                    <div *ngIf="f.insurance.errors && (f.insurance.touched || f.insurance.dirty || submitted)"
+                                        class="text-danger">
+                                        <div *ngIf="f.insurance.errors.required"> Chọn công ty bảo hiểm </div>
                                     </div>
                                 </td>
                             </tr>
@@ -34,7 +39,11 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker></kendo-datepicker>
+                                    <kendo-datepicker formControlName="dateObj"></kendo-datepicker>
+                                    <div *ngIf="f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)"
+                                        class="text-danger">
+                                        <div *ngIf="f.dateObj.errors.required"> Chọn ngày bảo lãnh </div>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
@@ -48,7 +57,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input type="text" class="form-control" />
+                                    <input type="text" class="form-control" formControlName="note" />
                                 </td>
                             </tr>
                             <tr>
@@ -58,7 +67,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    0
+                                    {{ f.amount.value | number}}
                                 </td>
                             </tr>
                         </tbody>
@@ -75,37 +84,52 @@
                                 <th class="text-right">Khách hàng trả</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td class="align-middle"> Cấy ghép răng Implant </td>
-                                <td class="text-right align-middle"> 1.000.000 </td>
-                                <td class="d-flex">
-                                    <kendo-numerictextbox required class="form-control" [min]="0" [format]="'n0'"
-                                        [spinners]="false">
-                                    </kendo-numerictextbox>
-                                    <!-- <kendo-numerictextbox required class="form-control" [min]="0" [max]="100"
-                                        [autoCorrect]="true" [format]="'n0'" [spinners]="false">
-                                    </kendo-numerictextbox> -->
-                                    <div class="mt-1 ml-2 d-flex">
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" [hidden]="true" type="radio" name="payments"
-                                                id="cash" checked value="cash">
-                                            <label class="form-check-label btn btn-outline-primary" for="cash">
-                                                VNĐ
-                                            </label>
+                        <tbody formArrayName="lines">
+                            <ng-container *ngFor="let line of linesFC.controls; let i = index">
+                                <tr [formGroupName]="i">
+                                    <td class="align-middle"> {{line.get('saleOrderLine').value.name}} </td>
+                                    <td class="text-right align-middle"> {{line.get('saleOrderLine').value.priceTotal |
+                                        number}}
+                                    </td>
+                                    <td class="d-flex justify-content-end">
+                                        <ng-container *ngIf="line.value.payType === 'percent'; else elseTemplate">
+                                            <kendo-numerictextbox style="width: 150px;" required class="form-control"
+                                                [min]="0" [max]="100" [autoCorrect]="true" [format]="'n0'"
+                                                formControlName="percent" (valueChange)="computeAmount(i)"
+                                                (blur)="onBlurPercent(i)" [spinners]="true">
+                                            </kendo-numerictextbox>
+                                        </ng-container>
+                                        <ng-template #elseTemplate>
+                                            <kendo-numerictextbox style="width: 150px;" required class="form-control"
+                                                [min]="0" [max]="line.value.saleOrderLine.priceTotal"
+                                                formControlName="fixedAmount" (valueChange)="computeAmount(i)"
+                                                (blur)="onBlurfixed(i)" [format]="'n0'" [spinners]="true">
+                                            </kendo-numerictextbox>
+                                        </ng-template>
+                                        <div class="mt-1 ml-2 d-flex">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" [hidden]="true" type="radio"
+                                                    formControlName="payType" [id]="'fixed-' + i" value="fixed"
+                                                    (change)="changePayType(i)">
+                                                <label class="form-check-label btn btn-outline-primary"
+                                                    [for]="'fixed-' + i"> VNĐ </label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" [hidden]="true" type="radio"
+                                                    formControlName="payType" [id]="'percent-' + i" value="percent"
+                                                    (change)="changePayType(i)">
+                                                <label class="form-check-label btn btn-outline-primary"
+                                                    [for]="'percent-' + i"> % </label>
+                                            </div>
                                         </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" [hidden]="true" type="radio" name="payments"
-                                                id="percent" value="percent">
-                                            <label class="form-check-label btn btn-outline-primary" for="percent">
-                                                %
-                                            </label>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="text-right align-middle"> 300.000 </td>
-                                <td class="text-right align-middle"> 700.000 </td>
-                            </tr>
+                                    </td>
+                                    <td class="text-right align-middle"> {{( line.value.saleOrderLine.amountPaid || 0) |
+                                        number }}
+                                    </td>
+                                    <td class="text-right align-middle">
+                                        {{ (line.value.saleOrderLine.amountResidual || 0) | number }} </td>
+                                </tr>
+                            </ng-container>
                         </tbody>
                     </table>
                 </div>
@@ -116,7 +140,8 @@
 
 <div class="modal-footer">
     <div>
-        <button type="button" class="btn btn-primary mr-2" (click)="onSave()" accesskey="s">Xác nhận bảo lãnh</button>
+        <button type="button" class="btn btn-primary mr-2" (click)="actionPayment()" accesskey="s">Xác nhận bảo
+            lãnh</button>
         <button type="button" class="btn btn-light mr-2" (click)="onCancel()" accesskey="q">Đóng</button>
     </div>
 </div>

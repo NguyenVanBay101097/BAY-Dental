@@ -36,6 +36,11 @@
     <kendo-grid [data]="gridData" [pageable]="pagerSettings" (pageChange)="onPageChange($event)" [skip]="skip"
         [pageSize]="limit">
         <kendo-grid-column field="name" title="Công ty bảo hiểm">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                <a class="text-primary" [routerLink]="['/res-insurance/' + dataItem.id]">
+                    {{dataItem.name}}
+                </a>
+            </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="phone" title="Số điện thoại">
         </kendo-grid-column>
@@ -53,12 +58,12 @@
                     <span class="far fa-edit"></span></button>
                 <ng-container *ngIf="dataItem.isActive; else elseTemplate">
                     <button class="btn btn-danger mr-2" title="Ngưng liên kết" (click)="inactiveInsurance(dataItem)">
-                        <span class="fas fa-eye-slash"></span>
+                        <span class="fas fa-unlink"></span>
                     </button>
                 </ng-container>
                 <ng-template #elseTemplate>
                     <button class="btn btn-primary mr-2" title="Liên kết" (click)="activeInsurance(dataItem)">
-                        <span class="fa fa-eye"></span>
+                        <span class="fas fa-link"></span>
                     </button>
                 </ng-template>
                 <button class="btn btn-danger" title="Xóa" (click)="deleteItem(dataItem)">
