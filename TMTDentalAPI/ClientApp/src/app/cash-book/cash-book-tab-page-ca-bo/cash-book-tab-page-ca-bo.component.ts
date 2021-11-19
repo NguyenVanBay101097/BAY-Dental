@@ -42,7 +42,7 @@ export class CashBookTabPageCaBoComponent implements OnInit {
   accountJournalSelectedId: string;
   listAccounts: AccountJournalSimple[] = [];
   cbxPopupSettings = {
-    width: 250
+    width: 300
   };
   constructor(
     private cashBookService: CashBookService,
@@ -66,8 +66,7 @@ export class CashBookTabPageCaBoComponent implements OnInit {
     this.dateTo = this.monthEnd;
 
     this.loadCashBankTotal();
-    this.loadDataFromApi();
-    this.loadGridData();
+    this.clickTab('cash_bank');
     this.loadAccounts();
     this.searchUpdate.pipe(
       debounceTime(400),
@@ -170,6 +169,7 @@ export class CashBookTabPageCaBoComponent implements OnInit {
   clickTab(value) {
     this.resultSelection = value;
     this.skip = 0;
+    this.accountJournalSelectedId = null;
     this.loadDataFromApi();
     this.loadGridData();
   }
@@ -199,6 +199,8 @@ export class CashBookTabPageCaBoComponent implements OnInit {
     var val = new AccountJournalFilter();
     val.limit = 20;
     val.type = 'bank';
+    val.search = search || '';
+    val.companyId = this.authService.userInfo.companyId;
     return this.accountJournalService.journalResBankAutoComplete(val);
   }
 
@@ -218,7 +220,10 @@ export class CashBookTabPageCaBoComponent implements OnInit {
     let modalRef = this.modalService.open(AccountBankCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Chỉnh sửa tài khoản ngân hàng';
     modalRef.componentInstance.accountId = this.accountJournalSelectedId;
-    modalRef.result.then(() => {
+    modalRef.result.then((journal) => {
+      if(!journal)
+      this.accountJournalSelectedId = null;
+      
       this.loadAccounts();
     });
   }
@@ -234,6 +239,7 @@ export class CashBookTabPageCaBoComponent implements OnInit {
   onSelectAccount(journalObj) {
     this.accountJournalSelectedId = journalObj ? journalObj.id : '';
     this.loadGridData();
+    this.loadDataFromApi();
   }
 
   exportExcelFile() {

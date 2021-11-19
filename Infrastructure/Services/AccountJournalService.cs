@@ -380,7 +380,7 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<AccountJournal>(x => types.Contains(x.Type)));
             }
 
-            var query = SearchQuery(domain: spec.AsExpression(), orderBy: x => x.OrderBy(s => s.Code).ThenByDescending(x=> x.Active));
+            var query = SearchQuery(domain: spec.AsExpression(), orderBy: x => x.OrderByDescending(z=> z.Active).ThenBy(s=> s.Code));
             var items = await query.Include(x=> x.BankAccount.Bank).Skip(0).Take(20).ToListAsync();
 
             return _mapper.Map<IEnumerable<AccountJournalResBankSimple>>(items);

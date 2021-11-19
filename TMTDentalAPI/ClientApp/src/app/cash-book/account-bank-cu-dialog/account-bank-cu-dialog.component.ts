@@ -21,8 +21,8 @@ export class AccountBankCuDialogComponent implements OnInit {
   accountId: string;
   bankItems: ResBankSimple[] = [];
   states: any[] = [
-    {text: 'Đang sử dụng', value: 1},
-    {text: 'Ngừng sử dụng', value: 0}
+    { text: 'Đang sử dụng', value: true },
+    { text: 'Ngừng sử dụng', value: false }
   ];
   @ViewChild("bankCbx", { static: true }) bankVC: ComboBoxComponent;
 
@@ -38,7 +38,7 @@ export class AccountBankCuDialogComponent implements OnInit {
   ngOnInit(): void {
     this.formGroup = this.fb.group({
       accountHolderName: [null, Validators.required],
-      accountNumber: [null, Validators.required],
+      accountNumber: [null, [Validators.required]],
       bankId: [null, Validators.required],
       bankBranch: null,
       active: 1,
@@ -47,7 +47,7 @@ export class AccountBankCuDialogComponent implements OnInit {
 
     this.loadBankItems();
 
-    if (this.accountId){
+    if (this.accountId) {
       this.getDataFromApi();
     }
 
@@ -67,8 +67,6 @@ export class AccountBankCuDialogComponent implements OnInit {
 
   getDataFromApi() {
     this.accountJournalService.getById(this.accountId).subscribe(result => {
-      console.log(result);
-      
       this.formGroup.patchValue(result);
     })
   }
@@ -77,22 +75,20 @@ export class AccountBankCuDialogComponent implements OnInit {
     this.submitted = true;
     if (this.formGroup.invalid)
       return;
-    
+
     var formValue = this.formGroup.value;
-    console.log(formValue);
-    
     if (this.accountId) {
-      this.accountJournalService.update(this.accountId,formValue).subscribe(result => {
+      this.accountJournalService.update(this.accountId, formValue).subscribe(result => {
         this.notifyService.notify("success", "Lưu thành công");
-        this.activeModal.close(true);
+        this.activeModal.close(this.accountId);
       }, error => {
-        console.log(error); 
+        console.log(error);
       })
     }
     else {
-      this.accountJournalService.create(formValue).subscribe(result => {
+      this.accountJournalService.create(formValue).subscribe((result:any) => {
         this.notifyService.notify("success", "Lưu thành công");
-        this.activeModal.close(true);
+        this.activeModal.close(result.id);
       }, error => {
         console.log(error);
       });
@@ -101,14 +97,16 @@ export class AccountBankCuDialogComponent implements OnInit {
   }
 
   onRemove() {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Xóa tài khoản ngân hàng';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa Tài khoản ngân hàng?';
     modalRef.result.then(() => {
       this.accountJournalService.delete(this.accountId).subscribe(result => {
-        this.notifyService.notify("Xóa thành công", "success");
+        this.notifyService.notify("success", "Xóa thành công");
+        this.activeModal.close();
+
       }, error => {
-        console.log(error); 
+        console.log(error);
       })
     });
   }
@@ -123,11 +121,31 @@ export class AccountBankCuDialogComponent implements OnInit {
     var val = new ResPartnerBankPaged();
     val.search = q || '';
     val.limit = 20;
-    return this.resBankService.getAutocomplete(val);
+    return this.resBankService.getAutocomplete(val).pipe(
+      tap(res=> {
+        res.forEach((x:any) => {
+          x.displayName = x.bic + ' - ' + x.name;
+        });
+      })
+    );
   }
 
   get f() {
     return this.formGroup.controls;
+  }
+
+  public valueNormalizer = (bankId: Observable<string>) =>
+    bankId.pipe(
+      map((content: string) => {
+        return {
+          name: content,
+          id: content,
+        };
+      })
+    );
+
+  onCancel() {
+    this.activeModal.dismiss();
   }
 
 }

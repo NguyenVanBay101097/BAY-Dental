@@ -71,11 +71,11 @@
                                 Thêm tài khoản ngân hàng
                             </button>
                             <kendo-combobox #accountJournalCbx [popupSettings]="cbxPopupSettings" class="mr-2 cbx-account" [data]="listAccounts" filterable="true"
-                            textField = "displayName" valueField="id" placeholder = "Tất cả tài khoản" (selectionChange)="onSelectAccount($event)">
+                            textField = "displayName" [value]="accountJournalSelectedId" valueField="id" placeholder = "Tất cả tài khoản" [valuePrimitive]="true" (selectionChange)="onSelectAccount($event)">
                                 <ng-template kendoComboBoxItemTemplate let-dataItem>
-                                    <div>
-                                        <h6>{{dataItem.bankAccount? dataItem.bankAccount?.accountNumber : dataItem.name}}</h6>
-                                        <p *ngIf="dataItem.bankAccount">{{dataItem.bankAccount?.accountHolderName}} - {{dataItem.bankAccount?.bank?.bic}} ({{dataItem.bankAccount?.branch}})</p>
+                                    <div class="pt-2 pb-2">
+                                        <div class="font-weight-bold">{{dataItem.bankAccount? dataItem.bankAccount?.accountNumber : dataItem.name}}</div>
+                                        <div class="opacity-8" *ngIf="dataItem.bankAccount">{{dataItem.bankAccount?.accountHolderName}} - {{dataItem.bankAccount?.bank?.bic}} ({{dataItem.bankAccount?.branch}})</div>
                                     </div>
                                 </ng-template>
                             </kendo-combobox>
@@ -148,7 +148,7 @@
                         </kendo-grid-column>
                         <kendo-grid-column field="invoiceOrigin" title="Số phiếu" width="120"></kendo-grid-column>
                         <kendo-grid-column field="name" title="Nội dung" width="200"></kendo-grid-column>
-                        <kendo-grid-column field="journalName" title="Phương thức" width="120"></kendo-grid-column>
+                        <kendo-grid-column field="journalName" title="Phương thức" width="135"></kendo-grid-column>
                         <kendo-grid-column field="accountName" title="Loại thu chi" width="120"></kendo-grid-column>
                         <kendo-grid-column field="amount" title="Số tiền" width="120" class="text-right">
                             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
