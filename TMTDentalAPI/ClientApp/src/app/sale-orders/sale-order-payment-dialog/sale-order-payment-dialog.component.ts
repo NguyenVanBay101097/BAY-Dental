@@ -35,6 +35,9 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   maxAmount: number = 0;
   partner: any;
 
+  isPaymentForService = false;
+  isPaymentDebt = false;
+
   constructor(
     private fb: FormBuilder,
     private intlService: IntlService,
@@ -114,7 +117,6 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
   loadFilteredJournals() {
     this.searchJournals().subscribe((result) => {
-      console.log(result);
       this.filteredJournals = result;
       // if (this.filteredJournals && this.filteredJournals.length > 1) {
       //   this.journalLinesFC.clear();
