@@ -7,17 +7,17 @@
                 <span *ngIf="!isEditting">{{line.date | date:'dd/MM/yyyy'}}</span>
                 <kendo-datepicker class="mw-140" format="dd/MM/yyyy" *ngIf="isEditting" formControlName="date">
                 </kendo-datepicker>
-                <ng-container *ngIf="isEditting; else elseTemplateState">
-                    <select *ngIf="formState != 'draft'" class="form-control text-white select-state ml-2" formControlName="state" [ngClass]="{'bg-success':formState == 'done', 'bg-danger': formState == 'cancel', 'bg-primary': formState == 'sale'}">
-                        <option class="text-dark bg-white" *ngFor="let item of  listState" [value]="item.value">{{item.text}}</option>
-                    </select>
-                </ng-container>
-                <ng-template #elseTemplateState>
-                    <div *ngIf="line.state != 'draft'" class="form-control text-white select-state ml-2" [ngClass]="{'bg-success':line.state == 'done', 'bg-danger': line.state == 'cancel', 'bg-primary': line.state == 'sale'}">
-                        {{getStateDisplay(line.state)}}
+                <div *ngIf="line.state != 'draft'" class="form-control ml-2 w-auto" [ngClass]="{'state-success':line.state == 'done', 'state-danger': line.state == 'cancel', 'state-primary': line.state == 'sale'}">
+                    {{getStateDisplay(line.state)}}
+                </div>
+                <div *ngIf="!isEditting && line.state == 'sale'" class="h-100">
+                    <div class="cursor-pointer state-icon-dropdown ml-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img src="../../../assets/icons/icon-state-swich.svg" alt="chuyển đổi trạng thái">
                     </div>
-                </ng-template>
-
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a  href="javascript: void(0);" (click)="onSWitchState(item.value)" *ngFor="let item of  listState" class="dropdown-item">{{item.text}}</a>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="row">

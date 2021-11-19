@@ -206,4 +206,8 @@ export class SaleOrderLineService {
     applyCardCard(val) {
         return this.http.post(this.baseApi + this.apiUrl + '/ApplyCardCard', val);
     }
+
+    debtPayment(id) {
+        return this.http.post(this.baseApi + this.apiUrl + "/" +id +  '/DebtPayment', null);
+    }
 }
