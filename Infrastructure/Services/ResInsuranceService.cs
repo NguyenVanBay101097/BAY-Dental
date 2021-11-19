@@ -51,17 +51,22 @@ namespace Infrastructure.Services
 
             var debt_dict = amls.Any() ? amls.GroupBy(x => x.PartnerId.Value).ToDictionary(x => x.Key, x => x.Sum(x => x.Balance)) : null;
 
-            var items = await query.Select(x => new ResInsuranceBasic { 
+            var items = query.Select(x => new ResInsuranceBasic { 
                 Id = x.Id,
                 Name = x.Name,
                 Phone = x.Phone,
                 TotalDebt = (debt_dict != null && debt_dict.ContainsKey(x.PartnerId.Value)) ? debt_dict[x.PartnerId.Value] : 0,
                 IsActive = x.IsActive              
-            }).ToListAsync();
+            }).AsQueryable();
+
+            if (val.IsDebt.HasValue)
+                items = items.Where(x => val.IsDebt == true ? x.TotalDebt > 0 : x.TotalDebt == 0);
+
+            var list = await items.ToListAsync();
 
             var paged = new PagedResult2<ResInsuranceBasic>(totalItems, val.Offset, val.Limit)
             {
-                Items = items
+                Items = list
             };
 
             return paged;

@@ -19,6 +19,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public bool? IsActive { get; set; }
 
+        public bool? IsDebt { get; set; }
+
     }
 
     public class ResInsuranceBasic
