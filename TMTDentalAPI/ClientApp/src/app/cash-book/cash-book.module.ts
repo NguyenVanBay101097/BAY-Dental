@@ -16,7 +16,7 @@ import { AccountBankCuDialogComponent } from './account-bank-cu-dialog/account-b
     CashBookComponent,
     CashBookTabPageCaBoComponent,
     CashBookTabPageRePaComponent,
-    AccountBankCuDialogComponent
+    AccountBankCuDialogComponent,
   ],
   imports: [
     CommonModule,

@@ -24,7 +24,7 @@
                                 <label class="o_form_label">Số tài khoản</label>
                             </td>
                             <td colspan="1">
-                                <input class="form-control" formControlName="accountNumber">
+                                <input class="form-control" type="text" formControlName="accountNumber" numbersOnly>
                                 <div *ngIf="f.accountNumber.errors && (f.accountNumber.touched || f.accountNumber.dirty || submitted)" class="text-danger mb-1">
                                     <div *ngIf="f.accountNumber.errors.required">Nhập số tài khoản</div>
                                 </div>
@@ -35,9 +35,11 @@
                                 <label class="o_form_label">Ngân hàng</label>
                             </td>
                             <td colspan="1">
-                                <kendo-combobox #bankCbx [data]="bankItems" [valueField]="'id'" [textField]="'name'" [valuePrimitive]="true"
-                                formControlName="bankId">
+                                <kendo-combobox class="form-control" [data]="bankItems" [textField]="'displayName'"
+                                        [filterable]="true" #bankCbx formControlName="bankId" [valueField]="'id'"
+                                        [valuePrimitive]="true">
                                 </kendo-combobox>
+                                
                                 <div *ngIf="f.bankId.errors && (f.bankId.touched || f.bankId.dirty || submitted)" class="text-danger mb-1">
                                     <div *ngIf="f.bankId.errors.required">Chọn ngân hàng</div>
                                 </div>
@@ -56,7 +58,7 @@
                                 <label class="o_form_label">Trạng thái</label>
                             </td>
                             <td colspan="1">
-                                <kendo-combobox [data]="states" [valueField]="'value'" [textField]="'text'" formControlName="active">
+                                <kendo-combobox [data]="states" [valuePrimitive]="true" [valueField]="'value'" [textField]="'text'" formControlName="active">
                                 </kendo-combobox>
                             </td>
                         </tr>
@@ -71,6 +73,6 @@
         Lưu</button>
     <button *ngIf="accountId" type="button" class="btn btn-danger mr-2" (click)="onRemove()">
         Xóa</button>
-    <button type="button" class="btn btn-light mr-2" (click)="activeModal.dismiss()">
+    <button type="button" class="btn btn-light mr-2" (click)="onCancel()">
         Đóng</button>
 </div>

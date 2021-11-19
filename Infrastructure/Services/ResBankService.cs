@@ -56,7 +56,8 @@ namespace Infrastructure.Services
                 .Select(x => new ResBankSimple
                 {
                     Id = x.Id,
-                    Name = x.Name
+                    Name = x.Name,
+                    BIC = x.BIC
                 })
                 .ToListAsync();
 
