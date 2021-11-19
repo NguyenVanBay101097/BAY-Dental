@@ -1541,5 +1541,44 @@ namespace Infrastructure.Services
             return res;
         }
 
+        public async Task DebtPayment(Guid id)
+        {
+            var saleLine = await SearchQuery(x=> x.Id == id).Include(x=>x.Order).FirstOrDefaultAsync();
+            if (saleLine == null)
+                throw new Exception("Không tìm thấy dịch vụ");
+            var amountToPay = saleLine.PriceTotal - saleLine.AmountInvoiced;
+            //tạo saleorderpayment
+            var journalObj = GetService<IAccountJournalService>();
+            var soPaymentObj = GetService<ISaleOrderPaymentService>();
+            var debtJournal = await journalObj.GetJournalByTypeAndCompany("debt", saleLine.CompanyId.Value);
+            
+            var soPaymentSave = new SaleOrderPaymentSave()
+            {
+                Amount = amountToPay.Value,
+                CompanyId = saleLine.CompanyId.Value,
+                Date = DateTime.Now,
+                JournalLines = new List<SaleOrderPaymentJournalLineSave>()
+                {
+                    new SaleOrderPaymentJournalLineSave()
+                    {
+                        Amount = amountToPay.Value,
+                        JournalId = debtJournal.Id
+                    }
+                },
+                Lines = new List<SaleOrderPaymentHistoryLineSave>()
+                {
+                    new SaleOrderPaymentHistoryLineSave()
+                    {
+                        Amount = amountToPay.Value,
+                        SaleOrderLineId = saleLine.Id
+                    }
+                },
+                Note = saleLine.Order.Name + " - Khách hàng thanh toán",
+                OrderId = saleLine.OrderId ,
+                State = "draft"
+            };
+            var soPayment = await soPaymentObj.CreateSaleOrderPayment(soPaymentSave);
+            await soPaymentObj.ActionPayment(new List<Guid>() { soPayment.Id });
+        }
     }
 }

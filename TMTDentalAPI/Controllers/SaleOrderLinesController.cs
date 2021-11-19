@@ -408,5 +408,15 @@ namespace TMTDentalAPI.Controllers
 
             return Ok(line.Teeth);
         }
+
+        [HttpPost("{id}/[action]")]
+        public async Task<IActionResult> DebtPayment(Guid id)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleLineService.DebtPayment(id);
+            _unitOfWork.Commit();
+
+            return NoContent();
+        }
     }
 }
