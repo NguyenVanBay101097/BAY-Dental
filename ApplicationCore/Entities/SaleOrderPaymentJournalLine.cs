@@ -12,6 +12,12 @@ namespace ApplicationCore.Entities
         public Guid SaleOrderPaymentId { get; set; }
         public SaleOrderPayment SaleOrderPayment { get; set; }
 
+        /// <summary>
+        /// insurance : bảo hiểm
+        /// </summary>
+        public Guid? PartnerId { get; set; }
+        public Partner Partner { get; set; }
+
         public decimal Amount { get; set; }
     }
 }

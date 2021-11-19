@@ -34,11 +34,11 @@ namespace TMTDentalAPI.Controllers
             return Ok(basic);
         }
 
-        [HttpPost("{id}/[action]")]
-        public async Task<IActionResult> ActionPayment(Guid id)
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionPayment(IEnumerable<Guid> ids)
         {
             await _unitOfWork.BeginTransactionAsync();
-            await _insurancePaymentService.ActionPayment(id);
+            await _insurancePaymentService.ActionPayment(ids);
             _unitOfWork.Commit();
             return NoContent();
         }

@@ -19,6 +19,10 @@ namespace Infrastructure.EntityConfigurations
                     .WithMany(x => x.JournalLines)
                     .HasForeignKey(x => x.SaleOrderPaymentId);
 
+            builder.HasOne(x => x.Partner)
+                  .WithMany()
+                  .HasForeignKey(x => x.PartnerId);
+
             builder.HasOne(x => x.CreatedBy)
                     .WithMany()
                     .HasForeignKey(x => x.CreatedById);

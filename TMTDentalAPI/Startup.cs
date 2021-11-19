@@ -385,6 +385,7 @@ namespace TMTDentalAPI
             services.AddScoped<IResInsuranceService, ResInsuranceService>();
             services.AddScoped<IResInsurancePaymentService, ResInsurancePaymentService>();
             services.AddScoped<IResInsurancePaymentLineService, ResInsurancePaymentLineService>();
+            services.AddScoped<IResInsuranceReportService, ResInsuranceReportService>();
 
             services.AddMemoryCache();
 
