@@ -76,6 +76,11 @@ namespace Infrastructure.Services
                             if (rec.PaymentType == "inbound")
                                 sequence_code = "account.payment.supplier.refund";
                         }
+                        else if (rec.PartnerType == "insurance")
+                        {
+                            if (rec.PaymentType == "inbound")
+                                sequence_code = "account.payment.customer.invoice";
+                        }
                     }
 
                     rec.Name = await seqObj.NextByCode(sequence_code);
@@ -269,6 +274,13 @@ namespace Infrastructure.Services
                         rec_pay_line_name += "Nhà cung cấp hoàn tiền";
                     else if (payment.PaymentType == "outbound")
                         rec_pay_line_name += "Thanh toán nhà cung cấp";
+                }
+                else if (payment.PartnerType == "insurance")
+                {
+                    if (payment.PaymentType == "inbound")
+                        rec_pay_line_name += "Bảo hiểm thanh toán";
+                    else if (payment.PaymentType == "outbound")
+                        rec_pay_line_name += "Hoàn tiền bảo hiểm";
                 }
 
                 if (payment.AccountMovePaymentRels.Any())
@@ -683,6 +695,60 @@ namespace Infrastructure.Services
             return rec;
         }
 
+        public async Task<AccountRegisterPaymentDisplay> InsurancePaymentDefaultGet(IEnumerable<Guid> invoice_ids)
+        {
+            var amObj = GetService<IAccountMoveService>();
+            var invoices = await amObj.SearchQuery(x => invoice_ids.Contains(x.Id)).ToListAsync();
+            invoices = invoices.Where(x => amObj.IsInvoice(x, include_receipts: true)).ToList();
+
+            if (!invoices.Any() || invoices.Any(x => x.State != "posted"))
+                throw new Exception("Bạn chưa chọn khoản tiền bảo hiểm phải thu");
+            var dtype = invoices[0].Type;
+            //foreach (var inv in invoices.Skip(1))
+            //{
+            //    if (inv.Type != dtype)
+            //    {
+            //        if ((dtype == "in_refund" && inv.Type == "in_invoice") || (dtype == "in_invoice" && inv.Type == "in_refund"))
+            //            throw new Exception("Bạn không thể tạo thanh toán cho mua hàng và trả hàng cùng một lúc.");
+
+            //        if ((dtype == "out_refund" && inv.Type == "out_invoice") || (dtype == "out_invoice" && inv.Type == "out_refund"))
+            //            throw new Exception("Bạn không thể tạo thanh toán cho bán hàng và trả hàng cùng một lúc.");
+            //    }
+            //}
+
+            var total_amount = invoices.Sum(x => x.AmountTotal * MAP_INVOICE_TYPE_PAYMENT_SIGN[x.Type]);
+            var communication = !string.IsNullOrEmpty(invoices[0].InvoicePaymentRef) ? invoices[0].InvoicePaymentRef :
+                (!string.IsNullOrEmpty(invoices[0].Ref) ? invoices[0].Ref : invoices[0].Name);
+
+            var journalObj = GetService<IAccountJournalService>();
+            var cashJournal = await journalObj.SearchQuery(x => x.Type == "cash" && x.CompanyId == CompanyId).FirstOrDefaultAsync();
+
+            var rec = new AccountRegisterPaymentDisplay
+            {
+                Amount = Math.Abs(total_amount ?? 0),
+                PaymentType = total_amount > 0 ? "inbound" : "outbound",
+                PartnerId = invoices[0].PartnerId,
+                PartnerType = "insurance",
+                //Communication = communication,
+                InvoiceIds = invoice_ids,
+                Journal = _mapper.Map<AccountJournalSimple>(cashJournal),
+                JournalId = cashJournal.Id
+            };
+
+            //get debit items
+            rec.DebitItems = invoices.Select(x => new PartnerGetDebtPagedItem
+            {
+                Date = x.Date,
+                AmountResidual = x.AmountResidual.GetValueOrDefault(),
+                Balance = x.AmountTotal.GetValueOrDefault(),
+                Origin = x.InvoiceOrigin,
+                MoveId = x.Id,
+                MoveType = x.Type
+            });
+
+            return rec;
+        }
+
         public async Task<AccountRegisterPaymentDisplay> ServiceCardOrderDefaultGet(IEnumerable<Guid> order_ids)
         {
             var orderObj = GetService<IServiceCardOrderService>();
@@ -1002,13 +1068,13 @@ namespace Infrastructure.Services
             var loaiThuChiObj = GetService<ILoaiThuChiService>();
             foreach (var payment in self)
             {
-                if (payment.AccountMovePaymentRels.Any())
+                if (payment.AccountMovePaymentRels.Any() && payment.PartnerType != "insurance")
                 {
                     var move_ids = payment.AccountMovePaymentRels.Select(x => x.MoveId).ToList();
                     payment.DestinationAccount = amlObj.SearchQuery(x => move_ids.Contains(x.MoveId))
                         .Include(x => x.Account).Select(x => x.Account).Where(x => x.InternalType == "receivable" || x.InternalType == "payable").FirstOrDefault();
                 }
-                else if (payment.PartnerType == "customer")
+                if (payment.PartnerType == "customer")
                 {
                     var account = await accountObj.GetAccountReceivableCurrentCompany();
                     payment.DestinationAccount = account;
@@ -1016,6 +1082,11 @@ namespace Infrastructure.Services
                 else if (payment.PartnerType == "supplier")
                 {
                     var account = await accountObj.GetAccountPayableCurrentCompany();
+                    payment.DestinationAccount = account;
+                }
+                else if (payment.PartnerType == "insurance")
+                {
+                    var account = await accountObj.GetAccountInsuranceDebtCompany();
                     payment.DestinationAccount = account;
                 }
             }

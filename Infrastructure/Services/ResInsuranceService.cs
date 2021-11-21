@@ -27,49 +27,62 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<ResInsuranceBasic>> GetPagedResult(ResInsurancePaged val)
         {
-            var movelineObj = GetService<IAccountMoveLineService>(); 
-            var query = SearchQuery();
 
-            if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Name.Contains(val.Search) || x.Phone.Contains(val.Search));
-
-            if (val.IsActive.HasValue)
-                query = query.Where(x => x.IsActive == val.IsActive);
+            var query = GetQueryableResInsurances(val);        
 
             var totalItems = await query.CountAsync();
 
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
-            query = query.OrderByDescending(x => x.DateCreated);
-
-            var amlQuery = movelineObj._QueryGet(companyId: CompanyId, state: "posted");
-
-            amlQuery = amlQuery.Where(x => x.Account.Code == "CNBH" && x.PartnerId.HasValue);
-
-            var amls = await amlQuery.ToListAsync();
-
-            var debt_dict = amls.Any() ? amls.GroupBy(x => x.PartnerId.Value).ToDictionary(x => x.Key, x => x.Sum(x => x.Balance)) : null;
-
-            var items = await query.Select(x => new ResInsuranceBasic { 
-                Id = x.Id,
-                Name = x.Name,
-                Phone = x.Phone,
-                TotalDebt = (debt_dict != null && debt_dict.ContainsKey(x.PartnerId.Value)) ? debt_dict[x.PartnerId.Value] : 0,
-                IsActive = x.IsActive              
-            }).ToListAsync();
-
-            if (val.IsDebt.HasValue)
-                items = items.Where(x => val.IsDebt == true ? x.TotalDebt > 0 : x.TotalDebt == 0).ToList();
-
-            var list = items;
+            var items = await query.ToListAsync();     
 
             var paged = new PagedResult2<ResInsuranceBasic>(totalItems, val.Offset, val.Limit)
             {
-                Items = list
+                Items = items
             };
 
             return paged;
+        }
+
+        public IQueryable<ResInsuranceBasic> GetQueryableResInsurances(ResInsurancePaged val)
+        {
+            var movelineObj = GetService<IAccountMoveLineService>();
+            var accObj = GetService<IAccountAccountService>();
+
+            var insuranceDebQr = from aml in movelineObj.SearchQuery(x => x.CompanyId == CompanyId)
+                               join acc in accObj.SearchQuery()
+                               on aml.AccountId equals acc.Id
+                               where acc.Code == "CNBH"
+                               group aml by aml.PartnerId into g
+                               select new
+                               {
+                                   PartnerId = g.Key,
+                                   TotalDebit = g.Sum(x => x.Balance)
+                               };
+
+            var ResponseQr = from isr in SearchQuery()
+                             from isrd in insuranceDebQr.Where(x => x.PartnerId == isr.PartnerId).DefaultIfEmpty()
+                             orderby isr.DateCreated descending
+                             select new ResInsuranceBasic
+                             {
+                                 Id = isr.Id,
+                                 Name = isr.Name,
+                                 Phone = isr.Phone,
+                                 TotalDebt = isrd.TotalDebit,
+                                 IsActive = isr.IsActive
+                             };
+
+            if (!string.IsNullOrEmpty(val.Search))
+                ResponseQr = ResponseQr.Where(x => x.Name.Contains(val.Search) || x.Phone.Contains(val.Search));
+
+            if (val.IsActive.HasValue)
+                ResponseQr = ResponseQr.Where(x => x.IsActive == val.IsActive);
+
+            if (val.IsDebt.HasValue)
+                ResponseQr = ResponseQr.Where(x => val.IsDebt == true ? x.TotalDebt > 0 : x.TotalDebt == 0);
+
+            return ResponseQr;
         }
 
         public async Task<ResInsurance> GetDisplayById(Guid id)

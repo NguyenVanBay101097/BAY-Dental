@@ -1624,8 +1624,8 @@ namespace Infrastructure.Services
         public async Task<ResInsurancePaymentRegisterDisplay> GetDefaultInsurancePaymentByOrderId(Guid id)
         {
             var saleLineObj = GetService<ISaleOrderLineService>();
-            var order = await SearchQuery(x => x.Id == id && x.State != "draft").Include(x => x.OrderLines).ThenInclude(s => s.InsurancePaymentLines).FirstOrDefaultAsync();
-            var lines = order.OrderLines.Where(x => x.OrderId == id && x.State != "draft" && !x.InsurancePaymentLines.Any()).ToList();
+            var order = await SearchQuery(x => x.Id == id && x.State != "draft").Include(x => x.OrderLines).ThenInclude(s => s.InsurancePaymentLines).ThenInclude(x => x.ResInsurancePayment).FirstOrDefaultAsync();
+            var lines = order.OrderLines.Where(x => x.OrderId == id && x.State != "draft" && !x.InsurancePaymentLines.Any(x => x.ResInsurancePayment.State == "posted")).ToList();
             var res = new ResInsurancePaymentRegisterDisplay();
             res.Date = DateTime.Now;
             res.Note = $"{order.Name} - Bảo hiểm bảo lãnh";
@@ -1636,7 +1636,7 @@ namespace Infrastructure.Services
                 {
                     Id = x.Id,
                     Name = x.Name,
-                    PriceTotal = x.AmountToInvoice,
+                    PriceTotal = x.PriceTotal,
                     AmountPaid = x.AmountPaid,
                     AmountResidual = x.AmountResidual
 

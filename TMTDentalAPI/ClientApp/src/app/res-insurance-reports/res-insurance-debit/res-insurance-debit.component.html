@@ -47,7 +47,7 @@
                                                 <label class="o_form_label">Ngày ký kết</label>
                                             </td>
                                             <td style="width: 100%">
-                                                <span> {{ insuranceInfo?.date }} </span>
+                                                <span> {{ insuranceInfo?.date | date:'shortDate'}} </span>
                                             </td>
                                         </tr>
                                         <tr>
@@ -79,25 +79,44 @@
                                     (searchChange)="onSearchDateChange($event)">
                                     </app-date-range-picker-filter>
                                     <div class="mt-2">
-                                        <button class="btn btn-primary mr-2">Thu tiền</button>
+                                        <button class="btn btn-primary mr-2" (click)="onPayment()">Thu tiền</button>
                                         <button class="btn btn-primary">Xuất excel</button>
                                     </div>
                                 </div>
                                 <div class="filter-right">
                                     <div class="o_searchview">
-                                        <input class="o_searchview_input"
+                                        <input class="o_searchview_input" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)"
                                             placeholder="Tìm kiếm theo số phiếu, khách hàng, dịch vụ" type="text" />
                                         <span class="o_searchview_icon fas fa-search"></span>
                                     </div>
                                 </div>
                             </div>
-                            <kendo-grid>
+                            <kendo-grid [resizable]="true" [data]="insuranceDebt"  [navigable]="true" [kendoGridSelectBy]="'moveId'" [selectedKeys]="selectedIds">
+                                <kendo-grid-checkbox-column [width]="50" [headerClass]="{'text-center': true}" [class]="{'text-center': true}" showSelectAll="true"></kendo-grid-checkbox-column>
+                                <kendo-grid-column title="Ngày" width="100">
+                                    <ng-template kendoGridCellTemplate let-dataItem let-column="column">
+                                        {{dataItem.date | date:'shortDate'}}
+                                    </ng-template>
+                                </kendo-grid-column>
+                                <kendo-grid-column field="partnerName" title="Khách hàng" width="100">
+                                </kendo-grid-column>
+                                <kendo-grid-column field="origin" title="Nguồn" width="100">
+                                </kendo-grid-column>
+                                <kendo-grid-column field="name" title="Nội dung" width="120">
+                                </kendo-grid-column>
+                                <kendo-grid-column title="Số tiền" class="text-right" width="135">
+                                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                        {{dataItem.amountTotal | number}}
+                                    </ng-template>
+                                </kendo-grid-column>
+                            </kendo-grid>
+                            <!-- <kendo-grid>
                                 <kendo-grid-column title="Khách hàng"></kendo-grid-column>
                                 <kendo-grid-column title="Ngày bảo lãnh"></kendo-grid-column>
                                 <kendo-grid-column title="Phiếu điều trị"></kendo-grid-column>
                                 <kendo-grid-column title="Dịch vụ"></kendo-grid-column>
                                 <kendo-grid-column title="Số tiền"></kendo-grid-column>
-                            </kendo-grid>
+                            </kendo-grid> -->
                         </div>
                     </div>
                 </div>

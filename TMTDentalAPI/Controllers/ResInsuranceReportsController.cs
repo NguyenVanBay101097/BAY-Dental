@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
 {
@@ -20,6 +21,13 @@ namespace TMTDentalAPI.Controllers
         {
             _resInsuranceReportService = resInsuranceReportService;
             _mapper = mapper;
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetInsuranceDebtReport([FromQuery] ImsuranceDebtFilter val)
+        {
+            var result = await _resInsuranceReportService.GetInsuranceDebtReport(val);
+            return Ok(result);
         }
 
 

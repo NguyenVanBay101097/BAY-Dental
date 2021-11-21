@@ -36,6 +36,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool IsActive { get; set; }
     }
 
+
     public class ResInsuranceDisplay
     {
         public Guid Id { get; set; }
@@ -45,6 +46,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime Date { get; set; }
 
         public string Avatar { get; set; }
+
+        public Guid PartnerId { get; set; }
 
         /// <summary>
         /// người đại diện
