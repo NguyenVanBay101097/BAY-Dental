@@ -207,6 +207,7 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit, Af
     modalRef.componentInstance.title = 'Thêm khách hàng';
     modalRef.result.then((res) => {
       this.setValueFC('partner', res);
+      this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter,[res], 'id');
     });
   }
 

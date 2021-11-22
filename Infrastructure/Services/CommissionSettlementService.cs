@@ -333,7 +333,7 @@ namespace Infrastructure.Services
             };
         }
 
-        public async Task<PagedResult2<CommissionSettlementReportRes>> GetReportPaged(CommissionSettlementFilterReport val)
+        public async Task<IEnumerable<CommissionSettlementReportRes>> GetReportPaged(CommissionSettlementFilterReport val)
         {
             var query = GetQueryableReportPaged(val);
 
@@ -355,12 +355,7 @@ namespace Infrastructure.Services
                 EmployeeName = x.Key.EmployeeName
             }).ToList();
 
-            var totalItems = res.Count();
-
-            return new PagedResult2<CommissionSettlementReportRes>(totalItems, val.Offset, val.Limit)
-            {
-                Items = res
-            };
+            return res;
         }
 
         public async Task<IEnumerable<CommissionSettlementOverview>> GetCommissionSettlements(DateTime? dateFrom, DateTime? dateTo, string classify, string groupBy)

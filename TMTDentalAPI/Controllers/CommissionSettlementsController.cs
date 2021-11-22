@@ -77,7 +77,7 @@ namespace TMTDentalAPI.Controllers
             var stream = new MemoryStream();
             val.Limit = int.MaxValue;
             var data = await _commissionSettlementService.GetReportPaged(val);
-            decimal sum = data.Items.Sum(x => x.Amount.Value);
+            decimal sum = data.Sum(x => x.Amount.Value);
             byte[] fileContent;
             var sheetName = "Hoa hồng nhân viên";
 
@@ -93,7 +93,7 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells["A1:P1"].Style.Font.Bold = true;
 
                 var row = 2;
-                foreach (var item in data.Items)
+                foreach (var item in data)
                 {
                     worksheet.Cells[row, 1].Value = item.EmployeeName;
                     worksheet.Cells[row, 2].Value = _commissionSettlementService.CommissionType(item.CommissionType);

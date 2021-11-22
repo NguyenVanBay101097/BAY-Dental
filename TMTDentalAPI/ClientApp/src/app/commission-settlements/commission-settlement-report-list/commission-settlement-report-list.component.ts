@@ -16,9 +16,10 @@ import { CommissionSettlementFilterReport, CommissionSettlementsService } from '
   styleUrls: ['./commission-settlement-report-list.component.css']
 })
 export class CommissionSettlementReportListComponent implements OnInit {
-  reportResults: GridDataResult;
+  items: any[] = [];
+  gridData: GridDataResult;
   search: string = '';
-  limit = 2;
+  limit = 20;
   skip = 0;
   pagerSettings: any;
   loading = false;
@@ -73,13 +74,9 @@ export class CommissionSettlementReportListComponent implements OnInit {
     val.commissionType = this.commissionType ? this.commissionType : '';
     val.groupBy = 'employee';
     this.loading = true;
-    this.commissionSettlementsService.getReportPaged(val).pipe(
-      map((response: any) => (<GridDataResult>{
-        data: response.items,
-        total: response.totalItems
-      }))
-    ).subscribe((res: any) => {
-      this.reportResults = res;
+    this.commissionSettlementsService.getReportPaged(val).subscribe((res: any) => {
+      this.items = res;
+      this.loadItems();
       this.loading = false;
     }, err => {
       console.log(err);
@@ -107,8 +104,8 @@ export class CommissionSettlementReportListComponent implements OnInit {
 
   get amountTotal() {
     var total = 0;
-    if(this.reportResults) {
-      this.reportResults.data.forEach(item => {
+    if(this.items) {
+      this.items.forEach(item => {
         total += item.amount;
       });
 
@@ -121,7 +118,14 @@ export class CommissionSettlementReportListComponent implements OnInit {
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
     this.limit = event.take;
-    this.loadDataFromApi();
+    this.loadItems();
+  }
+  
+  loadItems(): void {
+    this.gridData = {
+      data: this.items.slice(this.skip, this.skip + this.limit),
+      total: this.items.length
+    };
   }
 
   onDateSearchChange(filter) {
