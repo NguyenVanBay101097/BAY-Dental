@@ -24,12 +24,25 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetInsuranceDebtReport([FromQuery] ImsuranceDebtFilter val)
+        public async Task<IActionResult> GetInsuranceDebtReport([FromQuery] InsuranceDebtFilter val)
         {
             var result = await _resInsuranceReportService.GetInsuranceDebtReport(val);
             return Ok(result);
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetSummaryReports(InsuranceReportFilter val)
+        {
+            var res = await _resInsuranceReportService.ReportSummary(val);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetDetailReports(InsuranceReportDetailFilter val)
+        {
+            var res = await _resInsuranceReportService.ReportDetail(val);
+            return Ok(res);
+        }
 
     }
 }

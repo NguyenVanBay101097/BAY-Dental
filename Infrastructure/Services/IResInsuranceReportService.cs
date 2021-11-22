@@ -8,6 +8,10 @@ namespace Infrastructure.Services
 {
     public interface IResInsuranceReportService
     {
-        Task<IEnumerable<ImsuranceDebtReport>> GetInsuranceDebtReport(ImsuranceDebtFilter val);
+        Task<IEnumerable<InsuranceDebtReport>> GetInsuranceDebtReport(InsuranceDebtFilter val);
+
+        Task<IEnumerable<InsuranceReportItem>> ReportSummary(InsuranceReportFilter val);
+
+        Task<IEnumerable<InsuranceReportDetailItem>> ReportDetail(InsuranceReportDetailFilter val);
     }
 }

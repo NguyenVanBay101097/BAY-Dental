@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -41,34 +42,206 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<IEnumerable<ImsuranceDebtReport>> GetInsuranceDebtReport(ImsuranceDebtFilter val)
+        public async Task<IEnumerable<InsuranceDebtReport>> GetInsuranceDebtReport(InsuranceDebtFilter val)
         {
             var accMoveObj = GetService<IAccountMoveService>();
             var insuranceObj = GetService<IResInsuranceService>();
             var accPaymentObj = GetService<IAccountPaymentService>();
-           
+            var partialReconcilesObj = GetService<IAccountPartialReconcileService>();
+
 
             var insurance = await insuranceObj.GetByIdAsync(val.InsuranceId);
-            var invoiceIds = await accPaymentObj.SearchQuery(x => x.State == "posted" && x.MoveLines.Any(s => s.PartnerId == insurance.PartnerId && s.Account.Code == "CNBH")).SelectMany(x => x.AccountMovePaymentRels).Select(x => x.MoveId).Distinct().ToListAsync();
-
-            var query = accMoveObj.SearchQuery(x => invoiceIds.Contains(x.Id) && x.Type == "out_invoice"  && x.InvoicePaymentState == "paid");
-            //var types = new[] { "receivable"};
-            //query = query.Where(x => x.PartnerId == insurance.PartnerId && x.Reconciled == false && x.PaymentId.HasValue);
+            var query =  partialReconcilesObj.SearchQuery(x => x.CreditMove.Move.PartnerId == insurance.PartnerId);          
             if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.InvoiceOrigin.Contains(val.Search) || x.Partner.Name.Contains(val.Search));
+                query = query.Where(x => x.DebitMove.Move.InvoiceOrigin.Contains(val.Search) || x.DebitMove.Move.Name.Contains(val.Search));
 
             var total = await query.CountAsync();
-            var items = await query.OrderByDescending(x => x.Date).Select(x => new ImsuranceDebtReport
+            var items = await query.OrderByDescending(x => x.DateCreated).Select(x => new InsuranceDebtReport
             {
-                Date = x.Date,
-                PartnerName = x.Partner.Name,
-                AmountTotal =  x.AmountTotal ?? 0,
-                Origin = x.InvoiceOrigin,
-                MoveId = x.Id,
-                MoveType = x.Type
+                Date = x.DateCreated,
+                PartnerName = x.DebitMove.Partner.Name,
+                AmountTotal = x.DebitMove.Balance - x.DebitMove.AmountResidual,
+                Origin = x.DebitMove.Move.InvoiceOrigin,
+                MoveId = x.DebitMove.Move.Id,
+                MoveType = x.DebitMove.Move.Type
             }).ToListAsync();
 
             return items;
         }
+
+        public async Task<IEnumerable<InsuranceReportItem>> ReportSummary(InsuranceReportFilter val)
+        {
+            var today = DateTime.Today;
+            var date_from = val.DateFrom;
+            var date_to = val.DateTo;
+            if (date_to.HasValue)
+                date_to = date_to.Value.AbsoluteEndOfDate();
+
+            var amlObj = GetService<IAccountMoveLineService>();
+
+            var dict = new Dictionary<Guid, InsuranceReportItem>();
+            if (date_from.HasValue)
+            {
+                var query = amlObj._QueryGet(dateFrom: date_from, dateTo: null, initBal: true, state: "posted", companyId: val.CompanyId);
+                query = query.Where(x => x.PartnerId.HasValue && x.Partner.IsInsurance);
+
+                if (!string.IsNullOrWhiteSpace(val.Search))
+                {
+                    query = query.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search) ||
+                    x.Partner.Phone.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
+                }
+
+                var list = await query
+                   .GroupBy(x => new
+                   {
+                       PartnerId = x.Partner.Id,
+                       PartnerName = x.Partner.Name,
+                       PartnerRef = x.Partner.Ref,
+                       PartnerPhone = x.Partner.Phone,
+                       Type = x.Account.InternalType
+                   })
+                   .Select(x => new
+                   {
+                       PartnerId = x.Key.PartnerId,
+                       PartnerName = x.Key.PartnerName,
+                       PartnerRef = x.Key.PartnerRef,
+                       PartnerPhone = x.Key.PartnerPhone,
+                       x.Key.Type,
+                       InitialBalance = x.Sum(s => s.Debit - s.Credit),
+                   }).ToListAsync();
+
+                foreach (var item in list)
+                {
+                    if (!dict.ContainsKey(item.PartnerId))
+                    {
+                        dict.Add(item.PartnerId, new InsuranceReportItem()
+                        {
+                            PartnerId = item.PartnerId,
+                            PartnerName = item.PartnerName,
+                            PartnerRef = item.PartnerRef,
+                            PartnerPhone = item.PartnerPhone,
+                            DateFrom = date_from,
+                            DateTo = date_to
+                        });
+                    }
+
+                    dict[item.PartnerId].Begin = item.InitialBalance;
+                }
+            }
+
+            var query2 = amlObj._QueryGet(dateFrom: date_from, dateTo: date_to, state: "posted", companyId: val.CompanyId);
+            query2 = query2.Where(x => x.PartnerId.HasValue &&  x.Partner.IsInsurance );
+
+            if (!string.IsNullOrWhiteSpace(val.Search))
+            {
+                query2 = query2.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search) ||
+                x.Partner.Phone.Contains(val.Search) || x.Partner.Ref.Contains(val.Search));
+            }
+
+            var list2 = await query2
+                      .GroupBy(x => new
+                      {
+                          PartnerId = x.Partner.Id,
+                          PartnerName = x.Partner.Name,
+                          PartnerRef = x.Partner.Ref,
+                          PartnerPhone = x.Partner.Phone,
+                          Type = x.Account.InternalType
+                      })
+                    .Select(x => new
+                    {
+                        PartnerId = x.Key.PartnerId,
+                        PartnerName = x.Key.PartnerName,
+                        PartnerRef = x.Key.PartnerRef,
+                        PartnerPhone = x.Key.PartnerPhone,
+                        x.Key.Type,
+                        Debit = x.Sum(s => s.Debit),
+                        Credit = x.Sum(s => s.Credit),
+                    }).ToListAsync();
+
+            foreach (var item in list2)
+            {
+                if (!dict.ContainsKey(item.PartnerId))
+                {
+                    dict.Add(item.PartnerId, new InsuranceReportItem()
+                    {
+                        PartnerId = item.PartnerId,
+                        PartnerName = item.PartnerName,
+                        PartnerRef = item.PartnerRef,
+                        PartnerPhone = item.PartnerPhone,
+                        DateFrom = date_from,
+                        DateTo = date_to
+                    });
+                }
+
+                dict[item.PartnerId].Debit = item.Debit;
+                dict[item.PartnerId].Credit = item.Credit;           
+            }
+
+            var res = new List<InsuranceReportItem>();
+            foreach (var item in dict)
+            {
+                var begin = dict[item.Key].Begin;
+                var debit = dict[item.Key].Debit;
+                var credit = dict[item.Key].Credit;
+                var end = begin + debit - credit;
+                var value = item.Value;
+                res.Add(new InsuranceReportItem
+                {
+                    PartnerId = item.Key,
+                    DateFrom = date_from,
+                    DateTo = date_to,
+                    PartnerRef = value.PartnerRef,
+                    Begin = begin,
+                    Debit = debit,
+                    Credit = credit,
+                    End = end,
+                    PartnerName = value.PartnerName,
+                    PartnerPhone = value.PartnerPhone,
+                });
+            }
+            return res;
+        }
+
+        public async Task<IEnumerable<InsuranceReportDetailItem>> ReportDetail(InsuranceReportDetailFilter val)
+        {
+            var date_from = val.DateFrom;
+            var date_to = val.DateTo;
+            var amlObj = GetService<IAccountMoveLineService>();
+
+            var sign = 1;
+            decimal begin = 0;
+            var res = new List<InsuranceReportDetailItem>();
+
+            if (date_from.HasValue)
+            {
+                var query = amlObj._QueryGet(dateFrom: date_from, dateTo: null, initBal: true, state: "posted");
+                query = query.Where(x => x.PartnerId == val.PartnerId && x.Partner.IsInsurance);
+                begin = (await query.SumAsync(x => x.Debit - x.Credit)) * sign;
+            }
+
+            var query2 = amlObj._QueryGet(dateFrom: date_from, dateTo: date_to, state: "posted");
+            query2 = query2.Where(x => x.PartnerId == val.PartnerId && x.Partner.IsInsurance);
+            var list2 = query2.OrderBy(x => x.DateCreated)
+                    .Select(x => new InsuranceReportDetailItem
+                    {
+                        Date = x.Date,
+                        MoveName = x.Move.Name,
+                        Name = x.Name,
+                        Ref = x.Move.Ref,
+                        Debit = x.Account.InternalType == "payable" ? x.Credit : x.Debit,
+                        Credit = x.Account.InternalType == "payable" ? x.Debit : x.Credit,
+                    }).ToList();
+
+
+            foreach (var item in list2)
+            {
+                item.Begin = begin;
+                item.End = item.Begin + item.Debit - item.Credit;
+                begin = item.End;
+            }
+
+            return list2;
+        }
+
     }
 }

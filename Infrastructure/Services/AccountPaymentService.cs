@@ -306,7 +306,7 @@ namespace Infrastructure.Services
                     Ref = payment.Communication,
                     JournalId = payment.JournalId,
                     Journal = payment.Journal,
-                    PartnerId = payment.PartnerId.Equals(move_invoice_partnerId) ? payment.PartnerId : move_invoice_partnerId,
+                    PartnerId = payment.PartnerId,
                     CompanyId = payment.CompanyId,
                     InvoiceOrigin = payment.Name,
                 };
@@ -319,7 +319,7 @@ namespace Infrastructure.Services
                         Debit = balance > 0 ? balance : 0,
                         Credit = balance < 0 ? -balance : 0,
                         DateMaturity = payment.PaymentDate,
-                        PartnerId = payment.PartnerId.Equals(move_invoice_partnerId) ? payment.PartnerId : move_invoice_partnerId,
+                        PartnerId = payment.DestinationAccount.Code == "CNBH" ? payment.PartnerId : move_invoice_partnerId,
                         AccountId = payment.DestinationAccount.Id,
                         Account = payment.DestinationAccount,
                         PaymentId = payment.Id,
@@ -331,7 +331,7 @@ namespace Infrastructure.Services
                         Debit = balance < 0 ? -balance : 0,
                         Credit = balance > 0 ? balance : 0,
                         DateMaturity = payment.PaymentDate,
-                        PartnerId = payment.PartnerId,
+                        PartnerId = liquidity_line_account.Code == "CNBH" ? payment.PartnerId : move_invoice_partnerId,
                         AccountId = liquidity_line_account.Id,
                         Account = liquidity_line_account,
                         PaymentId = payment.Id,
@@ -1068,7 +1068,7 @@ namespace Infrastructure.Services
             var loaiThuChiObj = GetService<ILoaiThuChiService>();
             foreach (var payment in self)
             {
-                if (payment.AccountMovePaymentRels.Any() && payment.PartnerType != "insurance")
+                if (payment.AccountMovePaymentRels.Any())
                 {
                     var move_ids = payment.AccountMovePaymentRels.Select(x => x.MoveId).ToList();
                     payment.DestinationAccount = amlObj.SearchQuery(x => move_ids.Contains(x.MoveId))
