@@ -85,7 +85,7 @@ export class MemberCardCreateUpdateComponent implements OnInit {
     var id = proFA.controls[proIndex].value.id;
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Xóa dịch vụ';
-    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
+    modalRef.componentInstance.body = `Bạn chắc chắn muốn xóa dịch vụ ${proFA.controls[proIndex].value.product.name}?`;
     modalRef.result.then(() => {
       this.productPriceListItemService.delete(id).subscribe(() => {
         this.notify('Xóa thành công', 'success');

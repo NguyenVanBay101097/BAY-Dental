@@ -78,6 +78,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public string WardCode { get; set; }
         // nguồn khách hàng
         public Guid? SourceId { get; set; }
+        // option has null  nguồn khách hàng
+        public bool IsHasNullSourceId { get; set; }
         //nhãn
         public IEnumerable<Guid> CategIds { get; set; } = new List<Guid>();
         //giới tính
