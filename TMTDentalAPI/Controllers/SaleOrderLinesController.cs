@@ -339,7 +339,10 @@ namespace TMTDentalAPI.Controllers
         [HttpPut("{id}/[action]")]
         public async Task<IActionResult> UpdateState(Guid id, string state)
         {
+            await _unitOfWork.BeginTransactionAsync();
             await _saleLineService.UpdateState(id,state);
+            _unitOfWork.Commit();
+
             return Ok();
         }
 

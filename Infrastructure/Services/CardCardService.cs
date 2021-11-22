@@ -32,7 +32,7 @@ namespace Infrastructure.Services
         public async Task<decimal?> ConvertAmountToPoint(decimal? amount)
         {
             var prate = await GetLoyaltyPointExchangeRate();
-            if (prate < 0 || !amount.HasValue)
+            if (prate <= 0 || !amount.HasValue)
                 return 0;
             var points = (amount ?? 0) / prate;
             var res = FloatUtils.FloatRound((double)points, precisionRounding: 1);
