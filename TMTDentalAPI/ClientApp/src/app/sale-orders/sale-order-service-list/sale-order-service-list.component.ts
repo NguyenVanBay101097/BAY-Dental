@@ -5,11 +5,15 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import * as moment from 'moment';
+import { forkJoin } from 'rxjs';
 import { catchError, mergeMap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
+import { AmountCustomerDebtFilter, CustomerDebtReportService } from 'src/app/core/services/customer-debt-report.service';
 import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
 import { SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
+import { PartnerService } from 'src/app/partners/partner.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
 import { ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
@@ -37,6 +41,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
   linesDirty = false;
   formGroup: FormGroup;
   submitted = false;
+  partnerDebt = null;
   @Output() updateOrderEvent = new EventEmitter<any>();
   constructor(
      private saleOrderService: SaleOrderService,
@@ -49,6 +54,9 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
      private employeeService: EmployeeService,
      private toothService: ToothService,
      private _decimalPipe: DecimalPipe,
+     private partnerService: PartnerService,
+     private customerDebtReportService: CustomerDebtReportService,
+     private authService: AuthService,
      private fb: FormBuilder) { }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -81,6 +89,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
     this.loadToothCategories();
     this.loadEmployees();
     this.loadTeethList();
+    this.loadPartnerInfo();
   }
 
   get f() {
@@ -700,6 +709,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
       .subscribe(r => {
       this.notify('success', 'Ghi nợ thành công');
       this.saleOrder.totalPaid = this.saleOrder.totalPaid + (line.priceSubTotal - line.amountInvoiced);
+      this.partnerDebt.debitTotal = this.partnerDebt.debitTotal + (line.priceSubTotal - line.amountInvoiced);
       line.amountInvoiced =  line.priceSubTotal;
       });
     })
@@ -735,5 +745,17 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
       default:
         return 'Nháp';
     }
+  }
+
+  loadPartnerInfo(){
+    var loadPartner$ = this.partnerService.getCustomerInfo(this.saleOrder.partnerId);
+    var val = new AmountCustomerDebtFilter();
+    val.partnerId = this.saleOrder.partnerId;
+    val.companyId = this.authService.userInfo.companyId;
+    var loadDebt$ = this.customerDebtReportService.getAmountDebtTotal(val);
+    forkJoin({partner: loadPartner$, debt: loadDebt$}).subscribe(res => {
+      this.partner = res.partner;
+      this.partnerDebt = res.debt;      
+    });
   }
 }
