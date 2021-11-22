@@ -591,8 +591,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     modalRef.componentInstance.amountResidual = this.amountResidual;
     modalRef.componentInstance.amountPayment = this.amountResidual;
     modalRef.componentInstance.debtAmountTotal = this.amountDebtTotal;
-
-
+    modalRef.componentInstance.journalLines = this.defaultVal.journalLines;
   }
 
 }

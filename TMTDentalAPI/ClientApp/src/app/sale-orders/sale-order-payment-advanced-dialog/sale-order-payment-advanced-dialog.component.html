@@ -30,7 +30,8 @@
                                         </label>
                                     </td>
                                     <td colspan="1" class="text-right">
-                                        <kendo-numerictextbox [min]="0" [format]="'n0'" [(ngModel)]="amountPayment" name="amountPayment"
+                                        <kendo-numerictextbox class="text-right" [min]="0" [format]="'n0'" 
+                                        [(ngModel)]="amountPayment" name="amountPayment" [max]="amountPayment"
                                          [spinners]="false">
                                         </kendo-numerictextbox>
                                     </td>
@@ -51,12 +52,19 @@
                             <div class="journal-input mb-2 mt-2">
                                 <div *ngFor="let item of selectedJournals" class="journal-item">
                                     <div>
-                                        <i class="far fa-trash-alt"></i>
+                                        <button class="btn" (click)="removeJounalSelected(item)">
+                                            <i class="far fa-trash-alt"></i>
+                                        </button>
                                         <span class="ml-3">{{item.type=='bank'?'Ngân hàng':item.name}}</span>
                                     </div>
                                     <div *ngIf="item.type == 'bank' && item.journals.length>0" >
-                                        <kendo-combobox style="min-width: 200px;" [data]="item.journals" [textField]="'name'"  [valueField]="'id'">
+                                        <kendo-combobox [placeholder]="'Tài khoản thu'" style="min-width: 200px;" 
+                                        [data]="item.journals" [textField]="'name'" [valueField]="'id'" [(ngModel)]="saleOrderJournalSelected" name="orderJournalSelected"
+                                        #orderJournalSelected="ngModel" required (ngModelChange)="changeOrderJournalSelected($event)">
                                         </kendo-combobox>
+                                        <div class="text-danger" *ngIf="orderJournalSelected.errors?.required && submitted">
+                                            Chọn tài khoản 
+                                        </div>
                                     </div>
                                     <div class="journal-input-number text-right">
                                         {{item.amount | number}}
@@ -64,7 +72,8 @@
                                 </div>
                             </div>
                         </div>
-                        <h6 class="payment-title">Thanh toán công nợ</h6>
+                        <ng-container *ngIf="debtAmountTotal > 0">
+                            <h6 class="payment-title">Thanh toán công nợ</h6>
                         <table class="mb-2 mt-0 o_group o_inner_group o_group_col_12">
                             <tbody>
                                 <tr>
@@ -82,20 +91,26 @@
                         <div class="journal-input mb-2 mt-2">
                             <div class="journal-item">
                                 <div class="journal-input-number">
-                                    <kendo-combobox [data]="debtPaymentJournals" [textField]="'name'"  [valueField]="'type'"
-                                    (selectionChange)="onSelectDebtTypeJounals($event)" [(ngModel)]="debtPaymentJournals[0]">
+                                    <kendo-combobox [data]="debtPaymentJournals" [textField]="'name'" [valueField]="'type'"
+                                    (selectionChange)="onSelectDebtTypeJounals($event)" [value]="debtTypeSelected">
                                     </kendo-combobox>
                                 </div>
                                 <div *ngIf="showDebtPaymentJournal" class="journal-input-number">
-                                    <kendo-combobox [data]="filteredJournals" [textField]="'name'"  [valueField]="'id'" 
-                                    (selectionChange)="onSelectDebtJounals($event)">
+                                    <kendo-combobox [data]="filteredJournals" [textField]="'name'"  [valueField]="'id'"
+                                    name="debtJournal" #debtJournal="ngModel" [(ngModel)]="debtJournalSelected" required
+                                    (ngModelChange)="onSelectDebtJounals($event)">
                                     </kendo-combobox>
+                                    <div class="text-danger" *ngIf="debtJournal.errors?.required && submitted">
+                                        Chọn tài khoản 
+                                    </div>
                                 </div>
                                 <div class="journal-input-number text-right">
                                     {{debtAmountTotal | number}}
                                 </div>
                             </div>
                         </div>
+                        </ng-container>
+                        
                     </div>
                     <div class="o_group o_inner_group o_group_col_4 mt-0">
                         <div class="card bg-light">
@@ -240,5 +255,13 @@
             accesskey="q">Đóng</button>
 
     </ng-template> -->
+    <!-- <button type="button" class="btn btn-secondary" (click)="backPreviousStep()" [disabled]="loading">Trở
+        lại</button> -->
+    <!-- <button type="button" class="btn btn-primary" (click)="saveAndPrint()" [disabled]="loading">Thanh
+        toán và in</button> -->
+    <button type="button" class="btn btn-primary" (click)="save()" accesskey="s">Thanh
+        toán</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="this.activeModal.dismiss()"
+        accesskey="q">Đóng</button>
 
 </footer>

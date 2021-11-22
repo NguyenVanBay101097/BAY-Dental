@@ -10,10 +10,12 @@ import { AuthService } from 'src/app/auth/auth.service';
   styleUrls: ['./sale-order-payment-advanced-dialog.component.css']
 })
 export class SaleOrderPaymentAdvancedDialogComponent implements OnInit {
+  submitted = false;
   title: string;
   paymentForm: FormGroup;
   amountResidual: number;
   amountPayment: number;
+  journalLines: any;
   amountTotalJournalPayment: number = 0;
   debtAmountTotal: number = 0;
   filteredJournals: any[] = [
@@ -27,8 +29,9 @@ export class SaleOrderPaymentAdvancedDialogComponent implements OnInit {
     {type:'bank',name: 'Ngân hàng'},
   ];
   showDebtPaymentJournal = false;
-  debtTypeSelected = {type:'cash'};
-  debtJournalSelected: string;
+  saleOrderJournalSelected: any;
+  debtTypeSelected = this.debtPaymentJournals[0];
+  debtJournalSelected: any;
   selectedJournals = [];
   constructor(
     public activeModal: NgbActiveModal,
@@ -37,7 +40,17 @@ export class SaleOrderPaymentAdvancedDialogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    console.log(this.journalLines);
+    
     this.getJounals();
+  }
+
+  save() {
+    this.submitted = true;
+    if (this.isDisabled('bank') && !this.saleOrderJournalSelected ||
+     this.debtTypeSelected.type =='bank' && !this.debtJournalSelected){
+      return;
+    }
   }
 
   getJounals() {
@@ -73,15 +86,31 @@ export class SaleOrderPaymentAdvancedDialogComponent implements OnInit {
   }
 
   onSelectDebtTypeJounals(journal) {
+    this.debtTypeSelected = journal;
     if (journal.type == 'bank'){
       let journals = this.filteredJournals['bank'].journals;
-      if (journals.length > 0)
+      if (journals.length > 1)
         this.showDebtPaymentJournal = true;
     }
   }
 
   onSelectDebtJounals(journal) {
     this.debtJournalSelected = journal;
+  }
+
+  changeOrderJournalSelected(journal) {
+    this.saleOrderJournalSelected = journal;
+    console.log(this.saleOrderJournalSelected);
+  }
+
+  removeJounalSelected(journal) {
+    let index = this.selectedJournals.findIndex(x => x.type == journal.type);
+    if (index != -1) {
+      let jnItem = this.selectedJournals[index];
+      this.amountTotalJournalPayment = this.amountTotalJournalPayment - jnItem.amount;
+      this.amountPayment = this.amountPayment + jnItem.amount;
+      this.selectedJournals.splice(index,1);
+    }
   }
 
 }
