@@ -236,5 +236,7 @@ namespace ApplicationCore.Entities
         /// </summary>
         public DateTime? DateDone { get; set; }
 
+        public Guid? AgentId { get; set; }
+        public Agent Agent { get; set; }
     }
 }

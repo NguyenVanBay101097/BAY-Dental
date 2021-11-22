@@ -846,6 +846,16 @@ namespace Infrastructure.Services
             return Convert.ToDouble(val);
         }
 
+        public async Task<double> GetHistoryPrice(Guid id, Guid companyId, DateTime? date = null)
+        {
+            date = date ?? DateTime.Now;
+            var priceHistoryObj = GetService<IProductPriceHistoryService>();
+            var history = await priceHistoryObj.SearchQuery(x => x.CompanyId == companyId && x.ProductId == id && x.DateTime <= date)
+                .OrderByDescending(x => x.DateTime).ThenByDescending(x => x.DateCreated).FirstOrDefaultAsync();
+
+            return history != null ? history.Cost : 0;
+        }
+
         public async Task<ProductDisplay> DefaultGet()
         {
             var uomObj = GetService<IUoMService>();

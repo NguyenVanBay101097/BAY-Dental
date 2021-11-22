@@ -219,10 +219,8 @@ namespace Infrastructure.Services
                     .Include(x => x.Employee)
                     .Include(x => x.Assistant)
                     .Include(x => x.Counselor)
+                    .Include(x => x.Agent)
                     .ToListAsync();
-
-                var agent = await agentObj.SearchQuery(x => x.Partners.Any(s => s.Id == saleOrderPayment.Order.PartnerId))
-                    .FirstOrDefaultAsync();
 
                 foreach (var line in saleOrderPayment.Lines)
                 {
@@ -233,7 +231,8 @@ namespace Infrastructure.Services
                     var totalPaid = (saleOrderLine.AmountPaid ?? 0) + line.Amount;
 
                     //Tổng giá vốn
-                    var totalStandPrice = (decimal)productObj.GetStandardPrice(saleOrderLine.ProductId.Value, saleOrderLine.CompanyId) * saleOrderLine.ProductUOMQty;
+                    var productStdPrice = (decimal)(await productObj.GetHistoryPrice(saleOrderLine.ProductId.Value, saleOrderLine.CompanyId.Value, date: saleOrderLine.Date));
+                    var totalStandPrice = productStdPrice * saleOrderLine.ProductUOMQty;
 
                     //Tổng tiền đã tính hoa hồng trước đó
                     var totalBaseAmount = await commSetObj.SearchQuery(x => x.SaleOrderLineId == line.SaleOrderLineId).SumAsync(x => x.BaseAmount ?? 0);
@@ -305,14 +304,14 @@ namespace Infrastructure.Services
                         });
                     }
 
-                    if (agent != null && agent.CommissionId.HasValue)
+                    if (saleOrderLine.Agent != null && saleOrderLine.Agent.CommissionId.HasValue)
                     {
-                        var commPercent = await commObj.getCommissionPercent(saleOrderLine.ProductId, agent.CommissionId);
+                        var commPercent = await commObj.getCommissionPercent(saleOrderLine.ProductId, saleOrderLine.Agent.CommissionId.Value);
                         commissionSettlements.Add(new CommissionSettlement
                         {
-                            PartnerId = agent.PartnerId,
-                            AgentId = agent.Id,
-                            CommissionId = agent.CommissionId,
+                            PartnerId = saleOrderLine.Agent.PartnerId,
+                            AgentId = saleOrderLine.Agent.Id,
+                            CommissionId = saleOrderLine.Agent.CommissionId,
                             ProductId = saleOrderLine.ProductId,
                             SaleOrderLineId = saleOrderLine.Id,
                             HistoryLineId = line.Id,
