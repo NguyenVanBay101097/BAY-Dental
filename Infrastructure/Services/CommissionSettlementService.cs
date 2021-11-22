@@ -198,6 +198,10 @@ namespace Infrastructure.Services
 
             var totalItems = await query.CountAsync();
 
+            query = query.OrderByDescending(x => x.DateCreated);
+            if (val.Limit > 0)
+                query = query.Skip(val.Offset).Take(val.Limit);
+
             var items = await query.Select(x => new CommissionSettlementReportDetailOutput
             {
                 Amount = x.Amount,
@@ -293,12 +297,6 @@ namespace Infrastructure.Services
                 else if(val.CommissionDisplay == "equals_zero")
                     query = query.Where(x => x.Percentage == 0);
             }
-
-
-            if (val.Limit > 0)
-                query = query.Skip(val.Offset).Take(val.Limit);
-
-            query = query.OrderByDescending(x => x.DateCreated);
 
             return query;
         }
