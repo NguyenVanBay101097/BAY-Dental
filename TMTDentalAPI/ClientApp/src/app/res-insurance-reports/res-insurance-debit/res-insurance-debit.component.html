@@ -5,17 +5,26 @@
                 <div class="row">
                     <div class="col-4">
                         <div class="card">
-                            <h5 class="card-header d-flex justify-content-between">
-                                <span> Bảo hiểm </span>
-                                <a class="fas fa-edit text-success" title="Sửa" (click)="editInsurance()"></a>
+                            <h5 class="card-header d-flex-center bg-white">
+                                <span> {{ insuranceInfo?.name }} </span>
+                                <button class="btn btn-primary" (click)="editInsurance()">
+                                    <i class="fas fa-pencil-alt"></i>&nbsp;Sửa
+                                </button>
                             </h5>
                             <div class="card-body">
                                 <table class="o_group mt-0 o_inner_group o_group_col_12">
                                     <tbody>
                                         <tr>
                                             <td colspan="2">
-                                                <img class="avatar" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSllqIXWN4cwTR__4uLBF99Xp-8QqjcUD2w5w&usqp=CAU"
-                                                    alt="">
+                                                <div class="avatar">
+                                                    <ng-container
+                                                        *ngIf="insuranceInfo && insuranceInfo.avatar; else elseTemplate">
+                                                        <img [src]="insuranceInfo.avatar" alt="">
+                                                    </ng-container>
+                                                    <ng-template #elseTemplate>
+                                                        <img [src]="'../../../assets/images/no-avatar.png'" alt="">
+                                                    </ng-template>
+                                                </div>
                                             </td>
                                         </tr>
                                         <tr>
@@ -72,51 +81,54 @@
                         </div>
                     </div>
                     <div class="col-8">
-                        <div class="border p-3">
+                        <div class="border p-3 bg-white">
                             <div class="d-flex justify-content-between mb-2">
                                 <div class="filter-left">
                                     <app-date-range-picker-filter [startDate]="dateFrom" [endDate]="dateTo"
-                                    (searchChange)="onSearchDateChange($event)">
+                                        (searchChange)="onSearchDateChange($event)">
                                     </app-date-range-picker-filter>
                                     <div class="mt-2">
                                         <button class="btn btn-primary mr-2" (click)="onPayment()">Thu tiền</button>
-                                        <button class="btn btn-primary">Xuất excel</button>
+                                        <button class="btn btn-primary" (click)="exportExcel()">Xuất excel</button>
                                     </div>
                                 </div>
                                 <div class="filter-right">
                                     <div class="o_searchview">
-                                        <input class="o_searchview_input" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)"
-                                            placeholder="Tìm kiếm theo số phiếu, khách hàng, dịch vụ" type="text" />
+                                        <input class="o_searchview_input" [(ngModel)]="search"
+                                            (ngModelChange)="this.searchUpdate.next($event)"
+                                            placeholder="Tìm kiếm theo số phiếu, khách hàng, dịch vụ" type="text"
+                                            [ngModelOptions]="{standalone: true}" />
                                         <span class="o_searchview_icon fas fa-search"></span>
                                     </div>
                                 </div>
                             </div>
-                            <kendo-grid [resizable]="true" [data]="insuranceDebt"  [navigable]="true" [kendoGridSelectBy]="'moveId'" [selectedKeys]="selectedIds">
-                                <kendo-grid-checkbox-column [width]="50" [headerClass]="{'text-center': true}" [class]="{'text-center': true}" showSelectAll="true"></kendo-grid-checkbox-column>
+                            <kendo-grid [resizable]="true" [data]="insuranceDebt" [navigable]="true"
+                                [kendoGridSelectBy]="'moveId'" [selectedKeys]="selectedIds">
+                                <kendo-grid-checkbox-column [width]="50" [headerClass]="{'text-center': true}"
+                                    [class]="{'text-center': true}" showSelectAll="true"></kendo-grid-checkbox-column>
+                                <kendo-grid-column field="partnerName" title="Khách hàng" width="100" footerClass="font-weight-600">
+                                    <ng-template kendoGridFooterTemplate>
+                                        Tổng
+                                    </ng-template>
+                                </kendo-grid-column>
                                 <kendo-grid-column title="Ngày" width="100">
                                     <ng-template kendoGridCellTemplate let-dataItem let-column="column">
                                         {{dataItem.date | date:'shortDate'}}
                                     </ng-template>
                                 </kendo-grid-column>
-                                <kendo-grid-column field="partnerName" title="Khách hàng" width="100">
-                                </kendo-grid-column>
                                 <kendo-grid-column field="origin" title="Nguồn" width="100">
                                 </kendo-grid-column>
                                 <kendo-grid-column field="name" title="Nội dung" width="120">
                                 </kendo-grid-column>
-                                <kendo-grid-column title="Số tiền" class="text-right" width="135">
+                                <kendo-grid-column title="Số tiền" class="text-right" width="135" footerClass="text-right font-weight-600">
                                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                                         {{dataItem.amountTotal | number}}
                                     </ng-template>
+                                    <ng-template kendoGridFooterTemplate>
+                                        {{sumAmount | number}}
+                                    </ng-template>
                                 </kendo-grid-column>
                             </kendo-grid>
-                            <!-- <kendo-grid>
-                                <kendo-grid-column title="Khách hàng"></kendo-grid-column>
-                                <kendo-grid-column title="Ngày bảo lãnh"></kendo-grid-column>
-                                <kendo-grid-column title="Phiếu điều trị"></kendo-grid-column>
-                                <kendo-grid-column title="Dịch vụ"></kendo-grid-column>
-                                <kendo-grid-column title="Số tiền"></kendo-grid-column>
-                            </kendo-grid> -->
                         </div>
                     </div>
                 </div>
@@ -124,7 +136,3 @@
         </div>
     </form>
 </div>
-
-<!-- <app-date-range-picker-filter [showClearButton]="false" [opens]="'right'" class="mr-1" opens="right">
-</app-date-range-picker-filter>
-<button class="btn btn-primary">Thu tiền</button> -->

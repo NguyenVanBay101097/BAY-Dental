@@ -5,21 +5,29 @@
                 <a routerLink="/res-insurance">Bảo hiểm</a>
             </li>
             <li class="active">
-                <span>Bảo hiểm Bảo Việt</span>
+                <span> {{insuranceName||''}} </span>
             </li>
         </ol>
 
         <div>
             <div class="o_cp_buttons">
-                <ul class="nav nav-pills">
-                    <li class="nav-item">
-                        <a routerLink="debit" class="nav-link px-3 py-1" routerLinkActive="active">Công nợ</a>
+                <ul ngbNav #nav="ngbNav" [activeId]="route.fragment | async" class="nav-pills">
+                    <li [ngbNavItem]="'debit'">
+                        <a ngbNavLink routerLink="." [fragment]="'debit'">Công nợ</a>
+                        <ng-template ngbNavContent>
+                            <app-res-insurance-debit [insuranceInfo]="insuranceInfo"></app-res-insurance-debit>
+                        </ng-template>
                     </li>
-                    <li class="nav-item">
-                        <a routerLink="histories" class="nav-link px-3 py-1" routerLinkActive="active">Lịch sử thu</a>
+                    <li [ngbNavItem]="'histories'">
+                        <a ngbNavLink routerLink="." [fragment]="'histories'">Lịch sử thu</a>
+                        <ng-template ngbNavContent>
+                            <app-res-insurance-histories [partnerId]="insuranceInfo?.partnerId">
+                            </app-res-insurance-histories>
+                        </ng-template>
                     </li>
                 </ul>
             </div>
+
             <div class="o_cp_sidebar">
             </div>
         </div>
@@ -28,4 +36,4 @@
     </div>
 </div>
 
-<router-outlet></router-outlet>
+<div [ngbNavOutlet]="nav"></div>

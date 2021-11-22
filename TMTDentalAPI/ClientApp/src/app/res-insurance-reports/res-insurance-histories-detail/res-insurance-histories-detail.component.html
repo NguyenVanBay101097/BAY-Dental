@@ -1,0 +1,22 @@
+<div class="card">
+    <div class="card-header p-2 font-weight-600">
+        <h6 class="mb-0">Chi tiết phiếu thu</h6>
+    </div>
+    <div class="card-body p-2">
+        <kendo-grid [data]="gridData">
+            <kendo-grid-column title="Khách hàng"> </kendo-grid-column>
+            <kendo-grid-column title="Ngày bảo lãnh">
+                <!-- <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.paymentDate | date : 'shortDate' }}
+        </ng-template> -->
+            </kendo-grid-column>
+            <kendo-grid-column title="Phiếu điều trị"></kendo-grid-column>
+            <kendo-grid-column title="Dịch vụ"></kendo-grid-column>
+            <kendo-grid-column title="Số tiền">
+                <!-- <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.amount | number}}
+        </ng-template> -->
+            </kendo-grid-column>
+        </kendo-grid>
+    </div>
+</div>

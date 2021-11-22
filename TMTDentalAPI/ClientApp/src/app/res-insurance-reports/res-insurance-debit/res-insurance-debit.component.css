@@ -7,7 +7,14 @@
     width: 50%;
 }
 
-.avatar{
+.d-flex-center {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.avatar img {
     width: 80px;
     height: auto;
+    object-fit: cover;
 }

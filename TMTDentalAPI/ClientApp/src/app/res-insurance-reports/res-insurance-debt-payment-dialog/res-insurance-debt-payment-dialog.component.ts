@@ -16,15 +16,16 @@ import { NotifyService } from 'src/app/shared/services/notify.service';
   styleUrls: ['./res-insurance-debt-payment-dialog.component.css']
 })
 export class ResInsuranceDebtPaymentDialogComponent implements OnInit {
+  @ViewChild('journalCbx', { static: true }) journalCbx: ComboBoxComponent;
   formGroup: FormGroup;
   defaultVal: AccountRegisterPaymentDisplay;
   filteredJournals: AccountJournalSimple[];
-  @ViewChild('journalCbx', { static: true }) journalCbx: ComboBoxComponent;
   loading = false;
   title: string;
   purchaseType: string;
   submitted = false;
   partnerId: string;
+  debitItems: any[];
 
   constructor(private paymentService: AccountPaymentService,
     private fb: FormBuilder,
@@ -36,7 +37,7 @@ export class ResInsuranceDebtPaymentDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.formGroup = this.fb.group({
-      amount: [0, Validators.required],
+      amount: 0,
       paymentDateObj: [null, Validators.required],
       paymentDate: null,
       communication: null,
@@ -50,6 +51,7 @@ export class ResInsuranceDebtPaymentDialogComponent implements OnInit {
 
     setTimeout(() => {
       if (this.defaultVal) {
+        this.debitItems = this.defaultVal.debitItems;
         this.formGroup.patchValue(this.defaultVal);
         var paymentDate = new Date(this.defaultVal.paymentDate);
         this.formGroup.get('paymentDateObj').setValue(paymentDate);
@@ -83,15 +85,14 @@ export class ResInsuranceDebtPaymentDialogComponent implements OnInit {
     return this.accountJournalService.autocomplete(val);
   }
 
-  save() {
-    debugger
+  onSave() {
     var val = this.formGroup.value;
     val.partnerId = this.partnerId ? this.partnerId : val.partnerId;
     val.journalId = val.journal.id;
     val.paymentDate = this.intlService.formatDate(val.paymentDateObj, 'd', 'en-US');
     this.paymentService.create(val).subscribe((result: any) => {
-      this.paymentService.post([result.id]).subscribe(() => {
-        this.activeModal.close();
+      this.paymentService.post([result.id]).subscribe((res) => {
+        this.activeModal.close(res);
       });
     }, (err) => {
       this.notifyService.notify('error', err);
@@ -100,6 +101,13 @@ export class ResInsuranceDebtPaymentDialogComponent implements OnInit {
 
   get f() { return this.formGroup.controls; }
 
+  deleteItem(item, index) {
+    this.debitItems.splice(index, 1);
+    const invoiceIds = this.defaultVal.invoiceIds.filter(val => val !== item.moveId);
+    const amountComputed = this.f.amount.value - item.balance;
+    this.f.amount.setValue(amountComputed);
+    this.f.invoiceIds.setValue(invoiceIds);
+  }
 
   cancel() {
     this.activeModal.dismiss();

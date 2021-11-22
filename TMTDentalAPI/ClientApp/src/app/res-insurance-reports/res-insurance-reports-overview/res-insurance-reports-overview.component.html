@@ -11,31 +11,36 @@
 <div class="p-3">
     <div class="d-flex justify-content-between mb-2">
         <div class="filter-left">
-            <div class="mr-2 mb-2">
-                <app-date-range-picker-filter [startDate]="dateFrom" [endDate]="dateTo"
-                    (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
-            </div>
-            <div class="mr-2">
-                <kendo-combobox [(ngModel)]="companyId" (valueChange)="changeCompany($event)" class="form-control"
+            <div class="d-flex mb-2">
+                <div class="mr-2">
+                    <app-date-range-picker-filter [startDate]="dateFrom" [endDate]="dateTo"
+                        (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
+                </div>
+                <div class="mr-2">
+                    <kendo-combobox [(ngModel)]="companyId" (valueChange)="changeCompany($event)" class="form-control"
                         [data]="filteredCompanies" [textField]="'name'" [filterable]="true" #companyCbx
                         [valueField]="'id'" [valuePrimitive]="true" [placeholder]="'Tất cả chi nhánh'">
                     </kendo-combobox>
-            </div>
-            <div class="dropdown mr-2">
-                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-download"></i> Xuất File
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item">Xuất Excel</a>
-                    <a class="dropdown-item">Xuất PDF</a>
                 </div>
             </div>
-            <button class="btn btn-primary">In báo cáo</button>
+            <div class="d-flex mb-2">
+                <div class="dropdown mr-2">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-download"></i> Xuất File
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item">Xuất Excel</a>
+                        <a class="dropdown-item">Xuất PDF</a>
+                    </div>
+                </div>
+                <button class="btn btn-primary">In báo cáo</button>
+            </div>
         </div>
         <div class="filter-right">
             <div class="o_searchview">
-                <input class="o_searchview_input" placeholder="Tìm kiếm theo tên, số điện thoại" type="text" />
+                <input class="o_searchview_input" placeholder="Tìm kiếm theo tên, số điện thoại" type="text"
+                    [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
                 <span class="o_searchview_icon fas fa-search"></span>
             </div>
         </div>
@@ -46,25 +51,25 @@
                 <div class="o_aggregate_col o_group_col_2">
                     <div class="o_aggregate">
                         <h5>Nợ đầu kỳ</h5>
-                        <div class="o_value text-success">{{0 || 0 | number}}</div>
+                        <div class="o_value text-primary"> {{sumBegin || 0 | number}} </div>
                     </div>
                 </div>
                 <div class="o_aggregate_col o_group_col_2">
                     <div class="o_aggregate">
                         <h5>Tiền phát sinh</h5>
-                        <div class="o_value text-primary"> {{0 || 0 | number}}</div>
+                        <div class="o_value text-primary"> {{sumDebit || 0 | number}}</div>
                     </div>
                 </div>
                 <div class="o_aggregate_col o_group_col_2">
                     <div class="o_aggregate">
                         <h5>Tiền thanh toán</h5>
-                        <div class="o_value text-danger">{{0 || 0 | number }}</div>
+                        <div class="o_value text-success"> {{sumCredit || 0 | number }} </div>
                     </div>
                 </div>
                 <div class="o_aggregate_col o_group_col_2">
                     <div class="o_aggregate">
                         <h5>Nợ cuối kỳ</h5>
-                        <div class="o_value text-danger">{{0 || 0 | number }}</div>
+                        <div class="o_value text-danger"> {{sumEnd || 0 | number }} </div>
                     </div>
                 </div>
             </div>
@@ -72,10 +77,30 @@
     </div>
     <kendo-grid [data]="gridData" [pageable]="pagerSettings" [skip]="offset" [pageSize]="limit"
         (pageChange)="onPageChange($event)">
-        <kendo-grid-column title="Công ty bảo hiểm"></kendo-grid-column>
-        <kendo-grid-column title="Nợ đầu kỳ"></kendo-grid-column>
-        <kendo-grid-column title="Phát sinh"></kendo-grid-column>
-        <kendo-grid-column title="Thanh toán"></kendo-grid-column>
-        <kendo-grid-column title="Nợ cuối kỳ"></kendo-grid-column>
+        <kendo-grid-column field="partnerName" title="Công ty bảo hiểm"></kendo-grid-column>
+        <kendo-grid-column field="begin" title="Nợ đầu kỳ">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{ dataItem.begin | number }}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="debit" title="Phát sinh">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{ dataItem.debit | number }}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="credit" title="Thanh toán">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{ dataItem.credit | number }}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="end" title="Nợ cuối kỳ">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{ dataItem.end | number }}
+            </ng-template>
+        </kendo-grid-column>
+        <div *kendoGridDetailTemplate="let dataItem">
+            <app-res-insurance-reports-detail-list [dateFrom]="dateFrom" [dateTo]="dateTo"
+                [partnerId]="dataItem.partnerId" [companyId]="companyId"></app-res-insurance-reports-detail-list>
+        </div>
     </kendo-grid>
 </div>
