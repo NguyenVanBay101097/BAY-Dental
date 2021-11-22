@@ -3,6 +3,10 @@
     justify-content: space-between;
 }
 
+.payment-methods:hover {
+    cursor: pointer;
+}
+
 .payment-methods button {
     width: calc(25% - 10px);
 }
@@ -13,6 +17,8 @@
 
 .payment-title {
     color: #7f7f7f;
+    margin-top: 0.5rem;
+    margin-bottom: 0;
 }
 
 .journal-item {
@@ -22,14 +28,19 @@
     align-items: center;
     border-top: 1px solid rgba(0,0,0,.125);
     border-bottom: 1px solid rgba(0,0,0,.125);
-    background-image: linear-gradient(#f0f0f0, #e5e5e5);
+    /* background-image: linear-gradient(#f0f0f0, #e5e5e5); */
 }
 
 .journal-input {
     border-radius: 2px;
     overflow: hidden;
+    margin-bottom: 0.5rem;
 }
 
 .journal-input-number {
     width: 30%;
+}
+
+.btn.disabled, .btn:disabled, .btn.disabled .pointer, .btn:disabled .pointer {
+    cursor: default;
 }

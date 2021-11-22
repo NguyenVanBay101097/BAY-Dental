@@ -74,12 +74,12 @@
                                 <tr>
                                     <td colspan="1"></td>
                                     <td class="text-right" colspan="1">Tiền dịch vụ còn thiếu:</td>
-                                    <td class="text-danger" colspan="1">14.000.000</td>
+                                    <td class="text-danger" colspan="1">{{amountResidual | number}}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="1"></td>
                                     <td class="text-right" colspan="1">Công nợ hiện tại:</td>
-                                    <td class="text-danger" colspan="1">200.000</td>
+                                    <td class="text-danger" colspan="1">{{amountDebtTotal | number}}</td>
                                 </tr>
                                 <!-- <tr>
                                     <td colspan="1" class="o_td_label">
@@ -110,7 +110,7 @@
                     <div class="o_group">
                         <h6 class="mb-3">Thanh toán dịch vụ</h6>
                         <div class="custom-control custom-switch pl-0 mb-2">
-                            <input type="checkbox" (change)="isPaymentForService = !isPaymentForService" class="custom-control-input" id="customSwitch1">
+                            <input type="checkbox" (change)="changePaymentForService()" class="custom-control-input" id="customSwitch1">
                             <label class="custom-control-label" for="customSwitch1">Thanh toán theo dịch vụ</label>
                         </div>
                         <table *ngIf="isPaymentForService" class="table mb-2">
@@ -119,15 +119,21 @@
                             <th class="text-right">Đã trả</th>
                             <th class="text-right">Còn thiếu</th>
                             <th class="text-right">Thanh toán</th>
-                            <tbody>
-                                <td class="text-left">Cấy ghép răng Implant</td>
-                                <td class="text-right">1.000.000</td>
-                                <td class="text-right">0</td>
-                                <td class="text-right">1.000.000</td>
-                                <td class="text-right w-25">
-                                    <kendo-numerictextbox [min]="0" [format]="'n0'">
-                                    </kendo-numerictextbox>
-                                </td>
+                            <tbody formArrayName="lines">
+                                <ng-container *ngFor="let line of linesFC.controls; let i=index">
+                                    <tr [formGroupName]="i">
+                                        <td class="text-left">{{ line.get('saleOrderLine').value.name }}</td>
+                                        <td class="text-right">{{ line.get('saleOrderLine').value.priceTotal | number }}</td>
+                                        <td class="text-right">{{ line.get('saleOrderLine').value.amountPaid | number }}</td>
+                                        <td class="text-right">{{ line.get('saleOrderLine').value.amountResidual | number }}</td>
+                                        <td class="text-right w-25">
+                                            <kendo-numerictextbox [step]="1000" [min]="0" [format]="'n0'" 
+                                            [max]="line.get('saleOrderLine').value.amountResidual" [autoCorrect]="true" 
+                                            style="max-width: 200px;" formControlName="amount" (valueChange)="changeMoneyLine(line)">
+                                            </kendo-numerictextbox>
+                                        </td>
+                                    </tr>
+                                </ng-container>
                             </tbody>
                         </table>
                         <!-- <div *ngIf="showError_1" class="text-danger">
@@ -163,14 +169,18 @@
                             </tbody>
                         </table> -->
                     </div>
-                    <div *ngIf="isPaymentForService" class="o_group d-flex justify-content-between">
+                    <div class="o_group d-flex justify-content-between">
                         <table class="o_group o_inner_group o_group_col_6" style="width: 45%;">
                             <tr>
                                 <td>Khách trả <i>(tiền mặt)</i> </td>
                                 <td>
-                                    <kendo-numerictextbox [min]="0" [format]="'n0'">
+                                    <kendo-numerictextbox [min]="0" [max]="maxAmount == 0 ? null : maxAmount" [step]="1000" [format]="'n0'"
+                                     [autoCorrect]="true" (blur)="enterMoney()" formControlName="amount">
                                     </kendo-numerictextbox>
-                                    <div></div>
+                                    <div *ngIf="f.amount.errors && (f.amount.touched || f.amount.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="f.amount.errors.required">Nhập số tiền</div>
+                                        <div *ngIf="f.amount.errors.min">Nhập số tiền lớn hơn 0</div>
+                                    </div>
                                 </td>
                             </tr>
                         </table>
@@ -178,26 +188,32 @@
                             <tr>
                                 <td>Nội dung</td>
                                 <td>
-                                    <input type="text" class="form-control">
+                                    <input type="text" class="form-control" formControlName="note">
                                 </td>
                             </tr>
                         </table>
                     </div>
-                    <div class="o_group">
+                    <div class="o_group" *ngIf="amountDebtTotal">
                         <div class="form-check pl-0">
                             <label class="form-check-label" for="flexCheckDefault">
                                 <h6>Thanh toán công nợ</h6>
                             </label>
-                            <input (change)="isPaymentDebt = !isPaymentDebt" class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                            <input (change)="isDebtPayment = !isDebtPayment" formControlName="isDebtPayment"
+                             class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
                         </div>
-                        <div *ngIf="isPaymentDebt" class="d-flex justify-content-between">
+                        <div *ngIf="isDebtPayment" class="d-flex justify-content-between">
                             <table class="o_group o_inner_group o_group_col_6" style="width: 45%;">
                                 <tr>
                                     <td>Khách trả <i>(tiền mặt)</i> </td>
                                     <td>
-                                        <kendo-numerictextbox [min]="0" [format]="'n0'">
+                                        <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="debtAmount"
+                                        [max]="amountDebtTotal" [step]="1000" [format]="'n0'"
+                                        [autoCorrect]="true">
                                         </kendo-numerictextbox>
-                                        <div></div>
+                                        <div *ngIf="f.debtAmount.errors && (f.debtAmount.touched || f.debtAmount.dirty || submitted)" class="text-danger">
+                                            <div *ngIf="f.debtAmount.errors.required">Nhập số tiền</div>
+                                            <div *ngIf="f.debtAmount.errors.min">Nhập số tiền lớn hơn 0</div>
+                                        </div>
                                     </td>
                                 </tr>
                             </table>
@@ -205,7 +221,7 @@
                                 <tr>
                                     <td>Nội dung</td>
                                     <td>
-                                        <input type="text" class="form-control">
+                                        <input type="text" class="form-control" formControlName="debNote">
                                     </td>
                                 </tr>
                             </table>
@@ -216,7 +232,7 @@
                             <tr>
                                 <td><h6>Tổng tiền khách trả</h6></td>
                                 <td class="text-primary text-center">
-                                    500.000
+                                    {{getAmountTotalPayment() | number}}
                                 </td>
                             </tr>
                         </table>
@@ -325,7 +341,7 @@
 </div>
 
 <footer class="modal-footer">
-    <ng-container *ngIf="step === 1; else elseTemplateFooter">
+    <!-- <ng-container *ngIf="step === 1; else elseTemplateFooter">
         <button type="button" class="btn btn-primary" (click)="nextStep()" [disabled]="loading" accesskey="s">Tiếp
             tục</button>
         <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="cancel()"
@@ -335,13 +351,16 @@
 
         <button type="button" class="btn btn-secondary" (click)="backPreviousStep()" [disabled]="loading">Trở
             lại</button>
-        <button type="button" class="btn btn-primary" (click)="saveAndPrint()" [disabled]="loading">Thanh
-            toán và in</button>
-        <button type="button" class="btn btn-primary" (click)="save()" [disabled]="loading" accesskey="s">Thanh
-            toán</button>
-        <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="cancel()"
-            accesskey="q">Đóng</button>
+        
 
-    </ng-template>
+    </ng-template> -->
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="loading" accesskey="s">Thanh
+        toán</button>
+    <button type="button" class="btn btn-primary" (click)="saveAndPrint()" [disabled]="loading">Thanh
+        toán và in</button>
+    <button type="button" class="btn btn-primary" (click)="advancedPayment()" [disabled]="loading">Thanh
+        toán nâng cao</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="cancel()"
+        accesskey="q">Đóng</button>
 
 </footer>

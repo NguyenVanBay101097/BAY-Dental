@@ -1,15 +1,18 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
+import { NgbActiveModal, NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
 import { IntlService } from "@progress/kendo-angular-intl";
 import {
   AccountJournalFilter, AccountJournalService, AccountJournalSimple
 } from "src/app/account-journals/account-journal.service";
 import { AuthService } from "src/app/auth/auth.service";
+import { CustomerDebtReportService } from "src/app/core/services/customer-debt-report.service";
+import { PaymentService } from "src/app/core/services/payment.service";
 import { SaleOrderPaymentService } from "src/app/core/services/sale-order-payment.service";
 import { PartnerService } from "src/app/partners/partner.service";
 import { AppSharedShowErrorService } from "src/app/shared/shared-show-error.service";
+import { SaleOrderPaymentAdvancedDialogComponent } from "../sale-order-payment-advanced-dialog/sale-order-payment-advanced-dialog.component";
 
 @Component({
   selector: "app-sale-order-payment-dialog",
@@ -36,8 +39,10 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   partner: any;
 
   isPaymentForService = false;
-  isPaymentDebt = false;
-
+  isDebtPayment = false;
+  amountDebtTotal = 0;
+  amountResidual = 0;
+  amountPaymentTotal = 0;
   constructor(
     private fb: FormBuilder,
     private intlService: IntlService,
@@ -46,7 +51,11 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     private errorService: AppSharedShowErrorService,
     private authService: AuthService,
     private saleOrderPaymentService: SaleOrderPaymentService,
-    private partnerService: PartnerService
+    private partnerService: PartnerService,
+    private customerDebtReportService: CustomerDebtReportService,
+    private paymentService: PaymentService,
+    private modalService: NgbModal,
+
   ) { }
 
   ngOnInit() {
@@ -55,10 +64,15 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
       date: [new Date(), Validators.required],
       orderId: [null, Validators.required],
       companyId: [null, Validators.required],
-      journalLines: this.fb.array([]),
+      // journalLines: this.fb.array([]),
       lines: this.fb.array([]),
       note: "",
       state: "draft",
+      isDebtPayment: false,
+      debtJournalId: null,
+      debtAmount: [0, Validators.required],
+      debNote: null,
+      partnerId: this.partner.id
     });
 
     setTimeout(() => {
@@ -67,18 +81,21 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
         this.paymentForm.patchValue(this.defaultVal);
         this.maxAmount = this.getValueForm("amount");
         this.paymentForm.get("amount").setValue(0);
-
+        this.amountResidual = this.defaultVal.lines.reduce((total,line) => {
+          return total + line?.saleOrderLine?.amountResidual;
+        },0);
+        this.setAmountPaymentTotal();
         this.linesFC.clear();
         this.defaultVal.lines.forEach((line) => {
           var g = this.fb.group(line);
           this.linesFC.push(g);
         });
 
-        this.journalLinesFC.clear();
-        this.defaultVal.journalLines.forEach((line) => {
-          var g = this.fb.group(line);
-          this.journalLinesFC.push(g);
-        });
+        // this.journalLinesFC.clear();
+        // this.defaultVal.journalLines.forEach((line) => {
+        //   var g = this.fb.group(line);
+        //   this.journalLinesFC.push(g);
+        // });
 
         this.paymentForm.markAsPristine();
       }
@@ -93,6 +110,22 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
       //   this.journalCbx.loading = false;
       // });
     });
+    this.getAmountDebtTotal();
+  }
+
+  getAmountDebtTotal() {
+    this.customerDebtReportService.getAmountDebtTotal(result => {
+      this.amountDebtTotal = result.debitTotal;
+    })
+  }
+
+  setAmountPaymentTotal() {
+    if (!this.isPaymentForService) {
+      this.amountPaymentTotal = this.amountResidual;
+    }
+    else {
+      this.amountPaymentTotal = 0;
+    }
   }
 
   get amount() {
@@ -113,6 +146,16 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
   get cashLineFG() {
     return this.journalLinesFC.controls.find(x => x.value.journal.type == 'cash');
+  }
+
+  get debtAmount() {
+    return this.paymentForm.get('debtAmount').value;
+  }
+
+  getAmountTotalPayment() {
+    let amount = this.amount | 0;
+    let debtAmount = this.debtAmount | 0;
+    return amount + debtAmount;
   }
 
   loadFilteredJournals() {
@@ -155,41 +198,45 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   }
 
   save() {
-    if (!this.isThanhToanDu()) {
-      alert('Vui lòng phân bổ đủ số tiền cần thanh toán');
-      return false;
-    }
+    // if (!this.isThanhToanDu()) {
+    //   alert('Vui lòng phân bổ đủ số tiền cần thanh toán');
+    //   return false;
+    // }
 
     this.submitted = true;
     if (!this.paymentForm.valid) {
       return;
     }
-
     var val = this.getValueFormSave();
     if (val == null) return;
-
-    this.saleOrderPaymentService.create(val).subscribe(
-      (result: any) => {
-        this.saleOrderPaymentService.actionPayment([result.id]).subscribe(
-          () => {
-            this.activeModal.close(true);
-          },
-          (err) => {
-            this.errorService.show(err);
-          }
-        );
-      },
-      (err) => {
+    this.paymentService.paymentSaleOrderAndDebt(val).subscribe(result => {
+        this.activeModal.close(true);
+    },(err) => {
         this.errorService.show(err);
-      }
-    );
+    })
+
+    // this.saleOrderPaymentService.create(val).subscribe(
+    //   (result: any) => {
+    //     this.saleOrderPaymentService.actionPayment([result.id]).subscribe(
+    //       () => {
+    //         this.activeModal.close(true);
+    //       },
+    //       (err) => {
+    //         this.errorService.show(err);
+    //       }
+    //     );
+    //   },
+    //   (err) => {
+    //     this.errorService.show(err);
+    //   }
+    // );
   }
 
   saveAndPrint() {
-    if (!this.isThanhToanDu()) {
-      alert('Vui lòng phân bổ đủ số tiền cần thanh toán');
-      return false;
-    }
+    // if (!this.isThanhToanDu()) {
+    //   alert('Vui lòng phân bổ đủ số tiền cần thanh toán');
+    //   return false;
+    // }
 
     this.submitted = true;
     if (!this.paymentForm.valid) {
@@ -198,6 +245,17 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
     var val = this.getValueFormSave();
     if (val == null) return;
+
+    var val = this.getValueFormSave();
+    if (val == null) return;
+    this.paymentService.paymentSaleOrderAndDebt(val).subscribe((result: any) => {
+      this.activeModal.close({
+        print: true,
+        paymentId: result.id,
+      });
+    },(err) => {
+        this.errorService.show(err);
+    })
 
     this.saleOrderPaymentService.create(val).subscribe(
       (result: any) => {
@@ -519,6 +577,22 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
       var advanceMax = this.amount - otherLineAmount > this.advanceAmount ? this.advanceAmount : this.amount - otherLineAmount;
       return advanceMax > 0 ? advanceMax : 0;
     }
+  }
+
+  changePaymentForService() {
+    this.isPaymentForService = !this.isPaymentForService;
+    let total = this.isPaymentForService ? this.amountDebtTotal : 0;
+    this.paymentForm.get('amount').setValue(total);
+  }
+
+  advancedPayment() {
+    let modalRef = this.modalService.open(SaleOrderPaymentAdvancedDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Thanh toán';
+    modalRef.componentInstance.amountResidual = this.amountResidual;
+    modalRef.componentInstance.amountPayment = this.amountResidual;
+    modalRef.componentInstance.debtAmountTotal = this.amountDebtTotal;
+
+
   }
 
 }

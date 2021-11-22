@@ -9,8 +9,8 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="o_group">
-                    <h6 class="payment-title">Thanh toán dịch vụ</h6>
-                    <div class="o_group o_inner_group o_group_col_6 mt-0">
+                    <div class="o_group o_inner_group o_group_col_8 pr-3 mt-0">
+                        <h6 class="payment-title">Thanh toán dịch vụ</h6>
                         <table class="mb-2 o_group o_inner_group o_group_col_12">
                             <tbody>
                                 <tr>
@@ -20,7 +20,7 @@
                                         </label>
                                     </td>
                                     <td colspan="1" class="text-primary text-right">
-                                        300.000
+                                        {{amountResidual | number}}
                                     </td>
                                 </tr>
                                 <tr>
@@ -30,38 +30,42 @@
                                         </label>
                                     </td>
                                     <td colspan="1" class="text-right">
-                                        <kendo-numerictextbox [min]="0" [format]="'n0'">
+                                        <kendo-numerictextbox [min]="0" [format]="'n0'" [(ngModel)]="amountPayment" name="amountPayment"
+                                         [spinners]="false">
                                         </kendo-numerictextbox>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
-                        <div class="journal-btn">
-                            <div class="payment-methods">
-                                <ng-container *ngFor="let item of filteredJournals">
-                                    <button class="btn border d-flex flex-column align-items-center">
-                                        <i class="far fa-credit-card"></i>
-                                        <label class="pointer my-1">{{item.name}}</label>
-                                    </button>
-                                </ng-container>
-                            </div>
-                        </div>
-                        <div class="journal-input mb-2 mt-2">
-                            <div *ngFor="let item of filteredJournals" class="journal-item">
-                                <div>
-                                    <i class="far fa-trash-alt"></i>
-                                    <span class="ml-3">{{item.name}}</span>
-                                </div>
-                                <div class="journal-input-number">
-                                    <kendo-numerictextbox [min]="0" [format]="'n0'">
-                                    </kendo-numerictextbox>
+                        <div class="card p-3">
+                            <div class="journal-btn">
+                                <div class="payment-methods">
+                                    <ng-container *ngFor="let item of filteredJournals">
+                                        <button [disabled]="isDisabled(item.type)" class="btn border d-flex flex-column align-items-center" (click)="selectJournal(item)">
+                                            <i class="far fa-credit-card"></i>
+                                            <label class="pointer my-1">{{item.type=='bank'?'Ngân hàng':item.name}}</label>
+                                        </button>
+                                    </ng-container>
                                 </div>
                             </div>
+                            <div class="journal-input mb-2 mt-2">
+                                <div *ngFor="let item of selectedJournals" class="journal-item">
+                                    <div>
+                                        <i class="far fa-trash-alt"></i>
+                                        <span class="ml-3">{{item.type=='bank'?'Ngân hàng':item.name}}</span>
+                                    </div>
+                                    <div *ngIf="item.type == 'bank' && item.journals.length>0" >
+                                        <kendo-combobox style="min-width: 200px;" [data]="item.journals" [textField]="'name'"  [valueField]="'id'">
+                                        </kendo-combobox>
+                                    </div>
+                                    <div class="journal-input-number text-right">
+                                        {{item.amount | number}}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <h6 class="payment-title">Thanh toán công nợ</h6>
-                    <div class="o_group o_inner_group o_group_col_6 mt-0">
-                        <table class="mb-2 o_group o_inner_group o_group_col_12">
+                        <h6 class="payment-title">Thanh toán công nợ</h6>
+                        <table class="mb-2 mt-0 o_group o_inner_group o_group_col_12">
                             <tbody>
                                 <tr>
                                     <td colspan="1" class="o_td_label">
@@ -70,7 +74,7 @@
                                         </label>
                                     </td>
                                     <td colspan="1" class="text-primary text-right">
-                                        300.000
+                                        {{debtAmountTotal | number}}
                                     </td>
                                 </tr>
                             </tbody>
@@ -78,16 +82,42 @@
                         <div class="journal-input mb-2 mt-2">
                             <div class="journal-item">
                                 <div class="journal-input-number">
-                                    <kendo-combobox [data]="filteredJournals" [textField]="'name'"  [valueField]="'id'">
+                                    <kendo-combobox [data]="debtPaymentJournals" [textField]="'name'"  [valueField]="'type'"
+                                    (selectionChange)="onSelectDebtTypeJounals($event)" [(ngModel)]="debtPaymentJournals[0]">
                                     </kendo-combobox>
                                 </div>
-                                <div class="journal-input-number">
-                                    <kendo-combobox [data]="filteredJournals" [textField]="'name'"  [valueField]="'id'">
+                                <div *ngIf="showDebtPaymentJournal" class="journal-input-number">
+                                    <kendo-combobox [data]="filteredJournals" [textField]="'name'"  [valueField]="'id'" 
+                                    (selectionChange)="onSelectDebtJounals($event)">
                                     </kendo-combobox>
                                 </div>
-                                <div class="journal-input-number">
-                                    <kendo-numerictextbox [min]="0" [format]="'n0'">
-                                    </kendo-numerictextbox>
+                                <div class="journal-input-number text-right">
+                                    {{debtAmountTotal | number}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="o_group o_inner_group o_group_col_4 mt-0">
+                        <div class="card bg-light">
+                            <div class="card-body p-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h6> Tổng tiền khách cần trả</h6>
+                                    <span class="mb-0 text-right text-primary">{{ this.amountResidual | number}}</span>
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-between">
+                                    <h6> Tổng tiền khách đưa</h6>
+                                    <span class="mb-0 text-right text-primary">{{ this.amountTotalJournalPayment | number}}</span>
+                                </div>
+                                <div *ngFor="let item of selectedJournals"
+                                    class="d-flex justify-content-between align-items-center mb-2">
+                                    <span>{{item.name}}</span>
+                                    <span>{{item.amount | number}}</span>
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-between">
+                                    <h6> Còn thiếu</h6>
+                                    <span class="mb-0 text-right text-primary">{{this.amountResidual - this.amountTotalJournalPayment | number}}</span>
                                 </div>
                             </div>
                         </div>

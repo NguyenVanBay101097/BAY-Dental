@@ -509,7 +509,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   actionSaleOrderPayment() {
     if (this.saleOrderId) {
       this.saleOrderService.getSaleOrderPaymentBySaleOrderId(this.saleOrderId).subscribe(rs2 => {
-        let modalRef = this.modalService.open(SaleOrderPaymentAdvancedDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        let modalRef = this.modalService.open(SaleOrderPaymentDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = 'Thanh toán';
         modalRef.componentInstance.defaultVal = rs2;
         modalRef.componentInstance.advanceAmount = this.amountAdvanceBalance;

@@ -26,9 +26,9 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> SaleOrderCustomerDebtPayment(SaleOrderCustomerDebtPaymentReq val)
         {
             await _unitOfWork.BeginTransactionAsync();
-            await _paymentService.SaleOrderCustomerDebtPayment(val);
+            var res = await _paymentService.SaleOrderCustomerDebtPayment(val);
             _unitOfWork.Commit();
-            return Ok();
+            return Ok(_mapper.Map<SaleOrderPaymentDisplay>(res));
         }
 
     }

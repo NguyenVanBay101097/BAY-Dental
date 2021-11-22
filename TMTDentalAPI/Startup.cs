@@ -582,6 +582,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new HrJobProfile());
                 mc.AddProfile(new ProductPricelistItemProfile());
                 mc.AddProfile(new SampleDataProfile());
+                mc.AddProfile(new PaymentProfile());
             };
 
             #endregion

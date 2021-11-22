@@ -24,16 +24,17 @@ namespace Infrastructure.Services
             _contextAccessor = contextAccessor;
         }
 
-        public async Task SaleOrderCustomerDebtPayment(SaleOrderCustomerDebtPaymentReq val)
+        public async Task<SaleOrderPayment> SaleOrderCustomerDebtPayment(SaleOrderCustomerDebtPaymentReq val)
         {
             var soPaymentObj = GetService<ISaleOrderPaymentService>();
             var phieuThuChiObj = GetService<IPhieuThuChiService>();
             var journalObj = GetService<IAccountJournalService>();
             #region saleorder payment
+            var cashJournal = await journalObj.GetJournalByTypeAndCompany("cash", val.CompanyId);
+
             if (!val.JournalLines.Any())
             {
-                var cashJournal = await journalObj.GetJournalByTypeAndCompany("cash", val.CompanyId);
-                val.JournalLines.ToList().Add(new SaleOrderPaymentJournalLineSave()
+                val.JournalLines.Add(new SaleOrderPaymentJournalLineSave()
                 {
                     Amount = val.Amount,
                     JournalId = cashJournal.Id
@@ -45,19 +46,20 @@ namespace Infrastructure.Services
             #endregion
             #region debt payment
             if (!val.IsDebtPayment)
-                return;
+                return soPayment;
             var phieuThuChiSave = new PhieuThuChiSave()
             {
                 AccountType = "customer_debt",
                 Amount = val.DebtAmount,
                 Date = val.Date,
-                JournalId = val.DebtJournalId,
+                JournalId = val.DebtJournalId.HasValue? val.DebtJournalId.Value : cashJournal.Id,
                 PartnerId = val.PartnerId,
                 Type = "thu"
             };
             var phieuThuChi = await phieuThuChiObj.CreatePhieuThuChi(phieuThuChiSave);
             await phieuThuChiObj.ActionConfirm(new List<Guid>() { phieuThuChi.Id });
             #endregion
+            return soPayment;
         }
 
         private T GetService<T>()

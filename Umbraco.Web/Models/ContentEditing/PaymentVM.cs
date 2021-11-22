@@ -16,14 +16,14 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string State { get; set; }
 
-        public IEnumerable<SaleOrderPaymentJournalLineSave> JournalLines { get; set; } = new List<SaleOrderPaymentJournalLineSave>();
-        public IEnumerable<SaleOrderPaymentHistoryLineSave> Lines { get; set; } = new List<SaleOrderPaymentHistoryLineSave>();
+        public List<SaleOrderPaymentJournalLineSave> JournalLines { get; set; } = new List<SaleOrderPaymentJournalLineSave>();
+        public List<SaleOrderPaymentHistoryLineSave> Lines { get; set; } = new List<SaleOrderPaymentHistoryLineSave>();
 
         public string Note { get; set; }
 
         //thông tin thanh toán công nợ
         public bool IsDebtPayment { get; set; }
-        public Guid DebtJournalId { get; set; }
+        public Guid? DebtJournalId { get; set; }
         public decimal DebtAmount { get; set; }
         public string DebNote { get; set; }
         public Guid PartnerId { get; set; }
