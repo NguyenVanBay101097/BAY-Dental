@@ -48,6 +48,8 @@ export class CommissionSettlementReportListComponent implements OnInit {
   ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
+    this.dateFrom = this.monthStart;
+    this.dateTo = this.monthEnd;
     this.loadEmployees();
 
     this.loadDataFromApi();
