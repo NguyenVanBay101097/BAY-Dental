@@ -51,6 +51,17 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   partner: any;
 
   isPaymentForService = false;
+
+  myOptions = {
+    digitGroupSeparator: '.',
+    decimalCharacter: ',',
+    decimalCharacterAlternative: '.',
+    currencySymbol: '\u00a0',
+    currencySymbolPlacement: 's',
+    roundingMethod: 'U',
+    minimumValue: '0',
+    decimalPlaces: '0'
+  }
   constructor(
     private fb: FormBuilder,
     private intlService: IntlService,
