@@ -87,7 +87,7 @@ select {
 }
 
 .o_form_view .oe_avatar+.oe_title {
-    padding-right: 100px;
+    padding-left: 100px;
 }
 
 .o_form_view .oe_title>h1,
@@ -1266,7 +1266,7 @@ html .o_web_client {
 /* end dashboard_view.scss*/
 
 .o_form_view .oe_avatar {
-    float: right;
+    float: left;
     margin-bottom: 10px;
 }
 
@@ -1274,7 +1274,7 @@ html .o_web_client {
     max-width: 90px;
     max-height: 90px;
     vertical-align: top;
-    border: 1px solid #a8a8a8;
+    border: 1px solid #E2E7ED;
 }
 
 .accordion-button {

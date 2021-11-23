@@ -1,5 +1,5 @@
 <div>
-    <div class="mt-2 d-flex flex-row summary flex-wrap">
+    <!-- <div class="mt-2 d-flex flex-row summary flex-wrap">
         <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
             <label style="font-weight: 600;"> Tổng sổ quỹ </label>
             <h5 class="text-success">{{totalCashBook[0]?.totalAmount || 0 | number}}</h5>
@@ -12,16 +12,47 @@
             <label style="font-weight: 600;"> Quỹ ngân hàng </label>
             <h5 class="text-success">{{totalCashBook[2]?.totalAmount || 0 | number}}</h5>
         </div>
-    </div>
+    </div> -->
 
-
+    <kendo-combobox [data]="filteredJournals" class="mb-2" [textField]="'name'" [valueField]="'id'" [filterable]="true"
+        (selectionChange)="onSelectChange($event)" #journalCbx [placeholder]="'Phương thức'">
+    </kendo-combobox>
 
     <div class="mb-2">
         <div class="row">
             <div class="col">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title text-primary">Thu</h5>
+                        <h5 class="card-title text-primary"> Tồn quỹ </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="my-2 d-flex justify-content-between">
+                            <span class="title-detail"> Đầu ngày </span>
+                            <span> {{cashBookBalanceReport?.begin || 0 | number}} </span>
+                        </div>
+                        <div class="my-2 d-flex justify-content-between">
+                            <span class="title-detail"> Tổng thu trong ngày </span>
+                            <span> {{cashBookBalanceReport?.totalThu ||0 | number}} </span>
+                        </div>
+                        <div class="my-2 d-flex justify-content-between">
+                            <span class="title-detail"> Tổng chi trong ngày </span>
+                            <span> {{cashBookBalanceReport?.totalChi || 0 | number}} </span>
+                        </div>
+                        <div class="my-2 d-flex justify-content-between">
+                            <span class="title-detail"> Chênh lệch trong ngày</span>
+                            <span> {{(cashBookBalanceReport?.totalThu - cashBookBalanceReport?.totalChi) || 0 | number}} </span>
+                        </div>
+                        <div class="my-2 d-flex justify-content-between">
+                            <span class="title-detail"> Cuối ngày</span>
+                            <span> {{cashBookBalanceReport?.totalAmount || 0 | number}} </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title text-primary"> Các khoản thu </h5>
                     </div>
                     <div class="card-body">
                         <div class="my-2 d-flex justify-content-between">
@@ -35,20 +66,24 @@
                             <span>{{cashBookDataReport?.customerIncomeTotal || 0 | number}}</span>
                         </div>
                         <div class="my-2 d-flex justify-content-between">
-                            <span class="title-detail">Khách hàng đóng tạm ứng</span>
-                            <span>{{cashBookDataReport?.advanceIncomeTotal || 0 | number}}</span>
+                            <span class="title-detail"> Khách hàng đóng tạm ứng </span>
+                            <span> {{cashBookDataReport?.advanceIncomeTotal || 0 | number}} </span>
                         </div>
                         <div class="my-2 d-flex justify-content-between">
-                            <span class="title-detail">Thu công nợ khách hàng</span>
-                            <span>{{cashBookDataReport?.debtIncomeTotal || 0 | number}}</span>
+                            <span class="title-detail"> Thu công nợ khách hàng </span>
+                            <span> {{cashBookDataReport?.debtIncomeTotal || 0 | number}} </span>
                         </div>
                         <div class="my-2 d-flex justify-content-between">
-                            <span class="title-detail">Nhà cung cấp hoàn tiền</span>
-                            <span>{{cashBookDataReport?.supplierIncomeTotal || 0 | number}}</span>
+                            <span class="title-detail"> Thu công nợ bảo hiểm </span>
+                            <span> {{cashBookDataReport?.insuranceIncomeTotal | number}} </span>
                         </div>
                         <div class="my-2 d-flex justify-content-between">
-                            <span class="title-detail">Thu ngoài</span>
-                            <span>{{cashBookDataReport?.otherIncomeTotal || 0 | number}}</span>
+                            <span class="title-detail"> Nhà cung cấp hoàn tiền </span>
+                            <span> {{cashBookDataReport?.supplierIncomeTotal || 0 | number}} </span>
+                        </div>
+                        <div class="my-2 d-flex justify-content-between">
+                            <span class="title-detail"> Thu ngoài </span>
+                            <span> {{cashBookDataReport?.otherIncomeTotal || 0 | number}} </span>
                         </div>
                     </div>
                 </div>
@@ -56,38 +91,36 @@
             <div class="col">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title text-primary">Chi</h5>
+                        <h5 class="card-title text-primary"> Các khoản chi </h5>
                     </div>
                     <div class="card-body">
                         <div class="my-2 d-flex justify-content-between">
-                            <span class="title-detail">Thanh toán cho nhà cung cấp</span>
-                            <span>{{cashBookDataReport?.supplierExpenseTotal || 0 | number}}</span>
+                            <span class="title-detail"> Thanh toán cho nhà cung cấp </span>
+                            <span> {{cashBookDataReport?.supplierExpenseTotal || 0 | number}} </span>
                         </div>
                         <div class="my-2 d-flex justify-content-between">
-                            <span class="title-detail">Hoàn tạm ứng cho khách hàng</span>
-                            <span>{{cashBookDataReport?.advanceExpenseTotal || 0 | number}}</span>
+                            <span class="title-detail"> Hoàn tạm ứng cho khách hàng </span>
+                            <span> {{cashBookDataReport?.advanceExpenseTotal || 0 | number}} </span>
                         </div>
                         <div class="my-2 d-flex justify-content-between">
-                            <span class="title-detail">Chi lương nhân viên</span>
-                            <span>{{cashBookDataReport?.salaryExpenseTotal || 0 | number}}</span>
+                            <span class="title-detail"> Chi lương nhân viên </span>
+                            <span> {{cashBookDataReport?.salaryExpenseTotal || 0 | number}} </span>
                         </div>
                         <div class="my-2 d-flex justify-content-between">
-                            <span class="title-detail">Hoa hồng người giới thiệu</span>
-                            <span>{{cashBookDataReport?.commissionExpenseTotal || 0 | number}}</span>
+                            <span class="title-detail"> Hoa hồng người giới thiệu </span>
+                            <span> {{cashBookDataReport?.commissionExpenseTotal || 0 | number}} </span>
                         </div>
                         <div class="my-2 d-flex justify-content-between">
-                            <span class="title-detail">Chi ngoài</span>
-                            <span>{{cashBookDataReport?.otherExpenseTotal || 0 | number}}</span>
+                            <span class="title-detail"> Chi ngoài </span>
+                            <span> {{cashBookDataReport?.otherExpenseTotal || 0 | number}} </span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <kendo-combobox [data]="stateOptions" class="mb-2" [textField]="'text'" [valueField]="'value'" [filterable]="true"
-        (selectionChange)="onSelectChange($event)" [placeholder]="'Phương thức'">
-    </kendo-combobox>
-    <div class="mt-2 d-flex flex-row summary flex-wrap">
+    
+    <!-- <div class="mt-2 d-flex flex-row summary flex-wrap">
         <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
             <label style="font-weight: 600;"> Quỹ đầu kỳ </label>
             <h5 class="text-primary">{{(summaryResult ? summaryResult.begin : 0) | number}}</h5>
@@ -104,7 +137,7 @@
             <label style="font-weight: 600;"> Tổng sổ quỹ </label>
             <h5 class="text-success">{{(summaryResult ? summaryResult.totalAmount : 0) | number}}</h5>
         </div>
-    </div>
+    </div> -->
 
     <kendo-grid #grid [data]="gridData" [pageable]="pagerSettings" [skip]="skip" [pageSize]="limit" [resizable]="true"
         [loading]="loading" (pageChange)="pageChange($event)">

@@ -67,7 +67,9 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    {{ (getAmountTotal() || 0) | number }}
+                                    <span class="text-primary">
+                                        {{ (getAmountTotal() || 0) | number }}
+                                    </span>
                                 </td>
                             </tr>
                         </tbody>
@@ -105,15 +107,15 @@
                                                 [spinners]="true">
                                             </kendo-numerictextbox>
                                         </ng-template>
-                                        <div class="mt-1 ml-2 d-flex">
-                                            <div class="form-check form-check-inline">
+                                        <div class="d-flex">
+                                            <div class="form-check form-check-inline mr-0">
                                                 <input class="form-check-input" [hidden]="true" type="radio"
                                                     formControlName="payType" [id]="'fixed-' + i" value="fixed"
                                                     (change)="changePayType(i)">
                                                 <label class="form-check-label btn btn-outline-primary"
                                                     [for]="'fixed-' + i"> VNĐ </label>
                                             </div>
-                                            <div class="form-check form-check-inline">
+                                            <div class="form-check form-check-inline mr-0">
                                                 <input class="form-check-input" [hidden]="true" type="radio"
                                                     formControlName="payType" [id]="'percent-' + i" value="percent"
                                                     (change)="changePayType(i)">

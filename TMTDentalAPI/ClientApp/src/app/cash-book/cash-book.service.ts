@@ -17,7 +17,7 @@ export class CashBookPaged {
 export class CashBookSummarySearch {
   companyId: string;
   resultSelection: string;
-  journal: string;
+  journalId: string;
   dateFrom: string;
   dateTo: string;
 }

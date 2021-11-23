@@ -65,7 +65,6 @@ export class ResInsuranceDebitComponent implements OnInit {
     modalRef.componentInstance.title = 'Sửa công ty bảo hiểm';
     modalRef.componentInstance.id = this.insuranceInfo ? this.insuranceInfo.id : '';
     modalRef.result.then((res: any) => {
-      console.log(res);
       this.notifyService.notify("success", "Lưu thành công")
     }, () => { });
   }
@@ -78,11 +77,9 @@ export class ResInsuranceDebitComponent implements OnInit {
     val.insuranceId = this.insuranceId ? this.insuranceId : '';
     this.resInsuranceReportService.getInsuranceDebtReport(val).subscribe((res: any) => {
       this.insuranceDebt = res;
-      console.log(this.insuranceDebt);
       const result = aggregateBy(res, [
         { aggregate: "sum", field: "amountTotal" },
       ]);
-      
       this.sumAmount = result.amountTotal ? result.amountTotal.sum : 0;
     }, (error) => console.log(error))
   }
@@ -111,7 +108,24 @@ export class ResInsuranceDebitComponent implements OnInit {
     })
   }
 
-  exportExcel(): void {
+  exportExcelFile(): void {
+    // let val;
+    // this.cashBookService.exportExcelFile(val).subscribe((res: any) => {
+    //   let filename = "CongNoBaoHiem";
 
+    //   let newBlob = new Blob([res], {
+    //     type:
+    //       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    //   });
+    //   let data = window.URL.createObjectURL(newBlob);
+    //   let link = document.createElement("a");
+    //   link.href = data;
+    //   link.download = filename;
+    //   link.click();
+    //   setTimeout(() => {
+    //     // For Firefox it is necessary to delay revoking the ObjectURL
+    //     window.URL.revokeObjectURL(data);
+    //   }, 100);
+    // });
   }
 }

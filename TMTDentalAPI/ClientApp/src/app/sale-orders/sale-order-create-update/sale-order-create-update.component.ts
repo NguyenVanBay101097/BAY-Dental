@@ -969,6 +969,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     // }
   }
 
-
+  insurancePayment() {
+    this.loadSaleOrder();
+  }
 }
 

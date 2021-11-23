@@ -8,7 +8,7 @@
     </div>
 </div>
 
-<div class="p-3">
+<div class="o_content p-3">
     <div class="d-flex justify-content-between mb-2">
         <div class="filter-left">
             <div class="d-flex mb-2">
@@ -30,11 +30,11 @@
                         <i class="fas fa-download"></i> Xuất File
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item">Xuất Excel</a>
-                        <a class="dropdown-item">Xuất PDF</a>
+                        <a class="dropdown-item" (click)="exportExcel()">Xuất Excel</a>
+                        <a class="dropdown-item" (click)="onExportPDF()">Xuất PDF</a>
                     </div>
                 </div>
-                <button class="btn btn-primary">In báo cáo</button>
+                <button class="btn btn-primary" (click)="printReport()">In báo cáo</button>
             </div>
         </div>
         <div class="filter-right">
@@ -45,7 +45,7 @@
             </div>
         </div>
     </div>
-    <div class="o_dashboard_view">
+    <div class="o_dashboard_view p-0">
         <div class="o_group m-0">
             <div class="o_group o_group_col_12">
                 <div class="o_aggregate_col o_group_col_2">
@@ -78,22 +78,22 @@
     <kendo-grid [data]="gridData" [pageable]="pagerSettings" [skip]="offset" [pageSize]="limit"
         (pageChange)="onPageChange($event)">
         <kendo-grid-column field="partnerName" title="Công ty bảo hiểm"></kendo-grid-column>
-        <kendo-grid-column field="begin" title="Nợ đầu kỳ">
+        <kendo-grid-column field="begin" title="Nợ đầu kỳ" class="text-right">
             <ng-template kendoGridCellTemplate let-dataItem>
                 {{ dataItem.begin | number }}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="debit" title="Phát sinh">
+        <kendo-grid-column field="debit" title="Phát sinh" class="text-right">
             <ng-template kendoGridCellTemplate let-dataItem>
                 {{ dataItem.debit | number }}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="credit" title="Thanh toán">
+        <kendo-grid-column field="credit" title="Thanh toán" class="text-right">
             <ng-template kendoGridCellTemplate let-dataItem>
                 {{ dataItem.credit | number }}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="end" title="Nợ cuối kỳ">
+        <kendo-grid-column field="end" title="Nợ cuối kỳ" class="text-right">
             <ng-template kendoGridCellTemplate let-dataItem>
                 {{ dataItem.end | number }}
             </ng-template>

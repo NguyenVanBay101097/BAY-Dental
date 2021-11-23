@@ -69,7 +69,9 @@
                         <li [ngbNavItem]="'services'">
                             <a ngbNavLink routerLink="." [fragment]="'services'">Dịch vụ</a>
                             <ng-template ngbNavContent>                      
-                            <app-sale-order-service-list #serviceListComp [saleOrder]="saleOrder" (updateOrderEvent)="onUpdateOrder($event)"></app-sale-order-service-list>
+                            <app-sale-order-service-list #serviceListComp [saleOrder]="saleOrder"
+                                (updateOrderEvent)="onUpdateOrder($event)" (insurancePayment)="insurancePayment()">
+                            </app-sale-order-service-list>
                             </ng-template>
                         </li>
                         <li [ngbNavItem]="'process-service'" *ngIf="saleOrder.state != 'draft'">

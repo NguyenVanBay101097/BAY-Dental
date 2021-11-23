@@ -4,20 +4,7 @@
             <div class="d-flex">
                 <app-date-range-picker-filter [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo"
                     (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
-
             </div>
-        </div>
-        <div class="o_cp_searchview">
-        </div>
-        <div class="o_cp_left">
-            <div class="o_cp_buttons">
-
-            </div>
-            <div class="o_cp_sidebar">
-            </div>
-        </div>
-        <div class="o_cp_right">
-
         </div>
     </div>
 </div>
@@ -25,21 +12,21 @@
 <div class="o_content">
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"
         (pageChange)="pageChange($event)">
-        <kendo-grid-column field="paymentDate" title="Ngày">
+        <kendo-grid-column field="paymentDate" title="Ngày" width="150">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.paymentDate | date : 'shortDate' }}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="name" title="Số phiếu"> </kendo-grid-column>
-        <kendo-grid-column field="communication" title="Nội dung"></kendo-grid-column>
-        <kendo-grid-column field="paymentType" title="Phương thức"></kendo-grid-column>
-        <kendo-grid-column field="amount" title="Số tiền">
+        <kendo-grid-column field="name" title="Số phiếu" width="150"></kendo-grid-column>
+        <kendo-grid-column field="communication" title="Nội dung" width="180"></kendo-grid-column>
+        <kendo-grid-column field="paymentType" title="Phương thức" width="150"></kendo-grid-column>
+        <kendo-grid-column field="amount" title="Số tiền" class="text-right" width="150">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 {{dataItem.amount | number}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="displayState" title="Trạng thái"></kendo-grid-column>
-        <kendo-grid-column title="Thao tác">
+        <kendo-grid-column field="displayState" title="Trạng thái" width="150"></kendo-grid-column>
+        <kendo-grid-column title="Thao tác" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <button class="btn btn-danger" title="Hủy" (click)="onCancelPaymnet(dataItem)">
                     <i class="fas fa-times"></i>

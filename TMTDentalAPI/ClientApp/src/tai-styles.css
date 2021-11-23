@@ -25,6 +25,7 @@ a {
 .modal .modal-dialog .o_form_view .o_form_sheet_bg {
     padding: 0;
     width: 100%;
+    border: none;
 }
 
 .modal .modal-dialog .o_form_view .o_form_sheet_bg>.o_form_sheet {
@@ -32,6 +33,7 @@ a {
     width: 100%;
     margin: 0 auto;
     max-width: none;
+    border: none;
 }
 
 .modal.o_technical_modal .modal-content .modal-body.o_act_window {

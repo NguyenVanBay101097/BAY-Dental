@@ -94,7 +94,7 @@ export class ResInsuranceReportsOverviewComponent implements OnInit, AfterViewIn
       { aggregate: "sum", field: "debit" },
       { aggregate: "sum", field: "end" },
     ]);
-    
+
     this.sumBegin = result.begin ? result.begin.sum : 0;
     this.sumEnd = result.end ? result.end.sum : 0;
     this.sumDebit = result.debit ? result.debit.sum : 0;
@@ -131,5 +131,64 @@ export class ResInsuranceReportsOverviewComponent implements OnInit, AfterViewIn
     this.dateFrom = e.dateFrom || '';
     this.dateTo = e.dateTo || '';
     this.loadDataFromApi();
+  }
+
+  exportExcel() {
+    let val;
+    val.companyId = val.companyId || '';
+    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
+    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    // this.accInvService.exportRevenueTimeReportExcel(val).subscribe((rs) => {
+    //   let filename = "BaoCaoCongNoBaoHiem";
+    //   let newBlob = new Blob([rs], {
+    //     type:
+    //       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    //   });
+
+    //   let data = window.URL.createObjectURL(newBlob);
+    //   let link = document.createElement("a");
+    //   link.href = data;
+    //   link.download = filename;
+    //   link.click();
+    //   setTimeout(() => {
+    //     // For Firefox it is necessary to delay revoking the ObjectURL
+    //     window.URL.revokeObjectURL(data);
+    //   }, 100);
+    // });
+  }
+
+  onExportPDF() {
+    let val;
+    val.companyId = val.companyId || '';
+    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
+    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    // this.accInvService.getRevenueTimeReportPdf(val).subscribe(res => {
+    //   let filename = "BaoCaoCongNoBaoHiem";
+
+    //   let newBlob = new Blob([res], {
+    //     type: "application/pdf",
+    //   });
+
+    //   let data = window.URL.createObjectURL(newBlob);
+    //   let link = document.createElement("a");
+    //   link.href = data;
+    //   link.download = filename;
+    //   link.click();
+    //   setTimeout(() => {
+    //     // For Firefox it is necessary to delay revoking the ObjectURL
+    //     window.URL.revokeObjectURL(data);
+    //   }, 100);
+    // });
+  }
+
+  printReport(){
+    var val;
+    val.companyId = val.companyId || '';
+    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
+    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    // this.accInvService.getPrintRevenueTimeReport(val).subscribe(result =>{
+    //   this.printService.printHtml(result);
+    // });
+    
   }
 }

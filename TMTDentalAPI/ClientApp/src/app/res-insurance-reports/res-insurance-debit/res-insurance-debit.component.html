@@ -89,7 +89,9 @@
                                     </app-date-range-picker-filter>
                                     <div class="mt-2">
                                         <button class="btn btn-primary mr-2" (click)="onPayment()">Thu tiền</button>
-                                        <button class="btn btn-primary" (click)="exportExcel()">Xuất excel</button>
+                                        <button class="btn btn-primary" (click)="exportExcelFile()">
+                                            <i class="fas fa-download"></i>&nbsp;Xuất excel
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="filter-right">
@@ -103,24 +105,26 @@
                                 </div>
                             </div>
                             <kendo-grid [resizable]="true" [data]="insuranceDebt" [navigable]="true"
-                                [kendoGridSelectBy]="'moveId'" [selectedKeys]="selectedIds">
+                                [kendoGridSelectBy]="'moveId'" [selectedKeys]="selectedIds" #grid>
                                 <kendo-grid-checkbox-column [width]="50" [headerClass]="{'text-center': true}"
                                     [class]="{'text-center': true}" showSelectAll="true"></kendo-grid-checkbox-column>
-                                <kendo-grid-column field="partnerName" title="Khách hàng" width="100" footerClass="font-weight-600">
+                                <kendo-grid-column field="partnerName" title="Khách hàng" width="150"
+                                    footerClass="font-weight-600">
                                     <ng-template kendoGridFooterTemplate>
                                         Tổng
                                     </ng-template>
                                 </kendo-grid-column>
-                                <kendo-grid-column title="Ngày" width="100">
+                                <kendo-grid-column title="Ngày" width="120">
                                     <ng-template kendoGridCellTemplate let-dataItem let-column="column">
                                         {{dataItem.date | date:'shortDate'}}
                                     </ng-template>
                                 </kendo-grid-column>
-                                <kendo-grid-column field="origin" title="Nguồn" width="100">
+                                <kendo-grid-column field="origin" title="Nguồn" width="150">
                                 </kendo-grid-column>
                                 <kendo-grid-column field="name" title="Nội dung" width="120">
                                 </kendo-grid-column>
-                                <kendo-grid-column title="Số tiền" class="text-right" width="135" footerClass="text-right font-weight-600">
+                                <kendo-grid-column title="Số tiền" class="text-right" width="135"
+                                    footerClass="text-right font-weight-600">
                                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                                         {{dataItem.amountTotal | number}}
                                     </ng-template>
