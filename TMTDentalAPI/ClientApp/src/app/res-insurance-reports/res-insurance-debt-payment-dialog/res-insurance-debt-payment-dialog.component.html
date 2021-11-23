@@ -75,11 +75,10 @@
                 <table *ngIf="defaultVal?.debitItems?.length > 0" class="table table-sm table-striped">
                     <thead>
                         <tr>
-                            <th> Ngày</th>
+                            <th> Ngày bảo lãnh </th>
                             <th> Nguồn</th>
-                            <th> Tổng tiền</th>
-                            <th> Thanh Toán</th>
-                            <th> Còn nợ</th>
+                            <th> Phiếu điều trị</th>
+                            <th> Số tiền </th>
                             <th> Thao tác</th>
                         </tr>
                     </thead>
@@ -88,9 +87,8 @@
                             <tr>
                                 <td> {{item.date | date:'shortDate'}} </td>
                                 <td> {{item.origin}} </td>
+                                <td> {{item.refDisplay }} </td>
                                 <td> {{item.balance | number}} </td>
-                                <td> {{(item.balance - item.amountResidual) | number}} </td>
-                                <td> {{item.amountResidual | number}} </td>
                                 <td>
                                     <button class="btn btn-danger" title="Xóa" (click)="deleteItem(item, i)">
                                         <i class="fas fa-trash"></i>

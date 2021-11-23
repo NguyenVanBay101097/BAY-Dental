@@ -694,12 +694,10 @@ namespace Infrastructure.Services
         public async Task<AccountRegisterPaymentDisplay> InsurancePaymentDefaultGet(IEnumerable<Guid> invoice_ids)
         {
             var amObj = GetService<IAccountMoveService>();
-            var moves = await amObj.SearchQuery(x => invoice_ids.Contains(x.Id)).Include(x => x.Lines).ToListAsync();
-            //invoices = invoices.Where(x => amObj.IsInvoice(x, include_receipts: true)).ToList();
+            var moves = await amObj.SearchQuery(x => invoice_ids.Contains(x.Id)).Include(x => x.Lines).OrderByDescending(x => x.DateCreated).ToListAsync();
 
             if (!moves.Any() || moves.Any(x => x.State != "posted"))
                 throw new Exception("Bạn chưa chọn khoản tiền bảo hiểm phải thu");
-            var dtype = moves[0].Type;
 
             var sign = 1;
 
@@ -714,9 +712,7 @@ namespace Infrastructure.Services
             {
                 Amount = Math.Abs(total_amount),
                 PaymentType = total_amount > 0 ? "inbound" : "outbound",
-                PartnerId = moves[0].PartnerId,
                 PartnerType = "insurance",
-                //Communication = communication,
                 InvoiceIds = invoice_ids,
                 Journal = _mapper.Map<AccountJournalSimple>(cashJournal),
                 JournalId = cashJournal.Id
@@ -729,6 +725,7 @@ namespace Infrastructure.Services
                 AmountResidual = x.AmountResidual.GetValueOrDefault(),
                 Balance = x.AmountTotal.GetValueOrDefault(),
                 Origin = x.InvoiceOrigin,
+                Ref = x.Ref,
                 MoveId = x.Id,
                 MoveType = x.Type
             });

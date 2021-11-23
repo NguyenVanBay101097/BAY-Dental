@@ -103,6 +103,7 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                         context.AccountAccounts.Add(accCNBH);
                         context.SaveChanges();
 
+
                         var seq = context.IRSequences.Where(x => x.Prefix == "CNBH/{yyyy}/").FirstOrDefault();
                         if (seq == null)
                         {
@@ -113,14 +114,12 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                                 Padding = 4,
                                 NumberIncrement = 1,
                                 NumberNext = 1,
-                                CompanyId = company.Id,
                             };
 
                             context.IRSequences.Add(seq);
                             context.SaveChanges();
                         }
 
-                      
 
 
                         var journalCNKH = context.AccountJournals.Where(x => x.Type == "insurance" && x.CompanyId == company.Id).FirstOrDefault();
@@ -152,8 +151,7 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                             Prefix = "THUBH" + "/{yyyy}/",
                             Padding = 4,
                             NumberIncrement = 1,
-                            NumberNext = 1,
-                            CompanyId = company.Id,
+                            NumberNext = 1,                         
                             Code = "account.payment.insurance.invoice"
                         };
 

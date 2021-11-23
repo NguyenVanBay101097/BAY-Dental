@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
@@ -42,26 +43,34 @@ namespace Infrastructure.Services
             }
         }
 
+        private string UserId
+        {
+            get
+            {
+                if (!_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+                    return null;
+
+                return _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            }
+        }
+
         public async Task<IEnumerable<InsuranceDebtReport>> GetInsuranceDebtReport(InsuranceDebtFilter val)
         {
             var moveLineObj = GetService<IAccountMoveLineService>();
             var insuranceObj = GetService<IResInsuranceService>();
-            var accPaymentObj = GetService<IAccountPaymentService>();
-            var partialReconcilesObj = GetService<IAccountPartialReconcileService>();
-
 
             var insurance = await insuranceObj.GetByIdAsync(val.InsuranceId);
             var query = moveLineObj.SearchQuery(x => x.PartnerId == insurance.PartnerId && x.Journal.Type == "insurance" && x.AmountResidual > 0);          
             if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Move.InvoiceOrigin.Contains(val.Search) || x.Move.Name.Contains(val.Search));
+                query = query.Where(x => x.Move.InvoiceOrigin.Contains(val.Search) || (x.PaymentId.HasValue && x.Payment.Communication.Contains(val.Search)));
 
-            var total = await query.CountAsync();
             var items = await query.OrderByDescending(x => x.DateCreated).Select(x => new InsuranceDebtReport
             {
                 Date = x.DateCreated,
-                PartnerName = x.Partner.Name,
+                PartnerName = x.PartnerId.HasValue ? x.Payment.Partner.Name : null,
                 AmountTotal = x.AmountResidual,
                 Origin = x.Move.InvoiceOrigin,
+                Communication = x.PartnerId.HasValue ? x.Payment.Communication : null,
                 MoveId = x.Move.Id,
                 MoveType = x.Move.Type
             }).ToListAsync();
@@ -83,7 +92,7 @@ namespace Infrastructure.Services
             if (date_from.HasValue)
             {
                 var query = amlObj._QueryGet(dateFrom: date_from, dateTo: null, initBal: true, state: "posted", companyId: val.CompanyId);
-                query = query.Where(x => x.PartnerId.HasValue && x.Partner.IsInsurance);
+                query = query.Where(x => x.PartnerId.HasValue && x.Partner.IsInsurance && x.Account.Code == "CNBH");
 
                 if (!string.IsNullOrWhiteSpace(val.Search))
                 {
@@ -130,7 +139,7 @@ namespace Infrastructure.Services
             }
 
             var query2 = amlObj._QueryGet(dateFrom: date_from, dateTo: date_to, state: "posted", companyId: val.CompanyId);
-            query2 = query2.Where(x => x.PartnerId.HasValue &&  x.Partner.IsInsurance );
+            query2 = query2.Where(x => x.PartnerId.HasValue &&  x.Partner.IsInsurance && x.Account.Code == "CNBH");
 
             if (!string.IsNullOrWhiteSpace(val.Search))
             {
@@ -215,12 +224,12 @@ namespace Infrastructure.Services
             if (date_from.HasValue)
             {
                 var query = amlObj._QueryGet(dateFrom: date_from, dateTo: null, initBal: true, state: "posted");
-                query = query.Where(x => x.PartnerId == val.PartnerId && x.Partner.IsInsurance);
+                query = query.Where(x => x.PartnerId == val.PartnerId && x.Partner.IsInsurance && x.Account.Code == "CNBH");
                 begin = (await query.SumAsync(x => x.Debit - x.Credit)) * sign;
             }
 
             var query2 = amlObj._QueryGet(dateFrom: date_from, dateTo: date_to, state: "posted");
-            query2 = query2.Where(x => x.PartnerId == val.PartnerId && x.Partner.IsInsurance);
+            query2 = query2.Where(x => x.PartnerId == val.PartnerId && x.Partner.IsInsurance && x.Account.Code == "CNBH");
             var list2 = query2.OrderBy(x => x.DateCreated)
                     .Select(x => new InsuranceReportDetailItem
                     {
@@ -241,6 +250,27 @@ namespace Infrastructure.Services
             }
 
             return list2;
+        }
+
+        public async Task<InsuranceReportPrint> ReportSummaryPrint(InsuranceReportFilter val)
+        {
+            var data = await ReportSummary(val);
+            var res = new InsuranceReportPrint()
+            {
+                DateFrom = val.DateFrom,
+                DateTo = val.DateTo,
+                Data = data,
+            };
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId);
+            res.User = _mapper.Map<ApplicationUserSimple>(user);
+
+            if (val.CompanyId.HasValue)
+            {
+                var companyObj = GetService<ICompanyService>();
+                res.Company = _mapper.Map<CompanyPrintVM>(await companyObj.SearchQuery(x => x.Id == val.CompanyId)
+                    .Include(x => x.Partner).FirstOrDefaultAsync());
+            }
+            return res;
         }
 
     }

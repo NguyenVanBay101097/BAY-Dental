@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -37,7 +37,10 @@ export class ResInsuranceDebtPaymentDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.formGroup = this.fb.group({
-      amount: 0,
+      amount:new FormControl({
+        value: 0,
+        disabled: true
+      }),
       paymentDateObj: [null, Validators.required],
       paymentDate: null,
       communication: null,
@@ -86,8 +89,7 @@ export class ResInsuranceDebtPaymentDialogComponent implements OnInit {
   }
 
   onSave() {
-    debugger
-    var val = this.formGroup.value;
+    var val = this.formGroup.getRawValue();
     val.partnerId = this.partnerId ? this.partnerId : val.partnerId;
     val.journalId = val.journal.id;
     val.paymentDate = this.intlService.formatDate(val.paymentDateObj, 'd', 'en-US');

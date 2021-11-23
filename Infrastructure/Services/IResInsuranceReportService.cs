@@ -13,5 +13,7 @@ namespace Infrastructure.Services
         Task<IEnumerable<InsuranceReportItem>> ReportSummary(InsuranceReportFilter val);
 
         Task<IEnumerable<InsuranceReportDetailItem>> ReportDetail(InsuranceReportDetailFilter val);
+
+        Task<InsuranceReportPrint> ReportSummaryPrint(InsuranceReportFilter val);
     }
 }

@@ -26,4 +26,12 @@ export class ResInsuranceReportService {
   exportExcelFile(val) {
     return this.http.post(this.baseApi + this.apiUrl + "/ExportExcelFile", val, { responseType: "blob" });
   }
+
+  printGetSummary(val) {
+    return this.http.post(this.baseApi + "ResInsurance/PrintGetSummary", val, { responseType: "text" });
+  }
+
+  getSummaryPdf(val: any) {
+    return this.http.post(this.baseApi + this.apiUrl + "/GetSummaryPdf", val, { responseType: "blob" });
+  }
 }

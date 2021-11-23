@@ -1,4 +1,7 @@
-﻿using AutoMapper;
+﻿using ApplicationCore.Utilities;
+using AutoMapper;
+using DinkToPdf;
+using DinkToPdf.Contracts;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,11 +22,15 @@ namespace TMTDentalAPI.Controllers
     public class ResInsuranceReportsController : BaseApiController
     {
         private readonly IResInsuranceReportService _resInsuranceReportService;
+        private readonly IViewRenderService _viewRenderService;
+        private IConverter _converter;
         private readonly IMapper _mapper;
 
-        public ResInsuranceReportsController(IResInsuranceReportService resInsuranceReportService, IMapper mapper)
+        public ResInsuranceReportsController(IResInsuranceReportService resInsuranceReportService, IViewRenderService viewRenderService, IConverter converter, IMapper mapper)
         {
             _resInsuranceReportService = resInsuranceReportService;
+            _viewRenderService = viewRenderService;
+            _converter = converter;
             _mapper = mapper;
         }
 
@@ -46,6 +53,36 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _resInsuranceReportService.ReportDetail(val);
             return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetSummaryPdf(InsuranceReportFilter val)
+        {
+            var data = await _resInsuranceReportService.ReportSummaryPrint(val);
+            var html = _viewRenderService.Render("ResInsurance/GetSummaryPdf", data);
+
+            var globalSettings = new GlobalSettings
+            {
+                ColorMode = ColorMode.Color,
+                Orientation = Orientation.Landscape,
+                PaperSize = PaperKind.A4,
+                Margins = new MarginSettings { Top = 10 },
+                DocumentTitle = "PDF Report"
+            };
+            var objectSettings = new ObjectSettings
+            {
+                PagesCount = true,
+                HtmlContent = html,
+                WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/css", "print.css") },
+                FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Báo cáo công nợ bảo hiểm", Right = "Page [page] of [toPage]" }
+            };
+            var pdf = new HtmlToPdfDocument()
+            {
+                GlobalSettings = globalSettings,
+                Objects = { objectSettings }
+            };
+            var file = _converter.Convert(pdf);
+            return File(file, "application/pdf", "BaoCaoCongNo_BH.pdf");
         }
 
         [HttpPost("[action]")]
@@ -73,7 +110,7 @@ namespace TMTDentalAPI.Controllers
                 //worksheet.Cells["A2:G2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
 
-            
+
                 worksheet.Cells[1, 1].Value = "Ngày";
                 worksheet.Cells[1, 2].Value = "Nguồn";
                 worksheet.Cells[1, 3].Value = "Nội dung";
@@ -94,7 +131,7 @@ namespace TMTDentalAPI.Controllers
                 {
                     worksheet.Cells[row, 1].Value = item.Date;
                     worksheet.Cells[row, 1].Style.Numberformat.Format = "dd/mm/yyyy";
-                    worksheet.Cells[row, 2].Value = item.Origin;            
+                    worksheet.Cells[row, 2].Value = item.Origin;
                     worksheet.Cells[row, 3].Value = "";
                     worksheet.Cells[row, 4].Value = item.AmountTotal;
                     worksheet.Cells[row, 4].Style.Numberformat.Format = "#,##0";
@@ -121,6 +158,8 @@ namespace TMTDentalAPI.Controllers
 
             return new FileContentResult(fileContent, mimeType);
         }
+
+      
 
     }
 }

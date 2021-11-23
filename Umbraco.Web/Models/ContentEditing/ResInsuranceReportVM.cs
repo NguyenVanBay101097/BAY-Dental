@@ -24,6 +24,21 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Origin { get; set; }
 
+        public string Communication { get; set; }
+
+        public string CommunicationDisplay { 
+            
+            get{
+                if (!string.IsNullOrEmpty(Communication))
+                    return Communication.Split("-")[0].Trim();
+
+                return null;
+            }
+
+            set { }
+        
+        }
+
         public Guid MoveId { get; set; }
         public string MoveType { get; set; }
     }
@@ -49,6 +64,15 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Chi nhanh
         /// </summary>
         public Guid? CompanyId { get; set; }
+    }
+
+    public class InsuranceReportPrint
+    {
+        public IEnumerable<InsuranceReportItem> Data { get; set; } = new List<InsuranceReportItem>();
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public CompanyPrintVM Company { get; set; }
+        public ApplicationUserSimple User { get; set; }
     }
 
     public class InsuranceReportItem

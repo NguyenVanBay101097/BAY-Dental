@@ -7,6 +7,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { CompanyPaged, CompanyService } from 'src/app/companies/company.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { PrintService } from 'src/app/shared/services/print.service';
 import { InsuranceReportFilter } from '../res-insurance-report.model';
 import { ResInsuranceReportService } from '../res-insurance-report.service';
 
@@ -38,6 +39,7 @@ export class ResInsuranceReportsOverviewComponent implements OnInit, AfterViewIn
   constructor(
     private companyService: CompanyService,
     private resInsuranceReportService: ResInsuranceReportService,
+    private printService: PrintService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -157,38 +159,40 @@ export class ResInsuranceReportsOverviewComponent implements OnInit, AfterViewIn
     // });
   }
 
-  onExportPDF() {
-    let val;
-    val.companyId = val.companyId || '';
-    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
-    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
-    // this.accInvService.getRevenueTimeReportPdf(val).subscribe(res => {
-    //   let filename = "BaoCaoCongNoBaoHiem";
-
-    //   let newBlob = new Blob([res], {
-    //     type: "application/pdf",
-    //   });
-
-    //   let data = window.URL.createObjectURL(newBlob);
-    //   let link = document.createElement("a");
-    //   link.href = data;
-    //   link.download = filename;
-    //   link.click();
-    //   setTimeout(() => {
-    //     // For Firefox it is necessary to delay revoking the ObjectURL
-    //     window.URL.revokeObjectURL(data);
-    //   }, 100);
-    // });
+  getFilter(){
+    let val = new InsuranceReportFilter();
+    val.dateFrom = this.dateFrom ? moment(this.dateFrom).format('YYYY-MM-DD') : '';
+    val.dateTo = this.dateTo ? moment(this.dateTo).format('YYYY-MM-DD') : '';
+    val.search = this.search || '';
+    val.companyId = this.companyId || '';
+    return val;
   }
 
   printReport(){
-    var val;
-    val.companyId = val.companyId || '';
-    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
-    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
-    // this.accInvService.getPrintRevenueTimeReport(val).subscribe(result =>{
-    //   this.printService.printHtml(result);
-    // });
-    
+    var val = this.getFilter();
+    this.resInsuranceReportService.printGetSummary(val).subscribe(result => 
+      this.printService.printHtml(result));
+  }
+
+  onExportPDF(){
+    var val = this.getFilter();
+    this.resInsuranceReportService.getSummaryPdf(val).subscribe(result => {
+      let filename ="BaoCaoCongNo_BH";
+
+      let newBlob = new Blob([result], {
+        type:
+          "application/pdf",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    })
   }
 }

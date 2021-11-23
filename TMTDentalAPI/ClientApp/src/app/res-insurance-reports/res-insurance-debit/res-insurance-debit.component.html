@@ -98,7 +98,7 @@
                                     <div class="o_searchview">
                                         <input class="o_searchview_input" [(ngModel)]="search"
                                             (ngModelChange)="this.searchUpdate.next($event)"
-                                            placeholder="Tìm kiếm theo số phiếu, khách hàng, dịch vụ" type="text"
+                                            placeholder="Tìm kiếm theo số phiếu, nguồn" type="text"
                                             [ngModelOptions]="{standalone: true}" />
                                         <span class="o_searchview_icon fas fa-search"></span>
                                     </div>
@@ -123,8 +123,8 @@
                                 </kendo-grid-column>
                                 <kendo-grid-column field="origin" title="Nguồn" width="150">
                                 </kendo-grid-column>
-                                <kendo-grid-column field="name" title="Nội dung" width="120">
-                                </kendo-grid-column>
+                                <kendo-grid-column field="communicationDisplay" title="Số phiếu" width="100">
+                                </kendo-grid-column>                               
                                 <kendo-grid-column title="Số tiền" class="text-right" width="135"
                                     footerClass="text-right font-weight-600">
                                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
