@@ -51,7 +51,7 @@ namespace Infrastructure.Services
 
 
             var insurance = await insuranceObj.GetByIdAsync(val.InsuranceId);
-            var query = moveLineObj.SearchQuery(x => x.PartnerId == insurance.PartnerId && x.Journal.Type == "insurance");          
+            var query = moveLineObj.SearchQuery(x => x.PartnerId == insurance.PartnerId && x.Journal.Type == "insurance" && x.AmountResidual > 0);          
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Move.InvoiceOrigin.Contains(val.Search) || x.Move.Name.Contains(val.Search));
 

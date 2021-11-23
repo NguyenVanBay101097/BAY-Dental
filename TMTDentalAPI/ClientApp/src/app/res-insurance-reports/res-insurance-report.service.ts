@@ -12,14 +12,18 @@ export class ResInsuranceReportService {
   readonly apiUrl = 'api/ResInsuranceReports';
 
   getInsuranceDebtReport(val) {
-    return this.http.get(this.baseApi + this.apiUrl + '/GetInsuranceDebtReport', { params: new HttpParams({fromObject: val})});
+    return this.http.get(this.baseApi + this.apiUrl + '/GetInsuranceDebtReport', { params: new HttpParams({ fromObject: val }) });
   }
 
   getSummaryReports(val: InsuranceReportFilter) {
     return this.http.post(this.baseApi + this.apiUrl + '/GetSummaryReports', val);
   }
-  
+
   getDetailReports(val: InsuranceReportDetailFilter) {
     return this.http.post(this.baseApi + this.apiUrl + '/GetDetailReports', val);
+  }
+
+  exportExcelFile(val) {
+    return this.http.post(this.baseApi + this.apiUrl + "/ExportExcelFile", val, { responseType: "blob" });
   }
 }

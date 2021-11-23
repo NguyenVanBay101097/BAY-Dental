@@ -1641,7 +1641,7 @@ namespace Infrastructure.Services
                     AmountResidual = x.AmountResidual
 
                 },
-                PayType = "percent",
+                PayType = "fixed",
                 FixedAmount = 0,
                 Percent = 0,
 

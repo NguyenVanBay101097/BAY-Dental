@@ -204,7 +204,8 @@ namespace Infrastructure.Services
                 .Include(x => x.Move)
                 .Include(x => x.Order)
                 .Include(x => x.Lines)
-                .Include(x => x.JournalLines)
+                .Include(x => x.JournalLines).ThenInclude(s => s.Journal)
+                .Include(x => x.JournalLines).ThenInclude(s => s.Insurance)
                 .ToListAsync();
             foreach (var saleOrderPayment in saleOrderPayments)
             {

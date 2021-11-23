@@ -86,6 +86,7 @@ export class ResInsuranceDebtPaymentDialogComponent implements OnInit {
   }
 
   onSave() {
+    debugger
     var val = this.formGroup.value;
     val.partnerId = this.partnerId ? this.partnerId : val.partnerId;
     val.journalId = val.journal.id;

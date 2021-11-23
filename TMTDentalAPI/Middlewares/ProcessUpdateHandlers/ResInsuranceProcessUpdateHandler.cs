@@ -120,23 +120,7 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                             context.SaveChanges();
                         }
 
-                        var seqInsuranceIncome = context.IRSequences.Where(x => x.Code == "account.payment.insurance.invoice").FirstOrDefault();
-                        if (seq == null)
-                        {
-                            seq = new IRSequence
-                            {
-                                Name = "",
-                                Prefix = "THUBH" + "/{yyyy}/",
-                                Padding = 4,
-                                NumberIncrement = 1,
-                                NumberNext = 1,
-                                CompanyId = company.Id,
-                                Code = "account.payment.insurance.invoice"
-                            };
-
-                            context.IRSequences.Add(seq);
-                            context.SaveChanges();
-                        }
+                      
 
 
                         var journalCNKH = context.AccountJournals.Where(x => x.Type == "insurance" && x.CompanyId == company.Id).FirstOrDefault();
@@ -157,6 +141,24 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                             context.AccountJournals.Add(journalCNKH);
                             context.SaveChanges();
                         }
+                    }
+
+                    var seqInsuranceIncome = context.IRSequences.Where(x => x.Code == "account.payment.insurance.invoice").FirstOrDefault();
+                    if (seqInsuranceIncome == null)
+                    {
+                        seqInsuranceIncome = new IRSequence
+                        {
+                            Name = "",
+                            Prefix = "THUBH" + "/{yyyy}/",
+                            Padding = 4,
+                            NumberIncrement = 1,
+                            NumberNext = 1,
+                            CompanyId = company.Id,
+                            Code = "account.payment.insurance.invoice"
+                        };
+
+                        context.IRSequences.Add(seqInsuranceIncome);
+                        context.SaveChanges();
                     }
 
                 }

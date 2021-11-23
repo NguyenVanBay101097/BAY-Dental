@@ -694,7 +694,7 @@ namespace Infrastructure.Services
         public async Task<AccountRegisterPaymentDisplay> InsurancePaymentDefaultGet(IEnumerable<Guid> invoice_ids)
         {
             var amObj = GetService<IAccountMoveService>();
-            var moves = await amObj.SearchQuery(x => invoice_ids.Contains(x.Id)).ToListAsync();
+            var moves = await amObj.SearchQuery(x => invoice_ids.Contains(x.Id)).Include(x => x.Lines).ToListAsync();
             //invoices = invoices.Where(x => amObj.IsInvoice(x, include_receipts: true)).ToList();
 
             if (!moves.Any() || moves.Any(x => x.State != "posted"))
@@ -703,7 +703,7 @@ namespace Infrastructure.Services
 
             var sign = 1;
 
-            var total_amount = moves.Sum(x => x.AmountResidual * sign);
+            var total_amount = moves.SelectMany(x => x.Lines).Sum(x => x.AmountResidual  * sign);
             var communication = !string.IsNullOrEmpty(moves[0].InvoicePaymentRef) ? moves[0].InvoicePaymentRef :
                 (!string.IsNullOrEmpty(moves[0].Ref) ? moves[0].Ref : moves[0].Name);
 
@@ -712,7 +712,7 @@ namespace Infrastructure.Services
 
             var rec = new AccountRegisterPaymentDisplay
             {
-                Amount = Math.Abs(total_amount ?? 0),
+                Amount = Math.Abs(total_amount),
                 PaymentType = total_amount > 0 ? "inbound" : "outbound",
                 PartnerId = moves[0].PartnerId,
                 PartnerType = "insurance",

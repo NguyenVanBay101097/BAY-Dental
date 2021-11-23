@@ -111,7 +111,27 @@ export class ResInsuranceDebitComponent implements OnInit {
     })
   }
 
-  exportExcel(): void {
+  exportExcelFile() : void {
+    var val = new InsuranceDebtFilter();
+    val.search = this.search || '';
+    val.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
+    val.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
+    val.insuranceId = this.insuranceId ? this.insuranceId : '';
 
+    this.resInsuranceReportService.exportExcelFile(val).subscribe((res: any) => {
+      let filename = "BaoCaoBaoHiem";
+      let newBlob = new Blob([res], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    })
   }
 }
