@@ -106,14 +106,17 @@
                                 [kendoGridSelectBy]="'moveId'" [selectedKeys]="selectedIds">
                                 <kendo-grid-checkbox-column [width]="50" [headerClass]="{'text-center': true}"
                                     [class]="{'text-center': true}" showSelectAll="true"></kendo-grid-checkbox-column>
-                                <kendo-grid-column field="partnerName" title="Khách hàng" width="100" footerClass="font-weight-600">
+                                <!-- <kendo-grid-column field="partnerName" title="Khách hàng" width="100" footerClass="font-weight-600">
                                     <ng-template kendoGridFooterTemplate>
                                         Tổng
                                     </ng-template>
-                                </kendo-grid-column>
+                                </kendo-grid-column> -->
                                 <kendo-grid-column title="Ngày" width="100">
                                     <ng-template kendoGridCellTemplate let-dataItem let-column="column">
                                         {{dataItem.date | date:'shortDate'}}
+                                    </ng-template>
+                                    <ng-template kendoGridFooterTemplate>
+                                        Tổng
                                     </ng-template>
                                 </kendo-grid-column>
                                 <kendo-grid-column field="origin" title="Nguồn" width="100">
