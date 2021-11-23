@@ -79,7 +79,7 @@ namespace Infrastructure.Services
                         else if (rec.PartnerType == "insurance")
                         {
                             if (rec.PaymentType == "inbound")
-                                sequence_code = "account.payment.customer.invoice";
+                                sequence_code = "account.payment.insurance.invoice";
                         }
                     }
 
@@ -296,10 +296,6 @@ namespace Infrastructure.Services
                 else
                     liquidity_line_name = payment.Name;
 
-
-
-
-
                 var move_vals = new AccountMove
                 {
                     Date = payment.PaymentDate,
@@ -319,7 +315,7 @@ namespace Infrastructure.Services
                         Debit = balance > 0 ? balance : 0,
                         Credit = balance < 0 ? -balance : 0,
                         DateMaturity = payment.PaymentDate,
-                        PartnerId = payment.DestinationAccount.Code == "CNBH" ? payment.PartnerId : move_invoice_partnerId,
+                        PartnerId = payment.PartnerId,
                         AccountId = payment.DestinationAccount.Id,
                         Account = payment.DestinationAccount,
                         PaymentId = payment.Id,
@@ -331,7 +327,7 @@ namespace Infrastructure.Services
                         Debit = balance < 0 ? -balance : 0,
                         Credit = balance > 0 ? balance : 0,
                         DateMaturity = payment.PaymentDate,
-                        PartnerId = liquidity_line_account.Code == "CNBH" ? payment.PartnerId : move_invoice_partnerId,
+                        PartnerId = payment.Journal.Type == "insurance" ? payment.Insurance.PartnerId : payment.PartnerId,
                         AccountId = liquidity_line_account.Id,
                         Account = liquidity_line_account,
                         PaymentId = payment.Id,
@@ -698,16 +694,18 @@ namespace Infrastructure.Services
         public async Task<AccountRegisterPaymentDisplay> InsurancePaymentDefaultGet(IEnumerable<Guid> invoice_ids)
         {
             var amObj = GetService<IAccountMoveService>();
-            var invoices = await amObj.SearchQuery(x => invoice_ids.Contains(x.Id)).ToListAsync();
-            invoices = invoices.Where(x => amObj.IsInvoice(x, include_receipts: true)).ToList();
+            var moves = await amObj.SearchQuery(x => invoice_ids.Contains(x.Id)).ToListAsync();
+            //invoices = invoices.Where(x => amObj.IsInvoice(x, include_receipts: true)).ToList();
 
-            if (!invoices.Any() || invoices.Any(x => x.State != "posted"))
+            if (!moves.Any() || moves.Any(x => x.State != "posted"))
                 throw new Exception("Bạn chưa chọn khoản tiền bảo hiểm phải thu");
-            var dtype = invoices[0].Type;          
+            var dtype = moves[0].Type;
 
-            var total_amount = invoices.Sum(x => x.AmountTotal * MAP_INVOICE_TYPE_PAYMENT_SIGN[x.Type]);
-            var communication = !string.IsNullOrEmpty(invoices[0].InvoicePaymentRef) ? invoices[0].InvoicePaymentRef :
-                (!string.IsNullOrEmpty(invoices[0].Ref) ? invoices[0].Ref : invoices[0].Name);
+            var sign = 1;
+
+            var total_amount = moves.Sum(x => x.AmountResidual * sign);
+            var communication = !string.IsNullOrEmpty(moves[0].InvoicePaymentRef) ? moves[0].InvoicePaymentRef :
+                (!string.IsNullOrEmpty(moves[0].Ref) ? moves[0].Ref : moves[0].Name);
 
             var journalObj = GetService<IAccountJournalService>();
             var cashJournal = await journalObj.SearchQuery(x => x.Type == "cash" && x.CompanyId == CompanyId).FirstOrDefaultAsync();
@@ -716,7 +714,7 @@ namespace Infrastructure.Services
             {
                 Amount = Math.Abs(total_amount ?? 0),
                 PaymentType = total_amount > 0 ? "inbound" : "outbound",
-                PartnerId = invoices[0].PartnerId,
+                PartnerId = moves[0].PartnerId,
                 PartnerType = "insurance",
                 //Communication = communication,
                 InvoiceIds = invoice_ids,
@@ -725,7 +723,7 @@ namespace Infrastructure.Services
             };
 
             //get debit items
-            rec.DebitItems = invoices.Select(x => new PartnerGetDebtPagedItem
+            rec.DebitItems = moves.Select(x => new PartnerGetDebtPagedItem
             {
                 Date = x.Date,
                 AmountResidual = x.AmountResidual.GetValueOrDefault(),

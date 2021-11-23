@@ -128,7 +128,7 @@ namespace Infrastructure.Services
                 {
                     JournalId = journal.Id,
                     Amount = saleOrderPayment.Lines.Sum(x => x.Amount),
-                    PartnerId = insurancePayment.ResInsurance.PartnerId
+                    InsuranceId = insurancePayment.ResInsurance.Id
                 });
 
                 await saleOrderPaymentObj.CreateAsync(saleOrderPayment);

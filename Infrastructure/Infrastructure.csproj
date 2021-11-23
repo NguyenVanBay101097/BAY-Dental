@@ -134,6 +134,10 @@
     <Compile Remove="Data\Migrations\20211019091305_CreateTableBank.Designer.cs" />
     <Compile Remove="Data\Migrations\20211118094117_AddPartnerSaleOrderPayment.cs" />
     <Compile Remove="Data\Migrations\20211118094117_AddPartnerSaleOrderPayment.Designer.cs" />
+    <Compile Remove="Data\Migrations\20211123085928_CreateRefInsuranceAccountPayment.cs" />
+    <Compile Remove="Data\Migrations\20211123085928_CreateRefInsuranceAccountPayment.Designer.cs" />
+    <Compile Remove="Data\Migrations\20211123090304_CreateRefInsuranceAccountPayment.cs" />
+    <Compile Remove="Data\Migrations\20211123090304_CreateRefInsuranceAccountPayment.Designer.cs" />
     <Compile Remove="TenantData\Migrations\20210128064223_AddAddressTenant.cs" />
     <Compile Remove="TenantData\Migrations\20210128064223_AddAddressTenant.Designer.cs" />
     <Compile Remove="Data\Migrations\20210127070036_bay_add_survey.cs" />

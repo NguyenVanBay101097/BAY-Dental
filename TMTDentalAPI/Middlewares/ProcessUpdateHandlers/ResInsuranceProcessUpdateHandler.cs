@@ -97,7 +97,7 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                             InternalType = currentLiabilities.Type,
                             UserTypeId = currentLiabilities.Id,
                             CompanyId = company.Id,
-                           
+                            Reconcile = true
                         };
 
                         context.AccountAccounts.Add(accCNBH);

@@ -45,6 +45,9 @@ namespace ApplicationCore.Entities
         public Guid JournalId { get; set; }
         public AccountJournal Journal { get; set; }
 
+        public Guid? InsuranceId { get; set; }
+        public ResInsurance Insurance { get; set; }
+
         /// <summary>
         /// draft: Nháp
         /// posted: Đã vào sổ
