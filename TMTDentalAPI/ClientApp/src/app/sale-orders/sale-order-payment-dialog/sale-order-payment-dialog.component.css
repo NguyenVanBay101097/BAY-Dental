@@ -80,22 +80,6 @@
     margin-bottom: 0;
 }
 
-.journal-item {
-    padding: 5px 10px 5px 5px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-top: 1px solid rgba(0,0,0,.125);
-    border-bottom: 1px solid rgba(0,0,0,.125);
-    /* background-image: linear-gradient(#f0f0f0, #e5e5e5); */
-}
-
-.journal-input {
-    border-radius: 2px;
-    overflow: hidden;
-    margin-bottom: 0.5rem;
-}
-
 .journal-input-number {
     width: 30%;
 }

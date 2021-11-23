@@ -14,7 +14,7 @@
                             <tbody>
                                 <tr>
                                     <td colspan="1" class="o_td_label">
-                                        <label for="o_field_input_46" class="o_form_label">
+                                        <label class="o_form_label">
                                             Ngày thanh toán
                                         </label>
                                     </td>
@@ -32,12 +32,20 @@
                             <tbody>
                                 <tr>
                                     <td colspan="1"></td>
-                                    <td class="text-right" colspan="1">Tiền dịch vụ còn lại:</td>
+                                    <td class="o_td_label text-right" colspan="1">
+                                        <label class="o_form_label">
+                                            Tiền dịch vụ còn lại:
+                                        </label>
+                                    </td>
                                     <td class="text-danger text-right" colspan="1">{{amountResidual | number}}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="1"></td>
-                                    <td class="text-right" colspan="1">Công nợ hiện tại:</td>
+                                    <td class="o_td_label text-right" colspan="1">
+                                        <label class="o_form_label">
+                                            Công nợ hiện tại:
+                                        </label>
+                                    </td>
                                     <td class="text-danger text-right" colspan="1">{{partnerDebt | number}}</td>
                                 </tr>
                             </tbody>
@@ -94,7 +102,11 @@
                     <div class="o_group d-flex justify-content-between">
                         <table class="o_group o_inner_group o_group_col_6" style="width: 45%;">
                             <tr>
-                                <td>Khách trả <i>(tiền mặt)</i> </td>
+                                <td class="o_td_label" colspan="1">
+                                    <label class="o_form_label">
+                                        Số tiền
+                                    </label>
+                                </td>
                                 <td>
                                     <input class="form-control" style="max-width: 200px;" formControlName="amount" 
                                     (blur)="enterMoney()" [ngAutonumeric]="myOptions" />
@@ -112,7 +124,11 @@
                         </table>
                         <table class="o_group o_inner_group o_group_col_6" style="width: 45%;">
                             <tr>
-                                <td>Nội dung</td>
+                                <td class="o_td_label" colspan="1">
+                                    <label class="o_form_label">
+                                        Tiền dịch vụ còn lại:
+                                    </label>
+                                </td>
                                 <td>
                                     <input type="text" class="form-control" formControlName="note">
                                 </td>
@@ -122,7 +138,7 @@
                     <div class="o_group" *ngIf="partnerDebt">
                         <div class="form-check pl-0">
                             <label class="form-check-label" for="flexCheckDefault">
-                                <h6>Thanh toán công nợ</h6>
+                                <h6 class="mb-4">Thanh toán công nợ</h6>
                             </label>
                             <input formControlName="isDebtPayment" class="form-check-input" type="checkbox" value=""
                                 id="flexCheckDefault">
@@ -130,7 +146,11 @@
                         <div *ngIf="paymentFC.isDebtPayment.value" class="d-flex justify-content-between">
                             <table class="o_group o_inner_group o_group_col_6" style="width: 45%;">
                                 <tr>
-                                    <td>Khách trả <i>(tiền mặt)</i> </td>
+                                    <td class="o_td_label" colspan="1">
+                                        <label class="o_form_label">
+                                            Số tiền
+                                        </label>
+                                    </td>
                                     <td>
                                         <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="debtAmount"
                                             [max]="partnerDebt" [step]="1000" [format]="'n0'" [autoCorrect]="true">
@@ -145,7 +165,11 @@
                             </table>
                             <table class="o_group o_inner_group o_group_col_6" style="width: 45%;">
                                 <tr>
-                                    <td>Nội dung</td>
+                                    <td class="o_td_label" colspan="1">
+                                        <label class="o_form_label">
+                                            Nội dung
+                                        </label>
+                                    </td>
                                     <td>
                                         <input type="text" class="form-control" formControlName="debNote">
                                     </td>
@@ -155,23 +179,23 @@
                     </div>
                     <div class="o_group">
                         <div class="card o_group_col_6 p-3">
-                            <table class="o_group o_inner_group">
-                                <tr>
-                                    <td>
-                                        <h6 class="mb-0">Tổng tiền khách trả</h6>
-                                    </td>
-                                    <td class="text-primary text-right">
-                                        {{getAmountTotalPayment() | number}}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td class="text-right">
-                                        <button type="button" class="btn btn-outline-primary" (click)="nextStep()" 
-                                        [disabled]="loading">Phương thức khác</button>
-                                    </td>
-                                </tr>
-                            </table>
+                            <div class="d-flex mb-3">
+                                <div class="w-50">
+                                    <h6 class="mb-0">Tổng tiền khách trả</h6>
+                                </div>
+                                <div class="w-50 text-right text-primary">
+                                    {{getAmountTotalPayment() | number}}
+                                </div>
+                            </div>
+                            <div class="d-flex">
+                                <div class="w-50">
+                                </div>
+                                <div class="w-50 text-right">
+                                    <button type="button" class="btn btn-outline-primary" (click)="nextStep()" 
+                                        [disabled]="loading">Phương thức khác
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -226,12 +250,10 @@
                                     </div>
                                 </div>
                                 <div class="journal-input mb-2 mt-2">
-                                    <div *ngFor="let item of selectedJournals; let i = index" class="journal-item">
+                                    <div *ngFor="let item of selectedJournals; let i = index" 
+                                    class="align-items-center d-flex justify-content-between mb-2 border-bottom">
                                         <div>
-                                            <button class="btn" (click)="removeJounalSelected(item)">
-                                                <i class="far fa-trash-alt"></i>
-                                            </button>
-                                            <span class="ml-3">{{item.name}}</span>
+                                            {{item.name}}
                                         </div>
                                         <div *ngIf="item.journals.length > 1">
                                             <kendo-combobox [placeholder]="'Tài khoản thu'" style="min-width: 200px;"
@@ -246,12 +268,15 @@
                                         </div>
                                         <div class="journal-input-number text-right">
                                             {{item.amount | number}}
+                                            <button class="ml-3 btn" (click)="removeJounalSelected(item)">
+                                                <i class="far fa-trash-alt text-danger"></i>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <ng-container *ngIf=" debtAmount > 0">
-                                <h6 class="payment-title">Thanh toán công nợ</h6>
+                                <h6 class="payment-title mb-4">Thanh toán công nợ</h6>
                                 <table class="mb-2 mt-0 o_group o_inner_group o_group_col_12">
                                     <tbody>
                                         <tr>
@@ -266,8 +291,8 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                                <div class="journal-input mb-2 mt-2">
-                                    <div class="journal-item">
+                                <div class="card mb-2 mt-2 p-4">
+                                    <div class="d-flex justify-content-between align-items-center">
                                         <div class="journal-input-number">
                                             <div ngbDropdown container="body" class="d-inline-block">
                                                 <button class="btn btn-outline-primary" id="dropdownBasic1" ngbDropdownToggle>{{debtJournalSelected.name}}</button>
