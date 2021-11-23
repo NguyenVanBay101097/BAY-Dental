@@ -1,9 +1,14 @@
 import { AfterViewInit, Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
-import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { aggregateBy } from '@progress/kendo-data-query';
+import * as moment from 'moment';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { CompanyPaged, CompanyService } from 'src/app/companies/company.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { InsuranceReportFilter } from '../res-insurance-report.model';
+import { ResInsuranceReportService } from '../res-insurance-report.service';
 
 @Component({
   selector: 'app-res-insurance-reports-overview',
@@ -12,7 +17,7 @@ import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-ken
 })
 export class ResInsuranceReportsOverviewComponent implements OnInit, AfterViewInit {
   @ViewChild('companyCbx', { static: false }) companyCbx: ComboBoxComponent;
-
+  allDataGrid: any;
   gridData: GridDataResult;
   limit: number = 20;
   offset: number = 0;
@@ -20,12 +25,19 @@ export class ResInsuranceReportsOverviewComponent implements OnInit, AfterViewIn
   dateFrom: Date;
   dateTo: Date;
   companyId: string;
+  search: string;
+  searchUpdate = new Subject<string>();
   filteredCompanies: any[];
+  sumBegin: number = 0;
+  sumEnd: number = 0;
+  sumDebit: number = 0;
+  sumCredit: number = 0;
   public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
 
   constructor(
     private companyService: CompanyService,
+    private resInsuranceReportService: ResInsuranceReportService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -34,6 +46,8 @@ export class ResInsuranceReportsOverviewComponent implements OnInit, AfterViewIn
     this.dateTo = this.monthEnd;
 
     this.loadCompany();
+    this.loadDataFromApi();
+    this.onSearchUpdate();
   }
 
   ngAfterViewInit(): void {
@@ -45,6 +59,46 @@ export class ResInsuranceReportsOverviewComponent implements OnInit, AfterViewIn
       this.filteredCompanies = rs.items;
       this.companyCbx.loading = false;
     });
+  }
+
+  onSearchUpdate(): void {
+    this.searchUpdate.pipe(
+      debounceTime(400),
+      distinctUntilChanged())
+      .subscribe(() => {
+        this.loadDataFromApi();
+      });
+  }
+
+  loadDataFromApi() {
+    let val = new InsuranceReportFilter();
+    val.dateFrom = this.dateFrom ? moment(this.dateFrom).format('YYYY-MM-DD') : '';
+    val.dateTo = this.dateTo ? moment(this.dateTo).format('YYYY-MM-DD') : '';
+    val.search = this.search || '';
+    val.companyId = this.companyId || '';
+    this.resInsuranceReportService.getSummaryReports(val).subscribe(res => {
+      this.allDataGrid = res;
+      this.loadReport();
+    }, (error) => console.log(error))
+  }
+
+  loadReport() {
+    this.gridData = <GridDataResult>{
+      total: this.allDataGrid.length,
+      data: this.allDataGrid.slice(this.offset, this.offset + this.limit)
+    };
+
+    const result = aggregateBy(this.allDataGrid, [
+      { aggregate: "sum", field: "begin" },
+      { aggregate: "sum", field: "credit" },
+      { aggregate: "sum", field: "debit" },
+      { aggregate: "sum", field: "end" },
+    ]);
+    
+    this.sumBegin = result.begin ? result.begin.sum : 0;
+    this.sumEnd = result.end ? result.end.sum : 0;
+    this.sumDebit = result.debit ? result.debit.sum : 0;
+    this.sumCredit = result.credit ? result.credit.sum : 0;
   }
 
   searchCompany(search?: string) {
@@ -65,14 +119,17 @@ export class ResInsuranceReportsOverviewComponent implements OnInit, AfterViewIn
   onPageChange(event: PageChangeEvent): void {
     this.offset = event.skip;
     this.limit = event.take;
+    this.loadReport();
   }
 
   changeCompany(e): void {
-    console.log(e);
+    this.companyId = e ? e : '';
+    this.loadDataFromApi();
   }
 
   onSearchDateChange(e): void {
     this.dateFrom = e.dateFrom || '';
     this.dateTo = e.dateTo || '';
+    this.loadDataFromApi();
   }
 }

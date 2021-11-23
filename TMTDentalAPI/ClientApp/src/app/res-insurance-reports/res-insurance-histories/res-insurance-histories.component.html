@@ -25,11 +25,29 @@
 <div class="o_content">
     <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"
         (pageChange)="pageChange($event)">
-        <kendo-grid-column title="Ngày"></kendo-grid-column>
-        <kendo-grid-column title="Số phiếu"></kendo-grid-column>
-        <kendo-grid-column title="Nội dung"></kendo-grid-column>
-        <kendo-grid-column title="Phương thức"></kendo-grid-column>
-        <kendo-grid-column title="Số tiền"></kendo-grid-column>
-        <kendo-grid-column title="Thao tác"></kendo-grid-column>
+        <kendo-grid-column field="paymentDate" title="Ngày">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.paymentDate | date : 'shortDate' }}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="name" title="Số phiếu"> </kendo-grid-column>
+        <kendo-grid-column field="communication" title="Nội dung"></kendo-grid-column>
+        <kendo-grid-column field="paymentType" title="Phương thức"></kendo-grid-column>
+        <kendo-grid-column field="amount" title="Số tiền">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.amount | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="displayState" title="Trạng thái"></kendo-grid-column>
+        <kendo-grid-column title="Thao tác">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <button class="btn btn-danger" title="Hủy" (click)="onCancelPaymnet(dataItem)">
+                    <i class="fas fa-times"></i>
+                </button>
+            </ng-template>
+        </kendo-grid-column>
+        <div *kendoGridDetailTemplate="let dataItem">
+            <app-res-insurance-histories-detail [paymentId]="dataItem.id"></app-res-insurance-histories-detail>
+        </div>
     </kendo-grid>
 </div>

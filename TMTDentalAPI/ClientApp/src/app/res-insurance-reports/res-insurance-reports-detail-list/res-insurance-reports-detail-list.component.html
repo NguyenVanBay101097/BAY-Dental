@@ -1,0 +1,31 @@
+<kendo-grid [data]="gridData" [pageable]="pagerSettings" [skip]="offset" [pageSize]="limit"
+    (pageChange)="onPageChange($event)">
+    <kendo-grid-column title="Ngày" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{ dataItem.date | date:'shortDate'}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="name" title="Số phiếu" width="180"></kendo-grid-column>
+    <kendo-grid-column title="Khách hàng" width="150"></kendo-grid-column>
+    <kendo-grid-column title="Dịch vụ" width="150"></kendo-grid-column>
+    <kendo-grid-column field="begin" title="Nợ đầu kỳ" width="150">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{ dataItem.begin | number }}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="debit" title="Phát sinh" width="150">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{ dataItem.debit | number }}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="credit" title="Thanh toán" width="150">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{ dataItem.credit | number }}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="end" title="Nợ cuối kỳ" width="150">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{ dataItem.end | number }}
+        </ng-template>
+    </kendo-grid-column>
+</kendo-grid>
