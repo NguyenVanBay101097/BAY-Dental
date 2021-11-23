@@ -44,27 +44,27 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
   partnerDebt = null;
   @Output() updateOrderEvent = new EventEmitter<any>();
   constructor(
-     private saleOrderService: SaleOrderService,
-     private notificationService: NotificationService,
-     private intlService: IntlService,
-     private modalService: NgbModal,
-     private saleOrderPromotionService: SaleOrderPromotionService,
-     private saleOrderLineService: SaleOrderLineService,
-     private toothCategoryService: ToothCategoryService,
-     private employeeService: EmployeeService,
-     private toothService: ToothService,
-     private _decimalPipe: DecimalPipe,
-     private partnerService: PartnerService,
-     private customerDebtReportService: CustomerDebtReportService,
-     private authService: AuthService,
-     private fb: FormBuilder) { }
+    private saleOrderService: SaleOrderService,
+    private notificationService: NotificationService,
+    private intlService: IntlService,
+    private modalService: NgbModal,
+    private saleOrderPromotionService: SaleOrderPromotionService,
+    private saleOrderLineService: SaleOrderLineService,
+    private toothCategoryService: ToothCategoryService,
+    private employeeService: EmployeeService,
+    private toothService: ToothService,
+    private _decimalPipe: DecimalPipe,
+    private partnerService: PartnerService,
+    private customerDebtReportService: CustomerDebtReportService,
+    private authService: AuthService,
+    private fb: FormBuilder) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (!changes.saleOrder.firstChange) {
       this.saleOrderService.get(this.saleOrder.id).subscribe(result => {
         this.orderLines = result.orderLines;
         this.promotions = result.promotions;
-        
+
         var dateOrder = new Date(result.dateOrder);
         this.formGroup.get('dateOrder').setValue(dateOrder);
 
@@ -81,7 +81,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
     this.saleOrderService.get(this.saleOrder.id).subscribe(result => {
       this.orderLines = result.orderLines;
       this.promotions = result.promotions;
-      
+
       var dateOrder = new Date(result.dateOrder);
       this.formGroup.get('dateOrder').setValue(dateOrder);
     });
@@ -99,7 +99,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
   public hasEditingLine() {
     return this.lineSelected != null || this.lineSelected != undefined;
   }
-  
+
   loadTeethList() {
     var val = new ToothFilter();
     this.toothService.getAllBasic(val).subscribe((result: any[]) => {
@@ -134,7 +134,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
     popover.open();
   }
 
-  
+
   loadEmployees() {
     var val = new EmployeePaged();
     val.limit = 0;
@@ -312,7 +312,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
     this.promotions = data.promotions;
     this.resetFormPristine();
   }
-  
+
   resetFormPristine() {
     this.linesDirty = false;
     // this.formGroup.markAsPristine();
@@ -424,7 +424,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
   }
 
   onOpenLinePromotionDialog(i) {
-    var line = this.orderLines[i];  
+    var line = this.orderLines[i];
     let modalRef = this.modalService.open(SaleOrderLinePromotionDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static', scrollable: true });
     modalRef.componentInstance.saleOrderLine = line;
 
@@ -492,7 +492,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
           this.notify('error', err.error.error);
         });
     });
-    
+
     modalRef.componentInstance.getBtnPromoServiceCardObs().subscribe(data => {
       var val = {
         id: line.id,
@@ -590,7 +590,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
       this.linesDirty = true;
     }
   }
-  
+
   onEditLine(line) {
     if (this.lineSelected != null) {
       this.notify('error', 'Vui lòng hoàn thành dịch vụ hiện tại để chỉnh sửa dịch vụ khác');
@@ -600,7 +600,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
       viewChild.onEditLine();
     }
   }
-  
+
   updateLineInfo(value, index) {
     var line = this.orderLines[index];
     Object.assign(line, value);
@@ -662,7 +662,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
     this.saleOrder.amountTotal = total;
   }
 
-  
+
   onActiveLine(active, line) {
     if (active) {
       this.saleOrderLineService.patchIsActive(line.id, active).subscribe(() => {
@@ -688,7 +688,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
       this.notify('error', 'Vui lòng hoàn thành dịch vụ hiện tại');
       return;
     }
-    this.saleOrderLineService.updateState(line.id,state).subscribe(()=>{
+    this.saleOrderLineService.updateState(line.id, state).subscribe(() => {
       this.notify('success', 'Lưu thành công');
       line.state = state;
       if (this.orderLines.every(x => x.state == 'done' || x.state == 'cancel') &&
@@ -697,27 +697,27 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
         this.saleOrder.state = 'done';
       }
 
-      if(state == "done" && line.priceSubTotal - line.amountInvoiced > 0) {
+      if (state == "done" && line.priceSubTotal - line.amountInvoiced > 0) {
         let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = `Ghi công nợ số tiền ${this._decimalPipe.transform((line.priceSubTotal - line.amountInvoiced))}đ`;
-    modalRef.componentInstance.body = `Dịch vụ ${line.name} còn ${this._decimalPipe.transform((line.priceSubTotal - line.amountInvoiced))}đ chưa được thanh toán. Bạn có muốn ghi công nợ số tiền này?`;
-    modalRef.componentInstance.confirmText = "Đồng ý";
-    modalRef.componentInstance.closeText = "Không đồng ý";
-    modalRef.componentInstance.closeClass = "btn-danger";
-    modalRef.result.then(() => {
-      this.saleOrderLineService.debtPayment(line.id)
-      .subscribe(r => {
-      this.notify('success', 'Ghi nợ thành công');
-      this.saleOrder.totalPaid = this.saleOrder.totalPaid + (line.priceSubTotal - line.amountInvoiced);
-      this.partnerDebt.debitTotal = this.partnerDebt.debitTotal + (line.priceSubTotal - line.amountInvoiced);
-      line.amountInvoiced =  line.priceSubTotal;
-      });
-    })
+        modalRef.componentInstance.title = `Ghi công nợ số tiền ${this._decimalPipe.transform((line.priceSubTotal - line.amountInvoiced))}đ`;
+        modalRef.componentInstance.body = `Dịch vụ ${line.name} còn ${this._decimalPipe.transform((line.priceSubTotal - line.amountInvoiced))}đ chưa được thanh toán. Bạn có muốn ghi công nợ số tiền này?`;
+        modalRef.componentInstance.confirmText = "Đồng ý";
+        modalRef.componentInstance.closeText = "Không đồng ý";
+        modalRef.componentInstance.closeClass = "btn-danger";
+        modalRef.result.then(() => {
+          this.saleOrderLineService.debtPayment(line.id)
+            .subscribe(r => {
+              this.notify('success', 'Ghi nợ thành công');
+              this.saleOrder.totalPaid = this.saleOrder.totalPaid + (line.priceSubTotal - line.amountInvoiced);
+              this.partnerDebt.debitTotal = this.partnerDebt.debitTotal + (line.priceSubTotal - line.amountInvoiced);
+              line.amountInvoiced = line.priceSubTotal;
+            });
+        })
 
       }
     })
   }
-  
+
   getAmountSubTotal() {
     //Hàm trả về thành tiền
     return this.orderLines.reduce((total, cur) => {
@@ -747,15 +747,25 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
     }
   }
 
-  loadPartnerInfo(){
-    var loadPartner$ = this.partnerService.getCustomerInfo(this.saleOrder.partnerId);
+  loadPartnerDebt() {
+    this.loadPartnerDebt$().subscribe(res => {
+      this.partnerDebt = res;
+    });
+  }
+
+  loadPartnerDebt$() {
     var val = new AmountCustomerDebtFilter();
     val.partnerId = this.saleOrder.partnerId;
     val.companyId = this.authService.userInfo.companyId;
-    var loadDebt$ = this.customerDebtReportService.getAmountDebtTotal(val);
-    forkJoin({partner: loadPartner$, debt: loadDebt$}).subscribe(res => {
+    return this.customerDebtReportService.getAmountDebtTotal(val);
+  }
+
+  loadPartnerInfo() {
+    var loadPartner$ = this.partnerService.getCustomerInfo(this.saleOrder.partnerId);
+    var loadDebt$ = this.loadPartnerDebt$();
+    forkJoin({ partner: loadPartner$, debt: loadDebt$ }).subscribe(res => {
       this.partner = res.partner;
-      this.partnerDebt = res.debt;      
+      this.partnerDebt = res.debt;
     });
   }
 }

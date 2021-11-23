@@ -45,7 +45,7 @@ namespace Infrastructure.Services
             await soPaymentObj.ActionPayment(new List<Guid>() { soPayment.Id});
             #endregion
             #region debt payment
-            if (!val.IsDebtPayment)
+            if (!val.IsDebtPayment || val.DebtAmount == 0)
                 return soPayment;
             var phieuThuChiSave = new PhieuThuChiSave()
             {

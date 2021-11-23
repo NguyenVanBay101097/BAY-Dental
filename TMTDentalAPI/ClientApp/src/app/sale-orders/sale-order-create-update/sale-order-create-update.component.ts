@@ -5,10 +5,12 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, forkJoin } from 'rxjs';
 import { catchError, mergeMap } from 'rxjs/operators';
 import { PaymentInfoContent } from 'src/app/account-invoices/account-invoice.service';
 import { AccountPaymentBasic } from 'src/app/account-payments/account-payment.service';
+import { AuthService } from 'src/app/auth/auth.service';
+import { AmountCustomerDebtFilter, CustomerDebtReportService } from 'src/app/core/services/customer-debt-report.service';
 import { SaleOrderPaymentService } from 'src/app/core/services/sale-order-payment.service';
 import { LaboOrderBasic } from 'src/app/labo-orders/labo-order.service';
 import { PartnerSimple } from 'src/app/partners/partner-simple';
@@ -115,6 +117,8 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     private saleOrderPromotionService: SaleOrderPromotionService,
     private smsMessageService: SmsMessageService,
     private saleOrderPaymentService: SaleOrderPaymentService,
+    private authService: AuthService,
+    private customerDebtReportService: CustomerDebtReportService
   ) {
   }
 
@@ -508,12 +512,18 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   actionSaleOrderPayment() {
     if (this.saleOrderId) {
-      this.saleOrderService.getSaleOrderPaymentBySaleOrderId(this.saleOrderId).subscribe(rs2 => {
+      var val = new AmountCustomerDebtFilter();
+    val.partnerId = this.saleOrder.partnerId;
+    val.companyId = this.authService.userInfo.companyId;
+    var loadDebt$ = this.customerDebtReportService.getAmountDebtTotal(val);
+      var loadSaleOrder$ = this.saleOrderService.getSaleOrderPaymentBySaleOrderId(this.saleOrderId);
+      forkJoin({partnerDebt: loadDebt$, payment: loadSaleOrder$}).subscribe(rs => {
         let modalRef = this.modalService.open(SaleOrderPaymentDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = 'Thanh toán';
-        modalRef.componentInstance.defaultVal = rs2;
+        modalRef.componentInstance.defaultVal = rs.payment;
         modalRef.componentInstance.advanceAmount = this.amountAdvanceBalance;
         modalRef.componentInstance.partner = this.saleOrder.partner;
+        modalRef.componentInstance.partnerDebt = (rs.partnerDebt as any).balanceTotal;
 
         modalRef.result.then(result => {
           this.notificationService.show({
@@ -525,6 +535,10 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
           });
           
           this.loadSaleOrder();
+          if(this.serviceListComp) // load lại công nợ
+          {
+            this.serviceListComp.loadPartnerDebt();
+          }
           if (this.paymentComp) {
             this.paymentComp.loadPayments();
           }
