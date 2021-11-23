@@ -343,7 +343,7 @@ namespace Infrastructure.Services
                 //await ComputePointAndUpdateLevel(saleOrderPayment, saleOrderPayment.Order.PartnerId, "payment");
                 var loyaltyPoints = ConvertAmountToPoint(saleOrderPayment.Amount);
                 var card = await cardObj.SearchQuery(x => x.PartnerId == saleOrderPayment.Order.PartnerId && x.State == "in_use").FirstOrDefaultAsync();
-                if(card != null)
+                if (card != null)
                 {
                     card.TotalPoint += loyaltyPoints;
                     var typeId = await UpGradeCardCard((card.TotalPoint ?? 0));
@@ -351,7 +351,7 @@ namespace Infrastructure.Services
                     await cardObj.UpdateAsync(card);
                 }
 
-             
+
             }
             //await partnerObj.UpdateMemberLevelForPartner(partnerIds);
             await UpdateAsync(saleOrderPayments);
@@ -515,13 +515,14 @@ namespace Infrastructure.Services
                 var payment = new AccountPayment
                 {
                     JournalId = line.JournalId,
-                    PartnerId = line.PartnerId.HasValue ? line.PartnerId.Value : self.Order.PartnerId,
+                    PartnerId = self.Order.PartnerId,
                     Amount = line.Amount,
                     PartnerType = "customer",
                     PaymentDate = self.Date,
                     PaymentType = "inbound",
                     CompanyId = self.Order.CompanyId,
-                    Communication = self.Note
+                    Communication = self.Note,
+                    InsuranceId = line.Journal.Type == "insurance" ? line.InsuranceId : null
                 };
 
                 payment.AccountMovePaymentRels.Add(new AccountMovePaymentRel { MoveId = moveId });

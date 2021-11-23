@@ -97,6 +97,7 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                             InternalType = currentLiabilities.Type,
                             UserTypeId = currentLiabilities.Id,
                             CompanyId = company.Id,
+                            Reconcile = true
                         };
 
                         context.AccountAccounts.Add(accCNBH);
@@ -113,6 +114,24 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                                 NumberIncrement = 1,
                                 NumberNext = 1,
                                 CompanyId = company.Id,
+                            };
+
+                            context.IRSequences.Add(seq);
+                            context.SaveChanges();
+                        }
+
+                        var seqInsuranceIncome = context.IRSequences.Where(x => x.Code == "account.payment.insurance.invoice").FirstOrDefault();
+                        if (seq == null)
+                        {
+                            seq = new IRSequence
+                            {
+                                Name = "",
+                                Prefix = "THUBH" + "/{yyyy}/",
+                                Padding = 4,
+                                NumberIncrement = 1,
+                                NumberNext = 1,
+                                CompanyId = company.Id,
+                                Code = "account.payment.insurance.invoice"
                             };
 
                             context.IRSequences.Add(seq);

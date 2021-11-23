@@ -314,7 +314,7 @@ namespace Infrastructure.Services
             else if (resultSelection == "advance")
                 types = new string[] { "advance" };
             else if (resultSelection == "all")
-                types = new string[] { "cash", "bank", "debt", "advance" };
+                types = new string[] { "cash", "bank", "debt", "advance" , "insurance" };
 
             if (dateFrom.HasValue)
                 dateFrom = dateFrom.Value.AbsoluteBeginOfDate();
