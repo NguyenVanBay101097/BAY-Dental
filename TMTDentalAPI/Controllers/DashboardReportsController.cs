@@ -97,16 +97,20 @@ namespace TMTDentalAPI.Controllers
             var cashBankPaymentTotal = await query.Where(x => (x.Journal.Type == "cash" || x.Journal.Type == "bank") && x.AccountInternalType == "receivable").SumAsync(x => x.Credit);
             var advancePaymentTotal = await query.Where(x => x.Journal.Type == "advance" && x.AccountInternalType == "receivable").SumAsync(x => x.Credit);
             var debtPaymentTotal = await query.Where(x => x.Journal.Type == "debt" && x.AccountInternalType == "receivable").SumAsync(x => x.Credit);
+            var debtInsuranceTotal = await query.Where(x => x.Journal.Type == "insurance" && x.AccountInternalType == "receivable").SumAsync(x => x.Credit);
 
             var advanceIncomeTotal = await query.Where(x => (x.Journal.Type == "cash" || x.Journal.Type == "bank") && x.Account.Code == "KHTU").SumAsync(x => x.Credit);
             var debtIncomeTotal = await query.Where(x => (x.Journal.Type == "cash" || x.Journal.Type == "bank") && x.Account.Code == "CNKH").SumAsync(x => x.Credit);
             var cashBankDebitTotal = await query.Where(x => (x.Journal.Type == "cash" || x.Journal.Type == "bank") && x.AccountInternalType == "liquidity").SumAsync(x => x.Debit);
+            var insuranceIncomeTotal = await query.Where(x => (x.Journal.Type == "cash" || x.Journal.Type == "bank") && x.Account.Code == "CNBH").SumAsync(x => x.Credit);
 
             return Ok(new GetRevenueActualReportResponse
             {
                 CashBankPaymentTotal = cashBankPaymentTotal,
                 AdvancePaymentTotal = advancePaymentTotal,
                 DebtPaymentTotal = debtPaymentTotal,
+                DebtInsuranceTotal = debtInsuranceTotal,
+                InsuranceIncomeTotal = insuranceIncomeTotal,
                 AdvanceIncomeTotal = advanceIncomeTotal,
                 DebtIncomeTotal = debtIncomeTotal,
                 CashBankDebitTotal = cashBankDebitTotal
@@ -117,7 +121,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetThuChiReport(GetRevenueActualReportRequest val)
         {
             //báo cáo doanh thu thực thu
-            var res = await _dashboardService.GetThuChiReport(val.DateFrom, val.DateTo, val.CompanyId);         
+            var res = await _dashboardService.GetThuChiReport(val.DateFrom, val.DateTo, val.CompanyId, val.JournalId);         
             return Ok(res);
         }
 

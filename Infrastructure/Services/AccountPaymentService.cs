@@ -703,18 +703,7 @@ namespace Infrastructure.Services
 
             if (!invoices.Any() || invoices.Any(x => x.State != "posted"))
                 throw new Exception("Bạn chưa chọn khoản tiền bảo hiểm phải thu");
-            var dtype = invoices[0].Type;
-            //foreach (var inv in invoices.Skip(1))
-            //{
-            //    if (inv.Type != dtype)
-            //    {
-            //        if ((dtype == "in_refund" && inv.Type == "in_invoice") || (dtype == "in_invoice" && inv.Type == "in_refund"))
-            //            throw new Exception("Bạn không thể tạo thanh toán cho mua hàng và trả hàng cùng một lúc.");
-
-            //        if ((dtype == "out_refund" && inv.Type == "out_invoice") || (dtype == "out_invoice" && inv.Type == "out_refund"))
-            //            throw new Exception("Bạn không thể tạo thanh toán cho bán hàng và trả hàng cùng một lúc.");
-            //    }
-            //}
+            var dtype = invoices[0].Type;          
 
             var total_amount = invoices.Sum(x => x.AmountTotal * MAP_INVOICE_TYPE_PAYMENT_SIGN[x.Type]);
             var communication = !string.IsNullOrEmpty(invoices[0].InvoicePaymentRef) ? invoices[0].InvoicePaymentRef :
@@ -920,6 +909,7 @@ namespace Infrastructure.Services
                     foreach (var line in remove_lines)
                         payment.SaleOrderLinePaymentRels.Remove(line);
                 }
+
             }
             return await base.CreateAsync(entities);
         }

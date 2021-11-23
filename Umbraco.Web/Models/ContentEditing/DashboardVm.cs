@@ -153,6 +153,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateFrom { get; set; }
 
         public Guid? CompanyId { get; set; }
+
+        public Guid? JournalId { get; set; }
     }
 
     public class GetRevenueActualReportResponse
@@ -161,7 +163,7 @@ namespace Umbraco.Web.Models.ContentEditing
         {
             get
             {
-                return CashBankPaymentTotal + AdvancePaymentTotal + DebtPaymentTotal;
+                return CashBankPaymentTotal + AdvancePaymentTotal + DebtPaymentTotal + DebtInsuranceTotal;
             }
         }
 
@@ -177,11 +179,15 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public decimal DebtIncomeTotal { get; set; }
 
+        public decimal DebtInsuranceTotal { get; set; }
+
+        public decimal InsuranceIncomeTotal { get; set; }
+
         public decimal OtherIncomeTotal 
         {
             get
             {
-                return CashBankDebitTotal - CashBankPaymentTotal - AdvanceIncomeTotal - DebtIncomeTotal;
+                return CashBankDebitTotal - CashBankPaymentTotal - AdvanceIncomeTotal - DebtIncomeTotal - InsuranceIncomeTotal;
             }
         }
     }
@@ -207,11 +213,13 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public decimal CashBankIncomeTotal { get; set; }
 
+        public decimal InsuranceIncomeTotal { get; set; }
+
         public decimal OtherIncomeTotal
         {
             get
             {
-                return CashBankIncomeTotal - CustomerIncomeTotal - AdvanceIncomeTotal - DebtIncomeTotal - SupplierIncomeTotal;
+                return CashBankIncomeTotal - CustomerIncomeTotal - AdvanceIncomeTotal - DebtIncomeTotal - SupplierIncomeTotal - InsuranceIncomeTotal;
             }
         }
 

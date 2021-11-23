@@ -44,26 +44,26 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<InsuranceDebtReport>> GetInsuranceDebtReport(InsuranceDebtFilter val)
         {
-            var accMoveObj = GetService<IAccountMoveService>();
+            var moveLineObj = GetService<IAccountMoveLineService>();
             var insuranceObj = GetService<IResInsuranceService>();
             var accPaymentObj = GetService<IAccountPaymentService>();
             var partialReconcilesObj = GetService<IAccountPartialReconcileService>();
 
 
             var insurance = await insuranceObj.GetByIdAsync(val.InsuranceId);
-            var query =  partialReconcilesObj.SearchQuery(x => x.CreditMove.Move.PartnerId == insurance.PartnerId);          
+            var query = moveLineObj.SearchQuery(x => x.PartnerId == insurance.PartnerId && x.Journal.Type == "insurance");          
             if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.DebitMove.Move.InvoiceOrigin.Contains(val.Search) || x.DebitMove.Move.Name.Contains(val.Search));
+                query = query.Where(x => x.Move.InvoiceOrigin.Contains(val.Search) || x.Move.Name.Contains(val.Search));
 
             var total = await query.CountAsync();
             var items = await query.OrderByDescending(x => x.DateCreated).Select(x => new InsuranceDebtReport
             {
                 Date = x.DateCreated,
-                PartnerName = x.DebitMove.Partner.Name,
-                AmountTotal = x.DebitMove.Balance - x.DebitMove.AmountResidual,
-                Origin = x.DebitMove.Move.InvoiceOrigin,
-                MoveId = x.DebitMove.Move.Id,
-                MoveType = x.DebitMove.Move.Type
+                PartnerName = x.Partner.Name,
+                AmountTotal = x.AmountResidual,
+                Origin = x.Move.InvoiceOrigin,
+                MoveId = x.Move.Id,
+                MoveType = x.Move.Type
             }).ToListAsync();
 
             return items;
@@ -228,8 +228,8 @@ namespace Infrastructure.Services
                         MoveName = x.Move.Name,
                         Name = x.Name,
                         Ref = x.Move.Ref,
-                        Debit = x.Account.InternalType == "payable" ? x.Credit : x.Debit,
-                        Credit = x.Account.InternalType == "payable" ? x.Debit : x.Credit,
+                        Debit = x.Debit,
+                        Credit = x.Credit,
                     }).ToList();
 
 

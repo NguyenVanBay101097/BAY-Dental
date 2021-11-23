@@ -17,6 +17,7 @@ export class CashBookPaged {
 export class CashBookSummarySearch {
   companyId: string;
   resultSelection: string;
+  journal: string;
   dateFrom: string;
   dateTo: string;
 }
@@ -52,6 +53,7 @@ export class ReportDataResult {
 
 export class CashBookDetailFilter {
   companyId: string;
+  journalId: string;
   resultSelection: string;
   dateFrom: string;
   dateTo: string;
@@ -119,6 +121,13 @@ export class CashBookService {
   getSumary(val: any): Observable<ReportDataResult> {
     return this.http.post<ReportDataResult>(
       this.baseApi + this.apiUrl + "/GetSumary",
+      val
+    );
+  }
+
+  getSumaryDayReport(val: any): Observable<ReportDataResult> {
+    return this.http.post<ReportDataResult>(
+      this.baseApi + this.apiUrl + "/GetSumaryDayReport",
       val
     );
   }
