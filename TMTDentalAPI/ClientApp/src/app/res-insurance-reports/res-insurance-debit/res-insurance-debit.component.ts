@@ -65,7 +65,6 @@ export class ResInsuranceDebitComponent implements OnInit {
     modalRef.componentInstance.title = 'Sửa công ty bảo hiểm';
     modalRef.componentInstance.id = this.insuranceInfo ? this.insuranceInfo.id : '';
     modalRef.result.then((res: any) => {
-      console.log(res);
       this.notifyService.notify("success", "Lưu thành công")
     }, () => { });
   }
@@ -78,11 +77,9 @@ export class ResInsuranceDebitComponent implements OnInit {
     val.insuranceId = this.insuranceId ? this.insuranceId : '';
     this.resInsuranceReportService.getInsuranceDebtReport(val).subscribe((res: any) => {
       this.insuranceDebt = res;
-      console.log(this.insuranceDebt);
       const result = aggregateBy(res, [
         { aggregate: "sum", field: "amountTotal" },
       ]);
-      
       this.sumAmount = result.amountTotal ? result.amountTotal.sum : 0;
     }, (error) => console.log(error))
   }

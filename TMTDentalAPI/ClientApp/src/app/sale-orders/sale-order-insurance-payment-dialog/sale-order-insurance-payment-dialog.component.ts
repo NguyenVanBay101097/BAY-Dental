@@ -25,7 +25,7 @@ export class SaleOrderInsurancePaymentDialogComponent implements OnInit, AfterVi
   formGroup: FormGroup;
   insuranceFilter: ResInsuranceSimple[] = [];
   submitted: boolean = false;
-  // amountPaid: number = 0;
+
   constructor(
     private fb: FormBuilder,
     private activeModal: NgbActiveModal,
