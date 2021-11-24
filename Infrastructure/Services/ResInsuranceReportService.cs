@@ -146,7 +146,7 @@ namespace Infrastructure.Services
             var items = await query.Select(x => new InsuranceHistoryInComeDetailItem
             {
                 Id = x.Id,
-                PartnerName = x.DebitMove.Partner.Name,
+                PartnerName = x.DebitMove.Move.Partner.Name,
                 Amount = x.Amount,
                 Date = x.DateCreated.Value,
                 Ref = x.DebitMove.Ref

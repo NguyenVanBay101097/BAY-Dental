@@ -122,18 +122,6 @@ export class DayDashboardReportCashbookComponent implements OnInit, AfterViewIni
   }
 
   loadCashBankTotal() {
-    // forkJoin(this.filterResultSelection.map(x => {
-    //   var summaryFilter = new CashBookSummarySearch();
-    //   summaryFilter.companyId = this.companyId || '';
-    //   summaryFilter.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : null;
-    //   summaryFilter.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : null;
-    //   // summaryFilter.resultSelection = x.value;
-    //   return this.cashBookService.getSumaryDayReport(summaryFilter).pipe(
-    //     switchMap(total => of({ text: x.value, total: total }))
-    //   );
-    // })).subscribe((result) => {
-    //   this.totalCashBook = result.map(x => x.total);
-    // });
     var summaryFilter = new CashBookSummarySearch();
     summaryFilter.companyId = this.companyId || '';
     summaryFilter.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : null;
@@ -240,13 +228,7 @@ export class DayDashboardReportCashbookComponent implements OnInit, AfterViewIni
 
   onSelectChange(e) {
     this.journalId = e ? e.id : '';
-    // if (e) {
-    //   this.resultSelection = e.value;
-    // } else {
-    //   this.resultSelection = null;
-    // }
     this.loadDataFromApi();
     this.loadData();
-    this.loadSumaryResult();
   }
 }

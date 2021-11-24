@@ -317,7 +317,7 @@ namespace TMTDentalAPI.Controllers
                 worksheet2.Cells["A4:D4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
                 worksheet2.Cells["A4:D4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#0667d1"));
                 worksheet2.Cells["A4:D4"].Style.Font.Color.SetColor(Color.White);
-                worksheet1.Cells[4, 1, 8, 4].Style.Border.Bottom.Color.SetColor(Color.White);
+                //worksheet1.Cells[4, 1, 8, 4].Style.Border.Bottom.Color.SetColor(Color.White);
 
 
 
@@ -358,10 +358,10 @@ namespace TMTDentalAPI.Controllers
                 }
 
                 ///Thu chi
-                var worksheet3 = package.Workbook.Worksheets.Add("TinhHinhThuChi");
+                var worksheet3 = package.Workbook.Worksheets.Add("SoQuy");
                 var dataCashBook = await _dashboardService.GetDataCashBookReportDay(val.DateFrom, val.DateTo, val.CompanyId);
 
-                worksheet3.Cells["A1:F1"].Value = "TÌNH HÌNH THU CHI";
+                worksheet3.Cells["A1:F1"].Value = "SỔ QUỸ";
                 worksheet3.Cells["A1:F1"].Style.Font.Color.SetColor(Color.Blue);
                 worksheet3.Cells["A1:F1"].Style.Font.Size = 14;
                 worksheet3.Cells["A1:F1"].Merge = true;
@@ -373,62 +373,67 @@ namespace TMTDentalAPI.Controllers
                 worksheet3.Cells["A2:F2"].Merge = true;
                 worksheet3.Cells["A2:F2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
-                worksheet3.Cells["A4"].Value = "Quỹ đầu kì";
-                worksheet3.Cells["B4"].Value = "Tổng thu";
-                worksheet3.Cells["C4"].Value = "Tổng chi";
-                worksheet3.Cells["D4"].Value = "Tồn sổ quỹ";
-                worksheet3.Cells["E4"].Value = "Quỹ tiền mặt";
-                worksheet3.Cells["F4"].Value = "Quỹ ngân hàng";
+                //worksheet3.Cells["A4"].Value = "Quỹ đầu kì";
+                //worksheet3.Cells["B4"].Value = "Tổng thu";
+                //worksheet3.Cells["C4"].Value = "Tổng chi";
+                //worksheet3.Cells["D4"].Value = "Tồn sổ quỹ";
+                //worksheet3.Cells["E4"].Value = "Quỹ tiền mặt";
+                //worksheet3.Cells["F4"].Value = "Quỹ ngân hàng";
 
-                worksheet3.Cells["A5"].Value = dataCashBook.DataAmountTotals.ToArray()[0].Begin;
-                worksheet3.Cells["B5"].Value = dataCashBook.DataAmountTotals.ToArray()[0].TotalThu;
-                worksheet3.Cells["C5"].Value = dataCashBook.DataAmountTotals.ToArray()[0].TotalChi;
-                worksheet3.Cells["D5"].Value = dataCashBook.DataAmountTotals.ToArray()[0].TotalAmount;
-                worksheet3.Cells["E5"].Value = dataCashBook.DataAmountTotals.ToArray()[1].TotalAmount;
-                worksheet3.Cells["F5"].Value = dataCashBook.DataAmountTotals.ToArray()[2].TotalAmount;
+                //worksheet3.Cells["A5"].Value = dataCashBook.DataAmountTotals.ToArray()[0].Begin;
+                //worksheet3.Cells["B5"].Value = dataCashBook.DataAmountTotals.ToArray()[0].TotalThu;
+                //worksheet3.Cells["C5"].Value = dataCashBook.DataAmountTotals.ToArray()[0].TotalChi;
+                //worksheet3.Cells["D5"].Value = dataCashBook.DataAmountTotals.ToArray()[0].TotalAmount;
+                //worksheet3.Cells["E5"].Value = dataCashBook.DataAmountTotals.ToArray()[1].TotalAmount;
+                //worksheet3.Cells["F5"].Value = dataCashBook.DataAmountTotals.ToArray()[2].TotalAmount;
 
-                worksheet3.Cells["A5:F5"].Style.Numberformat.Format = "#,##0";
+                //worksheet3.Cells["A5:F5"].Style.Numberformat.Format = "#,##0";
 
-                worksheet3.Cells["A4:F4"].Style.Font.Bold = true;
-                worksheet3.Cells["A4:F4"].Style.Font.Size = 14;
-                worksheet3.Cells["A4:F4"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                worksheet3.Cells["A4:F4"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
-                worksheet3.Cells["A4:F4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                worksheet3.Cells["A4:F4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#0667d1"));
-                worksheet3.Cells["A4:F4"].Style.Font.Color.SetColor(Color.White);
+                //worksheet3.Cells["A4:F4"].Style.Font.Bold = true;
+                //worksheet3.Cells["A4:F4"].Style.Font.Size = 14;
+                //worksheet3.Cells["A4:F4"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                //worksheet3.Cells["A4:F4"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                //worksheet3.Cells["A4:F4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                //worksheet3.Cells["A4:F4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#0667d1"));
+                //worksheet3.Cells["A4:F4"].Style.Font.Color.SetColor(Color.White);
 
-                worksheet3.Cells["A5:F5"].Style.Font.Bold = true;
-                worksheet3.Cells["A5:F5"].Style.Font.Size = 14;
-                worksheet3.Cells["A5:F5"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                worksheet3.Cells["A5:F5"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
-                worksheet3.Cells["A5:F5"].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                worksheet3.Cells["A5:F5"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#0667d1"));
-                worksheet3.Cells["A5:F5"].Style.Font.Color.SetColor(Color.White);
+                //worksheet3.Cells["A5:F5"].Style.Font.Bold = true;
+                //worksheet3.Cells["A5:F5"].Style.Font.Size = 14;
+                //worksheet3.Cells["A5:F5"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                //worksheet3.Cells["A5:F5"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                //worksheet3.Cells["A5:F5"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                //worksheet3.Cells["A5:F5"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#0667d1"));
+                //worksheet3.Cells["A5:F5"].Style.Font.Color.SetColor(Color.White);
+                worksheet3.Cells["A4:C4"].Value = "Tồn quỹ";
+                worksheet3.Cells["A4:C4"].Merge = true;
+                worksheet3.Cells["A4:C4"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
 
-                worksheet3.Cells["A7:C7"].Value = "Thu";
-                worksheet3.Cells["A7:C7"].Merge = true;
-                worksheet3.Cells["A7:C7"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
 
-                worksheet3.Cells["D7:F7"].Value = "Chi";
-                worksheet3.Cells["D7:F7"].Merge = true;
+                worksheet3.Cells["D4:F4"].Value = "Các khoản thu";
+                worksheet3.Cells["D4:F4"].Merge = true;
+                worksheet3.Cells["D4:F4"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
 
-                worksheet3.Cells["A7:F7"].Style.Font.Bold = true;
-                worksheet3.Cells["A7:F7"].Style.Font.Size = 14;
-                worksheet3.Cells["A7:F7"].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                worksheet3.Cells["A7:F7"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#0667d1"));
-                worksheet3.Cells["A7:F7"].Style.Font.Color.SetColor(Color.White);
+                worksheet3.Cells["G4:I4"].Value = "Các khoản chi";
+                worksheet3.Cells["G4:I4"].Merge = true;
+                worksheet3.Cells["D4:F4"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
 
-                worksheet3.Cells["A8:B8"].Value = "Khách hàng thanh toán dịch vụ và thuốc";
-                worksheet3.Cells["A8:B8"].Merge = true;
-                worksheet3.Cells["C8"].Value = dataCashBook.DataThuChiReport.CustomerIncomeTotal;
-                worksheet3.Cells["C8"].Style.Numberformat.Format = "#,##0";
+                worksheet3.Cells["A4:I4"].Style.Font.Bold = true;
+                worksheet3.Cells["A4:I4"].Style.Font.Size = 14;
+                worksheet3.Cells["A4:I4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet3.Cells["A4:I4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#0667d1"));
+                worksheet3.Cells["A4:I4"].Style.Font.Color.SetColor(Color.White);
 
-                worksheet3.Cells["A9:B9"].Value = "Khách hàng đóng tạm ứng";
+                worksheet3.Cells["A5:B5"].Value = "Đầu ngày";
+                worksheet3.Cells["A5:B5"].Merge = true;
+                worksheet3.Cells["C5"].Value = dataCashBook.DataThuChiReport.CustomerIncomeTotal;
+                worksheet3.Cells["C5"].Style.Numberformat.Format = "#,##0";
+
+                worksheet3.Cells["A9:B9"].Value = "Tổng thu trong ngày";
                 worksheet3.Cells["A9:B9"].Merge = true;
                 worksheet3.Cells["C9"].Value = dataCashBook.DataThuChiReport.AdvanceIncomeTotal;
                 worksheet3.Cells["C9"].Style.Numberformat.Format = "#,##0";
 
-                worksheet3.Cells["A10:B10"].Value = "Thu công nợ khách hàng";
+                worksheet3.Cells["A10:B10"].Value = "Tổng chi trong ngày";
                 worksheet3.Cells["A10:B10"].Merge = true;
                 worksheet3.Cells["C10"].Value = dataCashBook.DataThuChiReport.DebtIncomeTotal;
                 worksheet3.Cells["C10"].Style.Numberformat.Format = "#,##0";
