@@ -151,7 +151,7 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                             Prefix = "THUBH" + "/{yyyy}/",
                             Padding = 4,
                             NumberIncrement = 1,
-                            NumberNext = 1,                         
+                            NumberNext = 1,
                             Code = "account.payment.insurance.invoice"
                         };
 

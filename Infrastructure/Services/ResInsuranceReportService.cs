@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Models;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
@@ -60,22 +61,66 @@ namespace Infrastructure.Services
             var insuranceObj = GetService<IResInsuranceService>();
 
             var insurance = await insuranceObj.GetByIdAsync(val.InsuranceId);
-            var query = moveLineObj.SearchQuery(x => x.PartnerId == insurance.PartnerId && x.Journal.Type == "insurance" && x.AmountResidual > 0);          
+            var query = moveLineObj.SearchQuery(x => x.PartnerId == insurance.PartnerId && x.Journal.Type == "insurance" && x.AmountResidual > 0);
             if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Move.InvoiceOrigin.Contains(val.Search) || (x.PaymentId.HasValue && x.Payment.Communication.Contains(val.Search)));
+                query = query.Where(x => x.PaymentId.HasValue && (x.Payment.Communication.Contains(val.Search) || x.Payment.Partner.Name.Contains(val.Search) || x.Payment.Partner.NameNoSign.Contains(val.Search)));
 
             var items = await query.OrderByDescending(x => x.DateCreated).Select(x => new InsuranceDebtReport
             {
                 Date = x.DateCreated,
-                PartnerName = x.PartnerId.HasValue ? x.Payment.Partner.Name : null,
+                PartnerName = x.Payment.Partner.Name,
                 AmountTotal = x.AmountResidual,
                 Origin = x.Move.InvoiceOrigin,
-                Communication = x.PartnerId.HasValue ? x.Payment.Communication : null,
+                Communication = x.Payment.Communication,
                 MoveId = x.Move.Id,
                 MoveType = x.Move.Type
             }).ToListAsync();
 
             return items;
+        }
+
+        public async Task<PagedResult2<InsuranceHistoryInComeItem>> GetHistoryInComeDebtPaged(InsuranceHistoryInComeFilter val)
+        {
+            var paymentObj = GetService<IAccountPaymentService>();
+            var insuranceObj = GetService<IResInsuranceService>();
+            var paymentQr = paymentObj.SearchQuery();
+
+            if (val.InsuranceId.HasValue)
+                paymentQr = paymentQr.Where(x => x.InsuranceId == val.InsuranceId);
+
+            if (val.DateFrom.HasValue)
+                paymentQr = paymentQr.Where(x => x.PaymentDate >= val.DateFrom.Value.AbsoluteBeginOfDate());
+
+            if (val.DateTo.HasValue)
+                paymentQr = paymentQr.Where(x => x.PaymentDate < val.DateTo.Value.AbsoluteEndOfDate());
+
+            paymentQr = paymentQr.OrderByDescending(x => x.DateCreated);
+
+            if (val.Limit > 0)
+                paymentQr = paymentQr.Skip(val.Offset).Take(val.Limit);
+
+            var totalItems = await paymentQr.CountAsync();
+
+
+
+            var items = paymentQr.Select(x => new InsuranceHistoryInComeItem
+            {
+                Id = x.Id,
+                PaymentDate = x.PaymentDate,
+                Name = x.Name,
+                Amount = x.Amount,
+                Communication = x.Communication,
+                JournalName = x.Journal.Name,
+                State = x.State,
+                DateFrom = val.DateFrom,
+                DateTo = val.DateTo
+            });
+
+            return new PagedResult2<InsuranceHistoryInComeItem>(totalItems, val.Offset, val.Limit)
+            {
+                Items = items
+            };
+
         }
 
         public async Task<IEnumerable<InsuranceReportItem>> ReportSummary(InsuranceReportFilter val)
@@ -87,6 +132,7 @@ namespace Infrastructure.Services
                 date_to = date_to.Value.AbsoluteEndOfDate();
 
             var amlObj = GetService<IAccountMoveLineService>();
+            var insuranceObj = GetService<IResInsuranceService>();
 
             var dict = new Dictionary<Guid, InsuranceReportItem>();
             if (date_from.HasValue)
@@ -139,7 +185,7 @@ namespace Infrastructure.Services
             }
 
             var query2 = amlObj._QueryGet(dateFrom: date_from, dateTo: date_to, state: "posted", companyId: val.CompanyId);
-            query2 = query2.Where(x => x.PartnerId.HasValue &&  x.Partner.IsInsurance && x.Account.Code == "CNBH");
+            query2 = query2.Where(x => x.PartnerId.HasValue && x.Partner.IsInsurance && x.Account.Code == "CNBH");
 
             if (!string.IsNullOrWhiteSpace(val.Search))
             {
@@ -183,9 +229,12 @@ namespace Infrastructure.Services
                 }
 
                 dict[item.PartnerId].Debit = item.Debit;
-                dict[item.PartnerId].Credit = item.Credit;           
+                dict[item.PartnerId].Credit = item.Credit;
             }
 
+
+            var partnerIds = dict.Select(x => x.Key).ToList();
+            var dict_insurance = insuranceObj.SearchQuery(x => x.PartnerId.HasValue && partnerIds.Contains(x.PartnerId.Value)).Distinct().ToDictionary(x => x.PartnerId, x => x.Id);
             var res = new List<InsuranceReportItem>();
             foreach (var item in dict)
             {
@@ -197,6 +246,7 @@ namespace Infrastructure.Services
                 res.Add(new InsuranceReportItem
                 {
                     PartnerId = item.Key,
+                    InsuranceId = dict_insurance[item.Key],
                     DateFrom = date_from,
                     DateTo = date_to,
                     PartnerRef = value.PartnerRef,
@@ -235,6 +285,7 @@ namespace Infrastructure.Services
                     {
                         Date = x.Date,
                         MoveName = x.Move.Name,
+                        PaymentName = x.Payment.Name,
                         Name = x.Name,
                         Ref = x.Move.Ref,
                         Debit = x.Debit,
@@ -275,7 +326,7 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<ReportInsuranceDebitExcel>> ExportReportInsuranceDebtExcel(InsuranceReportFilter val)
         {
-            var reportDebitDetailFilter= new InsuranceReportDetailFilter()
+            var reportDebitDetailFilter = new InsuranceReportDetailFilter()
             {
                 DateFrom = val.DateFrom,
                 DateTo = val.DateTo,

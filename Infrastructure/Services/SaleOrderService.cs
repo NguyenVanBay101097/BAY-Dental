@@ -1625,7 +1625,7 @@ namespace Infrastructure.Services
         {
             var saleLineObj = GetService<ISaleOrderLineService>();
             var order = await SearchQuery(x => x.Id == id && x.State != "draft").Include(x => x.OrderLines).ThenInclude(s => s.InsurancePaymentLines).ThenInclude(x => x.ResInsurancePayment).FirstOrDefaultAsync();
-            var lines = order.OrderLines.Where(x => x.OrderId == id && x.State != "draft" && !x.InsurancePaymentLines.Any(x => x.ResInsurancePayment.State == "posted")).ToList();
+            var lines = order.OrderLines.Where(x => x.OrderId == id && x.State != "draft" && !x.InsurancePaymentLines.Any(x => x.ResInsurancePayment.State == "posted") && x.InvoiceStatus != "invoiced").ToList();
             var res = new ResInsurancePaymentRegisterDisplay();
             res.Date = DateTime.Now;
             res.Note = $"{order.Name} - Bảo hiểm bảo lãnh";
