@@ -86,8 +86,11 @@ namespace Infrastructure.Services
             var paymentQr = paymentObj.SearchQuery();
 
             if (val.InsuranceId.HasValue)
-                paymentQr = paymentQr.Where(x => x.InsuranceId == val.InsuranceId);
-
+            {
+                var insurance = await insuranceObj.GetByIdAsync(val.InsuranceId);
+                paymentQr = paymentQr.Where(x => x.PartnerId == insurance.PartnerId);
+            }
+               
             if (val.DateFrom.HasValue)
                 paymentQr = paymentQr.Where(x => x.PaymentDate >= val.DateFrom.Value.AbsoluteBeginOfDate());
 

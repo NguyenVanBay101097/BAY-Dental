@@ -50,6 +50,15 @@ namespace Infrastructure.Services
             var movelineObj = GetService<IAccountMoveLineService>();
             var accObj = GetService<IAccountAccountService>();
 
+            IQueryable<ResInsurance> insurances = from isr in SearchQuery() select isr;
+
+            if (!string.IsNullOrEmpty(val.Search))
+                insurances = from ins in insurances.Where(x => x.Name.Contains(val.Search) || x.Phone.Contains(val.Search)) select ins;
+
+            if (val.IsActive.HasValue)
+                insurances = insurances.Union(from ins in SearchQuery().Where(x => x.IsActive == val.IsActive) select ins);
+
+
             var insuranceDebQr = from aml in movelineObj.SearchQuery(x => x.CompanyId == CompanyId)
                                  join acc in accObj.SearchQuery()
                                  on aml.AccountId equals acc.Id
@@ -61,7 +70,7 @@ namespace Infrastructure.Services
                                      TotalDebit = g.Sum(x => x.Balance)
                                  };
 
-            var ResponseQr = from isr in SearchQuery()
+            var ResponseQr = from isr in insurances
                              from isrd in insuranceDebQr.Where(x => x.PartnerId == isr.PartnerId).DefaultIfEmpty()
                              orderby isr.DateCreated descending
                              select new ResInsuranceBasic
@@ -71,13 +80,7 @@ namespace Infrastructure.Services
                                  Phone = isr.Phone,
                                  TotalDebt = isrd.TotalDebit,
                                  IsActive = isr.IsActive
-                             };
-
-            if (!string.IsNullOrEmpty(val.Search))
-                ResponseQr = ResponseQr.Where(x => x.Name.Contains(val.Search) || x.Phone.Contains(val.Search));
-
-            if (val.IsActive.HasValue)
-                ResponseQr = ResponseQr.Where(x => x.IsActive == val.IsActive);
+                             };         
 
             if (val.IsDebt.HasValue)
                 ResponseQr = ResponseQr.Where(x => val.IsDebt == true ? x.TotalDebt > 0 : x.TotalDebt <= 0);

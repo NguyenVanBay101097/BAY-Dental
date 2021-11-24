@@ -99,10 +99,6 @@ export class ResInsuranceDebitComponent implements OnInit {
   }
 
   onPayment() {
-    if (this.selectedIds.length === 0) {
-      this.notifyService.notify('error', 'Bạn chưa chọn khoản tiền bảo hiểm phải thu');
-      return;
-    }
     this.accountPaymentService.insurancePaymentDefaultGet(this.selectedIds).subscribe(rs2 => {
       let modalRef = this.modalService.open(ResInsuranceDebtPaymentDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
       modalRef.componentInstance.title = 'Thu tiền bảo hiểm';
