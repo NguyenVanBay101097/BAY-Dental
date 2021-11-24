@@ -100,7 +100,7 @@ export class SaleOrderInsurancePaymentDialogComponent implements OnInit, AfterVi
     val.limit = 20;
     val.offset = 0;
     val.search = q || '';
-    val.isActive = 'true';
+    val.isActive = true;
     return this.resInsuranceService.autoComplete(val);
   }
 

@@ -137,7 +137,7 @@ export class ResInsuranceReportsOverviewComponent implements OnInit, AfterViewIn
 
   exportExcel() {
     let val = this.getFilter();
-    this.resInsuranceReportService.exportExcelFile(val).subscribe((rs) => {
+    this.resInsuranceReportService.exportReportInsuranceExcelFile(val).subscribe((rs) => {
       let filename = "BaoCaoCongNoBaoHiem";
       let newBlob = new Blob([rs], {
         type:

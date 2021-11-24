@@ -38,12 +38,8 @@ export class ResInsurancePaged {
     limit: number;
     offset: number;
     search: string;
-    isActive: string;
-    isDebt: string;
-}
-
-export class InsuranceIsActivePatch {
-    isActive: string;
+    isActive: boolean;
+    isDebt: boolean;
 }
 
 export class ResInsurancePaymentBasic {

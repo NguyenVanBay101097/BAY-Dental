@@ -7,7 +7,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { ResInsuranceCuDialogComponent } from 'src/app/shared/res-insurance-cu-dialog/res-insurance-cu-dialog.component';
 import { NotifyService } from 'src/app/shared/services/notify.service';
-import { InsuranceActionDeactiveRequest, InsuranceIsActivePatch, ResInsurancePaged } from '../res-insurance.model';
+import { InsuranceActionDeactiveRequest, ResInsurancePaged } from '../res-insurance.model';
 import { ResInsuranceService } from '../res-insurance.service';
 
 @Component({
@@ -21,18 +21,18 @@ export class ResInsuranceListComponent implements OnInit {
   skip: number = 0;
   pagerSettings: any;
   search: string;
-  isActive: string;
-  isDebt: string;
+  isActive: boolean;
+  isDebt: boolean;
   searchUpdate = new Subject<string>();
 
-  statesFilter: { text: string, value: string }[] = [
-    { text: 'Đang liên kết', value: 'true' },
-    { text: 'Ngưng liên kết', value: 'false' }
+  statesFilter: { text: string, value: boolean }[] = [
+    { text: 'Đang liên kết', value: true },
+    { text: 'Ngưng liên kết', value: false }
   ];
 
-  debitsFilter: { text: string, value: string }[] = [
-    { text: 'Có công nợ', value: 'true' },
-    { text: 'Không có công nợ', value: 'false' }
+  debitsFilter: { text: string, value: boolean }[] = [
+    { text: 'Có công nợ', value: true },
+    { text: 'Không có công nợ', value: false }
   ];
 
   constructor(
@@ -62,8 +62,12 @@ export class ResInsuranceListComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search || '';
-    val.isActive = this.isActive || '';
-    val.isDebt = this.isDebt || '';
+    if (typeof this.isActive === 'boolean') {
+      val.isActive = this.isActive;
+    }
+    if (typeof this.isDebt === 'boolean') {
+      val.isDebt = this.isDebt;
+    }
     this.resInsuranceService.getPaged(val).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
@@ -71,9 +75,7 @@ export class ResInsuranceListComponent implements OnInit {
       }))
     ).subscribe(res => {
       this.gridData = res;
-    }, err => {
-      console.log(err);
-    })
+    }, err => console.log(err))
   }
 
   createItem(): void {
@@ -136,12 +138,12 @@ export class ResInsuranceListComponent implements OnInit {
   }
 
   onStateChange(data: any): void {
-    this.isActive = data ? data.value : '';
+    this.isActive = data ? data.value : null;
     this.loadDataFromApi();
   }
-  
+
   onDebtChange(data: any): void {
-    this.isDebt = data ? data.value : '';
+    this.isDebt = data ? data.value : null;
     this.loadDataFromApi();
   }
 
