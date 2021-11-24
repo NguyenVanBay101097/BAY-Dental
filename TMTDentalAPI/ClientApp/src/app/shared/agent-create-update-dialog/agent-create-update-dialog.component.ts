@@ -200,7 +200,6 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
       this.agentService.get(this.id).subscribe((result: any) => {
         this.formGroup.patchValue(result);
         this.classify = result.classify ? result.classify : 'partner';
-        this.setValidator(this.classify);
         if (result.birthYear) {
           this.formGroup.get("birthYearStr").setValue(result.birthYear + '');
         }
@@ -325,8 +324,8 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
       if (e.birthDay) {
         let DOB = new Date(e.birthDay);
         this.formGroup.get("birthYearStr").setValue(DOB.getFullYear());
-        this.formGroup.get("birthMonthStr").setValue(DOB.getMonth());
-        this.formGroup.get("birthDayStr").setValue(DOB.getDay());
+        this.formGroup.get("birthMonthStr").setValue(DOB.getMonth() + 1);
+        this.formGroup.get("birthDayStr").setValue(DOB.getDate());
       }
     }
     else {

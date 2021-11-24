@@ -275,6 +275,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   actionCancel() {
     if (this.saleOrderId) {
       this.saleOrderService.actionCancel([this.saleOrderId]).subscribe(() => {
+        this.router.navigate([], { fragment: 'services', relativeTo: this.route } )
         this.loadSaleOrder();
       });
     }

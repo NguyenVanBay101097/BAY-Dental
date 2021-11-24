@@ -45,7 +45,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width:100%">
-                                    <kendo-numerictextbox [min]="0" style="width: auto" autoCorrect='true' [format]="'n0'" class="mr-2"
+                                    <kendo-numerictextbox [min]="0" style="width: auto" autoCorrect='true' format="n0" [decimals]="0" class="mr-2"
                                         formControlName="basicPoint">
                                     </kendo-numerictextbox>
                                     <div class="text-danger" *ngIf="submitted && f.basicPoint.errors?.required">

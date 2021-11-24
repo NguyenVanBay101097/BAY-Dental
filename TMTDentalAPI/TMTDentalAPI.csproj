@@ -73,6 +73,47 @@
     <None Remove="PrintTemplate\PartnerAdvance\Template_refund.html" />
     <None Remove="PrintTemplate\PurchaseOrder\Template_order.html" />
     <None Remove="PrintTemplate\ToaThuoc\Template.html" />
+    <None Remove="SampleData\account_data.xml" />
+    <None Remove="SampleData\account_security.xml" />
+    <None Remove="SampleData\base_groups.xml" />
+    <None Remove="SampleData\dental_data.xml" />
+    <None Remove="SampleData\dental_security.xml" />
+    <None Remove="SampleData\importSampleData.xml" />
+    <None Remove="SampleData\ImportXML\appointment.xml" />
+    <None Remove="SampleData\ImportXML\customer_receipt.xml" />
+    <None Remove="SampleData\ImportXML\employee.xml" />
+    <None Remove="SampleData\ImportXML\labo_bite_joint.xml" />
+    <None Remove="SampleData\ImportXML\labo_bridge.xml" />
+    <None Remove="SampleData\ImportXML\labo_finish_line.xml" />
+    <None Remove="SampleData\ImportXML\labo_order.xml" />
+    <None Remove="SampleData\ImportXML\loai_chi.xml" />
+    <None Remove="SampleData\ImportXML\loai_thu.xml" />
+    <None Remove="SampleData\ImportXML\partner_customer.xml" />
+    <None Remove="SampleData\ImportXML\partner_supplier.xml" />
+    <None Remove="SampleData\ImportXML\phieu_chi.xml" />
+    <None Remove="SampleData\ImportXML\phieu_thu.xml" />
+    <None Remove="SampleData\ImportXML\product_category.xml" />
+    <None Remove="SampleData\ImportXML\product_labo.xml" />
+    <None Remove="SampleData\ImportXML\product_labo_attach.xml" />
+    <None Remove="SampleData\ImportXML\product_medicine.xml" />
+    <None Remove="SampleData\ImportXML\product_product.xml" />
+    <None Remove="SampleData\ImportXML\product_service.xml" />
+    <None Remove="SampleData\ImportXML\purchase_order_order.xml" />
+    <None Remove="SampleData\ImportXML\purchase_order_refund.xml" />
+    <None Remove="SampleData\ImportXML\sale_order.xml" />
+    <None Remove="SampleData\ImportXML\sale_order_payment.xml" />
+    <None Remove="SampleData\ImportXML\stock_picking.xml" />
+    <None Remove="SampleData\ImportXML\uom.xml" />
+    <None Remove="SampleData\ir_model_access.csv" />
+    <None Remove="SampleData\ir_model_data.csv" />
+    <None Remove="SampleData\ir_module_category_data.xml" />
+    <None Remove="SampleData\product_data.xml" />
+    <None Remove="SampleData\product_demo.xml" />
+    <None Remove="SampleData\product_security.xml" />
+    <None Remove="SampleData\res_bank.xml" />
+    <None Remove="SampleData\sale_security.xml" />
+    <None Remove="SampleData\stock_data.xml" />
+    <None Remove="SampleData\stock_security.xml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -82,6 +123,129 @@
     <Content Include="PrintTemplate\PartnerAdvance\Template_advance.html" />
     <Content Include="PrintTemplate\PurchaseOrder\Template_order.html" />
     <Content Include="PrintTemplate\ToaThuoc\Template.html" />
+    <Content Include="SampleData\account_data.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\account_security.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\base_groups.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\dental_data.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\dental_security.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\importSampleData.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\ImportXML\appointment.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\ImportXML\customer_receipt.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\ImportXML\employee.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\ImportXML\labo_bite_joint.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\ImportXML\labo_bridge.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\ImportXML\labo_finish_line.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\ImportXML\labo_order.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\ImportXML\loai_chi.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\ImportXML\loai_thu.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\ImportXML\partner_customer.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\ImportXML\partner_supplier.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\ImportXML\phieu_chi.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\ImportXML\phieu_thu.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\ImportXML\product_category.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\ImportXML\product_labo.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\ImportXML\product_labo_attach.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\ImportXML\product_medicine.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\ImportXML\product_product.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\ImportXML\product_service.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\ImportXML\purchase_order_order.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\ImportXML\purchase_order_refund.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\ImportXML\sale_order.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\ImportXML\sale_order_payment.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\ImportXML\stock_picking.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\ImportXML\uom.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\ir_model_access.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\ir_model_data.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\ir_module_category_data.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\product_data.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\product_demo.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\product_security.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\res_bank.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\sale_security.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\stock_data.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleData\stock_security.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

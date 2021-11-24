@@ -284,7 +284,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   onDelete(){
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'md', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Xóa lịch hẹn';
-    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa?';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa lịch hẹn này?';
     modalRef.result.then(() => {
       this.appointmentService.removeAppointment(this.appointId).subscribe(()=>{
         this.notify("success","Xóa thành công");

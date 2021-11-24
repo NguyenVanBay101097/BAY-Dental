@@ -489,8 +489,12 @@ namespace Infrastructure.Services
             var customerReceiptData = xmlObj.GetObject<XmlSampleData<CustomerReceiptXmlSampleDataRecord>>(customerReceiptPath);
             foreach (var item in customerReceiptData.Records)
             {
+                var dateWaiting = DateTime.Today.AddDays(-item.DateRound).AddHours(item.WaitingTimeHour).AddMinutes(item.WaitingTimeMinute);
+                if (dateWaiting > DateTime.Now)
+                    continue;
+
                 var customerReceipt = _mapper.Map<CustomerReceipt>(item);
-                customerReceipt.DateWaiting = DateTime.Today.AddDays(-item.DateRound).AddHours(item.WaitingTimeHour).AddMinutes(item.WaitingTimeMinute);
+                customerReceipt.DateWaiting = dateWaiting;
                 if (item.ExaminationTimeHour.HasValue)
                     customerReceipt.DateExamination = DateTime.Today.AddDays(-item.DateRound).AddHours(item.ExaminationTimeHour.Value).AddMinutes(item.ExaminationTimeMinute.Value);
                 if (item.DoneTimeHour.HasValue)

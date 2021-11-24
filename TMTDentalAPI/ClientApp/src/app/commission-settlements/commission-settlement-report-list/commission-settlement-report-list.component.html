@@ -12,7 +12,7 @@
                         class="fas fa-download"></i>&nbsp;Xuất excel</button>
             </div>
         </div>
-        <kendo-grid [data]="reportResults" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading" (pageChange)="pageChange($event)">
+        <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading" (pageChange)="pageChange($event)">
             <kendo-grid-column field="employeeName" title="Nhân viên">
                 <ng-template kendoGridFooterTemplate>
                     <span class="text_sum">Tổng</span>

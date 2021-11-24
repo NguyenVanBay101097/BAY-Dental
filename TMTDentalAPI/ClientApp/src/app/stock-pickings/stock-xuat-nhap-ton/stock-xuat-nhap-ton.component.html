@@ -61,6 +61,9 @@
         <kendo-grid-column field="origin" title="Xuất xứ" [hidden]="visibleColumns.indexOf('origin') == -1" width="150">
         </kendo-grid-column>
         <kendo-grid-column field="expiry" title="Thời hạn sử dụng (tháng)" [hidden]="visibleColumns.indexOf('expiry') == -1" width="180">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.expiry | number}}
+            </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="averageExport" title="Lượng xuất trung bình" width="180" [hidden]="visibleColumns.indexOf('averageExport') == -1">
             <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">

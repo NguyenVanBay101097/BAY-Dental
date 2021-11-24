@@ -198,6 +198,10 @@ namespace Infrastructure.Services
 
             var totalItems = await query.CountAsync();
 
+            query = query.OrderByDescending(x => x.DateCreated);
+            if (val.Limit > 0)
+                query = query.Skip(val.Offset).Take(val.Limit);
+
             var items = await query.Select(x => new CommissionSettlementReportDetailOutput
             {
                 Amount = x.Amount,
@@ -294,12 +298,6 @@ namespace Infrastructure.Services
                     query = query.Where(x => x.Percentage == 0);
             }
 
-
-            if (val.Limit > 0)
-                query = query.Skip(val.Offset).Take(val.Limit);
-
-            query = query.OrderByDescending(x => x.DateCreated);
-
             return query;
         }
 
@@ -333,7 +331,7 @@ namespace Infrastructure.Services
             };
         }
 
-        public async Task<PagedResult2<CommissionSettlementReportRes>> GetReportPaged(CommissionSettlementFilterReport val)
+        public async Task<IEnumerable<CommissionSettlementReportRes>> GetReportPaged(CommissionSettlementFilterReport val)
         {
             var query = GetQueryableReportPaged(val);
 
@@ -355,12 +353,7 @@ namespace Infrastructure.Services
                 EmployeeName = x.Key.EmployeeName
             }).ToList();
 
-            var totalItems = res.Count();
-
-            return new PagedResult2<CommissionSettlementReportRes>(totalItems, val.Offset, val.Limit)
-            {
-                Items = res
-            };
+            return res;
         }
 
         public async Task<IEnumerable<CommissionSettlementOverview>> GetCommissionSettlements(DateTime? dateFrom, DateTime? dateTo, string classify, string groupBy)

@@ -146,6 +146,24 @@ namespace Infrastructure.Services
             await UpdateAsync(customerReceipt);
         }
 
+        public override Task<IEnumerable<CustomerReceipt>> CreateAsync(IEnumerable<CustomerReceipt> entities)
+        {
+            _CheckDateWaiting(entities);
+            return base.CreateAsync(entities);
+        }
+
+        public override Task UpdateAsync(IEnumerable<CustomerReceipt> entities)
+        {
+            _CheckDateWaiting(entities);
+            return base.UpdateAsync(entities);
+        }
+
+        private void _CheckDateWaiting(IEnumerable<CustomerReceipt> self)
+        {
+            if (self.Any(x => x.DateWaiting.HasValue && x.DateWaiting.Value > DateTime.Now))
+                throw new Exception("Ngày giờ tiếp nhận không được lớn hơn ngày giờ hiện tại");
+        }
+
         public override Task UpdateAsync(CustomerReceipt entity)
         {
             if (entity.State == "done" && !entity.DateExamination.HasValue)
