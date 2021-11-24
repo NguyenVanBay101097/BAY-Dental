@@ -139,8 +139,7 @@ namespace TMTDentalAPI.Controllers
             }
             catch
             {
-                product.Active = false;
-                await _productService.UpdateAsync(product);
+                throw new Exception("Không thể xóa do có sự ràng buộc dữ liệu");
             }
 
             return NoContent();
