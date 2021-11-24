@@ -39,6 +39,10 @@ namespace Infrastructure.Services
                     Amount = val.Amount,
                     JournalId = cashJournal.Id
                 });
+            } else
+            {
+                if (val.Amount != val.Lines.Sum(x => x.Amount))
+                    throw new Exception("Dữ liệu không đồng nhất!");
             }
             var soPaymentSave = _mapper.Map<SaleOrderPaymentSave>(val);
             var soPayment = await soPaymentObj.CreateSaleOrderPayment(soPaymentSave);

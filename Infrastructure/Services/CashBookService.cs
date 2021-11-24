@@ -175,11 +175,11 @@ namespace Infrastructure.Services
             {
                 query = query.Where(x=> x.JournalId == journalId.Value);
             }
+            var totalItems = await query.CountAsync();
 
             if (limit > 0)
                 query = query.Skip(offset).Take(limit);
 
-            var totalItems = await query.CountAsync();
             var items = await query.OrderByDescending(x => x.Date).Select(x => new CashBookReportDetail
             {
                 AccountName = x.Account.Name,

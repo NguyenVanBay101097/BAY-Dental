@@ -33,17 +33,17 @@
     flex: 0 0 150px;
 }
 
-.table-left td{
-    width: 250px;
+.custom-control-label {
+    font-weight: 600;
 }
 
 .custom-switch .custom-control-label::before {
-    left: 12.75rem;
+    left: 10.75rem;
     width: 2.25rem;
 }
 
 .custom-switch .custom-control-label::after {
-    left: calc(12.75rem + 2px);
+    left: calc(10.75rem + 2px);
 }
 
 .custom-switch .custom-control-input:checked~.custom-control-label::after {
@@ -53,7 +53,7 @@
 }
 
 .form-check-input {
-    margin-left: 3.75rem;
+    margin-left: 0.75rem;
 }
 
 

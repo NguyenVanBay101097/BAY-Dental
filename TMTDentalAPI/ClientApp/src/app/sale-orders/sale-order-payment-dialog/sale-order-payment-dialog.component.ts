@@ -11,7 +11,9 @@ import { CustomerDebtReportService } from "src/app/core/services/customer-debt-r
 import { PaymentService } from "src/app/core/services/payment.service";
 import { SaleOrderPaymentService } from "src/app/core/services/sale-order-payment.service";
 import { PartnerService } from "src/app/partners/partner.service";
+import { PrintService } from "src/app/shared/services/print.service";
 import { AppSharedShowErrorService } from "src/app/shared/shared-show-error.service";
+import { ConfirmPaymentDialogComponent } from "../confirm-payment-dialog/confirm-payment-dialog.component";
 import { SaleOrderPaymentAdvancedDialogComponent } from "../sale-order-payment-advanced-dialog/sale-order-payment-advanced-dialog.component";
 
 @Component({
@@ -54,13 +56,12 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
   myOptions = {
     digitGroupSeparator: '.',
-    decimalCharacter: ',',
-    decimalCharacterAlternative: '.',
-    currencySymbol: '\u00a0',
-    currencySymbolPlacement: 's',
-    roundingMethod: 'U',
-    minimumValue: '0',
-    decimalPlaces: '0'
+              decimalCharacter: ',',
+              decimalCharacterAlternative: '.',
+              currencySymbol: '\u00a0€',
+              currencySymbolPlacement: 's',
+              roundingMethod: 'U',
+              minimumValue: '0'
   }
   constructor(
     private fb: FormBuilder,
@@ -74,6 +75,9 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     private customerDebtReportService: CustomerDebtReportService,
     private paymentService: PaymentService,
     private modalService: NgbModal,
+    private printService: PrintService,
+
+
 
   ) { }
 
@@ -211,8 +215,26 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     }
     var val = this.getValueFormSave();
     if (val == null) return;
-    this.paymentService.paymentSaleOrderAndDebt(val).subscribe(result => {
-        this.activeModal.close(true);
+    this.paymentService.paymentSaleOrderAndDebt(val).subscribe((result: any) => {
+        this.activeModal.close();
+        let modalRef = this.modalService.open(ConfirmPaymentDialogComponent, {
+          size: 'sm',
+          windowClass: "o_technical_modal",
+          keyboard: false,
+          backdrop: "static",
+        });
+        modalRef.componentInstance.title = "Thanh toán thành công";
+        modalRef.componentInstance.name = this.partner?.name;
+        modalRef.componentInstance.amountPayment = this.paymentFC.isDebtPayment.value ? this.getAmountTotalPayment() : this.paymentForm.get('amount').value;
+        modalRef.result.then(
+          res => {
+            this.saleOrderPaymentService.getPrint(result.id).subscribe((result: any) => {
+              this.printService.printHtml(result.html);
+            });
+          },
+          () => { }
+        );
+        
     },(err) => {
         this.errorService.show(err);
     })
@@ -296,6 +318,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   }
 
   enterMoney() {
+   setTimeout(() => {
     var amount = this.paymentForm.get("amount").value || 0;
 
     var lines = this.paymentForm.get("lines") as FormArray;
@@ -321,6 +344,10 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
         amount -= amountPaid;
       }
     });
+    console.log(this.linesFC.value);
+   }, 0);
+  
+    
   }
 
   updateReturnCash() {
@@ -571,12 +598,8 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
   changePaymentForService() {
     var total = this.isPaymentForService ? 0 : this.amountResidual;
-    var fdsa = 
-    // this.paymentForm.get('amount').setValue(total);
-    setTimeout(() => {
-      this.paymentForm.get('amount').setValue(total);
-      this.enterMoney();
-    }, 0);
+    this.paymentForm.get('amount').setValue(total);
+    this.enterMoney();
   }
 
   // advance payment
@@ -590,7 +613,12 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     if (types.findIndex(x => x == journalFilter.type) != -1) {
       return;
     }
-    journalFilter.amount = this.userAmountPayment;
+    if (journalFilter.type == 'advance') {
+      journalFilter.amount = this.advanceAmount > this.userAmountPayment ? this.userAmountPayment : this.advanceAmount;
+    }
+    else {
+      journalFilter.amount = this.userAmountPayment;
+    }
     journalFilter.journal = journalFilter.journals[0];
     this.selectedJournals.push(journalFilter);
     this.userAmountPayment = this.amount - this.amountTotalJournalPayment;
@@ -600,7 +628,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     let index = this.selectedJournals.findIndex(x => x.type == journal.type);
     if (index != -1) {
       let jnItem = this.selectedJournals[index];
-      this.userAmountPayment = this.amount - this.amountTotalJournalPayment;
+      this.userAmountPayment = this.userAmountPayment + jnItem.amount;
       this.selectedJournals.splice(index,1);
     }
   }

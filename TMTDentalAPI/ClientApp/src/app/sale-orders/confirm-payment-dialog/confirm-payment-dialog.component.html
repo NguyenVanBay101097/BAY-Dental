@@ -1,0 +1,25 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title || 'Xác nhận'}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
+</header>
+
+<div class="modal-body">
+    <div class="d-flex justify-content-around">
+        <div>
+            <img src="../../../../assets/icons/payment_success.svg">
+        </div>
+    </div>
+    <div class="text-center p-4">Bạn vừa hoàn thành thanh toán {{amountPayment | number}} cho khách hàng {{name}}</div>
+    <div class="d-flex justify-content-around">
+        <div>
+            <button type="button" class="btn btn-primary mr-3" (click)="onPrint()" accesskey="s">In phiếu</button>
+            <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()" accesskey="s">Đóng</button>
+        </div>
+    </div>
+</div>
+
+<!-- <footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onConfirm()" accesskey="s"><span>{{confirmText}}</span></button>
+    <button type="button" [class]="'btn btn-secondary o_form_button_cancel ' + closeClass" (click)="onCancel()"
+        accesskey="q"><span>{{closeText}}</span></button>
+</footer> -->
