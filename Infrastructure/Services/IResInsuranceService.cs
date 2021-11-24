@@ -15,5 +15,7 @@ namespace Infrastructure.Services
         Task<ResInsurance> GetDisplayById(Guid id);
 
         Task<IEnumerable<ResInsurance>> GetAutoComplete(ResInsurancePaged val);
+
+        Task<bool> CheckInsuranceNameExist(string name);
     }
 }

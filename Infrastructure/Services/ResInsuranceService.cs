@@ -50,13 +50,13 @@ namespace Infrastructure.Services
             var movelineObj = GetService<IAccountMoveLineService>();
             var accObj = GetService<IAccountAccountService>();
 
-            IQueryable<ResInsurance> insurances = from isr in SearchQuery() select isr;
+            IQueryable<ResInsurance> insurances = from isr in SearchQuery() select isr ;
 
             if (!string.IsNullOrEmpty(val.Search))
-                insurances = from ins in insurances.Where(x => x.Name.Contains(val.Search) || x.Phone.Contains(val.Search)) select ins;
+                insurances = insurances.Where(x => x.Name.Contains(val.Search) || x.Phone.Contains(val.Search));
 
             if (val.IsActive.HasValue)
-                insurances = insurances.Union(from ins in SearchQuery().Where(x => x.IsActive == val.IsActive) select ins);
+                insurances = insurances.Where(x => x.IsActive == val.IsActive);
 
 
             var insuranceDebQr = from aml in movelineObj.SearchQuery(x => x.CompanyId == CompanyId)
@@ -70,7 +70,7 @@ namespace Infrastructure.Services
                                      TotalDebit = g.Sum(x => x.Balance)
                                  };
 
-            var ResponseQr = from isr in insurances
+            var ResponseQr = from isr in SearchQuery()
                              from isrd in insuranceDebQr.Where(x => x.PartnerId == isr.PartnerId).DefaultIfEmpty()
                              orderby isr.DateCreated descending
                              select new ResInsuranceBasic
@@ -83,7 +83,7 @@ namespace Infrastructure.Services
                              };         
 
             if (val.IsDebt.HasValue)
-                ResponseQr = ResponseQr.Where(x => val.IsDebt == true ? x.TotalDebt > 0 : x.TotalDebt <= 0);
+                ResponseQr = ResponseQr.Where(x =>  val.IsDebt == true ? x.TotalDebt > 0 : (x.TotalDebt <= 0 || x.TotalDebt == null));
 
             return ResponseQr;
         }
@@ -110,11 +110,7 @@ namespace Infrastructure.Services
         }
 
         public override async Task<ResInsurance> CreateAsync(ResInsurance entity)
-        {
-            var exist = await CheckInsuranceNameExist(entity.Name);
-            if (exist)
-                throw new Exception("Công ty bảo hiểm đã tồn tại");
-
+        {         
             var partnerObj = GetService<IPartnerService>();
             var partner = new Partner()
             {
@@ -136,16 +132,7 @@ namespace Infrastructure.Services
             return insurance;
         }
 
-        public override async Task UpdateAsync(ResInsurance entity)
-        {
-            await base.UpdateAsync(entity);
-
-            var exist = await CheckInsuranceNameExist(entity.Name);
-            if (exist)
-                throw new Exception("Công ty bảo hiểm đã tồn tại");
-        }
-
-        private async Task<bool> CheckInsuranceNameExist(string name)
+        public async Task<bool> CheckInsuranceNameExist(string name)
         {
             var count = await SearchQuery(x => x.Name == name).CountAsync();
             if (count > 1)
