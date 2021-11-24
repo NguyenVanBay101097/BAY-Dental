@@ -22,8 +22,8 @@
                                         <kendo-combobox [data]="insuranceFilter" #insuranceCbx [filterable]="true"
                                             formControlName="insurance" [valueField]="'id'" [textField]="'name'">
                                         </kendo-combobox>
-                                        <button class="btn btn-light" (click)="quickCreateInsurance()">
-                                            <span class="k-icon k-i-plus"></span>
+                                        <button class="btn btn-primary ml-2" (click)="quickCreateInsurance()">
+                                            <span class="fas fa-plus"></span>
                                         </button>
                                     </div>
                                     <div *ngIf="f.insurance.errors && (f.insurance.touched || f.insurance.dirty || submitted)"
@@ -95,36 +95,34 @@
                                     </td>
                                     <td class="d-flex justify-content-end">
                                         <ng-container *ngIf="line.value.payType === 'percent'; else elseTemplate">
-                                            <kendo-numerictextbox style="width: 150px;" required class="form-control"
-                                                [min]="0" [max]="100" [autoCorrect]="true" [format]="'n0'"
+                                            <kendo-numerictextbox style="width: 150px;" class="form-control" [min]="0"
+                                                [max]="100" [autoCorrect]="true" [format]="'n0'"
                                                 formControlName="percent" (blur)="onBlurPercent(i)" [spinners]="true">
                                             </kendo-numerictextbox>
                                         </ng-container>
                                         <ng-template #elseTemplate>
-                                            <kendo-numerictextbox style="width: 150px;" required class="form-control"
-                                                [min]="0" [max]="line.get('saleOrderLine').value.priceTotal" [autoCorrect]="true"
-                                                formControlName="fixedAmount" (blur)="onBlurfixed(i)" [format]="'n0'"
-                                                [spinners]="true">
+                                            <kendo-numerictextbox style="width: 150px;" class="form-control" [min]="0"
+                                                [max]="line.get('saleOrderLine').value.priceTotal"
+                                                formControlName="fixedAmount" [autoCorrect]="true" [step]="1000"
+                                                (blur)="onBlurfixed(i)" [format]="'n0'" [spinners]="true">
                                             </kendo-numerictextbox>
                                         </ng-template>
-                                        <div class="d-flex">
-                                            <div class="form-check form-check-inline mr-0">
-                                                <input class="form-check-input" [hidden]="true" type="radio"
-                                                    formControlName="payType" [id]="'fixed-' + i" value="fixed"
-                                                    (change)="changePayType(i)">
-                                                <label class="form-check-label btn btn-outline-primary"
-                                                    [for]="'fixed-' + i"> VNĐ </label>
-                                            </div>
-                                            <div class="form-check form-check-inline mr-0">
-                                                <input class="form-check-input" [hidden]="true" type="radio"
-                                                    formControlName="payType" [id]="'percent-' + i" value="percent"
-                                                    (change)="changePayType(i)">
-                                                <label class="form-check-label btn btn-outline-primary"
-                                                    [for]="'percent-' + i"> % </label>
-                                            </div>
+                                        <div class="d-flex btn-group mr-0 ml-2">
+                                            <input class="btn-check" [hidden]="true" type="radio"
+                                                formControlName="payType" [id]="'fixed-' + i" value="fixed"
+                                                (change)="changePayType(i)">
+                                            <label class="btn btn-outline-primary" [for]="'fixed-' + i"> VNĐ
+                                            </label>
+
+                                            <input class="btn-check" [hidden]="true" type="radio" value="percent"
+                                                formControlName="payType" [id]="'percent-' + i"
+                                                (change)="changePayType(i)">
+                                            <label class="btn btn-outline-primary" [for]="'percent-' + i"> %
+                                            </label>
                                         </div>
                                     </td>
-                                    <td class="text-right align-middle"> {{ (getAmountPaid(line.value, i) || 0) | number}}
+                                    <td class="text-right align-middle"> {{ (getAmountPaid(line.value, i) || 0) |
+                                        number}}
                                     </td>
                                     <td class="text-right align-middle">
                                         {{ (getAmountResidual(line.value, i) || 0) | number }} </td>

@@ -1,13 +1,15 @@
-import { Component, Inject, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import * as moment from 'moment';
 import { map } from 'rxjs/operators';
-import { AccountPaymentPaged, AccountPaymentService } from 'src/app/account-payments/account-payment.service';
-import { PartnerService } from 'src/app/partners/partner.service';
+import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { NotifyService } from 'src/app/shared/services/notify.service';
+import { InsuranceHistoryInComeFilter } from '../res-insurance-report.model';
+import { ResInsuranceReportService } from '../res-insurance-report.service';
 
 @Component({
   selector: 'app-res-insurance-histories',
@@ -15,7 +17,6 @@ import { NotifyService } from 'src/app/shared/services/notify.service';
   styleUrls: ['./res-insurance-histories.component.css']
 })
 export class ResInsuranceHistoriesComponent implements OnInit {
-  @Input() partnerId: string;
   gridData: GridDataResult;
   limit: number = 20;
   skip: number = 0;
@@ -25,35 +26,33 @@ export class ResInsuranceHistoriesComponent implements OnInit {
   dateTo: Date;
   monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
   monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
-
+  insuranceId: string;
   constructor(
     private modalService: NgbModal,
     private notifyService: NotifyService,
-    private partnerService: PartnerService,
+    private resInsuranceReportService: ResInsuranceReportService,
     private accountPaymentService: AccountPaymentService,
+    private activeRoute: ActivatedRoute,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit(): void {
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd;
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.partnerId.currentValue) {
+    this.insuranceId = this.activeRoute.parent.snapshot.paramMap.get('id');
+    if (this.insuranceId) {
       this.loadInsuranceHistories();
     }
   }
 
   loadInsuranceHistories(): void {
-    let val = new AccountPaymentPaged();
+    let val = new InsuranceHistoryInComeFilter();
     val.limit = this.limit;
     val.offset = this.skip;
-    val.partnerId = this.partnerId ? this.partnerId : '';
-    val.state = "posted";
-    val.paymentDateFrom = this.dateFrom ? moment(this.dateFrom).format('YYYY-MM-DD') : '';
-    val.paymentDateTo = this.dateTo ? moment(this.dateTo).format('YYYY-MM-DD') : '';
-    this.partnerService.getPayments(val).pipe(
+    val.dateFrom = this.dateFrom ? moment(this.dateFrom).format('YYYY-MM-DD') : '';
+    val.dateTo = this.dateTo ? moment(this.dateTo).format('YYYY-MM-DD') : '';
+    val.insuranceId = this.insuranceId ? this.insuranceId : '';
+    this.resInsuranceReportService.getHistoryInComeDebtPaged(val).pipe(
       map(rs1 => (<GridDataResult>{
         data: rs1.items,
         total: rs1.totalItems
@@ -80,6 +79,11 @@ export class ResInsuranceHistoriesComponent implements OnInit {
   }
 
   onCancelPaymnet(item): void {
+    if (item.state === 'cancel') {
+      this.notifyService.notify('error', 'Không thể hủy phiếu ở trạng thái Đã hủy');
+      return;
+    }
+    
     let modalRef = this.modalService.open(ConfirmDialogComponent, {
       windowClass: "o_technical_modal",
       keyboard: false,

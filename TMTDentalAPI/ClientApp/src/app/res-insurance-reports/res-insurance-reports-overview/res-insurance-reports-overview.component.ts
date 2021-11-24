@@ -4,7 +4,7 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { aggregateBy } from '@progress/kendo-data-query';
 import * as moment from 'moment';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { CompanyPaged, CompanyService } from 'src/app/companies/company.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { PrintService } from 'src/app/shared/services/print.service';
@@ -136,7 +136,7 @@ export class ResInsuranceReportsOverviewComponent implements OnInit, AfterViewIn
   }
 
   exportExcel() {
-   let val = this.getFilter();
+    let val = this.getFilter();
     this.resInsuranceReportService.exportExcelFile(val).subscribe((rs) => {
       let filename = "BaoCaoCongNoBaoHiem";
       let newBlob = new Blob([rs], {
@@ -156,7 +156,7 @@ export class ResInsuranceReportsOverviewComponent implements OnInit, AfterViewIn
     });
   }
 
-  getFilter(){
+  getFilter() {
     let val = new InsuranceReportFilter();
     val.dateFrom = this.dateFrom ? moment(this.dateFrom).format('YYYY-MM-DD') : '';
     val.dateTo = this.dateTo ? moment(this.dateTo).format('YYYY-MM-DD') : '';
@@ -165,16 +165,16 @@ export class ResInsuranceReportsOverviewComponent implements OnInit, AfterViewIn
     return val;
   }
 
-  printReport(){
+  printReport() {
     var val = this.getFilter();
-    this.resInsuranceReportService.printGetSummary(val).subscribe(result => 
+    this.resInsuranceReportService.printGetSummary(val).subscribe(result =>
       this.printService.printHtml(result));
   }
 
-  onExportPDF(){
+  onExportPDF() {
     var val = this.getFilter();
     this.resInsuranceReportService.getSummaryPdf(val).subscribe(result => {
-      let filename ="BaoCaoCongNo_BH";
+      let filename = "BaoCaoCongNo_BH";
 
       let newBlob = new Blob([result], {
         type:
