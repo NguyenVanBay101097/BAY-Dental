@@ -284,14 +284,8 @@ namespace Infrastructure.Services
             var res = new CashBookReportDay();
             /// load dữ liệu tổng tiền 
             var types = new string[] { "", "cash", "bank" };
-            var dataTotalAmount = new List<CashBookReport>();
-            foreach (var item in types)
-            {
-                var i = await cashbookObj.GetSumary(dateFrom, dateTo, companyId, item);
-                dataTotalAmount.Add(i);
-            }
-
-            res.DataAmountTotals = dataTotalAmount;
+            var summary = await cashbookObj.GetSumaryDayReport(dateFrom, dateTo, companyId, null, null);
+            res.SumaryDayReport = summary;
 
             /// load dữ liệu báo cáo thu chi
             var reportThuChi = await GetThuChiReport(dateFrom, dateTo, companyId, null);
