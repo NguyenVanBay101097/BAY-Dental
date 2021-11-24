@@ -25,7 +25,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool IsDebtPayment { get; set; }
         public Guid? DebtJournalId { get; set; }
         public decimal DebtAmount { get; set; }
-        public string DebNote { get; set; }
+        public string DebtNote { get; set; }
         public Guid PartnerId { get; set; }
     }
 }

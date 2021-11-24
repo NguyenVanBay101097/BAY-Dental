@@ -54,7 +54,8 @@ namespace Infrastructure.Services
                 Date = val.Date,
                 JournalId = val.DebtJournalId.HasValue? val.DebtJournalId.Value : cashJournal.Id,
                 PartnerId = val.PartnerId,
-                Type = "thu"
+                Type = "thu",
+                Reason = val.DebtNote
             };
             var phieuThuChi = await phieuThuChiObj.CreatePhieuThuChi(phieuThuChiSave);
             await phieuThuChiObj.ActionConfirm(new List<Guid>() { phieuThuChi.Id });

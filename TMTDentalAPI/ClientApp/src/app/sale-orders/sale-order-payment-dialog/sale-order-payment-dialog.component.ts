@@ -90,7 +90,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
       isDebtPayment: false,
       debtJournalId: null,
       debtAmount: [0],
-      debNote: null,
+      debtNote: null,
       partnerId: this.partner.id
     });
 
@@ -249,7 +249,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
       "d",
       "en-US"
     );
-    if(this.userAmountPayment > 0){
+    if(this.step == 2 && this.userAmountPayment > 0){
       var cashJournalFilter = this.filteredJournals.find(x=> x.type == 'cash');
       var cashSelected = this.selectedJournals.find(x=> x.type == 'cash');
       if(cashSelected){
@@ -266,7 +266,8 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
      }
     });
 
-    val.debtJournalId = this.debtJournalSelected.journal.id;
+   if(this.step == 2 && val.isDebtPayment)
+   val.debtJournalId = this.debtJournalSelected.journal.id;
     return val;
   }
 
@@ -569,9 +570,13 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   }
 
   changePaymentForService() {
-    let total = this.isPaymentForService ? 0 : this.amountResidual;
-    this.paymentForm.get('amount').setValue(total);
-    this.enterMoney();
+    var total = this.isPaymentForService ? 0 : this.amountResidual;
+    var fdsa = 
+    // this.paymentForm.get('amount').setValue(total);
+    setTimeout(() => {
+      this.paymentForm.get('amount').setValue(total);
+      this.enterMoney();
+    }, 0);
   }
 
   // advance payment
