@@ -3086,7 +3086,7 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<SaleOrderRevenueReport>> GetRevenueReport(SaleOrderRevenueReportPaged val)
         {
-            var query = SearchQuery(x => x.State != "cancel" && x.State != "draft" && x.Residual > 0);
+            var query = SearchQuery(x => x.State != "draft" && x.Residual != 0);
             if (val.CompanyId.HasValue)
             {
                 query = query.Where(x => x.CompanyId == val.CompanyId);
@@ -3127,7 +3127,7 @@ namespace Infrastructure.Services
 
         public async Task<GetRevenueSumTotalRes> GetRevenueSumTotal(GetRevenueSumTotalReq val)
         {
-            var query = SearchQuery(x => x.State != "cancel" && x.State != "draft" && x.Residual > 0);
+            var query = SearchQuery(x => x.State != "draft");
             if (val.CompanyId.HasValue)
                 query = query.Where(x => x.CompanyId == val.CompanyId);
             var res = new GetRevenueSumTotalRes()

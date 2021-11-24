@@ -86,6 +86,7 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
     modalRef.componentInstance.title = 'Thêm khách hàng';
     modalRef.result.then((res) => {
       this.setValueFC('partner', res);
+      this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, [res], 'id');
     });
   }
 
@@ -121,13 +122,16 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
     if (this.formGroup.invalid) {
       return;
     }
+
+    if (!this.formGroup.get('partner').value) {
+      this.notifyService.notify('error', 'Khách hàng đang trống, cần bổ sung khách hàng');
+      return false;
+    }
+
     let val = this.formGroup.value;
     val.typeId = val.type ? val.type.id : '';
     val.partnerId = val.partner ? val.partner.id : '';
-    if (val.partner == null) {
-      this.notifyService.notify('error', 'Khách hàng đang trống, cần bổ sung khách hàng');
-      return;
-    }
+  
     if (this.id) {
       this.cardCardsService.update(this.id, val).subscribe(res => {
         this.cardCardsService.buttonActive([this.id]).subscribe(() => {

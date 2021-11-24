@@ -199,7 +199,6 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
           this.activeModal.close(basic);
         },
         er => {
-          this.errorService.show(er);
           this.submitted = false;
         },
       )
@@ -213,7 +212,6 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
         this.activeModal.close(basic);
       },
         er => {
-          this.errorService.show(er);
           this.submitted = false;
         },
       )
