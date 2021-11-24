@@ -273,5 +273,25 @@ namespace Infrastructure.Services
             return res;
         }
 
+        public async Task<IEnumerable<ReportInsuranceDebitExcel>> ExportReportInsuranceDebtExcel(InsuranceReportFilter val)
+        {
+            var reportDebitDetailFilter= new InsuranceReportDetailFilter()
+            {
+                DateFrom = val.DateFrom,
+                DateTo = val.DateTo,
+                CompanyId = val.CompanyId,
+            };
+
+            var data = _mapper.Map<IEnumerable<ReportInsuranceDebitExcel>>(await ReportSummary(val));
+            foreach (var line in data)
+            {
+
+                reportDebitDetailFilter.PartnerId = line.PartnerId;
+                line.Lines = await ReportDetail(reportDebitDetailFilter);
+            }
+
+            return data;
+        }
+
     }
 }

@@ -145,4 +145,9 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public decimal End { get; set; }
     }
+
+    public class ReportInsuranceDebitExcel : InsuranceReportItem
+    {
+        public IEnumerable<InsuranceReportDetailItem> Lines { get; set; } = new List<InsuranceReportDetailItem>();
+    }
 }

@@ -589,6 +589,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new ResInsuranceProfile());
                 mc.AddProfile(new ResInsurancePaymentProfile());
                 mc.AddProfile(new ResInsurancePaymentLineProfile());
+                mc.AddProfile(new ResInsuranceReportsProfile());
             };
 
             #endregion

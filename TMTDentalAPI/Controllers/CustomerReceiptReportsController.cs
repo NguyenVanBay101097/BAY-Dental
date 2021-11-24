@@ -518,5 +518,7 @@ namespace TMTDentalAPI.Controllers
             return Pdfbase(html, "Báo cáo Tiếp nhận không điều trị", "Tiepnhankhongdieutri");
         }
 
+      
+
     }
 }
