@@ -61,3 +61,18 @@ export class InsuranceHistoryInComeItem {
     dateFrom: string;
     dateTo: string;
 }
+
+export class InsuranceHistoryInComeDetailFilter {
+    dateFrom: string;
+    dateTo: string;
+    paymentId: string;
+}
+
+export class InsuranceHistoryInComeDetailItem {
+    id: string;
+    date: string;
+    partnerName: string;
+    ref: string;
+    refDisplay: string;
+    amount: number;
+}

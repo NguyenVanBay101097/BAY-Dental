@@ -43,7 +43,8 @@
             </ng-template>
         </kendo-grid-column>
         <div *kendoGridDetailTemplate="let dataItem">
-            <app-res-insurance-histories-detail [paymentId]="dataItem.id"></app-res-insurance-histories-detail>
+            <app-res-insurance-histories-detail [paymentId]="dataItem.id" [dateFrom]="dateFrom" [dateTo]="dateTo">
+            </app-res-insurance-histories-detail>
         </div>
     </kendo-grid>
 </div>

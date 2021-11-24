@@ -4,18 +4,17 @@
     </div>
     <div class="card-body">
         <kendo-grid [data]="gridData">
-            <kendo-grid-column title="Khách hàng"> </kendo-grid-column>
+            <kendo-grid-column field="partnerName" title="Khách hàng"> </kendo-grid-column>
             <kendo-grid-column title="Ngày bảo lãnh">
-                <!-- <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.paymentDate | date : 'shortDate' }}
-        </ng-template> -->
+                <ng-template field="date" kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.date | date : 'shortDate' }}
+                </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column title="Phiếu điều trị"></kendo-grid-column>
-            <kendo-grid-column title="Dịch vụ"></kendo-grid-column>
-            <kendo-grid-column title="Số tiền">
-                <!-- <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            {{dataItem.amount | number}}
-        </ng-template> -->
+            <kendo-grid-column field="refDisplay" title="Phiếu điều trị"></kendo-grid-column>
+            <kendo-grid-column field="amount" title="Số tiền" class="text-right">
+                <ng-template field="amount" kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    {{dataItem.amount | number}}
+                </ng-template>
             </kendo-grid-column>
         </kendo-grid>
     </div>

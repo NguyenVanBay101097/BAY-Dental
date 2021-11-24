@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PagedResult2 } from '../core/paged-result-2';
-import { InsuranceHistoryInComeItem, InsuranceReportDetailFilter, InsuranceReportFilter } from './res-insurance-report.model';
+import { InsuranceHistoryInComeDetailItem, InsuranceHistoryInComeItem, InsuranceReportDetailFilter, InsuranceReportFilter } from './res-insurance-report.model';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +19,10 @@ export class ResInsuranceReportService {
 
   getHistoryInComeDebtPaged(val): Observable<PagedResult2<InsuranceHistoryInComeItem>> {
     return this.http.get<PagedResult2<InsuranceHistoryInComeItem>>(this.baseApi + this.apiUrl + '/GetHistoryInComeDebtPaged',{ params: new HttpParams({ fromObject: val }) });
+  }
+
+  getHistoryInComeDebtDetails(val): Observable<PagedResult2<InsuranceHistoryInComeDetailItem>> {
+    return this.http.post<PagedResult2<InsuranceHistoryInComeDetailItem>>(this.baseApi + this.apiUrl + '/GetHistoryInComeDebtDetails', val);
   }
 
   getSummaryReports(val: InsuranceReportFilter) {
