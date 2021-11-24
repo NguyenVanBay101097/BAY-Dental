@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PagedResult2 } from '../core/paged-result-2';
-import { InsuranceIsActivePatch, ResInsuranceBasic, ResInsuranceDisplay, ResInsurancePaged, ResInsuranceSave, ResInsuranceSimple } from './res-insurance.model';
+import { InsuranceActionDeactiveRequest, InsuranceIsActivePatch, ResInsuranceBasic, ResInsuranceDisplay, ResInsurancePaged, ResInsuranceSave, ResInsuranceSimple } from './res-insurance.model';
 
 @Injectable({
   providedIn: 'root'
@@ -31,9 +31,13 @@ export class ResInsuranceService {
   update(id: string, val: ResInsuranceSave){
     return this.http.put(this.baseApi + this.apiUrl + '/' + id, val);
   }
-  
-  patchIsActive(id: string, val: InsuranceIsActivePatch){
-    return this.http.patch(this.baseApi + this.apiUrl + '/' + id + '/' + 'PatchIsActive', val);
+
+  actionActive(val : InsuranceActionDeactiveRequest){
+    return this.http.post(this.baseApi + this.apiUrl + '/ActionActive', val);
+  }
+
+  actionDeactive(val: InsuranceActionDeactiveRequest){
+    return this.http.post(this.baseApi + this.apiUrl + '/ActionDeactive', val);
   }
 
   remove(id: string) {

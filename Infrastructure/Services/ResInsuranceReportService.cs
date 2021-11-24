@@ -103,7 +103,7 @@ namespace Infrastructure.Services
 
 
 
-            var items = paymentQr.Select(x => new InsuranceHistoryInComeItem
+            var items = await paymentQr.Select(x => new InsuranceHistoryInComeItem
             {
                 Id = x.Id,
                 PaymentDate = x.PaymentDate,
@@ -114,12 +114,42 @@ namespace Infrastructure.Services
                 State = x.State,
                 DateFrom = val.DateFrom,
                 DateTo = val.DateTo
-            });
+            }).ToListAsync();
 
             return new PagedResult2<InsuranceHistoryInComeItem>(totalItems, val.Offset, val.Limit)
             {
                 Items = items
             };
+
+        }
+
+        public async Task<IEnumerable<InsuranceHistoryInComeDetailItem>> GetHistoryInComeDebtDetails(InsuranceHistoryInComeDetailFilter val)
+        {
+            var partialReconcileObj = GetService<IAccountPartialReconcileService>();
+            var insuranceObj = GetService<IResInsuranceService>();
+            var query = partialReconcileObj.SearchQuery();
+
+            if (val.PaymentId.HasValue)
+                query = query.Where(x => x.CreditMove.PaymentId == val.PaymentId);
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.DateCreated >= val.DateFrom.Value.AbsoluteBeginOfDate());
+
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.DateCreated < val.DateTo.Value.AbsoluteEndOfDate());
+
+            query = query.OrderByDescending(x => x.DateCreated);         
+
+            var items = await query.Select(x => new InsuranceHistoryInComeDetailItem
+            {
+                Id = x.Id,
+                PartnerName = x.DebitMove.Partner.Name,
+                Amount = x.Amount,
+                Date = x.DateCreated.Value,
+                Ref = x.DebitMove.Ref
+            }).ToListAsync();
+
+            return items;
 
         }
 

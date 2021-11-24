@@ -62,3 +62,7 @@ export class ResInsurancePaymentSave {
     lines: any[];
     note: string;
 }
+
+export class InsuranceActionDeactiveRequest {
+    ids: any[];
+}

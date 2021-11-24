@@ -7,7 +7,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { ResInsuranceCuDialogComponent } from 'src/app/shared/res-insurance-cu-dialog/res-insurance-cu-dialog.component';
 import { NotifyService } from 'src/app/shared/services/notify.service';
-import { InsuranceIsActivePatch, ResInsurancePaged } from '../res-insurance.model';
+import { InsuranceActionDeactiveRequest, InsuranceIsActivePatch, ResInsurancePaged } from '../res-insurance.model';
 import { ResInsuranceService } from '../res-insurance.service';
 
 @Component({
@@ -112,9 +112,9 @@ export class ResInsuranceListComponent implements OnInit {
     modalRef.componentInstance.title = `Liên kết với công ty bảo hiểm ${item.name}`;
     modalRef.componentInstance.body = `Bạn chắc chắn muốn liên kết với công ty bảo hiểm ${item.name}?`;
     modalRef.result.then(() => {
-      let val = new InsuranceIsActivePatch();
-      val.isActive = 'true';
-      this.resInsuranceService.patchIsActive(item.id, val).subscribe((res: any) => {
+      let val = new InsuranceActionDeactiveRequest();
+      val.ids = [item.id];
+      this.resInsuranceService.actionActive(val).subscribe((res: any) => {
         this.notifyService.notify("success", "Liên kết thành công")
         this.loadDataFromApi();
       })
@@ -126,9 +126,9 @@ export class ResInsuranceListComponent implements OnInit {
     modalRef.componentInstance.title = `Ngưng liên kết với công ty bảo hiểm ${item.name}`;
     modalRef.componentInstance.body = `Bạn chắc chắn muốn ngưng liên kết với công ty bảo hiểm ${item.name}?`;
     modalRef.result.then(() => {
-      let val = new InsuranceIsActivePatch();
-      val.isActive = 'false';
-      this.resInsuranceService.patchIsActive(item.id, val).subscribe((res: any) => {
+      let val = new InsuranceActionDeactiveRequest();
+      val.ids = [item.id];
+      this.resInsuranceService.actionDeactive(val).subscribe((res: any) => {
         this.notifyService.notify("success", "Ngưng liên kết thành công")
         this.loadDataFromApi();
       })

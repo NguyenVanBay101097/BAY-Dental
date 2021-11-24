@@ -54,11 +54,11 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Catalog.Insurance.Create")]
         public async Task<IActionResult> Create(ResInsuranceSave val)
         {
-
+            await _unitOfWork.BeginTransactionAsync();
             var insurance = _mapper.Map<ResInsurance>(val);
             insurance.CompanyId = CompanyId;
-
             await _insuranceService.CreateAsync(insurance);
+            _unitOfWork.Commit();
 
             var simple = _mapper.Map<ResInsuranceSimple>(insurance);
             return Ok(simple);
@@ -107,23 +107,26 @@ namespace TMTDentalAPI.Controllers
             await _partnerService.UpdateAsync(pn);
         }
 
-        [HttpPatch("{id}/[action]")]
+        [HttpPost("[action]")]
         [CheckAccess(Actions = "Catalog.Insurance.Update")]
-        public async Task<IActionResult> PatchIsActive(Guid id, InsuranceIsActivePatch result)
+        public async Task<IActionResult> ActionActive(InsuranceActionDeactiveRequest val)
         {
-            var entity = await _insuranceService.GetByIdAsync(id);
-            if (entity == null)
-            {
-                return NotFound();
-            }
+            var insurances = await _insuranceService.SearchQuery(x => val.Ids.Contains(x.Id)).ToListAsync();
+            foreach (var insurance in insurances)
+                insurance.IsActive = true;
+            await _insuranceService.UpdateAsync(insurances);
 
-            var patch = new JsonPatchDocument<InsuranceIsActivePatch>();
-            patch.Replace(x => x.IsActive, result.IsActive);
-            var entityMap = _mapper.Map<InsuranceIsActivePatch>(entity);
-            patch.ApplyTo(entityMap);
+            return NoContent();
+        }
 
-            entity = _mapper.Map(entityMap, entity);
-            await _insuranceService.UpdateAsync(entity);
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Catalog.Insurance.Update")]
+        public async Task<IActionResult> ActionDeactive(InsuranceActionDeactiveRequest val)
+        {
+            var insurances = await _insuranceService.SearchQuery(x => val.Ids.Contains(x.Id)).ToListAsync();
+            foreach (var insurance in insurances)
+                insurance.IsActive = false;
+            await _insuranceService.UpdateAsync(insurances);
 
             return NoContent();
         }

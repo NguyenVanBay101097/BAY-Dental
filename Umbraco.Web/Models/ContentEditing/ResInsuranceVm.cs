@@ -93,4 +93,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
         public string Name { get; set; }
     }
+
+    public class InsuranceActionDeactiveRequest
+    {
+        public IEnumerable<Guid> Ids { get; set; }
+    }
 }

@@ -28,14 +28,14 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<ResInsuranceBasic>> GetPagedResult(ResInsurancePaged val)
         {
 
-            var query = GetQueryableResInsurances(val);        
+            var query = GetQueryableResInsurances(val);
 
             var totalItems = await query.CountAsync();
 
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
-            var items = await query.ToListAsync();     
+            var items = await query.ToListAsync();
 
             var paged = new PagedResult2<ResInsuranceBasic>(totalItems, val.Offset, val.Limit)
             {
@@ -51,15 +51,15 @@ namespace Infrastructure.Services
             var accObj = GetService<IAccountAccountService>();
 
             var insuranceDebQr = from aml in movelineObj.SearchQuery(x => x.CompanyId == CompanyId)
-                               join acc in accObj.SearchQuery()
-                               on aml.AccountId equals acc.Id
-                               where acc.Code == "CNBH"
-                               group aml by aml.PartnerId into g
-                               select new
-                               {
-                                   PartnerId = g.Key,
-                                   TotalDebit = g.Sum(x => x.Balance)
-                               };
+                                 join acc in accObj.SearchQuery()
+                                 on aml.AccountId equals acc.Id
+                                 where acc.Code == "CNBH" && !aml.Reconciled
+                                 group aml by aml.PartnerId into g
+                                 select new
+                                 {
+                                     PartnerId = g.Key,
+                                     TotalDebit = g.Sum(x => x.Balance)
+                                 };
 
             var ResponseQr = from isr in SearchQuery()
                              from isrd in insuranceDebQr.Where(x => x.PartnerId == isr.PartnerId).DefaultIfEmpty()
@@ -80,7 +80,7 @@ namespace Infrastructure.Services
                 ResponseQr = ResponseQr.Where(x => x.IsActive == val.IsActive);
 
             if (val.IsDebt.HasValue)
-                ResponseQr = ResponseQr.Where(x => val.IsDebt == true ? x.TotalDebt > 0 : x.TotalDebt == 0);
+                ResponseQr = ResponseQr.Where(x => val.IsDebt == true ? x.TotalDebt > 0 : x.TotalDebt <= 0);
 
             return ResponseQr;
         }
@@ -133,10 +133,22 @@ namespace Infrastructure.Services
             return insurance;
         }
 
+        public override async Task UpdateAsync(ResInsurance entity)
+        {
+            await base.UpdateAsync(entity);
+
+            var exist = await CheckInsuranceNameExist(entity.Name);
+            if (exist)
+                throw new Exception("Công ty bảo hiểm đã tồn tại");
+        }
+
         private async Task<bool> CheckInsuranceNameExist(string name)
         {
-            var exist = await SearchQuery(x => x.Name == name).AnyAsync();
-            return exist;
+            var count = await SearchQuery(x => x.Name == name).CountAsync();
+            if (count > 1)
+                return true;
+
+            return false;
         }
 
         public override ISpecification<ResInsurance> RuleDomainGet(IRRule rule)

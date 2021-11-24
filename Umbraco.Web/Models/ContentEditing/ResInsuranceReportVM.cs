@@ -35,6 +35,15 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? InsuranceId { get; set; }
     }
 
+    public class InsuranceHistoryInComeDetailFilter
+    {    
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
+
+        public Guid? PaymentId { get; set; }
+    }
+
     public class InsuranceHistoryInComeItem
     {
         public Guid Id { get; set; }
@@ -54,6 +63,31 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateFrom { get; set; }
 
         public DateTime? DateTo { get; set; }
+    }
+
+    public class InsuranceHistoryInComeDetailItem
+    {
+        public Guid Id { get; set; }
+
+        public DateTime Date { get; set; }
+
+        public string PartnerName { get; set; }
+
+        public string Ref { get; set; }
+
+        public string RefDisplay
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(Ref))
+                    return Ref.Split("-")[0].Trim();
+
+                return null;
+            }
+            set { }
+        }
+
+        public decimal Amount { get; set; }
     }
 
     public class InsuranceDebtReport
@@ -170,7 +204,7 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public DateTime? Date { get; set; }
 
-        public string PaymentName { get; set; }     
+        public string PaymentName { get; set; }
 
         public string Name { get; set; }
 
