@@ -24,7 +24,7 @@ namespace TMTDentalAPI.Controllers
         private readonly IMapper _mapper;
         private readonly IUnitOfWorkAsync _unitOfWork;
 
-        public ResInsurancesController(IResInsuranceService insuranceService, IPartnerService partnerService , IMapper mapper , IUnitOfWorkAsync unitOfWork)
+        public ResInsurancesController(IResInsuranceService insuranceService, IPartnerService partnerService, IMapper mapper, IUnitOfWorkAsync unitOfWork)
         {
             _insuranceService = insuranceService;
             _partnerService = partnerService;
@@ -118,7 +118,7 @@ namespace TMTDentalAPI.Controllers
             }
 
             var patch = new JsonPatchDocument<InsuranceIsActivePatch>();
-            patch.Replace(x => x.IsActive, result.IsActive);          
+            patch.Replace(x => x.IsActive, result.IsActive);
             var entityMap = _mapper.Map<InsuranceIsActivePatch>(entity);
             patch.ApplyTo(entityMap);
 

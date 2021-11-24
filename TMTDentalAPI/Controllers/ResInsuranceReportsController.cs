@@ -41,6 +41,13 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetHistoryInComeDebtPaged([FromQuery] InsuranceHistoryInComeFilter val)
+        {
+            var result = await _resInsuranceReportService.GetHistoryInComeDebtPaged(val);
+            return Ok(result);
+        }
+
         [HttpPost("[action]")]
         public async Task<IActionResult> GetSummaryReports(InsuranceReportFilter val)
         {
@@ -111,9 +118,9 @@ namespace TMTDentalAPI.Controllers
 
 
 
-                worksheet.Cells[1, 1].Value = "Ngày";
-                worksheet.Cells[1, 2].Value = "Nguồn";
-                worksheet.Cells[1, 3].Value = "Nội dung";
+                worksheet.Cells[1, 1].Value = "Khách hàng";
+                worksheet.Cells[1, 2].Value = "Ngày bảo lãnh";
+                worksheet.Cells[1, 3].Value = "Phiếu điều trị";
                 worksheet.Cells[1, 4].Value = "Số tiền";
 
 
@@ -129,10 +136,10 @@ namespace TMTDentalAPI.Controllers
                 var row = 2;
                 foreach (var item in res)
                 {
-                    worksheet.Cells[row, 1].Value = item.Date;
-                    worksheet.Cells[row, 1].Style.Numberformat.Format = "dd/mm/yyyy";
-                    worksheet.Cells[row, 2].Value = item.Origin;
-                    worksheet.Cells[row, 3].Value = "";
+                    worksheet.Cells[row, 1].Value = item.PartnerName;
+                    worksheet.Cells[row, 2].Value = item.Date;
+                    worksheet.Cells[row, 2].Style.Numberformat.Format = "dd/mm/yyyy";                  
+                    worksheet.Cells[row, 3].Value = item.CommunicationDisplay;
                     worksheet.Cells[row, 4].Value = item.AmountTotal;
                     worksheet.Cells[row, 4].Style.Numberformat.Format = "#,##0";
 
@@ -160,7 +167,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> ExportReportInsuranceDebitExcel(InsuranceReportFilter val )
+        public async Task<IActionResult> ExportReportInsuranceDebitExcel(InsuranceReportFilter val)
         {
             var data = await _resInsuranceReportService.ExportReportInsuranceDebtExcel(val);
             var dateToDate = "";
@@ -188,8 +195,7 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells["A4"].Value = "Công ty bảo hiểm";
                 worksheet.Cells["B4:D4"].Value = "Nợ đầu kỳ";
                 worksheet.Cells["B4:D4"].Merge = true;
-                worksheet.Cells["B4:D4"].Value = "Mã khách hàng";
-                worksheet.Cells["B4:D4"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                worksheet.Cells["B4:D4"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                 worksheet.Cells["E4"].Value = "Phát sinh";
                 worksheet.Cells["F4"].Value = "Thanh toán";
                 worksheet.Cells["G4"].Value = "Nợ cuối kỳ";
@@ -204,7 +210,7 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 1].Value = !string.IsNullOrEmpty(item.PartnerName) ? item.PartnerName : "Không xác định";
                     worksheet.Cells[row, 2, row, 4].Value = item.Begin;
                     worksheet.Cells[row, 2, row, 4].Merge = true;
-                    worksheet.Cells[row, 2, row, 4].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                    worksheet.Cells[row, 2, row, 4].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                     worksheet.Cells[row, 5].Value = item.Debit;
                     worksheet.Cells[row, 6].Value = item.Credit;
                     worksheet.Cells[row, 7].Value = item.End;
@@ -245,7 +251,7 @@ namespace TMTDentalAPI.Controllers
                         worksheet.Cells[row, 1].Value = "";
                         worksheet.Cells[row, 2].Value = line.Date;
                         worksheet.Cells[row, 2].Style.Numberformat.Format = "dd/mm/yyyy";
-                        worksheet.Cells[row, 3].Value = line.MoveName;
+                        worksheet.Cells[row, 3].Value = line.PaymentName;
                         worksheet.Cells[row, 4].Value = line.Begin;
                         worksheet.Cells[row, 5].Value = line.Debit;
                         worksheet.Cells[row, 6].Value = line.Credit;

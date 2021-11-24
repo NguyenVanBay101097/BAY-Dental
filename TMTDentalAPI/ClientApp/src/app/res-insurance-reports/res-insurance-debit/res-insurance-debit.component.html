@@ -98,7 +98,7 @@
                                     <div class="o_searchview">
                                         <input class="o_searchview_input" [(ngModel)]="search"
                                             (ngModelChange)="this.searchUpdate.next($event)"
-                                            placeholder="Tìm kiếm theo số phiếu, nguồn" type="text"
+                                            placeholder="Tìm kiếm theo số phiếu, khách hàng" type="text"
                                             [ngModelOptions]="{standalone: true}" />
                                         <span class="o_searchview_icon fas fa-search"></span>
                                     </div>
@@ -108,23 +108,24 @@
                                 [kendoGridSelectBy]="'moveId'" [selectedKeys]="selectedIds" #grid>
                                 <kendo-grid-checkbox-column [width]="50" [headerClass]="{'text-center': true}"
                                     [class]="{'text-center': true}" showSelectAll="true"></kendo-grid-checkbox-column>
-                                <!-- <kendo-grid-column field="partnerName" title="Khách hàng" width="100" footerClass="font-weight-600">
+                                <kendo-grid-column field="partnerName" title="Khách hàng" width="100"
+                                    footerClass="font-weight-600">
                                     <ng-template kendoGridFooterTemplate>
                                         Tổng
                                     </ng-template>
-                                </kendo-grid-column> -->
-                                <kendo-grid-column title="Ngày" width="100">
+                                </kendo-grid-column>
+                                <kendo-grid-column title="Ngày bảo lãnh" width="100">
                                     <ng-template kendoGridCellTemplate let-dataItem let-column="column">
                                         {{dataItem.date | date:'shortDate'}}
                                     </ng-template>
-                                    <ng-template kendoGridFooterTemplate>
+                                    <!-- <ng-template kendoGridFooterTemplate>
                                         Tổng
-                                    </ng-template>
+                                    </ng-template> -->
                                 </kendo-grid-column>
-                                <kendo-grid-column field="origin" title="Nguồn" width="150">
+                                <!-- <kendo-grid-column field="origin" title="Nguồn" width="150">
+                                </kendo-grid-column> -->
+                                <kendo-grid-column field="communicationDisplay" title="Phiếu điều trị" width="100">
                                 </kendo-grid-column>
-                                <kendo-grid-column field="communicationDisplay" title="Số phiếu" width="100">
-                                </kendo-grid-column>                               
                                 <kendo-grid-column title="Số tiền" class="text-right" width="135"
                                     footerClass="text-right font-weight-600">
                                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">

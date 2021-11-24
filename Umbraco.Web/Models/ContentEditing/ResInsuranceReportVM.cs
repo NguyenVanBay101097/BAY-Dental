@@ -15,6 +15,47 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? InsuranceId { get; set; }
     }
 
+    public class InsuranceHistoryInComeFilter
+    {
+        public InsuranceHistoryInComeFilter()
+        {
+            Limit = 20;
+        }
+
+        public int Limit { get; set; }
+
+        public int Offset { get; set; }
+
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
+
+        public string Search { get; set; }
+
+        public Guid? InsuranceId { get; set; }
+    }
+
+    public class InsuranceHistoryInComeItem
+    {
+        public Guid Id { get; set; }
+
+        public DateTime PaymentDate { get; set; }
+
+        public string JournalName { get; set; }
+
+        public string State { get; set; }
+
+        public string Name { get; set; }
+
+        public decimal Amount { get; set; }
+
+        public string Communication { get; set; }
+
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
+    }
+
     public class InsuranceDebtReport
     {
         public string PartnerName { get; set; }
@@ -26,9 +67,11 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Communication { get; set; }
 
-        public string CommunicationDisplay { 
-            
-            get{
+        public string CommunicationDisplay
+        {
+
+            get
+            {
                 if (!string.IsNullOrEmpty(Communication))
                     return Communication.Split("-")[0].Trim();
 
@@ -36,7 +79,7 @@ namespace Umbraco.Web.Models.ContentEditing
             }
 
             set { }
-        
+
         }
 
         public Guid MoveId { get; set; }
@@ -77,6 +120,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class InsuranceReportItem
     {
+        public Guid InsuranceId { get; set; }
+
         public Guid PartnerId { get; set; }
 
         public string PartnerName { get; set; }
@@ -124,6 +169,8 @@ namespace Umbraco.Web.Models.ContentEditing
     public class InsuranceReportDetailItem
     {
         public DateTime? Date { get; set; }
+
+        public string PaymentName { get; set; }     
 
         public string Name { get; set; }
 

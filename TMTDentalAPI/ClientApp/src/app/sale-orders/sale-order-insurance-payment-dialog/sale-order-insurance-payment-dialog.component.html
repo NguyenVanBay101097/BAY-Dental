@@ -102,7 +102,7 @@
                                         </ng-container>
                                         <ng-template #elseTemplate>
                                             <kendo-numerictextbox style="width: 150px;" required class="form-control"
-                                                [min]="0" [max]="line.value.amountTotal"
+                                                [min]="0" [max]="line.get('saleOrderLine').value.priceTotal" [autoCorrect]="true"
                                                 formControlName="fixedAmount" (blur)="onBlurfixed(i)" [format]="'n0'"
                                                 [spinners]="true">
                                             </kendo-numerictextbox>

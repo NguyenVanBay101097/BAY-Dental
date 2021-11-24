@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApplicationCore.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,5 +18,7 @@ namespace Infrastructure.Services
         Task<InsuranceReportPrint> ReportSummaryPrint(InsuranceReportFilter val);
 
         Task<IEnumerable<ReportInsuranceDebitExcel>> ExportReportInsuranceDebtExcel(InsuranceReportFilter val);
+
+        Task<PagedResult2<InsuranceHistoryInComeItem>> GetHistoryInComeDebtPaged(InsuranceHistoryInComeFilter val);
     }
 }
