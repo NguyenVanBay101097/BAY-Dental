@@ -70,7 +70,7 @@ namespace Infrastructure.Services
                                      TotalDebit = g.Sum(x => x.Balance)
                                  };
 
-            var ResponseQr = from isr in SearchQuery()
+            var ResponseQr = from isr in insurances
                              from isrd in insuranceDebQr.Where(x => x.PartnerId == isr.PartnerId).DefaultIfEmpty()
                              orderby isr.DateCreated descending
                              select new ResInsuranceBasic
