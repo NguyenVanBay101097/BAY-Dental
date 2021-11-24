@@ -24,7 +24,7 @@ export class ResInsuranceReportService {
   }
 
   exportExcelFile(val) {
-    return this.http.post(this.baseApi + this.apiUrl + "/ExportExcelFile", val, { responseType: "blob" });
+    return this.http.post(this.baseApi + this.apiUrl + "/ExportReportInsuranceDebitExcel", val, { responseType: "blob" });
   }
 
   printGetSummary(val) {

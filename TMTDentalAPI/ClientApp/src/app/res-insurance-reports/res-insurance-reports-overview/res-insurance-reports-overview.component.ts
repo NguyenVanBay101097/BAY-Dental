@@ -136,27 +136,28 @@ export class ResInsuranceReportsOverviewComponent implements OnInit, AfterViewIn
   }
 
   exportExcel() {
-    let val;
-    val.companyId = val.companyId || '';
-    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
-    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
-    // this.accInvService.exportRevenueTimeReportExcel(val).subscribe((rs) => {
-    //   let filename = "BaoCaoCongNoBaoHiem";
-    //   let newBlob = new Blob([rs], {
-    //     type:
-    //       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    //   });
+    let val = new InsuranceReportFilter();
+    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY-MM-DD') : '';
+    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY-MM-DD') : '';
+    val.search = this.search || '';
+    val.companyId = this.companyId || '';
+    this.resInsuranceReportService.exportExcelFile(val).subscribe((rs) => {
+      let filename = "BaoCaoCongNoBaoHiem";
+      let newBlob = new Blob([rs], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
 
-    //   let data = window.URL.createObjectURL(newBlob);
-    //   let link = document.createElement("a");
-    //   link.href = data;
-    //   link.download = filename;
-    //   link.click();
-    //   setTimeout(() => {
-    //     // For Firefox it is necessary to delay revoking the ObjectURL
-    //     window.URL.revokeObjectURL(data);
-    //   }, 100);
-    // });
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
   }
 
   getFilter(){
