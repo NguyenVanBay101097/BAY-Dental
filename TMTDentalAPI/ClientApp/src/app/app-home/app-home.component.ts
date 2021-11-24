@@ -144,7 +144,7 @@ export class AppHomeComponent implements OnInit {
         { name: 'Thông tin khách hàng', url: '/customer-management' },
         { name: 'Hạng thành viên', url: '/member-level/management' },
         { name: 'Nhà cung cấp', url: '/partners/suppliers', permissions: ['Basic.Partner.Read'] },
-        { name: 'Bảo hiểm', url: '/res-insurance', },
+        { name: 'Bảo hiểm', url: '/res-insurance', groups: 'insurance.group_insurance' },
         { name: 'Dịch vụ - Vật tư - Thuốc', url: '/products', permissions: ['Catalog.Products.Read'] },
         { name: 'Đơn thuốc mẫu', url: '/sample-prescriptions', permissions: ['Catalog.SamplePrescription.Read'] },
         { name: 'Đơn vị tính', url: '/uoms', groups: 'product.group_uom', permissions: ['UoM.UoMs.Read'] },

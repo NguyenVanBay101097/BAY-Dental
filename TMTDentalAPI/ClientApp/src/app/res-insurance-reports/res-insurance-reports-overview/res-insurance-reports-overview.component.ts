@@ -141,7 +141,7 @@ export class ResInsuranceReportsOverviewComponent implements OnInit, AfterViewIn
     val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY-MM-DD') : '';
     val.search = this.search || '';
     val.companyId = this.companyId || '';
-    this.resInsuranceReportService.exportExcelFile(val).subscribe((rs) => {
+    this.resInsuranceReportService.exportReportInsuranceExcelFile(val).subscribe((rs) => {
       let filename = "BaoCaoCongNoBaoHiem";
       let newBlob = new Blob([rs], {
         type:
