@@ -25,7 +25,16 @@
                 {{dataItem.amount | number}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="displayState" title="Trạng thái" width="150"></kendo-grid-column>
+        <kendo-grid-column field="state" title="Trạng thái" width="150">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <ng-container *ngIf="dataItem.state === 'posted'; else elseTemplate">
+                    <span> Đã xác nhận </span>
+                </ng-container>
+                <ng-template #elseTemplate>
+                    <span> Đã hủy </span>
+                </ng-template>
+            </ng-template>
+        </kendo-grid-column>
         <kendo-grid-column title="Thao tác" width="100">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                 <button class="btn btn-danger" title="Hủy" (click)="onCancelPaymnet(dataItem)">
