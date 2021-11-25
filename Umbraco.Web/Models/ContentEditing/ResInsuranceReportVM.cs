@@ -101,21 +101,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Communication { get; set; }
 
-        public string CommunicationDisplay
-        {
-
-            get
-            {
-                if (!string.IsNullOrEmpty(Communication))
-                    return Communication.Split("-")[0].Trim();
-
-                return null;
-            }
-
-            set { }
-
-        }
-
         public Guid MoveId { get; set; }
         public string MoveType { get; set; }
     }
@@ -225,6 +210,10 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Dư cuối
         /// </summary>
         public decimal End { get; set; }
+
+        public string PaymentCommunication { get; set; }
+
+        public string PaymentPartnerName { get; set; }
     }
 
     public class ReportInsuranceDebitExcel : InsuranceReportItem

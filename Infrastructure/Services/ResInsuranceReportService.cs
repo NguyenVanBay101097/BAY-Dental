@@ -319,10 +319,12 @@ namespace Infrastructure.Services
                         Date = x.Date,
                         MoveName = x.Move.Name,
                         PaymentName = x.Payment.Name,
+                        PaymentCommunication = x.Payment.Communication,
                         Name = x.Name,
                         Ref = x.Move.Ref,
                         Debit = x.Debit,
                         Credit = x.Credit,
+                        PaymentPartnerName = x.Payment.Partner.Name
                     }).ToList();
 
 

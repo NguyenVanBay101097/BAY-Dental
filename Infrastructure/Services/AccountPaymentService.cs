@@ -1167,11 +1167,15 @@ namespace Infrastructure.Services
         {
             await CancelAsync(SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.MoveLines)
+                .Include(x => x.Journal)
                 .ToList());
         }
 
         public async Task CancelAsync(IEnumerable<AccountPayment> payments)
         {
+            if (payments.Any(x => x.Journal.Type == "insurance" && x.MoveLines.All(s => s.Reconciled)))
+                throw new Exception("Thanh toán bảo hiểm đã được đối soát, không thể hủy");
+
             var moveObj = GetService<IAccountMoveService>();
             var moveLineObj = GetService<IAccountMoveLineService>();
             var moveIds = payments.SelectMany(x => x.MoveLines).Select(x => x.MoveId).Distinct().ToList();

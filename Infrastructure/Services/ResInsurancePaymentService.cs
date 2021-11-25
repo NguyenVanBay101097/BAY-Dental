@@ -36,7 +36,7 @@ namespace Infrastructure.Services
             ComputeAmount(resInsurancePayment);
 
             if (resInsurancePayment.Amount <= 0)
-                throw new Exception("Tổng Số tiền bảo hiểm trả phải lớn hơn 0");
+                throw new Exception("Tổng số tiền bảo hiểm trả phải lớn hơn 0");
 
             await UpdateAsync(resInsurancePayment);
 

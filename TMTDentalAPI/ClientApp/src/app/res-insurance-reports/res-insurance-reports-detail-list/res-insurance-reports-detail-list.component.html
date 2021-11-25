@@ -5,9 +5,9 @@
             {{ dataItem.date | date:'shortDate'}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="paymentName" title="Số phiếu" width="180"></kendo-grid-column>
-    <!-- <kendo-grid-column title="Khách hàng" width="150"></kendo-grid-column>
-    <kendo-grid-column title="Dịch vụ" width="150"></kendo-grid-column> -->
+    <kendo-grid-column field="paymentName" title="Số phiếu" width="150"></kendo-grid-column>
+    <kendo-grid-column field="paymentPartnerName" title="Khách hàng" width="150"></kendo-grid-column>
+    <kendo-grid-column field="paymentCommunication" title="Nội dung" width="200"></kendo-grid-column>
     <kendo-grid-column field="begin" title="Nợ đầu kỳ" width="150" class="text-right">
         <ng-template kendoGridCellTemplate let-dataItem>
             {{ dataItem.begin | number }}

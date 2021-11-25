@@ -97,10 +97,19 @@ namespace ApplicationCore.Entities
 
         public string Note { get; set; }
 
+        /// <summary>
+        /// Không sử dụng
+        /// </summary>
         public string InvoiceStatus { get; set; }
 
+        /// <summary>
+        /// Không sử dụng
+        /// </summary>
         public decimal? QtyToInvoice { get; set; }
 
+        /// <summary>
+        /// Không sử dụng
+        /// </summary>
         public decimal? QtyInvoiced { get; set; }
 
         /// <summary>
@@ -160,7 +169,7 @@ namespace ApplicationCore.Entities
         public decimal? PriceReduce { get; set; }
 
         /// <summary>
-        /// Số tiền đã thanh toán
+        /// Không sử dụng
         /// </summary>
         public decimal? AmountPaid { get; set; }
 
@@ -222,7 +231,7 @@ namespace ApplicationCore.Entities
         public Advisory Advisory { get; set; }
 
         /// <summary>
-        /// ngừng hoạt động
+        /// Không sử dụng
         /// </summary>
         public bool IsActive { get; set; }
 
