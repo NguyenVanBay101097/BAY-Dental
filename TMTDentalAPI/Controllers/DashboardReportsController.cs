@@ -311,13 +311,10 @@ namespace TMTDentalAPI.Controllers
                 worksheet2.Cells[4, 1, 9, 4].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;             
                 worksheet2.Cells["D5:D9"].Style.Numberformat.Format = "#,##0";
 
-                //worksheet2.Cells["A4:D4"].Style.Font.Bold = true;
-                //worksheet2.Cells["A4:D4"].Style.Font.Size = 11;
-                //worksheet2.Cells["A4:D4"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+
                 worksheet2.Cells["A4:D4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
                 worksheet2.Cells["A4:D4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#0667d1"));
                 worksheet2.Cells["A4:D4"].Style.Font.Color.SetColor(Color.White);
-                //worksheet1.Cells[4, 1, 8, 4].Style.Border.Bottom.Color.SetColor(Color.White);
 
 
 
@@ -373,37 +370,7 @@ namespace TMTDentalAPI.Controllers
                 worksheet3.Cells["A2:F2"].Merge = true;
                 worksheet3.Cells["A2:F2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
-                //worksheet3.Cells["A4"].Value = "Quỹ đầu kì";
-                //worksheet3.Cells["B4"].Value = "Tổng thu";
-                //worksheet3.Cells["C4"].Value = "Tổng chi";
-                //worksheet3.Cells["D4"].Value = "Tồn sổ quỹ";
-                //worksheet3.Cells["E4"].Value = "Quỹ tiền mặt";
-                //worksheet3.Cells["F4"].Value = "Quỹ ngân hàng";
-
-                //worksheet3.Cells["A5"].Value = dataCashBook.DataAmountTotals.ToArray()[0].Begin;
-                //worksheet3.Cells["B5"].Value = dataCashBook.DataAmountTotals.ToArray()[0].TotalThu;
-                //worksheet3.Cells["C5"].Value = dataCashBook.DataAmountTotals.ToArray()[0].TotalChi;
-                //worksheet3.Cells["D5"].Value = dataCashBook.DataAmountTotals.ToArray()[0].TotalAmount;
-                //worksheet3.Cells["E5"].Value = dataCashBook.DataAmountTotals.ToArray()[1].TotalAmount;
-                //worksheet3.Cells["F5"].Value = dataCashBook.DataAmountTotals.ToArray()[2].TotalAmount;
-
-                //worksheet3.Cells["A5:F5"].Style.Numberformat.Format = "#,##0";
-
-                //worksheet3.Cells["A4:F4"].Style.Font.Bold = true;
-                //worksheet3.Cells["A4:F4"].Style.Font.Size = 14;
-                //worksheet3.Cells["A4:F4"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                //worksheet3.Cells["A4:F4"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
-                //worksheet3.Cells["A4:F4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                //worksheet3.Cells["A4:F4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#0667d1"));
-                //worksheet3.Cells["A4:F4"].Style.Font.Color.SetColor(Color.White);
-
-                //worksheet3.Cells["A5:F5"].Style.Font.Bold = true;
-                //worksheet3.Cells["A5:F5"].Style.Font.Size = 14;
-                //worksheet3.Cells["A5:F5"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                //worksheet3.Cells["A5:F5"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
-                //worksheet3.Cells["A5:F5"].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                //worksheet3.Cells["A5:F5"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#0667d1"));
-                //worksheet3.Cells["A5:F5"].Style.Font.Color.SetColor(Color.White);
+               
                 worksheet3.Cells["A4:C4"].Value = "Tồn quỹ";
                 worksheet3.Cells["A4:C4"].Merge = true;
                 worksheet3.Cells["A4:C4"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
