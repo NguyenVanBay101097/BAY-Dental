@@ -102,5 +102,7 @@ namespace Infrastructure.Services
         Task<IEnumerable<IrAttachment>> GetListAttachment(Guid id);
 
         Task<IEnumerable<SaleOrder>> GetSaleOrdersByPartnerId(Guid partnerId);
+
+        Task<ResInsurancePaymentRegisterDisplay> GetDefaultInsurancePaymentByOrderId(Guid id);
     }
 }

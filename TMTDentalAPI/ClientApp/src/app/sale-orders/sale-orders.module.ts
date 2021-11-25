@@ -38,6 +38,7 @@ import { SaleOrderPrintPopupComponent } from './sale-order-print-popup/sale-orde
 import { SaleOrderImagesLibraryPopupComponent } from './sale-order-images-library-popup/sale-order-images-library-popup.component';
 import { SaleOrderImageComponent } from './sale-order-image/sale-order-image.component';
 import { SaleOrderServiceListComponent } from './sale-order-service-list/sale-order-service-list.component';
+import { SaleOrderInsurancePaymentDialogComponent } from './sale-order-insurance-payment-dialog/sale-order-insurance-payment-dialog.component';
 
 @NgModule({
   declarations: [
@@ -70,6 +71,7 @@ import { SaleOrderServiceListComponent } from './sale-order-service-list/sale-or
     SaleOrderImagesLibraryPopupComponent,
     SaleOrderImageComponent,
     SaleOrderServiceListComponent,
+    SaleOrderInsurancePaymentDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -99,7 +101,8 @@ import { SaleOrderServiceListComponent } from './sale-order-service-list/sale-or
     SaleOrderPromotionDialogComponent,
     SaleOrderLinePromotionDialogComponent,
     SaleOrderPrintPopupComponent,
-    SaleOrderImagesLibraryPopupComponent
+    SaleOrderImagesLibraryPopupComponent,
+    SaleOrderInsurancePaymentDialogComponent
   ]
 })
 export class SaleOrdersModule { }

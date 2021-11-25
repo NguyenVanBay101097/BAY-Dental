@@ -77,5 +77,12 @@ namespace Umbraco.Web.Models.ContentEditing
         [DbColumn("field_type", "boolean")]
         public bool? GroupSurvey { get; set; }
 
+        /// <summary>
+        /// bảo hiểm
+        /// </summary>
+        [DbColumn("implied_group", "insurance.group_insurance")]
+        [DbColumn("field_type", "boolean")]
+        public bool? GroupInsurance { get; set; }
+
     }
 }

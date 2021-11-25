@@ -1621,6 +1621,37 @@ namespace Infrastructure.Services
             return res;
         }
 
+        public async Task<ResInsurancePaymentRegisterDisplay> GetDefaultInsurancePaymentByOrderId(Guid id)
+        {
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var order = await SearchQuery(x => x.Id == id && x.State != "draft")
+                .Include(x => x.OrderLines).ThenInclude(s => s.InsurancePaymentLines).ThenInclude(x => x.ResInsurancePayment)
+                .FirstOrDefaultAsync();
+            var lines = order.OrderLines.Where(x => x.State != "draft" && !x.InsurancePaymentLines.Any(x => x.ResInsurancePayment.State == "posted" && (x.FixedAmount > 0 || x.Percent > 0)) && (x.PriceTotal - (x.AmountInvoiced ?? 0)) > 0).ToList();
+            if (!lines.Any())
+                throw new Exception("Toàn bộ dịch vụ đã được bảo lãnh hoặc đã được thanh toán hết");
+
+            var res = new ResInsurancePaymentRegisterDisplay();
+            res.Date = DateTime.Now;
+            res.Note = $"{order.Name} - Bảo hiểm bảo lãnh";
+            res.Lines = lines.Select(x => new ResInsurancePaymentLineRegisterDisplay
+            {
+                SaleOrderLineId = x.Id,
+                SaleOrderLine = new RegisterSaleOrderLinePayment
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    PriceTotal = x.PriceTotal - x.AmountInvoiced,
+                    AmountPaid = x.AmountInvoiced,
+                },
+                PayType = "fixed",
+                FixedAmount = 0,
+                Percent = 0,
+            });
+
+            return res;
+        }
+
         public async Task<SaleOrderDisplay> DefaultGet(SaleOrderDefaultGet val)
         {
             var res = new SaleOrderDisplay();

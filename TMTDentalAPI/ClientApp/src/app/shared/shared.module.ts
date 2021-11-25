@@ -110,6 +110,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BankCuDialogComponent } from './bank-cu-dialog/bank-cu-dialog.component';
 import { ProductCategoriesSearchDropdownComponent } from './product-categories-search-dropdown/product-categories-search-dropdown.component';
 import { ComputePriceInputPopoverComponent } from './compute-price-input-popover/compute-price-input-popover.component';
+import { ResInsuranceCuDialogComponent } from './res-insurance-cu-dialog/res-insurance-cu-dialog.component';
 
 
 const config: LocaleConfig = {};
@@ -214,7 +215,8 @@ const config: LocaleConfig = {};
         MonthRangeFilterDropdownComponent,
         BankCuDialogComponent,
         ProductCategoriesSearchDropdownComponent,
-        ComputePriceInputPopoverComponent
+        ComputePriceInputPopoverComponent,
+        ResInsuranceCuDialogComponent
     ],
     exports: [
         ConfirmDialogComponent,
@@ -308,7 +310,8 @@ const config: LocaleConfig = {};
         LaboWarrantyDetailListComponent,
         MonthRangeFilterDropdownComponent,
         NgChartsModule,
-        BankCuDialogComponent
+        BankCuDialogComponent,
+        ResInsuranceCuDialogComponent
     ],
     imports: [
         NgbModule,
@@ -364,7 +367,8 @@ const config: LocaleConfig = {};
         AddressDialogComponent,
         ReceiveAppointmentDialogComponent,
         WarrantyCuDidalogComponent,
-        BankCuDialogComponent
+        BankCuDialogComponent,
+        ResInsuranceCuDialogComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

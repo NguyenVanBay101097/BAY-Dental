@@ -1,0 +1,143 @@
+<div class="">
+    <form class="o_form_view">
+        <div class="container-xxl py-3">
+            <div class="row">
+                <div class="col-4">
+                    <div class="card">
+                        <h5 class="card-header d-flex-center bg-white">
+                            <span> {{ insuranceInfo?.name }} </span>
+                            <button class="btn btn-primary" (click)="editInsurance()">
+                                <i class="fas fa-pencil-alt"></i>&nbsp;Sửa
+                            </button>
+                        </h5>
+                        <div class="card-body">
+                            <table class="o_group mt-0 o_inner_group o_group_col_12">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="2">
+                                            <div class="avatar">
+                                                <ng-container
+                                                    *ngIf="insuranceInfo && insuranceInfo.avatar; else elseTemplate">
+                                                    <img [src]="insuranceInfo.avatar" alt="">
+                                                </ng-container>
+                                                <ng-template #elseTemplate>
+                                                    <img [src]="'../../../assets/images/no-avatar.png'" alt="">
+                                                </ng-template>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="o_td_label">
+                                            <label class="o_form_label">Người đại diện</label>
+                                        </td>
+                                        <td style="width: 100%">
+                                            <span> {{ insuranceInfo?.representative }} </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="o_td_label">
+                                            <label class="o_form_label">Số điện thoại</label>
+                                        </td>
+                                        <td style="width: 100%">
+                                            <span> {{ insuranceInfo?.phone }} </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="o_td_label">
+                                            <label class="o_form_label">Địa chỉ</label>
+                                        </td>
+                                        <td style="width: 100%">
+                                            <span> {{ insuranceInfo?.address }} </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="o_td_label">
+                                            <label class="o_form_label">Ngày ký kết</label>
+                                        </td>
+                                        <td style="width: 100%">
+                                            <span> {{ insuranceInfo?.date | date:'shortDate'}} </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="o_td_label">
+                                            <label class="o_form_label">Email</label>
+                                        </td>
+                                        <td style="width: 100%">
+                                            <span> {{ insuranceInfo?.email }} </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="o_td_label">
+                                            <label class="o_form_label">Ghi chú</label>
+                                        </td>
+                                        <td style="width: 100%">
+                                            <span> {{ insuranceInfo?.note }} </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-8">
+                    <div class="border p-3 bg-white">
+                        <div class="d-flex justify-content-between mb-2">
+                            <div class="filter-left">
+                                <app-date-range-picker-filter [startDate]="dateFrom" [endDate]="dateTo"
+                                    (searchChange)="onSearchDateChange($event)">
+                                </app-date-range-picker-filter>
+                                <div class="button-group">
+                                    <button class="btn btn-primary mr-2" (click)="onPayment()">Thu tiền</button>
+                                    <button class="btn btn-primary" (click)="exportExcelFile()">
+                                        <i class="fas fa-download"></i>&nbsp;Xuất excel
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="filter-right">
+                                <div class="o_searchview">
+                                    <input class="o_searchview_input" [(ngModel)]="search"
+                                        (ngModelChange)="this.searchUpdate.next($event)"
+                                        placeholder="Tìm kiếm theo nội dung, khách hàng" type="text"
+                                        [ngModelOptions]="{standalone: true}" />
+                                    <span class="o_searchview_icon fas fa-search"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <kendo-grid [resizable]="true" [data]="insuranceDebt" [navigable]="true"
+                            [kendoGridSelectBy]="'moveId'" [selectedKeys]="selectedIds" #grid>
+                            <kendo-grid-checkbox-column [width]="50" [headerClass]="{'text-center': true}"
+                                [class]="{'text-center': true}" showSelectAll="true"></kendo-grid-checkbox-column>
+                            <kendo-grid-column field="partnerName" title="Khách hàng" width="100"
+                                footerClass="font-weight-600">
+                                <ng-template kendoGridFooterTemplate>
+                                    Tổng
+                                </ng-template>
+                            </kendo-grid-column>
+                            <kendo-grid-column title="Ngày bảo lãnh" width="100">
+                                <ng-template kendoGridCellTemplate let-dataItem let-column="column">
+                                    {{dataItem.date | date:'shortDate'}}
+                                </ng-template>
+                                <!-- <ng-template kendoGridFooterTemplate>
+                                        Tổng
+                                    </ng-template> -->
+                            </kendo-grid-column>
+                            <!-- <kendo-grid-column field="origin" title="Nguồn" width="150">
+                                </kendo-grid-column> -->
+                            <kendo-grid-column field="communication" title="Nội dung" width="100">
+                            </kendo-grid-column>
+                            <kendo-grid-column title="Số tiền" headerClass="text-right" class="text-right" width="135"
+                                footerClass="text-right font-weight-600">
+                                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                    {{dataItem.amountTotal | number}}
+                                </ng-template>
+                                <ng-template kendoGridFooterTemplate>
+                                    {{sumAmount | number}}
+                                </ng-template>
+                            </kendo-grid-column>
+                        </kendo-grid>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

@@ -6,7 +6,11 @@
                 </app-service-list-search-dropdown>
             </div>
             <div>
-                <button type="button" *ngIf="saleOrder.state != 'done'" class="btn btn-primary ml-auto"
+                <button type="button" hasGroups [groups]="'insurance.group_insurance'" *ngIf="saleOrder && ['sale'].indexOf(saleOrder.state) !== -1"
+                    class="btn btn-primary ml-auto" (click)="actionInsurancePayment()">
+                    Bảo hiểm
+                </button>
+                <button type="button" *ngIf="saleOrder.state != 'done'" class="btn btn-primary ml-1"
                     (click)="onOpenSaleOrderPromotion()">
                     <i class="fas fa-tags"></i>
                     Thêm ưu đãi
@@ -177,27 +181,34 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <span>{{saleOrder.dateOrder | date: 'short'}}</span>
-                                    <button *ngIf="saleOrder.state == 'draft'" class="text-success" #popover="ngbPopover" triggers="manual" (click)="openUpdateOrderPopover(popover)" title="Sửa" style="outline: none;background: none;border: none;" [ngbPopover]="popContent" placement="bottom-right" [autoClose]="'outside'">
+                                    <button *ngIf="saleOrder.state == 'draft'" class="text-success"
+                                        #popover="ngbPopover" triggers="manual"
+                                        (click)="openUpdateOrderPopover(popover)" title="Sửa"
+                                        style="outline: none;background: none;border: none;" [ngbPopover]="popContent"
+                                        placement="bottom-right" [autoClose]="'outside'">
                                         <i class="fas fa-edit"></i>
                                     </button>
                                     <ng-template #popContent>
                                         <div [formGroup]="formGroup">
                                             <div class="mb-2">
-                                                <kendo-datepicker style="width: 100%" format="dd/MM/yyyy HH:mm" formControlName="dateOrder" [popupSettings]="{appendTo: 'component'}">
+                                                <kendo-datepicker style="width: 100%" format="dd/MM/yyyy HH:mm"
+                                                    formControlName="dateOrder"
+                                                    [popupSettings]="{appendTo: 'component'}">
                                                 </kendo-datepicker>
-                                                 <div *ngIf="f.dateOrder.errors && (f.dateOrder.touched || f.dateOrder.dirty || submitted)"
+                                                <div *ngIf="f.dateOrder.errors && (f.dateOrder.touched || f.dateOrder.dirty || submitted)"
                                                     class="text-danger">
                                                     <div *ngIf="f.dateOrder.errors.required">Chọn ngày lập phiếu</div>
                                                 </div>
                                             </div>
                                             <div>
-                                                <button type="button" class="btn btn-primary" (click)="saveSaleOrderInfo(popover)">
+                                                <button type="button" class="btn btn-primary"
+                                                    (click)="saveSaleOrderInfo(popover)">
                                                     Lưu
                                                 </button>
                                             </div>
                                         </div>
                                     </ng-template>
-                                   
+
                                 </td>
                             </tr>
                             <tr>

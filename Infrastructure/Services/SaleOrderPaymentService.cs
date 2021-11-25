@@ -204,7 +204,8 @@ namespace Infrastructure.Services
                 .Include(x => x.Move)
                 .Include(x => x.Order)
                 .Include(x => x.Lines)
-                .Include(x => x.JournalLines)
+                .Include(x => x.JournalLines).ThenInclude(s => s.Journal)
+                .Include(x => x.JournalLines).ThenInclude(s => s.Insurance)
                 .ToListAsync();
             foreach (var saleOrderPayment in saleOrderPayments)
             {
@@ -346,7 +347,7 @@ namespace Infrastructure.Services
                 //await ComputePointAndUpdateLevel(saleOrderPayment, saleOrderPayment.Order.PartnerId, "payment");
                 var loyaltyPoints = ConvertAmountToPoint(saleOrderPayment.Amount);
                 var card = await cardObj.SearchQuery(x => x.PartnerId == saleOrderPayment.Order.PartnerId && x.State == "in_use").FirstOrDefaultAsync();
-                if(card != null)
+                if (card != null)
                 {
                     card.TotalPoint += loyaltyPoints;
                     var typeId = await UpGradeCardCard((card.TotalPoint ?? 0));
@@ -354,7 +355,7 @@ namespace Infrastructure.Services
                     await cardObj.UpdateAsync(card);
                 }
 
-             
+
             }
             //await partnerObj.UpdateMemberLevelForPartner(partnerIds);
             await UpdateAsync(saleOrderPayments);
@@ -524,7 +525,8 @@ namespace Infrastructure.Services
                     PaymentDate = self.Date,
                     PaymentType = "inbound",
                     CompanyId = self.Order.CompanyId,
-                    Communication = self.Note
+                    Communication = self.Note,
+                    InsuranceId = line.Journal.Type == "insurance" ? line.InsuranceId : null
                 };
 
                 payment.AccountMovePaymentRels.Add(new AccountMovePaymentRel { MoveId = moveId });
@@ -598,6 +600,12 @@ namespace Infrastructure.Services
                     card.TypeId = typeId == Guid.Empty ? card.TypeId : typeId;
                     await cardObj.UpdateAsync(card);
                 }
+
+                //remove insurance payment if exist
+                var insurancePaymentObj = GetService<IResInsurancePaymentService>();
+                var insurancePaymentIds = await insurancePaymentObj.SearchQuery(x => x.SaleOrderPaymentId == saleOrderPayment.Id).Select(x => x.Id).ToListAsync();
+                if (insurancePaymentIds.Any())
+                    await insurancePaymentObj.Unlink(insurancePaymentIds);
 
                 saleOrderPayment.State = "cancel";
             }

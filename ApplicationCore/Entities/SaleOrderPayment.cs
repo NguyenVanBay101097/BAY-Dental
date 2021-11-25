@@ -38,7 +38,7 @@ namespace ApplicationCore.Entities
         /// Phiếu điều trị
         /// </summary>
         public Guid OrderId { get; set; }
-        public SaleOrder Order { get; set; }
+        public SaleOrder Order { get; set; }     
 
         /// <summary>
         /// draft : nháp

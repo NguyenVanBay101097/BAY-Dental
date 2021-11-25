@@ -14,7 +14,12 @@ namespace ApplicationCore.Entities
         public string Name { get; set; }
         public string Code { get; set; }
         public bool Active { get; set; }
+
+        /// <summary>
+        /// cash, bank, insurance
+        /// </summary>
         public string Type { get; set; }
+
         public Guid? DefaultDebitAccountId { get; set; }
         public AccountAccount DefaultDebitAccount { get; set; }
 

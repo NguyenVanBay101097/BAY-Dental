@@ -18,6 +18,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? CompanyId { get; set; }
 
+        public Guid? JournalId { get; set; }
+
         /// <summary>
         /// bank: ngan hang
         /// cash: tien mat
@@ -51,6 +53,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// cash_bank: tong quy
         /// </summary>
         public string ResultSelection { get; set; }
+
+        public Guid? JournalId { get; set; }
 
         public string Search { get; set; }
 

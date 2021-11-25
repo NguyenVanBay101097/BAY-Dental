@@ -743,7 +743,7 @@
       },
       {
         "Name": "Người giới thiệu",
-        "Ops": [        
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Catalog.Agent.Read"
@@ -759,6 +759,27 @@
           {
             "Name": "Xóa",
             "Permission": "Catalog.Agent.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Bảo hiểm",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.Insurance.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.Insurance.Read"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.Insurance.Read"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.Insurance.Read"
           }
         ]
       },
