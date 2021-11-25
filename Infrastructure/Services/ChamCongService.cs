@@ -45,6 +45,8 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Date.Value >= val.From);
             if (val.To.HasValue)
                 query = query.Where(x => x.Date.Value <= val.To);
+            if(val.CompanyId.HasValue)
+                query = query.Where(x=> x.CompanyId == val.CompanyId);
 
             var totalItems = await query.CountAsync();
 

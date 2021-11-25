@@ -32,7 +32,8 @@ namespace Infrastructure.Services
 
             if (val.SaleOrderId.HasValue)
                 query = query.Where(x => x.OrderId == val.SaleOrderId.Value);
-
+            if(val.CompanyId.HasValue)
+                query = query.Where(x=> x.CompanyId == val.CompanyId.Value);
 
             var totalItems = await query.CountAsync();
 

@@ -13,6 +13,7 @@ export class PrecscriptionPaymentPaged {
   dateFrom: string;
   dateTo: string;
   state: string;
+  companyId:string;
 }
 
 export class PrecscriptionPaymentVM {

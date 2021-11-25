@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { AuthService } from 'src/app/auth/auth.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { ProductRequestService } from 'src/app/shared/product-request.service';
 import { ProductRequestPaged } from '../product-request';
@@ -28,7 +29,8 @@ export class SaleOrderProductRequestListComponent implements OnInit {
   constructor(
     private modalService: NgbModal,
     private notificationService: NotificationService,
-    private productRequestService: ProductRequestService
+    private productRequestService: ProductRequestService,
+    private authService: AuthService,
   ) { }
 
   ngOnInit() {
@@ -44,7 +46,7 @@ export class SaleOrderProductRequestListComponent implements OnInit {
     val.saleOrderId = this.saleOrderId;
     val.offset = 0;
     val.limit = 0;
-    
+    val.companyId = this.authService.userInfo.companyId;
     this.productRequestService.getPaged(val).subscribe(res => {
       // console.log(res);
       this.productRequests = res.items;

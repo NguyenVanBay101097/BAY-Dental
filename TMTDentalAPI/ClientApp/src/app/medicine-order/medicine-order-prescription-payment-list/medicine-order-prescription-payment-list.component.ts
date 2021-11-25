@@ -4,6 +4,7 @@ import { GridComponent, GridDataResult, PageChangeEvent } from '@progress/kendo-
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { MedicineOrderCreateDialogComponent } from '../medicine-order-create-dialog/medicine-order-create-dialog.component';
 import { MedicineOrderService, PrecscriptionPaymentPaged, PrecscriptionPaymentReport } from '../medicine-order.service';
@@ -37,6 +38,7 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
     private intlService: IntlService,
     private medicineOrderSerive: MedicineOrderService,
     private modalService: NgbModal,
+    private authService: AuthService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -64,6 +66,7 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
     paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:50");
     paged.state = this.state;
+    paged.companyId = this.authService.userInfo.companyId;
     this.medicineOrderSerive.getPaged(paged).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
@@ -111,7 +114,8 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
   getReport() {
     var val = {
       dateTo: this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:59"),
-      dateFrom: this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd")
+      dateFrom: this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd"),
+      companyId : this.authService.userInfo.companyId
     }
     this.medicineOrderSerive.getReport(val).subscribe(
       result => {

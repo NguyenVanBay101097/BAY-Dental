@@ -22,5 +22,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Type { get; set; }
 
         public string Search { get; set; }
+
+        public Guid? CompanyId { get; set; }    
     }
 }

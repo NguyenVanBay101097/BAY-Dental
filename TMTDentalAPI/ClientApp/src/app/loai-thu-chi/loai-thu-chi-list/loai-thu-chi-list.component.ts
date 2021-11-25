@@ -9,6 +9,7 @@ import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { LoaiThuChiFormComponent } from 'src/app/shared/loai-thu-chi-form/loai-thu-chi-form.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-loai-thu-chi-list',
@@ -30,6 +31,7 @@ export class LoaiThuChiListComponent implements OnInit {
   constructor(private route: ActivatedRoute, private modalService: NgbModal,
     private notifyService: NotifyService,
     private loaiThuChiService: LoaiThuChiService,
+    private authService: AuthService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -56,6 +58,7 @@ export class LoaiThuChiListComponent implements OnInit {
     val.offset = this.skip;
     val.search = this.search || '';
     val.type = this.type;
+    val.companyId = this.authService.userInfo.companyId;
 
     this.loaiThuChiService.getPaged(val).pipe(
       map(response => (<GridDataResult>{

@@ -8,6 +8,7 @@ export class SaleOrderPaymentPaged {
   offset: number;
   limit: number;
   saleOrderId: string;
+  companyId: string;
 }
 
 export class SaleOrderPaymentPagging {

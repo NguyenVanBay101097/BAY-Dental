@@ -80,6 +80,9 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.RuleDateFrom <= ruleDateFromEnd);
             }
 
+            if(val.CompanyId.HasValue)
+                query = query.Where(x=> x.CompanyId == val.CompanyId);
+
             query = query.OrderByDescending(x => x.DateCreated);
 
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();

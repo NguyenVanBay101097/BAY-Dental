@@ -8,6 +8,7 @@ export class loaiThuChiPaged {
   offset: number;
   search: string;
   type: string;
+  companyId: string;
 }
 
 export class loaiThuChiBasic { 
