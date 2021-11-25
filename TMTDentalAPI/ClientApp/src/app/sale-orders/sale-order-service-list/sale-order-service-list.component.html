@@ -6,7 +6,7 @@
                 </app-service-list-search-dropdown>
             </div>
             <div>
-                <button type="button" *ngIf="saleOrder && ['sale'].indexOf(saleOrder.state) !== -1"
+                <button type="button" hasGroups [groups]="'insurance.group_insurance'" *ngIf="saleOrder && ['sale'].indexOf(saleOrder.state) !== -1"
                     class="btn btn-primary ml-auto" (click)="actionInsurancePayment()">
                     Bảo hiểm
                 </button>

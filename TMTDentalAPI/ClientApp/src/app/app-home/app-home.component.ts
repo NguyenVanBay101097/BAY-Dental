@@ -144,7 +144,7 @@ export class AppHomeComponent implements OnInit {
         { name: 'Thông tin khách hàng', url: '/customer-management' },
         { name: 'Hạng thành viên', url: '/member-level/management' },
         { name: 'Nhà cung cấp', url: '/partners/suppliers', permissions: ['Basic.Partner.Read'] },
-        { name: 'Bảo hiểm', url: '/res-insurance', groups: 'insurance.group_insurance' },
+        { name: 'Bảo hiểm', url: '/res-insurance', groups: 'insurance.group_insurance', permissions: ['Catalog.Insurance.Read'] },
         { name: 'Dịch vụ - Vật tư - Thuốc', url: '/products', permissions: ['Catalog.Products.Read'] },
         { name: 'Đơn thuốc mẫu', url: '/sample-prescriptions', permissions: ['Catalog.SamplePrescription.Read'] },
         { name: 'Đơn vị tính', url: '/uoms', groups: 'product.group_uom', permissions: ['UoM.UoMs.Read'] },
@@ -256,11 +256,11 @@ export class AppHomeComponent implements OnInit {
     var diff = expireDate.getTime() - date.getTime();
 
     var days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    diff -=  days * (1000 * 60 * 60 * 24);
-    
+    diff -= days * (1000 * 60 * 60 * 24);
+
     var hours = Math.floor(diff / (1000 * 60 * 60));
     diff -= hours * (1000 * 60 * 60);
-    
+
     var mins = Math.floor(diff / (1000 * 60));
     diff -= mins * (1000 * 60);
 
@@ -285,8 +285,10 @@ export class AppHomeComponent implements OnInit {
         if (menuItem.children) {
           var childArr: any[] = [];
           menuItem.children.forEach(child => {
-            if (this.hasPermission(child)) {
-              childArr.push(child);
+            if (this.hasGroups(child)) {
+              if (this.hasPermission(child)) {
+                childArr.push(child);
+              }
             }
           });
           menuItem.children = childArr;
@@ -304,6 +306,14 @@ export class AppHomeComponent implements OnInit {
     }
 
     return this.checkPermissionService.check(menuItem.permissions);
+  }
+
+  hasGroups(menuItem) {
+    if (!menuItem.groups || this.sessionInfo.isAdmin) {
+      return true;
+    }
+
+    return this.permissionService.hasDefined(menuItem.groups);   
   }
 
   toggleMinimize(e) {
