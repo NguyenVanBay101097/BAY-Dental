@@ -87,3 +87,15 @@
 .btn.disabled, .btn:disabled, .btn.disabled .pointer, .btn:disabled .pointer {
     cursor: default;
 }
+
+.icon-img {
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    width: 30px;
+    height: 30px;
+}
+
+.icon-img-active {
+    filter:  invert(30%) sepia(51%) saturate(3516%) hue-rotate(200deg) brightness(103%) contrast(107%);
+}

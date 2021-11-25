@@ -39,7 +39,10 @@ import { SaleOrderImagesLibraryPopupComponent } from './sale-order-images-librar
 import { SaleOrderImageComponent } from './sale-order-image/sale-order-image.component';
 import { SaleOrderServiceListComponent } from './sale-order-service-list/sale-order-service-list.component';
 import { SaleOrderPaymentAdvancedDialogComponent } from './sale-order-payment-advanced-dialog/sale-order-payment-advanced-dialog.component';
-import { NgAutonumericModule } from '@angularfy/ng-autonumeric';
+
+import { ConfirmPaymentDialogComponent } from './confirm-payment-dialog/confirm-payment-dialog.component';
+import { AutonumericModule } from '@angularfy/autonumeric';
+
 @NgModule({
   declarations: [
     SaleOrderCreateUpdateComponent,
@@ -72,6 +75,8 @@ import { NgAutonumericModule } from '@angularfy/ng-autonumeric';
     SaleOrderImageComponent,
     SaleOrderServiceListComponent,
     SaleOrderPaymentAdvancedDialogComponent,
+    ConfirmPaymentDialogComponent,
+
   ],
   imports: [
     CommonModule,
@@ -82,7 +87,8 @@ import { NgAutonumericModule } from '@angularfy/ng-autonumeric';
     FormsModule,
     SharedModule,
     NgbModule,
-    NgAutonumericModule
+    AutonumericModule,
+
   ],
   providers: [SaleOrderPromotionService, SaleCouponProgramService],
   exports: [

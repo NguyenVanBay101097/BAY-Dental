@@ -212,7 +212,7 @@ const config: LocaleConfig = {};
         LaboWarrantyDetailListComponent,
         MonthRangeFilterDropdownComponent,
         BankCuDialogComponent,
-        NumberDirective
+        NumberDirective,
 
     ],
     exports: [
@@ -306,7 +306,8 @@ const config: LocaleConfig = {};
         MonthRangeFilterDropdownComponent,
         NgChartsModule,
         BankCuDialogComponent,
-        NumberDirective
+        NumberDirective,
+
     ],
     imports: [
         NgbModule,

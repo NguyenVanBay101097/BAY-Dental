@@ -37,7 +37,7 @@ import { FormsModule } from "@angular/forms";
 import { LoadingComponent } from "./shared/loading/loading.component";
 import { MyCustomKendoModule } from "./shared/my-customer-kendo.module";
 import { GridModule } from '@progress/kendo-angular-grid';
-
+import { AutonumericModule } from '@angularfy/autonumeric';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -79,6 +79,16 @@ registerLocaleData(localeVi, "vi");
         m: 59,
       },
     }),
+    AutonumericModule.forRoot({
+      digitGroupSeparator: '.',
+    decimalCharacter: ',',
+    decimalCharacterAlternative: '.',
+    currencySymbol: '\u00a0',
+    currencySymbolPlacement: 's',
+    roundingMethod: 'U',
+    minimumValue: '0',
+    decimalPlaces: 0
+    }) ,
     FacebookModule.forRoot(),
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     GridModule,

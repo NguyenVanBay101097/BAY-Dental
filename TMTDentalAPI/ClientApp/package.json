@@ -23,7 +23,7 @@
     "@angular/platform-browser-dynamic": "~9.1.13",
     "@angular/router": "~9.1.13",
     "@angular/service-worker": "~9.1.13",
-    "@angularfy/ng-autonumeric": "^2.1.0",
+    "@angularfy/autonumeric": "^3.0.3",
     "@auth0/angular-jwt": "^4.2.0",
     "@ctrl/ngx-emoji-mart": "^3.0.4",
     "@fortawesome/fontawesome-free": "^5.8.2",

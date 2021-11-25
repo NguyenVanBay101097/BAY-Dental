@@ -56,12 +56,13 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
   myOptions = {
     digitGroupSeparator: '.',
-              decimalCharacter: ',',
-              decimalCharacterAlternative: '.',
-              currencySymbol: '\u00a0€',
-              currencySymbolPlacement: 's',
-              roundingMethod: 'U',
-              minimumValue: '0'
+    decimalCharacter: ',',
+    decimalCharacterAlternative: '.',
+    currencySymbol: '\u00a0',
+    currencySymbolPlacement: 's',
+    roundingMethod: 'U',
+    minimumValue: '0',
+    decimailPlaces: '0'
   }
   constructor(
     private fb: FormBuilder,
@@ -175,6 +176,10 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
   get debtAmount() {
     return this.paymentForm.get('debtAmount').value;
+  }
+
+  getPaymentFormControl(key) {
+    return this.paymentForm.get(key);
   }
 
   filteredJournalsByType(type){
@@ -344,7 +349,6 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
         amount -= amountPaid;
       }
     });
-    console.log(this.linesFC.value);
    }, 0);
   
     
@@ -617,7 +621,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
       journalFilter.amount = this.advanceAmount > this.userAmountPayment ? this.userAmountPayment : this.advanceAmount;
     }
     else {
-      journalFilter.amount = this.userAmountPayment;
+      journalFilter.amount = Number(this.userAmountPayment);
     }
     journalFilter.journal = journalFilter.journals[0];
     this.selectedJournals.push(journalFilter);
@@ -630,6 +634,36 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
       let jnItem = this.selectedJournals[index];
       this.userAmountPayment = this.userAmountPayment + jnItem.amount;
       this.selectedJournals.splice(index,1);
+    }
+  }
+
+  onChangeLine(value,line,id) {
+    var numberPattern = /\d+/g;
+    value = value.match( numberPattern ).join('')
+    let numberValue = Number(value);
+    let max = line.get('saleOrderLine').value.amountResidual;
+    if (numberValue > max) {
+      this.linesFC.controls[id].get('amount').setValue(max);
+    }
+  }
+
+  onChange(value,key,max) {
+    var numberPattern = /\d+/g;
+    value = value.match( numberPattern ).join('')
+    let numberValue = Number(value);
+    if (max!=0 && numberValue > max) {
+      this.getPaymentFormControl(key).setValue(max);
+    }
+  }
+
+  onChangeUserAmountPayment(value,max) {
+    let numberPattern = /\d+/g;
+    let numberValue = value.match(numberPattern);
+    if (numberValue != null) {
+      numberValue = numberValue.join('');
+      numberValue = Number(numberValue);
+      if (numberValue > max)
+      this.userAmountPayment = max;
     }
   }
 

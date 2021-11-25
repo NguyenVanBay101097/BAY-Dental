@@ -39,14 +39,12 @@ namespace Infrastructure.Services
                     Amount = val.Amount,
                     JournalId = cashJournal.Id
                 });
-            } else
-            {
-                if (val.Amount != val.Lines.Sum(x => x.Amount))
-                    throw new Exception("Dữ liệu không đồng nhất!");
             }
+            if (val.Amount != val.Lines.Sum(x => x.Amount) || val.Amount != val.JournalLines.Sum(x=> x.Amount))
+                throw new Exception("Dữ liệu không đồng nhất!");
             var soPaymentSave = _mapper.Map<SaleOrderPaymentSave>(val);
             var soPayment = await soPaymentObj.CreateSaleOrderPayment(soPaymentSave);
-            await soPaymentObj.ActionPayment(new List<Guid>() { soPayment.Id});
+            await soPaymentObj.ActionPayment(new List<Guid>() { soPayment.Id });
             #endregion
             #region debt payment
             if (!val.IsDebtPayment || val.DebtAmount == 0)
@@ -56,7 +54,7 @@ namespace Infrastructure.Services
                 AccountType = "customer_debt",
                 Amount = val.DebtAmount,
                 Date = val.Date,
-                JournalId = val.DebtJournalId.HasValue? val.DebtJournalId.Value : cashJournal.Id,
+                JournalId = val.DebtJournalId.HasValue ? val.DebtJournalId.Value : cashJournal.Id,
                 PartnerId = val.PartnerId,
                 Type = "thu",
                 Reason = val.DebtNote
