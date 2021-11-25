@@ -104,13 +104,13 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                         context.SaveChanges();
 
 
-                        var seq = context.IRSequences.Where(x => x.Prefix == "CNBH/{yyyy}/").FirstOrDefault();
+                        var seq = context.IRSequences.Where(x => x.Prefix == "INSURANCE/{yyyy}/").FirstOrDefault();
                         if (seq == null)
                         {
                             seq = new IRSequence
                             {
-                                Name = "Công nợ bảo hiểm",
-                                Prefix = "CNBH" + "/{yyyy}/",
+                                Name = "Bảo hiểm",
+                                Prefix = "INSURANCE" + "/{yyyy}/",
                                 Padding = 4,
                                 NumberIncrement = 1,
                                 NumberNext = 1,

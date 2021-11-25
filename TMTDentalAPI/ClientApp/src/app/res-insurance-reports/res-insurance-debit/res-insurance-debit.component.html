@@ -13,19 +13,19 @@
                         <div class="card-body">
                             <table class="o_group mt-0 o_inner_group o_group_col_12">
                                 <tbody>
-                                    <!-- <tr>
-                                            <td colspan="2">
-                                                <div class="avatar">
-                                                    <ng-container
-                                                        *ngIf="insuranceInfo && insuranceInfo.avatar; else elseTemplate">
-                                                        <img [src]="insuranceInfo.avatar" alt="">
-                                                    </ng-container>
-                                                    <ng-template #elseTemplate>
-                                                        <img [src]="'../../../assets/images/no-avatar.png'" alt="">
-                                                    </ng-template>
-                                                </div>
-                                            </td>
-                                        </tr> -->
+                                    <tr>
+                                        <td colspan="2">
+                                            <div class="avatar">
+                                                <ng-container
+                                                    *ngIf="insuranceInfo && insuranceInfo.avatar; else elseTemplate">
+                                                    <img [src]="insuranceInfo.avatar" alt="">
+                                                </ng-container>
+                                                <ng-template #elseTemplate>
+                                                    <img [src]="'../../../assets/images/no-avatar.png'" alt="">
+                                                </ng-template>
+                                            </div>
+                                        </td>
+                                    </tr>
                                     <tr>
                                         <td class="o_td_label">
                                             <label class="o_form_label">Người đại diện</label>

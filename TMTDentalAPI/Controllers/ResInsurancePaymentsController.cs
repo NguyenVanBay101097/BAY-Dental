@@ -29,7 +29,10 @@ namespace TMTDentalAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(ResInsurancePaymentSave val)
         {
+            await _unitOfWork.BeginTransactionAsync();
             var insurancePayment = await _insurancePaymentService.CreateResInsurancePayment(val);
+            _unitOfWork.Commit();
+
             var basic = _mapper.Map<ResInsurancePaymentBasic>(insurancePayment);
             return Ok(basic);
         }
