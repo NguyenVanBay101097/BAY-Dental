@@ -36,5 +36,25 @@ namespace Infrastructure.Services
             var val = propertyObj.get("list_price", "product.product", res_id: $"product.product,{self.Id.ToString()}");
             return Convert.ToDecimal(val);
         }
+
+        public static void ComputeUoMRels(this Product product)
+        {
+            var rels_remove = new List<ProductUoMRel>();
+            var uom_ids = new List<Guid>() { product.UOMId, product.UOMPOId };
+            foreach (var rel in product.ProductUoMRels)
+            {
+                if (!uom_ids.Contains(rel.UoMId))
+                    rels_remove.Add(rel);
+            }
+
+            foreach (var rel in rels_remove)
+                product.ProductUoMRels.Remove(rel);
+
+            foreach (var uom_id in uom_ids)
+            {
+                if (!product.ProductUoMRels.Any(x => x.UoMId == uom_id))
+                    product.ProductUoMRels.Add(new ProductUoMRel() { UoMId = uom_id });
+            }
+        }
     }
 }

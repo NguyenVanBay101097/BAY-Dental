@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApplicationCore.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -16,7 +17,20 @@ namespace ApplicationCore.Entities
             PurchaseOK = true;
             Type = "consu";
         }
-        public string Name { get; set; }
+
+        private string _name;
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                _name = value;
+                NameNoSign = string.Join("|", value, value.RemoveSignVietnameseV2(), value.GetAllFirstChar());
+            }
+        }
 
         public string NameNoSign { get; set; }
 

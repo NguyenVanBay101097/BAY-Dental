@@ -78,8 +78,8 @@ namespace Infrastructure.Services
 
         private void _SetNameNoSign(IEnumerable<Product> self)
         {
-            foreach (var product in self)
-                product.NameNoSign = string.Join("|", product.Name, product.Name.RemoveSignVietnameseV2(), product.Name.GetAllFirstChar());
+            //foreach (var product in self)
+            //    product.NameNoSign = string.Join("|", product.Name, product.Name.RemoveSignVietnameseV2(), product.Name.GetAllFirstChar());
         }
 
         //public override async Task UpdateAsync(IEnumerable<Product> entities)

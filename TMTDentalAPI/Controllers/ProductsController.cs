@@ -38,6 +38,8 @@ namespace TMTDentalAPI.Controllers
         private readonly IUoMCategoryService _uomCategService;
         private readonly IIRPropertyService _propertyService;
         private readonly IProductPriceHistoryService _productPriceHistoryService;
+        private readonly IIRSequenceService _sequenceService;
+
 
         public ProductsController(IProductService productService, IMapper mapper,
             IApplicationRoleFunctionService roleFunctionService,
@@ -47,7 +49,8 @@ namespace TMTDentalAPI.Controllers
             IProductStepService productStepService, IUoMService uomService,
             IUoMCategoryService uomCategService,
             IIRPropertyService propertyService,
-            IProductPriceHistoryService productPriceHistoryService)
+            IProductPriceHistoryService productPriceHistoryService,
+            IIRSequenceService sequenceService)
         {
             _productService = productService;
             _mapper = mapper;
@@ -61,6 +64,7 @@ namespace TMTDentalAPI.Controllers
             _uomCategService = uomCategService;
             _propertyService = propertyService;
             _productPriceHistoryService = productPriceHistoryService;
+            _sequenceService = sequenceService;
         }
 
         [HttpGet]
@@ -392,7 +396,7 @@ namespace TMTDentalAPI.Controllers
                 product.UOMId = uom.Id;
                 product.UOMPOId = uom.Id;
                 product.Name = item.Name;
-                product.DefaultCode = item.DefaultCode;
+                product.DefaultCode = !string.IsNullOrEmpty(item.DefaultCode) ? item.DefaultCode : (await _sequenceService.NextByCode("product_seq"));
                 product.SaleOK = true;
                 product.PurchaseOK = false;
                 product.Type = "service";
@@ -414,13 +418,13 @@ namespace TMTDentalAPI.Controllers
                 }
 
                 standardPriceDict.Add(product, item.StandardPrice ?? 0);
+                product.ComputeUoMRels();
                 productsCreate.Add(product);
             }
 
             try
             {
                 await _unitOfWork.BeginTransactionAsync();
-                _productService._ComputeUoMRels(productsCreate);
                 var products = await _productService.CreateAsync(productsCreate);
 
                 _propertyService.set_multi("standard_price", "product.product", standardPriceDict.ToDictionary(x => string.Format("product.product,{0}", x.Key.Id), x => (object)x.Value), force_company: CompanyId);
@@ -573,7 +577,6 @@ namespace TMTDentalAPI.Controllers
             try
             {
                 await _unitOfWork.BeginTransactionAsync();
-                _productService._ComputeUoMRels(productsUpdate);
                 await _productService.UpdateAsync(productsUpdate);
 
                 _propertyService.set_multi("standard_price", "product.product", standardPriceDict.ToDictionary(x => string.Format("product.product,{0}", x.Key.Id), x => (object)x.Value), force_company: CompanyId);
@@ -722,16 +725,15 @@ namespace TMTDentalAPI.Controllers
                 pd.MinInventory = item.MinInventory;
                 pd.Origin = item.Origin;
                 pd.Expiry = item.Expiry;
+
+                pd.ComputeUoMRels();
                 vals.Add(pd);
             }
 
             try
             {
                 await _unitOfWork.BeginTransactionAsync();
-                _productService._ComputeUoMRels(vals);
                 await _productService.CreateAsync(vals);
-
-
                 _unitOfWork.Commit();
             }
             catch (Exception e)
@@ -878,13 +880,14 @@ namespace TMTDentalAPI.Controllers
                 product.ListPrice = item.ListPrice;
                 product.Origin = item.Origin;
                 product.Expiry = item.Expiry;
+
+                product.ComputeUoMRels();
                 productsUpdate.Add(product);
             }
 
             try
             {
                 await _unitOfWork.BeginTransactionAsync();
-                _productService._ComputeUoMRels(productsUpdate);
                 await _productService.UpdateAsync(productsUpdate);
                 _unitOfWork.Commit();
             }
@@ -1019,17 +1022,14 @@ namespace TMTDentalAPI.Controllers
                 product.MinInventory = item.MinInventory ?? 0;
                 product.Origin = item.Origin;
                 product.Expiry = item.Expiry;
-                product.ProductUoMRels.Add(new ProductUoMRel { UoMId = uom.Id });
-                if (uom.Id != uomPO.Id)
-                    product.ProductUoMRels.Add(new ProductUoMRel { UoMId = uomPO.Id });
 
+                product.ComputeUoMRels();
                 productsCreate.Add(product);
             }
 
             try
             {
                 await _unitOfWork.BeginTransactionAsync();
-                _productService._ComputeUoMRels(productsCreate);
                 await _productService.CreateAsync(productsCreate);
                 _unitOfWork.Commit();
             }
@@ -1169,18 +1169,14 @@ namespace TMTDentalAPI.Controllers
                 product.MinInventory = item.MinInventory ?? 0;
                 product.Origin = item.Origin;
                 product.Expiry = item.Expiry;
-                product.ProductUoMRels.Clear();
-                product.ProductUoMRels.Add(new ProductUoMRel { UoMId = uomDict[item.UOM].Id });
-                if (uomDict[item.UOM].Id != uomDict[item.UOMPO].Id)
-                    product.ProductUoMRels.Add(new ProductUoMRel { UoMId = uomDict[item.UOMPO].Id });
 
+                product.ComputeUoMRels();
                 productsUpdate.Add(product);
             }
 
             try
             {
                 await _unitOfWork.BeginTransactionAsync();
-                _productService._ComputeUoMRels(productsUpdate);
                 await _productService.UpdateAsync(productsUpdate);
                 _unitOfWork.Commit();
             }
@@ -1255,18 +1251,14 @@ namespace TMTDentalAPI.Controllers
                 pd.UOMId = uom.Id;
                 pd.UOMPOId = uom.Id;
                 pd.Name = item.Name;
-                pd.NameNoSign = StringUtils.RemoveSignVietnameseV2(item.Name);
                 pd.SaleOK = false;
                 pd.PurchaseOK = false;
                 pd.KeToaOK = false;
                 pd.Type = "consu";
                 pd.Type2 = "labo";
-                pd.ListPrice = 0;
-                pd.PurchasePrice = 0;
                 vals.Add(pd);
             }
 
-            _productService._ComputeUoMRels(vals);
             await _productService.CreateAsync(vals);
 
             _unitOfWork.Commit();
@@ -1337,18 +1329,14 @@ namespace TMTDentalAPI.Controllers
                 pd.UOMId = uom.Id;
                 pd.UOMPOId = uom.Id;
                 pd.Name = item.Name;
-                pd.NameNoSign = StringUtils.RemoveSignVietnameseV2(item.Name);
                 pd.SaleOK = false;
                 pd.PurchaseOK = false;
                 pd.KeToaOK = false;
                 pd.Type = "consu";
                 pd.Type2 = "labo_attach";
-                pd.ListPrice = 0;
-                pd.PurchasePrice = 0;
                 vals.Add(pd);
             }
 
-            _productService._ComputeUoMRels(vals);
             await _productService.CreateAsync(vals);
 
             _unitOfWork.Commit();
