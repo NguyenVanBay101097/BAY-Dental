@@ -3,22 +3,23 @@
         <app-date-range-picker-filter class="mr-1 mb-2" [opens]="'right'" [startDate]="monthStart" [endDate]="monthEnd"
             (searchChange)="onSearchDateChange($event)">
         </app-date-range-picker-filter>
-        <kendo-combobox [placeholder]="'Người giới thiệu'" class="mr-1 mb-2" [valueField]="'id'"
-            [textField]="'name'" [filterable]="true" [data]="agentList"
-            (selectionChange)="onSelectAgent($event)" #agentCbx>
+        <kendo-combobox [placeholder]="'Người giới thiệu'" class="mr-1 mb-2" [valueField]="'id'" [textField]="'name'"
+            [filterable]="true" [data]="agentList" (selectionChange)="onSelectAgent($event)" #agentCbx>
         </kendo-combobox>
         <kendo-combobox [placeholder]="'Phân loại'" class="mr-1 mb-2" [valueField]="'id'" [textField]="'name'"
             [filterable]="true" [data]="agentTypes" (selectionChange)="onSelectAgentType($event)" #companyCbx>
         </kendo-combobox>
-        <button type="button" class="btn btn-primary mr-1 mb-2" (click)="exportExcel()"><i class="fas fa-download"></i>&nbsp;Xuất excel</button>
+        <button type="button" class="btn btn-primary mr-1 mb-2" (click)="exportExcel()"><i
+                class="fas fa-download"></i>&nbsp;Xuất excel</button>
     </div>
-    
+
     <div class="o_cp_t_right">
         <div class="o_cp_searchview">
             <div class="o_cp_searchview_group">
                 <div class="o_searchview">
-                    <input class="o_searchview_input o_searchview" placeholder="Tìm kiếm theo số phiếu, khách hàng, dịch vụ"
-                        type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                    <input class="o_searchview_input o_searchview"
+                        placeholder="Tìm kiếm theo số phiếu, khách hàng, dịch vụ" type="text" [(ngModel)]="search"
+                        (ngModelChange)="this.searchUpdate.next($event)">
                     <span class="o_searchview_icon fas fa-search"></span>
                 </div>
             </div>
@@ -28,14 +29,14 @@
         <div class="d-flex">
             <div class="form-check mr-2">
                 <input class="form-check-input" type="checkbox" (change)="checkCommissionDisplay($event)"
-                    formControlName="IscommissionDisplay" id="IscommissionDisplay">
+                    id="IscommissionDisplay">
                 <label class="form-check-label" for="IscommissionDisplay">
-                   <strong>Hiển thị các khoản thu dịch vụ không tính hoa hồng</strong> 
+                    <strong>Hiển thị các khoản thu dịch vụ không tính hoa hồng</strong>
                 </label>
             </div>
             <div class="icon-hover">
-                <i class="fas fa-info-circle text-primary" triggers="mouseenter:mouseleave"
-                    placement="top" [autoClose]="true" [ngbPopover]="popContent"></i>
+                <i class="fas fa-info-circle text-primary" triggers="mouseenter:mouseleave" placement="top"
+                    [autoClose]="true" [ngbPopover]="popContent"></i>
             </div>
             <ng-template #popContent>
                 Các khoản thu của dịch vụ có tỉ lệ % hoa hồng là 0%
@@ -96,7 +97,7 @@
             {{dataItem.totalAmount | number}}
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="baseAmount" title="Lợi nhuận tính hoa hồng" width="150" class="text-right">
+    <kendo-grid-column field="baseAmount" title="Lợi nhuận tính hoa hồng" width="180" class="text-right">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{dataItem.baseAmount | number}}
         </ng-template>
@@ -112,8 +113,3 @@
         </ng-template>
     </kendo-grid-column>
 </kendo-grid>
-<div class="bg-white">
-    <div class="o_form_view o_form_nosheet o_form_editable">
-
-    </div>
-</div>
