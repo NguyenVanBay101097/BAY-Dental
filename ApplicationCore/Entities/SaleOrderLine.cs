@@ -204,6 +204,8 @@ namespace ApplicationCore.Entities
 
         public ICollection<SaleOrderPromotionLine> PromotionLines { get; set; } = new List<SaleOrderPromotionLine>();
 
+
+
         /// <summary>
         /// Xác định line bị hủy bỏ
         /// </summary>

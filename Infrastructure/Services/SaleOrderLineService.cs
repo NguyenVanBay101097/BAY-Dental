@@ -747,6 +747,50 @@ namespace Infrastructure.Services
                 await productStepObj.CreateAsync(stepsAdd);
             }
         }
+
+        public async Task CreateSaleProduction(IEnumerable<SaleOrderLine> seft)
+        {
+            var saleProductObj = GetService<ISaleProductionService>();
+            var bomObj = GetService<IProductBomService>();
+            var lineIds = seft.Where(x => x.State != "draft").Select(x => x.Id).ToList();
+
+            var lines = await SearchQuery(x => lineIds.Contains(x.Id) && x.Product.Boms.Any())
+                .Include(x => x.Product).ThenInclude(x => x.Boms)
+                .ToListAsync();
+
+            var saleProductions = new List<SaleProduction>();
+
+            foreach(var item in lines)
+            {
+                var saleProduction = _PrepareSaleProduction(item);
+                saleProductions.Add(saleProduction);
+            }
+
+            await saleProductObj.CreateAsync(saleProductions);
+        }
+
+        public SaleProduction _PrepareSaleProduction(SaleOrderLine self)
+        {
+            var res = new SaleProduction
+            {             
+                ProductId = self.ProductId,
+                Quantity = self.ProductUOMQty,
+                CompanyId = self.CompanyId
+            };
+
+            foreach(var line in self.Product.Boms)
+            {
+                res.Lines.Add(new SaleProductionLine { 
+                ProductId = line.MaterialProductId.Value,
+                Quantity = res.Quantity * line.Quantity              
+                });
+            }
+
+            res.SaleOrderLineRels.Add(new SaleOrderLineSaleProductionRel { OrderLineId = self.Id });
+
+            return res;
+        }
+
         public async Task ComputeProductRequestedQuantity(IEnumerable<Guid> ids) //compute quantity after do something
         {
             var reqLineObj = GetService<IProductRequestLineService>();

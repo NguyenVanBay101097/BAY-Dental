@@ -86,5 +86,7 @@ namespace Infrastructure.Services
 
         Task<IEnumerable<CardCardBasic>> GetListCardCardApplyable(Guid id);
 
+        Task CreateSaleProduction(IEnumerable<SaleOrderLine> seft);
+
     }
 }

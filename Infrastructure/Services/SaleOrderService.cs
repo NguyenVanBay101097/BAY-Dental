@@ -1716,7 +1716,7 @@ namespace Infrastructure.Services
                 saleLineObj._GetToInvoiceAmount(order.OrderLines);
                 saleLineObj._ComputeInvoiceStatus(order.OrderLines);
                 saleLineObj.ComputeResidual(order.OrderLines);
-
+                await saleLineObj.CreateSaleProduction(order.OrderLines);
                 //await saleLineObj.RecomputeCommissions(order.OrderLines);
             }
 
