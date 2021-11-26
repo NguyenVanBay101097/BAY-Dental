@@ -14,6 +14,7 @@ export class TeethChartComponent implements OnInit, OnChanges {
   teethSort: ToothDisplay[]  = [];
   anchor: number = -1;
   focus: number = -1;
+  @Input() isDisabled = false;
   constructor() { }
 
   ngOnChanges(changes: SimpleChanges): void {
