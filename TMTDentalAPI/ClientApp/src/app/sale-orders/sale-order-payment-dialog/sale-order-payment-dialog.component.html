@@ -103,8 +103,6 @@
                                     <td>
                                         <input class="form-control" formControlName="amount" (blur)="enterMoney()" autonumeric
                                         (input)="onChange($event.target.value,'amount',maxAmount)"/>
-                                        <!-- <app-input-number [parentForm]="paymentForm" [formname]="'amount'" [maxAmount]="maxAmount == 0 ? null : maxAmount">
-                                        </app-input-number> -->
                                         <!-- <kendo-numerictextbox [min]="0" [max]="maxAmount == 0 ? null : maxAmount"
                                             [step]="1000" [format]="'n0'" [autoCorrect]="true" (blur)="enterMoney()"
                                             formControlName="amount">
@@ -240,7 +238,7 @@
                                             </kendo-numerictextbox> -->
                                             <input class="form-control text-right" [ngModelOptions]="{standalone: true}"
                                             [(ngModel)]="userAmountPayment" name="amountPayment" autonumeric
-                                            (input)="onChangeUserAmountPayment($event.target.value,this.amount - this.amountTotalJournalPayment)"/>
+                                            (input)="onChangeUserAmountPayment($event.target.value)"/>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -386,21 +384,21 @@
 </div>
 
 <footer class="modal-footer">
-    <ng-container *ngIf="step === 1; else elseTemplateFooter">
+    <div [class.d-none] = "this.step != 1">
         <button type="button" class="btn btn-primary" (click)="save()" [disabled]="loading" accesskey="s">Thanh
             toán</button>
         <!-- <button type="button" class="btn btn-primary" (click)="saveAndPrint()" [disabled]="loading">Thanh
             toán và in</button> -->
             
-    </ng-container>
-    <ng-template #elseTemplateFooter>
-        <button type="button" class="btn btn-secondary" (click)="backPreviousStep()" [disabled]="loading">Trở
+    </div>
+    <div [class.d-none] = "this.step == 1">
+        <button type="button" class="btn btn-secondary mr-2" (click)="backPreviousStep()" [disabled]="loading">Trở
             lại</button>
-            <button type="button" class="btn btn-primary" (click)="save()" [disabled]="loading" accesskey="s">Thanh
+            <button type="button" class="btn btn-primary mr-2" (click)="save()" [disabled]="loading" accesskey="s">Thanh
                 toán</button>
             <button type="button" class="btn btn-primary" (click)="saveAndPrint()" [disabled]="loading">Thanh
                 toán và in</button>
-    </ng-template>
+    </div>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="cancel()" accesskey="q">Đóng</button>
 
 </footer>

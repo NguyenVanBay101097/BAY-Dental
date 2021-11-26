@@ -632,7 +632,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     let index = this.selectedJournals.findIndex(x => x.type == journal.type);
     if (index != -1) {
       let jnItem = this.selectedJournals[index];
-      this.userAmountPayment = this.userAmountPayment + jnItem.amount;
+      this.userAmountPayment = Number(this.userAmountPayment) + jnItem.amount;
       this.selectedJournals.splice(index,1);
     }
   }
@@ -656,14 +656,17 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     }
   }
 
-  onChangeUserAmountPayment(value,max) {
+  onChangeUserAmountPayment(value) {
+    var max = this.amount - this.amountTotalJournalPayment;
     let numberPattern = /\d+/g;
     let numberValue = value.match(numberPattern);
     if (numberValue != null) {
       numberValue = numberValue.join('');
-      numberValue = Number(numberValue);
-      if (numberValue > max)
-      this.userAmountPayment = max;
+      // numberValue = Number(numberValue);
+      numberValue = +numberValue;
+      if (numberValue > max){
+        this.userAmountPayment = max;
+      }
     }
   }
 
