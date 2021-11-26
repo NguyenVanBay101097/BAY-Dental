@@ -60,9 +60,9 @@ export class TeethChartComponent implements OnInit, OnChanges {
         this.anchor = -1;
         this.focus = -1;
       } else {
-        var teethIndex = this.teethSort.findIndex(x=> x.id == tooth.id);
-        this.anchor = teethIndex;
-        this.focus = teethIndex;
+        var toothIndex = this.teethSort.findIndex(x=> x.id == tooth.id);
+        this.anchor = toothIndex;
+        this.focus = toothIndex;
         this.selectedKeys.push(tooth.id);
       }
     };
@@ -74,7 +74,8 @@ export class TeethChartComponent implements OnInit, OnChanges {
       let removeCount = end - start + 1;
       // remove between anchor and focus
       if(toothIndex >= start && toothIndex <= end)
-      this.selectedKeys.splice(0,removeCount);
+      // this.selectedKeys.splice(0,removeCount);
+      this.selectedKeys.splice(this.selectedKeys.length-removeCount,removeCount);
       
       this.focus = toothIndex;
       start = Math.min(this.anchor, this.focus)
