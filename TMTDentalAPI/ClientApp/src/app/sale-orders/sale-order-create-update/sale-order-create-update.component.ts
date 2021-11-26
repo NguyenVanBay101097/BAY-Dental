@@ -29,7 +29,6 @@ import { DiscountDefault, SaleOrderPrint, SaleOrderService } from '../../core/se
 import { PartnerCustomerToathuocListComponent } from '../partner-customer-toathuoc-list/partner-customer-toathuoc-list.component';
 import { SaleOrderLineCuComponent } from '../sale-order-line-cu/sale-order-line-cu.component';
 import { SaleOrderLinePromotionDialogComponent } from '../sale-order-line-promotion-dialog/sale-order-line-promotion-dialog.component';
-import { SaleOrderPaymentAdvancedDialogComponent } from '../sale-order-payment-advanced-dialog/sale-order-payment-advanced-dialog.component';
 import { SaleOrderPaymentDialogComponent } from '../sale-order-payment-dialog/sale-order-payment-dialog.component';
 import { SaleOrderPaymentListComponent } from '../sale-order-payment-list/sale-order-payment-list.component';
 import { SaleOrderPrintPopupComponent } from '../sale-order-print-popup/sale-order-print-popup.component';

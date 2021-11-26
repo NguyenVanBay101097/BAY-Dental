@@ -39,7 +39,6 @@ import { SaleOrderImagesLibraryPopupComponent } from './sale-order-images-librar
 import { SaleOrderImageComponent } from './sale-order-image/sale-order-image.component';
 import { SaleOrderServiceListComponent } from './sale-order-service-list/sale-order-service-list.component';
 import { SaleOrderInsurancePaymentDialogComponent } from './sale-order-insurance-payment-dialog/sale-order-insurance-payment-dialog.component';
-import { SaleOrderPaymentAdvancedDialogComponent } from './sale-order-payment-advanced-dialog/sale-order-payment-advanced-dialog.component';
 
 import { ConfirmPaymentDialogComponent } from './confirm-payment-dialog/confirm-payment-dialog.component';
 import { AutonumericModule } from '@angularfy/autonumeric';
@@ -76,7 +75,6 @@ import { AutonumericModule } from '@angularfy/autonumeric';
     SaleOrderImageComponent,
     SaleOrderServiceListComponent,
     SaleOrderInsurancePaymentDialogComponent,
-    SaleOrderPaymentAdvancedDialogComponent,
     ConfirmPaymentDialogComponent,
 
   ],
