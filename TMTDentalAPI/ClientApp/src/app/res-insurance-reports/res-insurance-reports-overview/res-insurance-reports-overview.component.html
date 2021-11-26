@@ -79,9 +79,10 @@
         (pageChange)="onPageChange($event)">
         <kendo-grid-column field="partnerName" title="Công ty bảo hiểm">
             <ng-template kendoGridCellTemplate let-dataItem>
-                <a class="text-primary" [routerLink]="['/res-insurance-reports/' + dataItem.insuranceId]">
+                {{dataItem.partnerName}}
+                <!-- <a class="text-primary" [routerLink]="['/res-insurance-reports/' + dataItem.insuranceId]">
                     {{dataItem.partnerName}}
-                </a>
+                </a> -->
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="begin" title="Nợ đầu kỳ" class="text-right">

@@ -266,8 +266,7 @@ namespace Infrastructure.Services
             }
 
 
-            var partnerIds = dict.Select(x => x.Key).ToList();
-            var dict_insurance = insuranceObj.SearchQuery(x => x.PartnerId.HasValue && partnerIds.Contains(x.PartnerId.Value)).Distinct().ToDictionary(x => x.PartnerId, x => x.Id);
+            var partnerIds = dict.Select(x => x.Key).ToList();        
             var res = new List<InsuranceReportItem>();
             foreach (var item in dict)
             {
@@ -279,7 +278,6 @@ namespace Infrastructure.Services
                 res.Add(new InsuranceReportItem
                 {
                     PartnerId = item.Key,
-                    InsuranceId = dict_insurance[item.Key],
                     DateFrom = date_from,
                     DateTo = date_to,
                     PartnerRef = value.PartnerRef,
