@@ -62,4 +62,16 @@ export class AccountJournalService {
     journalResBankAutoComplete(val: AccountJournalFilter): Observable<AccountJournalResBankSimple[]> {
         return this.http.post<AccountJournalResBankSimple[]>(this.baseApi + this.apiUrl + "/JournalResBankAutoComplete", val);
     }
+
+    createBankJournal(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/CreateBankJournal", val);
+    }
+
+    getBankJournal(id: string) {
+        return this.http.get(this.baseApi + this.apiUrl + "/" + id + '/GetBankJournal');
+    }
+
+    updateBankJournal(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + "/UpdateBankJournal", val);
+    }
 }

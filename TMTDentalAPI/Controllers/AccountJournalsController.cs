@@ -38,19 +38,52 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> JournalResBankAutoComplete(AccountJournalFilter val)
-        {
-            var result = await _accountJournalService.GetJournalResBankAutocomplete(val);
-            return Ok(result);
-        }
-
-        [HttpPost("[action]")]
         public async Task<IActionResult> CreateJournalSave(AccountJournalSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
             var res = await _accountJournalService.CreateJournals(new List<AccountJournalSave>() { val });
             _unitOfWork.Commit();
             return Ok(_mapper.Map<IEnumerable<AccountJournalDisplay>>(res));
+        }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetBankJournal(Guid id)
+        {
+            var res = await _accountJournalService.SearchQuery(x => x.Id == id)
+                .Select(x => new AccountJournalGetBankJournalVM {
+                    Id = x.Id,
+                    AccountHolderName = x.BankAccount.AccountHolderName,
+                    AccountNumber = x.Name,
+                    Active = x.Active,
+                    Bank = x.BankAccount.Bank != null ? new ResBankSimple
+                    {
+                        Id = x.BankAccount.Bank.Id,
+                        Name = x.BankAccount.Bank.Name
+                    } : null,
+                    BankBranch = x.BankAccount.Branch
+                }).FirstOrDefaultAsync();
+          
+            return Ok(res);
+        }
+
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> CreateBankJournal(AccountJournalCreateBankJournalVM val)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            var journal = await _accountJournalService.CreateBankJournal(val);
+            _unitOfWork.Commit();
+            return Ok(_mapper.Map<AccountJournalBasic>(journal));
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> UpdateBankJournal(AccountJournalUpdateBankJournalVM val)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _accountJournalService.UpdateBankJournal(val);
+            _unitOfWork.Commit();
+
+            return NoContent();
         }
 
         [HttpPut("{id}")]

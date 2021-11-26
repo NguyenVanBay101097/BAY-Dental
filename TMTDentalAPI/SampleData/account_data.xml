@@ -312,7 +312,7 @@
     <record model="account.journal" id="data_account_journal_bank">
       <field name="name">Ngân hàng</field>
       <field name="type">bank</field>
-      <field name="code">CSH2</field>
+      <field name="code">BNK1</field>
       <field name="update_posted" eval="True" />
       <field name="default_debit_account_id" ref="account.data_account_1112" />
       <field name="default_credit_account_id" ref="account.data_account_1112" />

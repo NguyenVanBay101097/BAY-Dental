@@ -8,6 +8,7 @@ import { AccountJournalService } from 'src/app/account-journals/account-journal.
 import { ResBankService, ResBankSimple, ResPartnerBankPaged } from 'src/app/res-banks/res-bank.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { NotifyService } from 'src/app/shared/services/notify.service';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-account-bank-cu-dialog',
@@ -39,10 +40,9 @@ export class AccountBankCuDialogComponent implements OnInit {
     this.formGroup = this.fb.group({
       accountHolderName: [null, Validators.required],
       accountNumber: [null, [Validators.required]],
-      bankId: [null, Validators.required],
+      bank: [null, Validators.required],
       bankBranch: null,
-      active: 1,
-      type: "bank"
+      active: true,
     });
 
     this.loadBankItems();
@@ -66,8 +66,11 @@ export class AccountBankCuDialogComponent implements OnInit {
   }
 
   getDataFromApi() {
-    this.accountJournalService.getById(this.accountId).subscribe(result => {
+    this.accountJournalService.getBankJournal(this.accountId).subscribe((result: any) => {
       this.formGroup.patchValue(result);
+      if (result.bank) {
+        this.bankItems = _.unionBy(this.bankItems, [result.bank], 'id');
+      }
     })
   }
 
@@ -77,8 +80,10 @@ export class AccountBankCuDialogComponent implements OnInit {
       return;
 
     var formValue = this.formGroup.value;
+    formValue.bankId = formValue.bank.id;
     if (this.accountId) {
-      this.accountJournalService.update(this.accountId, formValue).subscribe(result => {
+      formValue.id = this.accountId;
+      this.accountJournalService.updateBankJournal(formValue).subscribe(result => {
         this.notifyService.notify("success", "Lưu thành công");
         this.activeModal.close(this.accountId);
       }, error => {
@@ -86,7 +91,7 @@ export class AccountBankCuDialogComponent implements OnInit {
       })
     }
     else {
-      this.accountJournalService.create(formValue).subscribe((result:any) => {
+      this.accountJournalService.createBankJournal(formValue).subscribe((result:any) => {
         this.notifyService.notify("success", "Lưu thành công");
         this.activeModal.close(result.id);
       }, error => {

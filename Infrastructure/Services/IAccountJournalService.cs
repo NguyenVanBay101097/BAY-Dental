@@ -20,5 +20,8 @@ namespace Infrastructure.Services
         Task Unlink(Guid id);
         Task<IEnumerable<AccountJournalResBankSimple>> GetJournalResBankAutocomplete(AccountJournalFilter val);
 
+        Task<AccountJournal> CreateBankJournal(AccountJournalCreateBankJournalVM val);
+
+        Task UpdateBankJournal(AccountJournalUpdateBankJournalVM val);
     }
 }

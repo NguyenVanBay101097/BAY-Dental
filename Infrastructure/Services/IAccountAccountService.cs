@@ -22,5 +22,7 @@ namespace Infrastructure.Services
         Task<AccountAccount> GetAccountCustomerDebtCompany();
 
         Task<AccountAccount> GetAccountInsuranceDebtCompany();
+
+        Task<string> SearchNewAccountCode(Guid companyId, int digits, string prefix);
     }
 }

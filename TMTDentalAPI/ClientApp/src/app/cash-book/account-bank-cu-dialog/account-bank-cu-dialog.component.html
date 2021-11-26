@@ -36,12 +36,11 @@
                             </td>
                             <td colspan="1">
                                 <kendo-combobox class="form-control" [data]="bankItems" [textField]="'displayName'"
-                                        [filterable]="true" #bankCbx formControlName="bankId" [valueField]="'id'"
-                                        [valuePrimitive]="true">
+                                        [filterable]="true" #bankCbx formControlName="bank" [valueField]="'id'">
                                 </kendo-combobox>
                                 
-                                <div *ngIf="f.bankId.errors && (f.bankId.touched || f.bankId.dirty || submitted)" class="text-danger mb-1">
-                                    <div *ngIf="f.bankId.errors.required">Chọn ngân hàng</div>
+                                <div *ngIf="f.bank.errors && (f.bank.touched || f.bank.dirty || submitted)" class="text-danger mb-1">
+                                    <div *ngIf="f.bank.errors.required">Chọn ngân hàng</div>
                                 </div>
                             </td>
                         </tr>
@@ -53,13 +52,13 @@
                                 <input class="form-control" formControlName="bankBranch">
                             </td>
                         </tr>
-                        <tr *ngIf="accountId">
+                        <tr>
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label">Trạng thái</label>
                             </td>
                             <td colspan="1">
-                                <kendo-combobox [data]="states" [valuePrimitive]="true" [valueField]="'value'" [textField]="'text'" formControlName="active">
-                                </kendo-combobox>
+                                <kendo-dropdownlist [data]="states" [valuePrimitive]="true" [valueField]="'value'" [textField]="'text'" formControlName="active">
+                                </kendo-dropdownlist>
                             </td>
                         </tr>
                     </tbody>

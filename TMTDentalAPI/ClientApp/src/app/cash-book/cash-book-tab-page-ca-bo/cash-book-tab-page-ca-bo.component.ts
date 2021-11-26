@@ -201,17 +201,11 @@ export class CashBookTabPageCaBoComponent implements OnInit {
     val.type = 'bank';
     val.search = search || '';
     val.companyId = this.authService.userInfo.companyId;
-    return this.accountJournalService.journalResBankAutoComplete(val);
+    return this.accountJournalService.autocomplete(val);
   }
 
   loadAccounts() {
-    this.searchAccounts$().pipe(
-      tap(res=> {
-        res.forEach((x:any) => {
-          x.displayName = x.bankAccount ? x.bankAccount?.accountNumber + "-" + x.bankAccount?.bank?.bic : x.name;
-        });
-      })
-    ).subscribe(result => {
+    this.searchAccounts$().subscribe(result => {
       this.listAccounts = result;
     })
   }
