@@ -48,7 +48,13 @@ export class ResInsuranceCuDialogComponent implements OnInit {
     })
   }
 
-  onSave(): void {
+  onSave() {
+    this.submitted = true;
+    
+    if (!this.formGroup.valid) {
+      return false;
+    }
+
     let val = this.formGroup.value;
     val.date = moment(val.dateObj).format('YYYY-MM-DD');
     if (this.id) {
