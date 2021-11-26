@@ -235,7 +235,7 @@ namespace Infrastructure.Services
             return res;
 
         }
-        public async Task<GetThuChiReportResponse> GetThuChiReport(DateTime? dateFrom, DateTime? dateTo, Guid? companyId)
+        public async Task<GetThuChiReportResponse> GetThuChiReport(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, Guid? journalId)
         {
             var amlObj = GetService<IAccountMoveLineService>();
             //báo cáo doanh thu thực thu
@@ -244,9 +244,13 @@ namespace Infrastructure.Services
             var query = amlObj._QueryGet(dateTo: resdateTo, dateFrom: resdateFrom, state: "posted", companyId: companyId);
             query = query.Where(x => (x.Journal.Type == "cash" || x.Journal.Type == "bank") && x.AccountInternalType != "liquidity");
 
+            if (journalId.HasValue)
+                query = query.Where(x => x.JournalId == journalId);
+
             var customerIncomeTotal = await query.Where(x => x.AccountInternalType == "receivable").SumAsync(x => x.Credit);
             var advanceIncomeTotal = await query.Where(x => x.Account.Code == "KHTU").SumAsync(x => x.Credit);
             var debtIncomeTotal = await query.Where(x => x.Account.Code == "CNKH").SumAsync(x => x.Credit);
+            var insuranceIncomeTotal = await query.Where(x => x.Account.Code == "CNBH").SumAsync(x => x.Credit);
             var supplierIncomeTotal = await query.Where(x => x.AccountInternalType == "payable").SumAsync(x => x.Credit);
             var cashBankIncomeTotal = await query.SumAsync(x => x.Credit);
 
@@ -261,6 +265,7 @@ namespace Infrastructure.Services
                 CustomerIncomeTotal = customerIncomeTotal,
                 AdvanceIncomeTotal = advanceIncomeTotal,
                 DebtIncomeTotal = debtIncomeTotal,
+                InsuranceIncomeTotal = insuranceIncomeTotal,
                 SupplierIncomeTotal = supplierIncomeTotal,
                 CashBankIncomeTotal = cashBankIncomeTotal,
                 SupplierExpenseTotal = supplierExpenseTotal,
@@ -279,21 +284,15 @@ namespace Infrastructure.Services
             var res = new CashBookReportDay();
             /// load dữ liệu tổng tiền 
             var types = new string[] { "", "cash", "bank" };
-            var dataTotalAmount = new List<CashBookReport>();
-            foreach (var item in types)
-            {
-                var i = await cashbookObj.GetSumary(dateFrom, dateTo, companyId, item);
-                dataTotalAmount.Add(i);
-            }
-
-            res.DataAmountTotals = dataTotalAmount;
+            var summary = await cashbookObj.GetSumaryDayReport(dateFrom, dateTo, companyId, null, null);
+            res.SumaryDayReport = summary;
 
             /// load dữ liệu báo cáo thu chi
-            var reportThuChi = await GetThuChiReport(dateFrom, dateTo, companyId);
+            var reportThuChi = await GetThuChiReport(dateFrom, dateTo, companyId, null);
 
             res.DataThuChiReport = reportThuChi;
             /// load dữ liệu chi tiết
-            var cashbooks = await cashbookObj.GetDetails(dateFrom, dateTo, 0, 0, companyId, null, null);
+            var cashbooks = await cashbookObj.GetDetails(dateFrom, dateTo, 0, 0, companyId, null, null, null);
             res.DataDetails = cashbooks.Items;
 
             return res;

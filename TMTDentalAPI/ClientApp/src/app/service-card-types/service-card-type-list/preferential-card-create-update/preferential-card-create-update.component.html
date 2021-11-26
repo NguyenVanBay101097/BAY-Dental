@@ -17,29 +17,24 @@
     </div>
 </div>
 
-<div class="py-3 container o_content">
+<div class="py-3 o_content">
     <form class="o_form_view" [formGroup]="cardForm">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
+                <div class="oe_title">
+                    <label class="o_form_label oe_edit_only">Tên hạng thẻ</label>
+                    <h1>
+                        <input class="form-control" formControlName="name">
+                    </h1>
+                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
+                        <div *ngIf="f.name.errors?.required" class="text-danger">
+                            Nhập tên hạng thẻ
+                        </div>
+                    </div>
+                </div>
                 <div class="o_group">
                     <table class="o_group o_inner_group">
                         <tbody>
-                            <tr>
-                                <td class="o_td_label">
-                                    <label class="o_form_label o_form_label_help">
-                                        Tên hạng thẻ
-                                    </label>
-                                </td>
-                                <td colspan="1" style="width: 100%">
-                                    <input class="form-control" formControlName="name">
-                                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
-                                        class="text-danger">
-                                        <div *ngIf="f.name.errors?.required" class="text-danger">
-                                            Nhập tên hạng thẻ
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
                             <tr>
                                 <td class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
@@ -77,9 +72,14 @@
                 <div class="d-flex justify-content-between mb-2">
                     <app-service-list-search-dropdown (onSelectService)="addLine($event)"
                         [placeHolder]="'Tìm kiếm theo mã hoặc tên dịch vụ...'"></app-service-list-search-dropdown>
-                    <div class="mr-3">
-                        <button *ngIf="this.productPricelistItems.controls.length" class="btn btn-primary" (click)=onApplyAll()>Áp dụng cho toàn bộ</button>
-                    </div>
+                        <div>
+                            <button class="btn btn-primary mr-2" (click)="onApplyCateg()">
+                                Áp dụng cho cả nhóm
+                            </button>
+                            <button class="btn btn-primary" (click) ="onApplyAll()">
+                                Áp dụng cho toàn bộ
+                            </button>
+                        </div>
                 </div>
                 <div>
                     <table class="table">
@@ -87,7 +87,7 @@
                             <th>Tên dịch vụ</th>
                             <th>Giá bán</th>
                             <th>Ưu đãi theo thẻ</th>
-                            <th>Thao tác</th>
+                            <th></th>
                         </tr>
                         <ng-container>
                             <tbody formArrayName="productPricelistItems">
@@ -99,15 +99,12 @@
                                             {{categ.get('name').value}}
                                         </td>
                                         <td class="text-right">
-                                            <button class="btn btn-primary" (click)="onApplyCateg(categIndex)">
-                                                Áp dụng cho cả nhóm
-                                            </button>
                                         </td>
                                         <td></td>
                                     </tr>
 
                                     <ng-container formArrayName="products">
-                                        <tr *ngFor="let gr of categ.get('products').controls; let proIndex = index"
+                                        <tr *ngFor="let gr of categ.get('products')['controls']; let proIndex = index"
                                             [formGroupName]="proIndex">
                                             <td class="w-50">
                                                 <div>{{gr.get('product').value.name}}</div>
@@ -115,41 +112,10 @@
 
                                             </td>
                                             <td class="w-20">{{gr.get('product').value.listPrice | number}}</td>
-                                            <td class="w-30 text-right">
-                                                <div class="d-flex">
-                                                    <div style="flex: 1 1 100%;" class="mr-2">
-                                                        <ng-container
-                                                            *ngIf="gr.get('computePrice').value == 'percentage'; else ComputePriceTemplate">
-                                                            <kendo-numerictextbox [min]="0" max="100" [autoCorrect]="true"
-                                                                [format]="'n0'" class="mr-2" style="width: 100%;"
-                                                                formControlName='percentPrice'>
-                                                            </kendo-numerictextbox>
-                                                        </ng-container>
-                                                        <ng-template #ComputePriceTemplate>
-                                                            <kendo-numerictextbox [min]="0" [autoCorrect]="true" [max]="gr.get('product').value.listPrice"
-                                                                [format]="'n0'" class="mr-2" style="width: 100%;"
-                                                                formControlName='fixedAmountPrice'>
-                                                            </kendo-numerictextbox>
-                                                        </ng-template>
-                                                    </div>
-                                                    <div style="flex: 0 0 auto;">
-                                                        <input type="radio" class="btn-check"
-                                                            [id]="'btn-check-1'+categIndex + proIndex"
-                                                            value="percentage" formControlName='computePrice'
-                                                            (change)="changePeriod(categIndex, proIndex)">
-                                                        <label class="btn btn-outline-primary mb-0 mr-2"
-                                                            [for]="'btn-check-1'+categIndex + proIndex"
-                                                            [ngClass]="{'btn-primary': gr.get('computePrice').value == 'percentage'}">%</label>
-                                                        <input type="radio" class="btn-check"
-                                                            [id]="'btn-check-2'+categIndex + proIndex"
-                                                            value="fixed_amount" formControlName='computePrice'
-                                                            (change)="changePeriod(categIndex, proIndex)">
-                                                        <label class="btn btn-outline-primary mb-0"
-                                                            [for]="'btn-check-2'+categIndex + proIndex"
-                                                            [ngClass]="{'btn-primary':gr.get('computePrice').value != 'percentage'}">VNĐ</label>
-                                                    </div>
-                                                </div>
-
+                                            <td class="w-30">
+                                                <app-compute-price-input-popover (onApply) = "apply($event,categIndex, proIndex)" 
+                                                [priceObj] = "getPriceObj(gr)">
+                                                </app-compute-price-input-popover>
                                             </td>
                                             <td>
                                                 <button class="btn btn-danger mr-2" title="Xóa"

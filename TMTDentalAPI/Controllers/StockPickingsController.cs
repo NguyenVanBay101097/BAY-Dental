@@ -265,15 +265,13 @@ namespace TMTDentalAPI.Controllers
                 var item = _mapper.Map<StockPickingXmlSampleDataRecord>(entity);
 
                 item.Id = $@"sample.stock_picking_{entities.IndexOf(entity) + 1}";
-                item.DateRound = (int)(dateToData - entity.Date.Value).TotalDays;
+                item.DateRound = (int)(dateToData.Date - entity.Date.Value.Date).TotalDays;
                 var irmodelDataPartner = listIrModelData.FirstOrDefault(x => x.ResId == empPartner.Id.ToString());
                 item.PartnerId = irmodelDataPartner == null ? "" : irmodelDataPartner?.Module + "." + irmodelDataPartner?.Name;
                 var irmodelDataPickingType = listIrModelData.FirstOrDefault(x => x.ResId == entity.PickingTypeId.ToString());
                 item.PickingTypeId = irmodelDataPickingType == null ? "" : irmodelDataPickingType.Module + "." + irmodelDataPickingType?.Name;
                 var irmodelDataLocation = listIrModelData.FirstOrDefault(x => x.ResId == entity.LocationId.ToString());
-                item.LocationId = irmodelDataLocation == null ? "" : irmodelDataLocation.Module + "." + irmodelDataLocation?.Name;
                 var irmodelDataLocationDes = listIrModelData.FirstOrDefault(x => x.ResId == entity.LocationDestId.ToString());
-                item.LocationDestId = irmodelDataLocationDes == null ? "" : irmodelDataLocationDes.Module + "." + irmodelDataLocationDes?.Name;
                 //add lines
                 foreach (var lineEntity in entity.MoveLines)
                 {
@@ -287,11 +285,8 @@ namespace TMTDentalAPI.Controllers
                     var itemLine = new StockMoveXmlSampleDataRecord()
                     {
                         DateRound = (int)(dateToData - lineEntity.Date).TotalDays,
-                        LocationId = irmodelDataLocationLine == null ? "" : irmodelDataLocationLine.Module + "." + irmodelDataLocationLine?.Name,
-                        LocationDestId = irmodelDataLocationDesLine == null ? "" : irmodelDataLocationDesLine.Module + "." + irmodelDataLocationDesLine?.Name,
                         Name = lineEntity.Name,
                         PartnerId = irmodelDataPartner == null ? "" : irmodelDataPartner.Module + "." + irmodelDataPartner?.Name,
-                        PickingTypeId = irmodelDataPickingTypeLine == null ? "" : irmodelDataPickingTypeLine.Module + "." + irmodelDataPickingTypeLine?.Name,
                         PriceUnit = lineEntity.PriceUnit,
                         ProductId = irmodelDataProductLine == null ? "" : irmodelDataProductLine.Module + "." + irmodelDataProductLine?.Name,
                         ProductQty = lineEntity.ProductQty,

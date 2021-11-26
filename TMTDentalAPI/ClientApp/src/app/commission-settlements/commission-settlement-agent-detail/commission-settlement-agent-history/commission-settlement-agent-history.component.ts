@@ -6,6 +6,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { TotalAmountAgentFilter } from 'src/app/agents/agent.service';
+import { AuthService } from 'src/app/auth/auth.service';
 import { PhieuThuChiPaged, PhieuThuChiSave, PhieuThuChiService } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
@@ -39,6 +40,7 @@ export class CommissionSettlementAgentHistoryComponent implements OnInit {
     private modalService: NgbModal,
     private notifyService: NotifyService,
     private printService: PrintService,
+    private authService: AuthService
   ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
@@ -63,6 +65,7 @@ export class CommissionSettlementAgentHistoryComponent implements OnInit {
     val.accountType = 'commission';
     val.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     val.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-dd");
+    val.companyId = this.authService.userInfo.companyId;
     val.search = this.search ? this.search : '';
     this.phieuThuChiService.getPaged(val).pipe(
       map((response: any) => (<GridDataResult>{

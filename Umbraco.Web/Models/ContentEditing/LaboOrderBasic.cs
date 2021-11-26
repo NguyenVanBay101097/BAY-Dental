@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
@@ -91,6 +92,24 @@ namespace Umbraco.Web.Models.ContentEditing
         public string State { get; set; }
 
         public string ToothType { get; set; }
+
+        public string TeethDisplay
+        {
+            get
+            {
+                switch (ToothType)
+                {
+                    case "whole_jaw":
+                        return "Nguyên hàm";
+                    case "upper_jaw":
+                        return "Hàm trên";
+                    case "lower_jaw":
+                        return "Hàm dưới";
+                    default:
+                        return string.Join(", ", Teeth.Select(x => x.Name));
+                }
+            }
+        }
     }
 
     public class LaboOrderReceiptBasic

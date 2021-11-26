@@ -24,6 +24,7 @@ export class CommissionSettlementAgentPaymentDialogComponent implements OnInit {
   formGroup: FormGroup;
   submitted: boolean = false;
   amountBalanceTotal : number;
+  resAgent: any;
   filteredJournals: any = [];
 
   @ViewChild("journalCbx", { static: true }) journalCbx: ComboBoxComponent;
@@ -51,16 +52,29 @@ export class CommissionSettlementAgentPaymentDialogComponent implements OnInit {
   }
 
   loadDefault() {
-    this.phieuthuchiService.defaultGet({ type: this.type }).subscribe((rs: any) => {
-      this.formGroup.patchValue(rs);
-      var paymentDate = new Date(rs.date);
+
+    if(this.resAgent){
+      this.formGroup.patchValue(this.resAgent);
+      var paymentDate = new Date(this.resAgent.date);
       this.formGroup.get('dateObj').setValue(paymentDate);
 
-      if (rs.journal) {
-        this.filteredJournals = _.unionBy(this.filteredJournals, rs.journal, 'id');
+      if (this.resAgent) {
+        this.filteredJournals = _.unionBy(this.filteredJournals, this.resAgent.journal, 'id');
       }
 
-    })
+    }else{
+      this.phieuthuchiService.defaultGet({ type: this.type }).subscribe((rs: any) => {
+        this.formGroup.patchValue(rs);
+        var paymentDate = new Date(rs.date);
+        this.formGroup.get('dateObj').setValue(paymentDate);
+  
+        if (rs.journal) {
+          this.filteredJournals = _.unionBy(this.filteredJournals, rs.journal, 'id');
+        }
+  
+      })
+    }
+
   }
 
 

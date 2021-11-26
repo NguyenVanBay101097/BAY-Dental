@@ -60,7 +60,7 @@ namespace Infrastructure.Services
                 var customer = _mapper.Map<Partner>(item);
                 customer.Customer = true;
                 customer.CompanyId = companyId;
-                customer.Date = DateTime.Now.AddDays(-item.DateRound);
+                customer.Date = DateTime.Today.AddDays(-item.DateRound);
                 partnerDict.Add(item.Id, customer);
             }
             //add data supplier
@@ -72,7 +72,7 @@ namespace Infrastructure.Services
                 supplier.Customer = false;
                 supplier.Supplier = true;
                 supplier.CompanyId = companyId;
-                supplier.Date = DateTime.Now.AddDays(-item.DateRound);
+                supplier.Date = DateTime.Today.AddDays(-item.DateRound);
                 partnerDict.Add(item.Id, supplier);
             }
             await partnerObj.CreateAsync(partnerDict.Values);
@@ -156,7 +156,7 @@ namespace Infrastructure.Services
                 medicine.KeToaOK = true;
                 medicine.CompanyId = companyId;
                 medicine.Type = "product";
-                medicine.Type2 = "medicnie";
+                medicine.Type2 = "medicine";
                 medicine.UOMId = uomDict.ContainsKey(item.UOMId) ? uomDict[item.UOMId].Id : (await irModelDataObj.GetRef<UoM>(item.UOMId)).Id;
                 medicine.UOMPOId = defaultUoM.Id;
                 medicine.CategId = productCategoryDict.ContainsKey(item.CategId) ? productCategoryDict[item.CategId].Id : (await irModelDataObj.GetRef<ProductCategory>(item.CategId)).Id;
@@ -192,7 +192,7 @@ namespace Infrastructure.Services
                 laboAttach.PurchaseOK = false;
                 laboAttach.CompanyId = companyId;
                 laboAttach.Type = "consu";
-                laboAttach.Type2 = "labo";
+                laboAttach.Type2 = "labo_attach";
                 laboAttach.UOMId = defaultUoM.Id;
                 laboAttach.UOMPOId = defaultUoM.Id;
                 productDict.Add(item.Id, laboAttach);
@@ -259,6 +259,7 @@ namespace Infrastructure.Services
             foreach (var item in employeeData.Records)
             {
                 var entity = _mapper.Map<Employee>(item);
+                entity.CompanyId = companyId;
                 employeeDict.Add(item.Id, entity);
             }
             await employeeObj.CreateAsync(employeeDict.Values);
@@ -337,17 +338,23 @@ namespace Infrastructure.Services
             foreach (var item in saleOrderData.Records)
             {
                 var saleOrder = _mapper.Map<SaleOrder>(item);
-                saleOrder.DateOrder = DateTime.Now.AddDays(-item.DateRound);
+                saleOrder.DateOrder = DateTime.Today.AddDays(-item.DateRound).AddHours(item.TimeHour).AddMinutes(item.TimeMinute);
                 saleOrder.CompanyId = companyId;
                 saleOrder.PartnerId = partnerDict.ContainsKey(item.PartnerId) ? partnerDict[item.PartnerId].Id : (await irModelDataObj.GetRef<Partner>(item.PartnerId)).Id;
                 var sequence = 0;
                 foreach (var lineItem in item.OrderLines)
                 {
                     var line = _mapper.Map<SaleOrderLine>(lineItem);
-                    line.Date = DateTime.Now.AddDays(-lineItem.DateRound);
+                    line.Date = DateTime.Today.AddDays(-lineItem.DateRound);
                     line.CompanyId = companyId;
                     line.Sequence = sequence++;
                     line.ProductId = productDict.ContainsKey(lineItem.ProductId) ? productDict[lineItem.ProductId].Id : (await irModelDataObj.GetRef<Product>(lineItem.ProductId)).Id;
+                    line.ToothCategoryId = (await irModelDataObj.GetRef<ToothCategory>(lineItem.ToothCategoryId)).Id;
+                    foreach (var lineItemTooth in lineItem.SaleOrderLineToothRels)
+                    {
+                        line.SaleOrderLineToothRels.Add(new SaleOrderLineToothRel() 
+                        { ToothId = (await irModelDataObj.GetRef<Tooth>(lineItemTooth.ToothId)).Id });
+                    }
 
                     saleOrderLineDict.Add(lineItem.Id, line);
                     saleOrder.OrderLines.Add(line);
@@ -375,7 +382,7 @@ namespace Infrastructure.Services
             foreach (var item in saleOrderPaymentData.Records)
             {
                 var saleOrderPayment = _mapper.Map<SaleOrderPayment>(item);
-                saleOrderPayment.Date = DateTime.Now.AddDays(-item.DateRound);
+                saleOrderPayment.Date = DateTime.Today.AddDays(-item.DateRound);
                 saleOrderPayment.CompanyId = companyId;
                 saleOrderPayment.OrderId = saleOrderDict.ContainsKey(item.OrderId) ? saleOrderDict[item.OrderId].Id : (await irModelDataObj.GetRef<SaleOrder>(item.OrderId)).Id;
                 foreach (var lineItem in item.Lines)
@@ -396,6 +403,7 @@ namespace Infrastructure.Services
                     };
                     saleOrderPayment.JournalLines.Add(line);
                 }
+
                 saleOrderPaymentDict.Add(item.Id, saleOrderPayment);
             }
 
@@ -412,7 +420,7 @@ namespace Infrastructure.Services
             foreach (var item in laboOrderData.Records)
             {
                 var laboOrder = _mapper.Map<LaboOrder>(item);
-                laboOrder.DateOrder = DateTime.Now.AddDays(-item.DateRound);
+                laboOrder.DateOrder = DateTime.Today.AddDays(-item.DateRound);
                 laboOrder.CompanyId = companyId;
                 laboOrder.PartnerId = partnerDict[item.PartnerId].Id;
                 laboOrder.ProductId = productDict.ContainsKey(item.ProductId) ? (Guid?)productDict[item.ProductId].Id : null;
@@ -453,8 +461,7 @@ namespace Infrastructure.Services
             foreach (var item in appointmentData.Records)
             {
                 var appointment = _mapper.Map<Appointment>(item);
-                appointment.State = "done";
-                appointment.Date = DateTime.Now.AddDays(-item.DateRound);
+                appointment.Date = DateTime.Today.AddDays(-item.DateRound).AddHours(item.TimeHour).AddMinutes(item.TimeMinute);
                 appointment.CompanyId = companyId;
                 appointment.PartnerId = partnerDict[item.PartnerId].Id;
                 appointment.DoctorId = employeeDict.ContainsKey(item.DoctorId) ? (Guid?)employeeDict[item.DoctorId].Id : null;
@@ -482,10 +489,17 @@ namespace Infrastructure.Services
             var customerReceiptData = xmlObj.GetObject<XmlSampleData<CustomerReceiptXmlSampleDataRecord>>(customerReceiptPath);
             foreach (var item in customerReceiptData.Records)
             {
+                var dateWaiting = DateTime.Today.AddDays(-item.DateRound).AddHours(item.WaitingTimeHour).AddMinutes(item.WaitingTimeMinute);
+                if (dateWaiting > DateTime.Now)
+                    continue;
+
                 var customerReceipt = _mapper.Map<CustomerReceipt>(item);
-                customerReceipt.State = "examination";
-                customerReceipt.DateWaiting = DateTime.Now.AddDays(-item.DateRound);
-                customerReceipt.DateExamination = DateTime.Now.AddDays(-item.DateRound);
+                customerReceipt.DateWaiting = dateWaiting;
+                if (item.ExaminationTimeHour.HasValue)
+                    customerReceipt.DateExamination = DateTime.Today.AddDays(-item.DateRound).AddHours(item.ExaminationTimeHour.Value).AddMinutes(item.ExaminationTimeMinute.Value);
+                if (item.DoneTimeHour.HasValue)
+                    customerReceipt.DateDone = DateTime.Today.AddDays(-item.DateRound).AddHours(item.DoneTimeHour.Value).AddMinutes(item.DoneTimeMinute.Value);
+
                 customerReceipt.CompanyId = companyId;
                 customerReceipt.PartnerId = partnerDict[item.PartnerId].Id;
                 customerReceipt.DoctorId = employeeDict.ContainsKey(item.DoctorId) ? (Guid?)employeeDict[item.DoctorId].Id : null;
@@ -514,7 +528,7 @@ namespace Infrastructure.Services
             foreach (var item in phieuthuData.Records)
             {
                 var phieuthu = _mapper.Map<PhieuThuChi>(item);
-                phieuthu.Date = DateTime.Now.AddDays(-item.DateRound);
+                phieuthu.Date = DateTime.Today.AddDays(-item.DateRound);
                 phieuthu.CompanyId = companyId;
                 phieuthu.JournalId = (await irModelDataObj.GetRef<AccountJournal>(item.JournalId)).Id;
                 phieuthu.LoaiThuChiId = loaithuchiDict[item.LoaiThuChiId].Id;
@@ -528,7 +542,7 @@ namespace Infrastructure.Services
             foreach (var item in phieuchiData.Records)
             {
                 var phieuchi = _mapper.Map<PhieuThuChi>(item);
-                phieuchi.Date = DateTime.Now.AddDays(-item.DateRound);
+                phieuchi.Date = DateTime.Today.AddDays(-item.DateRound);
                 phieuchi.CompanyId = companyId;
                 phieuchi.JournalId = (await irModelDataObj.GetRef<AccountJournal>(item.JournalId)).Id;
                 phieuchi.LoaiThuChiId = loaithuchiDict[item.LoaiThuChiId].Id;
@@ -557,11 +571,13 @@ namespace Infrastructure.Services
             var purchaseorderData = xmlObj.GetObject<XmlSampleData<PurchaseOrderXmlSampleDataRecord>>(purchaseorderFilePath);
             foreach (var item in purchaseorderData.Records)
             {
+                var pickingType = await irModelDataObj.GetRef<StockPickingType>("stock.stock_picking_type_incoming");
                 var purchaseorder = _mapper.Map<PurchaseOrder>(item);
-                purchaseorder.DateOrder = DateTime.Now.AddDays(-item.DateRound);
+
+                purchaseorder.DateOrder = DateTime.Today.AddDays(-item.DateRound);
                 purchaseorder.CompanyId = companyId;
                 purchaseorder.PartnerId = partnerDict[item.PartnerId].Id;
-                purchaseorder.PickingTypeId = (await irModelDataObj.GetRef<StockPickingType>(item.PickingTypeId)).Id;
+                purchaseorder.PickingTypeId = pickingType.Id;
                 purchaseorder.JournalId = (await irModelDataObj.GetRef<AccountJournal>(item.JournalId)).Id;
                 purchaseorder.Type = "order";
                 purchaseorder.UserId = UserId;
@@ -570,11 +586,11 @@ namespace Infrastructure.Services
                 {
                     var line = _mapper.Map<PurchaseOrderLine>(lineItem);
                     line.CompanyId = companyId;
+                    line.PartnerId = purchaseorder.PartnerId;
                     line.Sequence = sequence++;
                     line.Name = productDict.ContainsKey(lineItem.ProductId) ? productDict[lineItem.ProductId].Name : "";
                     line.ProductId = productDict.ContainsKey(lineItem.ProductId) ? productDict[lineItem.ProductId].Id : (await irModelDataObj.GetRef<Product>(lineItem.ProductId)).Id;
                     line.ProductUOMId = uomDict.ContainsKey(lineItem.ProductUOMId) ? productDict[lineItem.ProductUOMId].Id : (await irModelDataObj.GetRef<UoM>(lineItem.ProductUOMId)).Id;
-                    line.PartnerId = partnerDict.ContainsKey(lineItem.PartnerId) ? partnerDict[lineItem.PartnerId].Id : (await irModelDataObj.GetRef<Partner>(lineItem.PartnerId)).Id;
                     purchaseorder.OrderLines.Add(line);
                 }
                 purchaseorderDict.Add(item.Id, purchaseorder);
@@ -585,7 +601,7 @@ namespace Infrastructure.Services
             foreach (var item in purchaserefundData.Records)
             {
                 var purchaseorder = _mapper.Map<PurchaseOrder>(item);
-                purchaseorder.DateOrder = DateTime.Now.AddDays(-item.DateRound);
+                purchaseorder.DateOrder = DateTime.Today.AddDays(-item.DateRound);
                 purchaseorder.CompanyId = companyId;
                 purchaseorder.PartnerId = partnerDict[item.PartnerId].Id;
                 purchaseorder.PickingTypeId = (await irModelDataObj.GetRef<StockPickingType>(item.PickingTypeId)).Id;
@@ -597,9 +613,9 @@ namespace Infrastructure.Services
                     var line = _mapper.Map<PurchaseOrderLine>(lineItem);
                     line.CompanyId = companyId;
                     line.Sequence = sequence++;
+                    line.PartnerId = purchaseorder.PartnerId;
                     line.ProductId = productDict.ContainsKey(lineItem.ProductId) ? productDict[lineItem.ProductId].Id : (await irModelDataObj.GetRef<Product>(lineItem.ProductId)).Id;
                     line.ProductUOMId = uomDict.ContainsKey(lineItem.ProductUOMId) ? productDict[lineItem.ProductUOMId].Id : (await irModelDataObj.GetRef<UoM>(lineItem.ProductUOMId)).Id;
-                    line.PartnerId = partnerDict.ContainsKey(lineItem.PartnerId) ? partnerDict[lineItem.PartnerId].Id : (await irModelDataObj.GetRef<Partner>(lineItem.PartnerId)).Id;
                     purchaseorder.OrderLines.Add(line);
                 }
                 purchaseorderDict.Add(item.Id, purchaseorder);
@@ -653,26 +669,29 @@ namespace Infrastructure.Services
             var stockPickingData = xmlObj.GetObject<XmlSampleData<StockPickingXmlSampleDataRecord>>(stockPickingFilePath);
             foreach (var item in stockPickingData.Records)
             {
+                var pickingType = (await irModelDataObj.GetRef<StockPickingType>("stock.stock_picking_type_outgoing"));
+
                 var stockPicking = _mapper.Map<StockPicking>(item);
-                stockPicking.Date = DateTime.Now.AddDays(-item.DateRound);
+                stockPicking.Date = DateTime.Today.AddDays(-item.DateRound);
                 stockPicking.CompanyId = companyId;
                 stockPicking.PartnerId = employeeDict[item.PartnerId].PartnerId;
-                stockPicking.PickingTypeId = (await irModelDataObj.GetRef<StockPickingType>(item.PickingTypeId)).Id;
-                stockPicking.LocationId = (await irModelDataObj.GetRef<StockLocation>(item.LocationId)).Id;
-                stockPicking.LocationDestId = (await irModelDataObj.GetRef<StockLocation>(item.LocationDestId)).Id;
+                stockPicking.PickingTypeId = pickingType.Id;
+                stockPicking.LocationId = pickingType.DefaultLocationSrcId.Value;
+                stockPicking.LocationDestId = pickingType.DefaultLocationDestId.Value;
                 var sequence = 0;
                 foreach (var lineItem in item.MoveLines)
                 {
                     var line = _mapper.Map<StockMove>(lineItem);
+                    line.ProductUOMQty = line.ProductQty.Value;
                     line.CompanyId = companyId;
-                    line.Date = DateTime.Now.AddDays(-lineItem.DateRound);
+                    line.Date = stockPicking.Date.Value;
                     line.Sequence = sequence++;
-                    line.PickingTypeId = !string.IsNullOrEmpty(lineItem.PickingTypeId) ? (Guid?)(await irModelDataObj.GetRef<StockPickingType>(lineItem.PickingTypeId)).Id : null;
+                    line.PickingTypeId = pickingType.Id;
                     line.PartnerId = employeeDict[lineItem.PartnerId].PartnerId;
                     line.ProductUOMId = uomDict.ContainsKey(lineItem.ProductUOMId) ? productDict[lineItem.ProductUOMId].Id : (await irModelDataObj.GetRef<UoM>(lineItem.ProductUOMId)).Id;
                     line.ProductId = productDict.ContainsKey(lineItem.ProductId) ? productDict[lineItem.ProductId].Id : (await irModelDataObj.GetRef<Product>(lineItem.ProductId)).Id;
-                    line.LocationId = (await irModelDataObj.GetRef<StockLocation>(lineItem.LocationId)).Id;
-                    line.LocationDestId = (await irModelDataObj.GetRef<StockLocation>(lineItem.LocationDestId)).Id;
+                    line.LocationId = pickingType.DefaultLocationSrcId.Value;
+                    line.LocationDestId = pickingType.DefaultLocationDestId.Value;
                     stockPicking.MoveLines.Add(line);
                 }
                 stockPickingDict.Add(item.Id, stockPicking);
@@ -986,10 +1005,10 @@ namespace Infrastructure.Services
             #endregion
 
             //set constraint
-            await _dbContext.ExecuteSqlCommandAsync("EXEC sp_MSForEachTable 'ALTER TABLE ? NOCHECK CONSTRAINT ALL'");
+            var commandResult = await _dbContext.ExecuteSqlCommandAsync("EXEC sp_MSForEachTable 'ALTER TABLE ? NOCHECK CONSTRAINT ALL'");
             // delete all tables except some tables
             string exceptTables = "('__EFMigrationsHistory','Partners','AspNetUsers','Companies')";
-            await _dbContext.ExecuteSqlCommandAsync($@"DECLARE @strSQL Varchar(MAX) = '';
+            var commandResult2 = await _dbContext.ExecuteSqlCommandAsync($@"DECLARE @strSQL Varchar(MAX) = '';
                                                        SELECT @strSQL = @strSQL + 'Delete ' + name + ' ; '
                                                        FROM sys.tables
                                                        where name not in {exceptTables}

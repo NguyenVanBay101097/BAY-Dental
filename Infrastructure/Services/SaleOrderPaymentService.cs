@@ -204,7 +204,8 @@ namespace Infrastructure.Services
                 .Include(x => x.Move)
                 .Include(x => x.Order)
                 .Include(x => x.Lines)
-                .Include(x => x.JournalLines)
+                .Include(x => x.JournalLines).ThenInclude(s => s.Journal)
+                .Include(x => x.JournalLines).ThenInclude(s => s.Insurance)
                 .ToListAsync();
             foreach (var saleOrderPayment in saleOrderPayments)
             {
@@ -219,10 +220,8 @@ namespace Infrastructure.Services
                     .Include(x => x.Employee)
                     .Include(x => x.Assistant)
                     .Include(x => x.Counselor)
+                    .Include(x => x.Agent)
                     .ToListAsync();
-
-                var agent = await agentObj.SearchQuery(x => x.Partners.Any(s => s.Id == saleOrderPayment.Order.PartnerId))
-                    .FirstOrDefaultAsync();
 
                 foreach (var line in saleOrderPayment.Lines)
                 {
@@ -233,7 +232,8 @@ namespace Infrastructure.Services
                     var totalPaid = (saleOrderLine.AmountPaid ?? 0) + line.Amount;
 
                     //Tổng giá vốn
-                    var totalStandPrice = (decimal)productObj.GetStandardPrice(saleOrderLine.ProductId.Value, saleOrderLine.CompanyId) * saleOrderLine.ProductUOMQty;
+                    var productStdPrice = (decimal)(await productObj.GetHistoryPrice(saleOrderLine.ProductId.Value, saleOrderLine.CompanyId.Value, date: saleOrderLine.Date));
+                    var totalStandPrice = productStdPrice * saleOrderLine.ProductUOMQty;
 
                     //Tổng tiền đã tính hoa hồng trước đó
                     var totalBaseAmount = await commSetObj.SearchQuery(x => x.SaleOrderLineId == line.SaleOrderLineId).SumAsync(x => x.BaseAmount ?? 0);
@@ -260,7 +260,8 @@ namespace Infrastructure.Services
                             BaseAmount = baseAmountCurrent,
                             Amount = baseAmountCurrent * commPercent / 100,
                             Percentage = commPercent,
-                            TotalAmount = line.Amount
+                            TotalAmount = line.Amount,
+                            CompanyId = saleOrderPayment.CompanyId
                         });
                     }
 
@@ -279,7 +280,8 @@ namespace Infrastructure.Services
                             BaseAmount = baseAmountCurrent,
                             Amount = baseAmountCurrent * commPercent / 100,
                             Percentage = commPercent,
-                            TotalAmount = line.Amount
+                            TotalAmount = line.Amount,
+                            CompanyId = saleOrderPayment.CompanyId
                         });
                     }
 
@@ -298,25 +300,27 @@ namespace Infrastructure.Services
                             BaseAmount = baseAmountCurrent,
                             Amount = baseAmountCurrent * commPercent / 100,
                             Percentage = commPercent,
-                            TotalAmount = line.Amount
+                            TotalAmount = line.Amount,
+                            CompanyId = saleOrderPayment.CompanyId
                         });
                     }
 
-                    if (agent != null && agent.CommissionId.HasValue)
+                    if (saleOrderLine.Agent != null && saleOrderLine.Agent.CommissionId.HasValue)
                     {
-                        var commPercent = await commObj.getCommissionPercent(saleOrderLine.ProductId, agent.CommissionId);
+                        var commPercent = await commObj.getCommissionPercent(saleOrderLine.ProductId, saleOrderLine.Agent.CommissionId.Value);
                         commissionSettlements.Add(new CommissionSettlement
                         {
-                            PartnerId = agent.PartnerId,
-                            AgentId = agent.Id,
-                            CommissionId = agent.CommissionId,
+                            PartnerId = saleOrderLine.Agent.PartnerId,
+                            AgentId = saleOrderLine.Agent.Id,
+                            CommissionId = saleOrderLine.Agent.CommissionId,
                             ProductId = saleOrderLine.ProductId,
                             SaleOrderLineId = saleOrderLine.Id,
                             HistoryLineId = line.Id,
                             BaseAmount = baseAmountCurrent,
                             Amount = baseAmountCurrent * commPercent / 100,
                             Percentage = commPercent,
-                            TotalAmount = line.Amount
+                            TotalAmount = line.Amount,
+                            CompanyId = saleOrderPayment.CompanyId
                         });
                     }
                 }
@@ -343,7 +347,7 @@ namespace Infrastructure.Services
                 //await ComputePointAndUpdateLevel(saleOrderPayment, saleOrderPayment.Order.PartnerId, "payment");
                 var loyaltyPoints = ConvertAmountToPoint(saleOrderPayment.Amount);
                 var card = await cardObj.SearchQuery(x => x.PartnerId == saleOrderPayment.Order.PartnerId && x.State == "in_use").FirstOrDefaultAsync();
-                if(card != null)
+                if (card != null)
                 {
                     card.TotalPoint += loyaltyPoints;
                     var typeId = await UpGradeCardCard((card.TotalPoint ?? 0));
@@ -351,7 +355,7 @@ namespace Infrastructure.Services
                     await cardObj.UpdateAsync(card);
                 }
 
-             
+
             }
             //await partnerObj.UpdateMemberLevelForPartner(partnerIds);
             await UpdateAsync(saleOrderPayments);
@@ -521,7 +525,8 @@ namespace Infrastructure.Services
                     PaymentDate = self.Date,
                     PaymentType = "inbound",
                     CompanyId = self.Order.CompanyId,
-                    Communication = self.Note
+                    Communication = self.Note,
+                    InsuranceId = line.Journal.Type == "insurance" ? line.InsuranceId : null
                 };
 
                 payment.AccountMovePaymentRels.Add(new AccountMovePaymentRel { MoveId = moveId });
@@ -595,6 +600,12 @@ namespace Infrastructure.Services
                     card.TypeId = typeId == Guid.Empty ? card.TypeId : typeId;
                     await cardObj.UpdateAsync(card);
                 }
+
+                //remove insurance payment if exist
+                var insurancePaymentObj = GetService<IResInsurancePaymentService>();
+                var insurancePaymentIds = await insurancePaymentObj.SearchQuery(x => x.SaleOrderPaymentId == saleOrderPayment.Id).Select(x => x.Id).ToListAsync();
+                if (insurancePaymentIds.Any())
+                    await insurancePaymentObj.Unlink(insurancePaymentIds);
 
                 saleOrderPayment.State = "cancel";
             }

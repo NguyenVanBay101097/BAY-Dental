@@ -38,20 +38,20 @@ namespace Infrastructure.Services
             _context = context;
         }
 
-        public override async Task<IEnumerable<Product>> CreateAsync(IEnumerable<Product> entities)
-        {
-            _SetNameNoSign(entities);
+        //public override async Task<IEnumerable<Product>> CreateAsync(IEnumerable<Product> entities)
+        //{
+        //    _SetNameNoSign(entities);
 
-            await _GenerateCodeIfEmpty(entities);
+        //    await _GenerateCodeIfEmpty(entities);
 
-            await base.CreateAsync(entities);
+        //    await base.CreateAsync(entities);
 
-            await _CheckProductExistCode(entities);
+        //    await _CheckProductExistCode(entities);
 
-            await _SetListPrice(entities);
+        //    await _SetListPrice(entities);
 
-            return entities;
-        }
+        //    return entities;
+        //}
 
         public void _ComputeUoMRels(IEnumerable<Product> self)
         {
@@ -78,22 +78,22 @@ namespace Infrastructure.Services
 
         private void _SetNameNoSign(IEnumerable<Product> self)
         {
-            foreach (var product in self)
-                product.NameNoSign = string.Join("|", product.Name, product.Name.RemoveSignVietnameseV2(), product.Name.GetAllFirstChar());
+            //foreach (var product in self)
+            //    product.NameNoSign = string.Join("|", product.Name, product.Name.RemoveSignVietnameseV2(), product.Name.GetAllFirstChar());
         }
 
-        public override async Task UpdateAsync(IEnumerable<Product> entities)
-        {
-            _SetNameNoSign(entities);
+        //public override async Task UpdateAsync(IEnumerable<Product> entities)
+        //{
+        //    _SetNameNoSign(entities);
 
-            await _GenerateCodeIfEmpty(entities);
+        //    await _GenerateCodeIfEmpty(entities);
 
-            await base.UpdateAsync(entities);
+        //    await base.UpdateAsync(entities);
 
-            await _CheckProductExistCode(entities);
+        //    await _CheckProductExistCode(entities);
 
-            await _SetListPrice(entities);
-        }
+        //    await _SetListPrice(entities);
+        //}
 
         /// <summary>
         /// Kiểm tra xem nếu có sản phẩm đã tồn tại mã thì báo lỗi
@@ -485,7 +485,7 @@ namespace Infrastructure.Services
             var query = SearchQuery(x => x.Active);
 
             if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search));
+                query = query.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search) || x.DefaultCode.Contains(val.Search));
             if (val.KeToaOK.HasValue)
                 query = query.Where(x => x.KeToaOK == val.KeToaOK);
             if (val.IsLabo.HasValue)
@@ -562,29 +562,9 @@ namespace Infrastructure.Services
             });
         }
 
-        public async Task UpdateProduct(Guid id, ProductDisplay val)
-        {
-            var product = await SearchQuery(x => x.Id == id).Include(x => x.Steps).FirstOrDefaultAsync();
-            var companyId = CompanyId;
-            product = _mapper.Map(val, product);
-            product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
-
-            _SaveProductSteps(product, val.StepList);
-            await UpdateAsync(product);
-        }
-
         public async Task<Product> CreateProduct(ProductSave val)
         {
             var product = _mapper.Map<Product>(val);
-            //if (string.IsNullOrEmpty(product.DefaultCode))
-            //{
-            //    product.DefaultCode = await GenerateCodeIfEmpty();
-            //}
-            //else
-            //{
-            //    if (await IsExistProductCode(product.DefaultCode))
-            //        throw new Exception($"Đã tồn tại sản phầm với mã {val.DefaultCode}");
-            //}
 
             _SaveProductSteps(product, val.StepList);
 
@@ -593,13 +573,19 @@ namespace Infrastructure.Services
             _SaveUoMRels(product, val);
 
             UpdateProductCriteriaRel(product, val);
+
             _ComputeUoMRels(new List<Product>() { product });
+
+            _SetNameNoSign(new List<Product>() { product });
+
+            await _GenerateCodeIfEmpty(new List<Product>() { product });
 
             product = await CreateAsync(product);
 
             SetStandardPrice(product, val.StandardPrice, force_company: product.CompanyId);
-            //if (IsCorrectFormat(product.DefaultCode))
-            //    await UpdateNextCode(product.DefaultCode);
+
+            await _CheckProductExistCode(new List<Product>() { product });
+
             return product;
         }
 
@@ -609,16 +595,6 @@ namespace Infrastructure.Services
                 .Include(x => x.ProductUoMRels).Include(x => x.ProductStockInventoryCriteriaRels).FirstOrDefaultAsync();
 
             product = _mapper.Map(val, product);
-            //if (string.IsNullOrEmpty(product.DefaultCode))
-            //{
-            //    product.DefaultCode = await GenerateCodeIfEmpty();
-            //}
-            //else
-            //{
-            //    if (await IsExistProductCode(product.DefaultCode))
-            //        throw new Exception($"Đã tồn tại sản phầm với mã ${val.DefaultCode}");
-            //}
-            product.NameNoSign = StringUtils.RemoveSignVietnameseV2(product.Name);
 
             _SaveProductSteps(product, val.StepList);
 
@@ -627,15 +603,18 @@ namespace Infrastructure.Services
             _SaveUoMRels(product, val);
 
             SetStandardPrice(product, val.StandardPrice, force_company: product.CompanyId);
-            _ComputeUoMRels(new List<Product>() { product });
 
-            await _SetListPrice(product, val.ListPrice);
+            _ComputeUoMRels(new List<Product>() { product });
 
             UpdateProductCriteriaRel(product, val);
 
+            _SetNameNoSign(new List<Product>() { product });
+
+            await _GenerateCodeIfEmpty(new List<Product>() { product });
+
             await UpdateAsync(product);
-            //if (IsCorrectFormat(product.DefaultCode))
-            //    await UpdateNextCode(product.DefaultCode);
+
+            await _CheckProductExistCode(new List<Product>() { product });
         }
 
         private void UpdateProductCriteriaRel(Product product, ProductSave val)
@@ -844,6 +823,16 @@ namespace Infrastructure.Services
             var propertyObj = GetService<IIRPropertyService>();
             var val = propertyObj.get("standard_price", "product.product", res_id: $"product.product,{id}", force_company: force_company_id);
             return Convert.ToDouble(val);
+        }
+
+        public async Task<double> GetHistoryPrice(Guid id, Guid companyId, DateTime? date = null)
+        {
+            date = date ?? DateTime.Now;
+            var priceHistoryObj = GetService<IProductPriceHistoryService>();
+            var history = await priceHistoryObj.SearchQuery(x => x.CompanyId == companyId && x.ProductId == id && x.DateTime <= date)
+                .OrderByDescending(x => x.DateTime).ThenByDescending(x => x.DateCreated).FirstOrDefaultAsync();
+
+            return history != null ? history.Cost : 0;
         }
 
         public async Task<ProductDisplay> DefaultGet()

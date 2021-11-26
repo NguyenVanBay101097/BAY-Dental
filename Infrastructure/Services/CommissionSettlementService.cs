@@ -140,12 +140,12 @@ namespace Infrastructure.Services
 
         public override ISpecification<CommissionSettlement> RuleDomainGet(IRRule rule)
         {
-            var userObj = GetService<IUserService>();
-            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            //var userObj = GetService<IUserService>();
+            //var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
             switch (rule.Code)
             {
                 case "sale.commission_settlement_comp_rule":
-                    return new InitialSpecification<CommissionSettlement>(x => !x.Employee.CompanyId.HasValue || companyIds.Contains(x.Employee.CompanyId.Value));
+                    return new InitialSpecification<CommissionSettlement>(x => !x.CompanyId.HasValue || x.CompanyId == CompanyId);
                 default:
                     return null;
             }
@@ -197,6 +197,10 @@ namespace Infrastructure.Services
             var query = GetQueryableReportPaged(val);
 
             var totalItems = await query.CountAsync();
+
+            query = query.OrderByDescending(x => x.DateCreated);
+            if (val.Limit > 0)
+                query = query.Skip(val.Offset).Take(val.Limit);
 
             var items = await query.Select(x => new CommissionSettlementReportDetailOutput
             {
@@ -271,7 +275,7 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.AgentId == val.AgentId);
 
             if (val.CompanyId.HasValue)
-                query = query.Where(x => x.Employee.CompanyId == val.CompanyId);
+                query = query.Where(x => x.CompanyId == val.CompanyId);
 
             if (!string.IsNullOrEmpty(val.CommissionType))
                 query = query.Where(x => x.Commission.Type == val.CommissionType);
@@ -293,12 +297,6 @@ namespace Infrastructure.Services
                 else if(val.CommissionDisplay == "equals_zero")
                     query = query.Where(x => x.Percentage == 0);
             }
-
-
-            if (val.Limit > 0)
-                query = query.Skip(val.Offset).Take(val.Limit);
-
-            query = query.OrderByDescending(x => x.DateCreated);
 
             return query;
         }
@@ -333,7 +331,7 @@ namespace Infrastructure.Services
             };
         }
 
-        public async Task<PagedResult2<CommissionSettlementReportRes>> GetReportPaged(CommissionSettlementFilterReport val)
+        public async Task<IEnumerable<CommissionSettlementReportRes>> GetReportPaged(CommissionSettlementFilterReport val)
         {
             var query = GetQueryableReportPaged(val);
 
@@ -355,12 +353,7 @@ namespace Infrastructure.Services
                 EmployeeName = x.Key.EmployeeName
             }).ToList();
 
-            var totalItems = res.Count();
-
-            return new PagedResult2<CommissionSettlementReportRes>(totalItems, val.Offset, val.Limit)
-            {
-                Items = res
-            };
+            return res;
         }
 
         public async Task<IEnumerable<CommissionSettlementOverview>> GetCommissionSettlements(DateTime? dateFrom, DateTime? dateTo, string classify, string groupBy)
@@ -373,7 +366,6 @@ namespace Infrastructure.Services
 
             if (dateTo.HasValue)
                 query = query.Where(x => x.Date <= dateTo.Value.AbsoluteEndOfDate());
-
 
             var res = new List<CommissionSettlementOverview>();
 

@@ -3,6 +3,7 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { aggregateBy } from '@progress/kendo-data-query';
 import { CashBookService, DataInvoiceFilter } from 'src/app/cash-book/cash-book.service';
+import { DashboardReportService } from 'src/app/core/services/dashboard-report.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 
 @Component({
@@ -11,26 +12,29 @@ import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-ken
   styleUrls: ['./day-dashboard-report-revenue-service.component.css']
 })
 export class DayDashboardReportRevenueServiceComponent implements OnInit {
+  @Input() dateFrom: Date;
+  @Input() dateTo: Date;
+  @Input() companyId: string;
   gridData: GridDataResult;
   loading = false;
   skip = 0;
   limit = 20;
   pagerSettings: any;
   dataInvoices: any[] = [];
-  @Input() dateFrom: Date;
-  @Input() dateTo: Date;
-  @Input() companyId: string;
+  revenueActualReportData: any;
 
-  constructor(@Inject(PAGER_GRID_CONFIG) config: PageGridConfig,
-  private intlService: IntlService,
-  private cashBookService: CashBookService
+  constructor(
+    private intlService: IntlService,
+    private cashBookService: CashBookService,
+    private dashboardReportService: DashboardReportService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig,
   ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
     this.loadDataInvoiceApi();
+    this.loadDataRevenueApi();
   }
 
-  
   loadDataInvoiceApi() {
     var gridPaged = new DataInvoiceFilter();
     gridPaged.companyId = this.companyId;
@@ -48,6 +52,17 @@ export class DayDashboardReportRevenueServiceComponent implements OnInit {
     );
   }
 
+  loadDataRevenueApi() {
+    var val = {
+      dateFrom: this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : null,
+      dateTo: this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null,
+      companyId: this.companyId ? this.companyId : null
+    };
+
+    this.dashboardReportService.getRevenueActualReport(val).subscribe(result => {
+      this.revenueActualReportData = result;
+    });
+  }
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;

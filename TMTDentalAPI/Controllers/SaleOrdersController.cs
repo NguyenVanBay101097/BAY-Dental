@@ -498,6 +498,13 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetDefaultInsurancePaymentBySaleOrderId(Guid id)
+        {
+            var res = await _saleOrderService.GetDefaultInsurancePaymentByOrderId(id);
+            return Ok(res);
+        }
+
         [AllowAnonymous]
         [HttpGet("{id}/[action]")]
         [CheckAccess(Actions = "Basic.SaleOrder.Read")]
@@ -869,8 +876,8 @@ namespace TMTDentalAPI.Controllers
 
             var irModelCreate = new List<IRModelData>();
             var dateToData = new DateTime(2021, 08, 25);
-            var listIrModelData = await irModelObj.SearchQuery(x => x.Module == "sample" && (x.Model == "product" || x.Model == "uom" || x.Model == "partner")).ToListAsync();// các irmodel cần thiết
-            var entities = await _saleOrderService.SearchQuery(x => x.DateOrder.Date <= dateToData.Date).Include(x => x.OrderLines).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var listIrModelData = await irModelObj.SearchQuery().ToListAsync();// các irmodel cần thiết
+            var entities = await _saleOrderService.SearchQuery(x => x.DateOrder.Date <= dateToData.Date).Include(x => x.OrderLines).ThenInclude(x=> x.SaleOrderLineToothRels).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
             var data = new List<SaleOrderXmlSampleDataRecord>();
             foreach (var entity in entities)
             {
@@ -878,16 +885,29 @@ namespace TMTDentalAPI.Controllers
                 item.Id = $@"sample.sale_order_{entities.IndexOf(entity) + 1}";
                 var irmodelDataPartner = listIrModelData.FirstOrDefault(x => x.ResId == entity.PartnerId.ToString());
                 item.PartnerId = irmodelDataPartner?.Module + "." + irmodelDataPartner?.Name;
-                item.DateRound = (int)(dateToData - entity.DateOrder).TotalDays;
+                item.DateRound = (int)(dateToData.Date - entity.DateOrder.Date).TotalDays;
+                item.TimeHour = entity.DateOrder.Hour;
+                item.TimeMinute = entity.DateOrder.Minute;
                 //add lines
                 foreach (var lineEntity in entity.OrderLines)
                 {
                     var itemLine = _mapper.Map<SaleOrderLineXmlSampleDataRecord>(lineEntity);
                     itemLine.Id = $@"sample.sale_order_{entities.IndexOf(entity) + 1}_sale_order_line_{entity.OrderLines.ToList().IndexOf(lineEntity) + 1}";
-                    itemLine.DateRound = (int)(dateToData - lineEntity.DateCreated.Value).TotalDays;
+                    itemLine.DateRound = (int)(dateToData.Date - lineEntity.DateCreated.Value.Date).TotalDays;
                     var irmodelDataProduct = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.ProductId.ToString());
                     itemLine.ProductId = irmodelDataProduct?.Module + "." + irmodelDataProduct?.Name;
+                    var irmodelDataToothCategory = listIrModelData.FirstOrDefault(x => x.ResId == lineEntity.ToothCategoryId.ToString());
+                    itemLine.ToothCategoryId = irmodelDataToothCategory?.Module + "." + irmodelDataToothCategory?.Name;
+
+                    foreach (var lineTooth in lineEntity.SaleOrderLineToothRels)
+                    {
+                        var itemLineTooth = new SaleOrderLineToothRelXmlSampleDataRecord();
+                        var itemLineToothIrModelData = listIrModelData.FirstOrDefault(x => x.ResId == lineTooth.ToothId.ToString());
+                        itemLineTooth.ToothId = itemLineToothIrModelData?.Module + "." + itemLineToothIrModelData?.Name;
+                        itemLine.SaleOrderLineToothRels.Add(itemLineTooth);
+                    }
                     item.OrderLines.Add(itemLine);
+
                     // add IRModelData
                     irModelCreate.Add(new IRModelData()
                     {

@@ -223,7 +223,7 @@
     <DateRound>6</DateRound>
     <JournalLines>
       <Record>
-        <JournalId>account.data_account_journal_debt</JournalId>
+        <JournalId>account.data_account_journal_bank</JournalId>
         <Amount>1000000.00</Amount>
       </Record>
     </JournalLines>
@@ -236,24 +236,6 @@
   </Record>
   <Record>
     <Id>sample.sale_order_payment_14</Id>
-    <Amount>108000000.00</Amount>
-    <OrderId>sample.sale_order_12</OrderId>
-    <DateRound>6</DateRound>
-    <JournalLines>
-      <Record>
-        <JournalId>account.data_account_journal_cash</JournalId>
-        <Amount>108000000.00</Amount>
-      </Record>
-    </JournalLines>
-    <Lines>
-      <Record>
-        <SaleOrderLineId>sample.sale_order_12_sale_order_line_1</SaleOrderLineId>
-        <Amount>108000000.00</Amount>
-      </Record>
-    </Lines>
-  </Record>
-  <Record>
-    <Id>sample.sale_order_payment_15</Id>
     <Amount>3200000.00</Amount>
     <OrderId>sample.sale_order_16</OrderId>
     <DateRound>6</DateRound>
@@ -275,7 +257,7 @@
     </Lines>
   </Record>
   <Record>
-    <Id>sample.sale_order_payment_16</Id>
+    <Id>sample.sale_order_payment_15</Id>
     <Amount>30000000.00</Amount>
     <OrderId>sample.sale_order_12</OrderId>
     <DateRound>6</DateRound>
@@ -293,103 +275,49 @@
     </Lines>
   </Record>
   <Record>
-    <Id>sample.sale_order_payment_17</Id>
-    <Amount>20000000.00</Amount>
-    <OrderId>sample.sale_order_19</OrderId>
-    <DateRound>4</DateRound>
+    <Id>sample.sale_order_payment_16</Id>
+    <Amount>1000000.00</Amount>
+    <OrderId>sample.sale_order_21</OrderId>
+    <DateRound>5</DateRound>
     <JournalLines>
       <Record>
-        <JournalId>account.data_account_journal_advance</JournalId>
-        <Amount>20000000.00</Amount>
+        <JournalId>account.data_account_journal_cash</JournalId>
+        <Amount>1000000.00</Amount>
       </Record>
     </JournalLines>
     <Lines>
       <Record>
-        <SaleOrderLineId>sample.sale_order_19_sale_order_line_1</SaleOrderLineId>
-        <Amount>20000000.00</Amount>
+        <SaleOrderLineId>sample.sale_order_21_sale_order_line_1</SaleOrderLineId>
+        <Amount>1000000.00</Amount>
+      </Record>
+    </Lines>
+  </Record>
+  <Record>
+    <Id>sample.sale_order_payment_17</Id>
+    <Amount>1800000.00</Amount>
+    <OrderId>sample.sale_order_20</OrderId>
+    <DateRound>5</DateRound>
+    <JournalLines>
+      <Record>
+        <JournalId>account.data_account_journal_cash</JournalId>
+        <Amount>1800000.00</Amount>
+      </Record>
+    </JournalLines>
+    <Lines>
+      <Record>
+        <SaleOrderLineId>sample.sale_order_20_sale_order_line_1</SaleOrderLineId>
+        <Amount>1800000.00</Amount>
       </Record>
     </Lines>
   </Record>
   <Record>
     <Id>sample.sale_order_payment_18</Id>
-    <Amount>1800000.00</Amount>
-    <OrderId>sample.sale_order_20</OrderId>
-    <DateRound>4</DateRound>
-    <JournalLines>
-      <Record>
-        <JournalId>account.data_account_journal_debt</JournalId>
-        <Amount>1800000.00</Amount>
-      </Record>
-    </JournalLines>
-    <Lines>
-      <Record>
-        <SaleOrderLineId>sample.sale_order_20_sale_order_line_1</SaleOrderLineId>
-        <Amount>1800000.00</Amount>
-      </Record>
-    </Lines>
-  </Record>
-  <Record>
-    <Id>sample.sale_order_payment_19</Id>
-    <Amount>1000000.00</Amount>
-    <OrderId>sample.sale_order_21</OrderId>
-    <DateRound>4</DateRound>
-    <JournalLines>
-      <Record>
-        <JournalId>account.data_account_journal_advance</JournalId>
-        <Amount>1000000.00</Amount>
-      </Record>
-    </JournalLines>
-    <Lines>
-      <Record>
-        <SaleOrderLineId>sample.sale_order_21_sale_order_line_1</SaleOrderLineId>
-        <Amount>1000000.00</Amount>
-      </Record>
-    </Lines>
-  </Record>
-  <Record>
-    <Id>sample.sale_order_payment_20</Id>
-    <Amount>1000000.00</Amount>
-    <OrderId>sample.sale_order_21</OrderId>
-    <DateRound>5</DateRound>
-    <JournalLines>
-      <Record>
-        <JournalId>account.data_account_journal_advance</JournalId>
-        <Amount>1000000.00</Amount>
-      </Record>
-    </JournalLines>
-    <Lines>
-      <Record>
-        <SaleOrderLineId>sample.sale_order_21_sale_order_line_1</SaleOrderLineId>
-        <Amount>1000000.00</Amount>
-      </Record>
-    </Lines>
-  </Record>
-  <Record>
-    <Id>sample.sale_order_payment_21</Id>
-    <Amount>1800000.00</Amount>
-    <OrderId>sample.sale_order_20</OrderId>
-    <DateRound>5</DateRound>
-    <JournalLines>
-      <Record>
-        <JournalId>account.data_account_journal_debt</JournalId>
-        <Amount>1800000.00</Amount>
-      </Record>
-    </JournalLines>
-    <Lines>
-      <Record>
-        <SaleOrderLineId>sample.sale_order_20_sale_order_line_1</SaleOrderLineId>
-        <Amount>1800000.00</Amount>
-      </Record>
-    </Lines>
-  </Record>
-  <Record>
-    <Id>sample.sale_order_payment_22</Id>
     <Amount>20000000.00</Amount>
     <OrderId>sample.sale_order_19</OrderId>
     <DateRound>5</DateRound>
     <JournalLines>
       <Record>
-        <JournalId>account.data_account_journal_advance</JournalId>
+        <JournalId>account.data_account_journal_cash</JournalId>
         <Amount>20000000.00</Amount>
       </Record>
     </JournalLines>
@@ -401,17 +329,17 @@
     </Lines>
   </Record>
   <Record>
-    <Id>sample.sale_order_payment_23</Id>
+    <Id>sample.sale_order_payment_19</Id>
     <Amount>50000000.00</Amount>
     <OrderId>sample.sale_order_1</OrderId>
     <DateRound>4</DateRound>
     <JournalLines>
       <Record>
-        <JournalId>account.data_account_journal_advance</JournalId>
+        <JournalId>account.data_account_journal_cash</JournalId>
         <Amount>30000000.00</Amount>
       </Record>
       <Record>
-        <JournalId>account.data_account_journal_debt</JournalId>
+        <JournalId>account.data_account_journal_bank</JournalId>
         <Amount>20000000.00</Amount>
       </Record>
     </JournalLines>
@@ -423,7 +351,7 @@
     </Lines>
   </Record>
   <Record>
-    <Id>sample.sale_order_payment_24</Id>
+    <Id>sample.sale_order_payment_20</Id>
     <Amount>2700000.00</Amount>
     <OrderId>sample.sale_order_22</OrderId>
     <DateRound>4</DateRound>
@@ -441,7 +369,7 @@
     </Lines>
   </Record>
   <Record>
-    <Id>sample.sale_order_payment_25</Id>
+    <Id>sample.sale_order_payment_21</Id>
     <Amount>200000.00</Amount>
     <OrderId>sample.sale_order_23</OrderId>
     <DateRound>2</DateRound>
@@ -459,7 +387,7 @@
     </Lines>
   </Record>
   <Record>
-    <Id>sample.sale_order_payment_26</Id>
+    <Id>sample.sale_order_payment_22</Id>
     <Amount>2400000.00</Amount>
     <OrderId>sample.sale_order_24</OrderId>
     <DateRound>2</DateRound>
@@ -477,7 +405,7 @@
     </Lines>
   </Record>
   <Record>
-    <Id>sample.sale_order_payment_27</Id>
+    <Id>sample.sale_order_payment_23</Id>
     <Amount>65000000.00</Amount>
     <OrderId>sample.sale_order_25</OrderId>
     <DateRound>2</DateRound>
@@ -495,7 +423,7 @@
     </Lines>
   </Record>
   <Record>
-    <Id>sample.sale_order_payment_28</Id>
+    <Id>sample.sale_order_payment_24</Id>
     <Amount>21200000.00</Amount>
     <OrderId>sample.sale_order_26</OrderId>
     <DateRound>2</DateRound>
@@ -517,29 +445,7 @@
     </Lines>
   </Record>
   <Record>
-    <Id>sample.sale_order_payment_29</Id>
-    <Amount>21200000.00</Amount>
-    <OrderId>sample.sale_order_26</OrderId>
-    <DateRound>2</DateRound>
-    <JournalLines>
-      <Record>
-        <JournalId>account.data_account_journal_bank</JournalId>
-        <Amount>21200000.00</Amount>
-      </Record>
-    </JournalLines>
-    <Lines>
-      <Record>
-        <SaleOrderLineId>sample.sale_order_26_sale_order_line_1</SaleOrderLineId>
-        <Amount>1200000.00</Amount>
-      </Record>
-      <Record>
-        <SaleOrderLineId>sample.sale_order_26_sale_order_line_3</SaleOrderLineId>
-        <Amount>20000000.00</Amount>
-      </Record>
-    </Lines>
-  </Record>
-  <Record>
-    <Id>sample.sale_order_payment_30</Id>
+    <Id>sample.sale_order_payment_25</Id>
     <Amount>3000000.00</Amount>
     <OrderId>sample.sale_order_29</OrderId>
     <DateRound>1</DateRound>
@@ -557,7 +463,7 @@
     </Lines>
   </Record>
   <Record>
-    <Id>sample.sale_order_payment_31</Id>
+    <Id>sample.sale_order_payment_26</Id>
     <Amount>540000.00</Amount>
     <OrderId>sample.sale_order_30</OrderId>
     <DateRound>1</DateRound>
@@ -575,7 +481,7 @@
     </Lines>
   </Record>
   <Record>
-    <Id>sample.sale_order_payment_32</Id>
+    <Id>sample.sale_order_payment_27</Id>
     <Amount>1000000.00</Amount>
     <OrderId>sample.sale_order_31</OrderId>
     <DateRound>1</DateRound>
@@ -593,7 +499,7 @@
     </Lines>
   </Record>
   <Record>
-    <Id>sample.sale_order_payment_33</Id>
+    <Id>sample.sale_order_payment_28</Id>
     <Amount>600000.00</Amount>
     <OrderId>sample.sale_order_32</OrderId>
     <DateRound>1</DateRound>
@@ -611,13 +517,13 @@
     </Lines>
   </Record>
   <Record>
-    <Id>sample.sale_order_payment_34</Id>
+    <Id>sample.sale_order_payment_29</Id>
     <Amount>150000.00</Amount>
     <OrderId>sample.sale_order_33</OrderId>
     <DateRound>1</DateRound>
     <JournalLines>
       <Record>
-        <JournalId>account.data_account_journal_bank</JournalId>
+        <JournalId>account.data_account_journal_cash</JournalId>
         <Amount>150000.00</Amount>
       </Record>
     </JournalLines>
@@ -629,7 +535,7 @@
     </Lines>
   </Record>
   <Record>
-    <Id>sample.sale_order_payment_35</Id>
+    <Id>sample.sale_order_payment_30</Id>
     <Amount>300000.00</Amount>
     <OrderId>sample.sale_order_28</OrderId>
     <DateRound>2</DateRound>
@@ -647,13 +553,13 @@
     </Lines>
   </Record>
   <Record>
-    <Id>sample.sale_order_payment_36</Id>
+    <Id>sample.sale_order_payment_31</Id>
     <Amount>75000000.00</Amount>
     <OrderId>sample.sale_order_4</OrderId>
     <DateRound>1</DateRound>
     <JournalLines>
       <Record>
-        <JournalId>account.data_account_journal_debt</JournalId>
+        <JournalId>account.data_account_journal_bank</JournalId>
         <Amount>75000000.00</Amount>
       </Record>
     </JournalLines>
@@ -665,25 +571,7 @@
     </Lines>
   </Record>
   <Record>
-    <Id>sample.sale_order_payment_37</Id>
-    <Amount>144000000.00</Amount>
-    <OrderId>sample.sale_order_34</OrderId>
-    <DateRound>1</DateRound>
-    <JournalLines>
-      <Record>
-        <JournalId>account.data_account_journal_cash</JournalId>
-        <Amount>144000000.00</Amount>
-      </Record>
-    </JournalLines>
-    <Lines>
-      <Record>
-        <SaleOrderLineId>sample.sale_order_34_sale_order_line_1</SaleOrderLineId>
-        <Amount>144000000.00</Amount>
-      </Record>
-    </Lines>
-  </Record>
-  <Record>
-    <Id>sample.sale_order_payment_38</Id>
+    <Id>sample.sale_order_payment_32</Id>
     <Amount>600000.00</Amount>
     <OrderId>sample.sale_order_35</OrderId>
     <DateRound>1</DateRound>
@@ -701,7 +589,7 @@
     </Lines>
   </Record>
   <Record>
-    <Id>sample.sale_order_payment_39</Id>
+    <Id>sample.sale_order_payment_33</Id>
     <Amount>44000000.00</Amount>
     <OrderId>sample.sale_order_34</OrderId>
     <DateRound>1</DateRound>
@@ -719,13 +607,13 @@
     </Lines>
   </Record>
   <Record>
-    <Id>sample.sale_order_payment_40</Id>
+    <Id>sample.sale_order_payment_34</Id>
     <Amount>100000000.00</Amount>
     <OrderId>sample.sale_order_34</OrderId>
     <DateRound>1</DateRound>
     <JournalLines>
       <Record>
-        <JournalId>account.data_account_journal_debt</JournalId>
+        <JournalId>account.data_account_journal_bank</JournalId>
         <Amount>100000000.00</Amount>
       </Record>
     </JournalLines>
@@ -737,7 +625,7 @@
     </Lines>
   </Record>
   <Record>
-    <Id>sample.sale_order_payment_41</Id>
+    <Id>sample.sale_order_payment_35</Id>
     <Amount>20000000.00</Amount>
     <OrderId>sample.sale_order_1</OrderId>
     <DateRound>1</DateRound>
@@ -755,7 +643,7 @@
     </Lines>
   </Record>
   <Record>
-    <Id>sample.sale_order_payment_42</Id>
+    <Id>sample.sale_order_payment_36</Id>
     <Amount>5000000.00</Amount>
     <OrderId>sample.sale_order_36</OrderId>
     <DateRound>1</DateRound>
@@ -773,7 +661,7 @@
     </Lines>
   </Record>
   <Record>
-    <Id>sample.sale_order_payment_43</Id>
+    <Id>sample.sale_order_payment_37</Id>
     <Amount>24000000.00</Amount>
     <OrderId>sample.sale_order_37</OrderId>
     <DateRound>1</DateRound>
@@ -791,7 +679,7 @@
     </Lines>
   </Record>
   <Record>
-    <Id>sample.sale_order_payment_44</Id>
+    <Id>sample.sale_order_payment_38</Id>
     <Amount>1000000.00</Amount>
     <OrderId>sample.sale_order_38</OrderId>
     <DateRound>1</DateRound>
@@ -809,7 +697,7 @@
     </Lines>
   </Record>
   <Record>
-    <Id>sample.sale_order_payment_45</Id>
+    <Id>sample.sale_order_payment_39</Id>
     <Amount>3000000.00</Amount>
     <OrderId>sample.sale_order_39</OrderId>
     <DateRound>1</DateRound>
@@ -827,7 +715,7 @@
     </Lines>
   </Record>
   <Record>
-    <Id>sample.sale_order_payment_46</Id>
+    <Id>sample.sale_order_payment_40</Id>
     <Amount>300000.00</Amount>
     <OrderId>sample.sale_order_41</OrderId>
     <DateRound>0</DateRound>
@@ -845,13 +733,13 @@
     </Lines>
   </Record>
   <Record>
-    <Id>sample.sale_order_payment_47</Id>
+    <Id>sample.sale_order_payment_41</Id>
     <Amount>3400000.00</Amount>
     <OrderId>sample.sale_order_42</OrderId>
     <DateRound>0</DateRound>
     <JournalLines>
       <Record>
-        <JournalId>account.data_account_journal_debt</JournalId>
+        <JournalId>account.data_account_journal_cash</JournalId>
         <Amount>3400000.00</Amount>
       </Record>
     </JournalLines>
@@ -863,13 +751,13 @@
     </Lines>
   </Record>
   <Record>
-    <Id>sample.sale_order_payment_48</Id>
+    <Id>sample.sale_order_payment_42</Id>
     <Amount>20000000.00</Amount>
     <OrderId>sample.sale_order_43</OrderId>
     <DateRound>0</DateRound>
     <JournalLines>
       <Record>
-        <JournalId>account.data_account_journal_debt</JournalId>
+        <JournalId>account.data_account_journal_bank</JournalId>
         <Amount>20000000.00</Amount>
       </Record>
     </JournalLines>

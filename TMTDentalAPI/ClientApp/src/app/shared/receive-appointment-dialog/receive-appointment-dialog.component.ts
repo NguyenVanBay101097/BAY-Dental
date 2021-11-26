@@ -130,7 +130,6 @@ export class ReceiveAppointmentDialogComponent implements OnInit {
         this.activeModal.close(res);
       },
       er => {
-        this.errorService.show(er);
         this.submitted = false;
       },
     )

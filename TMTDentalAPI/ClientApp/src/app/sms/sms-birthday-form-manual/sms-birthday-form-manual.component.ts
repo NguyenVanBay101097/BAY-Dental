@@ -45,7 +45,8 @@ export class SmsBirthdayFormManualComponent implements OnInit {
   ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
-
+    this.day = new Date().getDate();
+    this.month = new Date().getMonth() + 1;
     this.loadDataFromApi();
     setTimeout(() => {
       this.loadDefaultCampaignBirthday();

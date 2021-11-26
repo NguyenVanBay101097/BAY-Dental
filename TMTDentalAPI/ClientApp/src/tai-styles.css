@@ -25,6 +25,7 @@ a {
 .modal .modal-dialog .o_form_view .o_form_sheet_bg {
     padding: 0;
     width: 100%;
+    border: none;
 }
 
 .modal .modal-dialog .o_form_view .o_form_sheet_bg>.o_form_sheet {
@@ -32,13 +33,14 @@ a {
     width: 100%;
     margin: 0 auto;
     max-width: none;
+    border: none;
 }
 
 .modal.o_technical_modal .modal-content .modal-body.o_act_window {
     padding: 0;
 }
 
-.modal.o_technical_modal .modal-content .modal-footer {
+.modal.o_technical_modal .modal-content .modal-footer, .modal .modal-content .modal-footer {
     flex-wrap: wrap;
     text-align: left;
     -webkit-box-pack: start;
@@ -298,7 +300,7 @@ td.oe_form_group_cell_label label {
 }
 
 .o_horizontal_separator {
-    color: #7c7bad;
+    color: #1A6DE3;
     font-size: 20px;
     margin: 5px 0;
 }

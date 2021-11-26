@@ -40,5 +40,7 @@ namespace Infrastructure.Services
         Task<ProductDisplay> GetDefaultProductMedicine();
         Task<IEnumerable<ProductComingEnd>> GetProductsComingEnd(ProductGetProductsComingEndRequest val);
         void _ComputeUoMRels(IEnumerable<Product> self);
+
+        Task<double> GetHistoryPrice(Guid id, Guid companyId, DateTime? date = null);
     }
 }

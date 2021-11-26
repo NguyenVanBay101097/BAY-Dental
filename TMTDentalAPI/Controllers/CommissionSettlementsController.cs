@@ -27,8 +27,7 @@ namespace TMTDentalAPI.Controllers
             _exportExcelService = exportExcelService;
         }
 
-        [HttpPost("[action]")]
-        [CheckAccess(Actions = "Report.Commission")]
+        [HttpPost("[action]")]      
         public async Task<IActionResult> GetReport(CommissionSettlementFilterReport val)
         {
             var result = await _commissionSettlementService.GetReport(val);
@@ -36,7 +35,6 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Report.Commission")]
         public async Task<IActionResult> GetCommissionSettlementReport(CommissionSettlementOverviewFilter val)
         {
             var result = await _commissionSettlementService.GetCommissionSettlements(dateFrom: val.DateFrom, dateTo: val.DateTo,classify: val.Classify , groupBy: val.GroupBy);
@@ -44,7 +42,6 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        [CheckAccess(Actions = "Report.Commission")]
         public async Task<IActionResult> GetReportPaged([FromQuery] CommissionSettlementFilterReport val)
         {
             var result = await _commissionSettlementService.GetReportPaged(val);
@@ -52,7 +49,6 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Report.Commission")]
         public async Task<IActionResult> GetReportDetail(CommissionSettlementFilterReport val)
         {
             var result = await _commissionSettlementService.GetReportDetail(val);
@@ -61,7 +57,6 @@ namespace TMTDentalAPI.Controllers
 
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Report.Commission")]
         public async Task<IActionResult> GetSumReport(CommissionSettlementFilterReport val)
         {
             var result = await _commissionSettlementService.GetSumReport(val);
@@ -69,7 +64,6 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Report.Commission")]
         public async Task<IActionResult> GetSumAmountTotalReport(CommissionSettlementFilterReport val)
         {
             var result = await _commissionSettlementService.GetSumAmountTotalReport(val);
@@ -83,7 +77,7 @@ namespace TMTDentalAPI.Controllers
             var stream = new MemoryStream();
             val.Limit = int.MaxValue;
             var data = await _commissionSettlementService.GetReportPaged(val);
-            decimal sum = data.Items.Sum(x => x.Amount.Value);
+            decimal sum = data.Sum(x => x.Amount.Value);
             byte[] fileContent;
             var sheetName = "Hoa hồng nhân viên";
 
@@ -99,7 +93,7 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells["A1:P1"].Style.Font.Bold = true;
 
                 var row = 2;
-                foreach (var item in data.Items)
+                foreach (var item in data)
                 {
                     worksheet.Cells[row, 1].Value = item.EmployeeName;
                     worksheet.Cells[row, 2].Value = _commissionSettlementService.CommissionType(item.CommissionType);

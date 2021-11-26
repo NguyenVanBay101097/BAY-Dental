@@ -22,6 +22,7 @@ namespace Infrastructure.EntityConfigurations
                     .OnDelete(DeleteBehavior.Restrict);
 
 
+
             builder.HasOne(x => x.CreatedBy)
                     .WithMany()
                     .HasForeignKey(x => x.CreatedById);

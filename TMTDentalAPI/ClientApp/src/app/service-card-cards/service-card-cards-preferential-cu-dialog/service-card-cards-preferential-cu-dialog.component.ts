@@ -155,11 +155,12 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit, Af
 
     if (this.id) {
       this.serviceCardsService.update(this.id, val).subscribe((res: any) => {
+        this.notifyService.notify('success', 'Lưu thành công');
         this.activeModal.close(res);
       }, (error) => { console.log(error) });
     } else {
       this.serviceCardsService.create(val).subscribe((res: any) => {
-        console.log(res);
+        this.notifyService.notify('success', 'Lưu thành công');
         this.activeModal.close(res);
       }, (error) => { console.log(error) });
     }
@@ -171,6 +172,12 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit, Af
     if (this.formGroup.invalid) {
       return;
     }
+
+    if (!this.formGroup.get('partner').value) {
+      this.notifyService.notify('error', 'Khách hàng đang trống, cần bổ sung khách hàng');
+      return false;
+    }
+
     let val = this.formGroup.value;
     val.partnerId = this.partnerId ? this.partnerId : (val.partner ? val.partner.id : '');
     val.cardTypeId = val.cardType ? val.cardType.id : '';
@@ -200,6 +207,7 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit, Af
     modalRef.componentInstance.title = 'Thêm khách hàng';
     modalRef.result.then((res) => {
       this.setValueFC('partner', res);
+      this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter,[res], 'id');
     });
   }
 
@@ -223,7 +231,7 @@ export function createLengthValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const valueLength = control.value.toString().length;
     var lengthValid = true;
-    if (valueLength < 10 || valueLength > 15)
+    if (valueLength < 5 || valueLength > 15)
       lengthValid = false;
     return !lengthValid ? { lengthError: true } : null;
   }

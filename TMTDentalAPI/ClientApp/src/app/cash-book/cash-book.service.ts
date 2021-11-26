@@ -17,9 +17,9 @@ export class CashBookPaged {
 export class CashBookSummarySearch {
   companyId: string;
   resultSelection: string;
+  journalId: string;
   dateFrom: string;
   dateTo: string;
-  journalId: string;
 }
 
 export class AccountMoveLineCashBookVM {
@@ -53,13 +53,13 @@ export class ReportDataResult {
 
 export class CashBookDetailFilter {
   companyId: string;
+  journalId: string;
   resultSelection: string;
   dateFrom: string;
   dateTo: string;
   search: string;
   limit: number;
   offset: number;
-  journalId: string;
 }
 
 export class DataInvoiceFilter {
@@ -121,6 +121,13 @@ export class CashBookService {
   getSumary(val: any): Observable<ReportDataResult> {
     return this.http.post<ReportDataResult>(
       this.baseApi + this.apiUrl + "/GetSumary",
+      val
+    );
+  }
+
+  getSumaryDayReport(val: any): Observable<ReportDataResult> {
+    return this.http.post<ReportDataResult>(
+      this.baseApi + this.apiUrl + "/GetSumaryDayReport",
       val
     );
   }

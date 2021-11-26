@@ -17,6 +17,7 @@ import { PartnerService } from 'src/app/partners/partner.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
 import { ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
+import { SaleOrderInsurancePaymentDialogComponent } from '../sale-order-insurance-payment-dialog/sale-order-insurance-payment-dialog.component';
 import { SaleOrderLineCuComponent } from '../sale-order-line-cu/sale-order-line-cu.component';
 import { SaleOrderLinePromotionDialogComponent } from '../sale-order-line-promotion-dialog/sale-order-line-promotion-dialog.component';
 import { SaleOrderPromotionDialogComponent } from '../sale-order-promotion-dialog/sale-order-promotion-dialog.component';
@@ -30,6 +31,9 @@ import { SaleOrderPromotionService } from '../sale-order-promotion.service';
 })
 export class SaleOrderServiceListComponent implements OnInit, OnChanges {
   @Input() saleOrder: any;
+  @Output() updateOrderEvent = new EventEmitter<any>();
+  @Output() insurancePayment = new EventEmitter<any>();
+  @ViewChildren('lineTemplate') lineVCR: QueryList<SaleOrderLineCuComponent>;
   orderLines: any[] = [];
   promotions: any[] = []; //danh sách promotion của phiếu điều trị
   initialListEmployees: any[] = [];
@@ -37,12 +41,10 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
   listTeeths: any[] = [];
   partner: any;
   lineSelected = null;
-  @ViewChildren('lineTemplate') lineVCR: QueryList<SaleOrderLineCuComponent>;
   linesDirty = false;
   formGroup: FormGroup;
   submitted = false;
   partnerDebt = null;
-  @Output() updateOrderEvent = new EventEmitter<any>();
   constructor(
     private saleOrderService: SaleOrderService,
     private notificationService: NotificationService,
@@ -240,6 +242,35 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
       }
     } else {
       this.openSaleOrderPromotionDialog();
+    }
+  }
+
+  actionInsurancePayment() {
+    if (this.lineSelected != null) { //Nếu dữ liệu cần lưu lại
+      var viewChild = this.lineVCR.find(x => x.line == this.lineSelected);
+      var rs = viewChild.updateLineInfo();
+      if (rs) {
+        viewChild.onUpdateSignSubject.subscribe(value => {
+          this.onOpenInsurancePayment();
+        })
+      }
+    } else {
+      this.onOpenInsurancePayment();
+    }
+  }
+
+  onOpenInsurancePayment() {
+    if (this.saleOrder) {
+      this.saleOrderService.getDefaultInsuranceBySaleOrderId(this.saleOrder.id).subscribe((res: any) => {
+        const modalRef = this.modalService.open(SaleOrderInsurancePaymentDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+        modalRef.componentInstance.title = 'Bảo hiểm bảo lãnh';
+        modalRef.componentInstance.defaultValue = res;
+        modalRef.componentInstance.saleOrderId = this.saleOrder.id;
+        modalRef.result.then(result => {
+          this.insurancePayment.emit(null);
+          this.notify('success', "Bảo lãnh thành công");
+        }, () => { });
+      })
     }
   }
 

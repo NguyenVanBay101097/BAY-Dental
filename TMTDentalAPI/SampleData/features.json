@@ -743,7 +743,7 @@
       },
       {
         "Name": "Người giới thiệu",
-        "Ops": [        
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Catalog.Agent.Read"
@@ -759,6 +759,27 @@
           {
             "Name": "Xóa",
             "Permission": "Catalog.Agent.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Bảo hiểm",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.Insurance.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.Insurance.Read"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.Insurance.Read"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.Insurance.Read"
           }
         ]
       },
@@ -1442,6 +1463,69 @@
     ]
   },
   {
+    "Name": "Khảo sát đánh giá",
+    "Functions": [
+      {
+        "Name": "Danh sách công việc",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Survey.Assignment.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Survey.Assignment.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Survey.Assignment.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Survey.Assignment.Delete"
+          },
+          {
+            "Name": "Hủy khảo sát",
+            "Permission": "Survey.Assignment.DeleteUserInput"
+          }
+        ]
+      },
+      {
+        "Name": "Khảo sát",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Survey.UserInput.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Survey.UserInput.Create"
+          }
+        ]
+      },
+      {
+        "Name": "Câu hỏi khảo sát",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Survey.Question.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Survey.Question.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Survey.Question.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Survey.Question.Delete"
+          }
+        ]
+      }
+    ]
+  }, {
     "Name": "Khảo sát đánh giá",
     "Functions": [
       {

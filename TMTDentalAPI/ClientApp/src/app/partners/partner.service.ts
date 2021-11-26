@@ -200,6 +200,7 @@ export class PartnerInfoPaged {
     memberLevelId: string;
     cardTypeId: string;
     orderState: string;
+    companyId: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -261,7 +262,6 @@ export class PartnerService {
     }
 
     delete(id: string) {
-        debugger
         return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
     }
 

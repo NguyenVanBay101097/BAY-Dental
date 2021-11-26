@@ -90,4 +90,5 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public string Type { get; set; }
     }
+
 }

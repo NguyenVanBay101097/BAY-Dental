@@ -43,7 +43,15 @@ namespace ApplicationCore.Entities
         /// </summary>
         public bool Customer { get; set; }
 
+        /// <summary>
+        /// là người giới thiệu
+        /// </summary>
         public bool IsAgent { get; set; }
+
+        /// <summary>
+        /// là bảo hiểm
+        /// </summary>
+        public bool IsInsurance { get; set; }
 
         /// <summary>
         /// Chi nhánh

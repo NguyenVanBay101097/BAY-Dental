@@ -18,6 +18,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string JournalName { get; set; }
 
+        public string JournalType { get; set; }
+
         public string State { get; set; }
 
         public string Name { get; set; }

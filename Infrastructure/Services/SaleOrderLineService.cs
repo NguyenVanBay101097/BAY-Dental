@@ -1451,6 +1451,14 @@ namespace Infrastructure.Services
             _ComputeInvoiceStatus(new List<SaleOrderLine>() { saleLine });
             ComputeAmount(new List<SaleOrderLine>() { saleLine });
 
+            //gán người giới thiệu nếu có
+            if (saleLine.OrderPartnerId.HasValue)
+            {
+                var partnerObj = GetService<IPartnerService>();
+                var partner = await partnerObj.GetByIdAsync(saleLine.OrderPartnerId.Value);
+                saleLine.AgentId = partner.AgentId;
+            }
+
             await CreateAsync(saleLine);
 
             orderObj._AmountAll(order);

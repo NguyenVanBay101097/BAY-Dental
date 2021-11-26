@@ -381,6 +381,8 @@ namespace Infrastructure.Services
             return phieu.Partner;
         }
 
+        
+
         /// <summary>
         /// hủy phiếu
         /// </summary>
@@ -451,6 +453,7 @@ namespace Infrastructure.Services
 
             return res;
         }
+
 
         public async Task InsertModelsIfNotExists()
         {

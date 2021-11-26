@@ -19,21 +19,23 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <div class="d-flex">
-                                        <div class="w-100 mr-2">
-                                            <kendo-numerictextbox *ngIf="computePrice == 'percentage'" class="form-control" [format]="'n0'" max = '100' [min]="0" [autoCorrect]="true" [(ngModel)] = 'price' name = 'percentage'>
+                                        <form #form="ngForm" class="w-100 mr-2">
+                                            <kendo-numerictextbox *ngIf="computePrice == 'percentage'" class="form-control" [format]="'n0'" max = '100' [min]="0" [autoCorrect]="true" 
+                                            [(ngModel)] = 'percentPrice' name = 'percentage' required>
                                             </kendo-numerictextbox>
-                                            <kendo-numerictextbox *ngIf="computePrice != 'percentage'" class="form-control" [format]="'n0'" [min]="0" [autoCorrect]="true" [(ngModel)] = 'price' name = 'fixed_amount'>
+                                            <kendo-numerictextbox *ngIf="computePrice != 'percentage'" class="form-control" [format]="'n0'" [min]="0" [autoCorrect]="true" 
+                                            [(ngModel)] = 'fixedAmountPrice' name = 'fixed_amount' required>
                                             </kendo-numerictextbox>
-                                        </div>
+                                        </form>
                                         <div>
-                                            <input type="radio" class="btn-check" id = 'radio1' name="radio" value = "percentage" [(ngModel)]="computePrice"
-                                            (ngModelChange)="changePeriod()">
+                                            <input type="radio" class="btn-check" id = 'radio1' name="radio" value = "percentage" 
+                                            [(ngModel)]="computePrice" (change) = "changePrice()">
                                             <label class="btn btn-outline-primary mb-0 mr-2" [ngClass]="{'btn-primary': computePrice == 'percentage'}" 
                                             for="radio1">%</label>
                                         </div>
                                         <div>
-                                            <input type="radio" class="btn-check" id = 'radio2'name = 'radio'value = "fixed_amount" [(ngModel)]="computePrice"
-                                            (ngModelChange)="changePeriod()">
+                                            <input type="radio" class="btn-check" id = 'radio2' name = 'radio' value = "fixed_amount"
+                                             [(ngModel)]="computePrice" (change) = "changePrice()">
                                             <label class="btn btn-outline-primary mb-0 mr-2" [ngClass]="{'btn-primary': computePrice != 'percentage'}" 
                                             for="radio2">VNĐ</label>
                                         </div>
@@ -46,10 +48,9 @@
             </div>
         </div>
     </form>
-</div>
 
 <footer class="modal-footer">
-    <button type="button" class="btn btn-primary" (click)="onApply()" accesskey="s">Áp dụng</button>
+    <button type="button" class="btn btn-primary" (click)="onApply(form)" accesskey="s">Áp dụng</button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
         accesskey="q">Đóng</button>
 </footer>

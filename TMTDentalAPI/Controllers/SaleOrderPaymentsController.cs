@@ -138,7 +138,7 @@ namespace TMTDentalAPI.Controllers
             var irModelCreate = new List<IRModelData>();
             var dateToData = new DateTime(2021, 08, 25);
             var listIrModelData = await irModelObj.SearchQuery(x => (x.Module == "sample" || x.Module == "account")).ToListAsync();// các irmodel cần thiết
-            var entities = await _saleOrderPaymentService.SearchQuery(x => x.Date.Date <= dateToData.Date).Include(x => x.JournalLines).Include(x => x.Order.OrderLines).Include(x => x.Lines).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var entities = await _saleOrderPaymentService.SearchQuery(x => x.Date.Date <= dateToData.Date && x.State == "posted").Include(x => x.JournalLines).Include(x => x.Order.OrderLines).Include(x => x.Lines).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
             var data = new List<SaleOrderPaymentXmlSampleDataRecord>();
             foreach (var entity in entities)
             {
@@ -146,7 +146,7 @@ namespace TMTDentalAPI.Controllers
                 item.Id = $@"sample.sale_order_payment_{entities.IndexOf(entity) + 1}";
                 var irmodelDataOrder = listIrModelData.FirstOrDefault(x => x.ResId == entity.OrderId.ToString());
                 item.OrderId = irmodelDataOrder?.Module + "." + irmodelDataOrder?.Name;
-                item.DateRound = (int)(dateToData - entity.Date).TotalDays;
+                item.DateRound = (int)(dateToData.Date - entity.Date.Date).TotalDays;
                 //add lines
                 foreach (var lineEntity in entity.Lines)
                 {

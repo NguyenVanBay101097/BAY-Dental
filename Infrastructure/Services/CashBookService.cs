@@ -71,7 +71,7 @@ namespace Infrastructure.Services
             return total;
         }
 
-        public async Task<CashBookReport> GetSumary(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string resultSelection, Guid? journalId = null)
+        public async Task<CashBookReport> GetSumary(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string resultSelection, Guid? journalId)
         {
             var amlObj = GetService<IAccountMoveLineService>();
             var cashBookReport = new CashBookReport();
@@ -92,6 +92,8 @@ namespace Infrastructure.Services
             {
                 var query1 = amlObj._QueryGet(dateFrom: dateFrom, state: "posted", companyId: companyId, initBal: true);
                 query1 = query1.Where(x => types.Contains(x.Journal.Type) && x.AccountInternalType != "liquidity");
+                if (journalId.HasValue)
+                    query1 = query1.Where(x => x.JournalId == journalId);
                 var begin = await query1.SumAsync(x => x.Credit - x.Debit);
                 cashBookReport.Begin = begin;
             }
@@ -99,9 +101,39 @@ namespace Infrastructure.Services
             var query = amlObj._QueryGet(dateFrom: dateFrom, dateTo: dateTo, state: "posted", companyId: companyId);
             query = query.Where(x => types.Contains(x.Journal.Type) && x.AccountInternalType != "liquidity");
             if (journalId.HasValue)
-            {
-                query = query.Where(x=> x.JournalId == journalId.Value);
-            }
+                query = query.Where(x => x.JournalId == journalId.Value);
+
+            cashBookReport.TotalThu = await query.SumAsync(x => x.Credit);
+            cashBookReport.TotalChi = await query.SumAsync(x => x.Debit);
+
+            cashBookReport.TotalAmount = cashBookReport.Begin + cashBookReport.TotalThu - cashBookReport.TotalChi;
+            return cashBookReport;
+        }
+
+        public async Task<CashBookReport> GetSumaryDayReport(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string resultSelection, Guid? journalId)
+        {
+            var amlObj = GetService<IAccountMoveLineService>();
+            var cashBookReport = new CashBookReport();
+
+            var types = new string[] { "cash", "bank" };
+            if (resultSelection == "cash")
+                types = new string[] { "cash" };
+            else if (resultSelection == "bank")
+                types = new string[] { "bank" };
+
+            if (dateFrom.HasValue)
+                dateFrom = dateFrom.Value.AbsoluteBeginOfDate();
+
+            if (dateTo.HasValue)
+                dateTo = dateTo.Value.AbsoluteEndOfDate();
+
+            var query = amlObj._QueryGet(dateFrom: dateFrom, dateTo: dateTo, state: "posted", companyId: companyId);
+            query = query.Where(x => types.Contains(x.Journal.Type) && x.AccountInternalType != "liquidity");
+
+            if (journalId.HasValue)
+                query = query.Where(x => x.JournalId == journalId);
+
+            cashBookReport.Begin = await query.SumAsync(x => x.Credit - x.Debit);
             cashBookReport.TotalThu = await query.SumAsync(x => x.Credit);
             cashBookReport.TotalChi = await query.SumAsync(x => x.Debit);
 
@@ -150,7 +182,7 @@ namespace Infrastructure.Services
             return SumaryCashBook;
         }
 
-        public async Task<PagedResult2<CashBookReportDetail>> GetDetails(DateTime? dateFrom, DateTime? dateTo, int limit , int offset, Guid? companyId,string search, string resultSelection, Guid? journalId)
+        public async Task<PagedResult2<CashBookReportDetail>> GetDetails(DateTime? dateFrom, DateTime? dateTo, int limit, int offset, Guid? companyId, string search, string resultSelection, Guid? journalId)
         {
             var amlObj = GetService<IAccountMoveLineService>();
 
@@ -171,16 +203,17 @@ namespace Infrastructure.Services
 
             if (!string.IsNullOrEmpty(search))
                 query = query.Where(x => x.Move.InvoiceOrigin.Contains(search));
+
             if (journalId.HasValue)
-            {
-                query = query.Where(x=> x.JournalId == journalId.Value);
-            }
+                query = query.Where(x => x.JournalId == journalId);
+
             var totalItems = await query.CountAsync();
 
+            query = query.OrderByDescending(x => x.Date);
             if (limit > 0)
                 query = query.Skip(offset).Take(limit);
 
-            var items = await query.OrderByDescending(x => x.Date).Select(x => new CashBookReportDetail
+            var items = await query.Select(x => new CashBookReportDetail
             {
                 AccountName = x.Account.Name,
                 Amount = x.Credit - x.Debit,
@@ -288,7 +321,7 @@ namespace Infrastructure.Services
             else if (resultSelection == "advance")
                 types = new string[] { "advance" };
             else if (resultSelection == "all")
-                types = new string[] { "cash", "bank", "debt", "advance" };
+                types = new string[] { "cash", "bank", "debt", "advance", "insurance" };
 
             if (dateFrom.HasValue)
                 dateFrom = dateFrom.Value.AbsoluteBeginOfDate();
@@ -394,7 +427,7 @@ namespace Infrastructure.Services
             return res;
         }
 
-       
+
 
     }
 }

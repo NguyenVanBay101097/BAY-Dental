@@ -42,6 +42,7 @@ namespace Infrastructure.Services
             await groupObj.InsertSettingGroupIfNotExist("tcare.group_tcare", "TCare");
             await groupObj.InsertSettingGroupIfNotExist("survey.group_survey", "Group Survey");
             await groupObj.InsertSettingGroupIfNotExist("sms.group_sms", "Group Sms");
+            await groupObj.InsertSettingGroupIfNotExist("insurance.group_insurance", "Group Insurance");
 
             //var irValueObj = DependencyResolver.Current.GetService<IRValuesService>();
             var classified = await _GetClassifiedFields<T>();
@@ -114,6 +115,9 @@ namespace Infrastructure.Services
                     var value = Convert.ToBoolean(self.GetType().GetProperty(field).GetValue(self, null));
                     var partnerRule = await modelDataObj.GetRef<IRRule>("base.res_partner_rule");
                     self.GetType().GetProperty(field).SetValue(self, !partnerRule.Active);
+
+                    var agentRule = await modelDataObj.GetRef<IRRule>("base.agent_comp_rule");
+                    self.GetType().GetProperty(field).SetValue(self, !agentRule.Active);
                 }
             }
         }
@@ -477,6 +481,9 @@ namespace Infrastructure.Services
                     var productRule = await modelDataObj.GetRef<IRRule>("product.product_comp_rule");
                     productRule.Active = !value;
                     await ruleObj.UpdateAsync(productRule);
+
+                    //xử lý clear cache
+                    _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-irmodeldata-product.product_comp_rule");
                 }
 
                 if (field == "CompanySharePartner")
@@ -484,15 +491,20 @@ namespace Infrastructure.Services
                     var rules = new List<IRRule>();
                     var value = Convert.ToBoolean(self.GetType().GetProperty(field).GetValue(self, null));
                     
-                    var partnerRule = await modelDataObj.GetRef<IRRule>("base.res_partner_rule");
+                    var partnerRule = await ruleObj.GetByIdAsync((await modelDataObj.GetRef<IRRule>("base.res_partner_rule")).Id);
                     partnerRule.Active = !value;
                     rules.Add(partnerRule);
 
-                    var agentRule = await modelDataObj.GetRef<IRRule>("base.agent_comp_rule");
+                    var agentRule = await ruleObj.GetByIdAsync((await modelDataObj.GetRef<IRRule>("base.agent_comp_rule")).Id);
                     agentRule.Active = !value;
                     rules.Add(agentRule);
 
+
                     await ruleObj.UpdateAsync(rules);
+
+                    //xử lý clear cache
+                    _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-irmodeldata-base.res_partner_rule");
+                    _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-irmodeldata-base.agent_comp_rule");
                 }
             }
         }

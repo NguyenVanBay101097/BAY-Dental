@@ -76,9 +76,12 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.OrderLines, x => x.Ignore())
                 .ForMember(x => x.Id, x => x.Ignore());
 
-            CreateMap<SaleOrderLine, SaleOrderLineXmlSampleDataRecord>();
+            CreateMap<SaleOrderLine, SaleOrderLineXmlSampleDataRecord>()
+                .ForMember(x=> x.SaleOrderLineToothRels, x=> x.Ignore());
             CreateMap<SaleOrderLineXmlSampleDataRecord, SaleOrderLine>()
                 .ForMember(x => x.ProductId, x => x.Ignore())
+                .ForMember(x => x.SaleOrderLineToothRels, x => x.Ignore())
+                .ForMember(x => x.ToothCategoryId, x => x.Ignore())
                 .ForMember(x => x.Id, x => x.Ignore());
 
             CreateMap<SaleOrderPayment, SaleOrderPaymentXmlSampleDataRecord>()

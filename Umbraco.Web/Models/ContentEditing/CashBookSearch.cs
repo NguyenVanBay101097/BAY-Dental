@@ -18,14 +18,14 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? CompanyId { get; set; }
 
+        public Guid? JournalId { get; set; }
+
         /// <summary>
         /// bank: ngan hang
         /// cash: tien mat
         /// cash_bank: tong quy
         /// </summary>
         public string ResultSelection { get; set; }
-
-        public Guid? JournalId { get; set; }
     }
 
     public class CashBookDetailFilter
@@ -54,13 +54,13 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string ResultSelection { get; set; }
 
+        public Guid? JournalId { get; set; }
+
         public string Search { get; set; }
 
         public int Limit { get; set; }
 
         public int Offset { get; set; }
-
-        public Guid? JournalId { get; set; }
     }
 
     public class DataInvoiceFilter

@@ -81,5 +81,7 @@ namespace Infrastructure.Services
 
         Task<IEnumerable<Partner>> GetPublicPartners(int limit, int offset, string search);
 
+        Task<PartnerImportResponse> CustomerImportUpdate(string fileBase64);
+
     }
 }

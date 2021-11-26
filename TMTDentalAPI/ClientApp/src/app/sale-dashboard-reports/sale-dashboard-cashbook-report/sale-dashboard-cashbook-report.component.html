@@ -1,12 +1,15 @@
 <h4 class="ml-3 my-2 title-header">Sổ quỹ</h4>
 
 <div style="position: relative; height:320px;">
-    <canvas baseChart
+    <canvas baseChart *ngIf="cashBooks.length"
       [labels]="barChartLabels"
       [datasets]="barChartData"
       [options]="barChartOptions"
       [type]="'bar'">
     </canvas>
+    <div class="d-flex justify-content-center align-items-center" style="height: 100%;" *ngIf="!cashBooks.length">
+        <img src="./../../../assets/icons/NoData.svg" class="img-nodata ">
+    </div>
   </div>
 
 <div class="container-fluid pb-4 bg-white">
@@ -33,6 +36,10 @@
             <div class="my-2 d-flex align-items-center justify-content-between">
                 <span class="title-detail">Thu công nợ khách hàng</span>
                 <span> {{thuChiReportData?.debtIncomeTotal || 0 | number}}</span>
+            </div>
+            <div class="my-2 d-flex align-items-center justify-content-between">
+                <span class="title-detail">Thu công nợ bảo hiểm</span>
+                <span> {{thuChiReportData?.insuranceIncomeTotal || 0 | number}}</span>
             </div>
             <div class="my-2 d-flex align-items-center justify-content-between">
                 <span class="title-detail">Nhà cung cấp hoàn tiền</span>

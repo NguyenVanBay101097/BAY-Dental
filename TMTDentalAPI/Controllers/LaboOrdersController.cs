@@ -275,7 +275,7 @@ namespace TMTDentalAPI.Controllers
             var irModelCreate = new List<IRModelData>();
             var dateToData = new DateTime(2021, 08, 25);
             var listIrModelData = await irModelObj.SearchQuery(x => (x.Module == "sample" || x.Module == "base")).ToListAsync();// các irmodel cần thiết
-            var entities = await _laboOrderService.SearchQuery(x => x.DateCreated <= dateToData).Include(x => x.LaboOrderToothRel).Include(x => x.LaboOrderProductRel).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var entities = await _laboOrderService.SearchQuery(x => x.DateOrder.Date <= dateToData.Date).Include(x => x.LaboOrderToothRel).Include(x => x.LaboOrderProductRel).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
             var data = new List<LaboOrderXmlSampleDataRecord>();
             foreach (var entity in entities)
             {
@@ -288,7 +288,7 @@ namespace TMTDentalAPI.Controllers
                 var laboBridgeModelData = listIrModelData.FirstOrDefault(x => x.ResId == entity.LaboBridgeId.ToString());
                 var laboFinishLineModelData = listIrModelData.FirstOrDefault(x => x.ResId == entity.LaboFinishLineId.ToString());
                 item.Id = $@"sample.labo_order_{entities.IndexOf(entity) + 1}";
-                item.DateRound = (int)(dateToData - entity.DateOrder).TotalDays;
+                item.DateRound = (int)(dateToData.Date - entity.DateOrder.Date).TotalDays;
                 item.PartnerId = partnerModelData == null ? "" : partnerModelData?.Module + "." + partnerModelData?.Name;
                 item.ProductId = productModelData == null ? "" : productModelData?.Module + "." + productModelData?.Name;
                 item.SaleOrderLineId = saleLineModelData == null ? "" : saleLineModelData?.Module + "." + saleLineModelData?.Name;

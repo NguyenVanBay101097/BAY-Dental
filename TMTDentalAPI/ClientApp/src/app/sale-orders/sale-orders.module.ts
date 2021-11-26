@@ -38,6 +38,7 @@ import { SaleOrderPrintPopupComponent } from './sale-order-print-popup/sale-orde
 import { SaleOrderImagesLibraryPopupComponent } from './sale-order-images-library-popup/sale-order-images-library-popup.component';
 import { SaleOrderImageComponent } from './sale-order-image/sale-order-image.component';
 import { SaleOrderServiceListComponent } from './sale-order-service-list/sale-order-service-list.component';
+import { SaleOrderInsurancePaymentDialogComponent } from './sale-order-insurance-payment-dialog/sale-order-insurance-payment-dialog.component';
 import { SaleOrderPaymentAdvancedDialogComponent } from './sale-order-payment-advanced-dialog/sale-order-payment-advanced-dialog.component';
 
 import { ConfirmPaymentDialogComponent } from './confirm-payment-dialog/confirm-payment-dialog.component';
@@ -74,6 +75,7 @@ import { AutonumericModule } from '@angularfy/autonumeric';
     SaleOrderImagesLibraryPopupComponent,
     SaleOrderImageComponent,
     SaleOrderServiceListComponent,
+    SaleOrderInsurancePaymentDialogComponent,
     SaleOrderPaymentAdvancedDialogComponent,
     ConfirmPaymentDialogComponent,
 
@@ -108,7 +110,8 @@ import { AutonumericModule } from '@angularfy/autonumeric';
     SaleOrderPromotionDialogComponent,
     SaleOrderLinePromotionDialogComponent,
     SaleOrderPrintPopupComponent,
-    SaleOrderImagesLibraryPopupComponent
+    SaleOrderImagesLibraryPopupComponent,
+    SaleOrderInsurancePaymentDialogComponent
   ]
 })
 export class SaleOrdersModule { }

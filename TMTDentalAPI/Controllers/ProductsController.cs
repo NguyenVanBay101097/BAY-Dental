@@ -36,6 +36,10 @@ namespace TMTDentalAPI.Controllers
         private readonly IProductStepService _productStepService;
         private readonly IUoMService _uomService;
         private readonly IUoMCategoryService _uomCategService;
+        private readonly IIRPropertyService _propertyService;
+        private readonly IProductPriceHistoryService _productPriceHistoryService;
+        private readonly IIRSequenceService _sequenceService;
+
 
         public ProductsController(IProductService productService, IMapper mapper,
             IApplicationRoleFunctionService roleFunctionService,
@@ -43,7 +47,10 @@ namespace TMTDentalAPI.Controllers
             IUnitOfWorkAsync unitOfWork, IIRModelAccessService modelAccessService,
             IIRModelDataService modelDataService,
             IProductStepService productStepService, IUoMService uomService,
-            IUoMCategoryService uomCategService)
+            IUoMCategoryService uomCategService,
+            IIRPropertyService propertyService,
+            IProductPriceHistoryService productPriceHistoryService,
+            IIRSequenceService sequenceService)
         {
             _productService = productService;
             _mapper = mapper;
@@ -55,6 +62,9 @@ namespace TMTDentalAPI.Controllers
             _productStepService = productStepService;
             _uomService = uomService;
             _uomCategService = uomCategService;
+            _propertyService = propertyService;
+            _productPriceHistoryService = productPriceHistoryService;
+            _sequenceService = sequenceService;
         }
 
         [HttpGet]
@@ -133,8 +143,7 @@ namespace TMTDentalAPI.Controllers
             }
             catch
             {
-                product.Active = false;
-                await _productService.UpdateAsync(product);
+                throw new Exception("Không thể xóa do có sự ràng buộc dữ liệu");
             }
 
             return NoContent();
@@ -301,7 +310,6 @@ namespace TMTDentalAPI.Controllers
             var fileData = Convert.FromBase64String(val.FileBase64);
             var data = new List<ProductServiceImportExcelRow>();
             var categDict = new Dictionary<string, ProductCategory>();
-            var standardPriceDict = new Dictionary<string, decimal?>();
             var errors = new List<string>();
 
             try
@@ -370,18 +378,9 @@ namespace TMTDentalAPI.Controllers
                 }
             }
 
-            var standardPrices = data.Select(x => new
-            {
-                x.Name,
-                x.StandardPrice
-            }).ToList();
-
-            foreach (var standardPrice in standardPrices)
-            {
-                standardPriceDict.Add(standardPrice.Name, standardPrice?.StandardPrice);
-            }
+        
             var productDict = new Dictionary<string, Product>();
-
+            var standardPriceDict = new Dictionary<Product, decimal>();
             var uom = await _uomService.DefaultUOM();
             var productsCreate = new List<Product>();
 
@@ -397,7 +396,7 @@ namespace TMTDentalAPI.Controllers
                 product.UOMId = uom.Id;
                 product.UOMPOId = uom.Id;
                 product.Name = item.Name;
-                product.DefaultCode = item.DefaultCode;
+                product.DefaultCode = !string.IsNullOrEmpty(item.DefaultCode) ? item.DefaultCode : (await _sequenceService.NextByCode("product_seq"));
                 product.SaleOK = true;
                 product.PurchaseOK = false;
                 product.Type = "service";
@@ -418,19 +417,23 @@ namespace TMTDentalAPI.Controllers
                     }
                 }
 
+                standardPriceDict.Add(product, item.StandardPrice ?? 0);
+                product.ComputeUoMRels();
                 productsCreate.Add(product);
             }
 
             try
             {
                 await _unitOfWork.BeginTransactionAsync();
-                _productService._ComputeUoMRels(productsCreate);
                 var products = await _productService.CreateAsync(productsCreate);
 
-                foreach (var product in products)
+                _propertyService.set_multi("standard_price", "product.product", standardPriceDict.ToDictionary(x => string.Format("product.product,{0}", x.Key.Id), x => (object)x.Value), force_company: CompanyId);
+                await _productPriceHistoryService.CreateAsync(standardPriceDict.Select(x => new ProductPriceHistory
                 {
-                    _productService.SetStandardPrice(product, Convert.ToDouble(standardPriceDict[product.Name]), product.CompanyId);
-                }
+                    ProductId = x.Key.Id,
+                    Cost = (double)x.Value,
+                    CompanyId = CompanyId
+                }));
 
                 _unitOfWork.Commit();
             }
@@ -461,9 +464,9 @@ namespace TMTDentalAPI.Controllers
                         for (var row = 2; row <= worksheet.Dimension.Rows; row++)
                         {
                             var errs = new List<string>();
-                            var name = Convert.ToString(worksheet.Cells[row, 1].Value);
-                            var categName = Convert.ToString(worksheet.Cells[row, 3].Value);
-                            var serviceCode = Convert.ToString(worksheet.Cells[row, 4].Value);
+                            var serviceCode = Convert.ToString(worksheet.Cells[row, 1].Value);
+                            var categName = Convert.ToString(worksheet.Cells[row, 4].Value);
+                            var name = Convert.ToString(worksheet.Cells[row, 2].Value);
 
                             if (string.IsNullOrEmpty(serviceCode))
                                 errs.Add("Mã dịch vụ là bắt buộc");
@@ -483,12 +486,14 @@ namespace TMTDentalAPI.Controllers
                             var item = new ProductServiceImportExcelRow
                             {
                                 Name = name,
-                                IsLabo = Convert.ToBoolean(worksheet.Cells[row, 2].Value),
+                                IsLabo = Convert.ToBoolean(worksheet.Cells[row, 3].Value),
                                 CategName = categName,
                                 DefaultCode = serviceCode,
                                 ListPrice = Convert.ToDecimal(worksheet.Cells[row, 5].Value),
-                                Steps = Convert.ToString(worksheet.Cells[row, 6].Value),
-                                LaboPrice = Convert.ToDecimal(worksheet.Cells[row, 7].Value),
+                                StandardPrice = Convert.ToDecimal(worksheet.Cells[row, 6].Value),
+                                Steps = Convert.ToString(worksheet.Cells[row, 7].Value),
+                                LaboPrice = Convert.ToDecimal(worksheet.Cells[row, 8].Value),
+                                Firm = Convert.ToString(worksheet.Cells[row, 9].Value),
                             };
                             data.Add(item);
                         }
@@ -520,14 +525,18 @@ namespace TMTDentalAPI.Controllers
                 }
             }
 
-            var productCodes = data.Select(x => x.DefaultCode).Distinct().ToList();
-            var productsToUpdate = await _productService.SearchQuery(x => productCodes.Contains(x.DefaultCode))
-                .Include(x => x.Steps)
-                .ToListAsync();
-
-            var productDict = productsToUpdate.ToDictionary(x => x.DefaultCode, x => x);
-
             var productsUpdate = new List<Product>();
+            var productCodes = data.Select(x => x.DefaultCode).Distinct().ToList();
+            var productsToUpdate = await _productService.SearchQuery(x => x.Type2 == "service" && productCodes.Contains(x.DefaultCode))
+                .Include(x => x.Steps)
+                .Include(x => x.ProductUoMRels)
+                .ToListAsync();
+            var productDict = productsToUpdate.GroupBy(x => x.DefaultCode).ToDictionary(x => x.Key, x => x.FirstOrDefault());
+            var notFoundProductCodes = productCodes.Where(x => !productDict.ContainsKey(x)).ToList();
+            if (notFoundProductCodes.Any())
+                return Ok(new { success = false, errors = new List<string>() { $"Mã dịch vụ không tồn tại: {string.Join(", ", notFoundProductCodes)}" } });
+
+            var standardPriceDict = new Dictionary<Product, decimal>();
             foreach (var item in data)
             {
                 if (!productDict.ContainsKey(item.DefaultCode))
@@ -542,8 +551,7 @@ namespace TMTDentalAPI.Controllers
                 product.CategId = categDict[item.CategName].Id;
                 product.ListPrice = item.ListPrice ?? 0;
                 product.LaboPrice = item.LaboPrice ?? 0;
-
-                productsUpdate.Add(product);
+               
                 product.Steps.Clear();
                 if (!string.IsNullOrWhiteSpace(item.Steps))
                 {
@@ -560,13 +568,25 @@ namespace TMTDentalAPI.Controllers
                         });
                     }
                 }
+
+                standardPriceDict.Add(product, item.StandardPrice ?? 0);
+
+                productsUpdate.Add(product);
             }
 
             try
             {
                 await _unitOfWork.BeginTransactionAsync();
-                _productService._ComputeUoMRels(productsUpdate);
                 await _productService.UpdateAsync(productsUpdate);
+
+                _propertyService.set_multi("standard_price", "product.product", standardPriceDict.ToDictionary(x => string.Format("product.product,{0}", x.Key.Id), x => (object)x.Value), force_company: CompanyId);
+                await _productPriceHistoryService.CreateAsync(standardPriceDict.Select(x => new ProductPriceHistory
+                {
+                    ProductId = x.Key.Id,
+                    Cost = (double)x.Value,
+                    CompanyId = CompanyId
+                }));
+
                 _unitOfWork.Commit();
             }
             catch (Exception e)
@@ -634,8 +654,8 @@ namespace TMTDentalAPI.Controllers
                                 ListPrice = Convert.ToDecimal(worksheet.Cells[row, 4].Value),
                                 UoM = uomName,
                                 MinInventory = minInventory != null ? Convert.ToDecimal(minInventory) : (decimal?)minInventory,
-                                Origin = origin !=null ? Convert.ToString(origin) : null,
-                                Expiry = expiry !=null ? Convert.ToDecimal(expiry) : (decimal?)expiry
+                                Origin = origin != null ? Convert.ToString(origin) : null,
+                                Expiry = expiry != null ? Convert.ToDecimal(expiry) : (decimal?)expiry
                             };
                             data.Add(item);
                         }
@@ -705,16 +725,15 @@ namespace TMTDentalAPI.Controllers
                 pd.MinInventory = item.MinInventory;
                 pd.Origin = item.Origin;
                 pd.Expiry = item.Expiry;
+
+                pd.ComputeUoMRels();
                 vals.Add(pd);
             }
 
             try
             {
                 await _unitOfWork.BeginTransactionAsync();
-                _productService._ComputeUoMRels(vals);
                 await _productService.CreateAsync(vals);
-
-
                 _unitOfWork.Commit();
             }
             catch (Exception e)
@@ -784,7 +803,7 @@ namespace TMTDentalAPI.Controllers
                                 ListPrice = Convert.ToDecimal(worksheet.Cells[row, 4].Value),
                                 UoM = uomName,
                                 DefaultCode = defaultCode,
-                                MinInventory = minInventory !=null ? Convert.ToDecimal(minInventory) : (decimal?)minInventory,
+                                MinInventory = minInventory != null ? Convert.ToDecimal(minInventory) : (decimal?)minInventory,
                                 Origin = origin != null ? Convert.ToString(origin) : null,
                                 Expiry = expiry != null ? Convert.ToDecimal(expiry) : (decimal?)expiry
 
@@ -840,8 +859,14 @@ namespace TMTDentalAPI.Controllers
 
             var productsUpdate = new List<Product>();
             var productCodes = data.Select(x => x.DefaultCode).Distinct().ToList();
-            var productsToUpdate = await _productService.SearchQuery(x => productCodes.Contains(x.DefaultCode)).Include(x=>x.ProductUoMRels).ToListAsync();
-            var productDict = productsToUpdate.ToDictionary(x => x.DefaultCode, x => x);
+            var productsToUpdate = await _productService.SearchQuery(x => x.Type2 == "medicine" && productCodes.Contains(x.DefaultCode))
+                .Include(x => x.ProductUoMRels)
+                .ToListAsync();
+            var productDict = productsToUpdate.GroupBy(x => x.DefaultCode).ToDictionary(x => x.Key, x => x.FirstOrDefault());
+            var notFoundProductCodes = productCodes.Where(x => !productDict.ContainsKey(x)).ToList();
+            if (notFoundProductCodes.Any())
+                return Ok(new { success = false, errors = new List<string>() { $"Mã thuốc không tồn tại: {string.Join(", ", notFoundProductCodes)}" } });
+
             foreach (var item in data)
             {
                 if (!productDict.ContainsKey(item.DefaultCode))
@@ -855,13 +880,14 @@ namespace TMTDentalAPI.Controllers
                 product.ListPrice = item.ListPrice;
                 product.Origin = item.Origin;
                 product.Expiry = item.Expiry;
+
+                product.ComputeUoMRels();
                 productsUpdate.Add(product);
             }
 
             try
             {
                 await _unitOfWork.BeginTransactionAsync();
-                _productService._ComputeUoMRels(productsUpdate);
                 await _productService.UpdateAsync(productsUpdate);
                 _unitOfWork.Commit();
             }
@@ -936,9 +962,9 @@ namespace TMTDentalAPI.Controllers
                                 PurchasePrice = Convert.ToDecimal(worksheet.Cells[row, 5].Value),
                                 UOM = uomName,
                                 UOMPO = uomPOName,
-                                MinInventory = minInventory !=null ? Convert.ToDecimal(minInventory) : (decimal?)minInventory,
-                                Origin = origin !=null ? Convert.ToString(origin) : null,
-                                Expiry = expiry !=null ? Convert.ToDecimal(expiry) : (decimal?)expiry
+                                MinInventory = minInventory != null ? Convert.ToDecimal(minInventory) : (decimal?)minInventory,
+                                Origin = origin != null ? Convert.ToString(origin) : null,
+                                Expiry = expiry != null ? Convert.ToDecimal(expiry) : (decimal?)expiry
                             };
                             data.Add(item);
                         }
@@ -996,17 +1022,14 @@ namespace TMTDentalAPI.Controllers
                 product.MinInventory = item.MinInventory ?? 0;
                 product.Origin = item.Origin;
                 product.Expiry = item.Expiry;
-                product.ProductUoMRels.Add(new ProductUoMRel { UoMId = uom.Id });
-                if (uom.Id != uomPO.Id)
-                    product.ProductUoMRels.Add(new ProductUoMRel { UoMId = uomPO.Id });
 
+                product.ComputeUoMRels();
                 productsCreate.Add(product);
             }
 
             try
             {
                 await _unitOfWork.BeginTransactionAsync();
-                _productService._ComputeUoMRels(productsCreate);
                 await _productService.CreateAsync(productsCreate);
                 _unitOfWork.Commit();
             }
@@ -1123,7 +1146,7 @@ namespace TMTDentalAPI.Controllers
 
             var productsUpdate = new List<Product>();
             var productCodes = data.Select(x => x.DefaultCode).Distinct().ToList();
-            var productsToUpdate = await _productService.SearchQuery(x => productCodes.Contains(x.DefaultCode))
+            var productsToUpdate = await _productService.SearchQuery(x => x.Type2 == "product" && productCodes.Contains(x.DefaultCode))
                 .Include(x => x.ProductUoMRels)
                 .ToListAsync();
             var productDict = productsToUpdate.GroupBy(x => x.DefaultCode).ToDictionary(x => x.Key, x => x.FirstOrDefault());
@@ -1146,18 +1169,14 @@ namespace TMTDentalAPI.Controllers
                 product.MinInventory = item.MinInventory ?? 0;
                 product.Origin = item.Origin;
                 product.Expiry = item.Expiry;
-                product.ProductUoMRels.Clear();
-                product.ProductUoMRels.Add(new ProductUoMRel { UoMId = uomDict[item.UOM].Id });
-                if (uomDict[item.UOM].Id != uomDict[item.UOMPO].Id)
-                    product.ProductUoMRels.Add(new ProductUoMRel { UoMId = uomDict[item.UOMPO].Id });
 
+                product.ComputeUoMRels();
                 productsUpdate.Add(product);
             }
 
             try
             {
                 await _unitOfWork.BeginTransactionAsync();
-                _productService._ComputeUoMRels(productsUpdate);
                 await _productService.UpdateAsync(productsUpdate);
                 _unitOfWork.Commit();
             }
@@ -1232,18 +1251,14 @@ namespace TMTDentalAPI.Controllers
                 pd.UOMId = uom.Id;
                 pd.UOMPOId = uom.Id;
                 pd.Name = item.Name;
-                pd.NameNoSign = StringUtils.RemoveSignVietnameseV2(item.Name);
                 pd.SaleOK = false;
                 pd.PurchaseOK = false;
                 pd.KeToaOK = false;
                 pd.Type = "consu";
                 pd.Type2 = "labo";
-                pd.ListPrice = 0;
-                pd.PurchasePrice = 0;
                 vals.Add(pd);
             }
 
-            _productService._ComputeUoMRels(vals);
             await _productService.CreateAsync(vals);
 
             _unitOfWork.Commit();
@@ -1314,18 +1329,14 @@ namespace TMTDentalAPI.Controllers
                 pd.UOMId = uom.Id;
                 pd.UOMPOId = uom.Id;
                 pd.Name = item.Name;
-                pd.NameNoSign = StringUtils.RemoveSignVietnameseV2(item.Name);
                 pd.SaleOK = false;
                 pd.PurchaseOK = false;
                 pd.KeToaOK = false;
                 pd.Type = "consu";
                 pd.Type2 = "labo_attach";
-                pd.ListPrice = 0;
-                pd.PurchasePrice = 0;
                 vals.Add(pd);
             }
 
-            _productService._ComputeUoMRels(vals);
             await _productService.CreateAsync(vals);
 
             _unitOfWork.Commit();

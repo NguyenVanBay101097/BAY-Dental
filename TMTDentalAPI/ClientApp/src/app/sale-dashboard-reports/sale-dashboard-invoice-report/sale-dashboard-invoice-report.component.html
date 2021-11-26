@@ -1,11 +1,14 @@
 <h4 class="ml-3 my-2 title-header">Doanh thu</h4>
 <div style="position: relative; height:320px;">
-    <canvas baseChart
+    <canvas baseChart *ngIf="revenues.length || cashBooks.length"
       [labels]="barChartLabels"
       [datasets]="barChartData"
       [options]="barChartOptions"
       [type]="'bar'">
     </canvas>
+    <div class="d-flex justify-content-center align-items-center" style="height: 100%;" *ngIf="!revenues.length && !cashBooks.length">
+        <img src="./../../../assets/icons/NoData.svg" class="img-nodata ">
+    </div>
   </div>
 
 <div class="container-fluid pb-4">
@@ -27,6 +30,10 @@
                 <span class="title-detail">Thanh toán dịch vụ bằng ghi công nợ</span>
                 <span class="fw-bold"> {{(revenueActualReportData?.debtPaymentTotal || 0) | number}}</span>
             </div>
+            <div class="my-2 d-flex align-items-center justify-content-between">
+                <span class="title-detail">Thanh toán dịch vụ bằng bảo hiểm</span>
+                <span class="fw-bold"> {{(revenueActualReportData?.debtInsuranceTotal || 0) | number}}</span>
+            </div>
         </div>
         <div class="col">
             <div class="my-2 d-flex align-items-center justify-content-between">
@@ -44,6 +51,10 @@
             <div class="my-2 d-flex align-items-center justify-content-between">
                 <span class="title-detail">Thu công nợ khách hàng</span>
                 <span class="fw-bold">{{(revenueActualReportData?.debtIncomeTotal || 0) | number}}</span>
+            </div>
+            <div class="my-2 d-flex align-items-center justify-content-between">
+                <span class="title-detail">Thu công nợ bảo hiểm</span>
+                <span class="fw-bold">{{(revenueActualReportData?.insuranceIncomeTotal || 0) | number}}</span>
             </div>
             <div class="my-2 d-flex align-items-center justify-content-between">
                 <span class="title-detail">Thu ngoài</span>

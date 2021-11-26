@@ -65,5 +65,8 @@ namespace ApplicationCore.Entities
 
         public Guid? HistoryLineId { get; set; }
         public SaleOrderPaymentHistoryLine HistoryLine { get; set; }
+
+        public Guid? CompanyId { get; set; }
+        public Company Company { get; set; }
     }
 }
