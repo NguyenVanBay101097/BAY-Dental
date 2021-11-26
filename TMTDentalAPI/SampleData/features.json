@@ -771,15 +771,15 @@
           },
           {
             "Name": "Thêm",
-            "Permission": "Catalog.Insurance.Read"
+            "Permission": "Catalog.Insurance.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "Catalog.Insurance.Read"
+            "Permission": "Catalog.Insurance.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "Catalog.Insurance.Read"
+            "Permission": "Catalog.Insurance.Delete"
           }
         ]
       },
