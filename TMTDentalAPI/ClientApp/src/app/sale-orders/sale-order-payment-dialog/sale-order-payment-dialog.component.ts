@@ -14,7 +14,6 @@ import { PartnerService } from "src/app/partners/partner.service";
 import { PrintService } from "src/app/shared/services/print.service";
 import { AppSharedShowErrorService } from "src/app/shared/shared-show-error.service";
 import { ConfirmPaymentDialogComponent } from "../confirm-payment-dialog/confirm-payment-dialog.component";
-import { SaleOrderPaymentAdvancedDialogComponent } from "../sale-order-payment-advanced-dialog/sale-order-payment-advanced-dialog.component";
 
 @Component({
   selector: "app-sale-order-payment-dialog",
@@ -94,21 +93,12 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
       state: "draft",
       isDebtPayment: false,
       debtJournalId: null,
-      debtAmount: [0],
+      debtAmount: 0,
       debtNote: null,
       partnerId: this.partner.id
     });
-
-    this.paymentFC.isDebtPayment.valueChanges.subscribe(checked => {
-      if (checked) {
-        const validators = [ Validators.required, Validators.min(1) ];
-        this.paymentFC.debtAmount.setValidators(validators);
-        this.paymentFC.debtAmount.setValue(this.partnerDebt);
-      } else {
-        this.paymentFC.debtAmount.clearValidators();
-      }
-      this.paymentFC.debtAmount.updateValueAndValidity();
-    });
+    
+    
 
     setTimeout(() => {
       if (this.defaultVal) {
@@ -130,6 +120,18 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
     // advance payment
     this.getJounals();
+  }
+
+  changeDebtPayment(checked) {
+    if (checked) {
+      const validators = [ Validators.required, Validators.min(1) ];
+      this.paymentFC.debtAmount.setValidators(validators);
+      this.paymentFC.debtAmount.setValue(this.partnerDebt);
+    } else {
+      this.paymentFC.debtAmount.clearValidators();
+      this.debtJournalSelected = null;
+    }
+    this.paymentFC.debtAmount.updateValueAndValidity();
   }
 
   getJounals() {
@@ -175,7 +177,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   }
 
   get debtAmount() {
-    return this.paymentForm.get('debtAmount').value;
+    return +this.paymentForm.get('debtAmount').value;
   }
 
   getPaymentFormControl(key) {
@@ -183,13 +185,15 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   }
 
   filteredJournalsByType(type){
-    return this.filteredJournals.filter(x=> type.includes(x.type));
+    return JSON.parse(JSON.stringify(this.filteredJournals.filter(x=> type.includes(x.type))));
   }
 
   getAmountTotalPayment() {
     let amount = this.amount | 0;
     let debtAmount = this.debtAmount | 0;
-    return amount + debtAmount;
+    if (this.paymentFC.isDebtPayment.value)
+      return amount + debtAmount;
+    return amount;
   }
 
   getValueForm(key) {
@@ -213,7 +217,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     return totalAmountPaymentLines == this.amount;
   }
 
-  save() {
+  save(isPrint?: boolean) {
     this.submitted = true;
     if (!this.paymentForm.valid) {
       return;
@@ -222,23 +226,29 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     if (val == null) return;
     this.paymentService.paymentSaleOrderAndDebt(val).subscribe((result: any) => {
         this.activeModal.close();
-        let modalRef = this.modalService.open(ConfirmPaymentDialogComponent, {
-          size: 'sm',
-          windowClass: "o_technical_modal",
-          keyboard: false,
-          backdrop: "static",
-        });
-        modalRef.componentInstance.title = "Thanh toán thành công";
-        modalRef.componentInstance.name = this.partner?.name;
-        modalRef.componentInstance.amountPayment = this.paymentFC.isDebtPayment.value ? this.getAmountTotalPayment() : this.paymentForm.get('amount').value;
-        modalRef.result.then(
-          res => {
-            this.saleOrderPaymentService.getPrint(result.id).subscribe((result: any) => {
-              this.printService.printHtml(result.html);
-            });
-          },
-          () => { }
-        );
+        if (isPrint) {
+          let modalRef = this.modalService.open(ConfirmPaymentDialogComponent, {
+            size: 'sm',
+            windowClass: "o_technical_modal",
+            keyboard: false,
+            backdrop: "static",
+          });
+          modalRef.componentInstance.title = "Thanh toán thành công";
+          modalRef.componentInstance.name = this.partner?.name;
+          modalRef.componentInstance.amountPayment = this.paymentFC.isDebtPayment.value ? this.getAmountTotalPayment() : this.paymentForm.get('amount').value;
+          modalRef.result.then(
+            res => {
+              this.saleOrderPaymentService.getPrint(result.id).subscribe((result: any) => {
+                this.printService.printHtml(result.html);
+              });
+            },
+            () => { }
+          );
+        }
+        else {
+          this.activeModal.close(true);
+
+        }
         
     },(err) => {
         this.errorService.show(err);
@@ -246,11 +256,6 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   }
 
   saveAndPrint() {
-    // if (!this.isThanhToanDu()) {
-    //   alert('Vui lòng phân bổ đủ số tiền cần thanh toán');
-    //   return false;
-    // }
-
     this.submitted = true;
     if (!this.paymentForm.valid) {
       return;
@@ -369,7 +374,14 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     this.step++;
     //gán lại default
     this.userAmountPayment = this.amount;
-    this.debtJournalSelected = Object.assign({},this.filteredJournals.find(x=> x.type == 'cash'));
+    if(this.getValueForm('isDebtPayment'))
+    {
+      this.debtJournalSelected = Object.assign({},this.filteredJournals.find(x=> x.type == 'cash'));
+      this.debtJournalSelected.amount = this.debtAmount;
+    }
+    
+    // this.debtJournalSelected = {type:'cash',name: 'Tiền mặt', journals: [], journal:null};
+
     this.selectedJournals = [];
 
     //Nếu chưa có dòng phương thức tiền mặt thì add, có thì update tiền mặt mặc định
@@ -684,12 +696,14 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
    if(this.debtJournalSelected) {
     var existJN = newSelected.find(x=> this.debtJournalSelected.type == x.type);
     if(existJN) {
-      existJN.amount = existJN.amount + this.getValueForm('debtAmount');
+      existJN.amount = existJN.amount + this.debtAmount;
+    } else {
+      this.debtJournalSelected.amount = this.debtAmount;
+      newSelected.push(Object.assign({}, this.debtJournalSelected));
     }
    }
     return newSelected;
   }
-
 
 
 }
