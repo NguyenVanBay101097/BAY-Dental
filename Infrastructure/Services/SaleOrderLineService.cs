@@ -752,43 +752,49 @@ namespace Infrastructure.Services
         {
             var saleProductObj = GetService<ISaleProductionService>();
             var bomObj = GetService<IProductBomService>();
-            var lineIds = seft.Where(x => x.State != "draft").Select(x => x.Id).ToList();
 
-            var lines = await SearchQuery(x => lineIds.Contains(x.Id) && x.Product.Boms.Any())
-                .Include(x => x.Product).ThenInclude(x => x.Boms)
+            var productId_dict = seft.GroupBy(x => x.ProductId.Value).ToDictionary(x => x.Key, x => x.Select(s => s.Id).ToList());
+            var products = await SearchQuery(x => seft.Select(x => x.Id).Contains(x.Id) && x.Product.Boms.Any())
+                .GroupBy(x => x.ProductId.Value)
+                .Select(x => new 
+                {
+                    ProductId = x.Key,
+                    Quantity = x.Sum(s => s.ProductUOMQty),
+                    LineIds = productId_dict[x.Key],
+                })
                 .ToListAsync();
-
+          
+            var boms = await bomObj.SearchQuery(x => productId_dict.Select(x => x.Key).Contains(x.ProductId)).ToListAsync();
+            var bom_dict = boms.GroupBy(x => x.ProductId).ToDictionary(x => x.Key, x => x.Select(s => s).ToList());
             var saleProductions = new List<SaleProduction>();
-
-            foreach(var item in lines)
+            foreach (var item in products)
             {
-                var saleProduction = _PrepareSaleProduction(item);
+                var saleProduction = new SaleProduction
+                {
+                    ProductId = item.ProductId,
+                    Quantity = item.Quantity,
+                    CompanyId = CompanyId
+                };
+
+                foreach (var line in bom_dict[item.ProductId])
+                {
+                    saleProduction.Lines.Add(new SaleProductionLine
+                    {
+                        ProductId = line.MaterialProductId.Value,
+                        Quantity = saleProduction.Quantity * line.Quantity
+                    });
+                }
+
+                foreach (var lineId in item.LineIds)
+                {
+                    saleProduction.SaleOrderLineRels.Add(new SaleOrderLineSaleProductionRel { OrderLineId = lineId });
+                }
+
                 saleProductions.Add(saleProduction);
+
             }
 
             await saleProductObj.CreateAsync(saleProductions);
-        }
-
-        public SaleProduction _PrepareSaleProduction(SaleOrderLine self)
-        {
-            var res = new SaleProduction
-            {             
-                ProductId = self.ProductId,
-                Quantity = self.ProductUOMQty,
-                CompanyId = self.CompanyId
-            };
-
-            foreach(var line in self.Product.Boms)
-            {
-                res.Lines.Add(new SaleProductionLine { 
-                ProductId = line.MaterialProductId.Value,
-                Quantity = res.Quantity * line.Quantity              
-                });
-            }
-
-            res.SaleOrderLineRels.Add(new SaleOrderLineSaleProductionRel { OrderLineId = self.Id });
-
-            return res;
         }
 
         public async Task ComputeProductRequestedQuantity(IEnumerable<Guid> ids) //compute quantity after do something
@@ -1005,7 +1011,7 @@ namespace Infrastructure.Services
 
                 }
                 else
-                    throw new Exception(error_status.Error);              
+                    throw new Exception(error_status.Error);
             }
             else
             {
