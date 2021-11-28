@@ -245,6 +245,11 @@ namespace ApplicationCore.Entities
         public ICollection<ResInsurancePaymentLine> InsurancePaymentLines { get; set; } = new List<ResInsurancePaymentLine>();
 
         /// <summary>
+        /// danh sách vật tư
+        /// </summary>
+        public ICollection<SaleOrderLineSaleProductionRel> SaleProductionRels { get; set; } = new List<SaleOrderLineSaleProductionRel>();
+
+        /// <summary>
         /// ngày của chi tiết điều tr
         /// </summary>
         public DateTime? Date { get; set; }

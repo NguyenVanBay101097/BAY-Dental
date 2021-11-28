@@ -25,5 +25,7 @@ namespace ApplicationCore.Entities
         /// </summary>
 
         public ICollection<SaleOrderLineSaleProductionRel> SaleOrderLineRels { get; set; } = new List<SaleOrderLineSaleProductionRel>();
+
+        public ICollection<SaleProductionLineProductRequestLineRel> ProductRequestLineRels { get; set; } = new List<SaleProductionLineProductRequestLineRel>();
     }
 }

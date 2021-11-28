@@ -3,8 +3,10 @@ using ApplicationCore.Interfaces;
 using ApplicationCore.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
@@ -25,6 +27,16 @@ namespace Infrastructure.Services
         public async Task ChangeQtySaleProduction(SaleProductionChangeQtyReq val)
         {
 
+        }
+
+        public async Task Unlink(IEnumerable<Guid> ids)
+        {
+            var saleProductions = await SearchQuery(x => ids.Contains(x.Id))
+              .Include(x => x.SaleOrderLineRels)
+              .Include(x => x.ProductRequestLineRels)
+              .ToListAsync();
+
+            await DeleteAsync(saleProductions);
         }
 
 
