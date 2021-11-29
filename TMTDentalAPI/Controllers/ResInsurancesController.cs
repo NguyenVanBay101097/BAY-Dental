@@ -55,13 +55,15 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Create(ResInsuranceSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
+          
+            var insurance = _mapper.Map<ResInsurance>(val);
+            insurance.CompanyId = CompanyId;         
+            await _insuranceService.CreateAsync(insurance);
+
             var exist = await _insuranceService.CheckInsuranceNameExist(val.Name);
             if (exist)
                 throw new Exception("Công ty bảo hiểm đã tồn tại");
 
-            var insurance = _mapper.Map<ResInsurance>(val);
-            insurance.CompanyId = CompanyId;         
-            await _insuranceService.CreateAsync(insurance);
             _unitOfWork.Commit();
 
             var simple = _mapper.Map<ResInsuranceSimple>(insurance);

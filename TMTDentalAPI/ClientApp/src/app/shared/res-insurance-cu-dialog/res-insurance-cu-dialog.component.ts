@@ -33,7 +33,7 @@ export class ResInsuranceCuDialogComponent implements OnInit {
       address: '',
       note: '',
     });
-    this.formGroup.get('dateObj').patchValue(new Date());
+    // this.formGroup.get('dateObj').patchValue(new Date());
 
     if (this.id) {
       this.loadRecord(this.id);
@@ -43,14 +43,23 @@ export class ResInsuranceCuDialogComponent implements OnInit {
   loadRecord(id: string) {
     this.resInsuranceService.getById(id).subscribe((res: any) => {
       this.formGroup.patchValue(res);
-      let date = new Date(res.date);
-      this.formGroup.get('dateObj').patchValue(date);
+      if(res.date){
+        let date = new Date(res.date);
+        this.formGroup.get('dateObj').patchValue(date);
+      }
+     
     })
   }
 
-  onSave(): void {
+  onSave() {
+    this.submitted = true;
+    
+    if (!this.formGroup.valid) {
+      return false;
+    }
+
     let val = this.formGroup.value;
-    val.date = moment(val.dateObj).format('YYYY-MM-DD');
+    val.date = val.dateObj ? moment(val.dateObj).format('YYYY-MM-DD') : null;
     if (this.id) {
       this.resInsuranceService.update(this.id, val).subscribe((res: any) => {
         this.activeModal.close(res);

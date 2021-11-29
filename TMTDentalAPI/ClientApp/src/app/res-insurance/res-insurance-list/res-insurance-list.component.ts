@@ -79,7 +79,10 @@ export class ResInsuranceListComponent implements OnInit {
   }
 
   createItem(): void {
-    const modalRef = this.modalService.open(ResInsuranceCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
+    const modalRef = this.modalService.open(ResInsuranceCuDialogComponent, {
+      size: 'xl', windowClass: 'o_technical_modal', keyboard: false,
+      backdrop: "static",
+    });
     modalRef.componentInstance.title = 'Thêm công ty bảo hiểm';
     modalRef.result.then(() => {
       this.notifyService.notify("success", "Lưu thành công")
@@ -88,7 +91,7 @@ export class ResInsuranceListComponent implements OnInit {
   }
 
   editItem(item: any): void {
-    const modalRef = this.modalService.open(ResInsuranceCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal' });
+    const modalRef = this.modalService.open(ResInsuranceCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: "static" });
     modalRef.componentInstance.title = 'Sửa công ty bảo hiểm';
     modalRef.componentInstance.id = item.id;
     modalRef.result.then(() => {
