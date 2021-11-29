@@ -225,7 +225,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     var val = this.getValueFormSave();
     if (val == null) return;
     this.paymentService.paymentSaleOrderAndDebt(val).subscribe((result: any) => {
-        this.activeModal.close();
+        this.activeModal.close(false);
         if (isPrint) {
           let modalRef = this.modalService.open(ConfirmPaymentDialogComponent, {
             size: 'sm',
