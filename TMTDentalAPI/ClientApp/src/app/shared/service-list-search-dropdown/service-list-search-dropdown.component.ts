@@ -111,7 +111,7 @@ export class ServiceListSearchDropdownComponent implements OnInit {
       this.model = "";
       input.value = '';
     }
-
+    input.blur();
     $event.preventDefault();
     var item = $event.item;
     if (item.error){
