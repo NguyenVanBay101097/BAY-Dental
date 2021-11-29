@@ -24,11 +24,6 @@ namespace Infrastructure.Services
         }
 
 
-        public async Task ChangeQtySaleProduction(SaleProductionChangeQtyReq val)
-        {
-
-        }
-
         public async Task CompareSaleProduction(IEnumerable<SaleProduction> saleProductions)
         {
            

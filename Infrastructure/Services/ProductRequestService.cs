@@ -182,8 +182,7 @@ namespace Infrastructure.Services
                     {
                         _mapper.Map(line, item);
                         item.Sequence = sequence++;
-                        if(!item.SaleProductionLineRels.Any(x => x.SaleProductionLineId == line.SaleProductionLineId))
-                            item.SaleProductionLineRels.Add(new SaleProductionLineProductRequestLineRel { SaleProductionLineId = line.SaleProductionLineId.Value });
+                       
                     }
                 }
 

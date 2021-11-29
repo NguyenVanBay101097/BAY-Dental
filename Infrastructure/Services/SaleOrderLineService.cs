@@ -1456,12 +1456,12 @@ namespace Infrastructure.Services
 
             //Tính toán lại vật tư
             var saleProductionObj = GetService<ISaleProductionService>();
-            var lineTypes = new string[] { "draft", "cancel" };
-            var saleProductions = await saleProductionObj.SearchQuery(x => x.SaleOrderLineRels.Any(x => x.OrderLineId == entity.Id && lineTypes.Contains(x.OrderLine.State)))
+            var states = new string[] { "draft", "cancel" };
+            var saleProductions = await saleProductionObj.SearchQuery(x => x.SaleOrderLineRels.Any(x => x.OrderLineId == entity.Id && !states.Contains(x.OrderLine.State)))
                 .Include(x => x.Lines)
                 .Include(x => x.SaleOrderLineRels).ThenInclude(x => x.OrderLine).ToListAsync();
 
-            if(saleProductions.Any(x => x.Quantity != entity.ProductUOMQty))
+            if(saleProductions.Any())
             {
                await saleProductionObj.CompareSaleProduction(saleProductions);
             }
