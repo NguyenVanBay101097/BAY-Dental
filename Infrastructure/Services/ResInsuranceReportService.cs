@@ -65,6 +65,12 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.PaymentId.HasValue && (x.Payment.Communication.Contains(val.Search) || x.Payment.Partner.Name.Contains(val.Search) || x.Payment.Partner.NameNoSign.Contains(val.Search)));
 
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Date >= val.DateFrom.Value.AbsoluteBeginOfDate());
+
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.Date < val.DateTo.Value.AbsoluteEndOfDate());
+
             var items = await query.OrderByDescending(x => x.DateCreated).Select(x => new InsuranceDebtReport
             {
                 Date = x.DateCreated,
