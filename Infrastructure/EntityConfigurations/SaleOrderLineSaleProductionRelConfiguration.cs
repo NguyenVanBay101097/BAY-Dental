@@ -14,7 +14,7 @@ namespace Infrastructure.EntityConfigurations
             builder.HasKey(x => new { x.OrderLineId, x.SaleProductionId });
 
             builder.HasOne(x => x.OrderLine)
-                .WithMany()
+                .WithMany(x => x.SaleProductionRels)
                 .HasForeignKey(x => x.OrderLineId);
 
             builder.HasOne(x => x.SaleProduction)

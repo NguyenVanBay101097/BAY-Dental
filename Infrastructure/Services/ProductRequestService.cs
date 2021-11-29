@@ -140,7 +140,7 @@ namespace Infrastructure.Services
 
         public async Task UpdateRequest(Guid id, ProductRequestSave val)
         {
-            var request = await SearchQuery(x => x.Id == id).Include(x => x.Lines).FirstOrDefaultAsync();
+            var request = await SearchQuery(x => x.Id == id).Include(x => x.Lines).ThenInclude(s => s.SaleProductionLineRels).FirstOrDefaultAsync();
 
             request = _mapper.Map(val, request);
 
@@ -171,6 +171,8 @@ namespace Infrastructure.Services
                 {
                     var item = _mapper.Map<ProductRequestLine>(line);
                     item.Sequence = sequence++;
+                    if (line.SaleProductionLineId.HasValue)
+                        item.SaleProductionLineRels.Add(new SaleProductionLineProductRequestLineRel { SaleProductionLineId = line.SaleProductionLineId.Value });
                     request.Lines.Add(item);
                 }
                 else
@@ -180,6 +182,8 @@ namespace Infrastructure.Services
                     {
                         _mapper.Map(line, item);
                         item.Sequence = sequence++;
+                        if(!item.SaleProductionLineRels.Any(x => x.SaleProductionLineId == line.SaleProductionLineId))
+                            item.SaleProductionLineRels.Add(new SaleProductionLineProductRequestLineRel { SaleProductionLineId = line.SaleProductionLineId.Value });
                     }
                 }
 
@@ -189,25 +193,40 @@ namespace Infrastructure.Services
 
         public async Task ActionConfirm(IEnumerable<Guid> ids)
         {
-            var selfs = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Lines).ToListAsync();
+            var productionlineObj = GetService<ISaleProductionLineService>();
+            var saleProducionLineIds = new List<Guid>().AsEnumerable();
+            var selfs = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Lines).ThenInclude(s => s.SaleProductionLineRels).ToListAsync();
 
             foreach (var request in selfs)
+            {
+                var lineIds = request.Lines.SelectMany(x => x.SaleProductionLineRels).Select(s => s.SaleProductionLineId).ToList();
+                saleProducionLineIds = saleProducionLineIds.Union(lineIds);
                 request.State = "confirmed";
+            }
+
+            if (saleProducionLineIds.Any())
+                await productionlineObj.ComputeQtyRequested(saleProducionLineIds);
 
             await UpdateAsync(selfs);
 
-            var lineObj = GetService<ISaleOrderLineService>();
-            await lineObj.ComputeProductRequestedQuantity(selfs.SelectMany(x => x.Lines).Select(x => x.SaleOrderLineId.Value).Distinct().ToList());
+
         }
 
         public async Task ActionCancel(IEnumerable<Guid> ids)
         {
-            var selfs = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Lines).ToListAsync();
+            var productionlineObj = GetService<ISaleProductionLineService>();
+            var saleProducionLineIds = new List<Guid>().AsEnumerable();
+            var selfs = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.Lines).ThenInclude(s => s.SaleProductionLineRels)
+                .ToListAsync();
 
             foreach (var request in selfs)
             {
                 if (request.State == "done")
                     throw new Exception("Bạn không thể xóa yêu cầu vật tư đã xuất");
+
+                var lineIds = request.Lines.SelectMany(x => x.SaleProductionLineRels).Select(s => s.SaleProductionLineId).ToList();
+                saleProducionLineIds = saleProducionLineIds.Union(lineIds);
 
                 request.State = "draft";
             }
@@ -216,8 +235,9 @@ namespace Infrastructure.Services
             await UpdateAsync(selfs);
 
             //save requested quantity
-            var lineObj = GetService<ISaleOrderLineService>();
-            await lineObj.ComputeProductRequestedQuantity(selfs.SelectMany(x => x.Lines).Select(x => x.SaleOrderLineId.Value).Distinct().ToList());
+            if (saleProducionLineIds.Any())
+                await productionlineObj.ComputeQtyRequested(saleProducionLineIds);
+
         }
 
         public async Task ActionDone(IEnumerable<Guid> ids)
@@ -229,7 +249,7 @@ namespace Infrastructure.Services
                 .ToListAsync();
 
             //tạo phiếu xuất kho
-            foreach(var request in self)
+            foreach (var request in self)
             {
                 if (request.State != "confirmed")
                     continue;
@@ -297,6 +317,32 @@ namespace Infrastructure.Services
             return picking_vals;
         }
 
+        public async Task Unlink(IEnumerable<Guid> ids)
+        {
+            var productionlineObj = GetService<ISaleProductionLineService>();
+            var saleProducionLineIds = new List<Guid>().AsEnumerable();
+            var selfs = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.Lines).ThenInclude(s => s.SaleProductionLineRels)
+                .ToListAsync();
+
+            foreach (var request in selfs)
+            {
+                if (request.State == "done")
+                    throw new Exception("Bạn không thể xóa yêu cầu vật tư đã xuất");
+
+                var lineIds = request.Lines.SelectMany(x => x.SaleProductionLineRels).Select(s => s.SaleProductionLineId).ToList();
+                saleProducionLineIds = saleProducionLineIds.Union(lineIds);
+
+            }
+
+
+            await DeleteAsync(selfs);
+
+            //save requested quantity
+            if (saleProducionLineIds.Any())
+                await productionlineObj.ComputeQtyRequested(saleProducionLineIds);
+        }
+
         public override ISpecification<ProductRequest> RuleDomainGet(IRRule rule)
         {
             var userObj = GetService<IUserService>();
@@ -310,11 +356,11 @@ namespace Infrastructure.Services
             }
         }
 
-        public override Task DeleteAsync(IEnumerable<ProductRequest> entities)
-        {
-            if (entities.Any(x => x.State == "done"))
-                throw new Exception("Bạn không thể xóa yêu cầu vật tư đã xuất");
-            return base.DeleteAsync(entities);
-        }
+        //public override Task DeleteAsync(IEnumerable<ProductRequest> entities)
+        //{
+        //    if (entities.Any(x => x.State == "done"))
+        //        throw new Exception("Bạn không thể xóa yêu cầu vật tư đã xuất");
+        //    return base.DeleteAsync(entities);
+        //}
     }
 }

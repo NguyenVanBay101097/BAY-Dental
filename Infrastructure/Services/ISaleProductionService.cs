@@ -9,6 +9,7 @@ namespace Infrastructure.Services
 {
     public interface ISaleProductionService : IBaseService<SaleProduction>
     {
+        Task CompareSaleProduction(IEnumerable<SaleProduction> saleProductions);
         Task Unlink(IEnumerable<Guid> ids);
 
     }

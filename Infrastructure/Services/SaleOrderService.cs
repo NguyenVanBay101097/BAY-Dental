@@ -356,6 +356,8 @@ namespace Infrastructure.Services
                 move_ids = move_ids.Union(mIds);
 
                 dotKhamIds = dotKhamIds.Union(sale.DotKhams.Select(x => x.Id).ToList());
+
+
             }
 
             await UpdateAsync(self);
@@ -380,6 +382,16 @@ namespace Infrastructure.Services
             if (removeDkSteps.Any(x => x.IsDone))
                 throw new Exception("Đã có công đoạn đợt khám hoàn thành, không thể hủy");
             await dkStepObj.DeleteAsync(removeDkSteps);
+
+            ///remove sale production
+            var saleProductionObj = GetService<ISaleProductionService>();
+            var removeSaleProductionIds = await saleProductionObj.SearchQuery(x => x.SaleOrderLineRels.Any(s => saleLineIds.Contains(s.OrderLineId))).Select(x => x.Id).ToListAsync();
+            await saleProductionObj.Unlink(removeSaleProductionIds);
+
+            ///remove product request
+            var productRequestObj = GetService<IProductRequestService>();
+            var removeProductRequestIds = await productRequestObj.SearchQuery(x => x.SaleOrderId.HasValue && ids.Contains(x.SaleOrderId.Value) && x.State != "done").Select(x => x.Id).ToListAsync();
+            await productRequestObj.Unlink(removeProductRequestIds);
 
             foreach (var sale in self)
             {
@@ -2926,6 +2938,19 @@ namespace Infrastructure.Services
             }
 
             return res;
+        }
+
+        public async Task<IEnumerable<SaleProduction>> GetSaleProductionBySaleOrderId(Guid id)
+        {
+            var lineObj = GetService<ISaleOrderLineService>();
+            var lineIds = await lineObj.SearchQuery(x => x.OrderId == id).Select(x => x.Id).ToListAsync();
+            var saleProductionObj = GetService<ISaleProductionService>();
+            var saleProductions = await saleProductionObj.SearchQuery(x => x.SaleOrderLineRels.Any(s => lineIds.Contains(s.OrderLineId)))
+                .Include(x => x.Product)
+                .Include(x => x.Lines).ThenInclude(s => s.Product).ThenInclude(x => x.UOM)
+                .ToListAsync();
+
+            return saleProductions;
         }
 
         public async Task<PagedResult2<SaleOrderToSurvey>> GetToSurveyPagedAsync(SaleOrderToSurveyFilter val)

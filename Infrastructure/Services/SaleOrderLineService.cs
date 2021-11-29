@@ -483,6 +483,7 @@ namespace Infrastructure.Services
             var saleCardRelObj = GetService<ISaleOrderServiceCardCardRelService>();
             var serviceCardObj = GetService<IServiceCardCardService>();
 
+
             var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Coupon).Include(x => x.SaleOrderLinePaymentRels)
                 .Include(x => x.Order).Include(x => x.Promotions).ThenInclude(x => x.Lines)
                 .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
@@ -538,6 +539,8 @@ namespace Infrastructure.Services
                     await promotionObj.RemovePromotion(promotionIds);
 
             }
+
+
 
             await DeleteAsync(self);
         }
@@ -756,14 +759,14 @@ namespace Infrastructure.Services
             var productId_dict = seft.GroupBy(x => x.ProductId.Value).ToDictionary(x => x.Key, x => x.Select(s => s.Id).ToList());
             var products = await SearchQuery(x => seft.Select(x => x.Id).Contains(x.Id) && x.Product.Boms.Any())
                 .GroupBy(x => x.ProductId.Value)
-                .Select(x => new 
+                .Select(x => new
                 {
                     ProductId = x.Key,
                     Quantity = x.Sum(s => s.ProductUOMQty),
                     LineIds = productId_dict[x.Key],
                 })
                 .ToListAsync();
-          
+
             var boms = await bomObj.SearchQuery(x => productId_dict.Select(x => x.Key).Contains(x.ProductId)).ToListAsync();
             var bom_dict = boms.GroupBy(x => x.ProductId).ToDictionary(x => x.Key, x => x.Select(s => s).ToList());
             var saleProductions = new List<SaleProduction>();
@@ -1451,6 +1454,18 @@ namespace Infrastructure.Services
                 await promotionObj.ComputeAmount(orderPromotionIds);
             }
 
+            //Tính toán lại vật tư
+            var saleProductionObj = GetService<ISaleProductionService>();
+            var lineTypes = new string[] { "draft", "cancel" };
+            var saleProductions = await saleProductionObj.SearchQuery(x => x.SaleOrderLineRels.Any(x => x.OrderLineId == entity.Id && lineTypes.Contains(x.OrderLine.State)))
+                .Include(x => x.Lines)
+                .Include(x => x.SaleOrderLineRels).ThenInclude(x => x.OrderLine).ToListAsync();
+
+            if(saleProductions.Any(x => x.Quantity != entity.ProductUOMQty))
+            {
+               await saleProductionObj.CompareSaleProduction(saleProductions);
+            }
+
             //Tính toán lại thành tiền, tổng giảm giá, tổng tiền, đã thanh toán, còn lại cho order
             var orderObj = GetService<ISaleOrderService>();
             var order = await orderObj.SearchQuery(x => x.Id == entity.OrderId)
@@ -1524,7 +1539,7 @@ namespace Infrastructure.Services
 
         public async Task RemoveOrderLine(Guid id)
         {
-            var saleLine = await SearchQuery(x => x.Id == id).Include(x => x.SaleOrderLineToothRels).FirstOrDefaultAsync();
+            var saleLine = await SearchQuery(x => x.Id == id).Include(x => x.SaleOrderLineToothRels).Include(x => x.SaleProductionRels).FirstOrDefaultAsync();
             if (saleLine == null)
                 throw new Exception("Không tìm thấy dịch vụ!");
 
@@ -1552,7 +1567,28 @@ namespace Infrastructure.Services
                 await promotionObj.ComputeAmount(recomputePromotionIds);
             }
 
+            ///remove or compute sale production
+            var productionObj = GetService<ISaleProductionService>();
+            var saleProducionIds = saleLine.SaleProductionRels.Select(x => x.SaleProductionId).Distinct().ToList();
+            saleLine.SaleProductionRels.Clear();
+            //foreach (var item in saleLine.SaleProductionRels)
+            //{
+            //    if(item.OrderLineId == saleLine.Id)
+            //    saleLine.SaleProductionRels.Remove(item);
+            //}
+
+
             await Unlink(new List<Guid>() { id });
+
+            if (saleProducionIds.Any())
+            {
+                var saleProductions = await productionObj.SearchQuery(x => saleProducionIds.Contains(x.Id))
+                 .Include(x => x.Lines)
+                 .Include(x => x.SaleOrderLineRels).ThenInclude(x => x.OrderLine)
+                 .ToListAsync();
+
+                await productionObj.CompareSaleProduction(saleProductions);
+            }
 
             //compute sale order
             var orderObj = GetService<ISaleOrderService>();

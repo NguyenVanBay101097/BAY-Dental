@@ -13,11 +13,11 @@ using Umbraco.Web.Models.ContentEditing;
 
 namespace Infrastructure.Services
 {
-    public class SaleProductionService : BaseService<SaleProduction> , ISaleProductionService
+    public class SaleProductionService : BaseService<SaleProduction>, ISaleProductionService
     {
         private readonly IMapper _mapper;
 
-        public SaleProductionService(IAsyncRepository<SaleProduction> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper) 
+        public SaleProductionService(IAsyncRepository<SaleProduction> repository, IHttpContextAccessor httpContextAccessor, IMapper mapper)
             : base(repository, httpContextAccessor)
         {
             _mapper = mapper;
@@ -29,11 +29,56 @@ namespace Infrastructure.Services
 
         }
 
+        public async Task CompareSaleProduction(IEnumerable<SaleProduction> saleProductions)
+        {
+           
+            var removeItems = new List<SaleProduction>();
+            var updateItems = new List<SaleProduction>();
+            var createItems = new List<SaleProduction>();
+
+            foreach (var saleProduction in saleProductions)
+            {
+                if (!saleProduction.SaleOrderLineRels.Any())
+                    removeItems.Add(saleProduction);
+
+                if (saleProduction.Id == Guid.Empty)
+                {
+                    createItems.Add(saleProduction);
+                }
+                else
+                {
+                    var production = saleProductions.FirstOrDefault(x => x.Id == saleProduction.Id);
+                    var newQty = production.SaleOrderLineRels.Sum(x => x.OrderLine.ProductUOMQty);
+
+                    foreach (var line in production.Lines)
+                    {
+                        var qty = line.Quantity / saleProduction.Quantity * newQty;
+                        line.Quantity = qty;
+                    }
+
+                    production.Quantity = newQty;
+
+                    updateItems.Add(saleProduction);
+                }
+               
+            }
+
+            if (createItems.Any())
+                await CreateAsync(createItems);
+
+            if (updateItems.Any())
+                await UpdateAsync(updateItems);
+
+            if (removeItems.Any())
+                await DeleteAsync(removeItems);
+          
+        }
+
+
         public async Task Unlink(IEnumerable<Guid> ids)
         {
             var saleProductions = await SearchQuery(x => ids.Contains(x.Id))
               .Include(x => x.SaleOrderLineRels)
-              .Include(x => x.ProductRequestLineRels)
               .ToListAsync();
 
             await DeleteAsync(saleProductions);

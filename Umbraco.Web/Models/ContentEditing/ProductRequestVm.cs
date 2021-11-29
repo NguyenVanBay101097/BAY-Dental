@@ -129,5 +129,7 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid SaleOrderLineId { get; set; }
         public Guid ProductBomId { get; set; }
+
+        public Guid SaleProductionLineId { get; set; }
     }
 }

@@ -81,7 +81,7 @@ export class SaleOrderProductRequestListComponent implements OnInit {
     modalRef.componentInstance.title = 'Xóa yêu cầu vật tư';
     modalRef.componentInstance.body = 'Bạn có chắc chắn xóa yêu cầu vật tư?';
     modalRef.result.then(() => {
-      this.productRequestService.delete(item.id).subscribe(() => {
+      this.productRequestService.delete([item.id]).subscribe(() => {
       this.notify('success','Xóa thành công');
         this.loadData();
       }, err => {

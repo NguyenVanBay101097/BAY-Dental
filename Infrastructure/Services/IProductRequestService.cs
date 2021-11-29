@@ -23,5 +23,7 @@ namespace Infrastructure.Services
 
         Task ActionDone(IEnumerable<Guid> ids);
 
+        Task Unlink(IEnumerable<Guid> ids);
+
     }
 }

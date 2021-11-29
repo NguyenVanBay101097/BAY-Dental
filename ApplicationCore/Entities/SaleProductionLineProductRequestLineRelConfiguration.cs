@@ -13,11 +13,11 @@ namespace ApplicationCore.Entities
             builder.HasKey(x => new { x.SaleProductionLineId, x.ProductRequestLineId });
 
             builder.HasOne(x => x.SaleProductionLine)
-                .WithMany(x => x.ProductRequestRels)
+                .WithMany(x => x.ProductRequestLineRels)
                 .HasForeignKey(x => x.SaleProductionLineId);
 
             builder.HasOne(x => x.ProductRequestLine)
-                .WithMany()
+                .WithMany(x => x.SaleProductionLineRels)
                 .HasForeignKey(x => x.ProductRequestLineId);
         }
     }

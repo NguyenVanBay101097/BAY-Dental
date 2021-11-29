@@ -104,5 +104,7 @@ namespace Infrastructure.Services
         Task<IEnumerable<SaleOrder>> GetSaleOrdersByPartnerId(Guid partnerId);
 
         Task<ResInsurancePaymentRegisterDisplay> GetDefaultInsurancePaymentByOrderId(Guid id);
+
+        Task<IEnumerable<SaleProduction>> GetSaleProductionBySaleOrderId(Guid id);
     }
 }

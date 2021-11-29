@@ -30,6 +30,7 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
   productRequestDisplay: ProductRequestDisplay = new ProductRequestDisplay();
   listProductBoms: SaleOrderLineForProductRequest[] = [];
   listProductRequestedBoms: SaleOrderLineProductRequestedBasicCus[] = [];
+  listSaleProduction: any[];
 
   @ViewChild('employeeCbx', { static: true }) employeeCbx: ComboBoxComponent;
   filteredEmployees: EmployeeSimple[] = [];
@@ -123,17 +124,17 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     });
   }
 
-  getMax(line: FormGroup) {
-    var saleLineId = line.get('saleOrderLineId').value;
+  getMax(line: FormGroup , id) {
+    var saleproductionLineId = line.get('id').value;
     var productId = line.get('productId').value;
-    var item = this.listProductBoms.find(x => x.id == saleLineId);
+    var item = this.listSaleProduction.find(x => x.id == id);
     if (item) {
-      var bom = item.boms.find(x => x.materialProductId == productId);
+      var bom = item.lines.find(x => x.productId == productId);
       if (bom) {
         if (bom.quantity === 0) {
           return undefined;
         }
-        return bom.quantity - bom.requestedQuantity;
+        return bom.quantity - bom.quantityRequested;
       }
     }
 
@@ -151,59 +152,12 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     });
   }
 
-  loadLineToFormArray(line) {
-    var index = this.lines.value.findIndex(item => (item.saleOrderLineId == line.saleOrderLineId && item.productId == line.productId));
-    if (index < 0) {
-      // var i = this.findPro_listProductRequestedBoms(line.saleOrderLineId, line.productId);
-      // line.max = this.listProductRequestedBoms[i].max;
-      var fg = this.fb.group(line);
-      fg.get('productQty').setValidators([Validators.required]);
-      fg.get('productQty').markAsTouched();
-      this.lines.push(fg);
-    } else {
-      this.lines.at(index).get('productQty').setValue(this.lines.at(index).get('productQty').value + 1);
-      // if (this.lines.at(index).get('productQty').value < this.lines.at(index).get('max').value) {
-      //   this.lines.at(index).get('productQty').setValue(this.lines.at(index).get('productQty').value + 1);
-      // }
-    }
-  }
-
   loadListProductBoms() {
-    this.saleOrderService.getLineForProductRequest(this.saleOrderId).subscribe((res: any) => {
-      this.listProductBoms = res;
+    this.saleOrderService.getSaleProductionBySaleOrderId(this.saleOrderId).subscribe((res: any) => {
+      this.listSaleProduction = res;
     });
   }
 
-  loadListProductRequestedBoms(listSaleOrderLineId) {
-    var val = new SaleOrderLineProductRequestedPaged();
-    val.limit = 0;
-    val.saleOrderLineIds = listSaleOrderLineId;
-    this.saleOrderLineProductRequestedService.getPaged(val).subscribe((res: any) => {
-      this.listProductRequestedBoms = res.items;
-      this.listProductBoms.forEach(el => {
-        el.boms.forEach(el_item => {
-          var index = this.findPro_listProductRequestedBoms(el.id, el_item.materialProductId);
-          if (index < 0) {
-            var temp: SaleOrderLineProductRequestedBasicCus = {
-              id: null,
-              saleOrderLineId: el.id,
-              productId: el_item.materialProductId,
-              requestedQuantity: 0,
-              max: el_item.quantity
-            };
-            this.listProductRequestedBoms.push(temp);
-          } else {
-            this.listProductRequestedBoms[index].max = el_item.quantity - this.listProductRequestedBoms[index].requestedQuantity;
-          }
-        })
-      });
-      if (!this.id) {
-        this.loadDefault();
-      } else {
-        this.loadRecord();
-      }
-    });
-  }
 
   getValueForm(key) {
     return this.formGroup.get(key).value;
@@ -300,18 +254,17 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     }
   }
 
-  clickBom(bom, saleOrderLineId) {
-    if (bom.quantity !== 0) {
-      if (bom.requestedQuantity >= bom.quantity) {
+  addLine(saleProductionLine , parentId) {
+    if (saleProductionLine.quantity !== 0) {
+      if (saleProductionLine.quantityRequested >= saleProductionLine.quantity) {
         return;
       }
     }
 
-    var index = this.lines.value.findIndex(item => (item.saleOrderLineId == saleOrderLineId && item.productId == bom.materialProductId));
+    var index = this.lines.value.findIndex(item => (item.saleProductionLineId == saleProductionLine.id && item.productId == saleProductionLine.productId));
     if (index < 0) {
       var val = new ProductRequestGetLinePar();
-      val.saleOrderLineId = saleOrderLineId;
-      val.productBomId = bom.id;
+      val.saleProductionLineId = saleProductionLine.id;
       this.productRequestLineService.getLine(val).subscribe((res: any) => {
         console.log(res);
         this.lines.push(this.fb.group({
@@ -322,8 +275,8 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
       });
     } else {
       var line = this.lines.at(index) as FormGroup;
-      if (bom.quantity !== 0) {
-        if (line.get('productQty').value < this.getMax(line)) {
+      if (saleProductionLine.quantity !== 0) {
+        if (line.get('productQty').value < this.getMax(line,parentId)) {
           line.get('productQty').setValue(line.get('productQty').value + 1);
         }
       } else {
@@ -336,9 +289,6 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     this.lines.removeAt(index);
   }
 
-  findPro_listProductRequestedBoms(saleOrderLineId, productId) {
-    return this.listProductRequestedBoms.findIndex(item => (item.saleOrderLineId == saleOrderLineId && item.productId == productId));
-  }
 
   notify(type, content) {
     this.notificationService.show({

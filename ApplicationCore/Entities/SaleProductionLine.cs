@@ -22,6 +22,6 @@ namespace ApplicationCore.Entities
         /// </summary>
         public decimal QuantityRequested { get; set; }
 
-        public ICollection<SaleProductionLineProductRequestLineRel> ProductRequestRels { get; set; } = new List<SaleProductionLineProductRequestLineRel>();
+        public ICollection<SaleProductionLineProductRequestLineRel> ProductRequestLineRels { get; set; } = new List<SaleProductionLineProductRequestLineRel>();
     }
 }
