@@ -38,7 +38,7 @@
                                     </td>
                                     <td class="text-danger pr-0" colspan="1">{{amountResidual | number}}</td>
                                 </tr>
-                                <tr>
+                                <tr *ngIf="partnerDebt > 0">
                                     <td class="o_td_label" colspan="1">
                                         <label class="o_form_label">
                                             Công nợ hiện tại
@@ -52,12 +52,11 @@
                     <div class="o_group mb-0">
                         <h5 class="mb-3">Thanh toán dịch vụ</h5>
                         <div class="custom-control custom-switch pl-0 mb-2">
-                            <input type="checkbox" [(ngModel)]="isPaymentForService"
-                                [ngModelOptions]="{standalone: true}" (ngModelChange)="changePaymentForService()"
+                            <input type="checkbox" formControlName="isPaymentForService" (change)="changePaymentForService($event)"
                                 class="custom-control-input" id="customSwitch1">
                             <label class="custom-control-label" for="customSwitch1">Chi tiết dịch vụ</label>
                         </div>
-                        <table *ngIf="isPaymentForService" class="table table-bordered mb-2">
+                        <table *ngIf="isPaymentForServiceValue" class="table table-bordered mb-2">
                             <thead class="bg-light">
                                 <th class="text-left">Dịch vụ</th>
                                 <th class="text-right">Số tiền</th>
@@ -77,8 +76,8 @@
                                             number }}</td>
                                         <td class="text-right w-25">
                                             <input class="form-control text-right" formControlName="amount"
-                                                (change)="changeMoneyLine(line)" autonumeric
-                                                (input)="onChangeLine($event.target.value,line,i)" />
+                                                (change)="changeMoneyLine()" autonumeric
+                                                [options]="{maximumValue: line.get('saleOrderLine').value.amountResidual}" />
 
                                             <!-- <kendo-numerictextbox [step]="1000" [min]="0" [format]="'n0'"
                                                 [max]="line.get('saleOrderLine').value.amountResidual"
@@ -101,9 +100,11 @@
                                         </label>
                                     </td>
                                     <td>
-                                        <input class="form-control text-right" formControlName="amount"
+                                        <input class="form-control text-right" formControlName="amount" autonumeric [disableControl]="isPaymentForServiceValue"
+                                            [options]="{maximumValue: defaultVal.amount}" />
+                                        <!-- <input class="form-control text-right" formControlName="amount"
                                             (blur)="enterMoney()" autonumeric
-                                            (input)="onChange($event.target.value,'amount',maxAmount)" />
+                                            (input)="onChange($event.target.value,'amount',maxAmount)" /> -->
                                         <!-- <kendo-numerictextbox [min]="0" [max]="maxAmount == 0 ? null : maxAmount"
                                             [step]="1000" [format]="'n0'" [autoCorrect]="true" (blur)="enterMoney()"
                                             formControlName="amount">
@@ -140,7 +141,7 @@
                             <input (change)="changeDebtPayment($event.target.checked)" formControlName="isDebtPayment"
                                 class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
                         </div>
-                        <div [class.d-none]="!paymentFC.isDebtPayment.value">
+                        <div [class.d-none]="!isDebtPaymentValue">
 
                             <div class="d-flex justify-content-between">
                                 <table class="o_group o_inner_group o_group_col_6">
@@ -156,8 +157,7 @@
                                                 [max]="partnerDebt" [step]="1000" [format]="'n0'" [autoCorrect]="true">
                                             </kendo-numerictextbox> -->
                                                 <input class="form-control text-right" formControlName="debtAmount"
-                                                    autonumeric
-                                                    (input)="onChange($event.target.value,'debtAmount',partnerDebt)" />
+                                                    autonumeric [options]="{maximumValue: partnerDebt}" />
                                                 <div *ngIf="paymentFC.debtAmount.errors && (paymentFC.debtAmount.touched || paymentFC.debtAmount.dirty || submitted)"
                                                     class="text-danger">
                                                     <div *ngIf="paymentFC.debtAmount.errors.required">Nhập số tiền</div>
@@ -187,32 +187,42 @@
 
                     </div>
                     <div class="o_group">
-                        <div class="card o_group_col_6 p-3">
-                            <div class="d-flex mb-3">
-                                <div class="w-50">
-                                    <h6 class="mb-0">Tổng tiền khách trả</h6>
-
-                                </div>
-                                <div class="d-flex w-50 justify-content-end align-items-center">
-                                    <div class="icon-img icon-img-active mr-2"
-                                        style="background-image: url(../../../../assets/icons/money_cash.svg);"></div>
-                                    <div>
-                                        <h5 class="text-right text-primary mb-0">
-                                            {{getAmountTotalPayment() | number}}
-                                        </h5>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="d-flex">
-                                <div class="w-50">
-                                </div>
-                                <div class="w-50 text-right">
-                                    <button type="button" class="btn btn-outline-primary" (click)="nextStep()">Phương
-                                        thức khác
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                        <table class="o_group o_inner_group o_group_col_6">
+                            <tbody>
+                                <tr>
+                                    <td colspan="2">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="d-flex mb-3">
+                                                    <div class="w-50">
+                                                        <h6 class="mb-0">Tổng tiền khách trả</h6>
+                    
+                                                    </div>
+                                                    <div class="d-flex w-50 justify-content-end align-items-center">
+                                                        <div class="icon-img icon-img-active mr-2"
+                                                            style="background-image: url(../../../../assets/icons/money_cash.svg);"></div>
+                                                        <div>
+                                                            <h5 class="text-right text-primary mb-0">
+                                                                {{getAmountTotalPayment() | number}}
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex">
+                                                    <div class="w-50">
+                                                    </div>
+                                                    <div class="w-50 text-right">
+                                                        <button type="button" class="btn btn-outline-primary" (click)="nextStep()">Phương
+                                                            thức khác
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -249,15 +259,15 @@
                                                 </kendo-numerictextbox> -->
                                                 <input class="form-control text-right" style="max-width: 200px" [ngModelOptions]="{standalone: true}"
                                                     [(ngModel)]="userAmountPayment" name="amountPayment" autonumeric
-                                                    (input)="onChangeUserAmountPayment($event.target.value)" />
+                                                    [options]="{maximumValue: amount}" />
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
                                 <div class="card p-3">
-                                    <div class="journal-btn">
+                                    <div class="journal-btn mb-3">
                                         <div class="payment-methods">
-                                            <ng-container *ngFor="let item of filteredJournals">
+                                            <ng-container *ngFor="let item of paymentMethods">
                                                 <button *ngIf="item.type != 'advance'"
                                                     [disabled]="isHasJournalFilter(item.type)"
                                                     [ngClass]="{'active': isHasJournalFilter(item.type)}"
@@ -296,45 +306,45 @@
                                             </ng-container>
                                         </div>
                                     </div>
-                                    <div *ngIf="selectedJournals.length > 0" class="journal-input mt-2">
-                                        <table class="table">
-                                            <tbody>
-                                                <tr *ngFor="let item of selectedJournals; let i = index">
-                                                    <td style="vertical-align: unset;" class="w-25"><h6 class="mb-0">
-                                                        {{item.name}}
-                                                    </h6></td>
-                                                    <td class="w-50" style="vertical-align: unset;">
-                                                        <div *ngIf="item.journals.length > 1">
-                                                            <kendo-combobox [placeholder]="'Tài khoản thu'" style="min-width: 200px;"
-                                                                [data]="item.journals" [textField]="'name'" [valueField]="'id'"
-                                                                [(ngModel)]="item.journal" [name]="'orderJournalSelected'+ i"
-                                                                [ngModelOptions]="{standalone: true}" #orderJournalSelected="ngModel"
-                                                                required>
-                                                            </kendo-combobox>
-                                                            <div class="text-danger"
-                                                                *ngIf="orderJournalSelected.errors?.required && submitted">
-                                                                Chọn tài khoản
+                                    <div *ngIf="journalLines.controls.length > 0" class="journal-input">
+                                        <table class="table mb-0">
+                                            <tbody formArrayName="journalLines">
+                                                <ng-container *ngFor="let item of journalLines.controls; let i = index">
+                                                    <tr [formGroupName]="i">
+                                                        <td style="vertical-align: unset;" class="w-25">
+                                                            <strong>{{getPaymentMethod(item.get('type').value).name}}</strong>
+                                                        </td>
+                                                        <td class="w-50" style="vertical-align: unset;">
+                                                            <div *ngIf="item.get('journals').value.length > 1">
+                                                                <kendo-combobox [placeholder]="'Tài khoản thu'" style="min-width: 200px;"
+                                                                    [data]="item.get('journals').value" [textField]="'displayName'" [valueField]="'id'"
+                                                                    formControlName="journal" >
+                                                                </kendo-combobox>
+                                                                <div class="text-danger" 
+                                                                *ngIf="journalLines.controls[i].get('journal').errors && (journalLines.controls[i].get('journal').touched || journalLines.controls[i].get('journal').dirty || submitted)">
+                                                                    <div *ngIf="journalLines.controls[i].get('journal').errors.required">Chọn tài khoản</div>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
-                                                    <td class="w-25">
-                                                        <div class="d-flex align-items-center" >
-                                                            <div class="text-right" style="min-width: 100px;">
-                                                                {{item.amount | number}}
+                                                        </td>
+                                                        <td class="w-25">
+                                                            <div class="d-flex align-items-center" >
+                                                                <div class="text-right" style="min-width: 100px;">
+                                                                    {{item.get('amount').value | number}}
+                                                                </div>
+                                                                <a class="ml-3 text-danger" (click)="removeJounalSelected(i)">
+                                                                    <i class="far fa-trash-alt"></i>
+                                                                </a>
                                                             </div>
-                                                                <button class="ml-3 btn" (click)="removeJounalSelected(item)">
-                                                                    <i class="far fa-trash-alt text-danger"></i>
-                                                                </button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
+                                                        </td>
+                                                    </tr>
+                                                </ng-container>
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
                                 <ng-container *ngIf="paymentFC.isDebtPayment.value">
                                     <h5 class="mb-4 mt-3">Thanh toán công nợ</h5>
-                                    <table class="mb-2 mt-0 o_group o_inner_group o_group_col_12">
+                                    <table class="m-0 o_group o_inner_group o_group_col_12">
                                         <tbody>
                                             <tr>
                                                 <td colspan="1" class="o_td_label">
@@ -348,40 +358,20 @@
                                             </tr>
                                         </tbody>
                                     </table>
-                                    <div class="card mb-2 mt-2 p-4">
-                                            <table>
-                                                <tbody>
-                                                    <tr>
-                                                        <td class="w-25">
-                                                            <div ngbDropdown container="body" class="d-inline-block">
-                                                                <button class="btn btn-outline-primary" id="dropdownBasic1"
-                                                                    ngbDropdownToggle>{{debtJournalSelected?.name}}</button>
-                                                                <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-                                                                    <button (click)="debtJournalSelected = item"
-                                                                        *ngFor="let item of filteredJournalsByType('cash,bank')"
-                                                                        ngbDropdownItem>{{item.name}}</button>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td class="w-50">
-                                                            <ng-container *ngIf="debtJournalSelected?.journals.length > 1">
-                                                                <kendo-combobox [data]="debtJournalSelected?.journals" [textField]="'name'"
-                                                                [valueField]="'id'" name="debtJournal" #debtJournal="ngModel"
-                                                                [ngModelOptions]="{standalone: true}"
-                                                                [(ngModel)]="debtJournalSelected.journal" required>
-                                                            </kendo-combobox>
-                                                            <div class="text-danger" *ngIf="debtJournal.errors?.required && submitted">
-                                                                Chọn tài khoản
-                                                            </div>
-                                                            </ng-container>
-                                                        </td>
-    
-                                                        <td class="w-25 text-right">
-                                                            {{debtAmount | number}}
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
+                                    <div class="card mb-2">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <kendo-combobox style="width: 250px" [data]="cashBankJournals" [textField]="'displayName'"
+                                                        [valueField]="'id'" formControlName="debtJournal">
+                                                    </kendo-combobox>
+                                                    <div class="text-danger" *ngIf="paymentFC.debtJournal.errors && (paymentFC.debtJournal.touched || paymentFC.debtJournal.dirty || submitted)">
+                                                        <div *ngIf="paymentFC.debtJournal.errors.required">Chọn tài khoản</div>
+                                                    </div>
+                                                </div>
+                                                <div>{{debtAmount | number}}</div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </ng-container>
     
@@ -411,7 +401,7 @@
                                                     </td>
                                                 </tr>
                                                 <tr *ngFor="let item of CombineAllJournalSelected">
-                                                    <td>{{item.name}}</td>
+                                                    <td>{{getPaymentMethod(item.type).name}}</td>
                                                     <td class="text-right">{{item.amount | number}}</td>
                                                 </tr>
                                                 <tr>
@@ -437,18 +427,9 @@
 </div>
 
 <footer class="modal-footer">
-    <div [class.d-none]="this.step != 1">
-        <button type="button" class="btn btn-primary" (click)="save(true)" [disabled]="loading" accesskey="s">Thanh
-            toán</button>
-    </div>
-    <div [class.d-none]="this.step == 1">
-        <button type="button" class="btn btn-secondary mr-2" (click)="backPreviousStep()" [disabled]="loading">Trở
-            lại</button>
-        <button type="button" class="btn btn-primary mr-2" (click)="save()" [disabled]="loading" accesskey="s">Thanh
-            toán</button>
-        <button type="button" class="btn btn-primary" (click)="saveAndPrint()" [disabled]="loading">Thanh
-            toán và in</button>
-    </div>
+    <button type="button" *ngIf="this.step == 2" class="btn btn-secondary mr-2" (click)="backPreviousStep()" [disabled]="loading">Trở
+        lại</button>
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="loading" accesskey="s">Thanh
+        toán</button>
     <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="cancel()" accesskey="q">Đóng</button>
-
 </footer>

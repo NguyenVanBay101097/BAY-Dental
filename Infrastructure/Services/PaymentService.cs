@@ -29,38 +29,119 @@ namespace Infrastructure.Services
             var soPaymentObj = GetService<ISaleOrderPaymentService>();
             var phieuThuChiObj = GetService<IPhieuThuChiService>();
             var journalObj = GetService<IAccountJournalService>();
+            var saleOrderObj = GetService<ISaleOrderService>();
+
+            var saleOrder = await saleOrderObj.SearchQuery(x => x.Id == val.OrderId)
+                .Include(x => x.OrderLines)
+                .FirstOrDefaultAsync();
+
             #region saleorder payment
-            var cashJournal = await journalObj.GetJournalByTypeAndCompany("cash", val.CompanyId);
+            var cashJournal = await journalObj.GetJournalByTypeAndCompany("cash", saleOrder.CompanyId);
+
+            //if (!val.JournalLines.Any())
+            //{
+            //    val.JournalLines.Add(new SaleOrderPaymentJournalLineSave()
+            //    {
+            //        Amount = val.Amount,
+            //        JournalId = cashJournal.Id
+            //    });
+            //}
+            //if (val.Amount != val.Lines.Sum(x => x.Amount) || val.Amount != val.JournalLines.Sum(x => x.Amount))
+            //    throw new Exception("Dữ liệu không đồng nhất!");
+
+            //nếu ko thanh toán chi tiết thì tự động phân bổ
+            var soPayment = new SaleOrderPayment
+            {
+                Amount = val.Amount,
+                CompanyId = saleOrder.CompanyId,
+                Date = val.Date,
+                Note = val.Note,
+                OrderId = saleOrder.Id,
+            };
+
+            if (!val.Lines.Any())
+            {
+                var amount = val.Amount;
+                foreach(var line in saleOrder.OrderLines.OrderBy(x => x.Sequence))
+                {
+                    var amountResidual = line.PriceTotal - (line.AmountInvoiced ?? 0);
+                    if (amount > amountResidual)
+                    {
+                        soPayment.Lines.Add(new SaleOrderPaymentHistoryLine
+                        {
+                            SaleOrderLineId = line.Id,
+                            Amount = amountResidual
+                        });
+
+                        amount -= amountResidual;
+                    }
+                    else
+                    {
+                        soPayment.Lines.Add(new SaleOrderPaymentHistoryLine
+                        {
+                            SaleOrderLineId = line.Id,
+                            Amount = amount
+                        });
+
+                        amount = 0;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                foreach(var line in val.Lines)
+                {
+                    soPayment.Lines.Add(new SaleOrderPaymentHistoryLine
+                    {
+                        SaleOrderLineId = line.SaleOrderLineId,
+                        Amount = line.Amount
+                    });
+                }
+            }
 
             if (!val.JournalLines.Any())
             {
-                val.JournalLines.Add(new SaleOrderPaymentJournalLineSave()
+                soPayment.JournalLines.Add(new SaleOrderPaymentJournalLine
                 {
-                    Amount = val.Amount,
-                    JournalId = cashJournal.Id
+                    JournalId = cashJournal.Id,
+                    Amount = val.Amount
                 });
             }
-            if (val.Amount != val.Lines.Sum(x => x.Amount) || val.Amount != val.JournalLines.Sum(x=> x.Amount))
-                throw new Exception("Dữ liệu không đồng nhất!");
-            var soPaymentSave = _mapper.Map<SaleOrderPaymentSave>(val);
-            var soPayment = await soPaymentObj.CreateSaleOrderPayment(soPaymentSave);
+            else
+            {
+                foreach(var line in val.JournalLines)
+                {
+                    soPayment.JournalLines.Add(new SaleOrderPaymentJournalLine
+                    {
+                        JournalId = line.JournalId,
+                        Amount = line.Amount
+                    });
+                }
+            }
+
+            await soPaymentObj.CreateAsync(soPayment);
             await soPaymentObj.ActionPayment(new List<Guid>() { soPayment.Id });
+
             #endregion
             #region debt payment
-            if (!val.IsDebtPayment || val.DebtAmount == 0)
-                return soPayment;
-            var phieuThuChiSave = new PhieuThuChiSave()
+            if (val.IsDebtPayment && val.DebtJournalId.HasValue && val.DebtAmount > 0)
             {
-                AccountType = "customer_debt",
-                Amount = val.DebtAmount,
-                Date = val.Date,
-                JournalId = val.DebtJournalId.HasValue ? val.DebtJournalId.Value : cashJournal.Id,
-                PartnerId = val.PartnerId,
-                Type = "thu",
-                Reason = val.DebtNote
-            };
-            var phieuThuChi = await phieuThuChiObj.CreatePhieuThuChi(phieuThuChiSave);
-            await phieuThuChiObj.ActionConfirm(new List<Guid>() { phieuThuChi.Id });
+                var phieuThuSave = new PhieuThuChiSave()
+                {
+                    AccountType = "customer_debt",
+                    Amount = val.DebtAmount,
+                    Date = val.Date,
+                    JournalId = val.DebtJournalId.Value,
+                    PartnerId = saleOrder.PartnerId,
+                    Type = "thu",
+                    Reason = val.DebtNote,
+                };
+
+                var phieuThu = await phieuThuChiObj.CreatePhieuThuChi(phieuThuSave);
+                await phieuThuChiObj.ActionConfirm(new List<Guid>() { phieuThu.Id });
+            }
+         
             #endregion
             return soPayment;
         }

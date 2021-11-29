@@ -14,6 +14,7 @@ import { PartnerService } from "src/app/partners/partner.service";
 import { PrintService } from "src/app/shared/services/print.service";
 import { AppSharedShowErrorService } from "src/app/shared/shared-show-error.service";
 import { ConfirmPaymentDialogComponent } from "../confirm-payment-dialog/confirm-payment-dialog.component";
+import { NotifyService } from 'src/app/shared/services/notify.service';
 
 @Component({
   selector: "app-sale-order-payment-dialog",
@@ -26,16 +27,20 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   partnerDebt = 0; // số tiền công nợ
   // advanced payment
   userAmountPayment = 0; // số tiền khách nhập
-  filteredJournals: any[] = [// danh sách journal filter box
-    {type:'cash',name: 'Tiền mặt', journals: [], journal:null},
-    {type:'bank',name: 'Ngân hàng', journals: [], journal:null},
-    {type:'debt',name: 'Ghi công nợ', journals: [], journal:null},
-    {type:'advance',name: 'Tạm ứng', journals: [], journal:null}
+  filteredJournals: any[] = [];
+  cashBankJournals: any[] = [];
+
+  paymentMethods: any[] = [
+    { type: 'cash', name: 'Tiền mặt' },
+    { type: 'bank', name: 'Ngân hàng' },
+    { type: 'debt', name: 'Ghi công nợ' },
+    { type: 'advance', name: 'Tạm ứng' }
   ];
+
   advanceAmount: number = 0; // số tiền tạm ứng
   selectedJournals = []; // danh sách journal filter box được chọn
   debtJournalSelected: any; // phương thức thanh toán công nợ được chọn
-  
+
 
   @ViewChild("journalCbx", { static: true }) journalCbx: ComboBoxComponent;
   loading = false;
@@ -76,14 +81,12 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     private paymentService: PaymentService,
     private modalService: NgbModal,
     private printService: PrintService,
-
-
-
+    private notifyService: NotifyService
   ) { }
 
   ngOnInit() {
     this.paymentForm = this.fb.group({
-      amount: [0, [Validators.required, Validators.min(1)]],
+      amount: [0, [Validators.required, Validators.min(0)]],
       date: [new Date(), Validators.required],
       orderId: [null, Validators.required],
       companyId: [null, Validators.required],
@@ -93,75 +96,87 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
       state: "draft",
       isDebtPayment: false,
       debtJournalId: null,
+      debtJournal: null,
       debtAmount: 0,
       debtNote: null,
-      partnerId: this.partner.id
+      partnerId: this.partner.id,
+      isPaymentForService: false
     });
-    
-    
 
     setTimeout(() => {
       if (this.defaultVal) {
         this.defaultVal.date = new Date(this.defaultVal.date);
         this.paymentForm.patchValue(this.defaultVal);
         this.maxAmount = this.getValueForm("amount");
-       
-        this.linesFC.clear();
-        this.defaultVal.lines.forEach((line) => {
-          var g = this.fb.group(line);
-          this.linesFC.push(g);
-        });
+        this.paymentForm.get('amount').setValue(this.defaultVal.amount);
+
+        // this.linesFC.clear();
+        // this.defaultVal.lines.forEach((line) => {
+        //   var g = this.fb.group(line);
+        //   this.linesFC.push(g);
+        // });
 
         this.paymentForm.markAsPristine();
       }
-      this.changePaymentForService();
-     
+      // this.changePaymentForService();
+
     });
 
     // advance payment
     this.getJounals();
   }
 
+  get journalLines() {
+    return this.paymentForm.get('journalLines') as FormArray;
+  }
+
+  get isPaymentForServiceValue() {
+    return this.paymentForm.get('isPaymentForService').value;
+  }
+
+  get userAmountPaymentValue() {
+    return Number(this.userAmountPayment);
+  }
+
   changeDebtPayment(checked) {
     if (checked) {
-      const validators = [ Validators.required, Validators.min(1) ];
+      const validators = [Validators.required, Validators.min(0)];
       this.paymentFC.debtAmount.setValidators(validators);
       this.paymentFC.debtAmount.setValue(this.partnerDebt);
+
+      this.paymentFC.debtJournal.setValidators([Validators.required]);
+      this.paymentFC.debtJournal.setValue(this.filteredJournals.find(x => x.type == 'cash'));
     } else {
       this.paymentFC.debtAmount.clearValidators();
-      this.debtJournalSelected = null;
+      this.paymentFC.debtJournal.clearValidators();
     }
+
     this.paymentFC.debtAmount.updateValueAndValidity();
+    this.paymentFC.debtJournal.updateValueAndValidity();
   }
 
   getJounals() {
     var val = new AccountJournalFilter();
     val.companyId = this.authService.userInfo.companyId;
     val.type = "bank,cash,advance,debt";
-    this.accountJournalService.journalResBankAutoComplete(val).subscribe((result: any[]) => {
-      result.forEach((jn: any) => {
-        var filterJN = this.filteredJournals.find(x=> x.type == jn.type);
-        if(filterJN)
-        {
-          filterJN.journals.push(jn);
-          filterJN.journal = jn;
-        }
-      });
+    this.accountJournalService.autocomplete(val).subscribe((result: any[]) => {
+      this.filteredJournals = result;
+      this.cashBankJournals = result.filter(x => x.type == 'cash' || x.type == 'bank');
     })
-  }; 
+  };
 
   get amountResidual() {
-   return this.defaultVal.lines.reduce((total,line) => {
+    return this.defaultVal.lines.reduce((total, line) => {
       return total + line?.saleOrderLine?.amountResidual;
-    },0);
+    }, 0);
   }
 
   get amount() {
-    return this.paymentForm.get('amount').value;
+    return Number(this.paymentForm.get('amount').value);
   }
 
   get paymentFC() {
-    return this.paymentForm.controls ;
+    return this.paymentForm.controls;
   }
 
   get journalLinesFC() {
@@ -177,15 +192,19 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   }
 
   get debtAmount() {
-    return +this.paymentForm.get('debtAmount').value;
+    return Number(this.paymentForm.get('debtAmount').value);
+  }
+
+  get isDebtPaymentValue() {
+    return this.paymentForm.get('isDebtPayment').value;
   }
 
   getPaymentFormControl(key) {
     return this.paymentForm.get(key);
   }
 
-  filteredJournalsByType(type){
-    return JSON.parse(JSON.stringify(this.filteredJournals.filter(x=> type.includes(x.type))));
+  filteredJournalsByType(type) {
+    return JSON.parse(JSON.stringify(this.filteredJournals.filter(x => type.includes(x.type))));
   }
 
   getAmountTotalPayment() {
@@ -217,41 +236,44 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     return totalAmountPaymentLines == this.amount;
   }
 
-  save(isPrint?: boolean) {
+  save() {
     this.submitted = true;
     if (!this.paymentForm.valid) {
       return;
     }
-    var val = this.getValueFormSave();
-    if (val == null) return;
-    this.paymentService.paymentSaleOrderAndDebt(val).subscribe((result: any) => {
-        this.activeModal.close();
-        if (isPrint) {
-          let modalRef = this.modalService.open(ConfirmPaymentDialogComponent, {
-            size: 'sm',
-            windowClass: "o_technical_modal",
-            keyboard: false,
-            backdrop: "static",
-          });
-          modalRef.componentInstance.title = "Thanh toán thành công";
-          modalRef.componentInstance.name = this.partner?.name;
-          modalRef.componentInstance.amountPayment = this.paymentFC.isDebtPayment.value ? this.getAmountTotalPayment() : this.paymentForm.get('amount').value;
-          modalRef.result.then(
-            res => {
-              this.saleOrderPaymentService.getPrint(result.id).subscribe((result: any) => {
-                this.printService.printHtml(result.html);
-              });
-            },
-            () => { }
-          );
-        }
-        else {
-          this.activeModal.close(true);
 
-        }
-        
-    },(err) => {
-        this.errorService.show(err);
+    if (this.amount <= 0) {
+      this.notifyService.notify('error', 'Số tiền thanh toán phải lớn hơn 0');
+      return false;
+    }
+
+    //nếu số tiền còn thiếu > 0 thì ko cho thanh toán
+    if (this.step == 2 && this.amountTotalJournalPayment < this.amount) {
+      this.notifyService.notify('error', 'Vui lòng chọn phương thức cho số tiền còn thiếu');
+      return false;
+    }
+
+    var val = this.getValueFormSave();
+    this.paymentService.paymentSaleOrderAndDebt(val).subscribe((result: any) => {
+      this.activeModal.close();
+      let modalRef = this.modalService.open(ConfirmPaymentDialogComponent, {
+        size: 'sm',
+        windowClass: "o_technical_modal",
+        keyboard: false,
+        backdrop: "static",
+      });
+      modalRef.componentInstance.title = "Thanh toán thành công";
+      modalRef.componentInstance.name = this.partner?.name;
+      modalRef.componentInstance.amountPayment = this.paymentFC.isDebtPayment.value ? this.getAmountTotalPayment() : this.paymentForm.get('amount').value;
+      modalRef.result.then(
+        res => {
+          this.saleOrderPaymentService.getPrint(result.id).subscribe((result: any) => {
+            this.printService.printHtml(result.html);
+          });
+        },
+        () => { }
+      );
+    }, (err) => {
     })
   }
 
@@ -261,6 +283,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
       return;
     }
 
+
     var val = this.getValueFormSave();
     if (val == null) return;
 
@@ -269,37 +292,24 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
         print: true,
         paymentId: result.id,
       });
-    },(err) => {
-        this.errorService.show(err);
+    }, (err) => {
+      this.errorService.show(err);
     })
   }
 
   getValueFormSave() {
-    var val = this.paymentForm.value;
-    val.date = this.intlService.formatDate(
-      val.date,
-      "d",
-      "en-US"
-    );
-    if(this.step == 2 && this.userAmountPayment > 0){
-      var cashJournalFilter = this.filteredJournals.find(x=> x.type == 'cash');
-      var cashSelected = this.selectedJournals.find(x=> x.type == 'cash');
-      if(cashSelected){
-        cashSelected.amount = cashSelected.amount + this.userAmountPayment;
-      } else {
-        this.selectJournalFilter(cashJournalFilter);
-      }
-    }
+    var val = this.paymentForm.getRawValue();
+    val.date = this.intlService.formatDate(val.date, "d", "en-US");
 
-    val.journalLines = this.selectedJournals.map(x=> {
-     return {
-      journalId: x.journal.id,
-      amount: x.amount
-     }
+    val.journalLines = val.journalLines.map(x => {
+      return {
+        journalId: x.journal.id,
+        amount: x.amount
+      }
     });
 
-   if(this.step == 2 && val.isDebtPayment)
-   val.debtJournalId = this.debtJournalSelected.journal.id;
+    val.debtJournalId = val.debtJournal ? val.debtJournal.id : null;
+
     return val;
   }
 
@@ -307,11 +317,12 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     this.activeModal.dismiss();
   }
 
-  changeMoneyLine(line: FormGroup) {
+  changeMoneyLine() {
     var sumAmountPrepaid = 0;
-    this.getValueForm("lines").forEach(function (v) {
-      sumAmountPrepaid += v.amount;
+    this.linesFC.controls.forEach(function (v) {
+      sumAmountPrepaid += Number(v.get('amount').value);
     });
+   
     this.paymentForm.get("amount").setValue(sumAmountPrepaid);
   }
 
@@ -328,35 +339,35 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   }
 
   enterMoney() {
-   setTimeout(() => {
-    var amount = this.paymentForm.get("amount").value || 0;
+    setTimeout(() => {
+      var amount = this.paymentForm.get("amount").value || 0;
 
-    var lines = this.paymentForm.get("lines") as FormArray;
-    //tìm những line có số tiền âm sẽ cộng thêm vào amount;
-    var negativeLineControls = lines.controls.filter((value, index, array) => {
-      return value.get("saleOrderLine").value.amountResidual < 0;
-    });
+      var lines = this.paymentForm.get("lines") as FormArray;
+      //tìm những line có số tiền âm sẽ cộng thêm vào amount;
+      var negativeLineControls = lines.controls.filter((value, index, array) => {
+        return value.get("saleOrderLine").value.amountResidual < 0;
+      });
 
-    negativeLineControls.forEach((control) => {
-      var amountResidual =
-        control.get("saleOrderLine").value.amountResidual || 0;
-      control.get("amount").setValue(amountResidual);
-      amount += amountResidual * -1;
-    });
+      negativeLineControls.forEach((control) => {
+        var amountResidual =
+          control.get("saleOrderLine").value.amountResidual || 0;
+        control.get("amount").setValue(amountResidual);
+        amount += amountResidual * -1;
+      });
 
-    lines.controls.forEach((control) => {
-      var amountResidual =
-        control.get("saleOrderLine").value.amountResidual || 0;
-      if (amountResidual > 0) {
-        var amountPaid = Math.min(amount, amountResidual);
-        control.get("amount").setValue(amountPaid);
+      lines.controls.forEach((control) => {
+        var amountResidual =
+          control.get("saleOrderLine").value.amountResidual || 0;
+        if (amountResidual > 0) {
+          var amountPaid = Math.min(amount, amountResidual);
+          control.get("amount").setValue(amountPaid);
 
-        amount -= amountPaid;
-      }
-    });
-   }, 0);
-  
-    
+          amount -= amountPaid;
+        }
+      });
+    }, 0);
+
+
   }
 
   updateReturnCash() {
@@ -374,12 +385,11 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     this.step++;
     //gán lại default
     this.userAmountPayment = this.amount;
-    if(this.getValueForm('isDebtPayment'))
-    {
-      this.debtJournalSelected = Object.assign({},this.filteredJournals.find(x=> x.type == 'cash'));
+    if (this.getValueForm('isDebtPayment')) {
+      this.debtJournalSelected = Object.assign({}, this.filteredJournals.find(x => x.type == 'cash'));
       this.debtJournalSelected.amount = this.debtAmount;
     }
-    
+
     // this.debtJournalSelected = {type:'cash',name: 'Tiền mặt', journals: [], journal:null};
 
     this.selectedJournals = [];
@@ -409,8 +419,10 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
   backPreviousStep() {
     this.step--;
-    this.selectedJournals = [];
-    this.debtJournalSelected = null;
+    this.journalLines.clear();
+    if (this.isDebtPaymentValue) {
+      this.paymentFC.debtJournal.setValue(this.filteredJournals.find(x => x.type == 'cash'));
+    }
   }
 
   addCashSuggest() {
@@ -612,96 +624,102 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     }
   }
 
-  changePaymentForService() {
-    var total = this.isPaymentForService ? 0 : this.amountResidual;
-    this.paymentForm.get('amount').setValue(total);
-    this.enterMoney();
+  changePaymentForService(e) {
+    if (e.target.checked) {
+      this.linesFC.clear();
+      this.defaultVal.lines.forEach((line) => {
+        var g = this.fb.group(line);
+        setTimeout(() => {
+          g.get('amount').setValue(0);
+        });
+        this.linesFC.push(g);
+      });
+
+      this.paymentForm.get('amount').setValue(0);
+    } else {
+      this.linesFC.clear();
+      this.paymentForm.get('amount').setValue(this.defaultVal.amount);
+    }
+    // var total = this.isPaymentForService ? 0 : this.amountResidual;
+    // this.paymentForm.get('amount').setValue(total);
+    // this.enterMoney();
   }
 
   // advance payment
   isHasJournalFilter(journalType) {
-    var types = this.selectedJournals.map(x => x.type);
-    return types.includes(journalType);
+    var index = this.journalLines.controls.findIndex(x => x.get('type').value == journalType);
+    return index !== -1;
   }
 
   selectJournalFilter(journalFilter) {
-    var types = this.selectedJournals.map(x => x.type);
-    if (types.findIndex(x => x == journalFilter.type) != -1) {
+    var index = this.journalLines.controls.findIndex(x => x.get('type').value == journalFilter.type);
+    if (index !== -1 || this.userAmountPaymentValue <= 0) {
       return;
     }
+
+    var amount = this.userAmountPaymentValue;
     if (journalFilter.type == 'advance') {
-      journalFilter.amount = this.advanceAmount > this.userAmountPayment ? this.userAmountPayment : this.advanceAmount;
+      amount = this.advanceAmount > amount ? amount : this.advanceAmount;
     }
-    else {
-      journalFilter.amount = Number(this.userAmountPayment);
-    }
-    journalFilter.journal = journalFilter.journals[0];
-    this.selectedJournals.push(journalFilter);
+
+    var journals = this.filteredJournals.filter(x => x.type == journalFilter.type);
+
+    this.journalLines.push(this.fb.group({
+      type: journalFilter.type,
+      journals: this.fb.array(journals),
+      amount: amount,
+      journal: [journals[0], Validators.required]
+    }));
+
     this.userAmountPayment = this.amount - this.amountTotalJournalPayment;
   }
 
-  removeJounalSelected(journal) {
-    let index = this.selectedJournals.findIndex(x => x.type == journal.type);
-    if (index != -1) {
-      let jnItem = this.selectedJournals[index];
-      this.userAmountPayment = Number(this.userAmountPayment) + jnItem.amount;
-      this.selectedJournals.splice(index,1);
-    }
+  removeJounalSelected(i) {
+    var journalLine = this.journalLines.at(i);
+    this.userAmountPayment = Number(this.userAmountPayment) + journalLine.get('amount').value;
+    this.journalLines.removeAt(i);
   }
 
-  onChangeLine(value,line,id) {
-    var numberPattern = /\d+/g;
-    value = value.match( numberPattern ).join('')
-    let numberValue = Number(value);
+  getPaymentMethod(type: string) {
+    return this.paymentMethods.find(x => x.type == type);
+  }
+
+  onChangeLine(index) {
+    var line = this.linesFC.controls[index];
+    var amount = line.get('amount').value;
     let max = line.get('saleOrderLine').value.amountResidual;
-    if (numberValue > max) {
-      this.linesFC.controls[id].get('amount').setValue(max);
+    if (amount > max) {
+      line.get('amount').setValue(max);
     }
   }
 
-  onChange(value,key,max) {
-    var numberPattern = /\d+/g;
-    value = value.match( numberPattern ).join('')
-    let numberValue = Number(value);
-    if (max!=0 && numberValue > max) {
-      this.getPaymentFormControl(key).setValue(max);
+  onChangeUserAmountPayment() {
+    if (this.userAmountPayment > this.amount) {
+      this.userAmountPayment = this.amount;
     }
   }
 
-  onChangeUserAmountPayment(value) {
-    var max = this.amount - this.amountTotalJournalPayment;
-    let numberPattern = /\d+/g;
-    let numberValue = value.match(numberPattern);
-    if (numberValue != null) {
-      numberValue = numberValue.join('');
-      // numberValue = Number(numberValue);
-      numberValue = +numberValue;
-      if (numberValue > max){
-        this.userAmountPayment = max;
+  get amountTotalJournalPayment() {
+    return this.journalLines.controls.reduce((x, v) => {
+      return v.get('amount').value + x;
+    }, 0);
+  }
+
+  get CombineAllJournalSelected() {
+    var newSelected = [];
+    this.journalLines.controls.forEach(JN => {
+      newSelected.push(Object.assign({}, JN.value));
+    });
+
+    if (this.debtJournalSelected) {
+      var existJN = newSelected.find(x => this.debtJournalSelected.type == x.type);
+      if (existJN) {
+        existJN.amount = existJN.amount + this.debtAmount;
+      } else {
+        this.debtJournalSelected.amount = this.debtAmount;
+        newSelected.push(Object.assign({}, this.debtJournalSelected));
       }
     }
-  }
-
-  get amountTotalJournalPayment(){
-    return this.selectedJournals.reduce((x, v)=> {
-      return v.amount + x;
-    },0);
-  }
-
-  get CombineAllJournalSelected(){
-    var newSelected = [];
-    this.selectedJournals.forEach(JN => {
-      newSelected.push(Object.assign({}, JN));
-    });
-   if(this.debtJournalSelected) {
-    var existJN = newSelected.find(x=> this.debtJournalSelected.type == x.type);
-    if(existJN) {
-      existJN.amount = existJN.amount + this.debtAmount;
-    } else {
-      this.debtJournalSelected.amount = this.debtAmount;
-      newSelected.push(Object.assign({}, this.debtJournalSelected));
-    }
-   }
     return newSelected;
   }
 

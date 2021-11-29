@@ -41,7 +41,7 @@ namespace Infrastructure.Services
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
-            var items = await query.Include(x => x.PaymentRels).ThenInclude(x => x.Payment).ThenInclude(x => x.Journal)
+            var items = await query.Include(x => x.PaymentRels).ThenInclude(x => x.Payment).ThenInclude(x => x.Journal).ThenInclude(x => x.BankAccount).ThenInclude(x => x.Bank)
                 .Include(x => x.Lines).ThenInclude(x => x.SaleOrderLine).ToListAsync();
 
             var paged = new PagedResult2<SaleOrderPaymentBasic>(totalItems, val.Offset, val.Limit)
