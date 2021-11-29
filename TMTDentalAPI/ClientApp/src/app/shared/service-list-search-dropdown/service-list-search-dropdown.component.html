@@ -9,7 +9,8 @@
         <ng-template #rt let-r="result" let-t="term">
             <div class="d-flex justify-content-between">
                 <ng-container *ngIf="r.error; else elseTemplateResult">
-                    <span>Không tìm thấy kết quả tìm kiếm</span>
+                        <span>{{model}}</span>
+                        <i class="fas fa-plus"></i>
                 </ng-container>
                 <ng-template #elseTemplateResult>
                     <ngb-highlight class="service-name mr-3" [result]="r.name" [term]="t"></ngb-highlight>
