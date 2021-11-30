@@ -1570,13 +1570,9 @@ namespace Infrastructure.Services
             ///remove or compute sale production
             var productionObj = GetService<ISaleProductionService>();
             var saleProducionIds = saleLine.SaleProductionRels.Select(x => x.SaleProductionId).Distinct().ToList();
-            saleLine.SaleProductionRels.Clear();
-            //foreach (var item in saleLine.SaleProductionRels)
-            //{
-            //    if(item.OrderLineId == saleLine.Id)
-            //    saleLine.SaleProductionRels.Remove(item);
-            //}
-
+            //saleLine.SaleProductionRels.Clear();
+            var saleProductionRel = saleLine.SaleProductionRels.Where(x => x.OrderLineId == saleLine.Id).FirstOrDefault();
+            saleLine.SaleProductionRels.Remove(saleProductionRel);
 
             await Unlink(new List<Guid>() { id });
 
