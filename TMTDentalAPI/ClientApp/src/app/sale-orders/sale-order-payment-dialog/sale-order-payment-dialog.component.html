@@ -100,8 +100,11 @@
                                         </label>
                                     </td>
                                     <td>
-                                        <input class="form-control text-right" formControlName="amount" autonumeric [disableControl]="isPaymentForServiceValue"
-                                            [options]="{maximumValue: defaultVal.amount}" />
+                                        <!-- <input class="form-control text-right" formControlName="amount" autonumeric [disableControl]="isPaymentForServiceValue"
+                                            [options]="{maximumValue: defaultVal.amount}" /> -->
+                                        <app-number-input formControlName="amount" [max]="defaultVal.amount">
+
+                                        </app-number-input> 
                                         <!-- <input class="form-control text-right" formControlName="amount"
                                             (blur)="enterMoney()" autonumeric
                                             (input)="onChange($event.target.value,'amount',maxAmount)" /> -->
@@ -109,6 +112,7 @@
                                             [step]="1000" [format]="'n0'" [autoCorrect]="true" (blur)="enterMoney()"
                                             formControlName="amount">
                                         </kendo-numerictextbox> -->
+                                        {{this.paymentForm.get('amount').value}}
                                         <div *ngIf="paymentFC.amount.errors && (paymentFC.amount.touched || submitted)"
                                             class="text-danger">
                                             <div *ngIf="paymentFC.amount.errors.required">Nhập số tiền</div>
@@ -257,9 +261,12 @@
                                                     [(ngModel)]="userAmountPayment" name="amountPayment"  [ngModelOptions]="{standalone: true}"
                                                     [max]="userAmountPayment" [spinners]="false">
                                                 </kendo-numerictextbox> -->
-                                                <input class="form-control text-right" style="max-width: 200px" [ngModelOptions]="{standalone: true}"
+                                                <!-- <input class="form-control text-right" style="max-width: 200px" [ngModelOptions]="{standalone: true}"
                                                     [(ngModel)]="userAmountPayment" name="amountPayment" autonumeric
-                                                    [options]="{maximumValue: userAmountPaymentMax}" />
+                                                    [options]="{maximumValue: userAmountPaymentMax}" /> -->
+                                                    <app-number-input [ngModelOptions]="{standalone: true}"
+                                                    [(ngModel)]="userAmountPayment" name="amountPayment"></app-number-input>
+                                                    {{userAmountPayment}}
                                             </td>
                                         </tr>
                                     </tbody>
