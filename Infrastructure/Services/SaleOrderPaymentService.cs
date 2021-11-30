@@ -629,6 +629,7 @@ namespace Infrastructure.Services
             orderlineObj._GetInvoiceQty(order.OrderLines);
             orderlineObj._GetToInvoiceQty(order.OrderLines);
             orderlineObj._GetInvoiceAmount(order.OrderLines);
+            orderlineObj._GetTotalInsurancePaidAmount(order.OrderLines);
             orderlineObj._GetToInvoiceAmount(order.OrderLines);
             orderlineObj._ComputeInvoiceStatus(order.OrderLines);
             orderlineObj._ComputeLinePaymentRels(order.OrderLines);

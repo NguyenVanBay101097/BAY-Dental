@@ -281,6 +281,38 @@ namespace Infrastructure.Services
             }
         }
 
+        public void _GetTotalInsurancePaidAmount(IEnumerable<SaleOrderLine> self)
+        {
+            var amlObj = GetService<IAccountMoveLineService>();
+            var selfIds = self.Select(x => x.Id).ToList();
+            var selfAmls = amlObj.SearchQuery(x => x.Account.Code == "DTBH" && x.SaleLineRels.Any(x => selfIds.Contains(x.OrderLineId)))
+                .Include(x => x.SaleLineRels)
+                .Include(x => x.Move).ToList();
+
+            foreach (var line in self)
+            {
+                decimal amountInsurancePaid = 0;
+                var amls = selfAmls.Where(x => x.SaleLineRels.Any(s => s.OrderLineId == line.Id)).ToList();
+                foreach (var invoiceLine in amls)
+                {
+                    var move = invoiceLine.Move;
+                    if (move.State != "cancel")
+                    {
+                        if (move.Type == "out_invoice")
+                        {
+                            amountInsurancePaid += (invoiceLine.PriceSubtotal ?? 0);
+                        }
+                        else if (move.Type == "out_refund")
+                        {
+                            amountInsurancePaid -= (invoiceLine.PriceSubtotal ?? 0);
+                        }
+                    }
+                }
+
+                line.AmountInsurancePaidTotal = amountInsurancePaid;
+            }
+        }
+
         public async Task _UpdateInvoiceQty(IEnumerable<Guid> ids)
         {
             var lines = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.SaleOrderLineInvoiceRels)

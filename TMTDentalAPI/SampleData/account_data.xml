@@ -296,6 +296,12 @@
       <field name="reconcile" eval="True" />
     </record>
 
+    <record model="account.account" id="data_account_DTBH">
+      <field name="name">Doanh Thu bảo hiểm</field>
+      <field name="code">DTBH</field>
+      <field name="user_type_id" ref="account.data_account_type_revenue" />
+    </record>
+
     <!-- account.journal -->
     <record model="account.journal" id="data_account_journal_cash">
       <field name="name">Tiền mặt</field>
