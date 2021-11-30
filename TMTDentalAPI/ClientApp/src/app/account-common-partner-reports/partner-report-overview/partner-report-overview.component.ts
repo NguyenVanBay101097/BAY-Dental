@@ -211,8 +211,8 @@ export class PartnerReportOverviewComponent implements OnInit {
   }
 
   loadPnSources() {
-    this.searchPartnerSource$().subscribe((res:any[]) => {
-      res.push({id:-1, name: 'Chưa xác định'});
+    this.searchPartnerSource$().subscribe((res: any[]) => {
+      res.push({ id: -1, name: 'Chưa xác định' });
       this.partnerSources = res;
     });
   }
@@ -252,7 +252,7 @@ export class PartnerReportOverviewComponent implements OnInit {
 
   onSelectPartnerSource(e) {
     this.filter.sourceId = (e && e.id != -1) ? e.id : '';
-    this.filter.isHasNullSourceId = (e &&e.id == -1) ? true : false;
+    this.filter.isHasNullSourceId = (e && e.id == -1) ? true : false;
     this.onFilterChange();
   }
 
