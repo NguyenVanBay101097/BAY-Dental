@@ -2948,6 +2948,7 @@ namespace Infrastructure.Services
             var saleProductions = await saleProductionObj.SearchQuery(x => x.SaleOrderLineRels.Any(s => lineIds.Contains(s.OrderLineId)))
                 .Include(x => x.Product)
                 .Include(x => x.Lines).ThenInclude(s => s.Product).ThenInclude(x => x.UOM)
+                .OrderByDescending(x => x.DateCreated)
                 .ToListAsync();
 
             return saleProductions;

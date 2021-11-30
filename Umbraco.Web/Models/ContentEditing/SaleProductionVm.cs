@@ -24,9 +24,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<SaleProductionLineDisplay> Lines { get; set; } = new List<SaleProductionLineDisplay>();
     }
 
-    public class SaleProductionChangeQtyReq
+    public class UpdateSaleProductionReq
     {
-        public Guid OrderLineId { get; set; }
-        public decimal Quantity { get; set; }
+        public Guid OrderId { get; set; }
     }
 }

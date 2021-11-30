@@ -46,6 +46,13 @@
                                     </div>
                                 </td>
                             </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                   
+                                </td>
+                                <td colspan="1" style="width: 100%;">                                   
+                                </td>
+                            </tr>                          
                         </tbody>
                     </table>
                     <table class="o_group o_inner_group o_group_col_6">
@@ -77,8 +84,13 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="mb-1">
+                    <button type="button" *ngIf="!seeForm" (click)="updateSaleProduction()" class="btn btn-primary">
+                        Cập nhật vật tư
+                     </button>
+                </div>           
                 <div class="section">
-                    <div class="section-left" *ngIf="!seeForm">
+                    <div class="section-left" *ngIf="!seeForm">                    
                         <table class="table table-sm table-hover border-bottom">
                             <thead>
                                 <tr>

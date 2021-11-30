@@ -1452,19 +1452,7 @@ namespace Infrastructure.Services
             {
                 var promotionObj = GetService<ISaleOrderPromotionService>();
                 await promotionObj.ComputeAmount(orderPromotionIds);
-            }
-
-            //Tính toán lại vật tư
-            var saleProductionObj = GetService<ISaleProductionService>();
-            var states = new string[] { "draft", "cancel" };
-            var saleProductions = await saleProductionObj.SearchQuery(x => x.SaleOrderLineRels.Any(x => x.OrderLineId == entity.Id && !states.Contains(x.OrderLine.State)))
-                .Include(x => x.Lines)
-                .Include(x => x.SaleOrderLineRels).ThenInclude(x => x.OrderLine).ToListAsync();
-
-            if(saleProductions.Any())
-            {
-               await saleProductionObj.CompareSaleProduction(saleProductions);
-            }
+            }        
 
             //Tính toán lại thành tiền, tổng giảm giá, tổng tiền, đã thanh toán, còn lại cho order
             var orderObj = GetService<ISaleOrderService>();

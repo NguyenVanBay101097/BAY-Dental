@@ -8,6 +8,7 @@ import * as _ from 'lodash';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { SaleOrderLineForProductRequest } from 'src/app/core/services/sale-order-line.service';
 import { SaleOrderService } from 'src/app/core/services/sale-order.service';
+import { SaleProductionService, UpdateSaleProductionReq } from 'src/app/core/services/sale-production.service';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
@@ -56,6 +57,7 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     private saleOrderService: SaleOrderService,
     private productRequestLineService: ProductRequestLineService,
     private intlService: IntlService,
+    private saleProductionService: SaleProductionService,
     private saleOrderLineProductRequestedService: SaleOrderLineProductRequestedService
   ) { }
 
@@ -75,7 +77,7 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
       }
 
       this.loadEmployees();
-      this.loadListProductBoms();
+      this.loadListSaleProduction();
     });
 
     this.employeeCbx.filterChange.asObservable().pipe(
@@ -152,10 +154,18 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     });
   }
 
-  loadListProductBoms() {
+  loadListSaleProduction() {
     this.saleOrderService.getSaleProductionBySaleOrderId(this.saleOrderId).subscribe((res: any) => {
       this.listSaleProduction = res;
     });
+  }
+
+  updateSaleProduction() {
+    let val = new UpdateSaleProductionReq();
+    val.orderId = this.saleOrderId;
+    this.saleProductionService.updateSaleProduction(val).subscribe(() => {
+      this.loadListSaleProduction();
+    })
   }
 
 
@@ -207,7 +217,6 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     val.employeeId = val.employee.id;
     val.saleOrderId = this.saleOrderId;
     val.date = this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm:ss");
-    console.log(val);
     if (!this.id) {
       this.productRequestService.create(val).subscribe((res: any) => {
         this.productRequestService.actionConfirm([res.id]).subscribe((res: any) => {
