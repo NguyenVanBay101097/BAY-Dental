@@ -25,6 +25,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   paymentForm: FormGroup;
   defaultVal: any;// data from api saleorderpaymentbysaleorderid
   partnerDebt = 0; // số tiền công nợ
+  userAmountPaymentMax = 0; // số tiền tối đa mà người dùng được nhập
   // advanced payment
   userAmountPayment = 0; // số tiền khách nhập
   filteredJournals: any[] = [];
@@ -385,6 +386,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     this.step++;
     //gán lại default
     this.userAmountPayment = this.amount;
+    this.userAmountPaymentMax = this.amount;
     if (this.getValueForm('isDebtPayment')) {
       this.debtJournalSelected = Object.assign({}, this.filteredJournals.find(x => x.type == 'cash'));
       this.debtJournalSelected.amount = this.debtAmount;
@@ -670,8 +672,11 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
       amount: amount,
       journal: [journals[0], Validators.required]
     }));
-
-    this.userAmountPayment = this.amount - this.amountTotalJournalPayment;
+    let computeAmount = this.amount - this.amountTotalJournalPayment;
+    this.userAmountPayment =  computeAmount;
+    setTimeout(() => {
+      this.userAmountPaymentMax = computeAmount;
+    });
   }
 
   removeJounalSelected(i) {
