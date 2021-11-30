@@ -59,7 +59,7 @@
                     </div>
                     <div class="mb-2">
                         <h5>BẢN ĐỒ RĂNG NHA</h5>
-                        <div class="mb-3">
+                        <div>
                             <!-- nhóm răng-->
                             <div class="mb-2 d-flex">
                                 <div class="form-check t-form-check mr-2" *ngFor="let item of filteredToothCategories">
@@ -83,34 +83,9 @@
                             </div>
                         </div>
                         <div class="mb-2">
-                            <div class="teeth-map mb-2 row mx-0 w-100">
-                                <!-- loại răng chọn -->
-                                <div class="col-sm-3 row">
-                                    <!-- <ng-container *ngFor="let item of toothTypeDict; let toothTypeIndex = index">
-                                        <div class="col-6 pl-0">
-                                            <input (change)="onChangeToothType(item.value)" [value]="item.value" [checked]="item.value === getValueFormControl('toothType')" class="btn-check hide" type="radio" name="toothType" formControlName="toothType" [id]="'toothType' + toothTypeIndex">
-                                            <label class="btn w-100 mb-0" [ngClass]="item.value === getValueFormControl('toothType') ? 'btn-primary' : 'btn-outline-primary'" [for]="'toothType' + toothTypeIndex">{{item.name}}</label>
-                                        </div>
-                                    </ng-container> -->
-                                </div>
-                                <!-- răng -->
-                                <div class="col-sm-9">
-                                    <!-- <table class="table-tooth table table-sm w-auto mw-100">
-                                        <tr *ngFor="let ham of hamList | keyvalue">
-                                            <td *ngFor="let vitri of ham.value | keyvalue" [ngClass]="{'text-right' : vitri.key === '0_right'}">
-                                                <div class="tooth-wrapper">
-                                                    <div *ngFor="let rang of vitri.value" class="tooth-item" 
-                                                        [ngClass]="{'teethSelected' : isSelected(rang), 'disabled' : getValueFormControl('toothType') != 'manual'}" 
-                                                        (click)="onSelected(rang)">
-                                                        {{rang.name}}
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </table> -->
-                                    <app-teeth-chart [isDisabled]="teethDisabled" [teeth]="filterTeeths" [(selectedKeys)]="toothSelectedIds">
-                                    </app-teeth-chart>
-                                </div>
+                            <div class="text-center">
+                                <app-teeth-chart [isDisabled]="teethDisabled" [teeth]="filterTeeths" [(selectedKeys)]="toothSelectedIds">
+                                </app-teeth-chart>
                                 <div *ngIf="getValueFormControl('toothType') == 'manual'
                                     && toothSelectedIds.length == 0
                                     && submitted" class="text-danger">

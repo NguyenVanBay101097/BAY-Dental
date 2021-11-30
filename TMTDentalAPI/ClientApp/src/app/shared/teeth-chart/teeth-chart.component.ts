@@ -11,9 +11,10 @@ export class TeethChartComponent implements OnInit, OnChanges {
   @Input() selectedKeys: string[] = [];
   hamList: { [key: string]: {} };
   @Output() selectedKeysChange = new EventEmitter<string[]>();
-  teethSort: ToothDisplay[]  = [];
-  anchor: number = -1;
-  focus: number = -1;
+  teethSort: ToothDisplay[] = [];
+  anchor: number = 0;
+  focus: number = 0;
+  selection = new Set();
   @Input() isDisabled = false;
   constructor() { }
 
@@ -46,7 +47,7 @@ export class TeethChartComponent implements OnInit, OnChanges {
       this.teethSort.push(...this.hamList[pro]['0_right']);
       this.teethSort.push(...this.hamList[pro]['1_left']);
     }
-    
+
   }
 
   isSelected(tooth: ToothDisplay) {
@@ -54,46 +55,46 @@ export class TeethChartComponent implements OnInit, OnChanges {
   }
 
   clickTooth(tooth: ToothDisplay, event: PointerEvent) {
-    var onlyClick = ()=> {
+    var onlyClick = () => {
       var index = this.selectedKeys.indexOf(tooth.id);
       if (this.isSelected(tooth)) {
         this.selectedKeys.splice(index, 1);
-        this.anchor = -1;
-        this.focus = -1;
+        this.anchor = 0;
+        this.focus = 0;
       } else {
-        var toothIndex = this.teethSort.findIndex(x=> x.id == tooth.id);
+        var toothIndex = this.teethSort.findIndex(x => x.id == tooth.id);
         this.anchor = toothIndex;
         this.focus = toothIndex;
         this.selectedKeys.push(tooth.id);
       }
     };
 
-    var shiftClick = ()=>{
-      var toothIndex = this.teethSort.findIndex(x=> x.id == tooth.id);
+    var shiftClick = () => {
+      var toothIndex = this.teethSort.findIndex(x => x.id == tooth.id);
       let start = Math.min(this.anchor, this.focus)
       let end = Math.max(this.anchor, this.focus)
       let removeCount = end - start + 1;
       // remove between anchor and focus
-      if(toothIndex >= start && toothIndex <= end)
-      // this.selectedKeys.splice(0,removeCount);
-      this.selectedKeys.splice(this.selectedKeys.length-removeCount,removeCount);
-      
+      if (toothIndex >= start && toothIndex <= end)
+        // this.selectedKeys.splice(0,removeCount);
+        this.selectedKeys.splice(this.selectedKeys.length - removeCount, removeCount);
+
       this.focus = toothIndex;
       start = Math.min(this.anchor, this.focus)
       end = Math.max(this.anchor, this.focus)
       for (let i = start; i <= end; i++) {
-        if(!this.isSelected(this.teethSort[i]))
-        this.selectedKeys.push(this.teethSort[i].id)
+        if (!this.isSelected(this.teethSort[i]))
+          this.selectedKeys.push(this.teethSort[i].id)
       }
     }
-    
 
-    if (event.shiftKey && this.anchor != -1) {
+
+    if (event.shiftKey) {
       shiftClick();
-    }else {
-     onlyClick();
+    } else {
+      onlyClick();
     }
-    window.getSelection().removeAllRanges();
+    // window.getSelection().removeAllRanges();
     this.selectedKeysChange.emit(this.selectedKeys);
   }
 }
