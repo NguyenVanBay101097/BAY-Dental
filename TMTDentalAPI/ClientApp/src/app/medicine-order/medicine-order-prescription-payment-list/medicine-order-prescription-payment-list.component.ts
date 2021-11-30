@@ -66,7 +66,6 @@ export class MedicineOrderPrescriptionPaymentListComponent implements OnInit {
     paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd");
     paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:50");
     paged.state = this.state;
-    paged.companyId = this.authService.userInfo.companyId;
     this.medicineOrderSerive.getPaged(paged).pipe(
       map(response => (<GridDataResult>{
         data: response.items,
