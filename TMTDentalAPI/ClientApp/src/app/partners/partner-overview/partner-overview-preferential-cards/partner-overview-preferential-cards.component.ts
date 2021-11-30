@@ -42,6 +42,7 @@ export class PartnerOverviewPreferentialCardsComponent implements OnInit {
     const modalRef = this.modalService.open(ServiceCardCardsPreferentialCuDialogComponent, { scrollable: true, windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = "Chỉnh sửa thẻ " + item.barcode;
     modalRef.componentInstance.id = item.id;
+    modalRef.componentInstance.partnerId = this.partnerId;
     modalRef.componentInstance.partnerDisable = true;
     modalRef.result.then(result => {
       if (!result) {
