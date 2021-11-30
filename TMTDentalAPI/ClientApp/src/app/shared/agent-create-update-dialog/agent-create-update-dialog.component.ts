@@ -6,7 +6,9 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import * as _ from 'lodash';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { AgentService } from 'src/app/agents/agent.service';
+import { AuthService } from 'src/app/auth/auth.service';
 import { Commission, CommissionPaged, CommissionService } from 'src/app/commissions/commission.service';
+import { SessionInfoStorageService } from 'src/app/core/services/session-info-storage.service';
 import { EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
@@ -53,6 +55,8 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
     private notifyService: NotifyService,
     private employeeService: EmployeeService,
     private resBankService: ResBankService,
+    private sessionInfoStorageService: SessionInfoStorageService,
+    private authService: AuthService,
   ) { }
 
 
@@ -160,6 +164,9 @@ export class AgentCreateUpdateDialogComponent implements OnInit, AfterViewInit {
     val.limit = 20;
     val.offset = 0;
     val.search = q || '';
+    if (this.sessionInfoStorageService.getSessionInfo().settings && !this.sessionInfoStorageService.getSessionInfo().settings.companySharePartner) {
+      val.companyId = this.authService.userInfo.companyId;
+    }
     return this.partnerService.autocompletePartnerInfo(val);
   }
 

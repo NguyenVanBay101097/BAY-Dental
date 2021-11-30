@@ -177,7 +177,10 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
 
   onChangeTemplate(event) {
     if (event && event.body) {
-      this.template = JSON.parse(event.body);
+      this.template = {
+        text: event.body,
+        templateType: 'text'
+      }
     } else {
       this.template = {
         text: '',

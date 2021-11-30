@@ -6,6 +6,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
@@ -55,6 +56,7 @@ export class SalePromotionProgramListComponent implements OnInit {
     private checkPermissionService: CheckPermissionService,
     private notificationService: NotificationService,
     private intlService: IntlService,
+    public authService: AuthService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -129,7 +131,8 @@ export class SalePromotionProgramListComponent implements OnInit {
     val.active = this.filterActive;
     val.ruleDateFromBegin = this.ruleDateFromBegin ? this.intlService.formatDate(this.ruleDateFromBegin, 'yyyy-MM-dd') : '';
     val.ruleDateFromEnd = this.ruleDateFromEnd ? this.intlService.formatDate(this.ruleDateFromEnd, 'yyyy-MM-dd') : '';
-
+    val.companyId = this.authService.userInfo.companyId;
+    
     if (this.selectedStatus && this.selectedStatus.value) {
       val.status = this.selectedStatus.value;
     }

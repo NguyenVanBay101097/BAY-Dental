@@ -46,6 +46,11 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.OrderDate <= dateOrderTo);
             }
 
+            if (val.CompanyId.HasValue)
+            {
+                query = query.Where(x=> x.CompanyId == val.CompanyId.Value);
+            }
+
 
             var totalItems = await query.CountAsync();
 
@@ -628,6 +633,10 @@ namespace Infrastructure.Services
             {
                 var dateOrderTo = val.DateTo.Value.AbsoluteEndOfDate();
                 query = query.Where(x => x.OrderDate <= dateOrderTo);
+            }
+            if (val.CompanyId.HasValue)
+            {
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
             }
 
             var totalItems = await query.CountAsync();

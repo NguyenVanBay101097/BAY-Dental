@@ -38,6 +38,7 @@ export class SaleOrderLinesLaboPaged {
     search: string;
     hasAnyLabo: any;
     laboState: string;
+    companyId: string;
 }
 
 export class SaleOrderLineViewModel {

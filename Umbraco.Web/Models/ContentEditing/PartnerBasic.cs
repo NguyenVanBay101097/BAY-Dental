@@ -123,6 +123,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public bool ComputeCreditDebit { get; set; }
         public bool? Active { get; set; }
+        public Guid? CompanyId { get; set; }
     }
 
     public class PartnerGetDebtPagedFilter

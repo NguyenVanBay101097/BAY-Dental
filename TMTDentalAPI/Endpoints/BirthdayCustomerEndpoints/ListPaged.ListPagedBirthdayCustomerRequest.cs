@@ -12,5 +12,6 @@ namespace TMTDentalAPI.Endpoints.BirthdayCustomerEndpoints
         public string Search { get; set; }
         public int? Day { get; set; }
         public int? Month { get; set; }
+        public Guid? CompanyId { get; set; }
     }
 }

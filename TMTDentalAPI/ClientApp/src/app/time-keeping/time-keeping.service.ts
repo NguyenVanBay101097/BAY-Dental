@@ -59,6 +59,7 @@ export class ChamCongPaged {
   to: string;
   limit: number;
   offset: number;
+  companyId: string;
 }
 
 export class ChamCongPagging {

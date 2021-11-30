@@ -5,7 +5,9 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { BirthdayCustomerService, ListPagedBirthdayCustomerRequest } from 'src/app/core/services/birthday-customer.service';
+import { SessionInfoStorageService } from 'src/app/core/services/session-info-storage.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { SmsCampaignService } from '../sms-campaign.service';
 import { SmsManualDialogComponent } from '../sms-manual-dialog/sms-manual-dialog.component';
@@ -41,6 +43,8 @@ export class SmsBirthdayFormManualComponent implements OnInit {
     private notificationService: NotificationService,
     private smsCampaignService: SmsCampaignService,
     private birthCustomerService: BirthdayCustomerService,
+    private sessionInfoStorageService: SessionInfoStorageService,
+    private authService: AuthService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -69,6 +73,9 @@ export class SmsBirthdayFormManualComponent implements OnInit {
     val.search = this.search || '';
     val.day = this.day;
     val.month = this.month;
+    if (this.sessionInfoStorageService.getSessionInfo().settings && !this.sessionInfoStorageService.getSessionInfo().settings.companySharePartner) {
+      val.companyId = this.authService.userInfo.companyId;
+    }
     this.birthCustomerService
       .getListPaged(val)
       .pipe(

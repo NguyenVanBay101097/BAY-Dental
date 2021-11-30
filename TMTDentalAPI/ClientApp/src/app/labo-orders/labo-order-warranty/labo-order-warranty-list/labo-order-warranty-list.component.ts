@@ -9,6 +9,8 @@ import * as _ from 'lodash';
 import * as moment from 'moment';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
+import { SessionInfoStorageService } from 'src/app/core/services/session-info-storage.service';
 import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
@@ -53,7 +55,9 @@ export class LaboOrderWarrantyListComponent implements OnInit {
     private laboOrderService: LaboOrderService,
     private partnerService: PartnerService,
     private intlService: IntlService,
-    private checkPermissionService: CheckPermissionService
+    private checkPermissionService: CheckPermissionService,
+    private sessionInfoStorageService: SessionInfoStorageService,
+    private authService: AuthService,
   ) { }
 
   ngOnInit() {
@@ -89,6 +93,9 @@ export class LaboOrderWarrantyListComponent implements OnInit {
     val.search = search || '';
     val.supplier = true;
     val.active = true;
+    if (this.sessionInfoStorageService.getSessionInfo().settings && !this.sessionInfoStorageService.getSessionInfo().settings.companySharePartner) {
+      val.companyId = this.authService.userInfo.companyId;
+    }
     return this.partnerService.getAutocompleteSimple(val);
   }
 

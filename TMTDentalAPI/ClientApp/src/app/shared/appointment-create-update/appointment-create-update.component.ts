@@ -9,6 +9,8 @@ import { Subject } from 'rxjs';
 import { debounceTime, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { AppointmentBasic } from 'src/app/appointment/appointment';
 import { AppointmentService } from 'src/app/appointment/appointment.service';
+import { AuthService } from 'src/app/auth/auth.service';
+import { SessionInfoStorageService } from 'src/app/core/services/session-info-storage.service';
 import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { PartnerSearchDialogComponent } from 'src/app/partners/partner-search-dialog/partner-search-dialog.component';
@@ -77,7 +79,9 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     private productService: ProductService,
     private employeeService: EmployeeService,
     private notificationService: NotificationService,
-    private printService: PrintService
+    private printService: PrintService,
+    private sessionInfoStorageService: SessionInfoStorageService,
+    private authService: AuthService
    ) { }
 
   ngOnInit() {
@@ -402,6 +406,9 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     partnerPaged.supplier = false;
     partnerPaged.limit = 10;
     partnerPaged.offset = 0;
+    if (this.sessionInfoStorageService.getSessionInfo().settings && !this.sessionInfoStorageService.getSessionInfo().settings.companySharePartner) {
+      partnerPaged.companyId = this.authService.userInfo.companyId;
+    }
     this.partnerService.autocompletePartner(partnerPaged).subscribe(
       rs => {
         this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, rs, 'id');
