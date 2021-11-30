@@ -26,7 +26,6 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
   @ViewChild('multiSelect', { static: true }) multiSelect: MultiSelectComponent;
   myForm: FormGroup;
   hamList: { [key: string]: {} };
-  teethSelected: ToothDisplay[] = [];
   teethSelectedById: ToothDisplay[] = [];
   filteredToothCategories: any[] = [];
   productSelectedFromApi: any[] = [];
@@ -37,6 +36,9 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
   id: string;
   filterData: EmployeeBasic[] = [];
   changesCount = 0;
+  filterTeeths = [];
+  teethDisabled = false;
+  toothSelectedIds: string[] = [];
   toothTypeDict = [
     { name: "Hàm trên", value: "upper_jaw" },
     { name: "Nguyên hàm", value: "whole_jaw" },
@@ -77,13 +79,16 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
       note: [],
       companyId: [null,Validators.required]
     })
+    this.f.toothType.valueChanges.subscribe(val=>{
+      if (val != "manual") {
+        this.teethDisabled = true;
+      } else {
+        this.teethDisabled = false;
+      }
+    });
 
     setTimeout(() => {
       this.loadToothCategories();
-      this.loadDefaultToothCategory().subscribe(result => {
-        this.cateId = result.id;
-        this.loadTeethMap(result);
-      })
       
       this.loadEmployees();
       this.getPageDiagnosis('');
@@ -92,6 +97,7 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
         this.getById();
       } else {
         this.getDefault();
+        
       }
     });
 
@@ -146,7 +152,11 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
   loadTeethMap(categ: ToothCategoryBasic) {
     var val = new ToothFilter();
     val.categoryId = categ.id;
-    return this.toothService.getAllBasic(val).subscribe(result => this.processTeeth(result));
+    return this.toothService.getAllBasic(val).subscribe(result =>
+      {
+        this.filterTeeths = result;
+        this.processTeeth(result)
+      });
   }
 
   processTeeth(teeth: ToothDisplay[]) {
@@ -166,15 +176,13 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
   }
 
   onChangeToothType(toothType) {
-    if (toothType != "manual") {
-      this.teethSelected = [];
-      this.f.teeth.setValue(this.teethSelected);
-    }
+    this.toothSelectedIds = [];
+    this.f.teeth.setValue(this.filterTeeths.filter(x => this.toothSelectedIds.indexOf(x.id) !== -1));
   }
 
   isSelected(tooth: ToothDisplay) {
-    for (var i = 0; i < this.teethSelected.length; i++) {
-      if (this.teethSelected[i].id === tooth.id) {
+    for (var i = 0; i < this.toothSelectedIds.length; i++) {
+      if (this.toothSelectedIds[i] === tooth.id) {
         return true;
       }
     }
@@ -186,17 +194,17 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     if (this.getValueFormControl("toothType") == "manual") {
       if (this.isSelected(tooth)) {
         var index = this.getSelectedIndex(tooth);
-        this.teethSelected.splice(index, 1);
+        this.toothSelectedIds.splice(index, 1);
       } else {
-        this.teethSelected.push(tooth);
+        this.toothSelectedIds.push(tooth.id);
       }
-      this.f.teeth.setValue(this.teethSelected);
+      this.f.teeth.setValue(this.filterTeeths.filter(x => this.toothSelectedIds.indexOf(x.id) !== -1));
     }
   }
 
   getSelectedIndex(tooth: ToothDisplay) {
-    for (var i = 0; i < this.teethSelected.length; i++) {
-      if (this.teethSelected[i].id === tooth.id) {
+    for (var i = 0; i < this.toothSelectedIds.length; i++) {
+      if (this.toothSelectedIds[i] === tooth.id) {
         return i;
       }
     }
@@ -243,8 +251,8 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
 
   onChangeToothCategory(value: any) {
     if (value.id) {
-      this.teethSelected = [];
-      this.f.teeth.setValue(this.teethSelected);
+      this.toothSelectedIds = [];
+      this.f.teeth.setValue(this.filterTeeths.filter(x => this.toothSelectedIds.indexOf(x.id) !== -1));
       this.loadTeethMap(value);
       this.cateId = value.id;
     }
@@ -256,7 +264,7 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
       return false;
     }
 
-    if (this.getValueFormControl('toothType') == 'manual' && (this.getValueFormControl('teeth') && this.getValueFormControl('teeth').length == 0) )
+    if (this.getValueFormControl('toothType') == 'manual' && this.toothSelectedIds.length == 0)
       return;
     var valueForm = this.myForm.value;
     if (valueForm.employeeAdvisory) {
@@ -264,7 +272,7 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     }
     valueForm.date = this.intlService.formatDate(valueForm.dateObj, 'yyyy-MM-ddTHH:mm:ss');
     valueForm.toothCategoryId = this.cateId ;
-    valueForm.toothIds = this.teethSelected.map(x => x.id);
+    valueForm.toothIds = this.toothSelectedIds;
     valueForm.toothDiagnosisIds = valueForm.toothDiagnosis.map(x => x.id);
     valueForm.productIds = valueForm.product.map(x => x.id);
     if (this.id) {
@@ -299,14 +307,20 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
       let date = new Date(result.date);
       this.myForm.get('dateObj').patchValue(date);
       this.myForm.get('employeeAdvisory').patchValue(result.employee);
+      this.loadDefaultToothCategory().subscribe(result => {
+        this.cateId = result.id;
+        this.f.toothCategoryId.setValue(this.cateId);
+        this.loadTeethMap(result);
+      })
     })
   }
 
   getById() {
     this.advisoryService.get(this.id).subscribe(result => {
       this.cateId = result.toothCategoryId;
+      this.f.toothCategoryId.setValue(this.cateId);
       this.loadTeethMap(result.toothCategory);
-      this.teethSelected = result.teeth;
+      this.toothSelectedIds = result.teeth.map(x=> x.id);
       this.teethSelectedById = result.teeth;
       this.myForm.patchValue(result);
       let date = new Date(result.date);
@@ -324,7 +338,7 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
       this.getById();
     } else {
       this.getDefault();
-      this.teethSelected = [];
+      this.toothSelectedIds = [];
     }
     
   }
