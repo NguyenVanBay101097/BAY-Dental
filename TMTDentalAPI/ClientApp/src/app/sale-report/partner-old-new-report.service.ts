@@ -46,6 +46,7 @@ export class PartnerOldNewReportReq {
   limit: number;
   offset: number;
   partnerId: string;
+  isHasNullSourceId: boolean;
 }
 
 export class GetSaleOrderPagedReq {
