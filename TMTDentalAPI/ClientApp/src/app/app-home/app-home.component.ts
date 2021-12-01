@@ -178,7 +178,7 @@ export class AppHomeComponent implements OnInit {
       children: [
         { name: 'Chi nhánh', url: '/companies', permissions: ['System.Company.Read'] },
         { name: 'Nhóm quyền', url: '/roles', permissions: ['System.ApplicationRole.Read'] },
-        { name: 'Cấu hình chung', url: '/config-settings' },
+        { name: 'Cấu hình chung', url: '/config-settings', permissions: ['System.Config'] },
         // { name: 'Mẫu in', url: '/print-template-config' },
         // { name: 'Thiết lập kết nối API', url: '/setting-public-api' }
       ],
@@ -195,9 +195,9 @@ export class AppHomeComponent implements OnInit {
         { name: 'Báo cáo doanh thu', url: '/account-invoice-reports/revenue-time', permissions: ['Report.Revenue'] },
         { name: 'Báo cáo dịch vụ', url: '/sale-report/service-report', permissions: ['Report.Sale'] },
         { name: 'Báo cáo khách hàng', url: '/report-account-common/partner-report-overview', permissions: ['Report.PartnerOldNew'] },
-        { name: 'Báo cáo tiếp nhận', url: '/customer-receipt-reports' },
+        { name: 'Báo cáo tiếp nhận', url: '/customer-receipt-reports', permissions: ['Report.CustomerReceiptReports'] },
         { name: 'Công nợ nhà cung cấp', url: '/report-account-common/partner', linkProps: { queryParams: { result_selection: 'supplier' } }, permissions: ['Report.AccountPartner'] },
-        { name: 'Báo cáo công nợ bảo hiểm', url: '/res-insurance-reports' },
+        { name: 'Báo cáo công nợ bảo hiểm', url: '/res-insurance-reports',  permissions: ['Report.ResInsuranceReports'] },
         { name: 'Thống kê nguồn khách hàng', url: '/report-partner-sources', permissions: ['Report.PartnerSource'] },
         { name: 'Quản lý điều trị', url: '/sale-orders/management', permissions: ['Basic.SaleOrder.Read'] },
       ],
