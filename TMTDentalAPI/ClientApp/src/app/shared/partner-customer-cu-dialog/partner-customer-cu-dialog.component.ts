@@ -347,7 +347,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   }
 
   quickCreateSource() {
-    let modalRef = this.modalService.open(PartnerSourceCreateUpdateDialogComponent, { size: 'xl', windowClass: "o_technical_modal", keyboard: false, backdrop: "static", });
+    let modalRef = this.modalService.open(PartnerSourceCreateUpdateDialogComponent, { size: 'lg', windowClass: "o_technical_modal", keyboard: false, backdrop: "static", });
     modalRef.componentInstance.title = "Thêm nguồn khách hàng";
     modalRef.result.then(result => {
       this.notifyService.notify("success","Lưu thành công");
