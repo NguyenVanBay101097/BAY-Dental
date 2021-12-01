@@ -156,7 +156,7 @@ namespace TMTDentalAPI.Controllers
       
 
         [HttpGet("{id}/Print")]
-        //[CheckAccess(Actions = "Account.PhieuThuChi.Read")]
+        [CheckAccess(Actions = "Account.PhieuThuChi.Print")]
         public async Task<IActionResult> GetPrint(Guid id)
         {
             var res = await _phieuThuChiService.GetByIdAsync(id);
@@ -182,7 +182,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("{id}/Print2")]
-        //[CheckAccess(Actions = "Account.PhieuThuChi.Read")]
+        [CheckAccess(Actions = "Account.PhieuThuChi.Print")]
         public async Task<IActionResult> GetPrint2(Guid id)
         {
             var res = await _phieuThuChiService.GetByIdAsync(id);

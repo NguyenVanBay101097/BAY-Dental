@@ -302,7 +302,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("Print")]
-        [CheckAccess(Actions = "Basic.SaleOrder.Read")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Print")]
         public async Task<IActionResult> GetPrint(SaleOrderPrint val)
         {
 

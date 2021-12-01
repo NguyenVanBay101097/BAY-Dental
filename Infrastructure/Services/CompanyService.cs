@@ -137,6 +137,9 @@ namespace Infrastructure.Services
         public async Task InsertDataSetuptenant(Company mainCompany)
         {
             var groupObj = GetService<IResGroupService>();
+            var appRoleService = GetService<IApplicationRoleService>();
+            var resBankObj = GetService<IResBankService>();
+
             await InsertModuleAccountData(mainCompany);
             await InsertModuleStockData(mainCompany);
             await InsertModuleProductData();
@@ -144,10 +147,10 @@ namespace Infrastructure.Services
             await groupObj.InsertSecurityData();
             //insert những irmodelfield
             await InsertIrModelFieldData();
-            var appRoleService = GetService<IApplicationRoleService>();
             await appRoleService.CreateBaseUserRole();
-            var resBankObj = GetService<IResBankService>();
             await resBankObj.ImportSampleData();
+            //insert role default with permission
+            await appRoleService.CreateDefaultRoles();
         }
 
         public async Task AddIrDataForSurvey()

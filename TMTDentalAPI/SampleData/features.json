@@ -51,6 +51,10 @@
             "Permission": "Basic.SaleOrder.Delete"
           },
           {
+            "Name": "In phiếu",
+            "Permission": "Basic.SaleOrder.Print"
+          },
+          {
             "Name": "Hủy phiếu",
             "Permission": "Basic.SaleOrder.Cancel"
           },
@@ -377,6 +381,14 @@
             "Permission": "Salary.HrPayslipRun.Update"
           },
           {
+            "Name": "In",
+            "Permission": "Salary.HrPayslipRun.Print"
+          },
+          {
+            "Name": "Xuất file",
+            "Permission": "Salary.HrPayslipRun.Export"
+          },
+          {
             "Name": "Hủy",
             "Permission": "Salary.HrPayslipRun.Cancel"
           }
@@ -511,6 +523,10 @@
           {
             "Name": "Hủy phiếu",
             "Permission": "Labo.LaboWarranty.Cancel"
+          },
+          {
+            "Name": "Xuất Excel",
+            "Permission": "Labo.LaboWarranty.Export"
           }
         ]
       }
@@ -913,6 +929,15 @@
             "Permission": "System.ApplicationRole.Delete"
           }
         ]
+      },
+      {
+        "Name": "Cấu hình chung",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "System.Config"
+          }
+        ]
       }
     ]
   },
@@ -925,6 +950,10 @@
           {
             "Name": "Xem",
             "Permission": "Account.Read"
+          },
+          {
+            "Name": "Xuất file",
+            "Permission": "Account.Export"
           }
         ]
       },
@@ -946,6 +975,10 @@
           {
             "Name": "Xóa",
             "Permission": "Account.PhieuThuChi.Delete"
+          },
+          {
+            "Name": "In phiếu",
+            "Permission": "Account.PhieuThuChi.Print"
           }
         ]
       },
@@ -975,6 +1008,24 @@
   {
     "Name": "Báo cáo",
     "Functions": [
+      {
+        "Name": "Báo cáo tổng quan",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.Overview"
+          }
+        ]
+      },
+      {
+        "Name": "Báo cáo tổng quan ngày",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.DayOverview"
+          }
+        ]
+      },
       {
         "Name": "Kết quả kinh doanh",
         "Ops": [
@@ -1008,6 +1059,24 @@
           {
             "Name": "Xem",
             "Permission": "Report.PartnerOldNew"
+          }
+        ]
+      },
+      {
+        "Name": "Báo cáo Tiếp nhận",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.CustomerReceiptReports"
+          }
+        ]
+      },
+      {
+        "Name": "Báo cáo Công nợ bảo hiểm",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.ResInsuranceReports"
           }
         ]
       },

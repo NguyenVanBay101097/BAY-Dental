@@ -13,6 +13,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -56,6 +57,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.ResInsuranceReports")]
         public async Task<IActionResult> GetSummaryReports(InsuranceReportFilter val)
         {
             var res = await _resInsuranceReportService.ReportSummary(val);

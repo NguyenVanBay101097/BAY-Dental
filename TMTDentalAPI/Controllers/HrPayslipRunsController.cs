@@ -64,7 +64,7 @@ namespace TMTDentalAPI.Controllers
 
 
         [HttpPost("{id}/[action]")]
-        [CheckAccess(Actions = "Salary.HrPayslipRun.Read")]
+        [CheckAccess(Actions = "Salary.HrPayslipRun.Print")]
         public async Task<IActionResult> Print(Guid id, HrPayslipRunSave val)
         {
             var ids = val.Slips.Where(x => x.IsCheck == true).Select(x => x.Id);
@@ -231,7 +231,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Salary.HrPayslipRun.Read")]
+        [CheckAccess(Actions = "Salary.HrPayslipRun.Export")]
         public async Task<IActionResult> ExportExcelFile(IEnumerable<Guid> payslipIds)
         {
             CultureInfo cul = CultureInfo.CurrentCulture;

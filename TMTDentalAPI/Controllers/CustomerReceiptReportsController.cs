@@ -12,6 +12,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -34,6 +35,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet]
+        [CheckAccess(Actions = "Report.CustomerReceiptReports")]
         public async Task<IActionResult> GetReportPaged([FromQuery] CustomerReceiptReportFilter val)
         {
             var res = await _customerReceiptReportService.GetPagedResultAsync(val);

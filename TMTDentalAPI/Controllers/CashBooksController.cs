@@ -80,7 +80,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Account.Read")]
+        [CheckAccess(Actions = "Account.Export")]
         public async Task<IActionResult> ExportExcelFile(CashBookDetailFilter val)
         {
             var stream = new MemoryStream();
