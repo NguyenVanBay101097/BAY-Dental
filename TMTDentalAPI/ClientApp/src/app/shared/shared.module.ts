@@ -113,6 +113,7 @@ import { ComputePriceInputPopoverComponent } from './compute-price-input-popover
 import { ResInsuranceCuDialogComponent } from './res-insurance-cu-dialog/res-insurance-cu-dialog.component';
 import { NumberDirective } from './directives/numbers-only.directive';
 import { TmtAutonumericModule } from 'tmt-autonumeric';
+import { AgePopoverComponent } from './age-popover/age-popover.component';
 
 const config: LocaleConfig = {};
 @NgModule({
@@ -219,6 +220,7 @@ const config: LocaleConfig = {};
         ComputePriceInputPopoverComponent,
         ResInsuranceCuDialogComponent,
         NumberDirective,
+        AgePopoverComponent
     ],
     exports: [
         ConfirmDialogComponent,
@@ -315,7 +317,8 @@ const config: LocaleConfig = {};
         BankCuDialogComponent,
         ResInsuranceCuDialogComponent,
         NumberDirective,
-        TmtAutonumericModule
+        TmtAutonumericModule,
+        AgePopoverComponent
     ],
     imports: [
         NgbModule,

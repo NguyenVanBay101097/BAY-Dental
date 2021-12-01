@@ -86,16 +86,17 @@
                                                         <option *ngFor="let i of dayList">
                                                             {{i}}</option>
                                                     </select>
-                                                    <select class="form-control" formControlName="birthMonthStr">
+                                                    <select class="form-control ml-2" formControlName="birthMonthStr">
                                                         <option value="">Tháng</option>
                                                         <option *ngFor="let i of monthList">
                                                             {{i}}</option>
                                                     </select>
-                                                    <select class="form-control" formControlName="birthYearStr">
+                                                    <select class="form-control ml-2" formControlName="birthYearStr">
                                                         <option value="">Năm</option>
                                                         <option *ngFor="let i of yearList">
                                                             {{i}}</option>
                                                     </select>
+                                                    <app-age-popover class="ml-2" (onAgeEmit)="onAgeEmit($event)"></app-age-popover>
                                                 </div>
                                             </td>
                                         </tr>
@@ -107,8 +108,8 @@
                                                 <div class="d-flex">
                                                     <kendo-combobox formControlName="title" [filterable]="true" [placeholder]="'ví dụ ông, bà, anh, chị...'" [data]="filteredTitles" [valueField]="'id'" #titleCbx [textField]="'name'">
                                                     </kendo-combobox>
-                                                    <a *ngIf="canCreateTitle" class="btn btn-light" (click)="quickCreateTitle()">
-                                                        <span class="k-icon k-i-plus"></span>
+                                                    <a *ngIf="canCreateTitle" class="btn btn-primary ml-2" (click)="quickCreateTitle()">
+                                                        <span class="fas fa-plus text-white"></span>
                                                     </a>
                                                 </div>
                                             </td>
@@ -137,8 +138,8 @@
                                                 <div class="d-flex">
                                                     <kendo-combobox formControlName="agent" [filterable]="true" [data]="filteredAgents" [valueField]="'id'" #agentCbx [textField]="'name'">
                                                     </kendo-combobox>
-                                                    <a class="btn btn-light" (click)="quickCreateAgent()">
-                                                        <span class="k-icon k-i-plus"></span>
+                                                    <a class="btn btn-primary ml-2" (click)="quickCreateAgent()">
+                                                        <span class="fas fa-plus text-white"></span>
                                                     </a>
                                                 </div>                                              
                                             </td>
@@ -162,28 +163,26 @@
                                                     <label class="o_form_label">
                                                         Địa chỉ
                                                     </label>
-                                                    <div class="pl-3">
-                                                        <app-check-address-button (clickAddress)="handleAddress($event)">
-                                                        </app-check-address-button>
-                                                    </div>
                                                 </div>
 
                                             </td>
                                             <td colspan="1" style="width: 100%;">
                                                 <div class="o_address_format mb-2">
-                                                    <div class="mb-2">
+                                                    <div class="mb-2 d-flex">
                                                         <input class="form-control" placeholder="Số nhà, đường..." type="text" formControlName="street" />
+                                                        <app-check-address-button class="ml-2" (clickAddress)="handleAddress($event)">
+                                                        </app-check-address-button>
                                                     </div>
                                                     <div class="mb-2">
                                                         <kendo-combobox [data]="dataResultCities" [textField]="'name'" [filterable]="true" [placeholder]="'Tỉnh/Thành'" [filterable]="true" (filterChange)="handleCityFilter($event)" #cityCbx (valueChange)="handleCityChange($event)" formControlName="city" [valueField]="'code'">
                                                         </kendo-combobox>
                                                     </div>
                                                     <div class="mb-2">
-                                                        <kendo-combobox [data]="dataResultDistricts" [textField]="'name'" [disabled]="isDisabledDistricts" [placeholder]="'Quận/Huyện'" (filterChange)="handleDistrictFilter($event)" [filterable]="true" #districtCbx (valueChange)="handleDistrictChange($event)"
+                                                        <kendo-combobox [data]="dataResultDistricts" [textField]="'name'" [disableControl]="isDisabledDistricts" [placeholder]="'Quận/Huyện'" (filterChange)="handleDistrictFilter($event)" [filterable]="true" #districtCbx (valueChange)="handleDistrictChange($event)"
                                                             formControlName="district" [valueField]="'code'">
                                                         </kendo-combobox>
                                                     </div>
-                                                    <kendo-combobox [data]="dataResultWards" [textField]="'name'" [disabled]="isDisabledWards" [placeholder]="'Phường/Xã'" [filterable]="true" (filterChange)="handleWardFilter($event)" #wardCbx (valueChange)="handleWardChange($event)" formControlName="ward"
+                                                    <kendo-combobox [data]="dataResultWards" [textField]="'name'" [disableControl]="isDisabledWards" [placeholder]="'Phường/Xã'" [filterable]="true" (filterChange)="handleWardFilter($event)" #wardCbx (valueChange)="handleWardChange($event)" formControlName="ward"
                                                         [valueField]="'code'">
                                                     </kendo-combobox>
                                                 </div>
@@ -194,9 +193,12 @@
                                                 <label class="o_form_label">Nguồn</label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
-                                                <div>
+                                                <div class="d-flex">
                                                     <kendo-combobox formControlName="source" [filterable]="true" [data]="filteredSources" [valueField]="'id'" #sourceCbx [textField]="'name'">
                                                     </kendo-combobox>
+                                                    <a class="btn btn-primary ml-2" (click)="quickCreateSource()">
+                                                        <span class="fas fa-plus text-white"></span>
+                                                    </a>
                                                 </div>
                                             </td>
                                         </tr>

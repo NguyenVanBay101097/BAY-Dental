@@ -1,0 +1,9 @@
+.pop_content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pop_content .pop_title {
+    width: 80px;
+}
