@@ -34,6 +34,7 @@ export class CommissionDialogComponent implements OnInit {
     });
 
     if (this.id) {
+      this.f.type.disable();
       setTimeout(() => {
         this.commissionService.get(this.id).subscribe((result) => {
           this.myform.patchValue(result);

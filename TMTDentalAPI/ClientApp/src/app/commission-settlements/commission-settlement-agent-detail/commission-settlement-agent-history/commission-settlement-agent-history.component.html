@@ -57,10 +57,10 @@
             Thao tác
         </ng-template>
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-            <button (click)="printItem(dataItem)" class="btn" title="In phiếu">
-                <i class="fas fa-print text-primary"></i></button>
-            <button (click)="deleteItem(dataItem)" class="btn" title="Hủy phiếu chi">
-                <i class="fas fa-window-close text-danger"></i>
+            <button (click)="printItem(dataItem)" class="btn btn-primary mr-2" title="In phiếu">
+                <i class="fas fa-print"></i></button>
+            <button (click)="deleteItem(dataItem)" class="btn btn-danger" title="Hủy phiếu chi">
+                <i class="fas fa-times"></i>
             </button>
         </ng-template>
     </kendo-grid-column>

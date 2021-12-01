@@ -1,4 +1,4 @@
-<div class="bg-white">
+<div class="">
     <div class="o_form_view o_form_nosheet o_form_editable">
         <div class="my-3 d-flex justify-content-between">
             <div class="d-flex justify-content-between">
@@ -8,7 +8,7 @@
                 </kendo-combobox>
                 <kendo-combobox [placeholder]="'Loại hoa hồng'" (valueChange)="valueCommissionTypeChange($event)" class="mr-1" [data]="filteredCommissionType" [valueField]="'value'" [textField]="'name'">
                 </kendo-combobox>
-                <button type="button" class="btn btn-secondary mr-1" (click)="exportCommissionExcelFile()"><i
+                <button type="button" class="btn btn-primary mr-1" (click)="exportCommissionExcelFile()"><i
                         class="fas fa-download"></i>&nbsp;Xuất excel</button>
             </div>
         </div>
