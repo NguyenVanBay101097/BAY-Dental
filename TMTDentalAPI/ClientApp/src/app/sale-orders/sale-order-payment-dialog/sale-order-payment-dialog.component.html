@@ -100,13 +100,13 @@
                                         </label>
                                     </td>
                                     <td>
-                                        <input class="form-control text-right" formControlName="amount" [options]="{maximumValue: defaultVal.amount}" 
+                                        <input class="form-control text-right" formControlName="amount" 
+                                        [options]="{maximumValue: defaultVal.amount, decimalPlaces: 0}" 
                                         tmtautonumeric [disableControl]="isPaymentForServiceValue" />
                                         <!-- <kendo-numerictextbox [min]="0" [max]="maxAmount == 0 ? null : maxAmount"
                                             [step]="1000" [format]="'n0'" [autoCorrect]="true" (blur)="enterMoney()"
                                             formControlName="amount">
                                         </kendo-numerictextbox> -->
-                                        {{this.paymentForm.get('amount').value + 55}}
                                         <div *ngIf="paymentFC.amount.errors && (paymentFC.amount.touched || submitted)"
                                             class="text-danger">
                                             <div *ngIf="paymentFC.amount.errors.required">Nhập số tiền</div>
@@ -258,9 +258,6 @@
                                                 <!-- <input class="form-control text-right" style="max-width: 200px" [ngModelOptions]="{standalone: true}"
                                                     [(ngModel)]="userAmountPayment" name="amountPayment" autonumeric
                                                     [options]="{maximumValue: userAmountPaymentMax}" /> -->
-                                                    <app-number-input [ngModelOptions]="{standalone: true}"
-                                                    [(ngModel)]="userAmountPayment" name="amountPayment"></app-number-input>
-                                                    {{userAmountPayment}}
                                             </td>
                                         </tr>
                                     </tbody>

@@ -79,13 +79,11 @@ export class TmtAutonumericDirective implements OnInit, AfterViewInit, OnChanges
         normalized[key] = options[key];
       }
     });
-    console.log(normalized);
     return normalized;
   }
 
   ngAfterViewInit(): void {
     var options = this.getOptions();
-    console.log(options);
 
     this.instance = new AutoNumeric(
       this.elm.nativeElement,
@@ -97,7 +95,6 @@ export class TmtAutonumericDirective implements OnInit, AfterViewInit, OnChanges
       this.formatted.emit($event);
     });
     this.unsubscribeRawValueModified = this.renderer.listen(this.elm.nativeElement, 'autoNumeric:rawValueModified', ($event) => {
-      // this.onChangeFn($event.detail.newRawValue);
       this.onChangeFn($event.detail.aNElement.getNumber());
       this.rawValueModified.emit($event);
     });
@@ -139,8 +136,6 @@ export class TmtAutonumericDirective implements OnInit, AfterViewInit, OnChanges
   }
 
   writeValue(value: any): void {
-    console.log(value);
-    console.log(this.instance);
     setTimeout(() => {
       if (this.instance) {
         this.instance.set(value);
@@ -149,13 +144,6 @@ export class TmtAutonumericDirective implements OnInit, AfterViewInit, OnChanges
         this.initialValue = value;
       }
     });
-
-    // if (this.instance) {
-    //   this.instance.set(value);
-    // } else {
-    //   // autonumeric hasn't been initialised yet, store the value for later use
-    //   this.initialValue = value;
-    // }
   }
 
   registerOnChange(fn: any): void {
