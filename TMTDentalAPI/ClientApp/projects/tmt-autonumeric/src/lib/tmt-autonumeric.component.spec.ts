@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NumberInputComponent } from './number-input.component';
+import { TmtAutonumericComponent } from './tmt-autonumeric.component';
 
-describe('NumberInputComponent', () => {
-  let component: NumberInputComponent;
-  let fixture: ComponentFixture<NumberInputComponent>;
+describe('TmtAutonumericComponent', () => {
+  let component: TmtAutonumericComponent;
+  let fixture: ComponentFixture<TmtAutonumericComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ NumberInputComponent ]
+      declarations: [ TmtAutonumericComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(NumberInputComponent);
+    fixture = TestBed.createComponent(TmtAutonumericComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

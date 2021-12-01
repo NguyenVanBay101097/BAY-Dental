@@ -112,9 +112,7 @@ import { ProductCategoriesSearchDropdownComponent } from './product-categories-s
 import { ComputePriceInputPopoverComponent } from './compute-price-input-popover/compute-price-input-popover.component';
 import { ResInsuranceCuDialogComponent } from './res-insurance-cu-dialog/res-insurance-cu-dialog.component';
 import { NumberDirective } from './directives/numbers-only.directive';
-import { NumberInputComponent } from './number-input/number-input.component';
-import { AutonumericModule } from '@angularfy/autonumeric';
-
+import { TmtAutonumericModule } from 'tmt-autonumeric';
 
 const config: LocaleConfig = {};
 @NgModule({
@@ -221,7 +219,6 @@ const config: LocaleConfig = {};
         ComputePriceInputPopoverComponent,
         ResInsuranceCuDialogComponent,
         NumberDirective,
-        NumberInputComponent
     ],
     exports: [
         ConfirmDialogComponent,
@@ -318,7 +315,7 @@ const config: LocaleConfig = {};
         BankCuDialogComponent,
         ResInsuranceCuDialogComponent,
         NumberDirective,
-        NumberInputComponent
+        TmtAutonumericModule
     ],
     imports: [
         NgbModule,
@@ -336,8 +333,7 @@ const config: LocaleConfig = {};
                 'm': 59
             }
         }),
-        AutonumericModule,
-
+        TmtAutonumericModule
     ],
     providers: [NavSidebarService, AppLoadingService, AppSharedShowErrorService, FundBookService,
         { provide: LOCALE_CONFIG, useValue: config },

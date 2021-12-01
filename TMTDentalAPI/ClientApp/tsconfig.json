@@ -18,6 +18,17 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "inlineSources": true,
+    "paths": {
+      "tmt-autonumeric-lib": [
+        "dist/tmt-autonumeric-lib/tmt-autonumeric-lib",
+        "dist/tmt-autonumeric-lib"
+      ],
+      "tmt-autonumeric": [
+        "dist/tmt-autonumeric/tmt-autonumeric",
+        "dist/tmt-autonumeric"
+      ]
+    }
   }
 }
