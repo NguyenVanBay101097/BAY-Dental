@@ -39,7 +39,7 @@
                         [line]="line" (onCancelEvent)="onCancelEditLine($event, i)" (onDeleteEvent)="onDeleteLine(i)"
                         (onEditEvent)="onEditLine($event)" (onUpdateEvent)="updateLineInfo($event, i)"
                         (onActiveEvent)="onActiveLine($event, line)"
-                        (onUpdateStateEvent)="onUpdateStateLine($event, line)" [orderState]="saleOrder?.state">
+                        (onUpdateStateEvent)="onUpdateStateLine(i, $event)" [orderState]="saleOrder?.state">
                     </app-sale-order-line-cu>
                 </ng-container>
             </div>
@@ -97,6 +97,16 @@
                                 <tr>
                                     <td colspan="1" class="o_td_label o_td_label_sm">
                                         <label class="o_form_label">
+                                            Công nợ  hiện tại:
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <span class="text-danger">{{partnerDebt.balanceTotal | number}}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label o_td_label_sm">
+                                        <label class="o_form_label">
                                             Giới tính
                                         </label>
                                     </td>
@@ -112,6 +122,16 @@
                                     </td>
                                     <td colspan="1" style="width: 100%;">
                                         <span>{{partner.dateOfBirth}}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label o_td_label_sm">
+                                        <label class="o_form_label">
+                                            Tuổi
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <span>{{partner.age}}</span>
                                     </td>
                                 </tr>
                                 <tr>
@@ -137,21 +157,11 @@
                                 <tr>
                                     <td colspan="1" class="o_td_label o_td_label_sm">
                                         <label class="o_form_label">
-                                            Tuổi
-                                        </label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <span>{{partner.age}}</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label o_td_label_sm">
-                                        <label class="o_form_label">
                                             Hạng thành viên
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">
-                                        <span>{{partner.memberLevel?.name}}</span>
+                                        <span>{{partner.cardTypeName}}</span>
                                     </td>
                                 </tr>
                                 <tr>

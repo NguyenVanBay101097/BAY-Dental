@@ -23,14 +23,14 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-combobox [class.d-none]="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'"
-                                        [data]="filteredJournals" [textField]="'name'" [valueField]="'id'"
+                                        [data]="filteredJournals" [textField]="'displayName'" [valueField]="'id'"
                                         [filterable]="true" #journalCbx formControlName="journal">
                                     </kendo-combobox>
                                     <div *ngIf="f.journal.errors && (f.journal.touched || f.journal.dirty || submitted)" class="text-danger">
                                         <div *ngIf="f.journal.errors.required">Chọn phương thức thanh toán</div>
                                     </div>
                                     <span *ngIf="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'">
-                                        {{ precscriptPayment && precscriptPayment.journal ? precscriptPayment.journal.name : '' }}
+                                        {{ precscriptPayment && precscriptPayment.journal ? precscriptPayment.journal.displayName : '' }}
                                     </span>
                                 </td>
                             </tr>

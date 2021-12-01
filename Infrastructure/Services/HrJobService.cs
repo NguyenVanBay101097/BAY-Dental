@@ -31,6 +31,8 @@ namespace Infrastructure.Services
             var query = SearchQuery(x => x.CompanyId == CompanyId);
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search));
+            if(val.CompanyId.HasValue)
+                query = query.Where(x=> x.CompanyId.Value == val.CompanyId.Value);
 
             var totalItem = await query.CountAsync();
             query = query.OrderByDescending(x => x.DateCreated);

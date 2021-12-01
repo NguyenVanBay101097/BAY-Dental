@@ -11,6 +11,7 @@ import { debounceTime, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { AccountJournalFilter, AccountJournalService } from 'src/app/account-journals/account-journal.service';
 import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { AuthService } from 'src/app/auth/auth.service';
+import { SessionInfoStorageService } from 'src/app/core/services/session-info-storage.service';
 import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { ProductSimple } from 'src/app/products/product-simple';
@@ -76,7 +77,8 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     private authService: AuthService,
     private modalService: NgbModal,
     private paymentService: AccountPaymentService,
-    private printService: PrintService
+    private printService: PrintService,
+    private sessionInfoStorageService: SessionInfoStorageService,
   ) { }
 
   ngOnInit() {
@@ -196,6 +198,9 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     val.supplier = true;
     val.search = filter;
     val.active = true;
+    if (this.sessionInfoStorageService.getSessionInfo().settings && !this.sessionInfoStorageService.getSessionInfo().settings.companySharePartner) {
+      val.companyId = this.authService.userInfo.companyId;
+    }
     return this.partnerService.getAutocompleteSimple(val);
   }
 

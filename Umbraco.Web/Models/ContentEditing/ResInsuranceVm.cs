@@ -43,7 +43,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Name { get; set; }
 
-        public DateTime Date { get; set; }
+        public DateTime? Date { get; set; }
 
         public string Avatar { get; set; }
 
@@ -66,7 +66,7 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public string Name { get; set; }
 
-        public DateTime Date { get; set; }
+        public DateTime? Date { get; set; }
 
         public string Avatar { get; set; }
 

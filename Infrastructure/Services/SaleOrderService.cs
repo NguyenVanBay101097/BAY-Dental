@@ -3261,7 +3261,7 @@ namespace Infrastructure.Services
             var attObj = GetService<IIrAttachmentService>();
             var dotkhamObj = GetService<IDotKhamService>();
 
-            var attQr = attObj.SearchQuery();
+            var attQr = attObj.SearchQuery(x=> x.CompanyId == CompanyId);
             var dotkhamQr = dotkhamObj.SearchQuery();
 
             var resQr = from att in attQr

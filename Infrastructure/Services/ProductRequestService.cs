@@ -49,6 +49,9 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Date <= dateOrderTo);
             }
 
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+
             var totalItems = await query.CountAsync();
 
             query = query.OrderByDescending(x => x.DateCreated);

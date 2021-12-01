@@ -6,6 +6,7 @@ import { PagedResult2 } from '../core/paged-result-2';
 export class ResBankSimple {
   id: string;
   name: string;
+  bic: string;
 }
 export class AccountJournalSave {
   name: string;

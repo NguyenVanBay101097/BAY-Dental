@@ -18,12 +18,15 @@ namespace Umbraco.Web.Models.ContentEditing
         public string State { get; set; }
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
+        public Guid? CompanyId { get; set; }    
     }
 
     public class MedicineOrderFilterReport
     {
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
+        public Guid? CompanyId { get; set; }
+
     }
 
     public class MedicineOrderReport

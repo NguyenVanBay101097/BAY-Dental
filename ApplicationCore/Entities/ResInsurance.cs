@@ -16,7 +16,7 @@ namespace ApplicationCore.Entities
 
         public string Name { get; set; }
 
-        public DateTime Date { get; set; }
+        public DateTime? Date { get; set; }
 
         public string Avatar { get; set; }
 

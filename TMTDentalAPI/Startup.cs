@@ -378,6 +378,7 @@ namespace TMTDentalAPI
             services.AddScoped<ICustomerReceiptReportService, CustomerReceiptReportService>();
             services.AddScoped<IPrintTemplateService, PrintTemplateService>();
             services.AddScoped<IPrintTemplateConfigService, PrintTemplateConfigService>();
+            services.AddScoped<IPaymentService, PaymentService>();
 
             services.AddScoped<ILaboWarrantyService, LaboWarrantyService>();
             services.AddScoped<IHrJobService, HrJobService>();
@@ -593,6 +594,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new ResInsurancePaymentProfile());
                 mc.AddProfile(new ResInsurancePaymentLineProfile());
                 mc.AddProfile(new ResInsuranceReportsProfile());
+                mc.AddProfile(new PaymentProfile());
                 mc.AddProfile(new SaleProductionProfile());
                 mc.AddProfile(new SaleProductionLineProfile());
             };

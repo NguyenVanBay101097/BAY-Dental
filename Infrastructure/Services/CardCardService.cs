@@ -32,7 +32,7 @@ namespace Infrastructure.Services
         public async Task<decimal?> ConvertAmountToPoint(decimal? amount)
         {
             var prate = await GetLoyaltyPointExchangeRate();
-            if (prate < 0 || !amount.HasValue)
+            if (prate <= 0 || !amount.HasValue)
                 return 0;
             var points = (amount ?? 0) / prate;
             var res = FloatUtils.FloatRound((double)points, precisionRounding: 1);
@@ -412,10 +412,14 @@ namespace Infrastructure.Services
                             var typeName = worksheet.Cells[row, 2].Text.Trim();
                             var type = await cardTypeObj.SearchQuery(x => x.Name == typeName).FirstOrDefaultAsync();
                             if (type == null)
-                                errors.Add($"Dòng {row}: không tìm thấy hạng thẻ");
+                                errors.Add($"Dòng {row}: Không tìm thấy hạng thẻ");
 
                             var barcode = worksheet.Cells[row, 1].Text.Trim();
-                            if (barcode.Length < 5 || barcode.Length > 15)
+                            if (string.IsNullOrEmpty(barcode))
+                            {
+                                errors.Add($"Dòng {row}: Số ID thẻ không được bỏ trống");
+                            }
+                            else if (barcode.Length < 5 || barcode.Length > 15)
                             {
                                 errors.Add($"Dòng {row}: Số ID tối thiểu 5 và tối đa 15 ký tự");
                             }

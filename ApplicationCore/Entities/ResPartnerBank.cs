@@ -6,6 +6,11 @@ namespace ApplicationCore.Entities
 {
     public class ResPartnerBank : BaseEntity
     {
+        /// <summary>
+        /// tên chủ tài khoản
+        /// </summary>
+        public string AccountHolderName { get; set; }
+
         public string AccountNumber { get; set; }
 
         public Guid PartnerId { get; set; }
@@ -18,5 +23,10 @@ namespace ApplicationCore.Entities
 
         public Guid? CompanyId { get; set; }
         public Company Company { get; set; }
+        /// <summary>
+        /// chi nhánh ngân hàng
+        /// </summary>
+        public string Branch { get; set; }
+
     }
 }

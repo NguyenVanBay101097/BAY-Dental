@@ -21,6 +21,7 @@
   height: 46px;
   flex-flow: column;
   justify-content: center;
+  user-select: none;
 }
 
 .chia_doi_doc {
@@ -33,4 +34,8 @@
   color: #212529;
   background-color: #dae0e5;
   border-color: #d3d9df;
+}
+
+.teeth_nameTeeth.disabled {
+  color: hsl(0deg 0% 80%);
 }

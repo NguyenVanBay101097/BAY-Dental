@@ -40,6 +40,8 @@ import { SaleOrderImageComponent } from './sale-order-image/sale-order-image.com
 import { SaleOrderServiceListComponent } from './sale-order-service-list/sale-order-service-list.component';
 import { SaleOrderInsurancePaymentDialogComponent } from './sale-order-insurance-payment-dialog/sale-order-insurance-payment-dialog.component';
 
+import { ConfirmPaymentDialogComponent } from './confirm-payment-dialog/confirm-payment-dialog.component';
+
 @NgModule({
   declarations: [
     SaleOrderCreateUpdateComponent,
@@ -72,6 +74,7 @@ import { SaleOrderInsurancePaymentDialogComponent } from './sale-order-insurance
     SaleOrderImageComponent,
     SaleOrderServiceListComponent,
     SaleOrderInsurancePaymentDialogComponent,
+    ConfirmPaymentDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -81,7 +84,7 @@ import { SaleOrderInsurancePaymentDialogComponent } from './sale-order-insurance
     ToaThuocsModule,
     FormsModule,
     SharedModule,
-    NgbModule
+    NgbModule,
   ],
   providers: [SaleOrderPromotionService, SaleCouponProgramService],
   exports: [

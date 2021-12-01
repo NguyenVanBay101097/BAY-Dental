@@ -32,7 +32,8 @@ namespace Infrastructure.Services
 
             if (val.SaleOrderId.HasValue)
                 query = query.Where(x => x.OrderId == val.SaleOrderId.Value);
-
+            if(val.CompanyId.HasValue)
+                query = query.Where(x=> x.CompanyId == val.CompanyId.Value);
 
             var totalItems = await query.CountAsync();
 
@@ -41,7 +42,7 @@ namespace Infrastructure.Services
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
-            var items = await query.Include(x => x.PaymentRels).ThenInclude(x => x.Payment).ThenInclude(x => x.Journal)
+            var items = await query.Include(x => x.PaymentRels).ThenInclude(x => x.Payment).ThenInclude(x => x.Journal).ThenInclude(x => x.BankAccount).ThenInclude(x => x.Bank)
                 .Include(x => x.Lines).ThenInclude(x => x.SaleOrderLine).ToListAsync();
 
             var paged = new PagedResult2<SaleOrderPaymentBasic>(totalItems, val.Offset, val.Limit)
@@ -642,12 +643,12 @@ namespace Infrastructure.Services
 
         public override ISpecification<SaleOrderPayment> RuleDomainGet(IRRule rule)
         {
-            var userObj = GetService<IUserService>();
-            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            //var userObj = GetService<IUserService>();
+            //var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
             switch (rule.Code)
             {
                 case "sale.sale_order_payment_comp_rule":
-                    return new InitialSpecification<SaleOrderPayment>(x => companyIds.Contains(x.CompanyId));
+                    return new InitialSpecification<SaleOrderPayment>(x => x.CompanyId == CompanyId);
                 default:
                     return null;
             }

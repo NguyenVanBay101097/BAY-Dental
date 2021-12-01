@@ -1,14 +1,19 @@
+import { DecimalPipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges, ViewChildren } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import * as moment from 'moment';
+import { forkJoin } from 'rxjs';
 import { catchError, mergeMap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
+import { AmountCustomerDebtFilter, CustomerDebtReportService } from 'src/app/core/services/customer-debt-report.service';
 import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
 import { SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
+import { PartnerService } from 'src/app/partners/partner.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { ToothFilter, ToothService } from 'src/app/teeth/tooth.service';
 import { ToothCategoryService } from 'src/app/tooth-categories/tooth-category.service';
@@ -21,7 +26,8 @@ import { SaleOrderPromotionService } from '../sale-order-promotion.service';
 @Component({
   selector: 'app-sale-order-service-list',
   templateUrl: './sale-order-service-list.component.html',
-  styleUrls: ['./sale-order-service-list.component.css']
+  styleUrls: ['./sale-order-service-list.component.css'],
+  providers: [DecimalPipe]
 })
 export class SaleOrderServiceListComponent implements OnInit, OnChanges {
   @Input() saleOrder: any;
@@ -38,6 +44,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
   linesDirty = false;
   formGroup: FormGroup;
   submitted = false;
+  partnerDebt = null;
   constructor(
     private saleOrderService: SaleOrderService,
     private notificationService: NotificationService,
@@ -48,6 +55,10 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
     private toothCategoryService: ToothCategoryService,
     private employeeService: EmployeeService,
     private toothService: ToothService,
+    private _decimalPipe: DecimalPipe,
+    private partnerService: PartnerService,
+    private customerDebtReportService: CustomerDebtReportService,
+    private authService: AuthService,
     private fb: FormBuilder) { }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -80,6 +91,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
     this.loadToothCategories();
     this.loadEmployees();
     this.loadTeethList();
+    this.loadPartnerInfo();
   }
 
   get f() {
@@ -701,21 +713,39 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
     }
   }
 
-  onUpdateStateLine(state, line) {
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = state == 'done' ? 'Hoàn thành dịch vụ' : (state == 'cancel' ? 'Ngừng dịch vụ' : 'Lưu dịch vụ');
-    modalRef.componentInstance.body = `Bạn có ${state == 'done' ? 'xác nhận hoàn thành' : (state == 'cancel' ? 'muốn ngừng' : 'muốn lưu')} dịch vụ không ?`;
-    modalRef.componentInstance.body2 = state == 'cancel' ? 'Lưu ý: sau khi ngừng không thể chỉnh sửa dịch vụ' : '';
-    modalRef.result.then(() => {
-      this.saleOrderLineService.updateState(line.id, state).subscribe(r => {
-        this.notify('success', 'Lưu thành công');
-        line.state = state;
-        if (this.orderLines.every(x => x.state == 'done' || x.state == 'cancel') &&
-          this.orderLines.some(x => x.state == 'done')
-        ) {
-          this.saleOrder.state = 'done';
-        }
-      });
+  onUpdateStateLine(lineIndex, state) {
+    var line = this.orderLines[lineIndex];
+    if (this.lineSelected != null && this.lineSelected != line) {
+      this.notify('error', 'Vui lòng hoàn thành dịch vụ hiện tại');
+      return;
+    }
+    this.saleOrderLineService.updateState(line.id, state).subscribe(() => {
+      this.notify('success', 'Lưu thành công');
+      line.state = state;
+      if (this.orderLines.every(x => x.state == 'done' || x.state == 'cancel') &&
+        this.orderLines.some(x => x.state == 'done')
+      ) {
+        this.saleOrder.state = 'done';
+      }
+
+      if (state == "done" && line.priceSubTotal - line.amountInvoiced > 0) {
+        let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+        modalRef.componentInstance.title = `Ghi công nợ số tiền ${this._decimalPipe.transform((line.priceSubTotal - line.amountInvoiced))}đ`;
+        modalRef.componentInstance.body = `Dịch vụ ${line.name} còn ${this._decimalPipe.transform((line.priceSubTotal - line.amountInvoiced))}đ chưa được thanh toán. Bạn có muốn ghi công nợ số tiền này?`;
+        modalRef.componentInstance.confirmText = "Đồng ý";
+        modalRef.componentInstance.closeText = "Không đồng ý";
+        modalRef.componentInstance.closeClass = "btn-danger";
+        modalRef.result.then(() => {
+          this.saleOrderLineService.debtPayment(line.id)
+            .subscribe(r => {
+              this.notify('success', 'Ghi nợ thành công');
+              this.saleOrder.totalPaid = this.saleOrder.totalPaid + (line.priceSubTotal - line.amountInvoiced);
+              this.partnerDebt.debitTotal = this.partnerDebt.debitTotal + (line.priceSubTotal - line.amountInvoiced);
+              line.amountInvoiced = line.priceSubTotal;
+            });
+        })
+
+      }
     })
   }
 
@@ -746,5 +776,27 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
       default:
         return 'Nháp';
     }
+  }
+
+  loadPartnerDebt() {
+    this.loadPartnerDebt$().subscribe(res => {
+      this.partnerDebt = res;
+    });
+  }
+
+  loadPartnerDebt$() {
+    var val = new AmountCustomerDebtFilter();
+    val.partnerId = this.saleOrder.partnerId;
+    val.companyId = this.authService.userInfo.companyId;
+    return this.customerDebtReportService.getAmountDebtTotal(val);
+  }
+
+  loadPartnerInfo() {
+    var loadPartner$ = this.partnerService.getCustomerInfo(this.saleOrder.partnerId);
+    var loadDebt$ = this.loadPartnerDebt$();
+    forkJoin({ partner: loadPartner$, debt: loadDebt$ }).subscribe(res => {
+      this.partner = res.partner;
+      this.partnerDebt = res.debt;
+    });
   }
 }

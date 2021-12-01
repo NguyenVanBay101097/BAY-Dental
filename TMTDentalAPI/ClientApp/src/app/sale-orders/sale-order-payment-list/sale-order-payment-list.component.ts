@@ -20,7 +20,7 @@ export class SaleOrderPaymentListComponent implements OnInit {
     private notificationService: NotificationService,
     private modalService: NgbModal,
     private printService: PrintService,
-    private saleOrderPaymentService: SaleOrderPaymentService
+    private saleOrderPaymentService: SaleOrderPaymentService,
   ) { }
 
   ngOnInit() {

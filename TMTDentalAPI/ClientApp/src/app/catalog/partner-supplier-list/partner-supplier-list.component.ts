@@ -10,6 +10,8 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { PartnerImportComponent } from '../../partners/partner-import/partner-import.component';
 import { PartnerSupplierCuDialogComponent } from 'src/app/shared/partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { SessionInfoStorageService } from 'src/app/core/services/session-info-storage.service';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-partner-supplier-list',
@@ -39,6 +41,8 @@ export class PartnerSupplierListComponent implements OnInit {
     private partnerService: PartnerService, 
     private modalService: NgbModal, 
     private notificationService: NotificationService,
+    private sessionInfoStorageService: SessionInfoStorageService,
+    private authService: AuthService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -68,6 +72,9 @@ export class PartnerSupplierListComponent implements OnInit {
     val.active = (this.active || this.active == false) ? this.active : '';
     val.search = this.search || '';
     val.computeCreditDebit = true;
+    if (this.sessionInfoStorageService.getSessionInfo().settings && !this.sessionInfoStorageService.getSessionInfo().settings.companySharePartner) {
+      val.companyId = this.authService.userInfo.companyId;
+    }
 
     this.loading = true;
     this.partnerService.getPaged(val).pipe(

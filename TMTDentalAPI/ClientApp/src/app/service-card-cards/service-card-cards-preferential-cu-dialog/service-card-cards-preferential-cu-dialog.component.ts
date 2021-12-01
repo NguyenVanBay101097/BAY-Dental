@@ -5,6 +5,8 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
+import { SessionInfoStorageService } from 'src/app/core/services/session-info-storage.service';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { ServiceCardTypeService } from 'src/app/service-card-types/service-card-type.service';
@@ -43,7 +45,9 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit, Af
     private notifyService: NotifyService,
     private partnerService: PartnerService,
     private serviceCardsService: ServiceCardCardService,
-    private serviceCardTypeService: ServiceCardTypeService
+    private serviceCardTypeService: ServiceCardTypeService,
+    private sessionInfoStorageService: SessionInfoStorageService,
+    private authService: AuthService,
   ) { }
 
   ngOnInit(): void {
@@ -122,6 +126,9 @@ export class ServiceCardCardsPreferentialCuDialogComponent implements OnInit, Af
     val.search = q || '';
     val.customer = true;
     val.employee = false;
+    if (this.sessionInfoStorageService.getSessionInfo().settings && !this.sessionInfoStorageService.getSessionInfo().settings.companySharePartner) {
+      val.companyId = this.authService.userInfo.companyId;
+    }
     return this.partnerService.autocomplete3(val);
   }
 

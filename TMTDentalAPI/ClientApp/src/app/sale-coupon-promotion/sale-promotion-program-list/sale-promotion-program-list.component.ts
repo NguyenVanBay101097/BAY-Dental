@@ -129,7 +129,7 @@ export class SalePromotionProgramListComponent implements OnInit {
     val.active = this.filterActive;
     val.ruleDateFromBegin = this.ruleDateFromBegin ? this.intlService.formatDate(this.ruleDateFromBegin, 'yyyy-MM-dd') : '';
     val.ruleDateFromEnd = this.ruleDateFromEnd ? this.intlService.formatDate(this.ruleDateFromEnd, 'yyyy-MM-dd') : '';
-
+    
     if (this.selectedStatus && this.selectedStatus.value) {
       val.status = this.selectedStatus.value;
     }

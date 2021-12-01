@@ -21,6 +21,7 @@ export class ProductRequestPaged {
     dateFrom: string;
     dateTo: string;
     state: string;
+    companyId: string;
 }
 
 export class ProductRequestDisplay {

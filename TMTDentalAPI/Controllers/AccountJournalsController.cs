@@ -6,6 +6,7 @@ using ApplicationCore.Entities;
 using ApplicationCore.Models;
 using AutoMapper;
 using Infrastructure.Services;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,13 +19,15 @@ namespace TMTDentalAPI.Controllers
     public class AccountJournalsController : BaseApiController
     {
         private readonly IAccountJournalService _accountJournalService;
+        private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly IMapper _mapper;
 
-        public AccountJournalsController(IAccountJournalService accountJournalService,
+        public AccountJournalsController(IAccountJournalService accountJournalService, IUnitOfWorkAsync unitOfWork,
             IMapper mapper)
         {
             _accountJournalService = accountJournalService;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpPost("Autocomplete")]
@@ -37,14 +40,58 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> CreateJournalSave(AccountJournalSave val)
         {
-            await _accountJournalService.CreateJournals(new List<AccountJournalSave>() { val });
+            await _unitOfWork.BeginTransactionAsync();
+            var res = await _accountJournalService.CreateJournals(new List<AccountJournalSave>() { val });
+            _unitOfWork.Commit();
+            return Ok(_mapper.Map<IEnumerable<AccountJournalDisplay>>(res));
+        }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetBankJournal(Guid id)
+        {
+            var res = await _accountJournalService.SearchQuery(x => x.Id == id)
+                .Select(x => new AccountJournalGetBankJournalVM {
+                    Id = x.Id,
+                    AccountHolderName = x.BankAccount.AccountHolderName,
+                    AccountNumber = x.Name,
+                    Active = x.Active,
+                    Bank = x.BankAccount.Bank != null ? new ResBankSimple
+                    {
+                        Id = x.BankAccount.Bank.Id,
+                        Name = x.BankAccount.Bank.Name
+                    } : null,
+                    BankBranch = x.BankAccount.Branch
+                }).FirstOrDefaultAsync();
+          
+            return Ok(res);
+        }
+
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> CreateBankJournal(AccountJournalCreateBankJournalVM val)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            var journal = await _accountJournalService.CreateBankJournal(val);
+            _unitOfWork.Commit();
+            return Ok(_mapper.Map<AccountJournalBasic>(journal));
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> UpdateBankJournal(AccountJournalUpdateBankJournalVM val)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _accountJournalService.UpdateBankJournal(val);
+            _unitOfWork.Commit();
+
             return NoContent();
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(Guid id, AccountJournalSave val)
         {
+            await _unitOfWork.BeginTransactionAsync();
             await _accountJournalService.UpdateJournalSave(id,val);
+            _unitOfWork.Commit();
             return NoContent();
         }
 
@@ -64,7 +111,7 @@ namespace TMTDentalAPI.Controllers
                 .FirstOrDefaultAsync();
             if (journal == null)
                 return BadRequest();
-            var res = _mapper.Map<AccountJournalSave>(journal);
+            var res = _mapper.Map<AccountJournalDisplay>(journal);
 
             return Ok(res);
         }
@@ -82,6 +129,15 @@ namespace TMTDentalAPI.Controllers
                 await _accountJournalService.UpdateAsync(self);
             }
 
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _accountJournalService.Unlink(id);
+            _unitOfWork.Commit();
             return NoContent();
         }
     }

@@ -12,6 +12,7 @@ export class HrJobsPaged {
   limit: number;
   offset: number;
   search: string;
+  companyId: string;
 }
 
 // export class HrJobsSave {

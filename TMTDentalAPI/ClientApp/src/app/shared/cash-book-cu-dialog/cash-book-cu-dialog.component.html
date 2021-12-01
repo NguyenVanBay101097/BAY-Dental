@@ -61,9 +61,9 @@
                                     <label class="o_form_label">Phương thức</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="formReadonly">{{phieuThuChiDisplay.journal.name}}</span>
+                                    <span *ngIf="formReadonly">{{phieuThuChiDisplay.journal.displayName}}</span>
                                     <div *ngIf="!formReadonly">
-                                        <kendo-combobox [data]="filteredJournals" [textField]="'name'"
+                                        <kendo-combobox [data]="filteredJournals" [textField]="'displayName'"
                                             [filterable]="true" #journalCbx formControlName="journal"
                                             [valueField]="'id'">
                                         </kendo-combobox>
