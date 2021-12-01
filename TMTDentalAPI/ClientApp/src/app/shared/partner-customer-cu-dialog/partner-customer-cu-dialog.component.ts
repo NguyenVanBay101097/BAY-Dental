@@ -11,6 +11,7 @@ import { PartnerCategoryCuDialogComponent } from "src/app/partner-categories/par
 import {
   PartnerCategoryPaged, PartnerCategoryService
 } from "src/app/partner-categories/partner-category.service";
+import { PartnerSourceCreateUpdateDialogComponent } from "src/app/partner-sources/partner-source-create-update-dialog/partner-source-create-update-dialog.component";
 import { PartnerSourcePaged, PartnerSourceService } from "src/app/partner-sources/partner-source.service";
 import { PartnerTitle, PartnerTitlePaged, PartnerTitleService } from 'src/app/partner-titles/partner-title.service';
 import { City, District, PartnerCategorySimple, PartnerSourceSimple, Ward } from 'src/app/partners/partner-simple';
@@ -22,6 +23,7 @@ import { environment } from 'src/environments/environment';
 import { AgentCreateUpdateDialogComponent } from '../agent-create-update-dialog/agent-create-update-dialog.component';
 import { CheckPermissionService } from '../check-permission.service';
 import { PartnerTitleCuDialogComponent } from '../partner-title-cu-dialog/partner-title-cu-dialog.component';
+import { NotifyService } from "../services/notify.service";
 import { AgentBasic, AgentPaged, AgentService } from './../../agents/agent.service';
 
 @Component({
@@ -116,7 +118,8 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     private intlService: IntlService,
     private userService: UserService,
     private partnerTitleService: PartnerTitleService,
-    private checkPermissionService: CheckPermissionService
+    private checkPermissionService: CheckPermissionService,
+    private notifyService: NotifyService
   ) { }
 
   ngOnInit() {
@@ -343,6 +346,16 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     });
   }
 
+  quickCreateSource() {
+    let modalRef = this.modalService.open(PartnerSourceCreateUpdateDialogComponent, { size: 'xl', windowClass: "o_technical_modal", keyboard: false, backdrop: "static", });
+    modalRef.componentInstance.title = "Thêm nguồn khách hàng";
+    modalRef.result.then(result => {
+      this.notifyService.notify("success","Lưu thành công");
+      this.filteredSources.push(result as PartnerSourceSimple);
+      this.formGroup.patchValue({ source: result });
+    }, () => { }
+    );
+  }
 
   loadSourceCities() {
     this.http
@@ -570,6 +583,15 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     });
   }
 
+  onAgeEmit(data): void {
+    const currentYear = (new Date()).getFullYear();
+    if (data && currentYear >= data) {
+      const year = currentYear - (+data);
+      this.formGroup.get("birthYearStr").setValue(year);
+    } else {
+      this.formGroup.get("birthYearStr").setValue('');
+    }
+  }
 
   onCancel() {
     this.activeModal.dismiss();

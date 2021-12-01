@@ -112,6 +112,7 @@ import { ProductCategoriesSearchDropdownComponent } from './product-categories-s
 import { ComputePriceInputPopoverComponent } from './compute-price-input-popover/compute-price-input-popover.component';
 import { ResInsuranceCuDialogComponent } from './res-insurance-cu-dialog/res-insurance-cu-dialog.component';
 import { NumberDirective } from './directives/numbers-only.directive';
+import { AgePopoverComponent } from './age-popover/age-popover.component';
 
 
 const config: LocaleConfig = {};
@@ -219,6 +220,7 @@ const config: LocaleConfig = {};
         ComputePriceInputPopoverComponent,
         ResInsuranceCuDialogComponent,
         NumberDirective,
+        AgePopoverComponent
     ],
     exports: [
         ConfirmDialogComponent,
@@ -315,6 +317,7 @@ const config: LocaleConfig = {};
         BankCuDialogComponent,
         ResInsuranceCuDialogComponent,
         NumberDirective,
+        AgePopoverComponent
     ],
     imports: [
         NgbModule,
