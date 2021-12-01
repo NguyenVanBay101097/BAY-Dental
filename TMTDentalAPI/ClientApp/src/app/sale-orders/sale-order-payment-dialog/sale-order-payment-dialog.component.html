@@ -77,7 +77,7 @@
                                         <td class="text-right w-25">
                                             <input class="form-control text-right" formControlName="amount"
                                                 (change)="changeMoneyLine()" tmtautonumeric
-                                                [options]="{maximumValue: line.get('saleOrderLine').value.amountResidual}" />
+                                                [options]="{maximumValue: line.get('saleOrderLine').value.amountResidual,minimumValue: 0,decimalPlaces:0}" />
 
                                             <!-- <kendo-numerictextbox [step]="1000" [min]="0" [format]="'n0'"
                                                 [max]="line.get('saleOrderLine').value.amountResidual"
@@ -101,7 +101,7 @@
                                     </td>
                                     <td>
                                         <input class="form-control text-right" formControlName="amount" 
-                                        [options]="{maximumValue: defaultVal.amount, decimalPlaces: 0}" 
+                                        [options]="{maximumValue: defaultVal.amount,minimumValue: 0, decimalPlaces: 0}" 
                                         tmtautonumeric [disableControl]="isPaymentForServiceValue" />
                                         <!-- <kendo-numerictextbox [min]="0" [max]="maxAmount == 0 ? null : maxAmount"
                                             [step]="1000" [format]="'n0'" [autoCorrect]="true" (blur)="enterMoney()"
@@ -155,7 +155,7 @@
                                                 [max]="partnerDebt" [step]="1000" [format]="'n0'" [autoCorrect]="true">
                                             </kendo-numerictextbox> -->
                                                 <input class="form-control text-right" formControlName="debtAmount"
-                                                    tmtautonumeric [options]="{maximumValue: partnerDebt}" />
+                                                    tmtautonumeric [options]="{maximumValue: partnerDebt,minimumValue: 0,decimalPlaces:0}" />
                                                 <div *ngIf="paymentFC.debtAmount.errors && (paymentFC.debtAmount.touched || paymentFC.debtAmount.dirty || submitted)"
                                                     class="text-danger">
                                                     <div *ngIf="paymentFC.debtAmount.errors.required">Nhập số tiền</div>
@@ -257,7 +257,7 @@
                                                 </kendo-numerictextbox> -->
                                                 <input class="form-control text-right" style="max-width: 200px" [ngModelOptions]="{standalone: true}"
                                                     [(ngModel)]="userAmountPayment" name="amountPayment" tmtautonumeric
-                                                    [options]="{maximumValue: userAmountPaymentMax}" />
+                                                    [options]="{maximumValue: userAmountPaymentMax,minimumValue: 0,decimalPlaces:0}" />
                                             </td>
                                         </tr>
                                     </tbody>

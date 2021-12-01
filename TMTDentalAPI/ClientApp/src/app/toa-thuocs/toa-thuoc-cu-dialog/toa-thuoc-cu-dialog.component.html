@@ -84,10 +84,12 @@
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <kendo-numerictextbox style="width: 100px" class="mr-1" [min]="0"
+                                            <!-- <kendo-numerictextbox style="width: 100px" class="mr-1" [min]="0"
                                                 [format]="'n0'" formControlName="numberOfTimes"
                                                 (valueChange)="updateQuantity(item)">
-                                            </kendo-numerictextbox>
+                                            </kendo-numerictextbox> -->
+                                            <input class="form-control text-right" style="width: 100px" formControlName="numberOfTimes" tmtautonumeric
+                                            [options]="{minimumValue: 0}" (input)="updateQuantity(item)"/>
                                             <span>Lần</span>
                                         </div>
                                     </td>
