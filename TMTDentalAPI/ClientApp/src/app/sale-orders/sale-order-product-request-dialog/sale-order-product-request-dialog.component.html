@@ -86,7 +86,7 @@
                 </div>
                 <div class="mb-1">
                     <button type="button" *ngIf="!seeForm" (click)="updateSaleProduction()" class="btn btn-primary">
-                        Cập nhật vật tư
+                        Cập nhật định mức
                      </button>
                 </div>           
                 <div class="section">
@@ -107,9 +107,14 @@
                             </thead>
                             <tbody>
                                 <ng-container *ngFor="let item of listSaleProduction; index as i">
-                                    <tr *ngIf="item.lines.length > 0">
+                                    <tr>
                                         <td colspan="3" class="font-weight-bold bg-primary text-white">
-                                            {{item.product.name}}
+                                            <div class="d-flex justify-content-between">
+                                                <span>{{item.product.name}}</span>
+                                                <a class="text-white" (click)="deleteSaleProduction(i)">
+                                                    <span class="fa fa-trash"></span>
+                                                </a>
+                                            </div>
                                         </td>
                                     </tr>
                                     <tr *ngFor="let item_child of item.lines; index as j" class="pointer"

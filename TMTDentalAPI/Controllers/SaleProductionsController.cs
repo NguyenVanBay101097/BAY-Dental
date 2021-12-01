@@ -34,5 +34,14 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork.Commit();
             return NoContent();
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Remove(Guid id)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleProductionService.Unlink(new List<Guid>() { id });
+            _unitOfWork.Commit();
+            return NoContent();
+        }
     }
 }

@@ -161,11 +161,40 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
   }
 
   updateSaleProduction() {
-    let val = new UpdateSaleProductionReq();
-    val.orderId = this.saleOrderId;
-    this.saleProductionService.updateSaleProduction(val).subscribe(() => {
-      this.loadListSaleProduction();
-    })
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Cập nhật định mức';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn cập nhật định mức?';
+    modalRef.result.then(() => {
+      let val = new UpdateSaleProductionReq();
+      val.orderId = this.saleOrderId;
+      this.saleProductionService.updateSaleProduction(val).subscribe(() => {
+        this.notify('success', 'Cập nhật thành công');
+        this.loadListSaleProduction();
+      })
+    });
+  }
+
+  deleteSaleProduction(index) {
+    var saleProduction = this.listSaleProduction[index];
+    var saleProductionLineIds = saleProduction.lines.map(x => x.id);
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = 'Xóa định mức';
+    modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa định mức này?';
+    modalRef.result.then(() => {
+      this.saleProductionService.delete(saleProduction.id).subscribe(() => {
+        this.notify('success', 'Xóa thành công');
+        this.loadListSaleProduction();
+        var controlsRemove = this.lines.controls.filter(x => saleProductionLineIds.indexOf(x.get('saleProductionLineId').value) !== -1);
+        controlsRemove.forEach(control => {
+          var i = this.lines.controls.indexOf(control);
+          this.lines.removeAt(i);
+        });
+
+        if (this.id) {
+          this.loadRecord();
+        }
+      })
+    });
   }
 
 

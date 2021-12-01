@@ -41,7 +41,7 @@ namespace Infrastructure.Services
 
             var saleProduction_dict = await SearchQuery(x => x.SaleOrderLineRels.Any(s => lines.Select(x => x.Id).Contains(s.OrderLineId))).Include(x => x.Lines).Include(x => x.SaleOrderLineRels).ToDictionaryAsync(x => x.ProductId.Value, x => x);
             var boms = await bomObj.SearchQuery(x => items.Distinct().Select(x => x.ProductId).Contains(x.ProductId)).ToListAsync();
-            var bom_dict = boms.GroupBy(x => x.ProductId).ToDictionary(x => x.Key, x => x.Select(s => s).ToList());
+            var bom_dict = boms.GroupBy(x => x.ProductId).ToDictionary(x => x.Key, x => x.ToList());
             foreach (var item in items)
             {
                 if (!saleProduction_dict.ContainsKey(item.ProductId))
@@ -68,7 +68,6 @@ namespace Infrastructure.Services
                     }
 
                     createItems.Add(saleProduction);
-
                 }
                 else
                 {
@@ -82,14 +81,15 @@ namespace Infrastructure.Services
                         if (itemLine != null)
                         {
                             itemLine.Quantity = line.Quantity * saleProduction.Quantity;
-
-                            continue;
                         }
-                        saleProduction.Lines.Add(new SaleProductionLine
+                        else
                         {
-                            ProductId = line.MaterialProductId.Value,
-                            Quantity = saleProduction.Quantity * line.Quantity
-                        });
+                            saleProduction.Lines.Add(new SaleProductionLine
+                            {
+                                ProductId = line.MaterialProductId.Value,
+                                Quantity = saleProduction.Quantity * line.Quantity
+                            });
+                        }
                     }
 
                     foreach (var lineId in item.OrderLineIds)
@@ -102,7 +102,6 @@ namespace Infrastructure.Services
 
                     updateItems.Add(saleProduction);
                 }
-
             }
 
 
@@ -155,8 +154,18 @@ namespace Infrastructure.Services
 
         public async Task Unlink(IEnumerable<Guid> ids)
         {
+            //nếu có yêu cầu vật tư nào đang yêu cầu hoặc đã xuất thì ko đc xóa
+            var productRequestLineObj = GetService<IProductRequestLineService>();
+            var requestLines = await productRequestLineObj.SearchQuery(x => x.SaleProductionLineRels.Any(s => ids.Contains(s.SaleProductionLine.SaleProductionId)))
+                .Include(x => x.Request)
+                .ToListAsync();
+
+            if (requestLines.Any(x => x.Request.State != "draft"))
+                throw new Exception("Có yêu cầu vật tư đang yêu cầu hoặc đã xuất, không thể xóa");
+
+            await productRequestLineObj.DeleteAsync(requestLines);
+
             var saleProductions = await SearchQuery(x => ids.Contains(x.Id))
-              .Include(x => x.SaleOrderLineRels)
               .ToListAsync();
 
             await DeleteAsync(saleProductions);

@@ -15,4 +15,8 @@ export class SaleProductionService {
   updateSaleProduction(val) {
     return this.http.post(this.baseApi + this.apiUrl + '/UpdateSaleProduction', val);
   }
+
+  delete(id) {
+    return this.http.delete(this.baseApi + this.apiUrl + '/' + id);
+  }
 }
