@@ -1555,24 +1555,9 @@ namespace Infrastructure.Services
                 await promotionObj.ComputeAmount(recomputePromotionIds);
             }
 
-            ///remove or compute sale production
-            var productionObj = GetService<ISaleProductionService>();
-            var saleProducionIds = saleLine.SaleProductionRels.Select(x => x.SaleProductionId).Distinct().ToList();
-            //saleLine.SaleProductionRels.Clear();
-            var saleProductionRel = saleLine.SaleProductionRels.Where(x => x.OrderLineId == saleLine.Id).FirstOrDefault();
-            saleLine.SaleProductionRels.Remove(saleProductionRel);
 
             await Unlink(new List<Guid>() { id });
 
-            if (saleProducionIds.Any())
-            {
-                var saleProductions = await productionObj.SearchQuery(x => saleProducionIds.Contains(x.Id))
-                 .Include(x => x.Lines)
-                 .Include(x => x.SaleOrderLineRels).ThenInclude(x => x.OrderLine)
-                 .ToListAsync();
-
-                await productionObj.CompareSaleProduction(saleProductions);
-            }
 
             //compute sale order
             var orderObj = GetService<ISaleOrderService>();

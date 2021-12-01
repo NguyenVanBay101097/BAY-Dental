@@ -53,7 +53,7 @@ export class SearchAllComponent implements OnInit {
         window.open(`/partners/supplier/${item.id}/info`, '_blank');
         break;
       case "sale-order":
-        window.open(`/sale-orders/form?id=${item.id}`, '_blank');
+        window.open(`/sale-orders/${item.id}`, '_blank');
         break;
       default:
         break;

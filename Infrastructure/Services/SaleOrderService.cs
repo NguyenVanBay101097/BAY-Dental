@@ -383,15 +383,6 @@ namespace Infrastructure.Services
                 throw new Exception("Đã có công đoạn đợt khám hoàn thành, không thể hủy");
             await dkStepObj.DeleteAsync(removeDkSteps);
 
-            ///remove sale production
-            var saleProductionObj = GetService<ISaleProductionService>();
-            var removeSaleProductionIds = await saleProductionObj.SearchQuery(x => x.SaleOrderLineRels.Any(s => saleLineIds.Contains(s.OrderLineId))).Select(x => x.Id).ToListAsync();
-            await saleProductionObj.Unlink(removeSaleProductionIds);
-
-            ///remove product request
-            var productRequestObj = GetService<IProductRequestService>();
-            var removeProductRequestIds = await productRequestObj.SearchQuery(x => x.SaleOrderId.HasValue && ids.Contains(x.SaleOrderId.Value) && x.State != "done").Select(x => x.Id).ToListAsync();
-            await productRequestObj.Unlink(removeProductRequestIds);
 
             foreach (var sale in self)
             {
