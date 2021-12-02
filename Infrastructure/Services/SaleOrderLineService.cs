@@ -247,7 +247,11 @@ namespace Infrastructure.Services
             }
         }
 
-
+        public void _GetInvoiceAmount(IEnumerable<Guid> ids)
+        {
+            var self = SearchQuery(x => ids.Contains(x.Id)).ToList();
+            _GetInvoiceAmount(self);
+        }
 
         public void _GetInvoiceAmount(IEnumerable<SaleOrderLine> self)
         {
@@ -260,6 +264,9 @@ namespace Infrastructure.Services
             foreach (var line in self)
             {
                 decimal amountInvoiced = 0;
+                decimal amountInsurancePaid = 0;
+                Guid? insuranceId = null;
+
                 var amls = selfAmls.Where(x => x.SaleLineRels.Any(s => s.OrderLineId == line.Id)).ToList();
                 foreach (var invoiceLine in amls)
                 {
@@ -269,47 +276,21 @@ namespace Infrastructure.Services
                         if (move.Type == "out_invoice")
                         {
                             amountInvoiced += (invoiceLine.PriceSubtotal ?? 0);
+                            amountInsurancePaid += invoiceLine.InsuranceId.HasValue ? (invoiceLine.PriceSubtotal ?? 0) : 0;
                         }
                         else if (move.Type == "out_refund")
                         {
                             amountInvoiced -= (invoiceLine.PriceSubtotal ?? 0);
+                            amountInsurancePaid -= invoiceLine.InsuranceId.HasValue ? (invoiceLine.PriceSubtotal ?? 0) : 0;
                         }
                     }
+
+                    insuranceId = invoiceLine.InsuranceId;
                 }
 
                 line.AmountInvoiced = amountInvoiced;
-            }
-        }
-
-        public void _GetTotalInsurancePaidAmount(IEnumerable<SaleOrderLine> self)
-        {
-            var amlObj = GetService<IAccountMoveLineService>();
-            var selfIds = self.Select(x => x.Id).ToList();
-            var selfAmls = amlObj.SearchQuery(x => x.Account.Code == "DTBH" && x.SaleLineRels.Any(x => selfIds.Contains(x.OrderLineId)))
-                .Include(x => x.SaleLineRels)
-                .Include(x => x.Move).ToList();
-
-            foreach (var line in self)
-            {
-                decimal amountInsurancePaid = 0;
-                var amls = selfAmls.Where(x => x.SaleLineRels.Any(s => s.OrderLineId == line.Id)).ToList();
-                foreach (var invoiceLine in amls)
-                {
-                    var move = invoiceLine.Move;
-                    if (move.State != "cancel")
-                    {
-                        if (move.Type == "out_invoice")
-                        {
-                            amountInsurancePaid += (invoiceLine.PriceSubtotal ?? 0);
-                        }
-                        else if (move.Type == "out_refund")
-                        {
-                            amountInsurancePaid -= (invoiceLine.PriceSubtotal ?? 0);
-                        }
-                    }
-                }
-
                 line.AmountInsurancePaidTotal = amountInsurancePaid;
+                line.InsuranceId = insuranceId;
             }
         }
 

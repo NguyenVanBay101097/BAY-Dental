@@ -81,6 +81,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
     });
 
     this.saleOrderService.get(this.saleOrder.id).subscribe(result => {
+      console.log(result);
       this.orderLines = result.orderLines;
       this.promotions = result.promotions;
 

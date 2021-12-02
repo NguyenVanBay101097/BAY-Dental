@@ -188,6 +188,9 @@ namespace ApplicationCore.Entities
         /// </summary>
         public decimal? AmountInsurancePaidTotal { get; set; }
 
+        public Guid? InsuranceId { get; set; }
+        public ResInsurance Insurance { get; set; }
+
         /// <summary>
         /// bác sĩ được hưởng hoa hồng
         /// </summary>

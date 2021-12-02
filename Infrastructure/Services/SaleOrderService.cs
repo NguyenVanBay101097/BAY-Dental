@@ -1249,6 +1249,7 @@ namespace Infrastructure.Services
                 .Include(x => x.SaleOrderLineToothRels).ThenInclude(x => x.Tooth)
                 .Include(x => x.Employee)
                 .Include(x => x.Counselor)
+                .Include(x => x.Insurance)
                 .Include(x => x.OrderPartner).ToListAsync();
 
             display.OrderLines = _mapper.Map<IEnumerable<SaleOrderLineDisplay>>(lines);
@@ -2290,16 +2291,21 @@ namespace Infrastructure.Services
 
         public void _ComputeResidual(IEnumerable<SaleOrder> self)
         {
+            var ids = self.Select(x => x.Id).ToList();
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var saleLines = saleLineObj.SearchQuery(x => ids.Contains(x.OrderId)).ToList();
             foreach (var order in self)
             {
                 decimal? residual = 0M;
-
-                foreach (var line in order.OrderLines)
+                decimal totalPaid = 0;
+                var orderLines = saleLines.Where(x => x.OrderId == order.Id).ToList();
+                foreach (var line in orderLines)
                 {
                     residual += line.PriceSubTotal - (line.AmountInvoiced ?? 0);
+                    totalPaid += (line.AmountInvoiced ?? 0);
                 }
 
-
+                order.TotalPaid = totalPaid;
                 order.Residual = residual;
             }
         }
