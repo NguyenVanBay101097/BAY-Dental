@@ -71,10 +71,6 @@
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <!-- <kendo-numerictextbox style="width: 100px" class="mr-1" [min]="0"
-                                                [format]="'n0'" formControlName="numberOfTimes"
-                                                (valueChange)="updateQuantity(item)">
-                                            </kendo-numerictextbox> -->
                                             <input class="form-control mr-1" style="width: 100px"
                                                 formControlName="numberOfTimes" tmtautonumeric
                                                 [options]="{ minimumValue: 0, decimalPlaces: 0 }"
@@ -84,10 +80,6 @@
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <!-- <kendo-numerictextbox class="mr-1" style="width: 100px" [min]="0"
-                                                [format]="'n2'" formControlName="amountOfTimes"
-                                                (valueChange)="updateQuantity(item)">
-                                            </kendo-numerictextbox> -->
                                             <input class="form-control mr-1" style="width: 100px"
                                                 formControlName="amountOfTimes" tmtautonumeric
                                                 [options]="{ minimumValue: 0 }" (input)="updateQuantity(item)" />
@@ -95,18 +87,12 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <!-- <kendo-numerictextbox style="width: 100px" [min]="0" [format]="'n0'"
-                                            formControlName="numberOfDays" (valueChange)="updateQuantity(item)">
-                                        </kendo-numerictextbox> -->
                                         <input class="form-control" style="width: 100px"
                                             formControlName="numberOfDays" tmtautonumeric
                                             [options]="{ minimumValue: 0, decimalPlaces: 0 }"
                                             (input)="updateQuantity(item)" />
                                     </td>
                                     <td>
-                                        <!-- <kendo-numerictextbox style="width: 100px" [min]="0" [format]="'n2'"
-                                            formControlName="quantity">
-                                        </kendo-numerictextbox> -->
                                         <input class="form-control" style="width: 100px"
                                             formControlName="quantity" tmtautonumeric
                                             [options]="{ minimumValue: 0 }" />

@@ -56,15 +56,9 @@
                                     <label class="o_form_label">Tỉ lệ</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <!-- <kendo-numerictextbox [class.d-none]="uomTypeValue != 'smaller'"
-                                        class="form-control" formControlName="factor" [min]="0" [format]="'n5'">
-                                    </kendo-numerictextbox> -->
                                     <input class="form-control" [class.d-none]="uomTypeValue != 'smaller'"
                                         formControlName="factor" tmtautonumeric
                                         [options]="{ minimumValue: 0, decimalPlaces: 5 }" />
-                                    <!-- <kendo-numerictextbox [class.d-none]="uomTypeValue != 'bigger'" class="form-control"
-                                        formControlName="factorInv" [min]="0" [format]="'n5'">
-                                    </kendo-numerictextbox> -->
                                     <input class="form-control" [class.d-none]="uomTypeValue != 'bigger'"
                                         formControlName="factorInv" tmtautonumeric
                                         [options]="{ minimumValue: 0, decimalPlaces: 5 }" />
