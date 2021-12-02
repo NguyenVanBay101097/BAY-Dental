@@ -45,9 +45,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width:100%">
-                                    <kendo-numerictextbox [min]="0" style="width: auto" autoCorrect='true' format="n0" [decimals]="0" class="mr-2"
-                                        formControlName="basicPoint">
-                                    </kendo-numerictextbox>
+                                    <input class="form-control" style="width: auto" formControlName="basicPoint"
+                                        tmtautonumeric [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
                                     <div class="text-danger" *ngIf="submitted && f.basicPoint.errors?.required">
                                         Nhập điểm tích lũy tối thiểu
                                     </div>
