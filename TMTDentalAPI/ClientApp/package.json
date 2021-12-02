@@ -23,7 +23,6 @@
     "@angular/platform-browser-dynamic": "~9.1.13",
     "@angular/router": "~9.1.13",
     "@angular/service-worker": "~9.1.13",
-    "@angularfy/autonumeric": "^3.0.3",
     "@auth0/angular-jwt": "^4.2.0",
     "@ctrl/ngx-emoji-mart": "^3.0.4",
     "@fortawesome/fontawesome-free": "^5.8.2",
@@ -90,6 +89,7 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.901.15",
+    "@angular-devkit/build-ng-packagr": "~0.901.15",
     "@angular/cli": "~9.1.15",
     "@angular/compiler-cli": "~9.1.13",
     "@angular/language-service": "~9.1.13",
@@ -107,6 +107,7 @@
     "karma-coverage-istanbul-reporter": "~2.0.1",
     "karma-jasmine": "~2.0.1",
     "karma-jasmine-html-reporter": "^1.4.0",
+    "ng-packagr": "^9.0.0",
     "protractor": "~5.4.0",
     "ts-node": "~7.0.0",
     "tslint": "~5.15.0",

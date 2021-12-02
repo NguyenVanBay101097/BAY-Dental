@@ -515,6 +515,7 @@ namespace Infrastructure.Services
             var saleCardRelObj = GetService<ISaleOrderServiceCardCardRelService>();
             var serviceCardObj = GetService<IServiceCardCardService>();
 
+
             var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Coupon).Include(x => x.SaleOrderLinePaymentRels)
                 .Include(x => x.Order).Include(x => x.Promotions).ThenInclude(x => x.Lines)
                 .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
@@ -570,6 +571,8 @@ namespace Infrastructure.Services
                     await promotionObj.RemovePromotion(promotionIds);
 
             }
+
+
 
             await DeleteAsync(self);
         }
@@ -779,6 +782,56 @@ namespace Infrastructure.Services
                 await productStepObj.CreateAsync(stepsAdd);
             }
         }
+
+        public async Task CreateSaleProduction(IEnumerable<SaleOrderLine> seft)
+        {
+            var saleProductObj = GetService<ISaleProductionService>();
+            var bomObj = GetService<IProductBomService>();
+
+            var productId_dict = seft.GroupBy(x => x.ProductId.Value).ToDictionary(x => x.Key, x => x.Select(s => s.Id).ToList());
+            var products = await SearchQuery(x => seft.Select(x => x.Id).Contains(x.Id) && x.Product.Boms.Any())
+                .GroupBy(x => x.ProductId.Value)
+                .Select(x => new
+                {
+                    ProductId = x.Key,
+                    Quantity = x.Sum(s => s.ProductUOMQty),
+                    LineIds = productId_dict[x.Key],
+                })
+                .ToListAsync();
+
+            var boms = await bomObj.SearchQuery(x => productId_dict.Select(x => x.Key).Contains(x.ProductId)).ToListAsync();
+            var bom_dict = boms.GroupBy(x => x.ProductId).ToDictionary(x => x.Key, x => x.Select(s => s).ToList());
+            var saleProductions = new List<SaleProduction>();
+            foreach (var item in products)
+            {
+                var saleProduction = new SaleProduction
+                {
+                    ProductId = item.ProductId,
+                    Quantity = item.Quantity,
+                    CompanyId = CompanyId
+                };
+
+                foreach (var line in bom_dict[item.ProductId])
+                {
+                    saleProduction.Lines.Add(new SaleProductionLine
+                    {
+                        ProductId = line.MaterialProductId.Value,
+                        Quantity = saleProduction.Quantity * line.Quantity
+                    });
+                }
+
+                foreach (var lineId in item.LineIds)
+                {
+                    saleProduction.SaleOrderLineRels.Add(new SaleOrderLineSaleProductionRel { OrderLineId = lineId });
+                }
+
+                saleProductions.Add(saleProduction);
+
+            }
+
+            await saleProductObj.CreateAsync(saleProductions);
+        }
+
         public async Task ComputeProductRequestedQuantity(IEnumerable<Guid> ids) //compute quantity after do something
         {
             var reqLineObj = GetService<IProductRequestLineService>();
@@ -993,7 +1046,7 @@ namespace Infrastructure.Services
 
                 }
                 else
-                    throw new Exception(error_status.Error);              
+                    throw new Exception(error_status.Error);
             }
             else
             {
@@ -1431,7 +1484,7 @@ namespace Infrastructure.Services
             {
                 var promotionObj = GetService<ISaleOrderPromotionService>();
                 await promotionObj.ComputeAmount(orderPromotionIds);
-            }
+            }        
 
             //Tính toán lại thành tiền, tổng giảm giá, tổng tiền, đã thanh toán, còn lại cho order
             var orderObj = GetService<ISaleOrderService>();
@@ -1506,7 +1559,7 @@ namespace Infrastructure.Services
 
         public async Task RemoveOrderLine(Guid id)
         {
-            var saleLine = await SearchQuery(x => x.Id == id).Include(x => x.SaleOrderLineToothRels).FirstOrDefaultAsync();
+            var saleLine = await SearchQuery(x => x.Id == id).Include(x => x.SaleOrderLineToothRels).Include(x => x.SaleProductionRels).FirstOrDefaultAsync();
             if (saleLine == null)
                 throw new Exception("Không tìm thấy dịch vụ!");
 
@@ -1534,7 +1587,9 @@ namespace Infrastructure.Services
                 await promotionObj.ComputeAmount(recomputePromotionIds);
             }
 
+
             await Unlink(new List<Guid>() { id });
+
 
             //compute sale order
             var orderObj = GetService<ISaleOrderService>();

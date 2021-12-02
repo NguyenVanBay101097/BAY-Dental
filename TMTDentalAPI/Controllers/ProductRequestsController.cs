@@ -21,14 +21,16 @@ namespace TMTDentalAPI.Controllers
         private readonly IProductRequestService _productRequestService;
         private readonly IUnitOfWorkAsync _unitOfWork;
         private readonly ISaleOrderLineService _saleLineService;
+        private readonly ISaleProductionLineService _saleProductionLineService;
 
         public ProductRequestsController(IMapper mapper, IProductRequestService productRequestService, IUnitOfWorkAsync unitOfWork,
-            ISaleOrderLineService saleLineService)
+            ISaleOrderLineService saleLineService, ISaleProductionLineService saleProductionLineService)
         {
             _mapper = mapper;
             _productRequestService = productRequestService;
             _unitOfWork = unitOfWork;
             _saleLineService = saleLineService;
+            _saleProductionLineService = saleProductionLineService;
         }
 
         [HttpGet]
@@ -118,21 +120,12 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
+        [HttpPost("[action]")]
         [CheckAccess(Actions = "Basic.ProductRequest.Delete")]
-        public async Task<IActionResult> Delete(Guid id)
-        {
-            var request = await _productRequestService.SearchQuery(x => x.Id == id)
-                .Include(x => x.Lines)
-                .FirstOrDefaultAsync();
-            if (request == null)
-                return NotFound();
-
-            await _unitOfWork.BeginTransactionAsync();
-            var saleLineIds = request.Lines.Where(x => x.SaleOrderLineId.HasValue).Select(x => x.SaleOrderLineId.Value).Distinct().ToList();
-            await _productRequestService.DeleteAsync(request);
-            if (saleLineIds.Any())
-                await _saleLineService.ComputeProductRequestedQuantity(saleLineIds);
+        public async Task<IActionResult> Delete(IEnumerable<Guid> ids)
+        {        
+            await _unitOfWork.BeginTransactionAsync();           
+            await _productRequestService.Unlink(ids);          
             _unitOfWork.Commit();
             return NoContent();
         }

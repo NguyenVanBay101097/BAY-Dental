@@ -51,6 +51,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
   showStandardPrice = false; // ẩn hiện giá vốn theo phân quyền
 
   @Input() productDefaultVal: Product;
+  @Input() name: string = '';
 
   @ViewChild('form', { static: true }) formView: any;
   @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
@@ -71,7 +72,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
 
   ngOnInit() {
     this.productForm = this.fb.group({
-      name: ['', Validators.required],
+      name: [this.name, Validators.required],
       saleOK: true,
       purchaseOK: false,
       categ: [null, Validators.required],
@@ -145,6 +146,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
       if (result.categ) {
         this.filterdCategories = _.unionBy(this.filterdCategories, [result.categ as ProductCategoryBasic], 'id');
       }
+      result.name = this.name;
       this.productForm.patchValue(result);
       this.productForm.get('type').setValue('service');
       this.productForm.get('type2').setValue('service');
@@ -247,7 +249,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
         });
     } else {
       this.productService.create(data).subscribe(
-        result => {
+        (result: any) => {
           this.notificationService.show({
             content: 'Lưu thành công',
             hideAfter: 3000,
@@ -255,6 +257,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
             animation: { type: 'fade', duration: 400 },
             type: { style: 'success', icon: true }
           });
+          result.categ = data.categ;
           this.activeModal.close(result);
         });
     }

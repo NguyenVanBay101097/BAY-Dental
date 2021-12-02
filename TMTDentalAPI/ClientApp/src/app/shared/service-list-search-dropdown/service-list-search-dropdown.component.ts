@@ -1,8 +1,10 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { categories } from '@ctrl/ngx-emoji-mart/ngx-emoji';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { identity } from 'lodash';
 import { combineLatest, forkJoin, fromEvent, merge, Observable, of, OperatorFunction, Subject, throwError } from 'rxjs';
 import { catchError, debounceTime, distinctUntilChanged, filter, map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { ProductServiceCuDialogComponent } from 'src/app/products/product-service-cu-dialog/product-service-cu-dialog.component';
 import { ProductPaged, ProductService } from 'src/app/products/product.service';
 
 @Component({
@@ -24,7 +26,8 @@ export class ServiceListSearchDropdownComponent implements OnInit {
   focus$ = new Subject<any>();
 
   constructor(
-    private productService: ProductService
+    private productService: ProductService,
+    private modalService: NgbModal
   ) { }
 
   ngOnInit() {
@@ -96,20 +99,40 @@ export class ServiceListSearchDropdownComponent implements OnInit {
   }
 
   onSelectValue($event, input) {
+    var emitValue = (value)=> {
+      this.onSelectService.emit({
+        id: value.id,
+        defaultCode: value.defaultCode,
+        name: value.name,
+        listPrice: value.listPrice,
+        categName: value.categ.name,
+        categId: value.categ.id
+      });
+      this.model = "";
+      input.value = '';
+    }
+    input.blur();
     $event.preventDefault();
     var item = $event.item;
-    if (item.error) return;
-    this.onSelectService.emit({
-      id: item.id,
-      defaultCode: item.defaultCode,
-      name: item.name,
-      listPrice: item.listPrice,
-      categName: item.categ.name,
-      categId: item.categ.id
-    });
-
-    this.model = "";
-    input.value = '';
+    if (item.error){
+      let modalRef = this.modalService.open(ProductServiceCuDialogComponent, {
+        size: 'xl',
+        windowClass: "o_technical_modal",
+        keyboard: false,
+        backdrop: "static",
+      });
+      modalRef.componentInstance.title = "Thêm: dịch vụ";
+      modalRef.componentInstance.name = input.value;
+      modalRef.result.then(
+        (res) => {
+      emitValue(res);
+        },
+        () => { }
+      );
+    } else {
+      emitValue(item);
+    }
+   
   }
 
 }

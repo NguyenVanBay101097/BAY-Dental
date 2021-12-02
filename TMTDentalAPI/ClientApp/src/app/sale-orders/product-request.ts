@@ -53,6 +53,7 @@ export class ProductRequestSave {
 export class ProductRequestGetLinePar {
     saleOrderLineId: string;
     productBomId: string;
+    saleProductionLineId: string;
 }
 
 export class ProductRequestDefaultGet {

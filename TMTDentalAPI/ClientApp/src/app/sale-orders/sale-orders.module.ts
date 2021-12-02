@@ -41,7 +41,6 @@ import { SaleOrderServiceListComponent } from './sale-order-service-list/sale-or
 import { SaleOrderInsurancePaymentDialogComponent } from './sale-order-insurance-payment-dialog/sale-order-insurance-payment-dialog.component';
 
 import { ConfirmPaymentDialogComponent } from './confirm-payment-dialog/confirm-payment-dialog.component';
-import { AutonumericModule } from '@angularfy/autonumeric';
 
 @NgModule({
   declarations: [
@@ -76,7 +75,6 @@ import { AutonumericModule } from '@angularfy/autonumeric';
     SaleOrderServiceListComponent,
     SaleOrderInsurancePaymentDialogComponent,
     ConfirmPaymentDialogComponent,
-
   ],
   imports: [
     CommonModule,
@@ -87,8 +85,6 @@ import { AutonumericModule } from '@angularfy/autonumeric';
     FormsModule,
     SharedModule,
     NgbModule,
-    AutonumericModule,
-
   ],
   providers: [SaleOrderPromotionService, SaleCouponProgramService],
   exports: [

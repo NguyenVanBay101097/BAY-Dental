@@ -505,6 +505,14 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetSaleProductionBySaleOrderId(Guid id)
+        {
+            var saleProductions = await _saleOrderService.GetSaleProductionBySaleOrderId(id);
+            var res = _mapper.Map<IEnumerable<SaleProductionDisplay>>(saleProductions);
+            return Ok(res);
+        }
+
         [AllowAnonymous]
         [HttpGet("{id}/[action]")]
         [CheckAccess(Actions = "Basic.SaleOrder.Read")]
@@ -877,7 +885,7 @@ namespace TMTDentalAPI.Controllers
             var irModelCreate = new List<IRModelData>();
             var dateToData = new DateTime(2021, 08, 25);
             var listIrModelData = await irModelObj.SearchQuery().ToListAsync();// các irmodel cần thiết
-            var entities = await _saleOrderService.SearchQuery(x => x.DateOrder.Date <= dateToData.Date).Include(x => x.OrderLines).ThenInclude(x=> x.SaleOrderLineToothRels).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var entities = await _saleOrderService.SearchQuery(x => x.DateOrder.Date <= dateToData.Date).Include(x => x.OrderLines).ThenInclude(x => x.SaleOrderLineToothRels).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
             var data = new List<SaleOrderXmlSampleDataRecord>();
             foreach (var entity in entities)
             {

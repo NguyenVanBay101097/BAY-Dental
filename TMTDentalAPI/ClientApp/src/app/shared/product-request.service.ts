@@ -18,7 +18,7 @@ export class ProductRequestService {
     }
 
     defaultGet(val: ProductRequestDefaultGet): Observable<ProductRequestDisplay> {
-        return this.http.post<ProductRequestDisplay>(this.baseApi + this.apiUrl + '/DefaultGet', val );
+        return this.http.post<ProductRequestDisplay>(this.baseApi + this.apiUrl + '/DefaultGet', val);
     }
 
     create(val: ProductRequestSave): Observable<ProductRequestBasic> {
@@ -41,7 +41,7 @@ export class ProductRequestService {
         return this.http.post(this.baseApi + this.apiUrl + '/ActionDone', ids);
     }
 
-    delete(id: string) {
-        return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
+    delete(ids: string[]) {
+        return this.http.post(this.baseApi + this.apiUrl + "/Delete", ids);
     }
 }

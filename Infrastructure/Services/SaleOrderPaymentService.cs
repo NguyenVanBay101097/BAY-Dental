@@ -664,12 +664,12 @@ namespace Infrastructure.Services
 
         public override ISpecification<SaleOrderPayment> RuleDomainGet(IRRule rule)
         {
-            var userObj = GetService<IUserService>();
-            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            //var userObj = GetService<IUserService>();
+            //var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
             switch (rule.Code)
             {
                 case "sale.sale_order_payment_comp_rule":
-                    return new InitialSpecification<SaleOrderPayment>(x => companyIds.Contains(x.CompanyId));
+                    return new InitialSpecification<SaleOrderPayment>(x => x.CompanyId == CompanyId);
                 default:
                     return null;
             }

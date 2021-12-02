@@ -5,7 +5,6 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
-import { AuthService } from 'src/app/auth/auth.service';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
@@ -51,7 +50,6 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
     private timeKeepingService: TimeKeepingService,
     private router: Router,
     config: NgbPopoverConfig,
-    public authService: AuthService,
     private notificationService: NotificationService,
     private checkPermissionService: CheckPermissionService
   ) {
@@ -128,7 +126,6 @@ export class TimeKeepingViewCalendarComponent implements OnInit {
     val.offset = 0;
     val.to = this.intl.formatDate(this.monthEnd, 'yyyy-MM-dd');
     val.from = this.intl.formatDate(this.monthStart, 'yyyy-MM-dd');
-    val.companyId = this.authService.userInfo.companyId;
     this.timeKeepingService.getPaged(val).subscribe(
       result => {
         emps.forEach(item => {

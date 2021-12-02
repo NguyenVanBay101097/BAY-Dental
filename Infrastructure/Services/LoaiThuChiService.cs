@@ -235,12 +235,13 @@ namespace Infrastructure.Services
 
         public override ISpecification<LoaiThuChi> RuleDomainGet(IRRule rule)
         {
-            var userObj = GetService<IUserService>();
-            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            //var userObj = GetService<IUserService>();
+            //var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            var companyId = CompanyId;
             switch (rule.Code)
             {
-                case "account.phieu_thu_chi_comp_rule":
-                    return new InitialSpecification<LoaiThuChi>(x => !x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value));
+                case "account.loai_thu_chi_comp_rule":
+                    return new InitialSpecification<LoaiThuChi>(x => !x.CompanyId.HasValue || x.CompanyId == companyId);
                 default:
                     return null;
             }

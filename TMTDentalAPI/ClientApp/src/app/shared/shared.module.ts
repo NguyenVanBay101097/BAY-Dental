@@ -1,9 +1,9 @@
-import { CUSTOM_ELEMENTS_SCHEMA, ModuleWithProviders, NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { RouterModule } from '@angular/router';
 import { ChangePasswordDialogComponent } from './change-password-dialog/change-password-dialog.component';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule} from '@angular/forms';
 import { LayoutSidebarComponent } from './layout-sidebar/layout-sidebar.component';
 import { LayoutHeaderComponent } from './layout-header/layout-header.component';
 import { NavSidebarService } from './nav-sidebar.service';
@@ -112,7 +112,8 @@ import { ProductCategoriesSearchDropdownComponent } from './product-categories-s
 import { ComputePriceInputPopoverComponent } from './compute-price-input-popover/compute-price-input-popover.component';
 import { ResInsuranceCuDialogComponent } from './res-insurance-cu-dialog/res-insurance-cu-dialog.component';
 import { NumberDirective } from './directives/numbers-only.directive';
-
+import { TmtAutonumericModule } from 'tmt-autonumeric';
+import { AgePopoverComponent } from './age-popover/age-popover.component';
 
 const config: LocaleConfig = {};
 @NgModule({
@@ -219,6 +220,7 @@ const config: LocaleConfig = {};
         ComputePriceInputPopoverComponent,
         ResInsuranceCuDialogComponent,
         NumberDirective,
+        AgePopoverComponent
     ],
     exports: [
         ConfirmDialogComponent,
@@ -315,6 +317,8 @@ const config: LocaleConfig = {};
         BankCuDialogComponent,
         ResInsuranceCuDialogComponent,
         NumberDirective,
+        TmtAutonumericModule,
+        AgePopoverComponent
     ],
     imports: [
         NgbModule,
@@ -331,11 +335,13 @@ const config: LocaleConfig = {};
             relativeTimeThresholdOptions: {
                 'm': 59
             }
-        })
+        }),
+        TmtAutonumericModule
     ],
     providers: [NavSidebarService, AppLoadingService, AppSharedShowErrorService, FundBookService,
         { provide: LOCALE_CONFIG, useValue: config },
-        { provide: LocaleService, useClass: LocaleService, deps: [LOCALE_CONFIG] }
+        { provide: LocaleService, useClass: LocaleService, deps: [LOCALE_CONFIG] },
+        
     ],
     entryComponents: [
         ConfirmDialogComponent,
