@@ -46,6 +46,26 @@ namespace TMTDentalAPI.Controllers
             return Ok(_mapper.Map<IEnumerable<AccountJournalDisplay>>(res));
         }
 
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetBankJournals(string search)
+        {
+            var query = _accountJournalService.SearchQuery(x => x.Type == "bank");
+            if (!string.IsNullOrEmpty(search))
+                query = query.Where(x => x.Name.Contains(search));
+            var res = await query.Select(x => new AccountJournalBankJournalDto
+                {
+                    Id = x.Id,
+                    AccountHolderName = x.BankAccount.AccountHolderName,
+                    AccountNumber = x.BankAccount.AccountNumber,
+                    Active = x.Active,
+                    BankBic = x.BankAccount.Bank.BIC,
+                    BankBranch = x.BankAccount.Branch,
+                    Name = x.Name
+                }).ToListAsync();
+
+            return Ok(res);
+        }
+
         [HttpGet("{id}/[action]")]
         public async Task<IActionResult> GetBankJournal(Guid id)
         {
@@ -53,7 +73,7 @@ namespace TMTDentalAPI.Controllers
                 .Select(x => new AccountJournalGetBankJournalVM {
                     Id = x.Id,
                     AccountHolderName = x.BankAccount.AccountHolderName,
-                    AccountNumber = x.Name,
+                    AccountNumber = x.BankAccount.AccountNumber,
                     Active = x.Active,
                     Bank = x.BankAccount.Bank != null ? new ResBankSimple
                     {

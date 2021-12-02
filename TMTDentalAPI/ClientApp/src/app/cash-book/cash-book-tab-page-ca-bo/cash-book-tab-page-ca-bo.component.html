@@ -71,11 +71,17 @@
                                 Thêm tài khoản ngân hàng
                             </button>
                             <kendo-combobox #accountJournalCbx [popupSettings]="cbxPopupSettings" style="width: 250px" class="mr-2 cbx-account" [data]="listAccounts" filterable="true"
-                            textField="displayName" [value]="accountJournalSelectedId" valueField="id" placeholder = "Tất cả tài khoản" [valuePrimitive]="true" (selectionChange)="onSelectAccount($event)">
+                            textField="name" [value]="accountJournalSelectedId" valueField="id" placeholder = "Tất cả tài khoản" [valuePrimitive]="true" (selectionChange)="onSelectAccount($event)">
                                 <ng-template kendoComboBoxItemTemplate let-dataItem>
                                     <div class="pt-2 pb-2">
-                                        <div class="font-weight-bold">{{dataItem.name}}</div>
-                                        <div class="opacity-8" *ngIf="dataItem.subDisplayName">{{dataItem.subDisplayName}}</div>
+                                        <div class="font-weight-bold">{{dataItem.accountNumber}}</div>
+                                        <div class="opacity-8" *ngIf="dataItem.bankBic">
+                                            {{dataItem.bankBic}}
+                                            <span *ngIf="dataItem.bankBranch">({{dataItem.bankBranch}})</span>
+                                        </div>
+                                        <div class="opacity-8" *ngIf="dataItem.accountHolderName">
+                                            {{dataItem.accountHolderName}}
+                                        </div>
                                     </div>
                                 </ng-template>
                             </kendo-combobox>

@@ -65,6 +65,10 @@ export class AccountBankCuDialogComponent implements OnInit {
       });
   }
 
+  get accountHolderNameCtrl() {
+    return this.formGroup.get('accountHolderName');
+  }
+
   getDataFromApi() {
     this.accountJournalService.getBankJournal(this.accountId).subscribe((result: any) => {
       this.formGroup.patchValue(result);

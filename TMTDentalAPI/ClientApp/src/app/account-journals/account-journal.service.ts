@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ResPartnerBankBasic } from '../res-partner-banks/res-partner-bank';
@@ -51,7 +51,7 @@ export class AccountJournalService {
         return this.http.post(this.baseApi + this.apiUrl + "/CreateJournalSave", val);
     }
 
-    update(id: string,val: AccountJournalSave) {
+    update(id: string, val: AccountJournalSave) {
         return this.http.put(this.baseApi + this.apiUrl + "/" + id, val);
     }
 
@@ -73,5 +73,9 @@ export class AccountJournalService {
 
     updateBankJournal(val: any) {
         return this.http.post(this.baseApi + this.apiUrl + "/UpdateBankJournal", val);
+    }
+
+    getBankJournals(val: any) {
+        return this.http.get(this.baseApi + this.apiUrl + "/GetBankJournals", { params: new HttpParams({ fromObject: val }) });
     }
 }

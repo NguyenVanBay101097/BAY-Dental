@@ -84,7 +84,7 @@ export class CashBookTabPageCaBoComponent implements OnInit {
         switchMap((value) => this.searchAccounts$(value)
         )
       )
-      .subscribe(result => {
+      .subscribe((result: any) => {
         this.listAccounts = result;
         this.accountVC.loading = false;
       });
@@ -196,16 +196,11 @@ export class CashBookTabPageCaBoComponent implements OnInit {
   }
 
   searchAccounts$(search?) {
-    var val = new AccountJournalFilter();
-    val.limit = 20;
-    val.type = 'bank';
-    val.search = search || '';
-    val.companyId = this.authService.userInfo.companyId;
-    return this.accountJournalService.autocomplete(val);
+    return this.accountJournalService.getBankJournals({search: search || ''});
   }
 
   loadAccounts() {
-    this.searchAccounts$().subscribe(result => {
+    this.searchAccounts$().subscribe((result: any) => {
       this.listAccounts = result;
     })
   }

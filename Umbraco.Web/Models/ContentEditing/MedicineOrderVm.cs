@@ -59,7 +59,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid ToaThuocId { get; set; }
         public ToaThuocBasic ToaThuoc { get; set; }
         public Guid JournalId { get; set; }
-        public AccountJournal Journal { get; set; }
+        public AccountJournalSimple Journal { get; set; }
 
         public decimal Amount { get; set; }
         public string State { get; set; }
