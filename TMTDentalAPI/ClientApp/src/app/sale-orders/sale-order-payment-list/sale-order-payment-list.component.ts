@@ -54,8 +54,8 @@ export class SaleOrderPaymentListComponent implements OnInit {
     }
 
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = 'Hủy thanh toán điều trị';
-    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn hủy thanh toán điều trị?';
+    modalRef.componentInstance.title = payment.payments[0].journalType === 'insurance' ? 'Hủy bảo lãnh' : 'Hủy thanh toán điều trị';
+    modalRef.componentInstance.body = payment.payments[0].journalType === 'insurance' ? 'Bạn chắc chắn muốn hủy bảo lãnh ?' :'Bạn có chắc chắn muốn hủy thanh toán điều trị?';
     modalRef.result.then(() => {
       this.saleOrderPaymentService.actionCancel([payment.id])
         .subscribe(() => {

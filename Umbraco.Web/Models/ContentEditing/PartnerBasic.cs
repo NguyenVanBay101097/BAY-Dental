@@ -139,6 +139,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class PartnerGetDebtPagedItem
     {
+        public string PartnerName { get; set; }
         public DateTime? Date { get; set; }
 
         public decimal AmountResidual { get; set; }
@@ -148,21 +149,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Origin { get; set; }
 
         public string Ref { get; set; }
-
-        public string RefDisplay
-        {
-
-            get
-            {
-                if (!string.IsNullOrEmpty(Ref))
-                    return Ref.Split("-")[0].Trim();
-
-                return null;
-            }
-
-            set { }
-
-        }
 
         public Guid MoveId { get; set; }
         public string MoveType { get; set; }
