@@ -8,6 +8,7 @@ import { AccountPaymentService } from 'src/app/account-payments/account-payment.
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { NotifyService } from 'src/app/shared/services/notify.service';
+import { ResInsuranceHistoriesDetailComponent } from '../res-insurance-histories-detail/res-insurance-histories-detail.component';
 import { InsuranceHistoryInComeFilter } from '../res-insurance-report.model';
 import { ResInsuranceReportService } from '../res-insurance-report.service';
 
@@ -65,6 +66,19 @@ export class ResInsuranceHistoriesComponent implements OnInit {
     );
   }
 
+  clickItem(item) {
+    if (item && item.dataItem) {
+      var id = item.dataItem.id
+      const modalRef = this.modalService.open(ResInsuranceHistoriesDetailComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = 'Chi tiết phiếu thu';
+      modalRef.componentInstance.paymentId = id;
+      modalRef.result.then(res => {
+        this.loadInsuranceHistories();
+      }, () => {
+      });
+    }
+  }
+
   onSearchDateChange(e): void {
     this.dateFrom = e.dateFrom;
     this.dateTo = e.dateTo;
@@ -79,11 +93,12 @@ export class ResInsuranceHistoriesComponent implements OnInit {
   }
 
   onCancelPaymnet(item): void {
+    event.stopPropagation();
     if (item.state === 'cancel') {
       this.notifyService.notify('error', 'Không thể hủy phiếu ở trạng thái Đã hủy');
       return;
     }
-    
+
     let modalRef = this.modalService.open(ConfirmDialogComponent, {
       windowClass: "o_technical_modal",
       keyboard: false,

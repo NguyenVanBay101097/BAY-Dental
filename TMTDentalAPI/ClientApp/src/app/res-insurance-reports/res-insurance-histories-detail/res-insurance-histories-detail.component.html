@@ -1,22 +1,106 @@
-<div class="card">
-    <div class="card-header font-weight-600">
-        <h6 class="mb-0">Chi tiết phiếu thu</h6>
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="onCancel()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <div class="o_form_view o_form_editable">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Ngày thu
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    {{itemDetail?.paymentDate | date: 'shortDate'}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label for="o_field_input_46" class="o_form_label">
+                                        Số tiền
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    {{itemDetail?.amountTotal | number}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Nội dung
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    {{itemDetail?.communication}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label for="o_field_input_46" class="o_form_label">
+                                        Trạng thái
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    {{getState(itemDetail?.state)}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <kendo-grid [resizable]="true" [data]="gridData" [navigable]="true" [pageSize]="limit" [skip]="skip"
+                    [pageable]="pagerSettings" (pageChange)="pageChange($event)" #grid>
+                    <div *kendoGridDetailTemplate="let dataItem" width="50">
+                        <app-res-insurance-debit-detail [item]="dataItem">
+                        </app-res-insurance-debit-detail>
+                    </div>
+                    <kendo-grid-column field="partnerName" title="Khách hàng" width="150">
+                        <ng-template kendoGridCellTemplate let-dataItem let-column="column">
+                            <a class="text-primary" title="Xem hồ sơ khách hàng" (click)="clickUrl(dataItem)">
+                                {{dataItem.partnerName}}
+                            </a>
+                            <!-- <div>
+
+                                <div *ngIf="dataItem.partnerRef">
+                                    <small>{{dataItem.partnerRef}}</small>
+                                </div>
+                            </div> -->
+                        </ng-template>
+                    </kendo-grid-column>
+                    <kendo-grid-column title="Ngày bảo lãnh" width="100">
+                        <ng-template kendoGridCellTemplate let-dataItem let-column="column">
+                            {{dataItem?.date | date:'shortDate'}}
+                        </ng-template>
+                    </kendo-grid-column>
+
+                    <kendo-grid-column field="communication" title="Nội dung" width="150">
+                    </kendo-grid-column>
+                    <kendo-grid-column title="Số tiền" headerClass="text-right" class="text-right" width="135"
+                        footerClass="text-right font-weight-600">
+                        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                            {{dataItem.amountTotal | number}}
+                        </ng-template>
+                    </kendo-grid-column>
+                </kendo-grid>
+                </div>
+               
+            </div>
+        </div>
     </div>
-    <div class="card-body">
-        <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" #grid
-            (pageChange)="pageChange($event)">
-            <kendo-grid-column field="partnerName" title="Khách hàng"> </kendo-grid-column>
-            <kendo-grid-column title="Ngày bảo lãnh">
-                <ng-template field="date" kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.date | date : 'shortDate' }}
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column field="refDisplay" title="Phiếu điều trị"></kendo-grid-column>
-            <kendo-grid-column field="amount" title="Số tiền" class="text-right">
-                <ng-template field="amount" kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.amount | number}}
-                </ng-template>
-            </kendo-grid-column>
-        </kendo-grid>
+</div>
+
+<div class="modal-footer">
+    <div>
+        <button type="button" class="btn btn-light mr-2" (click)="onCancel()" accesskey="q">Đóng</button>
     </div>
 </div>

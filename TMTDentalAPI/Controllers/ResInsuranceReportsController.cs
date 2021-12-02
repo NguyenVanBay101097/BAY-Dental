@@ -56,9 +56,9 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> GetHistoryInComeDetails(InsuranceHistoryInComeDetailFilter val)
+        public async Task<IActionResult> GetHistoryInComeDetail(InsuranceHistoryInComeDetailFilter val)
         {
-            var result = await _resInsuranceReportService.GetHistoryInComeDetails(val);
+            var result = await _resInsuranceReportService.GetHistoryInComeDetail(val);
             return Ok(result);
         }
 

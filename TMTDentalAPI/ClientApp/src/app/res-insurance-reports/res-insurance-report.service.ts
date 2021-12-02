@@ -25,8 +25,8 @@ export class ResInsuranceReportService {
     return this.http.get<PagedResult2<InsuranceHistoryInComeItem>>(this.baseApi + this.apiUrl + '/GetHistoryInComePaged',{ params: new HttpParams({ fromObject: val }) });
   }
 
-  getHistoryInComeDetails(val): Observable<PagedResult2<InsuranceHistoryInComeDetailItem>> {
-    return this.http.post<PagedResult2<InsuranceHistoryInComeDetailItem>>(this.baseApi + this.apiUrl + '/GetHistoryInComeDetails', val);
+  getHistoryInComeDetail(val) {
+    return this.http.post(this.baseApi + this.apiUrl + '/GetHistoryInComeDetail', val);
   }
 
   getSummaryReports(val: InsuranceReportFilter) {

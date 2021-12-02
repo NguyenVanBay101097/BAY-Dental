@@ -157,6 +157,16 @@
       <field name="padding">4</field>
     </record>
 
+    <record id="sequence_insurance" model="ir.sequence">
+      <field name="name">Insurance sequence</field>
+      <field name="code">insurance</field>
+      <field name="prefix">INS/{yyyy}/</field>
+      <field eval="1" name="number_next"/>
+      <field eval="1" name="number_increment"/>
+      <field eval="False" name="company_id"/>
+      <field name="padding">4</field>
+    </record>
+
 
     <!-- account.account.type -->
     <record model="account.account.type" id="data_account_type_receivable">
@@ -294,12 +304,6 @@
       <field name="code">CNBH</field>
       <field name="user_type_id" ref="account.data_account_type_current_liabilities" />
       <field name="reconcile" eval="True" />
-    </record>
-
-    <record model="account.account" id="data_account_DTBH">
-      <field name="name">Doanh Thu bảo hiểm</field>
-      <field name="code">DTBH</field>
-      <field name="user_type_id" ref="account.data_account_type_revenue" />
     </record>
 
     <!-- account.journal -->

@@ -105,8 +105,8 @@
                         </div>
                         <kendo-grid [resizable]="true" [data]="gridData" [navigable]="true"  [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" 
                         (pageChange)="pageChange($event)" [kendoGridSelectBy]="'moveId'" [selectedKeys]="selectedIds" #grid>
-                            <div *kendoGridDetailTemplate="let dataItem" [width]="40">
-                                <app-res-insurance-debit-detail [item]="dataItem">
+                            <div *kendoGridDetailTemplate="let dataItem" width="60">
+                                <app-res-insurance-debit-detail [item]="dataItem" >
                                 </app-res-insurance-debit-detail>
                             </div>
                             <kendo-grid-checkbox-column [width]="40" [headerClass]="{'text-center': true}"

@@ -74,8 +74,6 @@ export class InsuranceHistoryInComeItem {
 }
 
 export class InsuranceHistoryInComeDetailFilter {
-    dateFrom: string;
-    dateTo: string;
     paymentId: string;
 }
 

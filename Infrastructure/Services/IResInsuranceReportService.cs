@@ -19,9 +19,9 @@ namespace Infrastructure.Services
 
         Task<IEnumerable<ReportInsuranceDebitExcel>> ExportReportInsuranceDebtExcel(InsuranceReportFilter val);
 
-        Task<PagedResult2<InsuranceHistoryInComeItem>> GetHistoryInComePaged(InsuranceHistoryInComeFilter val);
+        Task<PagedResult2<InsuranceHistoryInCome>> GetHistoryInComePaged(InsuranceHistoryInComeFilter val);
 
-        Task<IEnumerable<InsuranceHistoryInComeDetailItem>> GetHistoryInComeDetails(InsuranceHistoryInComeDetailFilter val);
+        Task<InsuranceHistoryInComeDetailItem> GetHistoryInComeDetail(InsuranceHistoryInComeDetailFilter val);
         Task<IEnumerable<InsuranceDebtDetailItem>> GetInsuranceDebtDetailReport(InsuranceDebtDetailFilter val);
     }
 }

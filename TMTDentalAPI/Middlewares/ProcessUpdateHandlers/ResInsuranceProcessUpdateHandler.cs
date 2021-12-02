@@ -85,10 +85,6 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                 if (currentLiabilities == null)
                     return Task.CompletedTask;
 
-                var accountTypeRevenue = context.AccountAccountTypes.Where(x => x.Name == "Income").FirstOrDefault();
-                if (accountTypeRevenue == null)
-                    return Task.CompletedTask;
-
                 foreach (var company in companies)
                 {
                     var accCNBH = context.AccountAccounts.Where(x => x.Code == "CNBH" && x.CompanyId == company.Id).FirstOrDefault();
@@ -108,13 +104,13 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                         context.SaveChanges();
 
 
-                        var seq = context.IRSequences.Where(x => x.Prefix == "INSURANCE/{yyyy}/").FirstOrDefault();
+                        var seq = context.IRSequences.Where(x => x.Prefix == "INS/{yyyy}/").FirstOrDefault();
                         if (seq == null)
                         {
                             seq = new IRSequence
                             {
                                 Name = "Bảo hiểm",
-                                Prefix = "INSURANCE" + "/{yyyy}/",
+                                Prefix = "INS" + "/{yyyy}/",
                                 Padding = 4,
                                 NumberIncrement = 1,
                                 NumberNext = 1,
@@ -146,21 +142,6 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                         }
                     }
 
-                    var accDTBH = context.AccountAccounts.Where(x => x.Code == "DTBH" && x.CompanyId == company.Id).FirstOrDefault();
-                    if (accDTBH == null)
-                    {
-                        accDTBH = new AccountAccount
-                        {
-                            Name = "Doanh thu bảo hiểm",
-                            Code = "DTBH",
-                            InternalType = accountTypeRevenue.Type,
-                            UserTypeId = accountTypeRevenue.Id,
-                            CompanyId = company.Id
-                        };
-
-                        context.AccountAccounts.Add(accDTBH);
-                        context.SaveChanges();                  
-                    }
 
                     var seqInsuranceIncome = context.IRSequences.Where(x => x.Code == "account.payment.insurance.invoice").FirstOrDefault();
                     if (seqInsuranceIncome == null)
