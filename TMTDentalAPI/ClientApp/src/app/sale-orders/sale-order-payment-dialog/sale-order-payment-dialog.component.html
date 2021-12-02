@@ -79,11 +79,6 @@
                                                 (change)="changeMoneyLine()" tmtautonumeric
                                                 [options]="{maximumValue: line.get('saleOrderLine').value.amountResidual,minimumValue: 0,decimalPlaces:0}" />
 
-                                            <!-- <kendo-numerictextbox [step]="1000" [min]="0" [format]="'n0'"
-                                                [max]="line.get('saleOrderLine').value.amountResidual"
-                                                [autoCorrect]="true" style="max-width: 200px;" formControlName="amount"
-                                                (valueChange)="changeMoneyLine(line)">
-                                            </kendo-numerictextbox> -->
                                         </td>
                                     </tr>
                                 </ng-container>
@@ -103,10 +98,6 @@
                                         <input class="form-control text-right" formControlName="amount" 
                                         [options]="{maximumValue: defaultVal.amount,minimumValue: 0, decimalPlaces: 0}" 
                                         tmtautonumeric [disableControl]="isPaymentForServiceValue" />
-                                        <!-- <kendo-numerictextbox [min]="0" [max]="maxAmount == 0 ? null : maxAmount"
-                                            [step]="1000" [format]="'n0'" [autoCorrect]="true" (blur)="enterMoney()"
-                                            formControlName="amount">
-                                        </kendo-numerictextbox> -->
                                         <div *ngIf="paymentFC.amount.errors && (paymentFC.amount.touched || submitted)"
                                             class="text-danger">
                                             <div *ngIf="paymentFC.amount.errors.required">Nhập số tiền</div>
@@ -151,9 +142,6 @@
                                                 </label>
                                             </td>
                                             <td>
-                                                <!-- <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="debtAmount"
-                                                [max]="partnerDebt" [step]="1000" [format]="'n0'" [autoCorrect]="true">
-                                            </kendo-numerictextbox> -->
                                                 <input class="form-control text-right" formControlName="debtAmount"
                                                     tmtautonumeric [options]="{maximumValue: partnerDebt,minimumValue: 0,decimalPlaces:0}" />
                                                 <div *ngIf="paymentFC.debtAmount.errors && (paymentFC.debtAmount.touched || paymentFC.debtAmount.dirty || submitted)"
@@ -251,10 +239,6 @@
                                                 </label>
                                             </td>
                                             <td colspan="1" style="float: right;">
-                                                <!-- <kendo-numerictextbox class="text-right" [min]="0" [format]="'n0'"
-                                                    [(ngModel)]="userAmountPayment" name="amountPayment"  [ngModelOptions]="{standalone: true}"
-                                                    [max]="userAmountPayment" [spinners]="false">
-                                                </kendo-numerictextbox> -->
                                                 <input class="form-control text-right" style="max-width: 200px" [ngModelOptions]="{standalone: true}"
                                                     [(ngModel)]="userAmountPayment" name="amountPayment" tmtautonumeric
                                                     [options]="{maximumValue: userAmountPaymentMax,minimumValue: 0,decimalPlaces:0}" />

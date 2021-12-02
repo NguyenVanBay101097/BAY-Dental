@@ -95,18 +95,16 @@
                                     </td>
                                     <td class="d-flex justify-content-end">
                                         <ng-container *ngIf="line.value.payType === 'percent'; else elseTemplate">
-                                            <kendo-numerictextbox style="width: 150px;" class="form-control" [min]="0"
-                                                [max]="100" [autoCorrect]="true" [format]="'n0'"
-                                                formControlName="percent" (blur)="onBlurPercent(i)" [spinners]="true">
-                                            </kendo-numerictextbox>
+                                            <input class="form-control" style="width: 150px;" formControlName="percent" 
+                                            tmtautonumeric
+                                            [options]="{minimumValue: 0, maximumValue: 100, decimalPlaces: 0}" (blur)="onBlurPercent(i)"/>
                                         </ng-container>
                                         <ng-template #elseTemplate>
-                                            <kendo-numerictextbox style="width: 150px;" class="form-control" [min]="0"
-                                                [max]="line.get('saleOrderLine').value.priceTotal"
-                                                formControlName="fixedAmount" [autoCorrect]="true" [step]="1000"
-                                                (blur)="onBlurfixed(i)" [format]="'n0'" [spinners]="true">
-                                            </kendo-numerictextbox>
+                                            <input class="form-control" style="width: 150px;" formControlName="fixedAmount" 
+                                            tmtautonumeric
+                                            [options]="{minimumValue: 0, maximumValue: line.get('saleOrderLine').value.priceTotal, decimalPlaces: 0}" (blur)="onBlurfixed(i)"/>
                                         </ng-template>
+                                        
                                         <div class="d-flex btn-group mr-0 ml-2">
                                             <input class="btn-check" [hidden]="true" type="radio"
                                                 formControlName="payType" [id]="'fixed-' + i" value="fixed"
