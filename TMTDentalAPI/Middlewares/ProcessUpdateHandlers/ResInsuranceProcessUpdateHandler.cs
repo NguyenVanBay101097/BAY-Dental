@@ -122,22 +122,22 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
 
 
 
-                        var journalCNKH = context.AccountJournals.Where(x => x.Type == "insurance" && x.CompanyId == company.Id).FirstOrDefault();
-                        if (journalCNKH == null)
+                        var journalCNBH = context.AccountJournals.Where(x => x.Type == "insurance" && x.CompanyId == company.Id).FirstOrDefault();
+                        if (journalCNBH == null)
                         {
-                            journalCNKH = new AccountJournal
+                            journalCNBH = new AccountJournal
                             {
                                 Name = "Bảo hiểm",
                                 Type = "insurance",
                                 UpdatePosted = true,
-                                Code = "INSURANCE",
+                                Code = "INS",
                                 DefaultDebitAccountId = accCNBH.Id,
                                 DefaultCreditAccountId = accCNBH.Id,
                                 SequenceId = seq.Id,
                                 CompanyId = company.Id,
                             };
 
-                            context.AccountJournals.Add(journalCNKH);
+                            context.AccountJournals.Add(journalCNBH);
                             context.SaveChanges();
                         }
                     }

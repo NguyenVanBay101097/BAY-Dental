@@ -398,7 +398,7 @@
     <record model="account.journal" id="data_account_journal_insurance">
       <field name="name">Bảo hiểm</field>
       <field name="type">insurance</field>
-      <field name="code">INSURANCE</field>
+      <field name="code">INS</field>
       <field name="update_posted" eval="True" />
       <field name="default_debit_account_id" ref="account.data_account_CNBH" />
       <field name="default_credit_account_id" ref="account.data_account_CNBH" />

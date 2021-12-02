@@ -467,7 +467,18 @@ namespace Infrastructure.Services
                 CompanyId = company.Id,
             };
 
-            await journalObj.CreateAsync(new List<AccountJournal>() { cashJournal, bankJournal, saleJournal, purchaseJournal, salaryJournal, journalAdvance, journalCNKH, journalHHA });
+            var journalBH = new AccountJournal
+            {
+                Name = "Bảo hiểm",
+                Type = "insurance",
+                UpdatePosted = true,
+                Code = "INS",
+                DefaultDebitAccountId = accCNBH.Id,
+                DefaultCreditAccountId = accCNBH.Id,
+                CompanyId = company.Id,
+            };
+
+            await journalObj.CreateAsync(new List<AccountJournal>() { cashJournal, bankJournal, saleJournal, purchaseJournal, salaryJournal, journalAdvance, journalCNKH, journalHHA , journalBH });
 
             #endregion
         }
