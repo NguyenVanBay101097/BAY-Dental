@@ -110,16 +110,9 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
         this.paymentForm.patchValue(this.defaultVal);
         this.maxAmount = this.getValueForm("amount");
         this.paymentForm.get('amount').setValue(this.defaultVal.amount);
-
-        // this.linesFC.clear();
-        // this.defaultVal.lines.forEach((line) => {
-        //   var g = this.fb.group(line);
-        //   this.linesFC.push(g);
-        // });
-
         this.paymentForm.markAsPristine();
       }
-      // this.changePaymentForService();
+      this.getAmountAdvanceBalance();
 
     });
 
@@ -137,6 +130,12 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
   get userAmountPaymentValue() {
     return Number(this.userAmountPayment);
+  }
+
+  getAmountAdvanceBalance() {
+    this.partnerService.getAmountAdvanceBalance(this.partner.id).subscribe(result => {
+      this.advanceAmount = result;
+    })
   }
 
   changeDebtPayment(checked) {
@@ -672,17 +671,24 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
       amount: amount,
       journal: [journals[0], Validators.required]
     }));
+
     let computeAmount = this.amount - this.amountTotalJournalPayment;
     this.userAmountPayment =  computeAmount;
+   
     setTimeout(() => {
       this.userAmountPaymentMax = computeAmount;
-    });
+    }, 200);
   }
 
   removeJounalSelected(i) {
     var journalLine = this.journalLines.at(i);
-    this.userAmountPayment = Number(this.userAmountPayment) + journalLine.get('amount').value;
+    this.userAmountPaymentMax = this.userAmountPaymentMax + journalLine.get('amount').value;
+
     this.journalLines.removeAt(i);
+
+    setTimeout(() => {
+      this.userAmountPayment = Number(this.userAmountPayment) + journalLine.get('amount').value;
+    }, 200);
   }
 
   getPaymentMethod(type: string) {

@@ -136,8 +136,8 @@
                                     </ng-template>
                                 </div>
                                 <ng-template #popContent let-greeting="greeting">
-                                    <kendo-numerictextbox style="width:100%;" [min]="0" [format]="'n0'" [spinners]="false" formControlName="priceUnit">
-                                    </kendo-numerictextbox>
+                                    <input class="form-control text-right" style="width:100%;" formControlName="priceUnit" tmtautonumeric
+                                        [options]="{minimumValue: 0,decimalPlaces:0}" />
                                 </ng-template>
                                 <ng-template #popTitle let-language="language">Giá gốc</ng-template>
                             </td>
@@ -155,8 +155,8 @@
                                     </span>
                                 </ng-container>
                                 <ng-template #elseTemplateQty>
-                                    <kendo-numerictextbox required style="width: 150px;" [format]="'n0'" [min]="0" formControlName="productUOMQty">
-                                    </kendo-numerictextbox>
+                                    <input class="form-control text-right" style="width: 150px; float: right;" formControlName="productUOMQty" tmtautonumeric
+                                    [options]="{minimumValue: 0,decimalPlaces: 0}" >
                                 </ng-template>
                             </td>
                         </tr>

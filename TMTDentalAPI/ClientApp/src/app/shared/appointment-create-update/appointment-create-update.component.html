@@ -86,10 +86,8 @@
                                     </div>
                                     <div class="d-flex">
                                         <span class="mr-1 text-time p-1">Dự kiến</span>
-                                        <!-- <input type="number" class="form-control" formControlName="timeExpected"
-                                            [min]="0"> -->
-                                        <kendo-numerictextbox [min]="0" [format]="'n0'" [spinners]="false" [autoCorrect]="true" formControlName="timeExpected">
-                                        </kendo-numerictextbox>
+                                        <input class="form-control" formControlName="timeExpected" tmtautonumeric
+                                        [options]="{minimumValue: 0, decimalPlaces: 0}"/>
                                         <span class="mr-1 text-time p-1">Phút</span>
                                     </div>
                                 </div>

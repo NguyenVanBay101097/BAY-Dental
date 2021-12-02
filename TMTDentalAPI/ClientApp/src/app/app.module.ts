@@ -79,7 +79,9 @@ registerLocaleData(localeVi, "vi");
         m: 59,
       },
     }),
-    TmtAutonumericModule.forRoot(),
+    TmtAutonumericModule.forRoot({
+      emptyInputBehavior: 'null'
+    }),
     FacebookModule.forRoot(),
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     GridModule,

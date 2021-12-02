@@ -116,6 +116,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
       this.filteredPartners = result;
       this.partnerCbx.loading = false;
     });
+
   }
 
   loadRecord() {
@@ -314,8 +315,9 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     }
   }
 
-  onChangeAmountPayment(value) {
+  onChangeAmountPayment() {
     var amountTotal = this.getAmountTotal;
+    var value = this.formGroup.get('amountPayment').value;
     if (value > amountTotal) {
       this.f.amountPayment.setValue(amountTotal);
     }
