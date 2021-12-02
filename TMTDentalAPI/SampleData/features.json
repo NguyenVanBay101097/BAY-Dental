@@ -729,6 +729,27 @@
         ]
       },
       {
+        "Name": "Chức vụ nhân viên",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.Employee.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.Employee.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.Employee.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.Employee.Delete"
+          }
+        ]
+      },
+      {
         "Name": "Nhân viên",
         "Ops": [
           {
@@ -1594,7 +1615,8 @@
         ]
       }
     ]
-  }, {
+  },
+  {
     "Name": "Khảo sát đánh giá",
     "Functions": [
       {
@@ -1653,6 +1675,29 @@
           {
             "Name": "Xóa",
             "Permission": "Survey.Question.Delete"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Hoa hồng",
+    "Functions": [
+      {
+        "Name": "Người giới thiệu",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Comission.Agent"
+          }
+        ]
+      },
+      {
+        "Name": "Nhân viên",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Comission.Employee"
           }
         ]
       }
