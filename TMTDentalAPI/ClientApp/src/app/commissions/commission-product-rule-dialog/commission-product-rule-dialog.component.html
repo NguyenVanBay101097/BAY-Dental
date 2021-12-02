@@ -20,8 +20,10 @@
                                 <td colspan="1" style="width: 100%;">
                                     <div class="d-flex">
                                         <div class="w-100 mr-2">
-                                            <kendo-numerictextbox class="form-control" formControlName="percent" [format]="'n0'" [min]="0" [max]="100" [autoCorrect]="true" required>
-                                            </kendo-numerictextbox>
+                                            <!-- <kendo-numerictextbox class="form-control" formControlName="percent" [format]="'n0'" [min]="0" [max]="100" [autoCorrect]="true" required>
+                                            </kendo-numerictextbox> -->
+                                            <input class="form-control" required formControlName="percent" tmtautonumeric
+                                                [options]="{ minimumValue: 0, maximumValue: 100, decimalPlaces: 0 }" />
                                             <div *ngIf="f.percent.errors && (f.percent.touched || f.percent.dirty || submitted)"
                                                 class="text-danger">
                                                 <div *ngIf="f.percent.errors.required">Nhập số % hoa hồng</div>

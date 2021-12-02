@@ -465,7 +465,6 @@ export class ProductServiceCuDialogComponent implements OnInit {
     });
 
     this.boms.push(line);
-    console.log(this.productForm);
     
   }
 

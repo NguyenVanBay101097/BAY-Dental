@@ -17,7 +17,8 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <input class="form-control" formControlName="name" />
-                                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
+                                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
+                                        class="text-danger">
                                         <div *ngIf="f.name.errors.required">Nhập tên đơn vị</div>
                                     </div>
                                 </td>
@@ -31,7 +32,8 @@
                                         [filterable]="true" #cateCbx formControlName="categoryId" [valueField]="'id'"
                                         [valuePrimitive]="true">
                                     </kendo-combobox>
-                                    <div *ngIf="f.categoryId.errors && (f.categoryId.touched || f.categoryId.dirty || submitted)" class="text-danger">
+                                    <div *ngIf="f.categoryId.errors && (f.categoryId.touched || f.categoryId.dirty || submitted)"
+                                        class="text-danger">
                                         <div *ngIf="f.categoryId.errors.required">Chọn nhóm đơn vị</div>
                                     </div>
                                 </td>
@@ -54,12 +56,18 @@
                                     <label class="o_form_label">Tỉ lệ</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [class.d-none]="uomTypeValue != 'smaller'"
+                                    <!-- <kendo-numerictextbox [class.d-none]="uomTypeValue != 'smaller'"
                                         class="form-control" formControlName="factor" [min]="0" [format]="'n5'">
-                                    </kendo-numerictextbox>
-                                    <kendo-numerictextbox [class.d-none]="uomTypeValue != 'bigger'" class="form-control"
+                                    </kendo-numerictextbox> -->
+                                    <input class="form-control" [class.d-none]="uomTypeValue != 'smaller'"
+                                        formControlName="factor" tmtautonumeric
+                                        [options]="{ minimumValue: 0, decimalPlaces: 5 }" />
+                                    <!-- <kendo-numerictextbox [class.d-none]="uomTypeValue != 'bigger'" class="form-control"
                                         formControlName="factorInv" [min]="0" [format]="'n5'">
-                                    </kendo-numerictextbox>
+                                    </kendo-numerictextbox> -->
+                                    <input class="form-control" [class.d-none]="uomTypeValue != 'bigger'"
+                                        formControlName="factorInv" tmtautonumeric
+                                        [options]="{ minimumValue: 0, decimalPlaces: 5 }" />
                                 </td>
                             </tr>
                             <tr>
@@ -91,9 +99,11 @@
                                     <label class="o_form_label">Làm tròn</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox class="form-control" formControlName="rounding" [min]="0"
+                                    <!-- <kendo-numerictextbox class="form-control" formControlName="rounding" [min]="0"
                                         [format]="'n2'">
-                                    </kendo-numerictextbox>
+                                    </kendo-numerictextbox> -->
+                                    <input class="form-control" formControlName="rounding" tmtautonumeric
+                                        [options]="{ minimumValue: 0 }" />
                                 </td>
                             </tr>
                         </tbody>
