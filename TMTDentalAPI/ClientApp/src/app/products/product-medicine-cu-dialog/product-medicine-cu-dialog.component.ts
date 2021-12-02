@@ -279,7 +279,7 @@ export class ProductMedicineCuDialogComponent implements OnInit {
 
   onSave() {
     this.submitted = true;
-
+    debugger;
     if (!this.productForm.valid) {
       return;
     }
