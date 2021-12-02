@@ -33,8 +33,8 @@ namespace Infrastructure.Services
 
             //var requestedObj = GetService<ISaleOrderLineProductRequestedService>();
             //var requested = await requestedObj.SearchQuery(x => x.ProductId == val.ProductBomId && x.SaleOrderLineId == val.SaleOrderLineId).FirstOrDefaultAsync();// da su dung
-            if (productionLine != null && productionLine.QuantityRequested >= productionLine.Quantity)
-                throw new Exception("Không còn định mức vật tư cho dịch vụ");
+            if (productionLine != null && productionLine.Quantity != 0 && productionLine.QuantityRequested >= productionLine.Quantity)
+                throw new Exception("Bạn đã yêu cầu vật tư đủ số lượng định mức");
 
             //return line.
             //var orderLine = await orderLineObj.SearchQuery(x => x.Id == val.SaleOrderLineId).FirstOrDefaultAsync();
