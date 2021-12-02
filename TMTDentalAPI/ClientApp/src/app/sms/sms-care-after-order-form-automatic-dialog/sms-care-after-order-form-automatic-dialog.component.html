@@ -79,9 +79,9 @@
                                                 </label>
                                             </td>
                                             <td colspan="1" class="d-flex tr-send" style="width: 100%;">
-                                                <kendo-numerictextbox [min]="1" formControlName="timeBeforSend"
-                                                    [autoCorrect]="true" [spinners]="false" format="n0">
-                                                </kendo-numerictextbox>
+                                                <input class="form-control" formControlName="timeBeforSend"
+                                                    [options]="{ decimalPlaces: 0 }" tmtautonumeric
+                                                    (input)="changeTimeBeforSend($event)" />
                                                 <select formControlName="typeTimeBeforSend" class="form-control ml-2">
                                                     <option class="form-control" value="day">Ngày
                                                     </option>

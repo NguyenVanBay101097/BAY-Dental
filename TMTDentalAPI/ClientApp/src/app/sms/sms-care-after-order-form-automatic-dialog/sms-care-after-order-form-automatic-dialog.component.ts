@@ -294,4 +294,9 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
     this.textarea.nativeElement.setSelectionRange(selectionStart + tabValueNew.length, selectionStart + tabValueNew.length);
   }
 
+  changeTimeBeforSend(event) {
+    if (+event.target.value <= 0) {
+      this.formGroup.get('timeBeforSend').setValue(1);
+    }
+  }
 }

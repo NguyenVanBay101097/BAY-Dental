@@ -213,6 +213,12 @@ export class SmsAppointmentFormAutomaticComponent implements OnInit {
     return this.formGroup.get('template').value;
   }
 
+  changeTimeBeforSend(event) {
+    if (+event.target.value <= 0) {
+      this.formGroup.get('timeBeforSend').setValue(1);
+    }
+  }
+
   notify(title, isSuccess = true) {
     this.notificationService.show({
       content: title,

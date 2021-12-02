@@ -281,10 +281,9 @@
                                                             | number}}</span>
                                                     </td>
                                                     <td class="text-right">
-                                                        <kendo-numerictextbox [format]="'n2'" [autoCorrect]="true"
+                                                        <input class="form-control" style="width: 120px;" formControlName="productQty"
                                                             *ngIf="stateControl == 'confirmed'"
-                                                            formControlName="productQty" style="width: 120px;">
-                                                        </kendo-numerictextbox>
+                                                            [options]="{ minimumValue: 0, decimalPlaces: 2 }" tmtautonumeric/>
                                                         <span style="padding-right: 16px;"
                                                             *ngIf="stateControl != 'confirmed'">{{line.get('productQty').value
                                                             | number}}</span>

@@ -143,54 +143,40 @@
                                             </td>
                                             <td class="text-right">{{item.get('allowance').value | number }}</td>
                                             <td class="text-right">
-                                                <kendo-numerictextbox
-                                                    [attr.disabled]="state == 'done' ? true : null"
-                                                    style="width: 100%;" formControlName="otherAllowance"
-                                                    [format]="'n0'" [min]="0">
-                                                </kendo-numerictextbox>
+                                                <input class="form-control" style="width: 100%;" [attr.disabled]="state == 'done' ? true : null"
+                                                    formControlName="otherAllowance" tmtautonumeric
+                                                    [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
                                             </td>
                                             <td class="text-right">
-                                                <kendo-numerictextbox
-                                                    [attr.disabled]="state == 'done' ? true : null"
-                                                    style="width: 100%;" formControlName="rewardSalary"
-                                                    [format]="'n0'" [min]="0" [autoCorrect]="true">
-                                                </kendo-numerictextbox>
+                                                <input class="form-control" style="width: 100%;" [attr.disabled]="state == 'done' ? true : null"
+                                                    formControlName="rewardSalary" tmtautonumeric
+                                                    [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
                                             </td>
                                             <td class="text-right">
-                                                <kendo-numerictextbox
-                                                    [attr.disabled]="state == 'done' ? true : null"
-                                                    style="width: 100%;" formControlName="holidayAllowance"
-                                                    [format]="'n0'" [min]="0" [autoCorrect]="true">
-                                                </kendo-numerictextbox>
+                                                <input class="form-control" style="width: 100%;" [attr.disabled]="state == 'done' ? true : null"
+                                                    formControlName="holidayAllowance" tmtautonumeric
+                                                    [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
                                             </td>
                                             <td class="text-right">
-                                                <kendo-numerictextbox
-                                                    [attr.disabled]="state == 'done' ? true : null"
-                                                    style="width: 100%;" formControlName="commissionSalary"
-                                                    [format]="'n0'" [min]="0" [autoCorrect]="true">
-                                                </kendo-numerictextbox>
+                                                <input class="form-control" style="width: 100%;" [attr.disabled]="state == 'done' ? true : null"
+                                                    formControlName="commissionSalary" tmtautonumeric
+                                                    [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
                                             </td>
                                             <td class="text-right">
-                                                <kendo-numerictextbox
-                                                    [attr.disabled]="state == 'done' ? true : null"
-                                                    style="width: 100%;" formControlName="amercementMoney"
-                                                    [format]="'n0'" [min]="0" [autoCorrect]="true">
-                                                </kendo-numerictextbox>
+                                                <input class="form-control" style="width: 100%;" [attr.disabled]="state == 'done' ? true : null"
+                                                    formControlName="amercementMoney" tmtautonumeric
+                                                    [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
                                             </td>
                                             <td class="text-right">{{item.get('totalSalary').value | number }}</td>
                                             <td class="text-right">
-                                                <kendo-numerictextbox
-                                                    [attr.disabled]="state == 'done' ? true : null"
-                                                    style="width: 100%;" formControlName="tax" [format]="'n0'"
-                                                    [min]="0" [autoCorrect]="true">
-                                                </kendo-numerictextbox>
+                                                <input class="form-control" style="width: 100%;" [attr.disabled]="state == 'done' ? true : null"
+                                                    formControlName="tax" tmtautonumeric
+                                                    [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
                                             </td>
                                             <td class="text-right">
-                                                <kendo-numerictextbox
-                                                    [attr.disabled]="state == 'done' ? true : null"
-                                                    style="width: 100%;" formControlName="socialInsurance"
-                                                    [format]="'n0'" [min]="0" [autoCorrect]="true">
-                                                </kendo-numerictextbox>
+                                                <input class="form-control" style="width: 100%;" [attr.disabled]="state == 'done' ? true : null"
+                                                    formControlName="socialInsurance" tmtautonumeric
+                                                    [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
                                             </td>
                                             <td class="text-right">{{item.get('netSalary').value | number}}</td>
                                             <td class="text-right">{{item.get('advancePayment').value | number}}
