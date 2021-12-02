@@ -285,7 +285,7 @@ namespace Infrastructure.Services
                         }
                     }
 
-                    insuranceId = invoiceLine.InsuranceId;
+                    insuranceId = invoiceLine.InsuranceId.HasValue ? invoiceLine.InsuranceId.Value : insuranceId;
                 }
 
                 line.AmountInvoiced = amountInvoiced;
