@@ -185,12 +185,24 @@
                         <tr>
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label">
-                                    Thanh toán
+                                    Bảo hiểm trả
                                 </label>
                             </td>
                             <td colspan="1" style="width: 100%; text-align: end;" class="pr-0">
                                 <div *ngIf="!isFast" class="font-weight-600">
-                                    {{line.amountInvoiced | number}}
+                                    {{line.amountInsurancePaidTotal | number}}
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Khách hàng trả
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%; text-align: end;" class="pr-0">
+                                <div *ngIf="!isFast" class="font-weight-600">
+                                    {{line.amountInvoiced - line.amountInsurancePaidTotal | number}}
                                 </div>
                             </td>
                         </tr>

@@ -1641,7 +1641,7 @@ namespace Infrastructure.Services
                 {
                     Id = x.Id,
                     Name = x.Name,
-                    PriceTotal = x.PriceTotal - x.AmountInvoiced,
+                    PriceTotal = x.PriceTotal,
                     AmountPaid = x.AmountInvoiced,
                 },
                 PayType = "fixed",

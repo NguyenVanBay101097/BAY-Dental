@@ -22,5 +22,6 @@ namespace Infrastructure.Services
         Task<PagedResult2<InsuranceHistoryInComeItem>> GetHistoryInComeDebtPaged(InsuranceHistoryInComeFilter val);
 
         Task<IEnumerable<InsuranceHistoryInComeDetailItem>> GetHistoryInComeDebtDetails(InsuranceHistoryInComeDetailFilter val);
+        Task<IEnumerable<InsuranceDebtDetailItem>> GetInsuranceDebtDetailReport(InsuranceDebtDetailFilter val);
     }
 }

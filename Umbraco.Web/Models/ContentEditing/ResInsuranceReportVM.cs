@@ -15,6 +15,21 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? InsuranceId { get; set; }
     }
 
+    public class InsuranceDebtDetailFilter
+    {
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
+
+        public Guid PaymentId { get; set; }
+    }
+
+    public class InsuranceDebtDetailItem
+    {
+        public string Name { get; set; }
+        public decimal Amount { get; set; }
+    }
+
     public class InsuranceHistoryInComeFilter
     {
         public InsuranceHistoryInComeFilter()
@@ -36,7 +51,7 @@ namespace Umbraco.Web.Models.ContentEditing
     }
 
     public class InsuranceHistoryInComeDetailFilter
-    {    
+    {
         public DateTime? DateFrom { get; set; }
 
         public DateTime? DateTo { get; set; }
@@ -92,7 +107,12 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class InsuranceDebtReport
     {
+        public Guid PartnerId { get; set; }
+
         public string PartnerName { get; set; }
+
+        public string PartnerRef { get; set; }
+
         public DateTime? Date { get; set; }
 
         public decimal AmountTotal { get; set; }
@@ -103,6 +123,21 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid MoveId { get; set; }
         public string MoveType { get; set; }
+
+        /// <summary>
+        /// Từ ngày
+        /// </summary>
+        public DateTime? DateFrom { get; set; }
+
+        /// <summary>
+        /// Đến ngày
+        /// </summary>
+        public DateTime? DateTo { get; set; }
+
+        /// <summary>
+        /// Phieu thanh toan
+        /// </summary>
+        public Guid? PaymentId { get; set; }
     }
 
     /// <summary>

@@ -32,8 +32,8 @@ namespace Infrastructure.Services
 
             if (val.SaleOrderId.HasValue)
                 query = query.Where(x => x.OrderId == val.SaleOrderId.Value);
-            if(val.CompanyId.HasValue)
-                query = query.Where(x=> x.CompanyId == val.CompanyId.Value);
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
 
             var totalItems = await query.CountAsync();
 
@@ -424,6 +424,7 @@ namespace Infrastructure.Services
             //param final: if True, refunds will be generated if necessary
             var saleLineObj = GetService<ISaleOrderLineService>();
             var paymentLineObj = GetService<ISaleOrderPaymentHistoryLineService>();
+            var accountObj = GetService<IAccountAccountService>();
             // Invoice values.
             var invoice_vals = await _PrepareInvoice(self);
             var lines = await paymentLineObj.SearchQuery(x => x.SaleOrderPaymentId == self.Id)
@@ -438,6 +439,16 @@ namespace Infrastructure.Services
                     continue;
                 var moveline = _PrepareInvoiceLineAsync(line);
                 invoice_vals.InvoiceLines.Add(moveline);
+            }
+
+            if (IsInvoiceAccountInsurance(self.JournalLines))
+            {
+                var account = await accountObj.SearchQuery(x => x.Code == "DTBH" && x.CompanyId == self.CompanyId).FirstOrDefaultAsync();
+                if (account == null)
+                    throw new Exception("Không tìm thấy tài khoản doanh thu");
+
+                foreach (var line in invoice_vals.InvoiceLines)
+                    line.Account = account;
             }
 
             if (!invoice_vals.InvoiceLines.Any())
@@ -508,6 +519,15 @@ namespace Infrastructure.Services
             res.SaleLineRels.Add(new SaleOrderLineInvoice2Rel { OrderLineId = self.SaleOrderLineId });
 
             return res;
+        }
+
+
+        public bool IsInvoiceAccountInsurance(IEnumerable<SaleOrderPaymentJournalLine> journalLines)
+        {
+            var isInvoice = false;
+            if (journalLines.Any(x => x.InsuranceId.HasValue && x.Journal.Type == "insurance"))
+                isInvoice = true;
+            return isInvoice;
         }
 
         public IEnumerable<AccountPayment> _PreparePayments(SaleOrderPayment self, Guid moveId)

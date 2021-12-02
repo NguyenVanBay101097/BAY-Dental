@@ -5,6 +5,17 @@ export class InsuranceDebtFilter {
     insuranceId: string;
 }
 
+export class InsuranceDebtDetailFilter {
+    dateFrom: string;
+    dateTo: string;
+    paymentId: string;
+}
+
+export class InsuranceDebtDetailItem {
+    name: string;
+    amount: number;
+}
+
 export class InsuranceHistoryInComeFilter {
     limit: number;
     offset: number;

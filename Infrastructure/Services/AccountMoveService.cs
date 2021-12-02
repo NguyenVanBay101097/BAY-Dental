@@ -474,7 +474,7 @@ namespace Infrastructure.Services
                 line.Date = self.Date;
                 line.Move = self;
                 line.CompanyId = self.CompanyId;
-                line.Account = await moveLineObj._GetComputedAccount(line);
+                line.Account = line.Account ?? await moveLineObj._GetComputedAccount(line);
 
                 if (line.Account == null)
                 {

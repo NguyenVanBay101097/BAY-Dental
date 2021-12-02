@@ -67,9 +67,14 @@
                     </p>
                     <p *ngIf="saleOrder.state == 'sale' || saleOrder.state == 'done'"
                         class="d-flex justify-content-between mb-0">
-                        <label class="font-weight-600">Thanh toán</label>
-                        <label class="font-weight-600">{{saleOrder.totalPaid |
-                            number}}</label>
+                        <label class="font-weight-600">Bảo hiểm trả</label>
+                        <label class="font-weight-600">{{getAmountInsurancePaidTotal()}}</label>
+                    </p>
+                    <p *ngIf="saleOrder.state == 'sale' || saleOrder.state == 'done'"
+                    class="d-flex justify-content-between mb-0">
+                    <label class="font-weight-600">Khách hàng trả</label>
+                    <label class="font-weight-600">{{saleOrder.totalPaid |
+                        number}}</label>
                     </p>
                     <p *ngIf="saleOrder.state == 'sale' || saleOrder.state == 'done'"
                         class="d-flex justify-content-between mb-0">

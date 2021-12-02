@@ -1,12 +1,14 @@
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Inject, Input, OnInit, SimpleChanges } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { aggregateBy } from '@progress/kendo-data-query';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { ResInsuranceService } from 'src/app/res-insurance/res-insurance.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { ResInsuranceCuDialogComponent } from 'src/app/shared/res-insurance-cu-dialog/res-insurance-cu-dialog.component';
 import { NotifyService } from 'src/app/shared/services/notify.service';
 import { ResInsuranceDebtPaymentDialogComponent } from '../res-insurance-debt-payment-dialog/res-insurance-debt-payment-dialog.component';
@@ -30,6 +32,10 @@ export class ResInsuranceDebitComponent implements OnInit {
   id: string;
   selectedIds: string[] = [];
   sumAmount: number = 0;
+  limit: number = 20;
+  skip: number = 0;
+  gridData: GridDataResult;
+  pagerSettings: any;
 
   constructor(
     private modalService: NgbModal,
@@ -39,7 +45,10 @@ export class ResInsuranceDebitComponent implements OnInit {
     private accountPaymentService: AccountPaymentService,
     private activeRoute: ActivatedRoute,
     private resInsuranceService: ResInsuranceService,
-  ) { }
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) {
+    this.pagerSettings = config.pagerSettings;
+   }
 
   ngOnInit(): void {
     this.dateFrom = this.monthStart;
@@ -89,6 +98,7 @@ export class ResInsuranceDebitComponent implements OnInit {
         { aggregate: "sum", field: "amountTotal" },
       ]);
       this.sumAmount = result.amountTotal ? result.amountTotal.sum : 0;
+      this.loadItems();
     }, (error) => console.log(error))
   }
 
@@ -96,6 +106,19 @@ export class ResInsuranceDebitComponent implements OnInit {
     this.dateFrom = e.dateFrom || '';
     this.dateTo = e.dateTo || '';
     this.loadInsuranceDebtReport();
+  }
+
+  loadItems(): void {
+    this.gridData = {
+      data: this.insuranceDebt.slice(this.skip, this.skip + this.limit),
+      total: this.insuranceDebt.length
+    };
+  }
+
+  public pageChange(event: PageChangeEvent): void {
+    this.skip = event.skip;
+    this.limit = event.take;
+    this.loadItems();
   }
 
   onPayment() {

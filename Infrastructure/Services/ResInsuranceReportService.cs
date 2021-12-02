@@ -74,12 +74,41 @@ namespace Infrastructure.Services
             var items = await query.OrderByDescending(x => x.DateCreated).Select(x => new InsuranceDebtReport
             {
                 Date = x.DateCreated,
+                PartnerId = x.Payment.PartnerId.Value,
                 PartnerName = x.Payment.Partner.Name,
+                PartnerRef = x.Payment.Partner.Ref,
                 AmountTotal = x.AmountResidual,
                 Origin = x.Move.InvoiceOrigin,
                 Communication = x.Payment.Communication,
                 MoveId = x.Move.Id,
-                MoveType = x.Move.Type
+                MoveType = x.Move.Type,
+                DateFrom = val.DateFrom,
+                DateTo = val.DateTo,
+                PaymentId = x.PaymentId
+            }).ToListAsync();
+
+            return items;
+        }
+
+        public async Task<IEnumerable<InsuranceDebtDetailItem>> GetInsuranceDebtDetailReport(InsuranceDebtDetailFilter val)
+        {
+            var moveLineObj = GetService<IAccountMoveLineService>();
+            var paymentObj = GetService<IAccountPaymentService>();
+
+            var payment = await paymentObj.SearchQuery(x => x.Id == val.PaymentId).Include(x => x.AccountMovePaymentRels).ToListAsync();
+            var move_ids = payment.SelectMany(x => x.AccountMovePaymentRels).Select(x => x.MoveId).ToList();
+            var query = moveLineObj.SearchQuery(x => x.Account.Code == "DTBH" && move_ids.Contains(x.MoveId));
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Date >= val.DateFrom.Value.AbsoluteBeginOfDate());
+
+            if (val.DateTo.HasValue)
+                query = query.Where(x => x.Date < val.DateTo.Value.AbsoluteEndOfDate());
+
+            var items = await query.OrderByDescending(x => x.DateCreated).Select(x => new InsuranceDebtDetailItem
+            {
+                Name = x.Name,
+                Amount = x.PriceSubtotal ?? 0
             }).ToListAsync();
 
             return items;
@@ -96,7 +125,7 @@ namespace Infrastructure.Services
                 var insurance = await insuranceObj.GetByIdAsync(val.InsuranceId);
                 paymentQr = paymentQr.Where(x => x.PartnerId == insurance.PartnerId);
             }
-               
+
             if (val.DateFrom.HasValue)
                 paymentQr = paymentQr.Where(x => x.PaymentDate >= val.DateFrom.Value.AbsoluteBeginOfDate());
 
@@ -147,7 +176,7 @@ namespace Infrastructure.Services
             if (val.DateTo.HasValue)
                 query = query.Where(x => x.DateCreated < val.DateTo.Value.AbsoluteEndOfDate());
 
-            query = query.OrderByDescending(x => x.DateCreated);         
+            query = query.OrderByDescending(x => x.DateCreated);
 
             var items = await query.Select(x => new InsuranceHistoryInComeDetailItem
             {
@@ -272,7 +301,7 @@ namespace Infrastructure.Services
             }
 
 
-            var partnerIds = dict.Select(x => x.Key).ToList();        
+            var partnerIds = dict.Select(x => x.Key).ToList();
             var res = new List<InsuranceReportItem>();
             foreach (var item in dict)
             {
