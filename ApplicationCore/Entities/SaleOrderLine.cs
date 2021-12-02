@@ -184,6 +184,14 @@ namespace ApplicationCore.Entities
         public double? AmountDiscountTotal { get; set; }
 
         /// <summary>
+        /// Tổng tiền bảo hiểm đã thanh toán
+        /// </summary>
+        public decimal? AmountInsurancePaidTotal { get; set; }
+
+        public Guid? InsuranceId { get; set; }
+        public ResInsurance Insurance { get; set; }
+
+        /// <summary>
         /// bác sĩ được hưởng hoa hồng
         /// </summary>
         //public Guid? PartnerCommissionId { get; set; }

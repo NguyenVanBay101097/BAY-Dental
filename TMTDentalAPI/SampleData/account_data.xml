@@ -157,6 +157,16 @@
       <field name="padding">4</field>
     </record>
 
+    <record id="sequence_insurance" model="ir.sequence">
+      <field name="name">Insurance sequence</field>
+      <field name="code">insurance</field>
+      <field name="prefix">INS/{yyyy}/</field>
+      <field eval="1" name="number_next"/>
+      <field eval="1" name="number_increment"/>
+      <field eval="False" name="company_id"/>
+      <field name="padding">4</field>
+    </record>
+
 
     <!-- account.account.type -->
     <record model="account.account.type" id="data_account_type_receivable">
@@ -388,7 +398,7 @@
     <record model="account.journal" id="data_account_journal_insurance">
       <field name="name">Bảo hiểm</field>
       <field name="type">insurance</field>
-      <field name="code">INSURANCE</field>
+      <field name="code">INS</field>
       <field name="update_posted" eval="True" />
       <field name="default_debit_account_id" ref="account.data_account_CNBH" />
       <field name="default_credit_account_id" ref="account.data_account_CNBH" />

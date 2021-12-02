@@ -32,8 +32,8 @@ namespace Infrastructure.Services
 
             if (val.SaleOrderId.HasValue)
                 query = query.Where(x => x.OrderId == val.SaleOrderId.Value);
-            if(val.CompanyId.HasValue)
-                query = query.Where(x=> x.CompanyId == val.CompanyId.Value);
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
 
             var totalItems = await query.CountAsync();
 
@@ -424,6 +424,7 @@ namespace Infrastructure.Services
             //param final: if True, refunds will be generated if necessary
             var saleLineObj = GetService<ISaleOrderLineService>();
             var paymentLineObj = GetService<ISaleOrderPaymentHistoryLineService>();
+            var accountObj = GetService<IAccountAccountService>();
             // Invoice values.
             var invoice_vals = await _PrepareInvoice(self);
             var lines = await paymentLineObj.SearchQuery(x => x.SaleOrderPaymentId == self.Id)
@@ -438,6 +439,14 @@ namespace Infrastructure.Services
                     continue;
                 var moveline = _PrepareInvoiceLineAsync(line);
                 invoice_vals.InvoiceLines.Add(moveline);
+            }
+
+            if (self.JournalLines.Count == 1 && self.JournalLines.ElementAt(0).Journal.Type == "insurance")
+            {
+                foreach (var line in invoice_vals.InvoiceLines)
+                {
+                    line.InsuranceId = self.JournalLines.ElementAt(0).InsuranceId;
+                }
             }
 
             if (!invoice_vals.InvoiceLines.Any())
@@ -585,8 +594,18 @@ namespace Infrastructure.Services
                 await moveObj.Unlink(new List<Guid>() { saleOrderPayment.Move.Id });
 
 
-                //tính lại paid , residual saleorder , lines
-                await _ComputeSaleOrder(saleOrderPayment.OrderId);
+                //Tính lại số tiền đã thanh toán, còn lại, số tiền thanh toán bảo hiểm của SaleOrderLine
+                var saleLineIds = saleOrderPayment.Lines.Select(x => x.SaleOrderLineId).ToList();
+                var saleLines = await saleLineObj.SearchQuery(x => saleLineIds.Contains(x.Id)).ToListAsync();
+                saleLineObj._GetInvoiceAmount(saleLines);
+                await saleLineObj.UpdateAsync(saleLines);
+
+                //Tổng tiền thanh toán và còn lại của phiếu điều trị
+                var saleOrderIds = saleLines.Select(x => x.OrderId).Distinct().ToList();
+                var saleOrders = await saleOrderObj.SearchQuery(x => saleOrderIds.Contains(x.Id)).ToListAsync();
+                saleOrderObj._ComputeResidual(saleOrders);
+                await saleOrderObj.UpdateAsync(saleOrders);
+
                 // cập nhập điểm và hạng thành viên
                 //await ComputePointAndUpdateLevel(res, res.Order.PartnerId,"cancel");
 

@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PagedResult2 } from '../core/paged-result-2';
-import { InsuranceHistoryInComeDetailItem, InsuranceHistoryInComeItem, InsuranceReportDetailFilter, InsuranceReportFilter } from './res-insurance-report.model';
+import { InsuranceDebtDetailItem, InsuranceHistoryInComeDetailItem, InsuranceHistoryInComeItem, InsuranceReportDetailFilter, InsuranceReportFilter } from './res-insurance-report.model';
 
 @Injectable({
   providedIn: 'root'
@@ -17,12 +17,16 @@ export class ResInsuranceReportService {
     return this.http.get(this.baseApi + this.apiUrl + '/GetInsuranceDebtReport', { params: new HttpParams({ fromObject: val }) });
   }
 
-  getHistoryInComeDebtPaged(val): Observable<PagedResult2<InsuranceHistoryInComeItem>> {
-    return this.http.get<PagedResult2<InsuranceHistoryInComeItem>>(this.baseApi + this.apiUrl + '/GetHistoryInComeDebtPaged',{ params: new HttpParams({ fromObject: val }) });
+  getInsuranceDebtDetailReport(val) {
+    return this.http.post<InsuranceDebtDetailItem[]>(this.baseApi + this.apiUrl + '/GetInsuranceDebtDetailReport',  val);
   }
 
-  getHistoryInComeDebtDetails(val): Observable<PagedResult2<InsuranceHistoryInComeDetailItem>> {
-    return this.http.post<PagedResult2<InsuranceHistoryInComeDetailItem>>(this.baseApi + this.apiUrl + '/GetHistoryInComeDebtDetails', val);
+  getHistoryInComePaged(val): Observable<PagedResult2<InsuranceHistoryInComeItem>> {
+    return this.http.get<PagedResult2<InsuranceHistoryInComeItem>>(this.baseApi + this.apiUrl + '/GetHistoryInComePaged',{ params: new HttpParams({ fromObject: val }) });
+  }
+
+  getHistoryInComeDetail(val) {
+    return this.http.post(this.baseApi + this.apiUrl + '/GetHistoryInComeDetail', val);
   }
 
   getSummaryReports(val: InsuranceReportFilter) {
