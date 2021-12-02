@@ -694,7 +694,7 @@ namespace Infrastructure.Services
         public async Task<AccountRegisterPaymentDisplay> InsurancePaymentDefaultGet(IEnumerable<Guid> invoice_ids)
         {
             var amObj = GetService<IAccountMoveService>();
-            var moves = await amObj.SearchQuery(x => invoice_ids.Contains(x.Id)).Include(x => x.Lines).OrderByDescending(x => x.DateCreated).ToListAsync();
+            var moves = await amObj.SearchQuery(x => invoice_ids.Contains(x.Id)).Include(x => x.Partner).Include(x => x.Lines).OrderByDescending(x => x.DateCreated).ToListAsync();
 
             if (!moves.Any() || moves.Any(x => x.State != "posted"))
                 throw new Exception("Bạn chưa chọn khoản tiền bảo hiểm phải thu");
@@ -727,7 +727,8 @@ namespace Infrastructure.Services
                 Origin = x.InvoiceOrigin,
                 Ref = x.Ref,
                 MoveId = x.Id,
-                MoveType = x.Type
+                MoveType = x.Type,
+                PartnerName = x.Partner.Name
             });
 
             return rec;
