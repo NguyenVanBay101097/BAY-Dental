@@ -201,7 +201,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
       amountPromotionToOrder: 0,
       amountPromotionToOrderLine: 0,
       amountDiscountTotal: 0,
-      amountInsurancePaidTotal:0,
+      amountInsurancePaidTotal: 0,
       orderPartnerId: this.saleOrder.partnerId,
       date: new Date()
     };
@@ -763,7 +763,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
     }, 0);
   }
 
-  getAmountInsurancePaidTotal(){
+  getAmountInsurancePaidTotal() {
     return this.orderLines.reduce((total, cur) => {
       return total + cur.amountInsurancePaidTotal;
     }, 0);

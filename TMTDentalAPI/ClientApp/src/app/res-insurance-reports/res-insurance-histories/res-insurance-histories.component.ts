@@ -52,7 +52,7 @@ export class ResInsuranceHistoriesComponent implements OnInit {
     val.dateFrom = this.dateFrom ? moment(this.dateFrom).format('YYYY-MM-DD') : '';
     val.dateTo = this.dateTo ? moment(this.dateTo).format('YYYY-MM-DD') : '';
     val.insuranceId = this.insuranceId ? this.insuranceId : '';
-    this.resInsuranceReportService.getHistoryInComeDebtPaged(val).pipe(
+    this.resInsuranceReportService.getHistoryInComePaged(val).pipe(
       map(rs1 => (<GridDataResult>{
         data: rs1.items,
         total: rs1.totalItems

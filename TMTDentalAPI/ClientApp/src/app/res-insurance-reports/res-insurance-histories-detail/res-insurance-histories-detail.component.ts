@@ -36,7 +36,7 @@ export class ResInsuranceHistoriesDetailComponent implements OnInit {
     val.dateFrom = this.dateFrom ? moment(this.dateFrom).format('YYYY-MM-DD') : '';
     val.dateTo = this.dateTo ? moment(this.dateTo).format('YYYY-MM-DD') : '';
     val.paymentId = this.paymentId || '';
-    this.resInsuranceReportService.getHistoryInComeDebtDetails(val).subscribe((res: any) => {
+    this.resInsuranceReportService.getHistoryInComeDetails(val).subscribe((res: any) => {
       this.items = res;
       this.loadItems();
     }, (error) => console.log(error));

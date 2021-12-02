@@ -68,12 +68,12 @@
                     <p *ngIf="saleOrder.state == 'sale' || saleOrder.state == 'done'"
                         class="d-flex justify-content-between mb-0">
                         <label class="font-weight-600">Bảo hiểm trả</label>
-                        <label class="font-weight-600">{{getAmountInsurancePaidTotal()}}</label>
+                        <label class="font-weight-600">{{getAmountInsurancePaidTotal() | number}}</label>
                     </p>
                     <p *ngIf="saleOrder.state == 'sale' || saleOrder.state == 'done'"
                     class="d-flex justify-content-between mb-0">
                     <label class="font-weight-600">Khách hàng trả</label>
-                    <label class="font-weight-600">{{saleOrder.totalPaid |
+                    <label class="font-weight-600">{{saleOrder.totalPaid - getAmountInsurancePaidTotal() |
                         number}}</label>
                     </p>
                     <p *ngIf="saleOrder.state == 'sale' || saleOrder.state == 'done'"
@@ -162,7 +162,7 @@
                                 <tr>
                                     <td colspan="1" class="o_td_label o_td_label_sm">
                                         <label class="o_form_label">
-                                            Hạng thành viên
+                                            Thẻ thành viên
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">

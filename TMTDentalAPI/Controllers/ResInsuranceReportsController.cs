@@ -42,9 +42,9 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetHistoryInComeDebtPaged([FromQuery] InsuranceHistoryInComeFilter val)
+        public async Task<IActionResult> GetHistoryInComePaged([FromQuery] InsuranceHistoryInComeFilter val)
         {
-            var result = await _resInsuranceReportService.GetHistoryInComeDebtPaged(val);
+            var result = await _resInsuranceReportService.GetHistoryInComePaged(val);
             return Ok(result);
         }
 
@@ -56,9 +56,9 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> GetHistoryInComeDebtDetails(InsuranceHistoryInComeDetailFilter val)
+        public async Task<IActionResult> GetHistoryInComeDetails(InsuranceHistoryInComeDetailFilter val)
         {
-            var result = await _resInsuranceReportService.GetHistoryInComeDebtDetails(val);
+            var result = await _resInsuranceReportService.GetHistoryInComeDetails(val);
             return Ok(result);
         }
 

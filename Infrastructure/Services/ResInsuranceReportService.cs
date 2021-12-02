@@ -114,7 +114,7 @@ namespace Infrastructure.Services
             return items;
         }
 
-        public async Task<PagedResult2<InsuranceHistoryInComeItem>> GetHistoryInComeDebtPaged(InsuranceHistoryInComeFilter val)
+        public async Task<PagedResult2<InsuranceHistoryInComeItem>> GetHistoryInComePaged(InsuranceHistoryInComeFilter val)
         {
             var paymentObj = GetService<IAccountPaymentService>();
             var insuranceObj = GetService<IResInsuranceService>();
@@ -161,7 +161,7 @@ namespace Infrastructure.Services
 
         }
 
-        public async Task<IEnumerable<InsuranceHistoryInComeDetailItem>> GetHistoryInComeDebtDetails(InsuranceHistoryInComeDetailFilter val)
+        public async Task<IEnumerable<InsuranceHistoryInComeDetailItem>> GetHistoryInComeDetails(InsuranceHistoryInComeDetailFilter val)
         {
             var partialReconcileObj = GetService<IAccountPartialReconcileService>();
             var insuranceObj = GetService<IResInsuranceService>();
