@@ -75,6 +75,10 @@ namespace Infrastructure.EntityConfigurations
             builder.HasOne(x => x.Agent)
               .WithMany()
               .HasForeignKey(x => x.AgentId);
+
+            builder.HasOne(x => x.Insurance)
+              .WithMany()
+              .HasForeignKey(x => x.InsuranceId);
         }
     }
 }

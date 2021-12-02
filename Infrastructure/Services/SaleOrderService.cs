@@ -356,6 +356,8 @@ namespace Infrastructure.Services
                 move_ids = move_ids.Union(mIds);
 
                 dotKhamIds = dotKhamIds.Union(sale.DotKhams.Select(x => x.Id).ToList());
+
+
             }
 
             await UpdateAsync(self);
@@ -380,6 +382,7 @@ namespace Infrastructure.Services
             if (removeDkSteps.Any(x => x.IsDone))
                 throw new Exception("Đã có công đoạn đợt khám hoàn thành, không thể hủy");
             await dkStepObj.DeleteAsync(removeDkSteps);
+
 
             foreach (var sale in self)
             {
@@ -1246,6 +1249,7 @@ namespace Infrastructure.Services
                 .Include(x => x.SaleOrderLineToothRels).ThenInclude(x => x.Tooth)
                 .Include(x => x.Employee)
                 .Include(x => x.Counselor)
+                .Include(x => x.Insurance)
                 .Include(x => x.OrderPartner).ToListAsync();
 
             display.OrderLines = _mapper.Map<IEnumerable<SaleOrderLineDisplay>>(lines);
@@ -1716,7 +1720,7 @@ namespace Infrastructure.Services
                 saleLineObj._GetToInvoiceAmount(order.OrderLines);
                 saleLineObj._ComputeInvoiceStatus(order.OrderLines);
                 saleLineObj.ComputeResidual(order.OrderLines);
-
+                await saleLineObj.CreateSaleProduction(order.OrderLines);
                 //await saleLineObj.RecomputeCommissions(order.OrderLines);
             }
 
@@ -2287,16 +2291,21 @@ namespace Infrastructure.Services
 
         public void _ComputeResidual(IEnumerable<SaleOrder> self)
         {
+            var ids = self.Select(x => x.Id).ToList();
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var saleLines = saleLineObj.SearchQuery(x => ids.Contains(x.OrderId)).ToList();
             foreach (var order in self)
             {
                 decimal? residual = 0M;
-
-                foreach (var line in order.OrderLines)
+                decimal totalPaid = 0;
+                var orderLines = saleLines.Where(x => x.OrderId == order.Id).ToList();
+                foreach (var line in orderLines)
                 {
                     residual += line.PriceSubTotal - (line.AmountInvoiced ?? 0);
+                    totalPaid += (line.AmountInvoiced ?? 0);
                 }
 
-
+                order.TotalPaid = totalPaid;
                 order.Residual = residual;
             }
         }
@@ -2926,6 +2935,20 @@ namespace Infrastructure.Services
             }
 
             return res;
+        }
+
+        public async Task<IEnumerable<SaleProduction>> GetSaleProductionBySaleOrderId(Guid id)
+        {
+            var lineObj = GetService<ISaleOrderLineService>();
+            var lineIds = await lineObj.SearchQuery(x => x.OrderId == id).Select(x => x.Id).ToListAsync();
+            var saleProductionObj = GetService<ISaleProductionService>();
+            var saleProductions = await saleProductionObj.SearchQuery(x => x.SaleOrderLineRels.Any(s => lineIds.Contains(s.OrderLineId)))
+                .Include(x => x.Product)
+                .Include(x => x.Lines).ThenInclude(s => s.Product).ThenInclude(x => x.UOM)
+                .OrderByDescending(x => x.DateCreated)
+                .ToListAsync();
+
+            return saleProductions;
         }
 
         public async Task<PagedResult2<SaleOrderToSurvey>> GetToSurveyPagedAsync(SaleOrderToSurveyFilter val)

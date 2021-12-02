@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationService } from '@progress/kendo-angular-notification';
-import { AuthService } from 'src/app/auth/auth.service';
 import { SaleOrderPaymentPaged, SaleOrderPaymentService } from 'src/app/core/services/sale-order-payment.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PrintService } from 'src/app/shared/services/print.service';
@@ -22,7 +21,6 @@ export class SaleOrderPaymentListComponent implements OnInit {
     private modalService: NgbModal,
     private printService: PrintService,
     private saleOrderPaymentService: SaleOrderPaymentService,
-    private authService: AuthService,
   ) { }
 
   ngOnInit() {
@@ -32,7 +30,6 @@ export class SaleOrderPaymentListComponent implements OnInit {
   loadPayments() {
     var val = new SaleOrderPaymentPaged();
     val.limit = 0;
-    val.companyId = this.authService.userInfo.companyId;
     if (!this.saleOrderId) {
       return;
     }

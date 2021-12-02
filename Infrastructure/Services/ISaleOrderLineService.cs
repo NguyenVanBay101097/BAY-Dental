@@ -24,7 +24,6 @@ namespace Infrastructure.Services
         void _ComputeInvoiceStatus(IEnumerable<SaleOrderLine> lines);
         void _GetInvoiceQty(IEnumerable<SaleOrderLine> lines);
         void _GetInvoiceAmount(IEnumerable<SaleOrderLine> self);
-        void _GetTotalInsurancePaidAmount(IEnumerable<SaleOrderLine> self);
         AccountInvoiceLine _PrepareInvoiceLine(SaleOrderLine line, decimal qty, AccountAccount account);
         Task<PagedResult2<SaleOrderLineBasic>> GetPagedResultAsync(SaleOrderLinesPaged val);
         Task Unlink(IEnumerable<Guid> ids);
@@ -87,6 +86,8 @@ namespace Infrastructure.Services
 
         Task<IEnumerable<CardCardBasic>> GetListCardCardApplyable(Guid id);
         Task DebtPayment(Guid id);
+
+        Task CreateSaleProduction(IEnumerable<SaleOrderLine> seft);
 
     }
 }

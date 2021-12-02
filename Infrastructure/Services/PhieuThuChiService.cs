@@ -483,12 +483,12 @@ namespace Infrastructure.Services
 
         public override ISpecification<PhieuThuChi> RuleDomainGet(IRRule rule)
         {
-            var userObj = GetService<IUserService>();
-            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            //var userObj = GetService<IUserService>();
+            //var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
             switch (rule.Code)
             {
                 case "account.phieu_thu_chi_comp_rule":
-                    return new InitialSpecification<PhieuThuChi>(x => !x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value));
+                    return new InitialSpecification<PhieuThuChi>(x => !x.CompanyId.HasValue || x.CompanyId == CompanyId);
                 default:
                     return null;
             }

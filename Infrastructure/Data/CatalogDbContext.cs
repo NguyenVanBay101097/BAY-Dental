@@ -341,6 +341,12 @@ namespace Infrastructure.Data
         public DbSet<ResInsurancePayment> ResInsurancePayments { get; set; }
         public DbSet<ResInsurancePaymentLine> ResInsurancePaymentLines { get; set; }
 
+        public DbSet<SaleProduction> SaleProductions { get; set; }
+        public DbSet<SaleProductionLine> SaleProductionLines { get; set; }
+        public DbSet<SaleOrderLineSaleProductionRel> SaleOrderLineSaleProductionRels { get; set; }
+        public DbSet<SaleProductionLineProductRequestLineRel> SaleProductionLineProductRequestLineRels { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new ProductConfiguration());
@@ -599,6 +605,10 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new ResInsuranceConfiguration());
             builder.ApplyConfiguration(new ResInsurancePaymentConfiguration());
             builder.ApplyConfiguration(new ResInsurancePaymentLineConfiguration());
+            builder.ApplyConfiguration(new SaleProductionConfiguration());
+            builder.ApplyConfiguration(new SaleProductionLineConfiguration());
+            builder.ApplyConfiguration(new SaleOrderLineSaleProductionRelConfiguration());
+            builder.ApplyConfiguration(new SaleProductionLineProductRequestLineRelConfiguration());
             //builder.ApplyConfiguration(new SaleOrderLineProductRequestedConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });

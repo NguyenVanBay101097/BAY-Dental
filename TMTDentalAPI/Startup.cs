@@ -388,6 +388,9 @@ namespace TMTDentalAPI
             services.AddScoped<IResInsurancePaymentLineService, ResInsurancePaymentLineService>();
             services.AddScoped<IResInsuranceReportService, ResInsuranceReportService>();
 
+            services.AddScoped<ISaleProductionService, SaleProductionService>();
+            services.AddScoped<ISaleProductionLineService, SaleProductionLineService>();
+
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
@@ -592,6 +595,8 @@ namespace TMTDentalAPI
                 mc.AddProfile(new ResInsurancePaymentLineProfile());
                 mc.AddProfile(new ResInsuranceReportsProfile());
                 mc.AddProfile(new PaymentProfile());
+                mc.AddProfile(new SaleProductionProfile());
+                mc.AddProfile(new SaleProductionLineProfile());
             };
 
             #endregion

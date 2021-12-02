@@ -129,5 +129,8 @@ namespace ApplicationCore.Entities
         /// </summary>
         public Guid? AssistantId { get; set; }
         public Employee Assistant { get; set; }
+
+        public Guid? InsuranceId { get; set; }
+        public ResInsurance Insurance { get; set; }
     }
 }

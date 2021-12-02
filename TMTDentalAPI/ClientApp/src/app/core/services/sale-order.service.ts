@@ -335,4 +335,8 @@ export class SaleOrderService {
     getDefaultInsuranceBySaleOrderId(id: string) {
         return this.http.get(this.baseApi + this.apiUrl + "/" + id + '/GetDefaultInsurancePaymentBySaleOrderId');
     }
+
+    getSaleProductionBySaleOrderId(id: string) {
+        return this.http.get(this.baseApi + this.apiUrl + "/" + id + '/GetSaleProductionBySaleOrderId');
+    }
 }

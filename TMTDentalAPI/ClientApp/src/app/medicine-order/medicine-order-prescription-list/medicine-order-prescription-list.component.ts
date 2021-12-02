@@ -4,7 +4,6 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { AuthService } from 'src/app/auth/auth.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { ToaThuocPaged, ToaThuocService } from 'src/app/toa-thuocs/toa-thuoc.service';
 import { MedicineOrderCreateDialogComponent } from '../medicine-order-create-dialog/medicine-order-create-dialog.component';
@@ -29,7 +28,6 @@ export class MedicineOrderPrescriptionListComponent implements OnInit {
   constructor(
     private toathuocSevice: ToaThuocService,
     private intlService: IntlService,
-    private authService: AuthService,
     private modalService: NgbModal,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
@@ -56,7 +54,6 @@ export class MedicineOrderPrescriptionListComponent implements OnInit {
     paged.search = this.search ? this.search : '';
     paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd")
     paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:59")
-    paged.companyId = this.authService.userInfo.companyId;
     this.toathuocSevice.getPaged(paged).pipe(
       map(response => (<GridDataResult>{
         data: response.items,

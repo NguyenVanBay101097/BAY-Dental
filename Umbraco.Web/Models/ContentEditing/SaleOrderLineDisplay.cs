@@ -86,6 +86,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public decimal? AmountInsurancePaidTotal { get; set; }
 
+        public string InsuranceName { get; set; }
+
         public string TeethDisplay
         {
             get

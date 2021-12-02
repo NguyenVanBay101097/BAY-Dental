@@ -25,7 +25,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist",
+            "outputPath": "dist/tmt-dental-api",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -183,6 +183,86 @@
             "production": {
               "devServerTarget": "tmt-dental:serve:production"
             }
+          }
+        }
+      }
+    },
+    "tmt-autonumeric-lib": {
+      "projectType": "library",
+      "root": "projects/tmt-autonumeric-lib",
+      "sourceRoot": "projects/tmt-autonumeric-lib/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/tmt-autonumeric-lib/tsconfig.lib.json",
+            "project": "projects/tmt-autonumeric-lib/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/tmt-autonumeric-lib/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/tmt-autonumeric-lib/src/test.ts",
+            "tsConfig": "projects/tmt-autonumeric-lib/tsconfig.spec.json",
+            "karmaConfig": "projects/tmt-autonumeric-lib/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/tmt-autonumeric-lib/tsconfig.lib.json",
+              "projects/tmt-autonumeric-lib/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
+    "tmt-autonumeric": {
+      "projectType": "library",
+      "root": "projects/tmt-autonumeric",
+      "sourceRoot": "projects/tmt-autonumeric/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/tmt-autonumeric/tsconfig.lib.json",
+            "project": "projects/tmt-autonumeric/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/tmt-autonumeric/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/tmt-autonumeric/src/test.ts",
+            "tsConfig": "projects/tmt-autonumeric/tsconfig.spec.json",
+            "karmaConfig": "projects/tmt-autonumeric/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/tmt-autonumeric/tsconfig.lib.json",
+              "projects/tmt-autonumeric/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
           }
         }
       }

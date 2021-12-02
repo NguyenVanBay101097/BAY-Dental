@@ -40,4 +40,5 @@ export class SaleOrderLineDisplay {
     amountInsurancePaidTotal: number;
     orderPartnerId: string;
     date: any;
+    insuranceName: string;
 }
