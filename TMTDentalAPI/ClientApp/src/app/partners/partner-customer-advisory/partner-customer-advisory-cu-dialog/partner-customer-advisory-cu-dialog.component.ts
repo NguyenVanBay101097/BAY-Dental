@@ -41,8 +41,8 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
   toothSelectedIds: string[] = [];
   toothTypeDict = [
     { name: "Hàm trên", value: "upper_jaw" },
-    { name: "Nguyên hàm", value: "whole_jaw" },
     { name: "Hàm dưới", value: "lower_jaw" },
+    { name: "Nguyên hàm", value: "whole_jaw" },
     { name: "Chọn răng", value: "manual" },
   ];
   productSource: any;
