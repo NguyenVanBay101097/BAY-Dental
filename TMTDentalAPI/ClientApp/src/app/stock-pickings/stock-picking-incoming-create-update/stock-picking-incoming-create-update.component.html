@@ -68,9 +68,9 @@
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-combobox [hidden]="state == 'done'" [data]="filteredPartners"
                                         [textField]="'name'" [filterable]="true" #partnerCbx formControlName="partner"
-                                        [valueField]="'id'">
+                                        [valueField]="'id'" [class.ng-submitted]="submitted">
                                     </kendo-combobox>
-                                    <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)"
+                                    <div *ngIf="f.partner.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.partner.errors.required">Chọn đối tác</div>
                                     </div>
@@ -161,8 +161,9 @@
                                                     <td class="align-middle ">
                                                         <input class="form-control" style="width: 80px;" formControlName="productUOMQty"
                                                             *ngIf="['done', 'cancel'].indexOf(picking?.state) === -1"
-                                                            [options]="{ minimumValue: 0, decimalPlaces: 2 }" tmtautonumeric/>
-                                                        <div *ngIf="line.get('productUOMQty').errors && (line.get('productUOMQty').touched || line.get('productUOMQty').dirty || submitted)"
+                                                            [options]="{ minimumValue: 0, decimalPlaces: 2 }" tmtautonumeric
+                                                            [class.ng-submitted]="submitted"/>
+                                                        <div *ngIf="line.get('productUOMQty').errors && submitted"
                                                             class="text-danger">
                                                             <div *ngIf="line.get('productUOMQty').errors.required">
                                                                 Nhập số lượng

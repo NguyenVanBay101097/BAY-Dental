@@ -18,8 +18,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input type="text" class="form-control" formControlName="name" />
-                                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
+                                    <input type="text" class="form-control" formControlName="name" [class.ng-submitted]="submitted" />
+                                    <div *ngIf="f.name.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.name.errors.required">Nhập tên tiêu chí kiểm kho</div>
                                     </div>

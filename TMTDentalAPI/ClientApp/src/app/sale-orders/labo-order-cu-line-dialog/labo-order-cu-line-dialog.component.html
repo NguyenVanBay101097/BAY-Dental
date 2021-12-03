@@ -64,10 +64,10 @@
                 </td>
                 <td colspan="1" style="width: 100%;">
                   <kendo-numerictextbox [min]="0" [class.d-none]="lineState == 'purchase'" [format]="'n0'"
-                    formControlName="productQty">
+                    formControlName="productQty" [class.ng-submitted]="submitted">
                   </kendo-numerictextbox>
                   <span *ngIf="line" [class.d-none]="lineState != 'purchase'">{{line.productQty | number}}</span>
-                  <div *ngIf="f.productQty.errors && (f.productQty.touched || f.productQty.dirty || submitted)"
+                  <div *ngIf="f.productQty.errors && submitted"
                     class="text-danger">
                     <span *ngIf="f.productQty.errors.required">Nhập số lượng</span>
                   </div>
@@ -81,10 +81,10 @@
                 </td>
                 <td colspan="1" style="width: 100%;">
                   <kendo-numerictextbox [min]="0" [class.d-none]="lineState == 'purchase'" [format]="'n0'"
-                    formControlName="priceUnit">
+                    formControlName="priceUnit" [class.ng-submitted]="submitted">
                   </kendo-numerictextbox>
                   <span *ngIf="line" [class.d-none]="lineState != 'purchase'">{{line.priceUnit | number}}</span>
-                  <div *ngIf="f.priceUnit.errors && (f.priceUnit.touched || f.priceUnit.dirty || submitted)"
+                  <div *ngIf="f.priceUnit.errors && submitted"
                     class="text-danger">
                     <span *ngIf="f.priceUnit.errors.required">Nhập đơn giá</span>
                   </div>

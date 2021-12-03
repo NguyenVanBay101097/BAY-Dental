@@ -19,9 +19,8 @@
                                     </td>
                                     <td style="width: 100%">
                                         <input class="form-control" formControlName="name"
-                                            [class.border-danger]="submitted && f.name.value==''" />
-                                        <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
-                                            class="text-danger">
+                                            [class.ng-submitted]="submitted" />
+                                        <div *ngIf="f.name.errors && submitted" class="text-danger">
                                             <div *ngIf="f.name.errors.required">Nhập tên tin nhắn</div>
                                         </div>
                                     </td>
@@ -33,10 +32,10 @@
                                     <td style="width: 100%">
                                         <kendo-combobox [data]="filteredSmsCampaign" [textField]="'name'"
                                             [valueField]="'id'" formControlName="smsCampaign" [filterable]="true"
-                                            #smsCampaignCbx (valueChange)="changeSmsCampaign($event)">
+                                            #smsCampaignCbx (valueChange)="changeSmsCampaign($event)"
+                                            [class.ng-submitted]="submitted">
                                         </kendo-combobox>
-                                        <div *ngIf="f.smsCampaign.errors && (f.smsCampaign.touched || f.smsCampaign.dirty || submitted)"
-                                            class="text-danger">
+                                        <div *ngIf="f.smsCampaign.errors && submitted" class="text-danger">
                                             <div *ngIf="f.smsCampaign.errors.required">Chọn chiến dịch</div>
                                         </div>
                                     </td>
@@ -48,13 +47,12 @@
                                     <td style="width: 100%">
                                         <kendo-combobox [data]="filteredSmsAccount" ngbAutofocus
                                             [textField]="'brandName'" formControlName="smsAccount" [filterable]="true"
-                                            #smsAccountCbx [valueField]="'id'">
+                                            #smsAccountCbx [valueField]="'id'" [class.ng-submitted]="submitted">
                                             <ng-template kendoComboBoxItemTemplate let-dataItem>
                                                 <span>{{dataItem.brandName}} ({{dataItem.name}})</span>
                                             </ng-template>
                                         </kendo-combobox>
-                                        <div *ngIf="f.smsAccount.errors && (f.smsAccount.touched || f.smsAccount.dirty || submitted)"
-                                            class="text-danger">
+                                        <div *ngIf="f.smsAccount.errors && submitted" class="text-danger">
                                             <div *ngIf="f.smsAccount.errors.required">Chọn brandname</div>
                                         </div>
                                     </td>
@@ -144,10 +142,10 @@
                                     <td>
                                         <kendo-combobox [data]="filteredTemplate" [textField]="'name'"
                                             [valueField]="'id'" formControlName="template" [filterable]="true"
-                                            #smsTemplateCbx (valueChange)="onChangeTemplate($event)">
+                                            #smsTemplateCbx (valueChange)="onChangeTemplate($event)"
+                                            [class.ng-submitted]="submitted">
                                         </kendo-combobox>
-                                        <div *ngIf="f.template.errors && (f.template.touched || f.template.dirty || submitted)"
-                                            class="text-danger">
+                                        <div *ngIf="f.template.errors && submitted" class="text-danger">
                                             <div *ngIf="f.template.errors.required">Chọn tin nhắn mẫu</div>
                                         </div>
                                     </td>
@@ -183,10 +181,9 @@
                                     <td>
                                         <div *ngIf="isTemplateCopy">
                                             <input type="text" class="form-control mt-2"
-                                                [class.border-danger]="submitted && f.templateName.value==''"
-                                                formControlName="templateName" placeholder="Tiêu đề tin nhắn mẫu">
-                                            <div *ngIf="f.templateName.errors && (f.templateName.touched || f.templateName.dirty || submitted)"
-                                                class="text-danger">
+                                                [class.ng-submitted]="submitted" formControlName="templateName"
+                                                placeholder="Tiêu đề tin nhắn mẫu">
+                                            <div *ngIf="f.templateName.errors && submitted" class="text-danger">
                                                 <div *ngIf="f.templateName.errors.required">Nhập tiêu đề tin nhắn
                                                     mẫu</div>
                                             </div>

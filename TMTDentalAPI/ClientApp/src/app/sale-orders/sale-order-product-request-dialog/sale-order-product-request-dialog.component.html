@@ -38,9 +38,9 @@
                                     <span *ngIf="seeForm">
                                         {{productRequestDisplay.date | date: 'shortDate'}}
                                     </span>
-                                    <kendo-datepicker *ngIf="!seeForm" formControlName="dateObj">
+                                    <kendo-datepicker *ngIf="!seeForm" formControlName="dateObj" [class.ng-submitted]="submitted">
                                     </kendo-datepicker>
-                                    <div *ngIf="f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)"
+                                    <div *ngIf="f.dateObj.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.dateObj.errors.required">Chọn ngày yêu cầu</div>
                                     </div>
@@ -73,9 +73,9 @@
                                     <span *ngIf="seeForm">{{productRequestDisplay.employee?.name}}</span>
                                     <kendo-combobox [class.d-none]="seeForm" [filterable]="true"
                                         [data]="filteredEmployees" [textField]="'name'" #employeeCbx
-                                        formControlName="employee" [valueField]="'id'">
+                                        formControlName="employee" [valueField]="'id'" [class.ng-submitted]="submitted">
                                     </kendo-combobox>
-                                    <div *ngIf="f.employee.errors && (f.employee.touched || f.employee.dirty || submitted)"
+                                    <div *ngIf="f.employee.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.employee.errors.required">Chọn bác sĩ chỉ định</div>
                                     </div>

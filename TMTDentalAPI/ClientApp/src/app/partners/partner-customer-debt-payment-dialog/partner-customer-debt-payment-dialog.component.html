@@ -18,9 +18,9 @@
                                     <div>
                                         <kendo-combobox [data]="filteredJournals" [textField]="'name'"
                                             [filterable]="true" #journalCbx formControlName="journal"
-                                            [valueField]="'id'">
+                                            [valueField]="'id'" [class.ng-submitted]="submitted">
                                         </kendo-combobox>
-                                        <div *ngIf="f.journal.errors && (f.journal.touched || f.journal.dirty || submitted)"
+                                        <div *ngIf="f.journal.errors && submitted"
                                             class="text-danger">
                                             <div *ngIf="f.journal.errors.required">Chọn phương thức thanh toán</div>
                                         </div>
@@ -32,9 +32,9 @@
                                     <label class="o_form_label">Số tiền</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input class="form-control" formControlName="amount" tmtautonumeric
+                                    <input class="form-control" formControlName="amount" tmtautonumeric [class.ng-submitted]="submitted"
                                     [options]="{minimumValue: 0, maximumValue: amountDebtBalanceTotal, decimalPlaces: 0}"/>
-                                    <div *ngIf="f.amount.errors && (f.amount.touched || f.amount.dirty || submitted)"
+                                    <div *ngIf="f.amount.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.amount.errors.required">Nhập số tiền</div>
                                     </div>
@@ -50,9 +50,9 @@
                                     <label class="o_form_label">Ngày thanh toán</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker formControlName="dateObj">
+                                    <kendo-datepicker formControlName="dateObj" [class.ng-submitted]="submitted">
                                     </kendo-datepicker>
-                                    <div *ngIf="f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)"
+                                    <div *ngIf="f.dateObj.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.dateObj.errors.required">Chọn ngày</div>
                                     </div>

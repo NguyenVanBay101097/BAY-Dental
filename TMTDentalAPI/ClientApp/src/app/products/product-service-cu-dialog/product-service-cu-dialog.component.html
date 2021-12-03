@@ -11,9 +11,9 @@
                 <div class="oe_title">
                     <label class="o_form_label oe_edit_only">Tên dịch vụ</label>
                     <h1>
-                        <input type="text" name="name" class="form-control" formControlName="name">
+                        <input type="text" name="name" class="form-control" formControlName="name" [class.ng-submitted]="submitted">
                     </h1>
-                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
+                    <div *ngIf="f.name.errors && submitted"
                         class="text-danger mb-1">
                         <div *ngIf="f.name.errors.required">Nhập tên dịch vụ</div>
                     </div>
@@ -60,13 +60,13 @@
                                                         [textField]="'completeName'" [filterable]="true" #categCbx
                                                         formControlName="categ" [valueField]="'id'"
                                                         (filterChange)="categCbxFilterChange2($event)"
-                                                        [loading]="categCbxLoading">
+                                                        [loading]="categCbxLoading" [class.ng-submitted]="submitted">
                                                     </kendo-combobox>
                                                     <a class="btn btn-light" (click)="quickCreateCateg()">
                                                         <span class="k-icon k-i-plus"></span>
                                                     </a>
                                                 </div>
-                                                <div *ngIf="f.categ.errors && (f.categ.touched || f.categ.dirty || submitted)"
+                                                <div *ngIf="f.categ.errors && submitted"
                                                     class="text-danger">
                                                     <div *ngIf="f.categ.errors.required">Chọn nhóm dịch vụ</div>
                                                 </div>
@@ -220,9 +220,9 @@
                                                     <kendo-combobox [data]="filteredProducts" [valueField]="'id'"
                                                         [textField]="'name'" style="width:70%;"
                                                         (valueChange)="onValueChange($event, i)"
-                                                        formControlName="materialProduct">
+                                                        formControlName="materialProduct" [class.ng-submitted]="submitted">
                                                     </kendo-combobox>
-                                                    <div *ngIf="item.get('materialProduct').errors && (item.get('materialProduct').touched || item.get('materialProduct').dirty || submitted)"
+                                                    <div *ngIf="item.get('materialProduct').errors && submitted"
                                                         class="text-danger">
                                                         <div *ngIf="item.get('materialProduct').errors.required">Chọn
                                                             vật tư</div>
@@ -238,8 +238,8 @@
                                                 </td>
                                                 <td>
                                                     <input class="form-control" formControlName="quantity"
-                                                        tmtautonumeric [options]="{ minimumValue: 0 }" />
-                                                    <div *ngIf="item.get('quantity').errors && (item.get('quantity').touched || item.get('quantity').dirty || submitted)"
+                                                        tmtautonumeric [options]="{ minimumValue: 0 }" [class.ng-submitted]="submitted" />
+                                                    <div *ngIf="item.get('quantity').errors && submitted"
                                                         class="text-danger">
                                                         <div *ngIf="item.get('quantity').errors.required">Chọn số lượng
                                                         </div>

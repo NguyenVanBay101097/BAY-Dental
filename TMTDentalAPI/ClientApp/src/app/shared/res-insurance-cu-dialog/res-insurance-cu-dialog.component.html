@@ -14,9 +14,9 @@
                 <div class="oe_title">
                     <label class="o_form_label oe_edit_only"> Tên công ty bảo hiểm </label>
                     <h1>
-                        <input class="form-control" formControlName="name">
+                        <input class="form-control" formControlName="name" [class.ng-submitted]="submitted">
                     </h1>
-                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
+                    <div *ngIf="f.name.errors && submitted"
                         class="text-danger mb-1">
                         <div *ngIf="f.name.errors.required"> Nhập tên công ty bảo hiểm </div>
                     </div>

@@ -17,8 +17,8 @@
                     </div>
                 </ng-container>
                 <div *ngIf="useAtControl == 'other'" class="mt-1">
-                    <input formControlName='note' class="form-control" placeholder="Nội dung" required />      
-                    <div *ngIf="f.note.errors && (f.note.touched || f.note.dirty || submitted)" class="text-danger">
+                    <input formControlName='note' class="form-control" placeholder="Nội dung" required [class.ng-submitted]="submitted" />      
+                    <div *ngIf="f.note.errors && submitted" class="text-danger">
                         <div *ngIf="f.note.errors.required">Nhập nội dung</div>
                     </div>         
                 </div>

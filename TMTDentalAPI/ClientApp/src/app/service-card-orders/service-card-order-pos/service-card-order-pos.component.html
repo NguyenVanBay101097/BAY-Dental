@@ -48,7 +48,7 @@
                                         <div class="d-flex">
                                             <kendo-combobox [class.d-none]="cardOrder.state != 'draft'"
                                                 [data]="filteredPartners" [textField]="'name'" [filterable]="true"
-                                                #partnerCbx formControlName="partner" [valueField]="'id'">
+                                                #partnerCbx formControlName="partner" [valueField]="'id'" [class.ng-submitted]="submitted">
                                             </kendo-combobox>
                                             <a type="button" [class.d-none]="cardOrder.state != 'draft'"
                                                 title="Thêm khách hàng" class="pl-2 py-1"
@@ -56,7 +56,7 @@
                                                 <i class="fas fa-plus"></i>
                                             </a>
                                         </div>
-                                        <div *ngIf="cardOrder.state == 'draft' && f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="cardOrder.state == 'draft' && f.partner.errors && submitted" class="text-danger">
                                             <div *ngIf="f.partner.errors.required">Chọn khách hàng</div>
                                         </div>
                                         <span [class.d-none]="cardOrder.state == 'draft'">
@@ -76,9 +76,9 @@
                                     </td>
                                     <td colspan="1" style="width: 100%;">
                                         <kendo-datetimepicker [class.d-none]="cardOrder.state != 'draft'"
-                                            formControlName="dateOrderObj">
+                                            formControlName="dateOrderObj" [class.ng-submitted]="submitted">
                                         </kendo-datetimepicker>
-                                        <div *ngIf="cardOrder.state == 'draft' && f.dateOrderObj.errors && (f.dateOrderObj.touched || f.dateOrderObj.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="cardOrder.state == 'draft' && f.dateOrderObj.errors && submitted" class="text-danger">
                                             <div *ngIf="f.dateOrderObj.errors.required">Chọn ngày bán</div>
                                         </div>
                                         <span [class.d-none]="cardOrder.state == 'draft'">

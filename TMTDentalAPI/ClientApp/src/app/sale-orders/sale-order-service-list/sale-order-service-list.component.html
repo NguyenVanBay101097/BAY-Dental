@@ -208,9 +208,10 @@
                                             <div class="mb-2">
                                                 <kendo-datepicker style="width: 100%" format="dd/MM/yyyy HH:mm"
                                                     formControlName="dateOrder"
-                                                    [popupSettings]="{appendTo: 'component'}">
+                                                    [popupSettings]="{appendTo: 'component'}"
+                                                    [class.ng-submitted]="submitted">
                                                 </kendo-datepicker>
-                                                <div *ngIf="f.dateOrder.errors && (f.dateOrder.touched || f.dateOrder.dirty || submitted)"
+                                                <div *ngIf="f.dateOrder.errors && submitted"
                                                     class="text-danger">
                                                     <div *ngIf="f.dateOrder.errors.required">Chọn ngày lập phiếu</div>
                                                 </div>

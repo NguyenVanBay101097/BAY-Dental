@@ -16,9 +16,8 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <input class="form-control" formControlName="name" id="name"
-                                        [class.border-danger]="submitted && f.name.value==''" />
-                                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
-                                        class="text-danger">
+                                        [class.ng-submitted]="submitted" />
+                                    <div *ngIf="f.name.errors && submitted" class="text-danger">
                                         <div *ngIf="f.name.errors.required">Nhập tiêu đề tin nhắn mẫu</div>
                                     </div>
                                 </td>
@@ -45,17 +44,16 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <textarea type="text" my-autosize class="form-control textarea textarea-required"
-                                        [class.border-danger]="submitted && f.body.value==''" id="textarea_mass"
-                                        formControlName="body" rows="5" #textarea></textarea>
-                                    <div *ngIf="f.body.errors && (f.body.touched || f.body.dirty || submitted)"
-                                        class="text-danger">
+                                        [class.ng-submitted]="submitted" id="textarea_mass" formControlName="body"
+                                        rows="5" #textarea></textarea>
+                                    <div *ngIf="f.body.errors && submitted" class="text-danger">
                                         <div *ngIf="f.body.errors.required">Nhập nội dung tin nhắn</div>
                                         <div *ngIf="f.body.errors.maxlength">Số kí tự đã vượt quá cho phép !
                                         </div>
                                     </div>
                                     <app-sms-note-content></app-sms-note-content>
-                                    <app-sms-personalized-tabs [type]="typeValue"
-                                        (contentEmit)="addToContent($event)"></app-sms-personalized-tabs>
+                                    <app-sms-personalized-tabs [type]="typeValue" (contentEmit)="addToContent($event)">
+                                    </app-sms-personalized-tabs>
                                 </td>
                             </tr>
                         </tbody>

@@ -46,9 +46,9 @@
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">
-                                        <kendo-datepicker [format]="'dd/MM/yyyy'" formControlName="dateObj">
+                                        <kendo-datepicker [format]="'dd/MM/yyyy'" formControlName="dateObj" [class.ng-submitted]="submitted">
                                         </kendo-datepicker>
-                                        <div *ngIf="f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)"
+                                        <div *ngIf="f.dateObj.errors && submitted"
                                             class="text-danger">
                                             <div *ngIf="f.dateObj.errors.required">Chọn ngày tạo</div>
                                         </div>
@@ -100,7 +100,7 @@
                             <kendo-multiselect [filterable]="true" class="mr-3" [data]="toothDianosisSource"
                                 [allowCustom]="true" [valueNormalizer]="valueNormalizer"
                                 (filterChange)="this.searchUpdateToothDianosis.next($event)" [filterable]="true"
-                                [textField]="'name'" [valueField]="'id'" formControlName="toothDiagnosis">
+                                [textField]="'name'" [valueField]="'id'" formControlName="toothDiagnosis" [class.ng-submitted]="submitted">
                             </kendo-multiselect>
                             <div *ngIf="f.toothDiagnosis.value.length == 0 && submitted" class="text-danger">
                                 Chọn chẩn đoán răng

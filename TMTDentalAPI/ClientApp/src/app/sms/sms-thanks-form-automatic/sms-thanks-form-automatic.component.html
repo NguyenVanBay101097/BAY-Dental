@@ -89,11 +89,10 @@
                                         </td>
                                         <td colspan="1" style="width: 80%;">
                                             <kendo-combobox [data]="filteredTemplate" ngbAutofocus [textField]="'name'"
-                                                formControlName="template" [filterable]="true" #smsTemplateCbx [valueField]="'id'"
-                                                class="mb-2">
+                                                formControlName="template" [filterable]="true" #smsTemplateCbx
+                                                [valueField]="'id'" class="mb-2" [class.ng-submitted]="submitted">
                                             </kendo-combobox>
-                                            <div *ngIf="f.template.errors && (f.template.touched || f.template.dirty || submitted)"
-                                                class="text-danger">
+                                            <div *ngIf="f.template.errors && submitted" class="text-danger">
                                                 <div *ngIf="f.template.errors.required">Chọn tin nhắn mẫu</div>
                                             </div>
                                         </td>

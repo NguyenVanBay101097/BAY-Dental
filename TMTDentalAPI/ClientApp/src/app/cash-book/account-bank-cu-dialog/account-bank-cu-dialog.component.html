@@ -13,8 +13,9 @@
                                 <label class="o_form_label">Chủ tài khoản</label>
                             </td>
                             <td colspan="1">
-                                <input class="form-control" formControlName="accountHolderName" (input)="accountHolderNameCtrl.setValue(accountHolderNameCtrl.value.toUpperCase())">
-                                <div *ngIf="f.accountHolderName.errors && (f.accountHolderName.touched || f.accountHolderName.dirty || submitted)" class="text-danger mb-1">
+                                <input class="form-control" formControlName="accountHolderName" [class.ng-submitted]="submitted"
+                                    (input)="accountHolderNameCtrl.setValue(accountHolderNameCtrl.value.toUpperCase())">
+                                <div *ngIf="f.accountHolderName.errors && submitted" class="text-danger mb-1">
                                     <div *ngIf="f.accountHolderName.errors.required">Nhập chủ tài khoản</div>
                                 </div>
                             </td>
@@ -24,8 +25,8 @@
                                 <label class="o_form_label">Số tài khoản</label>
                             </td>
                             <td colspan="1">
-                                <input class="form-control" type="text" formControlName="accountNumber" numbersOnly>
-                                <div *ngIf="f.accountNumber.errors && (f.accountNumber.touched || f.accountNumber.dirty || submitted)" class="text-danger mb-1">
+                                <input class="form-control" type="text" formControlName="accountNumber" numbersOnly [class.ng-submitted]="submitted">
+                                <div *ngIf="f.accountNumber.errors && submitted" class="text-danger mb-1">
                                     <div *ngIf="f.accountNumber.errors.required">Nhập số tài khoản</div>
                                 </div>
                             </td>
@@ -36,10 +37,10 @@
                             </td>
                             <td colspan="1">
                                 <kendo-combobox class="form-control" [data]="bankItems" [textField]="'displayName'"
-                                        [filterable]="true" #bankCbx formControlName="bank" [valueField]="'id'">
+                                        [filterable]="true" #bankCbx formControlName="bank" [valueField]="'id'" [class.ng-submitted]="submitted">
                                 </kendo-combobox>
                                 
-                                <div *ngIf="f.bank.errors && (f.bank.touched || f.bank.dirty || submitted)" class="text-danger mb-1">
+                                <div *ngIf="f.bank.errors && submitted" class="text-danger mb-1">
                                     <div *ngIf="f.bank.errors.required">Chọn ngân hàng</div>
                                 </div>
                             </td>

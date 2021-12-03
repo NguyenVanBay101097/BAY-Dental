@@ -37,9 +37,9 @@
                             </td>
                             <td colspan="1">
                                 <kendo-combobox formControlName="doctor" [filterable]="true" [data]="filteredEmployees"
-                                    #doctorCbx [valueField]="'id'" [textField]="'name'">
+                                    #doctorCbx [valueField]="'id'" [textField]="'name'" [class.ng-submitted]="submitted">
                                 </kendo-combobox>
-                                <div *ngIf="f.doctor.errors && (f.doctor.touched || f.doctor.dirty || submitted)"
+                                <div *ngIf="f.doctor.errors && submitted"
                                     class="text-danger">
                                     <div *ngIf="f.doctor.errors.required">Chọn bác sĩ</div>
                                 </div>
@@ -52,8 +52,8 @@
                             <td colspan="1">
                                 <div class="d-flex justify-content-between">
                                     <div class="mr-2 ">
-                                        <kendo-timepicker formControlName="dateObj" format="HH:mm"></kendo-timepicker>
-                                        <div *ngIf="f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)"
+                                        <kendo-timepicker formControlName="dateObj" format="HH:mm" [class.ng-submitted]="submitted"></kendo-timepicker>
+                                        <div *ngIf="f.dateObj.errors && submitted"
                                             class="text-danger">
                                             <div *ngIf="f.dateObj.errors.required">Chọn giờ tiếp nhận</div>
                                         </div>

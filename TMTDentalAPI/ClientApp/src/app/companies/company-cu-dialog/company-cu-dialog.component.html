@@ -14,9 +14,9 @@
                 <div class="oe_title">
                     <label class="o_form_label oe_edit_only">Tên chi nhánh</label>
                     <h1>
-                        <input type="text" class="form-control" formControlName="name" #nameInput>
+                        <input type="text" class="form-control" formControlName="name" #nameInput [class.ng-submitted]="submitted">
                     </h1>
-                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger mb-1">
+                    <div *ngIf="f.name.errors && submitted" class="text-danger mb-1">
                         <div *ngIf="f.name.errors.required">Nhập tên chi nhánh</div>
                     </div>
                 </div>

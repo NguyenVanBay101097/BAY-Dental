@@ -16,13 +16,16 @@
                 <a [routerLink]="['/dashboard']" class="btn btn-secondary mr-1">
                     Trở lại
                 </a>
-                <button *ngIf="!saleOrderId && saleOrder.state == 'draft'" type="button" class="btn btn-primary btn-sm mr-1" (click)="actionPayment()">
+                <button *ngIf="!saleOrderId && saleOrder.state == 'draft'" type="button"
+                    class="btn btn-primary btn-sm mr-1" (click)="actionPayment()">
                     Thanh toán
                 </button>
-                <a [routerLink]="['/partners/treatment-paymentfast/from']" *ngIf="saleOrderId" class="btn btn-primary btn-sm mr-1">
+                <a [routerLink]="['/partners/treatment-paymentfast/from']" *ngIf="saleOrderId"
+                    class="btn btn-primary btn-sm mr-1">
                     Thêm mới
-                 </a>
-                <button *ngIf="saleOrderId" type="button" class="btn btn-primary btn-sm mr-1" (click)="printFastSaleOrder(saleOrderId)">
+                </a>
+                <button *ngIf="saleOrderId" type="button" class="btn btn-primary btn-sm mr-1"
+                    (click)="printFastSaleOrder(saleOrderId)">
                     In phiếu
                 </button>
                 <!-- <button *ngIf="saleOrderId" type="button" class="btn btn-danger btn-sm ml-1" (click)="actionCancel()">
@@ -49,19 +52,24 @@
                             </td>
                             <td colspan="1" style="width: 100%;">
                                 <div class="d-flex">
-                                    <kendo-combobox [popupSettings]="{width: 'auto', popupClass: 'partner-cbx'}" [class.d-none]="saleOrder.state != 'draft'" [data]="filteredPartners" [textField]="'displayName'" [filterable]="true" #partnerCbx formControlName="partner" [valueField]="'id'">
+                                    <kendo-combobox [popupSettings]="{width: 'auto', popupClass: 'partner-cbx'}"
+                                        [class.d-none]="saleOrder.state != 'draft'" [data]="filteredPartners"
+                                        [textField]="'displayName'" [filterable]="true" #partnerCbx
+                                        formControlName="partner" [valueField]="'id'" [class.ng-submitted]="submitted">
                                         <ng-template kendoComboBoxItemTemplate let-dataItem>
                                             <div class="partner-item-cbx">
                                                 <div class="name">{{ dataItem.displayName }}</div>
                                                 <div class="phone">{{ dataItem.phone }}</div>
                                             </div>
-                                          </ng-template>
+                                        </ng-template>
                                     </kendo-combobox>
-                                    <a type="button" [class.d-none]="saleOrder.state != 'draft'" title="Thêm khách hàng" class="pl-2 py-1" (click)="quickCreateCustomer()">
+                                    <a type="button" [class.d-none]="saleOrder.state != 'draft'" title="Thêm khách hàng"
+                                        class="pl-2 py-1" (click)="quickCreateCustomer()">
                                         <i class="fas fa-plus"></i>
                                     </a>
                                 </div>
-                                <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)" class="text-danger">
+                                <div *ngIf="f.partner.errors && submitted"
+                                    class="text-danger">
                                     <div *ngIf="f.partner.errors.required">Chọn khách hàng</div>
                                 </div>
                                 <div *ngIf="['draft','cancel'].indexOf(saleOrder.state) === -1">
@@ -80,9 +88,11 @@
                                 </label>
                             </td>
                             <td colspan="1" style="width: 100%;">
-                                <kendo-datetimepicker [class.d-none]="saleOrder.state != 'draft'" formControlName="dateOrder">
+                                <kendo-datetimepicker [class.d-none]="saleOrder.state != 'draft'"
+                                    formControlName="dateOrder" [class.ng-submitted]="submitted">
                                 </kendo-datetimepicker>
-                                <div *ngIf="saleOrder.state == 'draft' && f.dateOrder.errors && (f.dateOrder.touched || f.dateOrder.dirty || submitted)" class="text-danger">
+                                <div *ngIf="saleOrder.state == 'draft' && f.dateOrder.errors && submitted"
+                                    class="text-danger">
                                     <div *ngIf="f.dateOrder.errors.required">Chọn ngày lập phiếu</div>
                                 </div>
                                 <span [class.d-none]="saleOrder.state == 'draft'">
@@ -116,7 +126,8 @@
         <div class="t_lower">
             <div class="w-100 h-100 d-flex flex-column">
                 <div *ngIf="saleOrder.state == 'draft'" class="w-25 mb-2">
-                    <app-service-list-search-dropdown (onSelectService)="addLine($event)"></app-service-list-search-dropdown>
+                    <app-service-list-search-dropdown (onSelectService)="addLine($event)">
+                    </app-service-list-search-dropdown>
                 </div>
                 <div class="d-flex overflow-hidden">
                     <div class="w-75 d-flex flex-column">
@@ -130,29 +141,39 @@
                                 <div style="width: 100px;" class="div-cell py-1 text-right">Thành tiền</div>
                                 <!-- <div style="width: 100px;" class="div-cell py-1 text-right">Thanh toán</div> -->
                                 <!-- <div style="width: 100px;" class="div-cell py-1 text-right">Còn lại</div> -->
-                                <div style="width: 100px;" class="div-cell py-1 text-center" *ngIf="state != 'done'">Thao tác</div>
+                                <div style="width: 100px;" class="div-cell py-1 text-center" *ngIf="state != 'done'">
+                                    Thao tác</div>
                             </div>
                         </div>
                         <div class="flex-1-1-100 overflow-auto">
                             <ng-container *ngFor="let line of saleOrder.orderLines; let i=index">
-                                <app-sale-order-line-cu #lineTemplate [initialListEmployees]="initialListEmployees" [filteredToothCategories]="filteredToothCategories" [initialListTeeths]="listTeeths" [isFast]="true" [line]="line" (onUpdateOpenPromotionEvent)="onUpdateOpenLinePromotion($event, line, i)"
-                                    (onCancelEvent)="onCancelEditLine($event)" (onDeleteEvent)="onDeleteLine(i)" (onEditEvent)="onEditLine($event)" (onUpdateEvent)="updateLineInfo($event, line)"></app-sale-order-line-cu>
+                                <app-sale-order-line-cu #lineTemplate [initialListEmployees]="initialListEmployees"
+                                    [filteredToothCategories]="filteredToothCategories" [initialListTeeths]="listTeeths"
+                                    [isFast]="true" [line]="line"
+                                    (onUpdateOpenPromotionEvent)="onUpdateOpenLinePromotion($event, line, i)"
+                                    (onCancelEvent)="onCancelEditLine($event)" (onDeleteEvent)="onDeleteLine(i)"
+                                    (onEditEvent)="onEditLine($event)" (onUpdateEvent)="updateLineInfo($event, line)">
+                                </app-sale-order-line-cu>
                             </ng-container>
                         </div>
                     </div>
                     <div class="w-25 pl-3">
                         <!-- ưu đãi -->
                         <div class="card mb-3">
-                            <div class="card-header bg-primary text-white px-3 py-1 d-flex align-items-center">Ưu đãi phiếu điều trị
-                                <img *ngIf="state != 'done'" class="ml-1 pointer" (click)="onOpenSaleOrderPromotion()" src="../../../assets/icons/promotion.svg" alt="">
+                            <div class="card-header bg-primary text-white px-3 py-1 d-flex align-items-center">Ưu đãi
+                                phiếu điều trị
+                                <img *ngIf="state != 'done'" class="ml-1 pointer" (click)="onOpenSaleOrderPromotion()"
+                                    src="../../../assets/icons/promotion.svg" alt="">
                                 <span class="ml-auto">{{sumPromotionSaleOrder() | number}}</span>
                             </div>
                             <div class="card-body px-3 py-2">
-                                <div *ngIf="this.saleOrder.promotions?.length" class="d-flex justify-content-between mb-1">
+                                <div *ngIf="this.saleOrder.promotions?.length"
+                                    class="d-flex justify-content-between mb-1">
                                     <span class="font-weight-600">Ưu đãi</span>
                                     <span class="font-weight-600">Số tiền giảm</span>
                                 </div>
-                                <div *ngFor="let item of saleOrder.promotions" class="d-flex justify-content-between mb-1">
+                                <div *ngFor="let item of saleOrder.promotions"
+                                    class="d-flex justify-content-between mb-1">
                                     <span>{{item.name}}</span>
                                     <span>{{item.amount | number}}</span>
                                 </div>
@@ -177,9 +198,11 @@
                                     <label class="font-weight-600">Thanh toán</label>
                                     <label class="font-weight-600">{{saleOrder.totalPaid | number}}</label>
                                 </p>
-                                <p *ngIf="saleOrder.state == 'sale' || saleOrder.state == 'done'" class="d-flex justify-content-between mb-0">
+                                <p *ngIf="saleOrder.state == 'sale' || saleOrder.state == 'done'"
+                                    class="d-flex justify-content-between mb-0">
                                     <label class="font-weight-600">Còn lại</label>
-                                    <label class="font-weight-600">{{saleOrder.amountTotal - saleOrder.totalPaid | number}}</label>
+                                    <label class="font-weight-600">{{saleOrder.amountTotal - saleOrder.totalPaid |
+                                        number}}</label>
                                 </p>
                             </div>
                         </div>

@@ -93,7 +93,7 @@
                   <div class="d-flex">
                     <kendo-combobox [class.d-none]="laboOrder.state != 'draft'" [data]="filteredPartners"
                       [textField]="'name'" [filterable]="true" #partnerCbx formControlName="partner"
-                      [valueField]="'id'">
+                      [valueField]="'id'" [class.ng-submitted]="submitted">
                     </kendo-combobox>
                     <a [class.d-none]="laboOrder.state != 'draft'" title="Cập nhật labo" class="pl-2 py-1" type="button"
                       *ngIf="partner" (click)="updateSupplierModal()">
@@ -107,7 +107,7 @@
                   <a class="text-primary" (click)="updateSupplierModal()"
                     [class.d-none]="laboOrder.state == 'draft'">{{laboOrder.partner ? laboOrder.partner.name : ''}}
                   </a>
-                  <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)"
+                  <div *ngIf="f.partner.errors && submitted"
                     class="text-danger">
                     <span *ngIf="f.partner.errors.required">Chọn nhà cung cấp</span>
                   </div>
@@ -146,10 +146,10 @@
                 </td>
                 <td colspan="1" style="width: 100%;">
                   <kendo-datepicker [format]="'dd/MM/yyyy HH:mm'" [class.d-none]="laboOrder.state != 'draft'"
-                    formControlName="dateOrderObj">
+                    formControlName="dateOrderObj" [class.ng-submitted]="submitted">
                   </kendo-datepicker>
                   <span [class.d-none]="laboOrder.state == 'draft'">{{laboOrder.dateOrder | date: 'short'}}</span>
-                  <div *ngIf="f.dateOrderObj.errors && (f.dateOrderObj.touched || f.dateOrderObj.dirty || submitted)"
+                  <div *ngIf="f.dateOrderObj.errors && submitted"
                     class="text-danger">
                     <span *ngIf="f.partner.errors.required">Chọn ngày gửi</span>
                   </div>

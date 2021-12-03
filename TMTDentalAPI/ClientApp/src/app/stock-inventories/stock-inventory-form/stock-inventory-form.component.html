@@ -137,9 +137,9 @@
                                 <td colspan="1">
                                     <kendo-combobox [class.d-none]="stateControl != 'draft'" [data]="filterdCategories"
                                         [textField]="'name'" [filterable]="true" #categCbx formControlName="category"
-                                        [valueField]="'id'">
+                                        [valueField]="'id'" [class.ng-submitted]="submitted">
                                     </kendo-combobox>
-                                    <div *ngIf="f.category.errors && (f.category.touched || f.category.dirty || submitted)"
+                                    <div *ngIf="f.category.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.category.errors.required">Chọn nhóm sản phẩm</div>
                                     </div>
@@ -155,9 +155,9 @@
                                 <td colspan="1">
                                     <kendo-combobox [class.d-none]="stateControl != 'draft'" [data]="filterdCriterias"
                                         [textField]="'name'" [filterable]="true" #criteriaCbx formControlName="criteria"
-                                        [valueField]="'id'">
+                                        [valueField]="'id'" [class.ng-submitted]="submitted">
                                     </kendo-combobox>
-                                    <div *ngIf="f.criteria.errors && (f.criteria.touched || f.criteria.dirty || submitted)"
+                                    <div *ngIf="f.criteria.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.criteria.errors.required">Chọn tiêu chí kiểm kho</div>
                                     </div>
@@ -187,9 +187,9 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-datepicker [format]="'dd/MM/yyyy'" *ngIf="stateControl == 'draft'"
-                                        formControlName="dateObj">
+                                        formControlName="dateObj" [class.ng-submitted]="submitted">
                                     </kendo-datepicker>
-                                    <div *ngIf="stateControl == 'draft' && f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)"
+                                    <div *ngIf="stateControl == 'draft' && f.dateObj.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.dateObj.errors.required">Chọn ngày kiểm</div>
                                     </div>

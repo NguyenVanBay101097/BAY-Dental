@@ -24,8 +24,10 @@
                                     <div class="flex-grow-1">
                                         <kendo-combobox formControlName="partner" [filterable]="true"
                                             [data]="customerSimpleFilter" (valueChange)="onChangePartner()" #partnerCbx
-                                            [valueField]="'id'" [textField]="'name'" [attr.disabled]="partnerDisable ? true : null"
-                                            placeholder="Mã, tên, số điện thoại khách hàng">
+                                            [valueField]="'id'" [textField]="'name'"
+                                            [attr.disabled]="partnerDisable ? true : null"
+                                            placeholder="Mã, tên, số điện thoại khách hàng"
+                                            [class.ng-submitted]="submitted">
                                         </kendo-combobox>
                                     </div>
                                     <div *ngIf="!partnerDisable" class="ml-2">
@@ -35,8 +37,7 @@
                                         </a>
                                     </div>
                                 </div>
-                                <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)"
-                                    class="text-danger">
+                                <div *ngIf="f.partner.errors && submitted" class="text-danger">
                                     <div *ngIf="f.partner.errors.required">Chọn khách hàng</div>
                                 </div>
                             </td>
@@ -55,9 +56,10 @@
                             </td>
                             <td colspan="1">
                                 <kendo-combobox formControlName="doctor" [filterable]="true" [data]="filteredEmployees"
-                                    #doctorCbx [valueField]="'id'" [textField]="'name'" [attr.disabled]="id">
+                                    #doctorCbx [valueField]="'id'" [textField]="'name'" [attr.disabled]="id"
+                                    [class.ng-submitted]="submitted">
                                 </kendo-combobox>
-                                <div *ngIf="f.doctor.errors && (f.doctor.touched || f.doctor.dirty || submitted)"
+                                <div *ngIf="f.doctor.errors && submitted"
                                     class="text-danger">
                                     <div *ngIf="f.doctor.errors.required">Chọn bác sĩ</div>
                                 </div>
@@ -70,8 +72,9 @@
                             <td colspan="1">
                                 <div class="d-flex justify-content-between">
                                     <div class="mr-2 ">
-                                        <kendo-timepicker formControlName="dateObj" format="HH:mm" [attr.disabled]="id"></kendo-timepicker>
-                                        <div *ngIf="f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)"
+                                        <kendo-timepicker formControlName="dateObj" format="HH:mm" [attr.disabled]="id" [class.ng-submitted]="submitted">
+                                        </kendo-timepicker>
+                                        <div *ngIf="f.dateObj.errors && submitted"
                                             class="text-danger">
                                             <div *ngIf="f.dateObj.errors.required">Chọn giờ tiếp nhận</div>
                                         </div>
@@ -101,7 +104,8 @@
                                 <div class="form-check">
                                     <input type="checkbox" class="form-check-input" id="exampleCheck1"
                                         (change)="checkedRepeatCustomer($event.target.checked)"
-                                        formControlName="isRepeatCustomer" [attr.disabled]="id && customerReceipt?.state == 'done' ? true : null">
+                                        formControlName="isRepeatCustomer"
+                                        [attr.disabled]="id && customerReceipt?.state == 'done' ? true : null">
                                     <label class="form-check-label" for="exampleCheck1">Khách tái khám</label>
                                 </div>
                             </td>
@@ -111,9 +115,10 @@
                                 <label class="o_form_label">Dịch vụ</label>
                             </td>
                             <td colspan="1">
-                                <kendo-multiselect [data]="filteredServices" [valueField]="'id'"
-                                    [textField]="'name'" [placeholder]="'Chọn dịch vụ'" formControlName="services"
-                                    [filterable]="true" #serviceMultiSelect  [attr.disabled]="id && customerReceipt?.state == 'done' ? true : null">
+                                <kendo-multiselect [data]="filteredServices" [valueField]="'id'" [textField]="'name'"
+                                    [placeholder]="'Chọn dịch vụ'" formControlName="services" [filterable]="true"
+                                    #serviceMultiSelect
+                                    [attr.disabled]="id && customerReceipt?.state == 'done' ? true : null">
                                     <!-- <ng-template kendoMultiSelectTagTemplate let-dataItem>
                                         <div class="template">
                                             <span [title]="dataItem.name">{{dataItem.name}}</span>
@@ -127,8 +132,9 @@
                                 <label class="o_form_label">Nội dung</label>
                             </td>
                             <td colspan="1">
-                                <textarea [attr.disabled]="id && customerReceipt?.state == 'done' ? true : null" class="form-control" rows="3" formControlName="note"
-                                    [placeholder]="'Nhập nội dung'" ></textarea>
+                                <textarea [attr.disabled]="id && customerReceipt?.state == 'done' ? true : null"
+                                    class="form-control" rows="3" formControlName="note"
+                                    [placeholder]="'Nhập nội dung'"></textarea>
                             </td>
                         </tr>
                         <tr *ngIf="id">
@@ -136,7 +142,7 @@
                                 <label class="o_form_label">Trạng thái</label>
                             </td>
                             <td colspan="1">
-                                <select class="form-control mr-1"  formControlName="state" >
+                                <select class="form-control mr-1" formControlName="state">
                                     <option value="waiting">Chờ khám</option>
                                     <option value="examination">Đang khám</option>
                                     <option value="done">Hoàn thành</option>
@@ -147,7 +153,8 @@
                             <td colspan="1"></td>
                             <td colspan="1">
                                 <div class="form-check">
-                                    <input  type="checkbox" class="form-check-input" id="Check2" [attr.disabled]="id && customerReceipt?.state == 'done' ? true : null"
+                                    <input type="checkbox" class="form-check-input" id="Check2"
+                                        [attr.disabled]="id && customerReceipt?.state == 'done' ? true : null"
                                         (change)="eventCheck($event.target.checked)" formControlName="isNoTreatment">
                                     <label class="form-check-label" for="Check2">Khách không điều trị</label>
                                 </div>
@@ -158,9 +165,9 @@
                                 <label class="o_form_label">Lý do</label>
                             </td>
                             <td colspan="1">
-                                <textarea  class="form-control text-error" rows="3" formControlName="reason" 
-                                    placeholder="Lý do khách không điều trị"></textarea>
-                                <div *ngIf="f.reason.errors && (f.reason.touched || f.reason.dirty || submitted)"
+                                <textarea class="form-control text-error" rows="3" formControlName="reason"
+                                    placeholder="Lý do khách không điều trị" [class.ng-submitted]="submitted"></textarea>
+                                <div *ngIf="f.reason.errors && submitted"
                                     class="text-danger">
                                     <div *ngIf="f.reason.errors.required">Nhập lý do</div>
                                 </div>
@@ -173,7 +180,8 @@
     </form>
 </div>
 <div class="modal-footer">
-    <button type="button" *ngIf="customerReceipt?.state != 'done'" class="btn btn-primary mr-2" accesskey="s" (click)="onSave()">
+    <button type="button" *ngIf="customerReceipt?.state != 'done'" class="btn btn-primary mr-2" accesskey="s"
+        (click)="onSave()">
         Lưu</button>
     <button type="button" *ngIf="id" class="btn btn-danger mr-2" (click)="deleteBtnClick()">
         Xóa</button>

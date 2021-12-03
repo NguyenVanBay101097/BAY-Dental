@@ -17,8 +17,8 @@
                                     <label class="o_form_label">Tên chiến dịch</label>
                                 </td>
                                 <td class="w-100 pb-4">
-                                    <input class="form-control" formControlName="name" />
-                                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
+                                    <input class="form-control" formControlName="name" [class.ng-submitted]="submitted" />
+                                    <div *ngIf="f.name.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.name.errors.required">Nhập tên chiến dịch</div>
                                     </div>

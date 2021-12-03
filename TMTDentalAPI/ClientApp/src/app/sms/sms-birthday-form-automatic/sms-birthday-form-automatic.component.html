@@ -40,7 +40,7 @@
                             </td>
                             <td colspan="1" style="width: 100%;">
                                 <kendo-combobox [data]="filteredSmsAccount" [textField]="'brandName'"
-                                    formControlName="smsAccount" [filterable]="true" #smsAccountCbx [valueField]="'id'">
+                                    formControlName="smsAccount" [filterable]="true" #smsAccountCbx [valueField]="'id'" [class.ng-submitted]="submitted">
                                     <ng-template kendoComboBoxItemTemplate let-dataItem>
                                         <span>{{dataItem ? dataItem.brandName :''}}
                                             ({{dataItem ? dataItem.name : ''}})</span>
@@ -90,10 +90,10 @@
                             <td colspan="1" style="width: 100%;">
                                 <kendo-combobox [data]="filteredTemplate" ngbAutofocus [textField]="'name'"
                                     formControlName="template" [filterable]="true" #smsTemplateCbx
-                                    (valueChange)="onChangeTemplate($event)" [valueField]="'id'">
+                                    (valueChange)="onChangeTemplate($event)" [valueField]="'id'"
+                                    [class.ng-submitted]="submitted">
                                 </kendo-combobox>
-                                <div *ngIf="f.template.errors && (f.template.touched || f.template.dirty || submitted)"
-                                    class="text-danger">
+                                <div *ngIf="f.template.errors && submitted" class="text-danger">
                                     <div *ngIf="f.template.errors.required">Chọn tin nhắn mẫu</div>
                                 </div>
                             </td>

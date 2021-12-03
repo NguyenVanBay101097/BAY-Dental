@@ -70,13 +70,13 @@
                                                 <div [class.d-none]="getValueFC('state') != 'draft'">
                                                     <kendo-combobox #doctorCbx [data]="filteredDoctors"
                                                         [textField]="'name'" [valueField]="'id'" [filterable]="true"
-                                                        formControlName="doctor">
+                                                        formControlName="doctor" [class.ng-submitted]="submitted">
                                                     </kendo-combobox>
                                                 </div>
                                                 <span *ngIf="getValueFC('state') != 'draft'">
                                                     {{getValueFC('doctor')?.name}}
                                                 </span>
-                                                <div *ngIf="f.doctor.errors && (f.doctor.touched || f.doctor.dirty || submitted)"
+                                                <div *ngIf="f.doctor.errors && submitted"
                                                     class="text-danger">
                                                     <div *ngIf="f.doctor.errors.required">Chọn bác sĩ</div>
                                                 </div>
@@ -145,14 +145,14 @@
                                             <td colspan="1" style="width: 100%;">
                                                 <ng-container *ngIf="getValueFC('state') === 'draft'; else reason">
                                                     <textarea type="text" formControlName="reason"
-                                                        [class.border-danger]="invalid" class="form-control"></textarea>
+                                                    [class.ng-submitted]="submitted" class="form-control"></textarea>
                                                 </ng-container>
                                                 <ng-template #reason>
                                                     <span style="word-break: break-word;">
                                                         {{getValueFC('reason')}}
                                                     </span>
                                                 </ng-template>
-                                                <div *ngIf="f.reason.errors && (f.reason.touched || f.reason.dirty || submitted)"
+                                                <div *ngIf="f.reason.errors && submitted"
                                                     class="text-danger">
                                                     <div *ngIf="f.reason.errors.required">Nhập lý do</div>
                                                 </div>
