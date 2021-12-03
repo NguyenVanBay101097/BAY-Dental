@@ -51,7 +51,7 @@ namespace Infrastructure.Services
             var bankAccount = SearchQuery(x => x.AccountNumber.Equals(entity.AccountNumber) && x.BankId.Equals(entity.BankId))
                 .Include(x=>x.Bank).FirstOrDefault();
             if (bankAccount != null)
-                throw new Exception("Tài khoản này đã tồn tại");      
+                throw new Exception("Số tài khoản đã tồn tại");      
 
             return await base.CreateAsync(entity);
         }

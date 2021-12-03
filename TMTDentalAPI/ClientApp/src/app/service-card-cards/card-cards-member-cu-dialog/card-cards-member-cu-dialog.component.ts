@@ -123,6 +123,7 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
   }
 
   actionActivate() {
+    this.submitted = true;
     if (this.formGroup.invalid) {
       return;
     }

@@ -38,9 +38,6 @@
             <button type="button" class="btn btn-primary mr-2" (click)="exportExcelFile()">
                 <i class="fas fa-download mr-2"></i>Xuất file
             </button>
-            <!-- <button type="button" class="btn btn-primary mr-2" (click)="changeData()">
-                <i class="fas fa-download mr-2"></i>Change Data
-            </button> -->
         </div>
         <div class="t-search t-search-left w-50">
             <div class="o_searchview">
@@ -75,12 +72,15 @@
                                 <ng-template kendoComboBoxItemTemplate let-dataItem>
                                     <div class="pt-2 pb-2">
                                         <div class="font-weight-bold">{{dataItem.accountNumber}}</div>
-                                        <div class="opacity-8" *ngIf="dataItem.bankBic">
-                                            {{dataItem.bankBic}}
-                                            <span *ngIf="dataItem.bankBranch">({{dataItem.bankBranch}})</span>
-                                        </div>
-                                        <div class="opacity-8" *ngIf="dataItem.accountHolderName">
-                                            {{dataItem.accountHolderName}}
+                                        <div class="d-flex">
+                                            <div class="opacity-8" *ngIf="dataItem.accountHolderName">
+                                                {{dataItem.accountHolderName}}
+                                            </div>
+                                            <div class="opacity-8" *ngIf="dataItem.bankBic">
+                                                <span>&nbsp;-</span>
+                                                {{dataItem.bankBic}}
+                                                <span *ngIf="dataItem.bankBranch">({{dataItem.bankBranch}})</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </ng-template>

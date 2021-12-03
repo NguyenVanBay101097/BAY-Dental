@@ -44,8 +44,8 @@
                                 <td colspan="1" style="width: 100%">
                                     <div class="d-flex align-items-center w-100">
                                         <div class="mr-2">
-                                            <kendo-numerictextbox formControlName="nbrPeriod" [min]="0" format="n0">
-                                            </kendo-numerictextbox>
+                                            <input class="form-control" formControlName="nbrPeriod" tmtautonumeric
+                                            [options]="{minimumValue: 0, decimalPlaces: 0}"/>
                                         </div>
                                         <div>
                                             <select class="form-control select-control" formControlName="period">
@@ -73,10 +73,10 @@
                     <app-service-list-search-dropdown (onSelectService)="addLine($event)"
                         [placeHolder]="'Tìm kiếm theo mã hoặc tên dịch vụ...'"></app-service-list-search-dropdown>
                         <div>
-                            <button class="btn btn-primary mr-2" (click)="onApplyCateg()">
+                            <button type="button" class="btn btn-primary mr-2" (click)="onApplyCateg()">
                                 Áp dụng cho cả nhóm
                             </button>
-                            <button class="btn btn-primary" (click) ="onApplyAll()">
+                            <button type="button" class="btn btn-primary" (click) ="onApplyAll()">
                                 Áp dụng cho toàn bộ
                             </button>
                         </div>
@@ -118,7 +118,7 @@
                                                 </app-compute-price-input-popover>
                                             </td>
                                             <td>
-                                                <button class="btn btn-danger mr-2" title="Xóa"
+                                                <button type="button" class="btn btn-danger mr-2" title="Xóa"
                                                     (click)="deleteItem(categIndex, proIndex)">
                                                     <span class="far fa-trash-alt"></span>
                                                 </button>

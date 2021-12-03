@@ -56,7 +56,9 @@ export class MemberCardListComponent implements OnInit {
   }
 
   pageChange(event: PageChangeEvent){
-
+    this.skip = event.skip;
+    this.limit = event.take;
+    this.loadDataFromApi();
   }
 
   editItem(item){

@@ -24,7 +24,7 @@
                             {{showServicesName(payment.saleOrderLines)}}
                         </span>
                     </td>
-                    <td>{{item.journal?.displayName}}</td>
+                    <td>{{item.journal?.name}}</td>
                     <td class="text-right">{{item.amount | number}}</td>
                     <td>{{item.communication}}</td>
                     <td *ngIf="i == 0" [attr.rowspan]="payment.payments.length" class="text-center">{{getPaymentState(payment.state)}}</td>

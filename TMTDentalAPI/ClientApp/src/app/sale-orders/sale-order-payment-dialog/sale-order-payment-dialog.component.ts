@@ -255,7 +255,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
     var val = this.getValueFormSave();
     this.paymentService.paymentSaleOrderAndDebt(val).subscribe((result: any) => {
-      this.activeModal.close();
+      this.activeModal.close(false);
       let modalRef = this.modalService.open(ConfirmPaymentDialogComponent, {
         size: 'sm',
         windowClass: "o_technical_modal",
@@ -384,8 +384,12 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
     this.step++;
     //gán lại default
-    this.userAmountPayment = this.amount;
     this.userAmountPaymentMax = this.amount;
+
+    setTimeout(() => {
+      this.userAmountPayment = this.amount;
+
+    }, 200);
     if (this.getValueForm('isDebtPayment')) {
       this.debtJournalSelected = Object.assign({}, this.filteredJournals.find(x => x.type == 'cash'));
       this.debtJournalSelected.amount = this.debtAmount;
@@ -420,6 +424,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
   backPreviousStep() {
     this.step--;
+    this.userAmountPayment = 0;
     this.journalLines.clear();
     if (this.isDebtPaymentValue) {
       this.paymentFC.debtJournal.setValue(this.filteredJournals.find(x => x.type == 'cash'));
