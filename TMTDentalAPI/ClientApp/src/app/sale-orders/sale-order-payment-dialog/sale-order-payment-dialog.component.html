@@ -299,7 +299,7 @@
                                                         <td class="w-50" style="vertical-align: unset;">
                                                             <div *ngIf="item.get('journals').value.length > 1">
                                                                 <kendo-combobox [placeholder]="'Tài khoản thu'" style="min-width: 200px;"
-                                                                    [data]="item.get('journals').value" [textField]="'displayName'" [valueField]="'id'"
+                                                                    [data]="item.get('journals').value" [textField]="'name'" [valueField]="'id'"
                                                                     formControlName="journal" >
                                                                 </kendo-combobox>
                                                                 <div class="text-danger" 

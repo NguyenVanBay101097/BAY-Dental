@@ -35,7 +35,7 @@ export class CommissionListV2Component implements OnInit {
 
   loadDataFromApi() {
     var val = new CommissionPaged();
-    // val.limit = 0;
+    val.limit = 0;
     val.offset = 0;
     val.search = '';
     this.commissionService.getPaged(val).subscribe(res => {

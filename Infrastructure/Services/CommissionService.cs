@@ -33,7 +33,10 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<Commission>(x => x.Type == val.Type));
 
             var query = SearchQuery(spec.AsExpression(), orderBy: x => x.OrderByDescending(s => s.DateCreated));
-            var items = await _mapper.ProjectTo<CommissionBasic>(query.Skip(val.Offset).Take(val.Limit)).ToListAsync();
+            if (val.Limit > 0)
+                query = query.Skip(val.Offset).Take(val.Limit);
+
+            var items = await _mapper.ProjectTo<CommissionBasic>(query).ToListAsync();
             var totalItems = await query.CountAsync();
 
             return new PagedResult2<CommissionBasic>(totalItems, val.Offset, val.Limit)

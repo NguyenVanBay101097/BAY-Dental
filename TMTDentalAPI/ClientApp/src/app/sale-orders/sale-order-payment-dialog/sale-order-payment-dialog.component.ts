@@ -59,16 +59,6 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
   isPaymentForService = false;
 
-  myOptions = {
-    digitGroupSeparator: '.',
-    decimalCharacter: ',',
-    decimalCharacterAlternative: '.',
-    currencySymbol: '\u00a0',
-    currencySymbolPlacement: 's',
-    roundingMethod: 'U',
-    minimumValue: '0',
-    decimailPlaces: '0'
-  }
   constructor(
     private fb: FormBuilder,
     private intlService: IntlService,
@@ -107,13 +97,11 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     setTimeout(() => {
       if (this.defaultVal) {
         this.defaultVal.date = new Date(this.defaultVal.date);
+        this.maxAmount = this.defaultVal.amount;
         this.paymentForm.patchValue(this.defaultVal);
-        this.maxAmount = this.getValueForm("amount");
-        this.paymentForm.get('amount').setValue(this.defaultVal.amount);
-        this.paymentForm.markAsPristine();
       }
-      this.getAmountAdvanceBalance();
 
+      this.getAmountAdvanceBalance();
     });
 
     // advance payment
@@ -630,9 +618,6 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
       this.linesFC.clear();
       this.defaultVal.lines.forEach((line) => {
         var g = this.fb.group(line);
-        setTimeout(() => {
-          g.get('amount').setValue(0);
-        });
         this.linesFC.push(g);
       });
 
@@ -687,7 +672,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     this.journalLines.removeAt(i);
 
     setTimeout(() => {
-      this.userAmountPayment = Number(this.userAmountPayment) + journalLine.get('amount').value;
+      this.userAmountPayment = this.userAmountPayment + journalLine.get('amount').value;
     }, 200);
   }
 

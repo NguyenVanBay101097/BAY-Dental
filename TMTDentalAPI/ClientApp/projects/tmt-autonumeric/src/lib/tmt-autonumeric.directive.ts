@@ -84,10 +84,9 @@ export class TmtAutonumericDirective implements OnInit, AfterViewInit, OnChanges
 
   ngAfterViewInit(): void {
     var options = this.getOptions();
-
     this.instance = new AutoNumeric(
       this.elm.nativeElement,
-      null,
+      this.initialValue || 0,
       options
     );
     this.setDisabledState(this.isDisabled);
@@ -136,17 +135,6 @@ export class TmtAutonumericDirective implements OnInit, AfterViewInit, OnChanges
   }
 
   writeValue(value: any): void {
-    if (!this.instance) {
-      setTimeout(() => {
-        if (this.instance) {
-          this.instance.set(value);
-        } else {
-          // autonumeric hasn't been initialised yet, store the value for later use
-          this.initialValue = value;
-        }
-      });
-    }
-
     if (this.instance) {
       this.instance.set(value);
     } else {
