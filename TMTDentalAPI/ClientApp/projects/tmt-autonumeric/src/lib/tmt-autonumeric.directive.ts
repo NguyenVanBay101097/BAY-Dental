@@ -12,9 +12,9 @@ import {
   Renderer2,
   SimpleChanges,
 } from '@angular/core';
-import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import AutoNumeric from 'autonumeric';
-import {AutonumericDefaults} from './tmt-autonumeric-defaults.service';
+import { AutonumericDefaults } from './tmt-autonumeric-defaults.service';
 
 export const AUTONUMERIC_CONTROL_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -136,14 +136,23 @@ export class TmtAutonumericDirective implements OnInit, AfterViewInit, OnChanges
   }
 
   writeValue(value: any): void {
-    setTimeout(() => {
-      if (this.instance) {
-        this.instance.set(value);
-      } else {
-        // autonumeric hasn't been initialised yet, store the value for later use
-        this.initialValue = value;
-      }
-    });
+    if (!this.instance) {
+      setTimeout(() => {
+        if (this.instance) {
+          this.instance.set(value);
+        } else {
+          // autonumeric hasn't been initialised yet, store the value for later use
+          this.initialValue = value;
+        }
+      });
+    }
+
+    if (this.instance) {
+      this.instance.set(value);
+    } else {
+      // autonumeric hasn't been initialised yet, store the value for later use
+      this.initialValue = value;
+    }
   }
 
   registerOnChange(fn: any): void {

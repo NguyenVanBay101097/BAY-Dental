@@ -60,6 +60,8 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   amountTotal = 0;
   get f() { return this.formGroup.controls; }
 
+  maxAmountPayment = 0;
+
 
   constructor(
     private fb: FormBuilder,
@@ -241,10 +243,15 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   removeOrderLine(index) {
     this.orderLines.removeAt(index);
     this.countAmountTotal();
+    this.formGroup.get('amountPayment').setValue(Math.min(this.amountTotal, this.formGroup.get('amountPayment').value));
+    this.maxAmountPayment = this.amountTotal;
   }
 
   removeAllLine() {
     this.orderLines.clear();
+    this.countAmountTotal();
+    this.formGroup.get('amountPayment').setValue(Math.min(this.amountTotal, this.formGroup.get('amountPayment').value));
+    this.maxAmountPayment = this.amountTotal;
   }
 
   duplicateLine(index, line: FormControl) {
@@ -417,6 +424,8 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
       this.orderLines.push(group);
       this.focusLastRow();
       this.countAmountTotal();
+      this.formGroup.get('amountPayment').setValue(Math.min(this.amountTotal, this.formGroup.get('amountPayment').value));
+      this.maxAmountPayment = this.amountTotal;
     });
   }
 
@@ -437,9 +446,10 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     });
   }
 
-  changePrice(price, line: AbstractControl) {
-    //line.get('oldPriceUnit').patchValue(price);
+  changePrice(e) {
     this.countAmountTotal();
+    this.formGroup.get('amountPayment').setValue(Math.min(this.amountTotal, this.formGroup.get('amountPayment').value));
+    this.maxAmountPayment = this.amountTotal;
   }
 
   focusLastRow() {

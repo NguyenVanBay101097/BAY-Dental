@@ -153,7 +153,7 @@
                                 <td colspan="1" style="width: 100%;">
                                  
                                     <input class="form-control" formControlName="amountPayment" tmtautonumeric
-                                    [options]="{minimumValue: 0, decimalPlaces: 0}" (keyup)="onChangeAmountPayment()"/>
+                                    [options]="{minimumValue: 0, decimalPlaces: 0, maximumValue: maxAmountPayment}" />
                                     <div *ngIf="f.amountPayment.errors && (f.amountPayment.touched || f.amountPayment.dirty || submitted)"
                                         class="text-danger">
                                         <div *ngIf="f.amountPayment.errors.required">Nhập số tiền</div>
@@ -247,7 +247,7 @@
                                                         <td class="align-middle">
                                                             
                                                             <input *ngIf="purchaseOrder?.state == 'draft'" style="width: 80px;" class="form-control" formControlName="productQty" tmtautonumeric
-                                                            [options]="{minimumValue: 0, decimalPlaces: 2}" (input)="countAmountTotal()"/>
+                                                            [options]="{minimumValue: 0, decimalPlaces: 2}" (rawValueModified)="changePrice($event)"/>
                                                             <span *ngIf="purchaseOrder?.state != 'draft'">
                                                                 {{line.get('productQty').value | number}}
                                                             </span>
@@ -264,7 +264,7 @@
                                                         <td class="align-middle">
                                                           
                                                             <input style="width: 120px;" class="form-control" *ngIf="purchaseOrder?.state == 'draft'" 
-                                                            formControlName="priceUnit" tmtautonumeric (input)="changePrice()"
+                                                            formControlName="priceUnit" tmtautonumeric (rawValueModified)="changePrice($event)"
                                                             [options]="{minimumValue: 0, decimalPlaces: 0}"/>
                                                             <span *ngIf="purchaseOrder?.state != 'draft'">
                                                                 {{line.get('priceUnit').value | number}}
@@ -273,7 +273,7 @@
                                                         <td class="align-middle">
                                                             
                                                             <input style="width: 60px;" class="form-control" *ngIf="purchaseOrder?.state == 'draft'" 
-                                                            formControlName="discount" tmtautonumeric (input)="countAmountTotal()"
+                                                            formControlName="discount" tmtautonumeric (rawValueModified)="changePrice($event)"
                                                             [options]="{minimumValue: 0, decimalPlaces: 0}"/>
                                                             <span *ngIf="purchaseOrder?.state != 'draft'">
                                                                 {{line.get('discount').value | number}}

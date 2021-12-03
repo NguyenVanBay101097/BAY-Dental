@@ -80,8 +80,7 @@
                                             </td>
                                             <td colspan="1" class="d-flex tr-send" style="width: 100%;">
                                                 <input class="form-control" formControlName="timeBeforSend"
-                                                    [options]="{ decimalPlaces: 0 }" tmtautonumeric
-                                                    (input)="changeTimeBeforSend($event)" />
+                                                    [options]="{ minimumValue: 1, decimalPlaces: 0 }" tmtautonumeric />
                                                 <select formControlName="typeTimeBeforSend" class="form-control ml-2">
                                                     <option class="form-control" value="day">Ngày
                                                     </option>
