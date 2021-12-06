@@ -28,18 +28,18 @@
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
-                    <button *ngIf="!program.active" type="button" class="btn btn-primary" accesskey="s"
+                    <button type="button" *ngIf="!program.active" type="button" class="btn btn-primary" accesskey="s"
                         (click)="onSave()">
                         Lưu
                     </button>
-                    <button *ngIf="!program.active" type="button" class="btn btn-primary" (click)="onSaveActive()">
+                    <button type="button" *ngIf="!program.active" type="button" class="btn btn-primary" (click)="onSaveActive()">
                         Lưu và kích hoạt
                     </button>
-                    <button *ngIf="!program.isPaused && program.active && program.statusDisplay == 'Đang chạy'"
+                    <button type="button" *ngIf="!program.isPaused && program.active && program.statusDisplay == 'Đang chạy'"
                         type="button" class="btn btn-primary" accesskey="s" (click)="onPause()">
                         Tạm ngừng
                     </button>
-                    <button *ngIf="program.isPaused && program.active && program.statusDisplay != 'Hết hạn'"
+                    <button type="button" *ngIf="program.isPaused && program.active && program.statusDisplay != 'Hết hạn'"
                         type="button" class="btn btn-primary" accesskey="s" (click)="onActive()">
                         Kích hoạt
                     </button>
@@ -60,7 +60,7 @@
                     <div class="col-8">
                         <div class="o_form_sheet m-0">
                             <div class="o_not_full oe_button_box">
-                                <button class="btn oe_stat_button" (click)="showHistoryApplyPromotion()" title="Giá trị khuyến mãi">
+                                <button type="button" class="btn oe_stat_button" (click)="showHistoryApplyPromotion()" title="Giá trị khuyến mãi">
                                     <i class="fas fa-dollar-sign o_button_icon"></i>
                                     <div class="o_field_widget o_stat_info o_readonly_modifier">
                                         <span class="o_stat_text">
