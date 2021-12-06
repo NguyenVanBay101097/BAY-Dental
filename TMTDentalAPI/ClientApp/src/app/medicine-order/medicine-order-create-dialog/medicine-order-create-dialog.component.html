@@ -169,8 +169,9 @@
                                         <span *ngIf="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'">
                                             {{line.get('quantity').value | number}}
                                         </span>
-                                        <kendo-numerictextbox (valueChange)="computeTotalAmount()" *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'" [min]="0" [format]="'n0'" [autoCorrect]="true" formControlName="quantity">
-                                        </kendo-numerictextbox>
+                                        <input class="form-control text-right" formControlName="quantity" 
+                                        *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'"
+                                        tmtautonumeric [options]="{minimumValue: 0,decimalPlaces:0}" (input)="computeTotalAmount()" />
                                         <!-- <input [min]="0"
                                             *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'"
                                             type="number" class="form-control text-right" formControlName="quantity"
@@ -180,8 +181,9 @@
                                         <span *ngIf="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'">
                                             {{line.get('price').value | number}}
                                         </span>
-                                        <kendo-numerictextbox (valueChange)="computeTotalAmount()" *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'" [min]="0" [format]="'n0'" formControlName="price">
-                                        </kendo-numerictextbox>
+                                        <input class="form-control text-right" formControlName="price" 
+                                        *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'"
+                                        tmtautonumeric [options]="{minimumValue: 0,decimalPlaces:0}" (input)="computeTotalAmount()"/>
                                     </td>
                                     <td class="text-right">{{computeAmountOfLine(line) | number}}</td>
                                     <td class="text-center cursor-pointer" *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'">
