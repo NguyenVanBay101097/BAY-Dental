@@ -147,7 +147,7 @@ namespace Infrastructure.Services
             await groupObj.InsertSecurityData();
             //insert những irmodelfield
             await InsertIrModelFieldData();
-            await appRoleService.CreateBaseUserRole();
+            //await appRoleService.CreateBaseUserRole();
             await resBankObj.ImportSampleData();
             //insert role default with permission
             await appRoleService.CreateDefaultRoles();

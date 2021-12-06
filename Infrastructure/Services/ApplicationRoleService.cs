@@ -99,18 +99,18 @@ namespace Infrastructure.Services
 
                 var roleFuncCsvs = csv.GetRecords<ApplicationRoleFunctionCsvLine>().ToList();
                 var roleFuncs = new List<ApplicationRoleFunction>();
-                foreach (var irmodel in listIrModelDatas)
+
+                foreach (var roleFunc in roleFuncCsvs)
                 {
-                    foreach (var roleFunc in roleFuncCsvs)
+                    var modelData = listIrModelDatas.Where(x => $"{x.Module}.{x.Name}" == roleFunc.RoleId).FirstOrDefault();
+                    if (modelData == null)
+                        continue;
+
+                    roleFuncs.Add(new ApplicationRoleFunction()
                     {
-                        var roleStrId = $"{irmodel.Module}.{irmodel.Name}";
-                        if (roleStrId == roleFunc.RoleId.ToString())
-                            roleFuncs.Add(new ApplicationRoleFunction()
-                            {
-                                RoleId = irmodel.ResId,
-                                Func = roleFunc.Func
-                            });
-                    }
+                        RoleId = modelData.ResId,
+                        Func = roleFunc.Func
+                    });
                 }
 
                 await roleFuncObj.CreateAsync(roleFuncs);
