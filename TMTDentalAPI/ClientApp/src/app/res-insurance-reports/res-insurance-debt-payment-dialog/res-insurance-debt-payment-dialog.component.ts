@@ -89,6 +89,7 @@ export class ResInsuranceDebtPaymentDialogComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
     var val = this.formGroup.getRawValue();
     val.partnerId = this.partnerId ? this.partnerId : val.partnerId;
     val.journalId = val.journal.id;

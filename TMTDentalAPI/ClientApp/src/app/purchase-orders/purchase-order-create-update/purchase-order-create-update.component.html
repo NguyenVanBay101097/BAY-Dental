@@ -96,9 +96,9 @@
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-combobox [data]="filteredPartners" [textField]="'name'"
                                         [class.d-none]="purchaseOrder?.state != 'draft'" [filterable]="true" #partnerCbx
-                                        formControlName="partner" [valueField]="'id'">
+                                        formControlName="partner" [valueField]="'id'" [class.ng-submitted]="submitted">
                                     </kendo-combobox>
-                                    <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)"
+                                    <div *ngIf="f.partner.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.partner.errors.required">Chọn nhà cung cấp</div>
                                     </div>
@@ -116,9 +116,9 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-datepicker [format]="'dd/MM/yyyy'" *ngIf="purchaseOrder?.state == 'draft'"
-                                        formControlName="dateOrderObj">
+                                        formControlName="dateOrderObj" [class.ng-submitted]="submitted">
                                     </kendo-datepicker>
-                                    <div *ngIf="purchaseOrder?.state == 'draft' && f.dateOrderObj.errors && (f.dateOrderObj.touched || f.dateOrderObj.dirty || submitted)"
+                                    <div *ngIf="purchaseOrder?.state == 'draft' && f.dateOrderObj.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.dateOrderObj.errors.required">Chọn ngày {{purchaseOrder?.type ==
                                             'order' ? 'mua' : 'trả'}} hàng</div>
@@ -153,8 +153,9 @@
                                 <td colspan="1" style="width: 100%;">
                                  
                                     <input class="form-control" formControlName="amountPayment" tmtautonumeric
-                                    [options]="{minimumValue: 0, decimalPlaces: 0}" (keyup)="onChangeAmountPayment()"/>
-                                    <div *ngIf="f.amountPayment.errors && (f.amountPayment.touched || f.amountPayment.dirty || submitted)"
+                                    [options]="{minimumValue: 0, decimalPlaces: 0}" (keyup)="onChangeAmountPayment()"
+                                    [class.ng-submitted]="submitted"/>
+                                    <div *ngIf="f.amountPayment.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.amountPayment.errors.required">Nhập số tiền</div>
                                     </div>
