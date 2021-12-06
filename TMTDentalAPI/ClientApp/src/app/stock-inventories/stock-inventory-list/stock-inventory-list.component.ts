@@ -6,6 +6,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
@@ -43,6 +44,7 @@ export class StockInventoryListComponent implements OnInit {
     private router: Router,
     private modalService: NgbModal,
     private checkPermissionService: CheckPermissionService,
+    private authService: AuthService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -70,6 +72,7 @@ export class StockInventoryListComponent implements OnInit {
     paged.search = this.search ? this.search : '';
     paged.dateFrom = this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd")
     paged.dateTo = this.intlService.formatDate(this.dateTo, "yyyy-MM-ddT23:59")
+    paged.companyId = this.authService.userInfo.companyId;
     this.stockInventorySevice.getPaged(paged).pipe(
       map(response => (<GridDataResult>{
         data: response.items,

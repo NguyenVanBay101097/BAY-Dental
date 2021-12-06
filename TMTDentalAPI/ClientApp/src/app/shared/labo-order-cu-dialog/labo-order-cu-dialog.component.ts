@@ -9,6 +9,8 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
 import { Observable, of, timer } from 'rxjs';
 import { debounceTime, map, switchMap, tap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
+import { SessionInfoStorageService } from 'src/app/core/services/session-info-storage.service';
 import { WebService } from 'src/app/core/services/web.service';
 import { LaboBiteJointBasic, LaboBiteJointService } from 'src/app/labo-bite-joints/labo-bite-joint.service';
 import { LaboBridgeBasic, LaboBridgePageSimple, LaboBridgeService } from 'src/app/labo-bridges/labo-bridge.service';
@@ -68,6 +70,8 @@ export class LaboOrderCuDialogComponent implements OnInit {
     private printService: PrintService,
     private router: Router,
     private toothService: ToothService,
+    private sessionInfoStorageService: SessionInfoStorageService,
+    private authService: AuthService
     
   ) { }
 
@@ -177,6 +181,9 @@ export class LaboOrderCuDialogComponent implements OnInit {
     var val = new PartnerPaged();
     val.supplier = true;
     val.search = filter;
+    if (this.sessionInfoStorageService.getSessionInfo().settings && !this.sessionInfoStorageService.getSessionInfo().settings.companySharePartner) {
+      val.companyId = this.authService.userInfo.companyId;
+    }
     return this.partnerService.getAutocompleteSimple(val);
   }
 

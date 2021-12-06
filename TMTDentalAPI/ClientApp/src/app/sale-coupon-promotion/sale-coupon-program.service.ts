@@ -57,6 +57,7 @@ export class SaleCouponProgramGetListPagedRequest {
     status: string;
     ruleDateFromBegin: string;
     ruleDateFromEnd: string;
+    companyId: string;
 }
 
 export class SaleCouponProgramGetListPagedResponse {

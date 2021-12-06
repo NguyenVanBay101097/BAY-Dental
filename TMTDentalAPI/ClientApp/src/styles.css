@@ -1232,7 +1232,7 @@ html .o_web_client {
 }
 
 .o_dashboard_view .o_group>.o_aggregate_col,
-.o_dashboard_view .o_group .o_formula {
+.o_dashboard_view .o_group .o_formula, .o_aggregate_col {
     display: inline-block;
     width: 230px;
     margin-bottom: 1rem;
@@ -1243,7 +1243,7 @@ html .o_web_client {
 }
 
 .o_dashboard_view .o_group .o_aggregate,
-.o_dashboard_view .o_group .o_formula {
+.o_dashboard_view .o_group .o_formula, .o_aggregate {
     padding: 15px;
     border: 1px solid #dee2e6;
     border-radius: 4px;
@@ -1264,6 +1264,10 @@ html .o_web_client {
     font-weight: 600;
 }
 
+.o_aggregate .o_aggregate_link {
+    text-align: end;
+    color: #0d6efd;
+}
 
 /* end dashboard_view.scss*/
 

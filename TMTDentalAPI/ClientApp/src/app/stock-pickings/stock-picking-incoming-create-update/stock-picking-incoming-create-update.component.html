@@ -159,11 +159,9 @@
                                                             tư</span>
                                                     </td>
                                                     <td class="align-middle ">
-                                                        <kendo-numerictextbox [min]="0" [format]="'n2'"
+                                                        <input class="form-control" style="width: 80px;" formControlName="productUOMQty"
                                                             *ngIf="['done', 'cancel'].indexOf(picking?.state) === -1"
-                                                            formControlName="productUOMQty" style="width: 80px;"
-                                                            [spinners]="false">
-                                                        </kendo-numerictextbox>
+                                                            [options]="{ minimumValue: 0, decimalPlaces: 2 }" tmtautonumeric/>
                                                         <div *ngIf="line.get('productUOMQty').errors && (line.get('productUOMQty').touched || line.get('productUOMQty').dirty || submitted)"
                                                             class="text-danger">
                                                             <div *ngIf="line.get('productUOMQty').errors.required">

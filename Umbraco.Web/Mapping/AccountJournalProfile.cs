@@ -13,10 +13,7 @@ namespace Umbraco.Web.Mapping
         public AccountJournalProfile()
         {
             CreateMap<AccountJournal, AccountJournalViewModel>();
-            CreateMap<AccountJournal, AccountJournalSimple>()
-                .ForMember(x => x.AccountHolderName, x => x.MapFrom(y => y.BankAccount != null ? y.BankAccount.AccountHolderName : ""))
-                .ForMember(x => x.BankBic, x => x.MapFrom(y => y.BankAccount != null ? y.BankAccount.Bank.BIC : ""))
-                .ForMember(x => x.Branch, x => x.MapFrom(y => y.BankAccount != null ? y.BankAccount.Branch : ""));
+            CreateMap<AccountJournal, AccountJournalSimple>();
             CreateMap<AccountJournal, AccountJournalBasic>();
             CreateMap<AccountJournal, AccountJournalResBankSimple>();
 

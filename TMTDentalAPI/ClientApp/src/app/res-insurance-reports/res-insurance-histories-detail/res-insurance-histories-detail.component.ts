@@ -1,4 +1,6 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import * as moment from 'moment';
 import { map } from 'rxjs/operators';
@@ -12,16 +14,19 @@ import { ResInsuranceReportService } from '../res-insurance-report.service';
   styleUrls: ['./res-insurance-histories-detail.component.css']
 })
 export class ResInsuranceHistoriesDetailComponent implements OnInit {
-  @Input() paymentId: string;
-  @Input() dateFrom: string;
-  @Input() dateTo: string;
+  paymentId: string;
+  title: string;
   gridData: GridDataResult;
   limit: number = 20;
   skip: number = 0;
-  items: InsuranceHistoryInComeDetailItem[];
+  itemDetail: any;
   pagerSettings: any;
+
   constructor(
     private resInsuranceReportService: ResInsuranceReportService,
+    private activeModal: NgbActiveModal,
+    private modalService: NgbModal,
+    private router: Router,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) {
     this.pagerSettings = config.pagerSettings
@@ -33,19 +38,17 @@ export class ResInsuranceHistoriesDetailComponent implements OnInit {
 
   loadDataFromApi(): void {
     let val = new InsuranceHistoryInComeDetailFilter();
-    val.dateFrom = this.dateFrom ? moment(this.dateFrom).format('YYYY-MM-DD') : '';
-    val.dateTo = this.dateTo ? moment(this.dateTo).format('YYYY-MM-DD') : '';
     val.paymentId = this.paymentId || '';
-    this.resInsuranceReportService.getHistoryInComeDebtDetails(val).subscribe((res: any) => {
-      this.items = res;
+    this.resInsuranceReportService.getHistoryInComeDetail(val).subscribe((res: any) => {
+      this.itemDetail = res;
       this.loadItems();
     }, (error) => console.log(error));
   }
 
   loadItems(): void {
     this.gridData = {
-      data: this.items.slice(this.skip, this.skip + this.limit),
-      total: this.items.length
+      data: this.itemDetail.lines.slice(this.skip, this.skip + this.limit),
+      total: this.itemDetail.lines.length
     };
   }
 
@@ -53,5 +56,24 @@ export class ResInsuranceHistoriesDetailComponent implements OnInit {
     this.skip = event.skip;
     this.limit = event.take;
     this.loadItems();
+  }
+
+  clickUrl(item) {
+    this.router.navigateByUrl('/partners/customer/' + item.partnerId);
+    this.activeModal.dismiss();
+  }
+
+
+  public getState(state) {
+    switch (state) {
+      case 'posted':
+        return 'Đã xác nhận';
+      case 'cancel':
+        return 'Đã hủy';
+    }
+  }
+
+  onCancel(): void {
+    this.activeModal.dismiss();
   }
 }

@@ -1,10 +1,12 @@
 <div class="d-flex">
     <div class="d-flex flex-fill">
         <div class="flex-fill">
-            <kendo-numerictextbox class="font-weight-600" *ngIf="form.discountType == this.discountTypeDict['VNĐ']" [min]="0" [autoCorrect]="true" [(ngModel)]="form.discountFixed" style="width:100%" [format]="'n0'" [spinners]="false" (change)="onChangeDiscount($event)">
-            </kendo-numerictextbox>
-            <kendo-numerictextbox class="font-weight-600" *ngIf="form.discountType == this.discountTypeDict['%']" [min]="0" [autoCorrect]="true" [max]="100" [(ngModel)]="form.discountPercent" [format]="'n0'" style="width:100%" [spinners]="false" (change)="onChangeDiscount($event)">
-            </kendo-numerictextbox>
+            <input class="form-control font-weight-600" *ngIf="form.discountType == this.discountTypeDict['VNĐ']" [(ngModel)]="form.discountFixed" style="width:100%" tmtautonumeric
+            (input)="onChangeDiscount($event)"
+            [options]="{minimumValue: 0, decimalPlaces: 0}"/>
+            <input class="form-control font-weight-600" *ngIf="form.discountType == this.discountTypeDict['%']" [(ngModel)]="form.discountPercent" style="width:100%" tmtautonumeric
+            (input)="onChangeDiscount($event)"
+            [options]="{minimumValue: 0, maximumValue: 100, decimalPlaces: 0}"/>
         </div>
         <div class="btn-group-toggle discount-options ml-2">
             <label class="btn border" [class.active]="form.discountType == 'percentage'">

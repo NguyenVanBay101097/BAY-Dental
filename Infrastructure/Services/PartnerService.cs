@@ -529,6 +529,8 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Supplier == val.Supplier);
             if (val.Active.HasValue)
                 query = query.Where(x => x.Active == val.Active);
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
             if (!string.IsNullOrEmpty(val.Search))
             {
                 query = query.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search)
@@ -2736,7 +2738,7 @@ namespace Infrastructure.Services
             var dotkhamObj = GetService<IDotKhamService>();
             var saleObj = GetService<ISaleOrderService>();
             //check company
-            var attQr = attObj.SearchQuery();
+            var attQr = attObj.SearchQuery(x=> x.CompanyId == CompanyId);
             var saleQr = saleObj.SearchQuery(x=> x.CompanyId == CompanyId);
             var dotkhamQr = dotkhamObj.SearchQuery();
 

@@ -57,9 +57,8 @@
                                             </label>
                                         </td>
                                         <td colspan="1" class="d-flex">
-                                            <kendo-numerictextbox [min]="1" formControlName="timeBeforSend"
-                                                [autoCorrect]="true" [spinners]="false" format="n0">
-                                            </kendo-numerictextbox>
+                                            <input class="form-control" formControlName="timeBeforSend"
+                                                [options]="{ minimumValue: 1, decimalPlaces: 0 }" tmtautonumeric />
                                             <select formControlName="TypeTimeBeforSend" class="form-control ml-2">
                                                 <!-- <option class="form-control" value="minute">Phút
                                                 </option> -->

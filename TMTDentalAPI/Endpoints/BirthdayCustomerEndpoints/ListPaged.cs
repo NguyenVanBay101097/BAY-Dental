@@ -62,7 +62,9 @@ namespace TMTDentalAPI.Endpoints.BirthdayCustomerEndpoints
                 partnerQuery = partnerQuery.Where(x => x.BirthMonth == request.Month.Value);
             if (!string.IsNullOrEmpty(request.Search))
                 partnerQuery = partnerQuery.Where(x => x.Name.Contains(request.Search) || x.NameNoSign.Contains(request.Search) || x.Phone.Contains(request.Search));
-            
+            if(request.CompanyId.HasValue)
+                partnerQuery = partnerQuery.Where(x=> x.CompanyId.Value == request.CompanyId.Value);
+
             var query = from partner in partnerQuery
                         from sale_report in partnerSaleReport.Where(x => x.PartnerId == partner.Id).DefaultIfEmpty()
                         select new BirthdayCustomerDto

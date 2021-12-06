@@ -240,6 +240,9 @@ namespace TMTDentalAPI.Controllers
                     query = query.Where(x => x.Labos.Any(s => s.State == "confirmed"));
             }
 
+            if(val.CompanyId.HasValue)
+                query = query.Where(x=> x.CompanyId == val.CompanyId);
+
             var totalItems = await query.CountAsync();
 
             query = query.Include(x => x.OrderPartner)

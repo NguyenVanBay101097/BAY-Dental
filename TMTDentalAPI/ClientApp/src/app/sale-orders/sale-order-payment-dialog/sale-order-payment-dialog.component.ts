@@ -25,6 +25,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   paymentForm: FormGroup;
   defaultVal: any;// data from api saleorderpaymentbysaleorderid
   partnerDebt = 0; // số tiền công nợ
+  userAmountPaymentMax = 0; // số tiền tối đa mà người dùng được nhập
   // advanced payment
   userAmountPayment = 0; // số tiền khách nhập
   filteredJournals: any[] = [];
@@ -58,16 +59,6 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
   isPaymentForService = false;
 
-  myOptions = {
-    digitGroupSeparator: '.',
-    decimalCharacter: ',',
-    decimalCharacterAlternative: '.',
-    currencySymbol: '\u00a0',
-    currencySymbolPlacement: 's',
-    roundingMethod: 'U',
-    minimumValue: '0',
-    decimailPlaces: '0'
-  }
   constructor(
     private fb: FormBuilder,
     private intlService: IntlService,
@@ -106,20 +97,11 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     setTimeout(() => {
       if (this.defaultVal) {
         this.defaultVal.date = new Date(this.defaultVal.date);
+        this.maxAmount = this.defaultVal.amount;
         this.paymentForm.patchValue(this.defaultVal);
-        this.maxAmount = this.getValueForm("amount");
-        this.paymentForm.get('amount').setValue(this.defaultVal.amount);
-
-        // this.linesFC.clear();
-        // this.defaultVal.lines.forEach((line) => {
-        //   var g = this.fb.group(line);
-        //   this.linesFC.push(g);
-        // });
-
-        this.paymentForm.markAsPristine();
       }
-      // this.changePaymentForService();
 
+      this.getAmountAdvanceBalance();
     });
 
     // advance payment
@@ -136,6 +118,12 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
   get userAmountPaymentValue() {
     return Number(this.userAmountPayment);
+  }
+
+  getAmountAdvanceBalance() {
+    this.partnerService.getAmountAdvanceBalance(this.partner.id).subscribe(result => {
+      this.advanceAmount = result;
+    })
   }
 
   changeDebtPayment(checked) {
@@ -385,6 +373,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     this.step++;
     //gán lại default
     this.userAmountPayment = this.amount;
+    this.userAmountPaymentMax = this.amount;
     if (this.getValueForm('isDebtPayment')) {
       this.debtJournalSelected = Object.assign({}, this.filteredJournals.find(x => x.type == 'cash'));
       this.debtJournalSelected.amount = this.debtAmount;
@@ -629,9 +618,6 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
       this.linesFC.clear();
       this.defaultVal.lines.forEach((line) => {
         var g = this.fb.group(line);
-        setTimeout(() => {
-          g.get('amount').setValue(0);
-        });
         this.linesFC.push(g);
       });
 
@@ -671,13 +657,23 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
       journal: [journals[0], Validators.required]
     }));
 
-    this.userAmountPayment = this.amount - this.amountTotalJournalPayment;
+    let computeAmount = this.amount - this.amountTotalJournalPayment;
+    this.userAmountPayment =  computeAmount;
+   
+    setTimeout(() => {
+      this.userAmountPaymentMax = computeAmount;
+    }, 200);
   }
 
   removeJounalSelected(i) {
     var journalLine = this.journalLines.at(i);
-    this.userAmountPayment = Number(this.userAmountPayment) + journalLine.get('amount').value;
+    this.userAmountPaymentMax = this.userAmountPaymentMax + journalLine.get('amount').value;
+
     this.journalLines.removeAt(i);
+
+    setTimeout(() => {
+      this.userAmountPayment = this.userAmountPayment + journalLine.get('amount').value;
+    }, 200);
   }
 
   getPaymentMethod(type: string) {

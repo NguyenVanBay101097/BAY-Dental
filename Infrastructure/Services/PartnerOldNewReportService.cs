@@ -143,10 +143,12 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Partner.CityCode == val.CityCode);
             if (!string.IsNullOrEmpty(val.DistrictCode))
                 query = query.Where(x => x.Partner.DistrictCode == val.DistrictCode);
-            if (!string.IsNullOrEmpty(val.WardCode))
+            if (!string.IsNullOrEmpty(val.WardCode)) 
                 query = query.Where(x => x.Partner.WardCode == val.WardCode);
             if (val.SourceId.HasValue)
                 query = query.Where(x => x.Partner.SourceId == val.SourceId);
+            if (val.IsHasNullSourceId)
+                query = query.Where(x => !x.Partner.SourceId.HasValue);
             if (!string.IsNullOrEmpty(val.Gender))
                 query = query.Where(x => x.Partner.Gender == val.Gender);
            

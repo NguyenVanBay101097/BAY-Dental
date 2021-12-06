@@ -5,6 +5,8 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import * as _ from 'lodash';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
+import { SessionInfoStorageService } from 'src/app/core/services/session-info-storage.service';
 import { PartnerPaged } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
@@ -41,6 +43,8 @@ export class LaboOrderExportNotExportComponent implements OnInit {
     private modalService: NgbModal,
     private checkPermissionService: CheckPermissionService,
     private partnerService: PartnerService,
+    private sessionInfoStorageService: SessionInfoStorageService,
+    private authService: AuthService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
     ) { this.pagerSettings = config.pagerSettings }
 
@@ -98,6 +102,9 @@ export class LaboOrderExportNotExportComponent implements OnInit {
     val.search = search || '';
     val.supplier = true;
     val.active = true;
+    if (this.sessionInfoStorageService.getSessionInfo().settings && !this.sessionInfoStorageService.getSessionInfo().settings.companySharePartner) {
+      val.companyId = this.authService.userInfo.companyId;
+    }
     return this.partnerService.getAutocompleteSimple(val);
   }
 

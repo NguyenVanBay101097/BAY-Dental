@@ -83,7 +83,7 @@ namespace Infrastructure.Services
 
             foreach (var line in self.Lines)
             {
-                var amount = line.PayType == "percent" ? (line.SaleOrderLine.AmountResidual ?? 0) *  ((line.Percent ?? 0) / 100) : (line.FixedAmount ?? 0);
+                var amount = line.PayType == "percent" ? line.SaleOrderLine.PriceTotal *  ((line.Percent ?? 0) / 100) : (line.FixedAmount ?? 0);
                 totalAmount += amount;
             }
 

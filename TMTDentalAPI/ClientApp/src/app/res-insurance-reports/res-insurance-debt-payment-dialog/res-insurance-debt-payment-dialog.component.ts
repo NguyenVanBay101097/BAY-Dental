@@ -37,7 +37,7 @@ export class ResInsuranceDebtPaymentDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.formGroup = this.fb.group({
-      amount:new FormControl({
+      amount: new FormControl({
         value: 0,
         disabled: true
       }),
@@ -89,6 +89,11 @@ export class ResInsuranceDebtPaymentDialogComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
+    if(this.formGroup.invalid){
+      return;
+    }
+    
     var val = this.formGroup.getRawValue();
     val.partnerId = this.partnerId ? this.partnerId : val.partnerId;
     val.journalId = val.journal.id;
@@ -98,7 +103,7 @@ export class ResInsuranceDebtPaymentDialogComponent implements OnInit {
         this.activeModal.close(res);
       });
     }, (err) => {
-      this.notifyService.notify('error', err);
+      console.log(err);
     });
   }
 

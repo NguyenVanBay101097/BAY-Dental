@@ -13,7 +13,7 @@
                                 <label class="o_form_label">Chủ tài khoản</label>
                             </td>
                             <td colspan="1">
-                                <input class="form-control" formControlName="accountHolderName">
+                                <input class="form-control" formControlName="accountHolderName" (input)="accountHolderNameCtrl.setValue(accountHolderNameCtrl.value.toUpperCase())">
                                 <div *ngIf="f.accountHolderName.errors && (f.accountHolderName.touched || f.accountHolderName.dirty || submitted)" class="text-danger mb-1">
                                     <div *ngIf="f.accountHolderName.errors.required">Nhập chủ tài khoản</div>
                                 </div>

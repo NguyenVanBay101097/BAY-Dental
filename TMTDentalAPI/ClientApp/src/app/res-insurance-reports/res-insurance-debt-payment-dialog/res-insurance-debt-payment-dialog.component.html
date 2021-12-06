@@ -34,10 +34,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" [max]="defaultVal.amount" [autoCorrect]="true"
-                                        formControlName="amount" [format]="'n0'" 
-                                        [spinners]="false">
-                                    </kendo-numerictextbox>
+                                    <input class="form-control" formControlName="amount" tmtautonumeric
+                                    [options]="{minimumValue: 0, maximumValue:defaultVal.amount, decimalPlaces: 0}"/>
                                 </td>
                             </tr>
                         </tbody>
@@ -74,9 +72,9 @@
                 <table *ngIf="defaultVal?.debitItems?.length > 0" class="table table-sm table-striped">
                     <thead>
                         <tr>
+                            <th> Khách hàng </th>
                             <th> Ngày bảo lãnh </th>
-                            <th> Nguồn</th>
-                            <th> Phiếu điều trị</th>
+                            <th> Nội dung</th>
                             <th> Số tiền </th>
                             <th> Thao tác</th>
                         </tr>
@@ -84,9 +82,9 @@
                     <tbody>
                         <ng-container *ngFor="let item of debitItems; index as i">
                             <tr>
-                                <td> {{item.date | date:'shortDate'}} </td>
-                                <td> {{item.origin}} </td>
-                                <td> {{item.refDisplay }} </td>
+                                <td> {{item.partnerName}} </td>
+                                <td> {{item.date | date:'shortDate'}} </td>                              
+                                <td> {{item.ref }} </td>
                                 <td> {{item.balance | number}} </td>
                                 <td>
                                     <button class="btn btn-danger" title="Xóa" (click)="deleteItem(item, i)">

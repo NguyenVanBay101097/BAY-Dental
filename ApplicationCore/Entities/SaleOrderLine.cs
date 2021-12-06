@@ -184,6 +184,14 @@ namespace ApplicationCore.Entities
         public double? AmountDiscountTotal { get; set; }
 
         /// <summary>
+        /// Tổng tiền bảo hiểm đã thanh toán
+        /// </summary>
+        public decimal? AmountInsurancePaidTotal { get; set; }
+
+        public Guid? InsuranceId { get; set; }
+        public ResInsurance Insurance { get; set; }
+
+        /// <summary>
         /// bác sĩ được hưởng hoa hồng
         /// </summary>
         //public Guid? PartnerCommissionId { get; set; }
@@ -203,6 +211,8 @@ namespace ApplicationCore.Entities
         public ICollection<SaleOrderPromotion> Promotions { get; set; } = new List<SaleOrderPromotion>();
 
         public ICollection<SaleOrderPromotionLine> PromotionLines { get; set; } = new List<SaleOrderPromotionLine>();
+
+
 
         /// <summary>
         /// Xác định line bị hủy bỏ
@@ -241,6 +251,11 @@ namespace ApplicationCore.Entities
         /// thanh toán = bảo hiểm
         /// </summary>
         public ICollection<ResInsurancePaymentLine> InsurancePaymentLines { get; set; } = new List<ResInsurancePaymentLine>();
+
+        /// <summary>
+        /// danh sách vật tư
+        /// </summary>
+        public ICollection<SaleOrderLineSaleProductionRel> SaleProductionRels { get; set; } = new List<SaleOrderLineSaleProductionRel>();
 
         /// <summary>
         /// ngày của chi tiết điều tr

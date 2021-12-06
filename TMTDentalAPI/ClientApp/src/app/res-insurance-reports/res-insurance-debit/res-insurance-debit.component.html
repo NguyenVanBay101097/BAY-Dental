@@ -103,12 +103,28 @@
                                 </div>
                             </div>
                         </div>
-                        <kendo-grid [resizable]="true" [data]="insuranceDebt" [navigable]="true"
-                            [kendoGridSelectBy]="'moveId'" [selectedKeys]="selectedIds" #grid>
-                            <kendo-grid-checkbox-column [width]="50" [headerClass]="{'text-center': true}"
-                                [class]="{'text-center': true}" showSelectAll="true"></kendo-grid-checkbox-column>
+                        <kendo-grid [resizable]="true" [data]="gridData" [navigable]="true"  [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" 
+                        (pageChange)="pageChange($event)" [kendoGridSelectBy]="'moveId'" [selectedKeys]="selectedIds" #grid>
+                            <div *kendoGridDetailTemplate="let dataItem" width="60">
+                                <app-res-insurance-debit-detail [item]="dataItem" >
+                                </app-res-insurance-debit-detail>
+                            </div>
+                            <kendo-grid-checkbox-column [width]="40" [headerClass]="{'text-center': true}"
+                                [class]="{'text-center': true}" showSelectAll="true">
+                            </kendo-grid-checkbox-column>
                             <kendo-grid-column field="partnerName" title="Khách hàng" width="100"
                                 footerClass="font-weight-600">
+                                <ng-template kendoGridCellTemplate let-dataItem let-column="column">
+                                    <div>
+                                        <a class="text-primary" title="Xem hồ sơ khách hàng" [routerLink]="['/partners/customer/' + dataItem.partnerId]">
+                                        {{dataItem.partnerName}}
+                                    </a>
+                                        <div *ngIf="dataItem.partnerRef">
+                                            <small>{{dataItem.partnerRef}}</small>
+                                        </div>
+                                    </div>
+                                </ng-template>
+                               
                                 <ng-template kendoGridFooterTemplate>
                                     Tổng
                                 </ng-template>
@@ -121,8 +137,7 @@
                                         Tổng
                                     </ng-template> -->
                             </kendo-grid-column>
-                            <!-- <kendo-grid-column field="origin" title="Nguồn" width="150">
-                                </kendo-grid-column> -->
+
                             <kendo-grid-column field="communication" title="Nội dung" width="100">
                             </kendo-grid-column>
                             <kendo-grid-column title="Số tiền" headerClass="text-right" class="text-right" width="135"

@@ -6,6 +6,8 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
+import { SessionInfoStorageService } from 'src/app/core/services/session-info-storage.service';
 import { TmtOptionSelect } from 'src/app/core/tmt-option-select';
 import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
@@ -55,6 +57,8 @@ export class PurchaseOrderListComponent implements OnInit {
     private checkPermissionService: CheckPermissionService,
     private partnerService: PartnerService,
     private notifyService: NotifyService,
+    private sessionInfoStorageService: SessionInfoStorageService,
+    private authService: AuthService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -193,6 +197,9 @@ export class PurchaseOrderListComponent implements OnInit {
     filter.supplier = true;
     filter.active = true;
     filter.offset = 0;
+    if (this.sessionInfoStorageService.getSessionInfo().settings && !this.sessionInfoStorageService.getSessionInfo().settings.companySharePartner) {
+      filter.companyId = this.authService.userInfo.companyId;
+    }
     return this.partnerService.getAutocompleteSimple(filter);
   }
 

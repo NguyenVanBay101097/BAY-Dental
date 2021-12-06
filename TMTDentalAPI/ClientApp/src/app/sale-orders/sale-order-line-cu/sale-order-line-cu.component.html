@@ -136,8 +136,8 @@
                                     </ng-template>
                                 </div>
                                 <ng-template #popContent let-greeting="greeting">
-                                    <kendo-numerictextbox style="width:100%;" [min]="0" [format]="'n0'" [spinners]="false" formControlName="priceUnit">
-                                    </kendo-numerictextbox>
+                                    <input class="form-control text-right" style="width:100%;" formControlName="priceUnit" tmtautonumeric
+                                        [options]="{minimumValue: 0,decimalPlaces:0}" />
                                 </ng-template>
                                 <ng-template #popTitle let-language="language">Giá gốc</ng-template>
                             </td>
@@ -155,8 +155,8 @@
                                     </span>
                                 </ng-container>
                                 <ng-template #elseTemplateQty>
-                                    <kendo-numerictextbox required style="width: 150px;" [format]="'n0'" [min]="0" formControlName="productUOMQty">
-                                    </kendo-numerictextbox>
+                                    <input class="form-control text-right" style="width: 150px; float: right;" formControlName="productUOMQty" tmtautonumeric
+                                    [options]="{minimumValue: 0,decimalPlaces: 0}" >
                                 </ng-template>
                             </td>
                         </tr>
@@ -166,12 +166,12 @@
                 <table class="o_group o_inner_group o_group_col_12">
                     <tbody>
                         <tr>
-                            <td colspan="1" class="o_td_label">
+                            <td colspan="1" class="o_td_label" style="width: auto">
                                 <label class="o_form_label">
                                     Thành tiền
                                 </label>
                             </td>
-                            <td colspan="1" style="width: 100%; text-align: end;" class="pr-0">
+                            <td colspan="1" style="text-align: end;" class="pr-0">
                                 <div class="font-weight-600 mb-0">
                                     <ng-container *ngIf="!isEditting; else elseTemplatePriceSub">
                                         {{line.priceSubTotal | number: '1.0-0'}}
@@ -182,25 +182,38 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
+                        <tr hasGroups [groups]="'insurance.group_insurance'">
+                            <td colspan="1" class="o_td_label" style="width: auto">
                                 <label class="o_form_label">
-                                    Thanh toán
+                                    Bảo hiểm trả 
+                                    <i *ngIf="line.insuranceName" style="font-weight: normal;">({{line.insuranceName}})</i>
                                 </label>
                             </td>
-                            <td colspan="1" style="width: 100%; text-align: end;" class="pr-0">
-                                <div *ngIf="!isFast" class="font-weight-600">
-                                    {{line.amountInvoiced | number}}
+                            <td colspan="1" style="text-align: end;" class="pr-0">
+                                <div class="font-weight-600">
+                                    {{line.amountInsurancePaidTotal | number}}
                                 </div>
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="1" class="o_td_label">
+                            <td colspan="1" class="o_td_label" style="width: auto">
+                                <label class="o_form_label">
+                                    Khách hàng trả
+                                </label>
+                            </td>
+                            <td colspan="1" style="text-align: end;" class="pr-0">
+                                <div *ngIf="!isFast" class="font-weight-600">
+                                    {{line.amountInvoiced - line.amountInsurancePaidTotal | number}}
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label" style="width: auto">
                                 <label class="o_form_label">
                                     Còn lại
                                 </label>
                             </td>
-                            <td colspan="1" style="width: 100%; text-align: end;" class="pr-0">
+                            <td colspan="1" style="text-align: end;" class="pr-0">
                                 <div *ngIf="!isFast" class="font-weight-600">
                                     {{((isEditting? getPriceSubTotalFormGroup(): line.priceSubTotal)- line.amountInvoiced) | number}}
                                 </div>

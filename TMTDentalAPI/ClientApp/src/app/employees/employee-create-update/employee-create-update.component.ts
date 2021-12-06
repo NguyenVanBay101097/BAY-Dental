@@ -6,6 +6,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { Commission, CommissionPaged, CommissionService } from 'src/app/commissions/commission.service';
 import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/company.service';
 import { EmpCategoriesCreateUpdateComponent } from 'src/app/employee-categories/emp-categories-create-update/emp-categories-create-update.component';
@@ -38,6 +39,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     private resGroupService: ResGroupService,
     private roleService: RoleService,
     private hrJobService: HrJobService,
+    private authService: AuthService,
   ) { }
   empId: string;
   @ViewChild('userCbx', { static: true }) userCbx: ComboBoxComponent;
@@ -215,6 +217,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
     val.offset = 0;
     val.limit = 20;
     val.search = s || '';
+    val.companyId = this.authService.userInfo.companyId
     return this.hrJobService.getPaged(val);
   }
 

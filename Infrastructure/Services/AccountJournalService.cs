@@ -107,33 +107,33 @@ namespace Infrastructure.Services
 
         public async Task<AccountJournal> CreateBankJournal(AccountJournalCreateBankJournalVM val)
         {
+            var bankObj = GetService<IResBankService>();
+            var bank = await bankObj.GetByIdAsync(val.BankId);
+
             var journal = new AccountJournal()
             {
                 Active = val.Active,
-                Name = val.AccountNumber,
+                Name = $"{val.AccountNumber} - {bank.BIC}",
                 Type = "bank",
                 CompanyId = CompanyId
             };
 
-            if (!string.IsNullOrEmpty(val.AccountNumber) && val.BankId.HasValue)
+            var resPnBankObj = GetService<IResPartnerBankService>();
+            var companyObj = GetService<ICompanyService>();
+
+            var company = await companyObj.GetByIdAsync(CompanyId);
+            var partnerBank = new ResPartnerBank
             {
-                var resPnBankObj = GetService<IResPartnerBankService>();
-                var companyObj = GetService<ICompanyService>();
+                AccountNumber = val.AccountNumber,
+                BankId = val.BankId,
+                PartnerId = company.PartnerId,
+                AccountHolderName = val.AccountHolderName,
+                Branch = val.BankBranch
+            };
 
-                var company = await companyObj.GetByIdAsync(CompanyId);
-                var partnerBank = new ResPartnerBank
-                {
-                    AccountNumber = val.AccountNumber,
-                    BankId = val.BankId.Value,
-                    PartnerId = company.PartnerId,
-                    AccountHolderName = val.AccountHolderName,
-                    Branch = val.BankBranch
-                };
+            await resPnBankObj.CreateAsync(partnerBank);
 
-                await resPnBankObj.CreateAsync(partnerBank);
-
-                journal.BankAccountId = partnerBank.Id;
-            }
+            journal.BankAccountId = partnerBank.Id;
 
             journal.Code = await GenerateNextCodeBankCashAsync("bank");
             if (string.IsNullOrEmpty(journal.Code))
@@ -161,19 +161,15 @@ namespace Infrastructure.Services
                 .Include(x => x.BankAccount)
                 .FirstOrDefaultAsync();
 
-            journal.Name = val.AccountNumber;
-            journal.Active = val.Active;
-
             var bankAcc = journal.BankAccount;
             if (bankAcc != null)
             {
                 bankAcc.AccountNumber = val.AccountNumber;
                 bankAcc.AccountHolderName = val.AccountHolderName;
                 bankAcc.Branch = val.BankBranch;
-                if (val.BankId.HasValue)
-                    bankAcc.BankId = val.BankId.Value;
+                bankAcc.BankId = val.BankId;
             }
-            else if (val.BankId.HasValue)
+            else
             {
                 var resPnBankObj = GetService<IResPartnerBankService>();
                 var companyObj = GetService<ICompanyService>();
@@ -182,7 +178,7 @@ namespace Infrastructure.Services
                 var partnerBank = new ResPartnerBank
                 {
                     AccountNumber = val.AccountNumber,
-                    BankId = val.BankId.Value,
+                    BankId = val.BankId,
                     PartnerId = company.PartnerId,
                     AccountHolderName = val.AccountHolderName,
                     Branch = val.BankBranch
@@ -192,6 +188,12 @@ namespace Infrastructure.Services
 
                 journal.BankAccountId = partnerBank.Id;
             }
+
+            var bankObj = GetService<IResBankService>();
+            var bank = await bankObj.GetByIdAsync(val.BankId);
+
+            journal.Name = $"{val.AccountNumber} - {bank.BIC}";
+            journal.Active = val.Active;
 
             await UpdateAsync(journal);
         }
@@ -383,10 +385,6 @@ namespace Infrastructure.Services
                 Id = x.Id,
                 Name = x.Name,
                 Type = x.Type,
-                BankBic = x.BankAccount.Bank.BIC,
-                AccountHolderName = x.BankAccount.AccountHolderName,
-                BankName = x.BankAccount.Bank.Name,
-                Branch = x.BankAccount.Branch
             }).ToListAsync();
 
             return items;
@@ -417,12 +415,12 @@ namespace Infrastructure.Services
 
         public override ISpecification<AccountJournal> RuleDomainGet(IRRule rule)
         {
-            var userObj = GetService<IUserService>();
-            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            //var userObj = GetService<IUserService>();
+            //var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
             switch (rule.Code)
             {
                 case "account.journal_comp_rule":
-                    return new InitialSpecification<AccountJournal>(x => companyIds.Contains(x.CompanyId));
+                    return new InitialSpecification<AccountJournal>(x => x.CompanyId == CompanyId);
                 default:
                     return null;
             }

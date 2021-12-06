@@ -120,10 +120,10 @@
                   </label>
                 </td>
                 <td colspan="1" style="width: 100%">
-                  <kendo-numerictextbox [min]="1" [autoCorrect]="true" required #dateAppliesControl="ngModel"
-                    name="dateApplies" [format]="'n0'" [spinners]="false" [(ngModel)]="quotation.dateApplies"
-                    (valueChange)="onDateChange()">
-                  </kendo-numerictextbox>
+                  <input class="form-control" required #dateAppliesControl="ngModel"
+                  name="dateApplies" tmtautonumeric [(ngModel)]="quotation.dateApplies"
+                  (input)="onDateChange()"
+                  [options]="{minimumValue: 1, decimalPlaces: 0}"/>
                   <div *ngIf="dateAppliesControl?.errors?.required" class="text-danger">
                     Nhập số ngày
                   </div>
@@ -207,17 +207,12 @@
                             {{ i + 1 }}
                           </td>
                           <td class="d-flex">
-                            <kendo-numerictextbox *ngIf="payment_item.discountPercentType == 'cash'" required
-                              class="form-control" [min]="0" [format]="'n0'" [spinners]="false"
-                              [(ngModel)]="payment_item.payment" [name]="'payments[' + i + '].payment'"
-                              #progress="ngModel">
-                            </kendo-numerictextbox>
-                            <kendo-numerictextbox *ngIf="
-                                payment_item.discountPercentType == 'percent'
-                              " required class="form-control" [min]="0" [max]="100" [autoCorrect]="true"
-                              [format]="'n0'" [spinners]="false" [(ngModel)]="payment_item.payment"
-                              [name]="'payments[' + i + '].payment'" #progress="ngModel">
-                            </kendo-numerictextbox>
+                            <input class="form-control" *ngIf="payment_item.discountPercentType == 'cash'" required tmtautonumeric
+                              [options]="{minimumValue: 0, decimalPlaces: 0}" [(ngModel)]="payment_item.payment" [name]="'payments[' + i + '].payment'"
+                              #progress="ngModel"/>
+                              <input *ngIf="payment_item.discountPercentType == 'percent'" required class="form-control" tmtautonumeric
+                              [options]="{minimumValue: 0, maximumValue: 100, decimalPlaces: 0}" [(ngModel)]="payment_item.payment"
+                              [name]="'payments[' + i + '].payment'" #progress="ngModel"/>
                             <div class="mt-1 ml-2 d-flex">
                               <div class="form-check form-check-inline">
                                 <input class="form-check-input" [hidden]="true" type="radio"

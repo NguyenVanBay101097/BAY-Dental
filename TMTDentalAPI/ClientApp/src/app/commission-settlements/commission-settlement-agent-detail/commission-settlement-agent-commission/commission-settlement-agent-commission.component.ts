@@ -9,6 +9,7 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { AgentService, TotalAmountAgentFilter } from 'src/app/agents/agent.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PhieuThuChiService } from 'src/app/phieu-thu-chi/phieu-thu-chi.service';
+import { AgentCreateUpdateDialogComponent } from 'src/app/shared/agent-create-update-dialog/agent-create-update-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { NotifyService } from 'src/app/shared/services/notify.service';
 import { CommissionSettlementAgentPaymentDialogComponent } from '../../commission-settlement-agent-payment-dialog/commission-settlement-agent-payment-dialog.component';
@@ -126,11 +127,7 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
       val.companyId = this.authService.userInfo.companyId;
       this.agentService.getAmountDebitTotalAgent(val).subscribe((res: any) => {
         this.amountDebit = res;
-      },
-        (error) => {
-          console.log(error);
-        }
-      );
+      }, (error) => console.log(error));
     }
   }
 
@@ -148,8 +145,8 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
   }
 
   actionPayment() {
-    if(this.agentId){
-      var val =  {agentId: this.agentId , type:'chi'};
+    if (this.agentId) {
+      var val = { agentId: this.agentId, type: 'chi' };
       this.agentService.getCommissionPaymentByAgentId(val).subscribe(res => {
         const modalRef = this.modalService.open(CommissionSettlementAgentPaymentDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = 'Chi hoa hồng';
@@ -163,9 +160,9 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
           this.loadDataFromApi();
           this.loadAmountDebitTotalAgent();
           this.loadSumAmountTotal();
-        }, er => { })
+        }, () => { })
       });
-    }    
+    }
   }
 
   exportExcelFile() {
@@ -191,6 +188,17 @@ export class CommissionSettlementAgentCommissionComponent implements OnInit {
       setTimeout(() => {
         window.URL.revokeObjectURL(data);
       }, 100);
+    })
+  }
+
+  editAgent() {
+    const modalRef = this.modalService.open(AgentCreateUpdateDialogComponent, { scrollable: true, size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = 'Sửa người giới thiệu';
+    modalRef.componentInstance.id = this.agentId;
+    modalRef.result.then(() => {
+      this.notifyService.notify('success', 'Lưu thành công');
+      this.loadAgent();
+    }, () => {
     })
   }
 }

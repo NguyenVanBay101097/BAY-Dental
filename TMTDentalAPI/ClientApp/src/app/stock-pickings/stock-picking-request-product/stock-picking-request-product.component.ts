@@ -5,6 +5,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { ProductRequestPaged } from 'src/app/sale-orders/product-request';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { ProductRequestService } from 'src/app/shared/product-request.service';
@@ -37,6 +38,7 @@ export class StockPickingRequestProductComponent implements OnInit {
     private intlService: IntlService,
     private productRequestService: ProductRequestService,
     private notificationService: NotificationService,
+    private authService: AuthService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -63,6 +65,7 @@ export class StockPickingRequestProductComponent implements OnInit {
     val.offset = this.skip;
     val.state = this.state;
     val.search = this.search || '';
+    val.companyId = this.authService.userInfo.companyId;
 
     this.productRequestService.getPaged(val).pipe(
       map(response => (<GridDataResult>{

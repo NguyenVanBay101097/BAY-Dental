@@ -9,6 +9,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { AppointmentService } from 'src/app/appointment/appointment.service';
 import { CustomerReceiptRequest, DashboardReportService } from 'src/app/core/services/dashboard-report.service';
+import { SessionInfoStorageService } from 'src/app/core/services/session-info-storage.service';
 import { CustomerReceiptBasic, CustomerReceiptService } from 'src/app/customer-receipt/customer-receipt.service';
 import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
@@ -79,6 +80,7 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     private notificationService: NotificationService,
     private customerReceiptService: CustomerReceiptService,
     private appointmentService: AppointmentService,
+    private sessionInfoStorageService: SessionInfoStorageService,
   ) { }
 
   ngOnInit() {
@@ -309,6 +311,9 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     partnerPaged.supplier = false;
     partnerPaged.limit = 10;
     partnerPaged.offset = 0;
+    if (this.sessionInfoStorageService.getSessionInfo().settings && !this.sessionInfoStorageService.getSessionInfo().settings.companySharePartner) {
+      partnerPaged.companyId = this.authService.userInfo.companyId;
+    }
     this.partnerService.autocompletePartner(partnerPaged).subscribe(
       rs => {
         this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, rs, 'id');

@@ -104,13 +104,13 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
                         context.SaveChanges();
 
 
-                        var seq = context.IRSequences.Where(x => x.Prefix == "INSURANCE/{yyyy}/").FirstOrDefault();
+                        var seq = context.IRSequences.Where(x => x.Prefix == "INS/{yyyy}/").FirstOrDefault();
                         if (seq == null)
                         {
                             seq = new IRSequence
                             {
                                 Name = "Bảo hiểm",
-                                Prefix = "INSURANCE" + "/{yyyy}/",
+                                Prefix = "INS" + "/{yyyy}/",
                                 Padding = 4,
                                 NumberIncrement = 1,
                                 NumberNext = 1,
@@ -122,25 +122,26 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
 
 
 
-                        var journalCNKH = context.AccountJournals.Where(x => x.Type == "insurance" && x.CompanyId == company.Id).FirstOrDefault();
-                        if (journalCNKH == null)
+                        var journalCNBH = context.AccountJournals.Where(x => x.Type == "insurance" && x.CompanyId == company.Id).FirstOrDefault();
+                        if (journalCNBH == null)
                         {
-                            journalCNKH = new AccountJournal
+                            journalCNBH = new AccountJournal
                             {
                                 Name = "Bảo hiểm",
                                 Type = "insurance",
                                 UpdatePosted = true,
-                                Code = "INSURANCE",
+                                Code = "INS",
                                 DefaultDebitAccountId = accCNBH.Id,
                                 DefaultCreditAccountId = accCNBH.Id,
                                 SequenceId = seq.Id,
                                 CompanyId = company.Id,
                             };
 
-                            context.AccountJournals.Add(journalCNKH);
+                            context.AccountJournals.Add(journalCNBH);
                             context.SaveChanges();
                         }
                     }
+
 
                     var seqInsuranceIncome = context.IRSequences.Where(x => x.Code == "account.payment.insurance.invoice").FirstOrDefault();
                     if (seqInsuranceIncome == null)

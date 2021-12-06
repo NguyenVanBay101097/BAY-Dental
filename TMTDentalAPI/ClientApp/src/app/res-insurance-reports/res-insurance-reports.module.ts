@@ -13,10 +13,11 @@ import { ResInsuranceHistoriesComponent } from './res-insurance-histories/res-in
 import { ResInsuranceDebtPaymentDialogComponent } from './res-insurance-debt-payment-dialog/res-insurance-debt-payment-dialog.component';
 import { ResInsuranceHistoriesDetailComponent } from './res-insurance-histories-detail/res-insurance-histories-detail.component';
 import { ResInsuranceReportsDetailListComponent } from './res-insurance-reports-detail-list/res-insurance-reports-detail-list.component';
+import { ResInsuranceDebitDetailComponent } from './res-insurance-debit-detail/res-insurance-debit-detail.component';
 
 
 @NgModule({
-  declarations: [ResInsuranceReportsOverviewComponent, ResInsuranceDetailComponent, ResInsuranceDebitComponent, ResInsuranceHistoriesComponent, ResInsuranceDebtPaymentDialogComponent, ResInsuranceHistoriesDetailComponent, ResInsuranceReportsDetailListComponent],
+  declarations: [ResInsuranceReportsOverviewComponent, ResInsuranceDetailComponent, ResInsuranceDebitComponent, ResInsuranceHistoriesComponent, ResInsuranceDebtPaymentDialogComponent, ResInsuranceHistoriesDetailComponent, ResInsuranceReportsDetailListComponent, ResInsuranceDebitDetailComponent],
   imports: [
     CommonModule,
     ResInsuranceReportsRoutingModule,

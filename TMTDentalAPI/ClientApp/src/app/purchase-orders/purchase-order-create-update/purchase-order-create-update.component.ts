@@ -11,6 +11,7 @@ import { debounceTime, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { AccountJournalFilter, AccountJournalService } from 'src/app/account-journals/account-journal.service';
 import { AccountPaymentService } from 'src/app/account-payments/account-payment.service';
 import { AuthService } from 'src/app/auth/auth.service';
+import { SessionInfoStorageService } from 'src/app/core/services/session-info-storage.service';
 import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { ProductSimple } from 'src/app/products/product-simple';
@@ -59,6 +60,8 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   amountTotal = 0;
   get f() { return this.formGroup.controls; }
 
+  maxAmountPayment = 0;
+
 
   constructor(
     private fb: FormBuilder,
@@ -76,7 +79,8 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     private authService: AuthService,
     private modalService: NgbModal,
     private paymentService: AccountPaymentService,
-    private printService: PrintService
+    private printService: PrintService,
+    private sessionInfoStorageService: SessionInfoStorageService,
   ) { }
 
   ngOnInit() {
@@ -114,6 +118,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
       this.filteredPartners = result;
       this.partnerCbx.loading = false;
     });
+
   }
 
   loadRecord() {
@@ -196,6 +201,9 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     val.supplier = true;
     val.search = filter;
     val.active = true;
+    if (this.sessionInfoStorageService.getSessionInfo().settings && !this.sessionInfoStorageService.getSessionInfo().settings.companySharePartner) {
+      val.companyId = this.authService.userInfo.companyId;
+    }
     return this.partnerService.getAutocompleteSimple(val);
   }
 
@@ -235,10 +243,15 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   removeOrderLine(index) {
     this.orderLines.removeAt(index);
     this.countAmountTotal();
+    this.formGroup.get('amountPayment').setValue(Math.min(this.amountTotal, this.formGroup.get('amountPayment').value));
+    this.maxAmountPayment = this.amountTotal;
   }
 
   removeAllLine() {
     this.orderLines.clear();
+    this.countAmountTotal();
+    this.formGroup.get('amountPayment').setValue(Math.min(this.amountTotal, this.formGroup.get('amountPayment').value));
+    this.maxAmountPayment = this.amountTotal;
   }
 
   duplicateLine(index, line: FormControl) {
@@ -309,8 +322,9 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     }
   }
 
-  onChangeAmountPayment(value) {
+  onChangeAmountPayment() {
     var amountTotal = this.getAmountTotal;
+    var value = this.formGroup.get('amountPayment').value;
     if (value > amountTotal) {
       this.f.amountPayment.setValue(amountTotal);
     }
@@ -410,6 +424,8 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
       this.orderLines.push(group);
       this.focusLastRow();
       this.countAmountTotal();
+      this.formGroup.get('amountPayment').setValue(Math.min(this.amountTotal, this.formGroup.get('amountPayment').value));
+      this.maxAmountPayment = this.amountTotal;
     });
   }
 
@@ -430,9 +446,10 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     });
   }
 
-  changePrice(price, line: AbstractControl) {
-    //line.get('oldPriceUnit').patchValue(price);
+  changePrice(e) {
     this.countAmountTotal();
+    this.formGroup.get('amountPayment').setValue(Math.min(this.amountTotal, this.formGroup.get('amountPayment').value));
+    this.maxAmountPayment = this.amountTotal;
   }
 
   focusLastRow() {

@@ -21,6 +21,7 @@ export class ProductRequestPaged {
     dateFrom: string;
     dateTo: string;
     state: string;
+    companyId: string;
 }
 
 export class ProductRequestDisplay {
@@ -52,6 +53,7 @@ export class ProductRequestSave {
 export class ProductRequestGetLinePar {
     saleOrderLineId: string;
     productBomId: string;
+    saleProductionLineId: string;
 }
 
 export class ProductRequestDefaultGet {

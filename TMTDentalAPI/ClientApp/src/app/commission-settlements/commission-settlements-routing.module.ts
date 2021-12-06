@@ -7,7 +7,6 @@ import { AgentCommmissionHistoryComponent } from '../agents/agent-commmission-hi
 import { CommissionSettlementAgentCommissionComponent } from './commission-settlement-agent-detail/commission-settlement-agent-commission/commission-settlement-agent-commission.component';
 import { CommissionSettlementAgentDetailComponent } from './commission-settlement-agent-detail/commission-settlement-agent-detail.component';
 import { CommissionSettlementAgentHistoryComponent } from './commission-settlement-agent-detail/commission-settlement-agent-history/commission-settlement-agent-history.component';
-import { CommissionSettlementAgentProfileComponent } from './commission-settlement-agent-detail/commission-settlement-agent-profile/commission-settlement-agent-profile.component';
 import { CommissionSettlementReportDetailComponent } from './commission-settlement-report-detail/commission-settlement-report-detail.component';
 import { CommissionSettlementReportListComponent } from './commission-settlement-report-list/commission-settlement-report-list.component';
 import { CommissionSettlementReportComponent } from './commission-settlement-report/commission-settlement-report.component';
@@ -44,8 +43,7 @@ const routes: Routes = [
     path: 'agent/:id',
     component: CommissionSettlementAgentDetailComponent,
     children: [
-      { path: '', redirectTo: 'profile', pathMatch: 'full' },
-      { path: 'profile', component: CommissionSettlementAgentProfileComponent },
+      { path: '', redirectTo: 'commission', pathMatch: 'full' },
       { path: 'commission', component: CommissionSettlementAgentCommissionComponent },
       { path: 'history', component: CommissionSettlementAgentHistoryComponent },
     ]
