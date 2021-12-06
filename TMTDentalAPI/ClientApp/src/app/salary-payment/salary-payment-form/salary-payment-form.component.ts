@@ -78,6 +78,19 @@ export class SalaryPaymentFormComponent implements OnInit {
         this.defaultGet();
       }
     });
+
+    this.journalCbx.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.journalCbx.loading = true)),
+        switchMap((value) => this.searchFilteredJournals(value)
+        )
+      )
+      .subscribe((result: any) => {
+        this.filteredJournals = result;
+        this.journalCbx.loading = false;
+    });
   }
 
   loadData() {
@@ -122,7 +135,7 @@ export class SalaryPaymentFormComponent implements OnInit {
     var val = new AccountJournalFilter();
     val.type = "bank,cash";
     val.companyId = this.authService.userInfo.companyId;
-    this.accountJournalService.autocomplete(val).subscribe(
+    this.searchFilteredJournals().subscribe(
       (result) => {
         this.filteredJournals = _.unionBy(this.filteredJournals, result, "id");
       },
@@ -130,6 +143,14 @@ export class SalaryPaymentFormComponent implements OnInit {
         console.log(error);
       }
     );
+  }
+
+  searchFilteredJournals(q?: string) {
+    var val = new AccountJournalFilter();
+    val.type = "bank,cash";
+    val.search = q || '';
+    val.companyId = this.authService.userInfo.companyId;
+    return this.accountJournalService.autocomplete(val);
   }
 
   loadEmployees() {

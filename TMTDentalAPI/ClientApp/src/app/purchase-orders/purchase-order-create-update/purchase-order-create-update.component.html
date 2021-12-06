@@ -132,15 +132,23 @@
                     </table>
                     <table class="o_group o_inner_group o_group_col_4">
                         <tbody>
-                            <tr *ngIf="purchaseOrder?.state == 'draft'">
+                            <tr [class.d-none]="purchaseOrder?.state != 'draft'">
                                 <td colspan="1" class="o_td_label">
                                     <label class="o_form_label o_form_label_help">
                                         Phương thức TT
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="filteredJournals" [textField]="'name'" [filterable]="true"
-                                        formControlName="journal" [valueField]="'id'">
+                                    <kendo-combobox [data]="filteredJournals" [textField]="'name'" [valueField]="'id'"
+                                        [filterable]="true" #journalCbx formControlName="journal">
+                                        <ng-template kendoComboBoxItemTemplate let-dataItem>
+                                            <div class="pt-2 pb-2">
+                                                <h6 class="mb-0">{{dataItem.type == 'cash' ? 'Tiền mặt' : 'Ngân hàng'}}</h6>
+                                                <div *ngIf="!['Tiền mặt'].includes(dataItem.name)">
+                                                    {{dataItem.name}}
+                                                </div>
+                                            </div>
+                                        </ng-template>
                                     </kendo-combobox>
                                 </td>
                             </tr>

@@ -4,7 +4,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import * as _ from 'lodash';
-import { mergeMap } from 'rxjs/operators';
+import { debounceTime, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { AccountJournalFilter, AccountJournalService } from 'src/app/account-journals/account-journal.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { AmountCustomerDebtFilter, CustomerDebtReportService } from 'src/app/core/services/customer-debt-report.service';
@@ -46,6 +46,19 @@ export class PartnerCustomerDebtPaymentDialogComponent implements OnInit {
     this.loadDefault();
     this.loadFilteredJournals();
     this.loadAmountDebtBalanceTotal();
+
+    this.journalCbx.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.journalCbx.loading = true)),
+        switchMap((value) => this.searchFilteredJournals(value)
+        )
+      )
+      .subscribe((result: any) => {
+        this.filteredJournals = result;
+        this.journalCbx.loading = false;
+    });
   }
 
   loadDefault() {
@@ -63,16 +76,21 @@ export class PartnerCustomerDebtPaymentDialogComponent implements OnInit {
 
 
   loadFilteredJournals() {
-    var val = new AccountJournalFilter();
-    val.type = "bank,cash";
-    val.companyId = this.authService.userInfo.companyId;
-    this.accountJournalService.autocomplete(val).subscribe((res) => {
+    this.searchFilteredJournals().subscribe((res) => {
       this.filteredJournals = _.unionBy(this.filteredJournals, res, 'id');
     },
       (error) => {
         console.log(error);
       }
     );
+  }
+
+  searchFilteredJournals(q?: string) {
+    var val = new AccountJournalFilter();
+    val.type = "bank,cash";
+    val.search = q || '';
+    val.companyId = this.authService.userInfo.companyId;
+    return this.accountJournalService.autocomplete(val);
   }
 
   get f() { return this.formGroup.controls; }

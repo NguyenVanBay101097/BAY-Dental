@@ -61,11 +61,19 @@
                                     <label class="o_form_label">Phương thức</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="formReadonly">{{phieuThuChiDisplay.journal.displayName}}</span>
-                                    <div *ngIf="!formReadonly">
-                                        <kendo-combobox [data]="filteredJournals" [textField]="'displayName'"
-                                            [filterable]="true" #journalCbx formControlName="journal"
-                                            [valueField]="'id'">
+                                    <span *ngIf="formReadonly">{{phieuThuChiDisplay?.journal?.name}}</span>
+                                    <div [class.d-none]="formReadonly">
+                                        <kendo-combobox [data]="filteredJournals" [textField]="'name'"
+                                        [filterable]="true" #journalCbx formControlName="journal"
+                                        [valueField]="'id'">
+                                        <ng-template kendoComboBoxItemTemplate let-dataItem>
+                                            <div class="pt-2 pb-2">
+                                                <h6 class="mb-0">{{dataItem.type == 'cash' ? 'Tiền mặt' : 'Ngân hàng'}}</h6>
+                                                <div *ngIf="!['Tiền mặt'].includes(dataItem.name)">
+                                                    {{dataItem.name}}
+                                                </div>
+                                            </div>
+                                        </ng-template>
                                         </kendo-combobox>
                                         <div *ngIf="f.journal.errors && (f.journal.touched || f.journal.dirty || submitted)"
                                             class="text-danger">

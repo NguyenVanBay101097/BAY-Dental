@@ -45,7 +45,7 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   hasDefined = false;
   filteredPartners: PartnerSimple[];
 
-  @ViewChild('journalCbx', { static: true }) journalCbx: ComboBoxComponent;
+  @ViewChild("journalCbx", { static: true }) journalCbx: ComboBoxComponent;
   @ViewChild('searchInput', { static: true }) searchInput: ElementRef;
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
 
@@ -108,6 +108,19 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
     this.authService.getGroups().subscribe((result: any) => {
       this.permissionService.define(result);
       this.hasDefined = this.permissionService.hasOneDefined(['product.group_uom']);
+    });
+
+    this.journalCbx.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.journalCbx.loading = true)),
+        switchMap((value) => this.searchFilteredJournals(value)
+        )
+      )
+      .subscribe((result: any) => {
+        this.filteredJournals = result;
+        this.journalCbx.loading = false;
     });
 
     this.partnerCbx.filterChange.asObservable().pipe(
@@ -224,16 +237,21 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   }
 
   loadFilteredJournals() {
-    var val = new AccountJournalFilter();
-    val.type = "bank,cash";
-    val.companyId = this.authService.userInfo.companyId;
-    this.accountJournalService.autocomplete(val).subscribe((res) => {
+    this.searchFilteredJournals().subscribe((res) => {
       this.filteredJournals = _.unionBy(this.filteredJournals, res, 'id');
     },
       (error) => {
         console.log(error);
       }
     );
+  }
+
+  searchFilteredJournals(q?: string) {
+    var val = new AccountJournalFilter();
+    val.type = "bank,cash";
+    val.search = q || '';
+    val.companyId = this.authService.userInfo.companyId;
+    return this.accountJournalService.autocomplete(val);
   }
 
   get orderLines() {
