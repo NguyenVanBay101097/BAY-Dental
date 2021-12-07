@@ -24,7 +24,7 @@
 </div>
 
 <div class="o_content">
-    <form class="o_form_view" [formGroup]="formGroup">
+    <form class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
@@ -444,7 +444,7 @@
                                             <label for="startDate">
                                                 Ngày bắt đầu
                                             </label>
-                                            <kendo-datepicker class="form-control" id="startDate"
+                                            <kendo-datepicker style="width: 100%" id="startDate"
                                                 formControlName="ruleDateFromObj">
                                             </kendo-datepicker>
                                         </div>
@@ -452,7 +452,7 @@
                                             <label for="endDate">
                                                 Ngày kết thúc
                                             </label>
-                                            <kendo-datepicker class="form-control" id="endDate"
+                                            <kendo-datepicker style="width: 100%" id="endDate"
                                                 formControlName="ruleDateToObj">
                                             </kendo-datepicker>
                                             <div *ngIf="f.ruleDateToObj.errors" class="text-danger mb-1">
