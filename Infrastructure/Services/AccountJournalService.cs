@@ -166,12 +166,6 @@ namespace Infrastructure.Services
             var bankAcc = journal.BankAccount;
             if (bankAcc != null)
             {
-                var resPartnerBank = await resPnBankObj.SearchQuery(x => x.Id != bankAcc.Id && x.AccountNumber.Equals(val.AccountNumber) && x.BankId.Equals(val.BankId))
-                    .FirstOrDefaultAsync();
-
-                if (resPartnerBank != null)
-                    throw new Exception("Số tài khoản đã tồn tại");
-
                 bankAcc.AccountNumber = val.AccountNumber;
                 bankAcc.AccountHolderName = val.AccountHolderName;
                 bankAcc.Branch = val.BankBranch;
