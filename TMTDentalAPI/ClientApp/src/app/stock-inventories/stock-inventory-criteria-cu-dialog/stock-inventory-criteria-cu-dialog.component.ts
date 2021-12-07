@@ -41,6 +41,7 @@ export class StockInventoryCriteriaCuDialogComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
     if (this.formGroup.invalid) return;
     var val = this.formGroup.value;
     if (this.id) {

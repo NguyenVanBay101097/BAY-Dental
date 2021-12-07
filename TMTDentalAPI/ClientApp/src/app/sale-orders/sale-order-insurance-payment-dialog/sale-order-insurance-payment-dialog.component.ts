@@ -111,6 +111,8 @@ export class SaleOrderInsurancePaymentDialogComponent implements OnInit, AfterVi
   }
 
   actionPayment(): void {
+    this.submitted = true;
+
     let data = this.formGroup.value;
     const userInfo = JSON.parse(localStorage.getItem("user_info"));
     const companyId = userInfo.companyId;

@@ -24,7 +24,7 @@
 </div>
 
 <div class="o_content">
-    <form class="o_form_view" [formGroup]="formGroup">
+    <form class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
@@ -77,7 +77,7 @@
                                 <h1>
                                     <input type="text" class="form-control" required formControlName="name" />
                                 </h1>
-                                <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
+                                <div *ngIf="f.name.errors && submitted"
                                     class="text-danger mb-1">
                                     <div *ngIf="f.name.errors.required"> Nhập tên chương trình khuyến mãi </div>
                                 </div>
@@ -150,7 +150,7 @@
                                                         <td colspan="1" class="w-70">
                                                             <input class="form-control" formControlName="maximumUseNumber" tmtautonumeric
                                                                 [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
-                                                            <div *ngIf="f.maximumUseNumber.errors && (f.maximumUseNumber.touched || f.maximumUseNumber.dirty || submitted)"
+                                                            <div *ngIf="f.maximumUseNumber.errors && submitted"
                                                                 class="text-danger">
                                                                 <div *ngIf="f.maximumUseNumber.errors.required">
                                                                     Nhập số lần áp dụng
@@ -199,7 +199,7 @@
                                                                     <div class="flex-fill">
                                                                         <input class="form-control" style="width: 100%" formControlName="discountPercentage" tmtautonumeric
                                                                             [options]="{ minimumValue: 0, maximumValue: 100, decimalPlaces: 0 }" />
-                                                                        <div *ngIf="f.discountPercentage.errors && (f.discountPercentage.touched || f.discountPercentage.dirty || submitted)"
+                                                                        <div *ngIf="f.discountPercentage.errors && submitted"
                                                                             class="text-danger mb-1">
                                                                             <div *ngIf="f.discountPercentage.errors.required">
                                                                                 Nhập phần trăm giảm giá
@@ -240,7 +240,7 @@
                                                                     <div class="flex-fill">
                                                                         <input class="form-control" formControlName="discountMaxAmount" tmtautonumeric
                                                                             [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
-                                                                        <div *ngIf="f.discountMaxAmount.errors && (f.discountMaxAmount.touched || f.discountMaxAmount.dirty || submitted)"
+                                                                        <div *ngIf="f.discountMaxAmount.errors && submitted"
                                                                             class="text-danger">
                                                                             <div *ngIf="f.discountMaxAmount.errors.required">
                                                                                 Nhập mức giảm tối đa
@@ -267,7 +267,7 @@
                                                                     <div class="flex-fill">
                                                                         <input class="form-control" formControlName="discountFixedAmount" tmtautonumeric
                                                                             [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
-                                                                        <div *ngIf="f.discountFixedAmount.errors && (f.discountFixedAmount.touched || f.discountFixedAmount.dirty || submitted)"
+                                                                        <div *ngIf="f.discountFixedAmount.errors && submitted"
                                                                             class="text-danger mb-1">
                                                                             <div *ngIf="f.discountFixedAmount.errors.required">
                                                                                 Nhập số tiền giảm giá
@@ -327,7 +327,7 @@
                                                                     <div class="flex-fill">
                                                                         <input class="form-control" formControlName="ruleMinimumAmount" tmtautonumeric
                                                                             [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
-                                                                        <div *ngIf="f.ruleMinimumAmount.errors && (f.ruleMinimumAmount.touched || f.ruleMinimumAmount.dirty || submitted)"
+                                                                        <div *ngIf="f.ruleMinimumAmount.errors && submitted"
                                                                             class="text-danger mb-1">
                                                                             <div
                                                                                 *ngIf="f.ruleMinimumAmount.errors.required">
@@ -363,7 +363,7 @@
                                                             [textField]="'name'" [valueField]="'id'"
                                                             formControlName="discountSpecificProductCategories">
                                                         </kendo-multiselect>
-                                                        <div *ngIf="f.discountSpecificProductCategories.errors && (f.discountSpecificProductCategories.touched || f.discountSpecificProductCategories.dirty || submitted)"
+                                                        <div *ngIf="f.discountSpecificProductCategories.errors && submitted"
                                                             class="text-danger mb-1">
                                                             <div
                                                                 *ngIf="f.discountSpecificProductCategories.errors.required">
@@ -392,7 +392,7 @@
                                                             [valueField]="'id'"
                                                             formControlName="discountSpecificProducts">
                                                         </kendo-multiselect>
-                                                        <div *ngIf="f.discountSpecificProducts.errors && (f.discountSpecificProducts.touched || f.discountSpecificProducts.dirty || submitted)"
+                                                        <div *ngIf="f.discountSpecificProducts.errors && submitted"
                                                             class="text-danger mb-1">
                                                             <div
                                                                 *ngIf="f.discountSpecificProducts.errors.required">
@@ -442,7 +442,7 @@
                                             <label for="startDate">
                                                 Ngày bắt đầu
                                             </label>
-                                            <kendo-datepicker class="form-control" id="startDate"
+                                            <kendo-datepicker style="width: 100%" id="startDate"
                                                 formControlName="ruleDateFromObj">
                                             </kendo-datepicker>
                                         </div>
@@ -450,7 +450,7 @@
                                             <label for="endDate">
                                                 Ngày kết thúc
                                             </label>
-                                            <kendo-datepicker class="form-control" id="endDate"
+                                            <kendo-datepicker style="width: 100%" id="endDate"
                                                 formControlName="ruleDateToObj">
                                             </kendo-datepicker>
                                             <div *ngIf="f.ruleDateToObj.errors" class="text-danger mb-1">
@@ -504,7 +504,7 @@
                                                 [filterable]="true" #partnerMultiSelect [textField]="'name'"
                                                 [valueField]="'id'" formControlName="discountSpecificPartners">
                                             </kendo-multiselect>
-                                            <div *ngIf="f.discountSpecificPartners.errors && (f.discountSpecificPartners.touched || f.discountSpecificPartners.dirty || submitted)"
+                                            <div *ngIf="f.discountSpecificPartners.errors && submitted"
                                                 class="text-danger mb-1">
                                                 <div *ngIf="f.discountSpecificPartners.errors.required">
                                                     Chọn khách hàng
@@ -529,7 +529,7 @@
                                                 [filterable]="true" #cardTypeCbx [textField]="'name'"
                                                 [valueField]="'id'" formControlName="discountCardTypes">
                                             </kendo-multiselect>
-                                            <div *ngIf="f.discountCardTypes.errors && (f.discountCardTypes.touched || f.discountCardTypes.dirty || submitted)"
+                                            <div *ngIf="f.discountCardTypes.errors && submitted"
                                                 class="text-danger mb-1">
                                                 <div *ngIf="f.discountCardTypes.errors.required">
                                                     Loại thẻ thành viên

@@ -24,7 +24,7 @@
 </div>
 
 <div class="o_content">
-    <form class="o_form_view" [formGroup]="formGroup">
+    <form class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
@@ -98,7 +98,7 @@
                                         [class.d-none]="purchaseOrder?.state != 'draft'" [filterable]="true" #partnerCbx
                                         formControlName="partner" [valueField]="'id'">
                                     </kendo-combobox>
-                                    <div *ngIf="f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)"
+                                    <div *ngIf="f.partner.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.partner.errors.required">Chọn nhà cung cấp</div>
                                     </div>
@@ -118,7 +118,7 @@
                                     <kendo-datepicker [format]="'dd/MM/yyyy'" *ngIf="purchaseOrder?.state == 'draft'"
                                         formControlName="dateOrderObj">
                                     </kendo-datepicker>
-                                    <div *ngIf="purchaseOrder?.state == 'draft' && f.dateOrderObj.errors && (f.dateOrderObj.touched || f.dateOrderObj.dirty || submitted)"
+                                    <div *ngIf="purchaseOrder?.state == 'draft' && f.dateOrderObj.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.dateOrderObj.errors.required">Chọn ngày {{purchaseOrder?.type ==
                                             'order' ? 'mua' : 'trả'}} hàng</div>
@@ -154,7 +154,7 @@
                                  
                                     <input class="form-control" formControlName="amountPayment" tmtautonumeric
                                     [options]="{minimumValue: 0, decimalPlaces: 0, maximumValue: maxAmountPayment}" />
-                                    <div *ngIf="f.amountPayment.errors && (f.amountPayment.touched || f.amountPayment.dirty || submitted)"
+                                    <div *ngIf="f.amountPayment.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.amountPayment.errors.required">Nhập số tiền</div>
                                     </div>

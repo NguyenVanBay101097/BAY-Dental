@@ -4,7 +4,7 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <form class="o_form_view" [formGroup]="formGroup">
+    <form class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <!-- <h4>{{precscriptPayment.name ? precscriptPayment.name : ''}}</h4> -->
             <div class="o_form_sheet pt-2">
@@ -26,7 +26,7 @@
                                         [data]="filteredJournals" [textField]="'name'" [valueField]="'id'"
                                         [filterable]="true" #journalCbx formControlName="journal">
                                     </kendo-combobox>
-                                    <div *ngIf="f.journal.errors && (f.journal.touched || f.journal.dirty || submitted)" class="text-danger">
+                                    <div *ngIf="f.journal.errors && submitted" class="text-danger">
                                         <div *ngIf="f.journal.errors.required">Chọn phương thức thanh toán</div>
                                     </div>
                                     <span *ngIf="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'">
@@ -61,7 +61,7 @@
                                     <kendo-datepicker [class.d-none]="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'" 
                                         [format]="'dd/MM/yyyy'" formControlName="orderDate">
                                     </kendo-datepicker>
-                                    <div *ngIf="f.orderDate.errors && (f.orderDate.touched || f.orderDate.dirty || submitted)" class="text-danger">
+                                    <div *ngIf="f.orderDate.errors && submitted" class="text-danger">
                                         <div *ngIf="f.orderDate.errors.required">Chọn ngày thanh toán</div>
                                     </div>
                                     <span *ngIf="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'">

@@ -5,7 +5,7 @@
 </header>
 
 <div class="modal-body o_act_window">
-  <form class="o_form_view" [formGroup]="lineForm">
+  <form class="o_form_view" [formGroup]="lineForm" [class.ng-submitted]="submitted">
     <div class="o_form_sheet_bg">
       <div class="o_form_sheet">
         <div class="oe_title">
@@ -103,7 +103,7 @@
                             (valueChange)="onChangeProduct($event)" [filterable]="true" formControlName="product"
                             #productCbx [valueField]="'id'">
                           </kendo-combobox>
-                          <div *ngIf="f.product.errors && (f.product.touched || f.product.dirty || submitted)"
+                          <div *ngIf="f.product.errors && submitted"
                             class="invalid-feedback">
                             <span *ngIf="f.product.errors.required">Nhập tên labo</span>
                           </div>
@@ -129,7 +129,7 @@
                           <kendo-numerictextbox [min]="0" [format]="'n0'" (valueChange)="onChangeQuantity($event)"
                             formControlName="quantity">
                           </kendo-numerictextbox>
-                          <div *ngIf="f.quantity.errors && (f.quantity.touched || f.quantity.dirty || submitted)"
+                          <div *ngIf="f.quantity.errors && submitted"
                             class="invalid-feedback">
                             <span *ngIf="f.quantity.errors.required">Nhập số lượng</span>
                           </div>
@@ -145,7 +145,7 @@
                           <kendo-numerictextbox [min]="0" [format]="'n0'" (valueChange)="onChangePriceUnit($event)"
                             formControlName="priceUnit">
                           </kendo-numerictextbox>
-                          <div *ngIf="f.priceUnit.errors && (f.priceUnit.touched || f.priceUnit.dirty || submitted)"
+                          <div *ngIf="f.priceUnit.errors && submitted"
                             class="invalid-feedback">
                             <span *ngIf="f.priceUnit.errors.required">Nhập đơn giá</span>
                           </div>

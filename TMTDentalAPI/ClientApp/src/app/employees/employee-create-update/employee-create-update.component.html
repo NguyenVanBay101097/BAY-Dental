@@ -17,7 +17,7 @@
             <a class="nav-link" id="pills-commission-tab" data-toggle="pill" href="#pills-commission" role="tab" aria-controls="pills-commission" aria-selected="false" *appPermission="['Catalog.Employee.Commission.Update']">Cấu hình hoa hồng</a>
         </li>
     </ul>
-    <form class="o_form_view" [formGroup]="formCreate" kendo-validator="validator">
+    <form class="o_form_view" [formGroup]="formCreate" kendo-validator="validator" [class.ng-submitted]="submitted">
         <div class="tab-content" id="pills-tabContent">
             <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
 
@@ -30,7 +30,7 @@
                             <h1>
                                 <input type="text" class="form-control" formControlName="name" id="name" />
                             </h1>
-                            <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger mb-1">
+                            <div *ngIf="f.name.errors && submitted" class="text-danger mb-1">
                                 <div *ngIf="f.name.errors.required">Nhập tên nhân viên</div>
                             </div>
                             <div>
@@ -172,7 +172,7 @@
                                         </td>
                                         <td colspan="1" style="width: 50%;">
                                             <input #name type="text" class="form-control" formControlName="userName" />
-                                            <div *ngIf="f.userName.errors && (f.userName.touched || f.userName.dirty || submitted)" class="text-danger">
+                                            <div *ngIf="f.userName.errors && submitted" class="text-danger">
                                                 <div *ngIf="f.userName.errors.required">Nhập tên tài khoản</div>
                                             </div>
                                         </td>
@@ -182,8 +182,8 @@
                                         <td colspan="1" style="width: 50%;">
                                             <input type="password" class="form-control"
                                                 [disableControl]="!createChangePassword"
-                                                formControlName="userPassword" />
-                                            <div *ngIf="createChangePassword && f.userPassword.errors && (f.userPassword.touched || f.userPassword.dirty || submitted)" class="text-danger">
+                                                formControlName="userPassword"/>
+                                            <div *ngIf="createChangePassword && f.userPassword.errors && submitted" class="text-danger">
                                                 <div *ngIf="f.userPassword.errors.required">Nhập mật khẩu</div>
                                                 <div *ngIf="f.userPassword.errors.minlength">Mật khẩu tối thiểu 6 kí tự</div>
                                             </div>
@@ -237,9 +237,10 @@
                                             </label>
                                         </td>
                                         <td colspan="3" style="width: 100%;">
-                                            <kendo-combobox [data]="listCompanies" [textField]="'name'" #companyCbx formControlName="userCompany" [valueField]="'id'">
+                                            <kendo-combobox [data]="listCompanies" [textField]="'name'"
+                                                #companyCbx formControlName="userCompany" [valueField]="'id'">
                                             </kendo-combobox>
-                                            <div *ngIf="f.userCompany.errors && (f.userCompany.touched || f.userCompany.dirty || submitted)" class="text-danger">
+                                            <div *ngIf="f.userCompany.errors && submitted" class="text-danger">
                                                 <div *ngIf="f.userCompany.errors.required">Chọn chi nhánh hiện tại</div>
                                             </div>
                                         </td>

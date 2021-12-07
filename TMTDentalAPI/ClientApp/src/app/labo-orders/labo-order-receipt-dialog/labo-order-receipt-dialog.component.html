@@ -3,7 +3,7 @@
     <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
 </header>
 <div class="modal-body o_act_window">
-    <div class="o_form_view" [formGroup]="formGroup">
+    <div class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="o_group">
@@ -15,7 +15,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-datepicker formControlName="dateReceipt"></kendo-datepicker>
-                                    <div *ngIf="f.dateReceipt.errors && (f.dateReceipt.touched || f.dateReceipt.dirty || submitted)" class="text-danger">
+                                    <div *ngIf="f.dateReceipt.errors && submitted" class="text-danger">
                                         <div *ngIf="f.dateReceipt.errors.required">Chọn ngày nhận thực tế</div>
                                     </div>
                                 </td>
@@ -26,7 +26,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <input type="text" class="form-control" formControlName="warrantyCode">
-                                    <div *ngIf="f.warrantyCode.errors && (f.warrantyCode.touched || f.warrantyCode.dirty || submitted)" class="text-danger">
+                                    <div *ngIf="f.warrantyCode.errors && submitted" class="text-danger">
                                         <div *ngIf="f.warrantyCode.errors.required">Nhập mã bảo hành</div>
                                         <div *ngIf="f.warrantyCode.errors?.exist">Mã bảo hành đã tồn tại</div>
                                     </div>

@@ -4,7 +4,7 @@
         tabindex="-1">×</button>
 </header>
 <div class="modal-body o_act_window">
-    <div class="o_form_view" [formGroup]="formGroup">
+    <div class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
@@ -40,7 +40,7 @@
                                     </span>
                                     <kendo-datepicker *ngIf="!seeForm" formControlName="dateObj">
                                     </kendo-datepicker>
-                                    <div *ngIf="f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)"
+                                    <div *ngIf="f.dateObj.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.dateObj.errors.required">Chọn ngày yêu cầu</div>
                                     </div>
@@ -75,7 +75,7 @@
                                         [data]="filteredEmployees" [textField]="'name'" #employeeCbx
                                         formControlName="employee" [valueField]="'id'">
                                     </kendo-combobox>
-                                    <div *ngIf="f.employee.errors && (f.employee.touched || f.employee.dirty || submitted)"
+                                    <div *ngIf="f.employee.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.employee.errors.required">Chọn bác sĩ chỉ định</div>
                                     </div>

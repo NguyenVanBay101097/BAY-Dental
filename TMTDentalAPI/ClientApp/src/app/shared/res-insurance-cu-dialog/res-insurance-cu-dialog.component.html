@@ -4,7 +4,7 @@
         tabindex="-1">×</button>
 </header>
 <div class="modal-body o_act_window">
-    <form class="o_form_view" [formGroup]="formGroup">
+    <form class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <app-image-file-upload class="o_field_image o_field_widget oe_avatar" [supportWebcam]="true"
@@ -16,7 +16,7 @@
                     <h1>
                         <input class="form-control" formControlName="name">
                     </h1>
-                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
+                    <div *ngIf="f.name.errors && submitted"
                         class="text-danger mb-1">
                         <div *ngIf="f.name.errors.required"> Nhập tên công ty bảo hiểm </div>
                     </div>

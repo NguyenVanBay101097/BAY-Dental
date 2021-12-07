@@ -18,7 +18,7 @@
 </div>
 
 <div class="py-3 o_content">
-    <form class="o_form_view" [formGroup]="cardForm">
+    <form class="o_form_view" [formGroup]="cardForm" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="oe_title">
@@ -26,7 +26,7 @@
                     <h1>
                         <input class="form-control" formControlName="name">
                     </h1>
-                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
+                    <div *ngIf="f.name.errors && submitted" class="text-danger">
                         <div *ngIf="f.name.errors?.required" class="text-danger">
                             Nhập tên hạng thẻ
                         </div>
@@ -54,7 +54,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div *ngIf="f.nbrPeriod.errors && (f.nbrPeriod.touched || f.nbrPeriod.dirty || submitted)"
+                                    <div *ngIf="f.nbrPeriod.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.nbrPeriod.errors?.required" class="text-danger">
                                             Nhập hạn mức thẻ

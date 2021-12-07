@@ -21,7 +21,7 @@
         <div class="o_group">
             <div class="o_group o_group_col_12">
                 <div class="o_aggregate_col o_group_col_6">
-                    <kendo-combobox [(ngModel)]="companyId" (valueChange)="changeCompany($event)" class="form-control"
+                    <kendo-combobox [(ngModel)]="companyId" (valueChange)="changeCompany($event)"
                         [data]="filteredCompanies" [textField]="'name'" [filterable]="true" #companyCbx
                         [valueField]="'id'" [valuePrimitive]="true" [placeholder]="'Tất cả chi nhánh'">
                     </kendo-combobox>

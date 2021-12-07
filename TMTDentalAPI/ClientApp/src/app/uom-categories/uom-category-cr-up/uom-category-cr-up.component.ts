@@ -14,6 +14,7 @@ export class UomCategoryCrUpComponent implements OnInit {
   formGroup: FormGroup;
   title: string;
   uomCategory: UoMCategoryBasic;
+  submitted: boolean = false;
   constructor(
     public activeModal: NgbActiveModal,
     private fb: FormBuilder,
@@ -45,6 +46,7 @@ export class UomCategoryCrUpComponent implements OnInit {
   }
 
   onSave() {
+    this.submitted = true;
     if (this.formGroup.invalid)
       return false;
 

@@ -643,10 +643,41 @@ select {
   border: 1px solid #42A948;
 } */
 
-input.ng-touched.ng-invalid:not(form),
+/* input.ng-touched.ng-invalid:not(form),
 select.ng-touched.ng-invalid {
     border: 1px solid #dc3545;
-    /* red */
+} */
+
+.k-widget.k-state-invalid>.k-dateinput-wrap, 
+.k-widget.k-state-invalid>.k-dropdown-wrap, 
+.k-widget.k-state-invalid>.k-picker-wrap, 
+.k-widget.k-state-invalid>.k-multiselect-wrap, 
+.k-widget.k-state-invalid>.k-numeric-wrap, 
+.ng-invalid.ng-touched>.k-dateinput-wrap, 
+.ng-invalid.ng-touched>.k-dropdown-wrap, 
+.ng-invalid.ng-touched>.k-picker-wrap, 
+.ng-invalid.ng-touched>.k-multiselect-wrap, 
+.ng-invalid.ng-touched>.k-numeric-wrap, 
+.ng-invalid.ng-dirty>.k-dateinput-wrap, 
+.ng-invalid.ng-dirty>.k-dropdown-wrap, 
+.ng-invalid.ng-dirty>.k-picker-wrap, 
+.ng-invalid.ng-dirty>.k-multiselect-wrap, 
+.ng-invalid.ng-dirty>.k-numeric-wrap {
+    border-color: rgba(33,37,41,0.15);
+    color: #212529 !important;
+    background-color: #fff !important;
+}
+
+.ng-submitted input.ng-invalid,
+.ng-submitted textarea.ng-invalid,
+.ng-submitted .ng-invalid >.k-dropdown-wrap,
+.ng-submitted .ng-invalid >.k-dateinput-wrap,
+.ng-submitted .ng-invalid >.k-picker-wrap,
+.ng-submitted .ng-invalid >.k-multiselect-wrap,
+.ng-submitted .ng-invalid >.k-dateinput-wrap,
+.ng-submitted .ng-invalid >.k-dateinput-wrap,
+.ng-submitted .ng-invalid >.k-numeric-wrap {
+    border: 1px solid #dc3545;
 }
 
 .o_form_view .o_form_statusbar {

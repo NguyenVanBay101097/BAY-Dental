@@ -5,7 +5,7 @@
 </header>
 
 <div class="modal-body o_act_window">
-  <div class="o_form_view" [formGroup]="formGroup">
+  <div class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
     <div class="o_form_sheet_bg">
       <div class="o_form_sheet">
         <div class="o_group mt-0 mb-0">
@@ -67,7 +67,7 @@
                     formControlName="productQty">
                   </kendo-numerictextbox>
                   <span *ngIf="line" [class.d-none]="lineState != 'purchase'">{{line.productQty | number}}</span>
-                  <div *ngIf="f.productQty.errors && (f.productQty.touched || f.productQty.dirty || submitted)"
+                  <div *ngIf="f.productQty.errors && submitted"
                     class="text-danger">
                     <span *ngIf="f.productQty.errors.required">Nhập số lượng</span>
                   </div>
@@ -84,7 +84,7 @@
                     formControlName="priceUnit">
                   </kendo-numerictextbox>
                   <span *ngIf="line" [class.d-none]="lineState != 'purchase'">{{line.priceUnit | number}}</span>
-                  <div *ngIf="f.priceUnit.errors && (f.priceUnit.touched || f.priceUnit.dirty || submitted)"
+                  <div *ngIf="f.priceUnit.errors && submitted"
                     class="text-danger">
                     <span *ngIf="f.priceUnit.errors.required">Nhập đơn giá</span>
                   </div>

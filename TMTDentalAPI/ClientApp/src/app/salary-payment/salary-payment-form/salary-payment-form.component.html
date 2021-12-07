@@ -5,7 +5,7 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <form class="o_form_view" [formGroup]="formGroup">
+    <form class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg overflow-hidden">
             <div class="o_form_sheet">
                 <div class="o_group">
@@ -48,7 +48,7 @@
                                         [disableControl]="!editable" #journalCbx formControlName="journal"
                                         [valueField]="'id'">
                                     </kendo-combobox>
-                                    <div *ngIf="f.journal.errors && (f.journal.touched || f.journal.dirty || submitted)"
+                                    <div *ngIf="f.journal.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.journal.errors.required">Chọn phương thức</div>
                                     </div>
@@ -65,7 +65,7 @@
                                         [disableControl]="!editable" #employeeCbx formControlName="employee"
                                         [valueField]="'id'">
                                     </kendo-combobox>
-                                    <div *ngIf="f.employee.errors && (f.employee.touched || f.employee.dirty || submitted)"
+                                    <div *ngIf="f.employee.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.employee.errors.required">Chọn người nhận</div>
                                     </div>
@@ -80,7 +80,7 @@
                                 <td colspan="1" style="width: 100%;">
                                     <input class="form-control" [disableControl]="!editable" formControlName="amount"
                                         [options]="{ minimumValue: 0, decimalPlaces: 0 }" tmtautonumeric />
-                                    <div *ngIf="f.amount.errors && (f.amount.touched || f.amount.dirty || submitted)"
+                                    <div *ngIf="f.amount.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.amount.errors.required">Nhập số tiền ứng</div>
                                     </div>

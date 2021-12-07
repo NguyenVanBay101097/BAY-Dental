@@ -5,7 +5,7 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <form class="o_form_view o_form_editable" [formGroup]="formGroup">
+    <form class="o_form_view o_form_editable" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="o_group">
@@ -26,7 +26,7 @@
                                             <span class="fas fa-plus"></span>
                                         </button>
                                     </div>
-                                    <div *ngIf="f.insurance.errors && (f.insurance.touched || f.insurance.dirty || submitted)"
+                                    <div *ngIf="f.insurance.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.insurance.errors.required"> Chọn công ty bảo hiểm </div>
                                     </div>
@@ -40,7 +40,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-datepicker formControlName="dateObj"></kendo-datepicker>
-                                    <div *ngIf="f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)"
+                                    <div *ngIf="f.dateObj.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.dateObj.errors.required"> Chọn ngày bảo lãnh </div>
                                     </div>

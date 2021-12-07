@@ -4,7 +4,7 @@
         (click)="onClose()" tabindex="-1">×</button>
 </header>
 <div class="modal-body o_act_window">
-    <div class="o_form_view" [formGroup]="formGroup">
+    <div class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
@@ -49,7 +49,7 @@
                                                 <span class="k-icon k-i-plus"></span>
                                             </a>
                                         </div>
-                                        <div *ngIf="f.loaiThuChi.errors && (f.loaiThuChi.touched || f.loaiThuChi.dirty || submitted)"
+                                        <div *ngIf="f.loaiThuChi.errors && submitted"
                                             class="text-danger">
                                             <div *ngIf="f.loaiThuChi.errors.required">Chọn loại {{type}}</div>
                                         </div>
@@ -67,7 +67,7 @@
                                             [filterable]="true" #journalCbx formControlName="journal"
                                             [valueField]="'id'">
                                         </kendo-combobox>
-                                        <div *ngIf="f.journal.errors && (f.journal.touched || f.journal.dirty || submitted)"
+                                        <div *ngIf="f.journal.errors && submitted"
                                             class="text-danger">
                                             <div *ngIf="f.journal.errors.required">Chọn phương thức thanh toán</div>
                                         </div>
@@ -108,7 +108,7 @@
                                     </span>
                                     <kendo-datepicker *ngIf="!formReadonly" formControlName="dateObj">
                                     </kendo-datepicker>
-                                    <div *ngIf="!formReadonly && f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)" class="text-danger">
+                                    <div *ngIf="!formReadonly && f.dateObj.errors && submitted" class="text-danger">
                                         <div *ngIf="f.dateObj.errors.required">Chọn ngày</div>
                                     </div>
                                 </td>

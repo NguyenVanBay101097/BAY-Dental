@@ -5,7 +5,7 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <form class="o_form_view o_form_editable" [formGroup]="myform">
+    <form class="o_form_view o_form_editable" [formGroup]="myform" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="o_group">
@@ -22,7 +22,7 @@
                                         <div class="w-100 mr-2">
                                             <input class="form-control" required formControlName="percent" tmtautonumeric
                                                 [options]="{ minimumValue: 0, maximumValue: 100, decimalPlaces: 0 }" />
-                                            <div *ngIf="f.percent.errors && (f.percent.touched || f.percent.dirty || submitted)"
+                                            <div *ngIf="f.percent.errors && submitted"
                                                 class="text-danger">
                                                 <div *ngIf="f.percent.errors.required">Nhập số % hoa hồng</div>
                                             </div>

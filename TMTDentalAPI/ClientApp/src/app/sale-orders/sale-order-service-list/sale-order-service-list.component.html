@@ -204,13 +204,13 @@
                                         <i class="fas fa-edit"></i>
                                     </button>
                                     <ng-template #popContent>
-                                        <div [formGroup]="formGroup">
+                                        <div [formGroup]="formGroup" [class.ng-submitted]="submitted">
                                             <div class="mb-2">
                                                 <kendo-datepicker style="width: 100%" format="dd/MM/yyyy HH:mm"
                                                     formControlName="dateOrder"
                                                     [popupSettings]="{appendTo: 'component'}">
                                                 </kendo-datepicker>
-                                                <div *ngIf="f.dateOrder.errors && (f.dateOrder.touched || f.dateOrder.dirty || submitted)"
+                                                <div *ngIf="f.dateOrder.errors && submitted"
                                                     class="text-danger">
                                                     <div *ngIf="f.dateOrder.errors.required">Chọn ngày lập phiếu</div>
                                                 </div>

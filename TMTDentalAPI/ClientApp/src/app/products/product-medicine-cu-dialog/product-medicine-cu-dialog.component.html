@@ -5,15 +5,15 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <form class="o_form_view" [formGroup]="productForm" #form="ngForm">
+    <form class="o_form_view" [formGroup]="productForm" #form="ngForm" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="oe_title">
                     <label class="o_form_label oe_edit_only">Tên thuốc</label>
                     <h1>
-                        <input type="text" name="name" class="form-control" formControlName="name" #nameInput>
+                        <input type="text" name="name" class="form-control" formControlName="name" #nameInput >
                     </h1>
-                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
+                    <div *ngIf="f.name.errors && submitted"
                         class="text-danger mb-1">
                         <div *ngIf="f.name.errors.required">Nhập tên thuốc</div>
                     </div>
@@ -67,7 +67,7 @@
                                                         <span class="k-icon k-i-plus"></span>
                                                     </a>
                                                 </div>
-                                                <div *ngIf="f.categ.errors && (f.categ.touched || f.categ.dirty || submitted)"
+                                                <div *ngIf="f.categ.errors && submitted"
                                                     class="text-danger">
                                                     <div *ngIf="f.categ.errors.required">Chọn nhóm thuốc</div>
                                                 </div>
@@ -146,7 +146,7 @@
                                                     <input class="form-control" formControlName="listPrice" tmtautonumeric
                                                         [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
                                                 </div>
-                                                <div *ngIf="f.listPrice.errors && (f.listPrice.touched || f.listPrice.dirty || submitted)"
+                                                <div *ngIf="f.listPrice.errors && submitted"
                                                     class="text-danger">
                                                     <div *ngIf="f.listPrice.errors.required">Nhập giá thuốc</div>
                                                 </div>
