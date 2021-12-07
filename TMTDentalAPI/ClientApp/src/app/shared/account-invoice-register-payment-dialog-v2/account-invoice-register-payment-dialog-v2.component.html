@@ -21,10 +21,10 @@
                                         [filterable]="true" #journalCbx formControlName="journal"
                                         [valueField]="'id'">
                                         <ng-template kendoComboBoxItemTemplate let-dataItem>
-                                            <div class="pt-2 pb-2">
-                                                <h6 class="mb-0">{{dataItem.type == 'cash' ? 'Tiền mặt' : 'Ngân hàng'}}</h6>
-                                                <div *ngIf="!['Ngân hàng', 'Tiền mặt'].includes(dataItem.name)">
-                                                    {{dataItem.name}}
+                                            <div>
+                                                <div *ngIf="dataItem.type !== 'cash'">{{dataItem.displayType}}</div>
+                                                <div>
+                                                    <strong>{{dataItem.name}}</strong>
                                                 </div>
                                             </div>
                                         </ng-template>
