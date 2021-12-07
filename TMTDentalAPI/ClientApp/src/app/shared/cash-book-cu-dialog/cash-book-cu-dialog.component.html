@@ -66,14 +66,13 @@
                                         <kendo-combobox [data]="filteredJournals" [textField]="'name'"
                                         [filterable]="true" #journalCbx formControlName="journal"
                                         [valueField]="'id'">
-                                        <ng-template kendoComboBoxItemTemplate let-dataItem>
-                                            <div class="pt-2 pb-2">
-                                                <h6 class="mb-0">{{dataItem.type == 'cash' ? 'Tiền mặt' : 'Ngân hàng'}}</h6>
-                                                <div *ngIf="!['Tiền mặt'].includes(dataItem.name)">
+                                        <!-- <ng-template kendoComboBoxItemTemplate let-dataItem>
+                                            <div>
+                                                <h6 class="mb-0">
                                                     {{dataItem.name}}
-                                                </div>
+                                                </h6>
                                             </div>
-                                        </ng-template>
+                                        </ng-template> -->
                                         </kendo-combobox>
                                         <div *ngIf="f.journal.errors && (f.journal.touched || f.journal.dirty || submitted)"
                                             class="text-danger">
