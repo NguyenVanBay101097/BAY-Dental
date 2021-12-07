@@ -4,7 +4,7 @@
         (click)="activeModal.dismiss()" tabindex="-1">×</button>
   </header>
   <div class="modal-body o_act_window">
-    <form class="o_form_view" [formGroup]="formGroup">
+    <form class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <table class="o_group o_inner_group o_group_col_12">
@@ -37,7 +37,7 @@
                             </td>
                             <td colspan="1">
                                 <kendo-combobox formControlName="doctor" [filterable]="true" [data]="filteredEmployees"
-                                    #doctorCbx [valueField]="'id'" [textField]="'name'" [class.ng-submitted]="submitted">
+                                    #doctorCbx [valueField]="'id'" [textField]="'name'">
                                 </kendo-combobox>
                                 <div *ngIf="f.doctor.errors && submitted"
                                     class="text-danger">
@@ -52,7 +52,7 @@
                             <td colspan="1">
                                 <div class="d-flex justify-content-between">
                                     <div class="mr-2 ">
-                                        <kendo-timepicker formControlName="dateObj" format="HH:mm" [class.ng-submitted]="submitted"></kendo-timepicker>
+                                        <kendo-timepicker formControlName="dateObj" format="HH:mm"></kendo-timepicker>
                                         <div *ngIf="f.dateObj.errors && submitted"
                                             class="text-danger">
                                             <div *ngIf="f.dateObj.errors.required">Chọn giờ tiếp nhận</div>

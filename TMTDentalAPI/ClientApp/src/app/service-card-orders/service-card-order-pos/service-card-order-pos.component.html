@@ -27,7 +27,7 @@
 </div>
 <div class="bg-white">
     <div class="o_form_view o_form_nosheet">
-        <form [formGroup]="formGroup">
+        <form [formGroup]="formGroup" [class.ng-submitted]="submitted">
             <div>
                 <div class="o_form_sheet">
                     <div class="oe_title">
@@ -48,7 +48,7 @@
                                         <div class="d-flex">
                                             <kendo-combobox [class.d-none]="cardOrder.state != 'draft'"
                                                 [data]="filteredPartners" [textField]="'name'" [filterable]="true"
-                                                #partnerCbx formControlName="partner" [valueField]="'id'" [class.ng-submitted]="submitted">
+                                                #partnerCbx formControlName="partner" [valueField]="'id'">
                                             </kendo-combobox>
                                             <a type="button" [class.d-none]="cardOrder.state != 'draft'"
                                                 title="Thêm khách hàng" class="pl-2 py-1"
@@ -76,7 +76,7 @@
                                     </td>
                                     <td colspan="1" style="width: 100%;">
                                         <kendo-datetimepicker [class.d-none]="cardOrder.state != 'draft'"
-                                            formControlName="dateOrderObj" [class.ng-submitted]="submitted">
+                                            formControlName="dateOrderObj">
                                         </kendo-datetimepicker>
                                         <div *ngIf="cardOrder.state == 'draft' && f.dateOrderObj.errors && submitted" class="text-danger">
                                             <div *ngIf="f.dateOrderObj.errors.required">Chọn ngày bán</div>

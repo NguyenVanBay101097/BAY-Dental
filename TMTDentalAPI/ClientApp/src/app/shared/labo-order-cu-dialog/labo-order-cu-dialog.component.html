@@ -5,7 +5,7 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <form class="o_form_view o_form_editable" [formGroup]="myForm" (submit)="onSave()">
+    <form class="o_form_view o_form_editable" [formGroup]="myForm" (submit)="onSave()" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar o_form_statusbar_new">
                 <div class="o_statusbar_buttons">
@@ -77,8 +77,7 @@
                                                     <div class="d-flex">
                                                         <kendo-combobox #partnerCbx [data]="partners"
                                                             [textField]="'name'" [filterable]="true" #NCCLaboCbx
-                                                            formControlName="partner" [valueField]="'id'"
-                                                            [class.ng-submitted]="submitted">
+                                                            formControlName="partner" [valueField]="'id'">
                                                         </kendo-combobox>
                                                         <!-- <a [class.d-none]="state != 'draft'" title="Cập nhật labo" class="ml-1 btn btn-sm btn-light" type="button" *ngIf="partnerFC.value" (click)="onQuickUpdatePartner()">
                                                         <i class="fas fa-external-link-alt"></i>

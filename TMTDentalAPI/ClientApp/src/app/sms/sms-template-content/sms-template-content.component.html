@@ -1,8 +1,7 @@
-<div [formGroup]="formGroup">
+<div [formGroup]="formGroup" [class.ng-submitted]="submitted">
     <div class="position-relative">
         <textarea type="text" my-autosize class="form-control textarea-required" id="textarea_mass"
-            formControlName="text" [maxlength]="textareaLength" rows="5" #textarea (change)="onTextChange()"
-            [class.ng-submitted]="submitted">
+            formControlName="text" [maxlength]="textareaLength" rows="5" #textarea (change)="onTextChange()">
         </textarea>
         <div *ngIf="f.text.errors && submitted" class="text-danger">
             <div *ngIf="f.text.errors.required">Nhập nội dung tin nhắn</div>

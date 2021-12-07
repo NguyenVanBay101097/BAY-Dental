@@ -5,14 +5,13 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <form class="o_form_view" [formGroup]="productForm" #form="ngForm">
+    <form class="o_form_view" [formGroup]="productForm" #form="ngForm" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="oe_title">
                     <label class="o_form_label oe_edit_only">Tên vật tư</label>
                     <h1>
-                        <input type="text" name="name" class="form-control" formControlName="name" #nameInput
-                            [class.ng-submitted]="submitted">
+                        <input type="text" name="name" class="form-control" formControlName="name" #nameInput />
                     </h1>
                     <div *ngIf="f.name.errors && submitted" class="text-danger mb-1">
                         <div *ngIf="f.name.errors.required">Nhập tên vật tư</div>
@@ -66,7 +65,7 @@
                                                 <div class="d-flex">
                                                     <kendo-combobox [data]="filterdCategories"
                                                         [textField]="'completeName'" [filterable]="true" #categCbx
-                                                        formControlName="categ" [valueField]="'id'" [class.ng-submitted]="submitted">
+                                                        formControlName="categ" [valueField]="'id'">
                                                     </kendo-combobox>
                                                     <a class="btn btn-light" (click)="quickCreateCateg()">
                                                         <span class="k-icon k-i-plus"></span>

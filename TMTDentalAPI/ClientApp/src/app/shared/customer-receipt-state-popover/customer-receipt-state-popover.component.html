@@ -17,7 +17,7 @@
     <div ngbDropdownMenu aria-labelledby="dropdownManual" class="dropdown-wrapper">
         <h6 class="dropdown-header t_dropdown_header">Chuyển trạng thái</h6>
         <div class="customer-receipt-state">
-            <div [formGroup]="formGroup">
+            <div [formGroup]="formGroup" [class.ng-submitted]="submitted">
                 <div class="form-check" *ngFor="let itemState of stateFilterOptions; let i = index">
                     <input class="form-check-input" (change)="onChangeState($event.target.value)"
                         formControlName='state' type="radio" id="{{itemState.value}}_{{item.id}}"
@@ -36,7 +36,7 @@
                 </div>
                 <div *ngIf="!item.isRepeatCustomer && isNoTreatmentControl">
                     <textarea placeholder="Lý do khách không điều trị" cols="2" rows="2" class="form-control"
-                        formControlName="reason" [class.ng-submitted]="submitted"></textarea>
+                        formControlName="reason"></textarea>
                     <div *ngIf="f.reason.errors && submitted" class="text-danger">
                         <div *ngIf="f.reason.errors.required">Nhập lý do</div>
                     </div>

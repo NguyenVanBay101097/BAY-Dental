@@ -1,4 +1,4 @@
-<form class="o_form_view o_md_form_view" [formGroup]="formGroup">
+<form class="o_form_view o_md_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
     <div class="o_form_sheet_bg">
         <div class="o_form_sheet">
             <div class="o_group mt-0">
@@ -40,7 +40,7 @@
                             </td>
                             <td colspan="1" style="width: 100%;">
                                 <kendo-combobox [data]="filteredSmsAccount" [textField]="'brandName'"
-                                    formControlName="smsAccount" [filterable]="true" #smsAccountCbx [valueField]="'id'" [class.ng-submitted]="submitted">
+                                    formControlName="smsAccount" [filterable]="true" #smsAccountCbx [valueField]="'id'">
                                     <ng-template kendoComboBoxItemTemplate let-dataItem>
                                         <span>{{dataItem ? dataItem.brandName :''}}
                                             ({{dataItem ? dataItem.name : ''}})</span>
@@ -90,8 +90,7 @@
                             <td colspan="1" style="width: 100%;">
                                 <kendo-combobox [data]="filteredTemplate" ngbAutofocus [textField]="'name'"
                                     formControlName="template" [filterable]="true" #smsTemplateCbx
-                                    (valueChange)="onChangeTemplate($event)" [valueField]="'id'"
-                                    [class.ng-submitted]="submitted">
+                                    (valueChange)="onChangeTemplate($event)" [valueField]="'id'">
                                 </kendo-combobox>
                                 <div *ngIf="f.template.errors && submitted" class="text-danger">
                                     <div *ngIf="f.template.errors.required">Chọn tin nhắn mẫu</div>

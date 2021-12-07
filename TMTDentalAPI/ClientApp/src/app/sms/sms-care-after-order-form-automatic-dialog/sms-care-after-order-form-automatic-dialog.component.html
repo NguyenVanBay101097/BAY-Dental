@@ -4,7 +4,7 @@
         tabindex="-1">×</button>
 </header>
 <div class="modal-body o_act_window">
-    <form class="container o_form_view h-100" [formGroup]="formGroup">
+    <form class="container o_form_view h-100" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="">
             <div class="o_form_sheet">
                 <div class="o_group">
@@ -36,8 +36,7 @@
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 80%;">
-                                                <input class="form-control" formControlName="name"
-                                                    [class.ng-submitted]="submitted" />
+                                                <input class="form-control" formControlName="name" />
                                                 <div *ngIf="f.name.errors && submitted" class="text-danger">
                                                     <div *ngIf="f.name.errors.required">Nhập tên tin nhắn</div>
                                                 </div>
@@ -64,7 +63,7 @@
                                                 <kendo-combobox [data]="filteredSmsAccount" ngbAutofocus
                                                     class="mb-2 mt-2" [textField]="'brandName'"
                                                     formControlName="smsAccount" [filterable]="true" #smsAccountCbx
-                                                    [valueField]="'id'" [class.ng-submitted]="submitted">
+                                                    [valueField]="'id'">
                                                     <ng-template kendoComboBoxItemTemplate let-dataItem>
                                                         <span>{{dataItem.brandName}} ({{dataItem.name}})</span>
                                                     </ng-template>
@@ -134,7 +133,7 @@
                                                 [filterable]="true" style="min-height: 100px;" class="mr-3"
                                                 [data]="filteredProductCategories" [textField]="'name'"
                                                 [placeholder]="'Chọn nhóm dịch vụ'" [valueField]="'id'"
-                                                formControlName="productCategories" [class.ng-submitted]="submitted">
+                                                formControlName="productCategories">
                                             </kendo-multiselect>
                                             <div *ngIf="f.productCategories.errors && submitted" class="text-danger">
                                                 <div *ngIf="f.productCategories.errors.required">Chọn nhóm dịch vụ</div>
@@ -144,7 +143,7 @@
                                             <kendo-multiselect (filterChange)="loadProduct($event)" class="mr-3"
                                                 style="min-height: 100px;" [data]="filteredProducts" [filterable]="true"
                                                 [placeholder]="'Chọn dịch vụ'" [textField]="'name'" [valueField]="'id'"
-                                                formControlName="products" [class.ng-submitted]="submitted">
+                                                formControlName="products">
                                             </kendo-multiselect>
                                             <div *ngIf="f.products.errors && submitted" class="text-danger">
                                                 <div *ngIf="f.products.errors.required">Chọn dịch vụ</div>
@@ -168,8 +167,7 @@
                                             <td colspan="1" style="width: 80%;">
                                                 <kendo-combobox [data]="filteredTemplate" ngbAutofocus
                                                     [textField]="'name'" formControlName="template" [filterable]="true"
-                                                    #smsTemplateCbx [valueField]="'id'" class="mb-2"
-                                                    [class.ng-submitted]="submitted">
+                                                    #smsTemplateCbx [valueField]="'id'" class="mb-2">
                                                 </kendo-combobox>
                                                 <div *ngIf="f.template.errors && submitted" class="text-danger">
                                                     <div *ngIf="f.template.errors.required">Chọn tin nhắn mẫu</div>

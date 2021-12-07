@@ -6,7 +6,7 @@
 
 
 <div class="modal-body o_act_window">
-    <form class="o_form_view" [formGroup]="formGroup">
+    <form class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="o_group">
@@ -17,7 +17,7 @@
                                     <label class="o_form_label">Tên chiến dịch</label>
                                 </td>
                                 <td class="w-100 pb-4">
-                                    <input class="form-control" formControlName="name" [class.ng-submitted]="submitted" />
+                                    <input class="form-control" formControlName="name" />
                                     <div *ngIf="f.name.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.name.errors.required">Nhập tên chiến dịch</div>

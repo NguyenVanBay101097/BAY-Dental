@@ -5,7 +5,7 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <form class="o_form_view o_form_editable" [formGroup]="formGroup">
+    <form class="o_form_view o_form_editable" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="o_group">
@@ -20,8 +20,7 @@
                                 <td colspan="1" style="width: 100%;">
                                     <div class="d-flex">
                                         <kendo-combobox [data]="insuranceFilter" #insuranceCbx [filterable]="true"
-                                            formControlName="insurance" [valueField]="'id'" [textField]="'name'"
-                                            [class.ng-submitted]="submitted">
+                                            formControlName="insurance" [valueField]="'id'" [textField]="'name'">
                                         </kendo-combobox>
                                         <button class="btn btn-primary ml-2" (click)="quickCreateInsurance()">
                                             <span class="fas fa-plus"></span>
@@ -40,7 +39,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker formControlName="dateObj" [class.ng-submitted]="submitted"></kendo-datepicker>
+                                    <kendo-datepicker formControlName="dateObj"></kendo-datepicker>
                                     <div *ngIf="f.dateObj.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.dateObj.errors.required"> Chọn ngày bảo lãnh </div>

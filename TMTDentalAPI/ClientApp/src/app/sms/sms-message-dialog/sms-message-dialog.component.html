@@ -5,7 +5,7 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <form class="o_form_view" [formGroup]="formGroup">
+    <form class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="o_group">
@@ -18,8 +18,7 @@
                                         <label class="o_form_label">Tên tin nhắn</label>
                                     </td>
                                     <td style="width: 100%">
-                                        <input class="form-control" formControlName="name"
-                                            [class.ng-submitted]="submitted" />
+                                        <input class="form-control" formControlName="name" />
                                         <div *ngIf="f.name.errors && submitted" class="text-danger">
                                             <div *ngIf="f.name.errors.required">Nhập tên tin nhắn</div>
                                         </div>
@@ -32,8 +31,7 @@
                                     <td style="width: 100%">
                                         <kendo-combobox [data]="filteredSmsCampaign" [textField]="'name'"
                                             [valueField]="'id'" formControlName="smsCampaign" [filterable]="true"
-                                            #smsCampaignCbx (valueChange)="changeSmsCampaign($event)"
-                                            [class.ng-submitted]="submitted">
+                                            #smsCampaignCbx (valueChange)="changeSmsCampaign($event)">
                                         </kendo-combobox>
                                         <div *ngIf="f.smsCampaign.errors && submitted" class="text-danger">
                                             <div *ngIf="f.smsCampaign.errors.required">Chọn chiến dịch</div>
@@ -47,7 +45,7 @@
                                     <td style="width: 100%">
                                         <kendo-combobox [data]="filteredSmsAccount" ngbAutofocus
                                             [textField]="'brandName'" formControlName="smsAccount" [filterable]="true"
-                                            #smsAccountCbx [valueField]="'id'" [class.ng-submitted]="submitted">
+                                            #smsAccountCbx [valueField]="'id'">
                                             <ng-template kendoComboBoxItemTemplate let-dataItem>
                                                 <span>{{dataItem.brandName}} ({{dataItem.name}})</span>
                                             </ng-template>
@@ -142,8 +140,7 @@
                                     <td>
                                         <kendo-combobox [data]="filteredTemplate" [textField]="'name'"
                                             [valueField]="'id'" formControlName="template" [filterable]="true"
-                                            #smsTemplateCbx (valueChange)="onChangeTemplate($event)"
-                                            [class.ng-submitted]="submitted">
+                                            #smsTemplateCbx (valueChange)="onChangeTemplate($event)">
                                         </kendo-combobox>
                                         <div *ngIf="f.template.errors && submitted" class="text-danger">
                                             <div *ngIf="f.template.errors.required">Chọn tin nhắn mẫu</div>
@@ -180,8 +177,7 @@
                                     </td>
                                     <td>
                                         <div *ngIf="isTemplateCopy">
-                                            <input type="text" class="form-control mt-2"
-                                                [class.ng-submitted]="submitted" formControlName="templateName"
+                                            <input type="text" class="form-control mt-2" formControlName="templateName"
                                                 placeholder="Tiêu đề tin nhắn mẫu">
                                             <div *ngIf="f.templateName.errors && submitted" class="text-danger">
                                                 <div *ngIf="f.templateName.errors.required">Nhập tiêu đề tin nhắn

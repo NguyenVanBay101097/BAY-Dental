@@ -5,7 +5,7 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <form class="o_form_view o_form_editable" [formGroup]="myform">
+    <form class="o_form_view o_form_editable" [formGroup]="myform" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="o_group">
@@ -20,7 +20,7 @@
                                 <td colspan="1" style="width: 100%;">
                                     <div class="d-flex">
                                         <div class="w-100 mr-2">
-                                            <input class="form-control" required formControlName="percent" tmtautonumeric [class.ng-submitted]="submitted"
+                                            <input class="form-control" required formControlName="percent" tmtautonumeric
                                                 [options]="{ minimumValue: 0, maximumValue: 100, decimalPlaces: 0 }" />
                                             <div *ngIf="f.percent.errors && submitted"
                                                 class="text-danger">

@@ -220,7 +220,7 @@
                                                     <kendo-combobox [data]="filteredProducts" [valueField]="'id'"
                                                         [textField]="'name'" style="width:70%;"
                                                         (valueChange)="onValueChange($event, i)"
-                                                        formControlName="materialProduct" [class.ng-submitted]="submitted">
+                                                        formControlName="materialProduct">
                                                     </kendo-combobox>
                                                     <div *ngIf="item.get('materialProduct').errors && submitted"
                                                         class="text-danger">
@@ -238,7 +238,7 @@
                                                 </td>
                                                 <td>
                                                     <input class="form-control" formControlName="quantity"
-                                                        tmtautonumeric [options]="{ minimumValue: 0 }" [class.ng-submitted]="submitted" />
+                                                        tmtautonumeric [options]="{ minimumValue: 0 }" />
                                                     <div *ngIf="item.get('quantity').errors && submitted"
                                                         class="text-danger">
                                                         <div *ngIf="item.get('quantity').errors.required">Chọn số lượng

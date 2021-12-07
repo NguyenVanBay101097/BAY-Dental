@@ -1,4 +1,4 @@
-<div [ngClass]="{'active': editModeActive}" class="border rounded bg-white p-2 mb-2 dotkham" [formGroup]="dotkhamForm">
+<div [ngClass]="{'active': editModeActive}" class="border rounded bg-white p-2 mb-2 dotkham" [formGroup]="dotkhamForm" [class.ng-submitted]="submitted">
     <div class="body">
         <div class="info">
             <div class="d-flex align-items-center justify-content-between">
@@ -25,7 +25,7 @@
                                 </label>
                             </td>
                             <td colspan="1" class="b-td-value" style="width: 100%;">
-                                <kendo-datepicker *ngIf="editModeActive" formControlName="date" [class.ng-submitted]="submitted"></kendo-datepicker>
+                                <kendo-datepicker *ngIf="editModeActive" formControlName="date"></kendo-datepicker>
                                 <span *ngIf="!editModeActive">{{dotkhamDate | date: 'shortDate'}}</span>
                                 <div *ngIf="f.date.errors && submitted"
                                     class="text-danger">
@@ -46,7 +46,7 @@
                             <td colspan="1" class="b-td-value" style="width: 100%;">
                                 <kendo-combobox [hidden]="!editModeActive" formControlName="doctor" [data]="empList"
                                     [filterable]="true" [textField]="'name'" [valueField]="'id'" #empCbx
-                                    placeholder="Chọn bác sĩ..." [class.ng-submitted]="submitted">
+                                    placeholder="Chọn bác sĩ...">
                                 </kendo-combobox>
                                 <span *ngIf="!editModeActive">{{employee?.name}}</span>
                                 <div *ngIf="f.doctor.errors && submitted"

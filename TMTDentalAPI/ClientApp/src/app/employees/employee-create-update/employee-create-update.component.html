@@ -17,7 +17,7 @@
             <a class="nav-link" id="pills-commission-tab" data-toggle="pill" href="#pills-commission" role="tab" aria-controls="pills-commission" aria-selected="false" *appPermission="['Catalog.Employee.Commission.Update']">Cấu hình hoa hồng</a>
         </li>
     </ul>
-    <form class="o_form_view" [formGroup]="formCreate" kendo-validator="validator">
+    <form class="o_form_view" [formGroup]="formCreate" kendo-validator="validator" [class.ng-submitted]="submitted">
         <div class="tab-content" id="pills-tabContent">
             <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
 
@@ -28,7 +28,7 @@
                         <div class="oe_title">
                             <label class="o_form_label oe_edit_only">Tên nhân viên</label>
                             <h1>
-                                <input type="text" class="form-control" formControlName="name" id="name" [class.ng-submitted]="submitted" />
+                                <input type="text" class="form-control" formControlName="name" id="name" />
                             </h1>
                             <div *ngIf="f.name.errors && submitted" class="text-danger mb-1">
                                 <div *ngIf="f.name.errors.required">Nhập tên nhân viên</div>
@@ -171,7 +171,7 @@
                                             <label class="o_form_label">Tài khoản</label>
                                         </td>
                                         <td colspan="1" style="width: 50%;">
-                                            <input #name type="text" class="form-control" formControlName="userName" [class.ng-submitted]="submitted" />
+                                            <input #name type="text" class="form-control" formControlName="userName" />
                                             <div *ngIf="f.userName.errors && submitted" class="text-danger">
                                                 <div *ngIf="f.userName.errors.required">Nhập tên tài khoản</div>
                                             </div>
@@ -182,7 +182,7 @@
                                         <td colspan="1" style="width: 50%;">
                                             <input type="password" class="form-control"
                                                 [disableControl]="!createChangePassword"
-                                                formControlName="userPassword" [class.ng-submitted]="submitted"/>
+                                                formControlName="userPassword"/>
                                             <div *ngIf="createChangePassword && f.userPassword.errors && submitted" class="text-danger">
                                                 <div *ngIf="f.userPassword.errors.required">Nhập mật khẩu</div>
                                                 <div *ngIf="f.userPassword.errors.minlength">Mật khẩu tối thiểu 6 kí tự</div>
@@ -237,7 +237,7 @@
                                             </label>
                                         </td>
                                         <td colspan="3" style="width: 100%;">
-                                            <kendo-combobox [data]="listCompanies" [textField]="'name'" [class.ng-submitted]="submitted"
+                                            <kendo-combobox [data]="listCompanies" [textField]="'name'"
                                                 #companyCbx formControlName="userCompany" [valueField]="'id'">
                                             </kendo-combobox>
                                             <div *ngIf="f.userCompany.errors && submitted" class="text-danger">

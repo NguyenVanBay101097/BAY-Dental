@@ -5,7 +5,7 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <form class="o_form_view" [formGroup]="formGroup">
+    <form class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg overflow-hidden">
             <div class="o_form_sheet">
                 <div class="o_group">
@@ -47,7 +47,7 @@
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-combobox [data]="filteredJournals" [textField]="'name'" [filterable]="true"
                                         [disableControl]="checkIsDisable()" #journalCbx formControlName="journal"
-                                        [valueField]="'id'" [class.ng-submitted]="submitted">
+                                        [valueField]="'id'">
                                     </kendo-combobox>
                                     <div *ngIf="f.journal.errors && submitted" class="text-danger">
                                         <div *ngIf="f.journal.errors.required">Chọn phương thức</div>
@@ -63,7 +63,7 @@
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-combobox [data]="filteredPartners" [textField]="'name'" [filterable]="true"
                                         [disableControl]="checkIsDisable()" #partnerCbx formControlName="partner"
-                                        [valueField]="'id'" [class.ng-submitted]="submitted">
+                                        [valueField]="'id'">
                                     </kendo-combobox>
                                     <div *ngIf="f.partner.errors && submitted"
                                         class="text-danger">
@@ -79,7 +79,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="amount"
-                                        [disableControl]="checkIsDisable()" [class.ng-submitted]="submitted">
+                                        [disableControl]="checkIsDisable()">
                                     </kendo-numerictextbox>
                                     <div *ngIf="f.amount.errors && submitted"
                                         class="text-danger">

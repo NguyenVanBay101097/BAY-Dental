@@ -4,7 +4,7 @@
         (click)="activeModal.dismiss()" tabindex="-1">×</button>
 </header>
 <div class="modal-body o_act_window">
-    <form class="o_form_view" [formGroup]="formGroup">
+    <form class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <table class="o_group o_inner_group o_group_col_12">
@@ -24,8 +24,7 @@
                                     <div class="flex-grow-1 mr-2">
                                         <kendo-combobox formControlName="partner" [filterable]="true"
                                             [data]="customerSimpleFilter" (valueChange)="onChangePartner()" #partnerCbx
-                                            [valueField]="'id'" [textField]="'displayName'"
-                                            [class.ng-submitted]="submitted">
+                                            [valueField]="'id'" [textField]="'displayName'">
                                         </kendo-combobox>
                                     </div>
                                     <div>
@@ -54,8 +53,7 @@
                             </td>
                             <td colspan="1">
                                 <kendo-combobox formControlName="doctor" [filterable]="true" [data]="filteredEmployees"
-                                    #doctorCbx [valueField]="'id'" [textField]="'name'"
-                                    [class.ng-submitted]="submitted">
+                                    #doctorCbx [valueField]="'id'" [textField]="'name'">
                                 </kendo-combobox>
                                 <div *ngIf="f.doctor.errors && submitted" class="text-danger">
                                     <div *ngIf="f.doctor.errors.required">Chọn bác sĩ</div>
@@ -67,8 +65,7 @@
                                 <label class="o_form_label">Ngày hẹn</label>
                             </td>
                             <td colspan="1">
-                                <kendo-datepicker [format]="'dd/MM/yyyy'" formControlName="dateObj"
-                                    [class.ng-submitted]="submitted">
+                                <kendo-datepicker [format]="'dd/MM/yyyy'" formControlName="dateObj">
                                 </kendo-datepicker>
                                 <div *ngIf="f.dateObj.errors && submitted" class="text-danger">
                                     <div *ngIf="f.dateObj.errors.required">Chọn ngày hẹn</div>
@@ -87,8 +84,7 @@
                                             <option [value]="i" *ngFor="let i of timeList">
                                                 {{i}}</option>
                                         </select> -->
-                                        <kendo-timepicker formControlName="timeObj" format="HH:mm"
-                                            [class.ng-submitted]="submitted"></kendo-timepicker>
+                                        <kendo-timepicker formControlName="timeObj" format="HH:mm"></kendo-timepicker>
                                         <div *ngIf="f.timeObj.errors && submitted" class="text-danger">
                                             <div *ngIf="f.timeObj.errors.required">Chọn giờ hẹn</div>
                                         </div>
@@ -161,8 +157,7 @@
                                 <label class="o_form_label">Lý do</label>
                             </td>
                             <td colspan="1">
-                                <textarea class="form-control" rows="3" formControlName="reason"
-                                    [class.ng-submitted]="submitted"></textarea>
+                                <textarea class="form-control" rows="3" formControlName="reason"></textarea>
                                 <div *ngIf="f.reason.errors && submitted"
                                     class="text-danger">
                                     <div *ngIf="f.reason.errors.required">Nhập lý do</div>

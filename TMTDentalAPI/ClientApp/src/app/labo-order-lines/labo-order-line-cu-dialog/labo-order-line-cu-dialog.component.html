@@ -5,7 +5,7 @@
 </header>
 
 <div class="modal-body o_act_window">
-  <form class="o_form_view" [formGroup]="lineForm">
+  <form class="o_form_view" [formGroup]="lineForm" [class.ng-submitted]="submitted">
     <div class="o_form_sheet_bg">
       <div class="o_form_sheet">
         <div class="oe_title">
@@ -101,7 +101,7 @@
                         <td colspan="1" style="width: 100%;">
                           <kendo-combobox [data]="filteredProducts" [textField]="'name'"
                             (valueChange)="onChangeProduct($event)" [filterable]="true" formControlName="product"
-                            #productCbx [valueField]="'id'" [class.ng-submitted]="submitted">
+                            #productCbx [valueField]="'id'">
                           </kendo-combobox>
                           <div *ngIf="f.product.errors && submitted"
                             class="invalid-feedback">
@@ -127,7 +127,7 @@
                         </td>
                         <td colspan="1" style="width: 100%;">
                           <kendo-numerictextbox [min]="0" [format]="'n0'" (valueChange)="onChangeQuantity($event)"
-                            formControlName="quantity" [class.ng-submitted]="submitted">
+                            formControlName="quantity">
                           </kendo-numerictextbox>
                           <div *ngIf="f.quantity.errors && submitted"
                             class="invalid-feedback">
@@ -143,7 +143,7 @@
                         </td>
                         <td colspan="1" style="width: 100%;">
                           <kendo-numerictextbox [min]="0" [format]="'n0'" (valueChange)="onChangePriceUnit($event)"
-                            formControlName="priceUnit" [class.ng-submitted]="submitted">
+                            formControlName="priceUnit">
                           </kendo-numerictextbox>
                           <div *ngIf="f.priceUnit.errors && submitted"
                             class="invalid-feedback">

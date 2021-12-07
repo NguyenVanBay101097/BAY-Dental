@@ -75,7 +75,7 @@
                             <div class="oe_title">
                                 <label class="o_form_label oe_edit_only"> Tên chương trình </label>
                                 <h1>
-                                    <input type="text" class="form-control" required formControlName="name" [class.ng-submitted]="submitted" />
+                                    <input type="text" class="form-control" required formControlName="name" />
                                 </h1>
                                 <div *ngIf="f.name.errors && submitted"
                                     class="text-danger mb-1">
@@ -149,7 +149,7 @@
                                                         </td>
                                                         <td colspan="1" class="w-70">
                                                             <input class="form-control" formControlName="maximumUseNumber" tmtautonumeric
-                                                                [options]="{ minimumValue: 0, decimalPlaces: 0 }" [class.ng-submitted]="submitted" />
+                                                                [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
                                                             <div *ngIf="f.maximumUseNumber.errors && submitted"
                                                                 class="text-danger">
                                                                 <div *ngIf="f.maximumUseNumber.errors.required">
@@ -198,7 +198,7 @@
                                                                 <div class="d-flex">
                                                                     <div class="flex-fill">
                                                                         <input class="form-control" style="width: 100%" formControlName="discountPercentage" tmtautonumeric
-                                                                            [options]="{ minimumValue: 0, maximumValue: 100, decimalPlaces: 0 }" [class.ng-submitted]="submitted" />
+                                                                            [options]="{ minimumValue: 0, maximumValue: 100, decimalPlaces: 0 }" />
                                                                         <div *ngIf="f.discountPercentage.errors && submitted"
                                                                             class="text-danger mb-1">
                                                                             <div *ngIf="f.discountPercentage.errors.required">
@@ -239,7 +239,7 @@
                                                                 <div class="d-flex">
                                                                     <div class="flex-fill">
                                                                         <input class="form-control" formControlName="discountMaxAmount" tmtautonumeric
-                                                                            [options]="{ minimumValue: 0, decimalPlaces: 0 }" [class.ng-submitted]="submitted" />
+                                                                            [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
                                                                         <div *ngIf="f.discountMaxAmount.errors && submitted"
                                                                             class="text-danger">
                                                                             <div *ngIf="f.discountMaxAmount.errors.required">
@@ -266,7 +266,7 @@
                                                                 <div class="d-flex">
                                                                     <div class="flex-fill">
                                                                         <input class="form-control" formControlName="discountFixedAmount" tmtautonumeric
-                                                                            [options]="{ minimumValue: 0, decimalPlaces: 0 }" [class.ng-submitted]="submitted" />
+                                                                            [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
                                                                         <div *ngIf="f.discountFixedAmount.errors && submitted"
                                                                             class="text-danger mb-1">
                                                                             <div *ngIf="f.discountFixedAmount.errors.required">
@@ -326,7 +326,7 @@
                                                                 <div class="d-flex">
                                                                     <div class="flex-fill">
                                                                         <input class="form-control" formControlName="ruleMinimumAmount" tmtautonumeric
-                                                                            [options]="{ minimumValue: 0, decimalPlaces: 0 }" [class.ng-submitted]="submitted" />
+                                                                            [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
                                                                         <div *ngIf="f.ruleMinimumAmount.errors && submitted"
                                                                             class="text-danger mb-1">
                                                                             <div
@@ -361,8 +361,7 @@
                                                             [filterable]="true"
                                                             #productCategoriesMultiSelect
                                                             [textField]="'name'" [valueField]="'id'"
-                                                            formControlName="discountSpecificProductCategories"
-                                                            [class.ng-submitted]="submitted">
+                                                            formControlName="discountSpecificProductCategories">
                                                         </kendo-multiselect>
                                                         <div *ngIf="f.discountSpecificProductCategories.errors && submitted"
                                                             class="text-danger mb-1">
@@ -391,8 +390,7 @@
                                                             [data]="listProducts" [filterable]="true"
                                                             #productMultiSelect [textField]="'name'"
                                                             [valueField]="'id'"
-                                                            formControlName="discountSpecificProducts"
-                                                            [class.ng-submitted]="submitted">
+                                                            formControlName="discountSpecificProducts">
                                                         </kendo-multiselect>
                                                         <div *ngIf="f.discountSpecificProducts.errors && submitted"
                                                             class="text-danger mb-1">
@@ -504,8 +502,7 @@
                                         <div [class.d-none]="applyPartnerOn != 'specific_partners'">
                                             <kendo-multiselect class="cus-kendo-multiselect" [data]="listPartner"
                                                 [filterable]="true" #partnerMultiSelect [textField]="'name'"
-                                                [valueField]="'id'" formControlName="discountSpecificPartners"
-                                                [class.ng-submitted]="submitted">
+                                                [valueField]="'id'" formControlName="discountSpecificPartners">
                                             </kendo-multiselect>
                                             <div *ngIf="f.discountSpecificPartners.errors && submitted"
                                                 class="text-danger mb-1">
@@ -530,8 +527,7 @@
                                         <div [class.d-none]="applyPartnerOn != 'card_types'">
                                             <kendo-multiselect class="cus-kendo-multiselect" [data]="listCardType"
                                                 [filterable]="true" #cardTypeCbx [textField]="'name'"
-                                                [valueField]="'id'" formControlName="discountCardTypes"
-                                                [class.ng-submitted]="submitted">
+                                                [valueField]="'id'" formControlName="discountCardTypes">
                                             </kendo-multiselect>
                                             <div *ngIf="f.discountCardTypes.errors && submitted"
                                                 class="text-danger mb-1">

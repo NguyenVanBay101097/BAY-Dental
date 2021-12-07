@@ -5,7 +5,7 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <div class="o_form_view" [formGroup]="toaThuocForm">
+    <div class="o_form_view" [formGroup]="toaThuocForm" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="d-flex">
@@ -177,7 +177,7 @@
                             </label>
                         </div>
                         <input *ngIf="getFBValueItem('saveSamplePrescription')" type="text" class="form-control w-75" 
-                            formControlName="nameSamplePrescription" placeholder="Nhập tên đơn thuốc mẫu ..." [class.ng-submitted]="submitted" />
+                            formControlName="nameSamplePrescription" placeholder="Nhập tên đơn thuốc mẫu ..." />
                         <div *ngIf="f.nameSamplePrescription.errors && submitted" class="text-danger">
                             <div *ngIf="f.nameSamplePrescription.errors.required">Nhập tên đơn thuốc mẫu</div>
                         </div>

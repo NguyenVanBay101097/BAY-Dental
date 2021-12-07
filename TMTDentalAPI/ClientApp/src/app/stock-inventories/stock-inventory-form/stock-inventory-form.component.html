@@ -42,7 +42,7 @@
 </div>
 
 <div class="o_content">
-    <form class="o_form_view" [formGroup]="formGroup">
+    <form class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
@@ -137,7 +137,7 @@
                                 <td colspan="1">
                                     <kendo-combobox [class.d-none]="stateControl != 'draft'" [data]="filterdCategories"
                                         [textField]="'name'" [filterable]="true" #categCbx formControlName="category"
-                                        [valueField]="'id'" [class.ng-submitted]="submitted">
+                                        [valueField]="'id'">
                                     </kendo-combobox>
                                     <div *ngIf="f.category.errors && submitted"
                                         class="text-danger">
@@ -155,7 +155,7 @@
                                 <td colspan="1">
                                     <kendo-combobox [class.d-none]="stateControl != 'draft'" [data]="filterdCriterias"
                                         [textField]="'name'" [filterable]="true" #criteriaCbx formControlName="criteria"
-                                        [valueField]="'id'" [class.ng-submitted]="submitted">
+                                        [valueField]="'id'">
                                     </kendo-combobox>
                                     <div *ngIf="f.criteria.errors && submitted"
                                         class="text-danger">
@@ -187,7 +187,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-datepicker [format]="'dd/MM/yyyy'" *ngIf="stateControl == 'draft'"
-                                        formControlName="dateObj" [class.ng-submitted]="submitted">
+                                        formControlName="dateObj">
                                     </kendo-datepicker>
                                     <div *ngIf="stateControl == 'draft' && f.dateObj.errors && submitted"
                                         class="text-danger">

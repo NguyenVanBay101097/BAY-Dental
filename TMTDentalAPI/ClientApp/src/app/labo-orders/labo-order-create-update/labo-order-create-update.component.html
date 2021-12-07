@@ -34,7 +34,7 @@
 </div>
 
 <div class="o_content">
-  <form class="o_form_view" [formGroup]="formGroup">
+  <form class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
     <div class="o_form_sheet_bg">
       <div class="o_form_statusbar">
         <div class="o_statusbar_buttons">
@@ -93,7 +93,7 @@
                   <div class="d-flex">
                     <kendo-combobox [class.d-none]="laboOrder.state != 'draft'" [data]="filteredPartners"
                       [textField]="'name'" [filterable]="true" #partnerCbx formControlName="partner"
-                      [valueField]="'id'" [class.ng-submitted]="submitted">
+                      [valueField]="'id'">
                     </kendo-combobox>
                     <a [class.d-none]="laboOrder.state != 'draft'" title="Cập nhật labo" class="pl-2 py-1" type="button"
                       *ngIf="partner" (click)="updateSupplierModal()">
@@ -146,7 +146,7 @@
                 </td>
                 <td colspan="1" style="width: 100%;">
                   <kendo-datepicker [format]="'dd/MM/yyyy HH:mm'" [class.d-none]="laboOrder.state != 'draft'"
-                    formControlName="dateOrderObj" [class.ng-submitted]="submitted">
+                    formControlName="dateOrderObj">
                   </kendo-datepicker>
                   <span [class.d-none]="laboOrder.state == 'draft'">{{laboOrder.dateOrder | date: 'short'}}</span>
                   <div *ngIf="f.dateOrderObj.errors && submitted"

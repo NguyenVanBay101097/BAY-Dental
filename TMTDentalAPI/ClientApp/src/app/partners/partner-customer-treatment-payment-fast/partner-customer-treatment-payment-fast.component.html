@@ -10,7 +10,7 @@
 </div>
 
 <div class="o_content h-100 overflow-hidden">
-    <div class="o_form_view t_custom_form" [formGroup]="formGroup">
+    <div class="o_form_view t_custom_form" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="d-flex">
             <div class="btns">
                 <a [routerLink]="['/dashboard']" class="btn btn-secondary mr-1">
@@ -55,7 +55,7 @@
                                     <kendo-combobox [popupSettings]="{width: 'auto', popupClass: 'partner-cbx'}"
                                         [class.d-none]="saleOrder.state != 'draft'" [data]="filteredPartners"
                                         [textField]="'displayName'" [filterable]="true" #partnerCbx
-                                        formControlName="partner" [valueField]="'id'" [class.ng-submitted]="submitted">
+                                        formControlName="partner" [valueField]="'id'">
                                         <ng-template kendoComboBoxItemTemplate let-dataItem>
                                             <div class="partner-item-cbx">
                                                 <div class="name">{{ dataItem.displayName }}</div>
@@ -89,7 +89,7 @@
                             </td>
                             <td colspan="1" style="width: 100%;">
                                 <kendo-datetimepicker [class.d-none]="saleOrder.state != 'draft'"
-                                    formControlName="dateOrder" [class.ng-submitted]="submitted">
+                                    formControlName="dateOrder">
                                 </kendo-datetimepicker>
                                 <div *ngIf="saleOrder.state == 'draft' && f.dateOrder.errors && submitted"
                                     class="text-danger">

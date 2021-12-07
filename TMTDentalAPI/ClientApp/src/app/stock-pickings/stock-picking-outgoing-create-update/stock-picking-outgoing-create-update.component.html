@@ -19,7 +19,7 @@
 </div>
 
 <div class="o_content">
-    <div class="o_form_view" [formGroup]="pickingForm">
+    <div class="o_form_view" [formGroup]="pickingForm" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
@@ -66,7 +66,7 @@
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-combobox [hidden]="pickingState == 'done'" [data]="filteredPartners"
                                         [textField]="'name'" [filterable]="true" #partnerCbx formControlName="partner"
-                                        [valueField]="'id'" [class.ng-submitted]="submitted">
+                                        [valueField]="'id'">
                                     </kendo-combobox>
                                     <div *ngIf="f.partner.errors && submitted"
                                         class="text-danger">
@@ -160,8 +160,7 @@
                                                     <td class="align-middle ">
                                                         <input class="form-control" style="width: 80px;" formControlName="productUOMQty"
                                                             *ngIf="['done', 'cancel'].indexOf(picking?.state) === -1"
-                                                            [options]="{ minimumValue: 0, decimalPlaces: 2 }" tmtautonumeric
-                                                            [class.ng-submitted]="submitted"/>
+                                                            [options]="{ minimumValue: 0, decimalPlaces: 2 }" tmtautonumeric />
                                                         <div *ngIf="line.get('productUOMQty').errors && submitted"
                                                             class="text-danger">
                                                             <div *ngIf="line.get('productUOMQty').errors.required">

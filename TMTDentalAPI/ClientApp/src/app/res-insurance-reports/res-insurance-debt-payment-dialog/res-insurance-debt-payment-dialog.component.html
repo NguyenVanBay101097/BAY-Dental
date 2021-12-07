@@ -5,7 +5,7 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <form class="o_form_view o_form_editable" [formGroup]="formGroup">
+    <form class="o_form_view o_form_editable" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="o_group">
@@ -19,7 +19,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-combobox [data]="filteredJournals" [textField]="'name'" [valueField]="'id'"
-                                        [filterable]="true" #journalCbx formControlName="journal" [class.ng-submitted]="submitted">
+                                        [filterable]="true" #journalCbx formControlName="journal">
                                     </kendo-combobox>
                                     <div *ngIf="f.journal.errors && submitted"
                                         class="text-danger">
@@ -49,7 +49,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker formControlName="paymentDateObj" [class.ng-submitted]="submitted"></kendo-datepicker>
+                                    <kendo-datepicker formControlName="paymentDateObj"></kendo-datepicker>
                                     <div *ngIf="f.paymentDateObj.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.paymentDateObj.errors.required">Chọn ngày thu</div>

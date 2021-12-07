@@ -4,7 +4,7 @@
         tabindex="-1">×</button>
 </header>
 <div class="modal-body o_act_window">
-    <form class="o_form_view" [formGroup]="formGroup">
+    <form class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="">
@@ -15,8 +15,7 @@
                                     <label class="o_form_label">Tiêu đề tin nhắn mẫu</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input class="form-control" formControlName="name" id="name"
-                                        [class.ng-submitted]="submitted" />
+                                    <input class="form-control" formControlName="name" id="name" />
                                     <div *ngIf="f.name.errors && submitted" class="text-danger">
                                         <div *ngIf="f.name.errors.required">Nhập tiêu đề tin nhắn mẫu</div>
                                     </div>
@@ -43,8 +42,7 @@
                                     <label class="o_form_label">Nội dung</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <textarea type="text" my-autosize class="form-control textarea textarea-required"
-                                        [class.ng-submitted]="submitted" id="textarea_mass" formControlName="body"
+                                    <textarea type="text" my-autosize class="form-control textarea textarea-required" id="textarea_mass" formControlName="body"
                                         rows="5" #textarea></textarea>
                                     <div *ngIf="f.body.errors && submitted" class="text-danger">
                                         <div *ngIf="f.body.errors.required">Nhập nội dung tin nhắn</div>

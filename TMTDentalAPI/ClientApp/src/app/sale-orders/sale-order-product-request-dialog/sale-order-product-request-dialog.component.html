@@ -4,7 +4,7 @@
         tabindex="-1">×</button>
 </header>
 <div class="modal-body o_act_window">
-    <div class="o_form_view" [formGroup]="formGroup">
+    <div class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
@@ -38,7 +38,7 @@
                                     <span *ngIf="seeForm">
                                         {{productRequestDisplay.date | date: 'shortDate'}}
                                     </span>
-                                    <kendo-datepicker *ngIf="!seeForm" formControlName="dateObj" [class.ng-submitted]="submitted">
+                                    <kendo-datepicker *ngIf="!seeForm" formControlName="dateObj">
                                     </kendo-datepicker>
                                     <div *ngIf="f.dateObj.errors && submitted"
                                         class="text-danger">
@@ -73,7 +73,7 @@
                                     <span *ngIf="seeForm">{{productRequestDisplay.employee?.name}}</span>
                                     <kendo-combobox [class.d-none]="seeForm" [filterable]="true"
                                         [data]="filteredEmployees" [textField]="'name'" #employeeCbx
-                                        formControlName="employee" [valueField]="'id'" [class.ng-submitted]="submitted">
+                                        formControlName="employee" [valueField]="'id'">
                                     </kendo-combobox>
                                     <div *ngIf="f.employee.errors && submitted"
                                         class="text-danger">

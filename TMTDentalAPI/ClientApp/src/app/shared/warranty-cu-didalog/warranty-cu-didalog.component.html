@@ -5,7 +5,7 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <form class="o_form_view o_form_editable" [formGroup]="myForm" (submit)="onSave()">
+    <form class="o_form_view o_form_editable" [formGroup]="myForm" (submit)="onSave()" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
@@ -70,7 +70,7 @@
                                                 <div [class.d-none]="getValueFC('state') != 'draft'">
                                                     <kendo-combobox #doctorCbx [data]="filteredDoctors"
                                                         [textField]="'name'" [valueField]="'id'" [filterable]="true"
-                                                        formControlName="doctor" [class.ng-submitted]="submitted">
+                                                        formControlName="doctor">
                                                     </kendo-combobox>
                                                 </div>
                                                 <span *ngIf="getValueFC('state') != 'draft'">
@@ -92,7 +92,7 @@
                                                 <ng-container *ngIf="getValueFC('state') === 'draft'; else dateReceipt">
                                                     <kendo-datepicker formControlName="dateReceiptObj">
                                                     </kendo-datepicker>
-                                                    <span *ngIf="getControlFC('dateReceiptObj')?.errors?.required"
+                                                    <span *ngIf="getControlFC('dateReceiptObj')?.errors?.required && submitted"
                                                         class="text-danger">
                                                         Chọn ngày nhận bảo hành
                                                     </span>
@@ -144,8 +144,7 @@
                                             </td>
                                             <td colspan="1" style="width: 100%;">
                                                 <ng-container *ngIf="getValueFC('state') === 'draft'; else reason">
-                                                    <textarea type="text" formControlName="reason"
-                                                    [class.ng-submitted]="submitted" class="form-control"></textarea>
+                                                    <textarea type="text" formControlName="reason" class="form-control"></textarea>
                                                 </ng-container>
                                                 <ng-template #reason>
                                                     <span style="word-break: break-word;">

@@ -24,7 +24,7 @@
 </div>
 
 <div class="o_content">
-    <form class="o_form_view" [formGroup]="formGroup">
+    <form class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
@@ -96,7 +96,7 @@
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-combobox [data]="filteredPartners" [textField]="'name'"
                                         [class.d-none]="purchaseOrder?.state != 'draft'" [filterable]="true" #partnerCbx
-                                        formControlName="partner" [valueField]="'id'" [class.ng-submitted]="submitted">
+                                        formControlName="partner" [valueField]="'id'">
                                     </kendo-combobox>
                                     <div *ngIf="f.partner.errors && submitted"
                                         class="text-danger">
@@ -116,7 +116,7 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <kendo-datepicker [format]="'dd/MM/yyyy'" *ngIf="purchaseOrder?.state == 'draft'"
-                                        formControlName="dateOrderObj" [class.ng-submitted]="submitted">
+                                        formControlName="dateOrderObj">
                                     </kendo-datepicker>
                                     <div *ngIf="purchaseOrder?.state == 'draft' && f.dateOrderObj.errors && submitted"
                                         class="text-danger">
@@ -153,8 +153,7 @@
                                 <td colspan="1" style="width: 100%;">
                                  
                                     <input class="form-control" formControlName="amountPayment" tmtautonumeric
-                                    [options]="{minimumValue: 0, decimalPlaces: 0}" (keyup)="onChangeAmountPayment()"
-                                    [class.ng-submitted]="submitted"/>
+                                    [options]="{minimumValue: 0, decimalPlaces: 0}" (keyup)="onChangeAmountPayment()" />
                                     <div *ngIf="f.amountPayment.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.amountPayment.errors.required">Nhập số tiền</div>

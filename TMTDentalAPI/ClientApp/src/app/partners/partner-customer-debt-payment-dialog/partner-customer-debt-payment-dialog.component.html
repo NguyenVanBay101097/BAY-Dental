@@ -4,7 +4,7 @@
         tabindex="-1">×</button>
 </header>
 <div class="modal-body o_act_window">
-    <div class="o_form_view" [formGroup]="formGroup">
+    <div class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="o_group">
@@ -18,7 +18,7 @@
                                     <div>
                                         <kendo-combobox [data]="filteredJournals" [textField]="'name'"
                                             [filterable]="true" #journalCbx formControlName="journal"
-                                            [valueField]="'id'" [class.ng-submitted]="submitted">
+                                            [valueField]="'id'">
                                         </kendo-combobox>
                                         <div *ngIf="f.journal.errors && submitted"
                                             class="text-danger">
@@ -32,7 +32,7 @@
                                     <label class="o_form_label">Số tiền</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input class="form-control" formControlName="amount" tmtautonumeric [class.ng-submitted]="submitted"
+                                    <input class="form-control" formControlName="amount" tmtautonumeric
                                     [options]="{minimumValue: 0, maximumValue: amountDebtBalanceTotal, decimalPlaces: 0}"/>
                                     <div *ngIf="f.amount.errors && submitted"
                                         class="text-danger">
@@ -50,7 +50,7 @@
                                     <label class="o_form_label">Ngày thanh toán</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-datepicker formControlName="dateObj" [class.ng-submitted]="submitted">
+                                    <kendo-datepicker formControlName="dateObj">
                                     </kendo-datepicker>
                                     <div *ngIf="f.dateObj.errors && submitted"
                                         class="text-danger">

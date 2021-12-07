@@ -5,7 +5,7 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <form class="o_form_view" [formGroup]="formGroup">
+    <form class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="o_group">
@@ -16,7 +16,7 @@
                                     <label class="o_form_label">Tên câu hỏi</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input class="form-control" formControlName="name" [class.ng-submitted]="submitted" />
+                                    <input class="form-control" formControlName="name" />
                                     <div class="error-message">
                                         <span class="text-danger "
                                             *ngIf="f.name.errors && submitted">Nhập
@@ -65,7 +65,7 @@
                                             </div>
                                         </td>
                                         <td class="col-md" style="vertical-align: middle;">
-                                            <input type="text" class="form-control" formControlName="name" [class.ng-submitted]="submitted" >
+                                            <input type="text" class="form-control" formControlName="name" >
                                         </td>
                                         <td class="col-xs" style="vertical-align: middle;">
                                             <span>

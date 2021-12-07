@@ -4,7 +4,7 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <form class="o_form_view" [formGroup]="formGroup">
+    <form class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="o_group">
@@ -17,7 +17,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <input type="text" class="form-control" formControlName="name" [class.ng-submitted]="submitted">
+                                    <input type="text" class="form-control" formControlName="name" />
                                     <div *ngIf="f.name.errors && submitted" class="text-danger">
                                         <div *ngIf="f.name.errors.required">Nhập tên vật liệu Labo</div>
                                     </div>

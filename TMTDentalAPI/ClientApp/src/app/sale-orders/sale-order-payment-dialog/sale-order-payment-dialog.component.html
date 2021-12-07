@@ -5,7 +5,7 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <form class="o_form_view o_form_editable" [formGroup]="paymentForm">
+    <form class="o_form_view o_form_editable" [formGroup]="paymentForm" [class.ng-submitted]="submitted">
         <div [class.d-none]="this.step != 1">
             <div class="o_form_sheet_bg">
                 <div class="o_form_sheet m-0">
@@ -19,7 +19,7 @@
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">
-                                        <kendo-datepicker formControlName="date" [class.ng-submitted]="submitted"></kendo-datepicker>
+                                        <kendo-datepicker formControlName="date"></kendo-datepicker>
                                         <div *ngIf="paymentFC.date.errors && submitted"
                                             class="text-danger">
                                             <div *ngIf="paymentFC.date.errors.required">Chọn ngày thanh toán</div>
@@ -97,7 +97,7 @@
                                     <td>
                                         <input class="form-control text-right" formControlName="amount" 
                                         [options]="{maximumValue: defaultVal.amount,minimumValue: 0, decimalPlaces: 0}" 
-                                        tmtautonumeric [disableControl]="isPaymentForServiceValue" [class.ng-submitted]="submitted" />
+                                        tmtautonumeric [disableControl]="isPaymentForServiceValue" />
                                         <div *ngIf="paymentFC.amount.errors && submitted"
                                             class="text-danger">
                                             <div *ngIf="paymentFC.amount.errors.required">Nhập số tiền</div>
@@ -142,7 +142,7 @@
                                                 </label>
                                             </td>
                                             <td>
-                                                <input class="form-control text-right" formControlName="debtAmount" [class.ng-submitted]="submitted"
+                                                <input class="form-control text-right" formControlName="debtAmount"
                                                     tmtautonumeric [options]="{maximumValue: partnerDebt,minimumValue: 0,decimalPlaces:0}" />
                                                 <div *ngIf="paymentFC.debtAmount.errors && submitted"
                                                     class="text-danger">
@@ -300,7 +300,7 @@
                                                             <div *ngIf="item.get('journals').value.length > 1">
                                                                 <kendo-combobox [placeholder]="'Tài khoản thu'" style="min-width: 200px;"
                                                                     [data]="item.get('journals').value" [textField]="'displayName'" [valueField]="'id'"
-                                                                    formControlName="journal" [class.ng-submitted]="submitted">
+                                                                    formControlName="journal">
                                                                 </kendo-combobox>
                                                                 <div class="text-danger" 
                                                                 *ngIf="journalLines.controls[i].get('journal').errors && submitted">
@@ -345,7 +345,7 @@
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <div>
                                                     <kendo-combobox style="width: 250px" [data]="cashBankJournals" [textField]="'name'"
-                                                        [valueField]="'id'" formControlName="debtJournal" [class.ng-submitted]="submitted">
+                                                        [valueField]="'id'" formControlName="debtJournal">
                                                     </kendo-combobox>
                                                     <div class="text-danger" *ngIf="paymentFC.debtJournal.errors && submitted">
                                                         <div *ngIf="paymentFC.debtJournal.errors.required">Chọn tài khoản</div>

@@ -1,4 +1,4 @@
-<form class="container o_form_view h-100" [formGroup]="formGroup">
+<form class="container o_form_view h-100" [formGroup]="formGroup" [class.ng-submitted]="submitted">
     <div class="o_form_sheet_bg">
         <div class="o_form_sheet">
             <div class="o_group">
@@ -43,7 +43,7 @@
                                         <td colspan="1" style="width: 80%;">
                                             <kendo-combobox [data]="filteredSmsAccount" class="mb-2"
                                                 [textField]="'brandName'" formControlName="smsAccount"
-                                                [filterable]="true" #smsAccountCbx [valueField]="'id'" [class.ng-submitted]="submitted">
+                                                [filterable]="true" #smsAccountCbx [valueField]="'id'">
                                                 <ng-template kendoComboBoxItemTemplate let-dataItem>
                                                     <span>{{dataItem.brandName}} ({{dataItem.name}})</span>
                                                 </ng-template>
@@ -90,7 +90,7 @@
                                         <td colspan="1" style="width: 80%;">
                                             <kendo-combobox [data]="filteredTemplate" [textField]="'name'"
                                                 formControlName="template" [filterable]="true" #smsTemplateCbx
-                                                [valueField]="'id'" class="mb-2" [class.ng-submitted]="submitted">
+                                                [valueField]="'id'" class="mb-2">
                                             </kendo-combobox>
                                             <div *ngIf="f.template.errors && submitted" class="text-danger">
                                                 <div *ngIf="f.template.errors.required">Chọn tin nhắn mẫu</div>

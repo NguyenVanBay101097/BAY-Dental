@@ -5,7 +5,7 @@
 </header>
 
 <div class="modal-body o_act_window">
-  <div class="o_form_view" [formGroup]="formGroup">
+  <div class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
     <div class="o_form_sheet_bg">
       <div class="o_form_sheet">
         <div class="o_group mt-0 mb-0">
@@ -64,7 +64,7 @@
                 </td>
                 <td colspan="1" style="width: 100%;">
                   <kendo-numerictextbox [min]="0" [class.d-none]="lineState == 'purchase'" [format]="'n0'"
-                    formControlName="productQty" [class.ng-submitted]="submitted">
+                    formControlName="productQty">
                   </kendo-numerictextbox>
                   <span *ngIf="line" [class.d-none]="lineState != 'purchase'">{{line.productQty | number}}</span>
                   <div *ngIf="f.productQty.errors && submitted"
@@ -81,7 +81,7 @@
                 </td>
                 <td colspan="1" style="width: 100%;">
                   <kendo-numerictextbox [min]="0" [class.d-none]="lineState == 'purchase'" [format]="'n0'"
-                    formControlName="priceUnit" [class.ng-submitted]="submitted">
+                    formControlName="priceUnit">
                   </kendo-numerictextbox>
                   <span *ngIf="line" [class.d-none]="lineState != 'purchase'">{{line.priceUnit | number}}</span>
                   <div *ngIf="f.priceUnit.errors && submitted"

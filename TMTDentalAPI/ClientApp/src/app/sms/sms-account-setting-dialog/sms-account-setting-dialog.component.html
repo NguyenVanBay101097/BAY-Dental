@@ -5,7 +5,7 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <form class="o_form_view" [formGroup]="formGroup">
+    <form class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <!-- <div class="d-flex">
@@ -46,7 +46,7 @@
                                             <label class="o_form_label">Brand Name</label>
                                         </td>
                                         <td colspan="1" style="width: 100%;">
-                                            <input type="text" [class.ng-submitted]="submitted" class="form-control"
+                                            <input type="text" class="form-control"
                                                 formControlName="brandName">
                                             <div *ngIf="f.brandName.errors && submitted" class="text-danger">
                                                 <div *ngIf="f.brandName.errors.required">Nhập Brandname</div>
@@ -58,8 +58,7 @@
                                             <label class="o_form_label">Client Id</label>
                                         </td>
                                         <td colspan="1" style="width: 100%;">
-                                            <input type="text" class="form-control" [class.ng-submitted]="submitted"
-                                                formControlName="clientId">
+                                            <input type="text" class="form-control" formControlName="clientId">
                                             <div *ngIf="f.clientId.errors && submitted" class="text-danger">
                                                 <div *ngIf="f.clientId.errors.required">Nhập Client Id</div>
                                             </div>
@@ -71,8 +70,7 @@
                                             <label class="o_form_label">Client Secret</label>
                                         </td>
                                         <td colspan="1" style="width: 100%;">
-                                            <input type="text" class="form-control" [class.ng-submitted]="submitted"
-                                                formControlName="clientSecret">
+                                            <input type="text" class="form-control" formControlName="clientSecret">
                                             <div *ngIf="f.clientSecret.errors && submitted" class="text-danger">
                                                 <div *ngIf="f.clientSecret.errors.required">Nhập Client Secret</div>
                                             </div>
