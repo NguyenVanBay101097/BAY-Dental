@@ -42,7 +42,7 @@ export class CashBookTabPageCaBoComponent implements OnInit {
   accountJournalSelectedId: string;
   listAccounts: AccountJournalSimple[] = [];
   cbxPopupSettings = {
-    width: 300
+    width: 320
   };
   constructor(
     private cashBookService: CashBookService,

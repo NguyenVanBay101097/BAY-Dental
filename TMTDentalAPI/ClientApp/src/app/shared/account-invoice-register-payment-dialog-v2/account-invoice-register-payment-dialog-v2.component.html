@@ -31,8 +31,8 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-numerictextbox [min]="0" [max]="defaultVal.amount" [autoCorrect]="true" formControlName="amount" [format]="'n0'">
-                                    </kendo-numerictextbox>
+                                    <input class="form-control text-right" formControlName="amount"
+                                    tmtautonumeric [options]="{maximumValue: defaultVal.amount,minimumValue: 0,decimalPlaces:0}" />
                                     <div *ngIf="f.amount.errors && (f.amount.touched || f.amount.dirty || submitted)" class="text-danger">
                                         <div *ngIf="f.amount.errors.required">Nhập số tiền</div>
                                     </div>

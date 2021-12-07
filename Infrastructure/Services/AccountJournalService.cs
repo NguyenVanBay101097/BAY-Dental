@@ -157,6 +157,8 @@ namespace Infrastructure.Services
 
         public async Task UpdateBankJournal(AccountJournalUpdateBankJournalVM val)
         {
+            var resPnBankObj = GetService<IResPartnerBankService>();
+
             var journal = await SearchQuery(x => x.Id == val.Id)
                 .Include(x => x.BankAccount)
                 .FirstOrDefaultAsync();
@@ -171,7 +173,6 @@ namespace Infrastructure.Services
             }
             else
             {
-                var resPnBankObj = GetService<IResPartnerBankService>();
                 var companyObj = GetService<ICompanyService>();
 
                 var company = await companyObj.GetByIdAsync(CompanyId);
