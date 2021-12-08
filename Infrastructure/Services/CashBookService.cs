@@ -127,13 +127,23 @@ namespace Infrastructure.Services
             if (dateTo.HasValue)
                 dateTo = dateTo.Value.AbsoluteEndOfDate();
 
+            if (dateFrom.HasValue)
+            {
+                var query1 = amlObj._QueryGet(dateFrom: dateFrom, state: "posted", companyId: companyId, initBal: true);
+                query1 = query1.Where(x => types.Contains(x.Journal.Type) && x.AccountInternalType != "liquidity");
+                if (journalId.HasValue)
+                    query1 = query1.Where(x => x.JournalId == journalId);
+                var begin = await query1.SumAsync(x => x.Credit - x.Debit);
+                cashBookReport.Begin = begin;
+            }
+
+
             var query = amlObj._QueryGet(dateFrom: dateFrom, dateTo: dateTo, state: "posted", companyId: companyId);
             query = query.Where(x => types.Contains(x.Journal.Type) && x.AccountInternalType != "liquidity");
 
             if (journalId.HasValue)
                 query = query.Where(x => x.JournalId == journalId);
-
-            cashBookReport.Begin = await query.SumAsync(x => x.Credit - x.Debit);
+           
             cashBookReport.TotalThu = await query.SumAsync(x => x.Credit);
             cashBookReport.TotalChi = await query.SumAsync(x => x.Debit);
 

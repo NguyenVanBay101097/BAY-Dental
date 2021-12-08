@@ -57,14 +57,14 @@
     [loading]="loading" (pageChange)="pageChange($event)">
     <kendo-grid-column field="invoiceOrigin" title="Mã thanh toán" width="150">
     </kendo-grid-column>
-    <kendo-grid-column field="name" title="Nội dung" width="150">
-    </kendo-grid-column>
     <kendo-grid-column title="Khách hàng" width="180">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             <a class="text-primary"
                 [routerLink]="['/partners/customer/' + dataItem.partnerId]">{{dataItem.partnerName}}</a>
         </ng-template>
     </kendo-grid-column>
+    <kendo-grid-column field="name" title="Nội dung" width="150">
+    </kendo-grid-column> 
     <kendo-grid-column field="journalName" title="Phương thức" width="150">
     </kendo-grid-column>
     <kendo-grid-column title="Số tiền" class="text-right" width="150">
