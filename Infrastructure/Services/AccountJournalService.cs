@@ -380,8 +380,13 @@ namespace Infrastructure.Services
                 spec = spec.And(new InitialSpecification<AccountJournal>(x => types.Contains(x.Type)));
             }
 
-            var query = SearchQuery(domain: spec.AsExpression(), orderBy: x => x.OrderBy(s => s.Code));
-            var items = await query.Skip(0).Take(20).Select(x => new AccountJournalSimple()
+            var query = SearchQuery(domain: spec.AsExpression(), orderBy: x => x.OrderBy(s => s.DateCreated));
+            
+            if (val.Limit > 0)
+            {
+                query = query.Skip(val.Offset).Take(val.Limit);
+            } 
+            var items = await query.Select(x => new AccountJournalSimple()
             {
                 Id = x.Id,
                 Name = x.Name,

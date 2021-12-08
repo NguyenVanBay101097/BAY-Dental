@@ -25,6 +25,14 @@
                                     <kendo-combobox [class.d-none]="precscriptPayment.state == 'confirmed' || precscriptPayment.state == 'cancel'"
                                         [data]="filteredJournals" [textField]="'name'" [valueField]="'id'"
                                         [filterable]="true" #journalCbx formControlName="journal">
+                                        <ng-template kendoComboBoxItemTemplate let-dataItem>
+                                            <div>
+                                                <div *ngIf="dataItem.type !== 'cash'">{{dataItem.displayType}}</div>
+                                                <div>
+                                                    <strong>{{dataItem.name}}</strong>
+                                                </div>
+                                            </div>
+                                        </ng-template>
                                     </kendo-combobox>
                                     <div *ngIf="f.journal.errors && submitted" class="text-danger">
                                         <div *ngIf="f.journal.errors.required">Chọn phương thức thanh toán</div>

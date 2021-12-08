@@ -49,17 +49,19 @@ export class CommissionSettlementAgentPaymentDialogComponent implements OnInit {
 
     this.loadDefault();
     this.loadFilteredJournals();
+
     this.journalCbx.filterChange
       .asObservable()
       .pipe(
         debounceTime(300),
         tap(() => (this.journalCbx.loading = true)),
-        switchMap((value) => this.searchJournal(value))
+        switchMap((value) => this.searchFilteredJournals(value)
+        )
       )
-      .subscribe((x) => {
-        this.filteredJournals = x;
+      .subscribe((result: any) => {
+        this.filteredJournals = result;
         this.journalCbx.loading = false;
-      });
+    });
   }
 
   loadDefault() {
@@ -90,7 +92,7 @@ export class CommissionSettlementAgentPaymentDialogComponent implements OnInit {
 
 
   loadFilteredJournals() {
-    this.searchJournal().subscribe((res) => {
+    this.searchFilteredJournals().subscribe((res) => {
       this.filteredJournals = _.unionBy(this.filteredJournals, res, 'id');
     },
       (error) => {
@@ -99,11 +101,11 @@ export class CommissionSettlementAgentPaymentDialogComponent implements OnInit {
     );
   }
 
-  searchJournal(q?) {
+  searchFilteredJournals(q?: string) {
     var val = new AccountJournalFilter();
     val.type = "bank,cash";
+    val.search = q || '';
     val.companyId = this.authService.userInfo.companyId;
-    val.search = q || "";
     return this.accountJournalService.autocomplete(val);
   }
 

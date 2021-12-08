@@ -297,10 +297,19 @@
                                                             <strong>{{getPaymentMethod(item.get('type').value).name}}</strong>
                                                         </td>
                                                         <td class="w-50" style="vertical-align: unset;">
-                                                            <div *ngIf="item.get('journals').value.length > 1">
-                                                                <kendo-combobox [placeholder]="'Tài khoản thu'" style="min-width: 200px;"
-                                                                    [data]="item.get('journals').value" [textField]="'name'" [valueField]="'id'"
-                                                                    formControlName="journal" >
+                                                            <div [class.d-none]="item.get('journals').value.length <= 1">
+                                                                <kendo-combobox  [placeholder]="'Tài khoản thu'" style="min-width: 200px;" 
+                                                                [data]="item.get('journals').value" [textField]="'name'"
+                                                                [filterable]="true" formControlName="journal"
+                                                                [valueField]="'id'">
+                                                                <ng-template kendoComboBoxItemTemplate let-dataItem>
+                                                                    <div class="pt-2 pb-2">
+                                                                        <h6 class="mb-0">{{dataItem.type == 'cash' ? 'Tiền mặt' : 'Ngân hàng'}}</h6>
+                                                                        <div *ngIf="!['Tiền mặt'].includes(dataItem.name)">
+                                                                            {{dataItem.name}}
+                                                                        </div>
+                                                                    </div>
+                                                                </ng-template>
                                                                 </kendo-combobox>
                                                                 <div class="text-danger" 
                                                                 *ngIf="journalLines.controls[i].get('journal').errors && submitted">

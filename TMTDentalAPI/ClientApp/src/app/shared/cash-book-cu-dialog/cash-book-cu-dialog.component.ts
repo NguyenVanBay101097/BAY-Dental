@@ -107,6 +107,19 @@ export class CashBookCuDialogComponent implements OnInit {
         this.loaiThuChiList = result.items;
         this.loaiThuChiCbx.loading = false;
       });
+
+      this.journalCbx.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.journalCbx.loading = true)),
+        switchMap((value) => this.searchFilteredJournals(value)
+        )
+      )
+      .subscribe((result: any) => {
+        this.filteredJournals = result;
+        this.journalCbx.loading = false;
+    });
     });
   }
 
@@ -213,18 +226,23 @@ export class CashBookCuDialogComponent implements OnInit {
   }
 
   loadFilteredJournals() {
-    var val = new AccountJournalFilter();
-    val.type = "bank,cash";
-    val.companyId = this.authService.userInfo.companyId;
-    this.accountJournalService.autocomplete(val).subscribe(
+    this.searchFilteredJournals().subscribe(
       (res) => {
         this.filteredJournals = res;
-        this.formGroup.get("journal").patchValue(this.filteredJournals[0]);
+        this.formGroup.get("journal").patchValue(this.filteredJournals.find(x => x.type == 'cash'));
       },
       (error) => {
         console.log(error);
       }
     );
+  }
+
+  searchFilteredJournals(q?: string) {
+    var val = new AccountJournalFilter();
+    val.type = "bank,cash";
+    val.search = q || '';
+    val.companyId = this.authService.userInfo.companyId;
+    return this.accountJournalService.autocomplete(val);
   }
 
   changePartnerType(partnerType: string) {

@@ -187,7 +187,7 @@ export class MedicineOrderCreateDialogComponent implements OnInit {
     this.searchJournals().subscribe(result => {
       this.filteredJournals = result;
       if (this.filteredJournals && this.filteredJournals.length > 1) {
-        this.formGroup.get('journal').patchValue(this.filteredJournals[0])
+        this.formGroup.get('journal').patchValue(this.filteredJournals.find(x => x.type == 'cash'))
       }
     })
   }
