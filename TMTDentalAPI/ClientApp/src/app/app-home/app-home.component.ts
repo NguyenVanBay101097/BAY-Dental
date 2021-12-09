@@ -391,7 +391,8 @@ export class AppHomeComponent implements OnInit {
             animation: { type: 'fade', duration: 400 },
             type: { style: 'success', icon: true }
           });
-          window.location.reload();
+
+          this.logout();
         }
       )
     }, () => { });

@@ -139,7 +139,10 @@ namespace TMTDentalAPI.Controllers
             if (userRoot != null)
             {
                 userRoot.ResCompanyUsersRels.Add(new ResCompanyUsersRel { Company = company });
-                await _userManager.UpdateAsync(userRoot);
+                var updateResult = await _userManager.UpdateAsync(userRoot);
+
+                //clear cache ir rule
+                _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-ir.rule-{userRoot.Id}");
             }
 
             _unitOfWork.Commit();
