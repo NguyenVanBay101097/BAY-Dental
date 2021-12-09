@@ -2,7 +2,7 @@
     <div *ngIf="isEditSate()" class="mb-2">
         <div class="d-flex justify-content-between">
             <div>
-                <app-service-list-search-dropdown (onSelectService)="addLine($event)">
+                <app-service-list-search-dropdown [isQuickCreate]="true" (onSelectService)="addLine($event)">
                 </app-service-list-search-dropdown>
             </div>
             <div>
