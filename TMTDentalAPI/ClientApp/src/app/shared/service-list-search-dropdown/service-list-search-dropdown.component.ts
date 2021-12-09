@@ -23,6 +23,7 @@ export class ServiceListSearchDropdownComponent implements OnInit {
 
   @Output() onSelectService = new EventEmitter<any>()
   @Input() placeHolder: string;
+  @Input() isQuickCreate = false;
   focus$ = new Subject<any>();
 
   constructor(
@@ -115,6 +116,9 @@ export class ServiceListSearchDropdownComponent implements OnInit {
     $event.preventDefault();
     var item = $event.item;
     if (item.error){
+      if(!this.isQuickCreate)
+      return;
+      
       let modalRef = this.modalService.open(ProductServiceCuDialogComponent, {
         size: 'xl',
         windowClass: "o_technical_modal",

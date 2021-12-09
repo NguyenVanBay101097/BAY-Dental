@@ -2,12 +2,10 @@
   <div class="o_control_panel o_breadcrumb_full">
     <ol class="breadcrumb">
       <li>
-        <a [routerLink]="[
-            '/partners/customer/' + quotation.partner?.id + '/quotations'
-          ]">Báo giá</a>
+        <a [routerLink]="['/partners/customer/' + quotation.partner?.id + '/quotations']">Báo giá</a>
       </li>
       <li class="active">
-        <span *ngIf="quotationId">{{ quotation?.name }}</span>
+        <span *ngIf="quotationId"> {{ quotation?.name }} </span>
         <span *ngIf="!quotationId">Mới</span>
       </li>
     </ol>
@@ -17,8 +15,7 @@
           <button type="button" class="btn btn-primary" accesskey="s" (click)="form.onSubmit()">
             Lưu
           </button>
-          <button *ngIf="quotationId" type="button" accesskey="1" class="btn btn-primary"
-            (click)="onCreateSaleOrder()">
+          <button *ngIf="quotationId" type="button" accesskey="1" class="btn btn-primary" (click)="onCreateSaleOrder()">
             Tạo phiếu điều trị
           </button>
           <button *ngIf="quotationId" type="button" class="btn btn-primary" (click)="printQuotation()">
@@ -33,7 +30,7 @@
   </div>
 </div>
 <div class="o_content">
-  <form class="o_form_view" #form="ngForm" (ngSubmit)="onSave(form)">
+  <form class="o_form_view" #form="ngForm" (ngSubmit)="onSave(form)" [class.ng-submitted]="form.submitted">
     <div class="o_form_sheet_bg">
       <div class="o_form_sheet">
         <div class="o_group mt-0">
@@ -46,9 +43,9 @@
                   </label>
                 </td>
                 <td colspan="1" style="width: 100%">
-                  <a *ngIf="quotation.partner" [routerLink]="[
-                      '/partners/customer/' + quotation.partner.id
-                    ]">{{ quotation.partner.displayName }}</a>
+                  <a *ngIf="quotation.partner" [routerLink]="['/partners/customer/' + quotation.partner.id]">
+                    {{ quotation.partner.displayName }}
+                  </a>
                 </td>
               </tr>
               <tr>
@@ -62,12 +59,7 @@
                     [filterable]="true" (filterChange)="onFilterEmployee($event)" #empCbx class="mr-1"
                     [data]="filterEmployees" [textField]="'name'" [valueField]="'id'">
                   </kendo-combobox>
-                  <div *ngIf="
-                      (employeeControl.touched ||
-                        employeeControl.dirty ||
-                        form.submitted) &&
-                      employeeControl?.errors?.required
-                    " class="text-danger">
+                  <div *ngIf="form.submitted && employeeControl?.errors?.required" class="text-danger">
                     Chọn người báo giá
                   </div>
                 </td>
@@ -80,8 +72,10 @@
                 </td>
                 <td colspan="1" style="width: 100%">
                   <a *ngFor="let order of quotation.orders; let i = index" [routerLink]="['/sale-orders', order.id]"
-                    [queryParams]="{ id: order.id }">{{ order.name
-                    }}<span *ngIf="i < quotation.orders.length - 1">, </span></a>
+                    [queryParams]="{ id: order.id }">
+                    {{ order.name}} <span *ngIf="i < quotation.orders.length - 1">,
+                    </span>
+                  </a>
                 </td>
               </tr>
               <tr>
@@ -108,7 +102,7 @@
                   <kendo-datepicker [(ngModel)]="quotation.dateQuotation" required #dateQuotationControl="ngModel"
                     name="dateQuotation" (valueChange)="onDateChange()">
                   </kendo-datepicker>
-                  <div *ngIf="dateQuotationControl?.errors?.required" class="text-danger">
+                  <div *ngIf="form.submitted && dateQuotationControl?.errors?.required" class="text-danger">
                     Chọn ngày báo giá
                   </div>
                 </td>
@@ -120,11 +114,10 @@
                   </label>
                 </td>
                 <td colspan="1" style="width: 100%">
-                  <input class="form-control" required #dateAppliesControl="ngModel"
-                  name="dateApplies" tmtautonumeric [(ngModel)]="quotation.dateApplies"
-                  (input)="onDateChange()"
-                  [options]="{minimumValue: 1, decimalPlaces: 0}"/>
-                  <div *ngIf="dateAppliesControl?.errors?.required" class="text-danger">
+                  <input class="form-control" required #dateAppliesControl="ngModel" name="dateApplies" tmtautonumeric
+                    [(ngModel)]="quotation.dateApplies" (rawValueModified)="onDateChange()"
+                    [options]="{minimumValue: 0, decimalPlaces: 0}" />
+                  <div *ngIf="form.submitted && dateAppliesControl?.errors?.required" class="text-danger">
                     Nhập số ngày
                   </div>
                 </td>
@@ -173,9 +166,8 @@
                   <ng-container *ngFor="let line of quotation.lines; let i = index">
                     <app-quotation-line-cu #lineTemplate [initialListEmployees]="sourceEmployees"
                       [filteredToothCategories]="filteredToothCategories" [initialListTeeths]="listTeeths"
-                      (onUpdateOpenPromotionEvent)="
-                        onUpdateOpenLinePromotion($event, line, i)
-                      " [line]="line" (onCancelEvent)="onCancelEditLine($event, i)" (onEditEvent)="onEditLine($event)"
+                      (onUpdateOpenPromotionEvent)="onUpdateOpenLinePromotion($event, line, i)" [line]="line"
+                      (onCancelEvent)="onCancelEditLine($event, i)" (onEditEvent)="onEditLine($event)"
                       (onUpdateEvent)="updateLineInfo($event, i)" (onDeleteEvent)="onDeleteLine(i)">
                     </app-quotation-line-cu>
                   </ng-container>
@@ -198,57 +190,46 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <ng-container *ngFor="
-                          let payment_item of quotation.payments;
-                          let i = index
-                        ">
+                      <ng-container *ngFor="let payment_item of quotation.payments; let i = index">
                         <tr>
                           <td class="text-right">
                             {{ i + 1 }}
                           </td>
                           <td class="d-flex">
-                            <input class="form-control" *ngIf="payment_item.discountPercentType == 'cash'" required tmtautonumeric
-                              [options]="{minimumValue: 0, decimalPlaces: 0}" [(ngModel)]="payment_item.payment" [name]="'payments[' + i + '].payment'"
-                              #progress="ngModel"/>
-                              <input *ngIf="payment_item.discountPercentType == 'percent'" required class="form-control" tmtautonumeric
-                              [options]="{minimumValue: 0, maximumValue: 100, decimalPlaces: 0}" [(ngModel)]="payment_item.payment"
-                              [name]="'payments[' + i + '].payment'" #progress="ngModel"/>
+                            <input class="form-control" *ngIf="payment_item.discountPercentType == 'cash'" required
+                              tmtautonumeric [options]="{minimumValue: 0, decimalPlaces: 0}"
+                              [(ngModel)]="payment_item.payment" [name]="'payments[' + i + '].payment'"
+                              #progress="ngModel" />
+                            <input *ngIf="payment_item.discountPercentType == 'percent'" required class="form-control"
+                              tmtautonumeric [options]="{minimumValue: 0, maximumValue: 100, decimalPlaces: 0}"
+                              [(ngModel)]="payment_item.payment" [name]="'payments[' + i + '].payment'"
+                              #progress="ngModel" />
                             <div class="mt-1 ml-2 d-flex">
                               <div class="form-check form-check-inline">
                                 <input class="form-check-input" [hidden]="true" type="radio"
-                                  [(ngModel)]="payment_item.discountPercentType" (ngModelChange)="
-                                    changeDiscountType($event, i)
-                                  " [name]="
-                                    'payments[' + i + '].discountPercentType'
-                                  " [id]="'cash-' + i" value="cash" />
-                                <label class="
-                                    form-check-label
-                                    btn btn-outline-primary
-                                  " [for]="'cash-' + i">VNĐ</label>
+                                  [(ngModel)]="payment_item.discountPercentType"
+                                  (ngModelChange)="changeDiscountType($event, i)"
+                                  [name]="'payments[' + i + '].discountPercentType'" [id]="'cash-' + i" value="cash" />
+                                <label class="form-check-label btn btn-outline-primary" [for]="'cash-' + i">VNĐ</label>
                               </div>
                               <div class="form-check form-check-inline">
                                 <input class="form-check-input" [hidden]="true" type="radio"
-                                  [(ngModel)]="payment_item.discountPercentType" (ngModelChange)="
-                                    changeDiscountType($event, i)
-                                  " [name]="
-                                    'payments[' + i + '].discountPercentType'
-                                  " [id]="'percent-' + i" value="percent" />
-                                <label class="
-                                    form-check-label
-                                    btn btn-outline-primary
-                                  " [for]="'percent-' + i">%</label>
+                                  [(ngModel)]="payment_item.discountPercentType"
+                                  (ngModelChange)="changeDiscountType($event, i)"
+                                  [name]="'payments[' + i + '].discountPercentType'" [id]="'percent-' + i"
+                                  value="percent" />
+                                <label class="form-check-label btn btn-outline-primary" [for]="'percent-' + i">%</label>
                               </div>
                             </div>
                           </td>
                           <td>
-                            <kendo-datepicker [(ngModel)]="payment_item.date"
-                              [name]="'payments[' + i + '].date'">
+                            <kendo-datepicker [(ngModel)]="payment_item.date" [name]="'payments[' + i + '].date'">
                             </kendo-datepicker>
                           </td>
                           <td>
-                            <span class="float-right">{{
-                              getAmountPayment(payment_item) | number
-                              }}</span>
+                            <span class="float-right">
+                              {{ getAmountPayment(payment_item) | number }}
+                            </span>
                           </td>
                           <td class="text-center">
                             <button class="btn btn-danger" title="Xóa" (click)="deletePayment(i)">
@@ -307,21 +288,21 @@
                   <div class="card-body px-3 py-2">
                     <p class="d-flex justify-content-between mb-0">
                       <label class="font-weight-600">Thành tiền</label>
-                      <label class="font-weight-600">{{
-                        getAmountSubTotal() | number
-                        }}</label>
+                      <label class="font-weight-600">
+                        {{ getAmountSubTotal() | number }}
+                      </label>
                     </p>
                     <p class="d-flex justify-content-between mb-0">
                       <label class="font-weight-600">Tổng giảm giá</label>
-                      <label class="font-weight-600">{{
-                        getTotalDiscount() | number: "1.0-0"
-                        }}</label>
+                      <label class="font-weight-600">
+                        {{ getTotalDiscount() | number: "1.0-0" }}
+                      </label>
                     </p>
                     <p class="d-flex justify-content-between mb-0">
                       <label class="font-weight-600">Tổng tiền</label>
-                      <label class="font-weight-600">{{
-                        getAmountSubTotal() - getTotalDiscount() | number
-                        }}</label>
+                      <label class="font-weight-600">
+                        {{ getAmountSubTotal() - getTotalDiscount() | number }}
+                      </label>
                     </p>
                   </div>
                 </div>

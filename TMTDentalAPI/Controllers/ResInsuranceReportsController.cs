@@ -136,7 +136,7 @@ namespace TMTDentalAPI.Controllers
 
                 worksheet.Cells[1, 1].Value = "Khách hàng";
                 worksheet.Cells[1, 2].Value = "Ngày bảo lãnh";
-                worksheet.Cells[1, 3].Value = "Phiếu điều trị";
+                worksheet.Cells[1, 3].Value = "Nội dung";
                 worksheet.Cells[1, 4].Value = "Số tiền";
 
 
