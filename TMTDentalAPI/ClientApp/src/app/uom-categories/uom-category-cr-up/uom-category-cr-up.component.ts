@@ -33,6 +33,10 @@ export class UomCategoryCrUpComponent implements OnInit {
     }
   }
 
+  get f() {
+    return this.formGroup.controls;
+  }
+
   loadFormApi() {
     this.uoMCategoryService.get(this.id).subscribe(
       result => {

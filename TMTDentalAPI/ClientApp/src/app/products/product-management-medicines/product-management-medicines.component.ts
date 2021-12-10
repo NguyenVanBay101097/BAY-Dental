@@ -54,7 +54,6 @@ export class ProductManagementMedicinesComponent implements OnInit {
         this.loadMedicines();
       });
     this.loadMedicines();
-    this.loadConfigsettings();
     this.loadCategories();
     this.checkPermission();
   }
@@ -108,14 +107,6 @@ export class ProductManagementMedicinesComponent implements OnInit {
   onSelectedCate(cate: any) {
     this.selectedCateg = cate;
     this.loadMedicines();
-  }
-
-  loadConfigsettings() {
-    this.configSettingsService.defaultGet().subscribe(
-      (result: any) => {
-        this.configsettings = result;
-      }
-    );
   }
 
   pageChange(event: PageChangeEvent): void {

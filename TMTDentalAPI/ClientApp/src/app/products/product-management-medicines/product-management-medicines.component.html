@@ -33,7 +33,7 @@
                 </kendo-grid-column>
                 <kendo-grid-column field="categName" title="Nhóm thuốc" width="150">
                 </kendo-grid-column>
-                <kendo-grid-column *ngIf="configsettings?.groupMedicine || false" field="listPrice" title="Giá thuốc"
+                <kendo-grid-column hasGroups [groups]="'medicineOrder.group_medicine'" field="listPrice" title="Giá thuốc"
                     width="150">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                         {{dataItem.listPrice | number}}

@@ -473,14 +473,6 @@ export class SaleOrderLineCuComponent implements OnInit {
   }
 
   onSWitchState(state) {
-    if(state == this.line.state)
-    return;
-    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
-    modalRef.componentInstance.title = state == 'cancel'? "Ngừng dịch vụ" : "Hoàn thành dịch vụ";
-    modalRef.componentInstance.body =  state == 'cancel'? "Bạn có muốn ngừng dịch vụ không?" : "Bạn có xác nhận hoàn thành dịch vụ không?";
-    modalRef.componentInstance.body2 =  state == 'cancel'? "(Lưu ý: Sau khi ngừng không thể chỉnh sửa dịch vụ)" : "(Lưu ý: Sau khi hoàn thành không thể chỉnh sửa, xóa dịch vụ)";
-    modalRef.result.then(() => {
-     this.onUpdateStateEvent.next(state);
-    }).catch(() => {});
+    this.onUpdateStateEvent.next(state);
   }
 }

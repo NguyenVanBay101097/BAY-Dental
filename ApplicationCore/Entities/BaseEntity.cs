@@ -11,8 +11,8 @@ namespace ApplicationCore.Entities
         public BaseEntity()
         {
             var time = DateTime.Now;
-            DateCreated = new DateTime(time.Year, time.Month, time.Day, time.Hour, time.Minute, time.Second);
-            LastUpdated = new DateTime(time.Year, time.Month, time.Day, time.Hour, time.Minute, time.Second);
+            DateCreated = DateTime.Now;
+            LastUpdated = DateTime.Now;
             //Id = GuidComb.GenerateComb();
         }
 

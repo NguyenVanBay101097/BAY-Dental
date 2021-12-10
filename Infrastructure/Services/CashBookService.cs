@@ -219,7 +219,7 @@ namespace Infrastructure.Services
 
             var totalItems = await query.CountAsync();
 
-            query = query.OrderByDescending(x => x.Date);
+            query = query.OrderByDescending(x => x.Date).ThenByDescending(x => x.DateCreated);
             if (limit > 0)
                 query = query.Skip(offset).Take(limit);
 

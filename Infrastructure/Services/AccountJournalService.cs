@@ -113,7 +113,7 @@ namespace Infrastructure.Services
             var journal = new AccountJournal()
             {
                 Active = val.Active,
-                Name = $"{val.AccountNumber} - {bank.BIC}",
+                Name = $"{val.AccountNumber} - {bank.BIC.Trim()}",
                 Type = "bank",
                 CompanyId = CompanyId
             };
@@ -193,7 +193,7 @@ namespace Infrastructure.Services
             var bankObj = GetService<IResBankService>();
             var bank = await bankObj.GetByIdAsync(val.BankId);
 
-            journal.Name = $"{val.AccountNumber} - {bank.BIC}";
+            journal.Name = $"{val.AccountNumber} - {bank.BIC.Trim()}";
             journal.Active = val.Active;
 
             await UpdateAsync(journal);

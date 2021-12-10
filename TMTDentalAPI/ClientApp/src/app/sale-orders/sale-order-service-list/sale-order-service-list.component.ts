@@ -715,39 +715,50 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
   }
 
   onUpdateStateLine(lineIndex, state) {
-    var line = this.orderLines[lineIndex];
     if (this.lineSelected != null && this.lineSelected != line) {
-      this.notify('error', 'Vui lòng hoàn thành dịch vụ hiện tại');
+      this.notify('error', 'Vui lòng hoàn thành dịch vụ hiện tại để chỉnh sửa dịch vụ khác');
       return;
     }
-    this.saleOrderLineService.updateState(line.id, state).subscribe(() => {
-      this.notify('success', 'Lưu thành công');
-      line.state = state;
-      if (this.orderLines.every(x => x.state == 'done' || x.state == 'cancel') &&
-        this.orderLines.some(x => x.state == 'done')
-      ) {
-        this.saleOrder.state = 'done';
-      }
 
-      if (state == "done" && line.priceSubTotal - line.amountInvoiced > 0) {
-        let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
-        modalRef.componentInstance.title = `Ghi công nợ số tiền ${this._decimalPipe.transform((line.priceSubTotal - line.amountInvoiced))}đ`;
-        modalRef.componentInstance.body = `Dịch vụ ${line.name} còn ${this._decimalPipe.transform((line.priceSubTotal - line.amountInvoiced))}đ chưa được thanh toán. Bạn có muốn ghi công nợ số tiền này?`;
-        modalRef.componentInstance.confirmText = "Đồng ý";
-        modalRef.componentInstance.closeText = "Không đồng ý";
-        modalRef.componentInstance.closeClass = "btn-danger";
-        modalRef.result.then(() => {
-          this.saleOrderLineService.debtPayment(line.id)
-            .subscribe(r => {
-              this.notify('success', 'Ghi nợ thành công');
-              this.saleOrder.totalPaid = this.saleOrder.totalPaid + (line.priceSubTotal - line.amountInvoiced);
-              this.partnerDebt.debitTotal = this.partnerDebt.debitTotal + (line.priceSubTotal - line.amountInvoiced);
-              line.amountInvoiced = line.priceSubTotal;
-            });
-        })
-
-      }
-    })
+    var line = this.orderLines[lineIndex];
+    if(state == line.state && line.state != 'sale') {
+      return;
+    }
+   
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = state == 'cancel'? "Ngừng dịch vụ" : "Hoàn thành dịch vụ";
+    modalRef.componentInstance.body =  state == 'cancel'? "Bạn có muốn ngừng dịch vụ không?" : "Bạn có xác nhận hoàn thành dịch vụ không?";
+    modalRef.componentInstance.body2 =  state == 'cancel'? "(Lưu ý: Sau khi ngừng không thể chỉnh sửa dịch vụ)" : "(Lưu ý: Sau khi hoàn thành không thể chỉnh sửa, xóa dịch vụ)";
+    modalRef.result.then(() => {
+      this.saleOrderLineService.updateState(line.id, state).subscribe(() => {
+        this.notify('success', 'Lưu thành công');
+        line.state = state;
+        if (this.orderLines.every(x => x.state == 'done' || x.state == 'cancel') &&
+          this.orderLines.some(x => x.state == 'done')
+        ) {
+          this.saleOrder.state = 'done';
+        }
+  
+        if (state == "done" && line.priceSubTotal - line.amountInvoiced > 0) {
+          let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+          modalRef.componentInstance.title = `Ghi công nợ số tiền ${this._decimalPipe.transform((line.priceSubTotal - line.amountInvoiced))}đ`;
+          modalRef.componentInstance.body = `Dịch vụ ${line.name} còn ${this._decimalPipe.transform((line.priceSubTotal - line.amountInvoiced))}đ chưa được thanh toán. Bạn có muốn ghi công nợ số tiền này?`;
+          modalRef.componentInstance.confirmText = "Đồng ý";
+          modalRef.componentInstance.closeText = "Không đồng ý";
+          modalRef.componentInstance.closeClass = "btn-danger";
+          modalRef.result.then(() => {
+            this.saleOrderLineService.debtPayment(line.id)
+              .subscribe(r => {
+                this.notify('success', 'Ghi nợ thành công');
+                this.saleOrder.totalPaid = this.saleOrder.totalPaid + (line.priceSubTotal - line.amountInvoiced);
+                this.partnerDebt.debitTotal = this.partnerDebt.debitTotal + (line.priceSubTotal - line.amountInvoiced);
+                line.amountInvoiced = line.priceSubTotal;
+              });
+          })
+  
+        }
+      })
+    }).catch(() => {});
   }
 
   getAmountSubTotal() {
