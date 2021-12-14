@@ -311,7 +311,8 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       productId: val.id,
       product: {
         id: val.id,
-        name: val.name
+        name: val.name,
+        uom: val.uom
       },
       qty: 1,
       teeth: [],

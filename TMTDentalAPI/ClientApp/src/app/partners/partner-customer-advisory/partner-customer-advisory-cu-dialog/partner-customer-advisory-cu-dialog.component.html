@@ -113,6 +113,12 @@
                             <kendo-multiselect [filterable]="true" class="mr-3" [data]="productSource"
                                 [filterable]="true" (filterChange)="this.searchUpdateProduct.next($event)"
                                 [textField]="'name'" [valueField]="'id'" formControlName="product">
+                                <ng-template kendoMultiSelectItemTemplate let-dataItem>
+                                    <div class="d-flex justify-content-between">
+                                        <div style="width: 450px">{{dataItem.name}}</div>
+                                        <div style="width: 150px">{{dataItem.uomName? dataItem.uomName : ''}}</div>
+                                    </div>
+                                </ng-template>
                             </kendo-multiselect>
                         </div>
 

@@ -47,6 +47,7 @@ namespace Infrastructure.Services
                 .Include(x => x.Counselor)
                 .Include(x => x.PromotionLines).ThenInclude(x => x.Promotion)
                 .Include(x => x.Promotions)
+                .Include(x => x.Product).ThenInclude(x => x.UOM)
                 .ToListAsync();
 
             var payments = await paymentObj.SearchQuery(x => x.QuotationId == id, orderBy: x => x.OrderBy(s => s.Sequence))

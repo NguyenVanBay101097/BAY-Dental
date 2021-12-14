@@ -461,7 +461,7 @@ namespace Infrastructure.Services
 
             var totalItems = await query.CountAsync();
 
-            query = query.Include(x => x.OrderPartner).Include(x => x.Product).Include(x => x.Order).Include(x => x.Labos).Include(x => x.Employee).OrderByDescending(x => x.DateCreated);
+            query = query.Include(x => x.OrderPartner).Include(x => x.Product).ThenInclude(x => x.UOM).Include(x => x.Order).Include(x => x.Labos).Include(x => x.Employee).OrderByDescending(x => x.DateCreated);
             if (val.Limit > 0)
             {
                 query = query.Skip(val.Offset).Take(val.Limit);

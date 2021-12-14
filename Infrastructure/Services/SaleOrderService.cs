@@ -1250,6 +1250,7 @@ namespace Infrastructure.Services
                 .Include(x => x.Employee)
                 .Include(x => x.Counselor)
                 .Include(x => x.Insurance)
+                .Include(x => x.Product).ThenInclude(x => x.UOM)
                 .Include(x => x.OrderPartner).ToListAsync();
 
             display.OrderLines = _mapper.Map<IEnumerable<SaleOrderLineDisplay>>(lines);
@@ -2868,7 +2869,7 @@ namespace Infrastructure.Services
                 {
                     Id = x.Id,
                     Name = x.Name,
-
+                    UoMName = x.Product.UOM.Name,
                     Steps = x.DotKhamSteps.OrderBy(s => s.Order).Select(s => new DotKhamStepBasic
                     {
                         Id = s.Id,

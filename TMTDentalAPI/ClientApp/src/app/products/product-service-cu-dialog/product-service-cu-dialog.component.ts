@@ -4,6 +4,7 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { da } from 'date-fns/locale';
 import * as _ from 'lodash';
 import { Subject } from 'rxjs';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
@@ -12,6 +13,7 @@ import { ProductCategory } from 'src/app/product-categories/product-category';
 import { ProductCategoryBasic, ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { ProductCategoryDialogComponent } from 'src/app/shared/product-category-dialog/product-category-dialog.component';
+import { UoMBasic, UoMPaged, UomService } from 'src/app/uoms/uom.service';
 import { Product } from '../product';
 import { ProductBomDisplay } from '../product-bom';
 import { ProductProductCuDialogComponent } from '../product-product-cu-dialog/product-product-cu-dialog.component';
@@ -49,6 +51,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
   filteredProducts: any[] = [];
   isExist: boolean = false;
   showStandardPrice = false; // ẩn hiện giá vốn theo phân quyền
+  filterdUoMs: UoMBasic[] = [];
 
   @Input() productDefaultVal: Product;
   @Input() name: string = '';
@@ -56,13 +59,16 @@ export class ProductServiceCuDialogComponent implements OnInit {
   @ViewChild('form', { static: true }) formView: any;
   @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
+  @ViewChild('uomCbx', { static: true }) uomCbx: ComboBoxComponent;
+
 
   constructor(private fb: FormBuilder, private productService: ProductService,
     private productCategoryService: ProductCategoryService, public activeModal: NgbActiveModal,
     private modalService: NgbModal, 
     private notificationService: NotificationService, 
     private authService: AuthService,
-    private checkPermissionService: CheckPermissionService) {
+    private checkPermissionService: CheckPermissionService,
+    private uomService: UomService) {
   }
 
   formStepEdit = this.fb.group({
@@ -76,6 +82,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
       saleOK: true,
       purchaseOK: false,
       categ: [null, Validators.required],
+      uom: [null],
       uomId: null,
       uompoId: null,
       type: 'service',
@@ -108,6 +115,15 @@ export class ProductServiceCuDialogComponent implements OnInit {
       this.filteredProducts = result;
     });
 
+    this.uomCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.uomCbx.loading = true)),
+      switchMap(value => this.searchUoms(value))
+    ).subscribe((result: any) => {
+      this.filterdUoMs = result.items;
+      this.uomCbx.loading = false;
+    });
+
     if (this.id) {
       this.loadDataFromApi();
     } else {
@@ -116,12 +132,15 @@ export class ProductServiceCuDialogComponent implements OnInit {
     this.checkPermission();
     this.categCbxFilterChange();
     this.productCbxFilterChange();
+    this.loadUoms();
    
   }
 
   loadDataFromApi() {
     this.productService.get(this.id).subscribe(result => {
       this.filterdCategories = _.unionBy(this.filterdCategories, [result.categ as ProductCategoryBasic], 'id');
+      this.filterdUoMs = _.unionBy(this.filterdUoMs, [result.uom as UoMBasic], 'id');
+
       this.productForm.patchValue(result);
 
       this.loadStepList();
@@ -207,6 +226,18 @@ export class ProductServiceCuDialogComponent implements OnInit {
     return this.productCategoryService.autocomplete(val);
   }
 
+  searchUoms(q?: string) {
+    var val = new UoMPaged();
+    val.search = q || '';
+    return this.uomService.getPaged(val);
+  }
+
+  loadUoms() {
+    this.searchUoms().subscribe((result: any) => {
+      this.filterdUoMs = _.unionBy(this.filterdUoMs, result.items, 'id');
+    });
+  }
+
   displayFn(category: ProductCategory) {
     if (category) {
       return category.name;
@@ -268,6 +299,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
     data.companyId = this.authService.userInfo.companyId;
     data.categId = data.categ.id;
     data.stepList = this.stepList;
+    data.uomId = data.uom ? data.uom.id : null;
     data.boms.forEach(bom => {
       bom.materialProductId = bom.materialProduct ? bom.materialProduct.id : null;
       bom.productUOMId = bom.productUOM ? bom.productUOM.id : null;

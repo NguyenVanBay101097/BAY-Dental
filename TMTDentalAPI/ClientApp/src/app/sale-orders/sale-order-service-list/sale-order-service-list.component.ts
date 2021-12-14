@@ -186,7 +186,8 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
       productId: val.id,
       product: {
         id: val.id,
-        name: val.name
+        name: val.name,
+        uom: val.uom
       },
       productUOMQty: 1,
       state: this.saleOrder.state,
@@ -203,7 +204,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
       amountDiscountTotal: 0,
       amountInsurancePaidTotal: 0,
       orderPartnerId: this.saleOrder.partnerId,
-      date: new Date()
+      date: new Date(),
     };
 
     this.orderLines.unshift(value);

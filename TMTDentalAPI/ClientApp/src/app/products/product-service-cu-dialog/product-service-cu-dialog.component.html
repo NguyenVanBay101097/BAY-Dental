@@ -83,25 +83,16 @@
                                                     class="form-control" formControlName="defaultCode" />
                                             </td>
                                         </tr>
-                                        <tr [class.d-none]="isLabo == false">
+                                        <tr>
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">
-                                                    Hãng
+                                                    Đơn vị tính
                                                 </label>
                                             </td>
-                                            <td colspan="1" style="width: 100%;">
-                                                <input type="text" class="form-control" formControlName="firm">
-                                            </td>
-                                        </tr>
-                                        <tr [class.d-none]="isLabo == false">
-                                            <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">
-                                                    Giá đặt labo
-                                                </label>
-                                            </td>
-                                            <td colspan="1" style="width: 100%;">
-                                                <input class="form-control" formControlName="laboPrice" tmtautonumeric
-                                                    [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
+                                            <td>
+                                                <kendo-combobox [data]="filterdUoMs" [valueField]="'id'" [textField]="'name'"
+                                                formControlName="uom" [filterable]="true" #uomCbx>
+                                                </kendo-combobox>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -128,6 +119,27 @@
                                             <td colspan="1" style="width: 100%;">
                                                 <input class="form-control" formControlName="standardPrice"
                                                     tmtautonumeric [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
+                                            </td>
+                                        </tr>
+                                        <tr [class.d-none]="isLabo == false">
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Hãng
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <input type="text" class="form-control" formControlName="firm">
+                                            </td>
+                                        </tr>
+                                        <tr [class.d-none]="isLabo == false">
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Giá đặt labo
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <input class="form-control" formControlName="laboPrice" tmtautonumeric
+                                                    [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
                                             </td>
                                         </tr>
                                     </tbody>

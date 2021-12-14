@@ -560,7 +560,8 @@ namespace Infrastructure.Services
                     Date = x.Order.DateOrder,
                     DoctorName = x.Employee.Name,
                     Qty = x.ProductUOMQty,
-                    Type = "saleOrder"
+                    Type = "saleOrder",
+                    UomName = x.Product.UOM != null ? x.Product.UOM.Name : ""
                 });
 
             var quotationLines = quotationLineService.SearchQuery(x => x.AdvisoryId == val.AdvisoryId)
@@ -572,7 +573,8 @@ namespace Infrastructure.Services
                     Date = x.Quotation.DateQuotation,
                     Qty = x.Qty,
                     Type = "quotation",
-                    DoctorName = x.Employee.Name
+                    DoctorName = x.Employee.Name,
+                    UomName = x.Product.UOM != null ? x.Product.UOM.Name : ""
                 });
 
             var res = saleOrderLines.Union(quotationLines);

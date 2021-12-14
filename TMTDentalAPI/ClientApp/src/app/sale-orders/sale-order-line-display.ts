@@ -2,6 +2,7 @@ import { EmployeeSimple } from '../employees/employee';
 import { ProductSimple } from '../products/product-simple';
 import { ToothDisplay } from '../teeth/tooth.service';
 import { ToothCategoryBasic } from '../tooth-categories/tooth-category.service';
+import { UoMBasic } from '../uoms/uom.service';
 import { SaleOrderBasic } from './sale-order-basic';
 
 export class SaleOrderLineDisplay {
@@ -41,4 +42,5 @@ export class SaleOrderLineDisplay {
     orderPartnerId: string;
     date: any;
     insuranceName: string;
+    uom: UoMBasic;
 }

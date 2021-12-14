@@ -37,6 +37,12 @@
                 <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="employee.name" title="Bác sĩ"
                     width="150">
                 </kendo-grid-column>
+                <kendo-grid-column [headerClass]="{'font-weight-bold':true}"
+                    title="ĐVT" width="120">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        {{dataItem.product.uom ? dataItem.product.uom.name : ''}}
+                    </ng-template>
+                </kendo-grid-column>
                 <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="teethDisplay" title="Răng" width="120">
                 </kendo-grid-column>
                 <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="diagnostic" title="Chẩn đoán"

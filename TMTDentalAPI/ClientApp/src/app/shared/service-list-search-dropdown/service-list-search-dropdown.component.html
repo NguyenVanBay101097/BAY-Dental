@@ -21,8 +21,9 @@
                     </ng-template>
                 </ng-container>
                 <ng-template #elseTemplateResult>
-                    <ngb-highlight class="service-name mr-3" [result]="r.name" [term]="t"></ngb-highlight>
-                    <span>{{r.listPrice | number}}</span>
+                    <ngb-highlight class="service-name mr-3" style="width: 250px" [result]="r.name" [term]="t"></ngb-highlight>
+                    <span style="width: 50px">{{r.uom?.name}}</span>
+                    <span style="width: 100px">{{r.listPrice | number}}</span>
                 </ng-template>
             </div>
         </ng-template>
