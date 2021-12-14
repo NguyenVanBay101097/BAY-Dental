@@ -1,7 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { AccountJournalFilter, AccountJournalService } from 'src/app/account-journals/account-journal.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { SalaryPaymentService } from 'src/app/salary-payment/salary-payment.service';
@@ -14,6 +16,8 @@ import { PrintService } from 'src/app/shared/services/print.service';
   styleUrls: ['./hr-salary-payment.component.css']
 })
 export class HrSalaryPaymentComponent implements OnInit {
+  @ViewChild('journalCbx', { static: true }) journalCbx: ComboBoxComponent;
+
   @Input() payslipIds: any;
   isDisable = false;
 
@@ -62,12 +66,18 @@ export class HrSalaryPaymentComponent implements OnInit {
   }
 
   loadFilteredJournals() {
-    var val = new AccountJournalFilter();
-    val.type = 'bank,cash';
-    val.companyId = this.authService.userInfo.companyId;
-    this.journalService.autocomplete(val).subscribe(result => {
+    this.searchFilteredJournals().subscribe(result => {
       this.filteredJournals = result;
     });
+  }
+
+  searchFilteredJournals(q?: string) {
+    var val = new AccountJournalFilter();
+    val.type = "bank,cash";
+    val.search = q || '';
+    val.companyId = this.authService.userInfo.companyId;
+    val.limit = 0;
+    return this.journalService.autocomplete(val);
   }
 
   onChangeJournal(e) {
@@ -79,7 +89,6 @@ export class HrSalaryPaymentComponent implements OnInit {
     modalRef.componentInstance.title = 'Chi lương';
     modalRef.componentInstance.body = 'Bạn có chắc chắn muốn chi lương?';
     modalRef.result.then(() => {
-      debugger;
       const val = this.paymentFA.value;
       var data = val.map(x => {
         return {

@@ -54,6 +54,7 @@
     "@progress/kendo-theme-default": "^4.0.0",
     "@types/sprintf": "^0.1.0",
     "@types/sprintf-js": "^1.1.2",
+    "autonumeric": "^4.6.0",
     "autosize": "^4.0.2",
     "bootstrap": "^4.3.1",
     "chart.js": "^3.5.1",
@@ -88,6 +89,7 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.901.15",
+    "@angular-devkit/build-ng-packagr": "~0.901.15",
     "@angular/cli": "~9.1.15",
     "@angular/compiler-cli": "~9.1.13",
     "@angular/language-service": "~9.1.13",
@@ -105,6 +107,7 @@
     "karma-coverage-istanbul-reporter": "~2.0.1",
     "karma-jasmine": "~2.0.1",
     "karma-jasmine-html-reporter": "^1.4.0",
+    "ng-packagr": "^9.0.0",
     "protractor": "~5.4.0",
     "ts-node": "~7.0.0",
     "tslint": "~5.15.0",

@@ -37,6 +37,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? SaleOrderLineId { get; set; }
         public SaleOrderLineSimple SaleOrderLine { get; set; }
 
+        public Guid? SaleProductionLineId { get; set; }
+
         public decimal ProductQty { get; set; }
 
         public int Sequence { get; set; }
@@ -50,8 +52,10 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid ProductUOMId { get; set; }
 
-        public Guid SaleOrderLineId { get; set; }
+        public Guid? SaleOrderLineId { get; set; }
 
         public decimal ProductQty { get; set; }
+
+        public Guid? SaleProductionLineId { get; set; }
     }
 }

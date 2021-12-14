@@ -112,7 +112,7 @@ export class SaleOrderManagementComponent implements OnInit {
   }
 
   getFormSaleOrder(id) {
-    this.router.navigate(['/sale-orders/form'], { queryParams: { id: id } });
+    this.router.navigate(['/sale-orders/'], { queryParams: { id: id } });
   }
 
   pageChange(event) {

@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -61,6 +62,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.CustomerReceipt.Create")]
         public async Task<IActionResult> ActionSave(ReceiveAppointmentSaveViewModel val)
         {
             var appointment = await _appointmentService.GetByIdAsync(val.AppointmentId);

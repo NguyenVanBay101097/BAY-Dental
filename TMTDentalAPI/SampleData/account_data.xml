@@ -147,6 +147,26 @@
       <field name="padding">4</field>
     </record>
 
+    <record id="sequence_payment_insurance_inbound" model="ir.sequence">
+      <field name="name">Payments insurance sequence</field>
+      <field name="code">account.payment.insurance.invoice</field>
+      <field name="prefix">THUBH/{yyyy}/</field>
+      <field eval="1" name="number_next"/>
+      <field eval="1" name="number_increment"/>
+      <field eval="False" name="company_id"/>
+      <field name="padding">4</field>
+    </record>
+
+    <record id="sequence_insurance" model="ir.sequence">
+      <field name="name">Insurance sequence</field>
+      <field name="code">insurance</field>
+      <field name="prefix">INS/{yyyy}/</field>
+      <field eval="1" name="number_next"/>
+      <field eval="1" name="number_increment"/>
+      <field eval="False" name="company_id"/>
+      <field name="padding">4</field>
+    </record>
+
 
     <!-- account.account.type -->
     <record model="account.account.type" id="data_account_type_receivable">
@@ -279,6 +299,13 @@
       <field name="user_type_id" ref="account.data_account_type_expenses" />
     </record>
 
+    <record model="account.account" id="data_account_CNBH">
+      <field name="name">Công nợ bảo hiểm</field>
+      <field name="code">CNBH</field>
+      <field name="user_type_id" ref="account.data_account_type_current_liabilities" />
+      <field name="reconcile" eval="True" />
+    </record>
+
     <!-- account.journal -->
     <record model="account.journal" id="data_account_journal_cash">
       <field name="name">Tiền mặt</field>
@@ -295,7 +322,7 @@
     <record model="account.journal" id="data_account_journal_bank">
       <field name="name">Ngân hàng</field>
       <field name="type">bank</field>
-      <field name="code">CSH2</field>
+      <field name="code">BNK1</field>
       <field name="update_posted" eval="True" />
       <field name="default_debit_account_id" ref="account.data_account_1112" />
       <field name="default_credit_account_id" ref="account.data_account_1112" />
@@ -366,6 +393,15 @@
       <field name="update_posted" eval="True" />
       <field name="default_debit_account_id" ref="account.data_account_HHNGT" />
       <field name="default_credit_account_id" ref="account.data_account_HHNGT" />
+    </record>
+
+    <record model="account.journal" id="data_account_journal_insurance">
+      <field name="name">Bảo hiểm</field>
+      <field name="type">insurance</field>
+      <field name="code">INS</field>
+      <field name="update_posted" eval="True" />
+      <field name="default_debit_account_id" ref="account.data_account_CNBH" />
+      <field name="default_credit_account_id" ref="account.data_account_CNBH" />
     </record>
 
 

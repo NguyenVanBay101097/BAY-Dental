@@ -32,7 +32,8 @@ namespace Infrastructure.Services
 
             if (val.SaleOrderId.HasValue)
                 query = query.Where(x => x.OrderId == val.SaleOrderId.Value);
-
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
 
             var totalItems = await query.CountAsync();
 
@@ -41,7 +42,7 @@ namespace Infrastructure.Services
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
-            var items = await query.Include(x => x.PaymentRels).ThenInclude(x => x.Payment).ThenInclude(x => x.Journal)
+            var items = await query.Include(x => x.PaymentRels).ThenInclude(x => x.Payment).ThenInclude(x => x.Journal).ThenInclude(x => x.BankAccount).ThenInclude(x => x.Bank)
                 .Include(x => x.Lines).ThenInclude(x => x.SaleOrderLine).ToListAsync();
 
             var paged = new PagedResult2<SaleOrderPaymentBasic>(totalItems, val.Offset, val.Limit)
@@ -204,7 +205,8 @@ namespace Infrastructure.Services
                 .Include(x => x.Move)
                 .Include(x => x.Order)
                 .Include(x => x.Lines)
-                .Include(x => x.JournalLines)
+                .Include(x => x.JournalLines).ThenInclude(s => s.Journal)
+                .Include(x => x.JournalLines).ThenInclude(s => s.Insurance)
                 .ToListAsync();
             foreach (var saleOrderPayment in saleOrderPayments)
             {
@@ -346,7 +348,7 @@ namespace Infrastructure.Services
                 //await ComputePointAndUpdateLevel(saleOrderPayment, saleOrderPayment.Order.PartnerId, "payment");
                 var loyaltyPoints = ConvertAmountToPoint(saleOrderPayment.Amount);
                 var card = await cardObj.SearchQuery(x => x.PartnerId == saleOrderPayment.Order.PartnerId && x.State == "in_use").FirstOrDefaultAsync();
-                if(card != null)
+                if (card != null)
                 {
                     card.TotalPoint += loyaltyPoints;
                     var typeId = await UpGradeCardCard((card.TotalPoint ?? 0));
@@ -354,7 +356,7 @@ namespace Infrastructure.Services
                     await cardObj.UpdateAsync(card);
                 }
 
-             
+
             }
             //await partnerObj.UpdateMemberLevelForPartner(partnerIds);
             await UpdateAsync(saleOrderPayments);
@@ -422,6 +424,7 @@ namespace Infrastructure.Services
             //param final: if True, refunds will be generated if necessary
             var saleLineObj = GetService<ISaleOrderLineService>();
             var paymentLineObj = GetService<ISaleOrderPaymentHistoryLineService>();
+            var accountObj = GetService<IAccountAccountService>();
             // Invoice values.
             var invoice_vals = await _PrepareInvoice(self);
             var lines = await paymentLineObj.SearchQuery(x => x.SaleOrderPaymentId == self.Id)
@@ -436,6 +439,14 @@ namespace Infrastructure.Services
                     continue;
                 var moveline = _PrepareInvoiceLineAsync(line);
                 invoice_vals.InvoiceLines.Add(moveline);
+            }
+
+            if (self.JournalLines.Count == 1 && self.JournalLines.ElementAt(0).Journal.Type == "insurance")
+            {
+                foreach (var line in invoice_vals.InvoiceLines)
+                {
+                    line.InsuranceId = self.JournalLines.ElementAt(0).InsuranceId;
+                }
             }
 
             if (!invoice_vals.InvoiceLines.Any())
@@ -524,7 +535,8 @@ namespace Infrastructure.Services
                     PaymentDate = self.Date,
                     PaymentType = "inbound",
                     CompanyId = self.Order.CompanyId,
-                    Communication = self.Note
+                    Communication = self.Note,
+                    InsuranceId = line.Journal.Type == "insurance" ? line.InsuranceId : null
                 };
 
                 payment.AccountMovePaymentRels.Add(new AccountMovePaymentRel { MoveId = moveId });
@@ -582,8 +594,18 @@ namespace Infrastructure.Services
                 await moveObj.Unlink(new List<Guid>() { saleOrderPayment.Move.Id });
 
 
-                //tính lại paid , residual saleorder , lines
-                await _ComputeSaleOrder(saleOrderPayment.OrderId);
+                //Tính lại số tiền đã thanh toán, còn lại, số tiền thanh toán bảo hiểm của SaleOrderLine
+                var saleLineIds = saleOrderPayment.Lines.Select(x => x.SaleOrderLineId).ToList();
+                var saleLines = await saleLineObj.SearchQuery(x => saleLineIds.Contains(x.Id)).ToListAsync();
+                saleLineObj._GetInvoiceAmount(saleLines);
+                await saleLineObj.UpdateAsync(saleLines);
+
+                //Tổng tiền thanh toán và còn lại của phiếu điều trị
+                var saleOrderIds = saleLines.Select(x => x.OrderId).Distinct().ToList();
+                var saleOrders = await saleOrderObj.SearchQuery(x => saleOrderIds.Contains(x.Id)).ToListAsync();
+                saleOrderObj._ComputeResidual(saleOrders);
+                await saleOrderObj.UpdateAsync(saleOrders);
+
                 // cập nhập điểm và hạng thành viên
                 //await ComputePointAndUpdateLevel(res, res.Order.PartnerId,"cancel");
 
@@ -598,6 +620,12 @@ namespace Infrastructure.Services
                     card.TypeId = typeId == Guid.Empty ? card.TypeId : typeId;
                     await cardObj.UpdateAsync(card);
                 }
+
+                //remove insurance payment if exist
+                var insurancePaymentObj = GetService<IResInsurancePaymentService>();
+                var insurancePaymentIds = await insurancePaymentObj.SearchQuery(x => x.SaleOrderPaymentId == saleOrderPayment.Id).Select(x => x.Id).ToListAsync();
+                if (insurancePaymentIds.Any())
+                    await insurancePaymentObj.Unlink(insurancePaymentIds);
 
                 saleOrderPayment.State = "cancel";
             }
@@ -634,12 +662,12 @@ namespace Infrastructure.Services
 
         public override ISpecification<SaleOrderPayment> RuleDomainGet(IRRule rule)
         {
-            var userObj = GetService<IUserService>();
-            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            //var userObj = GetService<IUserService>();
+            //var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
             switch (rule.Code)
             {
                 case "sale.sale_order_payment_comp_rule":
-                    return new InitialSpecification<SaleOrderPayment>(x => companyIds.Contains(x.CompanyId));
+                    return new InitialSpecification<SaleOrderPayment>(x => x.CompanyId == CompanyId);
                 default:
                     return null;
             }

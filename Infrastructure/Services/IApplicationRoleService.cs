@@ -9,5 +9,6 @@ namespace Infrastructure.Services
     public interface IApplicationRoleService
     {
         Task<ApplicationRole> CreateBaseUserRole();
+        Task CreateDefaultRoles();
     }
 }

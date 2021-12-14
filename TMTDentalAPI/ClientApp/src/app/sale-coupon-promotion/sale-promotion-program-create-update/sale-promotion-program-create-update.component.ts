@@ -22,8 +22,10 @@ import { result } from 'lodash';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { DiscountPricePopoverComponent } from './discount-price-popover/discount-price-popover.component';
 import { PartnerFilter, PartnerService } from 'src/app/partners/partner.service';
-import { PartnerSimple } from 'src/app/partners/partner-simple';
+import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
 import { MemberLevelService } from 'src/app/member-level/member-level.service';
+import { SessionInfoStorageService } from 'src/app/core/services/session-info-storage.service';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-sale-promotion-program-create-update',
@@ -65,6 +67,8 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   constructor(private fb: FormBuilder, private programService: SaleCouponProgramService,
     private router: Router, private route: ActivatedRoute, private notificationService: NotificationService, private partnerService: PartnerService, private memberLevelService: MemberLevelService,
     private modalService: NgbModal, private productService: ProductService, private productCategoryService: ProductCategoryService, private intlService: IntlService, private cardTypeService: CardTypeService,
+    private sessionInfoStorageService: SessionInfoStorageService,
+    private authService: AuthService,
   ) { }
 
   ngOnInit() {
@@ -267,10 +271,13 @@ export class SalePromotionProgramCreateUpdateComponent implements OnInit {
   }
 
   searchPartners(search?: string) {
-    var val = new PartnerFilter();
+    var val = new PartnerPaged();
     val.active = true;
     val.customer = true;
     val.search = search || '';
+    if (this.sessionInfoStorageService.getSessionInfo().settings && !this.sessionInfoStorageService.getSessionInfo().settings.companySharePartner) {
+      val.companyId = this.authService.userInfo.companyId;
+    }
     return this.partnerService.autocomplete2(val);
   }
 

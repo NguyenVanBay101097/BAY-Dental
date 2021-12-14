@@ -4,7 +4,7 @@
         (click)="activeModal.dismiss()" tabindex="-1">×</button>
 </header>
 <div class="modal-body o_act_window">
-    <form class="o_form_view" [formGroup]="formGroup">
+    <form class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <table class="o_group o_inner_group o_group_col_12">
@@ -14,8 +14,8 @@
                                 <label class="o_form_label">Số ID thẻ</label>
                             </td>
                             <td colspan="1">
-                                <input class="form-control" formControlName="barcode" placeholder="Nhập số ID thẻ" />
-                                <div *ngIf="f.barcode.errors && (f.barcode.touched || f.barcode.dirty || submitted)" class="text-danger mb-1">
+                                <input class="form-control" formControlName="barcode" placeholder="Nhập số ID thẻ"/>
+                                <div *ngIf="f.barcode.errors && submitted" class="text-danger mb-1">
                                     <div *ngIf="f.barcode.errors?.required">Số ID thẻ không được bỏ trống</div>
                                     <div *ngIf="f.barcode.errors?.lengthError" class="text-danger">
                                         Tối thiểu 5 và tối đa 15 ký tự

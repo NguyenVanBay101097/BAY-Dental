@@ -111,6 +111,12 @@ namespace Infrastructure.Services
             return await SearchQuery(x => x.Code == "HHNGT" && x.CompanyId == companyId).FirstOrDefaultAsync();
         }
 
+        public async Task<AccountAccount> GetAccountInsuranceDebtCompany()
+        {
+            var companyId = CompanyId;
+            return await SearchQuery(x => x.Code == "CNBH" && x.CompanyId == companyId).FirstOrDefaultAsync();
+        }
+
 
         public override ISpecification<AccountAccount> RuleDomainGet(IRRule rule)
         {
@@ -123,6 +129,19 @@ namespace Infrastructure.Services
                 default:
                     return null;
             }
+        }
+
+        public async Task<string> SearchNewAccountCode(Guid companyId, int digits, string prefix) 
+        { 
+            foreach(var num in Enumerable.Range(1, 10000))
+            {
+                var newCode = prefix.PadLeft(digits - 1, '0') + num;
+                var rec = await SearchQuery(x => x.Code == newCode && x.CompanyId == companyId).FirstOrDefaultAsync();
+                if (rec == null)
+                    return newCode;
+            }
+
+            throw new Exception("Cannot generate an unused account code.");
         }
     }
 }

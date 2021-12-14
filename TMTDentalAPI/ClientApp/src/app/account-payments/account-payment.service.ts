@@ -99,6 +99,10 @@ export class AccountPaymentService {
         return this.http.post(this.baseApi + this.apiUrl + '/DefaultGet', ids);
     }
 
+    insurancePaymentDefaultGet(ids: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/InsurancePaymentDefaultGet', ids);
+    }
+
     saleDefaultGet(ids: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/SaleDefaultGet', ids);
     }

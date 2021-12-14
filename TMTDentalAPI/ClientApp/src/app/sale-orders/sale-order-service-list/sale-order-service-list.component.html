@@ -2,11 +2,15 @@
     <div *ngIf="isEditSate()" class="mb-2">
         <div class="d-flex justify-content-between">
             <div>
-                <app-service-list-search-dropdown (onSelectService)="addLine($event)">
+                <app-service-list-search-dropdown [isQuickCreate]="true" (onSelectService)="addLine($event)">
                 </app-service-list-search-dropdown>
             </div>
             <div>
-                <button type="button" *ngIf="saleOrder.state != 'done'" class="btn btn-primary ml-auto"
+                <button type="button" hasGroups [groups]="'insurance.group_insurance'" *ngIf="saleOrder && ['sale'].indexOf(saleOrder.state) !== -1"
+                    class="btn btn-primary ml-auto" (click)="actionInsurancePayment()">
+                    Bảo hiểm
+                </button>
+                <button type="button" *ngIf="saleOrder.state != 'done'" class="btn btn-primary ml-1"
                     (click)="onOpenSaleOrderPromotion()">
                     <i class="fas fa-tags"></i>
                     Thêm ưu đãi
@@ -35,7 +39,7 @@
                         [line]="line" (onCancelEvent)="onCancelEditLine($event, i)" (onDeleteEvent)="onDeleteLine(i)"
                         (onEditEvent)="onEditLine($event)" (onUpdateEvent)="updateLineInfo($event, i)"
                         (onActiveEvent)="onActiveLine($event, line)"
-                        (onUpdateStateEvent)="onUpdateStateLine($event, line)" [orderState]="saleOrder?.state">
+                        (onUpdateStateEvent)="onUpdateStateLine(i, $event)" [orderState]="saleOrder?.state">
                     </app-sale-order-line-cu>
                 </ng-container>
             </div>
@@ -63,9 +67,14 @@
                     </p>
                     <p *ngIf="saleOrder.state == 'sale' || saleOrder.state == 'done'"
                         class="d-flex justify-content-between mb-0">
-                        <label class="font-weight-600">Thanh toán</label>
-                        <label class="font-weight-600">{{saleOrder.totalPaid |
-                            number}}</label>
+                        <label class="font-weight-600">Bảo hiểm trả</label>
+                        <label class="font-weight-600">{{getAmountInsurancePaidTotal() | number}}</label>
+                    </p>
+                    <p *ngIf="saleOrder.state == 'sale' || saleOrder.state == 'done'"
+                    class="d-flex justify-content-between mb-0">
+                    <label class="font-weight-600">Khách hàng trả</label>
+                    <label class="font-weight-600">{{saleOrder.totalPaid - getAmountInsurancePaidTotal() |
+                        number}}</label>
                     </p>
                     <p *ngIf="saleOrder.state == 'sale' || saleOrder.state == 'done'"
                         class="d-flex justify-content-between mb-0">
@@ -93,6 +102,16 @@
                                 <tr>
                                     <td colspan="1" class="o_td_label o_td_label_sm">
                                         <label class="o_form_label">
+                                            Công nợ  hiện tại:
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <span class="text-danger">{{partnerDebt.balanceTotal | number}}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label o_td_label_sm">
+                                        <label class="o_form_label">
                                             Giới tính
                                         </label>
                                     </td>
@@ -108,6 +127,16 @@
                                     </td>
                                     <td colspan="1" style="width: 100%;">
                                         <span>{{partner.dateOfBirth}}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label o_td_label_sm">
+                                        <label class="o_form_label">
+                                            Tuổi
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <span>{{partner.age}}</span>
                                     </td>
                                 </tr>
                                 <tr>
@@ -133,21 +162,11 @@
                                 <tr>
                                     <td colspan="1" class="o_td_label o_td_label_sm">
                                         <label class="o_form_label">
-                                            Tuổi
+                                            Thẻ thành viên
                                         </label>
                                     </td>
                                     <td colspan="1" style="width: 100%;">
-                                        <span>{{partner.age}}</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="1" class="o_td_label o_td_label_sm">
-                                        <label class="o_form_label">
-                                            Hạng thành viên
-                                        </label>
-                                    </td>
-                                    <td colspan="1" style="width: 100%;">
-                                        <span>{{partner.memberLevel?.name}}</span>
+                                        <span>{{partner.cardTypeName}}</span>
                                     </td>
                                 </tr>
                                 <tr>
@@ -177,27 +196,34 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <span>{{saleOrder.dateOrder | date: 'short'}}</span>
-                                    <button *ngIf="saleOrder.state == 'draft'" class="text-success" #popover="ngbPopover" triggers="manual" (click)="openUpdateOrderPopover(popover)" title="Sửa" style="outline: none;background: none;border: none;" [ngbPopover]="popContent" placement="bottom-right" [autoClose]="'outside'">
+                                    <button *ngIf="saleOrder.state == 'draft'" class="text-success"
+                                        #popover="ngbPopover" triggers="manual"
+                                        (click)="openUpdateOrderPopover(popover)" title="Sửa"
+                                        style="outline: none;background: none;border: none;" [ngbPopover]="popContent"
+                                        placement="bottom-right" [autoClose]="'outside'">
                                         <i class="fas fa-edit"></i>
                                     </button>
                                     <ng-template #popContent>
-                                        <div [formGroup]="formGroup">
+                                        <div [formGroup]="formGroup" [class.ng-submitted]="submitted">
                                             <div class="mb-2">
-                                                <kendo-datepicker style="width: 100%" format="dd/MM/yyyy HH:mm" formControlName="dateOrder" [popupSettings]="{appendTo: 'component'}">
+                                                <kendo-datepicker style="width: 100%" format="dd/MM/yyyy HH:mm"
+                                                    formControlName="dateOrder"
+                                                    [popupSettings]="{appendTo: 'component'}">
                                                 </kendo-datepicker>
-                                                 <div *ngIf="f.dateOrder.errors && (f.dateOrder.touched || f.dateOrder.dirty || submitted)"
+                                                <div *ngIf="f.dateOrder.errors && submitted"
                                                     class="text-danger">
                                                     <div *ngIf="f.dateOrder.errors.required">Chọn ngày lập phiếu</div>
                                                 </div>
                                             </div>
                                             <div>
-                                                <button type="button" class="btn btn-primary" (click)="saveSaleOrderInfo(popover)">
+                                                <button type="button" class="btn btn-primary"
+                                                    (click)="saveSaleOrderInfo(popover)">
                                                     Lưu
                                                 </button>
                                             </div>
                                         </div>
                                     </ng-template>
-                                   
+
                                 </td>
                             </tr>
                             <tr>

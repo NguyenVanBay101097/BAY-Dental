@@ -72,6 +72,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? RuleDateFromBegin { get; set; }
 
         public DateTime? RuleDateFromEnd { get; set; }
+        public Guid? CompanyId { get; set; }
     }
 
     public class SaleCouponProgramGetListPagedResponse

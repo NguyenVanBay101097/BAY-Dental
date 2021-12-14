@@ -48,7 +48,7 @@
         <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}" field="name"
             title="Số phiếu" width="100">
             <ng-template kendoGridCellTemplate let-dataItem>
-                <a class="text-primary" (click)="getFormSaleOrder(dataItem.id)">{{dataItem.name}}</a>
+                <a class="text-primary" [routerLink]="['/sale-orders/' + dataItem.id]">{{dataItem.name}}</a>
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"

@@ -45,6 +45,8 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Date.Value >= val.From);
             if (val.To.HasValue)
                 query = query.Where(x => x.Date.Value <= val.To);
+            if(val.CompanyId.HasValue)
+                query = query.Where(x=> x.CompanyId == val.CompanyId);
 
             var totalItems = await query.CountAsync();
 
@@ -944,12 +946,12 @@ namespace Infrastructure.Services
 
         public override ISpecification<ChamCong> RuleDomainGet(IRRule rule)
         {
-            var userObj = GetService<IUserService>();
-            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            //var userObj = GetService<IUserService>();
+            //var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
             switch (rule.Code)
             {
                 case "hr.cham_cong_comp_rule":
-                    return new InitialSpecification<ChamCong>(x => companyIds.Contains(x.CompanyId));
+                    return new InitialSpecification<ChamCong>(x => x.CompanyId == CompanyId);
                 default:
                     return null;
             }

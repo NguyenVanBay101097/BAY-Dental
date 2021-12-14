@@ -12,6 +12,7 @@ import {
   AccountJournalService
 } from "src/app/account-journals/account-journal.service";
 import { AuthService } from "src/app/auth/auth.service";
+import { SessionInfoStorageService } from "src/app/core/services/session-info-storage.service";
 import { loaiThuChiPaged, LoaiThuChiService } from "src/app/loai-thu-chi/loai-thu-chi.service";
 import { PartnerPaged } from "src/app/partners/partner-simple";
 import { PartnerService } from "src/app/partners/partner.service";
@@ -64,7 +65,8 @@ export class CashBookCuDialogComponent implements OnInit {
     private printService: PrintService,
     private phieuThuChiService: PhieuThuChiService,
     private partnerService: PartnerService,
-    private checkPermissionService: CheckPermissionService
+    private checkPermissionService: CheckPermissionService,
+    private sessionInfoStorageService: SessionInfoStorageService,
   ) { }
 
   ngOnInit() {
@@ -105,6 +107,19 @@ export class CashBookCuDialogComponent implements OnInit {
         this.loaiThuChiList = result.items;
         this.loaiThuChiCbx.loading = false;
       });
+
+      this.journalCbx.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.journalCbx.loading = true)),
+        switchMap((value) => this.searchFilteredJournals(value)
+        )
+      )
+      .subscribe((result: any) => {
+        this.filteredJournals = result;
+        this.journalCbx.loading = false;
+    });
     });
   }
 
@@ -183,7 +198,6 @@ export class CashBookCuDialogComponent implements OnInit {
   }
 
   onChangeLoai(val) {
-    debugger
     if (val) {
       this.formGroup.get('isAccounting').setValue(val.isAccounting);
     }
@@ -192,6 +206,7 @@ export class CashBookCuDialogComponent implements OnInit {
   loadLoaiThuChiList() {
     var val = new loaiThuChiPaged();
     val.type = this.type;
+    val.companyId = this.authService.userInfo.companyId;
     this.loaiThuChiService.getPaged(val).subscribe(
       (res) => {
         this.loaiThuChiList = res.items;
@@ -206,22 +221,28 @@ export class CashBookCuDialogComponent implements OnInit {
     var val = new loaiThuChiPaged();
     val.type = this.type;
     val.search = search || '';
+    val.companyId = this.authService.userInfo.companyId;
     return this.loaiThuChiService.getPaged(val);
   }
 
   loadFilteredJournals() {
-    var val = new AccountJournalFilter();
-    val.type = "bank,cash";
-    val.companyId = this.authService.userInfo.companyId;
-    this.accountJournalService.autocomplete(val).subscribe(
+    this.searchFilteredJournals().subscribe(
       (res) => {
         this.filteredJournals = res;
-        this.formGroup.get("journal").patchValue(this.filteredJournals[0]);
+        this.formGroup.get("journal").patchValue(this.filteredJournals.find(x => x.type == 'cash'));
       },
       (error) => {
         console.log(error);
       }
     );
+  }
+
+  searchFilteredJournals(q?: string) {
+    var val = new AccountJournalFilter();
+    val.type = "bank,cash";
+    val.search = q || '';
+    val.companyId = this.authService.userInfo.companyId;
+    return this.accountJournalService.autocomplete(val);
   }
 
   changePartnerType(partnerType: string) {
@@ -252,6 +273,9 @@ export class CashBookCuDialogComponent implements OnInit {
       paged.supplier = true;
     } else if (partnerType == 'employee') {
       paged.employee = true;
+    }
+    if (this.sessionInfoStorageService.getSessionInfo().settings && !this.sessionInfoStorageService.getSessionInfo().settings.companySharePartner) {
+      paged.companyId = this.authService.userInfo.companyId;
     }
 
     return this.partnerService.getPaged(paged);

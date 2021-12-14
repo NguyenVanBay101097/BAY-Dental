@@ -240,6 +240,9 @@ namespace TMTDentalAPI.Controllers
                     query = query.Where(x => x.Labos.Any(s => s.State == "confirmed"));
             }
 
+            if(val.CompanyId.HasValue)
+                query = query.Where(x=> x.CompanyId == val.CompanyId);
+
             var totalItems = await query.CountAsync();
 
             query = query.Include(x => x.OrderPartner)
@@ -339,7 +342,10 @@ namespace TMTDentalAPI.Controllers
         [HttpPut("{id}/[action]")]
         public async Task<IActionResult> UpdateState(Guid id, string state)
         {
+            await _unitOfWork.BeginTransactionAsync();
             await _saleLineService.UpdateState(id,state);
+            _unitOfWork.Commit();
+
             return Ok();
         }
 
@@ -407,6 +413,16 @@ namespace TMTDentalAPI.Controllers
             }).FirstOrDefaultAsync();
 
             return Ok(line.Teeth);
+        }
+
+        [HttpPost("{id}/[action]")]
+        public async Task<IActionResult> DebtPayment(Guid id)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleLineService.DebtPayment(id);
+            _unitOfWork.Commit();
+
+            return NoContent();
         }
     }
 }

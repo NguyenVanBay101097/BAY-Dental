@@ -4,8 +4,10 @@ import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import * as _ from 'lodash';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { CardCardService } from 'src/app/card-cards/card-card.service';
 import { CardTypeService } from 'src/app/card-types/card-type.service';
+import { SessionInfoStorageService } from 'src/app/core/services/session-info-storage.service';
 import { PartnerPaged, PartnerSimpleContact } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
@@ -36,6 +38,8 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
     private partnerService: PartnerService,
     private cardCardsService: CardCardService,
     private cardService: CardTypeService,
+    private sessionInfoStorageService: SessionInfoStorageService,
+    private authService: AuthService,
   ) { }
 
   ngOnInit(): void {
@@ -119,6 +123,7 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
   }
 
   actionActivate() {
+    this.submitted = true;
     if (this.formGroup.invalid) {
       return;
     }
@@ -191,6 +196,9 @@ export class CardCardsMemberCuDialogComponent implements OnInit {
     val.search = q || '';
     val.customer = true;
     val.employee = false;
+    if (this.sessionInfoStorageService.getSessionInfo().settings && !this.sessionInfoStorageService.getSessionInfo().settings.companySharePartner) {
+      val.companyId = this.authService.userInfo.companyId;
+    }
     return this.partnerService.autocomplete3(val);
   }
 

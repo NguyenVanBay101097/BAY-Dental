@@ -208,7 +208,6 @@ export class SmsThanksFormAutomaticComponent implements OnInit {
     this.textarea.nativeElement.setSelectionRange(selectionStart + tabValueNew.length, selectionStart + tabValueNew.length);
   }
 
-
   notify(title, isSuccess = true) {
     this.notificationService.show({
       content: title,

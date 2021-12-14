@@ -17,7 +17,6 @@ import { AgentCommmissionHistoryComponent } from '../agents/agent-commmission-hi
 import { AgentCommmissionFormDetailItemComponent } from '../agents/agent-commmission-form-detail-item/agent-commmission-form-detail-item.component';
 // import { AgentCommmissionPaymentDialogComponent } from '../agents/agent-commmission-payment-dialog/agent-commmission-payment-dialog.component';
 import { CommissionSettlementAgentDetailComponent } from './commission-settlement-agent-detail/commission-settlement-agent-detail.component';
-import { CommissionSettlementAgentProfileComponent } from './commission-settlement-agent-detail/commission-settlement-agent-profile/commission-settlement-agent-profile.component';
 import { CommissionSettlementAgentCommissionComponent } from './commission-settlement-agent-detail/commission-settlement-agent-commission/commission-settlement-agent-commission.component';
 import { CommissionSettlementAgentHistoryComponent } from './commission-settlement-agent-detail/commission-settlement-agent-history/commission-settlement-agent-history.component';
 import { CommissionSettlementAgentReportComponent } from './commission-settlement-agent-report/commission-settlement-agent-report.component';
@@ -38,7 +37,6 @@ import { AgentCreateUpdateDialogComponent } from '../shared/agent-create-update-
     CommissionSettlementAgentDetailComponent,
     // AgentCommmissionPaymentDialogComponent,
     CommissionSettlementAgentDetailComponent,
-    CommissionSettlementAgentProfileComponent,
     CommissionSettlementAgentCommissionComponent,
     CommissionSettlementAgentHistoryComponent,
     CommissionSettlementAgentReportComponent,

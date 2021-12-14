@@ -331,4 +331,12 @@ export class SaleOrderService {
     getPromotions(id: string) {
         return this.http.get(this.baseApi + this.apiUrl + "/" + id + '/GetPromotions');
     }
+
+    getDefaultInsuranceBySaleOrderId(id: string) {
+        return this.http.get(this.baseApi + this.apiUrl + "/" + id + '/GetDefaultInsurancePaymentBySaleOrderId');
+    }
+
+    getSaleProductionBySaleOrderId(id: string) {
+        return this.http.get(this.baseApi + this.apiUrl + "/" + id + '/GetSaleProductionBySaleOrderId');
+    }
 }

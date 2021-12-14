@@ -76,6 +76,11 @@ namespace Infrastructure.Services
                             if (rec.PaymentType == "inbound")
                                 sequence_code = "account.payment.supplier.refund";
                         }
+                        else if (rec.PartnerType == "insurance")
+                        {
+                            if (rec.PaymentType == "inbound")
+                                sequence_code = "account.payment.insurance.invoice";
+                        }
                     }
 
                     rec.Name = await seqObj.NextByCode(sequence_code);
@@ -251,6 +256,7 @@ namespace Infrastructure.Services
                 var liquidity_amount = counterpart_amount;
 
                 var rec_pay_line_name = "";
+                Guid? move_invoice_partnerId = Guid.Empty;
                 if (payment.PaymentType == "transfer")
                 {
                     rec_pay_line_name = payment.Name;
@@ -269,9 +275,17 @@ namespace Infrastructure.Services
                     else if (payment.PaymentType == "outbound")
                         rec_pay_line_name += "Thanh toán nhà cung cấp";
                 }
+                else if (payment.PartnerType == "insurance")
+                {
+                    if (payment.PaymentType == "inbound")
+                        rec_pay_line_name += "Bảo hiểm thanh toán";
+                    else if (payment.PaymentType == "outbound")
+                        rec_pay_line_name += "Hoàn tiền bảo hiểm";
+                }
 
                 if (payment.AccountMovePaymentRels.Any())
                 {
+                    move_invoice_partnerId = payment.AccountMovePaymentRels.Select(x => x.Move.PartnerId.Value).Distinct().FirstOrDefault();
                     var move_origins = payment.AccountMovePaymentRels.Select(x => x.Move.InvoiceOrigin).ToList();
                     rec_pay_line_name += $": {string.Join(", ", move_origins)}";
                 }
@@ -313,7 +327,7 @@ namespace Infrastructure.Services
                         Debit = balance < 0 ? -balance : 0,
                         Credit = balance > 0 ? balance : 0,
                         DateMaturity = payment.PaymentDate,
-                        PartnerId = payment.PartnerId,
+                        PartnerId = payment.Journal.Type == "insurance" ? payment.Insurance.PartnerId : payment.PartnerId,
                         AccountId = liquidity_line_account.Id,
                         Account = liquidity_line_account,
                         PaymentId = payment.Id,
@@ -677,6 +691,49 @@ namespace Infrastructure.Services
             return rec;
         }
 
+        public async Task<AccountRegisterPaymentDisplay> InsurancePaymentDefaultGet(IEnumerable<Guid> invoice_ids)
+        {
+            var amObj = GetService<IAccountMoveService>();
+            var moves = await amObj.SearchQuery(x => invoice_ids.Contains(x.Id)).Include(x => x.Partner).Include(x => x.Lines).OrderByDescending(x => x.DateCreated).ToListAsync();
+
+            if (!moves.Any() || moves.Any(x => x.State != "posted"))
+                throw new Exception("Bạn chưa chọn khoản tiền bảo hiểm phải thu");
+
+            var sign = 1;
+
+            var total_amount = moves.SelectMany(x => x.Lines).Sum(x => x.AmountResidual  * sign);
+            var communication = !string.IsNullOrEmpty(moves[0].InvoicePaymentRef) ? moves[0].InvoicePaymentRef :
+                (!string.IsNullOrEmpty(moves[0].Ref) ? moves[0].Ref : moves[0].Name);
+
+            var journalObj = GetService<IAccountJournalService>();
+            var cashJournal = await journalObj.SearchQuery(x => x.Type == "cash" && x.CompanyId == CompanyId).FirstOrDefaultAsync();
+
+            var rec = new AccountRegisterPaymentDisplay
+            {
+                Amount = Math.Abs(total_amount),
+                PaymentType = total_amount > 0 ? "inbound" : "outbound",
+                PartnerType = "insurance",
+                InvoiceIds = invoice_ids,
+                Journal = _mapper.Map<AccountJournalSimple>(cashJournal),
+                JournalId = cashJournal.Id
+            };
+
+            //get debit items
+            rec.DebitItems = moves.Select(x => new PartnerGetDebtPagedItem
+            {
+                Date = x.Date,
+                AmountResidual = x.AmountResidual.GetValueOrDefault(),
+                Balance = x.AmountTotal.GetValueOrDefault(),
+                Origin = x.InvoiceOrigin,
+                Ref = x.Ref,
+                MoveId = x.Id,
+                MoveType = x.Type,
+                PartnerName = x.Partner.Name
+            });
+
+            return rec;
+        }
+
         public async Task<AccountRegisterPaymentDisplay> ServiceCardOrderDefaultGet(IEnumerable<Guid> order_ids)
         {
             var orderObj = GetService<IServiceCardOrderService>();
@@ -848,6 +905,7 @@ namespace Infrastructure.Services
                     foreach (var line in remove_lines)
                         payment.SaleOrderLinePaymentRels.Remove(line);
                 }
+
             }
             return await base.CreateAsync(entities);
         }
@@ -1002,7 +1060,7 @@ namespace Infrastructure.Services
                     payment.DestinationAccount = amlObj.SearchQuery(x => move_ids.Contains(x.MoveId))
                         .Include(x => x.Account).Select(x => x.Account).Where(x => x.InternalType == "receivable" || x.InternalType == "payable").FirstOrDefault();
                 }
-                else if (payment.PartnerType == "customer")
+                if (payment.PartnerType == "customer")
                 {
                     var account = await accountObj.GetAccountReceivableCurrentCompany();
                     payment.DestinationAccount = account;
@@ -1010,6 +1068,11 @@ namespace Infrastructure.Services
                 else if (payment.PartnerType == "supplier")
                 {
                     var account = await accountObj.GetAccountPayableCurrentCompany();
+                    payment.DestinationAccount = account;
+                }
+                else if (payment.PartnerType == "insurance")
+                {
+                    var account = await accountObj.GetAccountInsuranceDebtCompany();
                     payment.DestinationAccount = account;
                 }
             }
@@ -1105,11 +1168,15 @@ namespace Infrastructure.Services
         {
             await CancelAsync(SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.MoveLines)
+                .Include(x => x.Journal)
                 .ToList());
         }
 
         public async Task CancelAsync(IEnumerable<AccountPayment> payments)
         {
+            if (payments.Any(x => x.Journal.Type == "insurance" && x.MoveLines.All(s => s.Reconciled)))
+                throw new Exception("Thanh toán bảo hiểm đã được đối soát, không thể hủy");
+
             var moveObj = GetService<IAccountMoveService>();
             var moveLineObj = GetService<IAccountMoveLineService>();
             var moveIds = payments.SelectMany(x => x.MoveLines).Select(x => x.MoveId).Distinct().ToList();

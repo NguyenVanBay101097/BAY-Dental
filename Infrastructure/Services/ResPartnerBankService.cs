@@ -45,17 +45,6 @@ namespace Infrastructure.Services
             };
         }
 
-
-        public override async Task<ResPartnerBank> CreateAsync(ResPartnerBank entity)
-        {
-            var bankAccount = SearchQuery(x => x.AccountNumber.Equals(entity.AccountNumber) && x.BankId.Equals(entity.BankId))
-                .Include(x=>x.Bank).FirstOrDefault();
-            if (bankAccount != null)
-                throw new Exception("Tài khoản này đã tồn tại");      
-
-            return await base.CreateAsync(entity);
-        }
-
         public IEnumerable<ResBankSimple> SearchPartnerBankCbx(ResPartnerBankPaged val)
         {
             var rpBank = SearchQuery();

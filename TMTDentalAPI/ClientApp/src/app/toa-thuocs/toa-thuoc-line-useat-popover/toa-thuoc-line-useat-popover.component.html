@@ -8,7 +8,7 @@
 
     <div ngbDropdownMenu aria-labelledby="dropdownManual" class="dropdown-wrapper">
         <div class="prescription-useAt">
-            <div [formGroup]="formGroup">
+            <div [formGroup]="formGroup" [class.ng-submitted]="submitted">
                 <ng-container *ngFor="let item of useAtFilterOptions; let i = index">                    
                     <div class="form-check form-check-inline w-100">
                         <input class="form-check-input form-control" type="radio" formControlName="useAt"
@@ -18,7 +18,7 @@
                 </ng-container>
                 <div *ngIf="useAtControl == 'other'" class="mt-1">
                     <input formControlName='note' class="form-control" placeholder="Nội dung" required />      
-                    <div *ngIf="f.note.errors && (f.note.touched || f.note.dirty || submitted)" class="text-danger">
+                    <div *ngIf="f.note.errors && submitted" class="text-danger">
                         <div *ngIf="f.note.errors.required">Nhập nội dung</div>
                     </div>         
                 </div>

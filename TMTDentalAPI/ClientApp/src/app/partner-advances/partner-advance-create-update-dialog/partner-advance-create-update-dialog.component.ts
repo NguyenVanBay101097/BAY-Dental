@@ -5,6 +5,7 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { AccountJournalFilter, AccountJournalService } from 'src/app/account-journals/account-journal.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PartnerService } from 'src/app/partners/partner.service';
@@ -57,6 +58,19 @@ export class PartnerAdvanceCreateUpdateDialogComponent implements OnInit {
 
     this.loadFilteredJournals();
     this.loadAmountAdvanceBalance();
+    
+    this.journalCbx.filterChange
+    .asObservable()
+    .pipe(
+      debounceTime(300),
+      tap(() => (this.journalCbx.loading = true)),
+      switchMap((value) => this.searchJournals(value)
+      )
+    )
+    .subscribe((result: any) => {
+      this.filteredJournals = result;
+      this.journalCbx.loading = false;
+  });
 
   }
 

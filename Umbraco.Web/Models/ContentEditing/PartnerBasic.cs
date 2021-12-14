@@ -123,6 +123,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public bool ComputeCreditDebit { get; set; }
         public bool? Active { get; set; }
+        public Guid? CompanyId { get; set; }
     }
 
     public class PartnerGetDebtPagedFilter
@@ -138,6 +139,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class PartnerGetDebtPagedItem
     {
+        public string PartnerName { get; set; }
         public DateTime? Date { get; set; }
 
         public decimal AmountResidual { get; set; }
@@ -146,9 +148,12 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Origin { get; set; }
 
+        public string Ref { get; set; }
+
         public Guid MoveId { get; set; }
         public string MoveType { get; set; }
     }
+
 
     public class PartnerSaleOrderDone
     {
@@ -646,7 +651,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Avatar { get; set; }
 
-        public string Phone { get; set; }  
+        public string Phone { get; set; }
 
         /// <summary>
         /// Mã khách hàng

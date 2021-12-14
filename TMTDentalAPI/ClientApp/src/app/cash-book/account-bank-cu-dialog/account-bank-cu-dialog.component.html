@@ -1,0 +1,78 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ngbAutofocus (click)="activeModal.dismiss()" tabindex="-1">×</button>
+</header>
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <table class="o_group o_inner_group o_group_col_12">
+                    <tbody class="w-100">
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Chủ tài khoản</label>
+                            </td>
+                            <td colspan="1">
+                                <input class="form-control" formControlName="accountHolderName"
+                                    (input)="accountHolderNameCtrl.setValue(accountHolderNameCtrl.value.toUpperCase())">
+                                <div *ngIf="f.accountHolderName.errors && submitted" class="text-danger mb-1">
+                                    <div *ngIf="f.accountHolderName.errors.required">Nhập chủ tài khoản</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Số tài khoản</label>
+                            </td>
+                            <td colspan="1">
+                                <input class="form-control" type="text" formControlName="accountNumber" numbersOnly>
+                                <div *ngIf="f.accountNumber.errors && submitted" class="text-danger mb-1">
+                                    <div *ngIf="f.accountNumber.errors.required">Nhập số tài khoản</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Ngân hàng</label>
+                            </td>
+                            <td colspan="1">
+                                <kendo-combobox class="form-control" [data]="bankItems" [textField]="'displayName'"
+                                        [filterable]="true" #bankCbx formControlName="bank" [valueField]="'id'">
+                                </kendo-combobox>
+                                
+                                <div *ngIf="f.bank.errors && submitted" class="text-danger mb-1">
+                                    <div *ngIf="f.bank.errors.required">Chọn ngân hàng</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Chi nhánh</label>
+                            </td>
+                            <td colspan="1">
+                                <input class="form-control" formControlName="bankBranch">
+                            </td>
+                        </tr>
+                        <tr *ngIf="accountId">
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Trạng thái</label>
+                            </td>
+                            <td colspan="1">
+                                <kendo-dropdownlist [data]="states" [valuePrimitive]="true" [valueField]="'value'" [textField]="'text'" formControlName="active">
+                                </kendo-dropdownlist>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary mr-2" (click)="onSave()">
+        Lưu</button>
+    <button *ngIf="accountId" type="button" class="btn btn-danger mr-2" (click)="onRemove()">
+        Xóa</button>
+    <button type="button" class="btn btn-light mr-2" (click)="onCancel()">
+        Đóng</button>
+</div>

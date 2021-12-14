@@ -51,6 +51,10 @@
             "Permission": "Basic.SaleOrder.Delete"
           },
           {
+            "Name": "In phiếu",
+            "Permission": "Basic.SaleOrder.Print"
+          },
+          {
             "Name": "Hủy phiếu",
             "Permission": "Basic.SaleOrder.Cancel"
           },
@@ -377,6 +381,14 @@
             "Permission": "Salary.HrPayslipRun.Update"
           },
           {
+            "Name": "In",
+            "Permission": "Salary.HrPayslipRun.Print"
+          },
+          {
+            "Name": "Xuất file",
+            "Permission": "Salary.HrPayslipRun.Export"
+          },
+          {
             "Name": "Hủy",
             "Permission": "Salary.HrPayslipRun.Cancel"
           }
@@ -511,6 +523,10 @@
           {
             "Name": "Hủy phiếu",
             "Permission": "Labo.LaboWarranty.Cancel"
+          },
+          {
+            "Name": "Xuất Excel",
+            "Permission": "Labo.LaboWarranty.Export"
           }
         ]
       }
@@ -713,6 +729,27 @@
         ]
       },
       {
+        "Name": "Chức vụ nhân viên",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.Employee.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.Employee.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.Employee.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.Employee.Delete"
+          }
+        ]
+      },
+      {
         "Name": "Nhân viên",
         "Ops": [
           {
@@ -743,7 +780,7 @@
       },
       {
         "Name": "Người giới thiệu",
-        "Ops": [        
+        "Ops": [
           {
             "Name": "Xem",
             "Permission": "Catalog.Agent.Read"
@@ -759,6 +796,27 @@
           {
             "Name": "Xóa",
             "Permission": "Catalog.Agent.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Bảo hiểm",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.Insurance.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.Insurance.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.Insurance.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.Insurance.Delete"
           }
         ]
       },
@@ -892,6 +950,15 @@
             "Permission": "System.ApplicationRole.Delete"
           }
         ]
+      },
+      {
+        "Name": "Cấu hình chung",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "System.Config"
+          }
+        ]
       }
     ]
   },
@@ -904,6 +971,10 @@
           {
             "Name": "Xem",
             "Permission": "Account.Read"
+          },
+          {
+            "Name": "Xuất file",
+            "Permission": "Account.Export"
           }
         ]
       },
@@ -925,6 +996,10 @@
           {
             "Name": "Xóa",
             "Permission": "Account.PhieuThuChi.Delete"
+          },
+          {
+            "Name": "In phiếu",
+            "Permission": "Account.PhieuThuChi.Print"
           }
         ]
       },
@@ -954,6 +1029,24 @@
   {
     "Name": "Báo cáo",
     "Functions": [
+      {
+        "Name": "Báo cáo tổng quan",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.Overview"
+          }
+        ]
+      },
+      {
+        "Name": "Báo cáo tổng quan ngày",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.DayOverview"
+          }
+        ]
+      },
       {
         "Name": "Kết quả kinh doanh",
         "Ops": [
@@ -987,6 +1080,24 @@
           {
             "Name": "Xem",
             "Permission": "Report.PartnerOldNew"
+          }
+        ]
+      },
+      {
+        "Name": "Báo cáo Tiếp nhận",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.CustomerReceiptReports"
+          }
+        ]
+      },
+      {
+        "Name": "Báo cáo Công nợ bảo hiểm",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.ResInsuranceReports"
           }
         ]
       },
@@ -1504,65 +1615,25 @@
         ]
       }
     ]
-  }, {
-    "Name": "Khảo sát đánh giá",
+  },
+  {
+    "Name": "Hoa hồng",
     "Functions": [
       {
-        "Name": "Danh sách công việc",
+        "Name": "Người giới thiệu",
         "Ops": [
           {
             "Name": "Xem",
-            "Permission": "Survey.Assignment.Read"
-          },
-          {
-            "Name": "Thêm",
-            "Permission": "Survey.Assignment.Create"
-          },
-          {
-            "Name": "Cập nhật",
-            "Permission": "Survey.Assignment.Update"
-          },
-          {
-            "Name": "Xóa",
-            "Permission": "Survey.Assignment.Delete"
-          },
-          {
-            "Name": "Hủy khảo sát",
-            "Permission": "Survey.Assignment.DeleteUserInput"
+            "Permission": "Comission.Agent"
           }
         ]
       },
       {
-        "Name": "Khảo sát",
+        "Name": "Nhân viên",
         "Ops": [
           {
             "Name": "Xem",
-            "Permission": "Survey.UserInput.Read"
-          },
-          {
-            "Name": "Thêm",
-            "Permission": "Survey.UserInput.Create"
-          }
-        ]
-      },
-      {
-        "Name": "Câu hỏi khảo sát",
-        "Ops": [
-          {
-            "Name": "Xem",
-            "Permission": "Survey.Question.Read"
-          },
-          {
-            "Name": "Thêm",
-            "Permission": "Survey.Question.Create"
-          },
-          {
-            "Name": "Cập nhật",
-            "Permission": "Survey.Question.Update"
-          },
-          {
-            "Name": "Xóa",
-            "Permission": "Survey.Question.Delete"
+            "Permission": "Comission.Employee"
           }
         ]
       }

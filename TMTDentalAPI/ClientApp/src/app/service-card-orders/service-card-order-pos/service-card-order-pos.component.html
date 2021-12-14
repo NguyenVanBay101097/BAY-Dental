@@ -27,7 +27,7 @@
 </div>
 <div class="bg-white">
     <div class="o_form_view o_form_nosheet">
-        <form [formGroup]="formGroup">
+        <form [formGroup]="formGroup" [class.ng-submitted]="submitted">
             <div>
                 <div class="o_form_sheet">
                     <div class="oe_title">
@@ -56,7 +56,7 @@
                                                 <i class="fas fa-plus"></i>
                                             </a>
                                         </div>
-                                        <div *ngIf="cardOrder.state == 'draft' && f.partner.errors && (f.partner.touched || f.partner.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="cardOrder.state == 'draft' && f.partner.errors && submitted" class="text-danger">
                                             <div *ngIf="f.partner.errors.required">Chọn khách hàng</div>
                                         </div>
                                         <span [class.d-none]="cardOrder.state == 'draft'">
@@ -78,7 +78,7 @@
                                         <kendo-datetimepicker [class.d-none]="cardOrder.state != 'draft'"
                                             formControlName="dateOrderObj">
                                         </kendo-datetimepicker>
-                                        <div *ngIf="cardOrder.state == 'draft' && f.dateOrderObj.errors && (f.dateOrderObj.touched || f.dateOrderObj.dirty || submitted)" class="text-danger">
+                                        <div *ngIf="cardOrder.state == 'draft' && f.dateOrderObj.errors && submitted" class="text-danger">
                                             <div *ngIf="f.dateOrderObj.errors.required">Chọn ngày bán</div>
                                         </div>
                                         <span [class.d-none]="cardOrder.state == 'draft'">

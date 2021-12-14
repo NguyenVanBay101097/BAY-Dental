@@ -30,6 +30,8 @@ namespace Infrastructure.Services
             ISpecification<LoaiThuChi> spec = new InitialSpecification<LoaiThuChi>(x => true);
             if (!string.IsNullOrEmpty(val.Search))
                 spec = spec.And(new InitialSpecification<LoaiThuChi>(x => x.Name.Contains(val.Search) || x.Code.Contains(val.Search)));
+            if (val.CompanyId.HasValue)
+                spec = spec.And(new InitialSpecification<LoaiThuChi>(x => x.CompanyId == val.CompanyId));
 
             spec = spec.And(new InitialSpecification<LoaiThuChi>(x => x.Type == val.Type));
 
@@ -233,12 +235,13 @@ namespace Infrastructure.Services
 
         public override ISpecification<LoaiThuChi> RuleDomainGet(IRRule rule)
         {
-            var userObj = GetService<IUserService>();
-            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            //var userObj = GetService<IUserService>();
+            //var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            var companyId = CompanyId;
             switch (rule.Code)
             {
-                case "account.phieu_thu_chi_comp_rule":
-                    return new InitialSpecification<LoaiThuChi>(x => !x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value));
+                case "account.loai_thu_chi_comp_rule":
+                    return new InitialSpecification<LoaiThuChi>(x => !x.CompanyId.HasValue || x.CompanyId == companyId);
                 default:
                     return null;
             }

@@ -15,6 +15,7 @@ import { CommissionProductRuleService } from './commission-product-rule.service'
 import { CommissionProductRuleListComponent } from './commission-product-rule-list/commission-product-rule-list.component';
 import { CommissionDialogComponent } from './commission-dialog/commission-dialog.component';
 import { CommissionProductRuleDialogComponent } from './commission-product-rule-dialog/commission-product-rule-dialog.component';
+import { TmtAutonumericModule } from 'tmt-autonumeric';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { CommissionProductRuleDialogComponent } from './commission-product-rule-
     ReactiveFormsModule, 
     InputsModule, 
     NgbModule, 
-    PopupModule
+    PopupModule,
+    TmtAutonumericModule
   ],
   providers: [
     CommissionService,

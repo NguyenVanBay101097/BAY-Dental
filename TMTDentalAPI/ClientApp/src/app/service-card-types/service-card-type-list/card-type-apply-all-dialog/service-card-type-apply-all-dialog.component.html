@@ -20,10 +20,10 @@
                                 <td colspan="1" style="width: 100%;">
                                     <div class="d-flex">
                                         <div class="w-100 mr-2">
-                                            <kendo-numerictextbox *ngIf="computePrice == 'percentage'" class="form-control" [format]="'n0'" max = '100' [min]="0" [autoCorrect]="true" [(ngModel)] = 'percentPrice' name = 'percentage'>
-                                            </kendo-numerictextbox>
-                                            <kendo-numerictextbox *ngIf="computePrice != 'percentage'" class="form-control" [format]="'n0'" [min]="0" [autoCorrect]="true" [(ngModel)] = 'fixedAmountPrice' name = 'fixed_amount'>
-                                            </kendo-numerictextbox>
+                                            <input class="form-control" *ngIf="computePrice == 'percentage'" [(ngModel)] = 'percentPrice' name = 'percentage' tmtautonumeric
+                                            [options]="{minimumValue: 0, maximumValue: 100, decimalPlaces: 0}"/>
+                                            <input class="form-control" *ngIf="computePrice != 'percentage'" [(ngModel)] = 'fixedAmountPrice' name = 'fixed_amount' tmtautonumeric
+                                            [options]="{minimumValue: 0, decimalPlaces: 0}"/>
                                         </div>
                                         <div>
                                             <input type="radio" class="btn-check" id = 'radio1' name="radio" value = "percentage" [(ngModel)]="computePrice">

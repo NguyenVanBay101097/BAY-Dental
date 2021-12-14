@@ -378,9 +378,18 @@ namespace TMTDentalAPI
             services.AddScoped<ICustomerReceiptReportService, CustomerReceiptReportService>();
             services.AddScoped<IPrintTemplateService, PrintTemplateService>();
             services.AddScoped<IPrintTemplateConfigService, PrintTemplateConfigService>();
+            services.AddScoped<IPaymentService, PaymentService>();
 
             services.AddScoped<ILaboWarrantyService, LaboWarrantyService>();
             services.AddScoped<IHrJobService, HrJobService>();
+
+            services.AddScoped<IResInsuranceService, ResInsuranceService>();
+            services.AddScoped<IResInsurancePaymentService, ResInsurancePaymentService>();
+            services.AddScoped<IResInsurancePaymentLineService, ResInsurancePaymentLineService>();
+            services.AddScoped<IResInsuranceReportService, ResInsuranceReportService>();
+
+            services.AddScoped<ISaleProductionService, SaleProductionService>();
+            services.AddScoped<ISaleProductionLineService, SaleProductionLineService>();
 
             services.AddMemoryCache();
 
@@ -581,6 +590,13 @@ namespace TMTDentalAPI
                 mc.AddProfile(new HrJobProfile());
                 mc.AddProfile(new ProductPricelistItemProfile());
                 mc.AddProfile(new SampleDataProfile());
+                mc.AddProfile(new ResInsuranceProfile());
+                mc.AddProfile(new ResInsurancePaymentProfile());
+                mc.AddProfile(new ResInsurancePaymentLineProfile());
+                mc.AddProfile(new ResInsuranceReportsProfile());
+                mc.AddProfile(new PaymentProfile());
+                mc.AddProfile(new SaleProductionProfile());
+                mc.AddProfile(new SaleProductionLineProfile());
             };
 
             #endregion

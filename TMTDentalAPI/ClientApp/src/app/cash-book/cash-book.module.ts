@@ -9,12 +9,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
 import { CashBookTabPageCaBoComponent } from './cash-book-tab-page-ca-bo/cash-book-tab-page-ca-bo.component';
 import { CashBookTabPageRePaComponent } from './cash-book-tab-page-re-pa/cash-book-tab-page-re-pa.component';
+import { AccountBankCuDialogComponent } from './account-bank-cu-dialog/account-bank-cu-dialog.component';
 
 @NgModule({
   declarations: [
     CashBookComponent,
     CashBookTabPageCaBoComponent,
-    CashBookTabPageRePaComponent
+    CashBookTabPageRePaComponent,
+    AccountBankCuDialogComponent,
   ],
   imports: [
     CommonModule,

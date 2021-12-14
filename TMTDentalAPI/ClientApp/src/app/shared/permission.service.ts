@@ -42,8 +42,8 @@ export class PermissionService {
     public hasDefined(permission: string): boolean {
         if (typeof permission !== "string")
             return false;
-        const sessionInfo = this.sessionInfoStorageService.getSessionInfo();
-        return sessionInfo.groups.includes(permission);
+        var groups = permission.split(',');
+        return this.hasOneDefined(groups);
     }
 
     clearStore() {

@@ -10,6 +10,11 @@ export class ResPartnerBankPaged{
   search: string;
 }
 
+export class ResBankSimple{
+  id: string;
+  name: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -39,6 +44,6 @@ export class ResBankService {
   }
 
   getAutocomplete(val) {
-    return this.http.get(this.baseApi + this.apiUrl + '/Autocomplete', {params: val});
+    return this.http.get<ResBankSimple[]>(this.baseApi + this.apiUrl + '/Autocomplete', {params: val});
   }
 }

@@ -154,6 +154,13 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        public async Task<IActionResult> InsurancePaymentDefaultGet(IEnumerable<Guid> invoice_ids)
+        {
+            var res = await _paymentService.InsurancePaymentDefaultGet(invoice_ids);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
         public async Task<IActionResult> ThuChiDefaultGet(AccountPaymentThuChiDefaultGetRequest val)
         {
             var res = await _paymentService.ThuChiDefaultGet(val);

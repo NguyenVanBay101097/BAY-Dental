@@ -262,7 +262,6 @@ export class PartnerService {
     }
 
     delete(id: string) {
-        debugger
         return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
     }
 
