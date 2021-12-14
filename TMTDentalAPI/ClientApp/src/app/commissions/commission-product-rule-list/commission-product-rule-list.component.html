@@ -47,7 +47,7 @@
                                 <div class="d-flex">
                                     <div class="w-100 mr-2">
                                         <input class="form-control w-100" #percent required tmtautonumeric
-                                            (blur)="setNumberic(item,percent.value)" [value]="item.percent"
+                                            (blur)="setNumberic(item,percent.value)" [(ngModel)]="item.percent"
                                             [options]="{ minimumValue: 0, maximumValue: 100, decimalPlaces: 0 }" />
                                     </div>
                                     <span>%</span>

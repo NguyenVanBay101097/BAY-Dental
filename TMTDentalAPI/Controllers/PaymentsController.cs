@@ -4,6 +4,7 @@ using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Controllers
@@ -24,6 +25,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Basic.SaleOrderPayment.Full")]
         public async Task<IActionResult> SaleOrderCustomerDebtPayment(SaleOrderCustomerDebtPaymentReq val)
         {
             await _unitOfWork.BeginTransactionAsync();

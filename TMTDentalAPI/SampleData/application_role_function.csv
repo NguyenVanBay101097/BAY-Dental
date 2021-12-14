@@ -371,6 +371,9 @@
 "base.application_role_doctor","ServiceCard.Card.Read"
 "base.application_role_doctor","System.Company.Read"
 "base.application_role_doctor","Account.Read"
+"base.application_role_doctor","Basic.CustomerReceipt.Read"
+
+
 "base.application_role_assistant","Basic.Partner.Read"
 "base.application_role_assistant","Basic.Partner.Create"
 "base.application_role_assistant","Basic.Partner.Update"
@@ -483,6 +486,9 @@
 "base.application_role_assistant","ServiceCard.Card.Read"
 "base.application_role_assistant","System.Company.Read"
 "base.application_role_assistant","Account.Read"
+"base.application_role_assistant","Basic.CustomerReceipt.Read"
+
+
 "base.application_role_accountant","Basic.Partner.Read"
 "base.application_role_accountant","Basic.Partner.Create"
 "base.application_role_accountant","Basic.Partner.Update"
@@ -591,6 +597,9 @@
 "base.application_role_accountant","Comission.Agent"
 "base.application_role_accountant","Comission.Employee"
 "base.application_role_accountant","System.Company.Read"
+"base.application_role_accountant","Basic.CustomerReceipt.Read"
+
+
 "base.application_role_receptionist","Basic.Partner.Read"
 "base.application_role_receptionist","Basic.Partner.Create"
 "base.application_role_receptionist","Basic.Partner.Update"
