@@ -46,7 +46,6 @@ export class AppHomeComponent implements OnInit {
       icon: 'fas fa-capsules',
       url: '/medicine-orders',
       groups: 'medicineOrder.group_medicine',
-      permissions: ['Medicine.ToaThuoc.Read']
     },
     {
       name: 'Labo',
@@ -157,7 +156,7 @@ export class AppHomeComponent implements OnInit {
         { name: 'Loại thu chi', url: '/loai-thu-chi', permissions: ['Account.LoaiThuChi.Read'] },
         { name: 'Tiêu chí kiểm kho', url: '/stock/criterias', permissions: ['Stock.StockInventoryCriteria.Read'] },
         { name: 'Chẩn đoán răng', url: '/tooth-diagnosis', permissions: ['Catalog.ToothDiagnosis.Read'] },
-        { name: 'Nhãn khảo sát', url: '/surveys/survey-tag', groups: 'survey.group_survey' },
+        { name: 'Nhãn khảo sát', url: '/surveys/survey-tag', groups: 'survey.group_survey', permissions: ['Catalog.SurveyTag.Read'] },
         { name: 'Người giới thiệu', url: '/agents/list', Permissions: ['Catalog.Agent.Read'] },
       ],
       permissions: [
