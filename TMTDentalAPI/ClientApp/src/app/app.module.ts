@@ -38,7 +38,8 @@ import { LoadingComponent } from "./shared/loading/loading.component";
 import { MyCustomKendoModule } from "./shared/my-customer-kendo.module";
 import { GridModule } from '@progress/kendo-angular-grid';
 import { TmtAutonumericModule } from 'tmt-autonumeric';
-
+import { NgxEchartsModule } from 'ngx-echarts';
+import * as echarts from 'echarts';
 export function tokenGetter() {
   return localStorage.getItem("access_token");
 }
@@ -85,6 +86,9 @@ registerLocaleData(localeVi, "vi");
     FacebookModule.forRoot(),
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     GridModule,
+    NgxEchartsModule.forRoot({
+      echarts,
+    }),
   ],
   providers: [
     // ThemeService,
