@@ -38,6 +38,113 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? CompanyId { get; set; }
     }
 
+    public class AccountCommonPartnerReportOverviewFilter
+    {
+        /// <summary>
+        /// chi nhanh
+        /// </summary>
+        public Guid? CompanyId { get; set; }
+
+        /// <summary>
+        /// chi nhánh tạo khách hàng
+        /// </summary>
+        public Guid? PartnerCompanyId { get; set; }
+
+        /// <summary>
+        /// tuổi 
+        /// </summary>
+        public int? AgeFrom { get; set; }
+
+        public int? AgeTo { get; set; }
+
+        public decimal? RevenueFrom { get; set; }
+        public decimal? RevenueTo { get; set; }
+
+        public decimal? RevenueExpectFrom { get; set; }
+        public decimal? RevenueExpectTo { get; set; }
+
+        /// <summary>
+        /// cong no
+        /// </summary>
+        public bool? IsDebt { get; set; }
+
+        /// <summary>
+        /// du kien thu
+        /// </summary>
+        public bool? IsRevenueExpect { get; set; }
+
+        /// <summary>
+        /// sale : đang điều trị
+        /// done : hoàn thành
+        /// draft : chưa phát sinh
+        /// </summary>
+        public string OrderState { get; set; }
+
+        public IEnumerable<Guid> CategIds { get; set; } = new List<Guid>();
+
+        public IEnumerable<Guid> PartnerSourceIds { get; set; } = new List<Guid>();
+
+        public IEnumerable<Guid> CardTypeIds { get; set; } = new List<Guid>();
+
+
+        /// <summary>
+        /// mã thành phố
+        /// </summary>
+        public string CityCode { get; set; }
+
+        /// <summary>
+        /// mã quận/ huyện
+        /// </summary>
+        public string DistrictCode { get; set; }
+
+        /// <summary>
+        /// mã phường/ xã
+        /// </summary>
+        public string WardCode { get; set; }
+    }
+
+    public class PartnerReportOverviewItem
+    {
+        public Guid PartnerId { get; set; }
+
+        public Guid? PartnerSourceId { get; set; }
+
+        public string PartnerSourceName { get; set; }
+
+        public string OrderState { get; set; }
+
+        public decimal TotalService { get; set; }
+
+        public decimal TotalRevenue { get; set; }
+
+        public decimal TotalRevenueExpect { get; set; }
+
+        public decimal TotalDebt { get; set; }
+    }
+
+    public class AccountCommonPartnerReportOverview
+    {
+        public decimal TotalPartner { get; set; }
+
+        public decimal TotalService { get; set; }
+
+        public decimal TotalRevenue { get; set; }
+
+        public decimal TotalRevenueExpect { get; set; }
+
+        public decimal TotalDebt { get; set; }
+    }
+
+    public class PartnerReportSourceOverview
+    {
+        public Guid? PartnerSourceId { get; set; }
+
+        public string PartnerSourceName { get; set; }
+
+        public int TotalPartner { get; set; }
+
+    }
+
     public class AccountCommonPartnerReportSearchV2
     {
         public AccountCommonPartnerReportSearchV2()
@@ -106,7 +213,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string ResultSelection { get; set; }
     }
- 
+
     public class AccountCommonPartnerReportPrint
     {
         public IEnumerable<AccountCommonPartnerReportItem> Data { get; set; } = new List<AccountCommonPartnerReportItem>();
