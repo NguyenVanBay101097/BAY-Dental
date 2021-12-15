@@ -1222,6 +1222,11 @@ namespace Infrastructure.Services
             //Get list partner ref
             var partner_code_list = data.Where(x => !string.IsNullOrEmpty(x.Ref)).Select(x => x.Ref).Distinct().ToList();
             var partner_dict = await GetPartnerDictByRefs(partner_code_list);
+
+            var notFoundPartnerCodes = partner_code_list.Where(x => !partner_dict.ContainsKey(x)).ToList();
+            if (notFoundPartnerCodes.Any())
+                return new PartnerImportResponse { Success = false, Errors = new List<string>() { $"Mã khách hàng không tồn tại: {string.Join(", ", notFoundPartnerCodes)}" } };
+
             var address_check_dict = new Dictionary<string, AddressCheckApi>();
             var address_list = data.Where(x => !string.IsNullOrWhiteSpace(x.CheckAddress))
                 .Select(x => x.CheckAddress).Distinct().ToList();

@@ -90,7 +90,7 @@ export class PartnerImportComponent implements OnInit {
         this.notify('success', 'Cập nhật dữ liệu thành công');
       } else {
         this.errors = result.errors;
-        this.notify('error', 'Cập nhật dữ liệu không thành công');
+        // this.notify('error', 'Cập nhật dữ liệu không thành công');
       }
     }, (err) => {
     });

@@ -174,14 +174,6 @@
           {
             "Name": "Xóa",
             "Permission": "Basic.AccountPayment.Delete"
-          },
-          {
-            "Name": "In phiếu",
-            "Permission": "Basic.AccountPayment.Print"
-          },
-          {
-            "Name": "Hủy",
-            "Permission": "Basic.AccountPayment.Cancel"
           }
         ]
       },

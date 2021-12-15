@@ -83,6 +83,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrderPayment.Full")]
         public async Task<IActionResult> ActionPayment(IEnumerable<Guid> ids)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -104,6 +105,7 @@ namespace TMTDentalAPI.Controllers
 
 
         [HttpGet("{id}/[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrderPayment.Full")]
         public async Task<IActionResult> GetPrint(Guid id)
         {
             //tim trong bảng config xem có dòng nào để lấy ra template

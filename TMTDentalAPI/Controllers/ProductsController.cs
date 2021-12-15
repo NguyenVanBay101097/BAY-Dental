@@ -378,11 +378,57 @@ namespace TMTDentalAPI.Controllers
                 }
             }
 
-        
+
             var productDict = new Dictionary<string, Product>();
             var standardPriceDict = new Dictionary<Product, decimal>();
             var uom = await _uomService.DefaultUOM();
             var productsCreate = new List<Product>();
+
+            var itemsNoCode = data.Where(x => string.IsNullOrEmpty(x.DefaultCode));
+            if (itemsNoCode.Any())
+            {
+                var product_code_prefix = "SP"; //nên đưa vào constants
+                var matchedCodes = await _productService.SearchQuery(x => x.DefaultCode.Contains(product_code_prefix)).Select(x => x.DefaultCode).ToListAsync();
+                foreach (var num in Enumerable.Range(1, 100))
+                {
+                    var tmp = itemsNoCode.Where(x => string.IsNullOrEmpty(x.DefaultCode));
+                    if (tmp.Any())
+                    {
+                        var codeList = await _sequenceService.NextByCode("product_seq", tmp.Count());
+                        for (var i = 0; i < tmp.Count(); i++)
+                        {
+                            var item = itemsNoCode.ElementAt(i);
+                            if (!matchedCodes.Contains(codeList[i]))
+                                item.DefaultCode = codeList[i];
+                        }
+                    }
+                    else
+                        break;
+                }
+            }
+
+            if (data.Any(x => string.IsNullOrEmpty(x.DefaultCode)))
+                return Ok(new { success = false, errors = new List<string>() { $"Có những dòng không phát sinh mã đc" } });
+
+            var group = data.GroupBy(x => x.DefaultCode).Select(x => new
+            {
+                DefaultCode = x.Key,
+                Count = x.Count()
+            });
+
+            if (group.Any(x => x.Count > 1))
+            {
+                var duplicateCodes = group.Where(x => x.Count > 1).Select(x => x.DefaultCode).ToList();
+                return Ok(new { success = false, errors = new List<string>() { $"Dữ liệu file excel có những mã dịch vụ bị trùng: {string.Join(", ", duplicateCodes)}" } });
+            }
+
+            var codes = group.Select(x => x.DefaultCode).ToList();
+            var existCodeProducts = await _productService.SearchQuery(x => codes.Contains(x.DefaultCode)).ToListAsync();
+            if (existCodeProducts.Any())
+            {
+                var duplicateCodes = existCodeProducts.Select(x => x.DefaultCode).ToList();
+                return Ok(new { success = false, errors = new List<string>() { $"Đã tồn tại những dịch vụ với mã: {string.Join(", ", duplicateCodes)}" } });
+            }     
 
             foreach (var item in data)
             {
@@ -396,7 +442,7 @@ namespace TMTDentalAPI.Controllers
                 product.UOMId = uom.Id;
                 product.UOMPOId = uom.Id;
                 product.Name = item.Name;
-                product.DefaultCode = !string.IsNullOrEmpty(item.DefaultCode) ? item.DefaultCode : (await _sequenceService.NextByCode("product_seq"));
+                product.DefaultCode = item.DefaultCode;
                 product.SaleOK = true;
                 product.PurchaseOK = false;
                 product.Type = "service";
@@ -551,7 +597,7 @@ namespace TMTDentalAPI.Controllers
                 product.CategId = categDict[item.CategName].Id;
                 product.ListPrice = item.ListPrice ?? 0;
                 product.LaboPrice = item.LaboPrice ?? 0;
-               
+
                 product.Steps.Clear();
                 if (!string.IsNullOrWhiteSpace(item.Steps))
                 {
