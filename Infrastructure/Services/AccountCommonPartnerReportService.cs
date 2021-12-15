@@ -385,7 +385,7 @@ namespace Infrastructure.Services
             var res = await query.GroupBy(x => new { PartnerSourceId = x.PartnerSourceId, PartnerSourceName = x.PartnerSourceName }).Select(x => new PartnerReportSourceOverview
             {
                 PartnerSourceId = x.Key.PartnerSourceId,
-                PartnerSourceName = x.Key.PartnerSourceId == null ? "Không xác định" : x.Key.PartnerSourceName,
+                PartnerSourceName = x.Key.PartnerSourceId == null ? "Chưa xác định" : x.Key.PartnerSourceName,
                 TotalPartner = x.Count()
             }).ToListAsync();
 
