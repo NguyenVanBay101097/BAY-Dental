@@ -38,6 +38,14 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? CompanyId { get; set; }
     }
 
+    public class SampleDataAgeFilter { 
+        
+        public string Name { get; set; }
+        public int AgeFrom { get; set; }
+
+        public int AgeTo { get; set; }
+    }
+
     public class AccountCommonPartnerReportOverviewFilter
     {
         /// <summary>
@@ -107,6 +115,10 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public Guid PartnerId { get; set; }
 
+        public string PartnerGender { get; set; }
+
+        public string PartnerAge { get; set; }
+
         public Guid? PartnerSourceId { get; set; }
 
         public string PartnerSourceName { get; set; }
@@ -143,6 +155,21 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public int TotalPartner { get; set; }
 
+    }
+
+    public class PartnerGenderReportOverview
+    {
+        public IEnumerable<string> LegendChart { get; set; }
+
+        public IEnumerable<PartnerGenderItemReportOverview> PartnerGenderItems { get; set; } = new List<PartnerGenderItemReportOverview>();
+
+    }
+
+    public class PartnerGenderItemReportOverview
+    {
+        public string PartnerGender { get; set; }
+        public int PartnerGenderPercent { get; set; }
+        public IEnumerable<decimal> Percent { get; set; }
     }
 
     public class AccountCommonPartnerReportSearchV2

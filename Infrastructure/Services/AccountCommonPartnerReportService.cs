@@ -318,6 +318,8 @@ namespace Infrastructure.Services
                              select new PartnerReportOverviewItem
                              {
                                  PartnerId = p.Id,
+                                 PartnerGender = p.Gender,
+                                 PartnerAge = p.GetAge,
                                  PartnerSourceId = p.SourceId.HasValue ? p.SourceId : null,
                                  PartnerSourceName = p.SourceId.HasValue ? p.Source.Name : null,
                                  OrderState = pos.CountSale > 0 ? "sale" : (pos.CountDone > 0 ? "done" : "draft"),
@@ -391,6 +393,40 @@ namespace Infrastructure.Services
 
             return res;
         }
+
+        public async Task<PartnerGenderReportOverview> GetPartnerReportGenderOverview(AccountCommonPartnerReportOverviewFilter val)
+        {
+            var sampleDataAge = sampleDataAgeFilter;
+            var query = GetQueryablePartnerReportOverview(val);
+
+            var items = await query.ToListAsync();
+            var partnerGender_dict = items.GroupBy(x => x.PartnerGender).ToDictionary(x => x.Key, x => x.ToList());
+            var res = new PartnerGenderReportOverview();
+            var total = partnerGender_dict.Values.Sum(s => s.Count());
+            res.LegendChart = sampleDataAgeFilter.Select(x => x.Name).ToList();
+            res.PartnerGenderItems = partnerGender_dict.Select(x => new PartnerGenderItemReportOverview
+            {
+                PartnerGender = x.Key,
+                PartnerGenderPercent = ((x.Key.Count() / total) * 100),
+            }).ToList();
+
+
+
+            return res;
+        }
+
+        public static SampleDataAgeFilter[] sampleDataAgeFilter = new SampleDataAgeFilter[] {
+            new SampleDataAgeFilter {Name = "0 - 12",  AgeTo = 0, AgeFrom = 12},
+            new SampleDataAgeFilter {Name = "13 - 17", AgeTo = 13 , AgeFrom = 17},
+            new SampleDataAgeFilter {Name = "18 - 24", AgeTo = 18 , AgeFrom = 24},
+            new SampleDataAgeFilter {Name = "25 - 34", AgeTo = 25 , AgeFrom = 34},
+            new SampleDataAgeFilter {Name = "35 - 44", AgeTo = 35 , AgeFrom = 44},
+            new SampleDataAgeFilter {Name = "45 - 54", AgeTo = 45 , AgeFrom = 54},
+            new SampleDataAgeFilter {Name = "55 - 64", AgeTo = 55 , AgeFrom = 64},
+            new SampleDataAgeFilter {Name = "65+", AgeTo = 65}
+        };
+
+
 
         public async Task<AccountCommonPartnerReportPrint> ReportSummaryPrint(AccountCommonPartnerReportSearch val)
         {
