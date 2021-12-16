@@ -813,9 +813,15 @@ namespace Infrastructure.Services
                                 {
                                     DateTime? date = null;
                                     var dateExcel = Convert.ToString(worksheet.Cells[row, 3].Value);
-                                    long dateLong;
-                                    if (!string.IsNullOrEmpty(dateExcel) && long.TryParse(dateExcel, out dateLong))
-                                        date = DateTime.FromOADate(dateLong);
+                                    if (!string.IsNullOrEmpty(dateExcel))
+                                    {
+                                        if (double.TryParse(dateExcel, out double tmp))
+                                            date = DateTime.FromOADate(tmp);
+                                        else if (DateTime.TryParse(dateExcel, out DateTime tmp2))
+                                            date = tmp2;
+                                        else
+                                            errs.Add($"Ngày tạo không đúng định dạng");
+                                    }
 
                                     var birthDayStr = Convert.ToString(worksheet.Cells[row, 5].Value);
                                     var birthMonthStr = Convert.ToString(worksheet.Cells[row, 6].Value);
@@ -933,6 +939,7 @@ namespace Infrastructure.Services
                             try
                             {
                                 DateTime? date = null;
+                                var a = worksheet.Cells[row, 3].Value;
                                 var dateExcel = Convert.ToString(worksheet.Cells[row, 3].Value);
                                 long dateLong;
                                 if (!string.IsNullOrEmpty(dateExcel) && long.TryParse(dateExcel, out dateLong))
