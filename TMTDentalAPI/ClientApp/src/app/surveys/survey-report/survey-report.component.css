@@ -1,0 +1,29 @@
+.rp-emp-score .card{
+    width: calc(50% - 0.5rem);
+}
+
+.card-rp .card-header{
+    font-weight: 600;
+    color:hsl(211deg 100% 50%)!important;
+    text-align: center;
+    background-color: white;
+}
+
+.average-score{
+    position: absolute;
+    top: 20%;
+    right: 1rem;
+}
+
+.score-chart{
+    width: 100%;
+    height: 100%;
+}
+
+.icon-tooltip{
+    width: 16px;
+    height: 16px;
+    left: 12px;
+    top: 14px;
+    background: #007BFF;
+}

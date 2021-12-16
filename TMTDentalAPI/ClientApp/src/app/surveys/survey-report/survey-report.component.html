@@ -1,0 +1,68 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">Báo cáo khảo sát</li>
+        </ol>
+    </div>
+</div>
+
+<div class="o_content p-3">
+    <div class="filter d-flex">
+        <app-date-range-picker-filter [showClearButton]="false" class="mr-1" [startDate]="filter.dateFrom"
+            [endDate]="filter.dateTo" (searchChange)="searchChangeDate($event)"></app-date-range-picker-filter>
+        <kendo-combobox [placeholder]="'Tất cả chi nhánh'" [popupSettings]="{width: 'auto'}" class="ml-2"
+            [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies"
+            (selectionChange)="onSelectCompany($event)" #companyCbx>
+        </kendo-combobox>
+    </div>
+    <!-- báo cáo theo nhan vien, tỉ lệ điểm  -->
+    <div class="d-flex justify-content-between rp-emp-score my-3">
+        <div class="card card-rp">
+            <div class="card-header">
+                SỐ LƯỢNG KHẢO SÁT THEO NHÂN VIÊN
+            </div>
+            <div class="card-body">
+                <ng-container *ngIf="dataEmpReport.length; else elseEmpTemplate">
+                    <div echarts [options]="empChartOption" class="demo-chart"></div>
+                </ng-container>
+                <ng-template #elseEmpTemplate>
+                    <img class="ml-auto mr-auto" src="../../../assets/icons/NoData.svg" alt="">
+                </ng-template>
+            </div>
+        </div>
+        <div class="card card-rp">
+            <div class="card-header">
+                TỈ LỆ ĐIỂM ĐÁNH GIÁ
+            </div>
+            <div class="card-body">
+                <ng-container *ngIf="dataScroreReport?.lines.length; else elseScoreTemplate">
+                    <div class="w-100 h-100">
+                        <div echarts [options]="scoreChartOption" class="demo-chart score-chart">
+                        </div>
+                    </div>
+                    <div class="text-center border font-weight-600 p-3 average-score">
+                        <label>Điểm đánh giá trung bình</label><br>
+                        <label class="text-primary mb-0">{{dataScroreReport?.score}}/{{dataScroreReport?.maxScore}}</label>
+                    </div>
+                </ng-container>
+                <ng-template #elseScoreTemplate>
+                    <img class="ml-auto mr-auto" src="../../../assets/icons/NoData.svg" alt="">
+                </ng-template>
+            </div>
+        </div>
+    </div>
+    <!-- báo cáo điểm hài lòng -->
+    <div class="card card-rp">
+        <div class="card-header">
+            TỶ LỆ ĐIỂM HÀI LÒNG THEO TỪNG CÂU HỎI
+        </div>
+        <div class="card-body">
+            <ng-container *ngIf="dataQuestionReport.length; else elseQuestionTemplate">
+                <div echarts [options]="questionChartOption" class="demo-chart"></div>
+            </ng-container>
+            <ng-template #elseQuestionTemplate>
+                <img class="ml-auto mr-auto" src="../../../assets/icons/NoData.svg" alt="">
+            </ng-template>
+        </div>
+    </div>
+</div>

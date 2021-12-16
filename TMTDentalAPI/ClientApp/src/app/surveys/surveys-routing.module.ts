@@ -10,6 +10,7 @@ import { SurveyManageDetailSurveyImformationComponent } from './survey-manage-de
 import { SurveyManageDetailComponent } from './survey-manage-detail/survey-manage-detail.component';
 import { SurveyManageEmployeeComponent } from './survey-manage-employee/survey-manage-employee.component';
 import { SurveyManageListComponent } from './survey-manage-list/survey-manage-list.component';
+import { SurveyReportComponent } from './survey-report/survey-report.component';
 import { SurveyTagListComponent } from './survey-tag-list/survey-tag-list.component';
 
 const routes: Routes = [
@@ -38,7 +39,10 @@ const routes: Routes = [
   {
     path: 'form',
     component: SurveyAssignmentFormComponent
-  }
+  },
+  {
+    path: 'report', component: SurveyReportComponent
+  },
 ];
 
 @NgModule({

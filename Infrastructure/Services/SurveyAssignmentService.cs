@@ -77,7 +77,7 @@ namespace Infrastructure.Services
             var pnCateRelObj = GetService<IPartnerPartnerCategoryRelService>();
 
             var query = GetAllQuery(val);
-            query = query.Include(x => x.UserInput).ThenInclude(x=>x.SurveyUserInputSurveyTagRels).ThenInclude(x=>x.SurveyTag).Include(x => x.Employee).Include(x => x.Partner).Include(x => x.SaleOrder);
+            query = query.Include(x => x.UserInput).ThenInclude(x => x.SurveyUserInputSurveyTagRels).ThenInclude(x => x.SurveyTag).Include(x => x.Employee).Include(x => x.Partner).Include(x => x.SaleOrder);
             var count = await query.CountAsync();
             var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
 
@@ -433,6 +433,95 @@ namespace Infrastructure.Services
             }
         }
 
+        private IQueryable<SurveyAssignment> GetReportQuery(GetReportReq val)
+        {
+            var query = SearchQuery();
+            if (!string.IsNullOrEmpty(val.Status))
+            {
+                var statusArr = val.Status.Split(',');
+                query = query.Where(x => statusArr.Contains(x.Status));
+            }
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.AssignDate.Value >= val.DateFrom.Value.AbsoluteBeginOfDate());
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.AssignDate.Value < val.DateTo.Value.AbsoluteEndOfDate());
+            return query;
+        }
+        public async Task<GetScoreReportRes> GetScoreReport(GetReportReq val)
+        {
+            var userInputObj = GetService<ISurveyUserInputService>();
+            var assQr = GetReportQuery(val);
+            var userInputQr = userInputObj.SearchQuery();
 
+            var query = assQr.Join(userInputQr, ass => ass.UserInputId, ui => ui.Id, (ass, ui) => new { ass, ui });
+            var avergScore = await query.SumAsync(x => x.ui.Score.Value);
+            var MaxScore = await query.MaxAsync(x => x.ui.Score ?? 0);
+            var total = await query.CountAsync();
+            var resLines = query.AsEnumerable().GroupBy(x => Math.Round(x.ui.Score.Value, MidpointRounding.ToZero)).OrderByDescending(x=> x.Key).Select(x => new
+            {
+                Score = x.Key,
+                Count = x.Count(),
+            })
+                .ToList();
+            return new GetScoreReportRes()
+            {
+                Lines = resLines.Select(x => new GetScoreReportItem
+                {
+                    ScroreFrom = x.Score,
+                    ScroreTo = x.Score + 1,
+                    Value = x.Count
+                }),
+                Score = Math.Round(avergScore / (total == 0 ? 1 : total), 2),
+                MaxScore = MaxScore
+            };
+        }
+
+        public async Task<IEnumerable<GetEmployeeReportItem>> GetEmployeeReport(GetReportReq val)
+        {
+            var query = GetReportQuery(val);
+            var res = await query.GroupBy(x => new { x.EmployeeId, x.Employee.Name })
+                            .Select(x => new GetEmployeeReportItem
+                            {
+                                EmployeeId = x.Key.EmployeeId,
+                                EmployeeName = x.Key.Name,
+                                DoneCount = x.Sum(z => z.Status == "done" ? 1 :0),
+                                ContactCount = x.Sum(z => z.Status == "contact" ? 1 : 0)
+                            }).ToListAsync();
+            return res;
+        }
+
+        public async Task<IEnumerable<GetQuestionReportItem>> GetQuestionReport(GetReportReq val)
+        {
+            int[] Scores = { 1, 2, 3, 4, 5 };
+            var query = GetReportQuery(val);
+            var listdata = await query.SelectMany(x => x.UserInput.Lines).Where(x=> x.Question.Type == "radio").Select(x => new {
+                                QuestionId = x.QuestionId.Value,
+                                QuestionName = x.Question.Name,
+                                Score = x.Score
+                            }).ToListAsync();
+            var res = Scores.Select(x => new GetQuestionReportItem()
+            {
+                Score = x,
+                Lines = listdata.GroupBy(x=> new {x.QuestionId, x.QuestionName}).Select(z => new GetQuestionReportItemLine()
+                {
+                    QuestionId = z.Key.QuestionId,
+                    QuestionName = z.Key.QuestionName,
+                    Value = z.Count(i=> i.Score == x),
+                    ValuePercent = Math.Round((decimal)z.Count(i => i.Score.Value == x) * 100 / (z.Count() == 0 ? 1: z.Count() ), 2)
+                })
+            });
+
+            //foreach (var item in res)
+            //{
+            //    item.Lines = Scores.Select(x => new GetQuestionReportItemLine()
+            //    {
+            //        Score = x,
+            //        Value = inputLines.Count(z => z.QuestionId == item.QuestionId && Math.Round(z.Score.Value, 0, MidpointRounding.ToZero) == x)
+            //    });
+            //}
+            return res;
+        }
     }
 }

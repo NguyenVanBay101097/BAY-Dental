@@ -24,6 +24,7 @@ import { SurveyUserinputCreateDialogComponent } from './survey-userinput-create-
 import { SurveyUserinputDialogComponent } from './survey-userinput-dialog/survey-userinput-dialog.component';
 import { SurveyAssignmentService } from './survey.service';
 import { SurveysRoutingModule } from './surveys-routing.module';
+import { SurveyReportComponent } from './survey-report/survey-report.component';
 
 
 
@@ -46,6 +47,7 @@ import { SurveysRoutingModule } from './surveys-routing.module';
     SurveyTagDialogComponent,
     SurveyManageListComponent,
     SurveyUserinputCreateDialogComponent,
+    SurveyReportComponent,
   ],
   imports: [
     CommonModule,
