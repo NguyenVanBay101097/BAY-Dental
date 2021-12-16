@@ -83,5 +83,7 @@ namespace Infrastructure.Services
 
         Task<PartnerImportResponse> CustomerImportUpdate(string fileBase64);
 
+        Task<PartnerImportResponse> CustomerImport(string fileBase64);
+
     }
 }

@@ -384,20 +384,20 @@ namespace TMTDentalAPI.Controllers
             var uom = await _uomService.DefaultUOM();
             var productsCreate = new List<Product>();
 
-            var itemsNoCode = data.Where(x => string.IsNullOrEmpty(x.DefaultCode));
+            var itemsNoCode = data.Where(x => string.IsNullOrEmpty(x.DefaultCode)).ToList();
             if (itemsNoCode.Any())
             {
                 var product_code_prefix = "SP"; //nên đưa vào constants
                 var matchedCodes = await _productService.SearchQuery(x => x.DefaultCode.Contains(product_code_prefix)).Select(x => x.DefaultCode).ToListAsync();
                 foreach (var num in Enumerable.Range(1, 100))
                 {
-                    var tmp = itemsNoCode.Where(x => string.IsNullOrEmpty(x.DefaultCode));
+                    var tmp = itemsNoCode.Where(x => string.IsNullOrEmpty(x.DefaultCode)).ToList();
                     if (tmp.Any())
                     {
-                        var codeList = await _sequenceService.NextByCode("product_seq", tmp.Count());
-                        for (var i = 0; i < tmp.Count(); i++)
+                        var codeList = await _sequenceService.NextByCode("product_seq", tmp.Count);
+                        for (var i = 0; i < tmp.Count; i++)
                         {
-                            var item = itemsNoCode.ElementAt(i);
+                            var item = tmp[i];
                             if (!matchedCodes.Contains(codeList[i]))
                                 item.DefaultCode = codeList[i];
                         }

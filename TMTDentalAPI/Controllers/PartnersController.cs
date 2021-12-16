@@ -396,14 +396,26 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Basic.Partner.Create")]
         public async Task<IActionResult> ActionImport(PartnerImportExcelViewModel val)
         {
-            await _unitOfWork.BeginTransactionAsync();
+            //await _unitOfWork.BeginTransactionAsync();
 
-            var result = await _partnerService.ActionImport(val);
+            if (val.Type == "customer")
+            {
+                var result = await _partnerService.CustomerImport(val.FileBase64);
 
-            if (result.Success)
-                _unitOfWork.Commit();
+                //if (result.Success)
+                //    _unitOfWork.Commit();
 
-            return Ok(result);
+                return Ok(result);
+            }
+            else
+            {
+                var result = await _partnerService.ActionImport(val);
+
+                //if (result.Success)
+                //    _unitOfWork.Commit();
+
+                return Ok(result);
+            }
         }
 
         [HttpPost("[action]")]
