@@ -29,6 +29,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? ToothCategoryId { get; set; }
 
+        public Guid? ProductUOMId { get;set; }
+
         public IEnumerable<Guid> ToothIds { get; set; } = new List<Guid>();
 
 

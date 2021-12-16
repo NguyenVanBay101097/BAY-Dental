@@ -52,6 +52,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// manual :  thủ công
         /// </summary>
         public string ToothType { get; set; }
+        public Guid? ProductUOMId { get; set; }
+        public UoMBasic ProductUOM { get; set; }
 
         public decimal? AmountResidual
         {

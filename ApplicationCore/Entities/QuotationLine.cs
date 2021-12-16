@@ -52,6 +52,9 @@ namespace ApplicationCore.Entities
         /// </summary>
         public string Diagnostic { get; set; }
 
+        public Guid? ProductUOMId { get; set; }
+        public UoM ProductUOM { get; set; }
+
         /// <summary>
         /// Loại răng: răng sữa, răng vĩnh viễn !!!
         /// </summary>

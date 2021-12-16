@@ -96,6 +96,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string OrderId { get; set; }
         public string OrderName { get; set; }
         public Guid ProductId { get; set; }
+        public UoMBasic ProductUOM { get; set; }
 
     }
 

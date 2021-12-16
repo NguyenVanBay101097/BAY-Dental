@@ -47,7 +47,7 @@ namespace Infrastructure.Services
                 .Include(x => x.Counselor)
                 .Include(x => x.PromotionLines).ThenInclude(x => x.Promotion)
                 .Include(x => x.Promotions)
-                .Include(x => x.Product).ThenInclude(x => x.UOM)
+                .Include(x => x.ProductUOM)
                 .ToListAsync();
 
             var payments = await paymentObj.SearchQuery(x => x.QuotationId == id, orderBy: x => x.OrderBy(s => s.Sequence))
@@ -178,7 +178,6 @@ namespace Infrastructure.Services
             {
                 var quotationLine = _mapper.Map<QuotationLine>(item);
                 quotationLine.Quotation = quotation;
-
                 if (item.ToothType == "manual")
                 {
                     foreach (var toothId in item.ToothIds)
@@ -395,6 +394,7 @@ namespace Infrastructure.Services
                     saleLine.EmployeeId = line.EmployeeId;
                     saleLine.AssistantId = line.AssistantId;
                     saleLine.CounselorId = line.CounselorId;
+                    saleLine.ProductUOMId = line.ProductUOMId;
                     saleLine.Date = DateTime.Now;
 
                     if (line.QuotationLineToothRels.Any())

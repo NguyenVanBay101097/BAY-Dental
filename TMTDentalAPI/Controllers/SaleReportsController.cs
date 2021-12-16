@@ -116,16 +116,17 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[4, 3].Value = "Khách hàng";
                 worksheet.Cells[4, 4].Value = "Số lượng";
                 worksheet.Cells[4, 5].Value = "Bác sĩ";
-                worksheet.Cells[4, 6].Value = "Răng";
-                worksheet.Cells[4, 7].Value = "Chuẩn đoán";
+                worksheet.Cells[4, 6].Value = "Đơn vị tính";
+                worksheet.Cells[4, 7].Value = "Răng";
+                worksheet.Cells[4, 8].Value = "Chuẩn đoán";
 
-                worksheet.Cells[4, 8].Value = "Thành tiền";
-                worksheet.Cells[4, 9].Value = "Thanh toán";
-                worksheet.Cells[4, 10].Value = "Còn lại";
-                worksheet.Cells[4, 11].Value = "Trạng thái";
+                worksheet.Cells[4, 9].Value = "Thành tiền";
+                worksheet.Cells[4, 10].Value = "Thanh toán";
+                worksheet.Cells[4, 11].Value = "Còn lại";
+                worksheet.Cells[4, 12].Value = "Trạng thái";
 
-                worksheet.Cells["A4:K4"].Style.Font.Bold = true;
-                worksheet.Cells["A4:K4"].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                worksheet.Cells["A4:L4"].Style.Font.Bold = true;
+                worksheet.Cells["A4:L4"].Style.Border.BorderAround(ExcelBorderStyle.Thin);
 
                 var row = 5;
 
@@ -137,15 +138,16 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 4].Value = item.ProductUOMQty;
                     worksheet.Cells[row, 4].Style.Numberformat.Format = "0";
                     worksheet.Cells[row, 5].Value = item.Employee != null ? item.Employee.Name : "";
-                    worksheet.Cells[row, 6].Value = item.TeethDisplay;
-                    worksheet.Cells[row, 7].Value = item.Diagnostic;
-                    worksheet.Cells[row, 8].Value = item.PriceSubTotal;
-                    worksheet.Cells[row, 8].Style.Numberformat.Format = "#,###";
-                    worksheet.Cells[row, 9].Value = (item.PriceSubTotal - item.AmountResidual);
-                    worksheet.Cells[row, 9].Style.Numberformat.Format = ((item.PriceSubTotal) - (item.AmountResidual ?? 0)) > 0 && item.State != "draft" ? "#,###" : "0";
-                    worksheet.Cells[row, 10].Value = item.AmountResidual;
-                    worksheet.Cells[row, 10].Style.Numberformat.Format = (item.AmountResidual ?? 0) > 0 ? "#,###" : "0";
-                    worksheet.Cells[row, 11].Value = GetSaleOrderState(item.State);
+                    worksheet.Cells[row, 6].Value = item.ProductUOM != null ? item.ProductUOM.Name : "";
+                    worksheet.Cells[row, 7].Value = item.TeethDisplay;
+                    worksheet.Cells[row, 8].Value = item.Diagnostic;
+                    worksheet.Cells[row, 9].Value = item.PriceSubTotal;
+                    worksheet.Cells[row, 9].Style.Numberformat.Format = "#,###";
+                    worksheet.Cells[row, 10].Value = (item.PriceSubTotal - item.AmountResidual);
+                    worksheet.Cells[row, 10].Style.Numberformat.Format = ((item.PriceSubTotal) - (item.AmountResidual ?? 0)) > 0 && item.State != "draft" ? "#,###" : "0";
+                    worksheet.Cells[row, 11].Value = item.AmountResidual;
+                    worksheet.Cells[row, 11].Style.Numberformat.Format = (item.AmountResidual ?? 0) > 0 ? "#,###" : "0";
+                    worksheet.Cells[row, 12].Value = GetSaleOrderState(item.State);
                     row++;
                 }
 

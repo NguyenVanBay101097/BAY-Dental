@@ -187,9 +187,12 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
       product: {
         id: val.id,
         name: val.name,
-        uom: val.uom
       },
       productUOMQty: 1,
+      productUOM: {
+        name: val.uom.name,
+        id: val.uom.id
+      },
       state: this.saleOrder.state,
       teeth: [],
       promotions: [],
@@ -658,7 +661,8 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
       isActive: line.isActive,
       orderId: this.saleOrder.id,
       date: moment(line.date).format('YYYY-MM-DD HH:mm'),
-      state: line.state
+      state: line.state,
+      productUOMId: line.productUOM ? line.productUOM.id : null
     };
 
     if (!line.id) {

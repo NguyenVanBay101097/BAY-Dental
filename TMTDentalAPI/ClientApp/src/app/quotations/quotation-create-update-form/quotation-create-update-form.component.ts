@@ -93,7 +93,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       .subscribe((result: any) => {
         this.filterEmployees = result.items;
         this.empCbx.loading = false;
-      });
+      });      
   }
 
   routeActive() {
@@ -109,6 +109,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       })).subscribe(
         result => {
           this.quotation = result;
+          
         }
       )
   }
@@ -226,7 +227,8 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
           toothIds: x.teeth.map(s => s.id),
           toothCategoryId: x.toothCategory != null ? x.toothCategory.id : null,
           diagnostic: x.diagnostic,
-          toothType: x.toothType
+          toothType: x.toothType,
+          productUOMId: x.productUOM ? x.productUOM.id : null
         }
       }),
       payments: this.quotation.payments.map(x => {
@@ -312,7 +314,6 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       product: {
         id: val.id,
         name: val.name,
-        uom: val.uom
       },
       qty: 1,
       teeth: [],
@@ -325,6 +326,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
       amountPromotionToOrder: 0,
       amountPromotionToOrderLine: 0,
       amountDiscountTotal: 0,
+      productUOM: val.uom
     };
 
     this.quotation.lines.unshift(value);

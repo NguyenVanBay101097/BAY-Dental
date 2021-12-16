@@ -215,7 +215,8 @@ namespace Infrastructure.Services
                 Classify = x.Agent.Classify,
                 Name = x.Partner.Name,
                 TotalAmount = x.TotalAmount,
-                SaleOrderId = x.SaleOrderLine.OrderId
+                SaleOrderId = x.SaleOrderLine.OrderId,
+                UOMName = x.SaleOrderLine.ProductUOM != null ? x.SaleOrderLine.ProductUOM.Name : ""
             }).ToListAsync();
 
             return new PagedResult2<CommissionSettlementReportDetailOutput>(totalItems, val.Offset, val.Limit)

@@ -249,7 +249,8 @@ namespace TMTDentalAPI.Controllers
                 .Include(x => x.Order)
                 .Include(x => x.Employee)
                 .Include(x => x.Labos)
-                .Include(x => x.SaleOrderLineToothRels).ThenInclude(x => x.Tooth);
+                .Include(x => x.SaleOrderLineToothRels).ThenInclude(x => x.Tooth)
+                .Include(x => x.ProductUOM);
 
             query = query.OrderByDescending(x => x.DateCreated);
 

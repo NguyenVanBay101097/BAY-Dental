@@ -1250,7 +1250,7 @@ namespace Infrastructure.Services
                 .Include(x => x.Employee)
                 .Include(x => x.Counselor)
                 .Include(x => x.Insurance)
-                .Include(x => x.Product).ThenInclude(x => x.UOM)
+                .Include(x => x.ProductUOM)
                 .Include(x => x.OrderPartner).ToListAsync();
 
             display.OrderLines = _mapper.Map<IEnumerable<SaleOrderLineDisplay>>(lines);
@@ -2864,12 +2864,12 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<SaleOrderLineBasicViewModel>> GetDotKhamStepByOrderLine(Guid key)
         {
             var lineObj = GetService<ISaleOrderLineService>();
-            var lines = await lineObj.SearchQuery(x => x.OrderId == key)
+            var lines = await lineObj.SearchQuery(x => x.OrderId == key).Include(x => x.ProductUOM)
                 .Select(x => new SaleOrderLineBasicViewModel
                 {
                     Id = x.Id,
                     Name = x.Name,
-                    UoMName = x.Product.UOM.Name,
+                    UoMName = x.ProductUOM != null ? x.ProductUOM.Name : "",
                     Steps = x.DotKhamSteps.OrderBy(s => s.Order).Select(s => new DotKhamStepBasic
                     {
                         Id = s.Id,

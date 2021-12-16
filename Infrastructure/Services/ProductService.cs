@@ -255,6 +255,7 @@ namespace Infrastructure.Services
                 .Include(x => x.ProductCompanyRels)
                 .Include(x => x.Categ)
                 .Include(x => x.Steps)
+                .Include(x => x.UOM)
                 .ToListAsync();
 
             //check listPrice product
@@ -277,7 +278,9 @@ namespace Infrastructure.Services
                 {
                     Id = s.Id,
                     Name = s.Name
-                })
+                }),
+                UoMName = x.UOM != null ? x.UOM.Name : ""
+
             }).ToList();
 
             return res;

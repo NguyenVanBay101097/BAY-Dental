@@ -42,5 +42,5 @@ export class SaleOrderLineDisplay {
     orderPartnerId: string;
     date: any;
     insuranceName: string;
-    uom: UoMBasic;
+    productUOM: UoMBasic;
 }

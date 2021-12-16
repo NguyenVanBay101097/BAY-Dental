@@ -139,6 +139,9 @@ namespace Umbraco.Web.Models.ContentEditing
 
 
         public IEnumerable<QuotationPromotionBasic> Promotions { get; set; } = new List<QuotationPromotionBasic>();
+
+        public string ProductUOMId { get; set; }
+        public UoMBasic ProductUOM { get; set; }
     }
 
     public class QuotationLineSimple
@@ -189,6 +192,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Chuẩn đoán
         /// </summary>
         public string Diagnostic { get; set; }
+        public string ProductUOMId { get; set; }
 
         /// <summary>
         /// Loại răng: răng sữa, răng vĩnh viễn !!!

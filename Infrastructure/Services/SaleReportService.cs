@@ -327,6 +327,7 @@ namespace Infrastructure.Services
                 .Include(x => x.OrderPartner)
                 .Include(x => x.Product)
                 .Include(x => x.SaleOrderLinePaymentRels)
+                .Include(x => x.ProductUOM)
                 .Include("SaleOrderLineToothRels.Tooth")
                 .AsQueryable();
 
@@ -805,7 +806,7 @@ namespace Infrastructure.Services
                 DateTo = val.DateTo,
                 EmployeeId = val.EmployeeId,
                 Search = val.Search,
-                State = val.State
+                State = val.State,
             });
 
             if (val.ProductId.HasValue)

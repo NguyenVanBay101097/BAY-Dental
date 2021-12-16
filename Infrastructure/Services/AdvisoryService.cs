@@ -527,6 +527,7 @@ namespace Infrastructure.Services
                     quotationLine.DiscountType = "percentage";
                     quotationLine.ToothType = advisory.ToothType;
                     quotationLine.Amount = quotationLine.Qty * quotationLine.SubPrice;
+                    quotationLine.ProductUOMId = product.UOMId;
                     quotationLine.ToothCategoryId = advisory.ToothCategoryId.GetValueOrDefault();
                     foreach (var toothId in toothIds)
                     {
@@ -574,7 +575,7 @@ namespace Infrastructure.Services
                     Qty = x.Qty,
                     Type = "quotation",
                     DoctorName = x.Employee.Name,
-                    UomName = x.Product.UOM != null ? x.Product.UOM.Name : ""
+                    UomName = x.ProductUOM != null ? x.ProductUOM.Name : ""
                 });
 
             var res = saleOrderLines.Union(quotationLines);

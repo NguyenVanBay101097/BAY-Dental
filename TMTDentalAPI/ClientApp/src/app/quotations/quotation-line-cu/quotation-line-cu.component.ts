@@ -83,6 +83,7 @@ export class QuotationLineCuComponent implements OnInit {
       toothType: this.line.toothType
     }
     this.viewTeeth(this.toothData);
+    
   }
 
   getPriceUnitLinePromotion(line) {
@@ -209,7 +210,6 @@ export class QuotationLineCuComponent implements OnInit {
     } else {
       this.TeethFA.push(this.fb.group(tooth));
     }
-    console.log(this.line);
 
     this.onChangeToothTypeLine(this.getValueFormControl("toothType"));
   }
