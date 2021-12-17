@@ -167,13 +167,16 @@ export class SurveyReportComponent implements OnInit {
           trigger: 'item'
         },
         legend: {
-          orient: 'vertical',
-          top:'center',
-          right: 0,
+          right: 'center',
+          bottom: 0
+        },
+        grid: {
+          top: 1,
+          bottom: 60
         },
         series: [
           {
-            radius: '83%',
+            radius: '70%',
             label: {
               show: false,
             },
@@ -192,6 +195,10 @@ export class SurveyReportComponent implements OnInit {
       };
       
     })
+  }
+
+  get isShowQuestionReport(){
+    return this.dataQuestionReport.some(x=> x.lines.length);
   }
 
   loadQuestionReport() {

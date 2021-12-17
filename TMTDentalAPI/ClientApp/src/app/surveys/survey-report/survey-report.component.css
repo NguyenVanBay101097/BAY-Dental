@@ -1,5 +1,6 @@
-.rp-emp-score .card{
-    width: calc(50% - 0.5rem);
+.rp-emp-score{
+ flex: 1 1 630px;
+ margin-top: 1rem;
 }
 
 .card-rp .card-header{
@@ -13,11 +14,6 @@
     position: absolute;
     top: 20%;
     right: 1rem;
-}
-
-.score-chart{
-    width: 100%;
-    height: 100%;
 }
 
 .icon-tooltip{

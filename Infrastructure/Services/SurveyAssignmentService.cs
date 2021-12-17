@@ -456,9 +456,10 @@ namespace Infrastructure.Services
             var userInputQr = userInputObj.SearchQuery();
 
             var query = assQr.Join(userInputQr, ass => ass.UserInputId, ui => ui.Id, (ass, ui) => new { ass, ui });
-            var avergScore = await query.SumAsync(x => x.ui.Score.Value);
-            var MaxScore = await query.MaxAsync(x => x.ui.Score ?? 0);
+            var avergScore = await query.SumAsync(x => x.ui.Score ?? 0);
             var total = await query.CountAsync();
+            var MaxScore = await query.Select(x => x.ui.MaxScore ?? 0).DefaultIfEmpty().MaxAsync();
+
             var resLines = query.AsEnumerable().GroupBy(x => Math.Round(x.ui.Score.Value, MidpointRounding.ToZero)).OrderByDescending(x=> x.Key).Select(x => new
             {
                 Score = x.Key,

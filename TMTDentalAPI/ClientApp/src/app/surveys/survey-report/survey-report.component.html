@@ -16,7 +16,50 @@
         </kendo-combobox>
     </div>
     <!-- báo cáo theo nhan vien, tỉ lệ điểm  -->
-    <div class="d-flex justify-content-between rp-emp-score my-3">
+    <div class="row">
+        <div class="col rp-emp-score">
+            <div class="card card-rp h-100">
+                <div class="card-header">
+                    SỐ LƯỢNG KHẢO SÁT THEO NHÂN VIÊN
+                </div>
+                <div class="card-body">
+                    <ng-container *ngIf="dataEmpReport.length; else elseEmpTemplate">
+                        <div echarts [options]="empChartOption" class="demo-chart"></div>
+                    </ng-container>
+                    <ng-template #elseEmpTemplate>
+                        <div class="h-100 d-flex justify-content-center align-items-center">
+                            <img src="../../../assets/icons/NoData.svg" alt="">
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+        </div>
+        <div class="col rp-emp-score">
+            <div class="card card-rp h-100">
+                <div class="card-header">
+                    TỈ LỆ ĐIỂM ĐÁNH GIÁ
+                </div>
+                <div class="card-body">
+                    <ng-container *ngIf="dataScroreReport?.lines.length; else elseScoreTemplate">
+                        <div class="">
+                            <div class="text-center">
+                                <label class="font-weight-600 mb-0">Điểm đánh giá trung bình: <span
+                                        class="text-primary">{{dataScroreReport?.score}}/{{dataScroreReport?.maxScore}}</span></label>
+                            </div>
+                            <div echarts [options]="scoreChartOption" class="demo-chart score-chart w-100 h-100">
+                            </div>
+                        </div>
+                    </ng-container>
+                    <ng-template #elseScoreTemplate>
+                        <div class="h-100 d-flex justify-content-center align-items-center">
+                            <img src="../../../assets/icons/NoData.svg" alt="">
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- <div class="d-flex justify-content-between rp-emp-score flex-wrap">
         <div class="card card-rp">
             <div class="card-header">
                 SỐ LƯỢNG KHẢO SÁT THEO NHÂN VIÊN
@@ -26,7 +69,9 @@
                     <div echarts [options]="empChartOption" class="demo-chart"></div>
                 </ng-container>
                 <ng-template #elseEmpTemplate>
-                    <img class="ml-auto mr-auto" src="../../../assets/icons/NoData.svg" alt="">
+                    <div class="h-100 d-flex justify-content-center align-items-center">
+                        <img src="../../../assets/icons/NoData.svg" alt="">
+                        </div>
                 </ng-template>
             </div>
         </div>
@@ -36,32 +81,35 @@
             </div>
             <div class="card-body">
                 <ng-container *ngIf="dataScroreReport?.lines.length; else elseScoreTemplate">
-                    <div class="w-100 h-100">
-                        <div echarts [options]="scoreChartOption" class="demo-chart score-chart">
+                    <div class="">
+                        <div class="text-center">
+                            <label class="font-weight-600 mb-0">Điểm đánh giá trung bình: <span class="text-primary">{{dataScroreReport?.score}}/{{dataScroreReport?.maxScore}}</span></label>
                         </div>
-                    </div>
-                    <div class="text-center border font-weight-600 p-3 average-score">
-                        <label>Điểm đánh giá trung bình</label><br>
-                        <label class="text-primary mb-0">{{dataScroreReport?.score}}/{{dataScroreReport?.maxScore}}</label>
+                            <div echarts [options]="scoreChartOption" class="demo-chart score-chart w-100 h-100">
+                            </div>
                     </div>
                 </ng-container>
                 <ng-template #elseScoreTemplate>
-                    <img class="ml-auto mr-auto" src="../../../assets/icons/NoData.svg" alt="">
+                    <div class="h-100 d-flex justify-content-center align-items-center">
+                    <img src="../../../assets/icons/NoData.svg" alt="">
+                    </div>
                 </ng-template>
             </div>
         </div>
-    </div>
+    </div> -->
     <!-- báo cáo điểm hài lòng -->
-    <div class="card card-rp">
+    <div class="card card-rp mt-3">
         <div class="card-header">
             TỶ LỆ ĐIỂM HÀI LÒNG THEO TỪNG CÂU HỎI
         </div>
         <div class="card-body">
-            <ng-container *ngIf="dataQuestionReport.length; else elseQuestionTemplate">
+            <ng-container *ngIf="isShowQuestionReport; else elseQuestionTemplate">
                 <div echarts [options]="questionChartOption" class="demo-chart"></div>
             </ng-container>
             <ng-template #elseQuestionTemplate>
-                <img class="ml-auto mr-auto" src="../../../assets/icons/NoData.svg" alt="">
+                <div class="h-100 d-flex justify-content-center align-items-center">
+                    <img src="../../../assets/icons/NoData.svg" alt="">
+                </div>
             </ng-template>
         </div>
     </div>
