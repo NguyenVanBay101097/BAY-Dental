@@ -2,6 +2,12 @@
     <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}" field="Name"
         title="Dịch vụ" width="150">
     </kendo-grid-column>
+    <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
+        title="ĐVT" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{dataItem.ProductUOM ? dataItem.ProductUOM.Name : ""}}
+        </ng-template>
+    </kendo-grid-column>
     <kendo-grid-column class="text-right" [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
         field="ProductUOMQty" title="Số lượng" width="100">
     </kendo-grid-column>

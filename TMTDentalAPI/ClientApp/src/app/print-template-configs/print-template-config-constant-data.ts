@@ -572,6 +572,7 @@ const keyWorDatas =
             value: [
                 { text: 'Danh sách dịch vụ', value: '{{o.order_lines}}' },
                 { text: 'Tên dịch vụ', value: '{{line.product?.name}}' },
+                { text: 'Đơn vị tính', value: '{{line.product_uom?.name}}' },
                 { text: 'Số lượng', value: '{{line.product_uomqty}}' },
                 { text: 'Đơn giá', value: '{{line.price_unit}}' },
                 { text: 'Giảm giá', value: '{{line.amount_discount_total}}' },
@@ -647,6 +648,7 @@ const keyWorDatas =
             value: [
                 { text: 'Danh sách dịch vụ', value: '{{o.lines}}' },
                 { text: 'Tên dịch vụ', value: '{{line.name}}' },
+                { text: 'Đơn vị tính', value: '{{line.product_uom?.name}}' },
                 { text: 'Số lượng', value: '{{line.qty}}' },
                 { text: 'Đơn giá', value: '{{(line.sub_price - line.amount_discount_total)}}' },
                 { text: 'Thành tiền', value: '{{line.amount}}' },

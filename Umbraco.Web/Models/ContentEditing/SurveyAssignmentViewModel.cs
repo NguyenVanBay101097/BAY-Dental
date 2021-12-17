@@ -249,6 +249,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<string> Teeth { get; set; }
 
         public string Diagnostic { get; set; }
+        public string ProductUOMName { get; set; }
     }
 
     public class SurveyAssignmentDisplayDotKham

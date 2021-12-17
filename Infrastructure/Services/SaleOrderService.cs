@@ -1296,7 +1296,9 @@ namespace Infrastructure.Services
              .Include(x => x.SaleOrderLineToothRels).ThenInclude(x => x.Tooth)
              .Include(x => x.Employee)
              .Include(x => x.Counselor)
-             .Include(x => x.OrderPartner).ToListAsync();
+             .Include(x => x.OrderPartner)
+             .Include(x => x.ProductUOM)
+             .ToListAsync();
 
             var res = _mapper.Map<IEnumerable<SaleOrderLineDisplay>>(lines);
             return res;
@@ -1962,6 +1964,7 @@ namespace Infrastructure.Services
                 .Include(x => x.DotKhams).ThenInclude(s => s.Doctor)
                 .Include(x => x.DotKhams).ThenInclude(s => s.Lines).ThenInclude(x => x.ToothRels).ThenInclude(x => x.Tooth)
                 .Include(x => x.CreatedBy)
+                .Include(x => x.OrderLines).ThenInclude(x => x.ProductUOM)
                 .ToListAsync();
             foreach (var order in orders)
             {

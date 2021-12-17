@@ -245,6 +245,7 @@
                                     <tr>
                                         <th scope="col" style="width: 120px">Dịch vụ</th>
                                         <th scope="col" style="width: 80px">Bác sĩ</th>
+                                        <th scope="col" style="width: 80px">Đơn vị tính</th>
                                         <th scope="col" style="width: 50px">SL</th>
                                         <th scope="col" style="width: 150px">Thông tin bổ sung</th>
                                     </tr>
@@ -255,6 +256,9 @@
                                             <td>{{line.productName }}</td>
                                             <td>
                                                 {{line.employeeName}}
+                                            </td>
+                                            <td>
+                                                {{line.productUOMName}}
                                             </td>
                                             <td class="text-right">
                                                 <span>{{line.productUOMQty | number }}</span>

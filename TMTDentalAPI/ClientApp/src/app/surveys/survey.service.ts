@@ -104,6 +104,7 @@ export class SurveyAssignmentDisplaySaleOrderLine {
   productUOMQty: number;
   teeth: string[];
   diagnostic: string;
+  productUOMName: string;
 }
 
 export class SurveyAssignmentDisplayDotKham {

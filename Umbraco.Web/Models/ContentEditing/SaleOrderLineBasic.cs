@@ -122,6 +122,16 @@ namespace Umbraco.Web.Models.ContentEditing
         [EpplusDisplay("Bác sĩ")]
         public string EmployeeName { get; set; }
         [EpplusIgnore]
+        public UoMBasic ProductUOM { get; set; }
+        [EpplusDisplay("Đơn vị tính")]
+        public string ProductUOMName { 
+            get
+            {
+                return ProductUOM != null ? ProductUOM.Name : "";
+            }
+            set { }
+        }
+        [EpplusIgnore]
         public string ToothType { get; set; }
         [EpplusIgnore]
         public string Teeth { get; set; }

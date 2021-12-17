@@ -327,9 +327,9 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[2, 1].Value = (val.DateOrderFrom.HasValue ? "Từ ngày " + val.DateOrderFrom.Value.ToString("dd/MM/yyyy") : "") +
                                                (val.DateOrderTo.HasValue ? " đến ngày " + val.DateOrderTo.Value.ToString("dd/MM/yyyy") : "");
                 worksheet.Cells[2, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                worksheet.Cells["A4:I4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                worksheet.Cells["A4:I4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#1167a8"));
-                worksheet.Cells["A4:I4"].Style.Font.Color.SetColor(Color.White);
+                worksheet.Cells["A4:J4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["A4:J4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#1167a8"));
+                worksheet.Cells["A4:J4"].Style.Font.Color.SetColor(Color.White);
 
                 worksheet.Cells.AutoFitColumns();
                 
