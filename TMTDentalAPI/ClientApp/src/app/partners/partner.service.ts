@@ -599,6 +599,10 @@ export class PartnerService {
     getListAttachment(id) {
         return this.http.get<IrAttachmentBasic[]>(this.baseApi + this.apiUrl + '/' + id + '/GetListAttachment');
     }
+
+    createCustomer(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/Customers', val);
+    }
 }
 
 

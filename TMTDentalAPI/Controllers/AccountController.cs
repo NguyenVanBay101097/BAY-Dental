@@ -41,6 +41,7 @@ namespace TMTDentalAPI.Controllers
         private readonly ITCareJobService _tcareJobService;
         private readonly IApplicationRoleFunctionService _applicationRoleFunctionService;
 
+
         public AccountController(UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IOptions<AppSettings> appSettings, ITenant<AppTenant> tenant,

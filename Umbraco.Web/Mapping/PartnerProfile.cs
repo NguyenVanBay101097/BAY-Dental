@@ -76,7 +76,6 @@ namespace Umbraco.Web.Mapping
             CreateMap<Partner, PublicPartnerInfo>()
                 .ForMember(x => x.MedicalHistoryOther, x => x.MapFrom(s => s.MedicalHistory))
                 .ForMember(x => x.MedicalHistories, x => x.MapFrom(s => s.PartnerHistoryRels.Select(c => c.History.Name)));
-
         }
     }
 }

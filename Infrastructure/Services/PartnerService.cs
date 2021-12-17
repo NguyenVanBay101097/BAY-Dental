@@ -205,19 +205,6 @@ namespace Infrastructure.Services
             return res;
         }
 
-        //public override async Task<IEnumerable<Partner>> CreateAsync(IEnumerable<Partner> entities)
-        //{
-        //    _UpdateCityName(entities);
-        //    await _GenerateRefIfEmpty(entities);
-        //    _ComputeDisplayName(entities);
-        //    _SetCompanyIfNull(entities);
-
-        //    await base.CreateAsync(entities);
-
-        //    await _CheckUniqueRef(entities);
-        //    return entities;
-        //}
-
         private void _SetCompanyIfNull(IEnumerable<Partner> self)
         {
             //Nếu khởi tạo công ty ban đầu thì CompanyId ko có giá trị mà gán vào sẽ bị lỗi insert 
@@ -400,20 +387,7 @@ namespace Infrastructure.Services
             var amounAdvance = await paymentObj.SearchQuery(x => x.PartnerId == id && x.JournalId == journalAdvance.Id && x.State != "cancel").Select(x => x.Amount).SumAsync();
             return Math.Abs(amounAdvance);
         }
-        public override Task UpdateAsync(Partner entity)
-        {
-            entity.DisplayName = _NameGet(entity);
-            //if (!string.IsNullOrWhiteSpace(entity.Ref))
-            //{
-            //    var partner = SearchQuery(x => x.Ref == entity.Ref && x.Id != entity.Id).FirstOrDefault();
-            //    if (partner != null)
-            //        throw new Exception("Mã này đã tồn tại !");
-            //}
-            //else {
-            //    throw new Exception("Vui lòng nhập mã !");
-            //}
-            return base.UpdateAsync(entity);
-        }
+
 
         public async Task<IEnumerable<PartnerSimple>> SearchAutocomplete(string filter = "", bool? customer = null)
         {
@@ -1961,20 +1935,6 @@ namespace Infrastructure.Services
             var pair = new KeyValuePair<string, AddressCheckApi>(text, res);
             return pair;
         }
-
-
-        //public override ISpecification<Partner> RuleDomainGet(IRRule rule)
-        //{
-        //    var companyId = CompanyId;
-        //    switch (rule.Code)
-        //    {
-        //        case "partner_comp_rule":
-        //            return new InitialSpecification<Partner>(x => x.CompanyId == companyId);
-        //        default:
-        //            return null;
-        //    }
-        //}
-
 
         public Dictionary<Guid, PartnerCreditDebitItem> CreditDebitGet(IEnumerable<Guid> ids = null,
        DateTime? fromDate = null,
