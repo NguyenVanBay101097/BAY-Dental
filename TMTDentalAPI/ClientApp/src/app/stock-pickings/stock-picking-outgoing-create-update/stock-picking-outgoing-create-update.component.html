@@ -64,10 +64,17 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [hidden]="pickingState == 'done'" [data]="filteredPartners"
+                                    <div class="d-flex">
+                                        <kendo-combobox [hidden]="pickingState == 'done'" [data]="filteredPartners"
                                         [textField]="'name'" [filterable]="true" #partnerCbx formControlName="partner"
                                         [valueField]="'id'">
                                     </kendo-combobox>
+                                    <a data-toggle="dropdown" class="btn btn-sm btn-light"><span class="k-icon k-i-plus"></span></a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a  href="javascript: void(0);" (click)="onCreatePartner(item.value)" *ngFor="let item of  listTypePartner" class="dropdown-item">{{item.text}}</a>
+                                    </div>
+                                    </div>
+                                   
                                     <div *ngIf="f.partner.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.partner.errors.required">Chọn đối tác</div>
