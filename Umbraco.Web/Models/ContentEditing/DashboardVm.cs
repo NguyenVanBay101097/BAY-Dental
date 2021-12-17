@@ -262,6 +262,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal DebtTotal { get; set; }
 
         public decimal ExpectTotal { get; set; }
+        public decimal InsuranceDebitTotal { get; set; }
+
     }
     public class ExportExcelDashBoardDayFilter
     {
