@@ -30,5 +30,7 @@ namespace Infrastructure.Services
         Task<IEnumerable<PartnerReportSourceOverview>> GetPartnerReportSourceOverview(AccountCommonPartnerReportOverviewFilter val);
 
         Task<PartnerGenderReportOverview> GetPartnerReportGenderOverview(AccountCommonPartnerReportOverviewFilter val);
+
+        Task<IEnumerable<GetPartnerForCityReportOverview>> GetPartnerReportTreeMapOverview(AccountCommonPartnerReportOverviewFilter val);
     }
 }

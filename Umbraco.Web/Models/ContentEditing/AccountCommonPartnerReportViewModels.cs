@@ -38,8 +38,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? CompanyId { get; set; }
     }
 
-    public class SampleDataAgeFilter { 
-        
+    public class SampleDataAgeFilter
+    {
+
         public string Name { get; set; }
         public int? AgeFrom { get; set; }
 
@@ -122,6 +123,26 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? PartnerSourceId { get; set; }
 
         public string PartnerSourceName { get; set; }
+
+
+        /// <summary>
+        /// thành phố
+        /// </summary>
+        public string CityName { get; set; }
+
+        public string CityCode { get; set; }
+
+        /// <summary>
+        /// quận/ huyện
+        /// </summary>
+        public string DistrictName { get; set; }
+        public string DistrictCode { get; set; }
+
+        /// <summary>
+        /// phường/xã
+        /// </summary>
+        public string WardName { get; set; }
+        public string WardCode { get; set; }
 
         public string OrderState { get; set; }
 
@@ -272,6 +293,39 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal InitialBalance { get; set; }
 
         public int CountSaleOrder { get; set; }
+
+    }
+
+    public class GetPartnerForCityReportOverview
+    {
+        public string CityName { get; set; }
+
+        public string CityCode { get; set; }
+
+        public int Count { get; set; }
+
+        public IEnumerable<GetPartnerForDistrictReportOverview> Districts { get; set; } = new List<GetPartnerForDistrictReportOverview>();
+
+    }
+
+    public class GetPartnerForDistrictReportOverview
+    {
+        public string DistrictName { get; set; }
+
+        public string DistrictCode { get; set; }
+
+        public int Count { get; set; }
+
+        public IEnumerable<GetPartnerForWardReportOverview> Wards { get; set; } = new List<GetPartnerForWardReportOverview>();
+    }
+
+    public class GetPartnerForWardReportOverview
+    {
+        public string WardName { get; set; }
+
+        public string WardCode { get; set; }
+
+        public int Count { get; set; }
 
     }
 

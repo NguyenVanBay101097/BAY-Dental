@@ -70,6 +70,14 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Report.AccountPartner")]
+        public async Task<IActionResult> GetPartnerReportTreeMapOverview(AccountCommonPartnerReportOverviewFilter val)
+        {
+            var res = await _reportService.GetPartnerReportTreeMapOverview(val);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.AccountPartner")]
         public async Task<IActionResult> GetPartnerReportSourceOverview(AccountCommonPartnerReportOverviewFilter val)
         {
             var res = await _reportService.GetPartnerReportSourceOverview(val);

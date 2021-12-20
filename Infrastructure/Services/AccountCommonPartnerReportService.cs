@@ -322,6 +322,12 @@ namespace Infrastructure.Services
                                  PartnerAge = !string.IsNullOrEmpty(p.GetAge) ? p.GetAge : null,
                                  PartnerSourceId = p.SourceId.HasValue ? p.SourceId : null,
                                  PartnerSourceName = p.SourceId.HasValue ? p.Source.Name : null,
+                                 CityName = p.CityName,
+                                 CityCode = p.CityCode,
+                                 DistrictName = p.DistrictName,
+                                 DistrictCode = p.DistrictCode,
+                                 WardName = p.WardName,
+                                 WardCode = p.WardCode,
                                  OrderState = pos.CountSale > 0 ? "sale" : (pos.CountDone > 0 ? "done" : "draft"),
                                  TotalService = pr.TotalService,
                                  TotalRevenue = pr.TotalPaid ?? 0,
@@ -458,7 +464,46 @@ namespace Infrastructure.Services
             new SampleDataAgeFilter {Name = "Không xác định" }
         };
 
+        public async Task<IEnumerable<GetPartnerForCityReportOverview>> GetPartnerReportTreeMapOverview(AccountCommonPartnerReportOverviewFilter val)
+        {
+            var query = GetQueryablePartnerReportOverview(val);
 
+            var items = await query.ToListAsync();
+            var partnerForCities = new List<GetPartnerForCityReportOverview>();
+            var itemNullLocations = items.Where(x => string.IsNullOrEmpty(x.CityCode)).ToList();
+            if (itemNullLocations.Any())
+            {
+                partnerForCities.Add(new GetPartnerForCityReportOverview
+                {
+                    CityName = "Không xác định",
+                    CityCode = null,
+                    Count = itemNullLocations.Count(),
+                    Districts = new List<GetPartnerForDistrictReportOverview>(),
+                });
+            }
+
+            partnerForCities.AddRange( items.Where(x => !string.IsNullOrEmpty(x.CityCode)).GroupBy(x => new { CityName = x.CityName, CityCode = x.CityCode }).Select(x => new GetPartnerForCityReportOverview
+            {
+                CityName = !string.IsNullOrEmpty(x.Key.CityCode) ? x.Key.CityName : "Không xác định",
+                CityCode = !string.IsNullOrEmpty(x.Key.CityCode) ? x.Key.CityCode : null,
+                Count = x.Select(s => s.PartnerId).Count(),
+                Districts = !string.IsNullOrEmpty(x.Key.CityCode) ? x.GroupBy(x => new { DistrictName = x.DistrictName, DistrictCode = x.DistrictCode }).Select(c => new GetPartnerForDistrictReportOverview
+                {
+                    DistrictName = c.Key.DistrictName,
+                    DistrictCode = c.Key.DistrictCode,
+                    Count = c.Select(e => e.PartnerId).Count(),
+                    Wards = c.GroupBy(x => new { WardName = x.WardName, WardCode = x.WardCode }).Select(c => new GetPartnerForWardReportOverview
+                    {
+                        WardName = c.Key.WardName,
+                        WardCode = c.Key.WardCode,
+                        Count = c.Select(e => e.PartnerId).Count()
+                    }).ToList(),
+                }).ToList() : new List<GetPartnerForDistrictReportOverview>(),
+            }).ToList());
+
+            var res = partnerForCities;
+            return res;
+        }
 
         public async Task<AccountCommonPartnerReportPrint> ReportSummaryPrint(AccountCommonPartnerReportSearch val)
         {
