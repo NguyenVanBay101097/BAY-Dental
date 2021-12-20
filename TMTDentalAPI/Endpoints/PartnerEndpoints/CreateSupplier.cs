@@ -19,16 +19,16 @@ using Umbraco.Web.Models.ContentEditing;
 namespace TMTDentalAPI.Endpoints.PartnerEndpoints
 {
     [Authorize]
-    public class CreateCustomer : BaseAsyncEndpoint
-      .WithRequest<CreateCustomerRequest>
-      .WithResponse<CreateCustomerResponse>
+    public class CreateSupplier : BaseAsyncEndpoint
+      .WithRequest<CreateSupplierRequest>
+      .WithResponse<CreateSupplierResponse>
     {
         private readonly IPartnerService _partnerService;
         private readonly IIRSequenceService _sequenceService;
         private readonly ICurrentUser _currentUser;
         private readonly IUnitOfWorkAsync _unitOfWork;
 
-        public CreateCustomer(IPartnerService partnerService,
+        public CreateSupplier(IPartnerService partnerService,
             IIRSequenceService sequenceService,
             ICurrentUser currentUser,
             IUnitOfWorkAsync unitOfWork)
@@ -39,30 +39,20 @@ namespace TMTDentalAPI.Endpoints.PartnerEndpoints
             _unitOfWork = unitOfWork;
         }
 
-        [HttpPost("api/Partners/Customers")]
+        [HttpPost("api/Partners/Suppliers")]
         [CheckAccess(Actions = "Basic.Partner.Create")]
-        public override async Task<ActionResult<CreateCustomerResponse>> HandleAsync(CreateCustomerRequest request, CancellationToken cancellationToken = default)
+        public override async Task<ActionResult<CreateSupplierResponse>> HandleAsync(CreateSupplierRequest request, CancellationToken cancellationToken = default)
         {
             var partner = new Partner
-            { 
-                Customer = true,
+            {
+                Customer = false,
+                Supplier = true,
                 Name = request.Name,
                 Phone = request.Phone,
-                Ref = request.Ref,
-                BirthDay = request.BirthDay,
-                BirthMonth = request.BirthMonth,
-                BirthYear = request.BirthYear,
-                Gender = request.Gender,
-                TitleId = request.TitleId,
                 Email = request.Email,
-                JobTitle = request.JobTitle,
-                AgentId = request.AgentId,
                 Date = request.Date,
                 Street = request.Street,
-                SourceId = request.SourceId,
                 Comment = request.Comment,
-                Avatar = request.Avatar,
-                MedicalHistory = request.MedicalHistory,
                 CompanyId = _currentUser.CompanyId
             };
 
@@ -73,31 +63,28 @@ namespace TMTDentalAPI.Endpoints.PartnerEndpoints
             partner.WardCode = request.Ward != null ? request.Ward.Code : null;
             partner.WardName = request.Ward != null ? request.Ward.Name : null;
 
-            foreach (var historyId in request.HistoryIds)
-                partner.PartnerHistoryRels.Add(new PartnerHistoryRel { HistoryId = historyId });
-
             await _unitOfWork.BeginTransactionAsync();
             if (string.IsNullOrEmpty(partner.Ref))
             {
-                var matchedCodes = await _partnerService.SearchQuery(x => x.Customer && !string.IsNullOrEmpty(x.Ref)).Select(x => x.Ref).ToListAsync();
+                var matchedCodes = await _partnerService.SearchQuery(x => x.Supplier && !string.IsNullOrEmpty(x.Ref)).Select(x => x.Ref).ToListAsync();
                 foreach (var num in Enumerable.Range(1, 100))
                 {
-                    var customerCode = await _sequenceService.NextByCode("customer");
-                    if (!matchedCodes.Contains(customerCode))
+                    var supplierCode = await _sequenceService.NextByCode("supplier");
+                    if (!matchedCodes.Contains(supplierCode))
                     {
-                        partner.Ref = customerCode;
+                        partner.Ref = supplierCode;
                         break;
                     }
                 }
 
                 if (string.IsNullOrEmpty(partner.Ref))
                     throw new Exception("Không thể phát sinh mã");
-            }    
+            }
 
             await _partnerService.CreateAsync(partner);
             _unitOfWork.Commit();
 
-            return new CreateCustomerResponse()
+            return new CreateSupplierResponse()
             {
                 Id = partner.Id
             };

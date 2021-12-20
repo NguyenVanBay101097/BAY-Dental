@@ -209,6 +209,21 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Note { get; set; }
     }
 
+    public class PartnerSupplierImportRowExcel
+    {
+        public string Name { get; set; }
+        public DateTime? Date { get; set; }
+        public string Phone { get; set; }
+        public string Street { get; set; }
+        public string CityName { get; set; }
+        public string DistrictName { get; set; }
+        public string WardName { get; set; }
+        public string Email { get; set; }
+        public string Note { get; set; }
+        public string Fax { get; set; }
+        public string Ref { get; set; }
+    }
+
     public class WardVm
     {
         public string CityCode { get; set; }

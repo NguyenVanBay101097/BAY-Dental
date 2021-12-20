@@ -44,8 +44,6 @@ namespace Infrastructure.Services
         Task<IEnumerable<PartnerInfoChangePhone>> OnChangePartner(string phone);
         //Task<PartnerInfoViewModel> CheckPartner(CheckMergeFacebookPage val);
 
-        Task<PartnerImportResponse> ActionImport(PartnerImportExcelViewModel val);
-
         Task<PartnerImportResponse> ActionImportUpdate(PartnerImportExcelViewModel val);
 
         Task<PartnerImportResponse> ImportSupplier(PartnerImportExcelViewModel val);
@@ -84,6 +82,8 @@ namespace Infrastructure.Services
         Task<PartnerImportResponse> CustomerImportUpdate(string fileBase64);
 
         Task<PartnerImportResponse> CustomerImport(string fileBase64);
+
+        Task<PartnerImportResponse> SupplierImport(string fileBase64);
 
     }
 }

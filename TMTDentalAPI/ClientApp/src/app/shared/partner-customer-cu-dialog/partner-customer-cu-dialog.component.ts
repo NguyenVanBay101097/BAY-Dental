@@ -558,7 +558,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       email: value.email,
       jobTitle: value.jobTitle,
       agentId: value.agent != null ? value.agent.id : null,
-      date: value.dateObj,
+      date: value.dateObj ? this.intlService.formatDate(value.dateObj, "yyyy-MM-dd") : null,
       street: value.street,
       city: value.city,
       district: value.district,

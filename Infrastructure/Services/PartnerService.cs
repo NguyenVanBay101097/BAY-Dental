@@ -905,6 +905,73 @@ namespace Infrastructure.Services
             };
         }
 
+        public dynamic ReadExcelSupplierImportData(string fileBase64)
+        {
+            var fileData = Convert.FromBase64String(fileBase64);
+            var data = new List<PartnerSupplierImportRowExcel>();
+            var errors = new List<string>();
+            var partner_code_list = new List<string>();
+
+            using (var stream = new MemoryStream(fileData))
+            {
+                try
+                {
+                    using (var package = new ExcelPackage(stream))
+                    {
+                        ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                        var rowCount = worksheet.Dimension.Rows;
+
+                        for (int row = 2; row <= rowCount; row++)
+                        {
+                            var errs = new List<string>();
+
+                            var name = Convert.ToString(worksheet.Cells[row, 1].Value);
+                            if (string.IsNullOrWhiteSpace(name))
+                                errs.Add($"Tên NCC là bắt buộc");
+
+                            try
+                            {
+                                data.Add(new PartnerSupplierImportRowExcel
+                                {
+                                    Name = name,
+                                    Fax = Convert.ToString(worksheet.Cells[row, 3].Value),
+                                    Phone = Convert.ToString(worksheet.Cells[row, 2].Value),
+                                    Street = Convert.ToString(worksheet.Cells[row, 4].Value),
+                                    WardName = Convert.ToString(worksheet.Cells[row, 5].Value),
+                                    DistrictName = Convert.ToString(worksheet.Cells[row, 6].Value),
+                                    CityName = Convert.ToString(worksheet.Cells[row, 7].Value),
+                                    Email = Convert.ToString(worksheet.Cells[row, 8].Value),
+                                    Note = Convert.ToString(worksheet.Cells[row, 9].Value),
+                                });
+                            }
+                            catch
+                            {
+                                errors.Add($"Dòng {row}: {"Dữ liệu import chưa đúng định dạng"}");
+                                continue;
+                            }
+
+                            if (errs.Any())
+                            {
+                                errors.Add($"Dòng {row}: {string.Join(", ", errs)}");
+                                continue;
+                            }
+                        }
+                    }
+
+                }
+                catch (Exception)
+                {
+                    throw new Exception("File import sai định dạng. Vui lòng tải file mẫu và nhập dữ liệu đúng");
+                }
+            }
+
+            return new
+            {
+                Errors = errors,
+                Data = data
+            };
+        }
+
         public dynamic ReadExcelCustomerUpdateData(string fileBase64)
         {
             var fileData = Convert.FromBase64String(fileBase64);
@@ -1111,99 +1178,52 @@ namespace Infrastructure.Services
             };
         }
 
-        public async Task<PartnerImportResponse> ActionImport(PartnerImportExcelViewModel val)
+        public async Task<PartnerImportResponse> SupplierImport(string fileBase64)
         {
             //hàm này chỉ thêm partner, ko có update
-            var readResult = ReadExcelData(val);
+            var readResult = ReadExcelSupplierImportData(fileBase64);
             var errors = readResult.Errors as IEnumerable<string>;
-            var data = readResult.Data as IEnumerable<PartnerImportRowExcel>;
-
-            //if (data.Count() > 5000)
-            //    return new PartnerImportResponse { Success = false, Errors = new List<string>() { "Import không được vượt quá 5000 dòng" } };
+            var data = readResult.Data as IEnumerable<PartnerSupplierImportRowExcel>;
 
             if (errors.Any())
                 return new PartnerImportResponse { Success = false, Errors = errors };
 
-            var address_check_dict = new Dictionary<string, AddressCheckApi>();
-            var address_list = data.Where(x => !string.IsNullOrWhiteSpace(x.Address)).Select(x => x.Address).Distinct().ToList();
-            //Get list Api check address distionary
-            address_check_dict = await CheckAddressAsync(address_list);
-
-            var medical_history_dict = new Dictionary<string, History>();
-            var partner_history_list = data.Where(x => !string.IsNullOrEmpty(x.MedicalHistory)).Select(x => x.MedicalHistory.Split(",")).SelectMany(x => x).Distinct().ToList();
-            if (partner_history_list.Any())
+            var matchedCodes = await SearchQuery(x => x.Supplier && !string.IsNullOrEmpty(x.Ref)).Select(x => x.Ref).ToListAsync();
+            var seqObj = GetService<IIRSequenceService>();
+            foreach (var num in Enumerable.Range(1, 100))
             {
-                var historyObj = GetService<IHistoryService>();
-                var histories = await historyObj.SearchQuery(x => partner_history_list.Contains(x.Name)).ToListAsync();
-                foreach (var history in histories)
+                var tmp = data.Where(x => string.IsNullOrEmpty(x.Ref)).ToList();
+                if (tmp.Any())
                 {
-                    if (!medical_history_dict.ContainsKey(history.Name))
-                        medical_history_dict.Add(history.Name, history);
+                    var codeList = await seqObj.NextByCode("supplier", tmp.Count).ConfigureAwait(false);
+                    for (var i = 0; i < tmp.Count; i++)
+                    {
+                        var item = tmp[i];
+                        if (!matchedCodes.Contains(codeList[i]))
+                            item.Ref = codeList[i];
+                    }
                 }
-
-                var histories_name_to_insert = partner_history_list.Except(histories.Select(x => x.Name));
-                var histories_to_insert = histories_name_to_insert.Select(x => new History { Name = x }).ToList();
-                await historyObj.CreateAsync(histories_to_insert);
-
-                foreach (var history in histories_to_insert)
-                {
-                    if (!medical_history_dict.ContainsKey(history.Name))
-                        medical_history_dict.Add(history.Name, history);
-                }
+                else
+                    break;
             }
+
+            if (data.Any(x => string.IsNullOrEmpty(x.Ref)))
+                return new PartnerImportResponse { Success = false, Errors = new List<string>() { $"Có những dòng không phát sinh mã đc" } };
 
             var partners = new List<Partner>();
             foreach (var item in data)
             {
-                var addResult = address_check_dict.ContainsKey(item.Address) ? address_check_dict[item.Address] : null;
                 var partner = new Partner();
                 partner.CompanyId = CompanyId;
                 partner.Name = item.Name;
-                partner.Ref = item.Ref;
                 partner.Phone = item.Phone;
                 partner.Comment = item.Note;
                 partner.Email = item.Email;
                 partner.Street = item.Street;
-
-                if (addResult != null)
-                {
-
-                    partner.WardCode = addResult.WardCode != null ? addResult.WardCode : null;
-                    partner.WardName = addResult.WardName != null ? addResult.WardName : null;
-                    partner.DistrictCode = addResult.DistrictCode != null ? addResult.DistrictCode : null;
-                    partner.DistrictName = addResult.DistrictName != null ? addResult.DistrictName : null;
-                    partner.CityCode = addResult.CityCode != null ? addResult.CityCode : null;
-                    partner.CityName = addResult.CityName != null ? addResult.CityName : null;
-                }
-
-                if (val.Type == "customer")
-                {
-                    partner.Customer = true;
-                    partner.JobTitle = item.Job;
-                    partner.BirthDay = item.BirthDay;
-                    partner.BirthMonth = item.BirthMonth;
-                    partner.BirthYear = item.BirthYear;
-                    GetGenderPartner(partner, item);
-                    partner.Date = item.Date ?? DateTime.Today;
-                    partner.PartnerHistoryRels.Clear();
-                    if (!string.IsNullOrEmpty(item.MedicalHistory))
-                    {
-                        var medical_history_list = item.MedicalHistory.Split(",");
-                        foreach (var mh in medical_history_list)
-                        {
-                            if (!medical_history_dict.ContainsKey(mh))
-                                continue;
-
-                            partner.PartnerHistoryRels.Add(new PartnerHistoryRel { History = medical_history_dict[mh] });
-                        }
-                    }
-                }
-                else if (val.Type == "supplier")
-                {
-                    partner.Customer = false;
-                    partner.Supplier = true;
-                    partner.Fax = item.Fax;
-                }
+                partner.Customer = false;
+                partner.Supplier = true;
+                partner.Fax = item.Fax;
+                partner.Ref = item.Ref;
 
                 partners.Add(partner);
             }
@@ -1553,8 +1573,7 @@ namespace Infrastructure.Services
                 {
                     var seqRepository = new EfRepository<IRSequence>(context);
                     var seqObj = new IRSequenceService(seqRepository, _httpContextAccessor);
-                    var partner_code_prefix = "KH"; //nên đưa vào constants
-                    var matchedCodes = await SearchQuery(x => x.Customer && x.Ref.Contains(partner_code_prefix)).Select(x => x.Ref).ToListAsync();
+                    var matchedCodes = await SearchQuery(x => x.Customer && !string.IsNullOrEmpty(x.Ref)).Select(x => x.Ref).ToListAsync();
                     foreach (var num in Enumerable.Range(1, 100))
                     {
                         var tmp = itemsNoCode.Where(x => string.IsNullOrEmpty(x.Ref)).ToList();

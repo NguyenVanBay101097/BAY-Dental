@@ -607,6 +607,14 @@ export class PartnerService {
     updateCustomer(val: any) {
         return this.http.put(this.baseApi + this.apiUrl + '/Customers', val);
     }
+
+    createSupplier(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/Suppliers', val);
+    }
+
+    updateSupplier(val: any) {
+        return this.http.put(this.baseApi + this.apiUrl + '/Suppliers', val);
+    }
 }
 
 

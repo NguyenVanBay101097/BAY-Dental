@@ -406,7 +406,7 @@ namespace TMTDentalAPI.Controllers
             {
                 await _unitOfWork.BeginTransactionAsync();
 
-                var result = await _partnerService.ActionImport(val);
+                var result = await _partnerService.SupplierImport(val.FileBase64);
 
                 if (result.Success)
                     _unitOfWork.Commit();
@@ -654,7 +654,7 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 1].Value = item.Name;
                     worksheet.Cells[row, 2].Value = item.Ref;
                     worksheet.Cells[row, 3].Value = item.Date;
-                    worksheet.Cells[row, 3].Style.Numberformat.Format = "m/d/yyyy";
+                    worksheet.Cells[row, 3].Style.Numberformat.Format = "d/m/yyyy";
                     worksheet.Cells[row, 4].Value = item.Phone;
                     worksheet.Cells[row, 5].Value = !string.IsNullOrEmpty(item.Gender) && gender_dict.ContainsKey(item.Gender) ? gender_dict[item.Gender] : "Nam";
 
