@@ -738,12 +738,12 @@ namespace TMTDentalAPI
                 app.UseHsts();
             }
 
-            //var supportedCultures = new[] { "vi-VN" };
-            //var localizationOptions = new RequestLocalizationOptions().SetDefaultCulture(supportedCultures[0])
-            //    .AddSupportedCultures(supportedCultures)
-            //    .AddSupportedUICultures(supportedCultures);
+            var supportedCultures = new[] { "vi-VN" };
+            var localizationOptions = new RequestLocalizationOptions().SetDefaultCulture(supportedCultures[0])
+                .AddSupportedCultures(supportedCultures)
+                .AddSupportedUICultures(supportedCultures);
 
-            //app.UseRequestLocalization(localizationOptions);
+            app.UseRequestLocalization(localizationOptions);
 
             ////app.UseHttpsRedirection();
             var provider = new FileExtensionContentTypeProvider();

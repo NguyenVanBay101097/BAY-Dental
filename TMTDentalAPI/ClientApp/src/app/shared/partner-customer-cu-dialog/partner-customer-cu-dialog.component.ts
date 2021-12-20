@@ -545,7 +545,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     return list;
   }
 
-  preparePostData(value) {
+  preparePostData(value): any {
     return {
       name: value.name,
       phone: value.phone,
@@ -560,9 +560,14 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       agentId: value.agent != null ? value.agent.id : null,
       date: value.dateObj,
       street: value.street,
+      city: value.city,
+      district: value.district,
+      ward: value.ward,
       sourceId: value.source != null ? value.source.id : null,
       comment: value.comment,
       avatar: value.avatar,
+      medicalHistory: value.medicalHistory,
+      historyIds: value.histories.map(x => x.id)
     };
   }
 
@@ -577,7 +582,8 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     var postVal = this.preparePostData(val);
 
     if (this.id) {
-      this.partnerService.update(this.id, postVal).subscribe(
+      postVal.id = this.id;
+      this.partnerService.updateCustomer(postVal).subscribe(
         () => {
           this.activeModal.close(true);
         },

@@ -603,6 +603,10 @@ export class PartnerService {
     createCustomer(val: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/Customers', val);
     }
+
+    updateCustomer(val: any) {
+        return this.http.put(this.baseApi + this.apiUrl + '/Customers', val);
+    }
 }
 
 

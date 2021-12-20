@@ -396,23 +396,20 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Basic.Partner.Create")]
         public async Task<IActionResult> ActionImport(PartnerImportExcelViewModel val)
         {
-            //await _unitOfWork.BeginTransactionAsync();
-
             if (val.Type == "customer")
             {
                 var result = await _partnerService.CustomerImport(val.FileBase64);
-
-                //if (result.Success)
-                //    _unitOfWork.Commit();
 
                 return Ok(result);
             }
             else
             {
+                await _unitOfWork.BeginTransactionAsync();
+
                 var result = await _partnerService.ActionImport(val);
 
-                //if (result.Success)
-                //    _unitOfWork.Commit();
+                if (result.Success)
+                    _unitOfWork.Commit();
 
                 return Ok(result);
             }
@@ -657,7 +654,7 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 1].Value = item.Name;
                     worksheet.Cells[row, 2].Value = item.Ref;
                     worksheet.Cells[row, 3].Value = item.Date;
-                    worksheet.Cells[row, 3].Style.Numberformat.Format = "d/m/yyyy";
+                    worksheet.Cells[row, 3].Style.Numberformat.Format = "m/d/yyyy";
                     worksheet.Cells[row, 4].Value = item.Phone;
                     worksheet.Cells[row, 5].Value = !string.IsNullOrEmpty(item.Gender) && gender_dict.ContainsKey(item.Gender) ? gender_dict[item.Gender] : "Nam";
 

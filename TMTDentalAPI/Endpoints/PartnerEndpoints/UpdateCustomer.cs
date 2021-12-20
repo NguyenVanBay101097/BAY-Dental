@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using Ardalis.ApiEndpoints;
 using Infrastructure.Services;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using TMTDentalAPI.JobFilters;
 
 namespace TMTDentalAPI.Endpoints.PartnerEndpoints
 {
@@ -19,14 +21,19 @@ namespace TMTDentalAPI.Endpoints.PartnerEndpoints
     {
         private readonly IPartnerService _partnerService;
         private readonly IIRSequenceService _sequenceService;
+        private readonly IUnitOfWorkAsync _unitOfWork;
 
         public UpdateCustomer(IPartnerService partnerService,
-          IIRSequenceService sequenceService)
+          IIRSequenceService sequenceService,
+          IUnitOfWorkAsync unitOfWork)
         {
             _partnerService = partnerService;
             _sequenceService = sequenceService;
+            _unitOfWork = unitOfWork;
         }
 
+        [HttpPut("api/Partners/Customers")]
+        [CheckAccess(Actions = "Basic.Partner.Update")]
         public override async Task<ActionResult> HandleAsync(UpdateCustomerRequest request, CancellationToken cancellationToken = default)
         {
             var partner = await _partnerService.SearchQuery(x => x.Id == request.Id)
@@ -55,6 +62,7 @@ namespace TMTDentalAPI.Endpoints.PartnerEndpoints
             partner.DistrictName = request.District != null ? request.District.Name : null;
             partner.WardCode = request.Ward != null ? request.Ward.Code : null;
             partner.WardName = request.Ward != null ? request.Ward.Name : null;
+            partner.MedicalHistory = request.MedicalHistory;
 
             var historyRelToDelete = new List<PartnerHistoryRel>();
             foreach(var rel in partner.PartnerHistoryRels.ToList())
@@ -72,8 +80,7 @@ namespace TMTDentalAPI.Endpoints.PartnerEndpoints
                     partner.PartnerHistoryRels.Add(new PartnerHistoryRel { HistoryId = historyId });
             }
 
-            foreach (var historyId in request.HistoryIds)
-                partner.PartnerHistoryRels.Add(new PartnerHistoryRel { HistoryId = historyId });
+            await _unitOfWork.BeginTransactionAsync();
 
             if (string.IsNullOrEmpty(partner.Ref))
             {
@@ -94,6 +101,8 @@ namespace TMTDentalAPI.Endpoints.PartnerEndpoints
             }
 
             await _partnerService.UpdateAsync(partner);
+
+            _unitOfWork.Commit();
         
             return NoContent();
         }
