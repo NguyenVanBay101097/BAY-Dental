@@ -5,7 +5,7 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <form class="o_form_view" [formGroup]="formGroup">
+    <form class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <!-- <div class="d-flex">
@@ -46,9 +46,9 @@
                                             <label class="o_form_label">Brand Name</label>
                                         </td>
                                         <td colspan="1" style="width: 100%;">
-                                            <input type="text"  [class.border-danger]="submitted && f.brandName.value==''" class="form-control" formControlName="brandName">
-                                            <div *ngIf="f.brandName.errors && (f.brandName.touched || f.brandName.dirty || submitted)"
-                                                class="text-danger">
+                                            <input type="text" class="form-control"
+                                                formControlName="brandName">
+                                            <div *ngIf="f.brandName.errors && submitted" class="text-danger">
                                                 <div *ngIf="f.brandName.errors.required">Nhập Brandname</div>
                                             </div>
                                         </td>
@@ -58,11 +58,8 @@
                                             <label class="o_form_label">Client Id</label>
                                         </td>
                                         <td colspan="1" style="width: 100%;">
-                                            <input type="text" class="form-control"
-                                            [class.border-danger]="submitted && f.clientId.value==''"
-                                                formControlName="clientId">
-                                            <div *ngIf="f.clientId.errors && (f.clientId.touched || f.clientId.dirty || submitted)"
-                                                class="text-danger">
+                                            <input type="text" class="form-control" formControlName="clientId">
+                                            <div *ngIf="f.clientId.errors && submitted" class="text-danger">
                                                 <div *ngIf="f.clientId.errors.required">Nhập Client Id</div>
                                             </div>
                                         </td>
@@ -73,11 +70,8 @@
                                             <label class="o_form_label">Client Secret</label>
                                         </td>
                                         <td colspan="1" style="width: 100%;">
-                                            <input type="text" class="form-control"
-                                            [class.border-danger]="submitted && f.clientSecret.value==''"
-                                                formControlName="clientSecret">
-                                            <div *ngIf="f.clientSecret.errors && (f.clientSecret.touched || f.clientSecret.dirty || submitted)"
-                                                class="text-danger">
+                                            <input type="text" class="form-control" formControlName="clientSecret">
+                                            <div *ngIf="f.clientSecret.errors && submitted" class="text-danger">
                                                 <div *ngIf="f.clientSecret.errors.required">Nhập Client Secret</div>
                                             </div>
                                         </td>

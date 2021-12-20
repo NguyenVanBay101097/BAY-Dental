@@ -8,6 +8,7 @@ import { SamplePrescriptionsRoutingModule } from './sample-prescriptions-routing
 import { SamplePrescriptionLineCreateUpdateDialogComponent } from './sample-prescription-line-create-update-dialog/sample-prescription-line-create-update-dialog.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToaThuocsModule } from '../toa-thuocs/toa-thuocs.module';
+import { TmtAutonumericModule } from 'tmt-autonumeric';
 
 @NgModule({
   declarations: [SamplePrescriptionListComponent, SamplePrescriptionCreateUpdateDialogComponent, SamplePrescriptionLineCreateUpdateDialogComponent],
@@ -18,7 +19,8 @@ import { ToaThuocsModule } from '../toa-thuocs/toa-thuocs.module';
     ReactiveFormsModule,
     ToaThuocsModule,
     FormsModule,
-    NgbModule
+    NgbModule,
+    TmtAutonumericModule
   ],  
   entryComponents: [
     SamplePrescriptionCreateUpdateDialogComponent,

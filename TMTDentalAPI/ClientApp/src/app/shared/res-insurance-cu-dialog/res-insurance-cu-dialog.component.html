@@ -1,0 +1,118 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="onCancel()"
+        tabindex="-1">×</button>
+</header>
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <app-image-file-upload class="o_field_image o_field_widget oe_avatar" [supportWebcam]="true"
+                    (uploaded)="onAvatarUploaded($event)" [imageId]="f.avatar?.value" [width]="200" [height]="200">
+                </app-image-file-upload>
+
+                <div class="oe_title">
+                    <label class="o_form_label oe_edit_only"> Tên công ty bảo hiểm </label>
+                    <h1>
+                        <input class="form-control" formControlName="name">
+                    </h1>
+                    <div *ngIf="f.name.errors && submitted"
+                        class="text-danger mb-1">
+                        <div *ngIf="f.name.errors.required"> Nhập tên công ty bảo hiểm </div>
+                    </div>
+                </div>
+                <!-- <div class="o_group m-0">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <div class="d-flex justify-content-center">
+                                        <app-image-file-upload class="o_field_image o_field_widget oe_avatar"
+                                            [supportWebcam]="true" (uploaded)="onAvatarUploaded($event)"
+                                            [imageId]="f.avatar?.value" [width]="200" [height]="200">
+                                        </app-image-file-upload>
+                                    </div>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="oe_title">
+                                        <label class="o_form_label oe_edit_only"> Tên công ty bảo hiểm </label>
+                                        <h1>
+                                            <input class="form-control" formControlName="name">
+                                        </h1>
+                                        <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
+                                            class="text-danger mb-1">
+                                            <div *ngIf="f.name.errors.required"> Nhập tên công ty bảo hiểm </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div> -->
+                <div class="o_group m-0">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label"> Người đại diện </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input class="form-control" formControlName="representative" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label"> Số điện thoại </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input class="form-control" formControlName="phone" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label"> Địa chỉ </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input class="form-control" formControlName="address" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label"> Ngày ký kết </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker [format]="'dd/MM/yyyy'" formControlName="dateObj">
+                                    </kendo-datepicker>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label"> Email </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input class="form-control" formControlName="email" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label"> Ghi chú </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input class="form-control" formControlName="note" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary mr-2" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-light mr-2" (click)="onCancel()" accesskey="q">Đóng</button>
+</div>

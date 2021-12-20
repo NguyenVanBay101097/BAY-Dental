@@ -46,7 +46,6 @@ export class AppHomeComponent implements OnInit {
       icon: 'fas fa-capsules',
       url: '/medicine-orders',
       groups: 'medicineOrder.group_medicine',
-      permissions: ['Medicine.ToaThuoc.Read']
     },
     {
       name: 'Labo',
@@ -132,42 +131,52 @@ export class AppHomeComponent implements OnInit {
       name: 'Hoa hồng',
       icon: 'fas fa-poll',
       children: [
-        { name: 'Người giới thiệu', url: '/commission-settlements/agent' },
-        { name: 'Nhân viên', url: '/commission-settlements/employee'},
+        { name: 'Người giới thiệu', url: '/commission-settlements/agent', permissions: ['Comission.Agent'] },
+        { name: 'Nhân viên', url: '/commission-settlements/employee', permissions: ['Comission.Employee'] },
       ],
-      
+      permissions: ['Comission.Employee', 'Comission.Agent']
     },
     {
       name: 'Danh mục',
       icon: 'fas fa-list',
       children: [
-        { name: 'Thông tin khách hàng', url: '/customer-management' },
+        { name: 'Thông tin khách hàng', url: '/customer-management', permissions: ['Catalog.PartnerCategory.Read','Catalog.PartnerSource.Read',
+        'Catalog.PartnerTitle.Read','Catalog.History.Read'] },
         // { name: 'Hạng thành viên', url: '/member-level/management' },
         { name: 'Nhà cung cấp', url: '/partners/suppliers', permissions: ['Basic.Partner.Read'] },
+        { name: 'Bảo hiểm', url: '/res-insurance', groups: 'insurance.group_insurance', permissions: ['Catalog.Insurance.Read'] },
         { name: 'Dịch vụ - Vật tư - Thuốc', url: '/products', permissions: ['Catalog.Products.Read'] },
         { name: 'Đơn thuốc mẫu', url: '/sample-prescriptions', permissions: ['Catalog.SamplePrescription.Read'] },
         { name: 'Đơn vị tính', url: '/uoms', groups: 'product.group_uom', permissions: ['UoM.UoMs.Read'] },
         { name: 'Nhóm Đơn vị tính', url: '/uom-categories', groups: 'product.group_uom', permissions: ["UoM.UoMCategory.Read"] },
         { name: 'Bảng hoa hồng', url: '/commissions', permissions: ['Catalog.Commission.Read'] },
         { name: 'Nhân viên', url: '/employees', permissions: ['Catalog.Employee.Read'] },
-        { name: 'Chức vụ nhân viên', url: '/hr/jobs' },
+        { name: 'Chức vụ nhân viên', url: '/hr/jobs', permissions: ['HrJob.Read'] },
         { name: 'Thông số Labo', url: '/labo-management', permissions: ['Catalog.LaboFinishLine.Read', 'Catalog.LaboBridge.Read', 'Catalog.LaboBiteJoint.Read'] },
         { name: 'Loại thu chi', url: '/loai-thu-chi', permissions: ['Account.LoaiThuChi.Read'] },
         { name: 'Tiêu chí kiểm kho', url: '/stock/criterias', permissions: ['Stock.StockInventoryCriteria.Read'] },
         { name: 'Chẩn đoán răng', url: '/tooth-diagnosis', permissions: ['Catalog.ToothDiagnosis.Read'] },
-        { name: 'Nhãn khảo sát', url: '/surveys/survey-tag', groups: 'survey.group_survey' },
+        { name: 'Nhãn khảo sát', url: '/surveys/survey-tag', groups: 'survey.group_survey', permissions: ['Catalog.SurveyTag.Read'] },
         { name: 'Người giới thiệu', url: '/agents/list', Permissions: ['Catalog.Agent.Read'] },
       ],
       permissions: [
-        'Catalog.PartnerCategory.Read',
+        'Catalog.PartnerCategory.Read','Catalog.PartnerSource.Read',
+        'Catalog.PartnerTitle.Read','Catalog.History.Read',
+        'Basic.Partner.Read',
+        'Catalog.Insurance.Read',
         'Catalog.Products.Read',
-        'Catalog.Agent.Read',
         'Catalog.SamplePrescription.Read',
         'UoM.UoMs.Read',
+        "UoM.UoMCategory.Read",
         'Catalog.Commission.Read',
         'Catalog.Employee.Read',
-        'Stock.Criteria.Read',
-        'Account.LoaiThuChi.Read'
+        'HrJob.Read',
+        'Catalog.LaboFinishLine.Read', 'Catalog.LaboBridge.Read', 'Catalog.LaboBiteJoint.Read',
+        'Account.LoaiThuChi.Read',
+        'Stock.StockInventoryCriteria.Read',
+        'Catalog.ToothDiagnosis.Read',
+        'survey.group_survey' ,
+        'Catalog.Agent.Read',
       ]
     },
     {
@@ -177,41 +186,41 @@ export class AppHomeComponent implements OnInit {
       children: [
         { name: 'Chi nhánh', url: '/companies', permissions: ['System.Company.Read'] },
         { name: 'Nhóm quyền', url: '/roles', permissions: ['System.ApplicationRole.Read'] },
-        { name: 'Cấu hình chung', url: '/config-settings' },
+        { name: 'Cấu hình chung', url: '/config-settings', permissions: ['System.Config'] },
         // { name: 'Mẫu in', url: '/print-template-config' },
         // { name: 'Thiết lập kết nối API', url: '/setting-public-api' }
       ],
-      permissions: ['System.Company.Read', 'System.ApplicationUser.Read', 'System.ApplicationRole.Read']
+      permissions: ['System.Company.Read', 'System.Config', 'System.ApplicationRole.Read']
     },
     {
       name: 'Báo cáo',
       icon: 'far fa-chart-bar',
       id: 'reportMenu',
       children: [
-        { name: 'Báo cáo tổng quan', url: '/sale-dashboard-reports' },
-        { name: 'Báo cáo tổng quan ngày', url: '/day-dashboard-report' },
+        { name: 'Báo cáo tổng quan', url: '/sale-dashboard-reports', permissions: ['Report.Overview'] },
+        { name: 'Báo cáo ngày', url: '/day-dashboard-report', permissions: ['Report.DayOverview'] },
         { name: 'Kết quả kinh doanh', url: '/financial-report', permissions: ['Report.Financial'] },
         { name: 'Báo cáo doanh thu', url: '/account-invoice-reports/revenue-time', permissions: ['Report.Revenue'] },
         { name: 'Báo cáo dịch vụ', url: '/sale-report/service-report', permissions: ['Report.Sale'] },
         { name: 'Báo cáo khách hàng', url: '/report-account-common/partner-report-overview', permissions: ['Report.PartnerOldNew'] },
-        { name: 'Báo cáo tiếp nhận', url: '/customer-receipt-reports' },
+        { name: 'Báo cáo tiếp nhận', url: '/customer-receipt-reports', permissions: ['Report.CustomerReceiptReports'] },
         { name: 'Công nợ nhà cung cấp', url: '/report-account-common/partner', linkProps: { queryParams: { result_selection: 'supplier' } }, permissions: ['Report.AccountPartner'] },
+        { name: 'Báo cáo công nợ bảo hiểm', url: '/res-insurance-reports', permissions: ['Report.ResInsuranceReports'] },
         { name: 'Thống kê nguồn khách hàng', url: '/report-partner-sources', permissions: ['Report.PartnerSource'] },
         { name: 'Quản lý điều trị', url: '/sale-orders/management', permissions: ['Basic.SaleOrder.Read'] },
       ],
       permissions: [
+        'Report.Overview',
+        'Report.DayOverview',
         'Report.Financial',
-        // 'Report.CashBankAccount',
         'Report.Revenue',
         'Report.Sale',
-        // 'Report.AccountPartner',
+        'Report.PartnerOldNew',
+        'Report.CustomerReceiptReports',
+        'Report.ResInsuranceReports',
         'Report.AccountPartner',
         'Report.Stock',
-        'Report.RealRevenue',
-        'Report.Commission',
-        'Report.PartnerLocation',
-        'Report.PartnerSource',
-        'Report.PartnerOldNew'
+        'Report.PartnerSource'
       ]
     },
   ];
@@ -254,11 +263,11 @@ export class AppHomeComponent implements OnInit {
     var diff = expireDate.getTime() - date.getTime();
 
     var days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    diff -=  days * (1000 * 60 * 60 * 24);
-    
+    diff -= days * (1000 * 60 * 60 * 24);
+
     var hours = Math.floor(diff / (1000 * 60 * 60));
     diff -= hours * (1000 * 60 * 60);
-    
+
     var mins = Math.floor(diff / (1000 * 60));
     diff -= mins * (1000 * 60);
 
@@ -283,8 +292,10 @@ export class AppHomeComponent implements OnInit {
         if (menuItem.children) {
           var childArr: any[] = [];
           menuItem.children.forEach(child => {
-            if (this.hasPermission(child)) {
-              childArr.push(child);
+            if (this.hasGroups(child)) {
+              if (this.hasPermission(child)) {
+                childArr.push(child);
+              }
             }
           });
           menuItem.children = childArr;
@@ -302,6 +313,14 @@ export class AppHomeComponent implements OnInit {
     }
 
     return this.checkPermissionService.check(menuItem.permissions);
+  }
+
+  hasGroups(menuItem) {
+    if (!menuItem.groups || this.sessionInfo.isAdmin) {
+      return true;
+    }
+
+    return this.permissionService.hasDefined(menuItem.groups);
   }
 
   toggleMinimize(e) {
@@ -371,7 +390,8 @@ export class AppHomeComponent implements OnInit {
             animation: { type: 'fade', duration: 400 },
             type: { style: 'success', icon: true }
           });
-          window.location.reload();
+
+          this.logout();
         }
       )
     }, () => { });

@@ -42,7 +42,7 @@
 </div>
 
 <div class="o_content">
-    <form class="o_form_view" [formGroup]="formGroup">
+    <form class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
@@ -139,7 +139,7 @@
                                         [textField]="'name'" [filterable]="true" #categCbx formControlName="category"
                                         [valueField]="'id'">
                                     </kendo-combobox>
-                                    <div *ngIf="f.category.errors && (f.category.touched || f.category.dirty || submitted)"
+                                    <div *ngIf="f.category.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.category.errors.required">Chọn nhóm sản phẩm</div>
                                     </div>
@@ -157,7 +157,7 @@
                                         [textField]="'name'" [filterable]="true" #criteriaCbx formControlName="criteria"
                                         [valueField]="'id'">
                                     </kendo-combobox>
-                                    <div *ngIf="f.criteria.errors && (f.criteria.touched || f.criteria.dirty || submitted)"
+                                    <div *ngIf="f.criteria.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.criteria.errors.required">Chọn tiêu chí kiểm kho</div>
                                     </div>
@@ -189,7 +189,7 @@
                                     <kendo-datepicker [format]="'dd/MM/yyyy'" *ngIf="stateControl == 'draft'"
                                         formControlName="dateObj">
                                     </kendo-datepicker>
-                                    <div *ngIf="stateControl == 'draft' && f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)"
+                                    <div *ngIf="stateControl == 'draft' && f.dateObj.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.dateObj.errors.required">Chọn ngày kiểm</div>
                                     </div>
@@ -281,10 +281,9 @@
                                                             | number}}</span>
                                                     </td>
                                                     <td class="text-right">
-                                                        <kendo-numerictextbox [format]="'n2'" [autoCorrect]="true"
+                                                        <input class="form-control" style="width: 120px;" formControlName="productQty"
                                                             *ngIf="stateControl == 'confirmed'"
-                                                            formControlName="productQty" style="width: 120px;">
-                                                        </kendo-numerictextbox>
+                                                            [options]="{ minimumValue: 0, decimalPlaces: 2 }" tmtautonumeric/>
                                                         <span style="padding-right: 16px;"
                                                             *ngIf="stateControl != 'confirmed'">{{line.get('productQty').value
                                                             | number}}</span>

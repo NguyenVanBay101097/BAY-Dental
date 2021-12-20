@@ -12,6 +12,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid BankId { get; set; }
         public ResBankSimple Bank { get; set; }
+        public string AccountHolderName { get; set; }
+        public string Branch { get; set; }
     }
 
     public class ResPartnerBankDisplay

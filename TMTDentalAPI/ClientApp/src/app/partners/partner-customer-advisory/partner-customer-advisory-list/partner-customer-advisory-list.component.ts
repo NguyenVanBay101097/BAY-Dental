@@ -7,6 +7,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AdvisoryPaged, AdvisoryService, AdvisoryToothAdvise, CreateFromAdvisoryInput } from 'src/app/advisories/advisory.service';
+import { AuthService } from 'src/app/auth/auth.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { PrintService } from 'src/app/shared/services/print.service';
@@ -50,6 +51,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
     private notificationService: NotificationService,
     private printService: PrintService,
     private router: Router,
+    private authService: AuthService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -211,6 +213,7 @@ export class PartnerCustomerAdvisoryListComponent implements OnInit {
   loadTeethConsulted() {
     var val = new AdvisoryToothAdvise();
     val.customerId = this.customerId;
+    val.companyId = this.authService.userInfo.companyId;
     this.advisoryService.getToothAdvise(val).subscribe((result: any) => {
       this.teethConsulted = result.toothIds;
     })

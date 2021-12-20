@@ -4,7 +4,7 @@
         (click)="onClose()" tabindex="-1">×</button>
 </header>
 <div class="modal-body o_act_window">
-    <div class="o_form_view" [formGroup]="formGroup">
+    <div class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
@@ -49,7 +49,7 @@
                                                 <span class="k-icon k-i-plus"></span>
                                             </a>
                                         </div>
-                                        <div *ngIf="f.loaiThuChi.errors && (f.loaiThuChi.touched || f.loaiThuChi.dirty || submitted)"
+                                        <div *ngIf="f.loaiThuChi.errors && submitted"
                                             class="text-danger">
                                             <div *ngIf="f.loaiThuChi.errors.required">Chọn loại {{type}}</div>
                                         </div>
@@ -61,13 +61,21 @@
                                     <label class="o_form_label">Phương thức</label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span *ngIf="formReadonly">{{phieuThuChiDisplay.journal.name}}</span>
-                                    <div *ngIf="!formReadonly">
+                                    <span *ngIf="formReadonly">{{phieuThuChiDisplay?.journal?.name}}</span>
+                                    <div [class.d-none]="formReadonly">
                                         <kendo-combobox [data]="filteredJournals" [textField]="'name'"
-                                            [filterable]="true" #journalCbx formControlName="journal"
-                                            [valueField]="'id'">
+                                        [filterable]="true" #journalCbx formControlName="journal"
+                                        [valueField]="'id'">
+                                        <ng-template kendoComboBoxItemTemplate let-dataItem>
+                                            <div>
+                                                <div *ngIf="dataItem.type !== 'cash'">{{dataItem.displayType}}</div>
+                                                <div>
+                                                    <strong>{{dataItem.name}}</strong>
+                                                </div>
+                                            </div>
+                                        </ng-template>
                                         </kendo-combobox>
-                                        <div *ngIf="f.journal.errors && (f.journal.touched || f.journal.dirty || submitted)"
+                                        <div *ngIf="f.journal.errors && submitted"
                                             class="text-danger">
                                             <div *ngIf="f.journal.errors.required">Chọn phương thức thanh toán</div>
                                         </div>
@@ -80,9 +88,8 @@
                                 </td>
                                 <td colspan="1" style="width: 100%;">
                                     <span *ngIf="formReadonly">{{phieuThuChiDisplay.amount | number}}</span>
-                                    <kendo-numerictextbox *ngIf="!formReadonly" [min]="0" [format]="'n0'"
-                                        formControlName="amount">
-                                    </kendo-numerictextbox>
+                                    <input class="form-control" *ngIf="!formReadonly" formControlName="amount" tmtautonumeric
+                                        [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
                                 </td>
                             </tr>
                             <tr>
@@ -109,7 +116,7 @@
                                     </span>
                                     <kendo-datepicker *ngIf="!formReadonly" formControlName="dateObj">
                                     </kendo-datepicker>
-                                    <div *ngIf="!formReadonly && f.dateObj.errors && (f.dateObj.touched || f.dateObj.dirty || submitted)" class="text-danger">
+                                    <div *ngIf="!formReadonly && f.dateObj.errors && submitted" class="text-danger">
                                         <div *ngIf="f.dateObj.errors.required">Chọn ngày</div>
                                     </div>
                                 </td>

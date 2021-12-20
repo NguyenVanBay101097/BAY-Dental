@@ -12,6 +12,7 @@ import { ToaThuocLineCuFormComponent } from './toa-thuoc-line-cu-form/toa-thuoc-
 import { ToaThuocLinesSaveCuFormComponent } from './toa-thuoc-lines-save-cu-form/toa-thuoc-lines-save-cu-form.component';
 import { ProductsModule } from '../products/products.module';
 import { ToaThuocLineUseatPopoverComponent } from './toa-thuoc-line-useat-popover/toa-thuoc-line-useat-popover.component';
+import { TmtAutonumericModule } from 'tmt-autonumeric';
 
 @NgModule({
   declarations: [ToaThuocCuDialogComponent, ToaThuocLineDialogComponent, ToaThuocLineCuFormComponent, ToaThuocLinesSaveCuFormComponent, ToaThuocLineUseatPopoverComponent],
@@ -22,6 +23,7 @@ import { ToaThuocLineUseatPopoverComponent } from './toa-thuoc-line-useat-popove
     MyCustomKendoModule,
     ReactiveFormsModule, 
     FormsModule,
+    TmtAutonumericModule,
     NgbModule
   ],exports:[
     ToaThuocLineUseatPopoverComponent

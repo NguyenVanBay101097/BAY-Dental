@@ -24,22 +24,22 @@
 </div>
 
 <div class="o_content">
-    <form class="o_form_view" [formGroup]="formGroup">
+    <form class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
-                    <button *ngIf="!program.active" type="button" class="btn btn-primary" accesskey="s"
+                    <button type="button" *ngIf="!program.active" type="button" class="btn btn-primary" accesskey="s"
                         (click)="onSave()">
                         Lưu
                     </button>
-                    <button *ngIf="!program.active" type="button" class="btn btn-primary" (click)="onSaveActive()">
+                    <button type="button" *ngIf="!program.active" type="button" class="btn btn-primary" (click)="onSaveActive()">
                         Lưu và kích hoạt
                     </button>
-                    <button *ngIf="!program.isPaused && program.active && program.statusDisplay == 'Đang chạy'"
+                    <button type="button" *ngIf="!program.isPaused && program.active && program.statusDisplay == 'Đang chạy'"
                         type="button" class="btn btn-primary" accesskey="s" (click)="onPause()">
                         Tạm ngừng
                     </button>
-                    <button *ngIf="program.isPaused && program.active && program.statusDisplay != 'Hết hạn'"
+                    <button type="button" *ngIf="program.isPaused && program.active && program.statusDisplay != 'Hết hạn'"
                         type="button" class="btn btn-primary" accesskey="s" (click)="onActive()">
                         Kích hoạt
                     </button>
@@ -60,7 +60,7 @@
                     <div class="col-8">
                         <div class="o_form_sheet m-0">
                             <div class="o_not_full oe_button_box">
-                                <button class="btn oe_stat_button" (click)="showHistoryApplyPromotion()" title="Giá trị khuyến mãi">
+                                <button type="button" class="btn oe_stat_button" (click)="showHistoryApplyPromotion()" title="Giá trị khuyến mãi">
                                     <i class="fas fa-dollar-sign o_button_icon"></i>
                                     <div class="o_field_widget o_stat_info o_readonly_modifier">
                                         <span class="o_stat_text">
@@ -77,7 +77,7 @@
                                 <h1>
                                     <input type="text" class="form-control" required formControlName="name" />
                                 </h1>
-                                <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
+                                <div *ngIf="f.name.errors && submitted"
                                     class="text-danger mb-1">
                                     <div *ngIf="f.name.errors.required"> Nhập tên chương trình khuyến mãi </div>
                                 </div>
@@ -148,11 +148,9 @@
                                                             </label>
                                                         </td>
                                                         <td colspan="1" class="w-70">
-                                                            <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                                [autoCorrect]="true"
-                                                                formControlName="maximumUseNumber">
-                                                            </kendo-numerictextbox>
-                                                            <div *ngIf="f.maximumUseNumber.errors && (f.maximumUseNumber.touched || f.maximumUseNumber.dirty || submitted)"
+                                                            <input class="form-control" formControlName="maximumUseNumber" tmtautonumeric
+                                                                [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
+                                                            <div *ngIf="f.maximumUseNumber.errors && submitted"
                                                                 class="text-danger">
                                                                 <div *ngIf="f.maximumUseNumber.errors.required">
                                                                     Nhập số lần áp dụng
@@ -199,11 +197,9 @@
                                                             <td style="width: 100%">
                                                                 <div class="d-flex">
                                                                     <div class="flex-fill">
-                                                                        <kendo-numerictextbox style="width: 100%" [min]="0" [max]="100"
-                                                                        [format]="'n0'" formControlName="discountPercentage"
-                                                                        [autoCorrect]="true">
-                                                                        </kendo-numerictextbox>
-                                                                        <div *ngIf="f.discountPercentage.errors && (f.discountPercentage.touched || f.discountPercentage.dirty || submitted)"
+                                                                        <input class="form-control" style="width: 100%" formControlName="discountPercentage" tmtautonumeric
+                                                                            [options]="{ minimumValue: 0, maximumValue: 100, decimalPlaces: 0 }" />
+                                                                        <div *ngIf="f.discountPercentage.errors && submitted"
                                                                             class="text-danger mb-1">
                                                                             <div *ngIf="f.discountPercentage.errors.required">
                                                                                 Nhập phần trăm giảm giá
@@ -242,11 +238,9 @@
                                                             <td style="width: 100%" [class.d-none]="!isApplyMaxDiscount">
                                                                 <div class="d-flex">
                                                                     <div class="flex-fill">
-                                                                        <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                                            formControlName="discountMaxAmount"
-                                                                            [autoCorrect]="true">
-                                                                        </kendo-numerictextbox>
-                                                                        <div *ngIf="f.discountMaxAmount.errors && (f.discountMaxAmount.touched || f.discountMaxAmount.dirty || submitted)"
+                                                                        <input class="form-control" formControlName="discountMaxAmount" tmtautonumeric
+                                                                            [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
+                                                                        <div *ngIf="f.discountMaxAmount.errors && submitted"
                                                                             class="text-danger">
                                                                             <div *ngIf="f.discountMaxAmount.errors.required">
                                                                                 Nhập mức giảm tối đa
@@ -271,11 +265,9 @@
                                                             <td style="width: 100%">
                                                                 <div class="d-flex">
                                                                     <div class="flex-fill">
-                                                                        <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                                        formControlName="discountFixedAmount"
-                                                                        [autoCorrect]="true">
-                                                                        </kendo-numerictextbox>
-                                                                        <div *ngIf="f.discountFixedAmount.errors && (f.discountFixedAmount.touched || f.discountFixedAmount.dirty || submitted)"
+                                                                        <input class="form-control" formControlName="discountFixedAmount" tmtautonumeric
+                                                                            [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
+                                                                        <div *ngIf="f.discountFixedAmount.errors && submitted"
                                                                             class="text-danger mb-1">
                                                                             <div *ngIf="f.discountFixedAmount.errors.required">
                                                                                 Nhập số tiền giảm giá
@@ -333,11 +325,9 @@
                                                             <div [class.hide]="!isApplyMinimumDiscount">
                                                                 <div class="d-flex">
                                                                     <div class="flex-fill">
-                                                                        <kendo-numerictextbox [min]="0" [format]="'n0'"
-                                                                        formControlName="ruleMinimumAmount"
-                                                                        [autoCorrect]="true">
-                                                                        </kendo-numerictextbox>
-                                                                        <div *ngIf="f.ruleMinimumAmount.errors && (f.ruleMinimumAmount.touched || f.ruleMinimumAmount.dirty || submitted)"
+                                                                        <input class="form-control" formControlName="ruleMinimumAmount" tmtautonumeric
+                                                                            [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
+                                                                        <div *ngIf="f.ruleMinimumAmount.errors && submitted"
                                                                             class="text-danger mb-1">
                                                                             <div
                                                                                 *ngIf="f.ruleMinimumAmount.errors.required">
@@ -373,7 +363,7 @@
                                                             [textField]="'name'" [valueField]="'id'"
                                                             formControlName="discountSpecificProductCategories">
                                                         </kendo-multiselect>
-                                                        <div *ngIf="f.discountSpecificProductCategories.errors && (f.discountSpecificProductCategories.touched || f.discountSpecificProductCategories.dirty || submitted)"
+                                                        <div *ngIf="f.discountSpecificProductCategories.errors && submitted"
                                                             class="text-danger mb-1">
                                                             <div
                                                                 *ngIf="f.discountSpecificProductCategories.errors.required">
@@ -402,7 +392,7 @@
                                                             [valueField]="'id'"
                                                             formControlName="discountSpecificProducts">
                                                         </kendo-multiselect>
-                                                        <div *ngIf="f.discountSpecificProducts.errors && (f.discountSpecificProducts.touched || f.discountSpecificProducts.dirty || submitted)"
+                                                        <div *ngIf="f.discountSpecificProducts.errors && submitted"
                                                             class="text-danger mb-1">
                                                             <div
                                                                 *ngIf="f.discountSpecificProducts.errors.required">
@@ -452,7 +442,7 @@
                                             <label for="startDate">
                                                 Ngày bắt đầu
                                             </label>
-                                            <kendo-datepicker class="form-control" id="startDate"
+                                            <kendo-datepicker style="width: 100%" id="startDate"
                                                 formControlName="ruleDateFromObj">
                                             </kendo-datepicker>
                                         </div>
@@ -460,7 +450,7 @@
                                             <label for="endDate">
                                                 Ngày kết thúc
                                             </label>
-                                            <kendo-datepicker class="form-control" id="endDate"
+                                            <kendo-datepicker style="width: 100%" id="endDate"
                                                 formControlName="ruleDateToObj">
                                             </kendo-datepicker>
                                             <div *ngIf="f.ruleDateToObj.errors" class="text-danger mb-1">
@@ -514,7 +504,7 @@
                                                 [filterable]="true" #partnerMultiSelect [textField]="'name'"
                                                 [valueField]="'id'" formControlName="discountSpecificPartners">
                                             </kendo-multiselect>
-                                            <div *ngIf="f.discountSpecificPartners.errors && (f.discountSpecificPartners.touched || f.discountSpecificPartners.dirty || submitted)"
+                                            <div *ngIf="f.discountSpecificPartners.errors && submitted"
                                                 class="text-danger mb-1">
                                                 <div *ngIf="f.discountSpecificPartners.errors.required">
                                                     Chọn khách hàng
@@ -539,7 +529,7 @@
                                                 [filterable]="true" #cardTypeCbx [textField]="'name'"
                                                 [valueField]="'id'" formControlName="discountCardTypes">
                                             </kendo-multiselect>
-                                            <div *ngIf="f.discountCardTypes.errors && (f.discountCardTypes.touched || f.discountCardTypes.dirty || submitted)"
+                                            <div *ngIf="f.discountCardTypes.errors && submitted"
                                                 class="text-danger mb-1">
                                                 <div *ngIf="f.discountCardTypes.errors.required">
                                                     Loại thẻ thành viên

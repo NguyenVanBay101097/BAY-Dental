@@ -12,9 +12,13 @@
     right: 0;
     width: 100%;
     color: #fff;
-    background-color: #7c7bad;
+    font-weight: bold;
+    background-color: rgba(145,146,148);
     opacity: 0;
     transition: opacity ease 400ms;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .o_form_view .o_field_image .o_form_image_controls>.fa {

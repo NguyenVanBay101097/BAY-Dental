@@ -4,6 +4,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { SaleOrderLineService, SaleOrderLinesLaboPaged } from 'src/app/core/services/sale-order-line.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
@@ -60,6 +61,7 @@ export class LaboOrderListComponent implements OnInit {
     private saleOrderLineService: SaleOrderLineService,
     private modalService: NgbModal,
     private checkPermissionService: CheckPermissionService,
+    private authService: AuthService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -148,6 +150,7 @@ export class LaboOrderListComponent implements OnInit {
     this.filterPaged.hasAnyLabo = this.islabo ? this.islabo : '';
     this.filterPaged.laboState = this.stateLabo ? this.stateLabo : '';
     this.filterPaged.search = this.search ? this.search : '';
+    this.filterPaged.companyId = this.authService.userInfo.companyId;
     this.saleOrderLineService.getListLineIsLabo(this.filterPaged).pipe(
       map(response => (<GridDataResult>{
         data: response.items,

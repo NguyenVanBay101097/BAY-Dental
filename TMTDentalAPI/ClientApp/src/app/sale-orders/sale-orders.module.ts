@@ -38,6 +38,9 @@ import { SaleOrderPrintPopupComponent } from './sale-order-print-popup/sale-orde
 import { SaleOrderImagesLibraryPopupComponent } from './sale-order-images-library-popup/sale-order-images-library-popup.component';
 import { SaleOrderImageComponent } from './sale-order-image/sale-order-image.component';
 import { SaleOrderServiceListComponent } from './sale-order-service-list/sale-order-service-list.component';
+import { SaleOrderInsurancePaymentDialogComponent } from './sale-order-insurance-payment-dialog/sale-order-insurance-payment-dialog.component';
+
+import { ConfirmPaymentDialogComponent } from './confirm-payment-dialog/confirm-payment-dialog.component';
 
 @NgModule({
   declarations: [
@@ -70,6 +73,8 @@ import { SaleOrderServiceListComponent } from './sale-order-service-list/sale-or
     SaleOrderImagesLibraryPopupComponent,
     SaleOrderImageComponent,
     SaleOrderServiceListComponent,
+    SaleOrderInsurancePaymentDialogComponent,
+    ConfirmPaymentDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -79,7 +84,7 @@ import { SaleOrderServiceListComponent } from './sale-order-service-list/sale-or
     ToaThuocsModule,
     FormsModule,
     SharedModule,
-    NgbModule
+    NgbModule,
   ],
   providers: [SaleOrderPromotionService, SaleCouponProgramService],
   exports: [
@@ -99,7 +104,8 @@ import { SaleOrderServiceListComponent } from './sale-order-service-list/sale-or
     SaleOrderPromotionDialogComponent,
     SaleOrderLinePromotionDialogComponent,
     SaleOrderPrintPopupComponent,
-    SaleOrderImagesLibraryPopupComponent
+    SaleOrderImagesLibraryPopupComponent,
+    SaleOrderInsurancePaymentDialogComponent
   ]
 })
 export class SaleOrdersModule { }

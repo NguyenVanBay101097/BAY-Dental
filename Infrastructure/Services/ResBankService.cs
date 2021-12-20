@@ -56,7 +56,8 @@ namespace Infrastructure.Services
                 .Select(x => new ResBankSimple
                 {
                     Id = x.Id,
-                    Name = x.Name
+                    Name = x.Name,
+                    BIC = x.BIC
                 })
                 .ToListAsync();
 
@@ -82,8 +83,8 @@ namespace Infrastructure.Services
                 var bics = record.GetElementsByTagName("BIC");
                 resBanks.Add(new ResBank()
                 {
-                    Name = names[0].InnerText.Trim(),
-                    BIC = bics[0].InnerText.Trim()
+                    Name = names[0].InnerText,
+                    BIC = bics[0].InnerText
                 });
             }
 

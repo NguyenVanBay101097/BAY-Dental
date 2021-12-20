@@ -37,7 +37,7 @@ import { FormsModule } from "@angular/forms";
 import { LoadingComponent } from "./shared/loading/loading.component";
 import { MyCustomKendoModule } from "./shared/my-customer-kendo.module";
 import { GridModule } from '@progress/kendo-angular-grid';
-
+import { TmtAutonumericModule } from 'tmt-autonumeric';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -78,6 +78,9 @@ registerLocaleData(localeVi, "vi");
       relativeTimeThresholdOptions: {
         m: 59,
       },
+    }),
+    TmtAutonumericModule.forRoot({
+      emptyInputBehavior: 'null'
     }),
     FacebookModule.forRoot(),
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),

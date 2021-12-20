@@ -10,6 +10,9 @@ export class ConfirmDialogComponent implements OnInit {
   title: string;
   body: string;
   body2: string;
+  confirmText = 'Xác nhận';
+  closeText = 'Đóng';
+  closeClass = '';
   constructor(public activeModal: NgbActiveModal) { }
 
   ngOnInit() {

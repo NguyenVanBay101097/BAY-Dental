@@ -2,7 +2,7 @@
     <div class="o_control_panel">
         <ol class="breadcrumb">
             <li class="active">
-                <span>Báo cáo tổng quan ngày</span>
+                <span>Báo cáo ngày</span>
             </li>
         </ol>
         <div class="o_cp_searchview">
@@ -49,7 +49,7 @@
                   </ng-template>
                 </li>
                 <li [ngbNavItem]="'cashbook'">
-                  <a ngbNavLink routerLink="." [fragment]="'cashbook'">Tình hình thu chi</a>
+                  <a ngbNavLink routerLink="." [fragment]="'cashbook'">Sổ quỹ</a>
                   <ng-template ngbNavContent>
                     <app-day-dashboard-report-cashbook #cashbookComp [dateFrom]="dateFrom" [dateTo]="dateTo" [companyId]="companyId">
                     </app-day-dashboard-report-cashbook>

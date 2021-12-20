@@ -3,6 +3,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { NotifyService } from 'src/app/shared/services/notify.service';
@@ -26,6 +27,7 @@ export class HrJobListComponent implements OnInit {
     private hrJobService: HrJobService,
     private modalService: NgbModal,
     private notifyService: NotifyService,
+    private authService: AuthService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -46,6 +48,7 @@ export class HrJobListComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search;
+    val.companyId = this.authService.userInfo.companyId;
 
     this.loading = true;
     this.hrJobService.getPaged(val).pipe(

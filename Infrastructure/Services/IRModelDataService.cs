@@ -214,12 +214,12 @@ namespace Infrastructure.Services
 
         public override Task<IEnumerable<IRModelData>> CreateAsync(IEnumerable<IRModelData> entities)
         {
-            foreach (var modelData in entities)
+            foreach(var modelData in entities)
             {
                 var key = $"{(_tenant != null ? _tenant.Hostname : "localhost")}-irmodeldata-{string.Format("{0}.{1}", modelData.Module, modelData.Name)}";
                 _cache.Remove(key);
             }
-
+          
             return base.CreateAsync(entities);
         }
 

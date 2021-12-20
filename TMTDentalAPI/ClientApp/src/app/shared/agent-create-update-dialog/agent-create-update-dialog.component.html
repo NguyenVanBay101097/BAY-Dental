@@ -5,7 +5,7 @@
 </header>
 
 <div class="modal-body o_act_window">
-    <form class="o_form_view" [formGroup]="formGroup">
+    <form class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_sheet">
                 <div class="o_group m-0">
@@ -52,7 +52,7 @@
                                 <td colspan="1" style="width: 100%; vertical-align: initial;">
                                     <div [class.d-none]="classify !== 'partner'">
                                         <input class="form-control" formControlName="name" name="name">
-                                        <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
+                                        <div *ngIf="f.name.errors && submitted"
                                             class="text-danger mb-1">
                                             <div *ngIf="f.name.errors.required">Nhập tên người giới
                                                 thiệu
@@ -65,7 +65,7 @@
                                             [valueField]="'id'" [textField]="'displayName'" placeholder="Họ tên, sđt, mã"
                                             (valueChange)="onChangeCustomer($event)">
                                         </kendo-combobox>
-                                        <div *ngIf="f.customer.errors && (f.customer.touched || f.customer.dirty || submitted)"
+                                        <div *ngIf="f.customer.errors && submitted"
                                             class="text-danger mb-1">
                                             <div *ngIf="f.customer.errors.required">Nhập tên người giới
                                                 thiệu
@@ -78,7 +78,7 @@
                                             [valueField]="'id'" [textField]="'name'" placeholder="Họ tên, sđt, mã"
                                             (valueChange)="onChangeEmployee($event)">
                                         </kendo-combobox>
-                                        <div *ngIf="f.employee.errors && (f.employee.touched || f.employee.dirty || submitted)"
+                                        <div *ngIf="f.employee.errors && submitted"
                                             class="text-danger mb-1">
                                             <div *ngIf="f.employee.errors.required">Nhập tên người giới
                                                 thiệu
@@ -238,7 +238,7 @@
                                         [textField]="'name'" [valueField]="'id'" #agentCommissionCbx
                                         formControlName="commission">
                                     </kendo-combobox>
-                                    <div *ngIf="f.commission.errors && (f.commission.touched || f.commission.dirty || submitted)"
+                                    <div *ngIf="f.commission.errors && submitted"
                                         class="text-danger mb-1">
                                         <div *ngIf="f.commission.errors.required">Chọn bảng hoa hồng
                                         </div>

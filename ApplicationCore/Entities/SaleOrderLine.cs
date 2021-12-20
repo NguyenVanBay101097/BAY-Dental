@@ -97,10 +97,19 @@ namespace ApplicationCore.Entities
 
         public string Note { get; set; }
 
+        /// <summary>
+        /// Không sử dụng
+        /// </summary>
         public string InvoiceStatus { get; set; }
 
+        /// <summary>
+        /// Không sử dụng
+        /// </summary>
         public decimal? QtyToInvoice { get; set; }
 
+        /// <summary>
+        /// Không sử dụng
+        /// </summary>
         public decimal? QtyInvoiced { get; set; }
 
         /// <summary>
@@ -160,7 +169,7 @@ namespace ApplicationCore.Entities
         public decimal? PriceReduce { get; set; }
 
         /// <summary>
-        /// Số tiền đã thanh toán
+        /// Không sử dụng
         /// </summary>
         public decimal? AmountPaid { get; set; }
 
@@ -173,6 +182,14 @@ namespace ApplicationCore.Entities
         /// Tổng đơn giá giảm của dịch vụ
         /// </summary>
         public double? AmountDiscountTotal { get; set; }
+
+        /// <summary>
+        /// Tổng tiền bảo hiểm đã thanh toán
+        /// </summary>
+        public decimal? AmountInsurancePaidTotal { get; set; }
+
+        public Guid? InsuranceId { get; set; }
+        public ResInsurance Insurance { get; set; }
 
         /// <summary>
         /// bác sĩ được hưởng hoa hồng
@@ -194,6 +211,8 @@ namespace ApplicationCore.Entities
         public ICollection<SaleOrderPromotion> Promotions { get; set; } = new List<SaleOrderPromotion>();
 
         public ICollection<SaleOrderPromotionLine> PromotionLines { get; set; } = new List<SaleOrderPromotionLine>();
+
+
 
         /// <summary>
         /// Xác định line bị hủy bỏ
@@ -222,11 +241,22 @@ namespace ApplicationCore.Entities
         public Advisory Advisory { get; set; }
 
         /// <summary>
-        /// ngừng hoạt động
+        /// Không sử dụng
         /// </summary>
         public bool IsActive { get; set; }
 
         public ICollection<CommissionSettlement> CommissionSettlements { get; set; } = new List<CommissionSettlement>();
+
+        /// <summary>
+        /// thanh toán = bảo hiểm
+        /// </summary>
+        public ICollection<ResInsurancePaymentLine> InsurancePaymentLines { get; set; } = new List<ResInsurancePaymentLine>();
+
+        /// <summary>
+        /// danh sách vật tư
+        /// </summary>
+        public ICollection<SaleOrderLineSaleProductionRel> SaleProductionRels { get; set; } = new List<SaleOrderLineSaleProductionRel>();
+
         /// <summary>
         /// ngày của chi tiết điều tr
         /// </summary>

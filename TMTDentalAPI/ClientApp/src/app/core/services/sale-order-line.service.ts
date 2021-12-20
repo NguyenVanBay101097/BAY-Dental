@@ -38,6 +38,7 @@ export class SaleOrderLinesLaboPaged {
     search: string;
     hasAnyLabo: any;
     laboState: string;
+    companyId: string;
 }
 
 export class SaleOrderLineViewModel {
@@ -205,5 +206,9 @@ export class SaleOrderLineService {
 
     applyCardCard(val) {
         return this.http.post(this.baseApi + this.apiUrl + '/ApplyCardCard', val);
+    }
+
+    debtPayment(id) {
+        return this.http.post(this.baseApi + this.apiUrl + "/" +id +  '/DebtPayment', null);
     }
 }

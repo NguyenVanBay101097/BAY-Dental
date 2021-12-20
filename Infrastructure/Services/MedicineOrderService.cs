@@ -46,6 +46,11 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.OrderDate <= dateOrderTo);
             }
 
+            if (val.CompanyId.HasValue)
+            {
+                query = query.Where(x=> x.CompanyId == val.CompanyId.Value);
+            }
+
 
             var totalItems = await query.CountAsync();
 
@@ -629,6 +634,10 @@ namespace Infrastructure.Services
                 var dateOrderTo = val.DateTo.Value.AbsoluteEndOfDate();
                 query = query.Where(x => x.OrderDate <= dateOrderTo);
             }
+            if (val.CompanyId.HasValue)
+            {
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+            }
 
             var totalItems = await query.CountAsync();
             var amountTotal = await query.SumAsync(x => x.Amount);
@@ -687,12 +696,12 @@ namespace Infrastructure.Services
 
         public override ISpecification<MedicineOrder> RuleDomainGet(IRRule rule)
         {
-            var userObj = GetService<IUserService>();
-            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
+            //var userObj = GetService<IUserService>();
+            //var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
             switch (rule.Code)
             {
                 case "medicineOrder.medicine_order_comp_rule":
-                    return new InitialSpecification<MedicineOrder>(x => companyIds.Contains(x.CompanyId));
+                    return new InitialSpecification<MedicineOrder>(x => x.CompanyId == CompanyId);
                 default:
                     return null;
             }

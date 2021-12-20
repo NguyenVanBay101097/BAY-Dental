@@ -85,6 +85,7 @@ export class DayDashboardReportManagementComponent implements OnInit {
       this.servicesComp?.loadDataServiceApi();
       this.revenueComp?.loadDataInvoiceApi();
       this.cashbookComp?.loadDataFromApi();
+      this.revenueComp?.loadDataRevenueApi();
     });
   }
 

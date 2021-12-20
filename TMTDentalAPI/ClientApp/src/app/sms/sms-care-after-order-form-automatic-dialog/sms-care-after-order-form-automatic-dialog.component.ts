@@ -293,5 +293,4 @@ export class SmsCareAfterOrderFormAutomaticDialogComponent implements OnInit {
     this.textarea.nativeElement.focus();
     this.textarea.nativeElement.setSelectionRange(selectionStart + tabValueNew.length, selectionStart + tabValueNew.length);
   }
-
 }

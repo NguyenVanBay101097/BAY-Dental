@@ -100,8 +100,6 @@ export class ProductProductCuDialogComponent implements OnInit {
       this.authService.getGroups().subscribe((result: any) => {
         this.permissionService.define(result);
         this.hasDefined = this.permissionService.hasOneDefined(['product.group_uom']);
-        console.log(this.hasDefined);
-        
       });
       this.loadProductCriteriaList();
       this.categCbxFilterChange();

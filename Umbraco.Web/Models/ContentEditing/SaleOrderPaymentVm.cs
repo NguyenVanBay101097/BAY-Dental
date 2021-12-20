@@ -17,6 +17,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Limit { get; set; }
 
         public Guid? SaleOrderId { get; set; }
+        public Guid? CompanyId { get; set;}
 
     }
 

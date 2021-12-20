@@ -21,7 +21,20 @@ namespace ApplicationCore.Entities
 
         public string DisplayName { get; set; }
 
-        public string Name { get; set; }
+        private string _name;
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                _name = value;
+                NameNoSign = value.RemoveSignVietnameseV2();
+                DisplayName = _NameGet;
+            }
+        }
 
         public string NameNoSign { get; set; }
 
@@ -43,7 +56,15 @@ namespace ApplicationCore.Entities
         /// </summary>
         public bool Customer { get; set; }
 
+        /// <summary>
+        /// là người giới thiệu
+        /// </summary>
         public bool IsAgent { get; set; }
+
+        /// <summary>
+        /// là bảo hiểm
+        /// </summary>
+        public bool IsInsurance { get; set; }
 
         /// <summary>
         /// Chi nhánh
@@ -54,7 +75,19 @@ namespace ApplicationCore.Entities
         /// <summary>
         /// Mã khách hàng
         /// </summary>
-        public string Ref { get; set; }
+        private string _ref;
+        public string Ref
+        {
+            get
+            {
+                return _ref;
+            }
+            set
+            {
+                _ref = value;
+                DisplayName = _NameGet;
+            }
+        }
 
         /// <summary>
         /// Ghi chú
@@ -298,6 +331,17 @@ namespace ApplicationCore.Entities
             DisplayName = Name;
             if (!string.IsNullOrEmpty(Ref))
                 DisplayName = "[" + Ref + "] " + Name;
+        }
+
+        public string _NameGet
+        {
+            get
+            {
+                var name = Name;
+                if (!string.IsNullOrEmpty(Ref))
+                    name = "[" + Ref + "] " + Name;
+                return name;
+            }
         }
 
 

@@ -135,6 +135,7 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
     val.customer = true;
     val.limit = 10;
     val.active = true;
+    val.companyId = this.authService.userInfo.companyId;
     var partner$ = this.partnerService.getAutocompleteSimple(val);
 
     var val2 = Object.assign({}, val);

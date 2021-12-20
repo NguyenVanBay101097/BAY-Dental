@@ -1,0 +1,12 @@
+<kendo-grid [data]="items"  #grid>
+    <kendo-grid-column title="Dịch vụ">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.name}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Số tiền" class="text-right">
+        <ng-template field="amount" kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.amount | number}}
+        </ng-template>
+    </kendo-grid-column>
+</kendo-grid>

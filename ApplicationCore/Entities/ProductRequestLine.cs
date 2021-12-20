@@ -25,5 +25,7 @@ namespace ApplicationCore.Entities
         public decimal ProductQty { get; set; }
 
         public int Sequence { get; set; }
+
+        public ICollection<SaleProductionLineProductRequestLineRel> SaleProductionLineRels { get; set; } = new List<SaleProductionLineProductRequestLineRel>();
     }
 }

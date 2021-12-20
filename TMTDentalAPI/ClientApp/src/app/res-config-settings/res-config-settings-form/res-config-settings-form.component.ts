@@ -51,6 +51,7 @@ export class ResConfigSettingsFormComponent implements OnInit {
       tCareRunAtObj: new Date(2000, 2, 10, 0, 0, 0),
       groupMedicine: false,
       groupSurvey: false,
+      groupInsurance: false,
       // conversionRate: [0, Validators.required]
     });
 

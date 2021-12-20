@@ -1,0 +1,39 @@
+.filter-left {
+    display: flex;
+    /* flex-direction: column; */
+}
+
+.button-group {
+    margin-left: 7px;
+}
+
+@media only screen and (max-width: 1500px) {
+    .filter-left {
+        flex-direction: column;
+    }
+
+    .filter-left .button-group {
+        margin-top: 7px;
+        margin-left: 0;
+    }
+}
+
+.filter-right {
+    width: 50%;
+}
+
+.d-flex-center {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.avatar img {
+    width: 80px;
+    height: auto;
+    object-fit: cover;
+}
+
+.container-xxl {
+    max-width: 100%;
+}

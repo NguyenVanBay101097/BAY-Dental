@@ -139,15 +139,36 @@ select.none-appearance {
     -moz-appearance: none;
 }
 
-.select-state {
-    width: auto;
-    /* border-radius: 5px;
-    padding-top: 2px !important;
-    padding-bottom: 2px !important;
-    padding-right: 15px;
-    padding-left: 15px; */
-}
-
 .mw-140 {
     max-width: 140px;
+}
+
+.state-icon-dropdown{
+    border: 1px solid #71B6FA;
+    display: flex;
+    height: 100%;
+    border-radius: 6px;
+    padding: .25rem!important;
+    background: #FFFFFF;
+}
+
+.state-success{
+    background: #DFFCE6 !important;
+    border: 1px solid #88CE97;
+    color: #20913A;
+    font-weight: 600;
+}
+
+.state-danger{
+    background: #FCE6EA;
+    border: 1px solid #F17585;
+    color: #DA072D;
+    font-weight: 600;
+}
+
+.state-primary{
+    background: #CCE7FF;
+    border: 1px solid #72B7FB;
+    color: #007BFF;
+    font-weight: 600;
 }

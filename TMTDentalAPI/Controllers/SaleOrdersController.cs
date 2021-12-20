@@ -231,7 +231,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Basic.SaleOrder.Update")]
+        [CheckAccess(Actions = "Basic.SaleOrder.DiscountOrder")]
         public async Task<IActionResult> ApplyDiscountOnOrder(ApplyDiscountViewModel val)
         {
             if (!ModelState.IsValid)
@@ -302,7 +302,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("Print")]
-        [CheckAccess(Actions = "Basic.SaleOrder.Read")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Print")]
         public async Task<IActionResult> GetPrint(SaleOrderPrint val)
         {
 
@@ -495,6 +495,21 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetSaleOrderPaymentBySaleOrderId(Guid id)
         {
             var res = await _saleOrderService.GetSaleOrderPaymentBySaleOrderId(id);
+            return Ok(res);
+        }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetDefaultInsurancePaymentBySaleOrderId(Guid id)
+        {
+            var res = await _saleOrderService.GetDefaultInsurancePaymentByOrderId(id);
+            return Ok(res);
+        }
+
+        [HttpGet("{id}/[action]")]
+        public async Task<IActionResult> GetSaleProductionBySaleOrderId(Guid id)
+        {
+            var saleProductions = await _saleOrderService.GetSaleProductionBySaleOrderId(id);
+            var res = _mapper.Map<IEnumerable<SaleProductionDisplay>>(saleProductions);
             return Ok(res);
         }
 
@@ -870,7 +885,7 @@ namespace TMTDentalAPI.Controllers
             var irModelCreate = new List<IRModelData>();
             var dateToData = new DateTime(2021, 08, 25);
             var listIrModelData = await irModelObj.SearchQuery().ToListAsync();// các irmodel cần thiết
-            var entities = await _saleOrderService.SearchQuery(x => x.DateOrder.Date <= dateToData.Date).Include(x => x.OrderLines).ThenInclude(x=> x.SaleOrderLineToothRels).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
+            var entities = await _saleOrderService.SearchQuery(x => x.DateOrder.Date <= dateToData.Date).Include(x => x.OrderLines).ThenInclude(x => x.SaleOrderLineToothRels).ToListAsync();//lấy dữ liệu mẫu: bỏ dữ liệu mặc định
             var data = new List<SaleOrderXmlSampleDataRecord>();
             foreach (var entity in entities)
             {

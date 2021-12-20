@@ -137,6 +137,9 @@ namespace Infrastructure.Services
         public async Task InsertDataSetuptenant(Company mainCompany)
         {
             var groupObj = GetService<IResGroupService>();
+            var appRoleService = GetService<IApplicationRoleService>();
+            var resBankObj = GetService<IResBankService>();
+
             await InsertModuleAccountData(mainCompany);
             await InsertModuleStockData(mainCompany);
             await InsertModuleProductData();
@@ -144,10 +147,10 @@ namespace Infrastructure.Services
             await groupObj.InsertSecurityData();
             //insert những irmodelfield
             await InsertIrModelFieldData();
-            var appRoleService = GetService<IApplicationRoleService>();
-            await appRoleService.CreateBaseUserRole();
-            var resBankObj = GetService<IResBankService>();
+            //await appRoleService.CreateBaseUserRole();
             await resBankObj.ImportSampleData();
+            //insert role default with permission
+            await appRoleService.CreateDefaultRoles();
         }
 
         public async Task AddIrDataForSurvey()
@@ -362,7 +365,16 @@ namespace Infrastructure.Services
                 CompanyId = company.Id,
             };
 
-            await accountObj.CreateAsync(new List<AccountAccount>() { creadiorsAcc, debtorsAcc, cashAcc, bankAcc, incomeAcc, expenseAccount, acc1561, acc334, acc642, accKHTU, accCNKH, accHH });
+            var accCNBH = new AccountAccount
+            {
+                Name = "Công nợ bảo hiểm",
+                Code = "CNBH",
+                InternalType = currentLiabilities.Type,
+                UserTypeId = currentLiabilities.Id,
+                CompanyId = company.Id,
+            };
+
+            await accountObj.CreateAsync(new List<AccountAccount>() { creadiorsAcc, debtorsAcc, cashAcc, bankAcc, incomeAcc, expenseAccount, acc1561, acc334, acc642, accKHTU, accCNKH, accHH , accCNBH});
 
             #endregion
 
@@ -458,7 +470,18 @@ namespace Infrastructure.Services
                 CompanyId = company.Id,
             };
 
-            await journalObj.CreateAsync(new List<AccountJournal>() { cashJournal, bankJournal, saleJournal, purchaseJournal, salaryJournal, journalAdvance, journalCNKH, journalHHA });
+            var journalBH = new AccountJournal
+            {
+                Name = "Bảo hiểm",
+                Type = "insurance",
+                UpdatePosted = true,
+                Code = "INS",
+                DefaultDebitAccountId = accCNBH.Id,
+                DefaultCreditAccountId = accCNBH.Id,
+                CompanyId = company.Id,
+            };
+
+            await journalObj.CreateAsync(new List<AccountJournal>() { cashJournal, bankJournal, saleJournal, purchaseJournal, salaryJournal, journalAdvance, journalCNKH, journalHHA , journalBH });
 
             #endregion
         }

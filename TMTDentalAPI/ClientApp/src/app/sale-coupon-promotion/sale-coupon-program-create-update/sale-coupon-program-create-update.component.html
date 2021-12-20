@@ -29,7 +29,7 @@
 </div>
 
 <div class="o_content">
-    <form class="o_form_view" [formGroup]="formGroup">
+    <form class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
                 <div class="o_statusbar_buttons">
@@ -59,7 +59,7 @@
                     <h1>
                         <input type="text" class="form-control" required formControlName="name" />
                     </h1>
-                    <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)" class="text-danger">
+                    <div *ngIf="f.name.errors && submitted" class="text-danger">
                         <div *ngIf="f.name.errors.required">Nhập tên chương trình</div>
                     </div>
                 </div>

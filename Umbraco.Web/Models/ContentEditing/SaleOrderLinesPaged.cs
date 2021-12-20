@@ -70,6 +70,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// confirmed: Đã tạo
         /// </summary>
         public string LaboState { get; set; }
+        public Guid? CompanyId { get; set; }
     }
 
     public class SaleOrderLineIsActivePatch

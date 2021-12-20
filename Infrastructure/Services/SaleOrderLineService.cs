@@ -247,7 +247,11 @@ namespace Infrastructure.Services
             }
         }
 
-
+        public void _GetInvoiceAmount(IEnumerable<Guid> ids)
+        {
+            var self = SearchQuery(x => ids.Contains(x.Id)).ToList();
+            _GetInvoiceAmount(self);
+        }
 
         public void _GetInvoiceAmount(IEnumerable<SaleOrderLine> self)
         {
@@ -260,6 +264,9 @@ namespace Infrastructure.Services
             foreach (var line in self)
             {
                 decimal amountInvoiced = 0;
+                decimal amountInsurancePaid = 0;
+                Guid? insuranceId = null;
+
                 var amls = selfAmls.Where(x => x.SaleLineRels.Any(s => s.OrderLineId == line.Id)).ToList();
                 foreach (var invoiceLine in amls)
                 {
@@ -269,15 +276,21 @@ namespace Infrastructure.Services
                         if (move.Type == "out_invoice")
                         {
                             amountInvoiced += (invoiceLine.PriceSubtotal ?? 0);
+                            amountInsurancePaid += invoiceLine.InsuranceId.HasValue ? (invoiceLine.PriceSubtotal ?? 0) : 0;
                         }
                         else if (move.Type == "out_refund")
                         {
                             amountInvoiced -= (invoiceLine.PriceSubtotal ?? 0);
+                            amountInsurancePaid -= invoiceLine.InsuranceId.HasValue ? (invoiceLine.PriceSubtotal ?? 0) : 0;
                         }
                     }
+
+                    insuranceId = invoiceLine.InsuranceId.HasValue ? invoiceLine.InsuranceId.Value : insuranceId;
                 }
 
                 line.AmountInvoiced = amountInvoiced;
+                line.AmountInsurancePaidTotal = amountInsurancePaid;
+                line.InsuranceId = insuranceId;
             }
         }
 
@@ -483,6 +496,7 @@ namespace Infrastructure.Services
             var saleCardRelObj = GetService<ISaleOrderServiceCardCardRelService>();
             var serviceCardObj = GetService<IServiceCardCardService>();
 
+
             var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Coupon).Include(x => x.SaleOrderLinePaymentRels)
                 .Include(x => x.Order).Include(x => x.Promotions).ThenInclude(x => x.Lines)
                 .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
@@ -538,6 +552,8 @@ namespace Infrastructure.Services
                     await promotionObj.RemovePromotion(promotionIds);
 
             }
+
+
 
             await DeleteAsync(self);
         }
@@ -747,6 +763,56 @@ namespace Infrastructure.Services
                 await productStepObj.CreateAsync(stepsAdd);
             }
         }
+
+        public async Task CreateSaleProduction(IEnumerable<SaleOrderLine> seft)
+        {
+            var saleProductObj = GetService<ISaleProductionService>();
+            var bomObj = GetService<IProductBomService>();
+
+            var productId_dict = seft.GroupBy(x => x.ProductId.Value).ToDictionary(x => x.Key, x => x.Select(s => s.Id).ToList());
+            var products = await SearchQuery(x => seft.Select(x => x.Id).Contains(x.Id) && x.Product.Boms.Any())
+                .GroupBy(x => x.ProductId.Value)
+                .Select(x => new
+                {
+                    ProductId = x.Key,
+                    Quantity = x.Sum(s => s.ProductUOMQty),
+                    LineIds = productId_dict[x.Key],
+                })
+                .ToListAsync();
+
+            var boms = await bomObj.SearchQuery(x => productId_dict.Select(x => x.Key).Contains(x.ProductId)).ToListAsync();
+            var bom_dict = boms.GroupBy(x => x.ProductId).ToDictionary(x => x.Key, x => x.Select(s => s).ToList());
+            var saleProductions = new List<SaleProduction>();
+            foreach (var item in products)
+            {
+                var saleProduction = new SaleProduction
+                {
+                    ProductId = item.ProductId,
+                    Quantity = item.Quantity,
+                    CompanyId = CompanyId
+                };
+
+                foreach (var line in bom_dict[item.ProductId])
+                {
+                    saleProduction.Lines.Add(new SaleProductionLine
+                    {
+                        ProductId = line.MaterialProductId.Value,
+                        Quantity = saleProduction.Quantity * line.Quantity
+                    });
+                }
+
+                foreach (var lineId in item.LineIds)
+                {
+                    saleProduction.SaleOrderLineRels.Add(new SaleOrderLineSaleProductionRel { OrderLineId = lineId });
+                }
+
+                saleProductions.Add(saleProduction);
+
+            }
+
+            await saleProductObj.CreateAsync(saleProductions);
+        }
+
         public async Task ComputeProductRequestedQuantity(IEnumerable<Guid> ids) //compute quantity after do something
         {
             var reqLineObj = GetService<IProductRequestLineService>();
@@ -961,7 +1027,7 @@ namespace Infrastructure.Services
 
                 }
                 else
-                    throw new Exception(error_status.Error);              
+                    throw new Exception(error_status.Error);
             }
             else
             {
@@ -1399,7 +1465,7 @@ namespace Infrastructure.Services
             {
                 var promotionObj = GetService<ISaleOrderPromotionService>();
                 await promotionObj.ComputeAmount(orderPromotionIds);
-            }
+            }        
 
             //Tính toán lại thành tiền, tổng giảm giá, tổng tiền, đã thanh toán, còn lại cho order
             var orderObj = GetService<ISaleOrderService>();
@@ -1474,7 +1540,7 @@ namespace Infrastructure.Services
 
         public async Task RemoveOrderLine(Guid id)
         {
-            var saleLine = await SearchQuery(x => x.Id == id).Include(x => x.SaleOrderLineToothRels).FirstOrDefaultAsync();
+            var saleLine = await SearchQuery(x => x.Id == id).Include(x => x.SaleOrderLineToothRels).Include(x => x.SaleProductionRels).FirstOrDefaultAsync();
             if (saleLine == null)
                 throw new Exception("Không tìm thấy dịch vụ!");
 
@@ -1502,7 +1568,9 @@ namespace Infrastructure.Services
                 await promotionObj.ComputeAmount(recomputePromotionIds);
             }
 
+
             await Unlink(new List<Guid>() { id });
+
 
             //compute sale order
             var orderObj = GetService<ISaleOrderService>();
@@ -1549,5 +1617,44 @@ namespace Infrastructure.Services
             return res;
         }
 
+        public async Task DebtPayment(Guid id)
+        {
+            var saleLine = await SearchQuery(x=> x.Id == id).Include(x=>x.Order).FirstOrDefaultAsync();
+            if (saleLine == null)
+                throw new Exception("Không tìm thấy dịch vụ");
+            var amountToPay = saleLine.PriceTotal - saleLine.AmountInvoiced;
+            //tạo saleorderpayment
+            var journalObj = GetService<IAccountJournalService>();
+            var soPaymentObj = GetService<ISaleOrderPaymentService>();
+            var debtJournal = await journalObj.GetJournalByTypeAndCompany("debt", saleLine.CompanyId.Value);
+            
+            var soPaymentSave = new SaleOrderPaymentSave()
+            {
+                Amount = amountToPay.Value,
+                CompanyId = saleLine.CompanyId.Value,
+                Date = DateTime.Now,
+                JournalLines = new List<SaleOrderPaymentJournalLineSave>()
+                {
+                    new SaleOrderPaymentJournalLineSave()
+                    {
+                        Amount = amountToPay.Value,
+                        JournalId = debtJournal.Id
+                    }
+                },
+                Lines = new List<SaleOrderPaymentHistoryLineSave>()
+                {
+                    new SaleOrderPaymentHistoryLineSave()
+                    {
+                        Amount = amountToPay.Value,
+                        SaleOrderLineId = saleLine.Id
+                    }
+                },
+                Note = saleLine.Order.Name + " - Khách hàng thanh toán",
+                OrderId = saleLine.OrderId ,
+                State = "draft"
+            };
+            var soPayment = await soPaymentObj.CreateSaleOrderPayment(soPaymentSave);
+            await soPaymentObj.ActionPayment(new List<Guid>() { soPayment.Id });
+        }
     }
 }

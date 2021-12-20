@@ -4,7 +4,7 @@
         tabindex="-1">×</button>
 </header>
 <div class="modal-body o_act_window">
-    <form class="container o_form_view h-100" [formGroup]="formGroup">
+    <form class="container o_form_view h-100" [formGroup]="formGroup" [class.ng-submitted]="submitted">
         <div class="">
             <div class="o_form_sheet">
                 <div class="o_group">
@@ -36,10 +36,8 @@
                                                 </label>
                                             </td>
                                             <td colspan="1" style="width: 80%;">
-                                                <input class="form-control" formControlName="name"
-                                                    [class.border-danger]="submitted && f.name.value==''" />
-                                                <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
-                                                    class="text-danger">
+                                                <input class="form-control" formControlName="name" />
+                                                <div *ngIf="f.name.errors && submitted" class="text-danger">
                                                     <div *ngIf="f.name.errors.required">Nhập tên tin nhắn</div>
                                                 </div>
                                             </td>
@@ -79,9 +77,8 @@
                                                 </label>
                                             </td>
                                             <td colspan="1" class="d-flex tr-send" style="width: 100%;">
-                                                <kendo-numerictextbox [min]="1" formControlName="timeBeforSend"
-                                                    [autoCorrect]="true" [spinners]="false" format="n0">
-                                                </kendo-numerictextbox>
+                                                <input class="form-control" formControlName="timeBeforSend"
+                                                    [options]="{ minimumValue: 1, decimalPlaces: 0 }" tmtautonumeric />
                                                 <select formControlName="typeTimeBeforSend" class="form-control ml-2">
                                                     <option class="form-control" value="day">Ngày
                                                     </option>
@@ -107,7 +104,8 @@
                             </tr>
                             <tr>
                                 <td colspan="2" class="o_td_label">
-                                    <label class="o_form_label o_form_label_help font-weight-bolder" style="width: 250px;">
+                                    <label class="o_form_label o_form_label_help font-weight-bolder"
+                                        style="width: 250px;">
                                         Gửi cho khách hàng sử dụng
                                     </label>
                                     <div class="d-flex ml-5">
@@ -136,8 +134,7 @@
                                                 [placeholder]="'Chọn nhóm dịch vụ'" [valueField]="'id'"
                                                 formControlName="productCategories">
                                             </kendo-multiselect>
-                                            <div *ngIf="f.productCategories.errors && (f.productCategories.touched || f.productCategories.dirty || submitted)"
-                                                class="text-danger">
+                                            <div *ngIf="f.productCategories.errors && submitted" class="text-danger">
                                                 <div *ngIf="f.productCategories.errors.required">Chọn nhóm dịch vụ</div>
                                             </div>
                                         </div>
@@ -147,8 +144,7 @@
                                                 [placeholder]="'Chọn dịch vụ'" [textField]="'name'" [valueField]="'id'"
                                                 formControlName="products">
                                             </kendo-multiselect>
-                                            <div *ngIf="f.products.errors && (f.products.touched || f.products.dirty || submitted)"
-                                                class="text-danger">
+                                            <div *ngIf="f.products.errors && submitted" class="text-danger">
                                                 <div *ngIf="f.products.errors.required">Chọn dịch vụ</div>
                                             </div>
                                         </div>
@@ -170,19 +166,16 @@
                                             <td colspan="1" style="width: 80%;">
                                                 <kendo-combobox [data]="filteredTemplate" ngbAutofocus
                                                     [textField]="'name'" formControlName="template" [filterable]="true"
-                                                    #smsTemplateCbx
-                                                    [valueField]="'id'" class="mb-2">
+                                                    #smsTemplateCbx [valueField]="'id'" class="mb-2">
                                                 </kendo-combobox>
-                                                <div *ngIf="f.template.errors && (f.template.touched || f.template.dirty || submitted)"
-                                                    class="text-danger">
+                                                <div *ngIf="f.template.errors && submitted" class="text-danger">
                                                     <div *ngIf="f.template.errors.required">Chọn tin nhắn mẫu</div>
                                                 </div>
                                             </td>
                                         </tr>
                                         <tr *ngIf="templateValue">
                                             <td colspan="2" style="width: 80%;">
-                                                <textarea type="text" my-autosize
-                                                    class="form-control textarea"
+                                                <textarea type="text" my-autosize class="form-control textarea"
                                                     id="textarea_mass" [value]="templateValue.body" rows="5" #textarea
                                                     [attr.disabled]="true"></textarea>
                                                 <!-- <div *ngIf="f.body.errors && (f.body.touched || f.body.dirty || submitted)"

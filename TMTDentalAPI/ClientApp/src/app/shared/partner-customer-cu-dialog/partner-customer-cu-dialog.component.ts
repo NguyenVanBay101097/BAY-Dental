@@ -11,6 +11,7 @@ import { PartnerCategoryCuDialogComponent } from "src/app/partner-categories/par
 import {
   PartnerCategoryPaged, PartnerCategoryService
 } from "src/app/partner-categories/partner-category.service";
+import { PartnerSourceCreateUpdateDialogComponent } from "src/app/partner-sources/partner-source-create-update-dialog/partner-source-create-update-dialog.component";
 import { PartnerSourcePaged, PartnerSourceService } from "src/app/partner-sources/partner-source.service";
 import { PartnerTitle, PartnerTitlePaged, PartnerTitleService } from 'src/app/partner-titles/partner-title.service';
 import { City, District, PartnerCategorySimple, PartnerSourceSimple, Ward } from 'src/app/partners/partner-simple';
@@ -22,6 +23,7 @@ import { environment } from 'src/environments/environment';
 import { AgentCreateUpdateDialogComponent } from '../agent-create-update-dialog/agent-create-update-dialog.component';
 import { CheckPermissionService } from '../check-permission.service';
 import { PartnerTitleCuDialogComponent } from '../partner-title-cu-dialog/partner-title-cu-dialog.component';
+import { NotifyService } from "../services/notify.service";
 import { AgentBasic, AgentPaged, AgentService } from './../../agents/agent.service';
 
 @Component({
@@ -116,7 +118,8 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     private intlService: IntlService,
     private userService: UserService,
     private partnerTitleService: PartnerTitleService,
-    private checkPermissionService: CheckPermissionService
+    private checkPermissionService: CheckPermissionService,
+    private notifyService: NotifyService
   ) { }
 
   ngOnInit() {
@@ -343,6 +346,16 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     });
   }
 
+  quickCreateSource() {
+    let modalRef = this.modalService.open(PartnerSourceCreateUpdateDialogComponent, { size: 'lg', windowClass: "o_technical_modal", keyboard: false, backdrop: "static", });
+    modalRef.componentInstance.title = "Thêm nguồn khách hàng";
+    modalRef.result.then(result => {
+      this.notifyService.notify("success","Lưu thành công");
+      this.filteredSources.push(result as PartnerSourceSimple);
+      this.formGroup.patchValue({ source: result });
+    }, () => { }
+    );
+  }
 
   loadSourceCities() {
     this.http
@@ -532,6 +545,32 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     return list;
   }
 
+  preparePostData(value): any {
+    return {
+      name: value.name,
+      phone: value.phone,
+      ref: value.ref,
+      birthDay: value.birthDayStr ? parseInt(value.birthDayStr) : null,
+      birthMonth: value.birthMonthStr ? parseInt(value.birthMonthStr) : null,
+      birthYear: value.birthYearStr ? parseInt(value.birthYearStr) : null,
+      gender: value.gender,
+      titleId: value.title != null ? value.title.id : null,
+      email: value.email,
+      jobTitle: value.jobTitle,
+      agentId: value.agent != null ? value.agent.id : null,
+      date: value.dateObj ? this.intlService.formatDate(value.dateObj, "yyyy-MM-dd") : null,
+      street: value.street,
+      city: value.city,
+      district: value.district,
+      ward: value.ward,
+      sourceId: value.source != null ? value.source.id : null,
+      comment: value.comment,
+      avatar: value.avatar,
+      medicalHistory: value.medicalHistory,
+      historyIds: value.histories.map(x => x.id)
+    };
+  }
+
   onSave() {
     this.submitted = true;
 
@@ -540,23 +579,17 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     }
 
     var val = this.formGroup.value;
-    val.sourceId = val.source ? val.source.id : null;
-    val.referralUserId = val.referralUser ? val.referralUser.id : null;
-    val.titleId = val.title ? val.title.id : null;
-    val.date = val.dateObj ? this.intlService.formatDate(val.dateObj, "yyyy-MM-dd") : null;
-    val.birthDay = val.birthDayStr ? parseInt(val.birthDayStr) : null;
-    val.birthMonth = val.birthMonthStr ? parseInt(val.birthMonthStr) : null;
-    val.birthYear = val.birthYearStr ? parseInt(val.birthYearStr) : null;
-    val.agentId = val.agent ? val.agent.id : null;
+    var postVal = this.preparePostData(val);
 
     if (this.id) {
-      this.partnerService.update(this.id, val).subscribe(
+      postVal.id = this.id;
+      this.partnerService.updateCustomer(postVal).subscribe(
         () => {
           this.activeModal.close(true);
         },
       );
     } else {
-      this.partnerService.create(val).subscribe(
+      this.partnerService.createCustomer(postVal).subscribe(
         (result) => {
           this.activeModal.close(result);
         },
@@ -570,6 +603,15 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     });
   }
 
+  onAgeEmit(data): void {
+    const currentYear = (new Date()).getFullYear();
+    if (data && currentYear >= data) {
+      const year = currentYear - (+data);
+      this.formGroup.get("birthYearStr").setValue(year);
+    } else {
+      this.formGroup.get("birthYearStr").setValue('');
+    }
+  }
 
   onCancel() {
     this.activeModal.dismiss();

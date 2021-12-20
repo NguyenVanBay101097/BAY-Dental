@@ -262,7 +262,6 @@ export class PartnerService {
     }
 
     delete(id: string) {
-        debugger
         return this.http.delete(this.baseApi + this.apiUrl + "/" + id);
     }
 
@@ -599,6 +598,22 @@ export class PartnerService {
 
     getListAttachment(id) {
         return this.http.get<IrAttachmentBasic[]>(this.baseApi + this.apiUrl + '/' + id + '/GetListAttachment');
+    }
+
+    createCustomer(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/Customers', val);
+    }
+
+    updateCustomer(val: any) {
+        return this.http.put(this.baseApi + this.apiUrl + '/Customers', val);
+    }
+
+    createSupplier(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/Suppliers', val);
+    }
+
+    updateSupplier(val: any) {
+        return this.http.put(this.baseApi + this.apiUrl + '/Suppliers', val);
     }
 }
 

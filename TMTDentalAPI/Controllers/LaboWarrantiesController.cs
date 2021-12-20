@@ -192,7 +192,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Labo.LaboWarranty.Read")]
+        [CheckAccess(Actions = "Labo.LaboWarranty.Export")]
         public async Task<IActionResult> GetExcelFile([FromBody] LaboWarrantyPaged val)
         {
             var result = await _laboWarrantyService.GetExcelFile(val);

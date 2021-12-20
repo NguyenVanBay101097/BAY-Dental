@@ -7,17 +7,17 @@
                 <span *ngIf="!isEditting">{{line.date | date:'dd/MM/yyyy'}}</span>
                 <kendo-datepicker class="mw-140" format="dd/MM/yyyy" *ngIf="isEditting" formControlName="date">
                 </kendo-datepicker>
-                <ng-container *ngIf="isEditting; else elseTemplateState">
-                    <select *ngIf="formState != 'draft'" class="form-control text-white select-state ml-2" formControlName="state" [ngClass]="{'bg-success':formState == 'done', 'bg-danger': formState == 'cancel', 'bg-primary': formState == 'sale'}">
-                        <option class="text-dark bg-white" *ngFor="let item of  listState" [value]="item.value">{{item.text}}</option>
-                    </select>
-                </ng-container>
-                <ng-template #elseTemplateState>
-                    <div *ngIf="line.state != 'draft'" class="form-control text-white select-state ml-2" [ngClass]="{'bg-success':line.state == 'done', 'bg-danger': line.state == 'cancel', 'bg-primary': line.state == 'sale'}">
-                        {{getStateDisplay(line.state)}}
+                <div *ngIf="line.state != 'draft'" class="form-control ml-2 w-auto" [ngClass]="{'state-success':line.state == 'done', 'state-danger': line.state == 'cancel', 'state-primary': line.state == 'sale'}">
+                    {{getStateDisplay(line.state)}}
+                </div>
+                <div *ngIf="!isEditting && line.state == 'sale'" class="h-100">
+                    <div class="cursor-pointer state-icon-dropdown ml-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img src="../../../assets/icons/icon-state-swich.svg" alt="chuyển đổi trạng thái">
                     </div>
-                </ng-template>
-
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a  href="javascript: void(0);" (click)="onSWitchState(item.value)" *ngFor="let item of  listState" class="dropdown-item">{{item.text}}</a>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="row">
@@ -136,8 +136,8 @@
                                     </ng-template>
                                 </div>
                                 <ng-template #popContent let-greeting="greeting">
-                                    <kendo-numerictextbox style="width:100%;" [min]="0" [format]="'n0'" [spinners]="false" formControlName="priceUnit">
-                                    </kendo-numerictextbox>
+                                    <input class="form-control text-right" style="width:100%;" formControlName="priceUnit" tmtautonumeric
+                                        [options]="{minimumValue: 0,decimalPlaces:0}" />
                                 </ng-template>
                                 <ng-template #popTitle let-language="language">Giá gốc</ng-template>
                             </td>
@@ -155,8 +155,8 @@
                                     </span>
                                 </ng-container>
                                 <ng-template #elseTemplateQty>
-                                    <kendo-numerictextbox required style="width: 150px;" [format]="'n0'" [min]="0" formControlName="productUOMQty">
-                                    </kendo-numerictextbox>
+                                    <input class="form-control text-right" style="width: 150px; float: right;" formControlName="productUOMQty" tmtautonumeric
+                                    [options]="{minimumValue: 0,decimalPlaces: 0}" >
                                 </ng-template>
                             </td>
                         </tr>
@@ -166,12 +166,12 @@
                 <table class="o_group o_inner_group o_group_col_12">
                     <tbody>
                         <tr>
-                            <td colspan="1" class="o_td_label">
+                            <td colspan="1" class="o_td_label" style="width: auto">
                                 <label class="o_form_label">
                                     Thành tiền
                                 </label>
                             </td>
-                            <td colspan="1" style="width: 100%; text-align: end;" class="pr-0">
+                            <td colspan="1" style="text-align: end;" class="pr-0">
                                 <div class="font-weight-600 mb-0">
                                     <ng-container *ngIf="!isEditting; else elseTemplatePriceSub">
                                         {{line.priceSubTotal | number: '1.0-0'}}
@@ -182,25 +182,38 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
+                        <tr hasGroups [groups]="'insurance.group_insurance'" *ngIf="line.state != 'draft'">
+                            <td colspan="1" class="o_td_label" style="width: auto">
                                 <label class="o_form_label">
-                                    Thanh toán
+                                    Bảo hiểm trả 
+                                    <i *ngIf="line.insuranceName" style="font-weight: normal;">({{line.insuranceName}})</i>
                                 </label>
                             </td>
-                            <td colspan="1" style="width: 100%; text-align: end;" class="pr-0">
-                                <div *ngIf="!isFast" class="font-weight-600">
-                                    {{line.amountInvoiced | number}}
+                            <td colspan="1" style="text-align: end;" class="pr-0">
+                                <div class="font-weight-600">
+                                    {{line.amountInsurancePaidTotal | number}}
                                 </div>
                             </td>
                         </tr>
-                        <tr>
-                            <td colspan="1" class="o_td_label">
+                        <tr *ngIf="line.state != 'draft'">
+                            <td colspan="1" class="o_td_label" style="width: auto">
+                                <label class="o_form_label">
+                                    Khách hàng trả
+                                </label>
+                            </td>
+                            <td colspan="1" style="text-align: end;" class="pr-0">
+                                <div *ngIf="!isFast" class="font-weight-600">
+                                    {{line.amountInvoiced - line.amountInsurancePaidTotal | number}}
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngIf="line.state != 'draft'">
+                            <td colspan="1" class="o_td_label" style="width: auto">
                                 <label class="o_form_label">
                                     Còn lại
                                 </label>
                             </td>
-                            <td colspan="1" style="width: 100%; text-align: end;" class="pr-0">
+                            <td colspan="1" style="text-align: end;" class="pr-0">
                                 <div *ngIf="!isFast" class="font-weight-600">
                                     {{((isEditting? getPriceSubTotalFormGroup(): line.priceSubTotal)- line.amountInvoiced) | number}}
                                 </div>

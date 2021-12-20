@@ -37,6 +37,8 @@ export class SaleOrderLineDisplay {
     amountDiscountTotal: number;
     amountPromotionToOrder: number;
     amountPromotionToOrderLine: number;
+    amountInsurancePaidTotal: number;
     orderPartnerId: string;
     date: any;
+    insuranceName: string;
 }

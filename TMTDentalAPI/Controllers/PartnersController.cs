@@ -396,14 +396,23 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Basic.Partner.Create")]
         public async Task<IActionResult> ActionImport(PartnerImportExcelViewModel val)
         {
-            await _unitOfWork.BeginTransactionAsync();
+            if (val.Type == "customer")
+            {
+                var result = await _partnerService.CustomerImport(val.FileBase64);
 
-            var result = await _partnerService.ActionImport(val);
+                return Ok(result);
+            }
+            else
+            {
+                await _unitOfWork.BeginTransactionAsync();
 
-            if (result.Success)
-                _unitOfWork.Commit();
+                var result = await _partnerService.SupplierImport(val.FileBase64);
 
-            return Ok(result);
+                if (result.Success)
+                    _unitOfWork.Commit();
+
+                return Ok(result);
+            }
         }
 
         [HttpPost("[action]")]
@@ -600,7 +609,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Basic.Partner.Read")]
+        [CheckAccess(Actions = "Basic.Partner.Export")]
         public async Task<IActionResult> ExportExcelFile(PartnerInfoPaged val)
         {
             var stream = new MemoryStream();

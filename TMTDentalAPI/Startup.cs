@@ -57,6 +57,10 @@ using Microsoft.Extensions.Caching.Memory;
 using DinkToPdf;
 using DinkToPdf.Contracts;
 using Microsoft.AspNetCore.StaticFiles;
+using ApplicationCore.Users;
+using ApplicationCore.Security.Claims;
+using Volo.Abp.Security.Claims;
+using Volo.Abp.Identity;
 
 namespace TMTDentalAPI
 {
@@ -109,6 +113,7 @@ namespace TMTDentalAPI
                 };
             })
                .AddEntityFrameworkStores<CatalogDbContext>()
+               //.AddClaimsPrincipalFactory<AbpUserClaimsPrincipalFactory>()
                .AddDefaultTokenProviders();
 
             services.AddAuthorization(options =>
@@ -378,9 +383,18 @@ namespace TMTDentalAPI
             services.AddScoped<ICustomerReceiptReportService, CustomerReceiptReportService>();
             services.AddScoped<IPrintTemplateService, PrintTemplateService>();
             services.AddScoped<IPrintTemplateConfigService, PrintTemplateConfigService>();
+            services.AddScoped<IPaymentService, PaymentService>();
 
             services.AddScoped<ILaboWarrantyService, LaboWarrantyService>();
             services.AddScoped<IHrJobService, HrJobService>();
+
+            services.AddScoped<IResInsuranceService, ResInsuranceService>();
+            services.AddScoped<IResInsurancePaymentService, ResInsurancePaymentService>();
+            services.AddScoped<IResInsurancePaymentLineService, ResInsurancePaymentLineService>();
+            services.AddScoped<IResInsuranceReportService, ResInsuranceReportService>();
+
+            services.AddScoped<ISaleProductionService, SaleProductionService>();
+            services.AddScoped<ISaleProductionLineService, SaleProductionLineService>();
 
             services.AddMemoryCache();
 
@@ -400,6 +414,9 @@ namespace TMTDentalAPI
             services.AddScoped<IAdvisoryService, AdvisoryService>();
             services.AddScoped<IMemberLevelService, MemberLevelService>();
             services.AddScoped<IExportExcelService, ExportExcelService>();
+            services.AddTransient<ICurrentUser, CurrentUser>();
+            services.AddSingleton<ICurrentPrincipalAccessor, HttpContextCurrentPrincipalAccessor>();
+            services.AddTransient<IAbpClaimsPrincipalFactory, AbpClaimsPrincipalFactory>();
 
             #region -- Add profile mapper of entity
             Action<IMapperConfigurationExpression> mapperConfigExp = mc =>
@@ -581,6 +598,13 @@ namespace TMTDentalAPI
                 mc.AddProfile(new HrJobProfile());
                 mc.AddProfile(new ProductPricelistItemProfile());
                 mc.AddProfile(new SampleDataProfile());
+                mc.AddProfile(new ResInsuranceProfile());
+                mc.AddProfile(new ResInsurancePaymentProfile());
+                mc.AddProfile(new ResInsurancePaymentLineProfile());
+                mc.AddProfile(new ResInsuranceReportsProfile());
+                mc.AddProfile(new PaymentProfile());
+                mc.AddProfile(new SaleProductionProfile());
+                mc.AddProfile(new SaleProductionLineProfile());
             };
 
             #endregion

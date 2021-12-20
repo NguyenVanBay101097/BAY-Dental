@@ -139,6 +139,7 @@ export class SalaryPaymentDialogV2Component implements OnInit {
   }
 
   actionConfirm(print: boolean) {
+    this.submitted = true;
     var value = this.getValueForm();
     if (this.id) {
       this.accountPaymentService.update(this.id, value)

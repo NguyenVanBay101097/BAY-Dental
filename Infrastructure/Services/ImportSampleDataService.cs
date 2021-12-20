@@ -726,7 +726,21 @@ namespace Infrastructure.Services
             var irModelDataObj = GetService<IIRModelDataService>();
             var partner_main = await irModelDataObj.GetRef<Partner>("base.main_partner");
             var company_main = await irModelDataObj.GetRef<Company>("base.main_company");
+            if (company_main == null)
+                throw new Exception("Not found base.main_company");
+            var company_main_db = await companyObj.GetByIdAsync(company_main.Id);
+
             var user_root = await irModelDataObj.GetRef<ApplicationUser>("base.user_root");
+            if (user_root == null)
+                throw new Exception("Not found base.user_root");
+            var user_root_db = await userObj.GetByIdAsync(user_root.Id);
+
+            if (user_root_db.CompanyId != company_main_db.Id)
+            {
+                user_root_db.CompanyId = company_main_db.Id;
+                await userObj.UpdateAsync(user_root_db);
+            }
+
             var partner_root = await irModelDataObj.GetRef<Partner>("base.partner_root");
 
             if (partner_root == null)
@@ -735,6 +749,8 @@ namespace Infrastructure.Services
                 company_main = await companyObj.GetByIdAsync(user_root.CompanyId);
             if (partner_main == null)
                 partner_main = await partnerObj.GetByIdAsync(company_main.PartnerId);
+
+  
 
             #region xóa các bảng
             // các câu lệnh ưu tiên
