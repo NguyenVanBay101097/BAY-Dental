@@ -384,12 +384,13 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<PartnerReportSourceOverview>> GetPartnerReportSourceOverview(AccountCommonPartnerReportOverviewFilter val)
         {
             var query = GetQueryablePartnerReportOverview(val);
-            var res = await query.GroupBy(x => new { PartnerSourceId = x.PartnerSourceId, PartnerSourceName = x.PartnerSourceName }).Select(x => new PartnerReportSourceOverview
+            var items = await query.ToListAsync();
+            var res = items.GroupBy(x => new { PartnerSourceId = x.PartnerSourceId, PartnerSourceName = x.PartnerSourceName }).Select(x => new PartnerReportSourceOverview
             {
                 PartnerSourceId = x.Key.PartnerSourceId,
                 PartnerSourceName = x.Key.PartnerSourceId == null ? "Chưa xác định" : x.Key.PartnerSourceName,
                 TotalPartner = x.Count()
-            }).ToListAsync();
+            }).ToList();
 
             return res;
         }
@@ -409,8 +410,6 @@ namespace Infrastructure.Services
                 PartnerGender = x.Key,
                 PartnerGenderPercent = ((x.Key.Count() / total) * 100),
             }).ToList();
-
-
 
             return res;
         }
