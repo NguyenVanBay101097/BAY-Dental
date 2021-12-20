@@ -57,6 +57,10 @@ using Microsoft.Extensions.Caching.Memory;
 using DinkToPdf;
 using DinkToPdf.Contracts;
 using Microsoft.AspNetCore.StaticFiles;
+using ApplicationCore.Users;
+using ApplicationCore.Security.Claims;
+using Volo.Abp.Security.Claims;
+using Volo.Abp.Identity;
 
 namespace TMTDentalAPI
 {
@@ -109,6 +113,7 @@ namespace TMTDentalAPI
                 };
             })
                .AddEntityFrameworkStores<CatalogDbContext>()
+               //.AddClaimsPrincipalFactory<AbpUserClaimsPrincipalFactory>()
                .AddDefaultTokenProviders();
 
             services.AddAuthorization(options =>
@@ -409,6 +414,9 @@ namespace TMTDentalAPI
             services.AddScoped<IAdvisoryService, AdvisoryService>();
             services.AddScoped<IMemberLevelService, MemberLevelService>();
             services.AddScoped<IExportExcelService, ExportExcelService>();
+            services.AddTransient<ICurrentUser, CurrentUser>();
+            services.AddSingleton<ICurrentPrincipalAccessor, HttpContextCurrentPrincipalAccessor>();
+            services.AddTransient<IAbpClaimsPrincipalFactory, AbpClaimsPrincipalFactory>();
 
             #region -- Add profile mapper of entity
             Action<IMapperConfigurationExpression> mapperConfigExp = mc =>

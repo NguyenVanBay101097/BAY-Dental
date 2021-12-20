@@ -40,10 +40,6 @@ namespace ApplicationCore.Middlewares
             var msg = ex.Message;
             if (ex.InnerException != null)
                 msg = ex.InnerException.Message;
-            if (ex is DbUpdateException)
-            {
-                msg = "Không thể hoàn thành thao tác do có sự ràng buộc dữ liệu.";
-            }
 
             var result = JsonConvert.SerializeObject(new { error = msg, message = msg });
             context.Response.ContentType = "application/json";

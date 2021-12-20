@@ -13,5 +13,6 @@ namespace Infrastructure.Services
         Task<string> NextByCode(string v);
         Task<string> NextById(Guid id);
         Task<IQueryable<IRSequenceViewModel>> GetViewModelsAsync();
+        Task<IList<string>> NextByCode(string code, int length);
     }
 }

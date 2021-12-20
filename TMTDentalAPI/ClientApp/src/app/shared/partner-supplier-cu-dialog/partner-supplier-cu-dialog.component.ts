@@ -211,7 +211,8 @@ export class PartnerSupplierCuDialogComponent implements OnInit {
     if (this.id) {
       var val = this.formGroup.value;
       val.date = val.dateObj ? this.intlService.formatDate(val.dateObj, "yyyy-MM-dd") : null;
-      this.partnerService.update(this.id, val).subscribe(
+      val.id = this.id;
+      this.partnerService.updateSupplier(val).subscribe(
         () => {
           this.notificationService.show({
             content: 'Lưu thành công',
@@ -226,7 +227,7 @@ export class PartnerSupplierCuDialogComponent implements OnInit {
     } else {
       var val = this.formGroup.value;
       val.date = val.dateObj ? this.intlService.formatDate(val.dateObj, "yyyy-MM-dd") : null;
-      this.partnerService.create(val).subscribe(
+      this.partnerService.createSupplier(val).subscribe(
         (result) => {
           this.notificationService.show({
             content: 'Lưu thành công',
