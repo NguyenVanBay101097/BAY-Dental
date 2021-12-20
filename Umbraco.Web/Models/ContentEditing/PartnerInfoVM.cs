@@ -40,6 +40,7 @@ namespace Umbraco.Web.Models.ContentEditing
         }
         public DateTime? DateCreated { get; set; }
         public string TitleName { get; set; }
+        public  bool Active { get; set; }
     }
     public class PartnerInfoDisplay
     {
@@ -93,6 +94,8 @@ namespace Umbraco.Web.Models.ContentEditing
             {
             }
         }
+
+        public bool Active { get; set; }
     }
 
     public class PartnerInfoPaged
@@ -121,5 +124,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? CardTypeId { get; set; }
 
         public Guid? CompanyId { get; set; }
+        public bool? Active { get; set; }
     }
 }

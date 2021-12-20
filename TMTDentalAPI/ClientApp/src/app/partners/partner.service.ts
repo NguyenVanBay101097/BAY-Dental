@@ -201,6 +201,7 @@ export class PartnerInfoPaged {
     cardTypeId: string;
     orderState: string;
     companyId: string;
+    active?: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
