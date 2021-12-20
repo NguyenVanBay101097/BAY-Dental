@@ -1,0 +1,34 @@
+.card-collapse {
+    text-transform: uppercase;
+}
+
+.collapse-show {
+    position: relative;
+    transition: after 1s ease;
+}
+
+.collapse-show[aria-expanded=true]::after {
+    font-family: "Font Awesome 5 Free";
+    content: "\f077";
+    color: #aaa;
+    font-weight: 900;
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    font-size: 16px;
+    border: 1px solid red;
+}
+
+.collapse-show[aria-expanded=false]::after {
+    font-family: "Font Awesome 5 Free";
+    content: "\f078";
+    color: #aaa;
+    font-weight: 900;
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    font-size: 16px;
+    border: 1px solid red;
+}

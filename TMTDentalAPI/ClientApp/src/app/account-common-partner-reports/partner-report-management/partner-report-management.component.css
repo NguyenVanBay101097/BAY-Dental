@@ -27,3 +27,7 @@
 .k-grid-footer-wrap table tfoot tr td {
     border: none;
 }
+
+.o_cp_left {
+    width: 100%;
+}

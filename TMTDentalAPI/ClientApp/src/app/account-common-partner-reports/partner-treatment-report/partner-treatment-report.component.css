@@ -1,0 +1,27 @@
+.filter-right {
+    flex-basis: 400px;
+}
+
+.bg-filter {
+    background-color: #E4E7EB;
+}
+
+.bg-filter:hover {
+    background-color: #c1c7ce;
+}
+
+.icon-filter {
+    background-color: #E4E7EB;
+}
+
+.transform-50 {
+    transform: translateY(50%);
+}
+
+.cate-multi li.k-button {
+    white-space: nowrap !important;
+}
+
+.filter-2>* {
+    margin-top: .5rem !important;
+}

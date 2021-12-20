@@ -146,6 +146,33 @@ export class ReportPartnerAdvanceDetail {
     ref: string;
 }
 
+export class AccountCommonPartnerReportOverviewFilter {
+    companyId?: string;
+    partnerCompanyId?: string;
+    ageFrom?: number;
+    ageTo?: number;
+    revenueFrom?: number;
+    revenueTo?: number;
+    revenueExpectFrom?: number;
+    revenueExpectTo?: number;
+    isDebt?: boolean;
+    isRevenueExpect?: boolean;
+    orderState: string;
+    categIds: string[];
+    partnerSourceIds: string[];
+    cardTypeIds: string[];
+    cityCode: string;
+    districtCode: string;
+    wardCode: string;
+}
+
+export class AccountCommonPartnerReportOverview {
+    totalPartner: number;
+    totalService: number;
+    totalRevenue: number;
+    totalRevenueExpect: number;
+    totalDebt: number;
+}
 @Injectable()
 export class AccountCommonPartnerReportService {
     apiUrl = 'api/AccountCommonPartnerReports';
@@ -235,5 +262,13 @@ export class AccountCommonPartnerReportService {
 
     printReportPartnerAdvance(val) {
         return this.http.post(this.baseApi + "AccountCommonPartnerReport/ReportPartnerAdvance", val,{ responseType: "text" });
+    }
+
+    getPartnerReportSumaryOverview(val: AccountCommonPartnerReportOverviewFilter): Observable<AccountCommonPartnerReportOverview> {
+        return this.http.post<AccountCommonPartnerReportOverview>(this.baseApi + this.apiUrl + "/GetPartnerReportSumaryOverview", val);
+    }
+
+    getPartnerReportSourceOverview(val: AccountCommonPartnerReportOverviewFilter) {
+        return this.http.post(this.baseApi + this.apiUrl + "/GetPartnerReportSourceOverview", val);
     }
 }

@@ -17,6 +17,10 @@ import { PartnerAdvanceListReportComponent } from './partner-advance-list-report
 import { PartnerAdvanceDetailListReportComponent } from './partner-advance-detail-list-report/partner-advance-detail-list-report.component';
 import { PartnerAreaReportComponent } from './partner-area-report/partner-area-report.component';
 import { AccountInvoiceReportService } from '../account-invoice-reports/account-invoice-report.service';
+import { PartnerTreatmentReportComponent } from './partner-treatment-report/partner-treatment-report.component';
+import { PartnerReportAreaComponent } from './partner-report-area/partner-report-area.component';
+import { PartnerReportSourceComponent } from './partner-report-source/partner-report-source.component';
+import { PartnerReportAgeGenderComponent } from './partner-report-age-gender/partner-report-age-gender.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +32,11 @@ import { AccountInvoiceReportService } from '../account-invoice-reports/account-
     PartnerReportSaleOrderComponent,
     PartnerAdvanceListReportComponent,
     PartnerAdvanceDetailListReportComponent,
-    PartnerAreaReportComponent],
+    PartnerAreaReportComponent,
+    PartnerTreatmentReportComponent,
+    PartnerReportAreaComponent,
+    PartnerReportSourceComponent,
+    PartnerReportAgeGenderComponent],
   imports: [
     CommonModule,
     AccountCommonPartnerReportsRoutingModule,
