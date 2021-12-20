@@ -319,7 +319,7 @@ namespace Infrastructure.Services
                              {
                                  PartnerId = p.Id,
                                  PartnerGender = p.Gender,
-                                 PartnerAge = p.GetAge,
+                                 PartnerAge = !string.IsNullOrEmpty(p.GetAge) ? p.GetAge : null,
                                  PartnerSourceId = p.SourceId.HasValue ? p.SourceId : null,
                                  PartnerSourceName = p.SourceId.HasValue ? p.Source.Name : null,
                                  OrderState = pos.CountSale > 0 ? "sale" : (pos.CountDone > 0 ? "done" : "draft"),
@@ -403,26 +403,59 @@ namespace Infrastructure.Services
             var items = await query.ToListAsync();
             var partnerGender_dict = items.GroupBy(x => x.PartnerGender).ToDictionary(x => x.Key, x => x.ToList());
             var res = new PartnerGenderReportOverview();
+            var partnerGenderItems = new List<PartnerGenderItemReportOverview>();
             var total = partnerGender_dict.Values.Sum(s => s.Count());
             res.LegendChart = sampleDataAgeFilter.Select(x => x.Name).ToList();
-            res.PartnerGenderItems = partnerGender_dict.Select(x => new PartnerGenderItemReportOverview
+
+            foreach (var item in partnerGender_dict)
             {
-                PartnerGender = x.Key,
-                PartnerGenderPercent = ((x.Key.Count() / total) * 100),
-            }).ToList();
+                var count = item.Value.Count();
+                var percentTotal = (int)Math.Round((double)(100 * count) / total);
+
+                var itemValues = new List<int>();
+                var itemPercentValues = new List<int>();
+                foreach (var rangeAge in sampleDataAge)
+                {
+                    var countPn = item.Value.AsQueryable();
+
+                    if (rangeAge.AgeFrom.HasValue)
+                        countPn = countPn.Where(x => !string.IsNullOrEmpty(x.PartnerAge) && int.Parse(x.PartnerAge) >= rangeAge.AgeFrom.Value);
+
+                    if (rangeAge.AgeTo.HasValue)
+                        countPn = countPn.Where(x => !string.IsNullOrEmpty(x.PartnerAge) && int.Parse(x.PartnerAge) <= rangeAge.AgeTo.Value);
+
+                    if (!rangeAge.AgeFrom.HasValue && !rangeAge.AgeTo.HasValue)
+                        countPn = countPn.Where(x => x.PartnerAge == null);
+
+                    itemValues.Add(countPn.Count());
+                    var percent = countPn.Count() > 0 ? (int)Math.Round((double)(percentTotal * countPn.Count()) / count) : 0;
+                    itemPercentValues.Add(percent);
+                }
+
+                partnerGenderItems.Add(new PartnerGenderItemReportOverview
+                {
+                    PartnerGender = item.Key,
+                    PartnerGenderPercent = percentTotal,
+                    Count = itemValues,
+                    Percent = itemPercentValues
+                });
+
+            }
+
+            res.PartnerGenderItems = partnerGenderItems;
 
             return res;
         }
 
         public static SampleDataAgeFilter[] sampleDataAgeFilter = new SampleDataAgeFilter[] {
-            new SampleDataAgeFilter {Name = "0 - 12",  AgeTo = 0, AgeFrom = 12},
-            new SampleDataAgeFilter {Name = "13 - 17", AgeTo = 13 , AgeFrom = 17},
-            new SampleDataAgeFilter {Name = "18 - 24", AgeTo = 18 , AgeFrom = 24},
-            new SampleDataAgeFilter {Name = "25 - 34", AgeTo = 25 , AgeFrom = 34},
-            new SampleDataAgeFilter {Name = "35 - 44", AgeTo = 35 , AgeFrom = 44},
-            new SampleDataAgeFilter {Name = "45 - 54", AgeTo = 45 , AgeFrom = 54},
-            new SampleDataAgeFilter {Name = "55 - 64", AgeTo = 55 , AgeFrom = 64},
-            new SampleDataAgeFilter {Name = "65+", AgeTo = 65}
+            new SampleDataAgeFilter {Name = "0 - 12",  AgeFrom = 0, AgeTo = 12},
+            new SampleDataAgeFilter {Name = "13 - 17", AgeFrom = 13 , AgeTo = 17},
+            new SampleDataAgeFilter {Name = "18 - 24", AgeFrom = 18 , AgeTo = 24},
+            new SampleDataAgeFilter {Name = "25 - 34", AgeFrom = 25 , AgeTo = 34},
+            new SampleDataAgeFilter {Name = "35 - 44", AgeFrom = 35 , AgeTo = 44},
+            new SampleDataAgeFilter {Name = "45 - 64", AgeFrom = 45 , AgeTo = 64},
+            new SampleDataAgeFilter {Name = "65+", AgeFrom = 65},
+            new SampleDataAgeFilter {Name = "Không xác định" }
         };
 
 

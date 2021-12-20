@@ -41,9 +41,9 @@ namespace Umbraco.Web.Models.ContentEditing
     public class SampleDataAgeFilter { 
         
         public string Name { get; set; }
-        public int AgeFrom { get; set; }
+        public int? AgeFrom { get; set; }
 
-        public int AgeTo { get; set; }
+        public int? AgeTo { get; set; }
     }
 
     public class AccountCommonPartnerReportOverviewFilter
@@ -161,7 +161,7 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public IEnumerable<string> LegendChart { get; set; }
 
-        public IEnumerable<PartnerGenderItemReportOverview> PartnerGenderItems { get; set; } = new List<PartnerGenderItemReportOverview>();
+        public List<PartnerGenderItemReportOverview> PartnerGenderItems { get; set; } = new List<PartnerGenderItemReportOverview>();
 
     }
 
@@ -169,7 +169,8 @@ namespace Umbraco.Web.Models.ContentEditing
     {
         public string PartnerGender { get; set; }
         public int PartnerGenderPercent { get; set; }
-        public IEnumerable<decimal> Percent { get; set; }
+        public IEnumerable<int> Percent { get; set; }
+        public IEnumerable<int> Count { get; set; }
     }
 
     public class AccountCommonPartnerReportSearchV2
