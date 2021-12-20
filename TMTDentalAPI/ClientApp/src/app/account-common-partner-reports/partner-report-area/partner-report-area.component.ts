@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { EChartsOption } from 'echarts';
-import { partnerData } from './partner-report';
+import { AccountCommonPartnerReportOverviewFilter, AccountCommonPartnerReportService } from '../account-common-partner-report.service';
 // type RawNode = {
 //   [key: string]: RawNode;
 // } & {
@@ -10,6 +10,7 @@ import { partnerData } from './partner-report';
 interface TreeNode {
   name: string;
   value: number;
+  code: string;
   children?: TreeNode[];
 }
 
@@ -22,23 +23,54 @@ export class PartnerReportAreaComponent implements OnInit {
   data = {
     children: [] as TreeNode[]
   } as TreeNode;
+  dataSet = Object.assign({});
 
-  uploadedDataURL = 'https://echarts.apache.org/examples/data/asset/data/ec-option-doc-statistics-201604.json'
   chartOption: EChartsOption = {}
-
-  constructor() { }
+  constructor(
+    private accountCommonPartnerReportService: AccountCommonPartnerReportService
+  ) { }
 
   ngOnInit(): void {
+    // this.loadChartOption();
+    this.loadReportArea();
+  }
+
+  loadReportArea() {
+    let val = new AccountCommonPartnerReportOverviewFilter();
+    this.accountCommonPartnerReportService.getPartnerReportTreeMapOverview(val).subscribe((res: any) => {
+      res.forEach(el1 => {
+        let cityData = Object.assign({});
+        if (el1.districts) {
+          el1.districts.forEach(el2 => {
+            let districtsData = Object.assign({});
+            if (el2.wards) {
+              el2.wards.forEach(el3 => {
+                let wardsData = Object.assign({});
+                wardsData['$count'] = el3.count;
+                wardsData['$code'] = el3.wardCode;
+                districtsData[el3.wardName] = wardsData;
+              });
+            }
+            // districtsData['$count'] = el2.count;
+            districtsData['$code'] = el2.districtCode;
+            cityData[el2.districtName] = districtsData;
+          });
+        }
+        // cityData['$count'] = el1.count;
+        cityData['$code'] = el1.cityCode;
+        this.dataSet[el1.cityName] = cityData;
+      });
+      // console.log(this.dataSet);
+      this.loadChartOption();
+    }, error => console.log(error));
+  }
+
+  loadChartOption() {
     this.chartOption = {
-      title: {
-        text: 'ECharts Options',
-        subtext: '2016/04',
-        left: 'leafDepth'
-      },
       tooltip: {},
       series: [
         {
-          name: 'option',
+          name: 'Việt Nam',
           type: 'treemap',
           visibleMin: 300,
           data: this.data.children,
@@ -73,10 +105,9 @@ export class PartnerReportAreaComponent implements OnInit {
         }
       ]
     }
-    const rawData = partnerData;
+    const rawData = this.dataSet;
     if (rawData) {
       this.convert(rawData, this.data, '');
-
     }
   }
 
@@ -98,8 +129,13 @@ export class PartnerReportAreaComponent implements OnInit {
     } else {
       target.children.push({
         name: basePath,
-        value: source.$count
+        value: source.$count,
+        code: source.$code,
       });
     }
+  }
+
+  onChartClick(event) {
+    console.log(event);
   }
 }

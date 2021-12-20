@@ -271,4 +271,12 @@ export class AccountCommonPartnerReportService {
     getPartnerReportSourceOverview(val: AccountCommonPartnerReportOverviewFilter) {
         return this.http.post(this.baseApi + this.apiUrl + "/GetPartnerReportSourceOverview", val);
     }
+
+    getPartnerReportGenderOverview(val: AccountCommonPartnerReportOverviewFilter) {
+        return this.http.post(this.baseApi + this.apiUrl + "/GetPartnerReportGenderOverview", val);
+    }
+
+    getPartnerReportTreeMapOverview(val: AccountCommonPartnerReportOverviewFilter) {
+        return this.http.post(this.baseApi + this.apiUrl + "/GetPartnerReportTreeMapOverview", val);
+    }
 }

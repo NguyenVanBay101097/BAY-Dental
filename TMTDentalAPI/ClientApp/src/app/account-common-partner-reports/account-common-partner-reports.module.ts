@@ -21,6 +21,7 @@ import { PartnerTreatmentReportComponent } from './partner-treatment-report/part
 import { PartnerReportAreaComponent } from './partner-report-area/partner-report-area.component';
 import { PartnerReportSourceComponent } from './partner-report-source/partner-report-source.component';
 import { PartnerReportAgeGenderComponent } from './partner-report-age-gender/partner-report-age-gender.component';
+import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { PartnerReportAgeGenderComponent } from './partner-report-age-gender/par
     FormsModule,
     SharedModule,
     NgbModule,
+    DropDownsModule
   ],
   providers: [
     AccountCommonPartnerReportService,

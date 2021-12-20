@@ -2,8 +2,8 @@
     <div class="card-body">
         <div class="filter">
             <div class="filter-left">
-                <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mr-2" [valueField]="'id'" [textField]="'name'"
-                    [filterable]="true" #companyCbx>
+                <kendo-combobox [data]="companies" [placeholder]="'Tất cả chi nhánh'" class="mr-2" [valueField]="'id'"
+                    [textField]="'name'" [filterable]="true" #companyCbx (selectionChange)="onSelectCompany($event)">
                 </kendo-combobox>
                 <button class="btn btn-primary" type="button">
                     <i class="fas fa-download"></i> Xuất File
@@ -11,17 +11,29 @@
             </div>
             <div class="filter-right">
                 <kendo-combobox [placeholder]="'Tình trạng điều trị'" class="mr-2" [valueField]="'value'"
-                    [data]="orderStates" [textField]="'text'" [filterable]="true">
+                    [data]="orderStates" [textField]="'text'" [filterable]="true"
+                    (selectionChange)="onSelectOrderStates($event)">
                 </kendo-combobox>
                 <kendo-combobox [placeholder]="'Công nợ'" class="mr-2" [valueField]="'value'" [textField]="'text'"
-                    [data]="totalDebits" [filterable]="true">
+                    [data]="totalDebits" [filterable]="true" (selectionChange)="onSelectTotalDebits($event)">
                 </kendo-combobox>
                 <kendo-combobox [placeholder]="'Dự kiến thu'" [valueField]="'value'" [textField]="'text'"
-                    [data]="orderResiduals" [filterable]="true">
+                    [data]="revenueExpect" [filterable]="true" (selectionChange)="onSelectOrderResiduals($event)">
                 </kendo-combobox>
             </div>
         </div>
-        <div>
+
+        <app-partner-report-area></app-partner-report-area>
+        <div class="row">
+            <div class="col-sm-6">
+                <app-partner-report-source #sourceComp></app-partner-report-source>
+            </div>
+            <div class="col-sm-6">
+                <app-partner-report-age-gender></app-partner-report-age-gender>
+            </div>
+        </div>
+
+        <div class="mt-3">
             <div class="o_aggregate_col">
                 <div class="o_aggregate">
                     <h6>Số khách hàng</h6>
@@ -41,7 +53,7 @@
             <div class="o_aggregate_col">
                 <div class="o_aggregate">
                     <h6>Doanh thu</h6>
-                    <h4 class="text-primary">
+                    <h4 class="text-success">
                         {{reportSumary?.totalRevenue || 0 | number}}
                     </h4>
                 </div>
@@ -57,21 +69,10 @@
             <div class="o_aggregate_col">
                 <div class="o_aggregate">
                     <h6>Công nợ</h6>
-                    <h4 class="text-primary">
+                    <h4 class="text-danger">
                         {{reportSumary?.totalDebt || 0 | number}}
                     </h4>
                 </div>
-            </div>
-        </div>
-
-
-        <!-- <app-partner-report-area></app-partner-report-area> -->
-        <div class="row">
-            <div class="col-sm-6">
-                <app-partner-report-source></app-partner-report-source>
-            </div>
-            <div class="col-sm-6">
-                <app-partner-report-age-gender></app-partner-report-age-gender>
             </div>
         </div>
     </div>

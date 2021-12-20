@@ -434,7 +434,7 @@ namespace Infrastructure.Services
                         countPn = countPn.Where(x => x.PartnerAge == null);
 
                     itemValues.Add(countPn.Count());
-                    var percent = countPn.Count() > 0 ? Math.Round((double)(percentTotal * countPn.Count()) / count) : 0;
+                    var percent = countPn.Count() > 0 ? Math.Round((double)(percentTotal * countPn.Count()) / count, 2) : 0;
                     itemPercentValues.Add(percent);
                 }
 

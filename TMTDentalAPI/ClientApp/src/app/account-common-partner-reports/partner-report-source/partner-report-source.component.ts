@@ -21,18 +21,19 @@ export class PartnerReportSourceComponent implements OnInit {
   loadReportSource() {
     let val = new AccountCommonPartnerReportOverviewFilter();
     this.accountCommonPartnerReportService.getPartnerReportSourceOverview(val).subscribe((res: any) => {
-      this.dataSet = res.map(val=>{
-        return {value: val.totalPartner, name: val.partnerSourceName}
+      // console.log(res);
+      this.dataSet = res.map(val => {
+        return { value: val.totalPartner, name: val.partnerSourceName }
       })
+      // console.log(this.dataSet);
       this.loadChartOption();
     }, error => console.log(error));
   }
 
-  loadChartOption(){
+  loadChartOption() {
     this.chartOption = {
       tooltip: {
         trigger: 'item',
-        renderMode: 'html',
         formatter: function (params) {
           return `${params.name}: ${params.percent}%`;
         }
@@ -46,6 +47,9 @@ export class PartnerReportSourceComponent implements OnInit {
           type: 'pie',
           radius: '50%',
           data: this.dataSet,
+          label: {
+            show: false,
+          },
           emphasis: {
             itemStyle: {
               shadowBlur: 10,
@@ -53,7 +57,7 @@ export class PartnerReportSourceComponent implements OnInit {
               shadowColor: 'rgba(0, 0, 0, 0.5)'
             }
           }
-        }
+        },
       ]
     }
   }
