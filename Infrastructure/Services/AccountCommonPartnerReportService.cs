@@ -416,10 +416,10 @@ namespace Infrastructure.Services
             foreach (var item in partnerGender_dict)
             {
                 var count = item.Value.Count();
-                var percentTotal = (int)Math.Round((double)(100 * count) / total);
+                var percentTotal = Math.Round((double)(100 * count) / total);
 
                 var itemValues = new List<int>();
-                var itemPercentValues = new List<int>();
+                var itemPercentValues = new List<double>();
                 foreach (var rangeAge in sampleDataAge)
                 {
                     var countPn = item.Value.AsQueryable();
@@ -434,7 +434,7 @@ namespace Infrastructure.Services
                         countPn = countPn.Where(x => x.PartnerAge == null);
 
                     itemValues.Add(countPn.Count());
-                    var percent = countPn.Count() > 0 ? (int)Math.Round((double)(percentTotal * countPn.Count()) / count) : 0;
+                    var percent = countPn.Count() > 0 ? Math.Round((double)(percentTotal * countPn.Count()) / count) : 0;
                     itemPercentValues.Add(percent);
                 }
 

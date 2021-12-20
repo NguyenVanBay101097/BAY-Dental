@@ -189,8 +189,8 @@ namespace Umbraco.Web.Models.ContentEditing
     public class PartnerGenderItemReportOverview
     {
         public string PartnerGender { get; set; }
-        public int PartnerGenderPercent { get; set; }
-        public IEnumerable<int> Percent { get; set; }
+        public double PartnerGenderPercent { get; set; }
+        public IEnumerable<double> Percent { get; set; }
         public IEnumerable<int> Count { get; set; }
     }
 
