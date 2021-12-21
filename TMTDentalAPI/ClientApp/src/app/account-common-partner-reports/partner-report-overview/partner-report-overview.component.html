@@ -5,7 +5,7 @@
                 <kendo-combobox [data]="companies" [placeholder]="'Tất cả chi nhánh'" class="mr-2" [valueField]="'id'"
                     [textField]="'name'" [filterable]="true" #companyCbx (selectionChange)="onSelectCompany($event)">
                 </kendo-combobox>
-                <button class="btn btn-primary" type="button">
+                <button class="btn btn-primary" type="button" (click)="exportExcelFile()">
                     <i class="fas fa-download"></i> Xuất File
                 </button>
             </div>
@@ -20,16 +20,26 @@
                 <kendo-combobox [placeholder]="'Dự kiến thu'" [valueField]="'value'" [textField]="'text'"
                     [data]="revenueExpect" [filterable]="true" (selectionChange)="onSelectOrderResiduals($event)">
                 </kendo-combobox>
+                <div ngbDropdown>
+                    <button type="button" id="dropdownBasic1" ngbDropdownToggle class="btn btn-secondary">
+                        Lọc nâng cao
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                        <label>Nhãn khách hàng</label>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <app-partner-report-area></app-partner-report-area>
+        <div class="mb-3">
+            <app-partner-report-area #reportAreaComp></app-partner-report-area>
+        </div>
         <div class="row">
             <div class="col-sm-6">
-                <app-partner-report-source #sourceComp></app-partner-report-source>
+                <app-partner-report-source #reportSourceComp [filter]="filter"></app-partner-report-source>
             </div>
             <div class="col-sm-6">
-                <app-partner-report-age-gender></app-partner-report-age-gender>
+                <app-partner-report-age-gender #reportAgeGenderComp></app-partner-report-age-gender>
             </div>
         </div>
 

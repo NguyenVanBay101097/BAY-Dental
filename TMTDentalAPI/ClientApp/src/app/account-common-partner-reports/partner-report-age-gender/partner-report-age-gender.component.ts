@@ -17,10 +17,11 @@ export class PartnerReportAgeGenderComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadReportAgeGender();
-    this.loadChartOption();
+    // this.loadChartOption();
   }
 
   loadReportAgeGender() {
+    console.log('3')
     let val = new AccountCommonPartnerReportOverviewFilter();
     this.accountCommonPartnerReportService.getPartnerReportGenderOverview(val).subscribe((res: any) => {
       this.dataSet = res;

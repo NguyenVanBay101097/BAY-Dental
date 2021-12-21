@@ -3,6 +3,8 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
 import { AccountCommonPartnerReportOverviewFilter, AccountCommonPartnerReportService } from '../account-common-partner-report.service';
+import { PartnerReportAgeGenderComponent } from '../partner-report-age-gender/partner-report-age-gender.component';
+import { PartnerReportAreaComponent } from '../partner-report-area/partner-report-area.component';
 import { PartnerReportSourceComponent } from '../partner-report-source/partner-report-source.component';
 
 @Component({
@@ -11,8 +13,10 @@ import { PartnerReportSourceComponent } from '../partner-report-source/partner-r
   styleUrls: ['./partner-report-overview.component.css']
 })
 export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
-  @ViewChild('servicesComp', { static: false }) reportSourceComp: PartnerReportSourceComponent;
-  @ViewChild("companyCbx", { static: true }) companyCbx: ComboBoxComponent;
+  @ViewChild("companyCbx", { static: false }) companyCbx: ComboBoxComponent;
+  @ViewChild("reportAreaComp", { static: false }) reportAreaComp: PartnerReportAreaComponent;
+  @ViewChild('reportSourceComp', { static: false }) reportSourceComp: PartnerReportSourceComponent;
+  @ViewChild("reportAgeGenderComp", { static: false }) reportAgeGenderComp: PartnerReportAgeGenderComponent;
 
   revenueExpect: { text: string, value: boolean }[] = [
     { text: 'Có dự kiến thu', value: true },
@@ -40,9 +44,8 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit() {
-    this.loadAllData();
     this.loadCompanies();
-
+    this.loadReportSumary();
   }
 
   ngAfterViewInit(): void {
@@ -91,8 +94,10 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
 
   loadAllData() {
     setTimeout(() => {
-      this.loadReportSumary();
+      this.reportAreaComp?.loadReportArea();
       this.reportSourceComp?.loadReportSource();
+      // this.reportAgeGenderComp?.loadReportAgeGender();
+      this.loadReportSumary();
     }, 0);
   }
 
@@ -111,4 +116,7 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
     this.loadAllData();
   }
 
+  exportExcelFile() {
+
+  }
 }

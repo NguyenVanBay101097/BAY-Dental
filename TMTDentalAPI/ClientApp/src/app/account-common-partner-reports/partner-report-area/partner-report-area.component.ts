@@ -11,6 +11,7 @@ interface TreeNode {
   name: string;
   value: number;
   code: string;
+  type: string;
   children?: TreeNode[];
 }
 
@@ -36,6 +37,7 @@ export class PartnerReportAreaComponent implements OnInit {
   }
 
   loadReportArea() {
+    console.log('1')
     let val = new AccountCommonPartnerReportOverviewFilter();
     this.accountCommonPartnerReportService.getPartnerReportTreeMapOverview(val).subscribe((res: any) => {
       res.forEach(el1 => {
@@ -48,19 +50,22 @@ export class PartnerReportAreaComponent implements OnInit {
                 let wardsData = Object.assign({});
                 wardsData['$count'] = el3.count;
                 wardsData['$code'] = el3.wardCode;
+                wardsData['$type'] = 'ward';
                 districtsData[el3.wardName] = wardsData;
               });
             }
             // districtsData['$count'] = el2.count;
             districtsData['$code'] = el2.districtCode;
+            districtsData['$type'] = 'district';
             cityData[el2.districtName] = districtsData;
           });
         }
         // cityData['$count'] = el1.count;
         cityData['$code'] = el1.cityCode;
+        cityData['$type'] = 'city';
         this.dataSet[el1.cityName] = cityData;
       });
-      // console.log(this.dataSet);
+      console.log(this.dataSet);
       this.loadChartOption();
     }, error => console.log(error));
   }
@@ -68,6 +73,22 @@ export class PartnerReportAreaComponent implements OnInit {
   loadChartOption() {
     this.chartOption = {
       tooltip: {},
+      toolbox: {
+        show: false,
+        feature: {
+          dataZoom: {
+            yAxisIndex: "none",
+            xAxisIndex: "none",
+          },
+        }
+      },
+      dataZoom: [{
+        type: 'slider',//Telescopic strip below the chart
+        show: false, //Whether it is displayed
+        realtime: true, //When dragging, do you really update a series of views
+        start: 0, //Telescope start position (1-100), can be changed at any time
+        end: 100, //Telescopic balance (1-100), can be changed at any time
+      }],
       series: [
         {
           name: 'Việt Nam',
@@ -131,6 +152,7 @@ export class PartnerReportAreaComponent implements OnInit {
         name: basePath,
         value: source.$count,
         code: source.$code,
+        type: source.$type,
       });
     }
   }

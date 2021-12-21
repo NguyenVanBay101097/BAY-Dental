@@ -1,5 +1,7 @@
-.card-collapse {
+.card-header-title {
     text-transform: uppercase;
+    text-align: center;
+    color: #007BFF;
 }
 
 .collapse-show {

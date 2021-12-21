@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { EChartsOption } from 'echarts';
 import { AccountCommonPartnerReportOverviewFilter, AccountCommonPartnerReportService } from '../account-common-partner-report.service';
 
@@ -8,6 +8,7 @@ import { AccountCommonPartnerReportOverviewFilter, AccountCommonPartnerReportSer
   styleUrls: ['./partner-report-source.component.css']
 })
 export class PartnerReportSourceComponent implements OnInit {
+  @Input() filter: any;
   chartOption: EChartsOption;
   dataSet: [];
   constructor(
@@ -15,11 +16,19 @@ export class PartnerReportSourceComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
     this.loadReportSource();
   }
 
   loadReportSource() {
+    console.log('2');
+    console.log(this.filter);
     let val = new AccountCommonPartnerReportOverviewFilter();
+    val.companyId = this.filter ? this.filter.companyId : null;
+    val.isDebt = this.filter ? this.filter.isDebt : null;
+    val.isRevenueExpect = this.filter ? this.filter.isRevenueExpect : null;
+    val.orderState = this.filter ? this.filter.orderState : '';
+    console.log(val);
     this.accountCommonPartnerReportService.getPartnerReportSourceOverview(val).subscribe((res: any) => {
       // console.log(res);
       this.dataSet = res.map(val => {
