@@ -21,14 +21,12 @@ export class PartnerReportSourceComponent implements OnInit {
   }
 
   loadReportSource() {
-    console.log('2');
-    console.log(this.filter);
+    // console.log('2');
     let val = new AccountCommonPartnerReportOverviewFilter();
     val.companyId = this.filter ? this.filter.companyId : null;
     val.isDebt = this.filter ? this.filter.isDebt : null;
     val.isRevenueExpect = this.filter ? this.filter.isRevenueExpect : null;
     val.orderState = this.filter ? this.filter.orderState : '';
-    console.log(val);
     this.accountCommonPartnerReportService.getPartnerReportSourceOverview(val).subscribe((res: any) => {
       // console.log(res);
       this.dataSet = res.map(val => {

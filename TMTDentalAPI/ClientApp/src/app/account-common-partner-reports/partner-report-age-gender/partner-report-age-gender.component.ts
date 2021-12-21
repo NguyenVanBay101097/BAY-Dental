@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { EChartsOption } from 'echarts';
 import { AccountCommonPartnerReportOverviewFilter, AccountCommonPartnerReportService } from '../account-common-partner-report.service';
 
@@ -8,6 +8,7 @@ import { AccountCommonPartnerReportOverviewFilter, AccountCommonPartnerReportSer
   styleUrls: ['./partner-report-age-gender.component.css']
 })
 export class PartnerReportAgeGenderComponent implements OnInit {
+  @Input() filter: any;
   // chartOption: EChartsOption;
   dataSet: any;
   chartOption: EChartsOption;
@@ -21,8 +22,12 @@ export class PartnerReportAgeGenderComponent implements OnInit {
   }
 
   loadReportAgeGender() {
-    console.log('3')
+    // console.log('3')
     let val = new AccountCommonPartnerReportOverviewFilter();
+    val.companyId = this.filter ? this.filter.companyId : null;
+    val.isDebt = this.filter ? this.filter.isDebt : null;
+    val.isRevenueExpect = this.filter ? this.filter.isRevenueExpect : null;
+    val.orderState = this.filter ? this.filter.orderState : '';
     this.accountCommonPartnerReportService.getPartnerReportGenderOverview(val).subscribe((res: any) => {
       this.dataSet = res;
       this.loadChartOption();

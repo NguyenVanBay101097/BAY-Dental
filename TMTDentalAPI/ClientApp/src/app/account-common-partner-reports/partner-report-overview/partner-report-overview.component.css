@@ -1,7 +1,7 @@
 .filter {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     margin-bottom: 14px;
 }
 
@@ -18,4 +18,26 @@
 
 .demo-chart {
     height: 480px;
+}
+
+.filter-container {
+    width: 450px;
+}
+
+.filter-title {
+    font-size: 1.05rem;
+    font-weight: 500;
+    width: 100%;
+    background: #f2f7ff;
+    padding: 0.5rem;
+    height: 36px;
+}
+
+.filter-label {
+    font-weight: 500;
+    padding: 0.5rem;
+}
+
+.filter-content {
+    padding: 0 0.5rem;
 }

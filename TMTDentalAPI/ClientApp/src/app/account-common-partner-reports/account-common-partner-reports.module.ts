@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { AccountCommonPartnerReportsRoutingModule } from './account-common-partner-reports-routing.module';
 import { AccountCommonPartnerReportService } from './account-common-partner-report.service';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AccountCommonCustomerReportListComponent } from './account-common-customer-report-list/account-common-customer-report-list.component';
 import { SharedModule } from '../shared/shared.module';
 import { PartnerDebitListReportComponent } from './partner-debit-list-report/partner-debit-list-report.component';
@@ -45,7 +45,8 @@ import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
     FormsModule,
     SharedModule,
     NgbModule,
-    DropDownsModule
+    DropDownsModule,
+    ReactiveFormsModule
   ],
   providers: [
     AccountCommonPartnerReportService,

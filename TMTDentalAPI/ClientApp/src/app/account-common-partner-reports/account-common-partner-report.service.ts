@@ -155,6 +155,8 @@ export class AccountCommonPartnerReportOverviewFilter {
     revenueTo?: number;
     revenueExpectFrom?: number;
     revenueExpectTo?: number;
+    debtFrom?: number;
+    debtTo?: number;
     isDebt?: boolean;
     isRevenueExpect?: boolean;
     orderState: string;

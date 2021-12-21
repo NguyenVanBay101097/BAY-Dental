@@ -1,68 +1,61 @@
 // https://echarts.apache.org/examples/data/asset/data/ec-option-doc-statistics-201604.json
 export const partnerData =
 {
-
-    "TP Hồ Chí Minh": {
-        "$code": "HCM",
-        "Quận 1": {
-            "$code": "quan_1",
-            "Phường Tân Định": {
-                "$count": 102,
+    "Không xác định": {
+        "$code": null,
+        "$type": "city"
+    },
+    "Thành phố Cần Thơ": {
+        "Huyện Phong Điền": {
+            "Xã Nhơn Nghĩa": {
+                "$count": 1,
+                "$code": "31315",
+                "$type": "ward"
             },
-            "Phường Đa Kao": {
-                "$count": 52,
-            },
-            "Phường Bến Nghé": {
-                "$count": 245,
-            },
+            "$code": "926",
+            "$type": "district"
         },
-        "Quận Gò Vấp": {
-            "$code": "go_vap",
-            "Phường 14": {
-                "$count": 12,
+        "$code": "92",
+        "$type": "city"
+    },
+    "Thành phố Hồ Chí Minh": {
+        "Quận Thủ Đức": {
+            "Phường Hiệp Bình Phước": {
+                "$count": 1,
+                "$code": "26809",
+                "$type": "ward"
             },
-            "Phường 13": {
-                "$count": 152,
+            "Phường Hiệp Bình Chánh": {
+                "$count": 1,
+                "$code": "26812",
+                "$type": "ward"
             },
-            "Phường 15": {
-                "$count": 76,
-            },
+            "$code": "762",
+            "$type": "district"
         },
         "Quận Bình Thạnh": {
-            "$code": "binh_thanh",
-            "Phường 14": {
-                "$count": 76,
+            "Phường 03": {
+                "$count": 1,
+                "$code": "26947",
+                "$type": "ward"
             },
-            "Phường 24": {
-                "$count": 45,
-            },
-            "Phường 25": {
-                "$count": 28,
-            },
+            "$code": "765",
+            "$type": "district"
         },
+        "$code": "79",
+        "$type": "city"
     },
-    "Long An": {
-        "Thị xã Kiến Tường": {
-            "Xã Tuyên Thạnh": {
-                "$count": 102,
+    "Thành phố Hải Phòng": {
+        "Huyện An Dương": {
+            "Xã An Hoà": {
+                "$count": 1,
+                "$code": "11590",
+                "$type": "ward"
             },
-            "Phường 3": {
-                "$count": 52,
-            },
-            "Xã Thạnh Hưng": {
-                "$count": 245,
-            },
+            "$code": "312",
+            "$type": "district"
         },
-        "Huyện Tân Hưng": {
-            "Xã Hưng Hà": {
-                "$count": 12,
-            },
-            "Xã Hưng Điền": {
-                "$count": 152,
-            },
-            "Xã Thạnh Hưng": {
-                "$count": 76,
-            },
-        }
+        "$code": "31",
+        "$type": "city"
     }
 }

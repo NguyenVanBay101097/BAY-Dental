@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { EChartsOption } from 'echarts';
 import { AccountCommonPartnerReportOverviewFilter, AccountCommonPartnerReportService } from '../account-common-partner-report.service';
+import { partnerData } from './partner-report';
 // type RawNode = {
 //   [key: string]: RawNode;
 // } & {
@@ -21,10 +22,12 @@ interface TreeNode {
   styleUrls: ['./partner-report-area.component.css']
 })
 export class PartnerReportAreaComponent implements OnInit {
+  @Output() filterEmit = new EventEmitter<any>();
   data = {
     children: [] as TreeNode[]
   } as TreeNode;
-  dataSet = Object.assign({});
+  dataSet: any;
+  codeFilter = Object.assign({});
 
   chartOption: EChartsOption = {}
   constructor(
@@ -37,7 +40,8 @@ export class PartnerReportAreaComponent implements OnInit {
   }
 
   loadReportArea() {
-    console.log('1')
+    // console.log('1')
+    this.dataSet = {};
     let val = new AccountCommonPartnerReportOverviewFilter();
     this.accountCommonPartnerReportService.getPartnerReportTreeMapOverview(val).subscribe((res: any) => {
       res.forEach(el1 => {
@@ -65,7 +69,7 @@ export class PartnerReportAreaComponent implements OnInit {
         cityData['$type'] = 'city';
         this.dataSet[el1.cityName] = cityData;
       });
-      console.log(this.dataSet);
+      // console.log(this.dataSet);
       this.loadChartOption();
     }, error => console.log(error));
   }
@@ -95,7 +99,7 @@ export class PartnerReportAreaComponent implements OnInit {
           type: 'treemap',
           visibleMin: 300,
           data: this.data.children,
-          leafDepth: 2,
+          leafDepth: 1,
           levels: [
             {
               itemStyle: {
@@ -127,6 +131,7 @@ export class PartnerReportAreaComponent implements OnInit {
       ]
     }
     const rawData = this.dataSet;
+    // const rawData = partnerData;
     if (rawData) {
       this.convert(rawData, this.data, '');
     }
@@ -134,12 +139,16 @@ export class PartnerReportAreaComponent implements OnInit {
 
   convert(source: any, target: TreeNode, basePath: string) {
     for (let key in source) {
-      let path = basePath ? basePath + '.' + key : key;
+      let path = key;
       if (!key.match(/^\$/)) {
         target.children = target.children || [];
         const child = {
           name: path
         } as TreeNode;
+        if (typeof source[key] === 'object') {
+          // console.log(source[key]);
+          child.code = source[key].$code;
+        }
         target.children.push(child);
         this.convert(source[key], child, path);
       }
@@ -147,6 +156,8 @@ export class PartnerReportAreaComponent implements OnInit {
 
     if (!target.children) {
       target.value = source.$count || 1;
+      target.code = source.$code || '';
+      target.type = source.$type || '';
     } else {
       target.children.push({
         name: basePath,
@@ -158,6 +169,34 @@ export class PartnerReportAreaComponent implements OnInit {
   }
 
   onChartClick(event) {
-    console.log(event);
+    // console.log(event);
+    // const a = event?.data?.children.slice(-1).pop();
+    // console.log(a);
+    // console.log(a.type)
+    // if (a) {
+    //   switch (a.type) {
+    //     case 'city':
+    //       this.codeFilter['cityCode'] = a?.code;
+    //       this.codeFilter['districtCode'] = null;
+    //       this.codeFilter['wardCode'] = null;
+    //       break;
+    //     case 'district':
+    //       // this.codeFilter['cityCode'] = a?.code;
+    //       this.codeFilter['districtCode'] = a?.code;
+    //       this.codeFilter['wardCode'] = null;
+    //       break;
+    //     case 'ward':
+    //       // this.codeFilter['cityCode'] = a?.code;
+    //       // this.codeFilter['districtCode'] = a?.code;
+    //       this.codeFilter['wardCode'] = a?.code;
+    //       break;
+    //     default:
+    //       this.codeFilter['cityCode'] = null;
+    //       this.codeFilter['districtCode'] = null;
+    //       this.codeFilter['wardCode'] = null;
+    //       break;
+    //   }
+    // }
+    // console.log(this.codeFilter);
   }
 }
