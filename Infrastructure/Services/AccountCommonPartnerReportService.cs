@@ -247,28 +247,6 @@ namespace Infrastructure.Services
                             select a;
             }
 
-            if (val.AgeFrom.HasValue)
-            {
-                var filterPartnerQr =
-              from pcr in partnerObj.SearchQuery(x => x.BirthYear.HasValue && val.AgeFrom >= int.Parse(x.GetAge))
-              select pcr.Id;
-
-                mainQuery = from a in mainQuery
-                            join pbk in filterPartnerQr on a.Id equals pbk
-                            select a;
-            }
-
-            if (val.AgeTo.HasValue)
-            {
-                var filterPartnerQr =
-              from pcr in partnerObj.SearchQuery(x => x.BirthYear.HasValue && val.AgeTo <= int.Parse(x.GetAge))
-              select pcr.Id;
-
-                mainQuery = from a in mainQuery
-                            join pbk in filterPartnerQr on a.Id equals pbk
-                            select a;
-            }
-
             var partnerOrderStateQr = from v in saleOrderObj.SearchQuery(x => !val.CompanyId.HasValue || x.CompanyId == val.CompanyId)
                                       group v by v.PartnerId into g
                                       select new
@@ -319,7 +297,7 @@ namespace Infrastructure.Services
                              {
                                  PartnerId = p.Id,
                                  PartnerGender = p.Gender,
-                                 PartnerAge = !string.IsNullOrEmpty(p.GetAge) ? p.GetAge : null,
+                                 BirthYear = p.BirthYear,
                                  PartnerSourceId = p.SourceId.HasValue ? p.SourceId : null,
                                  PartnerSourceName = p.SourceId.HasValue ? p.Source.Name : null,
                                  CityName = p.CityName,
@@ -335,6 +313,17 @@ namespace Infrastructure.Services
                                  TotalDebt = pd.TotalDebit
                              };
 
+            if (val.AgeFrom.HasValue && val.AgeFrom > 0)
+                ResponseQr = ResponseQr.Where(x => x.BirthYear.HasValue && (DateTime.Now.Year - x.BirthYear)  >= val.AgeFrom.Value);
+
+
+
+
+            if (val.AgeTo.HasValue && val.AgeTo > 0)
+                ResponseQr = ResponseQr.Where(x => x.BirthYear.HasValue && (DateTime.Now.Year - x.BirthYear) <= val.AgeTo.Value);
+
+
+
             if (val.RevenueFrom.HasValue)
                 ResponseQr = ResponseQr.Where(x => x.TotalRevenue >= val.RevenueFrom);
 
@@ -342,10 +331,10 @@ namespace Infrastructure.Services
                 ResponseQr = ResponseQr.Where(x => x.TotalRevenue <= val.RevenueTo);
 
             if (val.RevenueExpectFrom.HasValue)
-                ResponseQr = ResponseQr.Where(x => x.TotalRevenueExpect >= val.RevenueFrom);
+                ResponseQr = ResponseQr.Where(x => x.TotalRevenueExpect >= val.RevenueExpectFrom);
 
             if (val.RevenueExpectTo.HasValue)
-                ResponseQr = ResponseQr.Where(x => x.TotalRevenueExpect <= val.RevenueTo);         
+                ResponseQr = ResponseQr.Where(x => x.TotalRevenueExpect <= val.RevenueExpectTo);
 
             if (val.DebtFrom.HasValue)
                 ResponseQr = ResponseQr.Where(x => x.TotalDebt >= val.DebtFrom);
@@ -418,13 +407,13 @@ namespace Infrastructure.Services
                     var countPn = item.Value.AsQueryable();
 
                     if (rangeAge.AgeFrom.HasValue)
-                        countPn = countPn.Where(x => !string.IsNullOrEmpty(x.PartnerAge) && int.Parse(x.PartnerAge) >= rangeAge.AgeFrom.Value);
+                        countPn = countPn.Where(x => x.BirthYear.HasValue && (DateTime.Now.Year - x.BirthYear) >= rangeAge.AgeFrom.Value);
 
                     if (rangeAge.AgeTo.HasValue)
-                        countPn = countPn.Where(x => !string.IsNullOrEmpty(x.PartnerAge) && int.Parse(x.PartnerAge) <= rangeAge.AgeTo.Value);
+                        countPn = countPn.Where(x => x.BirthYear.HasValue && (DateTime.Now.Year - x.BirthYear) <= rangeAge.AgeTo.Value);
 
                     if (!rangeAge.AgeFrom.HasValue && !rangeAge.AgeTo.HasValue)
-                        countPn = countPn.Where(x => x.PartnerAge == null);
+                        countPn = countPn.Where(x => x.BirthYear == null);
 
                     itemValues.Add(countPn.Count());
                     var percent = countPn.Count() > 0 ? Math.Round((double)(percentTotal * countPn.Count()) / count, 2) : 0;

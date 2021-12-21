@@ -2479,6 +2479,7 @@ namespace Infrastructure.Services
         public async Task<IQueryable<PartnerInfoTemplate>> GetQueryPartnerInfoPaged2(PartnerInfoPaged val)
         {
             var saleOrderObj = GetService<ISaleOrderService>();
+            var appointmentObj = GetService<IAppointmentService>();
             var amlObj = GetService<IAccountMoveLineService>();
             var accObj = GetService<IAccountAccountService>();
             var irProperyObj = GetService<IIRPropertyService>();
@@ -2492,8 +2493,11 @@ namespace Infrastructure.Services
                                       {
                                           PartnerId = g.Key,
                                           CountSale = g.Sum(x => x.State == "sale" ? 1 : 0),
-                                          CountDone = g.Sum(x => x.State == "done" ? 1 : 0)
+                                          CountDone = g.Sum(x => x.State == "done" ? 1 : 0),
+                                          Date = g.Max(x => x.DateOrder)
                                       };
+
+
 
             var PartnerResidualQr = (from s in saleOrderObj.SearchQuery(x => x.CompanyId == companyId)
                                      where s.State == "sale" || s.State == "done"
@@ -2520,6 +2524,14 @@ namespace Infrastructure.Services
 
             var cardCardQr = from card in cardCardObj.SearchQuery()
                              select card;
+
+            var appointmentQr = from appoint in appointmentObj.SearchQuery(x => x.CompanyId == companyId)
+                                group appoint by appoint.PartnerId into g
+                                select new
+                                {
+                                    PartnerId = g.Key,
+                                    Date = g.Max(s => s.Date)
+                                };
 
             var mainQuery = SearchQuery(x => x.Active && x.Customer);
             if (val.CompanyId.HasValue)
@@ -2549,7 +2561,7 @@ namespace Infrastructure.Services
 
                 mainQuery = from a in mainQuery
                             join pbk in partnersByKeywords on a.Id equals pbk
-                             select a;
+                            select a;
             }
 
             if (val.CategIds.Any())
@@ -2582,7 +2594,8 @@ namespace Infrastructure.Services
                              from pd in partnerDebQr.Where(x => x.PartnerId == p.Id).DefaultIfEmpty()
                              from pos in partnerOrderStateQr.Where(x => x.PartnerId == p.Id).DefaultIfEmpty()
                              from ir in irPropertyQr.Where(x => !string.IsNullOrEmpty(x.ResId) && x.ResId.Contains(p.Id.ToString().ToLower())).DefaultIfEmpty()
-                             from card in cardCardQr.Where(x=> x.PartnerId == p.Id).DefaultIfEmpty()
+                             from card in cardCardQr.Where(x => x.PartnerId == p.Id).DefaultIfEmpty()
+                             from appoint in appointmentQr.Where(x => x.PartnerId == p.Id).DefaultIfEmpty()
                              select new PartnerInfoTemplate
                              {
                                  Id = p.Id,
@@ -2611,7 +2624,10 @@ namespace Infrastructure.Services
                                  DateCreated = p.DateCreated,
                                  SourceName = p.Source.Name,
                                  TitleName = p.Title.Name,
-                                 CardTypeName = card.Type.Name
+                                 CardTypeName = card.Type.Name,
+                                 CompanyName = p.Company.Name,
+                                 AppointmentDate = appoint.Date,
+                                 SaleOrderDate = pos.Date
                              };
 
             if (val.HasOrderResidual.HasValue && val.HasOrderResidual.Value == 1)
@@ -2650,7 +2666,7 @@ namespace Infrastructure.Services
 
             var ResponseQr = await GetQueryPartnerInfoPaged2(val);
             var count = await ResponseQr.CountAsync();
-            var res = await ResponseQr.OrderByDescending(x=> x.DateCreated).Skip(val.Offset).Take(val.Limit).ToListAsync();
+            var res = await ResponseQr.OrderByDescending(x => x.DateCreated).Skip(val.Offset).Take(val.Limit).ToListAsync();
 
             var cateList = await partnerCategoryRelObj.SearchQuery(x => res.Select(i => i.Id).Contains(x.PartnerId)).Include(x => x.Category).ToListAsync();
             var categDict = cateList.GroupBy(x => x.PartnerId).ToDictionary(x => x.Key, x => x.Select(s => s.Category));
@@ -2738,8 +2754,8 @@ namespace Infrastructure.Services
             var dotkhamObj = GetService<IDotKhamService>();
             var saleObj = GetService<ISaleOrderService>();
             //check company
-            var attQr = attObj.SearchQuery(x=> x.CompanyId == CompanyId);
-            var saleQr = saleObj.SearchQuery(x=> x.CompanyId == CompanyId);
+            var attQr = attObj.SearchQuery(x => x.CompanyId == CompanyId);
+            var saleQr = saleObj.SearchQuery(x => x.CompanyId == CompanyId);
             var dotkhamQr = dotkhamObj.SearchQuery();
 
             var resQr = from att in attQr
@@ -2751,7 +2767,7 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<IEnumerable<Partner>> GetPublicPartners(int limit , int offset , string search)
+        public async Task<IEnumerable<Partner>> GetPublicPartners(int limit, int offset, string search)
         {
             var query = SearchQuery(x => x.Active && x.Customer);
 

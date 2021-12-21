@@ -188,6 +188,9 @@ export class PartnerInfoDisplay {
     categories: any[];
     dateOfBirth: string;
     age: string;
+    companyName: string;
+    appointmentDate: string;
+    saleOrderDate: string;
 }
 
 export class PartnerInfoPaged {

@@ -62,9 +62,9 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// tuổi 
         /// </summary>
-        public int? AgeFrom { get; set; }
+        public decimal? AgeFrom { get; set; }
 
-        public int? AgeTo { get; set; }
+        public decimal? AgeTo { get; set; }
 
         public decimal? RevenueFrom { get; set; }
         public decimal? RevenueTo { get; set; }
@@ -120,8 +120,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid PartnerId { get; set; }
 
         public string PartnerGender { get; set; }
-
-        public string PartnerAge { get; set; }
+        /// <summary>
+        /// Năm sinh
+        /// </summary>
+        public int? BirthYear { get; set; }
 
         public Guid? PartnerSourceId { get; set; }
 

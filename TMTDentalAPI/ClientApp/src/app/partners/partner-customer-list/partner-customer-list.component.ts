@@ -82,6 +82,53 @@ export class PartnerCustomerListComponent implements OnInit {
 
   showInfo = false;
   pagerSettings: any;
+  visibleColumns: string[] = [];
+  columnMenuItems: any[] = [
+    {
+      text: 'Số điên thoại',
+      field: 'phone'
+    },
+    {
+      text: 'Ngày sinh',
+      field: 'birthday'
+    },
+    {
+      text: 'Tuổi',
+      field: 'age'
+    },
+    {
+      text: 'Ngày hẹn gần nhất',
+      field: 'appointmentDate'
+    },
+    {
+      text: 'Ngày điều trị gần nhất',
+      field: 'saleOrderDate'
+    },
+    {
+      text: 'Tình trạng điều trị',
+      field: 'saleOrderState'
+    },
+    {
+      text: 'Dự kiến thu',
+      field: 'orderResidual'
+    },
+    {
+      text: 'Công nợ',
+      field: 'Debt'
+    },
+    {
+      text: 'Thẻ thành viên',
+      field: 'CardType'
+    },
+    {
+      text: 'Nhãn khách hàng',
+      field: 'CategoryPartner'
+    },
+    {
+      text: 'Chi nhánh tạo',
+      field: 'Company'
+    }
+  ]
 
   constructor(private partnerService: PartnerService, private modalService: NgbModal,
     private partnerCategoryService: PartnerCategoryService, private notificationService: NotificationService, 
@@ -135,6 +182,25 @@ export class PartnerCustomerListComponent implements OnInit {
     if(this.canFilterPartnerCategory){
       this.loadFilteredCategs();
     }
+
+    if (localStorage.getItem('partners_grid_visible_columns')) {
+      this.visibleColumns = localStorage.getItem('partners_grid_visible_columns').split(',');      
+    }
+  }
+
+  onCheckColumn(e) {
+    var field = e.target.attributes["data-field"].value;
+    if (e.target.checked) {
+      this.visibleColumns.push(field);
+    } else {
+      var index = this.visibleColumns.indexOf(field);
+      if (index !== -1) {
+        this.visibleColumns.splice(index, 1);
+      }
+    }
+
+    //save to localstorage
+    localStorage.setItem('partners_grid_visible_columns', this.visibleColumns.join(','));
   }
 
   initFilter() {
