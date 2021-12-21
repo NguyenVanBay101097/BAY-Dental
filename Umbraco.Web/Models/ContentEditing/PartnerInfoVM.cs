@@ -126,4 +126,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? CompanyId { get; set; }
         public bool? Active { get; set; }
     }
+
+    public class PartnerGetExistReq
+    {
+        public string Phone { get; set; }
+    }
+
 }

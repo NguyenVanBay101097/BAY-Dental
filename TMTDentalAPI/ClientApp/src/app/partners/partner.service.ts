@@ -204,6 +204,10 @@ export class PartnerInfoPaged {
     active?: boolean;
 }
 
+export class PartnerGetExistReq{
+    phone: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class PartnerService {
     apiUrl = 'api/Partners';
@@ -599,6 +603,10 @@ export class PartnerService {
 
     getListAttachment(id) {
         return this.http.get<IrAttachmentBasic[]>(this.baseApi + this.apiUrl + '/' + id + '/GetListAttachment');
+    }
+
+    getExist(val){
+        return this.http.post<PartnerSimple[]>(this.baseApi + this.apiUrl + '/GetExist', val);
     }
 }
 

@@ -114,6 +114,7 @@ import { ResInsuranceCuDialogComponent } from './res-insurance-cu-dialog/res-ins
 import { NumberDirective } from './directives/numbers-only.directive';
 import { TmtAutonumericModule } from 'tmt-autonumeric';
 import { AgePopoverComponent } from './age-popover/age-popover.component';
+import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
 
 const config: LocaleConfig = {};
 @NgModule({
@@ -336,7 +337,8 @@ const config: LocaleConfig = {};
                 'm': 59
             }
         }),
-        TmtAutonumericModule
+        TmtAutonumericModule,
+        DropDownsModule
     ],
     providers: [NavSidebarService, AppLoadingService, AppSharedShowErrorService, FundBookService,
         { provide: LOCALE_CONFIG, useValue: config },

@@ -1,11 +1,12 @@
 import { HttpClient } from "@angular/common/http";
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { NavigationStart, Router, RouterEvent } from "@angular/router";
 import { NgbActiveModal, NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
+import { AutoCompleteComponent, ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
 import { IntlService } from "@progress/kendo-angular-intl";
 import * as _ from "lodash";
-import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { debounceTime, delay, filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { HistorySimple } from "src/app/history/history";
 import { PartnerCategoryCuDialogComponent } from "src/app/partner-categories/partner-category-cu-dialog/partner-category-cu-dialog.component";
 import {
@@ -14,8 +15,9 @@ import {
 import { PartnerSourceCreateUpdateDialogComponent } from "src/app/partner-sources/partner-source-create-update-dialog/partner-source-create-update-dialog.component";
 import { PartnerSourcePaged, PartnerSourceService } from "src/app/partner-sources/partner-source.service";
 import { PartnerTitle, PartnerTitlePaged, PartnerTitleService } from 'src/app/partner-titles/partner-title.service';
-import { City, District, PartnerCategorySimple, PartnerSourceSimple, Ward } from 'src/app/partners/partner-simple';
-import { PartnerService } from 'src/app/partners/partner.service';
+import { PartnerExistListDialogComponent } from "src/app/partners/partner-exist-list-dialog/partner-exist-list-dialog.component";
+import { City, District, PartnerCategorySimple, PartnerSimple, PartnerSourceSimple, Ward } from 'src/app/partners/partner-simple';
+import { PartnerFilter, PartnerService } from 'src/app/partners/partner.service';
 import { AddressCheckApi } from 'src/app/price-list/price-list';
 import { UserSimple } from "src/app/users/user-simple";
 import { UserPaged, UserService } from "src/app/users/user.service";
@@ -36,6 +38,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   @ViewChild("userCbx", { static: true }) userCbx: ComboBoxComponent;
   @ViewChild("titleCbx", { static: true }) titleCbx: ComboBoxComponent;
   @ViewChild("agentCbx", { static: true }) agentCbx: ComboBoxComponent;
+  @ViewChild("autocomplete", { static: true }) partnerAutocomplete: AutoCompleteComponent;
 
   id: string;
   formGroup: FormGroup;
@@ -53,6 +56,9 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   wardsFilter: Ward[] = [];
   filteredTitles: PartnerTitle[] = [];
   filteredAgents: AgentBasic[] = [];
+  filterPartners: PartnerSimple[] = [];
+  phoneExistPartners = [];
+  partner: any;
 
   dataSourceCities: Array<{ code: string; name: string }>;
   dataSourceDistricts: Array<{
@@ -119,8 +125,22 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     private userService: UserService,
     private partnerTitleService: PartnerTitleService,
     private checkPermissionService: CheckPermissionService,
-    private notifyService: NotifyService
-  ) { }
+    private notifyService: NotifyService,
+    private router: Router
+  ) {
+    // Close any opened dialog when route changes
+    router.events.pipe(
+      filter((event: RouterEvent) => event instanceof NavigationStart),
+      tap(() => this.activeModal.dismiss()),
+      take(1),
+    ).subscribe(rs => { });
+  }
+
+  ngAfterViewInit(): void {
+    //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
+    //Add 'implements AfterViewInit' to the class.
+    this.partnerAutocomplete.focus();
+  }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -157,6 +177,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       this.checkRole();
       if (this.id) {
         this.partnerService.getPartner(this.id).subscribe((result) => {
+          this.partner = result;
           this.formGroup.patchValue(result);
           if (result.city && result.city.code) {
             this.handleCityChange(result.city);
@@ -266,10 +287,30 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
         this.filteredAgents = result.items;
         this.agentCbx.loading = false;
       });
+
+    this.partnerAutocomplete.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(1000),
+        tap(() => (this.partnerAutocomplete.loading = true)),
+        switchMap((searchTerm) => this.autoComplete$(searchTerm))
+      )
+      .subscribe((data: PartnerSimple[]) => {
+        this.filterPartners = data;
+        this.partnerAutocomplete.loading = false;
+      });
+
   }
 
   get sourceValue() {
     return this.formGroup.get('source').value;
+  }
+
+  autoComplete$(s?) {
+    var val = new PartnerFilter();
+    val.limit = 20;
+    val.search = s ?? '';
+    return this.partnerService.autocomplete2(val)
   }
 
   loadHistoriesList() {
@@ -350,7 +391,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     let modalRef = this.modalService.open(PartnerSourceCreateUpdateDialogComponent, { size: 'lg', windowClass: "o_technical_modal", keyboard: false, backdrop: "static", });
     modalRef.componentInstance.title = "Thêm nguồn khách hàng";
     modalRef.result.then(result => {
-      this.notifyService.notify("success","Lưu thành công");
+      this.notifyService.notify("success", "Lưu thành công");
       this.filteredSources.push(result as PartnerSourceSimple);
       this.formGroup.patchValue({ source: result });
     }, () => { }
@@ -605,4 +646,23 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     this.canCreateTitle = this.checkPermissionService.check(["Catalog.PartnerTitle.Create"]);
     this.showInfo = this.checkPermissionService.check(["Basic.Partner.ContactInfo"]);
   }
+
+  onBlurPhone(e) {
+    var value = e.target.value as string;
+    if(this.partner && this.partner.phone == value) {
+       return;
+    }
+    this.partnerService.getExist({ phone: value}).subscribe(res => {
+      this.phoneExistPartners = res;
+    })
+  }
+
+  onDetailExistPartner() {
+    let modalRef = this.modalService.open(PartnerExistListDialogComponent, { size: 'lg', windowClass: "o_technical_modal", keyboard: false, backdrop: "static", });
+    modalRef.componentInstance.data = this.phoneExistPartners;
+    modalRef.result.then(result => {
+    }, () => { }
+    );
+  }
+
 }

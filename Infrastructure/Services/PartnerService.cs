@@ -472,6 +472,12 @@ namespace Infrastructure.Services
                 Id = x.Id,
                 DisplayName = x.DisplayName,
                 Name = x.Name,
+                Active = x.Active,
+                Phone = x.Phone,
+                Email = x.Email,
+                BirthDay = x.BirthDay,
+                BirthMonth = x.BirthMonth,
+                BirthYear = x.BirthYear
             }).ToListAsync();
             return partners;
         }
@@ -2770,6 +2776,12 @@ namespace Infrastructure.Services
             var items = await query.OrderByDescending(x => x.DateCreated).ToListAsync();
 
             return items;
+        }
+
+        public async Task<IEnumerable<PartnerSimple>> GetExist(PartnerGetExistReq val)
+        {
+            var query = SearchQuery(x => x.Phone == val.Phone);
+            return _mapper.Map<IEnumerable<PartnerSimple>>(await query.ToListAsync());
         }
     }
 

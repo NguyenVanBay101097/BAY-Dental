@@ -241,7 +241,6 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Autocomplete2(PartnerPaged val)
         {
             var res = await _partnerService.SearchPartnersCbx(val);
-            res = res.Skip(val.Offset).Take(val.Limit);
             return Ok(res);
         }
 
@@ -869,6 +868,13 @@ namespace TMTDentalAPI.Controllers
             await irModelObj.CreateAsync(irModelCreate);
             return Ok();
 
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetExist(PartnerGetExistReq val)
+        {
+            var res = await _partnerService.GetExist(val);
+            return Ok(res);
         }
     }
 }

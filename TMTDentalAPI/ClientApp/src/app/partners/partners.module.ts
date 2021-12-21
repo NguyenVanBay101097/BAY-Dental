@@ -97,6 +97,7 @@ import { PartnerOverviewPreferentialCardsComponent } from './partner-overview/pa
 import { PartnerOverviewMemberCardsComponent } from './partner-overview/partner-overview-member-cards/partner-overview-member-cards.component';
 import { CardCardsModule } from '../card-cards/card-cards.module';
 import { CardCardsMemberCreateDialogComponent } from '../service-card-cards/card-cards-member-create-dialog/card-cards-member-create-dialog.component';
+import { PartnerExistListDialogComponent } from './partner-exist-list-dialog/partner-exist-list-dialog.component';
 // import { CatalogModule } from '../catalog/catalog.module';
 
 
@@ -184,6 +185,7 @@ import { CardCardsMemberCreateDialogComponent } from '../service-card-cards/card
     PartnerSupplierListComponent,
     PartnerOverviewPreferentialCardsComponent,
     PartnerOverviewMemberCardsComponent,
+    PartnerExistListDialogComponent,
   ],
   imports: [
     CommonModule,

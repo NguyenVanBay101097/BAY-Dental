@@ -34,8 +34,21 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<PartnerCategoryBasic> Categories { get; set; } = new List<PartnerCategoryBasic>();
         public MemberLevelBasic MemberLevel { get; set; }
         public string Phone { get; set; }
+        public bool Active { get; set; }
+        public string Email { get; set; }
+        public string DateOfBirth
+        {
+            get
+            {
+                if (!BirthDay.HasValue && !BirthMonth.HasValue && !BirthYear.HasValue)
+                    return string.Empty;
 
-
+                return $"{(BirthDay.HasValue ? BirthDay.Value.ToString() : "--")}/" +
+                    $"{(BirthMonth.HasValue ? BirthMonth.Value.ToString() : "--")}/" +
+                    $"{(BirthYear.HasValue ? BirthYear.Value.ToString() : "----")}";
+            }
+            set { }
+        }
     }
 
     public class PartnerSimpleContact
