@@ -72,6 +72,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? RevenueExpectFrom { get; set; }
         public decimal? RevenueExpectTo { get; set; }
 
+        public decimal? DebtFrom { get; set; }
+        public decimal? DebtTo { get; set; }
+
         /// <summary>
         /// cong no
         /// </summary>

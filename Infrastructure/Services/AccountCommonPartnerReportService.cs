@@ -336,40 +336,33 @@ namespace Infrastructure.Services
                              };
 
             if (val.RevenueFrom.HasValue)
-            {
                 ResponseQr = ResponseQr.Where(x => x.TotalRevenue >= val.RevenueFrom);
-            }
 
             if (val.RevenueTo.HasValue)
-            {
                 ResponseQr = ResponseQr.Where(x => x.TotalRevenue <= val.RevenueTo);
-            }
 
             if (val.RevenueExpectFrom.HasValue)
-            {
                 ResponseQr = ResponseQr.Where(x => x.TotalRevenueExpect >= val.RevenueFrom);
-            }
 
             if (val.RevenueExpectTo.HasValue)
-            {
-                ResponseQr = ResponseQr.Where(x => x.TotalRevenueExpect <= val.RevenueTo);
-            }
+                ResponseQr = ResponseQr.Where(x => x.TotalRevenueExpect <= val.RevenueTo);         
+
+            if (val.DebtFrom.HasValue)
+                ResponseQr = ResponseQr.Where(x => x.TotalDebt >= val.DebtFrom);
+
+            if (val.DebtTo.HasValue)
+                ResponseQr = ResponseQr.Where(x => x.TotalDebt <= val.DebtTo);
 
             if (val.IsRevenueExpect.HasValue)
-            {
                 ResponseQr = ResponseQr.Where(x => val.IsRevenueExpect.Value == true ? x.TotalRevenueExpect > 0 : x.TotalRevenueExpect == 0);
-            }
-
 
             if (val.IsDebt.HasValue)
-            {
                 ResponseQr = ResponseQr.Where(x => val.IsDebt.Value == true ? x.TotalDebt > 0 : x.TotalDebt == 0);
-            }
+
 
             if (!string.IsNullOrEmpty(val.OrderState))
-            {
                 ResponseQr = ResponseQr.Where(x => x.OrderState == val.OrderState);
-            }
+
 
             return ResponseQr;
         }
@@ -482,7 +475,7 @@ namespace Infrastructure.Services
                 });
             }
 
-            partnerForCities.AddRange( items.Where(x => !string.IsNullOrEmpty(x.CityCode) && x.CityCode != "").GroupBy(x => new { CityName = x.CityName, CityCode = x.CityCode }).Select(x => new GetPartnerForCityReportOverview
+            partnerForCities.AddRange(items.Where(x => !string.IsNullOrEmpty(x.CityCode) && x.CityCode != "").GroupBy(x => new { CityName = x.CityName, CityCode = x.CityCode }).Select(x => new GetPartnerForCityReportOverview
             {
                 CityName = !string.IsNullOrEmpty(x.Key.CityCode) ? x.Key.CityName : "Không xác định",
                 CityCode = !string.IsNullOrEmpty(x.Key.CityCode) ? x.Key.CityCode : null,
