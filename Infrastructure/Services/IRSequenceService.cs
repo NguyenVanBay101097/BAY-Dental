@@ -25,6 +25,40 @@ namespace Infrastructure.Services
             return await Next(sequence);
         }
 
+        public async Task<IList<string>> NextByCode(string code, int length)
+        {
+            var sequence = await SearchQuery(domain: x => x.Code == code).FirstOrDefaultAsync();
+            if (sequence == null)
+                return new List<string>();
+
+            var results = new List<string>();
+            var now = DateTime.Now;
+            var interpolatedPrefix = "";
+            var interpolatedSuffix = "";
+            var d = _InterpolationDict();
+            if (!string.IsNullOrEmpty(sequence.Prefix))
+            {
+                interpolatedPrefix = _Interpolate(sequence.Prefix, d);
+            }
+
+            if (!string.IsNullOrEmpty(sequence.Suffix))
+            {
+                interpolatedSuffix = _Interpolate(sequence.Suffix, d);
+            }
+           
+            for (var i = 1; i <= length; i++)
+            {
+                var numberNext = sequence.NumberNext;
+                var s = interpolatedPrefix + numberNext.ToString("D" + sequence.Padding) + interpolatedSuffix;
+                results.Add(s);
+                sequence.NumberNext += sequence.NumberIncrement;
+            }
+
+            await UpdateAsync(sequence);
+
+            return results;
+        }
+
         public async Task<string> Next(IRSequence sequence)
         {
             if (sequence == null)

@@ -48,6 +48,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost]
+        [CheckAccess(Actions = "Basic.SaleOrder.Update")]
         public async Task<IActionResult> Create(SaleOrderLineSave val)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -59,6 +60,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Update")]
         public async Task<IActionResult> Update(Guid id, SaleOrderLineSave val)
         {
             if (!ModelState.IsValid)
@@ -72,6 +74,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Update")]
         public async Task<IActionResult> Remove(Guid id)
         {
             await _unitOfWork.BeginTransactionAsync();
@@ -121,6 +124,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
+        [CheckAccess(Actions = "Basic.SaleOrder.DiscountLine")]
         public async Task<IActionResult> ApplyDiscountOnOrderLine(ApplyDiscountViewModel val)
         {
             if (!ModelState.IsValid)

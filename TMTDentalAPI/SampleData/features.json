@@ -733,19 +733,19 @@
         "Ops": [
           {
             "Name": "Xem",
-            "Permission": "Catalog.Employee.Read"
+            "Permission": "Hr.Job.Read"
           },
           {
             "Name": "Thêm",
-            "Permission": "Catalog.Employee.Create"
+            "Permission": "Hr.Job.Create"
           },
           {
             "Name": "Cập nhật",
-            "Permission": "Catalog.Employee.Update"
+            "Permission": "Hr.Job.Update"
           },
           {
             "Name": "Xóa",
-            "Permission": "Catalog.Employee.Delete"
+            "Permission": "Hr.Job.Delete"
           }
         ]
       },

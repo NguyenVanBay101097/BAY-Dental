@@ -172,6 +172,58 @@ namespace Umbraco.Web.Models.ContentEditing
         public string PartnerCategories { get; set; }
     }
 
+    public class PartnerCustomerImportRowExcel
+    {
+        public string Name { get; set; }
+        public string Ref { get; set; }
+        public DateTime? Date { get; set; }
+        public string Gender { get; set; }
+        public int? BirthYear { get; set; }
+        public int? BirthMonth { get; set; }
+        public int? BirthDay { get; set; }
+        public string Phone { get; set; }
+        public string Street { get; set; }
+        public string CityName { get; set; }
+        public string DistrictName { get; set; }
+        public string WardName { get; set; }
+
+        public string CheckAddress
+        {
+            get
+            {
+                var list = new List<string>();
+                if (!string.IsNullOrEmpty(WardName))
+                    list.Add(WardName);
+                if (!string.IsNullOrEmpty(DistrictName))
+                    list.Add(DistrictName);
+                if (!string.IsNullOrEmpty(CityName))
+                    list.Add(CityName);
+                return string.Join(", ", list);
+            }
+            set { }
+        }
+
+        public string MedicalHistory { get; set; }
+        public string Job { get; set; }
+        public string Email { get; set; }
+        public string Note { get; set; }
+    }
+
+    public class PartnerSupplierImportRowExcel
+    {
+        public string Name { get; set; }
+        public DateTime? Date { get; set; }
+        public string Phone { get; set; }
+        public string Street { get; set; }
+        public string CityName { get; set; }
+        public string DistrictName { get; set; }
+        public string WardName { get; set; }
+        public string Email { get; set; }
+        public string Note { get; set; }
+        public string Fax { get; set; }
+        public string Ref { get; set; }
+    }
+
     public class WardVm
     {
         public string CityCode { get; set; }

@@ -231,7 +231,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        [CheckAccess(Actions = "Basic.SaleOrder.Update")]
+        [CheckAccess(Actions = "Basic.SaleOrder.DiscountOrder")]
         public async Task<IActionResult> ApplyDiscountOnOrder(ApplyDiscountViewModel val)
         {
             if (!ModelState.IsValid)

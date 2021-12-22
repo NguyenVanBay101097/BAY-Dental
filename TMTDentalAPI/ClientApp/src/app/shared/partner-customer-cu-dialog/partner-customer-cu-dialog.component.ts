@@ -545,6 +545,32 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     return list;
   }
 
+  preparePostData(value): any {
+    return {
+      name: value.name,
+      phone: value.phone,
+      ref: value.ref,
+      birthDay: value.birthDayStr ? parseInt(value.birthDayStr) : null,
+      birthMonth: value.birthMonthStr ? parseInt(value.birthMonthStr) : null,
+      birthYear: value.birthYearStr ? parseInt(value.birthYearStr) : null,
+      gender: value.gender,
+      titleId: value.title != null ? value.title.id : null,
+      email: value.email,
+      jobTitle: value.jobTitle,
+      agentId: value.agent != null ? value.agent.id : null,
+      date: value.dateObj ? this.intlService.formatDate(value.dateObj, "yyyy-MM-dd") : null,
+      street: value.street,
+      city: value.city,
+      district: value.district,
+      ward: value.ward,
+      sourceId: value.source != null ? value.source.id : null,
+      comment: value.comment,
+      avatar: value.avatar,
+      medicalHistory: value.medicalHistory,
+      historyIds: value.histories.map(x => x.id)
+    };
+  }
+
   onSave() {
     this.submitted = true;
 
@@ -553,23 +579,17 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     }
 
     var val = this.formGroup.value;
-    val.sourceId = val.source ? val.source.id : null;
-    val.referralUserId = val.referralUser ? val.referralUser.id : null;
-    val.titleId = val.title ? val.title.id : null;
-    val.date = val.dateObj ? this.intlService.formatDate(val.dateObj, "yyyy-MM-dd") : null;
-    val.birthDay = val.birthDayStr ? parseInt(val.birthDayStr) : null;
-    val.birthMonth = val.birthMonthStr ? parseInt(val.birthMonthStr) : null;
-    val.birthYear = val.birthYearStr ? parseInt(val.birthYearStr) : null;
-    val.agentId = val.agent ? val.agent.id : null;
+    var postVal = this.preparePostData(val);
 
     if (this.id) {
-      this.partnerService.update(this.id, val).subscribe(
+      postVal.id = this.id;
+      this.partnerService.updateCustomer(postVal).subscribe(
         () => {
           this.activeModal.close(true);
         },
       );
     } else {
-      this.partnerService.create(val).subscribe(
+      this.partnerService.createCustomer(postVal).subscribe(
         (result) => {
           this.activeModal.close(result);
         },
