@@ -227,14 +227,12 @@ export class ProductServiceCuDialogComponent implements OnInit {
   }
 
   searchUoms(q?: string) {
-    var val = new UoMPaged();
-    val.search = q || '';
-    return this.uomService.getPaged(val);
+    return this.uomService.listServiceUoMs({search: q || ''});
   }
 
   loadUoms() {
     this.searchUoms().subscribe((result: any) => {
-      this.filterdUoMs = _.unionBy(this.filterdUoMs, result.items, 'id');
+      this.filterdUoMs = _.unionBy(this.filterdUoMs, result.uoms, 'id');
     });
   }
 

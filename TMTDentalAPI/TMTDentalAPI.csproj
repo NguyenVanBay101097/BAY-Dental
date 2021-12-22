@@ -217,7 +217,7 @@
     <Content Include="SampleData\ImportXML\uom.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="SampleData\application_role.csv"/>
+    <Content Include="SampleData\application_role.csv" />
     <Content Include="SampleData\ir_model_access.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
