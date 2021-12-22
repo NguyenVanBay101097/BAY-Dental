@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { GridDataResult, PageChangeEvent, RowClassArgs } from '@progress/kendo-angular-grid';
+import { GridComponent, GridDataResult, PageChangeEvent, RowClassArgs } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
 import { PartnerPaged, PartnerBasic } from '../partner-simple';
 import { map, debounceTime, distinctUntilChanged, tap, switchMap, subscribeOn } from 'rxjs/operators';
@@ -25,6 +25,7 @@ import { CardCardService } from 'src/app/card-cards/card-card.service';
 import { CardTypeService } from 'src/app/card-types/card-type.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { SessionInfoStorageService } from 'src/app/core/services/session-info-storage.service';
+import { ColumnSettings, GridSettings, StatePersistingService } from 'src/app/shared/services/state-persisting.service';
 
 @Component({
   selector: 'app-partner-customer-list',
@@ -35,6 +36,55 @@ import { SessionInfoStorageService } from 'src/app/core/services/session-info-st
   }
 })
 export class PartnerCustomerListComponent implements OnInit {
+  public gridSettings: GridSettings = {
+    columnsConfig: [{
+      field: 'phone',
+      title: 'Số điên thoại',
+      _width: 130
+    }, {
+      field: 'dateOfBirth',
+      title: 'Ngày sinh',
+      _width: 130,
+    }, {
+      field: 'age',
+      title: 'Tuổi',
+      _width: 100,
+    }, {
+      field: 'saleOrderDate',
+      title: 'Ngày điều trị gần nhất',
+      _width: 150,
+      format: '{0:d}',
+    }, {
+      field: 'appointmentDate',
+      title: 'Ngày hẹn gần nhất',
+      _width: 150,
+      format: '{0:d}',
+    }, {
+      field: 'orderState',
+      title: 'Tình trạng điều trị',
+      _width: 150,
+    }, {
+      field: 'orderResidual',
+      title: 'Dự kiến thu',
+      _width: 150,
+    }, {
+      field: 'totalDebit',
+      title: 'Công nợ',
+      _width: 150,
+    }, {
+      field: 'cardTypeName',
+      title: 'Thẻ thành viên',
+      _width: 150,
+    }, {
+      field: 'categories',
+      title: 'Nhãn khách hàng',
+      _width: 150,
+    }, {
+      field: 'companyName',
+      title: 'Chi nhánh tạo',
+      _width: 150,
+    }]
+  };
 
   gridData: GridDataResult;
   filter = new PartnerInfoPaged();
@@ -55,10 +105,10 @@ export class PartnerCustomerListComponent implements OnInit {
   canImport = false;
   canFilterPartnerCategory = false;
   canUpdateExcel = false;
-  
+
   OrderResiduals: { text: string, value: number }[] = [
     { text: 'Có dự kiến thu', value: 1 },
-    { text: 'Không có dự kiến thu', value: 0}
+    { text: 'Không có dự kiến thu', value: 0 }
   ];
 
   totalDebits: { text: string, value: number }[] = [
@@ -67,9 +117,9 @@ export class PartnerCustomerListComponent implements OnInit {
   ];
   memberLevels = [];
   orderStateDisplay = {
-    'sale':'Đang điều trị',
-    'done':'Hoàn thành',
-    'draft':'Chưa phát sinh'
+    'sale': 'Đang điều trị',
+    'done': 'Hoàn thành',
+    'draft': 'Chưa phát sinh'
   };
 
   memberCards = [];
@@ -78,7 +128,7 @@ export class PartnerCustomerListComponent implements OnInit {
     width: 'auto'
   };
 
-  color='red';
+  color = 'red';
 
   showInfo = false;
   pagerSettings: any;
@@ -106,7 +156,7 @@ export class PartnerCustomerListComponent implements OnInit {
     },
     {
       text: 'Tình trạng điều trị',
-      field: 'saleOrderState'
+      field: 'orderState'
     },
     {
       text: 'Dự kiến thu',
@@ -114,27 +164,28 @@ export class PartnerCustomerListComponent implements OnInit {
     },
     {
       text: 'Công nợ',
-      field: 'Debt'
+      field: 'debt'
     },
     {
       text: 'Thẻ thành viên',
-      field: 'CardType'
+      field: 'cardType'
     },
     {
       text: 'Nhãn khách hàng',
-      field: 'CategoryPartner'
+      field: 'categPartner'
     },
     {
       text: 'Chi nhánh tạo',
-      field: 'Company'
+      field: 'companyName'
     }
   ]
 
   constructor(private partnerService: PartnerService, private modalService: NgbModal,
-    private partnerCategoryService: PartnerCategoryService, private notificationService: NotificationService, 
+    private partnerCategoryService: PartnerCategoryService, private notificationService: NotificationService,
     private checkPermissionService: CheckPermissionService,
     private memberLevelService: MemberLevelService,
     private cardService: CardTypeService,
+    private persistingService: StatePersistingService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig,
     private authService: AuthService,
     private sessionInfoStorageService: SessionInfoStorageService,
@@ -146,17 +197,17 @@ export class PartnerCustomerListComponent implements OnInit {
     this.checkRole();
     this.loadCardTypes();
     this.cbxMember.filterChange
-    .asObservable()
-    .pipe(
-      debounceTime(300),
-      tap(() => (this.cbxMember.loading = true)),
-      switchMap((value) => this.searchCardTypes(value)
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.cbxMember.loading = true)),
+        switchMap((value) => this.searchCardTypes(value)
+        )
       )
-    )
-    .subscribe((x) => {
-      this.memberCards = x.items;
-      this.cbxMember.loading = false;
-    });
+      .subscribe((x) => {
+        this.memberCards = x.items;
+        this.cbxMember.loading = false;
+      });
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
@@ -167,24 +218,27 @@ export class PartnerCustomerListComponent implements OnInit {
 
     if (this.canFilterPartnerCategory && this.categMst) {
       this.categMst.filterChange
-      .asObservable()
-      .pipe(
-        debounceTime(300),
-        tap(() => (this.categMst.loading = true)),
-        switchMap((value) => this.searchCategories(value))
-      )
-      .subscribe((result) => {
-        this.filteredCategs = result;
-        this.categMst.loading = false;
-      });
+        .asObservable()
+        .pipe(
+          debounceTime(300),
+          tap(() => (this.categMst.loading = true)),
+          switchMap((value) => this.searchCategories(value))
+        )
+        .subscribe((result) => {
+          this.filteredCategs = result;
+          this.categMst.loading = false;
+        });
     }
 
-    if(this.canFilterPartnerCategory){
+    if (this.canFilterPartnerCategory) {
       this.loadFilteredCategs();
     }
 
     if (localStorage.getItem('partners_grid_visible_columns')) {
-      this.visibleColumns = localStorage.getItem('partners_grid_visible_columns').split(',');      
+      this.visibleColumns = this.persistingService.get('partners_grid_visible_columns');
+    } else {
+      this.visibleColumns = ['phone', 'birthday', 'age', 'orderState', 'orderResidual', 'debt', 'cardType', 'categPartner'];
+      this.persistingService.set('partners_grid_visible_columns', this.visibleColumns);
     }
   }
 
@@ -200,15 +254,52 @@ export class PartnerCustomerListComponent implements OnInit {
     }
 
     //save to localstorage
-    localStorage.setItem('partners_grid_visible_columns', this.visibleColumns.join(','));
+    this.persistingService.set('partners_grid_visible_columns', this.visibleColumns);
   }
+
+
+
+  public saveGridSettings(grid: GridComponent): void {
+    const columns = grid.columns;
+
+    //add only the required column properties to save local storage space
+    const gridConfig = {
+      columnsConfig: columns.toArray().map((item) => {
+        return <ColumnSettings>{
+          field: item["field"],
+          width: item["width"],
+          _width: item["_width"],
+          title: item["title"],
+          filter: item["filter"],
+          format: item["format"],
+          filterable: item["filterable"],
+          orderIndex: item["orderIndex"],
+        };
+      }),
+    };
+
+    this.persistingService.set("partners_grid_visible_columns", gridConfig);
+  }
+
+
+  private mapDateFilter = (descriptor: any) => {
+    const filters = descriptor.filters || [];
+
+    filters.forEach((filter) => {
+      if (filter.filters) {
+        this.mapDateFilter(filter);
+      } else if (filter.field === "FirstOrderedOn" && filter.value) {
+        filter.value = new Date(filter.value);
+      }
+    });
+  };
 
   initFilter() {
     this.filter.limit = 20;
     this.filter.offset = 0;
     this.filter.hasOrderResidual = -1;
     this.filter.hasTotalDebit = -1;
-    this.filter.orderState='';
+    this.filter.orderState = '';
     if (this.sessionInfoStorageService.getSessionInfo().settings && !this.sessionInfoStorageService.getSessionInfo().settings.companySharePartner) {
       this.filter.companyId = this.authService.userInfo.companyId;
     }
@@ -217,16 +308,16 @@ export class PartnerCustomerListComponent implements OnInit {
   refreshData() {
     var val = Object.assign({}, this.filter);
     this.loading = true;
-   this.partnerService.getPartnerInfoPaged2(val).subscribe(res => {
-     this.gridData = <GridDataResult> {
-      data : res.items,
-      total : res.totalItems
-     };
-   },()=> {},
-   ()=>{
-     this.loading = false;
-   }
-   );
+    this.partnerService.getPartnerInfoPaged2(val).subscribe(res => {
+      this.gridData = <GridDataResult>{
+        data: res.items,
+        total: res.totalItems
+      };
+    }, () => { },
+      () => {
+        this.loading = false;
+      }
+    );
   }
 
   toggleTagsPopOver(popover: any, dataItem: any) {
@@ -250,15 +341,15 @@ export class PartnerCustomerListComponent implements OnInit {
   //     this.memberLevels = res.items;
   //   });
   // }
-  loadCardTypes(){
+  loadCardTypes() {
     this.searchCardTypes().subscribe(result => {
       this.memberCards = result.items;
-      
+
     })
   }
 
   searchCardTypes(q?: string) {
-    var val = {search: q || '', offset: 0, limit: 10};
+    var val = { search: q || '', offset: 0, limit: 10 };
     return this.cardService.getPaged(val);
   }
   importFromExcel() {
@@ -289,7 +380,7 @@ export class PartnerCustomerListComponent implements OnInit {
   }
 
   onCategChange(value) {
-   this.filter.categIds = value.map(x=> x.id);
+    this.filter.categIds = value.map(x => x.id);
     this.filter.offset = 0;
     this.refreshData();
   }
@@ -376,7 +467,7 @@ export class PartnerCustomerListComponent implements OnInit {
     });
   }
 
-  checkRole(){
+  checkRole() {
     this.canExport = this.checkPermissionService.check(['Basic.Partner.Export']);
     this.canAdd = this.checkPermissionService.check(['Basic.Partner.Create']);
     this.canImport = this.checkPermissionService.check(['Basic.Partner.Create']);
@@ -385,16 +476,14 @@ export class PartnerCustomerListComponent implements OnInit {
     this.showInfo = this.checkPermissionService.check(["Basic.Partner.ContactInfo"]);
   }
 
-  onResidualSelect(e)
-  {
-    this.filter.hasOrderResidual = e? e.value : '';
+  onResidualSelect(e) {
+    this.filter.hasOrderResidual = e ? e.value : '';
     this.filter.offset = 0;
     this.refreshData();
   }
 
-  onDebitSelect(e)
-  {
-    this.filter.hasTotalDebit = e? e.value : '';
+  onDebitSelect(e) {
+    this.filter.hasTotalDebit = e ? e.value : '';
     this.filter.offset = 0;
     this.refreshData();
   }
@@ -406,8 +495,8 @@ export class PartnerCustomerListComponent implements OnInit {
   //   this.refreshData();
   // }
 
-  onMemberSelect(e){
-    this.filter.cardTypeId = e? e.id : '';
+  onMemberSelect(e) {
+    this.filter.cardTypeId = e ? e.id : '';
     this.filter.offset = 0;
     this.refreshData();
   }

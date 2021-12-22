@@ -97,6 +97,7 @@ import { PartnerOverviewPreferentialCardsComponent } from './partner-overview/pa
 import { PartnerOverviewMemberCardsComponent } from './partner-overview/partner-overview-member-cards/partner-overview-member-cards.component';
 import { CardCardsModule } from '../card-cards/card-cards.module';
 import { CardCardsMemberCreateDialogComponent } from '../service-card-cards/card-cards-member-create-dialog/card-cards-member-create-dialog.component';
+import { StatePersistingService } from '../shared/services/state-persisting.service';
 // import { CatalogModule } from '../catalog/catalog.module';
 
 
@@ -220,7 +221,7 @@ import { CardCardsMemberCreateDialogComponent } from '../service-card-cards/card
     PartnerCustomerDebtPaymentDialogComponent,
     CardCardsMemberCreateDialogComponent
   ],
-  providers: [SaleCouponProgramService, AccountInvoiceReportService],
+  providers: [SaleCouponProgramService, AccountInvoiceReportService , StatePersistingService],
   exports: [
     PartnerCustomerDetailComponent,
     PartnerCustomerTreatmentPaymentDetailComponent
