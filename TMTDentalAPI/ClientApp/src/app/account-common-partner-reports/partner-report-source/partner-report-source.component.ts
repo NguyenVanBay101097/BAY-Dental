@@ -11,28 +11,22 @@ export class PartnerReportSourceComponent implements OnInit {
   @Input() filter: any;
   chartOption: EChartsOption;
   dataSet: [];
+
   constructor(
     private accountCommonPartnerReportService: AccountCommonPartnerReportService
   ) { }
 
   ngOnInit(): void {
-
     this.loadReportSource();
   }
 
   loadReportSource() {
-    // console.log('2');
-    let val = new AccountCommonPartnerReportOverviewFilter();
-    val.companyId = this.filter ? this.filter.companyId : null;
-    val.isDebt = this.filter ? this.filter.isDebt : null;
-    val.isRevenueExpect = this.filter ? this.filter.isRevenueExpect : null;
-    val.orderState = this.filter ? this.filter.orderState : '';
+    let val = Object.assign({}, this.filter) as AccountCommonPartnerReportOverviewFilter;
+
     this.accountCommonPartnerReportService.getPartnerReportSourceOverview(val).subscribe((res: any) => {
-      // console.log(res);
       this.dataSet = res.map(val => {
         return { value: val.totalPartner, name: val.partnerSourceName }
       })
-      // console.log(this.dataSet);
       this.loadChartOption();
     }, error => console.log(error));
   }

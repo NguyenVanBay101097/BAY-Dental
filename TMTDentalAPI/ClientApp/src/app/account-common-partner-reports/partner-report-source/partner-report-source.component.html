@@ -1,19 +1,15 @@
-<!-- <div class="card">
-  <h5 class="card-header card-collapse collapse-show" data-toggle="collapse" data-target="#collapseSource"
-    aria-expanded="true" aria-controls="collapseSource">
-    Số lượng khách hàng theo nguồn
-  </h5>
-  <div class="collapse" id="collapseSource">
-    <div class="card-body">
-      <div echarts [options]="chartOption"></div>
-    </div>
-  </div>
-</div> -->
 <div class="card">
-  <h5 class="card-header card-header-title" >
+  <h5 class="card-header card-header-title bg-white">
     Số lượng khách hàng theo nguồn
   </h5>
-    <div class="card-body">
+  <div class="card-body">
+    <ng-container *ngIf="dataSet && dataSet.length > 0; else elseTemplate">
       <div echarts [options]="chartOption"></div>
+    </ng-container>
+    <ng-template #elseTemplate>
+      <div class="img-nodata">
+        <img src="./../../../assets/icons/NoData.svg">
+      </div>
+    </ng-template>
   </div>
 </div>

@@ -1,3 +1,4 @@
+import { KeyValue } from '@angular/common';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
@@ -56,7 +57,7 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
   public popupSettings: PopupSettings = {
     appendTo: "component",
   };
-
+  dataFilterObj = Object.create({});
   constructor(
     private companyService: CompanyService,
     private accountCommonPartnerReportService: AccountCommonPartnerReportService,
@@ -71,14 +72,14 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
       categs: [null],
       partnerSources: [null],
       cardTypes: [null],
-      ageFrom: 0,
-      ageTo: 0,
-      revenueFrom: 0,
-      revenueTo: 0,
-      revenueExpectFrom: 0,
-      revenueExpectTo: 0,
-      debtFrom: 0,
-      debtTo: 0,
+      ageFrom: null,
+      ageTo: null,
+      revenueFrom: null,
+      revenueTo: null,
+      revenueExpectFrom: null,
+      revenueExpectTo: null,
+      debtFrom: null,
+      debtTo: null,
     });
 
     this.loadCompanies();
@@ -197,11 +198,15 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
   }
 
   onApply() {
+    this.onFilterAdvance();
+    this.myDrop.toggle();
+  }
+
+  onFilterAdvance() {
     const formValue = this.formGroup.value;
-    // console.log(formValue);
-    const categIds = (formValue && formValue.categs) ? formValue.categs.map(val => val.id) : null;
-    const partnerSourceIds = (formValue && formValue.categs) ? formValue.partnerSources.map(val => val.id) : null;
-    const cardTypeIds = (formValue && formValue.cardTypes) ? formValue.cardTypes.map(val => val.id) : null;
+    const categIds = (formValue && formValue.categs != null) ? formValue.categs.map(val => val.id) : [];
+    const partnerSourceIds = (formValue && formValue.partnerSources != null) ? formValue.partnerSources.map(val => val.id) : [];
+    const cardTypeIds = (formValue && formValue.cardTypes != null) ? formValue.cardTypes.map(val => val.id) : [];
     this.filter.ageFrom = formValue.ageFrom;
     this.filter.ageTo = formValue.ageTo;
     this.filter.revenueFrom = formValue.revenueFrom;
@@ -214,14 +219,96 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
     this.filter.partnerSourceIds = partnerSourceIds;
     this.filter.cardTypeIds = cardTypeIds;
     this.loadAllData();
-    // const filter = {...formValue};
-    // filter['categIds'] = categIds;
-    // filter['partnerSourceIds'] = partnerSourceIds;
-    // filter['cardTypeIds'] = cardTypeIds;
-    // console.log(filter);
+    this.showFilterInfo();
   }
 
-  oncancel() {
+  showFilterInfo() {
+    const dataFilter = { ...this.formGroup.value };
+    this.dataFilterObj = {};
+    if (dataFilter) {
+      if (dataFilter.categs) {
+        this.dataFilterObj['categs'] = dataFilter.categs.map(el => el.name).join(', ');
+      }
+
+      if (dataFilter.partnerSources) {
+        this.dataFilterObj['partnerSources'] = dataFilter.partnerSources.map(el => el.name).join(', ');
+      }
+
+      if (dataFilter.cardTypes) {
+        this.dataFilterObj['cardTypes'] = dataFilter.cardTypes.map(el => el.name).join(', ');
+      }
+
+      if (dataFilter.ageFrom || dataFilter.ageTo) {
+        this.dataFilterObj['age'] = `Từ ${dataFilter.ageFrom && dataFilter.ageFrom >= 0 ? dataFilter.ageFrom : '--'} 
+                                    đến ${dataFilter.ageTo && dataFilter.ageTo >= 0 ? dataFilter.ageTo : '--'}`;
+      }
+
+      if (dataFilter.revenueFrom || dataFilter.revenueTo) {
+        this.dataFilterObj['revenue'] = `Từ ${dataFilter.revenueFrom && dataFilter.revenueFrom >= 0 ? dataFilter.revenueFrom : '--'} 
+                                        đến ${dataFilter.revenueTo && dataFilter.revenueTo >= 0 ? dataFilter.revenueTo : '--'}`;
+      }
+
+      if (dataFilter.revenueExpectFrom || dataFilter.revenueExpectTo) {
+        this.dataFilterObj['revenueExpect'] = `Từ ${dataFilter.revenueExpectFrom && dataFilter.revenueExpectFrom >= 0 ? dataFilter.revenueExpectFrom : '--'} 
+                                              đến ${dataFilter.revenueExpectTo && dataFilter.revenueExpectTo >= 0 ? dataFilter.revenueExpectTo : '--'}`;
+      }
+
+      if (dataFilter.debtFrom || dataFilter.debtTo) {
+        this.dataFilterObj['debt'] = `Từ ${dataFilter.debtFrom && dataFilter.debtFrom >= 0 ? dataFilter.debtFrom : '--'} 
+                                      đến ${dataFilter.debtTo && dataFilter.debtTo >= 0 ? dataFilter.debtTo : '--'}`;
+      }
+    }
+
+  }
+
+  getTitleDisplay(key: string) {
+    switch (key) {
+      case 'categs':
+        return 'Nhãn khách hàng';
+      case 'partnerSources':
+        return 'Nguồn khách hàng';
+      case 'cardTypes':
+        return 'Thẻ thành viên';
+      case 'age':
+        return 'Độ tuổi';
+      case 'revenue':
+        return 'Doanh thu';
+      case 'revenueExpect':
+        return 'Dự kiến thu';
+      case 'debt':
+        return 'Công nợ';
+      default:
+        return '';
+    }
+  }
+
+  reverseKey = (a: KeyValue<number, string>, b: KeyValue<number, string>): number => {
+    return a.key > b.key ? -1 : (b.key > a.key ? 1 : 0);
+  }
+
+  onRemoveFilter(key: string) {
+    if (key === 'age') {
+      this.formGroup.get('ageFrom').setValue(null);
+      this.formGroup.get('ageTo').setValue(null);
+    }
+    else if (key === 'revenue') {
+      this.formGroup.get('revenueFrom').setValue(null);
+      this.formGroup.get('revenueTo').setValue(null);
+    }
+    else if (key === 'revenueExpect') {
+      this.formGroup.get('revenueExpectFrom').setValue(null);
+      this.formGroup.get('revenueExpectTo').setValue(null);
+    }
+    else if (key === 'debt') {
+      this.formGroup.get('debtFrom').setValue(null);
+      this.formGroup.get('debtTo').setValue(null);
+    } else {
+      this.formGroup.get(key).setValue(null);
+    }
+    this.onFilterAdvance();
+  }
+
+  onRemoveAllFilters() {
     this.formGroup.reset();
   }
 }

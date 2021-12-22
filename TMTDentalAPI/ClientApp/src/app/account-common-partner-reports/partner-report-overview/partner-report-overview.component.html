@@ -2,26 +2,26 @@
     <div class="card-body">
         <div class="filter">
             <div class="filter-left">
-                <kendo-combobox [data]="companies" [placeholder]="'Tất cả chi nhánh'" class="mr-2" [valueField]="'id'"
+                <kendo-combobox [data]="companies" [placeholder]="'Tất cả chi nhánh'" [valueField]="'id'"
                     [textField]="'name'" [filterable]="true" #companyCbx (selectionChange)="onSelectCompany($event)">
                 </kendo-combobox>
-                <button class="btn btn-primary" type="button" (click)="exportExcelFile()">
+                <!-- <button class="btn btn-primary ml-2" type="button" (click)="exportExcelFile()">
                     <i class="fas fa-download"></i> Xuất File
-                </button>
+                </button> -->
             </div>
             <div class="filter-right">
-                <kendo-combobox [placeholder]="'Tình trạng điều trị'" class="mr-2" [valueField]="'value'"
+                <kendo-combobox [placeholder]="'Tình trạng điều trị'" [valueField]="'value'"
                     [data]="orderStates" [textField]="'text'" [filterable]="true"
                     (selectionChange)="onSelectOrderStates($event)">
                 </kendo-combobox>
-                <kendo-combobox [placeholder]="'Công nợ'" class="mr-2" [valueField]="'value'" [textField]="'text'"
+                <kendo-combobox [placeholder]="'Công nợ'" class="ml-2" [valueField]="'value'" [textField]="'text'"
                     [data]="totalDebits" [filterable]="true" (selectionChange)="onSelectTotalDebits($event)">
                 </kendo-combobox>
-                <kendo-combobox [placeholder]="'Dự kiến thu'" [valueField]="'value'" [textField]="'text'"
+                <kendo-combobox [placeholder]="'Dự kiến thu'" class="ml-2 revenue-cmp" [valueField]="'value'" [textField]="'text'"
                     [data]="revenueExpect" [filterable]="true" (selectionChange)="onSelectOrderResiduals($event)">
                 </kendo-combobox>
-                <div ngbDropdown #myDrop="ngbDropdown">
-                    <button type="button" id="filteredAdvance" ngbDropdownToggle class="btn btn-secondary">
+                <div ngbDropdown #myDrop="ngbDropdown" class="filter-dropdown">
+                    <button type="button" id="filteredAdvance" ngbDropdownToggle class="btn btn-secondary ml-2">
                         Lọc nâng cao
                     </button>
                     <div ngbDropdownMenu aria-labelledby="filteredAdvance" class="filter-container p-0">
@@ -62,10 +62,11 @@
                                     Độ tuổi
                                 </div>
                                 <div class="filter-content d-flex">
-                                    <input class="form-control" formControlName="ageFrom" placeholder="Từ" tmtautonumeric
-                                        [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
+                                    <input class="form-control" formControlName="ageFrom" placeholder="Từ"
+                                        tmtautonumeric [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
                                     <span>&nbsp;-&nbsp;</span>
-                                    <input class="form-control" formControlName="ageFrom" placeholder="Đến" tmtautonumeric
+                                    <input class="form-control" formControlName="ageFrom" placeholder="Đến"
+                                        tmtautonumeric
                                         [options]="{ minimumValue: 0, maximumValue: 100, decimalPlaces: 0 }" />
                                 </div>
 
@@ -73,33 +74,33 @@
                                     Doanh thu
                                 </div>
                                 <div class="filter-content d-flex">
-                                    <input class="form-control" formControlName="revenueFrom" placeholder="Từ" tmtautonumeric
-                                        [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
+                                    <input class="form-control" formControlName="revenueFrom" placeholder="Từ"
+                                        tmtautonumeric [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
                                     <span>&nbsp;-&nbsp;</span>
-                                    <input class="form-control" formControlName="revenueTo" placeholder="Đến" tmtautonumeric
-                                        [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
+                                    <input class="form-control" formControlName="revenueTo" placeholder="Đến"
+                                        tmtautonumeric [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
                                 </div>
 
                                 <div class="filter-label">
                                     Dự kiến thu
                                 </div>
                                 <div class="filter-content d-flex">
-                                    <input class="form-control" formControlName="revenueExpectFrom" placeholder="Từ" tmtautonumeric
-                                        [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
+                                    <input class="form-control" formControlName="revenueExpectFrom" placeholder="Từ"
+                                        tmtautonumeric [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
                                     <span>&nbsp;-&nbsp;</span>
-                                    <input class="form-control" formControlName="revenueExpectTo" placeholder="Đến" tmtautonumeric
-                                        [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
+                                    <input class="form-control" formControlName="revenueExpectTo" placeholder="Đến"
+                                        tmtautonumeric [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
                                 </div>
 
                                 <div class="filter-label">
                                     Công nợ
                                 </div>
                                 <div class="filter-content d-flex">
-                                    <input class="form-control" formControlName="debtFrom" placeholder="Từ" tmtautonumeric
-                                        [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
+                                    <input class="form-control" formControlName="debtFrom" placeholder="Từ"
+                                        tmtautonumeric [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
                                     <span>&nbsp;-&nbsp;</span>
-                                    <input class="form-control" formControlName="debtTo" placeholder="Đến" tmtautonumeric
-                                        [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
+                                    <input class="form-control" formControlName="debtTo" placeholder="Đến"
+                                        tmtautonumeric [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
                                 </div>
                             </form>
                         </div>
@@ -107,7 +108,7 @@
                             <button class="btn btn-primary mr-2" type="button" (click)="onApply()">
                                 Lọc
                             </button>
-                            <button class="btn btn-danger mr-2" type="button" (click)="oncancel()">
+                            <button class="btn btn-danger mr-2" type="button" (click)="onRemoveAllFilters()">
                                 Xóa bộ lọc
                             </button>
                             <button class="btn btn-secondary" type="button" (click)="myDrop.toggle()">
@@ -119,8 +120,19 @@
             </div>
         </div>
 
+        <div class="data-filter">
+            <ng-container *ngFor="let item of dataFilterObj | keyvalue: reverseKey">
+                <div class="alert alert-info filter-info" role="alert">
+                    <span class="pr-2">
+                        {{getTitleDisplay(item.key)}}:&nbsp;{{item.value}}
+                    </span>
+                    <i class="fas fa-times" (click)="onRemoveFilter(item.key)"></i>
+                </div>
+            </ng-container>
+        </div>
+
         <div class="mb-3">
-            <app-partner-report-area #reportAreaComp></app-partner-report-area>
+            <app-partner-report-area #reportAreaComp [filter]="filter"></app-partner-report-area>
         </div>
         <div class="row">
             <div class="col-sm-6">

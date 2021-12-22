@@ -1,15 +1,13 @@
-<!-- <div class="card">
-  <h5 class="card-header card-collapse collapse-show" data-toggle="collapse" data-target="#collapseAgeGender" aria-expanded="false"
-    aria-controls="collapseAgeGender">Số lượng khách hàng theo độ tuổi</h5>
-  <div class="collapse" id="collapseAgeGender">
-    <div class="card-body">
-      <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-    </div>
-  </div>
-</div> -->
 <div class="card">
-  <h5 class="card-header card-header-title">Số lượng khách hàng theo độ tuổi</h5>
+  <h5 class="card-header card-header-title bg-white">Số lượng khách hàng theo độ tuổi</h5>
   <div class="card-body">
-    <div echarts [options]="chartOption"></div>
+    <ng-container *ngIf="dataSet?.partnerGenderItems && dataSet?.partnerGenderItems.length > 0; else elseTemplate">
+      <div echarts [options]="chartOption"></div>
+    </ng-container>
+    <ng-template #elseTemplate>
+      <div class="img-nodata">
+        <img src="./../../../assets/icons/NoData.svg">
+      </div>
+    </ng-template>
   </div>
 </div>
