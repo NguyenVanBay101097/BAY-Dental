@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 
 namespace TMTDentalAPI.Endpoints.ProductEndpoints
 {
-    public class CreateServiceRequest
+    public class UpdateServiceRequest
     {
+        public Guid Id { get; set; }
+
         public string Name { get; set; }
 
         public Guid? CategId { get; set; }
@@ -25,21 +27,25 @@ namespace TMTDentalAPI.Endpoints.ProductEndpoints
 
         public string Firm { get; set; }
 
-        public IEnumerable<CreateServiceRequestStep> Steps { get; set; } = new List<CreateServiceRequestStep>();
+        public IEnumerable<UpdateServiceRequestStep> Steps { get; set; } = new List<UpdateServiceRequestStep>();
 
         /// <summary>
         /// danh sách định mức vật tư
         /// </summary>
-        public IEnumerable<CreateServiceRequestBom> Boms { get; set; } = new List<CreateServiceRequestBom>();
+        public IEnumerable<UpdateServiceRequestBom> Boms { get; set; } = new List<UpdateServiceRequestBom>();
     }
 
-    public class CreateServiceRequestStep
+    public class UpdateServiceRequestStep
     {
+        public Guid? Id { get; set; }
+
         public string Name { get; set; }
     }
 
-    public class CreateServiceRequestBom
+    public class UpdateServiceRequestBom
     {
+        public Guid? Id { get; set; }
+
         public Guid MaterialProductId { get; set; }
 
         public Guid ProductUomId { get; set; }
