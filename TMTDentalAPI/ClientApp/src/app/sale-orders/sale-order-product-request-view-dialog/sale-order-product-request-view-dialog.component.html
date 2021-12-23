@@ -7,25 +7,26 @@
     <div class="o_form_view" *ngIf="productRequest">
         <div class="o_form_sheet_bg">
             <div class="o_form_statusbar">
-                <h5>{{productRequest?.name}}</h5>
-
                 <div class="o_statusbar_status o_field_widget o_readonly_modifier">
-                    <button [disabled]="productRequest && productRequest.state == 'done'"
-                        class="btn o_arrow_button o_arrow_button_bg_primary disabled"
-                        [class.btn-primary]="productRequest && productRequest.state == 'done'"
-                        [class.btn-secondary]="productRequest && productRequest.state == 'done'" type="button">
+                    <button [disabled]="productRequest.state == 'done'" class="btn o_arrow_button disabled"
+                        [class.btn-primary]="productRequest.state == 'done'"
+                        [class.btn-secondary]="productRequest.state == 'done'" type="button">
                         Đã xuất
                     </button>
-                    <button [disabled]="productRequest && productRequest.state == 'confirmed'"
-                        class="btn o_arrow_button o_arrow_button_bg_primary disabled"
-                        [class.btn-primary]="productRequest && productRequest.state == 'confirmed'"
-                        [class.btn-secondary]="productRequest && productRequest.state == 'confirmed'" type="button">
+                    <button [disabled]="productRequest.state == 'confirmed'" class="btn o_arrow_button disabled"
+                        [class.btn-primary]="productRequest.state == 'confirmed'"
+                        [class.btn-secondary]="productRequest.state == 'confirmed'" type="button">
                         Đang yêu cầu
+                    </button>
+                    <button *ngIf="productRequest.state == 'cancel'" [disabled]="productRequest.state == 'cancel'" class="btn o_arrow_button disabled"
+                        [class.btn-primary]="productRequest.state == 'cancel'"
+                        [class.btn-secondary]="productRequest.state == 'cancel'" type="button">
+                        Đã hủy
                     </button>
                 </div>
             </div>
             <div class="o_form_sheet">
-                <!-- <h3>{{productRequest?.name}}</h3> -->
+                <h3>{{productRequest?.name}}</h3>
                 <div class="o_group">
                     <table class="o_group o_inner_group o_group_col_6">
                         <tbody>
@@ -47,17 +48,6 @@
                                     <span>
                                         {{(productRequest ? productRequest.picking.date : '') | date: 'shortDate'}}
                                     </span>
-                                </td>
-                            </tr>
-                            <tr *ngIf="productRequest.saleOrder">
-                                <td colspan="1" class="o_td_label">
-                                    <label class="o_form_label">Phiếu điều trị</label>
-                                </td>
-                                <td colspan="1" style="width: 100%;">
-                                    <a [routerLink]="['/sale-orders', productRequest.saleOrder.id]" 
-                                        class="text-primary" (click)="activateModal.dismiss()">
-                                        {{productRequest.saleOrder.name}}
-                                    </a>
                                 </td>
                             </tr>
                         </tbody>
@@ -108,7 +98,7 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button *ngIf="productRequest && productRequest.state == 'confirmed'" type="button" class="btn btn-primary mr-2"
-        (click)="onRequest()">Xuất kho</button>
+    <button *ngIf="productRequest && productRequest.state == 'confirmed'" type="button" class="btn btn-danger mr-2"
+        (click)="actionCancel()">Hủy yêu cầu</button>
     <button type="button" class="btn btn-secondary mr-2" (click)="activateModal.dismiss()">Đóng</button>
 </div>

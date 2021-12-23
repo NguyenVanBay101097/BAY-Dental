@@ -225,12 +225,12 @@ namespace Infrastructure.Services
             foreach (var request in selfs)
             {
                 if (request.State == "done")
-                    throw new Exception("Bạn không thể xóa yêu cầu vật tư đã xuất");
+                    throw new Exception("Bạn không thể hủy yêu cầu vật tư đã xuất");
 
                 var lineIds = request.Lines.SelectMany(x => x.SaleProductionLineRels).Select(s => s.SaleProductionLineId).ToList();
                 saleProducionLineIds = saleProducionLineIds.Union(lineIds);
 
-                request.State = "draft";
+                request.State = "cancel";
             }
 
 
@@ -321,28 +321,17 @@ namespace Infrastructure.Services
 
         public async Task Unlink(IEnumerable<Guid> ids)
         {
-            var productionlineObj = GetService<ISaleProductionLineService>();
-            var saleProducionLineIds = new List<Guid>().AsEnumerable();
             var selfs = await SearchQuery(x => ids.Contains(x.Id))
-                .Include(x => x.Lines).ThenInclude(s => s.SaleProductionLineRels)
                 .ToListAsync();
 
             foreach (var request in selfs)
             {
-                if (request.State == "done")
-                    throw new Exception("Bạn không thể xóa yêu cầu vật tư đã xuất");
-
-                var lineIds = request.Lines.SelectMany(x => x.SaleProductionLineRels).Select(s => s.SaleProductionLineId).ToList();
-                saleProducionLineIds = saleProducionLineIds.Union(lineIds);
-
+                if (request.State != "draft" && request.State != "cancel")
+                    throw new Exception("Bạn chỉ có thể xóa phiếu yêu cầu vật tư ở trạng thái đã hủy");
             }
 
 
             await DeleteAsync(selfs);
-
-            //save requested quantity
-            if (saleProducionLineIds.Any())
-                await productionlineObj.ComputeQtyRequested(saleProducionLineIds);
         }
 
         public override ISpecification<ProductRequest> RuleDomainGet(IRRule rule)

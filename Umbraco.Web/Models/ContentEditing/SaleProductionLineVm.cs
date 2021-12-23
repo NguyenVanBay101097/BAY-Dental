@@ -26,6 +26,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid ProductId { get; set; }
         public ProductSimple Product { get; set; }
 
+        public UoMSimple ProductUOM { get; set; }
+
         /// <summary>
         /// so luong dinh muc
         /// </summary>

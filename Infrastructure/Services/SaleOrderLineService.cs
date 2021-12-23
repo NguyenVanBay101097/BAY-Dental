@@ -764,27 +764,28 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task CreateSaleProduction(IEnumerable<SaleOrderLine> seft)
+        public async Task CreateSaleProduction(IEnumerable<SaleOrderLine> self)
         {
             var saleProductObj = GetService<ISaleProductionService>();
             var bomObj = GetService<IProductBomService>();
 
-            var productId_dict = seft.GroupBy(x => x.ProductId.Value).ToDictionary(x => x.Key, x => x.Select(s => s.Id).ToList());
-            var products = await SearchQuery(x => seft.Select(x => x.Id).Contains(x.Id) && x.Product.Boms.Any())
-                .GroupBy(x => x.ProductId.Value)
+            var products = self.GroupBy(x => x.ProductId.Value)
                 .Select(x => new
                 {
                     ProductId = x.Key,
                     Quantity = x.Sum(s => s.ProductUOMQty),
-                    LineIds = productId_dict[x.Key],
-                })
-                .ToListAsync();
+                    LineIds = x.Select(s => s.Id).ToList(),
+                }).ToList();
 
-            var boms = await bomObj.SearchQuery(x => productId_dict.Select(x => x.Key).Contains(x.ProductId)).ToListAsync();
-            var bom_dict = boms.GroupBy(x => x.ProductId).ToDictionary(x => x.Key, x => x.Select(s => s).ToList());
+            var productIds = products.Select(x => x.ProductId).ToList();
+            var boms = await bomObj.SearchQuery(x => productIds.Contains(x.ProductId)).ToListAsync();
+            var bom_dict = boms.GroupBy(x => x.ProductId).ToDictionary(x => x.Key, x => x.ToList());
             var saleProductions = new List<SaleProduction>();
             foreach (var item in products)
             {
+                if (!bom_dict.ContainsKey(item.ProductId))
+                    continue;
+
                 var saleProduction = new SaleProduction
                 {
                     ProductId = item.ProductId,
@@ -797,7 +798,8 @@ namespace Infrastructure.Services
                     saleProduction.Lines.Add(new SaleProductionLine
                     {
                         ProductId = line.MaterialProductId.Value,
-                        Quantity = saleProduction.Quantity * line.Quantity
+                        ProductUOMId = line.ProductUOMId,
+                        Quantity = item.Quantity * line.Quantity
                     });
                 }
 
@@ -807,7 +809,6 @@ namespace Infrastructure.Services
                 }
 
                 saleProductions.Add(saleProduction);
-
             }
 
             await saleProductObj.CreateAsync(saleProductions);
