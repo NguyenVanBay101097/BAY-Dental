@@ -1,7 +1,6 @@
 import { values } from 'lodash';
 import { Injectable } from '@angular/core';
 import { DataResult, State } from '@progress/kendo-data-query';
-import { SessionInfoStorageService } from 'src/app/core/services/session-info-storage.service';
 
 export interface GridSettings {
     columnsConfig: ColumnSettings[];
@@ -20,22 +19,20 @@ export interface ColumnSettings {
 }
 
 const getCircularReplacer = (key, values) => {
-    var array = localStorage.getItem(key);
-    const seen = array != null ? localStorage.getItem(key).split(',') :  new Array;
-    if (seen.length > 0) {       
-        for (let value of values) {
-            var index = seen.find(s => s == value);
-            if (index) {
-               continue;
-            }
-            seen.push(value);
-        }   
+    var array = JSON.parse(localStorage.getItem(key));
+    let seen = array == null ? new Array : array;
+    if (seen.length > 0) {
+        const set1 = new Set(values);
+        let i = seen.length;
 
+        while (i--) if (!set1.delete(seen[i])) seen.splice(i, 1);
+        seen.push(...set1);
+      
         return seen;
-    }else{
+    } else {
         values.forEach(element => {
             seen.push(element);
-        }); 
+        });
     }
 
     return seen;
@@ -43,13 +40,13 @@ const getCircularReplacer = (key, values) => {
 
 @Injectable()
 export class StatePersistingService {
-    constructor(private sessionInfoStorageService: SessionInfoStorageService) { }
-    public get<T>(token: string): T {
+
+    public get(token: string) {
         const settings = localStorage.getItem(token);
         return settings ? JSON.parse(settings) : settings;
     }
 
-    public set<T>(token: string, values: any): void {
+    public set(token: string, values: any): void {
         localStorage.setItem(token, JSON.stringify(getCircularReplacer(token, values)));
     }
 
