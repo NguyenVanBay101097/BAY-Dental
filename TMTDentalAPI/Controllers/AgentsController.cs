@@ -55,7 +55,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        [CheckAccess(Actions = "Catalog.Agent.Read")]
+        //[CheckAccess(Actions = "Catalog.Agent.Read")]
         public async Task<IActionResult> GetAmountDebitTotalAgent([FromQuery] TotalAmountAgentFilter val)
         {
             var result = await _agentService.GetAmountDebitTotalAgent(id: val.AgentId.Value, companyId: val.CompanyId, dateFrom: val.DateFrom, dateTo: val.DateTo);

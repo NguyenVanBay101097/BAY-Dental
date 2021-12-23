@@ -74,7 +74,6 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     private userService: UserService,
     public activeModal: NgbActiveModal,
     private modalService: NgbModal,
-    private errorService: AppSharedShowErrorService,
     private odataPartnerService: PartnersService,
     private productService: ProductService,
     private employeeService: EmployeeService,
@@ -209,7 +208,6 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         this.onPrint();
       },
       er => {
-        this.errorService.show(er);
         this.submitted = false;
       },
     )
@@ -248,7 +246,6 @@ export class AppointmentCreateUpdateComponent implements OnInit {
           
         },
         er => {
-          this.errorService.show(er);
           this.submitted = false;
         },
       )
@@ -263,7 +260,6 @@ export class AppointmentCreateUpdateComponent implements OnInit {
           this.notify("success","Lưu thành công");
         },
         er => {
-          this.errorService.show(er);
           this.submitted = false;
         },
       )

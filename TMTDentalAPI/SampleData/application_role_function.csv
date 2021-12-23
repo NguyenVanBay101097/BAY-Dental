@@ -265,8 +265,6 @@
 "base.application_role_manager","HrJob.Delete"
 "base.application_role_manager","Basic.AccountPayment.Print"
 "base.application_role_manager","Basic.AccountPayment.Cancel"
-
-
 "base.application_role_doctor","Basic.Partner.Read"
 "base.application_role_doctor","Basic.Partner.Create"
 "base.application_role_doctor","Basic.Partner.Update"
@@ -385,8 +383,6 @@
 "base.application_role_doctor","Basic.AccountPayment.Cancel"
 "base.application_role_doctor","UoM.UoMs.Read"
 "base.application_role_doctor","UoM.UoMCategory.Read"
-
-
 "base.application_role_assistant","Basic.Partner.Read"
 "base.application_role_assistant","Basic.Partner.Create"
 "base.application_role_assistant","Basic.Partner.Update"
@@ -505,7 +501,6 @@
 "base.application_role_assistant","Basic.AccountPayment.Cancel"
 "base.application_role_assistant","UoM.UoMs.Read"
 "base.application_role_assistant","UoM.UoMCategory.Read"
-
 "base.application_role_accountant","Basic.Partner.Read"
 "base.application_role_accountant","Basic.Partner.Create"
 "base.application_role_accountant","Basic.Partner.Update"
@@ -628,8 +623,6 @@
 "base.application_role_accountant","Catalog.Agent.Create"
 "base.application_role_accountant","Catalog.Agent.Update"
 "base.application_role_accountant","Catalog.Agent.Delete"
-
-
 "base.application_role_receptionist","Basic.Partner.Read"
 "base.application_role_receptionist","Basic.Partner.Create"
 "base.application_role_receptionist","Basic.Partner.Update"
@@ -852,8 +845,6 @@
 "base.application_role_receptionist","System.Company.Read"
 "base.application_role_receptionist","Basic.AccountPayment.Print"
 "base.application_role_receptionist","Basic.AccountPayment.Cancel"
-
-
 "base.application_role_customer_support","Basic.Partner.Read"
 "base.application_role_customer_support","Basic.Partner.Create"
 "base.application_role_customer_support","Basic.Partner.Update"

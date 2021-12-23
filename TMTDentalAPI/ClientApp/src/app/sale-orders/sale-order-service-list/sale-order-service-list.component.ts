@@ -751,7 +751,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
               .subscribe(r => {
                 this.notify('success', 'Ghi nợ thành công');
                 this.saleOrder.totalPaid = this.saleOrder.totalPaid + (line.priceSubTotal - line.amountInvoiced);
-                this.partnerDebt.debitTotal = this.partnerDebt.debitTotal + (line.priceSubTotal - line.amountInvoiced);
+                this.loadPartnerDebt();
                 line.amountInvoiced = line.priceSubTotal;
               });
           })
