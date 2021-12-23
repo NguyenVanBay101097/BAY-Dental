@@ -258,7 +258,6 @@ export class PartnerCustomerListComponent implements OnInit {
   }
 
 
-
   public saveGridSettings(grid: GridComponent): void {
     const columns = grid.columns;
 
@@ -281,18 +280,6 @@ export class PartnerCustomerListComponent implements OnInit {
     this.persistingService.set("partners_grid_visible_columns", gridConfig);
   }
 
-
-  private mapDateFilter = (descriptor: any) => {
-    const filters = descriptor.filters || [];
-
-    filters.forEach((filter) => {
-      if (filter.filters) {
-        this.mapDateFilter(filter);
-      } else if (filter.field === "FirstOrderedOn" && filter.value) {
-        filter.value = new Date(filter.value);
-      }
-    });
-  };
 
   initFilter() {
     this.filter.limit = 20;

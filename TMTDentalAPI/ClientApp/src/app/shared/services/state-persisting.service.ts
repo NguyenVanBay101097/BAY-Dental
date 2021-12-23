@@ -20,7 +20,6 @@ export interface ColumnSettings {
 }
 
 const getCircularReplacer = (key, values) => {
-    debugger
     var array = localStorage.getItem(key);
     const seen = array != null ? localStorage.getItem(key).split(',') :  new Array;
     if (seen.length > 0) {       
