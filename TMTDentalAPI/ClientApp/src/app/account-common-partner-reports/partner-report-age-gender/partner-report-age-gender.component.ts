@@ -23,6 +23,7 @@ export class PartnerReportAgeGenderComponent implements OnInit {
   loadReportAgeGender() {
     let val = Object.assign({}, this.filter) as AccountCommonPartnerReportOverviewFilter;
     this.accountCommonPartnerReportService.getPartnerReportGenderOverview(val).subscribe((res: any) => {
+      console.log(res);
       this.dataSet = res;
       this.loadChartOption();
     }, error => console.log(error));
@@ -61,7 +62,7 @@ export class PartnerReportAgeGenderComponent implements OnInit {
         {
           type: "value",
           axisLabel: {
-            formatter: "{value} %"
+            formatter: "{value}"
           }
         }
       ],
@@ -76,7 +77,7 @@ export class PartnerReportAgeGenderComponent implements OnInit {
           itemStyle: {
             color: '#007BFF'
           },
-          data: this.dataSet?.partnerGenderItems[0]?.percent
+          data: this.dataSet?.partnerGenderItems[0]?.count
         },
         {
           name: 'Nữ',
@@ -87,7 +88,7 @@ export class PartnerReportAgeGenderComponent implements OnInit {
           itemStyle: {
             color: '#EB3B5B'
           },
-          data: this.dataSet?.partnerGenderItems[1]?.percent
+          data: this.dataSet?.partnerGenderItems[1]?.count
         },
         {
           name: 'Khác',
@@ -98,7 +99,7 @@ export class PartnerReportAgeGenderComponent implements OnInit {
           itemStyle: {
             color: '#28A745'
           },
-          data: this.dataSet?.partnerGenderItems[2]?.percent
+          data: this.dataSet?.partnerGenderItems[2]?.count
         }
       ]
     }

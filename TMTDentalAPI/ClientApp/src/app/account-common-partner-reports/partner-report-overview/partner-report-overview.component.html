@@ -20,101 +20,12 @@
                 <kendo-combobox [placeholder]="'Dự kiến thu'" class="ml-2 revenue-cmp" [valueField]="'value'" [textField]="'text'"
                     [data]="revenueExpect" [filterable]="true" (selectionChange)="onSelectOrderResiduals($event)">
                 </kendo-combobox>
-                <div ngbDropdown #myDrop="ngbDropdown" class="filter-dropdown">
+                <div ngbDropdown #myDrop="ngbDropdown" class="filter-dropdown" (openChange)="onToggleDropdown($event)">
                     <button type="button" id="filteredAdvance" ngbDropdownToggle class="btn btn-secondary ml-2">
                         Lọc nâng cao
                     </button>
                     <div ngbDropdownMenu aria-labelledby="filteredAdvance" class="filter-container p-0">
-                        <div class="card-header bg-transparent">Lọc nâng cao</div>
-                        <div class="card-body">
-                            <form [formGroup]="formGroup">
-                                <div class="filter-label">
-                                    Nhãn khách hàng
-                                </div>
-                                <div class="filter-content">
-                                    <kendo-multiselect [data]="listPartnerCategory" [popupSettings]="popupSettings"
-                                        class="cus-kendo-multiselect" [filterable]="true" [textField]="'name'"
-                                        [valueField]="'id'" formControlName="categs">
-                                    </kendo-multiselect>
-                                </div>
-
-                                <div class="filter-label">
-                                    Nguồn khách hàng
-                                </div>
-                                <div class="filter-content">
-                                    <kendo-multiselect class="cus-kendo-multiselect" [popupSettings]="popupSettings"
-                                        [data]="listPartnerSource" [filterable]="true" [textField]="'name'"
-                                        [valueField]="'id'" formControlName="partnerSources">
-                                    </kendo-multiselect>
-                                </div>
-
-                                <div class="filter-label">
-                                    Thẻ thành viên
-                                </div>
-                                <div class="filter-content">
-                                    <kendo-multiselect class="cus-kendo-multiselect" [popupSettings]="popupSettings"
-                                        [data]="listCardType" [filterable]="true" #cardTypeCbx [textField]="'name'"
-                                        [valueField]="'id'" formControlName="cardTypes">
-                                    </kendo-multiselect>
-                                </div>
-
-                                <div class="filter-label">
-                                    Độ tuổi
-                                </div>
-                                <div class="filter-content d-flex">
-                                    <input class="form-control" formControlName="ageFrom" placeholder="Từ"
-                                        tmtautonumeric [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
-                                    <span>&nbsp;-&nbsp;</span>
-                                    <input class="form-control" formControlName="ageFrom" placeholder="Đến"
-                                        tmtautonumeric
-                                        [options]="{ minimumValue: 0, maximumValue: 100, decimalPlaces: 0 }" />
-                                </div>
-
-                                <div class="filter-label">
-                                    Doanh thu
-                                </div>
-                                <div class="filter-content d-flex">
-                                    <input class="form-control" formControlName="revenueFrom" placeholder="Từ"
-                                        tmtautonumeric [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
-                                    <span>&nbsp;-&nbsp;</span>
-                                    <input class="form-control" formControlName="revenueTo" placeholder="Đến"
-                                        tmtautonumeric [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
-                                </div>
-
-                                <div class="filter-label">
-                                    Dự kiến thu
-                                </div>
-                                <div class="filter-content d-flex">
-                                    <input class="form-control" formControlName="revenueExpectFrom" placeholder="Từ"
-                                        tmtautonumeric [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
-                                    <span>&nbsp;-&nbsp;</span>
-                                    <input class="form-control" formControlName="revenueExpectTo" placeholder="Đến"
-                                        tmtautonumeric [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
-                                </div>
-
-                                <div class="filter-label">
-                                    Công nợ
-                                </div>
-                                <div class="filter-content d-flex">
-                                    <input class="form-control" formControlName="debtFrom" placeholder="Từ"
-                                        tmtautonumeric [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
-                                    <span>&nbsp;-&nbsp;</span>
-                                    <input class="form-control" formControlName="debtTo" placeholder="Đến"
-                                        tmtautonumeric [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
-                                </div>
-                            </form>
-                        </div>
-                        <div class="card-footer bg-transparent">
-                            <button class="btn btn-primary mr-2" type="button" (click)="onApply()">
-                                Lọc
-                            </button>
-                            <button class="btn btn-danger mr-2" type="button" (click)="onRemoveAllFilters()">
-                                Xóa bộ lọc
-                            </button>
-                            <button class="btn btn-secondary" type="button" (click)="myDrop.toggle()">
-                                Đóng
-                            </button>
-                        </div>
+                        <app-partner-report-filter-popup #reportFilterPopup (onCloseEmit)="onCloseEmit()" (onApplyEmit)="onApplyEmit($event)"></app-partner-report-filter-popup>
                     </div>
                 </div>
             </div>

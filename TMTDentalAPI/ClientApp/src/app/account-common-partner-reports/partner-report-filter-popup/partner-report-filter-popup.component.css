@@ -1,0 +1,13 @@
+
+.filter-label {
+    font-weight: 500;
+    padding: 0.5rem 0;
+}
+
+.alert {
+    padding: 5px 15px 5px 10px !important;
+}
+
+.filter-dropdown, .revenue-cmp {
+    margin-top: 0;
+}
