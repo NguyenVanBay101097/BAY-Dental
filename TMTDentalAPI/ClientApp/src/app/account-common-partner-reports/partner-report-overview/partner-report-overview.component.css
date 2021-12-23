@@ -12,12 +12,12 @@
 .filter-right {
     width: 60%;
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
     flex-wrap: wrap;
 }
 
-.demo-chart {
-    height: 480px;
+#filteredAdvance {
+    font-weight: 500;
 }
 
 .filter-container {
@@ -35,9 +35,47 @@
 
 .filter-label {
     font-weight: 500;
-    padding: 0.5rem;
+    padding: 0.5rem 0;
 }
 
 .filter-content {
-    padding: 0 0.5rem;
+    /* padding: 0 0.5rem; */
+}
+
+.filter-info {
+    width: fit-content;
+    margin-right: 10px;
+    position: relative;
+}
+
+.filter-info i {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    /* height: 100%; */
+}
+
+.data-filter {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.alert {
+    padding: 5px 15px 5px 10px !important;
+}
+
+.filter-dropdown, .revenue-cmp {
+    margin-top: 0;
+}
+
+@media only screen and (max-width: 940px) {
+    .revenue-cmp {
+        margin-top: 7px;
+    }
+}
+
+@media only screen and (max-width: 1354px) {
+    .filter-dropdown {
+        margin-top: 7px;
+    }
 }

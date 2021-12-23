@@ -9,29 +9,22 @@ import { AccountCommonPartnerReportOverviewFilter, AccountCommonPartnerReportSer
 })
 export class PartnerReportAgeGenderComponent implements OnInit {
   @Input() filter: any;
-  // chartOption: EChartsOption;
   dataSet: any;
   chartOption: EChartsOption;
+
   constructor(
     private accountCommonPartnerReportService: AccountCommonPartnerReportService
   ) { }
 
   ngOnInit(): void {
     this.loadReportAgeGender();
-    // this.loadChartOption();
   }
 
   loadReportAgeGender() {
-    // console.log('3')
-    let val = new AccountCommonPartnerReportOverviewFilter();
-    val.companyId = this.filter ? this.filter.companyId : null;
-    val.isDebt = this.filter ? this.filter.isDebt : null;
-    val.isRevenueExpect = this.filter ? this.filter.isRevenueExpect : null;
-    val.orderState = this.filter ? this.filter.orderState : '';
+    let val = Object.assign({}, this.filter) as AccountCommonPartnerReportOverviewFilter;
     this.accountCommonPartnerReportService.getPartnerReportGenderOverview(val).subscribe((res: any) => {
       this.dataSet = res;
       this.loadChartOption();
-      // console.log(this.dataSet);
     }, error => console.log(error));
   }
 
@@ -61,7 +54,6 @@ export class PartnerReportAgeGenderComponent implements OnInit {
           axisLabel: {
             interval: 0
           },
-          // axisTick: { show: false },
           data: this.dataSet?.legendChart
         }
       ],
