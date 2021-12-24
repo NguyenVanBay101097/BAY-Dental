@@ -109,23 +109,30 @@ namespace Infrastructure.Services
 
         private async Task _GenerateCodeIfEmpty(IEnumerable<Product> self)
         {
-            //generate ma code duy nhat
-            var seqObj = GetService<IIRSequenceService>();
-            foreach (var product in self)
+            var nodeCodeProducts = self.Where(x => string.IsNullOrEmpty(x.DefaultCode)).ToList();
+            if (nodeCodeProducts.Any())
             {
-                if (!string.IsNullOrWhiteSpace(product.DefaultCode))
-                    continue;
-
-                do
+                var seqObj = GetService<IIRSequenceService>();
+                var matchedCodes = await SearchQuery(x => !string.IsNullOrEmpty(x.DefaultCode)).Select(x => x.DefaultCode).ToListAsync();
+                foreach (var num in Enumerable.Range(1, 100))
                 {
-                    product.DefaultCode = await seqObj.NextByCode("product_seq");
-
-                    if (string.IsNullOrWhiteSpace(product.DefaultCode))
+                    var tmp = nodeCodeProducts.Where(x => string.IsNullOrEmpty(x.DefaultCode)).ToList();
+                    if (tmp.Any())
                     {
-                        await _InsertProductSequence();
-                        product.DefaultCode = await seqObj.NextByCode("product_seq");
+                        var codeList = await seqObj.NextByCode("product_seq", tmp.Count);
+                        for (var i = 0; i < tmp.Count; i++)
+                        {
+                            var item = tmp[i];
+                            if (!matchedCodes.Contains(codeList[i]))
+                                item.DefaultCode = codeList[i];
+                        }
                     }
-                } while (SearchQuery(x => x.DefaultCode == product.DefaultCode).Any());
+                    else
+                        break;
+                }
+
+                if (nodeCodeProducts.Any(x => string.IsNullOrEmpty(x.DefaultCode)))
+                    throw new Exception($"Có những dòng không phát sinh mã đc");
             }
         }
 
@@ -136,16 +143,15 @@ namespace Infrastructure.Services
         /// <returns></returns>
         private async Task<IEnumerable<Product>> _GetProductsExistCode(IEnumerable<Product> self)
         {
-            var list = new List<Product>();
-            foreach (var product in self)
-            {
-                if (string.IsNullOrWhiteSpace(product.DefaultCode))
-                    continue;
+            var productCodes = self.Where(x => !string.IsNullOrEmpty(x.DefaultCode)).Select(x => x.DefaultCode).ToList();
+            var group = await SearchQuery(x => productCodes.Contains(x.DefaultCode)).GroupBy(x => x.DefaultCode)
+                    .Select(x => new {
+                        Code = x.Key,
+                        Count = x.Count()
+                    }).ToListAsync();
 
-                var count = await SearchQuery(x => x.DefaultCode == product.DefaultCode).CountAsync();
-                if (count >= 2)
-                    list.Add(product);
-            }
+            var existCodes = group.Where(x => x.Count > 1).Select(x => x.Code).ToList();
+            var list = self.Where(x => existCodes.Contains(x.DefaultCode)).ToList();
 
             return list;
         }

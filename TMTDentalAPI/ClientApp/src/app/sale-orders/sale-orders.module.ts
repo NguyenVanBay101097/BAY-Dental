@@ -41,6 +41,7 @@ import { SaleOrderServiceListComponent } from './sale-order-service-list/sale-or
 import { SaleOrderInsurancePaymentDialogComponent } from './sale-order-insurance-payment-dialog/sale-order-insurance-payment-dialog.component';
 
 import { ConfirmPaymentDialogComponent } from './confirm-payment-dialog/confirm-payment-dialog.component';
+import { SaleOrderProductRequestViewDialogComponent } from './sale-order-product-request-view-dialog/sale-order-product-request-view-dialog.component';
 
 @NgModule({
   declarations: [
@@ -75,6 +76,7 @@ import { ConfirmPaymentDialogComponent } from './confirm-payment-dialog/confirm-
     SaleOrderServiceListComponent,
     SaleOrderInsurancePaymentDialogComponent,
     ConfirmPaymentDialogComponent,
+    SaleOrderProductRequestViewDialogComponent,
   ],
   imports: [
     CommonModule,

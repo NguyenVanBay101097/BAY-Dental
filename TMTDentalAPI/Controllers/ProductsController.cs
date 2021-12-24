@@ -387,8 +387,7 @@ namespace TMTDentalAPI.Controllers
             var itemsNoCode = data.Where(x => string.IsNullOrEmpty(x.DefaultCode)).ToList();
             if (itemsNoCode.Any())
             {
-                var product_code_prefix = "SP"; //nên đưa vào constants
-                var matchedCodes = await _productService.SearchQuery(x => x.DefaultCode.Contains(product_code_prefix)).Select(x => x.DefaultCode).ToListAsync();
+                var matchedCodes = await _productService.SearchQuery(x => x.Type2 == "service" && !string.IsNullOrEmpty(x.DefaultCode)).Select(x => x.DefaultCode).ToListAsync();
                 foreach (var num in Enumerable.Range(1, 100))
                 {
                     var tmp = itemsNoCode.Where(x => string.IsNullOrEmpty(x.DefaultCode)).ToList();
@@ -423,11 +422,11 @@ namespace TMTDentalAPI.Controllers
             }
 
             var codes = group.Select(x => x.DefaultCode).ToList();
-            var existCodeProducts = await _productService.SearchQuery(x => codes.Contains(x.DefaultCode)).ToListAsync();
+            var existCodeProducts = await _productService.SearchQuery(x => x.Type2 == "service" && codes.Contains(x.DefaultCode)).ToListAsync();
             if (existCodeProducts.Any())
             {
-                var duplicateCodes = existCodeProducts.Select(x => x.DefaultCode).ToList();
-                return Ok(new { success = false, errors = new List<string>() { $"Đã tồn tại những dịch vụ với mã: {string.Join(", ", duplicateCodes)}" } });
+                var duplicateCodes = existCodeProducts.Select(x => x.DefaultCode).Distinct().ToList();
+                return Ok(new { success = false, errors = new List<string>() { $"Đã tồn tại dịch vụ với mã: {string.Join(", ", duplicateCodes)}" } });
             }     
 
             foreach (var item in data)
@@ -715,6 +714,51 @@ namespace TMTDentalAPI.Controllers
 
             if (errors.Any())
                 return Ok(new { success = false, errors });
+
+            var itemsNoCode = data.Where(x => string.IsNullOrEmpty(x.DefaultCode)).ToList();
+            if (itemsNoCode.Any())
+            {
+                var matchedCodes = await _productService.SearchQuery(x => x.Type2 == "medicine" && !string.IsNullOrEmpty(x.DefaultCode)).Select(x => x.DefaultCode).ToListAsync();
+                foreach (var num in Enumerable.Range(1, 100))
+                {
+                    var tmp = itemsNoCode.Where(x => string.IsNullOrEmpty(x.DefaultCode)).ToList();
+                    if (tmp.Any())
+                    {
+                        var codeList = await _sequenceService.NextByCode("product_seq", tmp.Count);
+                        for (var i = 0; i < tmp.Count; i++)
+                        {
+                            var item = tmp[i];
+                            if (!matchedCodes.Contains(codeList[i]))
+                                item.DefaultCode = codeList[i];
+                        }
+                    }
+                    else
+                        break;
+                }
+            }
+
+            if (data.Any(x => string.IsNullOrEmpty(x.DefaultCode)))
+                return Ok(new { success = false, errors = new List<string>() { $"Có những dòng không phát sinh mã đc" } });
+
+            var group = data.GroupBy(x => x.DefaultCode).Select(x => new
+            {
+                DefaultCode = x.Key,
+                Count = x.Count()
+            });
+
+            if (group.Any(x => x.Count > 1))
+            {
+                var duplicateCodes = group.Where(x => x.Count > 1).Select(x => x.DefaultCode).ToList();
+                return Ok(new { success = false, errors = new List<string>() { $"Dữ liệu file excel có những mã dịch vụ bị trùng: {string.Join(", ", duplicateCodes)}" } });
+            }
+
+            var codes = group.Select(x => x.DefaultCode).ToList();
+            var existCodeProducts = await _productService.SearchQuery(x => x.Type2 == "medicine" && codes.Contains(x.DefaultCode)).ToListAsync();
+            if (existCodeProducts.Any())
+            {
+                var duplicateCodes = existCodeProducts.Select(x => x.DefaultCode).Distinct().ToList();
+                return Ok(new { success = false, errors = new List<string>() { $"Đã tồn tại thuốc với mã: {string.Join(", ", duplicateCodes)}" } });
+            }
 
             var categNames = data.Select(x => x.CategName).Distinct().ToList();
             if (categNames.Any())
@@ -1024,6 +1068,51 @@ namespace TMTDentalAPI.Controllers
 
             if (errors.Any())
                 return Ok(new { success = false, errors });
+
+            var itemsNoCode = data.Where(x => string.IsNullOrEmpty(x.DefaultCode)).ToList();
+            if (itemsNoCode.Any())
+            {
+                var matchedCodes = await _productService.SearchQuery(x => x.Type2 == "product" && !string.IsNullOrEmpty(x.DefaultCode)).Select(x => x.DefaultCode).ToListAsync();
+                foreach (var num in Enumerable.Range(1, 100))
+                {
+                    var tmp = itemsNoCode.Where(x => string.IsNullOrEmpty(x.DefaultCode)).ToList();
+                    if (tmp.Any())
+                    {
+                        var codeList = await _sequenceService.NextByCode("product_seq", tmp.Count);
+                        for (var i = 0; i < tmp.Count; i++)
+                        {
+                            var item = tmp[i];
+                            if (!matchedCodes.Contains(codeList[i]))
+                                item.DefaultCode = codeList[i];
+                        }
+                    }
+                    else
+                        break;
+                }
+            }
+
+            if (data.Any(x => string.IsNullOrEmpty(x.DefaultCode)))
+                return Ok(new { success = false, errors = new List<string>() { $"Có những dòng không phát sinh mã đc" } });
+
+            var group = data.GroupBy(x => x.DefaultCode).Select(x => new
+            {
+                DefaultCode = x.Key,
+                Count = x.Count()
+            });
+
+            if (group.Any(x => x.Count > 1))
+            {
+                var duplicateCodes = group.Where(x => x.Count > 1).Select(x => x.DefaultCode).ToList();
+                return Ok(new { success = false, errors = new List<string>() { $"Dữ liệu file excel có những mã dịch vụ bị trùng: {string.Join(", ", duplicateCodes)}" } });
+            }
+
+            var codes = group.Select(x => x.DefaultCode).ToList();
+            var existCodeProducts = await _productService.SearchQuery(x => x.Type2 == "product" && codes.Contains(x.DefaultCode)).ToListAsync();
+            if (existCodeProducts.Any())
+            {
+                var duplicateCodes = existCodeProducts.Select(x => x.DefaultCode).Distinct().ToList();
+                return Ok(new { success = false, errors = new List<string>() { $"Đã tồn tại vật tư với mã: {string.Join(", ", duplicateCodes)}" } });
+            }
 
             var uomNames = data.Select(x => x.UOM).Union(data.Select(x => x.UOMPO)).Distinct().ToList();
             var uoms = await _uomService.SearchQuery(x => uomNames.Contains(x.Name)).ToListAsync();

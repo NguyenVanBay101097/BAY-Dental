@@ -121,8 +121,6 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
 
     setTimeout(() => {
       this.loadListCommissions();
-      this.loadListcommissionAssistants();
-      this.loadListcommissionCounselors();
       this.getEmployeeInfo();
       // this.loadUsers();
       // this.loadstructureTypes();
@@ -153,33 +151,6 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.commissionCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.commissionCbx.loading = true)),
-      switchMap(value => this.searchCommissions(value))
-    ).subscribe(result => {
-      this.listCommissions = result.items;
-      this.commissionCbx.loading = false;
-    });
-
-    this.assistantCommissionCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.assistantCommissionCbx.loading = true)),
-      switchMap(value => this.searchCommissionAssistants(value))
-    ).subscribe(result => {
-      this.listAssistantCommissions = result.items;
-      this.assistantCommissionCbx.loading = false;
-    });
-
-    this.counselorCommissionCbx.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.counselorCommissionCbx.loading = true)),
-      switchMap(value => this.searchCommissionCounselors(value))
-    ).subscribe(result => {
-      this.listCounselorCommissions = result.items;
-      this.counselorCommissionCbx.loading = false;
-    });
-
   }
 
   get isUser() {

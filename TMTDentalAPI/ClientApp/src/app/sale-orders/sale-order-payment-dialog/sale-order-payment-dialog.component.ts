@@ -40,8 +40,6 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
   advanceAmount: number = 0; // số tiền tạm ứng
   selectedJournals = []; // danh sách journal filter box được chọn
-  debtJournalSelected: any; // phương thức thanh toán công nợ được chọn
-
 
   @ViewChild("journalCbx", { static: true }) journalCbx: ComboBoxComponent;
   loading = false;
@@ -376,12 +374,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
     setTimeout(() => {
       this.userAmountPayment = this.amount;
-
     }, 200);
-    if (this.getValueForm('isDebtPayment')) {
-      this.debtJournalSelected = Object.assign({}, this.filteredJournals.find(x => x.type == 'cash'));
-      this.debtJournalSelected.amount = this.debtAmount;
-    }
 
     // this.debtJournalSelected = {type:'cash',name: 'Tiền mặt', journals: [], journal:null};
 
@@ -707,22 +700,27 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   }
 
   get CombineAllJournalSelected() {
-    var newSelected = [];
+    var list = [];
     this.journalLines.controls.forEach(JN => {
-      newSelected.push(Object.assign({}, JN.value));
+      var journal = JN.get('journal').value;
+      var item = list.find(x => x.type == journal.type);
+      if (item) {
+        item.amount += JN.get('amount').value;
+      } else {
+        list.push({type: journal.type, amount: JN.get('amount').value});
+      }
     });
 
-    if (this.debtJournalSelected) {
-      var existJN = newSelected.find(x => this.debtJournalSelected.type == x.type);
+    var debtJournal = this.paymentForm.get('debtJournal').value;
+    if (debtJournal) {
+      var existJN = list.find(x => x.type == debtJournal.type);
       if (existJN) {
-        existJN.amount = existJN.amount + this.debtAmount;
+        existJN.amount += this.debtAmount;
       } else {
-        this.debtJournalSelected.amount = this.debtAmount;
-        newSelected.push(Object.assign({}, this.debtJournalSelected));
+        list.push({type: debtJournal.type, amount: this.debtAmount});
       }
     }
-    return newSelected;
+
+    return list;
   }
-
-
 }

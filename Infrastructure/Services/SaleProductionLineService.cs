@@ -24,13 +24,15 @@ namespace Infrastructure.Services
 
         public async Task ComputeQtyRequested(IEnumerable<Guid> ids)
         {
-            var lines = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.ProductRequestLineRels).ThenInclude(x => x.ProductRequestLine).ThenInclude(x => x.Request).ToListAsync();
-
-            var rels = lines.SelectMany(x => x.ProductRequestLineRels.Where(s => s.ProductRequestLine.Request.State != "draft")).ToList();
-            var requestedQty_dict = rels.GroupBy(x => x.SaleProductionLineId).ToDictionary(x => x.Key, x => x.Sum(s => s.ProductRequestLine.ProductQty));
+            var lines = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.ProductRequestLineRels).ThenInclude(x => x.ProductRequestLine).ThenInclude(x => x.Request)
+                .ToListAsync();
 
             foreach (var line in lines)
-                line.QuantityRequested = requestedQty_dict.ContainsKey(line.Id) ? requestedQty_dict[line.Id] : 0;
+            {
+                line.QuantityRequested = line.ProductRequestLineRels.Where(x => x.ProductRequestLine.Request.State != "draft" && x.ProductRequestLine.Request.State != "cancel")
+                    .Sum(x => x.ProductRequestLine.ProductQty);
+            }
 
             await UpdateAsync(lines);
         }

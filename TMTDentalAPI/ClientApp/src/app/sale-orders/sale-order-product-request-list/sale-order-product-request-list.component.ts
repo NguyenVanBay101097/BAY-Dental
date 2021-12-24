@@ -6,6 +6,7 @@ import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-di
 import { ProductRequestService } from 'src/app/shared/product-request.service';
 import { ProductRequestPaged } from '../product-request';
 import { SaleOrderProductRequestDialogComponent } from '../sale-order-product-request-dialog/sale-order-product-request-dialog.component';
+import { SaleOrderProductRequestViewDialogComponent } from '../sale-order-product-request-view-dialog/sale-order-product-request-view-dialog.component';
 
 @Component({
   selector: 'app-sale-order-product-request-list',
@@ -67,12 +68,10 @@ export class SaleOrderProductRequestListComponent implements OnInit {
   }
 
   editItem(item) {
-    let modalRef = this.modalService.open(SaleOrderProductRequestDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    let modalRef = this.modalService.open(SaleOrderProductRequestViewDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Yêu cầu vật tư';
     modalRef.componentInstance.id = item.id;
-    modalRef.componentInstance.saleOrderId = this.saleOrderId;
     modalRef.result.then((result) => {
-      // this.notify('success','Lưu thành công');
       this.loadData();
     }, () => {
     });
@@ -111,6 +110,8 @@ export class SaleOrderProductRequestListComponent implements OnInit {
         return 'Đang yêu cầu';
       case 'done':
         return 'Đã xuất';
+      case 'cancel':
+        return 'Đã hủy';
       default:
         return 'Nháp';
     }

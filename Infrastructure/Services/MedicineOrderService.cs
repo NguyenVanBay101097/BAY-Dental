@@ -194,7 +194,7 @@ namespace Infrastructure.Services
             {
                 Amount = amountTotal,
                 JournalId = medicineOrder.JournalId,
-                PaymentType = amountTotal > 0 ? "inbound" : "outbound",
+                PaymentType = "inbound",
                 PartnerId = medicineOrder.PartnerId,
                 PartnerType = "customer",
                 CompanyId = medicineOrder.CompanyId,

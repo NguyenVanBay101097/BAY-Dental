@@ -12,6 +12,9 @@ namespace ApplicationCore.Entities
         public Guid ProductId { get; set; }
         public Product Product { get; set; }
 
+        public Guid? ProductUOMId { get; set; }
+        public UoM ProductUOM { get; set; }
+
         /// <summary>
         /// so luong dinh muc
         /// </summary>
