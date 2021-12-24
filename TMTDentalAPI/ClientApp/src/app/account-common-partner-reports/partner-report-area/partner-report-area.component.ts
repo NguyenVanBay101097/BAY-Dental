@@ -16,7 +16,7 @@ interface TreeNode {
 })
 export class PartnerReportAreaComponent implements OnInit {
   @Input() filter: any;
-  @Output() filterEmit = new EventEmitter<any>();
+  @Output() filterEmit = new EventEmitter();
   data: any;
   dataSet: any;
   codeFilter = Object.assign({});
@@ -119,27 +119,30 @@ export class PartnerReportAreaComponent implements OnInit {
 
 
   onChartClick(event) {
+    let res;
     if (event.dataType && event.dataType == 'main') {
       this.echartsInstance = this.echartsInstance.filter(val => !event.treePathInfo.map(s => s.dataIndex).includes(val.dataIndex));
-      event.treePathInfo.forEach(element => {     
-        if (element.dataIndex === event.dataIndex) {          
+      event.treePathInfo.forEach(element => {
+        if (element.dataIndex === event.dataIndex) {
           const a = { ...element };
           a['code'] = event.data.code;
           a['type'] = event.data.type;
           this.echartsInstance.push(a);
         }
       });
-
+      res = event.data;
     }
 
     if (event.selfType && event.selfType == 'breadcrumb') {
       this.echartsInstance = this.echartsInstance.filter(val => !event.treePathInfo.map(s => s.dataIndex).includes(val.dataIndex));
-      var res = this.echartsInstance.find(s => s.dataIndex == event.nodeData.dataIndex);
-      if (res) {
-        console.log(res);
-      }
-
+      res = this.echartsInstance.find(s => s.dataIndex == event.nodeData.dataIndex);
     }
-
+    // console.log(res);
+    const data = {
+      type: res ? res.type : '',
+      code: res ? res.code : ''
+    }
+    // console.log(data);
+    this.filterEmit.emit(data);
   }
 }

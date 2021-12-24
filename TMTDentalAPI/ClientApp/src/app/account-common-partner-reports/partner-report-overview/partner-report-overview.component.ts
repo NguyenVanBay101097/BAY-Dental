@@ -128,7 +128,7 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
   }
 
   loadAllData() {
-    
+
     setTimeout(() => {
       this.reportAreaComp?.loadReportArea();
       this.reportSourceComp?.loadReportSource();
@@ -256,5 +256,31 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
     if (e) {
       this.reportFilterPopup.onUpdateFormValue();
     };
+  }
+
+  filterEmit(val) {
+    // if (val) {
+    //   if (val.type === 'city') {
+    //     this.filter.cityCode = val.code;
+    //     this.filter.districtCode = null;
+    //     this.filter.wardCode = null;
+    //   }
+    //   else if (val.type === 'district') {
+    //     this.filter.cityCode = null;
+    //     this.filter.districtCode = val.code;
+    //     this.filter.wardCode = null;
+    //   }
+    //   else if (val.type === 'ward') {
+    //     this.filter.cityCode = null;
+    //     this.filter.districtCode = null;
+    //     this.filter.wardCode = val.code;
+    //   }
+    //   else {
+    //     this.filter.cityCode = null;
+    //     this.filter.districtCode = null;
+    //     this.filter.wardCode = null;
+    //   }
+    // }
+    // this.loadAllData();
   }
 }

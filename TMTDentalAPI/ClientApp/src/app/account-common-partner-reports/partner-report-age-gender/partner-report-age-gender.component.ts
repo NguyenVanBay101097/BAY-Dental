@@ -23,7 +23,6 @@ export class PartnerReportAgeGenderComponent implements OnInit {
   loadReportAgeGender() {
     let val = Object.assign({}, this.filter) as AccountCommonPartnerReportOverviewFilter;
     this.accountCommonPartnerReportService.getPartnerReportGenderOverview(val).subscribe((res: any) => {
-      console.log(res);
       this.dataSet = res;
       this.loadChartOption();
     }, error => console.log(error));
@@ -35,8 +34,12 @@ export class PartnerReportAgeGenderComponent implements OnInit {
         trigger: 'axis',
         axisPointer: {
           type: 'shadow'
+        },
+        formatter: (params)=>{
+          console.log(params);
+          return '';
         }
-      },
+     },
       legend: {
         bottom: 10,
         left: 'center',

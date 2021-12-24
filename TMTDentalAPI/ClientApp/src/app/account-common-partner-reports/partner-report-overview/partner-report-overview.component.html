@@ -43,7 +43,7 @@
         </div>
 
         <div class="mb-3">
-            <app-partner-report-area #reportAreaComp [filter]="filter"></app-partner-report-area>
+            <app-partner-report-area #reportAreaComp [filter]="filter" (filterEmit)="filterEmit($event)"></app-partner-report-area>
         </div>
         <div class="row">
             <div class="col-sm-6">
