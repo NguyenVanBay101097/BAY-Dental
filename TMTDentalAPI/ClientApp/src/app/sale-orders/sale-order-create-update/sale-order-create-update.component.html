@@ -92,7 +92,7 @@
                             <a ngbNavLink routerLink="." [fragment]="'payment'">Lịch sử thanh toán</a>
                             <ng-template ngbNavContent>
                                 <app-sale-order-payment-list *ngIf="saleOrderId" #paymentComp
-                                    [saleOrderId]="saleOrder.id" (hasDeletePayment)="loadCustomerInfo()">
+                                    [saleOrderId]="saleOrder.id" (hasDeletePayment)="onCancelPayment()">
                                 </app-sale-order-payment-list>
                             </ng-template>
                         </li>

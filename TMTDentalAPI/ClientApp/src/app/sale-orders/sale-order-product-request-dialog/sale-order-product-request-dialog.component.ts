@@ -4,8 +4,10 @@ import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { min } from 'date-fns';
 import * as _ from 'lodash';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { SaleMakeProductRequestService } from 'src/app/core/services/sale-make-product-request.service';
 import { SaleOrderLineForProductRequest } from 'src/app/core/services/sale-order-line.service';
 import { SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { SaleProductionService, UpdateSaleProductionReq } from 'src/app/core/services/sale-production.service';
@@ -58,7 +60,8 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     private productRequestLineService: ProductRequestLineService,
     private intlService: IntlService,
     private saleProductionService: SaleProductionService,
-    private saleOrderLineProductRequestedService: SaleOrderLineProductRequestedService
+    private saleOrderLineProductRequestedService: SaleOrderLineProductRequestedService,
+    private saleMakeProductRequestService: SaleMakeProductRequestService
   ) { }
 
   ngOnInit() {
@@ -70,12 +73,7 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     });
 
     setTimeout(() => {
-      if (!this.id) {
-        this.loadDefault();
-      } else {
-        this.loadRecord();
-      }
-
+      this.loadDefault();
       this.loadEmployees();
       this.loadListSaleProduction();
     });
@@ -126,21 +124,13 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     });
   }
 
-  getMax(line: FormGroup , id) {
-    var saleproductionLineId = line.get('id').value;
-    var productId = line.get('productId').value;
-    var item = this.listSaleProduction.find(x => x.id == id);
-    if (item) {
-      var bom = item.lines.find(x => x.productId == productId);
-      if (bom) {
-        if (bom.quantity === 0) {
-          return undefined;
-        }
-        return bom.quantity - bom.quantityRequested;
-      }
+  getMax(line: FormGroup) {
+    var saleproductionLine = line.get('saleProductionLine').value;
+    if (saleproductionLine.quantity == 0) {
+      return undefined;
     }
 
-    return undefined;
+    return Math.max(0, saleproductionLine.quantity - saleproductionLine.quantityRequested);
   }
 
   loadLinesToFormArray(lines) {
@@ -156,6 +146,7 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
 
   loadListSaleProduction() {
     this.saleOrderService.getSaleProductionBySaleOrderId(this.saleOrderId).subscribe((res: any) => {
+      console.log(res);
       this.listSaleProduction = res;
     });
   }
@@ -184,7 +175,7 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
       this.saleProductionService.delete(saleProduction.id).subscribe(() => {
         this.notify('success', 'Xóa thành công');
         this.loadListSaleProduction();
-        var controlsRemove = this.lines.controls.filter(x => saleProductionLineIds.indexOf(x.get('saleProductionLineId').value) !== -1);
+        var controlsRemove = this.lines.controls.filter(x => saleProductionLineIds.indexOf(x.get('saleProductionLine').value.id) !== -1);
         controlsRemove.forEach(control => {
           var i = this.lines.controls.indexOf(control);
           this.lines.removeAt(i);
@@ -237,36 +228,28 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     }
 
     if (this.lines.value.length <= 0) {
-      this.notify('error', 'Bạn chưa chọn Vật tư để yêu cầu');
+      this.notify('error', 'Bạn chưa chọn vật tư để yêu cầu');
       return;
     }
 
-    var val = Object.assign({}, this.formGroup.value);
-    val.userId = val.user.id;
-    val.employeeId = val.employee.id;
-    val.saleOrderId = this.saleOrderId;
-    val.date = this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm:ss");
-    if (!this.id) {
-      this.productRequestService.create(val).subscribe((res: any) => {
-        this.productRequestService.actionConfirm([res.id]).subscribe((res: any) => {
-          this.notify('success', 'Gửi yêu cầu thành công đến bộ phận Kho');
-          this.submitted = false;
-          this.activeModal.close();
-        }, (err) => {
-        });
-      }, (err) => {
-      });
-    } else {
-      this.productRequestService.update(this.id, val).subscribe((res: any) => {
-        this.productRequestService.actionConfirm([this.id]).subscribe((res: any) => {
-          this.notify('success', 'Gửi yêu cầu thành công đến bộ phận Kho');
-          this.submitted = false;
-          this.activeModal.close();
-        }, (err) => {
-        });
-      }, (err) => {
-      });
-    }
+    var val = this.formGroup.value;
+    var postDate = {
+      userId: val.user.id,
+      employeeId: val.employee.id,
+      saleOrderId: this.saleOrderId,
+      date: this.intlService.formatDate(val.dateObj, "yyyy-MM-ddTHH:mm:ss"),
+      lines: val.lines.map(x => {
+        return {
+          saleProductionLineId: x.saleProductionLine.id,
+          productQty: x.productQty
+        };
+      })
+    };
+   
+    this.saleMakeProductRequestService.create(postDate).subscribe(() => {
+      this.notify('success', 'Gửi yêu cầu thành công đến bộ phận Kho');
+      this.activeModal.close();
+    });
   }
 
   onCancel() {
@@ -292,35 +275,20 @@ export class SaleOrderProductRequestDialogComponent implements OnInit {
     }
   }
 
-  addLine(saleProductionLine , parentId) {
-    if (saleProductionLine.quantity !== 0) {
-      if (saleProductionLine.quantityRequested >= saleProductionLine.quantity) {
-        return;
-      }
+  addLine(saleProductionLine) {
+    if (saleProductionLine.quantity > 0 && saleProductionLine.quantityRequested >= saleProductionLine.quantity) {
+      return false;
+    }
+   
+    var index = this.lines.value.findIndex(item => item.saleProductionLine.id == saleProductionLine.id);
+    if (index != -1) {
+      return false;
     }
 
-    var index = this.lines.value.findIndex(item => (item.saleProductionLineId == saleProductionLine.id && item.productId == saleProductionLine.productId));
-    if (index < 0) {
-      var val = new ProductRequestGetLinePar();
-      val.saleProductionLineId = saleProductionLine.id;
-      this.productRequestLineService.getLine(val).subscribe((res: any) => {
-        console.log(res);
-        this.lines.push(this.fb.group({
-          ...res,
-          productQty: [res.productQty, Validators.required]
-        }));
-      }, (err) => {
-      });
-    } else {
-      var line = this.lines.at(index) as FormGroup;
-      if (saleProductionLine.quantity !== 0) {
-        if (line.get('productQty').value < this.getMax(line,parentId)) {
-          line.get('productQty').setValue(line.get('productQty').value + 1);
-        }
-      } else {
-        line.get('productQty').setValue(line.get('productQty').value + 1);
-      }
-    }
+    this.lines.push(this.fb.group({
+      saleProductionLine: saleProductionLine,
+      productQty: [0, Validators.required]
+    }));
   }
 
   deleteLine(index: number) {

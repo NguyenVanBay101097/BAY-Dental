@@ -23,7 +23,7 @@
                 <td>{{item.employeeName}}</td>
                 <td>{{getStateDisplay(item.state)}}</td>
                 <td *ngIf="saleOrderState != 'done'">
-                    <button class="btn btn-success mr-2" title="Sửa" (click)="editItem(item)">
+                    <button class="btn btn-success mr-2" title="Xem" (click)="editItem(item)">
                         <span class="far fa-edit"></span>
                     </button>
                     <button class="btn btn-danger" title="Xóa" (click)="deleteItem(item)">

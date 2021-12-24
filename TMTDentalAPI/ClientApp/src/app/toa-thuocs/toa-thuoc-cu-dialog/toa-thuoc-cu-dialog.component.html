@@ -86,14 +86,14 @@
                                         <div class="d-flex align-items-center">
                                             <input class="form-control" style="width: 100px" formControlName="numberOfTimes" tmtautonumeric
                                             [options]="{minimumValue: 0, decimalPlaces: 0}" (input)="updateQuantity(item)"/>
-                                            <span>Lần</span>
+                                            <span class="ml-2">Lần</span>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <input class="form-control" style="width: 100px" formControlName="amountOfTimes" tmtautonumeric
                                             [options]="{minimumValue: 0, decimalPlaces: 2}" (input)="updateQuantity(item)"/>
-                                            <span>{{item.get('productUoM').value?.name}}</span>
+                                            <span class="ml-2">{{item.get('productUoM').value?.name}}</span>
                                         </div>
                                     </td>
                                     <td>

@@ -360,7 +360,7 @@ export class ToaThuocCuDialogComponent implements OnInit {
     const gender = this.getFBValueItem('partner').gender;
       switch (gender) {
         case 'male':
-          return 'Name';
+          return 'Nam';
         case 'female':
           return 'Nữ';
         case 'other':

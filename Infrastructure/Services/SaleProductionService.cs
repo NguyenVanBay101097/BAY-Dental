@@ -58,6 +58,7 @@ namespace Infrastructure.Services
                         saleProduction.Lines.Add(new SaleProductionLine
                         {
                             ProductId = line.MaterialProductId.Value,
+                            ProductUOMId = line.ProductUOMId,
                             Quantity = saleProduction.Quantity * line.Quantity
                         });
                     }
@@ -87,6 +88,7 @@ namespace Infrastructure.Services
                             saleProduction.Lines.Add(new SaleProductionLine
                             {
                                 ProductId = line.MaterialProductId.Value,
+                                ProductUOMId = line.ProductUOMId,
                                 Quantity = saleProduction.Quantity * line.Quantity
                             });
                         }
@@ -160,7 +162,7 @@ namespace Infrastructure.Services
                 .Include(x => x.Request)
                 .ToListAsync();
 
-            if (requestLines.Any(x => x.Request.State != "draft"))
+            if (requestLines.Any(x => x.Request.State != "draft" && x.Request.State != "cancel"))
                 throw new Exception("Có yêu cầu vật tư đang yêu cầu hoặc đã xuất, không thể xóa");
 
             await productRequestLineObj.DeleteAsync(requestLines);

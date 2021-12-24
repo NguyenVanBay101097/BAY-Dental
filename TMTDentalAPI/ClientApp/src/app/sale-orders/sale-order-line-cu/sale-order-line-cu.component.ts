@@ -330,7 +330,6 @@ export class SaleOrderLineCuComponent implements OnInit {
     this.onUpdateEvent.emit(val);
     return true;
     }
-
     if(this.formState == 'done' || this.formState == 'cancel')
     {
       let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });

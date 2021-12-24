@@ -191,7 +191,7 @@
                             </td>
                             <td colspan="1" style="text-align: end;" class="pr-0">
                                 <div class="font-weight-600">
-                                    {{line.amountInsurancePaidTotal | number}}
+                                    {{(line.amountInsurancePaidTotal || 0) | number}}
                                 </div>
                             </td>
                         </tr>
@@ -203,7 +203,7 @@
                             </td>
                             <td colspan="1" style="text-align: end;" class="pr-0">
                                 <div *ngIf="!isFast" class="font-weight-600">
-                                    {{line.amountInvoiced - line.amountInsurancePaidTotal | number}}
+                                    {{line.amountInvoiced - (line.amountInsurancePaidTotal || 0) | number}}
                                 </div>
                             </td>
                         </tr>
