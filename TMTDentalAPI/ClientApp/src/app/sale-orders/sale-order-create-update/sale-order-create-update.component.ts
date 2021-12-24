@@ -132,6 +132,11 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     });
   }
 
+  onCancelPayment() {
+    this.loadCustomerInfo();
+    this.loadSaleOrder();
+  }
+
   loadCustomerInfo() {
     if (this.saleOrder.partnerId) {
       this.partnerService.getCustomerInfo(this.saleOrder.partnerId).subscribe((result) => {

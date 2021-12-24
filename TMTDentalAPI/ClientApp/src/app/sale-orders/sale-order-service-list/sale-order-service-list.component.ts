@@ -1,7 +1,7 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges, ViewChildren } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import * as moment from 'moment';
@@ -45,6 +45,9 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
   formGroup: FormGroup;
   submitted = false;
   partnerDebt = null;
+
+  @ViewChild('popover', { static: false }) public popover: NgbPopover;
+
   constructor(
     private saleOrderService: SaleOrderService,
     private notificationService: NotificationService,
@@ -109,7 +112,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
     });
   }
 
-  saveSaleOrderInfo(popover) {
+  saveSaleOrderInfo() {
     this.submitted = true;
     if (!this.formGroup.valid) {
       return false;
@@ -124,7 +127,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
       .subscribe(() => {
         this.notify('success', 'Lưu thành công');
         this.updateOrderEvent.emit(val);
-        popover.close();
+        this.popover.close();
       });
   }
 
@@ -783,7 +786,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
 
   getAmountInsurancePaidTotal() {
     return this.orderLines.reduce((total, cur) => {
-      return total + cur.amountInsurancePaidTotal;
+      return total + (cur.amountInsurancePaidTotal || 0);
     }, 0);
   }
 
