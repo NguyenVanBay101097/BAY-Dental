@@ -21,6 +21,7 @@ export class PartnerReportAreaComponent implements OnInit {
   dataSet: any;
   codeFilter = Object.assign({});
   chartOption: EChartsOption = {};
+  echartsInstance: any[] = [];
 
   constructor(
     private accountCommonPartnerReportService: AccountCommonPartnerReportService
@@ -60,6 +61,7 @@ export class PartnerReportAreaComponent implements OnInit {
         cityData['$type'] = 'city';
         this.dataSet[el1.cityName] = cityData;
       });
+
       this.loadChartOption();
     }, error => console.log(error));
   }
@@ -94,6 +96,7 @@ export class PartnerReportAreaComponent implements OnInit {
         } as TreeNode;
         if (typeof source[key] === 'object') {
           child.code = source[key].$code;
+          child.type = source[key].$type;
         }
         target.children.push(child);
         this.convert(source[key], child, path);
@@ -114,7 +117,29 @@ export class PartnerReportAreaComponent implements OnInit {
     }
   }
 
+
   onChartClick(event) {
-    console.log(event);
+    if (event.dataType && event.dataType == 'main') {
+      this.echartsInstance = this.echartsInstance.filter(val => !event.treePathInfo.map(s => s.dataIndex).includes(val.dataIndex));
+      event.treePathInfo.forEach(element => {     
+        if (element.dataIndex === event.dataIndex) {          
+          const a = { ...element };
+          a['code'] = event.data.code;
+          a['type'] = event.data.type;
+          this.echartsInstance.push(a);
+        }
+      });
+
+    }
+
+    if (event.selfType && event.selfType == 'breadcrumb') {
+      this.echartsInstance = this.echartsInstance.filter(val => !event.treePathInfo.map(s => s.dataIndex).includes(val.dataIndex));
+      var res = this.echartsInstance.find(s => s.dataIndex == event.nodeData.dataIndex);
+      if (res) {
+        console.log(res);
+      }
+
+    }
+
   }
 }
