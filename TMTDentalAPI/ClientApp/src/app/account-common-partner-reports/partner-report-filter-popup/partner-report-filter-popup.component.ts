@@ -54,10 +54,11 @@ export class PartnerReportFilterPopupComponent implements OnInit, AfterViewInit 
       debtFrom: null,
       debtTo: null,
     });
-
-    this.loadListCardType();
-    this.loadSourceList();
-    this.loadPartnerCategoryList();
+    setTimeout(() => {
+      this.loadListCardType();
+      this.loadSourceList();
+      this.loadPartnerCategoryList();
+    }, 200);
   }
 
   ngAfterViewInit(): void {
