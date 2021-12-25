@@ -190,7 +190,7 @@ export class CashBookTabPageCaBoComponent implements OnInit {
   getDifferentThuChi() {
     if (this.summarySearchResult) {
       var result = this.summarySearchResult.totalThu - this.summarySearchResult.totalChi;
-      return -result;
+      return result;
     }
     return 0;
   }

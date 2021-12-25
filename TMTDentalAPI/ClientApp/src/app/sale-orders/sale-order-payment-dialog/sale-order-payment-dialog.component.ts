@@ -641,6 +641,10 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
       return;
     }
 
+    if (journalFilter.type == 'advance' && this.advanceAmount <= 0) {
+      return false;
+    }
+
     var amount = this.userAmountPaymentValue;
     if (journalFilter.type == 'advance') {
       amount = this.advanceAmount > amount ? amount : this.advanceAmount;
@@ -703,11 +707,13 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     var list = [];
     this.journalLines.controls.forEach(JN => {
       var journal = JN.get('journal').value;
-      var item = list.find(x => x.type == journal.type);
-      if (item) {
-        item.amount += JN.get('amount').value;
-      } else {
-        list.push({type: journal.type, amount: JN.get('amount').value});
+      if (journal) {
+        var item = list.find(x => x.type == journal.type);
+        if (item) {
+          item.amount += JN.get('amount').value;
+        } else {
+          list.push({type: journal.type, amount: JN.get('amount').value});
+        }
       }
     });
 
