@@ -23,5 +23,9 @@ namespace Infrastructure.Services
         Task<IEnumerable<SurveyAssignmentGetSummary>> GetSummary(SurveyAssignmentGetSummaryFilter val);
 
         Task AddIrDataForSurvey();
+        Task<GetScoreReportRes> GetScoreReport(GetReportReq val);
+        Task<IEnumerable<GetEmployeeReportItem>> GetEmployeeReport(GetReportReq val);
+        Task<IEnumerable<GetQuestionReportItem>> GetQuestionReport(GetReportReq val);
+
     }
 }

@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { EmployeeSimple } from '../employees/employee';
 import { SaleOrderBasic } from '../sale-orders/sale-order-basic';
-import { SurveyUserInputDisplay } from './survey-userinput.service';
+import { GetReportReq, SurveyUserInputDisplay } from './survey-userinput.service';
 
 export class SurveyAssignmentPaged {
   limit: number;
@@ -198,6 +198,18 @@ export class SurveyAssignmentService {
 
   updateAssignment(val: any) {
     return this.http.post(this.base_api + this.apiUrl + '/UpdateEmployee', val);
+  }
+
+  getScoreReport(val: GetReportReq){
+    return this.http.post(this.base_api + this.apiUrl + '/GetScoreReport', val);
+  }
+
+  getEmployeeReport(val: GetReportReq){
+    return this.http.post(this.base_api + this.apiUrl + '/GetEmployeeReport', val);
+  }
+
+  getQuestionReport(val: GetReportReq){
+    return this.http.post(this.base_api + this.apiUrl + '/GetQuestionReport', val);
   }
 
 }

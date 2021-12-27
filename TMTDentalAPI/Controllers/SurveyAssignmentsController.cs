@@ -229,5 +229,32 @@ namespace TMTDentalAPI.Controllers
             await _surveyAssignmentService.UpdateAsync(assignment);
             return NoContent();
         }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Survey.UserInput.Read")]
+        public async Task<IActionResult> GetScoreReport(GetReportReq val)
+        {
+            var res = await _surveyAssignmentService.GetScoreReport(val);
+
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Survey.UserInput.Read")]
+        public async Task<IActionResult> GetEmployeeReport([FromBody]GetReportReq val)
+        {
+            var res = await _surveyAssignmentService.GetEmployeeReport(val);
+
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Survey.UserInput.Read")]
+        public async Task<IActionResult> GetQuestionReport(GetReportReq val)
+        {
+            var res = await _surveyAssignmentService.GetQuestionReport(val);
+
+            return Ok(res);
+        }
     }
 }

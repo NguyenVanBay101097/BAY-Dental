@@ -382,4 +382,56 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Count { get; set; }
     }
 
+    public class GetScoreReportRes
+    {
+        public IEnumerable<GetScoreReportItem> Lines = new List<GetScoreReportItem>();
+        public decimal MaxScore { get; set; }
+        public decimal Score { get; set; }
+    }
+
+    public class GetScoreReportItem
+    {
+        public string Name
+        {
+            get
+            {
+                return String.Format("{0} - {1} điểm", this.ScroreFrom, this.ScroreTo);
+            }
+        }
+        public decimal ScroreFrom { get; set; }
+        public decimal ScroreTo { get; set; }
+        public int Value { get; set; }
+    }
+
+    public class GetReportReq
+    {
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public Guid? CompanyId { get; set; }
+        public string Status { get; set; }
+    }
+
+    public class GetEmployeeReportItem
+    {
+        public Guid EmployeeId { get; set; }
+        public string EmployeeName { get; set; }
+        public int DoneCount { get; set; }
+        public int ContactCount { get; set; }
+    }
+
+    public class GetQuestionReportItemLine
+    {
+        public Guid QuestionId { get; set; }
+        public string QuestionName { get; set; }
+        public int Value { get; set; }
+        public decimal ValuePercent { get; set; }
+        
+    }
+
+    public class GetQuestionReportItem
+    {
+        public decimal Score { get; set; }
+        public IEnumerable<GetQuestionReportItemLine> Lines { get; set; } = new List<GetQuestionReportItemLine>();
+    }
+
 }
