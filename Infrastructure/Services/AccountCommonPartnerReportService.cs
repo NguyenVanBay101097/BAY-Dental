@@ -182,6 +182,311 @@ namespace Infrastructure.Services
             }
             return res;
         }
+
+        public IQueryable<PartnerReportOverviewItem> GetQueryablePartnerReportOverview(AccountCommonPartnerReportOverviewFilter val)
+        {
+            var saleOrderObj = GetService<ISaleOrderService>();
+            var saleOrderLineObj = GetService<ISaleOrderLineService>();
+            var amlObj = GetService<IAccountMoveLineService>();
+            var accObj = GetService<IAccountAccountService>();
+            var irProperyObj = GetService<IIRPropertyService>();
+            var cardCardObj = GetService<ICardCardService>();
+            var serviceCardCardObj = GetService<IServiceCardCardService>();
+            var partnerObj = GetService<IPartnerService>();
+            var partnerSourceObj = GetService<IPartnerSourceService>();
+
+            var mainQuery = partnerObj.SearchQuery(x => x.Active && x.Customer);
+
+            if (val.CompanyId.HasValue)
+                mainQuery = mainQuery.Where(x => x.CompanyId == val.CompanyId);
+
+            if (val.PartnerCompanyId.HasValue)
+                mainQuery = mainQuery.Where(x => x.CompanyId == val.PartnerCompanyId);
+
+            if (!string.IsNullOrEmpty(val.CityCode))
+                mainQuery = mainQuery.Where(x => x.CityCode == val.CityCode);
+
+            if (!string.IsNullOrEmpty(val.DistrictCode))
+                mainQuery = mainQuery.Where(x => x.DistrictCode == val.DistrictCode);
+
+            if (!string.IsNullOrEmpty(val.WardCode))
+                mainQuery = mainQuery.Where(x => x.WardCode == val.WardCode);
+
+            if (val.CategIds.Any())
+            {
+                var partnerCategoryRelService = GetService<IPartnerPartnerCategoryRelService>();
+
+                var filterPartnerQr = from pcr in partnerCategoryRelService.SearchQuery(x => val.CategIds.Contains(x.CategoryId))
+                                      group pcr by pcr.PartnerId into g
+                                      select g.Key;
+
+                mainQuery = from a in mainQuery
+                            join pbk in filterPartnerQr on a.Id equals pbk
+                            select a;
+            }
+
+            if (val.CardTypeIds.Any())
+            {
+                var filterPartnerQr =
+                   from pcr in cardCardObj.SearchQuery(x => val.CardTypeIds.Contains(x.TypeId))
+                   select pcr.PartnerId;
+
+                mainQuery = from a in mainQuery
+                            join pbk in filterPartnerQr on a.Id equals pbk
+                            select a;
+            }
+
+            if (val.PartnerSourceIds.Any())
+            {
+                var filterPartnerQr =
+                 from pcr in partnerObj.SearchQuery(x => val.PartnerSourceIds.Contains(x.SourceId.Value))
+                 select pcr.Id;
+
+                mainQuery = from a in mainQuery
+                            join pbk in filterPartnerQr on a.Id equals pbk
+                            select a;
+            }
+
+            var partnerOrderStateQr = from v in saleOrderObj.SearchQuery(x => !val.CompanyId.HasValue || x.CompanyId == val.CompanyId)
+                                      group v by v.PartnerId into g
+                                      select new
+                                      {
+                                          PartnerId = g.Key,
+                                          CountSale = g.Sum(x => x.State == "sale" ? 1 : 0),
+                                          CountDone = g.Sum(x => x.State == "done" ? 1 : 0)
+                                      };
+
+            var PartnerResidualQr = (from s in saleOrderLineObj.SearchQuery(x => !val.CompanyId.HasValue || x.CompanyId == val.CompanyId)
+                                     where s.State == "sale" || s.State == "done"
+                                     group s by s.OrderPartnerId into g
+                                     select new
+                                     {
+                                         PartnerId = g.Key,
+                                         TotalService = g.Count(),
+                                         OrderResidual = g.Sum(x => x.PriceTotal - x.AmountInvoiced),
+                                         TotalPaid = g.Sum(x => x.AmountInvoiced)
+                                     });
+
+
+
+            var partnerDebtQr = from aml in amlObj.SearchQuery(x => !val.CompanyId.HasValue || x.CompanyId == val.CompanyId)
+                                join acc in accObj.SearchQuery()
+                                on aml.AccountId equals acc.Id
+                                where acc.Code == "CNKH"
+                                group aml by aml.PartnerId into g
+                                select new
+                                {
+                                    PartnerId = g.Key,
+                                    TotalDebit = g.Sum(x => x.Balance)
+                                };
+
+            var cardCardQr = from card in cardCardObj.SearchQuery(x => !val.CompanyId.HasValue || x.CompanyId == val.CompanyId)
+                             select card;
+
+
+
+
+
+
+            var ResponseQr = from p in mainQuery
+                             from pr in PartnerResidualQr.Where(x => x.PartnerId == p.Id).DefaultIfEmpty()
+                             from pd in partnerDebtQr.Where(x => x.PartnerId == p.Id).DefaultIfEmpty()
+                             from pos in partnerOrderStateQr.Where(x => x.PartnerId == p.Id).DefaultIfEmpty()
+                             from card in cardCardQr.Where(x => x.PartnerId == p.Id).DefaultIfEmpty()
+                             select new PartnerReportOverviewItem
+                             {
+                                 PartnerId = p.Id,
+                                 PartnerGender = p.Gender,
+                                 BirthYear = p.BirthYear,
+                                 PartnerSourceId = p.SourceId.HasValue ? p.SourceId : null,
+                                 PartnerSourceName = p.SourceId.HasValue ? p.Source.Name : null,
+                                 CityName = p.CityName,
+                                 CityCode = p.CityCode,
+                                 DistrictName = p.DistrictName,
+                                 DistrictCode = p.DistrictCode,
+                                 WardName = p.WardName,
+                                 WardCode = p.WardCode,
+                                 OrderState = pos.CountSale > 0 ? "sale" : (pos.CountDone > 0 ? "done" : "draft"),
+                                 TotalService = pr.TotalService,
+                                 TotalRevenue = pr.TotalPaid ?? 0,
+                                 TotalRevenueExpect = pr.OrderResidual ?? 0,
+                                 TotalDebt = pd.TotalDebit
+                             };
+
+            if (val.AgeFrom.HasValue && val.AgeFrom > 0)
+                ResponseQr = ResponseQr.Where(x => x.BirthYear.HasValue && (DateTime.Now.Year - x.BirthYear)  >= val.AgeFrom.Value);
+
+
+
+
+            if (val.AgeTo.HasValue && val.AgeTo > 0)
+                ResponseQr = ResponseQr.Where(x => x.BirthYear.HasValue && (DateTime.Now.Year - x.BirthYear) <= val.AgeTo.Value);
+
+
+
+            if (val.RevenueFrom.HasValue)
+                ResponseQr = ResponseQr.Where(x => x.TotalRevenue >= val.RevenueFrom);
+
+            if (val.RevenueTo.HasValue)
+                ResponseQr = ResponseQr.Where(x => x.TotalRevenue <= val.RevenueTo);
+
+            if (val.RevenueExpectFrom.HasValue)
+                ResponseQr = ResponseQr.Where(x => x.TotalRevenueExpect >= val.RevenueExpectFrom);
+
+            if (val.RevenueExpectTo.HasValue)
+                ResponseQr = ResponseQr.Where(x => x.TotalRevenueExpect <= val.RevenueExpectTo);
+
+            if (val.DebtFrom.HasValue)
+                ResponseQr = ResponseQr.Where(x => x.TotalDebt >= val.DebtFrom);
+
+            if (val.DebtTo.HasValue)
+                ResponseQr = ResponseQr.Where(x => x.TotalDebt <= val.DebtTo);
+
+            if (val.IsRevenueExpect.HasValue)
+                ResponseQr = ResponseQr.Where(x => val.IsRevenueExpect.Value == true ? x.TotalRevenueExpect > 0 : x.TotalRevenueExpect == 0);
+
+            if (val.IsDebt.HasValue)
+                ResponseQr = ResponseQr.Where(x => val.IsDebt.Value == true ? x.TotalDebt > 0 : x.TotalDebt == 0);
+
+
+            if (!string.IsNullOrEmpty(val.OrderState))
+                ResponseQr = ResponseQr.Where(x => x.OrderState == val.OrderState);
+
+
+            return ResponseQr;
+        }
+
+        public async Task<AccountCommonPartnerReportOverview> GetPartnerReportSumaryOverview(AccountCommonPartnerReportOverviewFilter val)
+        {
+            var query = GetQueryablePartnerReportOverview(val);
+            var res = new AccountCommonPartnerReportOverview();
+            res.TotalPartner = await query.CountAsync();
+            res.TotalService = await query.SumAsync(x => x.TotalService);
+            res.TotalRevenue = await query.SumAsync(x => x.TotalRevenue);
+            res.TotalRevenueExpect = await query.SumAsync(x => x.TotalRevenueExpect);
+            res.TotalDebt = await query.SumAsync(x => x.TotalDebt);
+
+            return res;
+        }
+
+        public async Task<IEnumerable<PartnerReportSourceOverview>> GetPartnerReportSourceOverview(AccountCommonPartnerReportOverviewFilter val)
+        {
+            var query = GetQueryablePartnerReportOverview(val);
+            var items = await query.ToListAsync();
+            var res = items.GroupBy(x => new { PartnerSourceId = x.PartnerSourceId, PartnerSourceName = x.PartnerSourceName }).Select(x => new PartnerReportSourceOverview
+            {
+                PartnerSourceId = x.Key.PartnerSourceId,
+                PartnerSourceName = x.Key.PartnerSourceId == null ? "Chưa xác định" : x.Key.PartnerSourceName,
+                TotalPartner = x.Count()
+            }).ToList();
+
+            return res;
+        }
+
+        public async Task<PartnerGenderReportOverview> GetPartnerReportGenderOverview(AccountCommonPartnerReportOverviewFilter val)
+        {
+            var sampleDataAge = sampleDataAgeFilter;
+            var query = GetQueryablePartnerReportOverview(val);
+
+            var items = await query.ToListAsync();
+            var partnerGender_dict = items.GroupBy(x => x.PartnerGender).ToDictionary(x => x.Key, x => x.ToList());
+            var res = new PartnerGenderReportOverview();
+            var partnerGenderItems = new List<PartnerGenderItemReportOverview>();
+            var total = partnerGender_dict.Values.Sum(s => s.Count());
+            res.LegendChart = sampleDataAgeFilter.Select(x => x.Name).ToList();
+
+            foreach (var item in partnerGender_dict)
+            {
+                var count = item.Value.Count();
+                var percentTotal = Math.Round((double)(100 * count) / total);
+
+                var itemValues = new List<int>();
+                var itemPercentValues = new List<double>();
+                foreach (var rangeAge in sampleDataAge)
+                {
+                    var countPn = item.Value.AsQueryable();
+
+                    if (rangeAge.AgeFrom.HasValue)
+                        countPn = countPn.Where(x => x.BirthYear.HasValue && (DateTime.Now.Year - x.BirthYear) >= rangeAge.AgeFrom.Value);
+
+                    if (rangeAge.AgeTo.HasValue)
+                        countPn = countPn.Where(x => x.BirthYear.HasValue && (DateTime.Now.Year - x.BirthYear) <= rangeAge.AgeTo.Value);
+
+                    if (!rangeAge.AgeFrom.HasValue && !rangeAge.AgeTo.HasValue)
+                        countPn = countPn.Where(x => x.BirthYear == null);
+
+                    itemValues.Add(countPn.Count());
+                    var percent = countPn.Count() > 0 ? Math.Round((double)(percentTotal * countPn.Count()) / count, 2) : 0;
+                    itemPercentValues.Add(percent);
+                }
+
+                partnerGenderItems.Add(new PartnerGenderItemReportOverview
+                {
+                    PartnerGender = item.Key,
+                    PartnerGenderPercent = percentTotal,
+                    Count = itemValues,
+                    Percent = itemPercentValues
+                });
+
+            }
+
+            res.PartnerGenderItems = partnerGenderItems;
+
+            return res;
+        }
+
+        public static SampleDataAgeFilter[] sampleDataAgeFilter = new SampleDataAgeFilter[] {
+            new SampleDataAgeFilter {Name = "0 - 12",  AgeFrom = 0, AgeTo = 12},
+            new SampleDataAgeFilter {Name = "13 - 17", AgeFrom = 13 , AgeTo = 17},
+            new SampleDataAgeFilter {Name = "18 - 24", AgeFrom = 18 , AgeTo = 24},
+            new SampleDataAgeFilter {Name = "25 - 34", AgeFrom = 25 , AgeTo = 34},
+            new SampleDataAgeFilter {Name = "35 - 44", AgeFrom = 35 , AgeTo = 44},
+            new SampleDataAgeFilter {Name = "45 - 64", AgeFrom = 45 , AgeTo = 64},
+            new SampleDataAgeFilter {Name = "65+", AgeFrom = 65},
+            new SampleDataAgeFilter {Name = "Không xác định" }
+        };
+
+        public async Task<IEnumerable<GetPartnerForCityReportOverview>> GetPartnerReportTreeMapOverview(AccountCommonPartnerReportOverviewFilter val)
+        {
+            var query = GetQueryablePartnerReportOverview(val);
+
+            var items = await query.ToListAsync();
+            var partnerForCities = new List<GetPartnerForCityReportOverview>();
+            var itemNullLocations = items.Where(x => string.IsNullOrEmpty(x.CityCode) && x.CityCode != "").ToList();
+            if (itemNullLocations.Any())
+            {
+                partnerForCities.Add(new GetPartnerForCityReportOverview
+                {
+                    CityName = "Không xác định",
+                    CityCode = null,
+                    Count = itemNullLocations.Count(),
+                    Districts = new List<GetPartnerForDistrictReportOverview>(),
+                });
+            }
+
+            partnerForCities.AddRange(items.Where(x => !string.IsNullOrEmpty(x.CityCode) && x.CityCode != "").GroupBy(x => new { CityName = x.CityName, CityCode = x.CityCode }).Select(x => new GetPartnerForCityReportOverview
+            {
+                CityName = !string.IsNullOrEmpty(x.Key.CityCode) ? x.Key.CityName : "Không xác định",
+                CityCode = !string.IsNullOrEmpty(x.Key.CityCode) ? x.Key.CityCode : null,
+                Count = x.Select(s => s.PartnerId).Count(),
+                Districts = !string.IsNullOrEmpty(x.Key.CityCode) ? x.GroupBy(x => new { DistrictName = x.DistrictName, DistrictCode = x.DistrictCode }).Select(c => new GetPartnerForDistrictReportOverview
+                {
+                    DistrictName = !string.IsNullOrEmpty(c.Key.DistrictCode) ? c.Key.DistrictName : "Không xác định",
+                    DistrictCode = !string.IsNullOrEmpty(c.Key.DistrictCode) ? c.Key.DistrictCode : null,
+                    Count = c.Select(e => e.PartnerId).Count(),
+                    Wards = c.GroupBy(x => new { WardName = x.WardName, WardCode = x.WardCode }).Select(e => new GetPartnerForWardReportOverview
+                    {
+                        WardName = !string.IsNullOrEmpty(e.Key.WardCode) ? e.Key.WardName : "Không xác định",
+                        WardCode = e.Key.WardCode,
+                        Count = e.Select(z => z.PartnerId).Count()
+                    }).ToList(),
+                }).ToList() : new List<GetPartnerForDistrictReportOverview>(),
+            }).ToList());
+
+            var res = partnerForCities;
+            return res;
+        }
+
         public async Task<AccountCommonPartnerReportPrint> ReportSummaryPrint(AccountCommonPartnerReportSearch val)
         {
             var data = await ReportSummary(val);

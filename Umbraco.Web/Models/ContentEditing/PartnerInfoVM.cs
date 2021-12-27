@@ -23,6 +23,19 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal Revenue { get; set; }
         //nguồn
         public string SourceName { get; set; }
+
+        public string CompanyName { get; set; }
+
+        /// <summary>
+        /// ngày hẹn gần nhất
+        /// </summary>
+        public DateTime? AppointmentDate { get; set; }
+
+        /// <summary>
+        /// ngày điều trị gần nhất
+        /// </summary>
+        public DateTime? SaleOrderDate { get; set; }
+
         public string Address
         {
             get
@@ -62,6 +75,18 @@ namespace Umbraco.Web.Models.ContentEditing
         /// thẻ thành viên
         /// </summary>
         public string CardTypeName { get; set; }
+
+        public string CompanyName { get; set; }
+
+        /// <summary>
+        /// ngày hẹn gần nhất
+        /// </summary>
+        public DateTime? AppointmentDate { get; set; }
+
+        /// <summary>
+        /// ngày điều trị gần nhất
+        /// </summary>
+        public DateTime? SaleOrderDate { get; set; }
 
         public IEnumerable<PartnerCategoryBasic> Categories { get; set; } = new List<PartnerCategoryBasic>();
         public string DateOfBirth

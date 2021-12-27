@@ -2819,6 +2819,7 @@ namespace Infrastructure.Services
         public async Task<IQueryable<PartnerInfoTemplate>> GetQueryPartnerInfoPaged2(PartnerInfoPaged val)
         {
             var saleOrderObj = GetService<ISaleOrderService>();
+            var appointmentObj = GetService<IAppointmentService>();
             var amlObj = GetService<IAccountMoveLineService>();
             var accObj = GetService<IAccountAccountService>();
             var irProperyObj = GetService<IIRPropertyService>();
@@ -2832,8 +2833,11 @@ namespace Infrastructure.Services
                                       {
                                           PartnerId = g.Key,
                                           CountSale = g.Sum(x => x.State == "sale" ? 1 : 0),
-                                          CountDone = g.Sum(x => x.State == "done" ? 1 : 0)
+                                          CountDone = g.Sum(x => x.State == "done" ? 1 : 0),
+                                          Date = g.Max(x => x.DateOrder)
                                       };
+
+
 
             var PartnerResidualQr = (from s in saleOrderObj.SearchQuery(x => x.CompanyId == companyId)
                                      where s.State == "sale" || s.State == "done"
@@ -2860,6 +2864,14 @@ namespace Infrastructure.Services
 
             var cardCardQr = from card in cardCardObj.SearchQuery()
                              select card;
+
+            var appointmentQr = from appoint in appointmentObj.SearchQuery(x => x.CompanyId == companyId)
+                                group appoint by appoint.PartnerId into g
+                                select new
+                                {
+                                    PartnerId = g.Key,
+                                    Date = g.Max(s => s.Date)
+                                };
 
             var mainQuery = SearchQuery(x => x.Active && x.Customer);
             if (val.CompanyId.HasValue)
@@ -2923,6 +2935,7 @@ namespace Infrastructure.Services
                              from pos in partnerOrderStateQr.Where(x => x.PartnerId == p.Id).DefaultIfEmpty()
                              from ir in irPropertyQr.Where(x => !string.IsNullOrEmpty(x.ResId) && x.ResId.Contains(p.Id.ToString().ToLower())).DefaultIfEmpty()
                              from card in cardCardQr.Where(x => x.PartnerId == p.Id).DefaultIfEmpty()
+                             from appoint in appointmentQr.Where(x => x.PartnerId == p.Id).DefaultIfEmpty()
                              select new PartnerInfoTemplate
                              {
                                  Id = p.Id,
@@ -2951,7 +2964,10 @@ namespace Infrastructure.Services
                                  DateCreated = p.DateCreated,
                                  SourceName = p.Source.Name,
                                  TitleName = p.Title.Name,
-                                 CardTypeName = card.Type.Name
+                                 CardTypeName = card.Type.Name,
+                                 CompanyName = p.Company.Name,
+                                 AppointmentDate = appoint.Date,
+                                 SaleOrderDate = pos.Date
                              };
 
             if (val.HasOrderResidual.HasValue && val.HasOrderResidual.Value == 1)

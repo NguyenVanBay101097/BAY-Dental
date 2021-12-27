@@ -60,6 +60,38 @@ namespace TMTDentalAPI.Controllers
             return Ok(res);
         }
 
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.AccountPartner")]
+        public async Task<IActionResult> GetPartnerReportSumaryOverview(AccountCommonPartnerReportOverviewFilter val)
+        {
+            var res = await _reportService.GetPartnerReportSumaryOverview(val);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.AccountPartner")]
+        public async Task<IActionResult> GetPartnerReportTreeMapOverview(AccountCommonPartnerReportOverviewFilter val)
+        {
+            var res = await _reportService.GetPartnerReportTreeMapOverview(val);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.AccountPartner")]
+        public async Task<IActionResult> GetPartnerReportSourceOverview(AccountCommonPartnerReportOverviewFilter val)
+        {
+            var res = await _reportService.GetPartnerReportSourceOverview(val);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.AccountPartner")]
+        public async Task<IActionResult> GetPartnerReportGenderOverview(AccountCommonPartnerReportOverviewFilter val)
+        {
+            var res = await _reportService.GetPartnerReportGenderOverview(val);
+            return Ok(res);
+        }
+
         [HttpPost("GetDetail")]
         [CheckAccess(Actions = "Report.AccountPartner")]
         public async Task<IActionResult> GetDetail(AccountCommonPartnerReportItem val)
