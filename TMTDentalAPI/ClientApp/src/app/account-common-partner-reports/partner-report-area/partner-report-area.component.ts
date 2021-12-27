@@ -119,9 +119,10 @@ export class PartnerReportAreaComponent implements OnInit {
   onChartClick(event) {
     let res;
     if (event.dataType && event.dataType == 'main') {
-      this.echartsInstance = this.echartsInstance.filter(val => !event.treePathInfo.map(s => s.dataIndex).includes(val.dataIndex));
+      // this.echartsInstance = this.echartsInstance.filter(val => !event.treePathInfo.map(s => s.dataIndex).includes(val.dataIndex));
       event.treePathInfo.forEach(element => {
-        if (element.dataIndex === event.dataIndex) {
+        const isDuplicate = this.echartsInstance.map(s => s.dataIndex).includes(event.dataIndex);
+        if (element.dataIndex === event.dataIndex && !isDuplicate) {
           const data = { ...element };
           data['code'] = event.data.code;
           data['type'] = event.data.type;
@@ -132,19 +133,19 @@ export class PartnerReportAreaComponent implements OnInit {
     }
 
     if (event.selfType && event.selfType == 'breadcrumb') {
-      this.echartsInstance = this.echartsInstance.filter(val => !event.treePathInfo.map(s => s.dataIndex).includes(val.dataIndex));
+      // this.echartsInstance = this.echartsInstance.filter(val => !event.treePathInfo.map(s => s.dataIndex).includes(val.dataIndex));
       res = this.echartsInstance.find(s => s.dataIndex == event.nodeData.dataIndex);
     }
 
     let dataEmit;
-    if(res){
+    if (res) {
       dataEmit = {
         type: res ? res.type : '',
         code: res ? res.code : ''
       }
       this.filterEmit.emit(dataEmit);
     }
-    else{
+    else {
       this.filterEmit.emit(false);
     }
   }
