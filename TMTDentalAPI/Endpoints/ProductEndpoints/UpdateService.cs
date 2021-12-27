@@ -46,6 +46,14 @@ namespace TMTDentalAPI.Endpoints.ProductEndpoints
                 .Include(x => x.Steps)
                 .FirstOrDefaultAsync();
 
+            product.Name = request.Name;
+            product.DefaultCode = request.DefaultCode;
+            product.CategId = request.CategId;
+            product.IsLabo = request.IsLabo;
+            product.ListPrice = request.ListPrice ?? 0;
+            product.UOMId = request.UOMId;
+            product.UOMPOId = request.UOMId;
+
             if (product.IsLabo)
             {
                 product.Firm = request.Firm;

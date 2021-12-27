@@ -62,6 +62,11 @@
                 {{dataItem.name}}
             </ng-template>
         </kendo-grid-column>
+        <kendo-grid-column field="productUOM" title="Đơn vị tính" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.productUOM?.name}}
+            </ng-template>
+        </kendo-grid-column>
         <kendo-grid-column field="teethDisplay" title="Răng" width="100">
         </kendo-grid-column>
         <kendo-grid-column field="diagnostic" title="Chẩn đoán" width="100">

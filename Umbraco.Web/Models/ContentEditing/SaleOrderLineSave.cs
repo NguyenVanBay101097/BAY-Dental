@@ -18,8 +18,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Name { get; set; }
 
-        public decimal Discount { get; set; }
-
         public Guid? ProductId { get; set; }
 
         /// <summary>
@@ -32,12 +30,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? ProductUOMId { get;set; }
 
         public IEnumerable<Guid> ToothIds { get; set; } = new List<Guid>();
-
-
-        /// <summary>
-        /// danh sách chương trình ưu đãi
-        /// </summary>
-        public ICollection<SaleOrderPromotionSave> Promotions { get; set; } = new List<SaleOrderPromotionSave>();
 
         /// <summary>
         /// whole_jaw: nguyên hàm
@@ -53,9 +45,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? CounselorId { get; set; }
 
-        public bool IsActive { get; set; }
         public Guid OrderId { get; set; }
+
         public DateTime? Date { get; set; }
-        public string State { get; set; }
     }
 }

@@ -450,6 +450,7 @@ namespace Infrastructure.Services
                     saleOrderLine.Sequence = sequence++;
                     saleOrderLine.ToothCategoryId = advisory.ToothCategoryId;
                     saleOrderLine.Date = DateTime.Now;
+                    saleOrderLine.ProductUOMId = product.UOMId;
 
                     if (advisory.ToothType == "manual")
                     {

@@ -139,7 +139,7 @@ namespace Infrastructure.Services
                     continue;
                 line.OrderPartnerId = order.PartnerId;
                 line.CompanyId = order.CompanyId;
-                line.State = order.State;
+                //line.State = order.State;
             }
         }
 
@@ -1439,8 +1439,6 @@ namespace Infrastructure.Services
             var entity = await SearchQuery(x => x.Id == id).Include(x => x.SaleOrderLineToothRels).FirstOrDefaultAsync();
             if (entity == null)
                 throw new Exception("Không tìm thấy dịch vụ!");
-            if (val.State == "done" && entity.State != "done")
-                entity.DateDone = DateTime.Now;
             _mapper.Map(val, entity);
             entity.SaleOrderLineToothRels.Clear();
             if (val.ToothType == "manual")
@@ -1488,10 +1486,14 @@ namespace Infrastructure.Services
 
         public async Task<SaleOrderLine> CreateOrderLine(SaleOrderLineSave val)
         {
+            var orderObj = GetService<ISaleOrderService>();
+            var order = await orderObj.SearchQuery(x => x.Id == val.OrderId)
+               .Include(x => x.OrderLines)
+               .FirstOrDefaultAsync();
+
             var saleLine = _mapper.Map<SaleOrderLine>(val);
             saleLine.Date = saleLine.Date ?? DateTime.Now;
-            if (val.State == "done") saleLine.DateDone = DateTime.Now;
-            saleLine.AmountResidual = saleLine.PriceSubTotal - saleLine.AmountPaid;
+            saleLine.State = order.State;
 
             if (val.ToothType == "manual")
             {
@@ -1503,11 +1505,6 @@ namespace Infrastructure.Services
                     });
                 }
             }
-
-            var orderObj = GetService<ISaleOrderService>();
-            var order = await orderObj.SearchQuery(x => x.Id == saleLine.OrderId)
-               .Include(x => x.OrderLines)
-               .FirstOrDefaultAsync();
 
             UpdateOrderInfo(new List<SaleOrderLine>() { saleLine }, order);
             _GetInvoiceQty(new List<SaleOrderLine>() { saleLine });

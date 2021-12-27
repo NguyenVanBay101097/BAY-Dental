@@ -65,7 +65,7 @@
                             </button>
                         </ng-template>
                     </kendo-grid-column>
-                    <div *kendoGridDetailTemplate="let dataItem">
+                    <div *kendoGridDetailTemplate="let dataItem" width="50">
                         <app-partner-customer-treatment-sale-order-line [saleOrderId]="dataItem.id">
                         </app-partner-customer-treatment-sale-order-line>
                     </div>

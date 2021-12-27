@@ -106,7 +106,8 @@ export class ProductServiceCuDialogComponent implements OnInit {
       tap(() => (this.uomCbx.loading = true)),
       switchMap(value => this.searchUoms(value))
     ).subscribe((result: any) => {
-      this.filterdUoMs = result.items;
+      console.log('go ogogo');
+      this.filterdUoMs = result.uoms;
       this.uomCbx.loading = false;
     });
 
@@ -175,7 +176,6 @@ export class ProductServiceCuDialogComponent implements OnInit {
       tap(() => (this.categCbx.loading = true)),
       switchMap(value => this.searchCategories(value))
     ).subscribe(result => {
-      console.log('go ogogo');
       this.filterdCategories = result;
       this.categCbx.loading = false;
     });
