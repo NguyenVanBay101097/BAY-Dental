@@ -7226,6 +7226,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("ProductUOMId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("Qty")
                         .HasColumnType("int");
 
@@ -7257,6 +7260,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("EmployeeId");
 
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("ProductUOMId");
 
                     b.HasIndex("QuotationId");
 
@@ -15539,6 +15544,10 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("ApplicationCore.Entities.UoM", "ProductUOM")
+                        .WithMany()
+                        .HasForeignKey("ProductUOMId");
 
                     b.HasOne("ApplicationCore.Entities.Quotation", "Quotation")
                         .WithMany("Lines")

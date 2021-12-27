@@ -57,9 +57,8 @@
                                             <td colspan="1" style="width: 100%;">
                                                 <div class="d-flex">
                                                     <kendo-combobox [data]="filterdCategories"
-                                                        [textField]="'completeName'" [filterable]="true" #categCbx
+                                                        [textField]="'name'" [filterable]="true" #categCbx
                                                         formControlName="categ" [valueField]="'id'"
-                                                        (filterChange)="categCbxFilterChange2($event)"
                                                         [loading]="categCbxLoading">
                                                     </kendo-combobox>
                                                     <a class="btn btn-light" (click)="quickCreateCateg()">
@@ -83,25 +82,20 @@
                                                     class="form-control" formControlName="defaultCode" />
                                             </td>
                                         </tr>
-                                        <tr [class.d-none]="isLabo == false">
+                                        <tr>
                                             <td colspan="1" class="o_td_label">
                                                 <label class="o_form_label">
-                                                    Hãng
+                                                    Đơn vị tính
                                                 </label>
                                             </td>
-                                            <td colspan="1" style="width: 100%;">
-                                                <input type="text" class="form-control" formControlName="firm">
-                                            </td>
-                                        </tr>
-                                        <tr [class.d-none]="isLabo == false">
-                                            <td colspan="1" class="o_td_label">
-                                                <label class="o_form_label">
-                                                    Giá đặt labo
-                                                </label>
-                                            </td>
-                                            <td colspan="1" style="width: 100%;">
-                                                <input class="form-control" formControlName="laboPrice" tmtautonumeric
-                                                    [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
+                                            <td>
+                                                <kendo-combobox [data]="filterdUoMs" [valueField]="'id'" [textField]="'name'"
+                                                    formControlName="uom" [filterable]="true" #uomCbx>
+                                                </kendo-combobox>
+
+                                                <div *ngIf="f.uom.errors && submitted" class="text-danger">
+                                                    <div *ngIf="f.uom.errors.required">Chọn đơn vị tính</div>
+                                                </div>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -130,6 +124,27 @@
                                                     tmtautonumeric [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
                                             </td>
                                         </tr>
+                                        <tr [class.d-none]="isLabo == false">
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Hãng
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <input type="text" class="form-control" formControlName="firm">
+                                            </td>
+                                        </tr>
+                                        <tr [class.d-none]="isLabo == false">
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Giá đặt labo
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <input class="form-control" formControlName="laboPrice" tmtautonumeric
+                                                    [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -138,22 +153,17 @@
                         <div class="tab-pane" id="step" role="tabpanel" aria-labelledby="step-tab">
                             <div class="d-flex">
                                 <div class="input-group mb-3" style="max-width: 400px;">
-                                    <input type="text" class="form-control" formControlName="stepName"
+                                    <input type="text" class="form-control" #stepInput
                                         placeholder="Nhập tên công đoạn sau đó nhấn enter"
-                                        (keydown)="onKeyDownStepName($event)" />
+                                        (keydown.enter)="createTempProductStepList(stepInput.value);stepInput.value=''" />
                                     <div class="input-group-append">
                                         <button type="button" class="btn btn-primary"
-                                            (click)="createTempProductStepList()">Thêm</button>
+                                            (click)="createTempProductStepList(stepInput.value);stepInput.value=''">Thêm</button>
                                     </div>
-                                </div>
-                                <div>
-                                    <i class="fas fa-question-circle ml-2 text-primary" triggers="mouseenter:mouseleave"
-                                        ngbPopover="Click vào biểu tượng bút trên mỗi dòng trong danh sách công đoạn, sau khi sửa tên xong nhấn Enter để lưu"
-                                        placement="right" popoverTitle="Hướng dẫn cập nhật công đoạn"></i>
                                 </div>
                             </div>
 
-                            <table *ngIf="stepList.length>0" class="table table-sm">
+                            <table class="table table-sm">
                                 <thead>
                                     <tr>
                                         <th>STT</th>
@@ -161,30 +171,23 @@
                                         <th>Thao tác</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr *ngFor="let i of stepList;let idx = index">
-                                        <td>
-                                            {{idx + 1}}
-                                        </td>
-                                        <td #stepName>
-                                            <span *ngIf="showInput(i.order)">{{i.name}}</span>
-                                            <form *ngIf="!showInput(i.order)" [formGroup]="formStepEdit"
-                                                (ngSubmit)="submitStepName(i.order)">
-                                                <input type="text" formControlName="name" />
-                                            </form>
-                                        </td>
-                                        <td colspan="1">
-                                            <button type="button" [disabled]=" disableButton(i.order,true)"
-                                                class="btn btn-light mr-2" (click)="editStepOrCancel(i.order, i.name)">
-                                                <i class="fas fa-pen"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-light mr-2"
-                                                (click)="removeStepListItem(i.order)"
-                                                [disabled]=" disableButton(i.order,false)">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
+                                <tbody formArrayName="steps">
+                                    <ng-container *ngFor="let item of stepsFA.controls; let i=index">
+                                        <tr [formGroupName]="i">
+                                            <td>
+                                                {{i + 1}}
+                                            </td>
+                                            <td>
+                                                <input type="text" formControlName="name" class="form-control" />
+                                            </td>
+                                            <td colspan="1">
+                                                <button type="button" class="btn btn-light"
+                                                    (click)="removeStepListItem(i)">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </ng-container>
                                 </tbody>
                             </table>
                         </div>
@@ -224,13 +227,8 @@
                                                     </kendo-combobox>
                                                     <div *ngIf="item.get('materialProduct').errors && submitted"
                                                         class="text-danger">
-                                                        <div *ngIf="item.get('materialProduct').errors.required">Chọn
-                                                            vật tư</div>
-                                                        <div *ngIf="item.get('materialProduct').errors.incorrect">Vật tư
-                                                            đã tồn tại</div>
+                                                        <div *ngIf="item.get('materialProduct').errors.required">Chọn vật tư</div>
                                                     </div>
-
-
                                                 </td>
                                                 <td>
                                                     <span>{{item.get('productUOM') && item.get('productUOM').value ?
@@ -241,7 +239,7 @@
                                                         tmtautonumeric [options]="{ minimumValue: 0 }" />
                                                     <div *ngIf="item.get('quantity').errors && submitted"
                                                         class="text-danger">
-                                                        <div *ngIf="item.get('quantity').errors.required">Chọn số lượng
+                                                        <div *ngIf="item.get('quantity').errors.required">Nhập số lượng
                                                         </div>
                                                     </div>
                                                 </td>

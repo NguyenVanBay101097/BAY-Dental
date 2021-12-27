@@ -39,6 +39,9 @@
           },
           "Name": "Tẩy trắng răng tại nhà",
           "ProductUOMQty": 1.00,
+          "ProductUOM": {
+            "Name": "Cái"
+          },
           "PriceUnit": 1500000.00,
           "PriceSubTotal": 1350000.00,
           "PriceTotal": 0.0,
@@ -51,6 +54,9 @@
           },
           "Name": "Tẩy trắng răng bằng đèn Laser Zoom II",
           "ProductUOMQty": 2.00,
+          "ProductUOM": {
+            "Name": "Cái"
+          },
           "PriceUnit": 2500000.00,
           "PriceSubTotal": 4000000.00,
           "PriceTotal": 0.0,
@@ -2112,6 +2118,9 @@
           "name": "Răng sứ Nacera Q thế hệ mới",
           "qty": 1,
           "discountType": "percent",
+          "productUOM": {
+            "name": "Cái"
+          },
           "discountAmountPercent": 10,
           "subPrice": 10000000,
           "amountDiscountTotal": 1000000,

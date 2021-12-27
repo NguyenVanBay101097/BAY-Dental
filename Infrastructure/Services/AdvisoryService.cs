@@ -450,6 +450,7 @@ namespace Infrastructure.Services
                     saleOrderLine.Sequence = sequence++;
                     saleOrderLine.ToothCategoryId = advisory.ToothCategoryId;
                     saleOrderLine.Date = DateTime.Now;
+                    saleOrderLine.ProductUOMId = product.UOMId;
 
                     if (advisory.ToothType == "manual")
                     {
@@ -527,6 +528,7 @@ namespace Infrastructure.Services
                     quotationLine.DiscountType = "percentage";
                     quotationLine.ToothType = advisory.ToothType;
                     quotationLine.Amount = quotationLine.Qty * quotationLine.SubPrice;
+                    quotationLine.ProductUOMId = product.UOMId;
                     quotationLine.ToothCategoryId = advisory.ToothCategoryId.GetValueOrDefault();
                     foreach (var toothId in toothIds)
                     {
@@ -560,7 +562,8 @@ namespace Infrastructure.Services
                     Date = x.Order.DateOrder,
                     DoctorName = x.Employee.Name,
                     Qty = x.ProductUOMQty,
-                    Type = "saleOrder"
+                    Type = "saleOrder",
+                    UomName = x.Product.UOM != null ? x.Product.UOM.Name : ""
                 });
 
             var quotationLines = quotationLineService.SearchQuery(x => x.AdvisoryId == val.AdvisoryId)
@@ -572,7 +575,8 @@ namespace Infrastructure.Services
                     Date = x.Quotation.DateQuotation,
                     Qty = x.Qty,
                     Type = "quotation",
-                    DoctorName = x.Employee.Name
+                    DoctorName = x.Employee.Name,
+                    UomName = x.ProductUOM != null ? x.ProductUOM.Name : ""
                 });
 
             var res = saleOrderLines.Union(quotationLines);

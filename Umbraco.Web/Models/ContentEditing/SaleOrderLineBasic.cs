@@ -52,6 +52,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// manual :  thủ công
         /// </summary>
         public string ToothType { get; set; }
+        public Guid? ProductUOMId { get; set; }
+        public UoMBasic ProductUOM { get; set; }
 
         public decimal? AmountResidual
         {
@@ -119,6 +121,16 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Name { get; set; }
         [EpplusDisplay("Bác sĩ")]
         public string EmployeeName { get; set; }
+        [EpplusIgnore]
+        public UoMBasic ProductUOM { get; set; }
+        [EpplusDisplay("Đơn vị tính")]
+        public string ProductUOMName { 
+            get
+            {
+                return ProductUOM != null ? ProductUOM.Name : "";
+            }
+            set { }
+        }
         [EpplusIgnore]
         public string ToothType { get; set; }
         [EpplusIgnore]

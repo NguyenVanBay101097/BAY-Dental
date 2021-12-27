@@ -1,3 +1,4 @@
+import { UoMBasic } from "../uoms/uom.service";
 
 export class ProductSimple {
     id: string;
@@ -8,4 +9,5 @@ export class ProductSimple {
     defaultCode: string;
     type2: string;
     purchasePrice: number;
+    uom: UoMBasic;
 }

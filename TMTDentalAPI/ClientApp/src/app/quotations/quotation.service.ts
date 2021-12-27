@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { PagedResult2 } from '../core/paged-result-2';
 import { EmployeeSimple } from '../employees/employee';
 import { PartnerSimple } from '../partners/partner-simple';
+import { UoMBasic } from '../uoms/uom.service';
 import { UserSimple } from '../users/user-simple';
 
 // import { PagedResult2 } from '../paged-result-2';
@@ -36,6 +37,7 @@ export class QuotationLineDisplay {
   amountDiscountTotal: number;
   amountPromotionToOrder: number;
   amountPromotionToOrderLine: number;
+  productUOM: UoMBasic;
 }
 export class QuotationLineSave {
   productId: string;
@@ -191,6 +193,7 @@ export class QuotationService {
                 amountDiscountTotal: x.amountDiscountTotal,
                 amountPromotionToOrder: x.amountPromotionToOrder,
                 amountPromotionToOrderLine: x.amountPromotionToOrderLine,
+                productUOM: x.productUOM
               }),
               payments: response.payments.map(x => <PaymentQuotationDisplay>{
                 amount: x.amount,

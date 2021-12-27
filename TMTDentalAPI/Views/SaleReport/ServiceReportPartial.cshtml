@@ -50,6 +50,7 @@
                     <td width="150"><strong>Khách hàng</strong></td>
                     <td width="150"><strong>Dịch vụ</strong></td>
                     <td width="150"><strong>Bác sĩ</strong></td>
+                    <td width="120"><strong>ĐVT</strong></td>
                     <td width="100"><strong>Răng</strong></td>
                     <td width="100" class="text-right"><strong>Số lượng</strong></td>
                     <td width="120" class="text-right"><strong>Thành tiền</strong></td>
@@ -58,26 +59,27 @@
                 </tr>
                 @foreach (var line in item.Lines)
                 {
-                    <tr>
-                        <td width="120">@(!line.Date.HasValue ? "" : line.Date.Value.ToString("dd/MM/yyyy"))</td>
-                        <td width="150">@line.OrderPartnerName</td>
-                        <td width="150">@line.Name</td>
-                        <td width="150">@(line.EmployeeName)</td>
-                        <td width="100">
-                            @if (line.ToothType == "manual")
-                            {
-                                @string.Join(", ", line.Teeth.Select(x => x.Name))
-                            }
-                            else
-                            {
-                                @showTeethList(line.ToothType)
-                            }
-                        </td>
-                        <td width="100" class="text-right">@string.Format(culture, "{0:n0}", @line.ProductUOMQty)</td>
-                        <td width="120" class="text-right">@string.Format(culture, "{0:n0}", line.PriceSubTotal)</td>
-                        <td width="120">@(line.State == "done" ? "Hoàn thành" : (line.State == "cancel" ? "Ngừng dịch vụ" : "Đang điều trị"))</td>
-                        <td width="120">@line.OrderName</td>
-                    </tr>
+            <tr>
+                <td width="120">@(!line.Date.HasValue ? "" : line.Date.Value.ToString("dd/MM/yyyy"))</td>
+                <td width="150">@line.OrderPartnerName</td>
+                <td width="150">@line.Name</td>
+                <td width="150">@(line.EmployeeName)</td>
+                <td width="120">@(line.ProductUOM != null ? line.ProductUOM.Name : "")</td>
+                <td width="100">
+                    @if (line.ToothType == "manual")
+                    {
+                        @string.Join(", ", line.Teeth.Select(x => x.Name))
+                    }
+                    else
+                    {
+                        @showTeethList(line.ToothType)
+                    }
+                </td>
+                <td width="100" class="text-right">@string.Format(culture, "{0:n0}", @line.ProductUOMQty)</td>
+                <td width="120" class="text-right">@string.Format(culture, "{0:n0}", line.PriceSubTotal)</td>
+                <td width="120">@(line.State == "done" ? "Hoàn thành" : (line.State == "cancel" ? "Ngừng dịch vụ" : "Đang điều trị"))</td>
+                <td width="120">@line.OrderName</td>
+            </tr>
                 }
             </tbody>
         </table>

@@ -192,7 +192,8 @@ namespace Infrastructure.Services
                     Diagnostic = x.Diagnostic,
                     EmployeeName = x.Employee.Name,
                     ProductUOMQty = x.ProductUOMQty,
-                    Teeth = x.SaleOrderLineToothRels.Select(s => s.Tooth.Name)
+                    Teeth = x.SaleOrderLineToothRels.Select(s => s.Tooth.Name),
+                    ProductUOMName = x.ProductUOM != null ? x.ProductUOM.Name : ""
                 }).ToListAsync();
 
             assignDisplay.DotKhams = await dotkhamObj.SearchQuery(x => x.SaleOrderId == assign.SaleOrderId)

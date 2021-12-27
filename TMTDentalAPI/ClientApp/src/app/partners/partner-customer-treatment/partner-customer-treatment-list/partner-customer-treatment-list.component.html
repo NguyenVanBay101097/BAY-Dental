@@ -65,7 +65,7 @@
                             </button>
                         </ng-template>
                     </kendo-grid-column>
-                    <div *kendoGridDetailTemplate="let dataItem">
+                    <div *kendoGridDetailTemplate="let dataItem" width="50">
                         <app-partner-customer-treatment-sale-order-line [saleOrderId]="dataItem.id">
                         </app-partner-customer-treatment-sale-order-line>
                     </div>
@@ -93,6 +93,11 @@
                     <kendo-grid-column title="Bác sĩ" width="150">
                         <ng-template kendoGridCellTemplate let-dataItem>
                             {{dataItem.employee ? dataItem.employee.name : ''}}
+                        </ng-template>
+                    </kendo-grid-column>
+                    <kendo-grid-column title="Đơn vị tính" width="120">
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{dataItem.productUOM ? dataItem.productUOM.name : ''}}
                         </ng-template>
                     </kendo-grid-column>
                     <kendo-grid-column title="Số lượng" field="productUOMQty" width="100" class="text-right">

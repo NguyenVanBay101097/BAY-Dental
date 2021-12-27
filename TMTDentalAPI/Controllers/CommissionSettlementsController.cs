@@ -146,9 +146,10 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[1, 4].Value = "Số phiếu";
                 worksheet.Cells[1, 5].Value = "Khách hàng";
                 worksheet.Cells[1, 6].Value = "Dịch vụ";
-                worksheet.Cells[1, 7].Value = "Lợi nhuận tính hoa hồng";
-                worksheet.Cells[1, 8].Value = "% Hoa hồng";
-                worksheet.Cells[1, 9].Value = "Tiền hoa hồng";
+                worksheet.Cells[1, 7].Value = "Đơn vị tính";
+                worksheet.Cells[1, 8].Value = "Lợi nhuận tính hoa hồng";
+                worksheet.Cells[1, 9].Value = "% Hoa hồng";
+                worksheet.Cells[1, 10].Value = "Tiền hoa hồng";
 
                 worksheet.Cells["A1:P1"].Style.Font.Bold = true;
                 worksheet.Cells["A1:P1"].Style.Fill.PatternType = ExcelFillStyle.Solid;
@@ -165,12 +166,13 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 4].Value = item.InvoiceOrigin;
                     worksheet.Cells[row, 5].Value = item.PartnerName;
                     worksheet.Cells[row, 6].Value = item.ProductName;
-                    worksheet.Cells[row, 7].Value = item.BaseAmount;
-                    worksheet.Cells[row, 7].Style.Numberformat.Format = "#,###";
-                    worksheet.Cells[row, 8].Value = item.Percentage;
-                    worksheet.Cells[row, 8].Style.Numberformat.Format = "#0\\%";
-                    worksheet.Cells[row, 9].Value = item.Amount;
-                    worksheet.Cells[row, 9].Style.Numberformat.Format = "#,###";
+                    worksheet.Cells[row, 7].Value = item.UOMName;
+                    worksheet.Cells[row, 8].Value = item.BaseAmount;
+                    worksheet.Cells[row, 8].Style.Numberformat.Format = "#,###";
+                    worksheet.Cells[row, 9].Value = item.Percentage;
+                    worksheet.Cells[row, 9].Style.Numberformat.Format = "#0\\%";
+                    worksheet.Cells[row, 10].Value = item.Amount;
+                    worksheet.Cells[row, 10].Style.Numberformat.Format = "#,###";
 
                     row++;
                 }
@@ -203,20 +205,21 @@ namespace TMTDentalAPI.Controllers
             {
                 var worksheet = package.Workbook.Worksheets.Add(sheetName);
 
-                worksheet.Cells["A1:G1"].Value = data.Items.ToArray()[0].Name;
-                worksheet.Cells["A1:G1"].Style.Font.Size = 14;
-                //worksheet.Cells["A1:G1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
-                worksheet.Cells["A1:G1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                worksheet.Cells["A1:G1"].Merge = true;
-                worksheet.Cells["A1:G1"].Style.Font.Bold = true;
+                worksheet.Cells["A1:H1"].Value = data.Items.ToArray()[0].Name;
+                worksheet.Cells["A1:H1"].Style.Font.Size = 14;
+                //worksheet.Cells["A1:H1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
+                worksheet.Cells["A1:H1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells["A1:H1"].Merge = true;
+                worksheet.Cells["A1:H1"].Style.Font.Bold = true;
 
                 worksheet.Cells[3, 1].Value = "Ngày thanh toán";
                 worksheet.Cells[3, 2].Value = "Số phiếu";
                 worksheet.Cells[3, 3].Value = "Khách hàng";
                 worksheet.Cells[3, 4].Value = "Dịch vụ";
-                worksheet.Cells[3, 5].Value = "Lợi nhuận tính hoa hồng";
-                worksheet.Cells[3, 6].Value = "% Hoa hồng";
-                worksheet.Cells[3, 7].Value = "Tiền hoa hồng";
+                worksheet.Cells[3, 5].Value = "Đơn vị tính";
+                worksheet.Cells[3, 6].Value = "Lợi nhuận tính hoa hồng";
+                worksheet.Cells[3, 7].Value = "% Hoa hồng";
+                worksheet.Cells[3, 8].Value = "Tiền hoa hồng";
                 worksheet.Cells[3, 1].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                 worksheet.Cells[3, 2].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                 worksheet.Cells[3, 3].Style.Border.BorderAround(ExcelBorderStyle.Thin);
@@ -224,11 +227,12 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[3, 5].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                 worksheet.Cells[3, 6].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                 worksheet.Cells[3, 7].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                worksheet.Cells[3, 8].Style.Border.BorderAround(ExcelBorderStyle.Thin);
 
-                worksheet.Cells["A3:G3"].Style.Font.Bold = true;
-                worksheet.Cells["A3:G3"].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                worksheet.Cells["A3:G3"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
-                worksheet.Cells["A3:G3"].Style.Font.Color.SetColor(Color.White);
+                worksheet.Cells["A3:H3"].Style.Font.Bold = true;
+                worksheet.Cells["A3:H3"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["A3:H3"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
+                worksheet.Cells["A3:H3"].Style.Font.Color.SetColor(Color.White);
 
                 var row = 4;
                 foreach (var item in data.Items)
@@ -238,12 +242,13 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 2].Value = item.InvoiceOrigin;
                     worksheet.Cells[row, 3].Value = item.PartnerName;
                     worksheet.Cells[row, 4].Value = item.ProductName;
-                    worksheet.Cells[row, 5].Value = item.BaseAmount;
-                    worksheet.Cells[row, 5].Style.Numberformat.Format = "#,###";
-                    worksheet.Cells[row, 6].Value = item.Percentage;
-                    worksheet.Cells[row, 6].Style.Numberformat.Format = "#0\\%";
-                    worksheet.Cells[row, 7].Value = item.Amount;
-                    worksheet.Cells[row, 7].Style.Numberformat.Format = "#,###";
+                    worksheet.Cells[row, 5].Value = item.UOMName;
+                    worksheet.Cells[row, 6].Value = item.BaseAmount;
+                    worksheet.Cells[row, 6].Style.Numberformat.Format = "#,###";
+                    worksheet.Cells[row, 7].Value = item.Percentage;
+                    worksheet.Cells[row, 7].Style.Numberformat.Format = "#0\\%";
+                    worksheet.Cells[row, 8].Value = item.Amount;
+                    worksheet.Cells[row, 8].Style.Numberformat.Format = "#,###";
                     worksheet.Cells[row, 1].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                     worksheet.Cells[row, 2].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                     worksheet.Cells[row, 3].Style.Border.BorderAround(ExcelBorderStyle.Thin);
@@ -251,6 +256,8 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 5].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                     worksheet.Cells[row, 6].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                     worksheet.Cells[row, 7].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 8].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+
 
 
                     row++;

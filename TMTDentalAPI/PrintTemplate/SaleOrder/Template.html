@@ -44,19 +44,21 @@
     <tbody>
         <tr>
             <td><strong>Dịch vụ</strong></td>
+            <td><strong>ĐVT</strong></td>
             <td style="text-align:right"><strong>Số lượng</strong></td>
             <td style="text-align:right"><strong>Đơn giá</strong></td>
             <td style="text-align:right"><strong>Giảm giá</strong></td>
             <td style="text-align:right"><strong>Thành tiền</strong></td>
         </tr>
         <!--{{for line in o.order_lines}}-->
-        <tr>
-            <td>{{line.product?.name}}</td>
-            <td style="text-align:right">{{(line.product_uomqty ? line.product_uomqty : 0) | math.format "N0" }}</td>
-            <td style="text-align:right">{{line.price_unit | math.format "N0" }}</td>
-            <td style="text-align:right">{{line.amount_discount_total | math.format "N0" }}</td>
-            <td style="text-align:right">{{line.price_sub_total | math.format "N0" }}</td>
-        </tr>
+    <tr>
+        <td>{{line.product?.name}}</td>
+        <td>{{line.product_uom?.name}}</td>
+        <td style="text-align:right">{{(line.product_uomqty ? line.product_uomqty : 0) | math.format "N0" }}</td>
+        <td style="text-align:right">{{line.price_unit | math.format "N0" }}</td>
+        <td style="text-align:right">{{line.amount_discount_total | math.format "N0" }}</td>
+        <td style="text-align:right">{{line.price_sub_total | math.format "N0" }}</td>
+    </tr>
         <!--{{end}}-->
     </tbody>
 </table>

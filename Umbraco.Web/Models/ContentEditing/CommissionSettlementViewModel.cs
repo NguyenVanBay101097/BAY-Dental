@@ -179,6 +179,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Classify { get; set; }
 
         public decimal? TotalAmount { get; set; }
+        public string UOMName { get; set; }
     }
 
     public class CommissionSettlementReportDetailOutputExcel

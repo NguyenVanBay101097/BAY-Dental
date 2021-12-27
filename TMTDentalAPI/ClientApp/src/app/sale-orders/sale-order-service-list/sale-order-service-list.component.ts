@@ -189,9 +189,13 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
       productId: val.id,
       product: {
         id: val.id,
-        name: val.name
+        name: val.name,
       },
       productUOMQty: 1,
+      productUOM: {
+        name: val.uom.name,
+        id: val.uom.id
+      },
       state: this.saleOrder.state,
       teeth: [],
       promotions: [],
@@ -206,7 +210,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
       amountDiscountTotal: 0,
       amountInsurancePaidTotal: 0,
       orderPartnerId: this.saleOrder.partnerId,
-      date: new Date()
+      date: new Date(),
     };
 
     this.orderLines.unshift(value);
@@ -660,7 +664,8 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
       isActive: line.isActive,
       orderId: this.saleOrder.id,
       date: moment(line.date).format('YYYY-MM-DD HH:mm'),
-      state: line.state
+      state: line.state,
+      productUOMId: line.productUOM ? line.productUOM.id : null
     };
 
     if (!line.id) {

@@ -459,7 +459,7 @@ namespace Infrastructure.Services
 
             var totalItems = await query.CountAsync();
 
-            query = query.Include(x => x.OrderPartner).Include(x => x.Product).Include(x => x.Order).Include(x => x.Labos).Include(x => x.Employee).OrderByDescending(x => x.DateCreated);
+            query = query.Include(x => x.OrderPartner).Include(x => x.Product).Include(x => x.ProductUOM).Include(x => x.Order).Include(x => x.Labos).Include(x => x.Employee).OrderByDescending(x => x.DateCreated);
             if (val.Limit > 0)
             {
                 query = query.Skip(val.Offset).Take(val.Limit);
@@ -1438,8 +1438,6 @@ namespace Infrastructure.Services
             var entity = await SearchQuery(x => x.Id == id).Include(x => x.SaleOrderLineToothRels).FirstOrDefaultAsync();
             if (entity == null)
                 throw new Exception("Không tìm thấy dịch vụ!");
-            if (val.State == "done" && entity.State != "done")
-                entity.DateDone = DateTime.Now;
             _mapper.Map(val, entity);
             entity.SaleOrderLineToothRels.Clear();
             if (val.ToothType == "manual")
@@ -1487,10 +1485,14 @@ namespace Infrastructure.Services
 
         public async Task<SaleOrderLine> CreateOrderLine(SaleOrderLineSave val)
         {
+            var orderObj = GetService<ISaleOrderService>();
+            var order = await orderObj.SearchQuery(x => x.Id == val.OrderId)
+               .Include(x => x.OrderLines)
+               .FirstOrDefaultAsync();
+
             var saleLine = _mapper.Map<SaleOrderLine>(val);
             saleLine.Date = saleLine.Date ?? DateTime.Now;
-            if (val.State == "done") saleLine.DateDone = DateTime.Now;
-            saleLine.AmountResidual = saleLine.PriceSubTotal - saleLine.AmountPaid;
+            saleLine.State = order.State;
 
             if (val.ToothType == "manual")
             {
@@ -1502,11 +1504,6 @@ namespace Infrastructure.Services
                     });
                 }
             }
-
-            var orderObj = GetService<ISaleOrderService>();
-            var order = await orderObj.SearchQuery(x => x.Id == saleLine.OrderId)
-               .Include(x => x.OrderLines)
-               .FirstOrDefaultAsync();
 
             UpdateOrderInfo(new List<SaleOrderLine>() { saleLine }, order);
             _GetInvoiceQty(new List<SaleOrderLine>() { saleLine });

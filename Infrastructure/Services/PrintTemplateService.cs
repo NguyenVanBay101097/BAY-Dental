@@ -247,6 +247,7 @@ namespace Infrastructure.Services
                             .Include(x => x.Employee)
                             .Include(x => x.Lines)
                             .Include(x => x.Company).ThenInclude(x => x.Partner)
+                            .Include(x => x.Lines).ThenInclude(x => x.ProductUOM)
                             .Include(x => x.Payments).ToListAsync();
 
                         return quotations;

@@ -1,5 +1,4 @@
-<kendo-grid [data]="gridData" [loading]="loading" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings"
-[scrollable]="'none'" (pageChange)="pageChange($event)" [navigable]="true" >
+<kendo-grid [data]="gridData" [loading]="loading" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" (pageChange)="pageChange($event)" [navigable]="true" >
     <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}" field="name"
         title="Dịch vụ" width="150">
     </kendo-grid-column>
@@ -11,6 +10,12 @@
     </kendo-grid-column>
     <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
         field="employee.name" title="Bác sĩ" width="120">
+    </kendo-grid-column>
+    <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
+    title="Đơn vị tính" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{dataItem.product.uom ? dataItem.product.uom.name : ''}}
+        </ng-template>
     </kendo-grid-column>
     <kendo-grid-column class="text-right" [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
         field="productUOMQty" title="Số lượng" width="100">

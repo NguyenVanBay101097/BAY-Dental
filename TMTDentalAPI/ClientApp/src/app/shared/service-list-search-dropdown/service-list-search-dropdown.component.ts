@@ -24,6 +24,8 @@ export class ServiceListSearchDropdownComponent implements OnInit {
   @Output() onSelectService = new EventEmitter<any>()
   @Input() placeHolder: string;
   @Input() isQuickCreate = false;
+  @Input() isShowUom = false;
+
   focus$ = new Subject<any>();
 
   constructor(
@@ -107,7 +109,8 @@ export class ServiceListSearchDropdownComponent implements OnInit {
         name: value.name,
         listPrice: value.listPrice,
         categName: value.categ.name,
-        categId: value.categ.id
+        categId: value.categ.id,
+        uom: value.uom
       });
       this.model = "";
       input.value = '';
