@@ -68,11 +68,11 @@ export class PartnerReportAreaComponent implements OnInit {
 
   loadChartOption() {
     this.chartOption = {
+      tooltip: {},
       series: [
         {
           name: 'Việt Nam',
           type: 'treemap',
-          visibleMin: 300,
           roam: false,
           data: this.data.children,
           leafDepth: 1,
@@ -88,18 +88,17 @@ export class PartnerReportAreaComponent implements OnInit {
 
   convert(source: any, target: TreeNode, basePath: string) {
     for (let key in source) {
-      let path = key;
       if (!key.match(/^\$/)) {
         target.children = target.children || [];
         const child = {
-          name: path
+          name: key
         } as TreeNode;
         if (typeof source[key] === 'object') {
           child.code = source[key].$code;
           child.type = source[key].$type;
         }
         target.children.push(child);
-        this.convert(source[key], child, path);
+        this.convert(source[key], child, key);
       }
     }
 
@@ -117,17 +116,16 @@ export class PartnerReportAreaComponent implements OnInit {
     }
   }
 
-
   onChartClick(event) {
     let res;
     if (event.dataType && event.dataType == 'main') {
       this.echartsInstance = this.echartsInstance.filter(val => !event.treePathInfo.map(s => s.dataIndex).includes(val.dataIndex));
       event.treePathInfo.forEach(element => {
         if (element.dataIndex === event.dataIndex) {
-          const a = { ...element };
-          a['code'] = event.data.code;
-          a['type'] = event.data.type;
-          this.echartsInstance.push(a);
+          const data = { ...element };
+          data['code'] = event.data.code;
+          data['type'] = event.data.type;
+          this.echartsInstance.push(data);
         }
       });
       res = event.data;
@@ -137,12 +135,17 @@ export class PartnerReportAreaComponent implements OnInit {
       this.echartsInstance = this.echartsInstance.filter(val => !event.treePathInfo.map(s => s.dataIndex).includes(val.dataIndex));
       res = this.echartsInstance.find(s => s.dataIndex == event.nodeData.dataIndex);
     }
-    // console.log(res);
-    const data = {
-      type: res ? res.type : '',
-      code: res ? res.code : ''
+
+    let dataEmit;
+    if(res){
+      dataEmit = {
+        type: res ? res.type : '',
+        code: res ? res.code : ''
+      }
+      this.filterEmit.emit(dataEmit);
     }
-    // console.log(data);
-    this.filterEmit.emit(data);
+    else{
+      this.filterEmit.emit(false);
+    }
   }
 }

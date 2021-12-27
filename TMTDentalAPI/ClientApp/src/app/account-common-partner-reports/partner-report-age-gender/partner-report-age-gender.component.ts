@@ -35,10 +35,6 @@ export class PartnerReportAgeGenderComponent implements OnInit {
         axisPointer: {
           type: 'shadow'
         },
-        formatter: (params)=>{
-          console.log(params);
-          return '';
-        }
      },
       legend: {
         bottom: 10,

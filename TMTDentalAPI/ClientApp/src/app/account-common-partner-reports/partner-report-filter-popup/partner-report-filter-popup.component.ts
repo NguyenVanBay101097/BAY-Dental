@@ -139,7 +139,7 @@ export class PartnerReportFilterPopupComponent implements OnInit, AfterViewInit 
     this.onApply();
   }
 
-  onUpdateFormValue() {
+  onUpdateFormValue(event?: boolean) {
     this.formGroup.patchValue(this.dataFilterObj);
   }
 

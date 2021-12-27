@@ -128,7 +128,6 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
   }
 
   loadAllData() {
-
     setTimeout(() => {
       this.reportAreaComp?.loadReportArea();
       this.reportSourceComp?.loadReportSource();
@@ -252,10 +251,8 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
     this.myDrop.toggle();
   }
 
-  onToggleDropdown(e) {
-    if (e) {
-      this.reportFilterPopup.onUpdateFormValue();
-    };
+  onToggleDropdown(event) {
+    this.reportFilterPopup.onUpdateFormValue(event);
   }
 
   filterEmit(val) {
@@ -280,6 +277,12 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
         this.filter.districtCode = null;
         this.filter.wardCode = null;
       }
+    }
+    else {
+      this.filter.cityCode = null;
+      this.filter.districtCode = null;
+      this.filter.wardCode = null;
+      this.reportAreaComp?.loadReportArea();
     }
     this.reportSourceComp?.loadReportSource();
     this.reportAgeGenderComp?.loadReportAgeGender();
