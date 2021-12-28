@@ -11,7 +11,7 @@ import { PartnerImportComponent } from '../partner-import/partner-import.compone
 import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
-import { PartnerInfoPaged, PartnerService } from '../partner.service';
+import { PartnerActivePatch, PartnerInfoPaged, PartnerService } from '../partner.service';
 import { CompositeFilterDescriptor } from '@progress/kendo-data-query';
 import { PartnerCategoryPopoverComponent } from './partner-category-popover/partner-category-popover.component';
 import { PartnersBindingDirective } from 'src/app/shared/directives/partners-binding.directive';
@@ -121,6 +121,10 @@ export class PartnerCustomerListComponent implements OnInit {
     'done': 'Hoàn thành',
     'draft': 'Chưa phát sinh'
   };
+  filterState = [
+    { name: 'Theo dõi', value: true },
+    { name: 'Ngưng theo dõi', value: false }
+  ];
 
   memberCards = [];
 
@@ -492,5 +496,32 @@ export class PartnerCustomerListComponent implements OnInit {
     this.filter.offset = event.skip;
     this.filter.limit = event.take;
     this.refreshData();
+  }
+
+  onClickActive(item) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = `${!item.active ? '' : 'Ngưng'} theo dõi khách hàng ${item.name}`;
+    modalRef.componentInstance.body = `Bạn có chắc chắn muốn ${!item.active ? '' : 'Ngưng'} theo dõi khách hàng này`;
+    modalRef.result.then(() => {
+      var res = new PartnerActivePatch();
+      res.active = item.active ? false : true;
+      this.partnerService.patchActive(item.id, res).subscribe(() => {
+        this.notificationService.show({
+          content: 'Thành công',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'success', icon: true }
+        });
+        this.refreshData();
+      });
+    }, () => {
+    });
+  }
+
+  onStateSelect(e) {
+    this.filter.active = e ? e.value : '';
+    this.filter.offset = 0;
+    this.refreshData()
   }
 }

@@ -204,6 +204,11 @@ export class PartnerInfoPaged {
     cardTypeId: string;
     orderState: string;
     companyId: string;
+    active?: boolean;
+}
+
+export class PartnerGetExistReq{
+    phone: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -617,6 +622,10 @@ export class PartnerService {
 
     updateSupplier(val: any) {
         return this.http.put(this.baseApi + this.apiUrl + '/Suppliers', val);
+    }
+
+    getExist(val){
+        return this.http.post<PartnerSimple[]>(this.baseApi + this.apiUrl + '/GetExist', val);
     }
 }
 

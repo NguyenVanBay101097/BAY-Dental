@@ -478,6 +478,12 @@ namespace Infrastructure.Services
                 Id = x.Id,
                 DisplayName = x.DisplayName,
                 Name = x.Name,
+                Active = x.Active,
+                Phone = x.Phone,
+                Email = x.Email,
+                BirthDay = x.BirthDay,
+                BirthMonth = x.BirthMonth,
+                BirthYear = x.BirthYear
             }).ToListAsync();
             return partners;
         }
@@ -2928,6 +2934,8 @@ namespace Infrastructure.Services
                             select a;
             }
 
+            if (val.Active.HasValue)
+                mainQuery = mainQuery.Where(x => x.Active == val.Active);
 
             var ResponseQr = from p in mainQuery
                              from pr in PartnerResidualQr.Where(x => x.PartnerId == p.Id).DefaultIfEmpty()
@@ -2967,7 +2975,8 @@ namespace Infrastructure.Services
                                  CardTypeName = card.Type.Name,
                                  CompanyName = p.Company.Name,
                                  AppointmentDate = appoint.Date,
-                                 SaleOrderDate = pos.Date
+                                 SaleOrderDate = pos.Date,
+                                 Active = p.Active
                              };
 
             if (val.HasOrderResidual.HasValue && val.HasOrderResidual.Value == 1)
@@ -3123,6 +3132,12 @@ namespace Infrastructure.Services
             var items = await query.OrderByDescending(x => x.DateCreated).ToListAsync();
 
             return items;
+        }
+
+        public async Task<IEnumerable<PartnerSimple>> GetExist(PartnerGetExistReq val)
+        {
+            var query = SearchQuery(x => x.Phone == val.Phone);
+            return _mapper.Map<IEnumerable<PartnerSimple>>(await query.ToListAsync());
         }
     }
 

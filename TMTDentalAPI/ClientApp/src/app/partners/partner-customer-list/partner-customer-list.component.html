@@ -49,6 +49,8 @@
                 </div>
             </div>
             <div class="d-flex align-items-center justify-content-lg-between w-100 mt-1">
+                <kendo-combobox style="width: 230px;" (selectionChange)="onStateSelect($event)" placeholder="Trạng thái theo dõi" class="mr-1" [data]="filterState" [textField]="'name'" [valueField]="'value'">
+                </kendo-combobox>
                 <kendo-combobox style="width: 250px;" [popupSettings]="cbxPopupSettings" class="mr-1"
                     [placeholder]="'Tất cả dự kiến thu'" [data]="OrderResiduals" [valueField]="'value'"
                     [textField]="'text'" (valueChange)="onResidualSelect($event)">
@@ -190,8 +192,12 @@
                     <span class="fas fa-print"></span></button> -->
                 <button class="btn btn-success mr-2" title="Sửa" (click)="editItem(dataItem)">
                     <i class="far fa-edit"></i></button>
-                <button class="btn btn-danger" title="Xóa" (click)="deleteItem(dataItem)">
+                <button class="btn btn-danger mr-2" title="Xóa" (click)="deleteItem(dataItem)">
                     <i class="far fa-trash-alt"></i></button>
+                <button *ngIf="dataItem.active == true" (click)="onClickActive(dataItem)" class="btn btn-danger"><i
+                        title="Ngưng theo dõi" class="fas fa-eye-slash"></i></button>
+                <button *ngIf="dataItem.active == false" (click)="onClickActive(dataItem)" class="btn btn-success"><i
+                        title="Theo dõi" class="fas fa-eye"></i></button>
             </ng-template>
         </kendo-grid-column>
     </kendo-grid>

@@ -11,9 +11,18 @@
                 <div class="oe_title">
                     <label class="o_form_label oe_edit_only">Họ tên </label>
                     <h1>
-                        <input ngbAutoFocus class="form-control" formControlName="name" name="name">
+                        <!-- <input ngbAutoFocus class="form-control" formControlName="name" name="name"> -->
+                        <kendo-autocomplete ngbAutoFocus formControlName="name" class="form-control" valueField="name" [popupSettings]="{width:'150px'}" #autocomplete [data]="filterPartners" [filterable]="true">
+                            <ng-template kendoAutoCompleteItemTemplate let-dataItem>
+                                <div>
+                                    <div><a [routerLink]="['/partners/customer/' + dataItem.id]"><b>{{dataItem.name}}</b></a></div>
+                                  <div class="text-black-50">{{ dataItem.dateOfBirth }}</div>
+                                  <div class="text-black-50">{{ dataItem.phone ? dataItem.phone + ' - ': '' }}{{dataItem.email}}</div>
+                                </div>
+                            </ng-template>
+                          </kendo-autocomplete>
                     </h1>
-                    <div *ngIf="f.name.errors && submitted" class="text-danger mb-1">
+                    <div *ngIf="f.name.errors && (submitted || f.name.touched || f.name.dirty )" class="text-danger mb-1">
                         <div *ngIf="f.name.errors.required">Nhập tên khách hàng</div>
                     </div>
                 </div>
@@ -45,7 +54,8 @@
                                                 <label class="o_form_label">Điện thoại</label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
-                                                <input type="text" class="form-control" formControlName="phone" />
+                                                <input (blur)="onBlurPhone($event)" type="text" class="form-control" formControlName="phone" />
+                                                <label *ngIf="phoneExistPartners.length" class="mb-0 text-warning">Số điện thoại đã tồn tại <a [routerLink]="" (click)="onDetailExistPartner()">Chi tiết</a></label>
                                             </td>
                                         </tr>
                                         <tr>
