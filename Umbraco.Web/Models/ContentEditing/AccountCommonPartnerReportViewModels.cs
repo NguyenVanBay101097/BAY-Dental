@@ -123,7 +123,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Năm sinh
         /// </summary>
-        public int? BirthYear { get; set; }
+        public int? Age { get; set; }
 
         public Guid? PartnerSourceId { get; set; }
 

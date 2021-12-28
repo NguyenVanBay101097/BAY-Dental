@@ -85,5 +85,7 @@ namespace Infrastructure.Services
 
         Task<PartnerImportResponse> SupplierImport(string fileBase64);
 
+        IQueryable<Partner> GetQueryablePartnerFilter(AccountCommonPartnerReportOverviewFilter val);
+
     }
 }

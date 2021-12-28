@@ -24,6 +24,7 @@ export class PartnerReportAgeGenderComponent implements OnInit {
     let val = Object.assign({}, this.filter) as AccountCommonPartnerReportOverviewFilter;
     this.accountCommonPartnerReportService.getPartnerReportGenderOverview(val).subscribe((res: any) => {
       this.dataSet = res;
+      
       this.loadChartOption();
     }, error => console.log(error));
   }
