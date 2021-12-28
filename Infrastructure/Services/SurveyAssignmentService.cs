@@ -494,35 +494,21 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<IEnumerable<GetQuestionReportItem>> GetQuestionReport(GetReportReq val)
+        public async Task<GetQuestionReportRes> GetQuestionReport(GetReportReq val)
         {
-            int[] Scores = { 1, 2, 3, 4, 5 };
-            var query = GetReportQuery(val);
-            var listdata = await query.SelectMany(x => x.UserInput.Lines).Where(x=> x.Question.Type == "radio").Select(x => new {
-                                QuestionId = x.QuestionId.Value,
-                                QuestionName = x.Question.Name,
-                                Score = x.Score
-                            }).ToListAsync();
-            var res = Scores.Select(x => new GetQuestionReportItem()
-            {
-                Score = x,
-                Lines = listdata.GroupBy(x=> new {x.QuestionId, x.QuestionName}).Select(z => new GetQuestionReportItemLine()
-                {
-                    QuestionId = z.Key.QuestionId,
-                    QuestionName = z.Key.QuestionName,
-                    Value = z.Count(i=> i.Score == x),
-                    ValuePercent = Math.Round((decimal)z.Count(i => i.Score.Value == x) * 100 / (z.Count() == 0 ? 1: z.Count() ), 2)
-                })
-            });
+            var query = GetReportQuery(val).SelectMany(x => x.UserInput.Lines).Where(x => x.Question.Type == "radio");
 
-            //foreach (var item in res)
-            //{
-            //    item.Lines = Scores.Select(x => new GetQuestionReportItemLine()
-            //    {
-            //        Score = x,
-            //        Value = inputLines.Count(z => z.QuestionId == item.QuestionId && Math.Round(z.Score.Value, 0, MidpointRounding.ToZero) == x)
-            //    });
-            //}
+            var res = new GetQuestionReportRes();
+            var listQuestions = await query.GroupBy(x => new { x.QuestionId, x.Question.Name }).Select(x => x.Key).ToListAsync();
+
+            res.QuestionNames = listQuestions.Select(x => x.Name);
+
+            res.Data = query.OrderBy(x => x.Score).AsEnumerable().GroupBy(x => x.Score.Value).Select(x=> new GetQuestionReportItem
+            {
+                Score = x.Key,
+                Data = listQuestions.Select(z=> x.Count(i=> i.QuestionId == z.QuestionId))
+            }).ToList();
+
             return res;
         }
     }

@@ -419,19 +419,16 @@ namespace Umbraco.Web.Models.ContentEditing
         public int ContactCount { get; set; }
     }
 
-    public class GetQuestionReportItemLine
-    {
-        public Guid QuestionId { get; set; }
-        public string QuestionName { get; set; }
-        public int Value { get; set; }
-        public decimal ValuePercent { get; set; }
-        
-    }
-
     public class GetQuestionReportItem
     {
         public decimal Score { get; set; }
-        public IEnumerable<GetQuestionReportItemLine> Lines { get; set; } = new List<GetQuestionReportItemLine>();
+        public IEnumerable<int> Data { get; set; } = new List<int>();
+    }
+
+    public class GetQuestionReportRes
+    {
+        public IEnumerable<string> QuestionNames { get; set; } = new List<string>();
+        public IEnumerable<GetQuestionReportItem> Data { get; set; } = new List<GetQuestionReportItem>();
     }
 
 }

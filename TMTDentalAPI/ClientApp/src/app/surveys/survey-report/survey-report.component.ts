@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { ColorPaletteService } from '@progress/kendo-angular-inputs';
 import { EChartsOption } from 'echarts';
 import * as moment from 'moment';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
@@ -162,6 +163,7 @@ export class SurveyReportComponent implements OnInit {
     val.status = "done";
     this.assService.getScoreReport(val).subscribe((res: any) => {
       this.dataScroreReport = res;
+      var colors = ['#007BFF', '#FFC107', '#28A645', '#939EAB', '#EB3B5B'];
       this.scoreChartOption = {
         tooltip: {
           trigger: 'item'
@@ -182,7 +184,7 @@ export class SurveyReportComponent implements OnInit {
             },
             type: 'pie',
             data: res.lines,
-            color: ['#939EAB','#28A645','#FFC107','#007BFF','#EB3B5B'],
+            color: colors.slice(0, res.lines.length),
             emphasis: {
               itemStyle: {
                 shadowBlur: 10,
@@ -193,32 +195,24 @@ export class SurveyReportComponent implements OnInit {
           }
         ]
       };
-      
+
     })
   }
 
-  get isShowQuestionReport(){
-    return this.dataQuestionReport.some(x=> x.lines.length);
+  get isShowQuestionReport() {
+    return this.dataQuestionReport?.questionNames?.length;
   }
 
   loadQuestionReport() {
     var val = this.getApiReq();
     val.status = "done";
-    this.assService.getQuestionReport(val).subscribe((res: any[]) => {
+    this.assService.getQuestionReport(val).subscribe((res: any) => {
       this.dataQuestionReport = res;
-      // var resDisplay = res.map(x => {
-      //   var sum = x.lines.reduce((pre, curr) => {
-      //     return pre + curr.value;
-      //   }, 0);
-      //   var lines = x.lines.map(z => ({ ...z, valuePercent: (z.value * 100 / sum).toFixed(2) }))
-      //   x.lines = lines;
-      //   return x;
-      // });
+      var colors = ['#939EAB', '#EB3B5B', '#FFC107', '#28A645', '#007BFF'];
       var seriesData = [];
       var yAxisData = [];
-      res.forEach(e => {
-        var noExistLine = e.lines.filter(x=> !yAxisData.some(z=> z == x.questionName));
-        yAxisData = yAxisData.concat(noExistLine.map(x=> x.questionName));
+      res.data.forEach(e => {
+        yAxisData = res.questionNames;
         seriesData.push({
           name: `${e.score} điểm`,
           type: 'bar',
@@ -229,21 +223,26 @@ export class SurveyReportComponent implements OnInit {
           emphasis: {
             focus: 'series'
           },
-          data: e.lines.map(x=> {
-            return {value: x.valuePercent == 0? null : x.valuePercent, valueScore : x.value};
+          data: e.data.map((x, i) => {
+            var total = (res.data.map(z => z.data[i]) as number[]).reduce((pre, cur) => pre + cur);
+            return { value: Math.round((x * 100 / total)) == 0 ? null : Math.round((x * 100 / total)), valueCount: x };
           })
         })
       });
       this.questionChartOption = {
         tooltip: {
-          trigger: 'item',
+          trigger: 'axis',
           axisPointer: {
             type: 'line' // 'shadow' as default; can also be 'line' or 'shadow'
           },
           formatter: (params) => {
             // create new marker
-      var icon0 = `<span style="background-color:${params.color};height: 4px;width: 16px;height: 16px"></span>`;
-            return `<span class="d-flex">${icon0}&nbsp ${params.seriesName}: <span class="font-weight-600"> &nbsp ${params.data.valueScore} (${params.data.value}%) <span> <span>`;
+            var fmText = `${params[0].name} </br> `;
+            params.forEach(p => {
+              var icon0 = `<span style="background-color:${p.color};height: 4px;width: 16px;height: 16px"></span>`;
+              fmText += `<span class="d-flex">${icon0}&nbsp ${p.seriesName}: <span class="font-weight-600"> &nbsp ${p.data.valueCount} (${p.data.value ?? 0}%) </span> </span>`;
+            });
+            return fmText;
           },
         },
         legend: {
@@ -259,7 +258,7 @@ export class SurveyReportComponent implements OnInit {
         xAxis: {
           type: 'value',
           axisLabel: {
-            formatter:value => {
+            formatter: value => {
               return `${value} %`;
             }
           }
@@ -278,7 +277,7 @@ export class SurveyReportComponent implements OnInit {
           }
         },
         series: seriesData,
-        color: ['#939EAB','#28A645','#FFC107','#007BFF','#EB3B5B']
+        color: colors.slice(0, seriesData.length)
       };
 
     })
