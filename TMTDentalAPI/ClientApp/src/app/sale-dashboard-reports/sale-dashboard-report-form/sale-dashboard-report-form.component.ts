@@ -262,6 +262,9 @@ export class SaleDashboardReportFormComponent implements OnInit {
       case "hoa-hong-report":
         this.router.navigateByUrl("commission-settlements/report");
         break;
+        case "res-insurance-reports":
+          this.router.navigateByUrl(value);
+        break;
       default:
         break;
     }
