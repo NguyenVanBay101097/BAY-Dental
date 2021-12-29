@@ -48,7 +48,7 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
-        [HttpPost("[action]")][CheckAccess(Actions = "Catalog.PartnerSource.Read")]
+        [HttpPost("[action]")]
         public async Task<IActionResult> Autocomplete(PartnerSourcePaged val)
         {
             var res = await _partnerSourceService.GetAutocompleteAsync(val);

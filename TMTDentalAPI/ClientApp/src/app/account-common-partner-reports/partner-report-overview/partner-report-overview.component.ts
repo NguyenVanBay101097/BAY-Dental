@@ -1,3 +1,4 @@
+import { IntlService } from '@progress/kendo-angular-intl';
 import { KeyValue } from '@angular/common';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -61,6 +62,7 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
   constructor(
     private companyService: CompanyService,
     private accountCommonPartnerReportService: AccountCommonPartnerReportService,
+    private intlService: IntlService,
     private fb: FormBuilder
   ) { }
 
@@ -201,18 +203,18 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
       }
 
       if (dataFilter.revenueFrom || dataFilter.revenueTo) {
-        this.dataFilterObj['revenue'] = `Từ ${typeof dataFilter.revenueFrom === 'number' && dataFilter.revenueFrom >= 0 ? dataFilter.revenueFrom : '--'} 
-                                        đến ${typeof dataFilter.revenueTo === 'number' && dataFilter.revenueTo >= 0 ? dataFilter.revenueTo : '--'}`;
+        this.dataFilterObj['revenue'] = `Từ ${typeof dataFilter.revenueFrom === 'number' && dataFilter.revenueFrom >= 0 ? this.intlService.formatNumber(dataFilter.revenueFrom, { style: 'decimal' }) : '--'} 
+                                        đến ${typeof dataFilter.revenueTo === 'number' && dataFilter.revenueTo >= 0 ? this.intlService.formatNumber(dataFilter.revenueTo, { style: 'decimal' }) : '--'}`;
       }
 
       if (dataFilter.revenueExpectFrom || dataFilter.revenueExpectTo) {
-        this.dataFilterObj['revenueExpect'] = `Từ ${typeof dataFilter.revenueExpectFrom === 'number' && dataFilter.revenueExpectFrom >= 0 ? dataFilter.revenueExpectFrom : '--'} 
-                                              đến ${typeof dataFilter.revenueExpectTo === 'number' && dataFilter.revenueExpectTo >= 0 ? dataFilter.revenueExpectTo : '--'}`;
+        this.dataFilterObj['revenueExpect'] = `Từ ${typeof dataFilter.revenueExpectFrom === 'number' && dataFilter.revenueExpectFrom >= 0 ? this.intlService.formatNumber(dataFilter.revenueExpectFrom, { style: 'decimal' }) : '--'} 
+                                              đến ${typeof dataFilter.revenueExpectTo === 'number' && dataFilter.revenueExpectTo >= 0 ? this.intlService.formatNumber(dataFilter.revenueExpectTo, { style: 'decimal' }) : '--'}`;
       }
 
       if (dataFilter.debtFrom || dataFilter.debtTo) {
-        this.dataFilterObj['debt'] = `Từ ${typeof dataFilter.debtFrom === 'number' && dataFilter.debtFrom >= 0 ? dataFilter.debtFrom : '--'} 
-                                     đến ${typeof dataFilter.debtTo === 'number' && dataFilter.debtTo >= 0 ? dataFilter.debtTo : '--'}`;
+        this.dataFilterObj['debt'] = `Từ ${typeof dataFilter.debtFrom === 'number' && dataFilter.debtFrom >= 0 ? this.intlService.formatNumber(dataFilter.debtFrom, { style: 'decimal' }) : '--'} 
+                                     đến ${typeof dataFilter.debtTo === 'number' && dataFilter.debtTo >= 0 ? this.intlService.formatNumber(dataFilter.debtTo, { style: 'decimal' }) : '--'}`;
       }
     }
   }

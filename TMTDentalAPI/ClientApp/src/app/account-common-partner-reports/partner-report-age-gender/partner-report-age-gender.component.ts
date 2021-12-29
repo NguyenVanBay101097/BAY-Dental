@@ -24,22 +24,26 @@ export class PartnerReportAgeGenderComponent implements OnInit {
     let val = Object.assign({}, this.filter) as AccountCommonPartnerReportOverviewFilter;
     this.accountCommonPartnerReportService.getPartnerReportGenderOverview(val).subscribe((res: any) => {
       this.dataSet = res;
+
       this.loadChartOption();
     }, error => console.log(error));
   }
 
   loadChartOption() {
     this.chartOption = {
+      textStyle: {
+        fontFamily: 'sans-serif',
+      },
       tooltip: {
         trigger: 'axis',
         axisPointer: {
           type: 'shadow'
         },
-     },
+      },
       legend: {
         bottom: 10,
         left: 'center',
-        data: ['Nam', 'Nữ', 'Khác']
+        data: this.getGender(this.dataSet?.legendChart)
       },
       toolbox: {
         show: true,
@@ -54,7 +58,7 @@ export class PartnerReportAgeGenderComponent implements OnInit {
           axisLabel: {
             interval: 0
           },
-          data: this.dataSet?.legendChart
+          data: this.dataSet?.xAxisChart
         }
       ],
       yAxis: [
@@ -102,5 +106,18 @@ export class PartnerReportAgeGenderComponent implements OnInit {
         }
       ]
     }
+  }
+
+  getGender(val: string[]) {
+    return val.map(el => {
+      switch (el) {
+        case 'male':
+          return 'Nam';
+        case 'female':
+          return 'Nữ';
+        default:
+          return 'Khác';
+      }
+    })
   }
 }

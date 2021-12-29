@@ -47,73 +47,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public int? AgeTo { get; set; }
     }
 
-    public class AccountCommonPartnerReportOverviewFilter
-    {
-        /// <summary>
-        /// chi nhanh
-        /// </summary>
-        public Guid? CompanyId { get; set; }
-
-        /// <summary>
-        /// chi nhánh tạo khách hàng
-        /// </summary>
-        public Guid? PartnerCompanyId { get; set; }
-
-        /// <summary>
-        /// tuổi 
-        /// </summary>
-        public decimal? AgeFrom { get; set; }
-
-        public decimal? AgeTo { get; set; }
-
-        public decimal? RevenueFrom { get; set; }
-        public decimal? RevenueTo { get; set; }
-
-        public decimal? RevenueExpectFrom { get; set; }
-        public decimal? RevenueExpectTo { get; set; }
-
-        public decimal? DebtFrom { get; set; }
-        public decimal? DebtTo { get; set; }
-
-        /// <summary>
-        /// cong no
-        /// </summary>
-        public bool? IsDebt { get; set; }
-
-        /// <summary>
-        /// du kien thu
-        /// </summary>
-        public bool? IsRevenueExpect { get; set; }
-
-        /// <summary>
-        /// sale : đang điều trị
-        /// done : hoàn thành
-        /// draft : chưa phát sinh
-        /// </summary>
-        public string OrderState { get; set; }
-
-        public IEnumerable<Guid> CategIds { get; set; } = new List<Guid>();
-
-        public IEnumerable<Guid> PartnerSourceIds { get; set; } = new List<Guid>();
-
-        public IEnumerable<Guid> CardTypeIds { get; set; } = new List<Guid>();
-
-
-        /// <summary>
-        /// mã thành phố
-        /// </summary>
-        public string CityCode { get; set; }
-
-        /// <summary>
-        /// mã quận/ huyện
-        /// </summary>
-        public string DistrictCode { get; set; }
-
-        /// <summary>
-        /// mã phường/ xã
-        /// </summary>
-        public string WardCode { get; set; }
-    }
+    
 
     public class PartnerReportOverviewItem
     {
@@ -123,7 +57,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// Năm sinh
         /// </summary>
-        public int? BirthYear { get; set; }
+        public int? Age { get; set; }
 
         public Guid? PartnerSourceId { get; set; }
 
@@ -185,9 +119,11 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class PartnerGenderReportOverview
     {
+        public IEnumerable<string> XAxisChart { get; set; }
         public IEnumerable<string> LegendChart { get; set; }
-
         public List<PartnerGenderItemReportOverview> PartnerGenderItems { get; set; } = new List<PartnerGenderItemReportOverview>();
+
+
 
     }
 
