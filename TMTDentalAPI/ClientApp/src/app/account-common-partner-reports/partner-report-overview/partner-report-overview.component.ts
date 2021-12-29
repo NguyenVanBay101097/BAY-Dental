@@ -119,6 +119,7 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
 
   onSelectCompany(e) {
     this.filter.companyId = e ? e.id : null;
+    this.resetFilterCode();
     this.loadAllData();
   }
 
@@ -140,16 +141,19 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
 
   onSelectOrderStates(e) {
     this.filter.orderState = e ? e.value : null;
+    this.resetFilterCode();
     this.loadAllData();
   }
 
   onSelectTotalDebits(e) {
     this.filter.isDebt = e ? e.value : null;
+    this.resetFilterCode();
     this.loadAllData();
   }
 
   onSelectOrderResiduals(e) {
     this.filter.isRevenueExpect = e ? e.value : null;
+    this.resetFilterCode();
     this.loadAllData();
   }
 
@@ -158,6 +162,7 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
   }
 
   onApplyEmit(event) {
+    this.resetFilterCode();
     this.onFilterAdvance(event);
     this.myDrop.toggle();
   }
@@ -289,5 +294,11 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
     this.reportSourceComp?.loadReportSource();
     this.reportAgeGenderComp?.loadReportAgeGender();
     this.loadReportSumary();
+  }
+
+  resetFilterCode() {
+    this.filter.cityCode = null;
+    this.filter.districtCode = null;
+    this.filter.wardCode = null;
   }
 }
