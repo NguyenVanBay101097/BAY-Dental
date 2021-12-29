@@ -2526,7 +2526,7 @@ namespace Infrastructure.Services
             return result;
         }
 
-        public IQueryable<Partner> GetQueryablePartnerFilter(AccountCommonPartnerReportOverviewFilter val)
+        public IQueryable<Partner> GetQueryablePartnerFilter(PartnerQueryableFilter val)
         {
             var saleOrderObj = GetService<ISaleOrderService>();
             var saleOrderLineObj = GetService<ISaleOrderLineService>();

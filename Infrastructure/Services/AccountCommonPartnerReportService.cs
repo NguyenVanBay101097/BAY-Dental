@@ -186,205 +186,7 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public IQueryable<PartnerReportOverviewItem> GetQueryablePartnerReportOverview(AccountCommonPartnerReportOverviewFilter val)
-        {
-            var saleOrderObj = GetService<ISaleOrderService>();
-            var saleOrderLineObj = GetService<ISaleOrderLineService>();
-            var amlObj = GetService<IAccountMoveLineService>();
-            var accObj = GetService<IAccountAccountService>();
-            var irProperyObj = GetService<IIRPropertyService>();
-            var cardCardObj = GetService<ICardCardService>();
-            var serviceCardCardObj = GetService<IServiceCardCardService>();
-            var partnerObj = GetService<IPartnerService>();
-            var partnerSourceObj = GetService<IPartnerSourceService>();
-
-            var mainQuery = partnerObj.SearchQuery(x => x.Active && x.Customer);
-
-            if (val.CompanyId.HasValue)
-                mainQuery = mainQuery.Where(x => x.CompanyId == val.CompanyId);
-
-            if (!string.IsNullOrEmpty(val.CityCode))
-                mainQuery = mainQuery.Where(x => x.CityCode == val.CityCode);
-
-            if (!string.IsNullOrEmpty(val.DistrictCode))
-                mainQuery = mainQuery.Where(x => x.DistrictCode == val.DistrictCode);
-
-            if (!string.IsNullOrEmpty(val.WardCode))
-                mainQuery = mainQuery.Where(x => x.WardCode == val.WardCode);
-
-            if (val.CategIds.Any())
-            {
-                var partnerCategoryRelService = GetService<IPartnerPartnerCategoryRelService>();
-
-                var filterPartnerQr = from pcr in partnerCategoryRelService.SearchQuery(x => val.CategIds.Contains(x.CategoryId))
-                                      group pcr by pcr.PartnerId into g
-                                      select g.Key;
-
-                mainQuery = from a in mainQuery
-                            join pbk in filterPartnerQr on a.Id equals pbk
-                            select a;
-            }
-
-            if (val.CardTypeIds.Any())
-            {
-                var filterPartnerQr =
-                   from pcr in cardCardObj.SearchQuery(x => val.CardTypeIds.Contains(x.TypeId))
-                   select pcr.PartnerId;
-
-                mainQuery = from a in mainQuery
-                            join pbk in filterPartnerQr on a.Id equals pbk
-                            select a;
-            }
-
-            if (val.PartnerSourceIds.Any())
-            {
-                var filterPartnerQr =
-                 from pcr in partnerObj.SearchQuery(x => val.PartnerSourceIds.Contains(x.SourceId.Value))
-                 select pcr.Id;
-
-                mainQuery = from a in mainQuery
-                            join pbk in filterPartnerQr on a.Id equals pbk
-                            select a;
-            }
-
-
-
-            var partnerOrderStateQr = from v in saleOrderObj.SearchQuery(x => !val.CompanyId.HasValue || x.CompanyId == val.CompanyId)
-                                      group v by v.PartnerId into g
-                                      select new
-                                      {
-                                          PartnerId = g.Key,
-                                          CountSale = g.Sum(x => x.State == "sale" ? 1 : 0),
-                                          CountDone = g.Sum(x => x.State == "done" ? 1 : 0)
-                                      };
-
-            if (partnerOrderStateQr.Any())
-            {
-                mainQuery = from a in mainQuery
-                            join pbk in partnerOrderStateQr on a.Id equals pbk.PartnerId
-                            select a;
-            }
-
-            var PartnerResidualQr = (from s in saleOrderLineObj.SearchQuery(x => !val.CompanyId.HasValue || x.CompanyId == val.CompanyId)
-                                     where s.State == "sale" || s.State == "done"
-                                     group s by s.OrderPartnerId into g
-                                     select new
-                                     {
-                                         PartnerId = g.Key,
-                                         TotalService = g.Count(),
-                                         OrderResidual = g.Sum(x => x.PriceTotal - x.AmountInvoiced),
-                                         TotalPaid = g.Sum(x => x.AmountInvoiced)
-                                     });
-
-
-            if (PartnerResidualQr.Any())
-            {
-
-
-                mainQuery = from a in mainQuery
-                            join pbk in PartnerResidualQr on a.Id equals pbk.PartnerId
-                            select a;
-            }
-
-
-
-            var partnerDebtQr = from aml in amlObj.SearchQuery(x => !val.CompanyId.HasValue || x.CompanyId == val.CompanyId)
-                                join acc in accObj.SearchQuery()
-                                on aml.AccountId equals acc.Id
-                                where acc.Code == "CNKH"
-                                group aml by aml.PartnerId into g
-                                select new
-                                {
-                                    PartnerId = g.Key,
-                                    TotalDebit = g.Sum(x => x.Balance)
-                                };
-
-            if (partnerDebtQr.Any())
-            {
-
-
-                mainQuery = from a in mainQuery
-                            join pbk in partnerDebtQr on a.Id equals pbk.PartnerId
-                            select a;
-            }
-
-            var cardCardQr = from card in cardCardObj.SearchQuery(x => !val.CompanyId.HasValue || x.CompanyId == val.CompanyId)
-                             select card;
-
-
-
-
-
-
-            var ResponseQr = from p in mainQuery
-                             from pr in PartnerResidualQr.Where(x => x.PartnerId == p.Id).DefaultIfEmpty()
-                             from pd in partnerDebtQr.Where(x => x.PartnerId == p.Id).DefaultIfEmpty()
-                             from pos in partnerOrderStateQr.Where(x => x.PartnerId == p.Id).DefaultIfEmpty()
-                             from card in cardCardQr.Where(x => x.PartnerId == p.Id).DefaultIfEmpty()
-                             select new PartnerReportOverviewItem
-                             {
-                                 PartnerId = p.Id,
-                                 PartnerGender = p.Gender,
-                                 Age = p.BirthYear.HasValue ? DateTime.Now.Year - p.BirthYear : null,
-                                 PartnerSourceId = p.SourceId.HasValue ? p.SourceId : null,
-                                 PartnerSourceName = p.SourceId.HasValue ? p.Source.Name : null,
-                                 CityName = p.CityName,
-                                 CityCode = p.CityCode,
-                                 DistrictName = p.DistrictName,
-                                 DistrictCode = p.DistrictCode,
-                                 WardName = p.WardName,
-                                 WardCode = p.WardCode,
-                                 OrderState = pos.CountSale > 0 ? "sale" : (pos.CountDone > 0 ? "done" : "draft"),
-                                 TotalService = pr.TotalService,
-                                 TotalRevenue = pr.TotalPaid ?? 0,
-                                 TotalRevenueExpect = pr.OrderResidual ?? 0,
-                                 TotalDebt = pd.TotalDebit
-                             };
-
-            if (val.AgeFrom.HasValue && val.AgeFrom > 0)
-                ResponseQr = ResponseQr.Where(x => x.Age.HasValue && x.Age >= val.AgeFrom.Value);
-
-
-
-
-            if (val.AgeTo.HasValue && val.AgeTo > 0)
-                ResponseQr = ResponseQr.Where(x => x.Age.HasValue && x.Age <= val.AgeTo.Value);
-
-
-
-            if (val.RevenueFrom.HasValue)
-                ResponseQr = ResponseQr.Where(x => x.TotalRevenue >= val.RevenueFrom);
-
-            if (val.RevenueTo.HasValue)
-                ResponseQr = ResponseQr.Where(x => x.TotalRevenue <= val.RevenueTo);
-
-            if (val.RevenueExpectFrom.HasValue)
-                ResponseQr = ResponseQr.Where(x => x.TotalRevenueExpect >= val.RevenueExpectFrom);
-
-            if (val.RevenueExpectTo.HasValue)
-                ResponseQr = ResponseQr.Where(x => x.TotalRevenueExpect <= val.RevenueExpectTo);
-
-            if (val.DebtFrom.HasValue)
-                ResponseQr = ResponseQr.Where(x => x.TotalDebt >= val.DebtFrom);
-
-            if (val.DebtTo.HasValue)
-                ResponseQr = ResponseQr.Where(x => x.TotalDebt <= val.DebtTo);
-
-            if (val.IsRevenueExpect.HasValue)
-                ResponseQr = ResponseQr.Where(x => val.IsRevenueExpect.Value == true ? x.TotalRevenueExpect > 0 : x.TotalRevenueExpect == 0);
-
-            if (val.IsDebt.HasValue)
-                ResponseQr = ResponseQr.Where(x => val.IsDebt.Value == true ? x.TotalDebt > 0 : x.TotalDebt == 0);
-
-
-            if (!string.IsNullOrEmpty(val.OrderState))
-                ResponseQr = ResponseQr.Where(x => x.OrderState == val.OrderState);
-
-
-            return ResponseQr;
-        }
-
-        public async Task<AccountCommonPartnerReportOverview> GetPartnerReportSumaryOverview(AccountCommonPartnerReportOverviewFilter val)
+        public async Task<AccountCommonPartnerReportOverview> GetPartnerReportSumaryOverview(PartnerQueryableFilter val)
         {
             var partnerObj = GetService<IPartnerService>();
             var saleOderLineObj = GetService<ISaleOrderLineService>();
@@ -401,7 +203,7 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<IEnumerable<PartnerReportSourceOverview>> GetPartnerReportSourceOverview(AccountCommonPartnerReportOverviewFilter val)
+        public async Task<IEnumerable<PartnerReportSourceOverview>> GetPartnerReportSourceOverview(PartnerQueryableFilter val)
         {
             var partnerObj = GetService<IPartnerService>();
             var query = partnerObj.GetQueryablePartnerFilter(val);
@@ -416,19 +218,19 @@ namespace Infrastructure.Services
             return res;
         }
 
-        public async Task<PartnerGenderReportOverview> GetPartnerReportGenderOverview(AccountCommonPartnerReportOverviewFilter val)
+        public async Task<PartnerGenderReportOverview> GetPartnerReportGenderOverview(PartnerQueryableFilter val)
         {
             var partnerObj = GetService<IPartnerService>();
-            var sampleDataAge = sampleDataAgeFilter;
             var query = partnerObj.GetQueryablePartnerFilter(val);
 
-            var items = query.ToList();
+            var items = await query.ToListAsync();
             var partnerGender_dict = items.GroupBy(x => x.Gender).ToDictionary(x => x.Key, x => x.ToList());
             var res = new PartnerGenderReportOverview();
             var partnerGenderItems = new List<PartnerGenderItemReportOverview>();
             var total = partnerGender_dict.Values.Sum(s => s.Count());
-            res.LegendChart = sampleDataAgeFilter.Where(x => items.Any(s => !s.BirthYear.HasValue || (!x.AgeFrom.HasValue || x.AgeFrom.Value <= (DateTime.Now.Year - s.BirthYear.Value)) && (!x.AgeTo.HasValue || (DateTime.Now.Year - s.BirthYear.Value) <= x.AgeTo.Value))).Select(x => x.Name).ToList();
-
+            var dataPartnerDate = sampleDataAgeFilter.Where(x => items.Any(s => s.BirthYear.HasValue && (!x.AgeFrom.HasValue || (DateTime.Now.Year - s.BirthYear.Value) >= x.AgeFrom.Value) && (!x.AgeTo.HasValue || (DateTime.Now.Year - s.BirthYear.Value) <= x.AgeTo.Value)) || items.Any(s => s.BirthYear == null && !x.AgeFrom.HasValue && x.AgeFrom == s.BirthYear)).ToList();
+            res.XAxisChart = dataPartnerDate.Select(x => x.Name).ToList();
+            res.LegendChart = partnerGender_dict.Select(x => x.Key).ToList();
             foreach (var item in partnerGender_dict)
             {
                 var count = item.Value.Count();
@@ -436,7 +238,7 @@ namespace Infrastructure.Services
 
                 var itemValues = new List<int>();
                 var itemPercentValues = new List<double>();
-                foreach (var rangeAge in sampleDataAge)
+                foreach (var rangeAge in dataPartnerDate)
                 {
                     var countPn = item.Value.AsQueryable();
 
@@ -480,7 +282,7 @@ namespace Infrastructure.Services
             new SampleDataAgeFilter {Name = "Không xác định" }
         };
 
-        public async Task<IEnumerable<GetPartnerForCityReportOverview>> GetPartnerReportTreeMapOverview(AccountCommonPartnerReportOverviewFilter val)
+        public async Task<IEnumerable<GetPartnerForCityReportOverview>> GetPartnerReportTreeMapOverview(PartnerQueryableFilter val)
         {
             var partnerObj = GetService<IPartnerService>();
             var query = partnerObj.GetQueryablePartnerFilter(val);

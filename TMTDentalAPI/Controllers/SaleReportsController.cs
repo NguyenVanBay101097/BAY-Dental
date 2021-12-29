@@ -141,12 +141,12 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 6].Value = item.ProductUOM != null ? item.ProductUOM.Name : "";
                     worksheet.Cells[row, 7].Value = item.TeethDisplay;
                     worksheet.Cells[row, 8].Value = item.Diagnostic;
-                    worksheet.Cells[row, 9].Value = item.PriceSubTotal;
-                    worksheet.Cells[row, 9].Style.Numberformat.Format = "#,###";
-                    worksheet.Cells[row, 10].Value = (item.PriceSubTotal - item.AmountResidual);
-                    worksheet.Cells[row, 10].Style.Numberformat.Format = ((item.PriceSubTotal) - (item.AmountResidual ?? 0)) > 0 && item.State != "draft" ? "#,###" : "0";
-                    worksheet.Cells[row, 11].Value = item.AmountResidual;
-                    worksheet.Cells[row, 11].Style.Numberformat.Format = (item.AmountResidual ?? 0) > 0 ? "#,###" : "0";
+                    worksheet.Cells[row, 9].Value = item.PriceTotal;
+                    worksheet.Cells[row, 9].Style.Numberformat.Format = "#,##0";
+                    worksheet.Cells[row, 10].Value = (item.AmountInvoiced);
+                    worksheet.Cells[row, 10].Style.Numberformat.Format = "#,##0";
+                    worksheet.Cells[row, 11].Value = (item.PriceTotal) - (item.AmountInvoiced ?? 0);
+                    worksheet.Cells[row, 11].Style.Numberformat.Format = "#,##0";
                     worksheet.Cells[row, 12].Value = GetSaleOrderState(item.State);
                     row++;
                 }

@@ -33,6 +33,9 @@ export class PartnerReportSourceComponent implements OnInit {
 
   loadChartOption() {
     this.chartOption = {
+      textStyle: {
+        fontFamily: 'sans-serif',
+      },
       tooltip: {
         trigger: 'item',
         formatter: function (params) {
