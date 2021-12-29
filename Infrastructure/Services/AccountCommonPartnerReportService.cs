@@ -254,6 +254,8 @@ namespace Infrastructure.Services
                     itemValues.Add(countPn.Count());
                     var percent = countPn.Count() > 0 ? Math.Round((double)(percentTotal * countPn.Count()) / count, 2) : 0;
                     itemPercentValues.Add(percent);
+
+                  
                 }
 
                 partnerGenderItems.Add(new PartnerGenderItemReportOverview
@@ -263,7 +265,6 @@ namespace Infrastructure.Services
                     Count = itemValues,
                     Percent = itemPercentValues
                 });
-
             }
 
             res.PartnerGenderItems = partnerGenderItems;
