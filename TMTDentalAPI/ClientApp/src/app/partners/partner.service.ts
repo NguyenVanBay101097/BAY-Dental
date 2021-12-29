@@ -560,8 +560,8 @@ export class PartnerService {
         }
     }
 
-    patchActive(id, val): Observable<any> {
-        return this.http.patch(this.baseApi + "api/Partners/" + id + '/PatchActive', val);
+    UpdateActive(id, val): Observable<any> {
+        return this.http.post(this.baseApi + "api/Partners/" + id + '/UpdateActive', val);
     }
 
     getDebtPaged(id: string, val: any) {

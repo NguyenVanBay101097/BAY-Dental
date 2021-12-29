@@ -166,7 +166,7 @@ export class PartnerSupplierListComponent implements OnInit {
     modalRef.result.then(() => {
       var res = new PartnerActivePatch();
       res.active = item.active ? false : true;
-      this.partnerService.patchActive(item.id, res).subscribe(() => {
+      this.partnerService.UpdateActive(item.id, res).subscribe(() => {
         this.notificationService.show({
           content:  !item.active ? 'Hiện nhà cung cấp thành công ' : 'Ẩn nhà cung cấp thành công',
           hideAfter: 3000,

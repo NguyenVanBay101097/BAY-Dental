@@ -749,24 +749,19 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
-        [HttpPatch("{id}/[action]")]
+        [HttpPost("{id}/[action]")]
         [CheckAccess(Actions = "Basic.Partner.Update")]
-        public async Task<IActionResult> PatchActive(Guid id, PartnerActivePatch result)
+        public async Task<IActionResult> UpdateActive(Guid id, PartnerActivePatch val)
         {
             var entity = await _partnerService.GetByIdAsync(id);
             if (entity == null)
             {
                 return NotFound();
             }
-
-            var patch = new JsonPatchDocument<PartnerActivePatch>();
-            patch.Replace(x => x.Active, result.Active);
-            var entityMap = _mapper.Map<PartnerActivePatch>(entity);
-            patch.ApplyTo(entityMap);
-
-            entity = _mapper.Map(entityMap, entity);
+            await _unitOfWork.BeginTransactionAsync();
+            entity.Active = val.Active;
             await _partnerService.UpdateAsync(entity);
-
+            _unitOfWork.Commit();
             return NoContent();
         }
 
