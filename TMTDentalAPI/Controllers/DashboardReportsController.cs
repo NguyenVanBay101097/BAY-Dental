@@ -27,12 +27,14 @@ namespace TMTDentalAPI.Controllers
         private readonly ISaleOrderLineService _saleOrderLineService;
         private readonly ISaleReportService _saleReportService;
         private readonly ICashBookService _cashBookService;
+        private readonly IUserService _userService;
 
         public DashboardReportsController(IMapper mapper, IDashboardReportService dashboardService,
             IAccountMoveLineService amlService,
             ISaleOrderService saleOrderService,
             ISaleOrderLineService saleOrderLineService,
             ISaleReportService saleReportService,
+            IUserService userService,
             ICashBookService cashBookService)
         {
             _mapper = mapper;
@@ -42,6 +44,7 @@ namespace TMTDentalAPI.Controllers
             _saleOrderLineService = saleOrderLineService;
             _saleReportService = saleReportService;
             _cashBookService = cashBookService;
+            _userService = userService;
         }
 
         [HttpPost("[action]")]
@@ -97,12 +100,18 @@ namespace TMTDentalAPI.Controllers
             var cashBankPaymentTotal = await query.Where(x => (x.Journal.Type == "cash" || x.Journal.Type == "bank") && x.AccountInternalType == "receivable").SumAsync(x => x.Credit);
             var advancePaymentTotal = await query.Where(x => x.Journal.Type == "advance" && x.AccountInternalType == "receivable").SumAsync(x => x.Credit);
             var debtPaymentTotal = await query.Where(x => x.Journal.Type == "debt" && x.AccountInternalType == "receivable").SumAsync(x => x.Credit);
-            var debtInsuranceTotal = await query.Where(x => x.Journal.Type == "insurance" && x.AccountInternalType == "receivable").SumAsync(x => x.Credit);
+
+            var debtInsuranceTotal = 0.0M;
+            if (await _userService.HasGroup("insurance.group_insurance"))
+                debtInsuranceTotal = await query.Where(x => x.Journal.Type == "insurance" && x.AccountInternalType == "receivable").SumAsync(x => x.Credit);
 
             var advanceIncomeTotal = await query.Where(x => (x.Journal.Type == "cash" || x.Journal.Type == "bank") && x.Account.Code == "KHTU").SumAsync(x => x.Credit);
             var debtIncomeTotal = await query.Where(x => (x.Journal.Type == "cash" || x.Journal.Type == "bank") && x.Account.Code == "CNKH").SumAsync(x => x.Credit);
             var cashBankDebitTotal = await query.Where(x => (x.Journal.Type == "cash" || x.Journal.Type == "bank") && x.AccountInternalType == "liquidity").SumAsync(x => x.Debit);
-            var insuranceIncomeTotal = await query.Where(x => (x.Journal.Type == "cash" || x.Journal.Type == "bank") && x.Account.Code == "CNBH").SumAsync(x => x.Credit);
+
+            var insuranceIncomeTotal = 0.0M;
+            if (await _userService.HasGroup("insurance.group_insurance"))
+                insuranceIncomeTotal = await query.Where(x => (x.Journal.Type == "cash" || x.Journal.Type == "bank") && x.Account.Code == "CNBH").SumAsync(x => x.Credit);
 
             return Ok(new GetRevenueActualReportResponse
             {
@@ -121,7 +130,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetThuChiReport(GetRevenueActualReportRequest val)
         {
             //báo cáo doanh thu thực thu
-            var res = await _dashboardService.GetThuChiReport(val.DateFrom, val.DateTo, val.CompanyId, val.JournalId);         
+            var res = await _dashboardService.GetThuChiReport(val.DateFrom, val.DateTo, val.CompanyId, val.JournalId);
             return Ok(res);
         }
 
@@ -137,7 +146,10 @@ namespace TMTDentalAPI.Controllers
             var payableTotal = await query.Where(x => x.AccountInternalType == "payable").SumAsync(x => x.Credit - x.Debit);
             var debtTotal = await query.Where(x => x.Account.Code == "CNKH").SumAsync(x => x.Debit - x.Credit);
             var expectTotal = await _saleOrderService.SearchQuery(x => (!val.CompanyId.HasValue || x.CompanyId == val.CompanyId) && x.State != "draft").SumAsync(x => (x.AmountTotal ?? 0) - (x.TotalPaid ?? 0));
-            var insuranDebitTotal = await query.Where(x => x.Account.Code == "CNBH").SumAsync(x => x.Debit - x.Credit);
+
+            var insuranDebitTotal = 0.0M;
+            if (await _userService.HasGroup("insurance.group_insurance"))
+                insuranDebitTotal = await query.Where(x => x.Account.Code == "CNBH").SumAsync(x => x.Debit - x.Credit);
 
             return Ok(new GetSummaryReportResponse
             {
@@ -162,7 +174,7 @@ namespace TMTDentalAPI.Controllers
 
                 ///tab dịch vụ trong ngày
                 var worksheet1 = package.Workbook.Worksheets.Add("DichVuDangKiMoi");
-                var data = await _saleOrderLineService.GetPagedResultAsync(new SaleOrderLinesPaged {CompanyId = val.CompanyId, DateFrom = val.DateFrom , DateTo = val.DateTo , State = "sale,done,cancel" });
+                var data = await _saleOrderLineService.GetPagedResultAsync(new SaleOrderLinesPaged { CompanyId = val.CompanyId, DateFrom = val.DateFrom, DateTo = val.DateTo, State = "sale,done,cancel" });
 
                 worksheet1.Cells["A1:J1"].Value = "DỊCH VỤ ĐĂNG KÝ MỚI";
                 worksheet1.Cells["A1:J1"].Style.Font.Color.SetColor(Color.Blue);
@@ -278,7 +290,7 @@ namespace TMTDentalAPI.Controllers
                 worksheet2.Cells["A1:E1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
                 //worksheet2.Cells["A1:E1"].Style.Font.Bold = true;
                 worksheet2.Cells["A1:E1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
-               
+
                 worksheet2.Cells["A2:E2"].Value = @$"Ngày {val.DateFrom.Value.ToShortDateString()}";
                 worksheet2.Cells["A2:E2"].Merge = true;
                 worksheet2.Cells["A2:E2"].Style.Font.Size = 11;
@@ -315,7 +327,7 @@ namespace TMTDentalAPI.Controllers
                 worksheet2.Cells[4, 1, 9, 4].Style.Border.Right.Style = ExcelBorderStyle.Thin;
                 worksheet2.Cells[4, 1, 8, 4].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
                 worksheet2.Cells[4, 1, 8, 4].Style.Border.Bottom.Color.SetColor(Color.White);
-                worksheet2.Cells[9, 1, 9, 4].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;             
+                worksheet2.Cells[9, 1, 9, 4].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
                 worksheet2.Cells["D5:D9"].Style.Numberformat.Format = "#,##0";
 
 
@@ -377,7 +389,7 @@ namespace TMTDentalAPI.Controllers
                 worksheet3.Cells["A2:F2"].Merge = true;
                 worksheet3.Cells["A2:F2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
-               
+
                 worksheet3.Cells["A4:C4"].Value = "Tồn quỹ";
                 worksheet3.Cells["A4:C4"].Merge = true;
                 worksheet3.Cells["A4:C4"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
@@ -463,7 +475,7 @@ namespace TMTDentalAPI.Controllers
                 worksheet3.Cells[10, 1, 10, 6].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
                 worksheet3.Cells[5, 1, 10, 6].Style.Font.Bold = true;
                 worksheet3.Cells[5, 1, 10, 6].Style.Font.Size = 11;
-           
+
 
 
                 worksheet3.Cells[12, 1].Value = "Số phiếu";

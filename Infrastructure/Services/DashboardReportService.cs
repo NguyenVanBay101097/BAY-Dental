@@ -238,6 +238,7 @@ namespace Infrastructure.Services
         public async Task<GetThuChiReportResponse> GetThuChiReport(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, Guid? journalId)
         {
             var amlObj = GetService<IAccountMoveLineService>();
+            var userService = GetService<IUserService>();
             //báo cáo doanh thu thực thu
             var resdateFrom = dateFrom.HasValue ? dateFrom.Value.AbsoluteBeginOfDate() : (DateTime?)null;
             var resdateTo = dateTo.HasValue ? dateTo.Value.AbsoluteEndOfDate() : (DateTime?)null;
@@ -250,7 +251,10 @@ namespace Infrastructure.Services
             var customerIncomeTotal = await query.Where(x => x.AccountInternalType == "receivable").SumAsync(x => x.Credit);
             var advanceIncomeTotal = await query.Where(x => x.Account.Code == "KHTU").SumAsync(x => x.Credit);
             var debtIncomeTotal = await query.Where(x => x.Account.Code == "CNKH").SumAsync(x => x.Credit);
-            var insuranceIncomeTotal = await query.Where(x => x.Account.Code == "CNBH").SumAsync(x => x.Credit);
+
+            var insuranceIncomeTotal = 0.0M;
+            if (await userService.HasGroup("insurance.group_insurance"))
+                insuranceIncomeTotal = await query.Where(x => x.Account.Code == "CNBH").SumAsync(x => x.Credit);
             var supplierIncomeTotal = await query.Where(x => x.AccountInternalType == "payable").SumAsync(x => x.Credit);
             var cashBankIncomeTotal = await query.SumAsync(x => x.Credit);
 

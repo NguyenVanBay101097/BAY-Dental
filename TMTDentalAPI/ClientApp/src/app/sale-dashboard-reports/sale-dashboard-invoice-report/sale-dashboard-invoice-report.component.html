@@ -30,7 +30,7 @@
                 <span class="title-detail">Thanh toán dịch vụ bằng ghi công nợ</span>
                 <span class="fw-bold"> {{(revenueActualReportData?.debtPaymentTotal || 0) | number}}</span>
             </div>
-            <div class="my-2 d-flex align-items-center justify-content-between">
+            <div hasGroups [groups]="'insurance.group_insurance'" class="my-2 d-flex align-items-center justify-content-between">
                 <span class="title-detail">Thanh toán dịch vụ bằng bảo hiểm</span>
                 <span class="fw-bold"> {{(revenueActualReportData?.debtInsuranceTotal || 0) | number}}</span>
             </div>
@@ -52,7 +52,7 @@
                 <span class="title-detail">Thu công nợ khách hàng</span>
                 <span class="fw-bold">{{(revenueActualReportData?.debtIncomeTotal || 0) | number}}</span>
             </div>
-            <div class="my-2 d-flex align-items-center justify-content-between">
+            <div hasGroups [groups]="'insurance.group_insurance'" class="my-2 d-flex align-items-center justify-content-between">
                 <span class="title-detail">Thu công nợ bảo hiểm</span>
                 <span class="fw-bold">{{(revenueActualReportData?.insuranceIncomeTotal || 0) | number}}</span>
             </div>

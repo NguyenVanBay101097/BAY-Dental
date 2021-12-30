@@ -37,7 +37,7 @@
                 <span class="title-detail">Thu công nợ khách hàng</span>
                 <span> {{thuChiReportData?.debtIncomeTotal || 0 | number}}</span>
             </div>
-            <div class="my-2 d-flex align-items-center justify-content-between">
+            <div hasGroups [groups]="'insurance.group_insurance'" class="my-2 d-flex align-items-center justify-content-between">
                 <span class="title-detail">Thu công nợ bảo hiểm</span>
                 <span> {{thuChiReportData?.insuranceIncomeTotal || 0 | number}}</span>
             </div>
