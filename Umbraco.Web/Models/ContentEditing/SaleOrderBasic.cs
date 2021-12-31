@@ -38,6 +38,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public decimal? TotalPaid { get; set; }
         public decimal? AmountDiscountTotal { get; set; }
+
+        public EmployeeSimple Doctor { get; set; }
     }
 
     public class SaleOrderSimple

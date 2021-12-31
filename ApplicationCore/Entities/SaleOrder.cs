@@ -129,9 +129,11 @@ namespace ApplicationCore.Entities
         /// </summary>
         public Guid? OrderId { get; set; }
         public SaleOrder Order { get; set; }
-
-        //public Guid? EmployeeId { get; set; }
-        //public Employee Employee { get; set; }
+        /// <summary>
+        /// bác sĩ đại diện
+        /// </summary>
+        public Guid? DoctorId { get; set; }
+        public Employee Doctor { get; set; }
 
         public Guid? CodePromoProgramId { get; set; }
         public SaleCouponProgram CodePromoProgram { get; set; }

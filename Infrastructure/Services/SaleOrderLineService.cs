@@ -1585,12 +1585,24 @@ namespace Infrastructure.Services
             if (line.State == "done")
                 line.DateDone = DateTime.Now;
             await UpdateAsync(line);
-            //action done saleorder
-            var isOrderDone = (await SearchQuery(x => x.OrderId == line.OrderId).AllAsync(x => x.State == "done" || x.State == "cancel"))
-                && (await SearchQuery(x => x.OrderId == line.OrderId).AnyAsync(x => x.State == "done"));
             var orderObj = GetService<ISaleOrderService>();
-            if (isOrderDone)
-                await orderObj.ActionDone(new List<Guid>() { line.OrderId });
+
+            if (state == "sale")
+            {
+                var order = await orderObj.GetByIdAsync(line.OrderId);
+                if (order.State != "sale")
+                {
+                    order.State = state;
+                    await orderObj.UpdateAsync(order);
+                }
+            }
+            {
+                //action done saleorder
+                var isOrderDone = (await SearchQuery(x => x.OrderId == line.OrderId).AllAsync(x => x.State == "done" || x.State == "cancel"))
+                    && (await SearchQuery(x => x.OrderId == line.OrderId).AnyAsync(x => x.State == "done"));
+                if (isOrderDone)
+                    await orderObj.ActionDone(new List<Guid>() { line.OrderId });
+            }
         }
 
         public async Task<ServiceSaleReportPrint> SaleReportPrint(SaleOrderLinesPaged val)

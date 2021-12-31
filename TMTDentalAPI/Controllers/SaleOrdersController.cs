@@ -84,6 +84,7 @@ namespace TMTDentalAPI.Controllers
         {
             var order = await _saleOrderService.SearchQuery(x => x.Id == id)
                 .Include(x => x.Partner)
+                .Include(x => x.Doctor)
                 .FirstOrDefaultAsync();
 
             return Ok(_mapper.Map<SaleOrderBasic>(order));

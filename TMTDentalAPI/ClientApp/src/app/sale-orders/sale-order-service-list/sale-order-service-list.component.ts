@@ -45,6 +45,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
   formGroup: FormGroup;
   submitted = false;
   partnerDebt = null;
+  doctors = [];
 
   @ViewChild('popover', { static: false }) public popover: NgbPopover;
 
@@ -66,13 +67,13 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (!changes.saleOrder.firstChange) {
-      this.saleOrderService.get(this.saleOrder.id).subscribe(result => {
+      this.saleOrderService.get(this.saleOrder.id).subscribe((result: any) => {
         this.orderLines = result.orderLines;
         this.promotions = result.promotions;
 
         var dateOrder = new Date(result.dateOrder);
         this.formGroup.get('dateOrder').setValue(dateOrder);
-
+        this.formGroup.get('doctor').setValue(result.doctor);
         this.lineSelected = null;
       });
     }
@@ -80,15 +81,18 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.formGroup = this.fb.group({
-      dateOrder: [null, Validators.required]
+      dateOrder: [null, Validators.required],
+      doctor: [null],
+      doctorId: [null]
     });
 
-    this.saleOrderService.get(this.saleOrder.id).subscribe(result => {
+    this.saleOrderService.get(this.saleOrder.id).subscribe((result: any) => {
       this.orderLines = result.orderLines;
       this.promotions = result.promotions;
 
       var dateOrder = new Date(result.dateOrder);
       this.formGroup.get('dateOrder').setValue(dateOrder);
+      this.formGroup.get('doctor').setValue(result.doctor);
     });
 
     this.loadToothCategories();
@@ -121,6 +125,8 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
     var value = this.formGroup.value;
     var val = {
       dateOrder: this.intlService.formatDate(value.dateOrder, 'yyyy-MM-ddTHH:mm:ss'),
+      doctorId: value.doctor?.id ?? '',
+      doctor: value.doctor
     };
 
     this.saleOrderService.update(this.saleOrder.id, val)
@@ -132,10 +138,6 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
   }
 
   openUpdateOrderPopover(popover) {
-    this.formGroup = this.fb.group({
-      dateOrder: [new Date(this.saleOrder.dateOrder), Validators.required]
-    });
-
     popover.open();
   }
 
@@ -150,6 +152,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
       .getEmployeePaged(val)
       .subscribe((result: any) => {
         this.initialListEmployees = result.items;
+        this.doctors = this.initialListEmployees.filter(x => x.isDoctor == true);
       });
   }
 
@@ -729,51 +732,53 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
     }
 
     var line = this.orderLines[lineIndex];
-    if(state == line.state || (line.state == 'done' || line.state == 'cancel')) {
+    if (state == line.state) {
       return;
     }
 
-    if (state == 'done' || state == 'cancel') {
-      let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
-      modalRef.componentInstance.title = state == 'cancel'? "Ngừng dịch vụ" : "Hoàn thành dịch vụ";
-      modalRef.componentInstance.body =  state == 'cancel'? "Bạn có muốn ngừng dịch vụ không?" : "Bạn có xác nhận hoàn thành dịch vụ không?";
-      modalRef.componentInstance.body2 =  state == 'cancel'? "(Lưu ý: Sau khi ngừng không thể chỉnh sửa dịch vụ)" : "(Lưu ý: Sau khi hoàn thành không thể chỉnh sửa, xóa dịch vụ)";
-      modalRef.result.then(() => {
-        this.saleOrderLineService.updateState(line.id, state).subscribe(() => {
-          this.notify('success', 'Lưu thành công');
-          line.state = state;
-          if (this.orderLines.every(x => x.state == 'done' || x.state == 'cancel') &&
-            this.orderLines.some(x => x.state == 'done')
-          ) {
-            this.saleOrder.state = 'done';
-          }
-    
-          if (state == "done" && line.priceSubTotal - line.amountInvoiced > 0) {
-            let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
-            modalRef.componentInstance.title = `Ghi công nợ số tiền ${this._decimalPipe.transform((line.priceSubTotal - line.amountInvoiced))}đ`;
-            modalRef.componentInstance.body = `Dịch vụ ${line.name} còn ${this._decimalPipe.transform((line.priceSubTotal - line.amountInvoiced))}đ chưa được thanh toán. Bạn có muốn ghi công nợ số tiền này?`;
-            modalRef.componentInstance.confirmText = "Đồng ý";
-            modalRef.componentInstance.closeText = "Không đồng ý";
-            modalRef.componentInstance.closeClass = "btn-danger";
-            modalRef.result.then(() => {
-              this.saleOrderLineService.debtPayment(line.id)
-                .subscribe(r => {
-                  this.notify('success', 'Ghi nợ thành công');
-                  this.saleOrder.totalPaid = this.saleOrder.totalPaid + (line.priceSubTotal - line.amountInvoiced);
-                  this.loadPartnerDebt();
-                  line.amountInvoiced = line.priceSubTotal;
-                });
-            })
-    
-          }
-        })
-      }).catch(() => {});
-    } else {
+    var stateTitle = {
+      "cancel": "Ngừng",
+      "done": "Hoàn thành",
+      "sale": "Tiếp tục"
+    };
+
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = `${stateTitle[state]} dịch vụ ${line.name}`;
+    modalRef.componentInstance.body = `Bạn có xác nhận ${(stateTitle[state] as string).toLocaleLowerCase()} dịch vụ không?`;
+    modalRef.componentInstance.body2 = state == 'cancel' ? "(Lưu ý: Sau khi ngừng không thể chỉnh sửa dịch vụ)" : (state == "sale" ? "" : "(Lưu ý: Sau khi hoàn thành không thể chỉnh sửa, xóa dịch vụ)");
+    modalRef.result.then(() => {
       this.saleOrderLineService.updateState(line.id, state).subscribe(() => {
         this.notify('success', 'Lưu thành công');
         line.state = state;
-      });
-    }
+
+        if (this.orderLines.every(x => x.state == 'done' || x.state == 'cancel') &&
+          this.orderLines.some(x => x.state == 'done')
+        ) {
+          this.saleOrder.state = 'done';
+        } else if(this.orderLines.some(x => x.state == 'sale')) {
+          this.saleOrder.state = 'sale';
+        }
+
+        if (state == "done" && line.priceSubTotal - line.amountInvoiced > 0) {
+          let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+          modalRef.componentInstance.title = `Ghi công nợ số tiền ${this._decimalPipe.transform((line.priceSubTotal - line.amountInvoiced))}đ`;
+          modalRef.componentInstance.body = `Dịch vụ ${line.name} còn ${this._decimalPipe.transform((line.priceSubTotal - line.amountInvoiced))}đ chưa được thanh toán. Bạn có muốn ghi công nợ số tiền này?`;
+          modalRef.componentInstance.confirmText = "Đồng ý";
+          modalRef.componentInstance.closeText = "Không đồng ý";
+          modalRef.componentInstance.closeClass = "btn-danger";
+          modalRef.result.then(() => {
+            this.saleOrderLineService.debtPayment(line.id)
+              .subscribe(r => {
+                this.notify('success', 'Ghi nợ thành công');
+                this.saleOrder.totalPaid = this.saleOrder.totalPaid + (line.priceSubTotal - line.amountInvoiced);
+                this.loadPartnerDebt();
+                line.amountInvoiced = line.priceSubTotal;
+              });
+          })
+
+        }
+      })
+    }).catch(() => { });
   }
 
   getAmountSubTotal() {
@@ -832,4 +837,5 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
       this.partnerDebt = res.debt;
     });
   }
+
 }

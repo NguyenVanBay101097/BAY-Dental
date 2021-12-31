@@ -63,12 +63,12 @@ export class SaleOrderLineCuComponent implements OnInit {
   isUpdated: boolean = false;
   lineId: string = '';
   public listState = [
-   {text:'Đang điều trị', value:'sale'},
-   {text:'Ngừng điều trị', value:'cancel'},
-   {text:'Hoàn thành', value:'done'},
+    { text: 'Đang điều trị', value: 'sale' },
+    { text: 'Ngừng điều trị', value: 'cancel' },
+    { text: 'Hoàn thành', value: 'done' },
   ];
 
-  stateEdit= ['draft', 'sale'];
+  stateEdit = ['draft', 'sale'];
 
   constructor(
     private fb: FormBuilder,
@@ -99,7 +99,7 @@ export class SaleOrderLineCuComponent implements OnInit {
     return this.formGroupInfo.get("teeth") as FormArray;
   }
 
-  get formState(){
+  get formState() {
     return this.formGroupInfo.get("state").value;
   }
 
@@ -141,7 +141,7 @@ export class SaleOrderLineCuComponent implements OnInit {
       counselor: this.line.counselor,
       diagnostic: this.line.diagnostic,
       teeth: this.fb.array(this.line.teeth),
-      date: typeof this.line.date == 'string'? new Date(this.line.date) : this.line.date,
+      date: typeof this.line.date == 'string' ? new Date(this.line.date) : this.line.date,
       state: this.line.state
     });
 
@@ -319,30 +319,29 @@ export class SaleOrderLineCuComponent implements OnInit {
 
   updateLineInfo() {
 
-    var updateLineInfoRun = ()=> {
-    this.isUpdated = true;
-    if (this.formGroupInfo.invalid) {
-      this.formGroupInfo.markAllAsTouched();
-      return false;
+    var updateLineInfoRun = () => {
+      this.isUpdated = true;
+      if (this.formGroupInfo.invalid) {
+        this.formGroupInfo.markAllAsTouched();
+        return false;
+      }
+      let val = this.formGroupInfo.value;
+      this.isEditting = false;
+      this.onUpdateEvent.emit(val);
+      return true;
     }
-    let val = this.formGroupInfo.value;
-    this.isEditting = false;
-    this.onUpdateEvent.emit(val);
-    return true;
-    }
-    if(this.formState == 'done' || this.formState == 'cancel')
-    {
+    if (this.formState == 'done' || this.formState == 'cancel') {
       let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
       modalRef.componentInstance.title = this.formState == 'done' ? 'Hoàn thành dịch vụ' : 'Ngừng dịch vụ';
-      modalRef.componentInstance.body = this.formState == 'done'? 'Bạn có xác nhận hoàn thành dịch vụ không'
-      :'Bạn có muốn ngừng dịch vụ không?';
-      modalRef.componentInstance.body2 = this.formState == 'done'?'(Lưu ý: Sau khi hoàn thành không thể chỉnh sửa dịch vụ)'
-      :'(Lưu ý: Sau khi ngừng không thể chỉnh sửa dịch vụ)'
+      modalRef.componentInstance.body = this.formState == 'done' ? 'Bạn có xác nhận hoàn thành dịch vụ không'
+        : 'Bạn có muốn ngừng dịch vụ không?';
+      modalRef.componentInstance.body2 = this.formState == 'done' ? '(Lưu ý: Sau khi hoàn thành không thể chỉnh sửa dịch vụ)'
+        : '(Lưu ý: Sau khi ngừng không thể chỉnh sửa dịch vụ)'
       modalRef.result.then(() => {
-      return updateLineInfoRun();
+        return updateLineInfoRun();
       });
-    } else{
-      return  updateLineInfoRun();
+    } else {
+      return updateLineInfoRun();
     }
   }
 
@@ -466,12 +465,24 @@ export class SaleOrderLineCuComponent implements OnInit {
     });
   }
 
-  getStateDisplay(state){
-    var r = this.listState.find(x=> x.value == state);
-    return r? r.text : '';
+  getStateDisplay(state) {
+    var r = this.listState.find(x => x.value == state);
+    return r ? r.text : '';
   }
 
   onSWitchState(state) {
     this.onUpdateStateEvent.next(state);
+  }
+
+  getListSwitchState(state) {
+    switch (state) {
+      case "sale":
+        return this.listState.filter(x => x.value != "sale");
+      case "done":
+      case "cancel":
+        return this.listState.filter(x => x.value == "sale");
+      default:
+        break;
+    }
   }
 }

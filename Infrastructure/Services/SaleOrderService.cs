@@ -1234,7 +1234,7 @@ namespace Infrastructure.Services
         public async Task<SaleOrderDisplay> GetSaleOrderForDisplayAsync(Guid id)
         {
             var saleOrder = await SearchQuery(x => x.Id == id)
-                .Include(x => x.Partner)
+                .Include(x => x.Partner).Include(x=> x.Doctor)
                 .FirstOrDefaultAsync();
 
             var display = _mapper.Map<SaleOrderDisplay>(saleOrder);
@@ -1325,7 +1325,7 @@ namespace Infrastructure.Services
 
             //order = _mapper.Map(val, order);
             order.DateOrder = val.DateOrder;
-
+            order.DoctorId = val.DoctorId;
             //await SaveOrderLines(val, order);
             await UpdateAsync(order); //update trước để generate id cho những sale order line
 
