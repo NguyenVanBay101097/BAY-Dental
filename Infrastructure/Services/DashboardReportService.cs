@@ -307,7 +307,88 @@ namespace Infrastructure.Services
             return (T)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(T));
         }
 
+        public async Task<IEnumerable<RevenueReportChartVM>> GetRevenueReportChart(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string groupBy)
+        {
+            var saleOrderObj = GetService<ISaleOrderService>();
+            var accountMoveLineObj = GetService<IAccountMoveLineService>();
+            var accountMoveObj = GetService<IAccountMoveService>();
+            var accountInvoiceReportObj = GetService<IAccountInvoiceReportService>();
 
+            var res = new List<RevenueReportChartVM>();
+
+            var types = new string[] { "cash", "bank" };
+
+            var amountTotalQuery = saleOrderObj.SearchQuery(x => x.State != "draft" && (!companyId.HasValue || x.CompanyId == companyId.Value))
+                .GroupBy(x => x.DateOrder.Date)
+                .Select(x => new
+                {
+                    Date = x.Key,
+                    AmountTotal = x.Sum(y => y.AmountTotal ?? 0),
+                    Type = "Sale",
+                });
+
+            var revenueQuery = _context.AccountInvoiceReports.Where(x => (x.Type == "out_invoice" || x.Type == "out_refund") && x.State == "posted"
+            && x.AccountInternalType != "receivable" && (!companyId.HasValue || x.CompanyId == companyId.Value))
+                .GroupBy(x => x.InvoiceDate.Value.Date)
+                .Select(x => new
+                {
+                    Date = x.Key,
+                    AmountTotal = x.Sum(y => y.PriceSubTotal),
+                    Type = "Revenue"
+                });
+
+
+            var totalThuQuery = accountMoveLineObj.SearchQuery(x => x.Move.State == "posted" && x.AccountInternalType != "liquidity"
+            && types.Contains(x.Journal.Type) &&(!companyId.HasValue || x.CompanyId == companyId.Value)).GroupBy(x => x.Date.Value.Date)
+            .Select(x => new
+            {
+                Date = x.Key,
+                AmountTotal = x.Sum(y => y.PriceSubtotal ?? 0),
+                Type = "Liquidity"
+            });
+
+            var combineQuery = amountTotalQuery.Union(revenueQuery).Union(totalThuQuery);
+
+            if (dateFrom.HasValue)
+                combineQuery = combineQuery.Where(x => x.Date >= dateFrom.Value.AbsoluteBeginOfDate());
+
+
+            if (dateTo.HasValue)
+                combineQuery = combineQuery.Where(x => x.Date <= dateTo.Value.AbsoluteEndOfDate());
+
+
+            if (groupBy == "day")
+            {
+
+                res = await combineQuery.GroupBy(x => x.Date)
+                  .Select(x => new RevenueReportChartVM
+                  {
+                      Date = x.Key,
+                      TotalSaleAmount = x.Sum(s => s.Type == "Sale" ? s.AmountTotal : 0),
+                      TotalRevenueAmount = x.Sum(s => s.Type == "Revenue" ? s.AmountTotal : 0),
+                      TotalLiquidityAmount = x.Sum(s => s.Type == "Liquidity" ? s.AmountTotal : 0),
+                  }).ToListAsync();
+
+            }
+            if (groupBy == "month")
+            {
+                res = await combineQuery.GroupBy(x => new
+                {
+                    x.Date.Year,
+                    x.Date.Month,
+                })
+                 .Select(x => new RevenueReportChartVM
+                 {
+                     Date = new DateTime(x.Key.Year, x.Key.Month, 1),
+                     TotalSaleAmount = x.Sum(s => s.Type == "Sale" ? s.AmountTotal : 0),
+                     TotalRevenueAmount = x.Sum(s => s.Type == "Revenue" ? s.AmountTotal : 0),
+                     TotalLiquidityAmount = x.Sum(s => s.Type == "Liquidity" ? s.AmountTotal : 0),
+                 }).ToListAsync();
+
+            }
+
+            return res;
+        }
     }
 
 

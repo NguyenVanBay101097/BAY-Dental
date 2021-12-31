@@ -128,6 +128,17 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal AmountCashBook { get; set; }
     }
 
+    public class RevenueReportChartVM
+    {
+        public DateTime Date { get; set; }
+
+        public decimal TotalSaleAmount { get; set; }
+
+        public decimal TotalRevenueAmount { get; set; }
+
+        public decimal TotalLiquidityAmount { get; set; }
+    }
+
     public class ReportRevenueChartFilter
     {
         public DateTime? DateFrom { get; set; }
