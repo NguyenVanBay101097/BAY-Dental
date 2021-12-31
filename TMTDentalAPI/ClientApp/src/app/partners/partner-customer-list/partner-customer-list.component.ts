@@ -501,7 +501,7 @@ export class PartnerCustomerListComponent implements OnInit {
   onClickActive(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = `${!item.active ? '' : 'Ngưng'} theo dõi khách hàng ${item.name}`;
-    modalRef.componentInstance.body = `Bạn có chắc chắn muốn ${!item.active ? '' : 'Ngưng'} theo dõi khách hàng này`;
+    modalRef.componentInstance.body = `Bạn có chắc chắn muốn ${!item.active ? '' : 'Ngưng'} theo dõi khách hàng này?`;
     modalRef.result.then(() => {
       var res = new PartnerActivePatch();
       res.active = item.active ? false : true;
