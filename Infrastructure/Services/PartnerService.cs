@@ -3085,7 +3085,7 @@ namespace Infrastructure.Services
                                     Date = g.Max(s => s.Date)
                                 };
 
-            var mainQuery = SearchQuery(x => x.Active && x.Customer);
+            var mainQuery = SearchQuery(x => x.Customer);
             if (val.CompanyId.HasValue)
                 mainQuery = mainQuery.Where(x => x.CompanyId == val.CompanyId);
 
