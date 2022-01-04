@@ -100,4 +100,8 @@ export class DashboardReportService {
   getSummaryReport(val: any) {
     return this.http.post(this.baseApi + this.apiUrl + "/GetSummaryReport", val);
   }
+
+  getRevenueReportChart(val: any) {
+    return this.http.post(this.baseApi + this.apiUrl + "/GetRevenueReportChart", val);
+  }
 }

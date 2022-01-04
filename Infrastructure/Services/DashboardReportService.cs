@@ -343,7 +343,7 @@ namespace Infrastructure.Services
             .Select(x => new
             {
                 Date = x.Key,
-                AmountTotal = x.Sum(y => y.PriceSubtotal ?? 0),
+                AmountTotal = x.Sum(y => y.Credit),
                 Type = "Liquidity"
             });
 
@@ -357,7 +357,7 @@ namespace Infrastructure.Services
                 combineQuery = combineQuery.Where(x => x.Date <= dateTo.Value.AbsoluteEndOfDate());
 
 
-            if (groupBy == "day")
+            if (groupBy == "groupby:day")
             {
 
                 res = await combineQuery.GroupBy(x => x.Date)
@@ -370,7 +370,7 @@ namespace Infrastructure.Services
                   }).ToListAsync();
 
             }
-            if (groupBy == "month")
+            if (groupBy == "groupby:month")
             {
                 res = await combineQuery.GroupBy(x => new
                 {
