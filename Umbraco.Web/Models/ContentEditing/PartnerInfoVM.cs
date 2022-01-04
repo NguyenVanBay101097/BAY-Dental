@@ -155,6 +155,7 @@ namespace Umbraco.Web.Models.ContentEditing
     public class PartnerGetExistReq
     {
         public string Phone { get; set; }
+        public bool? Customer { get; set; }
     }
 
 }

@@ -3343,6 +3343,8 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<PartnerSimple>> GetExist(PartnerGetExistReq val)
         {
             var query = SearchQuery(x => x.Phone == val.Phone);
+            if (val.Customer.HasValue)
+                query = query.Where(x => x.Customer == val.Customer);
             return _mapper.Map<IEnumerable<PartnerSimple>>(await query.ToListAsync());
         }
     }

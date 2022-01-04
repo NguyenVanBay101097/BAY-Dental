@@ -95,6 +95,10 @@ export class SurveyReportComponent implements OnInit {
         },
         tooltip: {
           trigger: "axis",
+          textStyle: {
+            fontSize: 'unset',
+            fontFamily:"unset"
+          },
           axisPointer: {
             type: "line",
           },
@@ -164,7 +168,11 @@ export class SurveyReportComponent implements OnInit {
       var colors = ['#007BFF', '#FFC107', '#28A645', '#939EAB', '#EB3B5B'];
       this.scoreChartOption = {
         tooltip: {
-          trigger: 'item'
+          trigger: 'item',
+          textStyle: {
+            fontSize: 'unset',
+            fontFamily:"unset"
+          },
         },
         legend: {
           right: 'center',
@@ -230,6 +238,10 @@ export class SurveyReportComponent implements OnInit {
       this.questionChartOption = {
         tooltip: {
           trigger: 'axis',
+          textStyle: {
+            fontSize: 'unset',
+            fontFamily:"unset"
+          },
           axisPointer: {
             type: 'line' // 'shadow' as default; can also be 'line' or 'shadow'
           },
