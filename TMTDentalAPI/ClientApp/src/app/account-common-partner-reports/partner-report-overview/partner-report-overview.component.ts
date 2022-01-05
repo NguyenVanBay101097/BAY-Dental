@@ -262,8 +262,7 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
     this.reportFilterPopup.onUpdateFormValue(event);
   }
 
-  filterEmit(e) {
-    var val = e && e.data;
+  filterEmit(val) {
     if (val) {
       if (val.type === 'city') {
         this.filter.cityCode = val.code;
@@ -290,7 +289,7 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
       this.filter.cityCode = null;
       this.filter.districtCode = null;
       this.filter.wardCode = null;
-      this.reportAreaComp?.loadReportArea();
+      // this.reportAreaComp?.loadReportArea();
     }
     this.reportSourceComp?.loadReportSource();
     this.reportAgeGenderComp?.loadReportAgeGender();

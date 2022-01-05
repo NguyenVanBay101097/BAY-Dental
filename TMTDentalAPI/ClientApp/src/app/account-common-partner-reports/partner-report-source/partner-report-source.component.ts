@@ -38,9 +38,6 @@ export class PartnerReportSourceComponent implements OnInit {
       },
       tooltip: {
         trigger: 'item',
-        formatter: function (params) {
-          return `${params.name}: ${params.percent}%`;
-        }
       },
       legend: {
         bottom: 10,
@@ -52,7 +49,12 @@ export class PartnerReportSourceComponent implements OnInit {
           radius: '50%',
           data: this.dataSet,
           label: {
-            show: false,
+            show: true,
+            position: 'inside',
+            formatter: function (params) {
+              return `${params.percent}%`;
+            },
+            color: '#fff'
           },
           emphasis: {
             itemStyle: {

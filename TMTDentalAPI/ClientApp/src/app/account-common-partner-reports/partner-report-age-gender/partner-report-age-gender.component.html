@@ -1,13 +1,9 @@
 <div class="card">
   <h5 class="card-header card-header-title bg-white">Số lượng khách hàng theo độ tuổi</h5>
   <div class="card-body">
-    <ng-container *ngIf="dataSet?.partnerGenderItems && dataSet?.partnerGenderItems.length > 0; else elseTemplate">
-      <div echarts [options]="chartOption"></div>
-    </ng-container>
-    <ng-template #elseTemplate>
-      <div class="img-nodata">
-        <img src="./../../../assets/icons/NoData.svg">
-      </div>
-    </ng-template>
+    <div *ngIf="responseData.length" echarts [options]="chartOption" [merge]="updateOptions"></div>
+    <div *ngIf="!responseData.length" class="img-nodata">
+      <img src="./../../../assets/icons/NoData.svg">
+    </div>
   </div>
 </div>

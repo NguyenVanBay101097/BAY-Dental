@@ -207,67 +207,86 @@ namespace Infrastructure.Services
         {
             var partnerObj = GetService<IPartnerService>();
             var query = partnerObj.GetQueryablePartnerFilter(val);
-            var items = await query.Include(x => x.Source).ToListAsync();
-            var res = items.GroupBy(x => new { PartnerSourceId = x.SourceId, PartnerSourceName = x.SourceId.HasValue ? x.Source.Name : null }).Select(x => new PartnerReportSourceOverview
+            var groupSourceCount = query.GroupBy(x => x.SourceId).Select(x => new
             {
-                PartnerSourceId = x.Key.PartnerSourceId,
-                PartnerSourceName = x.Key.PartnerSourceId == null ? "Chưa xác định" : x.Key.PartnerSourceName,
+                PartnerSourceId = x.Key,
                 TotalPartner = x.Count()
             }).ToList();
+
+            var partnerSourceObj = GetService<IPartnerSourceService>();
+            var sourceIds = groupSourceCount.Where(x => x.PartnerSourceId.HasValue).Select(x => x.PartnerSourceId.Value).ToList();
+            var sources = await partnerSourceObj.SearchQuery(x => sourceIds.Contains(x.Id)).ToListAsync();
+            var sourceDict = sources.ToDictionary(x => x.Id, x => x);
+
+            var res = groupSourceCount.Select(x => new PartnerReportSourceOverview
+            {
+                PartnerSourceId = x.PartnerSourceId,
+                PartnerSourceName = !x.PartnerSourceId.HasValue ? "Chưa xác định" : sourceDict[x.PartnerSourceId.Value].Name,
+                TotalPartner = x.TotalPartner
+            });
 
             return res;
         }
 
-        public async Task<PartnerGenderReportOverview> GetPartnerReportGenderOverview(PartnerQueryableFilter val)
+        public async Task<IEnumerable<PartnerGenderReportOverview>> GetPartnerReportGenderOverview(PartnerQueryableFilter val)
         {
             var partnerObj = GetService<IPartnerService>();
             var query = partnerObj.GetQueryablePartnerFilter(val);
 
-            var items = await query.ToListAsync();
-            var partnerGender_dict = items.GroupBy(x => x.Gender).ToDictionary(x => x.Key, x => x.ToList());
-            var res = new PartnerGenderReportOverview();
-            var partnerGenderItems = new List<PartnerGenderItemReportOverview>();
-            var total = partnerGender_dict.Values.Sum(s => s.Count());
-            var dataPartnerDate = sampleDataAgeFilter.Where(x => items.Any(s => s.BirthYear.HasValue && (!x.AgeFrom.HasValue || (DateTime.Now.Year - s.BirthYear.Value) >= x.AgeFrom.Value) && (!x.AgeTo.HasValue || (DateTime.Now.Year - s.BirthYear.Value) <= x.AgeTo.Value)) || items.Any(s => s.BirthYear == null && !x.AgeFrom.HasValue && x.AgeFrom == s.BirthYear)).ToList();
-            res.XAxisChart = dataPartnerDate.Select(x => x.Name).ToList();
-            res.LegendChart = partnerGender_dict.Select(x => x.Key).ToList();
-            foreach (var item in partnerGender_dict)
+            //group by theo độ tuổi
+            var nowYear = DateTime.Now.Year;
+            var ageGroupData = await query
+                .Select(x => new
+                {
+                    DoTuoi = x.BirthYear.HasValue ? ((nowYear - x.BirthYear.Value) >= 0 && (nowYear - x.BirthYear.Value) <= 12 ? 1 : ((nowYear - x.BirthYear.Value) >= 13 && (nowYear - x.BirthYear.Value) <= 17 ? 2 : ((nowYear - x.BirthYear.Value) >= 18 && (nowYear - x.BirthYear.Value) <= 24 ? 3 : ((nowYear - x.BirthYear.Value) >= 25 && (nowYear - x.BirthYear.Value) <= 34 ? 4 : ((nowYear - x.BirthYear.Value) >= 35 && (nowYear - x.BirthYear.Value) <= 44 ? 5 : ((nowYear - x.BirthYear.Value) >= 45 && (nowYear - x.BirthYear.Value) <= 64 ? 6 : 7)))))) : 8
+                })
+                .GroupBy(x => x.DoTuoi)
+                .Select(x => new
+                {
+                    DoTuoi = x.Key,
+                    Count = x.Count()
+                }).ToListAsync();
+
+            //group by theo độ tuổi và giới tính
+            var ageGenderGroupData = await query
+             .Select(x => new
+             {
+                 DoTuoi = x.BirthYear.HasValue ? ((nowYear - x.BirthYear.Value) >= 0 && (nowYear - x.BirthYear.Value) <= 12 ? 1 : ((nowYear - x.BirthYear.Value) >= 13 && (nowYear - x.BirthYear.Value) <= 17 ? 2 : ((nowYear - x.BirthYear.Value) >= 18 && (nowYear - x.BirthYear.Value) <= 24 ? 3 : ((nowYear - x.BirthYear.Value) >= 25 && (nowYear - x.BirthYear.Value) <= 34 ? 4 : ((nowYear - x.BirthYear.Value) >= 35 && (nowYear - x.BirthYear.Value) <= 44 ? 5 : ((nowYear - x.BirthYear.Value) >= 45 && (nowYear - x.BirthYear.Value) <= 64 ? 6 : 7)))))) : 8,
+                 Gender = x.Gender
+             })
+             .GroupBy(x => new { DoTuoi = x.DoTuoi, Gender = x.Gender })
+             .Select(x => new
+             {
+                 DoTuoi = x.Key.DoTuoi,
+                 Gender = x.Key.Gender,
+                 Count = x.Count()
+             }).ToListAsync();
+
+            var doTuoiNameDict = new Dictionary<int, string>()
             {
-                var count = item.Value.Count();
-                var percentTotal = Math.Round((double)(100 * count) / total);
+                { 8, "Chưa xác định" },
+                { 1, "0 - 12" },
+                { 2, "13 - 17" },
+                { 3, "18 - 24" },
+                { 4, "25 - 34" },
+                { 5, "35 - 44" },
+                { 6, "45 - 64" },
+                { 7, "65+" },
+            };
 
-                var itemValues = new List<int>();
-                var itemPercentValues = new List<double>();
-                foreach (var rangeAge in dataPartnerDate)
+            var res = new List<PartnerGenderReportOverview>();
+            foreach (var ageGroup in ageGroupData)
+            {
+                var item = new PartnerGenderReportOverview()
                 {
-                    var countPn = item.Value.AsQueryable();
-
-                    if (rangeAge.AgeFrom.HasValue)
-                        countPn = countPn.Where(x => x.BirthYear.HasValue && (DateTime.Now.Year - x.BirthYear.Value) >= rangeAge.AgeFrom.Value);
-
-                    if (rangeAge.AgeTo.HasValue)
-                        countPn = countPn.Where(x => x.BirthYear.HasValue && (DateTime.Now.Year - x.BirthYear.Value) <= rangeAge.AgeTo.Value);
-
-                    if (!rangeAge.AgeFrom.HasValue && !rangeAge.AgeTo.HasValue)
-                        countPn = countPn.Where(x => x.BirthYear == null);
-
-                    itemValues.Add(countPn.Count());
-                    var percent = countPn.Count() > 0 ? Math.Round((double)(percentTotal * countPn.Count()) / count, 2) : 0;
-                    itemPercentValues.Add(percent);
-
-                  
-                }
-
-                partnerGenderItems.Add(new PartnerGenderItemReportOverview
-                {
-                    PartnerGender = item.Key,
-                    PartnerGenderPercent = percentTotal,
-                    Count = itemValues,
-                    Percent = itemPercentValues
-                });
+                    AgeRange = ageGroup.DoTuoi,
+                    AgeRangeName = doTuoiNameDict[ageGroup.DoTuoi],
+                    TotalMale = ageGenderGroupData.Where(x => x.DoTuoi == ageGroup.DoTuoi && x.Gender == "male").FirstOrDefault() != null ? ageGenderGroupData.Where(x => x.DoTuoi == ageGroup.DoTuoi && x.Gender == "male").FirstOrDefault().Count : 0,
+                    TotalFemale = ageGenderGroupData.Where(x => x.DoTuoi == ageGroup.DoTuoi && x.Gender == "female").FirstOrDefault() != null ? ageGenderGroupData.Where(x => x.DoTuoi == ageGroup.DoTuoi && x.Gender == "female").FirstOrDefault().Count : 0,
+                    TotalOther = ageGenderGroupData.Where(x => x.DoTuoi == ageGroup.DoTuoi && x.Gender == "other").FirstOrDefault() != null ? ageGenderGroupData.Where(x => x.DoTuoi == ageGroup.DoTuoi && x.Gender == "other").FirstOrDefault().Count : 0
+                };
+                res.Add(item);
             }
-
-            res.PartnerGenderItems = partnerGenderItems;
 
             return res;
         }
@@ -288,7 +307,7 @@ namespace Infrastructure.Services
             var partnerObj = GetService<IPartnerService>();
             var query = partnerObj.GetQueryablePartnerFilter(val);
 
-            var cityResults = await query.GroupBy(x => new { CityCode = x.CityCode, CityName = x.CityName}).Select(x => new GetPartnerForCityReportOverview
+            var cityResults = await query.GroupBy(x => new { CityCode = x.CityCode, CityName = x.CityName }).Select(x => new GetPartnerForCityReportOverview
             {
                 CityCode = x.Key.CityCode,
                 CityName = x.Key.CityName,
@@ -298,8 +317,8 @@ namespace Infrastructure.Services
             var cityCodes = cityResults.Select(x => x.CityCode).ToList();
 
             var districtResults = await query.Where(x => cityCodes.Contains(x.CityCode))
-                .GroupBy(x => new 
-                { 
+                .GroupBy(x => new
+                {
                     CityCode = x.CityCode,
                     DistrictCode = x.DistrictCode,
                     DistrictName = x.DistrictName
@@ -331,10 +350,10 @@ namespace Infrastructure.Services
                     Count = x.Count()
                 }).ToListAsync();
 
-            foreach(var cityResult in cityResults)
+            foreach (var cityResult in cityResults)
             {
                 cityResult.Districts = districtResults.Where(x => x.CityCode == cityResult.CityCode).ToList();
-                foreach(var districtResult in cityResult.Districts)
+                foreach (var districtResult in cityResult.Districts)
                 {
                     districtResult.Wards = wardResult.Where(x => x.CityCode == cityResult.CityCode && x.DistrictCode == districtResult.DistrictCode).ToList();
                 }

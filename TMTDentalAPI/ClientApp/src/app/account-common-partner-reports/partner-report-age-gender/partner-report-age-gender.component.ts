@@ -10,7 +10,82 @@ import { AccountCommonPartnerReportOverviewFilter, AccountCommonPartnerReportSer
 export class PartnerReportAgeGenderComponent implements OnInit {
   @Input() filter: any;
   dataSet: any;
-  chartOption: EChartsOption;
+  responseData: any = [];
+  updateOptions: any;
+  chartOption: EChartsOption = {
+    textStyle: {
+      fontFamily: 'sans-serif',
+    },
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'shadow'
+      },
+    },
+    legend: {
+      bottom: 10,
+      left: 'center',
+    },
+    toolbox: {
+      show: true,
+      orient: 'vertical',
+      left: 'right',
+      top: 'center',
+    },
+    xAxis: [
+      {
+        type: 'category',
+        axisLabel: {
+          interval: 0
+        },
+        data: []
+      }
+    ],
+    yAxis: [
+      {
+        type: "value",
+        axisLabel: {
+          formatter: "{value}"
+        }
+      }
+    ],
+    series: [
+      {
+        name: 'Nam',
+        type: 'bar',
+        barGap: 0,
+        emphasis: {
+          focus: 'series'
+        },
+        itemStyle: {
+          color: '#007BFF'
+        },
+        data: []
+      },
+      {
+        name: 'Nữ',
+        type: 'bar',
+        emphasis: {
+          focus: 'series'
+        },
+        itemStyle: {
+          color: '#EB3B5B'
+        },
+        data: []
+      },
+      {
+        name: 'Khác',
+        type: 'bar',
+        emphasis: {
+          focus: 'series'
+        },
+        itemStyle: {
+          color: '#28A745'
+        },
+        data: []
+      }
+    ]
+  };
 
   constructor(
     private accountCommonPartnerReportService: AccountCommonPartnerReportService
@@ -23,89 +98,24 @@ export class PartnerReportAgeGenderComponent implements OnInit {
   loadReportAgeGender() {
     let val = Object.assign({}, this.filter) as AccountCommonPartnerReportOverviewFilter;
     this.accountCommonPartnerReportService.getPartnerReportGenderOverview(val).subscribe((res: any) => {
-      this.dataSet = res;
-
-      this.loadChartOption();
-    }, error => console.log(error));
-  }
-
-  loadChartOption() {
-    this.chartOption = {
-      textStyle: {
-        fontFamily: 'sans-serif',
-      },
-      tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-          type: 'shadow'
+      this.responseData = res;
+      this.updateOptions = {
+        xAxis: {
+          data: res.map(x => x.ageRangeName)
         },
-      },
-      legend: {
-        bottom: 10,
-        left: 'center',
-        data: this.getGender(this.dataSet?.legendChart)
-      },
-      toolbox: {
-        show: true,
-        orient: 'vertical',
-        left: 'right',
-        top: 'center',
-
-      },
-      xAxis: [
-        {
-          type: 'category',
-          axisLabel: {
-            interval: 0
+        series: [
+          {
+            data: res.map(x => x.totalMale)
           },
-          data: this.dataSet?.xAxisChart
-        }
-      ],
-      yAxis: [
-        {
-          type: "value",
-          axisLabel: {
-            formatter: "{value}"
+          {
+            data: res.map(x => x.totalFemale)
+          },
+          {
+            data: res.map(x => x.totalOther)
           }
-        }
-      ],
-      series: [
-        {
-          name: 'Nam',
-          type: 'bar',
-          barGap: 0,
-          emphasis: {
-            focus: 'series'
-          },
-          itemStyle: {
-            color: '#007BFF'
-          },
-          data: this.dataSet?.partnerGenderItems[0]?.count
-        },
-        {
-          name: 'Nữ',
-          type: 'bar',
-          emphasis: {
-            focus: 'series'
-          },
-          itemStyle: {
-            color: '#EB3B5B'
-          },
-          data: this.dataSet?.partnerGenderItems[1]?.count
-        },
-        {
-          name: 'Khác',
-          type: 'bar',
-          emphasis: {
-            focus: 'series'
-          },
-          itemStyle: {
-            color: '#28A745'
-          },
-          data: this.dataSet?.partnerGenderItems[2]?.count
-        }
-      ]
-    }
+        ]
+      };
+    }, error => console.log(error));
   }
 
   getGender(val: string[]) {
