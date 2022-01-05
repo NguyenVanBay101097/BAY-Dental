@@ -118,7 +118,7 @@ namespace Infrastructure.Services
             var iRModelDataObj = GetService<IIRModelDataService>();
             var userObj = GetService<IUserService>();
             var user = await userObj.GetCurrentUser();
-            var refSubtype = await iRModelDataObj.GetRef<MailMessageSubtype>(subtype);
+            var refSubtype = await iRModelDataObj.GetRef<MailMessageSubtype>($"mail.{subtype}");
             return await CreateAsync(new MailMessage
             {
                 Body = body,

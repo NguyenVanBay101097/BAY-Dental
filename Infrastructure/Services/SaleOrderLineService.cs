@@ -1614,7 +1614,7 @@ namespace Infrastructure.Services
             if ((oldState == "sale" || string.IsNullOrEmpty(oldState)) && line.State == "sale")
                 content = "Sử dụng dịch vụ";
 
-            var bodySaleOrderLine = string.Format($"<p>{content} <b>{0}</b> - phiếu điều trị <b>{1}</b></p>", line.Name, orderName);
+            var bodySaleOrderLine = string.Format("<p>{0} <b>{1}</b> - phiếu điều trị <b>{2}</b></p>", content, line.Name, orderName);
             await mailMessageObj.CreateActionLog(body: bodySaleOrderLine, threadId: line.OrderPartnerId, threadModel: "res.partner", subtype: "subtype_sale_order_line");
         }
 

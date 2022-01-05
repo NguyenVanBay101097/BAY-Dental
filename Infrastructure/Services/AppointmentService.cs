@@ -405,7 +405,7 @@ namespace Infrastructure.Services
             appointment = await CreateAsync(appointment);
 
             //Create log appointment
-            var bodyContent = string.Format($"Đặt lịch hẹn {0} </br>Thời gian: {1}</br>Bác sĩ: {2}</br>Nội dung: {3}", appointment.Name, appointment.Date.ToLongDateString(), appointment.Doctor?.Name, appointment.Note);
+            var bodyContent = string.Format("Đặt lịch hẹn {0} </br>Thời gian: {1}</br>Bác sĩ: {2}</br>Nội dung: {3}", $"{(appointment.IsRepeatCustomer ? "tái khám" : "khám mới")} - {appointment.Name}", appointment.Date.ToLongDateString(), appointment.Doctor?.Name, appointment.Note);
             await mailMessageObj.CreateActionLog(body: bodyContent, threadId: appointment.PartnerId, threadModel: "res.partner", subtype: "subtype_appointment");
             return appointment;
         }
