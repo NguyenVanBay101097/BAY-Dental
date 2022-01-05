@@ -111,8 +111,8 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.ThreadModel))
                 query = query.Where(x => x.Model == val.ThreadModel);
 
-            var items = await query.Include(x => x.Author).Include(x => x.Subtype).ToListAsync();
-
+            var items = await query.Include(x => x.Author).Include(x => x.Subtype).ToListAsync();     
+            
             return items;
         }
 

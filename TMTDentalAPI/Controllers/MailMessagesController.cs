@@ -30,16 +30,20 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> GetLogsForPartner(LogForPartnerRequest val)
         {
             var res = await _mailMessageService.GetLogsForPartner(val);
-            var logs = res.Select(x => new LogForPartnerResponse
+            var actionLogs = res.GroupBy(x => x.Date.Value.Date).Select(x => new TimeLineLogForPartnerResponse
             {
-                body = x.Body,
-                Date = x.Date.Value,
-                Id = x.Id,
-                SubtypeName = x.Subtype.Name,
-                UserName = x.Author.Name
+                Date = x.Key.Date,
+                Logs = x.Select(s => new LogForPartnerResponse
+                {
+                    Id = s.Id,
+                    Date = s.Date.Value,
+                    body = s.Body,
+                    SubtypeName = s.Subtype.Name,
+                    UserName = s.Author.Name
+                }).ToList()
             }).ToList();
 
-            return Ok(logs);
+            return Ok(actionLogs);
         }
     }
 }

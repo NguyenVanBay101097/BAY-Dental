@@ -16,6 +16,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? ThreadId { get; set; }
     }
 
+    public class TimeLineLogForPartnerResponse
+    {
+        public DateTime Date { get; set; }
+
+        public List<LogForPartnerResponse> Logs { get; set; }
+    }
+
     public class LogForPartnerResponse
     {
         public Guid Id { get; set; }
