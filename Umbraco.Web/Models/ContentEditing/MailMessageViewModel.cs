@@ -4,18 +4,63 @@ using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
+    public class LogForPartnerRequest
+    {
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+
+        public string ThreadModel { get; set; }
+
+        public Guid? ThreadId { get; set; }
+    }
+
+    public class LogForPartnerResponse
+    {
+        public Guid Id { get; set; }
+
+        public DateTime Date { get; set; }
+
+        public string body { get; set; }
+
+        public string SubtypeName { get; set; }
+
+        public string UserName { get; set; }
+    }
+
+    public class MailMessageBasic
+    {
+        public Guid Id { get; set; }
+
+        public DateTime Date { get; set; }
+
+        public string body { get; set; }
+
+        public string SubtypeName { get; set; }
+
+        public string UserName { get; set; }
+    }
+
     public class MailMessageSave
     {
         /// <summary>
         /// nội dung
         /// </summary>
-        public string body { get; set; }
+        public string Body { get; set; }
 
+        /// <summary>
+        /// ResId
+        /// </summary>
+        public Guid? ThreadId { get; set; }
 
-        public Guid? ResId { get; set; }
+        /// <summary>
+        /// model
+        /// </summary>
+        public string ThreadModel { get; set; }
 
-        public string Model { get; set; }
-
+        /// <summary>
+        /// notification
+        /// comment
+        /// </summary>
         public string MessageType { get; set; }
 
         /// <summary>

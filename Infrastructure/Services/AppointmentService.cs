@@ -86,7 +86,7 @@ namespace Infrastructure.Services
         {
             var query = GetSearchQuery(search: val.Search, state: val.State, isLate: val.IsLate,
                 partnerId: val.PartnerId, doctorId: val.DoctorId, dateFrom: val.DateTimeFrom,
-                dateTo: val.DateTimeTo, userId: val.UserId, companyId: val.CompanyId, 
+                dateTo: val.DateTimeTo, userId: val.UserId, companyId: val.CompanyId,
                 dotKhamId: val.DotKhamId, isRepeatCustomer: val.IsRepeatCustomer);
 
             var totalItems = await query.CountAsync();
@@ -371,7 +371,7 @@ namespace Infrastructure.Services
         {
             var query = GetSearchQuery(search: val.Search, state: val.State, isLate: val.IsLate,
               partnerId: val.PartnerId, doctorId: val.DoctorId, dateFrom: val.DateTimeFrom,
-              dateTo: val.DateTimeTo, userId: val.UserId, companyId: val.CompanyId, 
+              dateTo: val.DateTimeTo, userId: val.UserId, companyId: val.CompanyId,
               dotKhamId: val.DotKhamId, isRepeatCustomer: val.IsRepeatCustomer);
 
             query = query.OrderByDescending(x => x.DateCreated);
@@ -389,6 +389,7 @@ namespace Infrastructure.Services
 
         public async Task<Appointment> CreateAsync(AppointmentDisplay val)
         {
+            var mailMessageObj = GetService<IMailMessageService>();
             var appointment = _mapper.Map<Appointment>(val);
             if (val.Services.Any())
             {
@@ -402,6 +403,10 @@ namespace Infrastructure.Services
             }
 
             appointment = await CreateAsync(appointment);
+
+            //Create log appointment
+            var bodyContent = string.Format($"Đặt lịch hẹn {0} </br>Thời gian: {1}</br>Bác sĩ: {2}</br>Nội dung: {3}", appointment.Name, appointment.Date.ToLongDateString(), appointment.Doctor?.Name, appointment.Note);
+            await mailMessageObj.CreateActionLog(body: bodyContent, threadId: appointment.PartnerId, threadModel: "res.partner", subtype: "subtype_appointment");
             return appointment;
         }
 

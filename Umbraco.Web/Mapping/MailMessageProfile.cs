@@ -14,6 +14,8 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<MailMessage, MailMessageFormat>();
 
+            CreateMap<MailMessage, MailMessageBasic>();
+
             CreateMap<MailMessage, MailMessageSave>();
 
             CreateMap<MailMessageSave, MailMessage>();

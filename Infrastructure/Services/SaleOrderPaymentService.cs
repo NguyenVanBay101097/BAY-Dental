@@ -356,10 +356,33 @@ namespace Infrastructure.Services
                     await cardObj.UpdateAsync(card);
                 }
 
-
+                //Create Log SaleOrderPayment
+                var insuranceId = payments.Any(s => s.InsuranceId.HasValue) ? payments.Select(s => s.InsuranceId).FirstOrDefault() : null;
+                await GenerateLogSaleOrderPayment(saleOrderPayment, insuranceId);
             }
+
             //await partnerObj.UpdateMemberLevelForPartner(partnerIds);
             await UpdateAsync(saleOrderPayments);
+        }
+
+        public async Task GenerateLogSaleOrderPayment(SaleOrderPayment payment, Guid? insuranceId = null)
+        {
+            var insuranceObj = GetService<IResInsuranceService>();
+            var mailMessageObj = GetService<IMailMessageService>();
+            var content = "";
+            var insurance = await insuranceObj.GetByIdAsync(insuranceId);
+            if (payment.State == "posted")
+                content = "Thanh toán phiếu điều trị";
+            if (payment.State == "cancel")
+                content = "Hủy thanh toán phiếu điều trị";
+            if (payment.State == "posted" && insurance != null)
+                content = $"Công ty <b>{insurance.Name}</b> bảo lãnh phiếu điều trị";
+            if (payment.State == "cancel" && insurance != null)
+                content = $"Hủy bảo lãnh phiếu điều trị";
+
+
+            var bodyContent = string.Format($"{content} {0} số tiền {1} đồng", payment.Order.Name, string.Format("{#,##0}", payment.Amount));
+            await mailMessageObj.CreateActionLog(body: bodyContent, threadId: payment.Order.PartnerId, threadModel: "res.partner", subtype: "subtype_sale_order_payment");
         }
 
         public decimal ConvertAmountToPoint(decimal amount)

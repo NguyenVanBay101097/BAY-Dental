@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Specifications;
+using ApplicationCore.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -90,6 +91,44 @@ namespace Infrastructure.Services
 
             return messages;
         }
-        
+
+        public async Task<IEnumerable<MailMessage>> GetLogsForPartner(LogForPartnerRequest val)
+        {
+            var query = SearchQuery();
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Date >= val.DateFrom.Value.AbsoluteBeginOfDate());
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Date <= val.DateTo.Value.AbsoluteEndOfDate());
+
+            if (val.ThreadId.HasValue)
+                query = query.Where(x => x.ResId == val.ThreadId);
+
+            if (!string.IsNullOrEmpty(val.ThreadModel))
+                query = query.Where(x => x.Model == val.ThreadModel);
+
+            var items = await query.Include(x => x.Author).Include(x => x.Subtype).ToListAsync();
+
+            return items;
+        }
+
+        public async Task<MailMessage> CreateActionLog(string body = null, Guid? threadId = null, string threadModel = null, string messageType = "notification", string subtype = "subtype_comment")
+        {
+            var iRModelDataObj = GetService<IIRModelDataService>();
+            var userObj = GetService<IUserService>();
+            var user = await userObj.GetCurrentUser();
+            var refSubtype = await iRModelDataObj.GetRef<MailMessageSubtype>(subtype);
+            return await CreateAsync(new MailMessage
+            {
+                Body = body,
+                ResId = threadId,
+                Model = threadModel,
+                MessageType = messageType,
+                SubtypeId = refSubtype?.Id,
+                AuthorId = user?.PartnerId
+            });
+        }
+
     }
 }

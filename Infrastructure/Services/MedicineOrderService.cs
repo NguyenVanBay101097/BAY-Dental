@@ -48,7 +48,7 @@ namespace Infrastructure.Services
 
             if (val.CompanyId.HasValue)
             {
-                query = query.Where(x=> x.CompanyId == val.CompanyId.Value);
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
             }
 
 
@@ -115,7 +115,7 @@ namespace Infrastructure.Services
             };
 
             var medicineOrderLines = new List<MedicineOrderLineDisplay>();
-            var toathuocLines = await toathuoLinecObj.SearchQuery(x => x.ToaThuocId == toathuoc.Id 
+            var toathuocLines = await toathuoLinecObj.SearchQuery(x => x.ToaThuocId == toathuoc.Id
             //(x.ToInvoiceQuantity == null || (x.ToInvoiceQuantity != null && x.ToInvoiceQuantity > 0))
             )
                 .Include(x => x.Product.UOM)
@@ -258,9 +258,25 @@ namespace Infrastructure.Services
                 propertyObj.set_multi("member_level", "res.partner", levelValuesDict, force_company: medicineOrder.CompanyId);
             }
 
+            await GenerateLogMedicineOrder(medicineOrder);
+
             var basic = _mapper.Map<MedicineOrderBasic>(medicineOrder);
             return basic;
 
+        }
+
+        public async Task GenerateLogMedicineOrder(MedicineOrder payment)
+        {
+            var mailMessageObj = GetService<IMailMessageService>();
+            var content = "";
+            if (payment.State == "posted")
+                content = "Thanh toán đơn thuốc";
+            if (payment.State == "cancel")
+                content = "Hủy thanh toán đơn thuốc";
+
+
+            var bodyContent = string.Format($"{content} {0} số tiền {1} đồng", payment.ToaThuoc.Name, string.Format("{#,##0}", payment.Amount));
+            await mailMessageObj.CreateActionLog(body: bodyContent, threadId: payment.PartnerId, threadModel: "res.partner", subtype: "subtype_sale_order_payment");
         }
 
         public async Task<decimal> ConvertAmountToPoint(decimal amount)
@@ -532,6 +548,8 @@ namespace Infrastructure.Services
                     };
                     propertyObj.set_multi("member_level", "res.partner", levelValuesDict, force_company: order.CompanyId);
                 }
+
+                await GenerateLogMedicineOrder(order);
             }
 
             if (move_ids.Any())
@@ -589,7 +607,7 @@ namespace Infrastructure.Services
                 entity.Name = await sequenceService.NextByCode("medicine.order");
             }
 
-            await base.CreateAsync(entity); 
+            await base.CreateAsync(entity);
 
             return entity;
         }
@@ -655,12 +673,12 @@ namespace Infrastructure.Services
         {
             var modelObj = GetService<IIRModelService>();
             var modelDataObj = GetService<IIRModelDataService>();
-            var iruleObj = GetService<IIRRuleService>();        
+            var iruleObj = GetService<IIRRuleService>();
             var model = await modelDataObj.GetRef<IRRule>("medicineOrder.medicine_order_comp_rule");
             if (model == null)
             {
                 var irModel = await modelObj.SearchQuery(x => x.Model == "MedicineOrders").FirstOrDefaultAsync();
-                if(irModel == null)
+                if (irModel == null)
                 {
                     irModel = new IRModel
                     {
@@ -671,7 +689,7 @@ namespace Infrastructure.Services
                     modelObj.Sudo = true;
                     await modelObj.CreateAsync(irModel);
                 }
-              
+
                 var irule = new IRRule
                 {
                     Name = "MedicineOrder multi-company",
@@ -687,7 +705,7 @@ namespace Infrastructure.Services
                 await modelDataObj.CreateAsync(new IRModelData
                 {
                     Module = reference[0],
-                    Name = reference[1],                  
+                    Name = reference[1],
                     Model = "ir.rule",
                     ResId = irule.Id.ToString()
                 });

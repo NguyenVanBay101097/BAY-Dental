@@ -1462,7 +1462,7 @@ namespace Infrastructure.Services
             {
                 var promotionObj = GetService<ISaleOrderPromotionService>();
                 await promotionObj.ComputeAmount(orderPromotionIds);
-            }        
+            }
 
             //Tính toán lại thành tiền, tổng giảm giá, tổng tiền, đã thanh toán, còn lại cho order
             var orderObj = GetService<ISaleOrderService>();
@@ -1485,6 +1485,7 @@ namespace Infrastructure.Services
 
         public async Task<SaleOrderLine> CreateOrderLine(SaleOrderLineSave val)
         {
+            var mailMessageObj = GetService<IMailMessageService>();
             var orderObj = GetService<ISaleOrderService>();
             var order = await orderObj.SearchQuery(x => x.Id == val.OrderId)
                .Include(x => x.OrderLines)
@@ -1531,6 +1532,9 @@ namespace Infrastructure.Services
                 && (await SearchQuery(x => x.OrderId == saleLine.OrderId).AnyAsync(x => x.State == "done"));
             if (isOrderDone)
                 await orderObj.ActionDone(new List<Guid>() { saleLine.OrderId });
+
+            await GenerateActionLogSaleOrderLine(saleLine, null, order.Name);
+
             return saleLine;
         }
 
@@ -1580,17 +1584,38 @@ namespace Infrastructure.Services
 
         public async Task UpdateState(Guid id, string state)
         {
-            var line = await GetByIdAsync(id);
+            var line = await SearchQuery(x => x.Id == id).Include(x => x.Order).FirstOrDefaultAsync();
+            var oldLineState = line.State;
             line.State = state;
             if (line.State == "done")
                 line.DateDone = DateTime.Now;
             await UpdateAsync(line);
+
             //action done saleorder
             var isOrderDone = (await SearchQuery(x => x.OrderId == line.OrderId).AllAsync(x => x.State == "done" || x.State == "cancel"))
                 && (await SearchQuery(x => x.OrderId == line.OrderId).AnyAsync(x => x.State == "done"));
             var orderObj = GetService<ISaleOrderService>();
             if (isOrderDone)
                 await orderObj.ActionDone(new List<Guid>() { line.OrderId });
+
+            await GenerateActionLogSaleOrderLine(line, oldLineState, line.Order.Name);
+        }
+
+        public async Task GenerateActionLogSaleOrderLine(SaleOrderLine line, string oldState = null, string orderName = null)
+        {
+            var mailMessageObj = GetService<IMailMessageService>();
+            var content = "";
+            if ((oldState == "cancel" || oldState == "done") && line.State == "sale")
+                content = "Tiếp tục điều trị dịch vụ";
+            if ((oldState == "sale" || string.IsNullOrEmpty(oldState)) && line.State == "done")
+                content = "Hoàn thành dịch vụ";
+            if (oldState == "sale" && line.State == "cancel")
+                content = "Ngừng điều trị dịch vụ";
+            if ((oldState == "sale" || string.IsNullOrEmpty(oldState)) && line.State == "sale")
+                content = "Sử dụng dịch vụ";
+
+            var bodySaleOrderLine = string.Format($"<p>{content} <b>{0}</b> - phiếu điều trị <b>{1}</b></p>", line.Name, orderName);
+            await mailMessageObj.CreateActionLog(body: bodySaleOrderLine, threadId: line.OrderPartnerId, threadModel: "res.partner", subtype: "subtype_sale_order_line");
         }
 
         public async Task<ServiceSaleReportPrint> SaleReportPrint(SaleOrderLinesPaged val)
@@ -1615,7 +1640,7 @@ namespace Infrastructure.Services
 
         public async Task DebtPayment(Guid id)
         {
-            var saleLine = await SearchQuery(x=> x.Id == id).Include(x=>x.Order).FirstOrDefaultAsync();
+            var saleLine = await SearchQuery(x => x.Id == id).Include(x => x.Order).FirstOrDefaultAsync();
             if (saleLine == null)
                 throw new Exception("Không tìm thấy dịch vụ");
             var amountToPay = saleLine.PriceTotal - saleLine.AmountInvoiced;
@@ -1623,7 +1648,7 @@ namespace Infrastructure.Services
             var journalObj = GetService<IAccountJournalService>();
             var soPaymentObj = GetService<ISaleOrderPaymentService>();
             var debtJournal = await journalObj.GetJournalByTypeAndCompany("debt", saleLine.CompanyId.Value);
-            
+
             var soPaymentSave = new SaleOrderPaymentSave()
             {
                 Amount = amountToPay.Value,
@@ -1646,7 +1671,7 @@ namespace Infrastructure.Services
                     }
                 },
                 Note = saleLine.Order.Name + " - Khách hàng thanh toán",
-                OrderId = saleLine.OrderId ,
+                OrderId = saleLine.OrderId,
                 State = "draft"
             };
             var soPayment = await soPaymentObj.CreateSaleOrderPayment(soPaymentSave);

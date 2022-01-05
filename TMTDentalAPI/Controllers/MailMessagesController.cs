@@ -25,5 +25,21 @@ namespace TMTDentalAPI.Controllers
             var res = await _mailMessageService.MessageFetch(val);
             return Ok(res);
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetLogsForPartner(LogForPartnerRequest val)
+        {
+            var res = await _mailMessageService.GetLogsForPartner(val);
+            var logs = res.Select(x => new LogForPartnerResponse
+            {
+                body = x.Body,
+                Date = x.Date.Value,
+                Id = x.Id,
+                SubtypeName = x.Subtype.Name,
+                UserName = x.Author.Name
+            }).ToList();
+
+            return Ok(logs);
+        }
     }
 }
