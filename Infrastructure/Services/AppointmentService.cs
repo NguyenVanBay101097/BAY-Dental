@@ -409,7 +409,7 @@ namespace Infrastructure.Services
             //Create log appointment
 
             var doctor = appointment.DoctorId.HasValue ? await employeeObj.GetByIdAsync(appointment.DoctorId) : null;
-            var bodyContent = string.Format("Đặt lịch hẹn {0} <br>Thời gian: {1}<br>Bác sĩ: {2}<br>Nội dung: {3}", $"{(appointment.IsRepeatCustomer ? "tái khám" : "khám mới")} - {appointment.Name}", $"{appointment.Date.ToString("HH:mm dddd", CultureInfo.GetCultureInfo("vi-VN"))}, {appointment.Date.ToString("dd/MM/yyyy")}", doctor?.Name, appointment.Note);
+            var bodyContent = string.Format("Đặt lịch hẹn {0} <br>Thời gian: {1}<br>Bác sĩ: {2}<br>Nội dung: {3}", $"<b>{(appointment.IsRepeatCustomer ? "<b>tái khám</b>" : "<b>khám mới</b>")} - {appointment.Name}</b>", $"{appointment.Date.ToString("HH:mm dddd", CultureInfo.GetCultureInfo("vi-VN"))}, {appointment.Date.ToString("dd/MM/yyyy")}", doctor?.Name, appointment.Note);
             await mailMessageObj.CreateActionLog(body: bodyContent, threadId: appointment.PartnerId, threadModel: "res.partner", subtype: "subtype_appointment");
             return appointment;
         }

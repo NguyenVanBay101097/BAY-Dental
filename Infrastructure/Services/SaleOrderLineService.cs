@@ -1534,7 +1534,8 @@ namespace Infrastructure.Services
             if (isOrderDone)
                 await orderObj.ActionDone(new List<Guid>() { saleLine.OrderId });
 
-            await GenerateActionLogSaleOrderLine(saleLine, null, order.Name);
+            if (saleLine.State != "draft")
+                await GenerateActionLogSaleOrderLine(saleLine, null, order.Name);
 
             return saleLine;
         }
@@ -1615,7 +1616,7 @@ namespace Infrastructure.Services
             if ((oldState == "sale" || string.IsNullOrEmpty(oldState)) && line.State == "sale")
                 content = "Sử dụng dịch vụ";
 
-            var bodySaleOrderLine = string.Format("<p>{0} <b>{1}</b> - phiếu điều trị <b>{2}</b></p>", content, line.Name, orderName);
+            var bodySaleOrderLine = string.Format("{0} <b>{1}</b> - phiếu điều trị <b>{2}</b>", content, line.Name, orderName);
             await mailMessageObj.CreateActionLog(body: bodySaleOrderLine, threadId: line.OrderPartnerId, threadModel: "res.partner", subtype: "subtype_sale_order_line");
         }
 
