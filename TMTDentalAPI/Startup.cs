@@ -395,6 +395,7 @@ namespace TMTDentalAPI
 
             services.AddScoped<ISaleProductionService, SaleProductionService>();
             services.AddScoped<ISaleProductionLineService, SaleProductionLineService>();
+            services.AddScoped<ISurveyReportService, SurveyReportService>();
 
             services.AddMemoryCache();
 

@@ -310,6 +310,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     var val = new PartnerFilter();
     val.limit = 20;
     val.search = s ?? '';
+    val.customer = true;
     return this.partnerService.autocomplete2(val)
   }
 
@@ -672,7 +673,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     if(this.partner && this.partner.phone == value) {
        return;
     }
-    this.partnerService.getExist({ phone: value}).subscribe(res => {
+    this.partnerService.getExist({ phone: value, customer: true}).subscribe(res => {
       this.phoneExistPartners = res;
     })
   }

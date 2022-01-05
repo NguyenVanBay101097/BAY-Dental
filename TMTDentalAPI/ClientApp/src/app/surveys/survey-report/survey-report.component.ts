@@ -1,12 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
-import { ColorPaletteService } from '@progress/kendo-angular-inputs';
 import { EChartsOption } from 'echarts';
 import * as moment from 'moment';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
-import { GetReportReq } from '../survey-userinput.service';
-import { SurveyAssignmentService } from '../survey.service';
+import { GetReportAssignmentQueryRequest, SurveReportService } from '../survey-report.service';
 
 @Component({
   selector: 'app-survey-report',
@@ -15,7 +13,7 @@ import { SurveyAssignmentService } from '../survey.service';
 })
 export class SurveyReportComponent implements OnInit {
 
-  filter = new GetReportReq();
+  filter = new GetReportAssignmentQueryRequest();
   companies: CompanySimple[] = [];
   @ViewChild("companyCbx", { static: true }) companyVC: ComboBoxComponent;
   empChartOption: EChartsOption;
@@ -26,7 +24,7 @@ export class SurveyReportComponent implements OnInit {
   dataQuestionReport: any = [];
   constructor(
     private companyService: CompanyService,
-    private assService: SurveyAssignmentService
+    private surveReportService: SurveReportService
   ) { }
 
   ngOnInit(): void {
@@ -56,9 +54,9 @@ export class SurveyReportComponent implements OnInit {
   }
 
   loadDataFromApi() {
-    this.loadEmployeeReport();
-    this.loadScoreReport();
-    this.loadQuestionReport();
+    this.loadReportNumberOfAssigmentByEmployee();
+    this.loadReportRatingScroreRate();
+    this.loadReportSatifyScoreRatingByQuestion();
   }
 
   getApiReq() {
@@ -69,10 +67,10 @@ export class SurveyReportComponent implements OnInit {
     return val;
   }
 
-  loadEmployeeReport() {
+  loadReportNumberOfAssigmentByEmployee() {
     var val = this.getApiReq();
     val.status = "done,contact";
-    this.assService.getEmployeeReport(val).subscribe((res: any[]) => {
+    this.surveReportService.reportNumberOfAssigmentByEmployee(val).subscribe((res: any[]) => {
       this.dataEmpReport = res;
       let xAxisData = [];
       let data1 = [];
@@ -97,6 +95,10 @@ export class SurveyReportComponent implements OnInit {
         },
         tooltip: {
           trigger: "axis",
+          textStyle: {
+            fontSize: 'unset',
+            fontFamily:"unset"
+          },
           axisPointer: {
             type: "line",
           },
@@ -158,15 +160,19 @@ export class SurveyReportComponent implements OnInit {
     })
   }
 
-  loadScoreReport() {
+  loadReportRatingScroreRate() {
     var val = this.getApiReq();
     val.status = "done";
-    this.assService.getScoreReport(val).subscribe((res: any) => {
+    this.surveReportService.reportRatingScroreRate(val).subscribe((res: any) => {
       this.dataScroreReport = res;
       var colors = ['#007BFF', '#FFC107', '#28A645', '#939EAB', '#EB3B5B'];
       this.scoreChartOption = {
         tooltip: {
-          trigger: 'item'
+          trigger: 'item',
+          textStyle: {
+            fontSize: 'unset',
+            fontFamily:"unset"
+          },
         },
         legend: {
           right: 'center',
@@ -203,10 +209,10 @@ export class SurveyReportComponent implements OnInit {
     return this.dataQuestionReport?.questionNames?.length;
   }
 
-  loadQuestionReport() {
+  loadReportSatifyScoreRatingByQuestion() {
     var val = this.getApiReq();
     val.status = "done";
-    this.assService.getQuestionReport(val).subscribe((res: any) => {
+    this.surveReportService.reportSatifyScoreRatingByQuestion(val).subscribe((res: any) => {
       this.dataQuestionReport = res;
       var colors = ['#939EAB', '#EB3B5B', '#FFC107', '#28A645', '#007BFF'];
       var seriesData = [];
@@ -232,6 +238,10 @@ export class SurveyReportComponent implements OnInit {
       this.questionChartOption = {
         tooltip: {
           trigger: 'axis',
+          textStyle: {
+            fontSize: 'unset',
+            fontFamily:"unset"
+          },
           axisPointer: {
             type: 'line' // 'shadow' as default; can also be 'line' or 'shadow'
           },
