@@ -24,4 +24,10 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? ActivatedDate { get; set; }
         public DateTime? ExpiredDate { get; set; }
     }
+
+    public class GetServiceCardCardNewestCreatedRequest
+    {
+        public Guid? PartnerId { get; set; }
+        public string State { get;set; }
+    }
 }

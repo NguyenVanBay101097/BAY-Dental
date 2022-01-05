@@ -459,17 +459,18 @@ namespace Infrastructure.Services
 
             var totalItems = await query.CountAsync();
 
-            query = query.Include(x => x.OrderPartner).Include(x => x.Product).Include(x => x.ProductUOM).Include(x => x.Order).Include(x => x.Labos).Include(x => x.Employee).OrderByDescending(x => x.DateCreated);
+            query = query.Include(x => x.OrderPartner).Include(x => x.Product).Include(x => x.ProductUOM).Include(x => x.Order).Include(x => x.Labos)
+                .Include(x => x.Employee).Include("SaleOrderLineToothRels.Tooth").OrderByDescending(x => x.DateCreated);
             if (val.Limit > 0)
             {
                 query = query.Skip(val.Offset).Take(val.Limit);
             }
 
-            var items = await _mapper.ProjectTo<SaleOrderLineBasic>(query).ToListAsync();
+            var items = await query.ToListAsync();
 
             return new PagedResult2<SaleOrderLineBasic>(totalItems, val.Offset, val.Limit)
             {
-                Items = items
+                Items = _mapper.Map<IEnumerable<SaleOrderLineBasic>>(items)
             };
         }
 

@@ -880,5 +880,12 @@ namespace TMTDentalAPI.Controllers
             var res = await _partnerService.GetExist(val);
             return Ok(res);
         }
+
+        [HttpPost("{id}/[action]")]
+        public async Task<IActionResult> GetTotalAmountOfSaleOrder(Guid id)
+        {
+            var res = await _partnerService.GetTotalAmountOfSaleOrder(id);
+            return Ok(new { Value = res });
+        }
     }
 }
