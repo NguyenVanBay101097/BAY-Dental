@@ -3,13 +3,9 @@
         Số lượng khách hàng theo khu vực
     </h5>
     <div class="card-body">
-        <ng-container *ngIf="(dataSet | json) != '{}'; else elseTemplate">
-            <div echarts [options]="chartOption" (chartClick)="onChartClick($event)"></div>
-        </ng-container>
-        <ng-template #elseTemplate>
-            <div class="img-nodata">
-                <img src="./../../../assets/icons/NoData.svg">
-            </div>
-        </ng-template>
+        <div echarts *ngIf="data.length" (chartInit)="onChartInit($event)" [options]="chartOption" [merge]="updateOptions" (chartClick)="onChartClick($event)"></div>
+        <div *ngIf="!data.length" class="img-nodata">
+            <img src="./../../../assets/icons/NoData.svg">
+        </div>
     </div>
 </div>

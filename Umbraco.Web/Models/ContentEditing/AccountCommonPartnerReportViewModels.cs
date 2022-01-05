@@ -251,6 +251,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class GetPartnerForDistrictReportOverview
     {
+        public string CityCode { get; set; }
+
         public string DistrictName { get; set; }
 
         public string DistrictCode { get; set; }
@@ -262,6 +264,10 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class GetPartnerForWardReportOverview
     {
+        public string CityCode { get; set; }
+
+        public string DistrictCode { get; set; }
+
         public string WardName { get; set; }
 
         public string WardCode { get; set; }

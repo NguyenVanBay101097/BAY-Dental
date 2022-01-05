@@ -262,7 +262,8 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
     this.reportFilterPopup.onUpdateFormValue(event);
   }
 
-  filterEmit(val) {
+  filterEmit(e) {
+    var val = e && e.data;
     if (val) {
       if (val.type === 'city') {
         this.filter.cityCode = val.code;
