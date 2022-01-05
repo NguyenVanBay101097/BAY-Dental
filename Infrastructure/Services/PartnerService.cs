@@ -2544,7 +2544,7 @@ namespace Infrastructure.Services
             var partnerObj = GetService<IPartnerService>();
             var partnerSourceObj = GetService<IPartnerSourceService>();
 
-           
+
 
             var mainQuery = partnerObj.SearchQuery(x => x.Active && x.Customer);
 
@@ -3344,6 +3344,13 @@ namespace Infrastructure.Services
         {
             var query = SearchQuery(x => x.Phone == val.Phone);
             return _mapper.Map<IEnumerable<PartnerSimple>>(await query.ToListAsync());
+        }
+
+        public async Task<decimal> GetTotalAmountOfSaleOrder(Guid id)
+        {
+            var orderObj = GetService<ISaleOrderService>();
+            var query = orderObj.SearchQuery(x => x.State != "draft" && x.PartnerId == id);
+            return await query.SumAsync(x=> x.AmountTotal ?? 0);
         }
     }
 
