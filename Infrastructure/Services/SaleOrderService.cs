@@ -387,7 +387,7 @@ namespace Infrastructure.Services
             foreach(var sale in self)
             {
                 ///Create log saleorder
-                var bodySaleOrder = string.Format($"<p>Hủy phiếu điều trị <b>{0}</b>", sale.Name);
+                var bodySaleOrder = string.Format("<p>Hủy phiếu điều trị <b>{0}</b>", sale.Name);
                 await mailMessageObj.CreateActionLog(body: bodySaleOrder, threadId: sale.PartnerId, threadModel: "res.partner", subtype: "subtype_sale_order");
             }
 
@@ -468,7 +468,7 @@ namespace Infrastructure.Services
 
                 var mailMessageObj = GetService<IMailMessageService>();
                 ///Create log saleorder
-                var bodySaleOrder = string.Format($"<p>Hoàn thành phiếu điều trị <b>{0}</b>", sale.Name);
+                var bodySaleOrder = string.Format("<p>Hoàn thành phiếu điều trị <b>{0}</b>", sale.Name);
                 await mailMessageObj.CreateActionLog(body: bodySaleOrder, threadId: sale.PartnerId, threadModel: "res.partner", subtype: "subtype_sale_order");
 
                 //tạo 1 message chờ gửi
@@ -1738,11 +1738,11 @@ namespace Infrastructure.Services
 
 
                 ///Create log saleorder
-                var bodySaleOrder = string.Format($"<p>Tạo phiếu điều trị <b>{0}</b></p>", order.Name);
+                var bodySaleOrder = string.Format("<p>Tạo phiếu điều trị <b>{0}</b></p>", order.Name);
                 await mailMessageObj.CreateActionLog(body: bodySaleOrder, threadId: order.PartnerId, threadModel: "res.partner", subtype: "subtype_sale_order");
 
                 ///Create log saleorderline
-                var bodySaleOrderLine = string.Format($"<p>Sử dụng dịch vụ <b>{0}</b> - phiếu điều trị <b>{1}</b></p>", string.Join(",", order.OrderLines.Select(s => s.Name).ToList()), order.Name);
+                var bodySaleOrderLine = string.Format("<p>Sử dụng dịch vụ <b>{0}</b> - phiếu điều trị <b>{1}</b></p>", string.Join(",", order.OrderLines.Select(s => s.Name).ToList()), order.Name);
                 await mailMessageObj.CreateActionLog(body: bodySaleOrderLine, threadId: order.PartnerId, threadModel: "res.partner", subtype: "subtype_sale_order_line");
                 //await saleLineObj.RecomputeCommissions(order.OrderLines);
             }

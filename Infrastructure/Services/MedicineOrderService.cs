@@ -269,13 +269,13 @@ namespace Infrastructure.Services
         {
             var mailMessageObj = GetService<IMailMessageService>();
             var content = "";
-            if (payment.State == "posted")
+            if (payment.State == "confirmed")
                 content = "Thanh toán đơn thuốc";
             if (payment.State == "cancel")
                 content = "Hủy thanh toán đơn thuốc";
 
 
-            var bodyContent = string.Format($"{content} {0} số tiền {1} đồng", payment.ToaThuoc.Name, string.Format("{#,##0}", payment.Amount));
+            var bodyContent = string.Format("{0} {1} số tiền {2} đồng", content, payment.ToaThuoc.Name, string.Format("{0:#,##0}", payment.Amount));
             await mailMessageObj.CreateActionLog(body: bodyContent, threadId: payment.PartnerId, threadModel: "res.partner", subtype: "subtype_sale_order_payment");
         }
 

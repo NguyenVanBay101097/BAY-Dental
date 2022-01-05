@@ -115,7 +115,7 @@ namespace Infrastructure.Services
             ///Create Log
             var mailMessageObj = GetService<IMailMessageService>();
             var order = await orderobj.GetByIdAsync(saleOrderId);
-            var bodyContent = string.Format($"Khám đợt <b>{0}</b> - phiếu điều trị <b>{1}</b>", dotKham.Name , order.Name);
+            var bodyContent = string.Format("Khám đợt <b>{0}</b> - phiếu điều trị <b>{1}</b>", dotKham.Name , order.Name);
             await mailMessageObj.CreateActionLog(body: bodyContent, threadId: dotKham.PartnerId, threadModel: "res.partner", subtype: "subtype_dotkham");
 
             return dotKham;
