@@ -230,49 +230,87 @@
                     <div class="filter h-100 overflow-hidden">
                         <div class="filter-title">Lựa chọn lọc</div>
                         <div class="filter-group">
+                            <div class="filter-label">Bác sĩ</div>
+                            <div class="filter-content">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="box-calendar">
+                                            <div class="box-icon" style="background-color: #E5F2FF;">
+                                                <i class="far fa-calendar text-primary"></i>
+                                            </div>
+                                            <div class="box-content">
+                                                <span>Đang hẹn</span>
+                                                <span class="font-weight-bold">{{onCountState('confirmed')}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="box-calendar">
+                                            <div class="box-icon" style="background-color: #EAFFEF;">
+                                                <i class="far fa-clock text-success"></i>
+                                            </div>
+                                            <div class="box-content">
+                                                <span>Dự kiến</span>
+                                                <span class="font-weight-bold">{{computeTimeExpected()}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="btn-group flex-column w-100 btn-group-employee">
+                                    <input checked class="btn-check" type="radio" name="employee"
+                                        [id]="'employee-default'" [value]="''" (change)="onChangeEmployee('')">
+                                    <label class="btn btn-label btn-outline-primary" [for]="'employee-default'">
+                                        Tất cả
+                                    </label>
+
+                                    <ng-container *ngFor="let employee of listEmployees; index as i">
+                                        <input class="btn-check" type="radio" name="employee" [id]="'employee-' + i"
+                                            [value]="employee.id" (change)="onChangeEmployee(employee.id)">
+                                        <label class="btn btn-label btn-outline-primary" [for]="'employee-' + i">
+                                            {{employee.name}}
+                                        </label>
+                                    </ng-container>
+                                </div>
+                            </div>
                             <!-- <div class="filter-label">Thời gian</div>
                             <div class="filter-content">
                                 <app-date-range-picker-filter opens="left" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onChangeDate($event)">
                                 </app-date-range-picker-filter>
                             </div> -->
                             <div class="filter-label">Trạng thái</div>
-                            <div class="filter-content">
-                                <div class="form-check t-form-check mb-1" *ngFor="let state of states; index as i">
-                                    <input class="form-check-input" type="radio" (change)="onChangeState(state.value)"
-                                        name="state" [id]="'state-' + i" [value]="state.value"
-                                        [(ngModel)]="stateSelected">
-                                    <label class="form-check-label" [for]="'state-' + i">
-                                        {{state.text}}
-                                    </label>
+                            <div class="w-100">
+                                <div class="btn-group flex-column w-100" role="group">
+                                    <ng-container *ngFor="let state of states; index as i">
+                                        <input class="btn-check" type="radio" (change)="onChangeState(state.value)"
+                                            name="state" [id]="'state-' + i" [value]="state.value"
+                                            [(ngModel)]="stateSelected">
+                                        <label class="btn btn-label btn-outline-primary" [for]="'state-' + i">
+                                            <div class="d-flex-between">
+                                                <span class="badge-status bg-confirmed" *ngIf="state.value === 'confirmed'"></span>
+                                                <span class="badge-status bg-arrived" *ngIf="state.value === 'done'"></span>
+                                                <span class="badge-status bg-cancel" *ngIf="state.value === 'cancel'"></span>
+                                                <span class="badge-status bg-overdue" *ngIf="state.value === 'overdue'"></span>
+                                                <span class="ml-2">{{state.text}}</span>
+                                            </div>
+                                            <span>{{onCountState(state.value)}}</span>
+                                        </label>
+                                    </ng-container>
                                 </div>
                             </div>
                             <div class="filter-label">Loại khám</div>
-                            <div class="filter-content">
-                                <div class="form-check t-form-check mb-1" *ngFor="let type of types; index as i">
-                                    <input class="form-check-input" type="radio" (change)="onChangeType(type.value)"
-                                        name="type" [id]="'type-' + i" [value]="type.value" [(ngModel)]="typeSelected">
-                                    <label class="form-check-label" [for]="'type-' + i">
-                                        {{type.text}}
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="filter-label">Bác sĩ</div>
-                            <div class="filter-content">
-                                <div class="form-check t-form-check mb-1">
-                                    <input checked class="form-check-input" type="radio" name="employee"
-                                        [id]="'employee-default'" [value]="''" (change)="onChangeEmployee('')">
-                                    <label class="form-check-label" [for]="'employee-default'">
-                                        Tất cả
-                                    </label>
-                                </div>
-
-                                <div class="form-check t-form-check mb-1"
-                                    *ngFor="let employee of listEmployees; index as i">
-                                    <input class="form-check-input" type="radio" name="employee" [id]="'employee-' + i"
-                                        [value]="employee.id" (change)="onChangeEmployee(employee.id)">
-                                    <label class="form-check-label" [for]="'employee-' + i">
-                                        {{employee.name}}
-                                    </label>
+                            <div class="w-100">
+                                <div class="btn-group flex-column w-100" role="group">
+                                    <ng-container *ngFor="let type of types; index as i">
+                                        <input class="btn-check" type="radio" (change)="onChangeType(type.value)"
+                                            name="type" [id]="'type-' + i" [value]="type.value"
+                                            [(ngModel)]="typeSelected">
+                                        <label class="btn btn-label btn-outline-primary" [for]="'type-' + i">
+                                            <span>{{type.text}}</span>
+                                            <span>
+                                                {{onCountType(type.value)}}
+                                            </span>
+                                        </label>
+                                    </ng-container>
                                 </div>
                             </div>
                         </div>

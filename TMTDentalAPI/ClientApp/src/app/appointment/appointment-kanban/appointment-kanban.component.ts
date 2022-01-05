@@ -4,6 +4,7 @@ import { NgbDropdownToggle, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import * as _ from 'lodash';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ReceiveAppointmentService } from 'src/app/customer-receipt/receive-appointment.service';
@@ -103,9 +104,10 @@ export class AppointmentKanbanComponent implements OnInit {
   firstTime = 6; // format 24h : 0h - 23h
   lastTime = 23; // format 24h : 0h - 23h
   dataAppointmentsGrouped = null;
-  dataAppointments: any[] = [];
+  dataAppointments = [];
   titleToolbar = "";
-
+  clientFilter: boolean = false;
+  dataAppointmentsForFilter: any[] = [];
   constructor(
     private appointmentService: AppointmentService,
     private intlService: IntlService,
@@ -128,6 +130,7 @@ export class AppointmentKanbanComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe(() => {
+        this.clientFilter = true;
         this.renderCalendar(); // Render Calendar
       });
 
@@ -173,6 +176,7 @@ export class AppointmentKanbanComponent implements OnInit {
       this.state = state;
       this.isLateFilter = undefined;
     }
+    this.clientFilter = true;
 
     this.renderCalendar(); // Render Calendar
   }
@@ -185,6 +189,7 @@ export class AppointmentKanbanComponent implements OnInit {
     } else {
       this.isRepeatCustomer = undefined;
     }
+    this.clientFilter = true;
 
     this.renderCalendar(); // Render Calendar
   }
@@ -204,20 +209,69 @@ export class AppointmentKanbanComponent implements OnInit {
   loadData() {
     // this.resetData();
     // this.loading = true;
+    if (this.clientFilter) {
+      this.loadItems();
+    } else {
+      this.loadDataFromApi();
+    }
+  }
+
+  loadItems() {
+    this.dataAppointmentsForFilter = [...this.dataAppointments];
+
+    // lọc theo trạng thái
+    this.dataAppointmentsForFilter = this.state ? this.dataAppointmentsForFilter.filter(x => {
+      return this.isLateFilter ?
+        (this.state === x.state && Boolean(x.isLate)) :
+        (this.state === x.state && Boolean(!x.isLate));
+    }) : [...this.dataAppointments];
+
+    // lọc theo loại khám
+    if (this.isRepeatCustomer != undefined) {
+      this.dataAppointmentsForFilter = this.dataAppointmentsForFilter.filter(x => {
+        return this.isRepeatCustomer === x.isRepeatCustomer;
+      });
+    }
+
+    //  lọc theo từ khóa tìm kiếm
+    // const search = this.search ? this.search.toLowerCase() : '';
+    // this.dataAppointmentsForFilter = search ? this.dataAppointmentsForFilter.filter(x => {
+    //   return _.includes(x.partnerName.toLowerCase(), search) || _.includes(x.partnerPhone.toLowerCase(), search);
+    // }) : [...this.dataAppointments];
+
+    this.loadAppointmentToCalendar();
+    this.clientFilter = false;
+  }
+
+  onCountState(value: any): number {
+    value = (value === 'overdue') ? 'confirmed' : value;
+    return value ? this.dataAppointments.filter(x => {
+      return this.isLateFilter ? (x.state === value && Boolean(x.isLate)) : (x.state === value && Boolean(!x.isLate))
+    }).length || 0 : this.dataAppointments.length;
+  }
+
+  onCountType(value: any): number {
+    return value ? this.dataAppointments.filter(x => {
+      return value === 'repeat' ? Boolean(x.isRepeatCustomer) : Boolean(!x.isRepeatCustomer)
+    }).length : this.dataAppointments.length || 0;
+
+  }
+
+  loadDataFromApi() {
     var val = new AppointmentPaged();
     val.limit = this.limit;
     val.offset = this.offset;
-    val.state = this.state || '';
-    if (this.isLateFilter) {
-      val.isLate = this.isLateFilter;
-    }
+    // val.state = this.state || '';
+    // if (this.isLateFilter) {
+    //   val.isLate = this.isLateFilter;
+    // }
     val.search = this.search || '';
     val.doctorId = this.employeeSelected || '';
     val.dateTimeFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
     val.dateTimeTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
-    if (this.isRepeatCustomer != undefined) {
-      val.isRepeatCustomer = this.isRepeatCustomer;
-    }
+    // if (this.isRepeatCustomer != undefined) {
+    //   val.isRepeatCustomer = this.isRepeatCustomer;
+    // }
 
     this.appointmentService.getPaged(val).pipe(
       map((response: any) =>
@@ -234,8 +288,10 @@ export class AppointmentKanbanComponent implements OnInit {
         dateFormat: new Date(v.date).setHours(0, 0, 0, 0),
         dateHour: new Date(v.date).getHours()
       }));
-
+      this.dataAppointmentsForFilter = [...this.dataAppointments];
+      console.log(this.dataAppointments);
       this.loadAppointmentToCalendar();
+      this.computeTimeExpected();
     }, (error: any) => {
       console.log(error);
       this.loading = false;
@@ -463,8 +519,8 @@ export class AppointmentKanbanComponent implements OnInit {
   }
 
   groupByDataAppointments() {
-    if (this.dataAppointments !== null && this.dataAppointments.length > 0) {
-      this.dataAppointmentsGrouped = this.dataAppointments.reduce(function (r, a) {
+    if (this.dataAppointmentsForFilter !== null && this.dataAppointmentsForFilter.length > 0) {
+      this.dataAppointmentsGrouped = this.dataAppointmentsForFilter.reduce(function (r, a) {
         r[a['dateFormat']] = r[a['dateFormat']] || [];
         r[a['dateFormat']].push(a);
         return r;
@@ -1099,4 +1155,14 @@ export class AppointmentKanbanComponent implements OnInit {
     });
   }
 
+  computeTimeExpected() {
+    const timeExpected = this.dataAppointments.filter(x => x.state === 'confirmed' && Boolean(!x.isLate)).reduce((previousValue, currentValue) => {
+      return previousValue += currentValue.timeExpected;
+    }, 0) || 0;
+
+    const m = timeExpected % 60;
+    const h = (timeExpected - m) / 60;
+    const HHMM = h.toString() + 'g' + (m < 10 ? '0' : '') + m.toString() + 'ph';
+    return HHMM;
+  }
 }

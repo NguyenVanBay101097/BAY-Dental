@@ -9,19 +9,22 @@
     padding: 15px;
     background: #fff;
 }
+
 .cont-left {
     -webkit-box-flex: 1;
     flex: 1;
     width: 0;
 }
+
 .cont-right {
     /* display: none; */
     -webkit-box-flex: 0;
     /* flex: 0 0 230px; */
-    flex: 0 0 230px;
+    flex: 0 0 280px;
     margin-left: 1rem;
     border: 1px solid #e2e7ed;
 }
+
 .filter-title {
     font-size: 1.05rem;
     font-weight: 500;
@@ -30,12 +33,16 @@
     padding: 0.5rem;
     height: 36px;
 }
+
 .filter-label {
     font-weight: 500;
-    padding: 0.5rem;
+    padding: 0.5rem 0;
 }
+
 .filter-content {
-    padding: 0 0.5rem;
+    /* padding: 0 0.5rem; */
+    height: 370px;
+    overflow: hidden;
 }
 
 .cont-calendar {
@@ -74,42 +81,42 @@
     background-color: #d7dadd;
 }
 
-.btn-check-calendar .btn-check + label {
+.btn-check-calendar .btn-check+label {
     margin-bottom: 0;
 }
 
-.btn-check-calendar .btn-check + .btn {
+.btn-check-calendar .btn-check+.btn {
     color: #929daa;
     border-color: #e2e7ed;
     border-radius: 0;
     border-right-width: 0;
 }
 
-.btn-check-calendar .btn-check + .btn:hover {
+.btn-check-calendar .btn-check+.btn:hover {
     border-color: #e2e7ed;
     background-color: #e2e7ed;
 }
 
-.btn-check-calendar .btn-check:first-of-type + .btn {
+.btn-check-calendar .btn-check:first-of-type+.btn {
     border-top-left-radius: 0.2rem;
     border-bottom-left-radius: 0.2rem;
 }
 
-.btn-check-calendar .btn-check:last-of-type + .btn {
+.btn-check-calendar .btn-check:last-of-type+.btn {
     border-top-right-radius: 0.2rem;
     border-bottom-right-radius: 0.2rem;
     border-right-width: 1px;
 }
 
-.btn-check-calendar .btn-check:active + .btn,
-.btn-check-calendar .btn-check:checked + .btn {
+.btn-check-calendar .btn-check:active+.btn,
+.btn-check-calendar .btn-check:checked+.btn {
     color: #fff;
     border-color: #0d6efd;
     background-color: #0d6efd;
 }
 
-.btn-check-calendar .btn-check:active + .btn-white,
-.btn-check-calendar .btn-check:checked + .btn-white {
+.btn-check-calendar .btn-check:active+.btn-white,
+.btn-check-calendar .btn-check:checked+.btn-white {
     color: #858f9b;
     border-color: #e2e7ed;
     background-color: #fff;
@@ -203,7 +210,7 @@
     text-align: center;
 }
 
-.main-calender .calendar-table th:first-child, 
+.main-calender .calendar-table th:first-child,
 .main-calender .calendar-table td:first-child {
     border-left: 1px solid #dee2e6 !important;
 }
@@ -278,8 +285,10 @@
     /* cursor: pointer; */
     width: 100%;
     max-width: 200px;
-    border-left: 3px solid #2395FF; /* default */
-    background: #E5F2FF; /* default */
+    border-left: 3px solid #2395FF;
+    /* default */
+    background: #E5F2FF;
+    /* default */
     cursor: default;
 }
 
@@ -295,8 +304,9 @@
     padding: .1rem .5rem;
     border-radius: 4px;
     color: white;
-    background: #2395FF; /* default */
-} 
+    background: #2395FF;
+    /* default */
+}
 
 .date-event-v2 .header .t-action {
     display: flex;
@@ -335,7 +345,8 @@
 .date-event-v2 .content i {
     width: 16px;
     opacity: 0.5;
-    color: #1A6DE3; /* default */
+    color: #1A6DE3;
+    /* default */
 }
 
 .date-event-v2 .content span {
@@ -383,7 +394,7 @@
     opacity: 0;
 }
 
-.list-data-event-day .date-event-v2:hover ~ .td-day-overwrite {
+.list-data-event-day .date-event-v2:hover~.td-day-overwrite {
     opacity: 1 !important;
 }
 
@@ -427,7 +438,7 @@
     opacity: 0;
 }
 
-.list-data-event-week .date-event-v2:hover ~ .td-week-overwrite {
+.list-data-event-week .date-event-v2:hover~.td-week-overwrite {
     opacity: 1 !important;
 }
 
@@ -452,7 +463,8 @@
     width: 7px;
     border-radius: 50%;
     margin-right: 8px;
-    background: #007bff; /* default */
+    background: #007bff;
+    /* default */
 }
 
 .dot-status span {
@@ -460,35 +472,43 @@
 }
 
 .color-confirmed {
-    color: #2395FF; /* đang hẹn */
+    color: #2395FF;
+    /* đang hẹn */
 }
 
 .color-arrived {
-    color: #28A745; /* đã đến */
+    color: #28A745;
+    /* đã đến */
 }
 
 .color-cancel {
-    color: #EB3B5B; /* hủy hẹn */
+    color: #EB3B5B;
+    /* hủy hẹn */
 }
 
 .color-overdue {
-    color: #FFC107; /* quá hạn */
+    color: #FFC107;
+    /* quá hạn */
 }
 
 .bg-confirmed {
-    background: #2395FF; /* đang hẹn */
+    background: #2395FF;
+    /* đang hẹn */
 }
 
 .bg-arrived {
-    background: #28A745; /* đã đến */
+    background: #28A745;
+    /* đã đến */
 }
 
 .bg-cancel {
-    background: #EB3B5B; /* hủy hẹn */
+    background: #EB3B5B;
+    /* hủy hẹn */
 }
 
 .bg-overdue {
-    background: #FFC107; /* quá hạn */
+    background: #FFC107;
+    /* quá hạn */
 }
 
 /* đang hẹn */
@@ -587,25 +607,96 @@
     cursor: pointer;
 }
 
-.dialog-calendar .body {
-
-}
+.dialog-calendar .body {}
 
 /* Hide Arrows From Input Number */
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+    -webkit-appearance: none;
+    margin: 0;
 }
+
 /* Firefox */
 input[type=number] {
-  -moz-appearance: textfield;
+    -moz-appearance: textfield;
 }
 
-.filter-group{
+.filter-group {
     height: calc(100% - 36px);
     overflow: auto;
+    padding: 0.5rem;
 }
 
-.k-grid tr.isLate { background-color: #f45c42; }
+.k-grid tr.isLate {
+    background-color: #f45c42;
+}
+
+.flex-column {
+    flex-direction: column;
+}
+
+.btn-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #E2E7ED !important;
+}
+
+.btn-check:active+.btn-outline-primary, .btn-check:checked+.btn-outline-primary, .btn-outline-primary.active, .btn-outline-primary.dropdown-toggle.show, .btn-outline-primary:active {
+    color: #007BFF;
+    background-color: #E6F2FF;
+}
+.btn-outline-primary {
+    color: unset;
+}
+.btn-outline-primary:hover {
+    color: #007BFF;
+    background-color: #E6F2FF;
+}
+
+.box-calendar {
+    border: 1px solid #E2E7ED;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px;
+    margin-bottom: 10px;
+    /* width: 120px; */
+}
+
+.box-icon {
+    /* border: 1px solid green; */
+    /* margin: 0 10px; */
+    /* width: 30px; */
+    /* height: 30px; */
+    border-radius: 50%;
+    /* text-align: center; */
+    /* padding-top: 3px; */
+    padding: 4px 8px;
+}
+
+.box-content {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+}
+
+.btn-group-employee {
+    overflow: auto;
+    height: 77%;
+    border: 1px solid #E2E7ED;
+}
+
+.badge-status {
+    width: 24px;
+    height: 14px;
+    border-radius: 34%;
+}
+
+.d-flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
