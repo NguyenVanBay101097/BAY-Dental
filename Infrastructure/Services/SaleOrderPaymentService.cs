@@ -381,7 +381,7 @@ namespace Infrastructure.Services
                 content = $"Hủy bảo lãnh phiếu điều trị";
 
 
-            var bodyContent = string.Format("{0} {1} số tiền {2} đồng", content, payment.Order.Name, string.Format("{#,##0}", payment.Amount));
+            var bodyContent = string.Format("{0} {1} số tiền {2} đồng", content, payment.Order.Name, string.Format("{0:#,##0}", payment.Amount));
             await mailMessageObj.CreateActionLog(body: bodyContent, threadId: payment.Order.PartnerId, threadModel: "res.partner", subtype: "subtype_sale_order_payment");
         }
 
