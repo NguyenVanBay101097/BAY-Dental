@@ -29,7 +29,7 @@ namespace Infrastructure.Services
 
         Task<IEnumerable<PartnerReportSourceOverview>> GetPartnerReportSourceOverview(PartnerQueryableFilter val);
 
-        Task<PartnerGenderReportOverview> GetPartnerReportGenderOverview(PartnerQueryableFilter val);
+        Task<IEnumerable<PartnerGenderReportOverview>> GetPartnerReportGenderOverview(PartnerQueryableFilter val);
 
         Task<IEnumerable<GetPartnerForCityReportOverview>> GetPartnerReportTreeMapOverview(PartnerQueryableFilter val);
     }

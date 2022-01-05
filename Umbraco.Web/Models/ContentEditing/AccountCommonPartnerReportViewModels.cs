@@ -119,12 +119,15 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class PartnerGenderReportOverview
     {
-        public IEnumerable<string> XAxisChart { get; set; }
-        public IEnumerable<string> LegendChart { get; set; }
-        public List<PartnerGenderItemReportOverview> PartnerGenderItems { get; set; } = new List<PartnerGenderItemReportOverview>();
+        public int AgeRange { get; set; }
 
+        public string AgeRangeName { get; set; }
 
+        public int TotalMale { get; set; }
 
+        public int TotalFemale { get; set; }
+
+        public int TotalOther { get; set; }
     }
 
     public class PartnerGenderItemReportOverview
