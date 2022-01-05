@@ -288,41 +288,59 @@ namespace Infrastructure.Services
             var partnerObj = GetService<IPartnerService>();
             var query = partnerObj.GetQueryablePartnerFilter(val);
 
-            var items = await query.ToListAsync();
-            var partnerForCities = new List<GetPartnerForCityReportOverview>();
-            var itemNullLocations = items.Where(x => string.IsNullOrEmpty(x.CityCode) && x.CityCode != "").ToList();
-            if (itemNullLocations.Any())
+            var cityResults = await query.GroupBy(x => new { CityCode = x.CityCode, CityName = x.CityName}).Select(x => new GetPartnerForCityReportOverview
             {
-                partnerForCities.Add(new GetPartnerForCityReportOverview
+                CityCode = x.Key.CityCode,
+                CityName = x.Key.CityName,
+                Count = x.Count()
+            }).ToListAsync();
+
+            var cityCodes = cityResults.Select(x => x.CityCode).ToList();
+
+            var districtResults = await query.Where(x => cityCodes.Contains(x.CityCode))
+                .GroupBy(x => new 
+                { 
+                    CityCode = x.CityCode,
+                    DistrictCode = x.DistrictCode,
+                    DistrictName = x.DistrictName
+                })
+                .Select(x => new GetPartnerForDistrictReportOverview
                 {
-                    CityName = "Không xác định",
-                    CityCode = null,
-                    Count = itemNullLocations.Count(),
-                    Districts = new List<GetPartnerForDistrictReportOverview>(),
-                });
+                    CityCode = x.Key.CityCode,
+                    DistrictCode = x.Key.DistrictCode,
+                    DistrictName = x.Key.DistrictName,
+                    Count = x.Count()
+                }).ToListAsync();
+
+            var districtCodes = districtResults.Select(x => x.DistrictCode).ToList();
+
+            var wardResult = await query.Where(x => cityCodes.Contains(x.CityCode) && districtCodes.Contains(x.DistrictCode))
+                .GroupBy(x => new
+                {
+                    CityCode = x.CityCode,
+                    DistrictCode = x.DistrictCode,
+                    WardCode = x.WardCode,
+                    WardName = x.WardName
+                })
+                .Select(x => new GetPartnerForWardReportOverview
+                {
+                    CityCode = x.Key.CityCode,
+                    DistrictCode = x.Key.DistrictCode,
+                    WardCode = x.Key.WardCode,
+                    WardName = x.Key.WardName,
+                    Count = x.Count()
+                }).ToListAsync();
+
+            foreach(var cityResult in cityResults)
+            {
+                cityResult.Districts = districtResults.Where(x => x.CityCode == cityResult.CityCode).ToList();
+                foreach(var districtResult in cityResult.Districts)
+                {
+                    districtResult.Wards = wardResult.Where(x => x.CityCode == cityResult.CityCode && x.DistrictCode == districtResult.DistrictCode).ToList();
+                }
             }
 
-            partnerForCities.AddRange(items.Where(x => !string.IsNullOrEmpty(x.CityCode) && x.CityCode != "").GroupBy(x => new { CityName = x.CityName, CityCode = x.CityCode }).Select(x => new GetPartnerForCityReportOverview
-            {
-                CityName = !string.IsNullOrEmpty(x.Key.CityCode) ? x.Key.CityName : "Không xác định",
-                CityCode = !string.IsNullOrEmpty(x.Key.CityCode) ? x.Key.CityCode : null,
-                Count = x.Select(s => s.Id).Count(),
-                Districts = !string.IsNullOrEmpty(x.Key.CityCode) ? x.GroupBy(x => new { DistrictName = x.DistrictName, DistrictCode = x.DistrictCode }).Select(c => new GetPartnerForDistrictReportOverview
-                {
-                    DistrictName = !string.IsNullOrEmpty(c.Key.DistrictCode) ? c.Key.DistrictName : "Không xác định",
-                    DistrictCode = !string.IsNullOrEmpty(c.Key.DistrictCode) ? c.Key.DistrictCode : null,
-                    Count = c.Select(e => e.Id).Count(),
-                    Wards = c.GroupBy(x => new { WardName = x.WardName, WardCode = x.WardCode }).Select(e => new GetPartnerForWardReportOverview
-                    {
-                        WardName = !string.IsNullOrEmpty(e.Key.WardCode) ? e.Key.WardName : "Không xác định",
-                        WardCode = e.Key.WardCode,
-                        Count = e.Select(z => z.Id).Count()
-                    }).ToList(),
-                }).ToList() : new List<GetPartnerForDistrictReportOverview>(),
-            }).ToList());
-
-            var res = partnerForCities;
-            return res;
+            return cityResults;
         }
 
         public async Task<AccountCommonPartnerReportPrint> ReportSummaryPrint(AccountCommonPartnerReportSearch val)
