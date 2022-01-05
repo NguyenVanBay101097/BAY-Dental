@@ -65,7 +65,7 @@ namespace Infrastructure.Services
             var total = await query.CountAsync();
             var MaxScore = await query.Select(x => x.ui.MaxScore ?? 0).DefaultIfEmpty().MaxAsync();
 
-            var resLines = query.AsEnumerable().GroupBy(x => Math.Round(x.ui.Score.Value, MidpointRounding.ToZero)).OrderByDescending(x => x.Key).Select(x => new
+            var resLines = query.GroupBy(x =>Math.Ceiling(x.ui.Score.Value)).OrderByDescending(x => x.Key).Select(x => new
             {
                 Score = x.Key,
                 Count = x.Count(),
@@ -75,8 +75,8 @@ namespace Infrastructure.Services
             {
                 Lines = resLines.Select(x => new ReportRatingScroreRateOfUserInputResponseItem
                 {
-                    ScroreFrom = x.Score,
-                    ScroreTo = x.Score + 1,
+                    ScroreFrom = x.Score - 1,
+                    ScroreTo = x.Score,
                     Value = x.Count
                 }),
                 Score = Math.Round(avergScore / (total == 0 ? 1 : total), 2),

@@ -37,14 +37,21 @@
         <div class="col rp-emp-score">
             <div class="card card-rp h-100">
                 <div class="card-header">
-                    TỈ LỆ ĐIỂM ĐÁNH GIÁ
+                    TỈ LỆ ĐIỂM ĐÁNH GIÁ 
+                    <i class="fas fa-info-circle" placement="right"
+                    ngbPopover="Biểu đồ không bao gồm các bản khảo sát chỉ có câu hỏi đánh giá theo nội dung"
+                    triggers="mouseenter:mouseleave"></i>
                 </div>
                 <div class="card-body">
                     <ng-container *ngIf="dataScroreReport?.lines.length; else elseScoreTemplate">
                         <div class="">
-                            <div class="text-center">
-                                <label class="font-weight-600 mb-0">Điểm đánh giá trung bình: <span
-                                        class="text-primary">{{dataScroreReport?.score}}/{{dataScroreReport?.maxScore}}</span></label>
+                            <div class="text-center d-flex justify-content-center">
+                               <div class="border p-2 border-radius-5 p-3">
+                                <label class="font-weight-600 mb-3">Điểm đánh giá trung bình</label>
+                                <h5 class="mb-0">
+                                <span class="text-primary">{{dataScroreReport?.score}}/{{dataScroreReport?.maxScore}}</span>
+                                </h5>
+                               </div>
                             </div>
                             <div echarts [options]="scoreChartOption" class="demo-chart score-chart w-100 h-100">
                             </div>

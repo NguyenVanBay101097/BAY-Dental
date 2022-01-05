@@ -2,7 +2,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModalModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MyCustomKendoModule } from '../shared/my-customer-kendo.module';
 import { SharedModule } from '../shared/shared.module';
 import { SurveyAssignmentFormComponent } from './survey-assignment-form/survey-assignment-form.component';
@@ -57,7 +57,8 @@ import { SurveyReportComponent } from './survey-report/survey-report.component';
     NgbModalModule,
     SharedModule,
     ReactiveFormsModule,
-    DragDropModule
+    DragDropModule,
+    NgbModule,
   ],
   providers: [SurveyAssignmentService],
   entryComponents: [

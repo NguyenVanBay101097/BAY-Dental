@@ -217,6 +217,7 @@ export class SurveyReportComponent implements OnInit {
       var colors = ['#939EAB', '#EB3B5B', '#FFC107', '#28A645', '#007BFF'];
       var seriesData = [];
       var yAxisData = [];
+      var totalPercent = 0;
       res.data.forEach(e => {
         yAxisData = res.questionNames;
         seriesData.push({
@@ -231,7 +232,9 @@ export class SurveyReportComponent implements OnInit {
           },
           data: e.data.map((x, i) => {
             var total = (res.data.map(z => z.data[i]) as number[]).reduce((pre, cur) => pre + cur);
-            return { value: Math.round((x * 100 / total)) == 0 ? null : Math.round((x * 100 / total)), valueCount: x };
+            var percentValue = Math.round(((x * 100 / total) + Number.EPSILON) * 100) / 100;
+            totalPercent += percentValue;
+            return { value: i == e.data.length? (totalPercent == 100 ? null : 100 - totalPercent) : (percentValue  == 0 ? null : percentValue), valueCount: x };
           })
         })
       });
