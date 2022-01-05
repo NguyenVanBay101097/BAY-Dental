@@ -102,6 +102,9 @@ namespace Infrastructure.Services
             if (val.DateFrom.HasValue)
                 query = query.Where(x => x.Date <= val.DateTo.Value.AbsoluteEndOfDate());
 
+            if (val.SubtypeId.HasValue)
+                query = query.Where(x => x.SubtypeId == val.SubtypeId);
+
             if (val.ThreadId.HasValue)
                 query = query.Where(x => x.ResId == val.ThreadId);
 

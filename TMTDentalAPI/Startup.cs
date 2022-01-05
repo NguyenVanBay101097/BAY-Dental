@@ -607,6 +607,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new PaymentProfile());
                 mc.AddProfile(new SaleProductionProfile());
                 mc.AddProfile(new SaleProductionLineProfile());
+                mc.AddProfile(new MailMessageSubtypeProfile());
             };
 
             #endregion
