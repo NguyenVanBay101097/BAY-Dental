@@ -24,14 +24,15 @@ namespace Infrastructure.Services
         {
             var userObj = GetService<IUserService>();
             var user = await userObj.GetCurrentUser();
-            var refSubtype = await _iRModelDataService.GetRef<MailMessageSubtype>(subtype);
-            return await CreateAsync(new MailMessage { 
-            Body = body,
-            ResId = threadId,
-            Model = threadModel,
-            MessageType = messageType,
-            SubtypeId = refSubtype?.Id,
-            AuthorId = user?.PartnerId
+            var refSubtype = await _iRModelDataService.GetRef<MailMessageSubtype>($"mail.{subtype}");
+            return await CreateAsync(new MailMessage
+            {
+                Body = body,
+                ResId = threadId,
+                Model = threadModel,
+                MessageType = messageType,
+                SubtypeId = refSubtype?.Id,
+                AuthorId = user?.PartnerId
             });
         }
 

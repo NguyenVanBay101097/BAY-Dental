@@ -6,12 +6,12 @@ namespace Umbraco.Web.Models.ContentEditing
 {
     public class LogForPartnerRequest
     {
+        public int Limit { get; set; }
+
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
 
         public Guid? SubtypeId { get; set; }
-
-        public string ThreadModel { get; set; }
 
         public Guid? ThreadId { get; set; }
     }

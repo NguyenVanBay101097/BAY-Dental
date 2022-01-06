@@ -1492,7 +1492,7 @@ namespace Infrastructure.Services
             var mailMessageObj = GetService<IMailMessageService>();
             var orderObj = GetService<ISaleOrderService>();
             var order = await orderObj.SearchQuery(x => x.Id == val.OrderId)
-               .Include(x => x.OrderLines)
+               .Include(x => x.OrderLines).ThenInclude(x => x.OrderPartner)
                .FirstOrDefaultAsync();
 
             var saleLine = _mapper.Map<SaleOrderLine>(val);
@@ -1589,7 +1589,7 @@ namespace Infrastructure.Services
 
         public async Task UpdateState(Guid id, string state)
         {
-            var line = await SearchQuery(x => x.Id == id).Include(x => x.Order).FirstOrDefaultAsync();
+            var line = await SearchQuery(x => x.Id == id).Include(x => x.Order).Include(x => x.OrderPartner).FirstOrDefaultAsync();
             var oldLineState = line.State;
             line.State = state;
             if (line.State == "done")
@@ -1608,7 +1608,7 @@ namespace Infrastructure.Services
 
         public async Task GenerateActionLogSaleOrderLine(SaleOrderLine line, string oldState = null, string orderName = null)
         {
-            var mailMessageObj = GetService<IMailMessageService>();
+            var threadMessageObj = GetService<IMailThreadMessageService>();
             var content = "";
             if ((oldState == "cancel" || oldState == "done") && line.State == "sale")
                 content = "Tiếp tục điều trị dịch vụ";
@@ -1620,7 +1620,7 @@ namespace Infrastructure.Services
                 content = "Sử dụng dịch vụ";
 
             var bodySaleOrderLine = string.Format("{0} <b>{1}</b> - phiếu điều trị <b>{2}</b>", content, line.Name, orderName);
-            await mailMessageObj.CreateActionLog(body: bodySaleOrderLine, threadId: line.OrderPartnerId, threadModel: "res.partner", subtype: "subtype_sale_order_line");
+            await threadMessageObj.MessagePost(line.OrderPartner, body: bodySaleOrderLine, subjectTypeId: "mail.subtype_sale_order_line");
         }
 
         public async Task<ServiceSaleReportPrint> SaleReportPrint(SaleOrderLinesPaged val)

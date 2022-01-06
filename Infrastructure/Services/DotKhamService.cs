@@ -83,11 +83,12 @@ namespace Infrastructure.Services
         public async Task<DotKham> CreateDotKham(Guid saleOrderId, DotKhamSaveVm val)
         {
             var orderobj = GetService<ISaleOrderService>();
+            var order = await orderobj.SearchQuery(x => x.Id == saleOrderId).Include(x => x.Partner).FirstOrDefaultAsync();
             var dotKham = _mapper.Map<DotKham>(val);
             dotKham.Sequence = val.Sequence;
             dotKham.CompanyId = CompanyId;
             dotKham.SaleOrderId = saleOrderId;
-            dotKham.PartnerId = await orderobj.SearchQuery(x => x.Id == saleOrderId).Select(x => x.PartnerId).FirstOrDefaultAsync();
+            dotKham.PartnerId = order.PartnerId;
 
             ///tạo lines
             var sequence = 0;
@@ -113,10 +114,9 @@ namespace Infrastructure.Services
             await attObj.UpdateListAttachmentRes(dotKham.Id, "dot.kham", _mapper.Map<IEnumerable<IrAttachment>>(val.IrAttachments));
 
             ///Create Log
-            var mailMessageObj = GetService<IMailMessageService>();
-            var order = await orderobj.GetByIdAsync(saleOrderId);
-            var bodyContent = string.Format("Khám đợt <b>{0}</b> - phiếu điều trị <b>{1}</b>", dotKham.Name , order.Name);
-            await mailMessageObj.CreateActionLog(body: bodyContent, threadId: dotKham.PartnerId, threadModel: "res.partner", subtype: "subtype_dotkham");
+            var threadMessageObj = GetService<IMailThreadMessageService>();
+            var bodyContent = string.Format("Khám đợt <b>{0}</b> - phiếu điều trị <b>{1}</b>", dotKham.Name, order.Name);
+            await threadMessageObj.MessagePost(order.Partner, body: bodyContent, subjectTypeId: "mail.subtype_dotkham");
 
             return dotKham;
 
@@ -138,10 +138,10 @@ namespace Infrastructure.Services
 
             //SaveDotKhamImages(val, dotKham);
 
-              ///cập nhật irattachment
+            ///cập nhật irattachment
             var attObj = GetService<IIrAttachmentService>();
             await attObj.UpdateListAttachmentRes(dotKham.Id, "dot.kham", _mapper.Map<IEnumerable<IrAttachment>>(val.IrAttachments));
-          
+
 
             await UpdateAsync(dotKham);
 
@@ -243,7 +243,7 @@ namespace Infrastructure.Services
             var dotkhams = await SearchQuery(x => x.SaleOrderId == saleOrderId)
                 .Include(x => x.Doctor)
                 .Include(x => x.Assistant)
-                .Include(x => x.Lines).ThenInclude(s => s.Product).ThenInclude(x=>x.Categ)
+                .Include(x => x.Lines).ThenInclude(s => s.Product).ThenInclude(x => x.Categ)
                 .Include(x => x.Lines).ThenInclude(s => s.Product).ThenInclude(x => x.UOM)
                 .Include(x => x.Lines).ThenInclude(s => s.ToothRels).ThenInclude(x => x.Tooth)
                 .ToListAsync();
@@ -334,11 +334,11 @@ namespace Infrastructure.Services
         {
             var attObj = GetService<IIrAttachmentService>();
             var attQr = attObj.SearchQuery();
-            
+
             var resQr = from att in attQr
                         where att.ResId == id
                         select att;
-            var res = await resQr.OrderByDescending(x=> x.DateCreated).ToListAsync();
+            var res = await resQr.OrderByDescending(x => x.DateCreated).ToListAsync();
             return res;
         }
 

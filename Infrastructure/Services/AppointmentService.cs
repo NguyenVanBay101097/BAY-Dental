@@ -390,7 +390,7 @@ namespace Infrastructure.Services
 
         public async Task<Appointment> CreateAsync(AppointmentDisplay val)
         {
-            var mailMessageObj = GetService<IMailMessageService>();
+            var threadMessageObj = GetService<IMailThreadMessageService>();
             var employeeObj = GetService<IEmployeeService>();
             var appointment = _mapper.Map<Appointment>(val);
             if (val.Services.Any())
@@ -407,10 +407,9 @@ namespace Infrastructure.Services
             appointment = await CreateAsync(appointment);
 
             //Create log appointment
-
-            var doctor = appointment.DoctorId.HasValue ? await employeeObj.GetByIdAsync(appointment.DoctorId) : null;
-            var bodyContent = string.Format("Đặt lịch hẹn {0} <br>Thời gian: {1}<br>Bác sĩ: {2}<br>Nội dung: {3}", $"<b>{(appointment.IsRepeatCustomer ? "<b>tái khám</b>" : "<b>khám mới</b>")} - {appointment.Name}</b>", $"{appointment.Date.ToString("HH:mm dddd", CultureInfo.GetCultureInfo("vi-VN"))}, {appointment.Date.ToString("dd/MM/yyyy")}", doctor?.Name, appointment.Note);
-            await mailMessageObj.CreateActionLog(body: bodyContent, threadId: appointment.PartnerId, threadModel: "res.partner", subtype: "subtype_appointment");
+            appointment = await SearchQuery(x => x.Id == appointment.Id).Include(x => x.Partner).Include(x => x.Doctor).FirstOrDefaultAsync();
+            var bodyContent = string.Format("Đặt lịch hẹn {0} <br>Thời gian: {1}<br>Bác sĩ: {2}<br>Nội dung: {3}", $"<b>{(appointment.IsRepeatCustomer ? "<b>tái khám</b>" : "<b>khám mới</b>")} - {appointment.Name}</b>", $"{appointment.Date.ToString("HH:mm dddd", CultureInfo.GetCultureInfo("vi-VN"))}, {appointment.Date.ToString("dd/MM/yyyy")}", appointment.Doctor?.Name, appointment.Note);
+            await threadMessageObj.MessagePost(appointment.Partner, body: bodyContent, subjectTypeId: "mail.subtype_appointment");
             return appointment;
         }
 

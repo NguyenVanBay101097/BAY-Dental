@@ -267,16 +267,16 @@ namespace Infrastructure.Services
 
         public async Task GenerateLogMedicineOrder(MedicineOrder payment)
         {
-            var mailMessageObj = GetService<IMailMessageService>();
+            var threadMessageObj = GetService<IMailThreadMessageService>();
             var content = "";
             if (payment.State == "confirmed")
                 content = "Thanh toán đơn thuốc";
             if (payment.State == "cancel")
                 content = "Hủy thanh toán đơn thuốc";
 
-
+            payment = await SearchQuery(x => x.Id == payment.Id).Include(x => x.Partner).FirstOrDefaultAsync();
             var bodyContent = string.Format("{0} <b>{1}</b> số tiền <b>{2}<b/> đồng", content, payment.ToaThuoc.Name, string.Format("{0:#,##0}", payment.Amount));
-            await mailMessageObj.CreateActionLog(body: bodyContent, threadId: payment.PartnerId, threadModel: "res.partner", subtype: "subtype_sale_order_payment");
+            await threadMessageObj.MessagePost(payment.Partner, body: bodyContent, subjectTypeId: "mail.subtype_sale_order_payment");
         }
 
         public async Task<decimal> ConvertAmountToPoint(decimal amount)

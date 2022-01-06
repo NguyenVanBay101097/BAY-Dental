@@ -203,7 +203,7 @@ namespace Infrastructure.Services
             /// truy vấn đủ dữ liệu của saleorder payment`
             var saleOrderPayments = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.Move)
-                .Include(x => x.Order)
+                .Include(x => x.Order).ThenInclude(s => s.Partner)
                 .Include(x => x.Lines)
                 .Include(x => x.JournalLines).ThenInclude(s => s.Journal)
                 .Include(x => x.JournalLines).ThenInclude(s => s.Insurance)
@@ -368,7 +368,7 @@ namespace Infrastructure.Services
         public async Task GenerateLogSaleOrderPayment(SaleOrderPayment payment, Guid? insuranceId = null)
         {
             var insuranceObj = GetService<IResInsuranceService>();
-            var mailMessageObj = GetService<IMailMessageService>();
+            var threadMessageObj = GetService<IMailThreadMessageService>();
             var content = "";
             var insurance = await insuranceObj.GetByIdAsync(insuranceId);
             if (payment.State == "posted")
@@ -382,7 +382,7 @@ namespace Infrastructure.Services
 
 
             var bodyContent = string.Format("{0} <b>{1}</b> số tiền <b>{2}</b> đồng", content, payment.Order.Name, string.Format("{0:#,##0}", payment.Amount));
-            await mailMessageObj.CreateActionLog(body: bodyContent, threadId: payment.Order.PartnerId, threadModel: "res.partner", subtype: "subtype_sale_order_payment");
+            await threadMessageObj.MessagePost(payment.Order.Partner, body: bodyContent, subjectTypeId: "mail.subtype_sale_order_payment");
         }
 
         public decimal ConvertAmountToPoint(decimal amount)

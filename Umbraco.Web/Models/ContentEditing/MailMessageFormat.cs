@@ -21,5 +21,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Model { get; set; }
 
         public Guid? ResId { get; set; }
+
+        public bool IsNote { get; set; }
+
+        public bool IsNotification { get; set; }
     }
 }

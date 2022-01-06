@@ -108,8 +108,8 @@ namespace Infrastructure.Services
             if (val.ThreadId.HasValue)
                 query = query.Where(x => x.ResId == val.ThreadId);
 
-            if (!string.IsNullOrEmpty(val.ThreadModel))
-                query = query.Where(x => x.Model == val.ThreadModel);
+            //if (!string.IsNullOrEmpty(val.ThreadModel))
+            //    query = query.Where(x => x.Model == val.ThreadModel);
 
             var items = await query.Include(x => x.Author).Include(x => x.Subtype).ToListAsync();     
             

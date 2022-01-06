@@ -17,11 +17,11 @@
     </div>
     <div class="filter d-flex align-items-center mt-2">
       <kendo-combobox class="mr-2" [data]="listMessageSubType" [textField]="'name'" [placeholder]="'Tất cả hoạt động'"
-        [valueField]="'id'" [kendoDropDownFilter]="{ caseSensitive: false, operator: 'contains' }" [filterable]="true" (selectionChange)="onChangeSubType($event)"
-        #messSubTypeCbx>
+        [valueField]="'id'" [kendoDropDownFilter]="{ caseSensitive: false, operator: 'contains' }" [filterable]="true"
+        (selectionChange)="onChangeSubType($event)" #messSubTypeCbx>
       </kendo-combobox>
-      <app-date-range-picker-filter [opens]="'left'" class="date-picker" [startDate]="this.filter.dateFrom" [endDate]="this.filter.dateTo"
-        (searchChange)="searchChangeDate($event)" [opens]="left">
+      <app-date-range-picker-filter [opens]="'left'" class="date-picker" [startDate]="this.filter.dateFrom"
+        [endDate]="this.filter.dateTo" (searchChange)="searchChangeDate($event)" [opens]="left">
       </app-date-range-picker-filter>
     </div>
     <div class="s_body">
@@ -38,7 +38,7 @@
                 <i (click)="onDeleteMessage(message)" class="fas fa-trash cursor-pointer text-danger icon"></i>
               </div>
               <div innerHTML="{{item.body}}"></div>
-              <label class = "text-gray">
+              <label class="text-gray">
                 Người tạo: {{item.userName}} - {{item.date | date : 'shortDate'}}
               </label>
             </div>

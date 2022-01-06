@@ -45,6 +45,8 @@ namespace TMTDentalAPI.Controllers
         private readonly IServiceCardCardService _serviceCardService;
         private readonly IPartnerSourceService _partnerSourceService;
         private readonly IIRModelDataService _iRModelDataService;
+        private readonly IMailMessageService _mailMessageService;
+        private readonly IMailThreadMessageService _threadMessageService;
 
         public PartnersController(IPartnerService partnerService, IMapper mapper,
             IUnitOfWorkAsync unitOfWork,
@@ -57,7 +59,9 @@ namespace TMTDentalAPI.Controllers
             IServiceCardCardService serviceCardService,
             IPartnerSourceService partnerSourceService,
             IIRModelDataService iRModelDataService,
-            IAccountCommonPartnerReportService accReportService)
+            IAccountCommonPartnerReportService accReportService,
+            IMailMessageService mailMessageService,
+            IMailThreadMessageService threadMessageService)
         {
             _accReportService = accReportService;
             _partnerService = partnerService;
@@ -72,6 +76,8 @@ namespace TMTDentalAPI.Controllers
             _serviceCardService = serviceCardService;
             _partnerSourceService = partnerSourceService;
             _iRModelDataService = iRModelDataService;
+            _mailMessageService = mailMessageService;
+            _threadMessageService = threadMessageService;
         }
 
         [HttpGet]
@@ -886,6 +892,51 @@ namespace TMTDentalAPI.Controllers
         {
             var res = await _partnerService.GetTotalAmountOfSaleOrder(id);
             return Ok(new { Value = res });
+        }
+
+        [HttpPost("{id}/ThreadMessages")]
+        public async Task<IActionResult> GetThreadMessages([FromRoute] Guid id, [FromBody] GetThreadMessageForPartnerRequest val)
+        {
+            var modelName = typeof(Partner).Name;
+            var query = _mailMessageService.SearchQuery(x => x.Model == modelName && x.ResId == id, orderBy: x => x.OrderByDescending(s => s.Date));
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Date >= val.DateFrom.Value.AbsoluteBeginOfDate());
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Date <= val.DateTo.Value.AbsoluteEndOfDate());
+
+            if (val.SubtypeId.HasValue)
+                query = query.Where(x => x.SubtypeId == val.SubtypeId);
+
+            if (val.Limit > 0)
+                query = query.Skip(val.Offset).Take(val.Limit);
+
+            var messages = await query.Include(x => x.Author).ToListAsync();
+            var messageFormats = messages.Select(x => new MailMessageFormat
+            {
+                Id = x.Id,
+                AuthorName = x.Author?.Name,
+                Body = x.Body,
+                Date = x.Date,
+                MessageType = x.MessageType,
+                Model = x.Model,
+                ResId = x.ResId,
+                Subject = x.Subject,
+                IsNote = x.MessageType == "comment",
+                IsNotification = x.MessageType == "notification"
+            });
+
+            var response = new GetPartnerThreadMessageResponse { Messages = messageFormats };
+            return Ok(response);
+        }
+
+        [HttpPost("{id}/[action]")]
+        public async Task<IActionResult> CreateComment([FromRoute] Guid id, [FromBody] CreateCommentForPartnerRequest val)
+        {         
+            var partner = await _partnerService.GetByIdAsync(id);
+            await _threadMessageService.MessagePost(partner, body: val.body, subjectTypeId: "mail.subtype_comment", messageType: "comment");
+            return Ok();
         }
     }
 }

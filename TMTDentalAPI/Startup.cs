@@ -398,6 +398,7 @@ namespace TMTDentalAPI
 
             services.AddScoped<IMailMessageSubtypeService, MailMessageSubtypeService>();
             services.AddScoped<ICommentService, CommentService>();
+            services.AddScoped<IMailThreadMessageService, MailThreadMessageService>();
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
