@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Infrastructure.Services;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Umbraco.Web.Models.ContentEditing;
@@ -14,9 +15,12 @@ namespace TMTDentalAPI.Controllers
     public class MailMessagesController : BaseApiController
     {
         private readonly IMailMessageService _mailMessageService;
-        public MailMessagesController(IMailMessageService mailMessageService)
+        private readonly IUnitOfWorkAsync _unitOfWork;
+
+        public MailMessagesController(IMailMessageService mailMessageService, IUnitOfWorkAsync unitOfWork)
         {
             _mailMessageService = mailMessageService;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpPost("[action]")]
@@ -44,6 +48,16 @@ namespace TMTDentalAPI.Controllers
             }).ToList();
 
             return Ok(actionLogs);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Remove(Guid id)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            var actionLog = await _mailMessageService.GetByIdAsync(id);
+            await _mailMessageService.DeleteAsync(actionLog);
+            _unitOfWork.Commit();
+            return NoContent();
         }
     }
 }
