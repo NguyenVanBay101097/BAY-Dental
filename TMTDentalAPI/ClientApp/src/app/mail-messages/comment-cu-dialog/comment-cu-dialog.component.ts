@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NotifyService } from 'src/app/shared/services/notify.service';
 import { CommentService } from '../comment.service';
 
 @Component({
@@ -16,7 +17,8 @@ export class CommentCuDialogComponent implements OnInit {
   constructor(
     private commentService: CommentService,
     private fb: FormBuilder,
-    public activeModal: NgbActiveModal
+    public activeModal: NgbActiveModal,
+    private notifyService: NotifyService
   ) { }
 
   ngOnInit(): void {
@@ -37,6 +39,7 @@ export class CommentCuDialogComponent implements OnInit {
   onSave(){
     var val = this.formGroup.value;
     this.commentService.create(val).subscribe((res:any) => {
+      this.notifyService.notify("success", "Lưu thành công");
       this.activeModal.close(res);
     });
   }

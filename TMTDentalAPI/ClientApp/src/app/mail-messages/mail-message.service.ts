@@ -38,4 +38,8 @@ export class MailMessageService {
     getLogsForPartner(val: LogForPartnerRequest){
         return this.http.post<TimeLineLogForPartnerResponse[]>(this.baseApi + this.apiUrl + "/GetLogsForPartner", val);
     }
+
+    delete(id){
+        return this.http.delete(this.baseApi + this.apiUrl + `/${id}`);
+    }
 }
