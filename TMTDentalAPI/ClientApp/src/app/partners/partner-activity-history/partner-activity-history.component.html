@@ -16,11 +16,11 @@
       </button>
     </div>
     <div class="filter d-flex align-items-center mt-2">
-      <kendo-combobox class="mr-2" [(ngModel)]="filter.SubtypeId" [data]="listMessageSubType" [textField]="'name'"
-        [valueField]="'id'" [kendoDropDownFilter]="{ caseSensitive: false, operator: 'contains' }" [filterable]="true"
+      <kendo-combobox class="mr-2" [data]="listMessageSubType" [textField]="'name'"
+        [valueField]="'id'" [kendoDropDownFilter]="{ caseSensitive: false, operator: 'contains' }" [filterable]="true" (selectedChange)="onChangeSubType($event)"
         #messSubTypeCbx>
       </kendo-combobox>
-      <app-date-range-picker-filter [opens]="'right'" class="date-picker" [startDate]="dateFrom" [endDate]="dateTo"
+      <app-date-range-picker-filter [opens]="'left'" class="date-picker" [startDate]="this.filter.dateFrom" [endDate]="this.filter.dateTo"
         (searchChange)="searchChangeDate($event)" [opens]="left">
       </app-date-range-picker-filter>
     </div>
@@ -31,9 +31,12 @@
           </div>
           <div class="message-body" *ngFor="let item of message.logs">
             <div class="message-item">
-              <label class="font-weight-600">
-                {{item.subtypeName}}
-              </label>
+              <div class="subtype-name d-flex justify-content-between align-items-center">
+                <label class="font-weight-600">
+                  {{item.subtypeName}}
+                </label>
+                <i (click)="onDeleteMessage(message)" class="fas fa-trash cursor-pointer text-danger icon"></i>
+              </div>
               <div innerHTML="{{item.body}}"></div>
               <label class = "text-gray">
                 Người tạo: {{item.userName}} - {{item.date | date : 'shortDate'}}

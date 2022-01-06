@@ -205,7 +205,7 @@ export class PartnerOverviewComponent implements OnInit {
     val.partnerId = this.partnerId;
     this.cardCardService.GetNewestCreated(val).pipe(
       map((response: any) => (<GridDataResult>{
-        data: [response],
+        data: response ? [response] : [],
         total: 1
       }))
     ).subscribe((res) => {
