@@ -643,14 +643,14 @@ input[type=number] {
     border: 1px solid #E2E7ED !important;
 }
 
-.btn-check:active+.btn-outline-primary, .btn-check:checked+.btn-outline-primary, .btn-outline-primary.active, .btn-outline-primary.dropdown-toggle.show, .btn-outline-primary:active {
+.btn-check:active+.btn-outline-label, .btn-check:checked+.btn-outline-label, .btn-outline-label.active, .btn-outline-label.dropdown-toggle.show, .btn-outline-label:active {
     color: #007BFF;
     background-color: #E6F2FF;
 }
-.btn-outline-primary {
+.btn-outline-label {
     color: unset;
 }
-.btn-outline-primary:hover {
+.btn-outline-label:hover {
     color: #007BFF;
     background-color: #E6F2FF;
 }
@@ -685,7 +685,7 @@ input[type=number] {
 
 .btn-group-employee {
     overflow: auto;
-    height: 77%;
+    height: 82%;
     border: 1px solid #E2E7ED;
 }
 
@@ -693,6 +693,7 @@ input[type=number] {
     width: 24px;
     height: 14px;
     border-radius: 34%;
+    margin-right: 7px;
 }
 
 .d-flex-between {

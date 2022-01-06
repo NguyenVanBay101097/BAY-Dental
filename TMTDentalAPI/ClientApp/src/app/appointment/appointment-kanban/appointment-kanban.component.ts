@@ -234,10 +234,12 @@ export class AppointmentKanbanComponent implements OnInit {
     }
 
     //  lọc theo từ khóa tìm kiếm
-    // const search = this.search ? this.search.toLowerCase() : '';
-    // this.dataAppointmentsForFilter = search ? this.dataAppointmentsForFilter.filter(x => {
-    //   return _.includes(x.partnerName.toLowerCase(), search) || _.includes(x.partnerPhone.toLowerCase(), search);
-    // }) : [...this.dataAppointments];
+    const search = this.search ? this.search.toLowerCase() : '';
+    if (search) {
+      this.dataAppointmentsForFilter = this.dataAppointmentsForFilter.filter(x => {
+        return _.includes(x.partnerName.toLowerCase(), search) || _.includes(x.partnerPhone.toLowerCase(), search);
+      });
+    }
 
     this.loadAppointmentToCalendar();
     this.clientFilter = false;
@@ -289,9 +291,7 @@ export class AppointmentKanbanComponent implements OnInit {
         dateHour: new Date(v.date).getHours()
       }));
       this.dataAppointmentsForFilter = [...this.dataAppointments];
-      console.log(this.dataAppointments);
       this.loadAppointmentToCalendar();
-      this.computeTimeExpected();
     }, (error: any) => {
       console.log(error);
       this.loading = false;
@@ -1162,7 +1162,7 @@ export class AppointmentKanbanComponent implements OnInit {
 
     const m = timeExpected % 60;
     const h = (timeExpected - m) / 60;
-    const HHMM = h.toString() + 'g' + (m < 10 ? '0' : '') + m.toString() + 'ph';
+    const HHMM = h.toString() + 'g' + (m < 10 ? '0' : '') + m.toString() + 'p';
     return HHMM;
   }
 }

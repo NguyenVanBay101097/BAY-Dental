@@ -259,14 +259,14 @@
                                 <div class="btn-group flex-column w-100 btn-group-employee">
                                     <input checked class="btn-check" type="radio" name="employee"
                                         [id]="'employee-default'" [value]="''" (change)="onChangeEmployee('')">
-                                    <label class="btn btn-label btn-outline-primary" [for]="'employee-default'">
+                                    <label class="btn btn-label btn-outline-label" [for]="'employee-default'">
                                         Tất cả
                                     </label>
 
                                     <ng-container *ngFor="let employee of listEmployees; index as i">
                                         <input class="btn-check" type="radio" name="employee" [id]="'employee-' + i"
                                             [value]="employee.id" (change)="onChangeEmployee(employee.id)">
-                                        <label class="btn btn-label btn-outline-primary" [for]="'employee-' + i">
+                                        <label class="btn btn-label btn-outline-label" [for]="'employee-' + i">
                                             {{employee.name}}
                                         </label>
                                     </ng-container>
@@ -284,13 +284,13 @@
                                         <input class="btn-check" type="radio" (change)="onChangeState(state.value)"
                                             name="state" [id]="'state-' + i" [value]="state.value"
                                             [(ngModel)]="stateSelected">
-                                        <label class="btn btn-label btn-outline-primary" [for]="'state-' + i">
+                                        <label class="btn btn-label btn-outline-label" [for]="'state-' + i">
                                             <div class="d-flex-between">
                                                 <span class="badge-status bg-confirmed" *ngIf="state.value === 'confirmed'"></span>
                                                 <span class="badge-status bg-arrived" *ngIf="state.value === 'done'"></span>
                                                 <span class="badge-status bg-cancel" *ngIf="state.value === 'cancel'"></span>
                                                 <span class="badge-status bg-overdue" *ngIf="state.value === 'overdue'"></span>
-                                                <span class="ml-2">{{state.text}}</span>
+                                                <span>{{state.text}}</span>
                                             </div>
                                             <span>{{onCountState(state.value)}}</span>
                                         </label>
@@ -304,7 +304,7 @@
                                         <input class="btn-check" type="radio" (change)="onChangeType(type.value)"
                                             name="type" [id]="'type-' + i" [value]="type.value"
                                             [(ngModel)]="typeSelected">
-                                        <label class="btn btn-label btn-outline-primary" [for]="'type-' + i">
+                                        <label class="btn btn-label btn-outline-label" [for]="'type-' + i">
                                             <span>{{type.text}}</span>
                                             <span>
                                                 {{onCountType(type.value)}}
