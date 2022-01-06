@@ -1,5 +1,5 @@
 <div class="card">
-  <h5 class="card-header card-header-title bg-white">Số lượng khách hàng theo độ tuổi</h5>
+  <h5 class="card-header card-header-title bg-white">Số lượng khách hàng theo độ tuổi - giới tính</h5>
   <div class="card-body">
     <div *ngIf="responseData.length" echarts [options]="chartOption" [merge]="updateOptions"></div>
     <div *ngIf="!responseData.length" class="img-nodata">

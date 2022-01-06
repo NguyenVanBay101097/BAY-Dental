@@ -59,6 +59,8 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
     appendTo: "component",
   };
   dataFilterObj = Object.create({});
+  dateFrom: Date;
+  dateTo: Date;
   constructor(
     private companyService: CompanyService,
     private accountCommonPartnerReportService: AccountCommonPartnerReportService,
@@ -67,19 +69,19 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit() {
-    this.formGroup = this.fb.group({
-      categs: [null],
-      partnerSources: [null],
-      cardTypes: [null],
-      ageFrom: null,
-      ageTo: null,
-      revenueFrom: null,
-      revenueTo: null,
-      revenueExpectFrom: null,
-      revenueExpectTo: null,
-      debtFrom: null,
-      debtTo: null,
-    });
+    // this.formGroup = this.fb.group({
+    //   categs: [null],
+    //   partnerSources: [null],
+    //   cardTypes: [null],
+    //   ageFrom: null,
+    //   ageTo: null,
+    //   revenueFrom: null,
+    //   revenueTo: null,
+    //   revenueExpectFrom: null,
+    //   revenueExpectTo: null,
+    //   debtFrom: null,
+    //   debtTo: null,
+    // });
 
     this.loadCompanies();
     this.loadReportSumary();
@@ -175,10 +177,13 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
     this.filter.ageTo = data.ageTo;
     this.filter.revenueFrom = data.revenueFrom;
     this.filter.revenueTo = data.revenueTo;
-    this.filter.revenueExpectFrom = data.revenueExpectFrom;
-    this.filter.revenueExpectTo = data.revenueExpectTo;
-    this.filter.debtFrom = data.debtFrom;
-    this.filter.debtTo = data.debtTo;
+    this.filter.priceSubTotalFrom = data.priceSubTotalFrom;
+    this.filter.priceSubTotalTo = data.priceSubTotalTo;
+    this.filter.gender = data.gender;
+    // this.filter.revenueExpectFrom = data.revenueExpectFrom;
+    // this.filter.revenueExpectTo = data.revenueExpectTo;
+    // this.filter.debtFrom = data.debtFrom;
+    // this.filter.debtTo = data.debtTo;
     this.filter.categIds = categIds;
     this.filter.partnerSourceIds = partnerSourceIds;
     this.filter.cardTypeIds = cardTypeIds;
@@ -212,15 +217,24 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
                                         đến ${typeof dataFilter.revenueTo === 'number' && dataFilter.revenueTo >= 0 ? this.intlService.formatNumber(dataFilter.revenueTo, { style: 'decimal' }) : '--'}`;
       }
 
-      if (dataFilter.revenueExpectFrom || dataFilter.revenueExpectTo) {
-        this.dataFilterObj['revenueExpect'] = `Từ ${typeof dataFilter.revenueExpectFrom === 'number' && dataFilter.revenueExpectFrom >= 0 ? this.intlService.formatNumber(dataFilter.revenueExpectFrom, { style: 'decimal' }) : '--'} 
-                                              đến ${typeof dataFilter.revenueExpectTo === 'number' && dataFilter.revenueExpectTo >= 0 ? this.intlService.formatNumber(dataFilter.revenueExpectTo, { style: 'decimal' }) : '--'}`;
+      if (dataFilter.priceSubTotalFrom || dataFilter.priceSubTotalTo) {
+        this.dataFilterObj['priceSubTotal'] = `Từ ${typeof dataFilter.priceSubTotalFrom === 'number' && dataFilter.priceSubTotalFrom >= 0 ? this.intlService.formatNumber(dataFilter.priceSubTotalFrom, { style: 'decimal' }) : '--'} 
+                                        đến ${typeof dataFilter.priceSubTotalTo === 'number' && dataFilter.priceSubTotalTo >= 0 ? this.intlService.formatNumber(dataFilter.priceSubTotalTo, { style: 'decimal' }) : '--'}`;
       }
 
-      if (dataFilter.debtFrom || dataFilter.debtTo) {
-        this.dataFilterObj['debt'] = `Từ ${typeof dataFilter.debtFrom === 'number' && dataFilter.debtFrom >= 0 ? this.intlService.formatNumber(dataFilter.debtFrom, { style: 'decimal' }) : '--'} 
-                                     đến ${typeof dataFilter.debtTo === 'number' && dataFilter.debtTo >= 0 ? this.intlService.formatNumber(dataFilter.debtTo, { style: 'decimal' }) : '--'}`;
+      if (dataFilter.gender) {
+        this.dataFilterObj['gender'] = `${this.getGender(dataFilter.gender)}`;
       }
+
+      // if (dataFilter.revenueExpectFrom || dataFilter.revenueExpectTo) {
+      //   this.dataFilterObj['revenueExpect'] = `Từ ${typeof dataFilter.revenueExpectFrom === 'number' && dataFilter.revenueExpectFrom >= 0 ? this.intlService.formatNumber(dataFilter.revenueExpectFrom, { style: 'decimal' }) : '--'} 
+      //                                         đến ${typeof dataFilter.revenueExpectTo === 'number' && dataFilter.revenueExpectTo >= 0 ? this.intlService.formatNumber(dataFilter.revenueExpectTo, { style: 'decimal' }) : '--'}`;
+      // }
+
+      // if (dataFilter.debtFrom || dataFilter.debtTo) {
+      //   this.dataFilterObj['debt'] = `Từ ${typeof dataFilter.debtFrom === 'number' && dataFilter.debtFrom >= 0 ? this.intlService.formatNumber(dataFilter.debtFrom, { style: 'decimal' }) : '--'} 
+      //                                đến ${typeof dataFilter.debtTo === 'number' && dataFilter.debtTo >= 0 ? this.intlService.formatNumber(dataFilter.debtTo, { style: 'decimal' }) : '--'}`;
+      // }
     }
   }
 
@@ -240,8 +254,23 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
         return 'Dự kiến thu';
       case 'debt':
         return 'Công nợ';
+      case 'priceSubTotal':
+        return 'Tổng tiền điều trị';
+      case 'gender':
+        return 'Giới tính';
       default:
         return '';
+    }
+  }
+
+  getGender(key: string) {
+    switch (key) {
+      case 'male':
+        return 'Nam';
+      case 'female':
+        return 'Nữ';
+      default:
+        return 'Khác';
     }
   }
 
@@ -300,5 +329,10 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
     this.filter.cityCode = null;
     this.filter.districtCode = null;
     this.filter.wardCode = null;
+  }
+
+  onSearchChange(data) {
+    this.dateFrom = data.dateFrom;
+    this.dateTo = data.dateTo;
   }
 }

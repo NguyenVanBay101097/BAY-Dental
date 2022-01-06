@@ -31,7 +31,11 @@ export class PartnerReportFilterPopupComponent implements OnInit, AfterViewInit 
   popupSettings: PopupSettings = {
     appendTo: "component",
   };
-
+  listGender: { text: string, value: string }[] = [
+    { text: 'Nam', value: 'male' },
+    { text: 'Nữ', value: 'female' },
+    { text: 'Khác', value: 'other' },
+  ]
   constructor(
     private fb: FormBuilder,
     private partnerCategoryService: PartnerCategoryService,
@@ -49,10 +53,13 @@ export class PartnerReportFilterPopupComponent implements OnInit, AfterViewInit 
       ageTo: null,
       revenueFrom: null,
       revenueTo: null,
-      revenueExpectFrom: null,
-      revenueExpectTo: null,
-      debtFrom: null,
-      debtTo: null,
+      // revenueExpectFrom: null,
+      // revenueExpectTo: null,
+      // debtFrom: null,
+      // debtTo: null,
+      priceSubTotalFrom: null,
+      priceSubTotalTo: null,
+      gender: null,
     });
     setTimeout(() => {
       this.loadListCardType();
@@ -126,14 +133,19 @@ export class PartnerReportFilterPopupComponent implements OnInit, AfterViewInit 
       this.formGroup.get('revenueFrom').setValue(null);
       this.formGroup.get('revenueTo').setValue(null);
     }
-    else if (key === 'revenueExpect') {
-      this.formGroup.get('revenueExpectFrom').setValue(null);
-      this.formGroup.get('revenueExpectTo').setValue(null);
+    else if (key === 'priceSubTotal') {
+      this.formGroup.get('priceSubTotalFrom').setValue(null);
+      this.formGroup.get('priceSubTotalTo').setValue(null);
     }
-    else if (key === 'debt') {
-      this.formGroup.get('debtFrom').setValue(null);
-      this.formGroup.get('debtTo').setValue(null);
-    } else {
+    // else if (key === 'revenueExpect') {
+    //   this.formGroup.get('revenueExpectFrom').setValue(null);
+    //   this.formGroup.get('revenueExpectTo').setValue(null);
+    // }
+    // else if (key === 'debt') {
+    //   this.formGroup.get('debtFrom').setValue(null);
+    //   this.formGroup.get('debtTo').setValue(null);
+    // }
+    else {
       this.formGroup.get(key).setValue(null);
     }
     this.onApply();

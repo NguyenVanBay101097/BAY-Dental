@@ -166,6 +166,11 @@ export class AccountCommonPartnerReportOverviewFilter {
     cityCode: string;
     districtCode: string;
     wardCode: string;
+    priceSubTotalFrom?: number;
+    priceSubTotalTo?: number;
+    gender: string;
+    dateFrom?: string;
+    dateTo?: string;
 }
 
 export class AccountCommonPartnerReportOverview {
