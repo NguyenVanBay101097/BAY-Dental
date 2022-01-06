@@ -3,3 +3,9 @@
   background: none!important;
   border: none!important;
 }
+
+.card-header .collapsing   {
+  -webkit-transition: none !important;
+  transition: none !important;
+  display: none !important;
+}

@@ -56,6 +56,7 @@ export class SaleOrderLinePaged {
     companyId: string;
     dateFrom: string;
     dateTo: string;
+    partnerId: string;
 }
 
 export class PartnerReportLocationCitySearch {
@@ -627,6 +628,8 @@ export class PartnerService {
     getExist(val){
         return this.http.post<PartnerSimple[]>(this.baseApi + this.apiUrl + '/GetExist', val);
     }
+
+    getTotalAmountOfSaleOrder(id){
+        return this.http.post<PartnerSimple[]>(this.baseApi + this.apiUrl + `/${id}/GetTotalAmountOfSaleOrder`, null);
+    }
 }
-
-

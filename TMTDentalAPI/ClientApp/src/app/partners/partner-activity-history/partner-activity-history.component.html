@@ -1,0 +1,47 @@
+<div class="card">
+  <div class="card-body">
+    <div class="head d-flex">
+      <h5 class="m-0 text-primary">Hoạt động</h5>
+      <button type="button" (click)="onCreateAppointment()" class="btn btn-primary d-flex ml-auto mr-2">
+        <span class="bg-white border-radius d-flex pd-2px mr-1">
+          <i class="fas fa-plus text-primary"></i>
+        </span>
+        <span>Thêm lịch hẹn</span>
+      </button>
+      <button type="button" (click)="onCreateComment()" class="btn btn-primary d-flex">
+        <span class="bg-white border-radius d-flex pd-2px mr-1">
+          <i class="fas fa-plus text-primary"></i>
+        </span>
+        <span>Thêm ghi chú</span>
+      </button>
+    </div>
+    <div class="filter d-flex align-items-center mt-2">
+      <kendo-combobox class="mr-2" [(ngModel)]="filter.SubtypeId" [data]="listMessageSubType" [textField]="'name'"
+        [valueField]="'id'" [kendoDropDownFilter]="{ caseSensitive: false, operator: 'contains' }" [filterable]="true"
+        #messSubTypeCbx>
+      </kendo-combobox>
+      <app-date-range-picker-filter [opens]="'right'" class="date-picker" [startDate]="dateFrom" [endDate]="dateTo"
+        (searchChange)="searchChangeDate($event)" [opens]="left">
+      </app-date-range-picker-filter>
+    </div>
+    <div class="s_body">
+      <ul class="messages">
+        <li class="message" *ngFor="let message of listMessages ">
+          <div class="time"> {{formatDate(message.date)==today ? 'Hôm nay' : formatDate(message.date)}}
+          </div>
+          <div class="message-body" *ngFor="let item of message.logs">
+            <div class="message-item">
+              <label class="font-weight-600">
+                {{item.subtypeName}}
+              </label>
+              <div innerHTML="{{item.body}}"></div>
+              <label class = "text-gray">
+                Người tạo: {{item.userName}} - {{item.date | date : 'shortDate'}}
+              </label>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

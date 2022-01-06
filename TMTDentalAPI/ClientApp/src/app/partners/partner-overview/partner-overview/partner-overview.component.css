@@ -1,52 +1,44 @@
-.o_history_treatment_report_container {
+.info-box .o_aggregate{
     display: flex;
-    height: 100%;
-    overflow: auto;
-    border-left: 1px solid #ccc;
-    min-width: 480px;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.o_report_appointment_container {
-    flex: 1;
+.box-icon{
+    border-radius: 50%;
+    padding: 14px;
+    width: 50px;
+    height: 50px;
+    display: flex;
 }
 
-.o_history_treatment_container {
-    flex: 1;
+.bg-prime {
+    background: rgba(0, 123, 255, 0.1);
+}
+.bg-succ{
+    background: #EAFFEF;
+}
+.bg-light-blue{
+    background: #E6F1FB;
+}
+.bg-yell{
+    background: #FFFBF0;
 }
 
-.o_report_appointment_container_scroll {
-    height: 100%;
-    overflow: auto;
-    padding: 15px;
-    border-left: 1px solid #ccc;
+.icon-img {
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.o_partner_info_left {
-    flex: 0 0 auto;
-    width: 545px;
+.icon-img-active {
+    filter:  invert(30%) sepia(51%) saturate(3516%) hue-rotate(200deg) brightness(103%) contrast(107%);
 }
 
-.o_partner_info_right {
-    flex: 1 1 auto;
+.img-fill-succ{
+    filter:  invert(49%) sepia(67%) saturate(452%) hue-rotate(82deg) brightness(94%) contrast(102%);
 }
-
-@media (max-width: 1200px) {
-    .o_history_treatment_report_container {
-        flex-direction: column;
-    }
-
-    .o_partner_info_left {
-        width: 483px;
-    }
-}
-
-@media (min-width: 992px) and (max-width: 1533.98px) {
-	.o_history_treatment_report_container {
-        flex-direction: column;
-    }
-
-    .o_report_appointment_container_scroll {
-        border-left: 0;
-    }
-}
-

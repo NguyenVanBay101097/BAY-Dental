@@ -457,6 +457,9 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Labos.Any(s => s.State == val.LaboState));
             }
 
+            if (val.PartnerId.HasValue)
+                query = query.Where(x => x.OrderPartnerId == val.PartnerId);
+
             var totalItems = await query.CountAsync();
 
             query = query.Include(x => x.OrderPartner).Include(x => x.Product).Include(x => x.ProductUOM).Include(x => x.Order).Include(x => x.Labos)

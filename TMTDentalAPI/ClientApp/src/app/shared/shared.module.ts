@@ -115,6 +115,7 @@ import { NumberDirective } from './directives/numbers-only.directive';
 import { TmtAutonumericModule } from 'tmt-autonumeric';
 import { AgePopoverComponent } from './age-popover/age-popover.component';
 import { NgxEchartsModule } from 'ngx-echarts';
+import { CommentCuDialogComponent } from '../mail-messages/comment-cu-dialog/comment-cu-dialog.component';
 
 const config: LocaleConfig = {};
 @NgModule({
@@ -221,7 +222,8 @@ const config: LocaleConfig = {};
         ComputePriceInputPopoverComponent,
         ResInsuranceCuDialogComponent,
         NumberDirective,
-        AgePopoverComponent
+        AgePopoverComponent,
+        CommentCuDialogComponent
     ],
     exports: [
         ConfirmDialogComponent,
@@ -320,7 +322,8 @@ const config: LocaleConfig = {};
         NumberDirective,
         TmtAutonumericModule,
         AgePopoverComponent,
-        NgxEchartsModule
+        NgxEchartsModule,
+        CommentCuDialogComponent
 
     ],
     imports: [
@@ -382,7 +385,8 @@ const config: LocaleConfig = {};
         ReceiveAppointmentDialogComponent,
         WarrantyCuDidalogComponent,
         BankCuDialogComponent,
-        ResInsuranceCuDialogComponent
+        ResInsuranceCuDialogComponent,
+        CommentCuDialogComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
