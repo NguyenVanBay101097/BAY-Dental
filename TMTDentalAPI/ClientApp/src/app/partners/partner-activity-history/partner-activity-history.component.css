@@ -1,8 +1,8 @@
-.border-radius{
+.border-radius {
   border-radius: 50%;
 }
 
-.pd-2px{
+.pd-2px {
   padding: 2px;
 }
 
@@ -19,7 +19,7 @@ li {
   padding: 0;
 }
 
-.messages{
+.messages {
   margin-left: 11px;
   margin-top: 5px;
 }
@@ -51,7 +51,7 @@ li {
   border-left: 1px solid #e0e2e9;
 }
 
-.message-body{
+.message-body {
   margin-left: -22px;
   margin-top: -6px;
   padding: 0px 0 20px 20px;
@@ -68,16 +68,21 @@ li {
   position: absolute;
   left: -7px;
 }
+
 .messages .message:last-child .message-body:last-child {
   border-left: none;
 }
 
-.message-item{
+.message-item {
   border: 1px solid #E9EDF2;
   border-radius: 6px;
   padding: 5px;
 }
 
-.text-gray{
+.text-gray {
   color: #929DAA;
+}
+
+.s_body>ul.messages>li.message>div.message-body>div.message-item>div>b {
+  font-weight: 700;
 }

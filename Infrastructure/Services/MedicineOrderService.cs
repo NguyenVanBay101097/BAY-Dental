@@ -275,7 +275,7 @@ namespace Infrastructure.Services
                 content = "Hủy thanh toán đơn thuốc";
 
 
-            var bodyContent = string.Format("{0} {1} số tiền {2} đồng", content, payment.ToaThuoc.Name, string.Format("{0:#,##0}", payment.Amount));
+            var bodyContent = string.Format("{0} <b>{1}</b> số tiền <b>{2}<b/> đồng", content, payment.ToaThuoc.Name, string.Format("{0:#,##0}", payment.Amount));
             await mailMessageObj.CreateActionLog(body: bodyContent, threadId: payment.PartnerId, threadModel: "res.partner", subtype: "subtype_sale_order_payment");
         }
 
