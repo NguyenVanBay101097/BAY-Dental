@@ -20,6 +20,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateTo { get; set; }
         public Guid? EmployeeId { get; set; }
         public Guid? UserId { get; set; }
+        public Guid? SurveyTagId { get; set; }
     }
 
     public class SurveyAssignmentGridItem

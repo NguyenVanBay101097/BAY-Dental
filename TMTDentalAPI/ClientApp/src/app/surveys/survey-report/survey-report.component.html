@@ -120,4 +120,60 @@
             </ng-template>
         </div>
     </div>
+    <div class="card card-rp mt-3">
+        <div class="card-header text-left d-flex justify-content-between">
+            <div class="d-flex align-items-center">
+                DANH SÁCH KHẢO SÁT HOÀN THÀNH
+            </div>
+            <div class="d-flex">
+                <button class="btn btn-primary mr-1" (click)="exportDoneSurveyListExcel()">
+                    <i class="fas fa-download"></i>
+                    &nbsp;Xuất Excel
+                </button>
+                <button class="btn btn-primary mr-1" (click)="printDoneSurveyList()">
+                    In báo cáo
+                </button>
+                <kendo-combobox [placeholder]="'Nhân viên khảo sát'" style="width: 200px" class="mr-1"
+                [data]="employeesData" [textField]="'name'" [valueField]="'id'" (selectionChange)="onSelectEmployee($event)">
+                </kendo-combobox>
+                <kendo-multiselect style="width: 200px" [data]="filteredSurveyTags" [valueField]="'id'" [textField]="'name'"
+                [placeholder]="'Lọc theo nhãn'" [filterable]="true" (valueChange)="onSurveyChange($event)"
+                #surveyMst>
+                </kendo-multiselect>
+            </div>
+        </div>
+        <div class="card-body">
+            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="pagerSettings" [loading]="loading"
+            (pageChange)="pageChange($event)">
+                <kendo-grid-column field="partnerName" title="Khách hàng"> </kendo-grid-column>
+                <kendo-grid-column field="age" title="Tuổi"> </kendo-grid-column>
+                <kendo-grid-column title="Phiếu điều trị">
+                    <ng-template kendoGridCellTemplate let-dataItem let-column="column">
+                        {{dataItem.saleOrder?.name}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column title="Nhân viên khảo sát"> 
+                    <ng-template kendoGridCellTemplate let-dataItem let-column="column">
+                        {{dataItem.employee?.name}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column title="Ngày phân việc"> 
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{dataItem.assignDate | date:'shortDate'}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column title="Ngày hoàn thành"> 
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{dataItem.completeDate | date:'shortDate'}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="surveyTags" title="Nhãn khảo sát"> </kendo-grid-column>
+                <kendo-grid-column title="Điểm khảo sát"> 
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        <span *ngIf="dataItem.userInputScore && dataItem.userInputMaxScore">{{dataItem.userInputScore}}/{{dataItem.userInputMaxScore}}</span>
+                    </ng-template>
+                </kendo-grid-column>
+              </kendo-grid>
+        </div>
+    </div>
 </div>
