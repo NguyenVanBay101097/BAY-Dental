@@ -45,7 +45,7 @@ namespace TMTDentalAPI.Controllers
                     SubtypeName = s.Subtype.Name,
                     UserName = s.Author.Name
                 }).ToList()
-            }).ToList();
+            }).OrderByDescending(x => x.Date).ToList();
 
             return Ok(actionLogs);
         }
