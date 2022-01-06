@@ -16,8 +16,8 @@
       </button>
     </div>
     <div class="filter d-flex align-items-center mt-2">
-      <kendo-combobox class="mr-2" [data]="listMessageSubType" [textField]="'name'"
-        [valueField]="'id'" [kendoDropDownFilter]="{ caseSensitive: false, operator: 'contains' }" [filterable]="true" (selectedChange)="onChangeSubType($event)"
+      <kendo-combobox class="mr-2" [data]="listMessageSubType" [textField]="'name'" [placeholder]="'Tất cả hoạt động'"
+        [valueField]="'id'" [kendoDropDownFilter]="{ caseSensitive: false, operator: 'contains' }" [filterable]="true" (selectionChange)="onChangeSubType($event)"
         #messSubTypeCbx>
       </kendo-combobox>
       <app-date-range-picker-filter [opens]="'left'" class="date-picker" [startDate]="this.filter.dateFrom" [endDate]="this.filter.dateTo"

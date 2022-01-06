@@ -5,6 +5,8 @@ import { CommentCuDialogComponent } from 'src/app/mail-messages/comment-cu-dialo
 import { MailMessageSubTypeService } from 'src/app/mail-messages/mail-message-subType.service';
 import { LogForPartnerRequest, LogForPartnerResponse, MailMessageService, TimeLineLogForPartnerResponse } from 'src/app/mail-messages/mail-message.service';
 import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
+import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
+import { NotifyService } from 'src/app/shared/services/notify.service';
 
 @Component({
   selector: 'app-partner-activity-history',
@@ -22,7 +24,8 @@ export class PartnerActivityHistoryComponent implements OnInit {
     private intl: IntlService,
     private modalService: NgbModal,
     private messageService: MailMessageService,
-    private messageSubTypeService: MailMessageSubTypeService
+    private messageSubTypeService: MailMessageSubTypeService,
+    private notifyService : NotifyService
   ) { }
 
   ngOnInit(): void {
@@ -79,9 +82,10 @@ export class PartnerActivityHistoryComponent implements OnInit {
   }
 
   onCreateComment(){
-    const modalRef = this.modalService.open(CommentCuDialogComponent, { size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.defaultVal = {
-      partnerId: this.partnerId
+    const modalRef = this.modalService.open(CommentCuDialogComponent, { size: 'md', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.value = {
+      threadId: this.partnerId,
+      threadModel: "res.partner"
     };
     modalRef.result.then(result => {
       if (result) {
@@ -92,7 +96,17 @@ export class PartnerActivityHistoryComponent implements OnInit {
   }
 
   onDeleteMessage(item) {
-
+    const modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
+    modalRef.componentInstance.title = "Xóa hoạt động";
+    modalRef.componentInstance.body = "Bạn có chắc chắn muốn xóa hoạt động này?";
+    modalRef.result.then(result => {
+      this.messageService.delete(item.id).subscribe(res => {
+        this.notifyService.notify("success", "Xóa hoạt động thành công");
+        this.loadDataFromApi();
+      })
+    }, () => {
+    });
+   
   }
 
   onChangeSubType(e) {
