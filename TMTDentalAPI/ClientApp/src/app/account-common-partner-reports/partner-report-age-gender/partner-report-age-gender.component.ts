@@ -1,14 +1,13 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { EChartsOption } from 'echarts';
-import { AccountCommonPartnerReportOverviewFilter, AccountCommonPartnerReportService } from '../account-common-partner-report.service';
 
 @Component({
   selector: 'app-partner-report-age-gender',
   templateUrl: './partner-report-age-gender.component.html',
   styleUrls: ['./partner-report-age-gender.component.css']
 })
-export class PartnerReportAgeGenderComponent implements OnInit {
-  @Input() filter: any;
+export class PartnerReportAgeGenderComponent implements OnInit, OnChanges {
+  @Input() dataReportAgeGender: any;
   dataSet: any;
   responseData: any = [];
   updateOptions: any;
@@ -87,47 +86,35 @@ export class PartnerReportAgeGenderComponent implements OnInit {
     ]
   };
 
-  constructor(
-    private accountCommonPartnerReportService: AccountCommonPartnerReportService
-  ) { }
+  constructor() { }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.dataReportAgeGender) {
+      this.responseData = this.dataReportAgeGender;
+      this.updateDataOptions();
+    }
+  }
 
   ngOnInit(): void {
-    this.loadReportAgeGender();
+
   }
 
-  loadReportAgeGender() {
-    let val = Object.assign({}, this.filter) as AccountCommonPartnerReportOverviewFilter;
-    this.accountCommonPartnerReportService.getPartnerReportGenderOverview(val).subscribe((res: any) => {
-      this.responseData = res;
-      this.updateOptions = {
-        xAxis: {
-          data: res.map(x => x.ageRangeName)
+  updateDataOptions() {
+    this.updateOptions = {
+      xAxis: {
+        data: this.dataReportAgeGender.map(x => x.ageRangeName)
+      },
+      series: [
+        {
+          data: this.dataReportAgeGender.map(x => x.totalMale)
         },
-        series: [
-          {
-            data: res.map(x => x.totalMale)
-          },
-          {
-            data: res.map(x => x.totalFemale)
-          },
-          {
-            data: res.map(x => x.totalOther)
-          }
-        ]
-      };
-    }, error => console.log(error));
-  }
-
-  getGender(val: string[]) {
-    return val.map(el => {
-      switch (el) {
-        case 'male':
-          return 'Nam';
-        case 'female':
-          return 'Nữ';
-        default:
-          return 'Khác';
-      }
-    })
+        {
+          data: this.dataReportAgeGender.map(x => x.totalFemale)
+        },
+        {
+          data: this.dataReportAgeGender.map(x => x.totalOther)
+        }
+      ]
+    };
   }
 }

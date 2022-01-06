@@ -1,19 +1,20 @@
-import { IntlService } from '@progress/kendo-angular-intl';
 import { KeyValue } from '@angular/common';
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { AfterViewInit, Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent, PopupSettings } from '@progress/kendo-angular-dropdowns';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { IntlService } from '@progress/kendo-angular-intl';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { CardTypeBasic } from 'src/app/card-types/card-type.service';
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
 import { PartnerCategoryBasic } from 'src/app/partner-categories/partner-category.service';
 import { PartnerSourceSimple } from 'src/app/partners/partner-simple';
+import { PartnerInfoPaged, PartnerService } from 'src/app/partners/partner.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { AccountCommonPartnerReportOverviewFilter, AccountCommonPartnerReportService } from '../account-common-partner-report.service';
-import { PartnerReportAgeGenderComponent } from '../partner-report-age-gender/partner-report-age-gender.component';
 import { PartnerReportAreaComponent } from '../partner-report-area/partner-report-area.component';
 import { PartnerReportFilterPopupComponent } from '../partner-report-filter-popup/partner-report-filter-popup.component';
-import { PartnerReportSourceComponent } from '../partner-report-source/partner-report-source.component';
 
 @Component({
   selector: 'app-partner-report-overview',
@@ -23,13 +24,13 @@ import { PartnerReportSourceComponent } from '../partner-report-source/partner-r
 export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
   @ViewChild("companyCbx", { static: false }) companyCbx: ComboBoxComponent;
   @ViewChild("reportAreaComp", { static: false }) reportAreaComp: PartnerReportAreaComponent;
-  @ViewChild('reportSourceComp', { static: false }) reportSourceComp: PartnerReportSourceComponent;
-  @ViewChild("reportAgeGenderComp", { static: false }) reportAgeGenderComp: PartnerReportAgeGenderComponent;
   @ViewChild("reportFilterPopup", { static: false }) reportFilterPopup: PartnerReportFilterPopupComponent;
   @ViewChild('myDrop', { static: true }) myDrop: NgbDropdown;
 
   formGroup: FormGroup
-
+  gridData: GridDataResult;
+  limit: number = 20;
+  offset: number = 0;
   revenueExpect: { text: string, value: boolean }[] = [
     { text: 'Có dự kiến thu', value: true },
     { text: 'Không có dự kiến thu', value: false }
@@ -61,30 +62,23 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
   dataFilterObj = Object.create({});
   dateFrom: Date;
   dateTo: Date;
+  dataReportSource: any[] = [];
+  dataReportAgeGender: any[] = [];
+  pagerSettings: any;
+
   constructor(
     private companyService: CompanyService,
     private accountCommonPartnerReportService: AccountCommonPartnerReportService,
     private intlService: IntlService,
-    private fb: FormBuilder
-  ) { }
+    private partnerService: PartnerService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig,
+  ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
-    // this.formGroup = this.fb.group({
-    //   categs: [null],
-    //   partnerSources: [null],
-    //   cardTypes: [null],
-    //   ageFrom: null,
-    //   ageTo: null,
-    //   revenueFrom: null,
-    //   revenueTo: null,
-    //   revenueExpectFrom: null,
-    //   revenueExpectTo: null,
-    //   debtFrom: null,
-    //   debtTo: null,
-    // });
-
+    this.loadReportSource();
+    this.loadReportAgeGender();
     this.loadCompanies();
-    this.loadReportSumary();
+    this.loadListPartner();
   }
 
   ngAfterViewInit(): void {
@@ -125,42 +119,72 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
     this.loadAllData();
   }
 
-  loadReportSumary() {
+  // loadReportSumary() {
+  //   let val = Object.assign({}, this.filter) as AccountCommonPartnerReportOverviewFilter;
+  //   this.accountCommonPartnerReportService.getPartnerReportSumaryOverview(val).subscribe((res: any) => {
+  //     this.reportSumary = res;
+  //   }, error => console.log(error))
+  // }
+
+  loadReportSource() {
     let val = Object.assign({}, this.filter) as AccountCommonPartnerReportOverviewFilter;
-    this.accountCommonPartnerReportService.getPartnerReportSumaryOverview(val).subscribe((res: any) => {
-      this.reportSumary = res;
-    }, error => console.log(error))
+
+    this.accountCommonPartnerReportService.getPartnerReportSourceOverview(val).subscribe((res: any) => {
+      this.dataReportSource = res;
+    }, error => console.log(error));
+  }
+
+  loadReportAgeGender() {
+    let val = Object.assign({}, this.filter) as AccountCommonPartnerReportOverviewFilter;
+    this.accountCommonPartnerReportService.getPartnerReportGenderOverview(val).subscribe((res: any) => {
+      this.dataReportAgeGender = res;
+    }, error => {
+      console.log(error)
+    });
+  }
+
+  loadListPartner() {
+    let val = new PartnerInfoPaged();
+    val.limit = this.limit;
+    val.offset = this.offset;
+    this.partnerService.getPartnerInfoPaged2(val).subscribe(res => {
+      this.gridData = <GridDataResult>{
+        data: res.items,
+        total: res.totalItems
+      };
+    }, (error) => {
+      console.log(error);
+    });
   }
 
   loadAllData() {
+    this.loadReportSource();
+    this.loadReportAgeGender();
+    // this.loadListPartner();
     setTimeout(() => {
       this.reportAreaComp?.loadReportArea();
-      this.reportSourceComp?.loadReportSource();
-      this.reportAgeGenderComp?.loadReportAgeGender();
-      this.loadReportSumary();
     }, 0);
   }
 
-  onSelectOrderStates(e) {
-    this.filter.orderState = e ? e.value : null;
-    this.resetFilterCode();
-    this.loadAllData();
-  }
-
-  onSelectTotalDebits(e) {
-    this.filter.isDebt = e ? e.value : null;
-    this.resetFilterCode();
-    this.loadAllData();
-  }
-
-  onSelectOrderResiduals(e) {
-    this.filter.isRevenueExpect = e ? e.value : null;
-    this.resetFilterCode();
-    this.loadAllData();
-  }
-
   exportExcelFile() {
+    var val = new PartnerInfoPaged();
+    this.partnerService.exportPartnerExcelFile(val).subscribe((rs) => {
+      let filename = "DanhSachKhachang";
+      let newBlob = new Blob([rs], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
 
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
   }
 
   onApplyEmit(event) {
@@ -180,10 +204,6 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
     this.filter.priceSubTotalFrom = data.priceSubTotalFrom;
     this.filter.priceSubTotalTo = data.priceSubTotalTo;
     this.filter.gender = data.gender;
-    // this.filter.revenueExpectFrom = data.revenueExpectFrom;
-    // this.filter.revenueExpectTo = data.revenueExpectTo;
-    // this.filter.debtFrom = data.debtFrom;
-    // this.filter.debtTo = data.debtTo;
     this.filter.categIds = categIds;
     this.filter.partnerSourceIds = partnerSourceIds;
     this.filter.cardTypeIds = cardTypeIds;
@@ -225,16 +245,6 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
       if (dataFilter.gender) {
         this.dataFilterObj['gender'] = `${this.getGender(dataFilter.gender)}`;
       }
-
-      // if (dataFilter.revenueExpectFrom || dataFilter.revenueExpectTo) {
-      //   this.dataFilterObj['revenueExpect'] = `Từ ${typeof dataFilter.revenueExpectFrom === 'number' && dataFilter.revenueExpectFrom >= 0 ? this.intlService.formatNumber(dataFilter.revenueExpectFrom, { style: 'decimal' }) : '--'} 
-      //                                         đến ${typeof dataFilter.revenueExpectTo === 'number' && dataFilter.revenueExpectTo >= 0 ? this.intlService.formatNumber(dataFilter.revenueExpectTo, { style: 'decimal' }) : '--'}`;
-      // }
-
-      // if (dataFilter.debtFrom || dataFilter.debtTo) {
-      //   this.dataFilterObj['debt'] = `Từ ${typeof dataFilter.debtFrom === 'number' && dataFilter.debtFrom >= 0 ? this.intlService.formatNumber(dataFilter.debtFrom, { style: 'decimal' }) : '--'} 
-      //                                đến ${typeof dataFilter.debtTo === 'number' && dataFilter.debtTo >= 0 ? this.intlService.formatNumber(dataFilter.debtTo, { style: 'decimal' }) : '--'}`;
-      // }
     }
   }
 
@@ -318,11 +328,9 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
       this.filter.cityCode = null;
       this.filter.districtCode = null;
       this.filter.wardCode = null;
-      // this.reportAreaComp?.loadReportArea();
     }
-    this.reportSourceComp?.loadReportSource();
-    this.reportAgeGenderComp?.loadReportAgeGender();
-    this.loadReportSumary();
+    this.loadReportSource();
+    this.loadReportAgeGender();
   }
 
   resetFilterCode() {
@@ -334,5 +342,11 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
   onSearchChange(data) {
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;
+  }
+
+  onPageChange(event: PageChangeEvent): void {
+    this.offset = event.skip;
+    this.limit = event.take;
+    this.loadListPartner();
   }
 }
