@@ -169,5 +169,30 @@ namespace ApplicationCore.Entities
         [NotMapped]
         public ICollection<IrAttachment> IrAttachments { get; set; } = new List<IrAttachment>();
 
+        [NotMapped]
+        public decimal? AmountSubTotal { 
+            get {
+                var total = 0.0M;
+                foreach (var item in OrderLines)
+                {
+                    total += item.PriceUnit * item.ProductUOMQty;
+                }
+                return total;
+            } 
+        }
+
+        [NotMapped]
+        public decimal? AmountDiscountTotal { 
+            get
+            {
+                var total = 0.0M;
+                foreach (var item in OrderLines)
+                {
+                    total += (decimal)item.AmountDiscountTotal.Value * item.ProductUOMQty;
+                }
+                return total;
+            }
+        }
+
     }
 }

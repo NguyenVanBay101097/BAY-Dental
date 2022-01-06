@@ -561,6 +561,8 @@ const keyWorDatas =
                 { text: 'Họ tên khách hàng', value: '{{o.partner?.name}}' },
                 { text: 'SĐT khách hàng', value: '{{o.partner?.phone}}' },
                 { text: 'Địa chỉ khách hàng', value: '{{o.partner?.address}}' },
+                { text: 'Tổng thành tiền', value: '{{o.amount_sub_total}}' },
+                { text: 'Tổng giảm giá', value: '{{o.amount_discount_total}}' },
                 { text: 'Tổng tiền', value: '{{o.amount_total}}' },
                 { text: 'Đã thanh toán', value: '{{o.total_paid}}' },
                 { text: 'Số tiền còn lại', value: '{{o.residual}}' },
