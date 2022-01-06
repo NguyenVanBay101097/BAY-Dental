@@ -912,11 +912,12 @@ namespace TMTDentalAPI.Controllers
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
-            var messages = await query.Include(x => x.Author).ToListAsync();
+            var messages = await query.Include(x => x.Author).Include(x => x.Subtype).ToListAsync();
             var messageFormats = messages.Select(x => new MailMessageFormat
             {
                 Id = x.Id,
                 AuthorName = x.Author?.Name,
+                SubtypeName = x.Subtype?.Name,
                 Body = x.Body,
                 Date = x.Date,
                 MessageType = x.MessageType,
