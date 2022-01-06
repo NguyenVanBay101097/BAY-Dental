@@ -19,8 +19,8 @@ li {
   padding: 0;
 }
 
-.messages {
-  margin-left: 11px;
+.messages{
+  margin-left: 5px;
   margin-top: 5px;
 }
 
@@ -76,7 +76,17 @@ li {
 .message-item {
   border: 1px solid #E9EDF2;
   border-radius: 6px;
-  padding: 5px;
+  padding: 7px;
+}
+
+.icon {
+  display: none;
+}
+.message-item:hover {
+  background: #F9FBFF;
+}
+.message-item:hover .icon {
+  display: block;
 }
 
 .text-gray {

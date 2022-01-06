@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { CommentCuDialogComponent } from 'src/app/mail-messages/comment-cu-dialog/comment-cu-dialog.component';
+import { MailMessageSubTypeService } from 'src/app/mail-messages/mail-message-subType.service';
 import { LogForPartnerRequest, LogForPartnerResponse, MailMessageService, TimeLineLogForPartnerResponse } from 'src/app/mail-messages/mail-message.service';
 import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
 
@@ -17,22 +18,29 @@ export class PartnerActivityHistoryComponent implements OnInit {
   listMessages: TimeLineLogForPartnerResponse[] = [];
   today = this.intl.formatDate(new Date(), "dd/MM/yyyy");
   listMessageSubType = [];
-  dateFrom:any;
-  dateTo:any;
   constructor(
     private intl: IntlService,
     private modalService: NgbModal,
-    private messageService: MailMessageService
+    private messageService: MailMessageService,
+    private messageSubTypeService: MailMessageSubTypeService
   ) { }
 
   ngOnInit(): void {
+    this.initFilterData();
+    this.loadListMessageSubType();
     this.loadDataFromApi();
+  }
+
+  loadListMessageSubType(){
+    this.messageSubTypeService.get().subscribe(res => {
+      this.listMessageSubType = res;
+    })
   }
 
   loadDataFromApi(){
     var val = Object.assign({}, this.filter);
-    val.dateFrom = this.dateFrom ? this.intl.formatDate(this.dateFrom, 'yyyy-MM-dd') : null;
-    val.dateTo = this.dateTo ? this.intl.formatDate(this.dateTo, 'yyyy-MM-dd') : null;
+    val.dateFrom = val.dateFrom ? this.intl.formatDate(val.dateFrom, 'yyyy-MM-dd') : null;
+    val.dateTo = val.dateTo ? this.intl.formatDate(val.dateTo, 'yyyy-MM-dd') : null;
     val.threadModel = 'res.partner';
     val.threadId = this.partnerId; 
     this.messageService.getLogsForPartner(val).subscribe((res:TimeLineLogForPartnerResponse[]) => {
@@ -46,13 +54,13 @@ export class PartnerActivityHistoryComponent implements OnInit {
 
   initFilterData() {
     var date = new Date(), y = date.getFullYear(), m = date.getMonth();
-    this.dateFrom = this.dateFrom || new Date(y, m, 1);
-    this.dateTo = this.dateTo || new Date(y, m + 1, 0);
+    this.filter.dateFrom = new Date(y, m, 1);
+    this.filter.dateTo = new Date(y, m + 1, 0);
   }
 
   searchChangeDate(value: any) {
-    this.dateFrom = value.dateFrom;
-    this.dateTo = value.dateTo;
+    this.filter.dateFrom = value.dateFrom;
+    this.filter.dateTo = value.dateTo;
     this.loadDataFromApi();
   }
 
@@ -81,5 +89,14 @@ export class PartnerActivityHistoryComponent implements OnInit {
       }
     }, () => {
     });
+  }
+
+  onDeleteMessage(item) {
+
+  }
+
+  onChangeSubType(e) {
+    this.filter.SubtypeId = e ? e.id : '';
+    this.loadDataFromApi();
   }
 }
