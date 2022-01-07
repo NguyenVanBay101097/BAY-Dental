@@ -2566,6 +2566,12 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Gender))
                 mainQuery = mainQuery.Where(x => x.Gender == val.Gender);
 
+            if (val.DateFrom.HasValue)
+                mainQuery = mainQuery.Where(x => x.Date >= val.DateFrom);
+
+            if (val.DateTo.HasValue)
+                mainQuery = mainQuery.Where(x => x.Date <= val.DateTo);
+
             if (!string.IsNullOrEmpty(val.Search))
             {
                 IQueryable<Guid> partnersByKeywords;
@@ -2634,12 +2640,22 @@ namespace Infrastructure.Services
 
             if (!string.IsNullOrEmpty(val.OrderState))
             {
-                var partnerOrderStateQr = from v in saleOrderObj.SearchQuery(x => !val.CompanyId.HasValue || x.CompanyId == val.CompanyId)
-                                          group v by v.PartnerId into g
+                var orderStateQr = from v in saleOrderObj.SearchQuery(x => x.CompanyId == val.CompanyId)
+                                   group v by v.PartnerId into g
+                                   select new
+                                   {
+                                       PartnerId = g.Key,
+                                       CountSale = g.Sum(x => x.State == "sale" ? 1 : 0),
+                                       CountDone = g.Sum(x => x.State == "done" ? 1 : 0),
+                                       Date = g.Max(x => x.DateOrder)
+                                   };
+
+                var partnerOrderStateQr = from a in mainQuery
+                                          from pos in orderStateQr.Where(x => x.PartnerId == a.Id).DefaultIfEmpty()
                                           select new
                                           {
-                                              PartnerId = g.Key,
-                                              OrderState = g.Sum(x => x.State == "sale" ? 1 : 0) > 0 ? "sale" : (g.Sum(x => x.State == "done" ? 1 : 0) > 0 ? "done" : "draft"),
+                                              PartnerId = a.Id,
+                                              OrderState = pos.CountSale > 0 ? "sale" : (pos.CountDone > 0 ? "done" : "draft"),
                                           };
 
                 mainQuery = from a in mainQuery
@@ -2759,6 +2775,8 @@ namespace Infrastructure.Services
                 if (val.AgeTo.HasValue && val.AgeTo > 0)
                     mainQuery = mainQuery.Where(x => (DateTime.Now.Year - x.BirthYear) <= val.AgeTo.Value);
             }
+
+
 
             return mainQuery;
         }
@@ -3266,12 +3284,27 @@ namespace Infrastructure.Services
                 Date = s.Max(x => x.DateOrder)
             }).ToDictionary(g => g.PartnerId, x => x);
 
+            var partnerDebitDict = amlObj.SearchQuery(x => res.Select(i => i.Id).Contains(x.PartnerId.Value) && x.Account.Code == "CNKH").GroupBy(x => x.PartnerId).Select(s => new
+            {
+                PartnerId = s.Key,
+                AmountTotalDebit = s.Sum(x => x.Balance)
+            }).ToDictionary(g => g.PartnerId, x => x);
+
+            var partnerCardTypeDict = cardCardObj.SearchQuery(x => res.Select(i => i.Id).Contains(x.PartnerId.Value)).Select(s => new
+            {
+                PartnerId = s.PartnerId,
+                CardTypeName = s.Type.Name
+            }).ToDictionary(g => g.PartnerId, x => x);
+
 
             var items = _mapper.Map<IEnumerable<PartnerInfoDisplay>>(res);
             foreach (var item in items)
             {
                 item.Categories = _mapper.Map<List<PartnerCategoryBasic>>(categDict.ContainsKey(item.Id) ? categDict[item.Id] : new List<PartnerCategory>());
                 item.OrderState = partnerOrderStateDict.ContainsKey(item.Id) ? partnerOrderStateDict[item.Id].CountSale > 0 ? "sale" : (partnerOrderStateDict[item.Id].CountDone > 0 ? "done" : "draft") : "draft";
+                item.OrderResidual = partnerOrderStateDict.ContainsKey(item.Id) ? partnerOrderStateDict[item.Id].AmountRevenueExpect : 0;
+                item.TotalDebit = partnerDebitDict.ContainsKey(item.Id) ? partnerDebitDict[item.Id].AmountTotalDebit : 0;
+                item.CardTypeName = partnerCardTypeDict.ContainsKey(item.Id) ? partnerCardTypeDict[item.Id].CardTypeName : null;
             }
 
             return new PagedResult2<PartnerInfoDisplay>(total, val.Offset, val.Limit)

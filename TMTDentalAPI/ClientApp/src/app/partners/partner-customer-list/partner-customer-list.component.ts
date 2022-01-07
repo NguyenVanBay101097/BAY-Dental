@@ -486,7 +486,7 @@ export class PartnerCustomerListComponent implements OnInit {
   // }
 
   onMemberSelect(e) {
-    this.filter.cardTypeIds = e ? e.id : '';
+    this.filter.cardTypeIds = e ? e.id : [];
     this.filter.offset = 0;
     this.refreshData();
   }
