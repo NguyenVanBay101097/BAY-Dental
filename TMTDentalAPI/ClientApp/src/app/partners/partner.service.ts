@@ -26,6 +26,34 @@ export class PartnerFilter {
     active: boolean;
 }
 
+export class PartnerInfoFilter {
+    limit: number;
+    offset: number;
+    search: string;
+    companyId?: string;
+    ageFrom?: number;
+    ageTo?: number;
+    revenueFrom?: number;
+    revenueTo?: number;
+    amountTotalFrom?: number;
+    amountTotalTo?: number;
+    isDebt?: boolean;
+    isRevenueExpect?: boolean;
+    orderState: string;
+    categIds: string[];
+    partnerSourceIds: string[];
+    cardTypeIds: string[];
+    cityCode: string;
+    districtCode: string;
+    wardCode: string;
+    priceSubTotalFrom?: number;
+    priceSubTotalTo?: number;
+    gender: string;
+    dateFrom?: string;
+    dateTo?: string;
+    isActive?: boolean;
+}
+
 export class SaleOrderLineBasic {
     name: string;
     state: string;

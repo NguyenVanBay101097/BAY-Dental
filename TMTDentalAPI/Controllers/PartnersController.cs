@@ -790,7 +790,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpGet("[action]")]
         [CheckAccess(Actions = "Basic.Partner.Read")]
-        public async Task<IActionResult> GetPartnerInfoPaged2([FromQuery] PartnerInfoPaged val) // giao diện list khách hàng
+        public async Task<IActionResult> GetPartnerInfoPaged2([FromQuery] PartnerQueryableFilter val) // giao diện list khách hàng
         {
             var result = await _partnerService.GetPartnerInfoPaged2(val);
 

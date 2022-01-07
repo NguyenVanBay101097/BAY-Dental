@@ -1,3 +1,4 @@
+import { PartnerFilter, PartnerInfoFilter } from 'src/app/partners/partner.service';
 import { Component, Inject, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { GridComponent, GridDataResult, PageChangeEvent, RowClassArgs } from '@progress/kendo-angular-grid';
 import { Subject } from 'rxjs';
@@ -87,7 +88,7 @@ export class PartnerCustomerListComponent implements OnInit {
   };
 
   gridData: GridDataResult;
-  filter = new PartnerInfoPaged();
+  filter = new PartnerInfoFilter();
   loading = false;
   opened = false;
 
@@ -106,14 +107,14 @@ export class PartnerCustomerListComponent implements OnInit {
   canFilterPartnerCategory = false;
   canUpdateExcel = false;
 
-  OrderResiduals: { text: string, value: number }[] = [
-    { text: 'Có dự kiến thu', value: 1 },
-    { text: 'Không có dự kiến thu', value: 0 }
+  OrderResiduals: { text: string, value: boolean }[] = [
+    { text: 'Có dự kiến thu', value: true },
+    { text: 'Không có dự kiến thu', value: false }
   ];
 
-  totalDebits: { text: string, value: number }[] = [
-    { text: 'Có công nợ', value: 1 },
-    { text: 'Không có công nợ', value: 0 }
+  totalDebits: { text: string, value: boolean }[] = [
+    { text: 'Có công nợ', value: true },
+    { text: 'Không có công nợ', value: false }
   ];
   memberLevels = [];
   orderStateDisplay = {
@@ -288,8 +289,6 @@ export class PartnerCustomerListComponent implements OnInit {
   initFilter() {
     this.filter.limit = 20;
     this.filter.offset = 0;
-    this.filter.hasOrderResidual = -1;
-    this.filter.hasTotalDebit = -1;
     this.filter.orderState = '';
     if (this.sessionInfoStorageService.getSessionInfo().settings && !this.sessionInfoStorageService.getSessionInfo().settings.companySharePartner) {
       this.filter.companyId = this.authService.userInfo.companyId;
@@ -468,13 +467,13 @@ export class PartnerCustomerListComponent implements OnInit {
   }
 
   onResidualSelect(e) {
-    this.filter.hasOrderResidual = e ? e.value : '';
+    this.filter.isRevenueExpect = e ? e.value : '';
     this.filter.offset = 0;
     this.refreshData();
   }
 
   onDebitSelect(e) {
-    this.filter.hasTotalDebit = e ? e.value : '';
+    this.filter.isDebt = e ? e.value : '';
     this.filter.offset = 0;
     this.refreshData();
   }
@@ -487,7 +486,7 @@ export class PartnerCustomerListComponent implements OnInit {
   // }
 
   onMemberSelect(e) {
-    this.filter.cardTypeId = e ? e.id : '';
+    this.filter.cardTypeIds = e ? e.id : '';
     this.filter.offset = 0;
     this.refreshData();
   }
@@ -520,7 +519,7 @@ export class PartnerCustomerListComponent implements OnInit {
   }
 
   onStateSelect(e) {
-    this.filter.active = e ? e.value : '';
+    this.filter.isActive = e ? e.value : '';
     this.filter.offset = 0;
     this.refreshData()
   }
