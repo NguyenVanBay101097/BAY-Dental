@@ -5,14 +5,15 @@ import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent, PopupSettings } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
+import * as moment from 'moment';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { CardTypeBasic } from 'src/app/card-types/card-type.service';
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
 import { PartnerCategoryBasic } from 'src/app/partner-categories/partner-category.service';
 import { PartnerSourceSimple } from 'src/app/partners/partner-simple';
-import { PartnerInfoPaged, PartnerService } from 'src/app/partners/partner.service';
+import { PartnerInfoFilter, PartnerInfoPaged, PartnerService } from 'src/app/partners/partner.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
-import { AccountCommonPartnerReportOverviewFilter, AccountCommonPartnerReportService } from '../account-common-partner-report.service';
+import { AccountCommonPartnerReportService } from '../account-common-partner-report.service';
 import { PartnerReportAreaComponent } from '../partner-report-area/partner-report-area.component';
 import { PartnerReportFilterPopupComponent } from '../partner-report-filter-popup/partner-report-filter-popup.component';
 
@@ -50,7 +51,7 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
   reportSumary: any;
   reportSource: any;
   companies: CompanySimple[] = [];
-  filter = new AccountCommonPartnerReportOverviewFilter();
+  filter = new PartnerInfoFilter();
 
   listCardType: CardTypeBasic[] = [];
   listPartnerSource: PartnerSourceSimple[] = [];
@@ -79,6 +80,8 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
     this.loadReportAgeGender();
     this.loadCompanies();
     this.loadListPartner();
+    this.filter.limit = this.limit;
+    this.filter.offset = this.offset;
   }
 
   ngAfterViewInit(): void {
@@ -127,7 +130,7 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
   // }
 
   loadReportSource() {
-    let val = Object.assign({}, this.filter) as AccountCommonPartnerReportOverviewFilter;
+    let val = Object.assign({}, this.filter) as PartnerInfoFilter;
 
     this.accountCommonPartnerReportService.getPartnerReportSourceOverview(val).subscribe((res: any) => {
       this.dataReportSource = res;
@@ -135,7 +138,7 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
   }
 
   loadReportAgeGender() {
-    let val = Object.assign({}, this.filter) as AccountCommonPartnerReportOverviewFilter;
+    let val = Object.assign({}, this.filter) as PartnerInfoFilter;
     this.accountCommonPartnerReportService.getPartnerReportGenderOverview(val).subscribe((res: any) => {
       this.dataReportAgeGender = res;
     }, error => {
@@ -144,9 +147,13 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
   }
 
   loadListPartner() {
-    let val = new PartnerInfoPaged();
-    val.limit = this.limit;
-    val.offset = this.offset;
+    let val = {};
+    for (const key in this.filter) {
+      const element = this.filter[key];
+      if (element) {
+        val[key] = element;
+      }
+    }
     this.partnerService.getPartnerInfoPaged2(val).subscribe(res => {
       this.gridData = <GridDataResult>{
         data: res.items,
@@ -160,7 +167,7 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
   loadAllData() {
     this.loadReportSource();
     this.loadReportAgeGender();
-    // this.loadListPartner();
+    this.loadListPartner();
     setTimeout(() => {
       this.reportAreaComp?.loadReportArea();
     }, 0);
@@ -201,8 +208,8 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
     this.filter.ageTo = data.ageTo;
     this.filter.revenueFrom = data.revenueFrom;
     this.filter.revenueTo = data.revenueTo;
-    this.filter.priceSubTotalFrom = data.priceSubTotalFrom;
-    this.filter.priceSubTotalTo = data.priceSubTotalTo;
+    this.filter.amountTotalFrom = data.amountTotalFrom;
+    this.filter.amountTotalTo = data.amountTotalTo;
     this.filter.gender = data.gender;
     this.filter.categIds = categIds;
     this.filter.partnerSourceIds = partnerSourceIds;
@@ -237,9 +244,9 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
                                         đến ${typeof dataFilter.revenueTo === 'number' && dataFilter.revenueTo >= 0 ? this.intlService.formatNumber(dataFilter.revenueTo, { style: 'decimal' }) : '--'}`;
       }
 
-      if (dataFilter.priceSubTotalFrom || dataFilter.priceSubTotalTo) {
-        this.dataFilterObj['priceSubTotal'] = `Từ ${typeof dataFilter.priceSubTotalFrom === 'number' && dataFilter.priceSubTotalFrom >= 0 ? this.intlService.formatNumber(dataFilter.priceSubTotalFrom, { style: 'decimal' }) : '--'} 
-                                        đến ${typeof dataFilter.priceSubTotalTo === 'number' && dataFilter.priceSubTotalTo >= 0 ? this.intlService.formatNumber(dataFilter.priceSubTotalTo, { style: 'decimal' }) : '--'}`;
+      if (dataFilter.amountTotalFrom || dataFilter.amountTotalTo) {
+        this.dataFilterObj['amountTotal'] = `Từ ${typeof dataFilter.amountTotalFrom === 'number' && dataFilter.amountTotalFrom >= 0 ? this.intlService.formatNumber(dataFilter.amountTotalFrom, { style: 'decimal' }) : '--'} 
+                                        đến ${typeof dataFilter.amountTotalTo === 'number' && dataFilter.amountTotalTo >= 0 ? this.intlService.formatNumber(dataFilter.amountTotalTo, { style: 'decimal' }) : '--'}`;
       }
 
       if (dataFilter.gender) {
@@ -264,7 +271,7 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
         return 'Dự kiến thu';
       case 'debt':
         return 'Công nợ';
-      case 'priceSubTotal':
+      case 'amountTotal':
         return 'Tổng tiền điều trị';
       case 'gender':
         return 'Giới tính';
@@ -331,6 +338,7 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
     }
     this.loadReportSource();
     this.loadReportAgeGender();
+    this.loadListPartner();
   }
 
   resetFilterCode() {
@@ -342,6 +350,10 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
   onSearchChange(data) {
     this.dateFrom = data.dateFrom;
     this.dateTo = data.dateTo;
+    this.filter.dateFrom = this.dateFrom ? moment(this.dateFrom).format('YYYY-MM-DD') : '';
+    this.filter.dateTo = this.dateTo ? moment(this.dateTo).format('YYYY-MM-DD') : '';
+    this.resetFilterCode();
+    this.loadAllData();
   }
 
   onPageChange(event: PageChangeEvent): void {

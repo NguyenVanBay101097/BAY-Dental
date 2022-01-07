@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { EChartsOption } from 'echarts';
-import { AccountCommonPartnerReportOverviewFilter, AccountCommonPartnerReportService } from '../account-common-partner-report.service';
+import { PartnerInfoFilter } from 'src/app/partners/partner.service';
+import { AccountCommonPartnerReportService } from '../account-common-partner-report.service';
 interface TreeNode {
   name: string;
   value: number;
@@ -36,7 +37,7 @@ export class PartnerReportAreaComponent implements OnInit {
     this.data = {
       children: [] as TreeNode[]
     } as TreeNode;
-    let val = Object.assign({}, this.filter) as AccountCommonPartnerReportOverviewFilter;
+    let val = Object.assign({}, this.filter) as PartnerInfoFilter;
     this.accountCommonPartnerReportService.getPartnerReportTreeMapOverview(val).subscribe((res: any) => {
       res.forEach(el1 => {
         let cityData = Object.assign({});
