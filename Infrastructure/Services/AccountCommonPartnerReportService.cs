@@ -307,7 +307,7 @@ namespace Infrastructure.Services
             var partnerObj = GetService<IPartnerService>();
             var query = partnerObj.GetQueryablePartnerFilter(val);
 
-            var cityResults = await query.GroupBy(x => new { CityCode = x.CityCode, CityName = x.CityName }).Select(x => new GetPartnerForCityReportOverview
+            var cityResults = await query.Where(x => !string.IsNullOrWhiteSpace(x.CityCode)).GroupBy(x => new { CityCode = x.CityCode, CityName = x.CityName }).Select(x => new GetPartnerForCityReportOverview
             {
                 CityCode = x.Key.CityCode,
                 CityName = x.Key.CityName,
@@ -358,6 +358,17 @@ namespace Infrastructure.Services
                     districtResult.Wards = wardResult.Where(x => x.CityCode == cityResult.CityCode && x.DistrictCode == districtResult.DistrictCode).ToList();
                 }
             }
+
+            ///add khong xac dinh
+            var partnerNotCity = await query.Where(x => string.IsNullOrEmpty(x.CityCode) || string.IsNullOrWhiteSpace(x.CityCode)).GroupBy(x => new { CityCode = x.CityCode, CityName = x.CityName }).Select(x => new GetPartnerForCityReportOverview
+            {
+                CityCode = "",
+                CityName = "Không xác định",
+                Count = x.Count()
+            }).FirstOrDefaultAsync();
+
+            if (partnerNotCity != null)
+                cityResults.Add(partnerNotCity);
 
             return cityResults;
         }

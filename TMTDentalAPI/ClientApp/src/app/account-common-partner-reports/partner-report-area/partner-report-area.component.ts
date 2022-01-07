@@ -39,6 +39,7 @@ export class PartnerReportAreaComponent implements OnInit {
     } as TreeNode;
     let val = Object.assign({}, this.filter) as PartnerInfoFilter;
     this.accountCommonPartnerReportService.getPartnerReportTreeMapOverview(val).subscribe((res: any) => {
+      console.log(res);
       res.forEach(el1 => {
         let cityData = Object.assign({});
         if (el1.districts) {
@@ -50,19 +51,24 @@ export class PartnerReportAreaComponent implements OnInit {
                 wardsData['$count'] = el3.count;
                 wardsData['$code'] = el3.wardCode;
                 wardsData['$type'] = 'ward';
-                districtsData[el3.wardName || 'Chưa xác định'] = wardsData;
+                districtsData[el3.wardName] = wardsData;
               });
             }
             districtsData['$code'] = el2.districtCode;
             districtsData['$type'] = 'district';
-            cityData[el2.districtName || 'Chưa xác định'] = districtsData;
+            cityData[el2.districtName] = districtsData;
           });
         }
-        cityData['$code'] = el1.cityCode;
-        cityData['$type'] = 'city';
-        this.dataSet[el1.cityName || 'Chưa xác định'] = cityData;
-      });
 
+        if(!el1.cityCode){
+          cityData['$count'] = el1.count;
+        }
+
+        cityData['$code'] = el1.cityCode;
+        cityData['$type'] = 'city';      
+        this.dataSet[el1.cityName] = cityData;
+      });    
+      
       this.loadChartOption();
     }, error => console.log(error));
   }
