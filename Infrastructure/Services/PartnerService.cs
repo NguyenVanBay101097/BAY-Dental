@@ -3258,7 +3258,7 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<PartnerInfoDisplay>> GetPartnerInfoPaged2(PartnerQueryableFilter val)
         {
             var saleOrderObj = GetService<ISaleOrderService>();
-            var cateObj = GetService<IPartnerCategoryService>();
+            var appointmentObj = GetService<IAppointmentService>();
             var partnerCategoryRelObj = GetService<IPartnerPartnerCategoryRelService>();
             var cardCardObj = GetService<ICardCardService>();
             var amlObj = GetService<IAccountMoveLineService>();
@@ -3269,7 +3269,7 @@ namespace Infrastructure.Services
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
-            var res = await query.Include(x => x.Source).OrderByDescending(x => x.DateCreated).ToListAsync();
+            var res = await query.Include(x => x.Source).Include(x => x.Company).OrderByDescending(x => x.DateCreated).ToListAsync();
 
             var cateList = await partnerCategoryRelObj.SearchQuery(x => res.Select(i => i.Id).Contains(x.PartnerId)).Include(x => x.Category).ToListAsync();
             var categDict = cateList.GroupBy(x => x.PartnerId).ToDictionary(x => x.Key, x => x.Select(s => s.Category));
@@ -3295,6 +3295,11 @@ namespace Infrastructure.Services
                 CardTypeName = s.Type.Name
             }).ToDictionary(g => g.PartnerId, x => x);
 
+            var partnerAppointmentDict = appointmentObj.SearchQuery(x => res.Select(i => i.Id).Contains(x.PartnerId)).GroupBy(x => x.PartnerId).Select(s => new
+            {
+                PartnerId = s.Key,
+                AppointmentDate = s.Max(g => g.Date)
+            }).ToDictionary(g => g.PartnerId, x => x);
 
             var items = _mapper.Map<IEnumerable<PartnerInfoDisplay>>(res);
             foreach (var item in items)
@@ -3304,6 +3309,8 @@ namespace Infrastructure.Services
                 item.OrderResidual = partnerOrderStateDict.ContainsKey(item.Id) ? partnerOrderStateDict[item.Id].AmountRevenueExpect : 0;
                 item.TotalDebit = partnerDebitDict.ContainsKey(item.Id) ? partnerDebitDict[item.Id].AmountTotalDebit : 0;
                 item.CardTypeName = partnerCardTypeDict.ContainsKey(item.Id) ? partnerCardTypeDict[item.Id].CardTypeName : null;
+                item.SaleOrderDate = partnerOrderStateDict.ContainsKey(item.Id) ? (DateTime?)partnerOrderStateDict[item.Id].Date : null;
+                item.AppointmentDate = partnerAppointmentDict.ContainsKey(item.Id) ? (DateTime?)partnerAppointmentDict[item.Id].AppointmentDate : null;
             }
 
             return new PagedResult2<PartnerInfoDisplay>(total, val.Offset, val.Limit)
