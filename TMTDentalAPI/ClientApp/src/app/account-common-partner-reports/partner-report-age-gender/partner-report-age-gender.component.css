@@ -1,13 +1,3 @@
-.card-header-title {
-    text-transform: uppercase;
-    text-align: center;
-    color: #007BFF;
-}
-
-.card {
-    height: 470px !important;
-}
-
 .img-nodata {
     display: flex;
     justify-content: center;
