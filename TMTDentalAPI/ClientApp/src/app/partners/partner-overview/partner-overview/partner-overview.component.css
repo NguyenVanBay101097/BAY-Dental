@@ -71,9 +71,18 @@
     overflow: hidden;
 }
 
-@media screen and (max-width: 1366px) {
+.container-body.row>div {
+    height: 100%;
+}
+
+@media (max-width: 1400px) {
     .container-body.row {
         overflow: auto;
+    }
+
+    .container-body.row>div {
+        height: auto;
+        width: 100% !important;
     }
   }
 

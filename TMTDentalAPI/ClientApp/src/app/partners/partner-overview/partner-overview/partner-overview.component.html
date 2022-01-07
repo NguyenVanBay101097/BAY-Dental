@@ -1,6 +1,6 @@
 <div class="container-fluid h-100">
     <div class="container-body row h-100">
-        <div class="col-8 h-100 overflow-auto">
+        <div class="col-12 col-xxl-8 overflow-auto">
             <div class="partner-info mt-3">
                 <app-partner-overview-info *ngIf="partner" (updateEvent)="onPartnerUpdate()" [partner]="partner">
                 </app-partner-overview-info>
@@ -60,7 +60,7 @@
                 </app-partner-overview-treatment-history>
             </div>
         </div>
-        <div class="col-4 h-100 overflow-auto d-flex flex-column">
+        <div class="col-12 col-xxl-4 overflow-auto d-flex flex-column">
             <div class= "mt-3 border-prime">
                 <app-partner-overview-member-cards [partnerId]="partnerId" [memberCard]="memberCard">
                 </app-partner-overview-member-cards>
