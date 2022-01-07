@@ -1,12 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { Subject } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { CommentCuDialogComponent } from 'src/app/mail-messages/comment-cu-dialog/comment-cu-dialog.component';
 import { MailMessageSubTypeService } from 'src/app/mail-messages/mail-message-subType.service';
 import { LogForPartnerRequest, LogForPartnerResponse, MailMessageService, TimeLineLogForPartnerResponse } from 'src/app/mail-messages/mail-message.service';
 import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { NotifyService } from 'src/app/shared/services/notify.service';
+import { GetPartnerThreadMessageResponse, GetThreadMessageForPartnerRequest, MailMessageFormat, PartnerService } from '../partner.service';
 
 @Component({
   selector: 'app-partner-activity-history',
@@ -16,8 +19,8 @@ import { NotifyService } from 'src/app/shared/services/notify.service';
 export class PartnerActivityHistoryComponent implements OnInit {
 
   @Input() partnerId: string;
-  filter: LogForPartnerRequest = new LogForPartnerRequest();
-  listMessages: TimeLineLogForPartnerResponse[] = [];
+  filter: GetThreadMessageForPartnerRequest = new GetThreadMessageForPartnerRequest();
+  listMessages: {date: any, logs:MailMessageFormat[] }[] = [];
   today = this.intl.formatDate(new Date(), "dd/MM/yyyy");
   listMessageSubType = [];
   constructor(
@@ -25,7 +28,8 @@ export class PartnerActivityHistoryComponent implements OnInit {
     private modalService: NgbModal,
     private messageService: MailMessageService,
     private messageSubTypeService: MailMessageSubTypeService,
-    private notifyService : NotifyService
+    private notifyService : NotifyService,
+    private partnerSerivce: PartnerService
   ) { }
 
   ngOnInit(): void {
@@ -44,10 +48,22 @@ export class PartnerActivityHistoryComponent implements OnInit {
     var val = Object.assign({}, this.filter);
     val.dateFrom = val.dateFrom ? this.intl.formatDate(val.dateFrom, 'yyyy-MM-dd') : null;
     val.dateTo = val.dateTo ? this.intl.formatDate(val.dateTo, 'yyyy-MM-dd') : null;
-    val.threadModel = 'res.partner';
-    val.threadId = this.partnerId; 
-    this.messageService.getLogsForPartner(val).subscribe((res:TimeLineLogForPartnerResponse[]) => {
-      this.listMessages = res;
+    this.partnerSerivce.getThreadMessages(this.partnerId,val).subscribe((res:GetPartnerThreadMessageResponse) => {
+      this.listMessages = [];
+      res.messages.forEach(e => {
+        var f = this.listMessages.find(x=> new Date(x.date).setHours(0, 0, 0, 0) == new Date(e.date).setHours(0, 0, 0, 0));
+        if(f)
+        f.logs.push(e);
+        else
+        {
+          f = {
+            date: e.date,
+            logs: [e]
+          }
+          this.listMessages.push(f);
+        }
+
+      });
     });
   }
 
@@ -59,6 +75,7 @@ export class PartnerActivityHistoryComponent implements OnInit {
     var date = new Date(), y = date.getFullYear(), m = date.getMonth();
     this.filter.dateFrom = new Date(y, m, 1);
     this.filter.dateTo = new Date(y, m + 1, 0);
+    this.filter.limit = 0;
   }
 
   searchChangeDate(value: any) {
@@ -82,11 +99,14 @@ export class PartnerActivityHistoryComponent implements OnInit {
   }
 
   onCreateComment(){
-    const modalRef = this.modalService.open(CommentCuDialogComponent, { size: 'md', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.value = {
-      threadId: this.partnerId,
-      threadModel: "res.partner"
-    };
+    const modalRef = this.modalService.open(CommentCuDialogComponent, { size: 'sm', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
+    (modalRef.componentInstance.onSaveSubj as Subject<any>).pipe(
+      switchMap((val : any) => {
+      return this.partnerSerivce.createComment(this.partnerId, val);
+      })
+    ).subscribe(res => {
+      modalRef.componentInstance.activeModal.close(true);
+    });
     modalRef.result.then(result => {
       if (result) {
         this.loadDataFromApi();
@@ -96,7 +116,7 @@ export class PartnerActivityHistoryComponent implements OnInit {
   }
 
   onDeleteMessage(item) {
-    const modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
+    const modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'md', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = "Xóa hoạt động";
     modalRef.componentInstance.body = "Bạn có chắc chắn muốn xóa hoạt động này?";
     modalRef.result.then(result => {
@@ -110,7 +130,7 @@ export class PartnerActivityHistoryComponent implements OnInit {
   }
 
   onChangeSubType(e) {
-    this.filter.SubtypeId = e ? e.id : '';
+    this.filter.subtypeId = e ? e.id : '';
     this.loadDataFromApi();
   }
 }

@@ -201,8 +201,9 @@ export class PartnerOverviewComponent implements OnInit {
   }
 
   loadPreferentialCards() {
-    let val = {partnerId : null};
+    let val = {partnerId : null, state: null};
     val.partnerId = this.partnerId;
+    val.state = "in_use";
     this.cardCardService.GetNewestCreated(val).pipe(
       map((response: any) => (<GridDataResult>{
         data: response ? [response] : [],

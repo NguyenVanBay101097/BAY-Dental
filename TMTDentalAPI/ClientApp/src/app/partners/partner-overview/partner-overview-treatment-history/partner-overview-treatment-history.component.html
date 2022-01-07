@@ -11,7 +11,7 @@
         <span>Tạo điều trị</span>
       </button>
     </div>
-    <kendo-grid [resizable]="true" #grid [loading]="loading" [data]="gridData" [pageSize]="this.filter.limit" [skip]="this.filter.offset" [pageable]="pagerSettings" (pageChange)="pageChange($event)">
+    <kendo-grid class="grid-data" [resizable]="true" #grid [loading]="loading" [data]="gridData" [pageSize]="this.filter.limit" [skip]="this.filter.offset" [pageable]="pagerSettings" (pageChange)="pageChange($event)">
       <kendo-grid-column field="date" title="Ngày tạo" width="110">
           <ng-template kendoGridCellTemplate let-dataItem>
               {{dataItem.date | date: 'dd/MM/yyyy'}}
@@ -24,7 +24,7 @@
     </kendo-grid-column>
     <kendo-grid-column field="name" title="Dịch vụ" width="200">
     </kendo-grid-column>
-    <kendo-grid-column title="Đơn vị tính" width="120">
+    <kendo-grid-column title="Đơn vị tính" width="100">
       <ng-template kendoGridCellTemplate let-dataItem>
           {{dataItem.productUOM ? dataItem.productUOM.name : ""}}
       </ng-template>
@@ -36,7 +36,7 @@
               {{dataItem.employee?.name}}
           </ng-template>
       </kendo-grid-column>
-      <kendo-grid-column field="diagnostic" title="Chẩn đoán" width="80">
+      <kendo-grid-column field="diagnostic" title="Chẩn đoán" width="100">
       </kendo-grid-column>
       <kendo-grid-column field="state" title="Trạng thái" width="120">
           <ng-template kendoGridCellTemplate let-dataItem>

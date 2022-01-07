@@ -9,3 +9,19 @@
   transition: none !important;
   display: none !important;
 }
+
+.o_text_overflow {
+  display: inline-block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: top;
+}
+
+
+@media (max-width: 1600px) {
+  .info-detail .o_group_col_6{
+    width: 100% !important;
+  }
+}

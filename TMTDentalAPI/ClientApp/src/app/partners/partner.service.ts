@@ -212,6 +212,36 @@ export class PartnerGetExistReq{
     phone: string;
 }
 
+export class GetThreadMessageForPartnerRequest{
+    limit: number;
+    offset: number;
+    dateFrom: any;
+    dateTo: any;
+    subtypeId: string;
+}
+
+export class GetPartnerThreadMessageResponse  {
+    messages: MailMessageFormat[];
+}
+
+export class MailMessageFormat {
+    id: string;
+    body: string;
+    date: any;
+    authorName:string;
+    messageType: string;
+    subject: string;
+    model: string;
+    resId: string;
+    isNote: boolean;
+    isNotification: boolean;
+    subtypeName: string;
+}
+
+export class CreateCommentForPartnerRequest{
+    body: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class PartnerService {
     apiUrl = 'api/Partners';
@@ -631,5 +661,13 @@ export class PartnerService {
 
     getTotalAmountOfSaleOrder(id){
         return this.http.post<PartnerSimple[]>(this.baseApi + this.apiUrl + `/${id}/GetTotalAmountOfSaleOrder`, null);
+    }
+
+    getThreadMessages(id: string,val: GetThreadMessageForPartnerRequest) {
+        return this.http.post<GetPartnerThreadMessageResponse>(this.baseApi + this.apiUrl + `/${id}/ThreadMessages`, val);
+    }
+
+    createComment(id: string,val: CreateCommentForPartnerRequest) {
+        return this.http.post<PartnerSimple[]>(this.baseApi + this.apiUrl + `/${id}/CreateComment`, val);
     }
 }

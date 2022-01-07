@@ -414,7 +414,7 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.State))
                 query = query.Where(x => x.State == val.State);
 
-            return await query.Include(x => x.CardType).FirstOrDefaultAsync();
+            return await query.OrderByDescending(x=> x.DateCreated).Include(x => x.CardType).FirstOrDefaultAsync();
         }
     }
 }

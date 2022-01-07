@@ -1,5 +1,5 @@
-<div class="card">
-  <div class="card-body">
+<div class="card h-100 border-0">
+  <div class="card-body h-100 d-flex flex-column">
     <div class="head d-flex">
       <h5 class="m-0 text-primary">Hoạt động</h5>
       <button type="button" (click)="onCreateAppointment()" class="btn btn-primary d-flex ml-auto mr-2">
@@ -16,35 +16,41 @@
       </button>
     </div>
     <div class="filter d-flex align-items-center mt-2">
-      <kendo-combobox class="mr-2" [data]="listMessageSubType" [textField]="'name'" [placeholder]="'Tất cả hoạt động'"
-        [valueField]="'id'" [kendoDropDownFilter]="{ caseSensitive: false, operator: 'contains' }" [filterable]="true"
-        (selectionChange)="onChangeSubType($event)" #messSubTypeCbx>
+      <kendo-combobox class="mr-2" style="width:175px;" [data]="listMessageSubType" [textField]="'name'" [placeholder]="'Tất cả hoạt động'"
+        [valueField]="'id'" [kendoDropDownFilter]="{ caseSensitive: false, operator: 'contains' }" [filterable]="true" (selectionChange)="onChangeSubType($event)"
+        #messSubTypeCbx>
       </kendo-combobox>
-      <app-date-range-picker-filter [opens]="'left'" class="date-picker" [startDate]="this.filter.dateFrom"
-        [endDate]="this.filter.dateTo" (searchChange)="searchChangeDate($event)" [opens]="left">
+      <app-date-range-picker-filter [opens]="'left'" class="date-picker" [startDate]="this.filter.dateFrom" [endDate]="this.filter.dateTo"
+        (searchChange)="searchChangeDate($event)" [opens]="left">
       </app-date-range-picker-filter>
     </div>
-    <div class="s_body">
-      <ul class="messages">
-        <li class="message" *ngFor="let message of listMessages ">
-          <div class="time"> {{formatDate(message.date)==today ? 'Hôm nay' : formatDate(message.date)}}
-          </div>
-          <div class="message-body" *ngFor="let item of message.logs">
-            <div class="message-item">
-              <div class="subtype-name d-flex justify-content-between align-items-center">
-                <label class="font-weight-600">
-                  {{item.subtypeName}}
-                </label>
-                <i (click)="onDeleteMessage(message)" class="fas fa-trash cursor-pointer text-danger icon"></i>
-              </div>
-              <div innerHTML="{{item.body}}"></div>
-              <label class="text-gray">
-                Người tạo: {{item.userName}} - {{item.date | date : 'shortDate'}}
-              </label>
+    <div class="s_body h-100 overflow-auto">
+      <ng-container *ngIf="!listMessages.length; else elseTemplate">
+        <img  class="m-auto d-block" src="../../../assets/icons/NoData.svg" alt="">
+      </ng-container>
+      <ng-template #elseTemplate>
+        <ul class="messages h-100">
+          <li class="message" *ngFor="let message of listMessages ">
+            <div class="time"> {{formatDate(message.date)==today ? 'Hôm nay' : formatDate(message.date)}}
             </div>
-          </div>
-        </li>
-      </ul>
+            <div class="message-body" *ngFor="let item of message.logs">
+              <div class="message-item">
+                <div class="subtype-name d-flex justify-content-between align-items-center">
+                  <label class="font-weight-600 m-0">
+                    {{item.subtypeName}}
+                  </label>
+                  <i (click)="onDeleteMessage(item)" class="fas fa-trash cursor-pointer text-danger icon"></i>
+                </div>
+                <div innerHTML="{{item.body}}"></div>
+                <label class = "text-gray m-0">
+                  Người tạo: {{item.authorName}} - {{item.date | date : 'shortDate'}}
+                </label>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </ng-template>
+      
     </div>
   </div>
 </div>

@@ -1,7 +1,19 @@
-.info-box .o_aggregate{
+.info-boxs{
     display: flex;
-    justify-content: space-between;
+    margin: 0 -5px;
+    flex-wrap: wrap;
+}
+.info-boxs .box{
+    border-radius: 8px;
+    border: 1px solid #EEEEEE;
+    display: flex;
     align-items: center;
+    background: #FFFFFF;
+    padding:12px;
+    text-align: center;
+    margin: 0 5px;
+    margin-bottom: 1rem;
+    min-width: 200px;
 }
 
 .box-icon{
@@ -42,3 +54,27 @@
 .img-fill-succ{
     filter:  invert(49%) sepia(67%) saturate(452%) hue-rotate(82deg) brightness(94%) contrast(102%);
 }
+
+.activity-history{
+    max-height: 500px ;
+    min-height: 300px;
+    border-radius: 6px;
+    border: 1px solid #E2E7ED;
+}
+
+.border-prime{
+    border: 1px solid #2395FF;
+    border-radius: 6px;
+}
+
+.container-body.row {
+    overflow: hidden;
+}
+
+@media screen and (max-width: 1366px) {
+    .container-body.row {
+        overflow: auto;
+    }
+  }
+
+

@@ -1,68 +1,58 @@
 <div class="container-fluid h-100">
-    <div class="row h-100">
-        <div class="col-8">
+    <div class="container-body row h-100">
+        <div class="col-8 h-100 overflow-auto">
             <div class="partner-info mt-3">
                 <app-partner-overview-info *ngIf="partner" (updateEvent)="onPartnerUpdate()" [partner]="partner">
                 </app-partner-overview-info>
             </div>
-            <div class="info-box mt-3">
-                <div class="o_aggregate_col o_group_col_2">
-                    <div class="o_aggregate">
+            <div class="info-boxs mt-3 w-100">
+                <div class="box">
                         <div class="box-icon bg-prime">
                             <!-- <div class="icon-img icon-img-active mr-2"
                             style="background-image: url(../../../../assets/icons/money_cash.svg);"></div> -->
                             <img src="../../../../assets/icons/increase-amount-report.svg" alt="">
                         </div>
-                        <div class="d-flex flex-column">
+                        <div class="d-flex flex-column flex-fill">
                             <label>Tổng tiền điều trị</label>
                             <label class="mb-0 font-weight-600">{{totalAmountSaleOrder | number}}</label>
                         </div>
-                    </div>
                 </div>
-                <div class="o_aggregate_col o_group_col_2">
-                    <div class="o_aggregate">
+                <div class="box">
                         <div class="box-icon bg-succ">
                             <img class="img-fill-succ" src="../../../../assets/icons/increase-amount-report.svg" alt="">
                         </div>
-                        <div class="d-flex flex-column">
+                        <div class="d-flex flex-column flex-fill">
                             <label>Doanh thu</label>
                             <label class="mb-0 font-weight-600">{{sumRevenue | number}}</label>
                         </div>
-                    </div>
                 </div>
     
-                <div class="o_aggregate_col o_group_col_2">
-                    <div class="o_aggregate">
+                <div class="box">
                         <div class="box-icon bg-light-blue">
                             <img src="../../../../assets/icons/sale-report.svg" alt="">
                         </div>
-                        <div class="d-flex flex-column">
+                        <div class="d-flex flex-column flex-fill">
                             <label>Dự kiến thu</label>
-                            <label class="mb-0 font-weight-600">{{saleSummary?.residualTotal | number}}</label>
+                            <label class="mb-0 font-weight-600">{{(saleSummary?.residualTotal || 0) | number}}</label>
                         </div>
-                    </div>
                 </div>
-                <div class="o_aggregate_col o_group_col_2">
-                    <div class="o_aggregate">
+                <div class="box">
                         <div class="box-icon bg-yell">
                             <img src="../../../../assets/icons/debit-report.svg" alt="">
                         </div>
-                        <div class="d-flex flex-column">
+                        <div class="d-flex flex-column flex-fill">
                             <label>Công nợ</label>
                             <label class="mb-0 font-weight-600">{{debtStatistics | number}}</label>
                         </div>
-                    </div>
                 </div>
-                <div class="o_aggregate_col o_group_col_2">
-                    <div class="o_aggregate">
+                <div class="box">
                         <div class="box-icon bg-prime">
                             <img src="../../../../assets/icons/advance-balance-report.svg" alt="">
                         </div>
-                        <div class="d-flex flex-column">
+                        <div class="d-flex flex-column flex-fill">
                             <label>Tạm ứng</label>
                             <label class="mb-0 font-weight-600">{{advanceBalance | number}}</label>
                         </div>
-                    </div>
                 </div>
             </div>
             <div class="treatment-history">
@@ -70,16 +60,16 @@
                 </app-partner-overview-treatment-history>
             </div>
         </div>
-        <div class="col-4">
-            <div>
+        <div class="col-4 h-100 overflow-auto d-flex flex-column">
+            <div class= "mt-3 border-prime">
                 <app-partner-overview-member-cards [partnerId]="partnerId" [memberCard]="memberCard">
                 </app-partner-overview-member-cards>
             </div>
-            <div>
-                <app-partner-overview-preferential-cards [partnerId]="partnerId" [preferentialCards]="preferentialCards">
+            <div class= "mt-3 border-prime">
+                <app-partner-overview-preferential-cards (onCreateUpdateEvent)="loadPreferentialCards()" [partnerId]="partnerId" [preferentialCards]="preferentialCards">
                 </app-partner-overview-preferential-cards>
             </div>
-            <div class="activity-history mt-3">
+            <div class="activity-history mt-3 overflow-hidden">
                 <app-partner-activity-history [partnerId]="partnerId"></app-partner-activity-history>
             </div>
         </div>

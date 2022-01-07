@@ -62,7 +62,7 @@
                                         <label class="o_form_label">Email:</label>
                                     </td>
                                     <td style="width: 100%">
-                                        <span class="o_field_widget">{{partner ?partner.email:''}}</span>
+                                        <span class="o_field_widget o_text_overflow">{{partner ?partner.email:''}}</span>
                                     </td>
                                 </tr>
                                 <tr *ngIf="showInfo">
@@ -115,7 +115,7 @@
                                         <label class="o_form_label">Nhãn:</label>
                                     </td>
                                     <td style="width: 100%">
-                                        <app-partner-category-popover [popOverPlace]="'right'" [tags]="categories"
+                                        <app-partner-category-popover [popOverPlace]="'left'" [tags]="categories"
                                             (onSave)="categories=$event" [rowPartnerId]="partner.id">
                                         </app-partner-category-popover>
                                     </td>

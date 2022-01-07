@@ -1,8 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { NotifyService } from 'src/app/shared/services/notify.service';
-import { CommentService } from '../comment.service';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-comment-cu-dialog',
@@ -11,25 +10,19 @@ import { CommentService } from '../comment.service';
 })
 export class CommentCuDialogComponent implements OnInit {
   title = "Thêm ghi chú";
-  @Input() value: any;
   formGroup: FormGroup
   submitted = false;
+  onSaveSubj = new Subject();
   constructor(
-    private commentService: CommentService,
     private fb: FormBuilder,
     public activeModal: NgbActiveModal,
-    private notifyService: NotifyService
   ) { }
 
   ngOnInit(): void {
     this.formGroup =  this.fb.group({
       body:[null, Validators.required],
-      threadId:null,
-      threadModel:null
     });
-    if(this.value){
-      this.formGroup.patchValue(this.value);
-    }
+   
   }
 
   Fcontrol(val): FormControl{
@@ -38,10 +31,11 @@ export class CommentCuDialogComponent implements OnInit {
 
   onSave(){
     var val = this.formGroup.value;
-    this.commentService.create(val).subscribe((res:any) => {
-      this.notifyService.notify("success", "Lưu thành công");
-      this.activeModal.close(res);
-    });
+    this.submitted = true;
+    if(this.formGroup.invalid) {
+      return;
+    }
+    this.onSaveSubj.next(val);
   }
 
   onCancel(){

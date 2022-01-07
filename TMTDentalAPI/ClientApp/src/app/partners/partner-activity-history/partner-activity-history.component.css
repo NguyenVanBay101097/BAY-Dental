@@ -8,7 +8,6 @@
 
 .s_body {
   flex: 1 1 100%;
-  overflow: auto;
   padding: 0 0.5rem;
   margin-top: 1.5rem;
 }
@@ -45,7 +44,7 @@ li {
 .message .time {
   font-weight: 600;
   margin-left: -22px;
-  padding: 0 10px 10px 20px;
+  padding: 0 10px 25px 20px;
   line-height: 18px;
   margin-bottom: 5px;
   border-left: 1px solid #e0e2e9;
