@@ -6,7 +6,7 @@ import { NgbActiveModal, NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { AutoCompleteComponent, ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
 import { IntlService } from "@progress/kendo-angular-intl";
 import * as _ from "lodash";
-import { debounceTime, delay, filter, map, switchMap, take, tap } from 'rxjs/operators';
+import { debounceTime, delay, filter, map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
 import { HistorySimple } from "src/app/history/history";
 import { PartnerCategoryCuDialogComponent } from "src/app/partner-categories/partner-category-cu-dialog/partner-category-cu-dialog.component";
 import {
@@ -283,7 +283,6 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
         switchMap((value) => this.searchAgents(value))
       )
       .subscribe((result) => {
-        console.log(result);
         this.filteredAgents = result.items;
         this.agentCbx.loading = false;
       });
@@ -631,11 +630,14 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
         },
       );
     } else {
-      this.partnerService.createCustomer(postVal).subscribe(
-        (result) => {
-          this.activeModal.close(result);
-        },
-      );
+      this.partnerService.createCustomer(postVal).pipe(
+        mergeMap((rs: any) => {
+          return this.partnerService.getCustomerInfo(rs.id);
+        })).subscribe(
+          (result: PartnerSimple) => {
+            this.activeModal.close(result);
+          },
+        );
     }
   }
 
@@ -670,10 +672,10 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
   onBlurPhone(e) {
     var value = e.target.value as string;
-    if(this.partner && this.partner.phone == value) {
-       return;
+    if (this.partner && this.partner.phone == value) {
+      return;
     }
-    this.partnerService.getExist({ phone: value, customer: true}).subscribe(res => {
+    this.partnerService.getExist({ phone: value, customer: true }).subscribe(res => {
       this.phoneExistPartners = res;
     })
   }

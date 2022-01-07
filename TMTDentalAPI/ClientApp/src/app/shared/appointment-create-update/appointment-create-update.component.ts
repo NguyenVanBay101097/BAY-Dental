@@ -22,6 +22,7 @@ import { AppSharedShowErrorService } from 'src/app/shared/shared-show-error.serv
 import { UserSimple } from 'src/app/users/user-simple';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { PartnerCustomerCuDialogComponent } from '../partner-customer-cu-dialog/partner-customer-cu-dialog.component';
+import { NotifyService } from '../services/notify.service';
 import { PartnersService } from '../services/partners.service';
 import { PrintService } from '../services/print.service';
 import { UserCuDialogComponent } from './../../users/user-cu-dialog/user-cu-dialog.component';
@@ -80,7 +81,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     private notificationService: NotificationService,
     private printService: PrintService,
     private sessionInfoStorageService: SessionInfoStorageService,
-    private authService: AuthService
+    private authService: AuthService,
+    private notifyService: NotifyService
    ) { }
 
   ngOnInit() {
@@ -400,7 +402,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     partnerPaged.employee = false;
     partnerPaged.customer = true;
     partnerPaged.supplier = false;
-    partnerPaged.limit = 10;
+    partnerPaged.limit = 1000;
     partnerPaged.offset = 0;
     if (this.sessionInfoStorageService.getSessionInfo().settings && !this.sessionInfoStorageService.getSessionInfo().settings.companySharePartner) {
       partnerPaged.companyId = this.authService.userInfo.companyId;
@@ -534,12 +536,13 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
     modalRef.result.then(result => {
       if (result && result.id) {
-        var newPartner = new PartnerSimple();
-        newPartner.id = result.id;
-        newPartner.name = result.name;
-        newPartner.displayName = result.displayName;
-        this.customerSimpleFilter.push(newPartner);
-        this.formGroup.get('partner').setValue(newPartner);
+        // var newPartner = new PartnerSimple();
+        // newPartner.id = result.id;
+        // newPartner.name = result.name;
+        // newPartner.displayName = result.displayName;
+        this.notifyService.notify("success", "Lưu thành công");
+        this.customerSimpleFilter.push(result as PartnerSimple);
+        this.formGroup.patchValue({ partner: result });
         this.onChangePartner();
       }
     })
