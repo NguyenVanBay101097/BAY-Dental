@@ -350,8 +350,8 @@ namespace TMTDentalAPI.Controllers
                 worksheet2.Cells["A11:E11"].Style.Border.Left.Style = ExcelBorderStyle.Thin;
                 worksheet2.Cells["A11:E11"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
                 worksheet2.Cells["A11:E11"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
-                worksheet1.Cells["A11:E11"].Style.Border.Bottom.Color.SetColor(Color.White);
                 worksheet2.Cells["A11:E11"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet2.Cells["A11:E11"].Style.Border.Bottom.Color.SetColor(Color.White);
                 worksheet2.Cells["A11:E11"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#0667d1"));
                 worksheet2.Cells["A11:E11"].Style.Font.Color.SetColor(Color.White);
 

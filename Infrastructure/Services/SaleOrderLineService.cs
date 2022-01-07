@@ -465,7 +465,8 @@ namespace Infrastructure.Services
                 query = query.Skip(val.Offset).Take(val.Limit);
             }
 
-            var items = await _mapper.ProjectTo<SaleOrderLineBasic>(query).ToListAsync();
+            //var items = await _mapper.ProjectTo<SaleOrderLineBasic>(query).ToListAsync();
+            var items = _mapper.Map<IEnumerable<SaleOrderLineBasic>>(await query.ToListAsync());
 
             return new PagedResult2<SaleOrderLineBasic>(totalItems, val.Offset, val.Limit)
             {
