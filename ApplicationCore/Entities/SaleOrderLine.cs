@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using MyERP.Utilities;
 
 namespace ApplicationCore.Entities
 {
@@ -268,5 +270,29 @@ namespace ApplicationCore.Entities
 
         public Guid? AgentId { get; set; }
         public Agent Agent { get; set; }
+
+        /// <summary>
+        /// Tổng tiền giảm
+        /// </summary>
+        [NotMapped]
+        public decimal TotalDiscountAmount
+        {
+            get
+            {
+                return (decimal)FloatUtils.FloatRound((AmountDiscountTotal ?? 0) * (double)ProductUOMQty, precisionDigits: 0);
+            }
+        }
+
+        /// <summary>
+        /// Thành tiền chưa giảm giá
+        /// </summary>
+        [NotMapped]
+        public decimal TotalUndiscountAmount
+        {
+            get
+            {
+                return ProductUOMQty * PriceUnit;
+            }
+        }
     }
 }

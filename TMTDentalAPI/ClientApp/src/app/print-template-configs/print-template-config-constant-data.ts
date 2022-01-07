@@ -561,6 +561,8 @@ const keyWorDatas =
                 { text: 'Họ tên khách hàng', value: '{{o.partner?.name}}' },
                 { text: 'SĐT khách hàng', value: '{{o.partner?.phone}}' },
                 { text: 'Địa chỉ khách hàng', value: '{{o.partner?.address}}' },
+                { text: 'Tổng thành tiền (chưa giảm giá)', value: '{{o.amount_undiscount_total}}' },
+                { text: 'Tổng giảm giá', value: '{{o.amount_discount_total}}' },
                 { text: 'Tổng tiền', value: '{{o.amount_total}}' },
                 { text: 'Đã thanh toán', value: '{{o.total_paid}}' },
                 { text: 'Số tiền còn lại', value: '{{o.residual}}' },
@@ -576,8 +578,9 @@ const keyWorDatas =
                 { text: 'Số lượng', value: '{{line.product_uomqty}}' },
                 { text: 'Đơn giá', value: '{{line.price_unit}}' },
                 { text: 'Giảm giá', value: '{{line.amount_discount_total}}' },
-                { text: 'Thành tiền', value: '{{line.price_sub_total}}' },
-
+                { text: 'Thành tiền (đã giảm giá)', value: '{{line.price_sub_total}}' },
+                { text: 'Thành tiền (chưa giảm giá)', value: '{{line.total_undiscount_amount}}' },
+                { text: 'Tiền giảm', value: '{{line.total_discount_amount}}' },
             ]
         },
         {
