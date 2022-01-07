@@ -338,27 +338,24 @@ namespace Infrastructure.Services
                 });
 
 
-            var totalThuQuery = accountMoveLineObj.SearchQuery(x => x.Move.State == "posted" && x.AccountInternalType != "liquidity"
+            var totalThuQuery = accountMoveLineObj.SearchQuery(x => x.Move.State == "posted" && x.AccountInternalType == "liquidity"
             && types.Contains(x.Journal.Type) &&(!companyId.HasValue || x.CompanyId == companyId.Value)).GroupBy(x => x.Date.Value.Date)
             .Select(x => new
             {
                 Date = x.Key,
-                AmountTotal = x.Sum(y => y.Credit),
+                AmountTotal = x.Sum(y => y.Debit),
                 Type = "Liquidity"
             });
 
             var combineQuery = amountTotalQuery.Union(revenueQuery).Union(totalThuQuery);
 
-            if (dateFrom.HasValue)
-                combineQuery = combineQuery.Where(x => x.Date >= dateFrom.Value.AbsoluteBeginOfDate());
-
-
-            if (dateTo.HasValue)
-                combineQuery = combineQuery.Where(x => x.Date <= dateTo.Value.AbsoluteEndOfDate());
-
-
             if (groupBy == "groupby:day")
             {
+                if (dateFrom.HasValue)
+                    combineQuery = combineQuery.Where(x => x.Date >= dateFrom.Value.AbsoluteBeginOfDate());
+
+                if (dateTo.HasValue)
+                    combineQuery = combineQuery.Where(x => x.Date <= dateTo.Value.AbsoluteEndOfDate());
 
                 res = await combineQuery.GroupBy(x => x.Date)
                   .Select(x => new RevenueReportChartVM
@@ -372,6 +369,18 @@ namespace Infrastructure.Services
             }
             if (groupBy == "groupby:month")
             {
+                if (dateFrom.HasValue)
+                {
+                    var dateFromTmp = new DateTime(dateFrom.Value.Year, dateFrom.Value.Month, 1);
+                    combineQuery = combineQuery.Where(x => x.Date >= dateFromTmp);
+                }
+
+                if (dateTo.HasValue)
+                {
+                    var dateToTmp = new DateTime(dateTo.Value.Year, dateTo.Value.Month, DateTime.DaysInMonth(dateTo.Value.Year, dateTo.Value.Month));
+                    combineQuery = combineQuery.Where(x => x.Date <= dateToTmp.AbsoluteEndOfDate());
+                }
+
                 res = await combineQuery.GroupBy(x => new
                 {
                     x.Date.Year,
