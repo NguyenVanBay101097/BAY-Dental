@@ -89,7 +89,7 @@ export class PartnerReportAgeGenderComponent implements OnInit, OnChanges {
   constructor() { }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.dataReportAgeGender) {
+    if (this.dataReportAgeGender.length) {
       this.responseData = this.dataReportAgeGender;
       this.updateDataOptions();
     }
