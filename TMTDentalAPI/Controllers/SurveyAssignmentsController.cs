@@ -235,7 +235,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Survey.Assignment.Read")]
-        public async Task<IActionResult> ExportExcel([FromBody] SurveyAssignmentPaged val)
+        public async Task<IActionResult> ExportDoneSurveyAssignmentExcel([FromBody] SurveyAssignmentPaged val)
         {
             var result = await _surveyAssignmentService.GetPagedResultAsync(val);
             var data = result.Items;

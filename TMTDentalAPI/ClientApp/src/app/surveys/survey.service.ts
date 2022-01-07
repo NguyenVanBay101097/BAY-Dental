@@ -16,6 +16,7 @@ export class SurveyAssignmentPaged {
   IsGetScore: boolean;
   userId: string;
   surveyTagId: string;
+  companyId: string;
 }
 
 export class SurveyAssignmentBasic {
@@ -213,15 +214,15 @@ export class SurveyAssignmentService {
     return this.http.post(this.base_api + this.apiUrl + '/GetQuestionReport', val);
   }
 
-  exportExcel(val: any) {
+  exportDoneSurveyAssignmentExcel(val: any) {
     return this.http.post(
-      this.base_api + this.apiUrl + "/ExportExcel", val,
+      this.base_api + this.apiUrl + "/ExportDoneSurveyAssignmentExcel", val,
       { responseType: "blob" }
     );
   }
 
   printDoneSurvey(val: any) {
-    return this.http.post(this.base_api + "SurveyAssignment/PrintDoneSurvey", val, { responseType: "text" });
+    return this.http.post(this.base_api + "SurveyAssignment/PrintDoneSurveyAssignmentReport", val, { responseType: "text" });
   }
 
 }

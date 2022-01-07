@@ -1,4 +1,5 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -49,6 +50,8 @@ export class SurveyReportComponent implements OnInit {
     private surveyAssignmentService: SurveyAssignmentService,
     private surveyTagService: SurveyTagService,
     private printService: PrintService,
+    private router: Router,
+
 
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) {this.pagerSettings = config.pagerSettings }
@@ -153,6 +156,11 @@ export class SurveyReportComponent implements OnInit {
         },
         xAxis: {
           data: xAxisData,
+          axisLabel: {
+            interval: 0,
+            // rotate: 25 //If the label names are too long you can manage this by rotating the label.
+            
+          },
           axisLine: {
             onZero: true,
             lineStyle: {
@@ -341,11 +349,14 @@ export class SurveyReportComponent implements OnInit {
     this.filter.dateFrom = value.dateFrom;
     this.filter.dateTo = value.dateTo;
     this.loadDataFromApi();
+    this.getDoneServeyAssignments();
   }
 
   onSelectCompany(e) {
     this.filter.companyId = e ? e.id : '';
     this.loadDataFromApi();
+    this.getDoneServeyAssignments();
+
   }
 
   loadCompanies() {
@@ -374,14 +385,9 @@ export class SurveyReportComponent implements OnInit {
   }
 
   getDoneServeyAssignments() {
-    var paged = new SurveyAssignmentPaged();
+    var paged = this.getDoneSurveyAssignmentPagedFilter();
     paged.limit = this.limit;
     paged.offset = this.offset;
-    paged.employeeId = this.employeeId ? this.employeeId : '';
-    paged.dateFrom = this.filter.dateFrom ? this.intlService.formatDate(this.filter.dateFrom, "yyyy-MM-dd") : '';
-    paged.dateTo = this.filter.dateTo ? this.intlService.formatDate(this.filter.dateTo, "yyyy-MM-dd") : '';
-    paged.status = 'done';
-    paged.surveyTagId = this.surveyTagId ? this.surveyTagId : '';
     this.loading = true;
     this.surveyAssignmentService.getPaged(paged).pipe(
       map(response => (<GridDataResult>{
@@ -424,15 +430,9 @@ export class SurveyReportComponent implements OnInit {
   }
 
   exportDoneSurveyListExcel() {
-    var paged = new SurveyAssignmentPaged();
-    paged.limit = 0;
-    paged.offset = this.offset;
-    paged.employeeId = this.employeeId ? this.employeeId : '';
-    paged.dateFrom = this.filter.dateFrom ? this.intlService.formatDate(this.filter.dateFrom, "yyyy-MM-dd") : '';
-    paged.dateTo = this.filter.dateTo ? this.intlService.formatDate(this.filter.dateTo, "yyyy-MM-dd") : '';
-    paged.status = 'done';
-    paged.surveyTagId = this.surveyTagId ? this.surveyTagId : '';
-    this.surveyAssignmentService.exportExcel(paged).subscribe((rs) => {
+    var paged = this.getDoneSurveyAssignmentPagedFilter();
+
+    this.surveyAssignmentService.exportDoneSurveyAssignmentExcel(paged).subscribe((rs) => {
       let filename = "DanhSachKhaoSatHoanThanh";
       let newBlob = new Blob([rs], {
         type:
@@ -452,16 +452,29 @@ export class SurveyReportComponent implements OnInit {
   }
 
   printDoneSurveyList() {
-    var paged = new SurveyAssignmentPaged();
-    paged.limit = 0;
-    paged.offset = this.offset;
-    paged.employeeId = this.employeeId ? this.employeeId : '';
-    paged.dateFrom = this.filter.dateFrom ? this.intlService.formatDate(this.filter.dateFrom, "yyyy-MM-dd") : '';
-    paged.dateTo = this.filter.dateTo ? this.intlService.formatDate(this.filter.dateTo, "yyyy-MM-dd") : '';
-    paged.status = 'done';
-    paged.surveyTagId = this.surveyTagId ? this.surveyTagId : '';
+    var paged = this.getDoneSurveyAssignmentPagedFilter();
+
     this.surveyAssignmentService.printDoneSurvey(paged).subscribe(result => {
       this.printService.printHtml(result);
     })
+  }
+
+  getDoneSurveyAssignmentPagedFilter() {
+    var paged = new SurveyAssignmentPaged();
+    paged.limit = 0;
+    paged.offset = 0;
+    paged.employeeId = this.employeeId ? this.employeeId : '';
+    paged.dateFrom = this.filter.dateFrom ? moment(this.filter.dateFrom).format('YYYY/MM/DD') : '';
+    paged.dateTo = this.filter.dateTo ? moment(this.filter.dateTo).format('YYYY/MM/DD') : '';
+    paged.status = 'done';
+    paged.surveyTagId = this.surveyTagId ? this.surveyTagId : '';
+    paged.companyId = this.filter.companyId ? this.filter.companyId : '';
+
+    return paged;
+  }
+
+  clickItem(item) {
+    var id = item.dataItem.id;
+    this.router.navigate(['/surveys/form'], { queryParams: { id: id } });
   }
 }

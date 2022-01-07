@@ -143,13 +143,21 @@
             </div>
         </div>
         <div class="card-body">
-            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="pagerSettings" [loading]="loading"
+            <kendo-grid class="pointer" [data]="gridData" [pageSize]="limit" [skip]="offset" [pageable]="pagerSettings" [loading]="loading" (cellClick)="clickItem($event)"
             (pageChange)="pageChange($event)">
-                <kendo-grid-column field="partnerName" title="Khách hàng"> </kendo-grid-column>
+                <kendo-grid-column field="partnerName" title="Khách hàng"> 
+                    <ng-template kendoGridCellTemplate let-dataItem let-column="column">
+                        <a class="text-primary" routerLink="/partners/customer/{{dataItem.partnerId}}/overview">
+                        {{dataItem.partnerName}}
+                       </a>
+                    </ng-template>
+                </kendo-grid-column>
                 <kendo-grid-column field="age" title="Tuổi"> </kendo-grid-column>
                 <kendo-grid-column title="Phiếu điều trị">
-                    <ng-template kendoGridCellTemplate let-dataItem let-column="column">
-                        {{dataItem.saleOrder?.name}}
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        <a [routerLink]="['/sale-orders', dataItem.saleOrderId]" class="text-primary">
+                            {{dataItem.saleOrder?.name}}
+                        </a>
                     </ng-template>
                 </kendo-grid-column>
                 <kendo-grid-column title="Nhân viên khảo sát"> 

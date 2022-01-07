@@ -443,5 +443,19 @@ namespace Infrastructure.Services
             }
         }
 
+        public async Task<DoneSurveyAssignmentPrintVM> GetDoneSurveyAssignmentReportPrint(SurveyAssignmentPaged val)
+        {
+            var res = new DoneSurveyAssignmentPrintVM();
+            if (val.CompanyId.HasValue)
+            {
+                var companyObj = GetService<ICompanyService>();
+                var company = await companyObj.SearchQuery(x => x.Id == val.CompanyId).Include(x => x.Partner).FirstOrDefaultAsync();
+                res.Company = _mapper.Map<CompanyPrintVM>(company);
+            }
+            var data = await GetPagedResultAsync(val);
+            res.Data = data.Items;
+
+            return res;
+        }
     }
 }

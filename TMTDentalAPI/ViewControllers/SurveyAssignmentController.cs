@@ -1,33 +1,31 @@
-﻿using AutoMapper;
+﻿using ApplicationCore.Constants;
+using AutoMapper;
 using Infrastructure.Data;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using TMTDentalAPI.JobFilters;
+using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.ViewControllers
 {
     public class SurveyAssignmentController : Controller
     {
-        private readonly IViewToStringRenderService _viewToStringRenderService;
-        private readonly IUserService _userService;
-        private readonly ICompanyService _companyService;
-        private readonly IMapper _mapper;
-        private readonly CatalogDbContext _context;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ISurveyAssignmentService _surveyAssignmentService;
 
-        public SurveyAssignmentController(IViewToStringRenderService viewToStringRenderService, IMapper mapper)
+
+        public SurveyAssignmentController(ISurveyAssignmentService surveyAssignmentService)
         {
-            _viewToStringRenderService = viewToStringRenderService;
-            _mapper = mapper;
+            _surveyAssignmentService = surveyAssignmentService;
         }
 
-        public IActionResult Index()
+        [PrinterNameFilterAttribute(Name = AppConstants.DoneSurveyAssignmentReport)]
+        [CheckAccess(Actions = "Survey.Assignment.Read")]
+        public async Task<IActionResult> PrintDoneSurveyAssignmentReport([FromBody] SurveyAssignmentPaged val)
         {
-            return View();
+            var data = await _surveyAssignmentService.GetDoneSurveyAssignmentReportPrint(val);
+            return View(data);
         }
     }
 }
