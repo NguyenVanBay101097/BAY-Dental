@@ -100,6 +100,7 @@ import { CardCardsMemberCreateDialogComponent } from '../service-card-cards/card
 import { StatePersistingService } from '../shared/services/state-persisting.service';
 import { PartnerExistListDialogComponent } from './partner-exist-list-dialog/partner-exist-list-dialog.component';
 import { PartnerActivityHistoryComponent } from './partner-activity-history/partner-activity-history.component';
+import { PartnerOtherInfoComponent } from './partner-other-info/partner-other-info.component';
 // import { CatalogModule } from '../catalog/catalog.module';
 
 
@@ -189,6 +190,7 @@ import { PartnerActivityHistoryComponent } from './partner-activity-history/part
     PartnerOverviewMemberCardsComponent,
     PartnerExistListDialogComponent,
     PartnerActivityHistoryComponent,
+    PartnerOtherInfoComponent,
   ],
   imports: [
     CommonModule,

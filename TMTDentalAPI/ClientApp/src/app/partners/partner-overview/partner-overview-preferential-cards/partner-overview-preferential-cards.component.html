@@ -1,7 +1,7 @@
-<div class="card">
-    <div class="card-body">
+<div class="card border-0 h-100">
+    <div class="card-body h-100 d-flex flex-column">
         <div class="d-flex justify-content-between">
-            <h5 class="card-header-title text-primary">
+            <h5 class="card-header-title text-primary m-0">
                 Thẻ ưu đãi dịch vụ mới tạo
             </h5>
             <div class="text-primary">
@@ -14,18 +14,20 @@
             </div>
         </ng-container>
         <ng-template #elseTemplate>
-            <div *ngFor="let item of preferentialCards" class="card-body-item">
-                <div class="d-flex justify-content-between">
-                    <h5 class="text-gray m-0">
-                        {{item.barcode}}
-                    </h5>
-                    <div class="card-header-edit text-primary">
-                        <a (click)="editCard(item)"><i class="fas fa-pen"></i></a>
+            <div class="overflow-auto">
+                <div *ngFor="let item of preferentialCards" class="card-body-item" [ngClass]="item.state == 'in_use' ? 'bg-active' : 'bg-inactive'">
+                    <div class="d-flex justify-content-between">
+                        <h5 class="text-gray m-0">
+                            {{item.barcode}}
+                        </h5>
+                        <div class="card-header-edit text-primary">
+                            <a (click)="editCard(item)"><i class="fas fa-pen"></i></a>
+                        </div>
                     </div>
+                    <div class="opacity-8" [class]="getStateClass(item.state)" style="min-width: 76px;">{{getState(item.state)}}</div>
+                    <p class="card-text opacity-8 mb-0">Hạng thẻ: {{item?.cardType?.name}}</p>
+                    <p class="card-text opacity-8 mb-0">Hạn sử dụng: {{item.activatedDate ? getExpiry(item) : ''}}</p>
                 </div>
-                <div class="opacity-8" [class]="getStateClass(item.state)" style="min-width: 76px;">{{getState(item.state)}}</div>
-                <p class="card-text opacity-8 mb-0">Hạng thẻ: {{item?.cardType?.name}}</p>
-                <p class="card-text opacity-8 mb-0">Hạn sử dụng: {{item.activatedDate ? getExpiry(item) : ''}}</p>
             </div>
         </ng-template>
     </div>
