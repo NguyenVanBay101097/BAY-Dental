@@ -163,7 +163,9 @@
           "Url": "https://statics.tdental.vn/images/test3/210930/1901540163_fd.jpg",
           "DateCreated": "2021-09-29T11:00:36"
         }
-      ]
+      ],
+      "AmountSubTotal": 6500000.00,
+      "AmountDiscountTotal": 1150000.00
     }
   },
   {
