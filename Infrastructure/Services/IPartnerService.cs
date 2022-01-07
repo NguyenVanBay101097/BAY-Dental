@@ -52,7 +52,7 @@ namespace Infrastructure.Services
 
         Task<AppointmentBasic> GetNextAppointment(Guid id);
 
-        Task<IEnumerable<PartnerCustomerExportExcelVM>> GetExcel(PartnerInfoPaged val);
+        Task<IEnumerable<PartnerCustomerExportExcelVM>> GetExcel(PartnerQueryableFilter val);
         Task AddOrRemoveTags(PartnerAddRemoveTagsVM val, bool isAdd);
 
         Task<IQueryable<PartnerViewModel>> GetViewModelsAsync();
