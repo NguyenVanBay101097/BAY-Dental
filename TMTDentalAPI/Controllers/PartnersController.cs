@@ -609,7 +609,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Basic.Partner.Export")]
-        public async Task<IActionResult> ExportExcelFile(PartnerInfoPaged val)
+        public async Task<IActionResult> ExportExcelFile(PartnerQueryableFilter val)
         {
             var stream = new MemoryStream();
             var data = await _partnerService.GetExcel(val);

@@ -567,9 +567,9 @@ namespace Infrastructure.Services
             return result;
         }
 
-        public async Task<IEnumerable<PartnerCustomerExportExcelVM>> GetExcel(PartnerInfoPaged val)
+        public async Task<IEnumerable<PartnerCustomerExportExcelVM>> GetExcel(PartnerQueryableFilter val)
         {
-            var query = await GetQueryPartnerInfoPaged2(val);
+            var query = GetQueryablePartnerFilter(val);
             if (val.CategIds.Any())
             {
                 //filter query
@@ -596,8 +596,7 @@ namespace Infrastructure.Services
                 Email = x.Email,
                 Note = x.Comment,
                 Id = x.Id,
-                SourceName = x.SourceName,
-                TitleName = x.TitleName
+                SourceName = x.Source.Name
             }).ToListAsync();
 
             var historyRelObj = GetService<IHistoryService>();
