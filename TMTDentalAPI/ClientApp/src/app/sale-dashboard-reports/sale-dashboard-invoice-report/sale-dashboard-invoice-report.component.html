@@ -1,12 +1,12 @@
-<h4 class="ml-3 my-2 title-header">Doanh thu</h4>
+<h4 class="ml-3 my-2 title-header">Tiền điều trị - Doanh thu - Thực thu</h4>
 <div style="position: relative; height:320px;">
-    <canvas baseChart *ngIf="revenues.length || cashBooks.length"
+    <canvas baseChart *ngIf="this.saleRevenueCashBookData.length"
       [labels]="barChartLabels"
       [datasets]="barChartData"
       [options]="barChartOptions"
       [type]="'bar'">
     </canvas>
-    <div class="d-flex justify-content-center align-items-center" style="height: 100%;" *ngIf="!revenues.length && !cashBooks.length">
+    <div class="d-flex justify-content-center align-items-center" style="height: 100%;" *ngIf="!this.saleRevenueCashBookData.length">
         <img src="./../../../assets/icons/NoData.svg" class="img-nodata ">
     </div>
   </div>

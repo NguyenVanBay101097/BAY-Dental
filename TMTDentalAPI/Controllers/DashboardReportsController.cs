@@ -531,5 +531,12 @@ namespace TMTDentalAPI.Controllers
 
             return new FileContentResult(fileContent, mimeType);
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetRevenueReportChart(ReportRevenueChartFilter val)
+        {
+            var res = await _dashboardService.GetRevenueReportChart(val.DateFrom, val.DateTo, val.CompanyId, val.GroupBy);
+            return Ok(res);
+        }
     }
 }
