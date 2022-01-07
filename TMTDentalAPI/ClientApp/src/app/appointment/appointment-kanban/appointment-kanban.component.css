@@ -41,7 +41,7 @@
 
 .filter-content {
     /* padding: 0 0.5rem; */
-    height: 370px;
+    height: 300px;
     overflow: hidden;
 }
 
@@ -635,6 +635,9 @@ input[type=number] {
 .flex-column {
     flex-direction: column;
 }
+.btn-filter-all {
+    font-weight: 600;
+}
 
 .btn-label {
     display: flex;
@@ -643,14 +646,14 @@ input[type=number] {
     border: 1px solid #E2E7ED !important;
 }
 
-.btn-check:active+.btn-outline-label, .btn-check:checked+.btn-outline-label, .btn-outline-label.active, .btn-outline-label.dropdown-toggle.show, .btn-outline-label:active {
+.btn-check:active+.btn-label, .btn-check:checked+.btn-label, .btn-label.active, .btn-label.dropdown-toggle.show, .btn-label:active {
     color: #007BFF;
     background-color: #E6F2FF;
 }
-.btn-outline-label {
+.btn-label {
     color: unset;
 }
-.btn-outline-label:hover {
+.btn-label:hover {
     color: #007BFF;
     background-color: #E6F2FF;
 }
@@ -663,7 +666,7 @@ input[type=number] {
     align-items: center;
     padding: 7px;
     margin-bottom: 10px;
-    /* width: 120px; */
+    width: 128px;
 }
 
 .box-icon {
@@ -683,9 +686,14 @@ input[type=number] {
     align-items: end;
 }
 
+.btn-group {
+    width: 100%;
+    flex-direction: column!important;
+}
+
 .btn-group-employee {
     overflow: auto;
-    height: 82%;
+    height: 100%;
     border: 1px solid #E2E7ED;
 }
 

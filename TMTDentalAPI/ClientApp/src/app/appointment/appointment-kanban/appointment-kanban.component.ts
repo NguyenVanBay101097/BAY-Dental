@@ -52,20 +52,18 @@ export class AppointmentKanbanComponent implements OnInit {
   // appointmentByDate: { [id: string]: AppointmentBasic[]; } = {};
 
   states: { text: string, value: string }[] = [
-    { text: 'Tất cả', value: '' },
     { text: 'Đang hẹn', value: 'confirmed' },
     { text: 'Đã đến', value: 'done' },
     { text: 'Hủy hẹn', value: 'cancel' },
     { text: 'Quá hẹn', value: 'overdue' }
   ];
-  stateSelected: string = this.states[0].value;
+  stateSelected: string = '';
 
   types: { text: string, value: string }[] = [
-    { text: 'Tất cả', value: '' },
     { text: 'Tái khám', value: 'repeat' },
     { text: 'Khám mới', value: 'new' }
   ];
-  typeSelected: string = this.states[0].value;
+  typeSelected: string = '';
   isRepeatCustomer: boolean;
 
   listEmployees: EmployeeBasic[] = [];
@@ -245,10 +243,9 @@ export class AppointmentKanbanComponent implements OnInit {
     this.clientFilter = false;
   }
 
-  onCountState(value: any): number {
-    value = (value === 'overdue') ? 'confirmed' : value;
-    return value ? this.dataAppointments.filter(x => {
-      return this.isLateFilter ? (x.state === value && Boolean(x.isLate)) : (x.state === value && Boolean(!x.isLate))
+  onCountState(data: any): number {
+    return data ? this.dataAppointments.filter(x => {
+      return data === 'overdue' ? (x.state === 'confirmed' && Boolean(x.isLate)) : (x.state === data && Boolean(!x.isLate))
     }).length || 0 : this.dataAppointments.length;
   }
 
