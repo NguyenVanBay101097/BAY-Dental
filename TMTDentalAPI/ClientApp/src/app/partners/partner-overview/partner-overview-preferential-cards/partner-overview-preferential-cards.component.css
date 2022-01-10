@@ -9,6 +9,14 @@
     margin-top: 9px;
 }
 
+.card-body-item.active {
+    border-left: 4px solid #2395FF;
+}
+
+.card-body-item.inactive {
+    border-left: 4px solid #A1ACB8;
+}
+
 .card-body-item:not(:first) {
    margin-top: 1rem;
 }

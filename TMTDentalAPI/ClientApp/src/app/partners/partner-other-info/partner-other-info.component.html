@@ -1,7 +1,7 @@
 <div class="container-fluid h-100 pt-3">
     <div class=" row h-100">
         <div class="left col-8 pr-0 h-100 d-flex flex-column overflow-hidden">
-            <div class="appointment border border-radius flex-0-0-auto">
+            <div class="appointment border border-radius flex-0-0-auto bg-white">
                 <app-partner-customer-appointment></app-partner-customer-appointment>
             </div>
             <div class="attachment border border-radius mt-3 flex-1-1-100 overflow-hidden">
@@ -10,7 +10,7 @@
         </div>
 
         <div class="right col-4 h-100">
-            <div class="border-prime h-100">
+            <div class="border-prime h-100 bg-white">
                 <app-partner-overview-preferential-cards (onCreateUpdateEvent)="loadPreferentialCards()"
                     [partnerId]="partnerId" [preferentialCards]="preferentialCards">
                 </app-partner-overview-preferential-cards>

@@ -41,7 +41,7 @@
                   <label class="font-weight-600 m-0">
                     {{item.subtypeName}}
                   </label>
-                  <i (click)="onDeleteMessage(item)" class="fas fa-trash cursor-pointer text-danger icon"></i>
+                  <i *ngIf="item.messageType == 'comment'" (click)="onDeleteMessage(item)" class="fas fa-trash cursor-pointer text-danger icon"></i>
                 </div>
                 <div innerHTML="{{item.body}}"></div>
                 <label class = "text-gray m-0">

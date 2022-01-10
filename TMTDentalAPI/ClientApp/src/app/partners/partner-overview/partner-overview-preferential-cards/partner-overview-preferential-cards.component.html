@@ -1,4 +1,4 @@
-<div class="card border-0 h-100">
+<div class="card border-0 h-100 bg-transparent">
     <div class="card-body h-100 d-flex flex-column">
         <div class="d-flex justify-content-between">
             <h5 class="card-header-title text-primary m-0">
@@ -15,7 +15,7 @@
         </ng-container>
         <ng-template #elseTemplate>
             <div class="overflow-auto">
-                <div *ngFor="let item of preferentialCards" class="card-body-item" [ngClass]="item.state == 'in_use' ? 'bg-active' : 'bg-inactive'">
+                <div *ngFor="let item of preferentialCards" class="card-body-item" [ngClass]="item.state == 'in_use' ? 'active' : 'inactive'">
                     <div class="d-flex justify-content-between">
                         <h5 class="text-gray m-0">
                             {{item.barcode}}

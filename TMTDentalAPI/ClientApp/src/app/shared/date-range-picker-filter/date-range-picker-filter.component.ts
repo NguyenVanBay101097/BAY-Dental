@@ -16,6 +16,7 @@ export class DateRangePickerFilterComponent implements OnInit {
   @Input() drops: string = 'auto';
   @Input() title: string = 'Thời gian';
   @Input() showClearButton: boolean = true;
+  @Input() parentEl = "body";
 
   @Input() showDropdowns = true;
   @Input() ranges: any = {
@@ -82,6 +83,9 @@ export class DateRangePickerFilterComponent implements OnInit {
     }
     if (this.drops) {
       this.options.drops = this.drops;
+    }
+    if(this.parentEl){
+      this.options.parentEl = this.parentEl;
     }
   }
 
